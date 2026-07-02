@@ -1,3 +1,20 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build output
+dist
+dist-ssr
+build
+*.local
+
+# Turborepo
+.turbo
+
+# Test / coverage
+coverage
+*.lcov
+
 # Logs
 logs
 *.log
@@ -7,13 +24,13 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Env files: keep .env.example and .env.production (public VITE_* config),
+# ignore local/secret env files.
+.env
+.env.local
+.env.*.local
 
-# Editor directories and files
-!.vscode/extensions.json
+# Editor / OS
 .idea
 .DS_Store
 *.suo
@@ -21,8 +38,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+!.vscode/extensions.json
 
-# Lockfiles: standardize on pnpm, commit pnpm-lock.yaml for reproducible Vercel builds
+# Vercel
+.vercel
+
+# Lockfiles from other package managers (this repo standardizes on pnpm)
 yarn.lock
 package-lock.json
 bun.lockb

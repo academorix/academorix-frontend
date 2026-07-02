@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@import "@heroui/styles";
+
+/* Scan the shared UI package so its utility classes are generated. */
+@source "../../../../packages/ui/src/**/*.{ts,tsx}";
+
+@custom-variant dark (&:is(.dark *));

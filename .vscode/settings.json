@@ -1,5 +1,112 @@
 {
+  // ── Editor ──────────────────────────────────────────────────────────────
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
+  },
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.stickyScroll.enabled": true,
+  "editor.minimap.enabled": false,
+  "editor.renderWhitespace": "boundary",
+
+  // ── TypeScript ──────────────────────────────────────────────────────────
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "javascript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.suggest.autoImports": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+
+  // ── Performance: reduce TS server memory ────────────────────────────────
+  "typescript.tsserver.maxTsServerMemory": 4096,
+  "typescript.tsserver.experimental.enableProjectDiagnostics": false,
+
+  // ── ESLint ──────────────────────────────────────────────────────────────
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+
+  // ── Tailwind CSS ────────────────────────────────────────────────────────
   "tailwindCSS.experimental.classRegex": [
-    ["([\"'`][^\"'`]*.*?[\"'`])", "[\"'`]([^\"'`]*).*?[\"'`]"]
+    ["cn\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["tv\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
   ],
+
+  // ── File Associations ───────────────────────────────────────────────────
+  "files.associations": {
+    "*.css": "tailwindcss",
+    "*.ejson": "json",
+    "*.hook": "json"
+  },
+
+  // ── Performance: File Explorer Exclusions ───────────────────────────────
+  "files.exclude": {
+    "**/.turbo": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.next": true,
+    ".ref": true,
+    ".docs": true,
+    ".references": true,
+    "**/.vite": true,
+    "**/.vite-temp": true,
+    "**/coverage": true,
+    "**/.cache": true,
+    ".ejson-keys": true
+  },
+
+  // ── Performance: Search Exclusions ──────────────────────────────────────
+  "search.exclude": {
+    "**/.turbo": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.next": true,
+    "**/pnpm-lock.yaml": true,
+    ".ref": true,
+    ".docs": true,
+    ".references": true,
+    "**/.vite": true,
+    "**/.vite-temp": true,
+    "**/coverage": true,
+    "**/.cache": true,
+    "**/*.map": true,
+    "**/.stackra": true
+  },
+
+  // ── Performance: File Watcher Exclusions (biggest impact) ───────────────
+  "files.watcherExclude": {
+    "**/.turbo/**": true,
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/.next/**": true,
+    ".ref/**": true,
+    ".docs/**": true,
+    ".references/**": true,
+    "**/.vite/**": true,
+    "**/.vite-temp/**": true,
+    "**/coverage/**": true,
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/.cache/**": true,
+    "**/.stackra/**": true
+  },
+
+  // ── Git ─────────────────────────────────────────────────────────────────
+  "git.ignoreLimitWarning": true,
+  "git.autofetch": false,
+  "git.decorations.enabled": false,
+
+  // ── Per-Language Formatters ─────────────────────────────────────────────
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[javascriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "typescript.autoClosingTags": false
 }

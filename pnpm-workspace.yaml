@@ -1,0 +1,65 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# Native deps that ship prebuilt binaries still occasionally need their
+# install scripts approved under pnpm v10's secure-by-default policy.
+onlyBuiltDependencies:
+  - esbuild
+  - "@tailwindcss/oxide"
+
+# Single source of truth for every dependency version in the workspace.
+# Reference these from any package.json with "catalog:".
+catalog:
+  # --- React ---
+  react: ^19.0.0
+  react-dom: ^19.0.0
+  react-router-dom: ^6.23.0
+  "@types/react": ^19.0.0
+  "@types/react-dom": ^19.0.0
+
+  # --- HeroUI + styling ---
+  "@heroui/react": 3.2.1
+  "@heroui/styles": 3.2.1
+  tailwindcss: 4.3.1
+  "@tailwindcss/vite": 4.3.1
+  tailwind-variants: ^3.2.2
+  clsx: ^2.1.1
+
+  # --- Runtime validation ---
+  zod: ^4.4.3
+
+  # --- Build toolchain ---
+  vite: ^8.1.2
+  "@vitejs/plugin-react": ^6.0.3
+  typescript: ^5.6.3
+  "@types/node": ^22.12.0
+
+  # --- Testing ---
+  vitest: ^4.1.9
+  "@vitest/coverage-v8": ^4.1.9
+  "@testing-library/react": ^16.3.2
+  "@testing-library/jest-dom": ^6.9.1
+  jsdom: ^29.1.1
+
+  # --- Lint / format ---
+  eslint: ^9.25.1
+  "@eslint/js": ^9.25.1
+  typescript-eslint: ^8.31.1
+  eslint-config-prettier: ^9.1.0
+  eslint-plugin-react: ^7.37.5
+  eslint-plugin-react-hooks: ^5.2.0
+  eslint-plugin-jsx-a11y: ^6.10.2
+  eslint-plugin-import: ^2.31.0
+  eslint-plugin-unused-imports: ^4.1.4
+  globals: ^16.0.0
+  prettier: ^3.9.4
+  prettier-plugin-tailwindcss: ^0.8.0
+
+  # --- Monorepo tooling ---
+  turbo: ^2.10.2
+  knip: ^6.23.0
+  husky: ^9.1.7
+  lint-staged: ^17.0.8
+  "@commitlint/cli": ^21.2.0
+  "@commitlint/config-conventional": ^21.2.0

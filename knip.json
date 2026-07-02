@@ -1,0 +1,10 @@
+{
+  "workspaces": {
+    "apps/web": {
+      "ignoreDependencies": ["@heroui/styles"]
+    },
+    "packages/typescript-config": {
+      "entry": ["*.json"]
+    }
+  }
+}
