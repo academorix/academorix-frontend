@@ -10,7 +10,7 @@
 import { BuildingOffice2Icon } from "@academorix/ui/icons/outline";
 import { createElement, lazy } from "react";
 
-import type { AppModule } from "@/app/module";
+import type { AppModule } from "@/lib/module";
 
 const ComingSoonPage = lazy(() => import("@/components/coming-soon"));
 
@@ -22,7 +22,7 @@ const branchesModule: AppModule = {
       list: "/branches",
       meta: {
         label: "Branches",
-        icon: createElement(BuildingOffice2Icon, { className: "size-5" }),
+        icon: BuildingOffice2Icon,
         featureKey: "branches",
         requiredPermission: "branches.viewAny",
         order: 50,

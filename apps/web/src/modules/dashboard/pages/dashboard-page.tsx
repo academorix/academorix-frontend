@@ -19,7 +19,8 @@ import {
 import { Card, Spinner } from "@academorix/ui/react";
 import { useList } from "@refinedev/core";
 
-import type { ComponentType, ReactNode, SVGProps } from "react";
+import type { IconType } from "@academorix/ui/icons";
+import type { ReactNode } from "react";
 
 import { useResourceLabel } from "@/lib/refine";
 
@@ -30,7 +31,7 @@ interface KpiConfig {
   /** Default label (overridden by tenant terminology). */
   label: string;
   /** Glyph rendered in the card corner. */
-  Icon: ComponentType<SVGProps<SVGSVGElement>>;
+  Icon: IconType;
 }
 
 /** The KPIs shown on the dashboard, in display order. */

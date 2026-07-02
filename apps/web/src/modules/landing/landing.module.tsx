@@ -9,7 +9,7 @@
 
 import { createElement, lazy } from "react";
 
-import type { AppModule } from "@/app/module";
+import type { AppModule } from "@/lib/module";
 
 const HomePage = lazy(() => import("@/modules/landing/pages/home-page"));
 

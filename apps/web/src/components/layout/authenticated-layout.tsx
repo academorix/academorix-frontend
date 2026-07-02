@@ -1,14 +1,15 @@
 /**
  * @file authenticated-layout.tsx
- * @module app/layouts/authenticated-layout
+ * @module components/layout/authenticated-layout
  *
  * @description
  * The **app-level** shell for every authenticated route, built with HeroUI
  * Pro's `AppLayout` + `Sidebar` + `Navbar`. It is app infrastructure, not a
- * feature — it wraps all authenticated modules — so it lives in `app/`, not in
- * any single module. Module-specific sub-layouts belong inside their module.
+ * feature — it wraps all authenticated modules — so it lives in
+ * `components/layout/`, not in any single module. Module-specific sub-layouts
+ * belong inside their module.
  *
- * - The **sidebar** is generated from the module {@link "@/app/registry" registry}'s
+ * - The **sidebar** is generated from the module {@link "@/lib/module" registry}'s
  *   resources, then **filtered by the current identity**: a resource is shown
  *   only if its `featureKey` is enabled for the tenant and its
  *   `requiredPermission` is granted. Labels use tenant **terminology** (an
@@ -41,13 +42,14 @@ import {
 import { useGetIdentity, useLogout } from "@refinedev/core";
 import { useLocation, useNavigate } from "react-router";
 
-import type { AppResourceMeta } from "@/app/module";
+import type { AppResource } from "@/lib/module";
 import type { Identity } from "@/types";
-import type { ResourceProps } from "@refinedev/core";
+import type { IconType } from "@academorix/ui/icons";
 import type { Key, ReactNode } from "react";
 
-import { appResources } from "@/app/registry";
+import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 import { siteConfig } from "@/config/site";
+import { appResources } from "@/lib/module";
 
 /** Props for {@link AuthenticatedLayout}. */
 interface AuthenticatedLayoutProps {
@@ -60,7 +62,7 @@ interface NavEntry {
   name: string;
   href: string;
   label: string;
-  icon: ReactNode;
+  Icon?: IconType;
   isCurrent: boolean;
 }
 
@@ -95,26 +97,21 @@ function useNavEntries(identity: Identity | undefined): NavEntry[] {
 
   return appResources
     .filter(
-      (resource): resource is ResourceProps & { list: string } => typeof resource.list === "string",
+      (resource): resource is AppResource & { list: string } => typeof resource.list === "string",
+    )
+    .filter(
+      (resource) =>
+        featureAllowed(identity, resource.meta.featureKey) &&
+        permissionAllowed(identity, resource.meta.requiredPermission),
     )
     .map((resource) => {
-      const meta = (resource.meta ?? {}) as AppResourceMeta;
-
-      return { resource, meta };
-    })
-    .filter(
-      ({ meta }) =>
-        featureAllowed(identity, meta.featureKey) &&
-        permissionAllowed(identity, meta.requiredPermission),
-    )
-    .map(({ resource, meta }) => {
       const href = resource.list;
 
       return {
         name: resource.name,
         href,
-        label: identity?.terminology?.[resource.name] ?? meta.label,
-        icon: meta.icon,
+        label: identity?.terminology?.[resource.name] ?? resource.meta.label,
+        Icon: resource.meta.icon,
         isCurrent: pathname === href || pathname.startsWith(`${href}/`),
       };
     });
@@ -205,7 +202,9 @@ function AppSidebar({ entries }: { entries: NavEntry[] }): ReactNode {
               isCurrent={entry.isCurrent}
               tooltip={entry.label}
             >
-              <Sidebar.MenuIcon>{entry.icon}</Sidebar.MenuIcon>
+              <Sidebar.MenuIcon>
+                {entry.Icon ? <entry.Icon aria-hidden="true" className="size-5" /> : null}
+              </Sidebar.MenuIcon>
               <Sidebar.MenuLabel>{entry.label}</Sidebar.MenuLabel>
             </Sidebar.MenuItem>
           ))}
@@ -236,6 +235,7 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps): Rea
             <Sidebar.Trigger />
             <span className="text-sm font-semibold text-foreground">{activeLabel}</span>
             <Navbar.Spacer />
+            <ThemeSwitcher />
             <UserMenu />
           </Navbar.Header>
         </Navbar>

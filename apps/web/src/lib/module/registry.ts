@@ -1,6 +1,6 @@
 /**
  * @file registry.ts
- * @module app/registry
+ * @module lib/module/registry
  *
  * @description
  * Auto-discovers every feature module manifest under `src/modules/<name>/`
@@ -9,17 +9,15 @@
  * edit required.
  *
  * NOTE: `import.meta.glob` patterns do **not** resolve the `@` alias, so the
- * glob below is written relative to this file (`../modules/...`). The page
- * components inside each manifest still use `@/...` lazy imports and stay
- * code-split.
+ * glob below is written relative to this file (`../../modules/...`, since this
+ * file sits two levels deep under `src/lib/module/`). The page components
+ * inside each manifest still use `@/...` lazy imports and stay code-split.
  */
 
-import type { AppModule, AppModuleRoute } from "@/app/module";
-import type { AppResourceMeta } from "@/app/module";
-import type { ResourceProps } from "@refinedev/core";
+import type { AppModule, AppModuleRoute, AppResource } from "@/lib/module/module";
 
 /** Eagerly-loaded module manifests (tiny; the page components stay lazy). */
-const manifests = import.meta.glob<{ default: AppModule }>("../modules/*/*.module.tsx", {
+const manifests = import.meta.glob<{ default: AppModule }>("../../modules/*/*.module.tsx", {
   eager: true,
 });
 
@@ -27,12 +25,12 @@ const manifests = import.meta.glob<{ default: AppModule }>("../modules/*/*.modul
 export const appModules: AppModule[] = Object.values(manifests).map((manifest) => manifest.default);
 
 /** Reads a resource's sidebar sort order (default `0`). */
-function resourceOrder(resource: ResourceProps): number {
-  return (resource.meta as AppResourceMeta | undefined)?.order ?? 0;
+function resourceOrder(resource: AppResource): number {
+  return resource.meta.order ?? 0;
 }
 
-/** All Refine resources across every module, sorted for stable sidebar order. */
-export const appResources: ResourceProps[] = appModules
+/** All resources across every module, sorted for stable sidebar order. */
+export const appResources: AppResource[] = appModules
   .flatMap((module) => module.resources ?? [])
   .sort((a, b) => resourceOrder(a) - resourceOrder(b));
 

@@ -1,18 +1,12 @@
 /**
- * @file athlete-list-page.tsx
- * @module modules/athletes/pages/athlete-list-page
+ * @file list.tsx
+ * @module modules/athletes/pages/list
  *
  * @description
- * The flagship resource screen: a paginated, sortable Athletes table driven by
- * Refine's headless `useTable` and rendered with HeroUI Pro's `DataGrid`.
- *
- * The intended pattern for every resource table:
- * - `useTable` owns server state (pagination, sorting, fetching) — identical in
- *   mock and REST modes.
- * - `DataGrid` renders the grid in **controlled sort** mode; sorting is
- *   delegated to the server via Refine's `sorters` (never sorted client-side).
- * - Pagination is a separate `Pagination` footer wired to `currentPage`.
- * - The page title uses tenant terminology (an academy shows "Students").
+ * Athletes list screen (the resource's `list` route). Follows the Refine CRUD
+ * page convention — sibling `create.tsx` / `edit.tsx` / `show.tsx` are added as
+ * those actions are built. Paginated + sortable via Refine's headless
+ * `useTable`, rendered with HeroUI Pro's `DataGrid`.
  */
 
 import { Chip, DataGrid, Pagination, Spinner } from "@academorix/ui/react";
@@ -90,7 +84,7 @@ const COLUMNS: DataGridColumn<Athlete>[] = [
 ];
 
 /** The athletes list page. */
-export default function AthleteListPage(): ReactNode {
+export default function AthleteList(): ReactNode {
   const title = useResourceLabel("athletes", "Athletes");
 
   const { tableQuery, sorters, setSorters, currentPage, setCurrentPage, pageSize, pageCount } =

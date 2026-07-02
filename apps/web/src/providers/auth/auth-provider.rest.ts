@@ -22,8 +22,8 @@ import type { ApiResource, AuthTokenResponse, Identity, LoginCredentials } from 
 import type { AuthUser } from "@/types";
 import type { AuthProvider } from "@refinedev/core";
 
-import { appRoutes } from "@/app/routes";
 import { ApiError } from "@/lib/http";
+import { appRoutes } from "@/lib/module";
 import { toIdentity } from "@/providers/auth/map-identity";
 import { setCurrentIdentity } from "@/providers/auth/session";
 

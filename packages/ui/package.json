@@ -12,6 +12,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./react": "./src/react/index.ts",
+    "./icons": "./src/icons/index.ts",
     "./icons/outline": "./src/icons/outline.ts",
     "./icons/solid": "./src/icons/solid.ts",
     "./icons/mini": "./src/icons/mini.ts",

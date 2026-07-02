@@ -59,11 +59,6 @@ never lives in `lib/` (that is framework-agnostic infrastructure).
 
 ```
 apps/web/src/
-├── app/                     # app-level wiring, not feature code
-│   ├── module.ts            # AppModule / AppModuleRoute types
-│   ├── registry.ts          # import.meta.glob aggregation of *.module.tsx
-│   ├── routes.ts            # cross-cutting redirect targets only (LOGIN, HOME…)
-│   └── layouts/             # app-level shell(s), e.g. authenticated-layout
 ├── modules/<domain>/        # one folder per bounded context (mirrors backend)
 │   ├── pages/               # route screens (lazy-loaded)
 │   ├── layouts/             # module-only sub-layouts (optional)
@@ -74,9 +69,11 @@ apps/web/src/
 │   └── <domain>.module.tsx  # THE manifest: resources + routes (default export)
 ├── providers/               # APP-LEVEL Refine providers (data/auth/live/notification/access)
 ├── lib/                     # infra only: http, api client, query builder
+│   ├── module/              # the module framework: module.ts + registry.ts + routes.ts (+ barrel)
 │   └── refine/              # cross-cutting Refine hooks/helpers (e.g. useResourceLabel)
 ├── components/              # shared, reusable UI widgets
-├── config/                  # env, site (NOT routes — those live in app/ or per module)
+│   └── layout/              # app-level shell(s), e.g. authenticated-layout
+├── config/                  # env, site (NOT routes — those live in lib/module or per module)
 └── types/                   # cross-module domain types, enums, API envelopes
 ```
 
@@ -87,8 +84,8 @@ apps/web/src/
 ### Layouts, providers & hooks — where they live
 
 - **App-level shell layout** (the authenticated `AppLayout`+`Sidebar`+`Navbar`
-  frame) lives in `src/app/layouts/`. It wraps _every_ authenticated module, so
-  it is app infrastructure — never place it in a feature module.
+  frame) lives in `src/components/layout/`. It wraps _every_ authenticated
+  module, so it is app infrastructure — never place it in a feature module.
 - **Core providers** (data / auth / live / notification / access-control) are
   the _app's_ strategy, shared by all modules → `src/providers/`. They are not
   owned by any feature (e.g. the auth **provider** is app-level; the `auth`
@@ -96,8 +93,9 @@ apps/web/src/
 - **Module-owned layouts/providers** are supported by **composition**: a module
   wraps its route `element` in its own layout (`modules/<name>/layouts/`) and/or
   context provider (`modules/<name>/providers/`). No contract change needed.
-- **Cross-cutting Refine hooks/helpers** → `src/lib/refine/`. **Module-only**
-  hooks → `modules/<name>/hooks/`.
+- **The module framework itself** (contract + registry + shared routes) lives in
+  `src/lib/module/`. **Cross-cutting Refine hooks/helpers** → `src/lib/refine/`.
+  **Module-only** hooks → `modules/<name>/hooks/`.
 - **Environment**: validate with **zod** in `config/env.ts` (this is a Vite SPA
   — all vars are client `VITE_*`; Vite enforces the prefix). Do **not** add
   `@t3-oss/env-core` — its server/client split only pays off with SSR/Node.
@@ -111,7 +109,8 @@ resource(s)** and its **routes**. Nothing else in the app hard-codes routes or
 resources.
 
 ```ts
-// src/app/module.ts
+// src/lib/module/module.ts
+import type { IconType } from "@academorix/ui/icons";
 import type { ResourceProps } from "@refinedev/core";
 import type { ReactElement } from "react";
 
@@ -131,19 +130,27 @@ export interface AppModuleRoute {
 /** Extra, Academorix-specific resource metadata (on `ResourceProps.meta`). */
 export interface AppResourceMeta {
   label: string;
-  icon?: ReactElement;
+  /** Icon *component* (heroicons-compatible `IconType`), not a rendered element. */
+  icon?: IconType;
   /** Tenant feature-toggle key; hidden unless the manifest enables it. */
   featureKey?: string;
   /** Permission required to see/enter, e.g. "athletes.viewAny". */
   requiredPermission?: string;
   /** Optional nav group / parent resource name. */
   parent?: string;
+  /** Sidebar sort order (ascending; default 0). */
+  order?: number;
 }
+
+/** A Refine resource whose `meta` is strongly typed as `AppResourceMeta`. */
+export type AppResource = Omit<ResourceProps, "meta"> & {
+  meta: AppResourceMeta;
+};
 
 /** A feature module: its Refine resources + its routes. */
 export interface AppModule {
   name: string;
-  resources?: ResourceProps[];
+  resources?: AppResource[];
   routes?: AppModuleRoute[];
 }
 ```
@@ -153,11 +160,9 @@ export interface AppModule {
 import { AcademicCapIcon } from "@academorix/ui/icons/outline";
 import { createElement, lazy } from "react";
 
-import type { AppModule } from "@/app/module";
+import type { AppModule } from "@/lib/module";
 
-const AthleteListPage = lazy(
-  () => import("@/modules/athletes/pages/athlete-list-page"),
-);
+const AthleteListPage = lazy(() => import("@/modules/athletes/pages/list"));
 
 const athletesModule: AppModule = {
   name: "athletes",
@@ -167,7 +172,7 @@ const athletesModule: AppModule = {
       list: "/athletes",
       meta: {
         label: "Athletes", // default; overridden by tenant terminology
-        icon: createElement(AcademicCapIcon, { className: "size-5" }),
+        icon: AcademicCapIcon, // an icon COMPONENT (IconType), not an element
         featureKey: "athletes",
         requiredPermission: "athletes.viewAny",
       },
@@ -187,6 +192,47 @@ export default athletesModule;
 
 ---
 
+### Resource pages — Refine CRUD convention
+
+A resource module's screens follow Refine's per-action file layout, one file per
+CRUD action:
+
+```
+src/modules/athletes/
+├── pages/
+│   ├── list.tsx      # default export → AthleteList  (built now)
+│   ├── create.tsx    # default export → AthleteCreate (added when built)
+│   ├── edit.tsx      # default export → AthleteEdit
+│   └── show.tsx      # default export → AthleteShow
+└── athletes.module.tsx
+```
+
+- Each page file **default-exports** its component and is **lazy-imported** per
+  file (we code-split per route). This differs from the Refine starter's named
+  exports + `index.ts` barrel + eager imports — intentionally, for splitting.
+- The manifest declares the resource's `list`/`create`/`edit`/`show` **paths**
+  and a route per page. **Only declare a route once its page exists** (no dead
+  nav links). Screens use Refine headless hooks (`useTable`, `useForm`,
+  `useShow`).
+- A module with multiple resources nests: `pages/<resource>/{list,…}.tsx`.
+
+### Where the module system lives — `lib/module/`, not `app/`
+
+The module **contract + wiring** (`lib/module/module.ts`,
+`lib/module/registry.ts`, `lib/module/routes.ts`, plus a barrel
+`lib/module/index.ts`) lives in `src/lib/module/` — it is framework-agnostic
+infrastructure, so it belongs under `lib/`, not in an `app/` folder.
+`src/lib/refine/` holds only **reusable, structure-agnostic** Refine
+hooks/helpers. Import everything module-related from the `@/lib/module` barrel.
+There is no `src/app/` directory.
+
+### Icons — `IconType` from the UI package
+
+Resource icons are **components**, typed as `IconType` from
+`@academorix/ui/icons` (heroicons-compatible). Manifests pass the component
+(`icon: AcademicCapIcon`); the layout renders it with consistent sizing. Never
+pass a pre-rendered element.
+
 ## 4. The registry (glob aggregation)
 
 The registry discovers every `*.module.tsx` with Vite's `import.meta.glob`
@@ -194,12 +240,17 @@ The registry discovers every `*.module.tsx` with Vite's `import.meta.glob`
 and `providers.tsx` consume the registry; neither imports modules directly.
 
 ```ts
-// src/app/registry.ts
-import type { AppModule, AppModuleRoute } from "@/app/module";
-import type { ResourceProps } from "@refinedev/core";
+// src/lib/module/registry.ts
+import type {
+  AppModule,
+  AppModuleRoute,
+  AppResource,
+} from "@/lib/module/module";
 
+// NOTE: import.meta.glob does NOT resolve the `@` alias — the pattern is
+// relative to this file (two levels deep under src/lib/module/).
 const manifests = import.meta.glob<{ default: AppModule }>(
-  "@/modules/*/*.module.tsx",
+  "../../modules/*/*.module.tsx",
   {
     eager: true,
   },
@@ -209,7 +260,7 @@ export const appModules: AppModule[] = Object.values(manifests).map(
   (m) => m.default,
 );
 
-export const appResources: ResourceProps[] = appModules.flatMap(
+export const appResources: AppResource[] = appModules.flatMap(
   (m) => m.resources ?? [],
 );
 

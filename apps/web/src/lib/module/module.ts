@@ -1,17 +1,18 @@
 /**
  * @file module.ts
- * @module app/module
+ * @module lib/module/module
  *
  * @description
  * The contract every feature module implements. A module co-locates its screens
  * (in `src/modules/<name>/pages`) and declares — in one `*.module.tsx` manifest —
- * the Refine **resources** and **routes** it contributes. The {@link "@/app/registry"}
- * aggregates every manifest so `App.tsx` and `providers.tsx` never import feature
- * code directly.
+ * the Refine **resources** and **routes** it contributes. The
+ * {@link "@/lib/module/registry"} aggregates every manifest so `App.tsx` and
+ * `providers.tsx` never import feature code directly.
  *
  * See `.kiro/steering/frontend-module-architecture.md` for the full standard.
  */
 
+import type { IconType } from "@academorix/ui/icons";
 import type { ResourceProps } from "@refinedev/core";
 import type { ReactElement } from "react";
 
@@ -42,8 +43,8 @@ export interface AppModuleRoute {
 export interface AppResourceMeta {
   /** Default nav label; overridden per tenant by `terminology` from `/auth/me`. */
   label: string;
-  /** Sidebar glyph. */
-  icon?: ReactElement;
+  /** Sidebar glyph — an icon *component* (the layout controls its size). */
+  icon?: IconType;
   /** Tenant feature-toggle key; hidden unless the manifest enables it. */
   featureKey?: string;
   /** Permission required to see/enter, e.g. `"athletes.viewAny"`. */
@@ -55,6 +56,14 @@ export interface AppResourceMeta {
 }
 
 /**
+ * A Refine resource whose `meta` is strongly typed as {@link AppResourceMeta}
+ * (so `icon`, `featureKey`, `requiredPermission`, and `order` are all checked).
+ * The registry casts these to Refine's `ResourceProps` at the `<Refine>`
+ * boundary — Refine's `meta.icon` is `ReactNode`, ours is an icon component.
+ */
+export type AppResource = Omit<ResourceProps, "meta"> & { meta: AppResourceMeta };
+
+/**
  * A feature module: the Refine resources it registers and the routes it serves.
  * Default-exported from each `src/modules/<name>/<name>.module.tsx`.
  */
@@ -62,7 +71,7 @@ export interface AppModule {
   /** Lowercase module name, matching the backend module (e.g. `"athletes"`). */
   name: string;
   /** Refine resources contributed by this module. */
-  resources?: ResourceProps[];
+  resources?: AppResource[];
   /** Routes contributed by this module. */
   routes?: AppModuleRoute[];
 }

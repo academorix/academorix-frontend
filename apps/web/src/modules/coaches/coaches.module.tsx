@@ -10,7 +10,7 @@
 import { UsersIcon } from "@academorix/ui/icons/outline";
 import { createElement, lazy } from "react";
 
-import type { AppModule } from "@/app/module";
+import type { AppModule } from "@/lib/module";
 
 const ComingSoonPage = lazy(() => import("@/components/coming-soon"));
 
@@ -22,7 +22,7 @@ const coachesModule: AppModule = {
       list: "/coaches",
       meta: {
         label: "Coaches",
-        icon: createElement(UsersIcon, { className: "size-5" }),
+        icon: UsersIcon,
         featureKey: "coaches",
         requiredPermission: "coaches.viewAny",
         order: 20,

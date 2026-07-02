@@ -10,9 +10,9 @@
 import { Squares2X2Icon } from "@academorix/ui/icons/outline";
 import { createElement, lazy } from "react";
 
-import type { AppModule } from "@/app/module";
+import type { AppModule } from "@/lib/module";
 
-import { appRoutes } from "@/app/routes";
+import { appRoutes } from "@/lib/module";
 
 const DashboardPage = lazy(() => import("@/modules/dashboard/pages/dashboard-page"));
 
@@ -24,7 +24,7 @@ const dashboardModule: AppModule = {
       list: appRoutes.dashboard,
       meta: {
         label: "Dashboard",
-        icon: createElement(Squares2X2Icon, { className: "size-5" }),
+        icon: Squares2X2Icon,
         featureKey: "dashboard",
         order: 0,
       },

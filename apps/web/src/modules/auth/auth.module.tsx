@@ -10,9 +10,9 @@
 
 import { createElement, lazy } from "react";
 
-import type { AppModule } from "@/app/module";
+import type { AppModule } from "@/lib/module";
 
-import { appRoutes } from "@/app/routes";
+import { appRoutes } from "@/lib/module";
 
 const LoginPage = lazy(() => import("@/modules/auth/pages/login-page"));
 

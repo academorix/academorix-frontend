@@ -10,7 +10,7 @@
 import { UserGroupIcon } from "@academorix/ui/icons/outline";
 import { createElement, lazy } from "react";
 
-import type { AppModule } from "@/app/module";
+import type { AppModule } from "@/lib/module";
 
 const ComingSoonPage = lazy(() => import("@/components/coming-soon"));
 
@@ -22,7 +22,7 @@ const teamsModule: AppModule = {
       list: "/teams",
       meta: {
         label: "Teams",
-        icon: createElement(UserGroupIcon, { className: "size-5" }),
+        icon: UserGroupIcon,
         featureKey: "teams",
         requiredPermission: "teams.viewAny",
         order: 40,

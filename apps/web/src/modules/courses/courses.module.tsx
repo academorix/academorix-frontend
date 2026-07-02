@@ -10,7 +10,7 @@
 import { BookOpenIcon } from "@academorix/ui/icons/outline";
 import { createElement, lazy } from "react";
 
-import type { AppModule } from "@/app/module";
+import type { AppModule } from "@/lib/module";
 
 const ComingSoonPage = lazy(() => import("@/components/coming-soon"));
 
@@ -22,7 +22,7 @@ const coursesModule: AppModule = {
       list: "/courses",
       meta: {
         label: "Courses",
-        icon: createElement(BookOpenIcon, { className: "size-5" }),
+        icon: BookOpenIcon,
         featureKey: "courses",
         requiredPermission: "courses.viewAny",
         order: 30,

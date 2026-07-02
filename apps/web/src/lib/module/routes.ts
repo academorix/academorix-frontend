@@ -1,6 +1,6 @@
 /**
  * @file routes.ts
- * @module app/routes
+ * @module lib/module/routes
  *
  * @description
  * Cross-cutting route paths referenced outside any single feature module —

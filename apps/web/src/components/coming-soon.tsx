@@ -15,7 +15,7 @@
 import { WrenchScrewdriverIcon } from "@academorix/ui/icons/outline";
 import { useResourceParams } from "@refinedev/core";
 
-import type { AppResourceMeta } from "@/app/module";
+import type { AppResourceMeta } from "@/lib/module";
 import type { ReactNode } from "react";
 
 import { useResourceLabel } from "@/lib/refine";

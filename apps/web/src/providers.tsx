@@ -24,10 +24,11 @@ import routerProvider, {
   UnsavedChangesNotifier,
 } from "@refinedev/react-router";
 
+import type { ResourceProps } from "@refinedev/core";
 import type { ReactNode } from "react";
 
-import { appResources } from "@/app/registry";
 import { siteConfig } from "@/config/site";
+import { appResources } from "@/lib/module";
 import { accessControlProvider } from "@/providers/access-control";
 import { authProvider } from "@/providers/auth";
 import { dataProvider } from "@/providers/data";
@@ -60,7 +61,7 @@ export function Providers({ children }: ProvidersProps): ReactNode {
           disableTelemetry: true,
           title: { text: siteConfig.name },
         }}
-        resources={appResources}
+        resources={appResources as unknown as ResourceProps[]}
         routerProvider={routerProvider}
       >
         {children}

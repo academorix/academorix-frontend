@@ -3,7 +3,7 @@
  * @module App
  *
  * @description
- * The route tree, assembled entirely from the module {@link "@/app/registry" registry} —
+ * The route tree, assembled entirely from the module {@link "@/lib/module" registry} —
  * `App.tsx` imports no feature code directly. Three tiers:
  *
  * 1. **Public** — routes flagged `tier: "public"` (landing, login). A public
@@ -24,19 +24,18 @@ import { CatchAllNavigate } from "@refinedev/react-router";
 import { lazy, Suspense } from "react";
 import { Navigate, Outlet, Route, Routes } from "react-router";
 
-import type { AppModuleRoute } from "@/app/module";
+import type { AppModuleRoute } from "@/lib/module";
 import type { ReactNode } from "react";
 
-import { protectedRoutes, publicRoutes } from "@/app/registry";
-import { appRoutes } from "@/app/routes";
 import { NotFoundPage } from "@/components/not-found";
+import { appRoutes, protectedRoutes, publicRoutes } from "@/lib/module";
 
 /**
  * The authenticated app shell — lazy so its heavy HeroUI Pro chunk (AppLayout,
  * Sidebar, Navbar, Dropdown) stays out of the initial bundle.
  */
 const AuthenticatedLayout = lazy(() =>
-  import("@/app/layouts/authenticated-layout").then((module) => ({
+  import("@/components/layout/authenticated-layout").then((module) => ({
     default: module.AuthenticatedLayout,
   })),
 );

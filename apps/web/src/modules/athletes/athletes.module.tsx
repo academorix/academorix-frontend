@@ -10,9 +10,9 @@
 import { AcademicCapIcon } from "@academorix/ui/icons/outline";
 import { createElement, lazy } from "react";
 
-import type { AppModule } from "@/app/module";
+import type { AppModule } from "@/lib/module";
 
-const AthleteListPage = lazy(() => import("@/modules/athletes/pages/athlete-list-page"));
+const AthleteListPage = lazy(() => import("@/modules/athletes/pages/list"));
 
 const athletesModule: AppModule = {
   name: "athletes",
@@ -22,7 +22,7 @@ const athletesModule: AppModule = {
       list: "/athletes",
       meta: {
         label: "Athletes",
-        icon: createElement(AcademicCapIcon, { className: "size-5" }),
+        icon: AcademicCapIcon,
         featureKey: "athletes",
         requiredPermission: "athletes.viewAny",
         order: 10,

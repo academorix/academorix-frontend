@@ -12,7 +12,7 @@ import { useNavigate } from "react-router";
 
 import type { ReactNode } from "react";
 
-import { appRoutes } from "@/app/routes";
+import { appRoutes } from "@/lib/module";
 
 /** Renders the 404 screen. */
 export function NotFoundPage(): ReactNode {
