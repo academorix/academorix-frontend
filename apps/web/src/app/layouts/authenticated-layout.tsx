@@ -1,10 +1,12 @@
 /**
  * @file authenticated-layout.tsx
- * @module components/layout/authenticated-layout
+ * @module app/layouts/authenticated-layout
  *
  * @description
- * The application shell for every authenticated route, built with HeroUI Pro's
- * `AppLayout` + `Sidebar` + `Navbar`.
+ * The **app-level** shell for every authenticated route, built with HeroUI
+ * Pro's `AppLayout` + `Sidebar` + `Navbar`. It is app infrastructure, not a
+ * feature — it wraps all authenticated modules — so it lives in `app/`, not in
+ * any single module. Module-specific sub-layouts belong inside their module.
  *
  * - The **sidebar** is generated from the module {@link "@/app/registry" registry}'s
  *   resources, then **filtered by the current identity**: a resource is shown

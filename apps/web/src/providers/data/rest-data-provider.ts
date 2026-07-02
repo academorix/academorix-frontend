@@ -75,7 +75,8 @@ export function createRestDataProvider(
       filters,
       meta,
     }: Parameters<DataProvider["getList"]>[0]) {
-      const searchParams = buildListSearchParams({ pagination, sorters, filters });
+      const include = Array.isArray(meta?.include) ? (meta.include as string[]) : undefined;
+      const searchParams = buildListSearchParams({ pagination, sorters, filters, include });
 
       const response = await client.get<LaravelPaginatedResponse<TData> | TData[]>(
         pathFor(resource),

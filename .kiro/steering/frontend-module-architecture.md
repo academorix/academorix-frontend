@@ -62,23 +62,45 @@ apps/web/src/
 ├── app/                     # app-level wiring, not feature code
 │   ├── module.ts            # AppModule / AppModuleRoute types
 │   ├── registry.ts          # import.meta.glob aggregation of *.module.tsx
-│   └── routes.ts            # cross-cutting redirect targets only (LOGIN, HOME…)
+│   ├── routes.ts            # cross-cutting redirect targets only (LOGIN, HOME…)
+│   └── layouts/             # app-level shell(s), e.g. authenticated-layout
 ├── modules/<domain>/        # one folder per bounded context (mirrors backend)
 │   ├── pages/               # route screens (lazy-loaded)
+│   ├── layouts/             # module-only sub-layouts (optional)
+│   ├── providers/           # module-only context providers (optional)
 │   ├── components/          # module-only components (optional)
 │   ├── hooks/               # module-only hooks (optional)
 │   ├── <domain>.types.ts    # module-only types (optional; shared shapes → @/types)
 │   └── <domain>.module.tsx  # THE manifest: resources + routes (default export)
-├── providers/               # Refine providers (data/auth/live/notification/access)
-├── lib/                     # infra only: http, api client, query builders
-├── components/              # shared UI: layout shell, shared widgets
-├── config/                  # env, site (NOT routes — those live per module)
+├── providers/               # APP-LEVEL Refine providers (data/auth/live/notification/access)
+├── lib/                     # infra only: http, api client, query builder
+│   └── refine/              # cross-cutting Refine hooks/helpers (e.g. useResourceLabel)
+├── components/              # shared, reusable UI widgets
+├── config/                  # env, site (NOT routes — those live in app/ or per module)
 └── types/                   # cross-module domain types, enums, API envelopes
 ```
 
 - Create only the folders a module needs; do not scaffold empty layers.
 - Module names are lowercase and match the backend (`organization`, `athletes`,
   `auth`, `billing`, …).
+
+### Layouts, providers & hooks — where they live
+
+- **App-level shell layout** (the authenticated `AppLayout`+`Sidebar`+`Navbar`
+  frame) lives in `src/app/layouts/`. It wraps _every_ authenticated module, so
+  it is app infrastructure — never place it in a feature module.
+- **Core providers** (data / auth / live / notification / access-control) are
+  the _app's_ strategy, shared by all modules → `src/providers/`. They are not
+  owned by any feature (e.g. the auth **provider** is app-level; the `auth`
+  **module** only owns the login screen/route).
+- **Module-owned layouts/providers** are supported by **composition**: a module
+  wraps its route `element` in its own layout (`modules/<name>/layouts/`) and/or
+  context provider (`modules/<name>/providers/`). No contract change needed.
+- **Cross-cutting Refine hooks/helpers** → `src/lib/refine/`. **Module-only**
+  hooks → `modules/<name>/hooks/`.
+- **Environment**: validate with **zod** in `config/env.ts` (this is a Vite SPA
+  — all vars are client `VITE_*`; Vite enforces the prefix). Do **not** add
+  `@t3-oss/env-core` — its server/client split only pays off with SSR/Node.
 
 ---
 
@@ -276,8 +298,15 @@ resource endpoints):
 - **Fixtures are pure record arrays.** The mock data provider synthesizes the
   `meta`/`message` envelope + pagination at runtime, so it behaves exactly like
   the paginated backend. Do not bake `meta` into fixture files.
-- Query contract: `page`, `per_page`, spatie-style `sort=-created_at,name`,
-  `filter[field]=` / `filter[field][op]=` (see `lib/query/laravel-query.ts`).
+- Query contract follows
+  [spatie/laravel-query-builder v7](https://spatie.be/docs/laravel-query-builder/v7/introduction):
+  `page` + `per_page` (Laravel paginator), `sort=-created_at,name`,
+  `include=branch,team`, and **named filters**. Filters split into two buckets:
+  bare `filter[field]=value` for `eq`/`contains`/`in` (comma-joined; the backend
+  `AllowedFilter` decides exact vs partial), and `filter[field][<op>]=value` for
+  comparison/range/presence operators (`gte`, `lte`, `between`, `null`, …) which
+  a single custom spatie operator filter interprets. See
+  `lib/query/laravel-query.ts`.
 
 ---
 

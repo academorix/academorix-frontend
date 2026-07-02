@@ -21,7 +21,7 @@ import { useList } from "@refinedev/core";
 
 import type { ComponentType, ReactNode, SVGProps } from "react";
 
-import { useResourceLabel } from "@/hooks/use-resource-label";
+import { useResourceLabel } from "@/lib/refine";
 
 /** Declarative KPI definition. */
 interface KpiConfig {

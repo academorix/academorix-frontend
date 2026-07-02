@@ -22,7 +22,7 @@ import type { Athlete, EntityStatus } from "@/types";
 import type { DataGridColumn, DataGridSortDescriptor } from "@academorix/ui/react";
 import type { ReactNode } from "react";
 
-import { useResourceLabel } from "@/hooks/use-resource-label";
+import { useResourceLabel } from "@/lib/refine";
 import { ENTITY_STATUS_LABELS, SKILL_LEVEL_LABELS } from "@/types";
 
 /** Maps an athlete status to a HeroUI Chip color. */

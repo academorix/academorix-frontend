@@ -18,7 +18,7 @@ import { useResourceParams } from "@refinedev/core";
 import type { AppResourceMeta } from "@/app/module";
 import type { ReactNode } from "react";
 
-import { useResourceLabel } from "@/hooks/use-resource-label";
+import { useResourceLabel } from "@/lib/refine";
 
 /** Renders a centered "coming soon" message for the current resource. */
 export default function ComingSoonPage(): ReactNode {

@@ -4,23 +4,31 @@
  *
  * @description
  * Translates Refine's `pagination` / `sorters` / `filters` into the query
- * string the Laravel REST API understands. This is the single place the
- * frontend↔backend list contract is defined, so both the REST data provider
- * and (for parity) the mock provider's expectations stay in lockstep.
+ * string the Laravel REST API understands, following
+ * {@link https://spatie.be/docs/laravel-query-builder/v7/introduction spatie/laravel-query-builder v7}.
  *
  * ## The contract
  *
  * | Concept    | Query param(s)                                            |
  * | ---------- | --------------------------------------------------------- |
- * | Pagination | `page=<n>&per_page=<size>`                                 |
- * | Sorting    | `sort=-created_at,name` (spatie-style, `-` = descending)  |
- * | Equality   | `filter[status]=active`                                   |
- * | Operators  | `filter[age][gte]=18`, `filter[level][in]=a,b`            |
+ * | Pagination | `page=<n>&per_page=<size>` (Laravel paginator)            |
+ * | Sorting    | `sort=-created_at,name` (spatie; `-` = descending)        |
+ * | Includes   | `include=branch,team` (spatie `AllowedInclude`)          |
+ * | Filtering  | `filter[status]=active` (spatie `AllowedFilter`)         |
+ * | Operators  | `filter[age][gte]=18` (spatie **custom** operator filter) |
  *
- * This mirrors `spatie/laravel-query-builder` (the de-facto Laravel standard)
- * for pagination and sorting, and extends its `filter[...]` convention with an
- * explicit operator segment so every Refine `CrudOperator` round-trips
- * losslessly. The backend implements matching custom filters.
+ * ## Filtering model (important)
+ * spatie is **named-filter** based: `filter[field]=value` maps to an
+ * `AllowedFilter` whose semantics (exact vs partial vs comma-array) are defined
+ * **server-side**. The client cannot force exact-vs-partial — that's spatie's
+ * design. So we split Refine's operators into two buckets:
+ *
+ * - **Native** (`eq`, `eqs`, `contains`, `containss`, `in`, `ina`) → bare
+ *   `filter[field]=value` (comma-joined for arrays). Handled by stock spatie
+ *   `AllowedFilter::exact` / `::partial`.
+ * - **Operator** (everything else: `gte`, `lte`, `between`, `ne`, `null`, …) →
+ *   `filter[field][<operator>]=value`. spatie parses this into an array value;
+ *   a single custom operator filter on the backend interprets it.
  */
 
 import type {
@@ -33,34 +41,18 @@ import type {
 } from "@refinedev/core";
 
 /**
- * Maps Refine's rich operator set to the token used in the
- * `filter[field][<token>]` segment. `eq` is special-cased by the caller to a
- * bare `filter[field]=value`, so it is absent here.
- *
- * Unmapped operators fall back to their raw Refine string, which keeps the
- * contract forward-compatible if Refine adds new operators.
+ * Operators that map to a stock spatie `AllowedFilter` via the bare
+ * `filter[field]=value` form (the backend decides exact vs partial). Everything
+ * else is encoded with an explicit operator segment for a custom filter.
  */
-const OPERATOR_TOKENS: Partial<Record<LogicalFilter["operator"], string>> = {
-  ne: "ne",
-  lt: "lt",
-  gt: "gt",
-  lte: "lte",
-  gte: "gte",
-  in: "in",
-  nin: "nin",
-  contains: "like",
-  ncontains: "not_like",
-  containss: "like",
-  ncontainss: "not_like",
-  startswith: "starts_with",
-  nstartswith: "not_starts_with",
-  endswith: "ends_with",
-  nendswith: "not_ends_with",
-  null: "null",
-  nnull: "not_null",
-  between: "between",
-  nbetween: "not_between",
-};
+const NATIVE_OPERATORS = new Set<LogicalFilter["operator"]>([
+  "eq",
+  "eqs",
+  "contains",
+  "containss",
+  "in",
+  "ina",
+]);
 
 /** Serialises a filter value: arrays become comma lists, booleans become 1/0. */
 function serializeValue(value: unknown): string {
@@ -81,39 +73,36 @@ function isConditionalFilter(filter: CrudFilter): filter is ConditionalFilter {
 }
 
 /**
- * Appends a single logical filter to the params as either a bare equality
- * (`filter[field]=value`) or an operator-scoped entry
- * (`filter[field][gte]=value`).
+ * Appends a single logical filter using spatie's convention: a bare
+ * `filter[field]=value` for native operators, or `filter[field][op]=value` for
+ * comparison/range/presence operators (interpreted by a custom spatie filter).
  */
 function appendLogicalFilter(params: URLSearchParams, filter: LogicalFilter): void {
   const { field, operator, value } = filter;
+  const isPresenceOperator = operator === "null" || operator === "nnull";
 
-  // Skip empty values so clearing a table filter drops the param entirely.
-  if (value === undefined || value === null || value === "") {
-    // `null`/`nnull` are the exception — they assert presence, not a value.
-    if (operator !== "null" && operator !== "nnull") {
-      return;
-    }
+  // Skip empty values so clearing a table filter drops the param entirely —
+  // except presence operators, which assert on absence, not a value.
+  if (!isPresenceOperator && (value === undefined || value === null || value === "")) {
+    return;
   }
 
-  if (operator === "eq") {
+  if (NATIVE_OPERATORS.has(operator)) {
     params.append(`filter[${field}]`, serializeValue(value));
 
     return;
   }
 
-  const token = OPERATOR_TOKENS[operator] ?? operator;
-
   // Presence operators carry a sentinel `1` rather than a comparison value.
-  const serialized = operator === "null" || operator === "nnull" ? "1" : serializeValue(value);
+  const serialized = isPresenceOperator ? "1" : serializeValue(value);
 
-  params.append(`filter[${field}][${token}]`, serialized);
+  params.append(`filter[${field}][${operator}]`, serialized);
 }
 
 /**
- * Recursively flattens filters into the params. Conditional (`and`/`or`)
- * groups are flattened by emitting their children; true server-side boolean
- * grouping is a documented v2 concern (tables emit logical filters in practice).
+ * Recursively flattens filters into the params. Conditional (`and`/`or`) groups
+ * are flattened by emitting their children; true server-side boolean grouping
+ * is a documented v2 concern (tables emit logical filters in practice).
  */
 function appendFilters(params: URLSearchParams, filters: CrudFilters): void {
   for (const filter of filters) {
@@ -137,33 +126,37 @@ export interface ListQueryInput {
   pagination?: Pagination;
   sorters?: CrudSorting;
   filters?: CrudFilters;
+  /** spatie `AllowedInclude` relations to eager-load, e.g. `["branch", "team"]`. */
+  include?: string[];
 }
 
 /**
  * Builds the complete `URLSearchParams` for a `getList` request from Refine's
- * table state.
+ * table state, following the spatie query-builder contract.
  *
- * @param input - Refine's `pagination`, `sorters`, and `filters`.
+ * @param input - Refine's `pagination`, `sorters`, `filters`, and `include`.
  * @returns Query params ready to hand to {@link HttpClient.get}.
  */
 export function buildListSearchParams({
   pagination,
   sorters,
   filters,
+  include,
 }: ListQueryInput): URLSearchParams {
   const params = new URLSearchParams();
 
   // Pagination — omitted entirely when the caller disables it (`mode: "off"`).
   if (pagination && pagination.mode !== "off") {
-    const currentPage = pagination.currentPage ?? 1;
-    const pageSize = pagination.pageSize ?? 10;
-
-    params.set("page", String(currentPage));
-    params.set("per_page", String(pageSize));
+    params.set("page", String(pagination.currentPage ?? 1));
+    params.set("per_page", String(pagination.pageSize ?? 10));
   }
 
   if (sorters && sorters.length > 0) {
     params.set("sort", buildSortParam(sorters));
+  }
+
+  if (include && include.length > 0) {
+    params.set("include", include.join(","));
   }
 
   if (filters && filters.length > 0) {

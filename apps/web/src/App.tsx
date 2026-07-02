@@ -36,7 +36,7 @@ import { NotFoundPage } from "@/components/not-found";
  * Sidebar, Navbar, Dropdown) stays out of the initial bundle.
  */
 const AuthenticatedLayout = lazy(() =>
-  import("@/components/layout/authenticated-layout").then((module) => ({
+  import("@/app/layouts/authenticated-layout").then((module) => ({
     default: module.AuthenticatedLayout,
   })),
 );

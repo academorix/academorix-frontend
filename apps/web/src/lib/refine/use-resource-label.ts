@@ -1,6 +1,6 @@
 /**
  * @file use-resource-label.ts
- * @module hooks/use-resource-label
+ * @module lib/refine/use-resource-label
  *
  * @description
  * Resolves a resource's **display label** for the current tenant. A resource
