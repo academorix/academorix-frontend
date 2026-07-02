@@ -16,10 +16,17 @@
 
 import type { AppModule, AppModuleRoute, AppResource } from "@/lib/module/module";
 
-/** Eagerly-loaded module manifests (tiny; the page components stay lazy). */
-const manifests = import.meta.glob<{ default: AppModule }>("../../modules/*/*.module.tsx", {
-  eager: true,
-});
+/**
+ * Eagerly-loaded module manifests (tiny; the page components stay lazy).
+ *
+ * Two depths are matched: top-level modules (`modules/<name>/<name>.module.tsx`)
+ * and one level of sub-domain nesting for the sports domain
+ * (`modules/sports/<sub-domain>/<name>.module.tsx`).
+ */
+const manifests = import.meta.glob<{ default: AppModule }>(
+  ["../../modules/*/*.module.tsx", "../../modules/*/*/*.module.tsx"],
+  { eager: true },
+);
 
 /** Every registered feature module. */
 export const appModules: AppModule[] = Object.values(manifests).map((manifest) => manifest.default);

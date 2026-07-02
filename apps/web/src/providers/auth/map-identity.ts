@@ -29,8 +29,12 @@ export function computeInitials(profile: UserProfile): string {
 
 /**
  * Condenses a full {@link AuthUser} into the {@link Identity} the app shell
- * renders (name, avatar, roles, permissions, tenant). Drops PII the UI does
- * not need.
+ * renders (name, avatar, roles, permissions, tenant, and the caller's
+ * accessible scopes). Drops PII the UI does not need.
+ *
+ * `tenants` and `scopes` back the tenant/organization/branch/season switchers;
+ * when the backend omits them (older payloads) we default to the single active
+ * tenant and empty scope lists so the shell still renders.
  */
 export function toIdentity(user: AuthUser): Identity {
   const fullName = `${user.profile.first_name} ${user.profile.last_name}`.trim();
@@ -47,5 +51,7 @@ export function toIdentity(user: AuthUser): Identity {
     features: user.features,
     terminology: user.terminology,
     tenant: user.tenant,
+    tenants: user.tenants ?? [user.tenant],
+    scopes: user.scopes ?? { organizations: [], branches: [], seasons: [] },
   };
 }

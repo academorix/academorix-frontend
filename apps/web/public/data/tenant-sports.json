@@ -1,0 +1,38 @@
+[
+  {
+    "id": "tsp_football",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "football",
+    "is_enabled": true,
+    "terminology": {},
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-01-01T09:00:00Z"
+  },
+  {
+    "id": "tsp_swimming",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "swimming",
+    "is_enabled": true,
+    "terminology": {},
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-01-01T09:00:00Z"
+  },
+  {
+    "id": "tsp_basketball",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "basketball",
+    "is_enabled": true,
+    "terminology": {},
+    "created_at": "2025-10-01T10:00:00Z",
+    "updated_at": "2026-01-01T09:00:00Z"
+  },
+  {
+    "id": "tsp_karate",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "karate",
+    "is_enabled": false,
+    "terminology": {},
+    "created_at": "2025-10-01T10:00:00Z",
+    "updated_at": "2026-01-01T09:00:00Z"
+  }
+]

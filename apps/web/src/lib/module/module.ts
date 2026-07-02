@@ -12,6 +12,7 @@
  * See `.kiro/steering/frontend-module-architecture.md` for the full standard.
  */
 
+import type { ScopeDimension } from "@/lib/scope/scope.types";
 import type { IconType } from "@academorix/ui/icons";
 import type { ResourceProps } from "@refinedev/core";
 import type { ReactElement } from "react";
@@ -53,6 +54,13 @@ export interface AppResourceMeta {
   parent?: string;
   /** Sort order in the sidebar (ascending; default `0`). */
   order?: number;
+  /**
+   * Which working-scope dimensions this resource is filtered by. When set, the
+   * {@link "@/components/refine/resource-data-grid".ResourceDataGrid} appends the
+   * active organization/branch/season as permanent list filters, so the table
+   * reflects the current scope and refetches when it changes.
+   */
+  scopedBy?: ScopeDimension[];
 }
 
 /**

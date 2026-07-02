@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "usr_owner",
-    "tenant_id": "tnt_academorix",
+    "tenant_id": "tnt_riverside",
     "email": "owner@academorix.test",
     "username": "owner",
     "phone": "+1 555 0100",
@@ -21,13 +21,93 @@
     },
     "roles": ["owner"],
     "permissions": ["*"],
-    "features": ["dashboard", "athletes", "coaches", "courses", "teams", "branches"],
+    "features": [
+      "dashboard",
+      "organizations",
+      "branches",
+      "regions",
+      "sports",
+      "attributes",
+      "documents",
+      "notification-templates",
+      "athletes",
+      "teams",
+      "seasons",
+      "registrations",
+      "events",
+      "payments",
+      "memberships",
+      "staff",
+      "users",
+      "roles",
+      "reception",
+      "admin",
+      "subscription",
+      "facilities",
+      "people",
+      "coaches",
+      "training-sessions",
+      "matches",
+      "private-sessions",
+      "attendance",
+      "progress",
+      "expenses",
+      "credentials",
+      "announcements",
+      "conversations"
+    ],
     "terminology": { "athletes": "Students" },
     "tenant": {
-      "id": "tnt_academorix",
+      "id": "tnt_riverside",
       "slug": "riverside",
       "name": "Riverside Sports Academy",
-      "business_type": "academy"
+      "business_type": "academy",
+      "branding": {
+        "logo_url": null,
+        "primary_color": null,
+        "favicon_url": null
+      }
+    },
+    "tenants": [
+      {
+        "id": "tnt_riverside",
+        "slug": "riverside",
+        "name": "Riverside Sports Academy",
+        "business_type": "academy"
+      }
+    ],
+    "scopes": {
+      "organizations": [
+        { "id": "org_riverside", "name": "Riverside (Main)", "is_default": true },
+        { "id": "org_downtown", "name": "Downtown Division", "is_default": false }
+      ],
+      "branches": [
+        {
+          "id": "brn_river",
+          "name": "Riverside HQ",
+          "organization_id": "org_riverside",
+          "region_id": "reg_us_east",
+          "is_default": true
+        },
+        {
+          "id": "brn_marina",
+          "name": "Marina Center",
+          "organization_id": "org_riverside",
+          "region_id": "reg_us_east",
+          "is_default": false
+        },
+        {
+          "id": "brn_downtown",
+          "name": "Downtown Arena",
+          "organization_id": "org_downtown",
+          "region_id": "reg_us_east",
+          "is_default": true
+        }
+      ],
+      "seasons": [
+        { "id": "ssn_2025_26", "name": "2025/26", "status": "active", "is_current": true },
+        { "id": "ssn_2026_27", "name": "2026/27", "status": "upcoming", "is_current": false }
+      ]
     }
   }
 }

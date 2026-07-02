@@ -47,6 +47,12 @@ import type { Identity } from "@/types";
 import type { IconType } from "@academorix/ui/icons";
 import type { Key, ReactNode } from "react";
 
+import {
+  BranchSwitcher,
+  OrganizationSwitcher,
+  SeasonSwitcher,
+  TenantSwitcher,
+} from "@/components/scope";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 import { siteConfig } from "@/config/site";
 import { appResources } from "@/lib/module";
@@ -184,11 +190,15 @@ function AppSidebar({ entries }: { entries: NavEntry[] }): ReactNode {
   return (
     <Sidebar>
       <Sidebar.Header>
-        <div className="flex items-center gap-2 px-1 py-1">
-          <AcademicCapIcon aria-hidden="true" className="size-6 shrink-0 text-accent" />
-          <span className="truncate text-base font-semibold text-foreground">
-            {siteConfig.name}
-          </span>
+        <div className="flex flex-col gap-1 px-1 py-1">
+          <div className="flex items-center gap-2">
+            <AcademicCapIcon aria-hidden="true" className="size-6 shrink-0 text-accent" />
+            <span className="truncate text-base font-semibold text-foreground">
+              {siteConfig.name}
+            </span>
+          </div>
+          {/* Active academy (tenant) context; a switcher for cross-tenant users. */}
+          <TenantSwitcher />
         </div>
       </Sidebar.Header>
 
@@ -233,8 +243,16 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps): Rea
           <Navbar.Header>
             <AppLayout.MenuToggle />
             <Sidebar.Trigger />
-            <span className="text-sm font-semibold text-foreground">{activeLabel}</span>
+            <span className="hidden text-sm font-semibold text-foreground sm:inline">
+              {activeLabel}
+            </span>
             <Navbar.Spacer />
+            {/* Working-scope switchers — hidden on small screens to save room. */}
+            <div className="hidden items-center gap-1.5 lg:flex">
+              <OrganizationSwitcher />
+              <BranchSwitcher />
+              <SeasonSwitcher />
+            </div>
             <ThemeSwitcher />
             <UserMenu />
           </Navbar.Header>

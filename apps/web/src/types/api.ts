@@ -18,7 +18,7 @@
  * `{ data, total }` shape Refine expects.
  */
 
-import type { AuthUser } from "@/types/models";
+import type { AuthUser } from "@/types/people";
 
 /**
  * Laravel API Resource envelope for a **single** record. Mutation endpoints

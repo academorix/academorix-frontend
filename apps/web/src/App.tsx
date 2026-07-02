@@ -29,6 +29,7 @@ import type { ReactNode } from "react";
 
 import { NotFoundPage } from "@/components/not-found";
 import { appRoutes, protectedRoutes, publicRoutes } from "@/lib/module";
+import { ScopeProvider } from "@/lib/scope";
 
 /**
  * The authenticated app shell — lazy so its heavy HeroUI Pro chunk (AppLayout,
@@ -95,9 +96,11 @@ export function App(): ReactNode {
         <Route
           element={
             <Authenticated key="protected" fallback={<CatchAllNavigate to={appRoutes.login} />}>
-              <AuthenticatedLayout>
-                <Outlet />
-              </AuthenticatedLayout>
+              <ScopeProvider>
+                <AuthenticatedLayout>
+                  <Outlet />
+                </AuthenticatedLayout>
+              </ScopeProvider>
             </Authenticated>
           }
         >

@@ -15,11 +15,14 @@
  */
 
 import { DataGrid, Pagination, Spinner } from "@academorix/ui/react";
-import { useTable } from "@refinedev/core";
+import { useResourceParams, useTable } from "@refinedev/core";
 
+import type { AppResourceMeta } from "@/lib/module";
 import type { DataGridColumn, DataGridSortDescriptor } from "@academorix/ui/react";
 import type { BaseRecord, CrudSort } from "@refinedev/core";
 import type { ReactNode } from "react";
+
+import { buildScopeFilters, useScope } from "@/lib/scope";
 
 /** Props for {@link ResourceDataGrid}. */
 export interface ResourceDataGridProps<TData extends BaseRecord> {
@@ -54,11 +57,22 @@ export function ResourceDataGrid<TData extends BaseRecord>({
   contentClassName,
   emptyMessage = "No records found.",
 }: ResourceDataGridProps<TData>): ReactNode {
+  // Resolve the resource definition to read its scope sensitivity (meta.scopedBy),
+  // and the active working scope, so lists are filtered to the current
+  // organization/branch/season and refetch when the scope changes.
+  const { resource: resourceDefinition } = useResourceParams({ resource });
+  const { scope } = useScope();
+  const scopedBy = (resourceDefinition?.meta as AppResourceMeta | undefined)?.scopedBy;
+  const scopeFilters = buildScopeFilters(scope, scopedBy);
+
   const { tableQuery, sorters, setSorters, currentPage, setCurrentPage, pageCount } =
     useTable<TData>({
       resource,
       pagination: { pageSize },
       sorters: initialSorters ? { initial: initialSorters } : undefined,
+      // Permanent filters compose with the user's own filters and are part of
+      // the query key, so changing scope refetches automatically.
+      filters: scopeFilters.length > 0 ? { permanent: scopeFilters } : undefined,
     });
 
   const rows = tableQuery.data?.data ?? [];

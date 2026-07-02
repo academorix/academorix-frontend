@@ -61,27 +61,35 @@ never lives in `lib/` (that is framework-agnostic infrastructure).
 apps/web/src/
 ├── modules/<domain>/        # one folder per bounded context (mirrors backend)
 │   ├── pages/               # route screens (lazy-loaded)
-│   ├── layouts/             # module-only sub-layouts (optional)
-│   ├── providers/           # module-only context providers (optional)
-│   ├── components/          # module-only components (optional)
-│   ├── hooks/               # module-only hooks (optional)
-│   ├── <domain>.types.ts    # module-only types (optional; shared shapes → @/types)
+│   ├── components/          # module-only components (optional; e.g. forms)
+│   ├── layouts/ providers/ hooks/   # module-only, optional
 │   └── <domain>.module.tsx  # THE manifest: resources + routes (default export)
+├── modules/sports/<sub>/    # the sports domain nests one level (athletes, teams,
+│                            #   seasons, events, coaching, registry, …)
 ├── providers/               # APP-LEVEL Refine providers (data/auth/live/notification/access)
-├── lib/                     # infra only: http, api client, query builder
+├── lib/                     # infra only: framework-agnostic
 │   ├── module/              # the module framework: module.ts + registry.ts + routes.ts (+ barrel)
-│   └── refine/              # cross-cutting Refine hooks/helpers (e.g. useResourceLabel)
+│   ├── refine/              # cross-cutting Refine hooks/helpers (e.g. useResourceLabel)
+│   ├── scope/               # tenant/org/branch/season scope: provider, hooks, filters
+│   ├── attributes/          # SDUI engine: use-attribute-set + field/form/view renderers
+│   ├── query/ http/ api/    # spatie query builder, HTTP client, OpenAPI types
+│   └── format.ts            # shared date/money formatters
 ├── components/              # shared, reusable UI widgets
 │   ├── layout/              # app-level shell(s), e.g. authenticated-layout
+│   ├── scope/               # tenant/org/branch/season switchers
 │   ├── theme/               # theme switcher (HeroUI useTheme: light/dark/system)
-│   └── refine/              # Refine UI kit: buttons/ + views/ + breadcrumbs + resource-data-grid
+│   ├── refine/              # Refine UI kit: buttons/ + views/ + breadcrumbs + resource-data-grid
+│   └── entity-status-chip.tsx   # shared status chip
 ├── config/                  # env, site (NOT routes — those live in lib/module or per module)
-└── types/                   # cross-module domain types, enums, API envelopes
+└── types/                   # domain types split by context (+ enums, api envelopes)
 ```
 
 - Create only the folders a module needs; do not scaffold empty layers.
 - Module names are lowercase and match the backend (`organization`, `athletes`,
-  `auth`, `billing`, …).
+  `auth`, `billing`, …). The **sports** domain mirrors the backend's single
+  module with one level of sub-domain nesting (`modules/sports/<sub>/`); the
+  glob registry matches both `modules/*/*.module.tsx` and
+  `modules/*/*/*.module.tsx`.
 
 ### Layouts, providers & hooks — where they live
 
@@ -101,6 +109,48 @@ apps/web/src/
 - **Environment**: validate with **zod** in `config/env.ts` (this is a Vite SPA
   — all vars are client `VITE_*`; Vite enforces the prefix). Do **not** add
   `@t3-oss/env-core` — its server/client split only pays off with SSR/Node.
+
+### The scope layer — tenant / organization / branch / season
+
+The app is **scope-aware**: users work within a Tenant → Organization → Branch →
+Season context. This lives in `src/lib/scope/` (framework-agnostic) + the
+switchers in `src/components/scope/`.
+
+- **`ScopeProvider`** (mounted inside `<Authenticated>` in `App.tsx`) reads the
+  caller's accessible scopes from `identity.scopes` (`/auth/me`), resolves the
+  active org/branch/season (persisted per-tenant in `localStorage`, validated,
+  defaulted), and cascades (changing org re-validates the branch).
+- **`useScope()`** exposes the active scope, setters, resolved option objects,
+  and the allowed lists (branches already filtered to the active org).
+  **`useTenant()`** exposes the tenant + cross-tenant switch.
+- **Switchers** (`OrganizationSwitcher`/`BranchSwitcher`/`SeasonSwitcher`/
+  `TenantSwitcher`) are data-driven: hidden with 0 options, read-only indicator
+  with 1, a `Select` with many — **never blocking**. Mounted in the shell navbar
+  - sidebar header.
+- **Scope reaches lists** without per-hook plumbing: a resource opts in via
+  `meta.scopedBy: ["organization" | "branch" | "season"]`, and
+  `ResourceDataGrid` appends `buildScopeFilters(scope, scopedBy)` as
+  **permanent** `useTable` filters. Because they're part of the query key,
+  changing scope refetches automatically; the providers need no change (they
+  already emit `filter[branch_id]=…`). Compose, never override, user filters.
+
+### Attributes / SDUI — the sport-agnostic core
+
+The **only** place we do server-driven UI. Where the blueprint marks a host as
+attribute-driven (athlete enrollment, progress, performance), sport-variable
+fields are rendered from an **attribute set** selected by `sport_key`, not
+hardcoded columns.
+
+- `src/lib/attributes/`: `useAttributeSet({ entityType, discriminatorValue })`
+  loads the set (highest version) via the `attribute-sets` resource;
+  `AttributeForm`/`AttributeField`/`AttributeView` render/validate it; value
+  helpers (`defaultAttributeValues`, `validateAttributeValues`, …) are pure.
+- Values live in a single `attributes: Record<string, unknown>` on the host
+  record (mirrors the backend `JSONB`); typed base columns stay on the model.
+- Widgets map to HeroUI (`select`→Select, `switch`→Switch, `slider`→Slider,
+  `number`/`date`/`input`→TextField). Labels are bilingual (en/ar), RTL-ready.
+- Base/typed fields (name, DOB, team, season) remain normal typed inputs; only
+  the sport-variable block is SDUI.
 
 ---
 
@@ -158,13 +208,15 @@ export interface AppModule {
 ```
 
 ```tsx
-// src/modules/athletes/athletes.module.tsx
+// src/modules/sports/athletes/athletes.module.tsx
 import { AcademicCapIcon } from "@academorix/ui/icons/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";
 
-const AthleteListPage = lazy(() => import("@/modules/athletes/pages/list"));
+const AthleteListPage = lazy(
+  () => import("@/modules/sports/athletes/pages/list"),
+);
 
 const athletesModule: AppModule = {
   name: "athletes",
@@ -177,6 +229,7 @@ const athletesModule: AppModule = {
         icon: AcademicCapIcon, // an icon COMPONENT (IconType), not an element
         featureKey: "athletes",
         requiredPermission: "athletes.viewAny",
+        scopedBy: ["branch"], // list filtered by the active branch
       },
     },
   ],
@@ -200,7 +253,7 @@ A resource module's screens follow Refine's per-action file layout, one file per
 CRUD action:
 
 ```
-src/modules/athletes/
+src/modules/sports/athletes/
 ├── pages/
 │   ├── list.tsx      # default export → AthleteList
 │   ├── create.tsx    # default export → AthleteCreate
