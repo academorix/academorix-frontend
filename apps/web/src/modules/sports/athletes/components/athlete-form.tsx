@@ -1,46 +1,43 @@
 /**
  * @file athlete-form.tsx
- * @module modules/athletes/components/athlete-form
+ * @module modules/sports/athletes/components/athlete-form
  *
  * @description
- * The shared create/edit form for athletes. It is a **controlled** form seeded
- * from optional initial values (empty for create, the fetched record for edit)
- * and calls `onSubmit` with the collected {@link AthleteFormValues}. Data
- * fetching and the mutation live in the page (`useForm`); this component owns
- * only the fields and local input state, so it works identically for create and
- * edit under either data provider.
+ * Shared create/edit form for an athlete's **typed identity** (name, contact,
+ * demographics, home branch, status). Sport-variable data is not here — it lives
+ * on the athlete's per-sport {@link "@/types".AthleteEnrollment} records and is
+ * rendered/edited via the SDUI attribute engine on the detail screen.
+ *
+ * The home-branch options come from the caller's accessible scope, so an athlete
+ * is always registered at a branch the user can access.
  */
 
 import { Button, Card, Form, Input, Label, ListBox, Select, TextField } from "@academorix/ui/react";
 import { useState } from "react";
 
-import type { Athlete, EntityStatus } from "@/types";
+import type { Athlete, EntityStatus, Gender } from "@/types";
 import type { Key, ReactNode } from "react";
 
-import { ENTITY_STATUSES, ENTITY_STATUS_LABELS } from "@/types";
+import { useScope } from "@/lib/scope";
+import { ENTITY_STATUSES, ENTITY_STATUS_LABELS, GENDERS, GENDER_LABELS } from "@/types";
 
-/** The editable fields of an athlete (excludes server-managed columns). */
+/** The editable identity fields of an athlete (excludes server-managed columns). */
 export interface AthleteFormValues {
   first_name: string;
   last_name: string;
   email: string;
   phone: string;
   status: EntityStatus;
-  gender: "male" | "female" | "other" | "";
+  gender: Gender | "";
   branch_id: string;
   date_of_birth: string;
+  nationality: string;
+  national_id: string;
   enrolled_at: string;
 }
 
-/** Gender options for the select (empty value = unspecified). */
-const GENDER_OPTIONS = [
-  { id: "male", label: "Male" },
-  { id: "female", label: "Female" },
-  { id: "other", label: "Other" },
-] as const;
-
 /** Builds the initial form state, merging any provided record over defaults. */
-function toFormValues(initial?: Partial<Athlete>): AthleteFormValues {
+function toFormValues(scopeBranchId: string | null, initial?: Partial<Athlete>): AthleteFormValues {
   return {
     first_name: initial?.first_name ?? "",
     last_name: initial?.last_name ?? "",
@@ -48,17 +45,15 @@ function toFormValues(initial?: Partial<Athlete>): AthleteFormValues {
     phone: initial?.phone ?? "",
     status: initial?.status ?? "pending",
     gender: initial?.gender ?? "",
-    branch_id: initial?.branch_id ?? "",
+    branch_id: initial?.branch_id ?? scopeBranchId ?? "",
     date_of_birth: initial?.date_of_birth ?? "",
+    nationality: initial?.nationality ?? "",
+    national_id: initial?.national_id ?? "",
     enrolled_at: (initial?.enrolled_at ?? new Date().toISOString()).slice(0, 10),
   };
 }
 
-/**
- * Converts collected form values into an API payload: trims strings and maps
- * empty optional fields to `null` so the backend stores absent values as null
- * rather than empty strings.
- */
+/** Converts form values into an athlete API payload (trimmed, nullable-aware). */
 export function toAthletePayload(values: AthleteFormValues): Partial<Athlete> {
   const emptyToNull = (value: string): string | null => {
     const trimmed = value.trim();
@@ -73,8 +68,10 @@ export function toAthletePayload(values: AthleteFormValues): Partial<Athlete> {
     phone: emptyToNull(values.phone),
     status: values.status,
     gender: values.gender === "" ? null : values.gender,
-    branch_id: values.branch_id.trim(),
+    branch_id: values.branch_id,
     date_of_birth: emptyToNull(values.date_of_birth),
+    nationality: emptyToNull(values.nationality),
+    national_id: emptyToNull(values.national_id),
     enrolled_at: values.enrolled_at,
   };
 }
@@ -83,7 +80,7 @@ export function toAthletePayload(values: AthleteFormValues): Partial<Athlete> {
 interface AthleteFormProps {
   /** Initial values (omit for create; pass the record for edit). */
   initialValues?: Partial<Athlete>;
-  /** Whether a submit is in flight (disables the submit button). */
+  /** Whether a submit is in flight. */
   isSubmitting: boolean;
   /** Called with the collected values on submit. */
   onSubmit: (values: AthleteFormValues) => void;
@@ -92,7 +89,7 @@ interface AthleteFormProps {
 }
 
 /**
- * A controlled athlete create/edit form.
+ * A controlled athlete identity create/edit form.
  *
  * @param props - Initial values, submit state, and the submit handler.
  */
@@ -102,9 +99,11 @@ export function AthleteForm({
   onSubmit,
   submitLabel = "Save",
 }: AthleteFormProps): ReactNode {
-  const [values, setValues] = useState<AthleteFormValues>(() => toFormValues(initialValues));
+  const { scope, allowed } = useScope();
+  const [values, setValues] = useState<AthleteFormValues>(() =>
+    toFormValues(scope.branchId, initialValues),
+  );
 
-  /** Updates a single field by key. */
   const setField = <K extends keyof AthleteFormValues>(
     key: K,
     value: AthleteFormValues[K],
@@ -169,6 +168,30 @@ export function AthleteForm({
 
             <Select
               className="w-full"
+              placeholder="Select home branch"
+              value={values.branch_id || null}
+              variant="secondary"
+              onChange={(key: Key | null) => setField("branch_id", key ? String(key) : "")}
+            >
+              <Label>Home branch</Label>
+              <Select.Trigger>
+                <Select.Value />
+                <Select.Indicator />
+              </Select.Trigger>
+              <Select.Popover>
+                <ListBox>
+                  {allowed.branches.map((branch) => (
+                    <ListBox.Item key={branch.id} id={branch.id} textValue={branch.name}>
+                      {branch.name}
+                      <ListBox.ItemIndicator />
+                    </ListBox.Item>
+                  ))}
+                </ListBox>
+              </Select.Popover>
+            </Select>
+
+            <Select
+              className="w-full"
               placeholder="Select status"
               value={values.status}
               variant="secondary"
@@ -196,9 +219,7 @@ export function AthleteForm({
               placeholder="Select gender"
               value={values.gender || null}
               variant="secondary"
-              onChange={(key: Key | null) =>
-                setField("gender", (key as AthleteFormValues["gender"] | null) ?? "")
-              }
+              onChange={(key: Key | null) => setField("gender", (key as Gender | null) ?? "")}
             >
               <Label>Gender</Label>
               <Select.Trigger>
@@ -207,9 +228,9 @@ export function AthleteForm({
               </Select.Trigger>
               <Select.Popover>
                 <ListBox>
-                  {GENDER_OPTIONS.map((option) => (
-                    <ListBox.Item key={option.id} id={option.id} textValue={option.label}>
-                      {option.label}
+                  {GENDERS.map((gender) => (
+                    <ListBox.Item key={gender} id={gender} textValue={GENDER_LABELS[gender]}>
+                      {GENDER_LABELS[gender]}
                       <ListBox.ItemIndicator />
                     </ListBox.Item>
                   ))}
@@ -229,14 +250,23 @@ export function AthleteForm({
             </TextField>
 
             <TextField
-              isRequired
-              name="branch_id"
-              value={values.branch_id}
+              name="nationality"
+              value={values.nationality}
               variant="secondary"
-              onChange={(value) => setField("branch_id", value)}
+              onChange={(value) => setField("nationality", value)}
             >
-              <Label>Branch ID</Label>
-              <Input placeholder="brn_river" />
+              <Label>Nationality</Label>
+              <Input placeholder="US" />
+            </TextField>
+
+            <TextField
+              name="national_id"
+              value={values.national_id}
+              variant="secondary"
+              onChange={(value) => setField("national_id", value)}
+            >
+              <Label>National ID / Passport</Label>
+              <Input />
             </TextField>
 
             <TextField

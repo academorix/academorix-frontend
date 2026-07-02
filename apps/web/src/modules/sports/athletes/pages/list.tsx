@@ -1,21 +1,18 @@
 /**
  * @file list.tsx
- * @module modules/athletes/pages/list
+ * @module modules/sports/athletes/pages/list
  *
  * @description
- * Athletes list screen (the resource's `list` route). Composed from the shared
- * Refine UI kit: {@link ListView} supplies the header (breadcrumbs, tenant
- * title, create action) and {@link ResourceDataGrid} handles data fetching,
- * sorting, and pagination. This page only declares its **columns** and the
- * per-row actions — no table plumbing.
+ * Athletes list (scoped by the active branch). Typed identity columns with
+ * per-row show/edit/delete actions. Sport-variable data is shown on the detail
+ * screen via SDUI, not here.
  */
 
-import { Chip } from "@academorix/ui/react";
-
-import type { Athlete, EntityStatus } from "@/types";
+import type { Athlete } from "@/types";
 import type { DataGridColumn } from "@academorix/ui/react";
 import type { ReactNode } from "react";
 
+import { EntityStatusChip } from "@/components/entity-status-chip";
 import {
   DeleteButton,
   EditButton,
@@ -23,28 +20,10 @@ import {
   ResourceDataGrid,
   ShowButton,
 } from "@/components/refine";
-import { ENTITY_STATUS_LABELS } from "@/types";
+import { formatDate } from "@/lib/format";
+import { GENDER_LABELS } from "@/types";
 
-/** Maps an athlete status to a HeroUI Chip color. */
-const STATUS_COLOR: Record<EntityStatus, "success" | "warning" | "danger" | "default"> = {
-  active: "success",
-  pending: "warning",
-  archived: "danger",
-  inactive: "default",
-};
-
-/** Formats an ISO timestamp as a short, locale-aware date. */
-function formatDate(iso: string): string {
-  const date = new Date(iso);
-
-  return Number.isNaN(date.getTime()) ? "—" : date.toLocaleDateString();
-}
-
-/**
- * DataGrid column definitions. Each sortable column's `id` doubles as the sort
- * field sent to the server, so the `Name` column sorts by `first_name`. The
- * trailing `actions` column carries per-row show/edit/delete buttons.
- */
+/** DataGrid column definitions for the athletes list. */
 const COLUMNS: DataGridColumn<Athlete>[] = [
   {
     id: "first_name",
@@ -58,22 +37,17 @@ const COLUMNS: DataGridColumn<Athlete>[] = [
       </span>
     ),
   },
+  { id: "email", header: "Email", accessorKey: "email", allowsSorting: true, minWidth: 200 },
   {
-    id: "email",
-    header: "Email",
-    accessorKey: "email",
-    allowsSorting: true,
-    minWidth: 200,
+    id: "gender",
+    header: "Gender",
+    cell: (athlete) => (athlete.gender ? GENDER_LABELS[athlete.gender] : "—"),
   },
   {
     id: "status",
     header: "Status",
     allowsSorting: true,
-    cell: (athlete) => (
-      <Chip color={STATUS_COLOR[athlete.status]} size="sm" variant="soft">
-        {ENTITY_STATUS_LABELS[athlete.status]}
-      </Chip>
-    ),
+    cell: (athlete) => <EntityStatusChip status={athlete.status} />,
   },
   {
     id: "enrolled_at",
@@ -123,7 +97,7 @@ export default function AthleteList(): ReactNode {
       <ResourceDataGrid<Athlete>
         ariaLabel="Athletes"
         columns={COLUMNS}
-        contentClassName="min-w-[840px]"
+        contentClassName="min-w-[820px]"
         initialSorters={[{ field: "enrolled_at", order: "desc" }]}
         resource="athletes"
       />

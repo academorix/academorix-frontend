@@ -1,0 +1,67 @@
+[
+  {
+    "id": "role_owner",
+    "tenant_id": "tnt_riverside",
+    "name": "owner",
+    "description": "Full access to everything in the tenant.",
+    "permissions": ["*"],
+    "is_system": true,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-01T10:00:00Z"
+  },
+  {
+    "id": "role_admin",
+    "tenant_id": "tnt_riverside",
+    "name": "admin",
+    "description": "Manage branches, staff, athletes, and billing.",
+    "permissions": [
+      "branches.viewAny",
+      "branches.manage",
+      "staff.viewAny",
+      "staff.manage",
+      "athletes.viewAny",
+      "athletes.manage",
+      "invoices.viewAny"
+    ],
+    "is_system": true,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-01T10:00:00Z"
+  },
+  {
+    "id": "role_coach",
+    "tenant_id": "tnt_riverside",
+    "name": "coach",
+    "description": "Manage teams, events, attendance, and progress.",
+    "permissions": [
+      "teams.viewAny",
+      "events.viewAny",
+      "events.create",
+      "attendance.manage",
+      "progress.manage",
+      "athletes.viewAny"
+    ],
+    "is_system": true,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-01T10:00:00Z"
+  },
+  {
+    "id": "role_front_desk",
+    "tenant_id": "tnt_riverside",
+    "name": "front_desk",
+    "description": "Reception: check-in, registrations, and approvals.",
+    "permissions": ["registrations.viewAny", "reception.manage", "athletes.viewAny"],
+    "is_system": true,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-01T10:00:00Z"
+  },
+  {
+    "id": "role_parent_guardian",
+    "tenant_id": "tnt_riverside",
+    "name": "parent_guardian",
+    "description": "View their children, RSVP to events, pay invoices.",
+    "permissions": ["athletes.viewOwn", "events.rsvp", "invoices.viewOwn"],
+    "is_system": true,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-01T10:00:00Z"
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "reg_olivia",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
+    "season_id": "ssn_2025_26",
+    "applicant_name": "Olivia Chen",
+    "contact_email": "olivia.parent@example.com",
+    "contact_phone": "+1 555 2001",
+    "sport_key": "football",
+    "status": "trial",
+    "athlete_id": null,
+    "submitted_at": "2026-06-10T14:00:00Z",
+    "created_at": "2026-06-10T14:00:00Z",
+    "updated_at": "2026-06-12T09:00:00Z"
+  },
+  {
+    "id": "reg_ethan",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
+    "season_id": "ssn_2025_26",
+    "applicant_name": "Ethan Kim",
+    "contact_email": "ethan.parent@example.com",
+    "contact_phone": null,
+    "sport_key": "swimming",
+    "status": "lead",
+    "athlete_id": null,
+    "submitted_at": "2026-06-18T11:30:00Z",
+    "created_at": "2026-06-18T11:30:00Z",
+    "updated_at": "2026-06-18T11:30:00Z"
+  },
+  {
+    "id": "reg_mia",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_marina",
+    "season_id": "ssn_2025_26",
+    "applicant_name": "Mia Rossi",
+    "contact_email": "mia.parent@example.com",
+    "contact_phone": "+1 555 2003",
+    "sport_key": "football",
+    "status": "enrolled",
+    "athlete_id": "ath_noah",
+    "submitted_at": "2025-09-28T10:00:00Z",
+    "created_at": "2025-09-28T10:00:00Z",
+    "updated_at": "2025-10-01T09:00:00Z"
+  }
+]
