@@ -1,0 +1,109 @@
+/*
+ * RTL (Right-to-Left) Support
+ *
+ * Handles bidirectional layout for Arabic, Hebrew, and other RTL languages.
+ * Applied automatically when <html dir="rtl"> or [dir="rtl"] is set.
+ *
+ * The i18n module sets the dir attribute based on the active locale.
+ */
+
+/* ── Base RTL Direction ──────────────────────────────────────────────────── */
+
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+/* ── Flip horizontal margins/paddings ────────────────────────────────────── */
+
+[dir="rtl"] .ml-auto {
+  margin-left: unset;
+  margin-right: auto;
+}
+
+[dir="rtl"] .mr-auto {
+  margin-right: unset;
+  margin-left: auto;
+}
+
+/* ── Flex direction flip ─────────────────────────────────────────────────── */
+
+[dir="rtl"] .flex-row {
+  flex-direction: row-reverse;
+}
+
+/* ── Icon/Arrow mirroring ────────────────────────────────────────────────── */
+
+[dir="rtl"] .rtl\:flip {
+  transform: scaleX(-1);
+}
+
+/* ── Navigation & Sidebar ────────────────────────────────────────────────── */
+
+[dir="rtl"] .sidebar {
+  left: unset;
+  right: 0;
+}
+
+[dir="rtl"] .sidebar-collapsed + .main-content {
+  margin-left: unset;
+  margin-right: var(--sidebar-width-collapsed, 4rem);
+}
+
+/* ── Form elements ───────────────────────────────────────────────────────── */
+
+[dir="rtl"] input,
+[dir="rtl"] textarea,
+[dir="rtl"] select {
+  text-align: right;
+}
+
+[dir="rtl"] input[type="number"] {
+  text-align: left; /* Numbers stay LTR */
+}
+
+/* ── Scrollbar position ──────────────────────────────────────────────────── */
+
+[dir="rtl"] ::-webkit-scrollbar {
+  direction: ltr;
+}
+
+/* ── Transitions & Animations ────────────────────────────────────────────── */
+
+[dir="rtl"] .slide-in-left {
+  animation-name: slide-in-right;
+}
+
+[dir="rtl"] .slide-in-right {
+  animation-name: slide-in-left;
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ── Table alignment ─────────────────────────────────────────────────────── */
+
+[dir="rtl"] th,
+[dir="rtl"] td {
+  text-align: right;
+}
+
+[dir="rtl"] th:last-child,
+[dir="rtl"] td:last-child {
+  text-align: left;
+}

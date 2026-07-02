@@ -5,8 +5,7 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
 /** Resolve a path relative to this config file. */
-const resolvePath = (path: string): string =>
-  fileURLToPath(new URL(path, import.meta.url));
+const resolvePath = (path: string): string => fileURLToPath(new URL(path, import.meta.url));
 
 export default defineConfig({
   // Env files live in a dedicated folder instead of the package root.

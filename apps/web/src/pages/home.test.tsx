@@ -22,8 +22,6 @@ describe("HomePage", () => {
       </MemoryRouter>,
     );
 
-    expect(
-      screen.getByRole("button", { name: /get started/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /get started/i })).toBeInTheDocument();
   });
 });

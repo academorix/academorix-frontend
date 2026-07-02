@@ -1,0 +1,18 @@
+[
+  {
+    "name": "web app initial JS (gzip)",
+    "path": [
+      "apps/web/dist/assets/index-*.js",
+      "apps/web/dist/assets/react-vendor-*.js",
+      "apps/web/dist/assets/rolldown-runtime-*.js"
+    ],
+    "limit": "130 KB",
+    "gzip": true
+  },
+  {
+    "name": "web app CSS (gzip)",
+    "path": "apps/web/dist/assets/*.css",
+    "limit": "60 KB",
+    "gzip": true
+  }
+]

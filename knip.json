@@ -6,5 +6,17 @@
     "packages/typescript-config": {
       "entry": ["*.json"]
     }
-  }
+  },
+  "rules": {
+    "files": "warn",
+    "exports": "warn",
+    "types": "warn",
+    "duplicates": "warn",
+    "dependencies": "error",
+    "unlisted": "error",
+    "unresolved": "error",
+    "binaries": "error"
+  },
+  "ignoreExportsUsedInFile": true,
+  "ignoreBinaries": ["doppler"]
 }

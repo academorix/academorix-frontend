@@ -7,6 +7,8 @@ packages:
 onlyBuiltDependencies:
   - esbuild
   - "@tailwindcss/oxide"
+  - "@heroui-pro/react"
+  - heroui-pro
 
 # Single source of truth for every dependency version in the workspace.
 # Reference these from any package.json with "catalog:".
@@ -21,10 +23,34 @@ catalog:
   # --- HeroUI + styling ---
   "@heroui/react": 3.2.1
   "@heroui/styles": 3.2.1
+  "@heroui-pro/react": 1.0.0-beta.6
+  "@heroicons/react": ^2.2.0
   tailwindcss: 4.3.1
   "@tailwindcss/vite": 4.3.1
   tailwind-variants: ^3.2.2
-  clsx: ^2.1.1
+  tailwind-merge: ^3.4.0
+  motion: ^12.12.0
+  react-aria-components: ^1.18.0
+  # HeroUI Pro barrel peers (charts, AI/markdown, rich-text, carousel)
+  "@number-flow/react": ^0.6.1
+  "@tiptap/core": ^3.27.1
+  "@tiptap/react": ^3.27.1
+  "@tiptap/pm": ^3.27.1
+  "@tiptap/starter-kit": ^3.27.1
+  "@tiptap/suggestion": ^3.27.1
+  "@tiptap/extensions": ^3.27.1
+  "@tiptap/extension-link": ^3.27.1
+  "@tiptap/extension-underline": ^3.27.1
+  embla-carousel: ^8.6.0
+  embla-carousel-react: ^8.6.0
+  marked: ^18.0.5
+  react-markdown: ^10.1.0
+  react-resizable-panels: ^4.12.0
+  recharts: ^3.9.1
+  remark-breaks: ^4.0.0
+  remark-gfm: ^4.0.1
+  shiki: ^4.3.0
+  streamdown: ^2.5.0
 
   # --- Runtime validation ---
   zod: ^4.4.3
@@ -63,3 +89,6 @@ catalog:
   lint-staged: ^17.0.8
   "@commitlint/cli": ^21.2.0
   "@commitlint/config-conventional": ^21.2.0
+  "@playwright/test": ^1.61.1
+  size-limit: ^12.1.0
+  "@size-limit/file": ^12.1.0

@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@academorix/ui": "workspace:*",
-    "@heroui/react": "catalog:",
     "@heroui/styles": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",

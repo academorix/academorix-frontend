@@ -1,0 +1,124 @@
+/*
+ * Controllers — Cursor Styles
+ *
+ * Defines cursor behavior for interactive elements. Uses `cursor: default`
+ * instead of `cursor: pointer` for clickable UI controls (buttons, tabs,
+ * toggles, etc.) following modern platform conventions.
+ *
+ * Rationale: macOS, iOS, and most native apps use the default arrow cursor
+ * for buttons and controls. The pointer (hand) cursor is reserved for
+ * hyperlinks that navigate to a new page/URL. This matches HeroUI's
+ * default behavior and Apple's HIG.
+ *
+ * @see https://developer.apple.com/design/human-interface-guidelines/cursors
+ * @see https://ux.stackexchange.com/questions/105024
+ */
+
+/* ── Buttons & Controls — default cursor (not pointer) ───────────────────── */
+
+button,
+[role="button"],
+[role="tab"],
+[role="switch"],
+[role="checkbox"],
+[role="radio"],
+[role="menuitem"],
+[role="option"],
+[role="slider"],
+[role="spinbutton"],
+summary {
+  cursor: default;
+}
+
+/* ── Links — pointer cursor (navigates to URL) ───────────────────────────── */
+
+a[href],
+[role="link"] {
+  cursor: pointer;
+}
+
+/* ── Disabled elements — not-allowed cursor ──────────────────────────────── */
+
+button:disabled,
+[role="button"][aria-disabled="true"],
+[aria-disabled="true"],
+input:disabled,
+select:disabled,
+textarea:disabled,
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ── Text inputs — text cursor ───────────────────────────────────────────── */
+
+input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not(
+    [type="radio"]
+  ):not([type="range"]):not(:disabled),
+textarea:not(:disabled),
+[contenteditable="true"] {
+  cursor: text;
+}
+
+/* ── Drag handles — grab cursor ──────────────────────────────────────────── */
+
+[data-draggable],
+.drag-handle,
+[role="slider"]:not([aria-disabled="true"]) {
+  cursor: grab;
+}
+
+[data-draggable]:active,
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* ── Resize handles ──────────────────────────────────────────────────────── */
+
+.resize-handle-ns {
+  cursor: ns-resize;
+}
+
+.resize-handle-ew {
+  cursor: ew-resize;
+}
+
+.resize-handle-nwse {
+  cursor: nwse-resize;
+}
+
+.resize-handle-nesw {
+  cursor: nesw-resize;
+}
+
+/* ── Loading state — wait cursor ─────────────────────────────────────────── */
+
+[aria-busy="true"],
+.loading {
+  cursor: wait;
+}
+
+/* ── Help/Info — help cursor ─────────────────────────────────────────────── */
+
+[title]:not(a):not(button),
+abbr[title],
+.help-cursor {
+  cursor: help;
+}
+
+/* ── Zoom controls ───────────────────────────────────────────────────────── */
+
+.zoom-in {
+  cursor: zoom-in;
+}
+
+.zoom-out {
+  cursor: zoom-out;
+}
+
+/* ── Crosshair (precision tools, color pickers) ──────────────────────────── */
+
+.crosshair,
+[role="application"] canvas {
+  cursor: crosshair;
+}

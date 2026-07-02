@@ -21,14 +21,9 @@ const parsed = envSchema.safeParse(import.meta.env);
 
 if (!parsed.success) {
   // eslint-disable-next-line no-console
-  console.error(
-    "Invalid frontend environment variables:\n",
-    z.prettifyError(parsed.error),
-  );
+  console.error("Invalid frontend environment variables:\n", z.prettifyError(parsed.error));
 
-  throw new Error(
-    "Invalid environment variables. Check apps/web/environments/.env",
-  );
+  throw new Error("Invalid environment variables. Check apps/web/environments/.env");
 }
 
 export const env: Env = parsed.data;

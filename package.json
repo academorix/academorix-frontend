@@ -5,7 +5,7 @@
   "type": "module",
   "packageManager": "pnpm@10.33.0",
   "engines": {
-    "node": ">=20.11.0",
+    "node": ">=22",
     "pnpm": ">=10"
   },
   "scripts": {
@@ -19,6 +19,20 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,cjs,mjs,json,md,css,yaml,yml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,cjs,mjs,json,md,css,yaml,yml}\"",
     "knip": "knip",
+    "size": "size-limit",
+    "quality": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm knip",
+    "quality:fix": "pnpm format && pnpm lint:fix",
+    "ci": "pnpm quality && pnpm test && pnpm build",
+    "e2e": "pnpm --filter @academorix/web build && playwright test",
+    "e2e:ui": "playwright test --ui",
+    "e2e:report": "playwright show-report",
+    "heroui:login": "pnpm dlx heroui-pro@latest login",
+    "heroui:setup": "pnpm dlx heroui-pro@latest install react --yes",
+    "heroui:update": "pnpm dlx heroui-pro@latest update --yes",
+    "heroui:status": "pnpm dlx heroui-pro@latest status",
+    "secrets:pull": "doppler secrets download --no-file --format env > apps/web/environments/.env",
+    "secrets:open": "doppler open dashboard",
+    "dev:secrets": "doppler run -- turbo run dev",
     "clean": "turbo run clean && rm -rf node_modules .turbo",
     "prepare": "husky || true"
   },
@@ -26,12 +40,15 @@
     "@academorix/eslint-config": "workspace:*",
     "@commitlint/cli": "catalog:",
     "@commitlint/config-conventional": "catalog:",
+    "@playwright/test": "catalog:",
+    "@size-limit/file": "catalog:",
     "eslint": "catalog:",
     "husky": "catalog:",
     "knip": "catalog:",
     "lint-staged": "catalog:",
     "prettier": "catalog:",
     "prettier-plugin-tailwindcss": "catalog:",
+    "size-limit": "catalog:",
     "turbo": "catalog:",
     "typescript": "catalog:"
   }

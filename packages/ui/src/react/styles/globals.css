@@ -1,0 +1,12 @@
+/*
+ * @academorix/ui — Global Styles
+ *
+ * Single import for all UI package styles. Import in your app root CSS
+ * from the package subpath: academorix/ui/react/styles
+ *
+ * Includes:
+ * - controllers.css — Cursor behavior conventions (default vs pointer)
+ * - rtl.css — Right-to-left layout support for Arabic/Hebrew
+ */
+@import "./controllers.css";
+@import "./rtl.css";

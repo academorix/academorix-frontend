@@ -36,4 +36,5 @@ npm run dev
 
 ## License
 
-Licensed under the [MIT license](https://github.com/heroui-inc/vite-template/blob/main/LICENSE).
+Licensed under the
+[MIT license](https://github.com/heroui-inc/vite-template/blob/main/LICENSE).
