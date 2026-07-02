@@ -1,7 +1,8 @@
 {
   "workspaces": {
     "apps/web": {
-      "ignoreDependencies": ["@heroui/styles"]
+      "ignoreDependencies": ["@heroui/styles", "openapi-fetch"],
+      "ignore": ["src/lib/api/**"]
     },
     "packages/typescript-config": {
       "entry": ["*.json"]

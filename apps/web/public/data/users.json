@@ -1,0 +1,62 @@
+[
+  {
+    "id": "usr_owner",
+    "tenant_id": "tnt_academorix",
+    "email": "owner@academorix.test",
+    "username": "owner",
+    "first_name": "Alex",
+    "last_name": "Rivera",
+    "avatar_url": null,
+    "phone": "+1 555 0100",
+    "status": "active",
+    "roles": ["owner"],
+    "last_login_at": "2026-06-30T08:15:00Z",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-30T08:15:00Z"
+  },
+  {
+    "id": "usr_morgan",
+    "tenant_id": "tnt_academorix",
+    "email": "morgan.ellis@academorix.test",
+    "username": "morgan",
+    "first_name": "Morgan",
+    "last_name": "Ellis",
+    "avatar_url": null,
+    "phone": "+1 555 0201",
+    "status": "active",
+    "roles": ["coach"],
+    "last_login_at": "2026-06-28T14:00:00Z",
+    "created_at": "2025-09-05T10:00:00Z",
+    "updated_at": "2026-05-10T10:00:00Z"
+  },
+  {
+    "id": "usr_diallo",
+    "tenant_id": "tnt_academorix",
+    "email": "amadou.diallo@academorix.test",
+    "username": "amadou",
+    "first_name": "Amadou",
+    "last_name": "Diallo",
+    "avatar_url": null,
+    "phone": "+1 555 0202",
+    "status": "active",
+    "roles": ["coach", "branch_manager"],
+    "last_login_at": "2026-06-29T11:30:00Z",
+    "created_at": "2025-09-12T10:00:00Z",
+    "updated_at": "2026-05-11T10:00:00Z"
+  },
+  {
+    "id": "usr_front_desk",
+    "tenant_id": "tnt_academorix",
+    "email": "frontdesk@academorix.test",
+    "username": "frontdesk",
+    "first_name": "Jordan",
+    "last_name": "Lee",
+    "avatar_url": null,
+    "phone": "+1 555 0300",
+    "status": "active",
+    "roles": ["front_desk"],
+    "last_login_at": "2026-06-30T07:45:00Z",
+    "created_at": "2025-10-01T10:00:00Z",
+    "updated_at": "2026-06-20T10:00:00Z"
+  }
+]

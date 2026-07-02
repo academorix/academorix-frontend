@@ -9,6 +9,23 @@ const envSchema = z.object({
   VITE_APP_NAME: z.string().min(1).default("Academorix"),
   VITE_APP_ENV: z.enum(["local", "staging", "production"]).default("local"),
   VITE_API_URL: z.url().default("http://localhost:8000"),
+
+  /**
+   * Master switch between the two Refine data/auth providers.
+   *
+   * - `true`  → the JSON-file **mock** backend (`public/data/*.json`). Lets the
+   *   whole UI run before the Laravel API exists.
+   * - `false` → the real **REST** backend at {@link VITE_API_URL}.
+   *
+   * Vite only exposes strings, so we accept the string literals `"true"` /
+   * `"false"` and coerce to a real boolean. Defaults to mock so a fresh
+   * checkout boots against fixtures with zero backend setup.
+   */
+  VITE_API_MOCK: z
+    .enum(["true", "false"])
+    .default("true")
+    .transform((value) => value === "true"),
+
   VITE_REVERB_APP_KEY: z.string().min(1).default("academorix-local-key"),
   VITE_REVERB_HOST: z.string().min(1).default("localhost"),
   VITE_REVERB_PORT: z.coerce.number().int().positive().default(8080),

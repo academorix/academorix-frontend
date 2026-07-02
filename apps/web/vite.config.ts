@@ -41,13 +41,22 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id: string) {
-          if (
-            /[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/.test(
-              id,
-            )
-          ) {
+          // Core React runtime — changes rarely, cache aggressively.
+          if (/[\\/]node_modules[\\/](react|react-dom|react-router|scheduler)[\\/]/.test(id)) {
             return "react-vendor";
           }
+
+          // Refine + TanStack Query data layer.
+          if (/[\\/]node_modules[\\/](@refinedev|@tanstack)[\\/]/.test(id)) {
+            return "refine-vendor";
+          }
+
+          // Realtime transport (Reverb speaks the Pusher protocol via Echo).
+          if (/[\\/]node_modules[\\/](laravel-echo|pusher-js)[\\/]/.test(id)) {
+            return "realtime-vendor";
+          }
+
+          return undefined;
         },
       },
     },
