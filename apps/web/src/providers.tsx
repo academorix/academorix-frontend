@@ -26,7 +26,7 @@ import routerProvider, {
 
 import type { ReactNode } from "react";
 
-import { resources } from "@/config/resources";
+import { appResources } from "@/app/registry";
 import { siteConfig } from "@/config/site";
 import { accessControlProvider } from "@/providers/access-control";
 import { authProvider } from "@/providers/auth";
@@ -60,7 +60,7 @@ export function Providers({ children }: ProvidersProps): ReactNode {
           disableTelemetry: true,
           title: { text: siteConfig.name },
         }}
-        resources={resources}
+        resources={appResources}
         routerProvider={routerProvider}
       >
         {children}

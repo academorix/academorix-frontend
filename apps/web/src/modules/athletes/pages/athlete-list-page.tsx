@@ -1,31 +1,31 @@
 /**
- * @file list.tsx
- * @module pages/students/list
+ * @file athlete-list-page.tsx
+ * @module modules/athletes/pages/athlete-list-page
  *
  * @description
- * The flagship resource screen: a paginated, sortable Students table driven by
+ * The flagship resource screen: a paginated, sortable Athletes table driven by
  * Refine's headless `useTable` and rendered with HeroUI Pro's `DataGrid`.
  *
- * `DataGrid` is config-driven (columns + data + getRowId) and is the intended
- * pattern for every resource table:
+ * The intended pattern for every resource table:
  * - `useTable` owns server state (pagination, sorting, fetching) — identical in
  *   mock and REST modes.
- * - `DataGrid` renders the grid; we run it in **controlled sort** mode so
- *   sorting is delegated to the server via Refine's `sorters` (never sorted
- *   client-side here).
+ * - `DataGrid` renders the grid in **controlled sort** mode; sorting is
+ *   delegated to the server via Refine's `sorters` (never sorted client-side).
  * - Pagination is a separate `Pagination` footer wired to `currentPage`.
+ * - The page title uses tenant terminology (an academy shows "Students").
  */
 
 import { Chip, DataGrid, Pagination, Spinner } from "@academorix/ui/react";
 import { useTable } from "@refinedev/core";
 
-import type { EntityStatus, Student } from "@/types";
+import type { Athlete, EntityStatus } from "@/types";
 import type { DataGridColumn, DataGridSortDescriptor } from "@academorix/ui/react";
 import type { ReactNode } from "react";
 
+import { useResourceLabel } from "@/hooks/use-resource-label";
 import { ENTITY_STATUS_LABELS, SKILL_LEVEL_LABELS } from "@/types";
 
-/** Maps a student status to a HeroUI Chip color. */
+/** Maps an athlete status to a HeroUI Chip color. */
 const STATUS_COLOR: Record<EntityStatus, "success" | "warning" | "danger" | "default"> = {
   active: "success",
   pending: "warning",
@@ -44,16 +44,16 @@ function formatDate(iso: string): string {
  * DataGrid column definitions. Each column `id` doubles as the sort field sent
  * to the server, so the `Name` column sorts by `first_name`.
  */
-const COLUMNS: DataGridColumn<Student>[] = [
+const COLUMNS: DataGridColumn<Athlete>[] = [
   {
     id: "first_name",
     header: "Name",
     isRowHeader: true,
     allowsSorting: true,
     minWidth: 180,
-    cell: (student) => (
+    cell: (athlete) => (
       <span className="font-medium">
-        {student.first_name} {student.last_name}
+        {athlete.first_name} {athlete.last_name}
       </span>
     ),
   },
@@ -68,15 +68,15 @@ const COLUMNS: DataGridColumn<Student>[] = [
     id: "level",
     header: "Level",
     allowsSorting: true,
-    cell: (student) => (student.level ? SKILL_LEVEL_LABELS[student.level] : "—"),
+    cell: (athlete) => (athlete.level ? SKILL_LEVEL_LABELS[athlete.level] : "—"),
   },
   {
     id: "status",
     header: "Status",
     allowsSorting: true,
-    cell: (student) => (
-      <Chip color={STATUS_COLOR[student.status]} size="sm" variant="soft">
-        {ENTITY_STATUS_LABELS[student.status]}
+    cell: (athlete) => (
+      <Chip color={STATUS_COLOR[athlete.status]} size="sm" variant="soft">
+        {ENTITY_STATUS_LABELS[athlete.status]}
       </Chip>
     ),
   },
@@ -85,20 +85,22 @@ const COLUMNS: DataGridColumn<Student>[] = [
     header: "Enrolled",
     align: "end",
     allowsSorting: true,
-    cell: (student) => formatDate(student.enrolled_at),
+    cell: (athlete) => formatDate(athlete.enrolled_at),
   },
 ];
 
-/** The students list page. */
-export function StudentsListPage(): ReactNode {
+/** The athletes list page. */
+export default function AthleteListPage(): ReactNode {
+  const title = useResourceLabel("athletes", "Athletes");
+
   const { tableQuery, sorters, setSorters, currentPage, setCurrentPage, pageSize, pageCount } =
-    useTable<Student>({
-      resource: "students",
+    useTable<Athlete>({
+      resource: "athletes",
       pagination: { pageSize: 10 },
       sorters: { initial: [{ field: "enrolled_at", order: "desc" }] },
     });
 
-  const students = tableQuery.data?.data ?? [];
+  const athletes = tableQuery.data?.data ?? [];
   const total = tableQuery.data?.total ?? 0;
   const isLoading = tableQuery.isLoading;
 
@@ -127,22 +129,22 @@ export function StudentsListPage(): ReactNode {
   return (
     <div className="flex flex-col gap-6 p-6">
       <header>
-        <h1 className="text-2xl font-semibold text-foreground">Students</h1>
+        <h1 className="text-2xl font-semibold text-foreground">{title}</h1>
         <p className="text-sm text-muted">{total} enrolled</p>
       </header>
 
       <DataGrid
-        aria-label="Students"
+        aria-label={title}
         columns={COLUMNS}
         contentClassName="min-w-[720px]"
-        data={students}
-        getRowId={(student) => student.id}
+        data={athletes}
+        getRowId={(athlete) => athlete.id}
         renderEmptyState={() => (
           <div className="flex h-40 items-center justify-center">
             {isLoading ? (
-              <Spinner aria-label="Loading students" />
+              <Spinner aria-label="Loading" />
             ) : (
-              <span className="text-sm text-muted">No students found.</span>
+              <span className="text-sm text-muted">No records found.</span>
             )}
           </div>
         )}
@@ -153,7 +155,7 @@ export function StudentsListPage(): ReactNode {
 
       <Pagination size="sm">
         <Pagination.Summary>
-          {rangeStart} to {rangeEnd} of {total} students
+          {rangeStart} to {rangeEnd} of {total}
         </Pagination.Summary>
         <Pagination.Content>
           <Pagination.Item>

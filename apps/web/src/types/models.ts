@@ -22,7 +22,6 @@
 import type {
   BusinessType,
   EntityStatus,
-  Role,
   SkillLevel,
   TeamPosition,
   UserStatus,
@@ -101,17 +100,30 @@ export interface AuthUser extends BaseModel, TenantScoped {
   phone_verified_at: string | null;
   last_login_at: string | null;
   profile: UserProfile;
-  /** RBAC roles held by the user (union of grants = effective permissions). */
-  roles: Role[];
-  /** Flat list of spatie permission strings, e.g. `"students.create"`. */
+  /**
+   * RBAC roles held by the user, as raw strings from the backend. Not a fixed
+   * frontend union — roles are data, seeded per `business_type`.
+   */
+  roles: string[];
+  /** Flat list of effective permission strings, e.g. `"athletes.create"`. `["*"]` = superuser. */
   permissions: string[];
+  /**
+   * Feature keys enabled for this tenant/`business_type` (feature toggles /
+   * entitlements). The frontend hides modules whose `featureKey` is absent.
+   */
+  features: string[];
+  /**
+   * Per-tenant terminology overrides, keyed by canonical resource name
+   * (e.g. `{ athletes: "Students" }`). Overrides a resource's default label.
+   */
+  terminology: Record<string, string>;
   tenant: TenantSummary;
 }
 
 /**
  * UI-facing identity derived from {@link AuthUser} by the auth provider.
- * Everything the app shell needs to render "who is signed in", with no PII
- * beyond what the header shows.
+ * Everything the app shell needs to render "who is signed in" and to gate
+ * navigation, with no PII beyond what the header shows.
  */
 export interface Identity {
   id: string;
@@ -121,8 +133,14 @@ export interface Identity {
   avatar_url: string | null;
   /** Uppercase initials for the avatar fallback, e.g. `"JD"`. */
   initials: string;
-  roles: Role[];
+  /** RBAC roles (raw strings). */
+  roles: string[];
+  /** Effective permission strings; `["*"]` = superuser. */
   permissions: string[];
+  /** Enabled feature keys for this tenant. */
+  features: string[];
+  /** Per-tenant terminology overrides keyed by resource name. */
+  terminology: Record<string, string>;
   tenant: TenantSummary;
 }
 
@@ -139,23 +157,26 @@ export interface User extends BaseModel, TenantScoped {
   avatar_url: string | null;
   phone: string | null;
   status: UserStatus;
-  roles: Role[];
+  /** RBAC roles (raw strings). */
+  roles: string[];
   last_login_at: string | null;
 }
 
 /**
- * A student / athlete enrolled at the academy — the flagship domain resource.
+ * An athlete enrolled at the academy — the flagship domain resource. (Some
+ * business types display these as "Students" or "Members" via tenant
+ * terminology; the canonical resource name stays `athletes`.)
  */
-export interface Student extends BaseModel, TenantScoped {
+export interface Athlete extends BaseModel, TenantScoped {
   first_name: string;
   last_name: string;
   email: string;
   phone: string | null;
   avatar_url: string | null;
   status: EntityStatus;
-  /** Branch (physical venue) the student is registered at. */
+  /** Branch (physical venue) the athlete is registered at. */
   branch_id: string;
-  /** Team/squad the student belongs to, if any. */
+  /** Team/squad the athlete belongs to, if any. */
   team_id: string | null;
   date_of_birth: string | null;
   gender: "male" | "female" | "other" | null;

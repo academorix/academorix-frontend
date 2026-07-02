@@ -44,6 +44,8 @@ export function toIdentity(user: AuthUser): Identity {
     initials: computeInitials(user.profile),
     roles: user.roles,
     permissions: user.permissions,
+    features: user.features,
+    terminology: user.terminology,
     tenant: user.tenant,
   };
 }

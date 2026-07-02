@@ -21,6 +21,8 @@
     },
     "roles": ["owner"],
     "permissions": ["*"],
+    "features": ["dashboard", "athletes", "coaches", "courses", "teams", "branches"],
+    "terminology": { "athletes": "Students" },
     "tenant": {
       "id": "tnt_academorix",
       "slug": "riverside",

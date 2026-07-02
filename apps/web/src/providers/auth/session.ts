@@ -43,3 +43,32 @@ export function hasPermission(permission: string): boolean {
 
   return permissions.includes("*") || permissions.includes(permission);
 }
+
+/** Returns the enabled feature keys (empty when unknown/signed out). */
+export function getCurrentFeatures(): string[] {
+  return currentIdentity?.features ?? [];
+}
+
+/**
+ * Whether a feature is enabled for the current tenant. Returns `true` when the
+ * feature is unspecified or the feature set is unknown (fail-open during
+ * bootstrap), and only hides an item when a non-empty feature set omits the key.
+ */
+export function hasFeature(feature?: string): boolean {
+  if (!feature) {
+    return true;
+  }
+
+  const features = getCurrentFeatures();
+
+  if (features.length === 0) {
+    return true;
+  }
+
+  return features.includes(feature);
+}
+
+/** Resolves a resource's tenant-specific label, falling back to the default. */
+export function resolveResourceLabel(resourceName: string, fallback: string): string {
+  return currentIdentity?.terminology?.[resourceName] ?? fallback;
+}

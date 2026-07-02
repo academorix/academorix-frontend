@@ -1,12 +1,13 @@
 /**
- * @file dashboard.tsx
- * @module pages/dashboard
+ * @file dashboard-page.tsx
+ * @module modules/dashboard/pages/dashboard-page
  *
  * @description
- * The authenticated landing surface. Renders KPI cards whose counts come from
- * the data layer itself — each card issues a `useList` with `pageSize: 1` and
- * reads `total` from the response, so the numbers are real in both mock and
- * REST modes without a bespoke stats endpoint.
+ * The authenticated landing surface. KPI cards derive their counts from the
+ * data layer itself — each issues a `useList` with `pageSize: 1` and reads
+ * `result.total`, so numbers are real in both mock and REST modes without a
+ * bespoke stats endpoint. Labels use tenant terminology (an academy shows
+ * "Students" for the `athletes` resource).
  */
 
 import {
@@ -20,11 +21,13 @@ import { useList } from "@refinedev/core";
 
 import type { ComponentType, ReactNode, SVGProps } from "react";
 
+import { useResourceLabel } from "@/hooks/use-resource-label";
+
 /** Declarative KPI definition. */
 interface KpiConfig {
-  /** Resource whose row count is displayed. */
+  /** Canonical resource whose row count is displayed. */
   resource: string;
-  /** Human-readable label. */
+  /** Default label (overridden by tenant terminology). */
   label: string;
   /** Glyph rendered in the card corner. */
   Icon: ComponentType<SVGProps<SVGSVGElement>>;
@@ -32,7 +35,7 @@ interface KpiConfig {
 
 /** The KPIs shown on the dashboard, in display order. */
 const KPIS: KpiConfig[] = [
-  { resource: "students", label: "Students", Icon: AcademicCapIcon },
+  { resource: "athletes", label: "Athletes", Icon: AcademicCapIcon },
   { resource: "coaches", label: "Coaches", Icon: UsersIcon },
   { resource: "courses", label: "Courses", Icon: BookOpenIcon },
   { resource: "teams", label: "Teams", Icon: UserGroupIcon },
@@ -45,6 +48,7 @@ function KpiCard({ resource, label, Icon }: KpiConfig): ReactNode {
     pagination: { currentPage: 1, pageSize: 1 },
   });
 
+  const displayLabel = useResourceLabel(resource, label);
   const total = result.total ?? 0;
   const isLoading = query.isLoading;
 
@@ -52,7 +56,7 @@ function KpiCard({ resource, label, Icon }: KpiConfig): ReactNode {
     <Card>
       <Card.Header>
         <div className="flex items-center justify-between">
-          <Card.Description>{label}</Card.Description>
+          <Card.Description>{displayLabel}</Card.Description>
           <Icon aria-hidden="true" className="size-5 text-muted" />
         </div>
         <Card.Title className="text-3xl tabular-nums">
@@ -64,7 +68,7 @@ function KpiCard({ resource, label, Icon }: KpiConfig): ReactNode {
 }
 
 /** The dashboard page: heading + KPI grid. */
-export function DashboardPage(): ReactNode {
+export default function DashboardPage(): ReactNode {
   return (
     <div className="flex flex-col gap-6 p-6">
       <header>

@@ -1,12 +1,11 @@
 /**
- * @file login.tsx
- * @module pages/login
+ * @file login-page.tsx
+ * @module modules/auth/pages/login-page
  *
  * @description
  * Public login screen. Submits credentials through Refine's `useLogin`, which
- * calls the active auth provider (`login`) and, on success, redirects to the
- * dashboard. Errors surface automatically via the notification provider, so no
- * manual error rendering is required here.
+ * calls the active auth provider and, on success, redirects to the dashboard.
+ * Errors surface automatically via the notification provider.
  *
  * In mock mode any non-empty credentials are accepted; the form is pre-filled
  * with a demo account and a hint is shown so that is obvious.
@@ -32,10 +31,8 @@ const MOCK_DEFAULTS: LoginFormValues = {
   password: "password",
 };
 
-/**
- * Renders the login card and wires submission to Refine's auth flow.
- */
-export function LoginPage(): ReactNode {
+/** Renders the login card and wires submission to Refine's auth flow. */
+export default function LoginPage(): ReactNode {
   const { mutate: login, isPending } = useLogin<LoginFormValues>();
 
   const [email, setEmail] = useState(env.VITE_API_MOCK ? MOCK_DEFAULTS.email : "");

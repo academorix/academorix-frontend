@@ -18,37 +18,11 @@
  */
 
 /**
- * RBAC roles seeded per `business_type` by the backend `Access` module
- * (spatie/laravel-permission). A user may hold several roles at once; the
- * effective permission set is the union of every role's grants.
- *
- * @see IDENTITY_AND_TENANCY_SPEC.md §8 "Authorization detail"
+ * RBAC roles are **not** modelled as a fixed union here — they are data seeded
+ * per `business_type` on the backend and arrive as `string[]` on the identity
+ * (see {@link AuthUser.roles}). Authorization is driven entirely by the
+ * `permissions` list from `/auth/me`, never by hardcoded role constants.
  */
-export const ROLES = [
-  "owner",
-  "admin",
-  "branch_manager",
-  "coach",
-  "athlete",
-  "parent_guardian",
-  "front_desk",
-  "viewer",
-] as const;
-
-/** A single RBAC role identifier (e.g. `"branch_manager"`). */
-export type Role = (typeof ROLES)[number];
-
-/** Human-readable labels for {@link Role}. Keyed by the raw role string. */
-export const ROLE_LABELS: Record<Role, string> = {
-  owner: "Owner",
-  admin: "Administrator",
-  branch_manager: "Branch Manager",
-  coach: "Coach",
-  athlete: "Athlete",
-  parent_guardian: "Parent / Guardian",
-  front_desk: "Front Desk",
-  viewer: "Viewer",
-};
 
 /**
  * The kind of business a tenant runs. Drives default role sets, terminology
@@ -126,7 +100,7 @@ export const ENTITY_STATUS_LABELS: Record<EntityStatus, string> = {
 
 /**
  * A member's position within a team. This is an organisational label and is
- * explicitly **not** an RBAC role — see {@link Role} for permissions.
+ * explicitly **not** an RBAC role (roles/permissions come from `/auth/me`).
  *
  * @see IDENTITY_AND_TENANCY_SPEC.md §3 "team_members.position"
  */

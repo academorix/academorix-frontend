@@ -6,21 +6,22 @@
  * The application shell for every authenticated route, built with HeroUI Pro's
  * `AppLayout` + `Sidebar` + `Navbar`.
  *
- * - The **sidebar menu** is generated from Refine's `useMenu()` (which reads
- *   the `resources` registry), so adding a resource automatically adds a nav
- *   item — no duplicate menu config.
- * - `AppLayout` sets up `Sidebar.Provider` internally; we must **not** wrap it
- *   ourselves. We forward React Router's `navigate` so `href`-based menu items
- *   route client-side.
- * - The **navbar** carries the mobile menu toggle, the sidebar collapse
- *   trigger, the current section title, and a user dropdown wired to Refine's
- *   `useGetIdentity` / `useLogout`.
+ * - The **sidebar** is generated from the module {@link "@/app/registry" registry}'s
+ *   resources, then **filtered by the current identity**: a resource is shown
+ *   only if its `featureKey` is enabled for the tenant and its
+ *   `requiredPermission` is granted. Labels use tenant **terminology** (an
+ *   academy shows "Students" for the `athletes` resource). Nothing is hardcoded.
+ * - `AppLayout` sets up `Sidebar.Provider` internally; we must **not** wrap it.
+ *   We forward React Router's `navigate` so `href` menu items route client-side.
+ * - The **navbar** carries the mobile menu toggle, the collapse trigger, the
+ *   active section title, and a user dropdown wired to `useGetIdentity` /
+ *   `useLogout`.
  *
  * @see https://docs.heroui.pro/react/components/app-layout
  */
 
+import { AcademicCapIcon } from "@academorix/ui/icons/outline";
 import {
-  AcademicCapIcon,
   ArrowRightStartOnRectangleIcon,
   Cog6ToothIcon,
   UserCircleIcon,
@@ -35,12 +36,15 @@ import {
   Separator,
   Sidebar,
 } from "@academorix/ui/react";
-import { useGetIdentity, useLogout, useMenu } from "@refinedev/core";
-import { useNavigate } from "react-router";
+import { useGetIdentity, useLogout } from "@refinedev/core";
+import { useLocation, useNavigate } from "react-router";
 
+import type { AppResourceMeta } from "@/app/module";
 import type { Identity } from "@/types";
+import type { ResourceProps } from "@refinedev/core";
 import type { Key, ReactNode } from "react";
 
+import { appResources } from "@/app/registry";
 import { siteConfig } from "@/config/site";
 
 /** Props for {@link AuthenticatedLayout}. */
@@ -49,7 +53,72 @@ interface AuthenticatedLayoutProps {
   children: ReactNode;
 }
 
-/** Sidebar footer / navbar user menu, driven by the current identity. */
+/** A nav entry derived from a registered resource + the current identity. */
+interface NavEntry {
+  name: string;
+  href: string;
+  label: string;
+  icon: ReactNode;
+  isCurrent: boolean;
+}
+
+/** Whether a tenant feature is enabled (fail-open when the set is unknown). */
+function featureAllowed(identity: Identity | undefined, featureKey?: string): boolean {
+  if (!featureKey) {
+    return true;
+  }
+
+  const features = identity?.features ?? [];
+
+  return features.length === 0 || features.includes(featureKey);
+}
+
+/** Whether the identity holds a permission (`"*"` = superuser). */
+function permissionAllowed(identity: Identity | undefined, permission?: string): boolean {
+  if (!permission) {
+    return true;
+  }
+
+  const permissions = identity?.permissions ?? [];
+
+  return permissions.includes("*") || permissions.includes(permission);
+}
+
+/**
+ * Builds the visible nav entries from the resource registry, filtered by the
+ * identity's features + permissions and labeled with tenant terminology.
+ */
+function useNavEntries(identity: Identity | undefined): NavEntry[] {
+  const { pathname } = useLocation();
+
+  return appResources
+    .filter(
+      (resource): resource is ResourceProps & { list: string } => typeof resource.list === "string",
+    )
+    .map((resource) => {
+      const meta = (resource.meta ?? {}) as AppResourceMeta;
+
+      return { resource, meta };
+    })
+    .filter(
+      ({ meta }) =>
+        featureAllowed(identity, meta.featureKey) &&
+        permissionAllowed(identity, meta.requiredPermission),
+    )
+    .map(({ resource, meta }) => {
+      const href = resource.list;
+
+      return {
+        name: resource.name,
+        href,
+        label: identity?.terminology?.[resource.name] ?? meta.label,
+        icon: meta.icon,
+        isCurrent: pathname === href || pathname.startsWith(`${href}/`),
+      };
+    });
+}
+
+/** Navbar user menu, driven by the current identity. */
 function UserMenu(): ReactNode {
   const { data: identity } = useGetIdentity<Identity>();
   const { mutate: logout } = useLogout();
@@ -111,12 +180,8 @@ function UserMenu(): ReactNode {
   );
 }
 
-/** The sidebar: brand header + resource-driven navigation menu. */
-function AppSidebar(): ReactNode {
-  const { menuItems, selectedKey } = useMenu();
-
-  const items = menuItems.filter((item) => Boolean(item.route));
-
+/** The sidebar: brand header + identity-filtered navigation menu. */
+function AppSidebar({ entries }: { entries: NavEntry[] }): ReactNode {
   return (
     <Sidebar>
       <Sidebar.Header>
@@ -130,16 +195,16 @@ function AppSidebar(): ReactNode {
 
       <Sidebar.Content>
         <Sidebar.Menu>
-          {items.map((item) => (
+          {entries.map((entry) => (
             <Sidebar.MenuItem
-              key={item.key}
-              href={item.route}
-              id={String(item.key)}
-              isCurrent={item.key === selectedKey}
-              tooltip={item.label}
+              key={entry.name}
+              href={entry.href}
+              id={entry.name}
+              isCurrent={entry.isCurrent}
+              tooltip={entry.label}
             >
-              <Sidebar.MenuIcon>{item.icon}</Sidebar.MenuIcon>
-              <Sidebar.MenuLabel>{item.label}</Sidebar.MenuLabel>
+              <Sidebar.MenuIcon>{entry.icon}</Sidebar.MenuIcon>
+              <Sidebar.MenuLabel>{entry.label}</Sidebar.MenuLabel>
             </Sidebar.MenuItem>
           ))}
         </Sidebar.Menu>
@@ -155,9 +220,10 @@ function AppSidebar(): ReactNode {
  */
 export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps): ReactNode {
   const navigate = useNavigate();
-  const { menuItems, selectedKey } = useMenu();
+  const { data: identity } = useGetIdentity<Identity>();
+  const entries = useNavEntries(identity);
 
-  const activeLabel = menuItems.find((item) => item.key === selectedKey)?.label ?? siteConfig.name;
+  const activeLabel = entries.find((entry) => entry.isCurrent)?.label ?? siteConfig.name;
 
   return (
     <AppLayout
@@ -174,7 +240,7 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps): Rea
       }
       navigate={navigate}
       scrollMode="content"
-      sidebar={<AppSidebar />}
+      sidebar={<AppSidebar entries={entries} />}
       sidebarCollapsible="icon"
       sidebarVariant="inset"
     >

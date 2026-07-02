@@ -21,12 +21,15 @@
 import type { AuthUser } from "@/types/models";
 
 /**
- * Laravel API Resource envelope for a **single** record.
+ * Laravel API Resource envelope for a **single** record. Mutation endpoints
+ * (create/update/delete) may include a human-readable `message` for toasts;
+ * reads omit it.
  *
  * @typeParam T - The wrapped domain model.
  */
 export interface ApiResource<T> {
   data: T;
+  message?: string;
 }
 
 /**

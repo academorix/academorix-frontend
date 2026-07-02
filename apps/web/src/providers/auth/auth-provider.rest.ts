@@ -22,7 +22,7 @@ import type { ApiResource, AuthTokenResponse, Identity, LoginCredentials } from 
 import type { AuthUser } from "@/types";
 import type { AuthProvider } from "@refinedev/core";
 
-import { routes } from "@/config/routes";
+import { appRoutes } from "@/app/routes";
 import { ApiError } from "@/lib/http";
 import { toIdentity } from "@/providers/auth/map-identity";
 import { setCurrentIdentity } from "@/providers/auth/session";
@@ -94,7 +94,7 @@ export function createRestAuthProvider(
         tokens.setToken(response.token, response.expires_at);
         setCurrentIdentity(toIdentity(response.user));
 
-        return { success: true, redirectTo: routes.dashboard };
+        return { success: true, redirectTo: appRoutes.dashboard };
       } catch (error) {
         return {
           success: false,
@@ -115,7 +115,7 @@ export function createRestAuthProvider(
       tokens.clearToken();
       setCurrentIdentity(null);
 
-      return { success: true, redirectTo: routes.login };
+      return { success: true, redirectTo: appRoutes.login };
     },
 
     async check() {
@@ -125,7 +125,7 @@ export function createRestAuthProvider(
 
       return {
         authenticated: false,
-        redirectTo: routes.login,
+        redirectTo: appRoutes.login,
         logout: true,
       };
     },
@@ -153,7 +153,7 @@ export function createRestAuthProvider(
       const statusCode = (error as { statusCode?: number })?.statusCode;
 
       if (statusCode === 401) {
-        return { logout: true, redirectTo: routes.login, error };
+        return { logout: true, redirectTo: appRoutes.login, error };
       }
 
       return { error };

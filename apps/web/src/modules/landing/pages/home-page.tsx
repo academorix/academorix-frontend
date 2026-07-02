@@ -1,13 +1,26 @@
+/**
+ * @file home-page.tsx
+ * @module modules/landing/pages/home-page
+ *
+ * @description
+ * Public marketing landing page (the `/` route). Rendered inside `<Refine>` but
+ * requires no data — it's the one screen unauthenticated visitors always see.
+ */
+
 import { AcademicCapIcon } from "@academorix/ui/icons/outline";
 import { Button, StatusBadge } from "@academorix/ui/react";
 
+import type { ReactNode } from "react";
+
 import { siteConfig } from "@/config/site";
 
+/** Opens an external URL in a new, isolated tab. */
 function openExternal(url: string): void {
   window.open(url, "_blank", "noopener,noreferrer");
 }
 
-export function HomePage() {
+/** The public landing page. */
+export default function HomePage(): ReactNode {
   const isProduction = siteConfig.environment === "production";
 
   return (

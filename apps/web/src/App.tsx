@@ -3,55 +3,42 @@
  * @module App
  *
  * @description
- * The route tree. Three tiers:
+ * The route tree, assembled entirely from the module {@link "@/app/registry" registry} —
+ * `App.tsx` imports no feature code directly. Three tiers:
  *
- * 1. **Public** — the landing page (`/`) and login (`/login`). The login route
- *    is wrapped so an already-authenticated user is bounced to the dashboard.
- * 2. **Authenticated** — everything under the {@link AuthenticatedLayout} shell,
- *    guarded by Refine's `<Authenticated>`; unauthenticated users are redirected
- *    to `/login` via `CatchAllNavigate`.
+ * 1. **Public** — routes flagged `tier: "public"` (landing, login). A public
+ *    route may set `redirectAuthenticatedTo` so signed-in users are bounced
+ *    away (login → dashboard).
+ * 2. **Protected** — routes flagged `tier: "protected"`, rendered inside the
+ *    {@link AuthenticatedLayout} shell and guarded by Refine's `<Authenticated>`;
+ *    unauthenticated users are sent to `/login`.
  * 3. **Catch-all** — a 404 for anything unmatched.
  *
- * ## Code splitting
- * The public landing and 404 are eager (fast first paint). Everything that
- * pulls in the heavy HeroUI Pro shell (AppLayout, Sidebar, Navbar, DataGrid) —
- * i.e. the authenticated layout and pages, plus the login form — is
- * **lazy-loaded** so it never inflates the initial bundle. A single `Suspense`
+ * Page components are lazy (declared in the manifests); a single `Suspense`
  * boundary renders a spinner while a route chunk loads.
- *
- * Resource routes come from `@/config/resources`; only `students` has a bespoke
- * page today — the rest render {@link ComingSoonPage} until built out.
  */
 
 import { Spinner } from "@academorix/ui/react";
 import { Authenticated } from "@refinedev/core";
-import { CatchAllNavigate, NavigateToResource } from "@refinedev/react-router";
+import { CatchAllNavigate } from "@refinedev/react-router";
 import { lazy, Suspense } from "react";
-import { Outlet, Route, Routes } from "react-router";
+import { Navigate, Outlet, Route, Routes } from "react-router";
 
+import type { AppModuleRoute } from "@/app/module";
 import type { ReactNode } from "react";
 
-import { routes } from "@/config/routes";
-import { HomePage } from "@/pages/home";
-import { NotFoundPage } from "@/pages/not-found";
+import { protectedRoutes, publicRoutes } from "@/app/registry";
+import { appRoutes } from "@/app/routes";
+import { NotFoundPage } from "@/components/not-found";
 
-// Heavy, auth-only chunks — loaded on demand, not in the initial bundle.
+/**
+ * The authenticated app shell — lazy so its heavy HeroUI Pro chunk (AppLayout,
+ * Sidebar, Navbar, Dropdown) stays out of the initial bundle.
+ */
 const AuthenticatedLayout = lazy(() =>
   import("@/components/layout/authenticated-layout").then((module) => ({
     default: module.AuthenticatedLayout,
   })),
-);
-const LoginPage = lazy(() =>
-  import("@/pages/login").then((module) => ({ default: module.LoginPage })),
-);
-const DashboardPage = lazy(() =>
-  import("@/pages/dashboard").then((module) => ({ default: module.DashboardPage })),
-);
-const StudentsListPage = lazy(() =>
-  import("@/pages/students/list").then((module) => ({ default: module.StudentsListPage })),
-);
-const ComingSoonPage = lazy(() =>
-  import("@/pages/coming-soon").then((module) => ({ default: module.ComingSoonPage })),
 );
 
 /** Full-viewport spinner shown while a lazy route chunk loads. */
@@ -63,41 +50,59 @@ function RouteFallback(): ReactNode {
   );
 }
 
-/** Top-level application routes. */
+/** Renders a module route as an index or path `<Route>` (never both). */
+function leafRoute(route: AppModuleRoute, key: string): ReactNode {
+  return route.index ? (
+    <Route key={key} index element={route.element} />
+  ) : (
+    <Route key={key} element={route.element} path={route.path} />
+  );
+}
+
+/**
+ * Renders a public route, optionally wrapped so authenticated visitors are
+ * redirected away (e.g. `/login` → `/dashboard`).
+ */
+function publicRoute(route: AppModuleRoute, key: string): ReactNode {
+  const leaf = leafRoute(route, key);
+
+  if (!route.redirectAuthenticatedTo) {
+    return leaf;
+  }
+
+  return (
+    <Route
+      key={`${key}-guard`}
+      element={
+        <Authenticated key={`${key}-auth`} fallback={<Outlet />}>
+          <Navigate replace to={route.redirectAuthenticatedTo} />
+        </Authenticated>
+      }
+    >
+      {leaf}
+    </Route>
+  );
+}
+
+/** Top-level application routes, assembled from the module registry. */
 export function App(): ReactNode {
   return (
     <Suspense fallback={<RouteFallback />}>
       <Routes>
-        {/* Public landing page. */}
-        <Route index element={<HomePage />} />
-
-        {/* Public login — redirect to the dashboard if already signed in. */}
-        <Route
-          element={
-            <Authenticated key="auth-pages" fallback={<Outlet />}>
-              <NavigateToResource resource="dashboard" />
-            </Authenticated>
-          }
-        >
-          <Route element={<LoginPage />} path={routes.login} />
-        </Route>
+        {/* Public routes (landing, login). */}
+        {publicRoutes.map((route, index) => publicRoute(route, `public-${index}`))}
 
         {/* Authenticated area — gated and wrapped in the app shell. */}
         <Route
           element={
-            <Authenticated key="protected" fallback={<CatchAllNavigate to={routes.login} />}>
+            <Authenticated key="protected" fallback={<CatchAllNavigate to={appRoutes.login} />}>
               <AuthenticatedLayout>
                 <Outlet />
               </AuthenticatedLayout>
             </Authenticated>
           }
         >
-          <Route element={<DashboardPage />} path={routes.dashboard} />
-          <Route element={<StudentsListPage />} path={routes.students} />
-          <Route element={<ComingSoonPage />} path={routes.coaches} />
-          <Route element={<ComingSoonPage />} path={routes.courses} />
-          <Route element={<ComingSoonPage />} path={routes.teams} />
-          <Route element={<ComingSoonPage />} path={routes.branches} />
+          {protectedRoutes.map((route, index) => leafRoute(route, `protected-${index}`))}
         </Route>
 
         {/* Catch-all 404. */}

@@ -1,12 +1,12 @@
 /**
  * @file coming-soon.tsx
- * @module pages/coming-soon
+ * @module components/coming-soon
  *
  * @description
- * A generic placeholder for resources whose full CRUD screens are not built
- * yet (coaches, courses, teams, branches). It reads the *active* resource from
- * Refine's `useResource()` so a single component serves every such route and
- * shows the correct title.
+ * A shared placeholder for resources whose full CRUD screens are not built yet
+ * (coaches, courses, teams, branches). It reads the *active* resource from
+ * Refine's `useResourceParams()` and resolves the tenant-specific label, so a
+ * single component serves every such route with the correct title.
  *
  * The data layer and mock fixtures for these resources already exist, so
  * fleshing them out later is purely a UI task.
@@ -15,12 +15,17 @@
 import { WrenchScrewdriverIcon } from "@academorix/ui/icons/outline";
 import { useResourceParams } from "@refinedev/core";
 
+import type { AppResourceMeta } from "@/app/module";
 import type { ReactNode } from "react";
 
+import { useResourceLabel } from "@/hooks/use-resource-label";
+
 /** Renders a centered "coming soon" message for the current resource. */
-export function ComingSoonPage(): ReactNode {
+export default function ComingSoonPage(): ReactNode {
   const { resource } = useResourceParams();
-  const label = resource?.meta?.label ?? resource?.name ?? "This section";
+  const meta = resource?.meta as AppResourceMeta | undefined;
+  const fallback = meta?.label ?? resource?.name ?? "This section";
+  const label = useResourceLabel(resource?.name ?? "", fallback);
 
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 p-6 text-center">
