@@ -3,20 +3,26 @@
  * @module modules/athletes/pages/list
  *
  * @description
- * Athletes list screen (the resource's `list` route). Follows the Refine CRUD
- * page convention — sibling `create.tsx` / `edit.tsx` / `show.tsx` are added as
- * those actions are built. Paginated + sortable via Refine's headless
- * `useTable`, rendered with HeroUI Pro's `DataGrid`.
+ * Athletes list screen (the resource's `list` route). Composed from the shared
+ * Refine UI kit: {@link ListView} supplies the header (breadcrumbs, tenant
+ * title, create action) and {@link ResourceDataGrid} handles data fetching,
+ * sorting, and pagination. This page only declares its **columns** and the
+ * per-row actions — no table plumbing.
  */
 
-import { Chip, DataGrid, Pagination, Spinner } from "@academorix/ui/react";
-import { useTable } from "@refinedev/core";
+import { Chip } from "@academorix/ui/react";
 
 import type { Athlete, EntityStatus } from "@/types";
-import type { DataGridColumn, DataGridSortDescriptor } from "@academorix/ui/react";
+import type { DataGridColumn } from "@academorix/ui/react";
 import type { ReactNode } from "react";
 
-import { useResourceLabel } from "@/lib/refine";
+import {
+  DeleteButton,
+  EditButton,
+  ListView,
+  ResourceDataGrid,
+  ShowButton,
+} from "@/components/refine";
 import { ENTITY_STATUS_LABELS, SKILL_LEVEL_LABELS } from "@/types";
 
 /** Maps an athlete status to a HeroUI Chip color. */
@@ -35,8 +41,9 @@ function formatDate(iso: string): string {
 }
 
 /**
- * DataGrid column definitions. Each column `id` doubles as the sort field sent
- * to the server, so the `Name` column sorts by `first_name`.
+ * DataGrid column definitions. Each sortable column's `id` doubles as the sort
+ * field sent to the server, so the `Name` column sorts by `first_name`. The
+ * trailing `actions` column carries per-row show/edit/delete buttons.
  */
 const COLUMNS: DataGridColumn<Athlete>[] = [
   {
@@ -77,110 +84,55 @@ const COLUMNS: DataGridColumn<Athlete>[] = [
   {
     id: "enrolled_at",
     header: "Enrolled",
-    align: "end",
     allowsSorting: true,
     cell: (athlete) => formatDate(athlete.enrolled_at),
+  },
+  {
+    id: "actions",
+    header: "",
+    align: "end",
+    minWidth: 150,
+    cell: (athlete) => (
+      <div className="flex justify-end gap-1">
+        <ShowButton
+          isIconOnly
+          aria-label="View athlete"
+          recordItemId={athlete.id}
+          resource="athletes"
+          size="sm"
+          variant="ghost"
+        />
+        <EditButton
+          isIconOnly
+          aria-label="Edit athlete"
+          recordItemId={athlete.id}
+          resource="athletes"
+          size="sm"
+          variant="ghost"
+        />
+        <DeleteButton
+          isIconOnly
+          aria-label="Delete athlete"
+          recordItemId={athlete.id}
+          resource="athletes"
+          size="sm"
+        />
+      </div>
+    ),
   },
 ];
 
 /** The athletes list page. */
 export default function AthleteList(): ReactNode {
-  const title = useResourceLabel("athletes", "Athletes");
-
-  const { tableQuery, sorters, setSorters, currentPage, setCurrentPage, pageSize, pageCount } =
-    useTable<Athlete>({
-      resource: "athletes",
-      pagination: { pageSize: 10 },
-      sorters: { initial: [{ field: "enrolled_at", order: "desc" }] },
-    });
-
-  const athletes = tableQuery.data?.data ?? [];
-  const total = tableQuery.data?.total ?? 0;
-  const isLoading = tableQuery.isLoading;
-
-  // Bridge Refine sorters <-> DataGrid SortDescriptor (single-column sort).
-  const activeSorter = sorters[0];
-  const sortDescriptor: DataGridSortDescriptor | undefined = activeSorter
-    ? {
-        column: activeSorter.field,
-        direction: activeSorter.order === "asc" ? "ascending" : "descending",
-      }
-    : undefined;
-
-  const handleSortChange = (descriptor: DataGridSortDescriptor): void => {
-    setSorters([
-      {
-        field: String(descriptor.column),
-        order: descriptor.direction === "ascending" ? "asc" : "desc",
-      },
-    ]);
-  };
-
-  const pages = Array.from({ length: pageCount }, (_, index) => index + 1);
-  const rangeStart = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
-  const rangeEnd = Math.min(currentPage * pageSize, total);
-
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <header>
-        <h1 className="text-2xl font-semibold text-foreground">{title}</h1>
-        <p className="text-sm text-muted">{total} enrolled</p>
-      </header>
-
-      <DataGrid
-        aria-label={title}
+    <ListView resource="athletes">
+      <ResourceDataGrid<Athlete>
+        ariaLabel="Athletes"
         columns={COLUMNS}
-        contentClassName="min-w-[720px]"
-        data={athletes}
-        getRowId={(athlete) => athlete.id}
-        renderEmptyState={() => (
-          <div className="flex h-40 items-center justify-center">
-            {isLoading ? (
-              <Spinner aria-label="Loading" />
-            ) : (
-              <span className="text-sm text-muted">No records found.</span>
-            )}
-          </div>
-        )}
-        sortDescriptor={sortDescriptor}
-        variant="primary"
-        onSortChange={handleSortChange}
+        contentClassName="min-w-[840px]"
+        initialSorters={[{ field: "enrolled_at", order: "desc" }]}
+        resource="athletes"
       />
-
-      <Pagination size="sm">
-        <Pagination.Summary>
-          {rangeStart} to {rangeEnd} of {total}
-        </Pagination.Summary>
-        <Pagination.Content>
-          <Pagination.Item>
-            <Pagination.Previous
-              isDisabled={currentPage <= 1}
-              onPress={() => setCurrentPage(Math.max(1, currentPage - 1))}
-            >
-              <Pagination.PreviousIcon />
-              Prev
-            </Pagination.Previous>
-          </Pagination.Item>
-
-          {pages.map((page) => (
-            <Pagination.Item key={page}>
-              <Pagination.Link isActive={page === currentPage} onPress={() => setCurrentPage(page)}>
-                {page}
-              </Pagination.Link>
-            </Pagination.Item>
-          ))}
-
-          <Pagination.Item>
-            <Pagination.Next
-              isDisabled={currentPage >= pageCount}
-              onPress={() => setCurrentPage(Math.min(pageCount, currentPage + 1))}
-            >
-              Next
-              <Pagination.NextIcon />
-            </Pagination.Next>
-          </Pagination.Item>
-        </Pagination.Content>
-      </Pagination>
-    </div>
+    </ListView>
   );
 }

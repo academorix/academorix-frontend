@@ -72,7 +72,9 @@ apps/web/src/
 │   ├── module/              # the module framework: module.ts + registry.ts + routes.ts (+ barrel)
 │   └── refine/              # cross-cutting Refine hooks/helpers (e.g. useResourceLabel)
 ├── components/              # shared, reusable UI widgets
-│   └── layout/              # app-level shell(s), e.g. authenticated-layout
+│   ├── layout/              # app-level shell(s), e.g. authenticated-layout
+│   ├── theme/               # theme switcher (HeroUI useTheme: light/dark/system)
+│   └── refine/              # Refine UI kit: buttons/ + views/ + breadcrumbs + resource-data-grid
 ├── config/                  # env, site (NOT routes — those live in lib/module or per module)
 └── types/                   # cross-module domain types, enums, API envelopes
 ```
@@ -200,10 +202,11 @@ CRUD action:
 ```
 src/modules/athletes/
 ├── pages/
-│   ├── list.tsx      # default export → AthleteList  (built now)
-│   ├── create.tsx    # default export → AthleteCreate (added when built)
+│   ├── list.tsx      # default export → AthleteList
+│   ├── create.tsx    # default export → AthleteCreate
 │   ├── edit.tsx      # default export → AthleteEdit
 │   └── show.tsx      # default export → AthleteShow
+├── components/       # module-only pieces (e.g. athlete-form, form-skeleton)
 └── athletes.module.tsx
 ```
 
@@ -214,7 +217,50 @@ src/modules/athletes/
   and a route per page. **Only declare a route once its page exists** (no dead
   nav links). Screens use Refine headless hooks (`useTable`, `useForm`,
   `useShow`).
-- A module with multiple resources nests: `pages/<resource>/{list,…}.tsx`.
+- Pages are thin: they compose the shared **Refine UI kit** (below) plus a
+  module-local form (create/edit share one controlled form in
+  `modules/<name>/components/`). A module with multiple resources nests:
+  `pages/<resource>/{list,…}.tsx`.
+
+### The Refine UI kit — `components/refine/`
+
+We do **not** copy the Refine starter's shadcn `refine-ui` kit; we ship the
+HeroUI + HeroUI Pro equivalents in `src/components/refine/` (import from the
+`@/components/refine` barrel). Same coverage, our design system:
+
+```
+src/components/refine/
+├── buttons/                 # ListButton, CreateButton, EditButton, ShowButton,
+│                            #   CloneButton, DeleteButton, RefreshButton
+├── views/                   # ListView, CreateView, EditView, ShowView (+ ViewHeader)
+├── breadcrumbs.tsx          # useBreadcrumb → HeroUI Breadcrumbs (react-router links)
+└── resource-data-grid.tsx   # useTable ⇄ HeroUI Pro DataGrid + Pagination bridge
+```
+
+- **Action buttons** wrap Refine's `use*Button` hooks, so navigation, labels,
+  loading, and **access-control gating** (hidden/disabled via the
+  `accessControlProvider`) are consistent everywhere. A hidden button renders
+  `null` — never a disabled dead control the user can't use. Pass `isIconOnly`
+  (with `aria-label`) for compact row actions.
+- **View scaffolds** render breadcrumbs + a tenant-aware title + the action
+  buttons appropriate to the action, then the page content. `ListView` adds
+  `CreateButton`; `Show`/`Edit`/`Create` add a back button + relevant actions.
+  Buttons inside a routed view default to the route's resource + `:id`.
+- **`ResourceDataGrid`** is the standard table: pass `columns` + `resource`; it
+  owns `useTable`, the single-column sort bridge (DataGrid `SortDescriptor` ⇄
+  Refine `sorters`, server-side), the empty/loading state, and pagination.
+  Feature modules provide columns, never table plumbing.
+- **`DeleteButton`** confirms in a popover and honours undoable mutation mode
+  (the "Undo" toast comes from the notification provider).
+
+### Theme switching — `components/theme/`
+
+Dark mode uses **HeroUI's native `useTheme`** (`@academorix/ui/react`), not
+`next-themes`: HeroUI v3 ships `useTheme` for Vite/CRA apps — it persists to
+`localStorage`, resolves `"system"`, and writes both `class` + `data-theme` to
+`<html>`. The `ThemeSwitcher` lives in the navbar; the body carries
+`bg-background text-foreground`. Do not add `next-themes` (extra dep + double
+theme controllers).
 
 ### Where the module system lives — `lib/module/`, not `app/`
 
@@ -365,9 +411,13 @@ resource endpoints):
 
 - Import UI from `@academorix/ui/react`; icons from
   `@academorix/ui/icons/{outline,solid,mini,micro}`. Never `@heroui/*` directly.
-- **Resource tables use HeroUI Pro `DataGrid`** (config-driven columns +
-  controlled sort bridged to Refine `sorters`); pagination is a separate
-  `Pagination` footer wired to `useTable`.
+- **Compose the Refine UI kit** (`@/components/refine`):
+  `ListView`/`CreateView`/ `EditView`/`ShowView` for scaffolding, the action
+  buttons, and `ResourceDataGrid` for tables. Do not hand-roll table plumbing or
+  action bars per page.
+- **Resource tables use `ResourceDataGrid`** (HeroUI Pro `DataGrid` under the
+  hood): config-driven columns + controlled sort bridged to Refine `sorters`,
+  with a `Pagination` footer wired to `useTable`.
 - The app shell is HeroUI Pro `AppLayout` + `Sidebar` + `Navbar`; the sidebar is
   generated from Refine `useMenu()` (resources), filtered by permission/feature.
 - List/detail/form screens use Refine headless hooks (`useTable`, `useForm`,
@@ -423,12 +473,16 @@ Before finalizing any change:
 ## 11. New-module checklist
 
 - [ ] `src/modules/<domain>/` created (mirrors backend module name).
-- [ ] `pages/` screens (lazy), built with HeroUI Pro + Refine headless hooks.
-- [ ] `<domain>.module.tsx` default-exports an `AppModule` (resources + routes).
+- [ ] `pages/` screens (lazy), composed from the `@/components/refine` kit
+      (`ListView`/`ShowView`/… + `ResourceDataGrid`) + Refine headless hooks.
+- [ ] `<domain>.module.tsx` default-exports an `AppModule` (resources + routes);
+      declare `create`/`edit`/`show` paths only once their pages exist.
 - [ ] Resource `meta` sets `label`, `icon`, `featureKey`, `requiredPermission`.
+- [ ] Create/edit share one controlled form in `modules/<domain>/components/`.
 - [ ] Domain shapes reused from `@/types` (module-only shapes stay local).
 - [ ] Mock fixture `public/data/<resource>.json` (pure record array,
       snake_case).
-- [ ] UI gated with `<CanAccess>`; nav filtered by permission/feature.
+- [ ] UI gated with `<CanAccess>` / kit buttons; nav filtered by
+      permission/feature.
 - [ ] Docblocks throughout; `pnpm quality` + `pnpm test` green; conventional
       commit.

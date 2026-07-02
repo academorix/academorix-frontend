@@ -13,6 +13,9 @@ import { createElement, lazy } from "react";
 import type { AppModule } from "@/lib/module";
 
 const AthleteListPage = lazy(() => import("@/modules/athletes/pages/list"));
+const AthleteCreatePage = lazy(() => import("@/modules/athletes/pages/create"));
+const AthleteEditPage = lazy(() => import("@/modules/athletes/pages/edit"));
+const AthleteShowPage = lazy(() => import("@/modules/athletes/pages/show"));
 
 const athletesModule: AppModule = {
   name: "athletes",
@@ -20,6 +23,9 @@ const athletesModule: AppModule = {
     {
       name: "athletes",
       list: "/athletes",
+      create: "/athletes/create",
+      edit: "/athletes/:id/edit",
+      show: "/athletes/:id",
       meta: {
         label: "Athletes",
         icon: AcademicCapIcon,
@@ -29,7 +35,12 @@ const athletesModule: AppModule = {
       },
     },
   ],
-  routes: [{ tier: "protected", path: "/athletes", element: createElement(AthleteListPage) }],
+  routes: [
+    { tier: "protected", path: "/athletes", element: createElement(AthleteListPage) },
+    { tier: "protected", path: "/athletes/create", element: createElement(AthleteCreatePage) },
+    { tier: "protected", path: "/athletes/:id/edit", element: createElement(AthleteEditPage) },
+    { tier: "protected", path: "/athletes/:id", element: createElement(AthleteShowPage) },
+  ],
 };
 
 export default athletesModule;
