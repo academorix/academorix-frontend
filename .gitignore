@@ -47,3 +47,6 @@ lerna-debug.log*
 yarn.lock
 package-lock.json
 bun.lockb
+
+# Kiro MCP config holds secret tokens (heroui-pro personal token) — keep local
+.kiro/settings/mcp.json
