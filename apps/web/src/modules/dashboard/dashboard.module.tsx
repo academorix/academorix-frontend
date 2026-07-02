@@ -12,7 +12,7 @@ import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";
 
-import { appRoutes } from "@/lib/module";
+import { appRoutes } from "@/lib/module/routes";
 
 const DashboardPage = lazy(() => import("@/modules/dashboard/pages/dashboard-page"));
 
