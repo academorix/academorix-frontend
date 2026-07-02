@@ -263,5 +263,65 @@
         ]
       }
     ]
+  },
+  {
+    "id": "attrset_performance_football_v1",
+    "code": "performance.football",
+    "entity_type": "performance",
+    "discriminator_field": "sport_key",
+    "discriminator_value": "football",
+    "version": 1,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-01-01T09:00:00Z",
+    "groups": [
+      {
+        "code": "speed_power",
+        "label": { "en": "Speed & Power", "ar": "السرعة والقوة" },
+        "collapsible": false,
+        "order": 1,
+        "attributes": [
+          {
+            "code": "sprint_40m",
+            "label": { "en": "40m Sprint (s)", "ar": "٤٠م عدو (ث)" },
+            "type": "decimal",
+            "widget": "number",
+            "validation": { "required": false, "min": 0, "step": 0.01 },
+            "order": 1
+          },
+          {
+            "code": "vertical_jump",
+            "label": { "en": "Vertical Jump (cm)", "ar": "الوثب العمودي (سم)" },
+            "type": "integer",
+            "widget": "number",
+            "validation": { "required": false, "min": 0, "max": 150 },
+            "order": 2
+          }
+        ]
+      },
+      {
+        "code": "endurance",
+        "label": { "en": "Endurance", "ar": "التحمل" },
+        "collapsible": false,
+        "order": 2,
+        "attributes": [
+          {
+            "code": "yo_yo_level",
+            "label": { "en": "Yo-Yo Level", "ar": "مستوى يو-يو" },
+            "type": "integer",
+            "widget": "number",
+            "validation": { "required": false, "min": 1, "max": 23 },
+            "order": 1
+          },
+          {
+            "code": "vo2max",
+            "label": { "en": "VO2 Max", "ar": "الحد الأقصى للأكسجين" },
+            "type": "integer",
+            "widget": "number",
+            "validation": { "required": false, "min": 20, "max": 90 },
+            "order": 2
+          }
+        ]
+      }
+    ]
   }
 ]

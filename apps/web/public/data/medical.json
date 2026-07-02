@@ -1,0 +1,28 @@
+[
+  {
+    "id": "med_emma",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_emma",
+    "type": "clearance",
+    "is_cleared": true,
+    "cleared_until": "2027-06-30",
+    "summary": "Fit to train and compete.",
+    "recorded_by": "stf_coach_sara",
+    "recorded_at": "2025-09-08",
+    "created_at": "2025-09-08T10:00:00Z",
+    "updated_at": "2025-09-08T10:00:00Z"
+  },
+  {
+    "id": "med_liam",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_liam",
+    "type": "injury",
+    "is_cleared": false,
+    "cleared_until": null,
+    "summary": "Ankle sprain — return-to-play in ~2 weeks.",
+    "recorded_by": "stf_coach_sara",
+    "recorded_at": "2026-06-20",
+    "created_at": "2026-06-20T10:00:00Z",
+    "updated_at": "2026-06-20T10:00:00Z"
+  }
+]

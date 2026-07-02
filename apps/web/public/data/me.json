@@ -51,10 +51,20 @@
       "private-sessions",
       "attendance",
       "progress",
+      "performance",
+      "medical",
+      "development",
+      "drills",
+      "competitions",
+      "formations",
+      "safeguarding",
       "expenses",
       "credentials",
       "announcements",
-      "conversations"
+      "conversations",
+      "reports",
+      "leads",
+      "ai"
     ],
     "terminology": { "athletes": "Students" },
     "tenant": {
