@@ -28,6 +28,7 @@ import type { ResourceProps } from "@refinedev/core";
 import type { ReactNode } from "react";
 
 import { siteConfig } from "@/config/site";
+import { LocaleProvider, useI18nProvider } from "@/lib/i18n";
 import { appResources } from "@/lib/module";
 import { accessControlProvider } from "@/providers/access-control";
 import { authProvider } from "@/providers/auth";
@@ -42,32 +43,47 @@ interface ProvidersProps {
 }
 
 /**
- * Wraps the app in the toast region and the fully-configured Refine context.
+ * Mounts the fully-configured Refine context, reading the locale-bound
+ * `i18nProvider` from {@link LocaleProvider} so a language switch re-translates
+ * the tree (including Refine's own components).
+ */
+function RefineRoot({ children }: ProvidersProps): ReactNode {
+  const i18nProvider = useI18nProvider();
+
+  return (
+    <Refine
+      accessControlProvider={accessControlProvider}
+      authProvider={authProvider}
+      dataProvider={dataProvider}
+      i18nProvider={i18nProvider}
+      liveProvider={liveProvider}
+      notificationProvider={notificationProvider}
+      options={{
+        liveMode: "auto",
+        syncWithLocation: true,
+        warnWhenUnsavedChanges: true,
+        disableTelemetry: true,
+        title: { text: siteConfig.name },
+      }}
+      resources={appResources as unknown as ResourceProps[]}
+      routerProvider={routerProvider}
+    >
+      {children}
+      <UnsavedChangesNotifier />
+      <DocumentTitleHandler />
+    </Refine>
+  );
+}
+
+/**
+ * Wraps the app in the locale layer, the toast region, and the fully-configured
+ * Refine context.
  */
 export function Providers({ children }: ProvidersProps): ReactNode {
   return (
-    <>
+    <LocaleProvider>
       <ToastProvider />
-      <Refine
-        accessControlProvider={accessControlProvider}
-        authProvider={authProvider}
-        dataProvider={dataProvider}
-        liveProvider={liveProvider}
-        notificationProvider={notificationProvider}
-        options={{
-          liveMode: "auto",
-          syncWithLocation: true,
-          warnWhenUnsavedChanges: true,
-          disableTelemetry: true,
-          title: { text: siteConfig.name },
-        }}
-        resources={appResources as unknown as ResourceProps[]}
-        routerProvider={routerProvider}
-      >
-        {children}
-        <UnsavedChangesNotifier />
-        <DocumentTitleHandler />
-      </Refine>
-    </>
+      <RefineRoot>{children}</RefineRoot>
+    </LocaleProvider>
   );
 }

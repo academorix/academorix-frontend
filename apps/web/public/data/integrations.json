@@ -1,0 +1,67 @@
+[
+  {
+    "id": "int_stripe",
+    "tenant_id": "tnt_riverside",
+    "provider": "stripe",
+    "name": "Stripe",
+    "category": "payments",
+    "status": "connected",
+    "is_enabled": true,
+    "last_synced_at": "2026-06-30T07:45:00Z",
+    "note": "Live mode. Invoices and memberships sync automatically.",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-30T07:45:00Z"
+  },
+  {
+    "id": "int_reverb",
+    "tenant_id": "tnt_riverside",
+    "provider": "reverb",
+    "name": "Laravel Reverb",
+    "category": "realtime",
+    "status": "connected",
+    "is_enabled": true,
+    "last_synced_at": "2026-06-30T08:10:00Z",
+    "note": "WebSocket transport for live notifications and attendance.",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-30T08:10:00Z"
+  },
+  {
+    "id": "int_sendgrid",
+    "tenant_id": "tnt_riverside",
+    "provider": "sendgrid",
+    "name": "SendGrid",
+    "category": "messaging",
+    "status": "connected",
+    "is_enabled": true,
+    "last_synced_at": "2026-06-29T18:00:00Z",
+    "note": "Transactional email for invoices and announcements.",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-29T18:00:00Z"
+  },
+  {
+    "id": "int_gcal",
+    "tenant_id": "tnt_riverside",
+    "provider": "google_calendar",
+    "name": "Google Calendar",
+    "category": "calendar",
+    "status": "disconnected",
+    "is_enabled": false,
+    "last_synced_at": null,
+    "note": "Not yet connected. Enable to publish events to staff calendars.",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-01T10:00:00Z"
+  },
+  {
+    "id": "int_twilio",
+    "tenant_id": "tnt_riverside",
+    "provider": "twilio",
+    "name": "Twilio SMS",
+    "category": "messaging",
+    "status": "error",
+    "is_enabled": true,
+    "last_synced_at": "2026-06-28T12:00:00Z",
+    "note": "Auth token expired — reconnect required to resume SMS reminders.",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-28T12:00:00Z"
+  }
+]

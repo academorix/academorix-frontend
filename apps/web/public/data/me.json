@@ -64,7 +64,12 @@
       "conversations",
       "reports",
       "leads",
-      "ai"
+      "ai",
+      "awards",
+      "passes",
+      "public-site",
+      "integrations",
+      "offline-sync"
     ],
     "terminology": { "athletes": "Students" },
     "tenant": {

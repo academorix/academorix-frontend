@@ -47,6 +47,7 @@ import type { Identity } from "@/types";
 import type { IconType } from "@academorix/ui/icons";
 import type { Key, ReactNode } from "react";
 
+import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import {
   BranchSwitcher,
   OrganizationSwitcher,
@@ -253,6 +254,7 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps): Rea
               <BranchSwitcher />
               <SeasonSwitcher />
             </div>
+            <LanguageSwitcher />
             <ThemeSwitcher />
             <UserMenu />
           </Navbar.Header>
