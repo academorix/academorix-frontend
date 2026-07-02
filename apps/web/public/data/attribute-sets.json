@@ -171,5 +171,97 @@
         ]
       }
     ]
+  },
+  {
+    "id": "attrset_progress_football_v1",
+    "code": "progress.football",
+    "entity_type": "progress",
+    "discriminator_field": "sport_key",
+    "discriminator_value": "football",
+    "version": 1,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-01-01T09:00:00Z",
+    "groups": [
+      {
+        "code": "technical",
+        "label": { "en": "Technical", "ar": "المهارات الفنية" },
+        "collapsible": false,
+        "order": 1,
+        "attributes": [
+          {
+            "code": "finishing",
+            "label": { "en": "Finishing", "ar": "الإنهاء" },
+            "type": "integer",
+            "widget": "slider",
+            "validation": { "required": false, "min": 1, "max": 100, "step": 1 },
+            "order": 1
+          },
+          {
+            "code": "passing",
+            "label": { "en": "Passing", "ar": "التمرير" },
+            "type": "integer",
+            "widget": "slider",
+            "validation": { "required": false, "min": 1, "max": 100, "step": 1 },
+            "order": 2
+          },
+          {
+            "code": "ball_control",
+            "label": { "en": "Ball Control", "ar": "التحكم بالكرة" },
+            "type": "integer",
+            "widget": "slider",
+            "validation": { "required": false, "min": 1, "max": 100, "step": 1 },
+            "order": 3
+          }
+        ]
+      },
+      {
+        "code": "physical",
+        "label": { "en": "Physical", "ar": "البدني" },
+        "collapsible": false,
+        "order": 2,
+        "attributes": [
+          {
+            "code": "pace",
+            "label": { "en": "Pace", "ar": "السرعة" },
+            "type": "integer",
+            "widget": "slider",
+            "validation": { "required": false, "min": 1, "max": 100, "step": 1 },
+            "order": 1
+          },
+          {
+            "code": "stamina",
+            "label": { "en": "Stamina", "ar": "التحمل" },
+            "type": "integer",
+            "widget": "slider",
+            "validation": { "required": false, "min": 1, "max": 100, "step": 1 },
+            "order": 2
+          }
+        ]
+      },
+      {
+        "code": "mental",
+        "label": { "en": "Mental", "ar": "الذهني" },
+        "collapsible": false,
+        "order": 3,
+        "attributes": [
+          {
+            "code": "composure",
+            "label": { "en": "Composure", "ar": "الهدوء" },
+            "type": "integer",
+            "widget": "slider",
+            "validation": { "required": false, "min": 1, "max": 100, "step": 1 },
+            "order": 1
+          },
+          {
+            "code": "coachable",
+            "label": { "en": "Coachable", "ar": "قابلية التدريب" },
+            "type": "boolean",
+            "widget": "switch",
+            "validation": { "required": false },
+            "order": 2
+          }
+        ]
+      }
+    ]
   }
 ]

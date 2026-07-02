@@ -1,35 +1,45 @@
 /**
- * @file coaches.module.tsx
- * @module modules/coaches
+ * @file coaching.module.tsx
+ * @module modules/sports/coaching
  *
  * @description
- * Coaches module manifest. Uses the shared coming-soon page until a bespoke
- * screen is built; the resource, permission gate, and mock fixture already exist.
+ * The Coaching module — a view over Staff surfacing coach→team assignments per
+ * season. List + detail, scoped by branch + season. The `coaches` resource is
+ * backed by coaching-assignment records.
+ *
+ * @see DOMAIN_MODULES_BLUEPRINT.md §12.3 "Coaching"
  */
 
-import { UsersIcon } from "@academorix/ui/icons/outline";
+import { UserIcon } from "@academorix/ui/icons/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";
 
-const ComingSoonPage = lazy(() => import("@/components/coming-soon"));
+const CoachingListPage = lazy(() => import("@/modules/sports/coaching/pages/list"));
+const CoachingShowPage = lazy(() => import("@/modules/sports/coaching/pages/show"));
 
-const coachesModule: AppModule = {
-  name: "coaches",
+/** The Coaching feature module. */
+const coachingModule: AppModule = {
+  name: "coaching",
   resources: [
     {
       name: "coaches",
       list: "/coaches",
+      show: "/coaches/:id",
       meta: {
-        label: "Coaches",
-        icon: UsersIcon,
+        label: "Coaching",
+        icon: UserIcon,
         featureKey: "coaches",
         requiredPermission: "coaches.viewAny",
-        order: 20,
+        order: 16,
+        scopedBy: ["branch", "season"],
       },
     },
   ],
-  routes: [{ tier: "protected", path: "/coaches", element: createElement(ComingSoonPage) }],
+  routes: [
+    { tier: "protected", path: "/coaches", element: createElement(CoachingListPage) },
+    { tier: "protected", path: "/coaches/:id", element: createElement(CoachingShowPage) },
+  ],
 };
 
-export default coachesModule;
+export default coachingModule;
