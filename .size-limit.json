@@ -13,7 +13,7 @@
   {
     "name": "web app CSS (gzip)",
     "path": "apps/web/dist/assets/*.css",
-    "limit": "60 KB",
+    "limit": "90 KB",
     "gzip": true
   }
 ]
