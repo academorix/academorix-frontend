@@ -1,0 +1,77 @@
+[
+  {
+    "id": "inv_1001",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
+    "customer_id": "usr_guardian_emma",
+    "athlete_id": "ath_emma",
+    "number": "INV-1001",
+    "status": "paid",
+    "currency": "USD",
+    "total": "300.00",
+    "amount_paid": "300.00",
+    "lines": [
+      {
+        "description": "Term fee — U12 Football",
+        "quantity": 1,
+        "unit_price": "300.00",
+        "amount": "300.00"
+      }
+    ],
+    "due_at": "2025-09-15",
+    "issued_at": "2025-09-01",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-10T09:00:00Z"
+  },
+  {
+    "id": "inv_1002",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
+    "customer_id": "usr_guardian_emma",
+    "athlete_id": "ath_emma",
+    "number": "INV-1002",
+    "status": "open",
+    "currency": "USD",
+    "total": "120.00",
+    "amount_paid": "0.00",
+    "lines": [
+      {
+        "description": "Swim program — Term 2",
+        "quantity": 1,
+        "unit_price": "120.00",
+        "amount": "120.00"
+      }
+    ],
+    "due_at": "2026-07-15",
+    "issued_at": "2026-06-25",
+    "created_at": "2026-06-25T10:00:00Z",
+    "updated_at": "2026-06-25T10:00:00Z"
+  },
+  {
+    "id": "inv_1003",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_marina",
+    "customer_id": "usr_guardian_noah",
+    "athlete_id": "ath_noah",
+    "number": "INV-1003",
+    "status": "overdue",
+    "currency": "USD",
+    "total": "300.00",
+    "amount_paid": "150.00",
+    "lines": [
+      {
+        "description": "Term fee — Marina squad",
+        "quantity": 1,
+        "unit_price": "300.00",
+        "amount": "300.00"
+      }
+    ],
+    "due_at": "2026-06-01",
+    "issued_at": "2026-05-01",
+    "created_at": "2026-05-01T10:00:00Z",
+    "updated_at": "2026-06-05T09:00:00Z"
+  }
+]

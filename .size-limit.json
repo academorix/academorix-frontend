@@ -1,18 +1,19 @@
 [
   {
-    "name": "web app initial JS (gzip)",
+    "name": "web app initial JS — app + React + Refine core (gzip)",
     "path": [
       "apps/web/dist/assets/index-*.js",
       "apps/web/dist/assets/react-vendor-*.js",
+      "apps/web/dist/assets/refine-vendor-*.js",
       "apps/web/dist/assets/rolldown-runtime-*.js"
     ],
-    "limit": "130 KB",
+    "limit": "210 KB",
     "gzip": true
   },
   {
     "name": "web app CSS (gzip)",
     "path": "apps/web/dist/assets/*.css",
-    "limit": "60 KB",
+    "limit": "90 KB",
     "gzip": true
   }
 ]

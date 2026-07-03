@@ -1,0 +1,22 @@
+[
+  {
+    "id": "cnv_u12",
+    "tenant_id": "tnt_riverside",
+    "branch_id": "brn_river",
+    "subject": "U12 Falcons — parents group",
+    "participant_count": 12,
+    "last_message_at": "2026-06-30T18:20:00Z",
+    "created_at": "2025-09-05T10:00:00Z",
+    "updated_at": "2026-06-30T18:20:00Z"
+  },
+  {
+    "id": "cnv_emma",
+    "tenant_id": "tnt_riverside",
+    "branch_id": "brn_river",
+    "subject": "Emma Johnson — coach & guardian",
+    "participant_count": 2,
+    "last_message_at": "2026-06-25T09:10:00Z",
+    "created_at": "2026-06-20T10:00:00Z",
+    "updated_at": "2026-06-25T09:10:00Z"
+  }
+]

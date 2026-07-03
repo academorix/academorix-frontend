@@ -1,0 +1,26 @@
+[
+  {
+    "id": "tmm_emma",
+    "tenant_id": "tnt_riverside",
+    "team_id": "tm_river_u12",
+    "member_id": "ath_emma",
+    "member_type": "athlete",
+    "position": "midfielder",
+    "is_captain": true,
+    "joined_at": "2025-09-05",
+    "created_at": "2025-09-05T10:00:00Z",
+    "updated_at": "2026-06-01T09:00:00Z"
+  },
+  {
+    "id": "tmm_liam",
+    "tenant_id": "tnt_riverside",
+    "team_id": "tm_river_u12",
+    "member_id": "ath_liam",
+    "member_type": "athlete",
+    "position": "forward",
+    "is_captain": false,
+    "joined_at": "2025-09-06",
+    "created_at": "2025-09-06T10:00:00Z",
+    "updated_at": "2026-06-01T09:00:00Z"
+  }
+]

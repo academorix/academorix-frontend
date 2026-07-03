@@ -1,0 +1,50 @@
+[
+  {
+    "id": "exp_1",
+    "tenant_id": "tnt_riverside",
+    "branch_id": "brn_river",
+    "category": "rent",
+    "amount": "2500.00",
+    "currency": "USD",
+    "status": "paid",
+    "description": "Monthly facility rent",
+    "is_recurring": true,
+    "recurrence": "monthly",
+    "receipt_document_id": null,
+    "incurred_at": "2026-01-01",
+    "created_at": "2026-01-01T09:00:00Z",
+    "updated_at": "2026-01-05T09:00:00Z"
+  },
+  {
+    "id": "exp_2",
+    "tenant_id": "tnt_riverside",
+    "branch_id": "brn_river",
+    "category": "equipment",
+    "amount": "1200.00",
+    "currency": "USD",
+    "status": "approved",
+    "description": "Replacement training goals and nets",
+    "is_recurring": false,
+    "recurrence": null,
+    "receipt_document_id": null,
+    "incurred_at": "2026-02-15",
+    "created_at": "2026-02-15T09:00:00Z",
+    "updated_at": "2026-02-16T09:00:00Z"
+  },
+  {
+    "id": "exp_3",
+    "tenant_id": "tnt_riverside",
+    "branch_id": "brn_river",
+    "category": "utilities",
+    "amount": "340.00",
+    "currency": "USD",
+    "status": "draft",
+    "description": "Electricity and water — Q1",
+    "is_recurring": false,
+    "recurrence": null,
+    "receipt_document_id": null,
+    "incurred_at": "2026-03-05",
+    "created_at": "2026-03-05T09:00:00Z",
+    "updated_at": "2026-03-05T09:00:00Z"
+  }
+]

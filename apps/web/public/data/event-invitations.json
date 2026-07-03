@@ -1,0 +1,42 @@
+[
+  {
+    "id": "einv_train_emma",
+    "tenant_id": "tnt_riverside",
+    "event_id": "evt_u12_training_1",
+    "athlete_id": "ath_emma",
+    "rsvp": "going",
+    "responded_at": "2026-06-21T09:00:00Z",
+    "created_at": "2026-06-20T10:00:00Z",
+    "updated_at": "2026-06-21T09:00:00Z"
+  },
+  {
+    "id": "einv_train_liam",
+    "tenant_id": "tnt_riverside",
+    "event_id": "evt_u12_training_1",
+    "athlete_id": "ath_liam",
+    "rsvp": "going",
+    "responded_at": "2026-06-21T10:00:00Z",
+    "created_at": "2026-06-20T10:00:00Z",
+    "updated_at": "2026-06-21T10:00:00Z"
+  },
+  {
+    "id": "einv_match_emma",
+    "tenant_id": "tnt_riverside",
+    "event_id": "evt_u12_match_1",
+    "athlete_id": "ath_emma",
+    "rsvp": "going",
+    "responded_at": "2026-06-23T09:00:00Z",
+    "created_at": "2026-06-22T10:00:00Z",
+    "updated_at": "2026-06-23T09:00:00Z"
+  },
+  {
+    "id": "einv_match_liam",
+    "tenant_id": "tnt_riverside",
+    "event_id": "evt_u12_match_1",
+    "athlete_id": "ath_liam",
+    "rsvp": "maybe",
+    "responded_at": null,
+    "created_at": "2026-06-22T10:00:00Z",
+    "updated_at": "2026-06-22T10:00:00Z"
+  }
+]

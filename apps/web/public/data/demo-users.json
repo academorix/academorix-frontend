@@ -1,0 +1,799 @@
+[
+  {
+    "id": "usr_owner",
+    "tenant_id": "tnt_riverside",
+    "email": "owner@academorix.test",
+    "username": "owner",
+    "phone": "+1 555 0100",
+    "status": "active",
+    "email_verified_at": "2025-09-01T10:00:00Z",
+    "phone_verified_at": "2025-09-01T10:00:00Z",
+    "last_login_at": "2026-06-30T08:15:00Z",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-30T08:15:00Z",
+    "profile": {
+      "first_name": "Alex",
+      "last_name": "Rivera",
+      "display_name": "Alex Rivera",
+      "avatar_url": null,
+      "locale": "en",
+      "timezone": "America/New_York"
+    },
+    "roles": ["owner"],
+    "permissions": ["*"],
+    "features": [
+      "dashboard",
+      "organizations",
+      "branches",
+      "regions",
+      "sports",
+      "attributes",
+      "documents",
+      "notification-templates",
+      "athletes",
+      "teams",
+      "seasons",
+      "registrations",
+      "events",
+      "payments",
+      "memberships",
+      "staff",
+      "users",
+      "roles",
+      "reception",
+      "admin",
+      "subscription",
+      "facilities",
+      "people",
+      "coaches",
+      "training-sessions",
+      "matches",
+      "private-sessions",
+      "attendance",
+      "progress",
+      "performance",
+      "medical",
+      "development",
+      "drills",
+      "competitions",
+      "formations",
+      "safeguarding",
+      "expenses",
+      "credentials",
+      "announcements",
+      "conversations",
+      "reports",
+      "leads",
+      "ai",
+      "awards",
+      "passes",
+      "public-site",
+      "integrations",
+      "offline-sync"
+    ],
+    "terminology": { "athletes": "Students" },
+    "tenant": {
+      "id": "tnt_riverside",
+      "slug": "riverside",
+      "name": "Riverside Sports Academy",
+      "business_type": "academy",
+      "branding": { "logo_url": null, "primary_color": null, "favicon_url": null }
+    },
+    "tenants": [
+      {
+        "id": "tnt_riverside",
+        "slug": "riverside",
+        "name": "Riverside Sports Academy",
+        "business_type": "academy"
+      }
+    ],
+    "scopes": {
+      "organizations": [
+        { "id": "org_riverside", "name": "Riverside (Main)", "is_default": true },
+        { "id": "org_downtown", "name": "Downtown Division", "is_default": false }
+      ],
+      "branches": [
+        {
+          "id": "brn_river",
+          "name": "Riverside HQ",
+          "organization_id": "org_riverside",
+          "region_id": "reg_us_east",
+          "is_default": true
+        },
+        {
+          "id": "brn_marina",
+          "name": "Marina Center",
+          "organization_id": "org_riverside",
+          "region_id": "reg_us_east",
+          "is_default": false
+        },
+        {
+          "id": "brn_downtown",
+          "name": "Downtown Arena",
+          "organization_id": "org_downtown",
+          "region_id": "reg_us_east",
+          "is_default": true
+        }
+      ],
+      "seasons": [
+        { "id": "ssn_2025_26", "name": "2025/26", "status": "active", "is_current": true },
+        { "id": "ssn_2026_27", "name": "2026/27", "status": "upcoming", "is_current": false }
+      ]
+    }
+  },
+  {
+    "id": "usr_admin",
+    "tenant_id": "tnt_riverside",
+    "email": "admin@academorix.test",
+    "username": "admin",
+    "phone": "+1 555 0101",
+    "status": "active",
+    "email_verified_at": "2025-09-01T10:00:00Z",
+    "phone_verified_at": null,
+    "last_login_at": "2026-06-29T14:00:00Z",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-29T14:00:00Z",
+    "profile": {
+      "first_name": "Dana",
+      "last_name": "Whitfield",
+      "display_name": "Dana Whitfield",
+      "avatar_url": null,
+      "locale": "en",
+      "timezone": "America/New_York"
+    },
+    "roles": ["admin"],
+    "permissions": ["*"],
+    "features": [
+      "dashboard",
+      "organizations",
+      "branches",
+      "regions",
+      "sports",
+      "attributes",
+      "documents",
+      "notification-templates",
+      "athletes",
+      "teams",
+      "seasons",
+      "registrations",
+      "events",
+      "payments",
+      "memberships",
+      "staff",
+      "users",
+      "roles",
+      "reception",
+      "admin",
+      "facilities",
+      "people",
+      "coaches",
+      "training-sessions",
+      "matches",
+      "private-sessions",
+      "attendance",
+      "progress",
+      "performance",
+      "medical",
+      "development",
+      "drills",
+      "competitions",
+      "formations",
+      "safeguarding",
+      "expenses",
+      "credentials",
+      "announcements",
+      "conversations",
+      "reports",
+      "leads",
+      "ai",
+      "awards",
+      "passes",
+      "public-site",
+      "integrations",
+      "offline-sync"
+    ],
+    "terminology": { "athletes": "Students" },
+    "tenant": {
+      "id": "tnt_riverside",
+      "slug": "riverside",
+      "name": "Riverside Sports Academy",
+      "business_type": "academy",
+      "branding": { "logo_url": null, "primary_color": null, "favicon_url": null }
+    },
+    "tenants": [
+      {
+        "id": "tnt_riverside",
+        "slug": "riverside",
+        "name": "Riverside Sports Academy",
+        "business_type": "academy"
+      }
+    ],
+    "scopes": {
+      "organizations": [
+        { "id": "org_riverside", "name": "Riverside (Main)", "is_default": true },
+        { "id": "org_downtown", "name": "Downtown Division", "is_default": false }
+      ],
+      "branches": [
+        {
+          "id": "brn_river",
+          "name": "Riverside HQ",
+          "organization_id": "org_riverside",
+          "region_id": "reg_us_east",
+          "is_default": true
+        },
+        {
+          "id": "brn_marina",
+          "name": "Marina Center",
+          "organization_id": "org_riverside",
+          "region_id": "reg_us_east",
+          "is_default": false
+        },
+        {
+          "id": "brn_downtown",
+          "name": "Downtown Arena",
+          "organization_id": "org_downtown",
+          "region_id": "reg_us_east",
+          "is_default": true
+        }
+      ],
+      "seasons": [
+        { "id": "ssn_2025_26", "name": "2025/26", "status": "active", "is_current": true },
+        { "id": "ssn_2026_27", "name": "2026/27", "status": "upcoming", "is_current": false }
+      ]
+    }
+  },
+  {
+    "id": "stf_coach_mike",
+    "tenant_id": "tnt_riverside",
+    "email": "coach.mike@academorix.test",
+    "username": "coach_mike",
+    "phone": "+1 555 0110",
+    "status": "active",
+    "email_verified_at": "2025-09-01T10:00:00Z",
+    "phone_verified_at": null,
+    "last_login_at": "2026-06-30T07:00:00Z",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-30T07:00:00Z",
+    "profile": {
+      "first_name": "Mike",
+      "last_name": "Thompson",
+      "display_name": "Coach Mike",
+      "avatar_url": null,
+      "locale": "en",
+      "timezone": "America/New_York"
+    },
+    "roles": ["head_coach"],
+    "permissions": [
+      "athletes.viewAny",
+      "athletes.view",
+      "athletes.create",
+      "athletes.update",
+      "teams.viewAny",
+      "teams.view",
+      "teams.create",
+      "teams.update",
+      "teams.delete",
+      "seasons.viewAny",
+      "seasons.view",
+      "registrations.viewAny",
+      "registrations.view",
+      "registrations.update",
+      "events.viewAny",
+      "events.view",
+      "events.create",
+      "events.update",
+      "events.delete",
+      "facilities.viewAny",
+      "facilities.view",
+      "coaches.viewAny",
+      "coaches.view",
+      "training-sessions.viewAny",
+      "training-sessions.view",
+      "training-sessions.create",
+      "training-sessions.update",
+      "training-sessions.delete",
+      "matches.viewAny",
+      "matches.view",
+      "matches.create",
+      "matches.update",
+      "matches.delete",
+      "private-sessions.viewAny",
+      "private-sessions.view",
+      "private-sessions.create",
+      "private-sessions.update",
+      "attendance.viewAny",
+      "attendance.view",
+      "attendance.create",
+      "attendance.update",
+      "progress.viewAny",
+      "progress.view",
+      "progress.create",
+      "progress.update",
+      "performance.viewAny",
+      "performance.view",
+      "performance.create",
+      "performance.update",
+      "development.viewAny",
+      "development.view",
+      "development.create",
+      "development.update",
+      "drills.viewAny",
+      "drills.view",
+      "drills.create",
+      "drills.update",
+      "drills.delete",
+      "competitions.viewAny",
+      "competitions.view",
+      "competitions.create",
+      "competitions.update",
+      "formations.viewAny",
+      "formations.view",
+      "formations.create",
+      "formations.update",
+      "formations.delete",
+      "awards.viewAny",
+      "awards.view",
+      "awards.create",
+      "awards.update",
+      "announcements.viewAny",
+      "announcements.view",
+      "announcements.create",
+      "announcements.update",
+      "conversations.viewAny",
+      "conversations.view",
+      "conversations.create",
+      "reports.viewAny",
+      "reports.view"
+    ],
+    "features": [
+      "dashboard",
+      "athletes",
+      "teams",
+      "seasons",
+      "registrations",
+      "events",
+      "facilities",
+      "coaches",
+      "training-sessions",
+      "matches",
+      "private-sessions",
+      "attendance",
+      "progress",
+      "performance",
+      "development",
+      "drills",
+      "competitions",
+      "formations",
+      "awards",
+      "announcements",
+      "conversations",
+      "reports"
+    ],
+    "terminology": { "athletes": "Students" },
+    "tenant": {
+      "id": "tnt_riverside",
+      "slug": "riverside",
+      "name": "Riverside Sports Academy",
+      "business_type": "academy",
+      "branding": { "logo_url": null, "primary_color": null, "favicon_url": null }
+    },
+    "tenants": [
+      {
+        "id": "tnt_riverside",
+        "slug": "riverside",
+        "name": "Riverside Sports Academy",
+        "business_type": "academy"
+      }
+    ],
+    "scopes": {
+      "organizations": [{ "id": "org_riverside", "name": "Riverside (Main)", "is_default": true }],
+      "branches": [
+        {
+          "id": "brn_river",
+          "name": "Riverside HQ",
+          "organization_id": "org_riverside",
+          "region_id": "reg_us_east",
+          "is_default": true
+        },
+        {
+          "id": "brn_marina",
+          "name": "Marina Center",
+          "organization_id": "org_riverside",
+          "region_id": "reg_us_east",
+          "is_default": false
+        }
+      ],
+      "seasons": [
+        { "id": "ssn_2025_26", "name": "2025/26", "status": "active", "is_current": true },
+        { "id": "ssn_2026_27", "name": "2026/27", "status": "upcoming", "is_current": false }
+      ]
+    }
+  },
+  {
+    "id": "stf_coach_sara",
+    "tenant_id": "tnt_riverside",
+    "email": "coach.sara@academorix.test",
+    "username": "coach_sara",
+    "phone": "+1 555 0111",
+    "status": "active",
+    "email_verified_at": "2025-09-01T10:00:00Z",
+    "phone_verified_at": null,
+    "last_login_at": "2026-06-30T06:30:00Z",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-30T06:30:00Z",
+    "profile": {
+      "first_name": "Sara",
+      "last_name": "Nolan",
+      "display_name": "Coach Sara",
+      "avatar_url": null,
+      "locale": "en",
+      "timezone": "America/New_York"
+    },
+    "roles": ["coach"],
+    "permissions": [
+      "athletes.viewAny",
+      "athletes.view",
+      "teams.viewAny",
+      "teams.view",
+      "events.viewAny",
+      "events.view",
+      "training-sessions.viewAny",
+      "training-sessions.view",
+      "matches.viewAny",
+      "matches.view",
+      "attendance.viewAny",
+      "attendance.view",
+      "attendance.create",
+      "attendance.update",
+      "progress.viewAny",
+      "progress.view",
+      "progress.create",
+      "progress.update",
+      "performance.viewAny",
+      "performance.view",
+      "development.viewAny",
+      "development.view",
+      "drills.viewAny",
+      "drills.view",
+      "announcements.viewAny",
+      "announcements.view",
+      "conversations.viewAny",
+      "conversations.view",
+      "conversations.create"
+    ],
+    "features": [
+      "dashboard",
+      "athletes",
+      "teams",
+      "events",
+      "training-sessions",
+      "matches",
+      "attendance",
+      "progress",
+      "performance",
+      "development",
+      "drills",
+      "announcements",
+      "conversations"
+    ],
+    "terminology": { "athletes": "Students" },
+    "tenant": {
+      "id": "tnt_riverside",
+      "slug": "riverside",
+      "name": "Riverside Sports Academy",
+      "business_type": "academy",
+      "branding": { "logo_url": null, "primary_color": null, "favicon_url": null }
+    },
+    "tenants": [
+      {
+        "id": "tnt_riverside",
+        "slug": "riverside",
+        "name": "Riverside Sports Academy",
+        "business_type": "academy"
+      }
+    ],
+    "scopes": {
+      "organizations": [{ "id": "org_riverside", "name": "Riverside (Main)", "is_default": true }],
+      "branches": [
+        {
+          "id": "brn_river",
+          "name": "Riverside HQ",
+          "organization_id": "org_riverside",
+          "region_id": "reg_us_east",
+          "is_default": true
+        }
+      ],
+      "seasons": [
+        { "id": "ssn_2025_26", "name": "2025/26", "status": "active", "is_current": true }
+      ]
+    }
+  },
+  {
+    "id": "stf_reception_amy",
+    "tenant_id": "tnt_riverside",
+    "email": "reception@academorix.test",
+    "username": "reception_amy",
+    "phone": "+1 555 0120",
+    "status": "active",
+    "email_verified_at": "2025-09-01T10:00:00Z",
+    "phone_verified_at": null,
+    "last_login_at": "2026-06-30T08:00:00Z",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-30T08:00:00Z",
+    "profile": {
+      "first_name": "Amy",
+      "last_name": "Chen",
+      "display_name": "Amy Chen",
+      "avatar_url": null,
+      "locale": "en",
+      "timezone": "America/New_York"
+    },
+    "roles": ["reception"],
+    "permissions": [
+      "athletes.viewAny",
+      "athletes.view",
+      "athletes.create",
+      "athletes.update",
+      "registrations.viewAny",
+      "registrations.view",
+      "registrations.create",
+      "registrations.update",
+      "registrations.delete",
+      "leads.viewAny",
+      "leads.view",
+      "leads.create",
+      "leads.update",
+      "leads.delete",
+      "reception.viewAny",
+      "approval-tasks.viewAny",
+      "approval-tasks.view",
+      "approval-tasks.update",
+      "memberships.viewAny",
+      "memberships.view",
+      "invoices.viewAny",
+      "invoices.view",
+      "passes.viewAny",
+      "passes.view",
+      "passes.create",
+      "passes.update",
+      "passes.delete",
+      "events.viewAny",
+      "events.view",
+      "announcements.viewAny",
+      "announcements.view",
+      "conversations.viewAny",
+      "conversations.view",
+      "conversations.create"
+    ],
+    "features": [
+      "dashboard",
+      "athletes",
+      "registrations",
+      "leads",
+      "reception",
+      "memberships",
+      "payments",
+      "passes",
+      "events",
+      "announcements",
+      "conversations"
+    ],
+    "terminology": { "athletes": "Students" },
+    "tenant": {
+      "id": "tnt_riverside",
+      "slug": "riverside",
+      "name": "Riverside Sports Academy",
+      "business_type": "academy",
+      "branding": { "logo_url": null, "primary_color": null, "favicon_url": null }
+    },
+    "tenants": [
+      {
+        "id": "tnt_riverside",
+        "slug": "riverside",
+        "name": "Riverside Sports Academy",
+        "business_type": "academy"
+      }
+    ],
+    "scopes": {
+      "organizations": [{ "id": "org_riverside", "name": "Riverside (Main)", "is_default": true }],
+      "branches": [
+        {
+          "id": "brn_river",
+          "name": "Riverside HQ",
+          "organization_id": "org_riverside",
+          "region_id": "reg_us_east",
+          "is_default": true
+        }
+      ],
+      "seasons": [
+        { "id": "ssn_2025_26", "name": "2025/26", "status": "active", "is_current": true }
+      ]
+    }
+  },
+  {
+    "id": "stf_finance_omar",
+    "tenant_id": "tnt_riverside",
+    "email": "finance@academorix.test",
+    "username": "finance_omar",
+    "phone": "+1 555 0130",
+    "status": "active",
+    "email_verified_at": "2025-09-01T10:00:00Z",
+    "phone_verified_at": null,
+    "last_login_at": "2026-06-28T16:00:00Z",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-28T16:00:00Z",
+    "profile": {
+      "first_name": "Omar",
+      "last_name": "Haddad",
+      "display_name": "Omar Haddad",
+      "avatar_url": null,
+      "locale": "en",
+      "timezone": "America/New_York"
+    },
+    "roles": ["finance"],
+    "permissions": [
+      "invoices.viewAny",
+      "invoices.view",
+      "invoices.create",
+      "invoices.update",
+      "invoices.delete",
+      "memberships.viewAny",
+      "memberships.view",
+      "memberships.create",
+      "memberships.update",
+      "memberships.delete",
+      "expenses.viewAny",
+      "expenses.view",
+      "expenses.create",
+      "expenses.update",
+      "expenses.delete",
+      "subscription.viewAny",
+      "subscription.view",
+      "subscription.update",
+      "reports.viewAny",
+      "reports.view"
+    ],
+    "features": ["dashboard", "payments", "memberships", "expenses", "subscription", "reports"],
+    "terminology": { "athletes": "Students" },
+    "tenant": {
+      "id": "tnt_riverside",
+      "slug": "riverside",
+      "name": "Riverside Sports Academy",
+      "business_type": "academy",
+      "branding": { "logo_url": null, "primary_color": null, "favicon_url": null }
+    },
+    "tenants": [
+      {
+        "id": "tnt_riverside",
+        "slug": "riverside",
+        "name": "Riverside Sports Academy",
+        "business_type": "academy"
+      }
+    ],
+    "scopes": {
+      "organizations": [
+        { "id": "org_riverside", "name": "Riverside (Main)", "is_default": true },
+        { "id": "org_downtown", "name": "Downtown Division", "is_default": false }
+      ],
+      "branches": [
+        {
+          "id": "brn_river",
+          "name": "Riverside HQ",
+          "organization_id": "org_riverside",
+          "region_id": "reg_us_east",
+          "is_default": true
+        },
+        {
+          "id": "brn_marina",
+          "name": "Marina Center",
+          "organization_id": "org_riverside",
+          "region_id": "reg_us_east",
+          "is_default": false
+        },
+        {
+          "id": "brn_downtown",
+          "name": "Downtown Arena",
+          "organization_id": "org_downtown",
+          "region_id": "reg_us_east",
+          "is_default": true
+        }
+      ],
+      "seasons": [
+        { "id": "ssn_2025_26", "name": "2025/26", "status": "active", "is_current": true },
+        { "id": "ssn_2026_27", "name": "2026/27", "status": "upcoming", "is_current": false }
+      ]
+    }
+  },
+  {
+    "id": "stf_medical_nadia",
+    "tenant_id": "tnt_riverside",
+    "email": "medical@academorix.test",
+    "username": "medical_nadia",
+    "phone": "+1 555 0140",
+    "status": "active",
+    "email_verified_at": "2025-09-01T10:00:00Z",
+    "phone_verified_at": null,
+    "last_login_at": "2026-06-27T11:00:00Z",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-27T11:00:00Z",
+    "profile": {
+      "first_name": "Nadia",
+      "last_name": "Farouk",
+      "display_name": "Dr. Nadia Farouk",
+      "avatar_url": null,
+      "locale": "en",
+      "timezone": "America/New_York"
+    },
+    "roles": ["medical_officer"],
+    "permissions": [
+      "athletes.viewAny",
+      "athletes.view",
+      "medical.viewAny",
+      "medical.view",
+      "medical.create",
+      "medical.update",
+      "medical.delete",
+      "safeguarding.viewAny",
+      "safeguarding.view",
+      "safeguarding.create",
+      "safeguarding.update",
+      "safeguarding.delete",
+      "credentials.viewAny",
+      "credentials.view",
+      "credentials.create",
+      "credentials.update",
+      "announcements.viewAny",
+      "announcements.view",
+      "conversations.viewAny",
+      "conversations.view",
+      "conversations.create"
+    ],
+    "features": [
+      "dashboard",
+      "athletes",
+      "medical",
+      "safeguarding",
+      "credentials",
+      "announcements",
+      "conversations"
+    ],
+    "terminology": { "athletes": "Students" },
+    "tenant": {
+      "id": "tnt_riverside",
+      "slug": "riverside",
+      "name": "Riverside Sports Academy",
+      "business_type": "academy",
+      "branding": { "logo_url": null, "primary_color": null, "favicon_url": null }
+    },
+    "tenants": [
+      {
+        "id": "tnt_riverside",
+        "slug": "riverside",
+        "name": "Riverside Sports Academy",
+        "business_type": "academy"
+      }
+    ],
+    "scopes": {
+      "organizations": [{ "id": "org_riverside", "name": "Riverside (Main)", "is_default": true }],
+      "branches": [
+        {
+          "id": "brn_river",
+          "name": "Riverside HQ",
+          "organization_id": "org_riverside",
+          "region_id": "reg_us_east",
+          "is_default": true
+        },
+        {
+          "id": "brn_marina",
+          "name": "Marina Center",
+          "organization_id": "org_riverside",
+          "region_id": "reg_us_east",
+          "is_default": false
+        }
+      ],
+      "seasons": [
+        { "id": "ssn_2025_26", "name": "2025/26", "status": "active", "is_current": true }
+      ]
+    }
+  }
+]

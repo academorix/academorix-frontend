@@ -1,0 +1,38 @@
+[
+  {
+    "id": "awd_emma_potm",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_emma",
+    "type": "player_of_the_month",
+    "title": "Player of the Month — May",
+    "description": "Outstanding attitude and improvement across training and matches.",
+    "granted_at": "2026-06-01",
+    "certificate_document_id": "doc_cert_emma_potm",
+    "created_at": "2026-06-01T10:00:00Z",
+    "updated_at": "2026-06-01T10:00:00Z"
+  },
+  {
+    "id": "awd_liam_syllabus",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_liam",
+    "type": "syllabus_completion",
+    "title": "Level 2 Ball-Mastery Certificate",
+    "description": "Completed the Level 2 ball-mastery syllabus with distinction.",
+    "granted_at": "2026-02-02",
+    "certificate_document_id": null,
+    "created_at": "2026-02-02T10:00:00Z",
+    "updated_at": "2026-02-02T10:00:00Z"
+  },
+  {
+    "id": "awd_sofia_attendance",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_sofia",
+    "type": "attendance_star",
+    "title": "Perfect Attendance — Autumn Term",
+    "description": "100% attendance across the autumn training block.",
+    "granted_at": "2025-12-20",
+    "certificate_document_id": null,
+    "created_at": "2025-12-20T10:00:00Z",
+    "updated_at": "2025-12-20T10:00:00Z"
+  }
+]

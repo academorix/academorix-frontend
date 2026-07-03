@@ -1,0 +1,24 @@
+[
+  {
+    "id": "cas_mike_u12",
+    "tenant_id": "tnt_riverside",
+    "branch_id": "brn_river",
+    "season_id": "ssn_2025_26",
+    "staff_id": "stf_coach_mike",
+    "team_id": "tm_river_u12",
+    "role": "head_coach",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-01T09:00:00Z"
+  },
+  {
+    "id": "cas_sara_swim",
+    "tenant_id": "tnt_riverside",
+    "branch_id": "brn_river",
+    "season_id": "ssn_2025_26",
+    "staff_id": "stf_coach_sara",
+    "team_id": "tm_river_swim",
+    "role": "head_coach",
+    "created_at": "2025-09-10T10:00:00Z",
+    "updated_at": "2026-06-01T09:00:00Z"
+  }
+]

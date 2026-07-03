@@ -1,0 +1,90 @@
+[
+  {
+    "id": "aen_emma_football",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_emma",
+    "sport_key": "football",
+    "team_id": "tm_river_u12",
+    "season_id": "ssn_2025_26",
+    "squad_role": "midfielder",
+    "level": "intermediate",
+    "status": "active",
+    "enrolled_at": "2025-09-05",
+    "attributes": {
+      "primary_position": "mid",
+      "preferred_foot": "right",
+      "jersey_number": 8,
+      "pace": 78,
+      "shooting": 65,
+      "passing": 82,
+      "dribbling": 75
+    },
+    "created_at": "2025-09-05T10:00:00Z",
+    "updated_at": "2026-06-01T09:00:00Z"
+  },
+  {
+    "id": "aen_liam_football",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_liam",
+    "sport_key": "football",
+    "team_id": "tm_river_u12",
+    "season_id": "ssn_2025_26",
+    "squad_role": "forward",
+    "level": "advanced",
+    "status": "active",
+    "enrolled_at": "2025-09-06",
+    "attributes": {
+      "primary_position": "fwd",
+      "preferred_foot": "left",
+      "jersey_number": 9,
+      "pace": 88,
+      "shooting": 84,
+      "passing": 70,
+      "dribbling": 86
+    },
+    "created_at": "2025-09-06T10:00:00Z",
+    "updated_at": "2026-06-01T09:00:00Z"
+  },
+  {
+    "id": "aen_emma_swimming",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_emma",
+    "sport_key": "swimming",
+    "team_id": null,
+    "season_id": "ssn_2025_26",
+    "squad_role": null,
+    "level": "beginner",
+    "status": "active",
+    "enrolled_at": "2026-01-15",
+    "attributes": {
+      "primary_stroke": "freestyle",
+      "squad": "junior",
+      "pb_50m_free": 32.4,
+      "pb_100m_free": 71.2,
+      "competitive": false
+    },
+    "created_at": "2026-01-15T10:00:00Z",
+    "updated_at": "2026-06-01T09:00:00Z"
+  },
+  {
+    "id": "aen_noah_swimming",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_noah",
+    "sport_key": "swimming",
+    "team_id": null,
+    "season_id": "ssn_2025_26",
+    "squad_role": null,
+    "level": "advanced",
+    "status": "active",
+    "enrolled_at": "2025-10-02",
+    "attributes": {
+      "primary_stroke": "butterfly",
+      "squad": "senior",
+      "pb_50m_free": 26.8,
+      "pb_100m_free": 58.9,
+      "competitive": true
+    },
+    "created_at": "2025-10-02T10:00:00Z",
+    "updated_at": "2026-06-01T09:00:00Z"
+  }
+]

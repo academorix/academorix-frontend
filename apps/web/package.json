@@ -12,14 +12,21 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "codegen": "openapi-typescript ${ACADEMORIX_OPENAPI_URL:-http://localhost:8000/api/openapi.json} --output ./src/lib/api/schema.d.ts",
     "clean": "rm -rf dist coverage .turbo"
   },
   "dependencies": {
     "@academorix/ui": "workspace:*",
     "@heroui/styles": "catalog:",
+    "@refinedev/core": "catalog:",
+    "@refinedev/react-router": "catalog:",
+    "@tanstack/react-query": "catalog:",
+    "laravel-echo": "catalog:",
+    "openapi-fetch": "catalog:",
+    "pusher-js": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-router-dom": "catalog:",
+    "react-router": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -35,6 +42,7 @@
     "@vitest/coverage-v8": "catalog:",
     "eslint": "catalog:",
     "jsdom": "catalog:",
+    "openapi-typescript": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",

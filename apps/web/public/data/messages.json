@@ -1,0 +1,35 @@
+[
+  {
+    "id": "msg_1",
+    "tenant_id": "tnt_riverside",
+    "conversation_id": "cnv_u12",
+    "sender_id": "usr_coach_mike",
+    "sender_name": "Mike Turner",
+    "body": "Reminder: training moves to 4pm this Saturday.",
+    "sent_at": "2026-06-30T17:00:00Z",
+    "created_at": "2026-06-30T17:00:00Z",
+    "updated_at": "2026-06-30T17:00:00Z"
+  },
+  {
+    "id": "msg_2",
+    "tenant_id": "tnt_riverside",
+    "conversation_id": "cnv_u12",
+    "sender_id": "usr_guardian_emma",
+    "sender_name": "Dana Johnson",
+    "body": "Thanks — Emma will be there.",
+    "sent_at": "2026-06-30T18:20:00Z",
+    "created_at": "2026-06-30T18:20:00Z",
+    "updated_at": "2026-06-30T18:20:00Z"
+  },
+  {
+    "id": "msg_3",
+    "tenant_id": "tnt_riverside",
+    "conversation_id": "cnv_emma",
+    "sender_id": "usr_coach_mike",
+    "sender_name": "Mike Turner",
+    "body": "Emma's finishing has improved a lot this term.",
+    "sent_at": "2026-06-25T09:10:00Z",
+    "created_at": "2026-06-25T09:10:00Z",
+    "updated_at": "2026-06-25T09:10:00Z"
+  }
+]

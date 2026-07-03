@@ -1,0 +1,41 @@
+[
+  {
+    "id": "drl_rondo_4v1",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "football",
+    "name": "4v1 Rondo",
+    "description": "Four attackers keep possession against one defender in a tight grid. Emphasise first-touch away from pressure, body shape, and quick one-touch passing. Rotate the defender every 60 seconds.",
+    "tags": ["passing", "possession", "first-touch"],
+    "level": "beginner",
+    "duration_minutes": 15,
+    "media_document_id": null,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-01T10:00:00Z"
+  },
+  {
+    "id": "drl_cone_dribble",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "football",
+    "name": "Cone Slalom Dribbling",
+    "description": "Players dribble through a slalom of cones using both feet, focusing on close control and change of pace. Progress to head-up dribbling and a finish on the final rep.",
+    "tags": ["dribbling", "ball-control", "agility"],
+    "level": "intermediate",
+    "duration_minutes": 20,
+    "media_document_id": null,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-01T10:00:00Z"
+  },
+  {
+    "id": "drl_finishing_channels",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "football",
+    "name": "Wide Channel Crossing & Finishing",
+    "description": "Wingers deliver crosses from wide channels while two strikers attack near and far posts. Rotate service side and vary cross height. Track conversion rate across the session.",
+    "tags": ["finishing", "crossing", "movement"],
+    "level": "advanced",
+    "duration_minutes": 25,
+    "media_document_id": null,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-01T10:00:00Z"
+  }
+]

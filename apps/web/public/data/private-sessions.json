@@ -1,0 +1,36 @@
+[
+  {
+    "id": "ps_1",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
+    "season_id": "ssn_2025_26",
+    "coach_id": "stf_coach_mike",
+    "athlete_id": "ath_emma",
+    "sport_key": "football",
+    "starts_at": "2026-07-08T15:00:00Z",
+    "duration_minutes": 60,
+    "status": "scheduled",
+    "price": "45.00",
+    "currency": "USD",
+    "created_at": "2026-06-20T10:00:00Z",
+    "updated_at": "2026-06-20T10:00:00Z"
+  },
+  {
+    "id": "ps_2",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
+    "season_id": "ssn_2025_26",
+    "coach_id": "stf_coach_mike",
+    "athlete_id": "ath_liam",
+    "sport_key": "football",
+    "starts_at": "2026-06-25T16:00:00Z",
+    "duration_minutes": 60,
+    "status": "completed",
+    "price": "45.00",
+    "currency": "USD",
+    "created_at": "2026-06-10T10:00:00Z",
+    "updated_at": "2026-06-25T17:00:00Z"
+  }
+]

@@ -1,0 +1,41 @@
+[
+  {
+    "id": "ann_kickoff",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
+    "title": "2025/26 Season Kick-off",
+    "body": "Welcome back! Training resumes Monday. Please confirm your child's availability via the events tab.",
+    "audience": "all",
+    "status": "published",
+    "published_at": "2025-09-01T09:00:00Z",
+    "created_at": "2025-08-28T10:00:00Z",
+    "updated_at": "2025-09-01T09:00:00Z"
+  },
+  {
+    "id": "ann_kit",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
+    "title": "New Kit Available",
+    "body": "The 2025/26 home kit is now available at the front desk.",
+    "audience": "branch",
+    "status": "published",
+    "published_at": "2026-01-15T09:00:00Z",
+    "created_at": "2026-01-14T10:00:00Z",
+    "updated_at": "2026-01-15T09:00:00Z"
+  },
+  {
+    "id": "ann_tournament_draft",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
+    "title": "Summer Tournament (draft)",
+    "body": "Details to follow for the U12 summer tournament.",
+    "audience": "team",
+    "status": "draft",
+    "published_at": null,
+    "created_at": "2026-06-20T10:00:00Z",
+    "updated_at": "2026-06-20T10:00:00Z"
+  }
+]

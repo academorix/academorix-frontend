@@ -1,0 +1,22 @@
+[
+  {
+    "id": "sync_att_1",
+    "tenant_id": "tnt_riverside",
+    "entity": "attendance",
+    "summary": "12 attendance marks — U12 training (pitch 2)",
+    "captured_at": "2026-06-30T17:30:00Z",
+    "captured_by": "Coach Mike",
+    "created_at": "2026-06-30T17:30:00Z",
+    "updated_at": "2026-06-30T17:30:00Z"
+  },
+  {
+    "id": "sync_prog_1",
+    "tenant_id": "tnt_riverside",
+    "entity": "progress",
+    "summary": "Skill-card assessment — Emma Carter",
+    "captured_at": "2026-06-30T17:35:00Z",
+    "captured_by": "Coach Mike",
+    "created_at": "2026-06-30T17:35:00Z",
+    "updated_at": "2026-06-30T17:35:00Z"
+  }
+]
