@@ -16,6 +16,8 @@ import { createElement, lazy } from "react";
 import type { AppModule } from "@/lib/module";
 
 const SafeguardingListPage = lazy(() => import("@/modules/safeguarding/pages/list"));
+const SafeguardingCreatePage = lazy(() => import("@/modules/safeguarding/pages/create"));
+const SafeguardingEditPage = lazy(() => import("@/modules/safeguarding/pages/edit"));
 const SafeguardingShowPage = lazy(() => import("@/modules/safeguarding/pages/show"));
 
 /** The Safeguarding feature module. */
@@ -25,6 +27,8 @@ const safeguardingModule: AppModule = {
     {
       name: "safeguarding",
       list: "/safeguarding",
+      create: "/safeguarding/create",
+      edit: "/safeguarding/:id/edit",
       show: "/safeguarding/:id",
       meta: {
         label: "Safeguarding",
@@ -37,6 +41,16 @@ const safeguardingModule: AppModule = {
   ],
   routes: [
     { tier: "protected", path: "/safeguarding", element: createElement(SafeguardingListPage) },
+    {
+      tier: "protected",
+      path: "/safeguarding/create",
+      element: createElement(SafeguardingCreatePage),
+    },
+    {
+      tier: "protected",
+      path: "/safeguarding/:id/edit",
+      element: createElement(SafeguardingEditPage),
+    },
     { tier: "protected", path: "/safeguarding/:id", element: createElement(SafeguardingShowPage) },
   ],
 };

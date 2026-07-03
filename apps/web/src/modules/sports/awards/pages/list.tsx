@@ -14,7 +14,7 @@ import type { Athlete, Award } from "@/types";
 import type { DataGridColumn } from "@academorix/ui/react";
 import type { ReactNode } from "react";
 
-import { ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
+import { EditButton, ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
 import { formatDate } from "@/lib/format";
 
 /** The awards list page. */
@@ -61,12 +61,20 @@ export default function AwardsList(): ReactNode {
         id: "actions",
         header: "",
         align: "end",
-        minWidth: 80,
+        minWidth: 120,
         cell: (award) => (
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-1">
             <ShowButton
               isIconOnly
               aria-label="View award"
+              recordItemId={award.id}
+              resource="awards"
+              size="sm"
+              variant="ghost"
+            />
+            <EditButton
+              isIconOnly
+              aria-label="Edit award"
               recordItemId={award.id}
               resource="awards"
               size="sm"

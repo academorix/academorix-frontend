@@ -4,8 +4,7 @@
  *
  * @description
  * The Leads CRM module — the acquisition pipeline of prospective members before
- * they convert to registrations. List + detail (read surfaces for the demo;
- * pipeline editing lands with the write API).
+ * they convert to registrations. Full CRUD, scoped by organization/branch.
  *
  * @see DOMAIN_MODULES_BLUEPRINT.md §12.3 "Leads & CRM"
  */
@@ -16,6 +15,8 @@ import { createElement, lazy } from "react";
 import type { AppModule } from "@/lib/module";
 
 const LeadsListPage = lazy(() => import("@/modules/leads/pages/list"));
+const LeadsCreatePage = lazy(() => import("@/modules/leads/pages/create"));
+const LeadsEditPage = lazy(() => import("@/modules/leads/pages/edit"));
 const LeadsShowPage = lazy(() => import("@/modules/leads/pages/show"));
 
 /** The Leads feature module. */
@@ -25,6 +26,8 @@ const leadsModule: AppModule = {
     {
       name: "leads",
       list: "/leads",
+      create: "/leads/create",
+      edit: "/leads/:id/edit",
       show: "/leads/:id",
       meta: {
         label: "Leads",
@@ -37,6 +40,8 @@ const leadsModule: AppModule = {
   ],
   routes: [
     { tier: "protected", path: "/leads", element: createElement(LeadsListPage) },
+    { tier: "protected", path: "/leads/create", element: createElement(LeadsCreatePage) },
+    { tier: "protected", path: "/leads/:id/edit", element: createElement(LeadsEditPage) },
     { tier: "protected", path: "/leads/:id", element: createElement(LeadsShowPage) },
   ],
 };

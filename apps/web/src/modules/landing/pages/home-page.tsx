@@ -5,51 +5,46 @@
  * @description
  * Public marketing landing page (the `/` route). Rendered inside `<Refine>` but
  * requires no data — it's the one screen unauthenticated visitors always see.
+ *
+ * The page is a thin composition of section subcomponents living in
+ * `modules/landing/components/`; each section owns its own content and markup.
+ * The root wrapper carries the theme surface (`bg-background text-foreground`)
+ * and an `id="top"` anchor target for "back to top" footer links, and the
+ * semantic landmarks (`<header>`, `<main>`, `<footer>`) come from the sections
+ * themselves so screen-reader navigation is well structured.
  */
-
-import { AcademicCapIcon } from "@academorix/ui/icons/outline";
-import { Button, StatusBadge } from "@academorix/ui/react";
 
 import type { ReactNode } from "react";
 
-import { siteConfig } from "@/config/site";
+import { CtaSection } from "@/modules/landing/components/cta-section";
+import { FeaturesSection } from "@/modules/landing/components/features-section";
+import { FooterSection } from "@/modules/landing/components/footer-section";
+import { HeroSection } from "@/modules/landing/components/hero-section";
+import { HowItWorksSection } from "@/modules/landing/components/how-it-works-section";
+import { LandingHeader } from "@/modules/landing/components/landing-header";
+import { LogoStrip } from "@/modules/landing/components/logo-strip";
+import { PricingSection } from "@/modules/landing/components/pricing-section";
+import { SportsSection } from "@/modules/landing/components/sports-section";
+import { TestimonialsSection } from "@/modules/landing/components/testimonials-section";
 
-/** Opens an external URL in a new, isolated tab. */
-function openExternal(url: string): void {
-  window.open(url, "_blank", "noopener,noreferrer");
-}
-
-/** The public landing page. */
+/** The public landing page, composed from the landing section subcomponents. */
 export default function HomePage(): ReactNode {
-  const isProduction = siteConfig.environment === "production";
-
   return (
-    <main className="relative flex min-h-dvh flex-col items-center justify-center gap-8 px-6 py-16 text-center">
-      <div className="flex items-center gap-2 text-accent">
-        <AcademicCapIcon aria-hidden="true" className="size-10" />
-        <span className="text-2xl font-bold tracking-tight text-foreground">{siteConfig.name}</span>
-      </div>
+    <div className="flex min-h-dvh flex-col bg-background text-foreground" id="top">
+      <LandingHeader />
 
-      <div className="max-w-2xl space-y-4">
-        <h1 className="text-4xl font-semibold tracking-tight text-foreground lg:text-6xl">
-          The operating system for modern academies
-        </h1>
-        <p className="text-lg text-muted lg:text-xl">{siteConfig.description}</p>
-      </div>
+      <main className="flex-1">
+        <HeroSection />
+        <LogoStrip />
+        <FeaturesSection />
+        <SportsSection />
+        <HowItWorksSection />
+        <PricingSection />
+        <TestimonialsSection />
+        <CtaSection />
+      </main>
 
-      <div className="flex flex-wrap items-center justify-center gap-3">
-        <Button variant="primary" onPress={() => openExternal(siteConfig.links.github)}>
-          Get started
-        </Button>
-        <Button variant="tertiary" onPress={() => openExternal(siteConfig.api.baseUrl)}>
-          API status
-        </Button>
-      </div>
-
-      <div className="flex items-center gap-2 text-xs text-muted">
-        <StatusBadge color={isProduction ? "success" : "warning"} label={siteConfig.environment} />
-        <span>API: {siteConfig.api.baseUrl}</span>
-      </div>
-    </main>
+      <FooterSection />
+    </div>
   );
 }

@@ -16,7 +16,7 @@ import type { Staff } from "@/types";
 import type { DataGridColumn } from "@academorix/ui/react";
 import type { ReactNode } from "react";
 
-import { ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
+import { EditButton, ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
 import { LeadStageChip } from "@/modules/leads/components/lead-stage-chip";
 
 /** The leads CRM list page. */
@@ -64,12 +64,20 @@ export default function LeadsList(): ReactNode {
         id: "actions",
         header: "",
         align: "end",
-        minWidth: 80,
+        minWidth: 120,
         cell: (lead) => (
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-1">
             <ShowButton
               isIconOnly
               aria-label="View lead"
+              recordItemId={lead.id}
+              resource="leads"
+              size="sm"
+              variant="ghost"
+            />
+            <EditButton
+              isIconOnly
+              aria-label="Edit lead"
               recordItemId={lead.id}
               resource="leads"
               size="sm"

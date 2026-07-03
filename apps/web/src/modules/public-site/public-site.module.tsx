@@ -4,8 +4,7 @@
  *
  * @description
  * The Public Site (CMS) module — manage the tenant's public marketing pages.
- * List + detail (read surfaces for the demo; page authoring lands with the
- * write API).
+ * Full CRUD at the tenant level.
  *
  * @see DOMAIN_MODULES_BLUEPRINT.md §19 "Public Site & CMS"
  */
@@ -16,6 +15,8 @@ import { createElement, lazy } from "react";
 import type { AppModule } from "@/lib/module";
 
 const PublicSiteListPage = lazy(() => import("@/modules/public-site/pages/list"));
+const PublicSiteCreatePage = lazy(() => import("@/modules/public-site/pages/create"));
+const PublicSiteEditPage = lazy(() => import("@/modules/public-site/pages/edit"));
 const PublicSiteShowPage = lazy(() => import("@/modules/public-site/pages/show"));
 
 /** The Public Site feature module. */
@@ -25,6 +26,8 @@ const publicSiteModule: AppModule = {
     {
       name: "public-site",
       list: "/public-site",
+      create: "/public-site/create",
+      edit: "/public-site/:id/edit",
       show: "/public-site/:id",
       meta: {
         label: "Public Site",
@@ -37,6 +40,16 @@ const publicSiteModule: AppModule = {
   ],
   routes: [
     { tier: "protected", path: "/public-site", element: createElement(PublicSiteListPage) },
+    {
+      tier: "protected",
+      path: "/public-site/create",
+      element: createElement(PublicSiteCreatePage),
+    },
+    {
+      tier: "protected",
+      path: "/public-site/:id/edit",
+      element: createElement(PublicSiteEditPage),
+    },
     { tier: "protected", path: "/public-site/:id", element: createElement(PublicSiteShowPage) },
   ],
 };

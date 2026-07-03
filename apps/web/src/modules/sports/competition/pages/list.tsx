@@ -17,7 +17,7 @@ import type {
 import type { DataGridColumn } from "@academorix/ui/react";
 import type { ReactNode } from "react";
 
-import { ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
+import { EditButton, ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
 import {
   COMPETITION_FORMAT_LABELS,
   COMPETITION_STATUS_LABELS,
@@ -65,10 +65,18 @@ export default function CompetitionList(): ReactNode {
         align: "end",
         minWidth: 80,
         cell: (competition) => (
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-1">
             <ShowButton
               isIconOnly
               aria-label="View competition"
+              recordItemId={competition.id}
+              resource="competitions"
+              size="sm"
+              variant="ghost"
+            />
+            <EditButton
+              isIconOnly
+              aria-label="Edit competition"
               recordItemId={competition.id}
               resource="competitions"
               size="sm"

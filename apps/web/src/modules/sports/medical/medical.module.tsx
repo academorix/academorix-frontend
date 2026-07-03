@@ -16,6 +16,8 @@ import { createElement, lazy } from "react";
 import type { AppModule } from "@/lib/module";
 
 const MedicalListPage = lazy(() => import("@/modules/sports/medical/pages/list"));
+const MedicalCreatePage = lazy(() => import("@/modules/sports/medical/pages/create"));
+const MedicalEditPage = lazy(() => import("@/modules/sports/medical/pages/edit"));
 const MedicalShowPage = lazy(() => import("@/modules/sports/medical/pages/show"));
 
 /** The Medical feature module. */
@@ -25,6 +27,8 @@ const medicalModule: AppModule = {
     {
       name: "medical",
       list: "/medical",
+      create: "/medical/create",
+      edit: "/medical/:id/edit",
       show: "/medical/:id",
       meta: {
         label: "Medical",
@@ -37,6 +41,8 @@ const medicalModule: AppModule = {
   ],
   routes: [
     { tier: "protected", path: "/medical", element: createElement(MedicalListPage) },
+    { tier: "protected", path: "/medical/create", element: createElement(MedicalCreatePage) },
+    { tier: "protected", path: "/medical/:id/edit", element: createElement(MedicalEditPage) },
     { tier: "protected", path: "/medical/:id", element: createElement(MedicalShowPage) },
   ],
 };

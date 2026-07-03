@@ -15,7 +15,7 @@ import type { Athlete, PerformanceTest } from "@/types";
 import type { DataGridColumn } from "@academorix/ui/react";
 import type { ReactNode } from "react";
 
-import { ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
+import { EditButton, ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
 import { formatDate } from "@/lib/format";
 
 /** The performance test results list page. */
@@ -58,12 +58,20 @@ export default function PerformanceList(): ReactNode {
         id: "actions",
         header: "",
         align: "end",
-        minWidth: 80,
+        minWidth: 120,
         cell: (test) => (
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-1">
             <ShowButton
               isIconOnly
               aria-label="View test"
+              recordItemId={test.id}
+              resource="performance"
+              size="sm"
+              variant="ghost"
+            />
+            <EditButton
+              isIconOnly
+              aria-label="Edit test"
               recordItemId={test.id}
               resource="performance"
               size="sm"

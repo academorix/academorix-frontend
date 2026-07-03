@@ -7,14 +7,16 @@
  * calls the active auth provider and, on success, redirects to the dashboard.
  * Errors surface automatically via the notification provider.
  *
- * In mock mode any non-empty credentials are accepted; the form is pre-filled
- * with a demo account and a hint is shown so that is obvious.
+ * In mock mode any non-empty credentials are accepted, and a **demo persona
+ * picker** lets you sign in as any of the seeded users (owner, admin, coaches,
+ * reception, finance, medical) to see role-based access control in action —
+ * the sidebar, action buttons, and page guards all reflect the chosen role.
  */
 
 import { AcademicCapIcon } from "@academorix/ui/icons/outline";
 import { Button, Card, Description, Form, Input, Label, TextField } from "@academorix/ui/react";
 import { useLogin } from "@refinedev/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { LoginCredentials } from "@/types";
 import type { FormEvent, ReactNode } from "react";
@@ -31,16 +33,79 @@ const MOCK_DEFAULTS: LoginFormValues = {
   password: "password",
 };
 
+/** The subset of a demo-user fixture the picker needs. */
+interface DemoPersona {
+  email: string;
+  display_name: string;
+  role: string;
+}
+
+/** Title-cases a raw role key, e.g. `"head_coach"` → `"Head Coach"`. */
+function formatRole(role: string): string {
+  return role
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
 /** Renders the login card and wires submission to Refine's auth flow. */
 export default function LoginPage(): ReactNode {
   const { mutate: login, isPending } = useLogin<LoginFormValues>();
 
   const [email, setEmail] = useState(env.VITE_API_MOCK ? MOCK_DEFAULTS.email : "");
   const [password, setPassword] = useState(env.VITE_API_MOCK ? MOCK_DEFAULTS.password : "");
+  const [personas, setPersonas] = useState<DemoPersona[]>([]);
+
+  // In mock mode, load the demo roster so we can offer one-click role sign-in.
+  useEffect(() => {
+    if (!env.VITE_API_MOCK) {
+      return;
+    }
+
+    let active = true;
+
+    void (async () => {
+      try {
+        const response = await fetch("/data/demo-users.json");
+
+        if (!response.ok) {
+          return;
+        }
+
+        const payload: unknown = await response.json();
+
+        if (!active || !Array.isArray(payload)) {
+          return;
+        }
+
+        setPersonas(
+          (
+            payload as { email: string; profile?: { display_name?: string }; roles?: string[] }[]
+          ).map((user) => ({
+            email: user.email,
+            display_name: user.profile?.display_name ?? user.email,
+            role: user.roles?.[0] ?? "member",
+          })),
+        );
+      } catch {
+        // Non-fatal: the manual form still works.
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     login({ email, password });
+  };
+
+  const handlePersona = (persona: DemoPersona): void => {
+    setEmail(persona.email);
+    setPassword("password");
+    login({ email: persona.email, password: "password" });
   };
 
   return (
@@ -82,10 +147,38 @@ export default function LoginPage(): ReactNode {
             </div>
           </Card.Content>
 
-          <Card.Footer className="mt-4">
+          <Card.Footer className="mt-4 flex-col items-stretch gap-4">
             <Button className="w-full" isDisabled={isPending} type="submit">
               {isPending ? "Signing in…" : "Sign in"}
             </Button>
+
+            {env.VITE_API_MOCK && personas.length > 0 ? (
+              <div className="flex flex-col gap-2">
+                <span className="text-xs font-medium tracking-wide text-muted uppercase">
+                  Or explore a role
+                </span>
+                <div className="grid grid-cols-2 gap-2">
+                  {personas.map((persona) => (
+                    <Button
+                      key={persona.email}
+                      className="justify-start"
+                      isDisabled={isPending}
+                      size="sm"
+                      type="button"
+                      variant="secondary"
+                      onPress={() => handlePersona(persona)}
+                    >
+                      <span className="flex min-w-0 flex-col items-start">
+                        <span className="truncate text-xs font-medium">{persona.display_name}</span>
+                        <span className="truncate text-[10px] text-muted">
+                          {formatRole(persona.role)}
+                        </span>
+                      </span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </Card.Footer>
         </Form>
       </Card>

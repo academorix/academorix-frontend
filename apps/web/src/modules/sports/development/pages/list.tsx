@@ -16,7 +16,7 @@ import type { Athlete } from "@/types";
 import type { DataGridColumn } from "@academorix/ui/react";
 import type { ReactNode } from "react";
 
-import { ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
+import { EditButton, ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
 import { formatDate } from "@/lib/format";
 import { DevelopmentStatusChip } from "@/modules/sports/development/components/development-status-chip";
 
@@ -74,10 +74,18 @@ export default function DevelopmentList(): ReactNode {
         align: "end",
         minWidth: 80,
         cell: (plan) => (
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-1">
             <ShowButton
               isIconOnly
               aria-label="View plan"
+              recordItemId={plan.id}
+              resource="development"
+              size="sm"
+              variant="ghost"
+            />
+            <EditButton
+              isIconOnly
+              aria-label="Edit plan"
               recordItemId={plan.id}
               resource="development"
               size="sm"

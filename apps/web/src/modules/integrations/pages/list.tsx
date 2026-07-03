@@ -14,7 +14,7 @@ import type { Integration, IntegrationStatus } from "@/modules/integrations/inte
 import type { DataGridColumn } from "@academorix/ui/react";
 import type { ReactNode } from "react";
 
-import { ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
+import { EditButton, ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
 import { formatDateTime } from "@/lib/format";
 import { INTEGRATION_STATUS_LABELS } from "@/modules/integrations/integrations.types";
 
@@ -63,12 +63,20 @@ export default function IntegrationsList(): ReactNode {
         id: "actions",
         header: "",
         align: "end",
-        minWidth: 80,
+        minWidth: 120,
         cell: (integration) => (
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-1">
             <ShowButton
               isIconOnly
               aria-label="View integration"
+              recordItemId={integration.id}
+              resource="integrations"
+              size="sm"
+              variant="ghost"
+            />
+            <EditButton
+              isIconOnly
+              aria-label="Edit integration"
               recordItemId={integration.id}
               resource="integrations"
               size="sm"

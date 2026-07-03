@@ -72,12 +72,15 @@ apps/web/src/
 │   ├── refine/              # cross-cutting Refine hooks/helpers (e.g. useResourceLabel)
 │   ├── scope/               # tenant/org/branch/season scope: provider, hooks, filters
 │   ├── attributes/          # SDUI engine: use-attribute-set + field/form/view renderers
+│   ├── i18n/                # i18n: LocaleProvider + Refine i18nProvider (en/ar catalogs, RTL)
 │   ├── query/ http/ api/    # spatie query builder, HTTP client, OpenAPI types
 │   └── format.ts            # shared date/money formatters
 ├── components/              # shared, reusable UI widgets
 │   ├── layout/              # app-level shell(s), e.g. authenticated-layout
 │   ├── scope/               # tenant/org/branch/season switchers
 │   ├── theme/               # theme switcher (HeroUI useTheme: light/dark/system)
+│   ├── access/              # RBAC page guard: ResourceAccessGuard (useCan) + AccessDenied
+│   ├── i18n/                # LanguageSwitcher (en/ar) mounted in the navbar
 │   ├── refine/              # Refine UI kit: buttons/ + views/ + breadcrumbs + resource-data-grid
 │   └── entity-status-chip.tsx   # shared status chip
 ├── config/                  # env, site (NOT routes — those live in lib/module or per module)
@@ -421,6 +424,24 @@ Rules:
   `delete→delete`, `clone→create`); everything the user _can do_ comes from
   `me`.
 
+### Enforcement & demo personas
+
+- **Provider:** `src/providers/access-control/` maps each Refine action to a
+  policy ability and answers `can` from the cached identity's `permissions`
+  (`"*"` = superuser); it enables access control on the kit buttons.
+- **Page guards:** `src/components/access/` ships `ResourceAccessGuard` (built
+  on Refine's `useCan`) + an `AccessDenied` panel. The
+  `List`/`Show`/`Create`/`Edit` view scaffolds wrap their body in it, so a user
+  who reaches a route they lack permission for sees `AccessDenied` instead of
+  the content — closing the direct-URL gap (the sidebar already hides the
+  entry). Use `<CanAccess>` / `useCan` directly for finer-grained inline gating.
+- **Demo personas (mock mode):** `public/data/demo-users.json` seeds seven users
+  — owner + admin (superuser `"*"`), plus head_coach, coach, reception, finance,
+  and medical_officer, each with a curated `permissions` + `features` set so
+  RBAC differences are visible end-to-end (nav, buttons, guards). The login
+  screen offers one-click sign-in per persona; the mock auth provider resolves
+  the persona by email and persists the choice across reloads.
+
 ---
 
 ## 6. Data layer & response contract
@@ -488,9 +509,15 @@ resource endpoints):
   defaulting to `meta.label`.
 - Feature availability is tenant-driven (`features` from the manifest). Code the
   module once; the backend decides who sees it.
-- Tenant branding (logo, colors) and locale/RTL come from the manifest/tenant
-  and are applied in the shell + theme. (i18n with en/ar + RTL is a planned
-  Refine `i18nProvider`.)
+- Tenant branding (logo, colors) come from the manifest/tenant and are applied
+  in the shell + theme.
+- **i18n is implemented** in `src/lib/i18n/`: a `LocaleProvider` (mounted above
+  `<Refine>` in `providers.tsx`) holds the active locale, builds a Refine
+  `i18nProvider` over the en/ar message catalogs, persists the choice, and
+  toggles the document `dir` (RTL for Arabic). The navbar `LanguageSwitcher`
+  changes it; keys missing from a catalog fall back to the English default. This
+  is the app-chrome vocabulary — distinct from per-tenant **terminology** (§5),
+  which relabels resources (e.g. "Athletes" → "Students").
 
 ---
 

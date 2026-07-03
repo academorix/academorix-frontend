@@ -14,7 +14,7 @@ import type { PublicPage, PublicPageStatus } from "@/modules/public-site/public-
 import type { DataGridColumn } from "@academorix/ui/react";
 import type { ReactNode } from "react";
 
-import { ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
+import { EditButton, ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
 import { PUBLIC_PAGE_STATUS_LABELS } from "@/modules/public-site/public-site.types";
 
 /** Maps page status to a semantic Chip color. */
@@ -52,12 +52,20 @@ export default function PublicSiteList(): ReactNode {
         id: "actions",
         header: "",
         align: "end",
-        minWidth: 80,
+        minWidth: 120,
         cell: (page) => (
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-1">
             <ShowButton
               isIconOnly
               aria-label="View page"
+              recordItemId={page.id}
+              resource="public-site"
+              size="sm"
+              variant="ghost"
+            />
+            <EditButton
+              isIconOnly
+              aria-label="Edit page"
               recordItemId={page.id}
               resource="public-site"
               size="sm"

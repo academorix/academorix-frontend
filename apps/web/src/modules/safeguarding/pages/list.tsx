@@ -16,7 +16,7 @@ import type { Athlete } from "@/types";
 import type { DataGridColumn } from "@academorix/ui/react";
 import type { ReactNode } from "react";
 
-import { ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
+import { EditButton, ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
 import { formatDate } from "@/lib/format";
 import {
   SafeguardingSeverityChip,
@@ -83,12 +83,20 @@ export default function SafeguardingList(): ReactNode {
         id: "actions",
         header: "",
         align: "end",
-        minWidth: 80,
+        minWidth: 120,
         cell: (record) => (
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-1">
             <ShowButton
               isIconOnly
               aria-label="View case"
+              recordItemId={record.id}
+              resource="safeguarding"
+              size="sm"
+              variant="ghost"
+            />
+            <EditButton
+              isIconOnly
+              aria-label="Edit case"
               recordItemId={record.id}
               resource="safeguarding"
               size="sm"

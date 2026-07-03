@@ -11,6 +11,7 @@
 
 import type { ReactNode } from "react";
 
+import { ResourceAccessGuard } from "@/components/access";
 import {
   CloneButton,
   DeleteButton,
@@ -57,7 +58,9 @@ export function ShowView({ children, resource, title, headerActions }: ShowViewP
         }
         title={resolvedTitle}
       />
-      {children}
+      <ResourceAccessGuard action="show" resource={resource}>
+        {children}
+      </ResourceAccessGuard>
     </div>
   );
 }

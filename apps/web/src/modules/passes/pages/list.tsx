@@ -14,7 +14,7 @@ import type { Pass, PassStatus } from "@/modules/passes/passes.types";
 import type { DataGridColumn } from "@academorix/ui/react";
 import type { ReactNode } from "react";
 
-import { ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
+import { EditButton, ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
 import { formatDate } from "@/lib/format";
 import { PASS_STATUS_LABELS, PASS_TYPE_LABELS } from "@/modules/passes/passes.types";
 
@@ -63,12 +63,20 @@ export default function PassesList(): ReactNode {
         id: "actions",
         header: "",
         align: "end",
-        minWidth: 80,
+        minWidth: 120,
         cell: (pass) => (
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-1">
             <ShowButton
               isIconOnly
               aria-label="View pass"
+              recordItemId={pass.id}
+              resource="passes"
+              size="sm"
+              variant="ghost"
+            />
+            <EditButton
+              isIconOnly
+              aria-label="Edit pass"
               recordItemId={pass.id}
               resource="passes"
               size="sm"

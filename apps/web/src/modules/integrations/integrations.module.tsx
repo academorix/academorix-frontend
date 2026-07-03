@@ -4,8 +4,7 @@
  *
  * @description
  * The Integrations module — connect and monitor third-party providers
- * (payments, messaging, calendar, realtime). List + detail (read surfaces for
- * the demo; connect/disconnect flows land with the write API).
+ * (payments, messaging, calendar, realtime). Full CRUD at the tenant level.
  *
  * @see DOMAIN_MODULES_BLUEPRINT.md §10.9 "Integrations"
  */
@@ -16,6 +15,8 @@ import { createElement, lazy } from "react";
 import type { AppModule } from "@/lib/module";
 
 const IntegrationsListPage = lazy(() => import("@/modules/integrations/pages/list"));
+const IntegrationsCreatePage = lazy(() => import("@/modules/integrations/pages/create"));
+const IntegrationsEditPage = lazy(() => import("@/modules/integrations/pages/edit"));
 const IntegrationsShowPage = lazy(() => import("@/modules/integrations/pages/show"));
 
 /** The Integrations feature module. */
@@ -25,6 +26,8 @@ const integrationsModule: AppModule = {
     {
       name: "integrations",
       list: "/integrations",
+      create: "/integrations/create",
+      edit: "/integrations/:id/edit",
       show: "/integrations/:id",
       meta: {
         label: "Integrations",
@@ -37,6 +40,16 @@ const integrationsModule: AppModule = {
   ],
   routes: [
     { tier: "protected", path: "/integrations", element: createElement(IntegrationsListPage) },
+    {
+      tier: "protected",
+      path: "/integrations/create",
+      element: createElement(IntegrationsCreatePage),
+    },
+    {
+      tier: "protected",
+      path: "/integrations/:id/edit",
+      element: createElement(IntegrationsEditPage),
+    },
     { tier: "protected", path: "/integrations/:id", element: createElement(IntegrationsShowPage) },
   ],
 };

@@ -13,7 +13,7 @@ import type { Formation } from "@/modules/sports/formations/formation.types";
 import type { DataGridColumn } from "@academorix/ui/react";
 import type { ReactNode } from "react";
 
-import { ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
+import { EditButton, ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
 
 /** The formations list page. */
 export default function FormationsList(): ReactNode {
@@ -40,10 +40,18 @@ export default function FormationsList(): ReactNode {
         align: "end",
         minWidth: 80,
         cell: (formation) => (
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-1">
             <ShowButton
               isIconOnly
               aria-label="View formation"
+              recordItemId={formation.id}
+              resource="formations"
+              size="sm"
+              variant="ghost"
+            />
+            <EditButton
+              isIconOnly
+              aria-label="Edit formation"
               recordItemId={formation.id}
               resource="formations"
               size="sm"

@@ -13,7 +13,7 @@ import type { Drill } from "@/types";
 import type { DataGridColumn } from "@academorix/ui/react";
 import type { ReactNode } from "react";
 
-import { ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
+import { EditButton, ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
 import { SKILL_LEVEL_LABELS } from "@/types";
 
 /** The drill-library list page. */
@@ -53,10 +53,18 @@ export default function DrillsList(): ReactNode {
         align: "end",
         minWidth: 80,
         cell: (drill) => (
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-1">
             <ShowButton
               isIconOnly
               aria-label="View drill"
+              recordItemId={drill.id}
+              resource="drills"
+              size="sm"
+              variant="ghost"
+            />
+            <EditButton
+              isIconOnly
+              aria-label="Edit drill"
               recordItemId={drill.id}
               resource="drills"
               size="sm"

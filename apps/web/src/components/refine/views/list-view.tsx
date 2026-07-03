@@ -10,6 +10,7 @@
 
 import type { ReactNode } from "react";
 
+import { ResourceAccessGuard } from "@/components/access";
 import { CreateButton } from "@/components/refine/buttons";
 import { useResourceTitle, ViewHeader } from "@/components/refine/views/view-header";
 
@@ -44,7 +45,9 @@ export function ListView({ children, resource, title, headerActions }: ListViewP
         }
         title={resolvedTitle}
       />
-      {children}
+      <ResourceAccessGuard action="list" resource={resource}>
+        {children}
+      </ResourceAccessGuard>
     </div>
   );
 }

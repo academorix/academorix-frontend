@@ -10,6 +10,7 @@
 
 import type { ReactNode } from "react";
 
+import { ResourceAccessGuard } from "@/components/access";
 import { DeleteButton, ListButton, RefreshButton } from "@/components/refine/buttons";
 import { useResourceTitle, ViewHeader } from "@/components/refine/views/view-header";
 
@@ -49,7 +50,9 @@ export function EditView({ children, resource, title, headerActions }: EditViewP
         }
         title={resolvedTitle}
       />
-      {children}
+      <ResourceAccessGuard action="edit" resource={resource}>
+        {children}
+      </ResourceAccessGuard>
     </div>
   );
 }

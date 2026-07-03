@@ -15,6 +15,8 @@ import { createElement, lazy } from "react";
 import type { AppModule } from "@/lib/module";
 
 const AwardsListPage = lazy(() => import("@/modules/sports/awards/pages/list"));
+const AwardsCreatePage = lazy(() => import("@/modules/sports/awards/pages/create"));
+const AwardsEditPage = lazy(() => import("@/modules/sports/awards/pages/edit"));
 const AwardsShowPage = lazy(() => import("@/modules/sports/awards/pages/show"));
 
 /** The Awards feature module. */
@@ -24,6 +26,8 @@ const awardsModule: AppModule = {
     {
       name: "awards",
       list: "/awards",
+      create: "/awards/create",
+      edit: "/awards/:id/edit",
       show: "/awards/:id",
       meta: {
         label: "Awards",
@@ -36,6 +40,8 @@ const awardsModule: AppModule = {
   ],
   routes: [
     { tier: "protected", path: "/awards", element: createElement(AwardsListPage) },
+    { tier: "protected", path: "/awards/create", element: createElement(AwardsCreatePage) },
+    { tier: "protected", path: "/awards/:id/edit", element: createElement(AwardsEditPage) },
     { tier: "protected", path: "/awards/:id", element: createElement(AwardsShowPage) },
   ],
 };
