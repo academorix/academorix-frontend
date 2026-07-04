@@ -71,7 +71,7 @@
       "integrations",
       "offline-sync"
     ],
-    "terminology": { "athletes": "Students" },
+    "terminology": { "athletes": "Players" },
     "tenant": {
       "id": "tnt_riverside",
       "slug": "riverside",

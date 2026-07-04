@@ -4,8 +4,8 @@
  *
  * @description
  * Formation create screen. `useForm` drives the mutation and redirects to the
- * list; the active scope supplies the organization/branch. New formations start
- * with an empty slot layout (slot geometry editing is a documented follow-up).
+ * list; the active scope supplies the organization/branch. The shared form seeds
+ * an empty slot layout that the coach fills in with the on-pitch slot editor.
  */
 
 import { useForm } from "@refinedev/core";

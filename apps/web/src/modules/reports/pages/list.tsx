@@ -16,6 +16,7 @@ import { useMemo } from "react";
 import type { Athlete, Event, Invoice, InvoiceStatus, Membership, MembershipStatus } from "@/types";
 import type { ReactNode } from "react";
 
+import { ResourceAccessGuard } from "@/components/access";
 import { Breadcrumbs } from "@/components/refine";
 import { formatMoney } from "@/lib/format";
 import { INVOICE_STATUS_LABELS, MEMBERSHIP_STATUS_LABELS } from "@/types";
@@ -146,60 +147,67 @@ export default function ReportsDashboard(): ReactNode {
   const membershipMax = Math.max(1, ...membershipBreakdown.map((row) => row.count));
 
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <div className="flex flex-col gap-4">
-        <Breadcrumbs />
-        <Separator />
-        <h1 className="text-2xl font-semibold text-foreground">Reports</h1>
-      </div>
+    <ResourceAccessGuard action="list" resource="reports">
+      <div className="flex flex-col gap-6 p-6">
+        <div className="flex flex-col gap-4">
+          <Breadcrumbs />
+          <Separator />
+          <h1 className="text-2xl font-semibold text-foreground">Reports</h1>
+        </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Athletes" value={String(athletes.length)} />
-        <StatCard label="Active members" value={String(activeMembers)} />
-        <StatCard
-          hint="Unpaid balance"
-          label="Outstanding"
-          value={formatMoney(outstanding, currency)}
-        />
-        <StatCard label="Upcoming events" value={String(upcomingEvents)} />
-      </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard label="Athletes" value={String(athletes.length)} />
+          <StatCard label="Active members" value={String(activeMembers)} />
+          <StatCard
+            hint="Unpaid balance"
+            label="Outstanding"
+            value={formatMoney(outstanding, currency)}
+          />
+          <StatCard label="Upcoming events" value={String(upcomingEvents)} />
+        </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Card>
-          <Card.Header>
-            <Card.Title>Invoices by status</Card.Title>
-          </Card.Header>
-          <Card.Content className="flex flex-col gap-3">
-            {invoiceBreakdown.length === 0 ? (
-              <p className="text-sm text-muted">No invoices yet.</p>
-            ) : (
-              invoiceBreakdown.map((row) => (
-                <BreakdownRow key={row.key} count={row.count} label={row.label} max={invoiceMax} />
-              ))
-            )}
-          </Card.Content>
-        </Card>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <Card>
+            <Card.Header>
+              <Card.Title>Invoices by status</Card.Title>
+            </Card.Header>
+            <Card.Content className="flex flex-col gap-3">
+              {invoiceBreakdown.length === 0 ? (
+                <p className="text-sm text-muted">No invoices yet.</p>
+              ) : (
+                invoiceBreakdown.map((row) => (
+                  <BreakdownRow
+                    key={row.key}
+                    count={row.count}
+                    label={row.label}
+                    max={invoiceMax}
+                  />
+                ))
+              )}
+            </Card.Content>
+          </Card>
 
-        <Card>
-          <Card.Header>
-            <Card.Title>Memberships by status</Card.Title>
-          </Card.Header>
-          <Card.Content className="flex flex-col gap-3">
-            {membershipBreakdown.length === 0 ? (
-              <p className="text-sm text-muted">No memberships yet.</p>
-            ) : (
-              membershipBreakdown.map((row) => (
-                <BreakdownRow
-                  key={row.key}
-                  count={row.count}
-                  label={row.label}
-                  max={membershipMax}
-                />
-              ))
-            )}
-          </Card.Content>
-        </Card>
+          <Card>
+            <Card.Header>
+              <Card.Title>Memberships by status</Card.Title>
+            </Card.Header>
+            <Card.Content className="flex flex-col gap-3">
+              {membershipBreakdown.length === 0 ? (
+                <p className="text-sm text-muted">No memberships yet.</p>
+              ) : (
+                membershipBreakdown.map((row) => (
+                  <BreakdownRow
+                    key={row.key}
+                    count={row.count}
+                    label={row.label}
+                    max={membershipMax}
+                  />
+                ))
+              )}
+            </Card.Content>
+          </Card>
+        </div>
       </div>
-    </div>
+    </ResourceAccessGuard>
   );
 }

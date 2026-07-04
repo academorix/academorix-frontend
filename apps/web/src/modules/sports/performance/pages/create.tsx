@@ -4,8 +4,8 @@
  *
  * @description
  * Performance-test create screen. `useForm` drives the mutation and redirects to
- * the list; the shared form builds the API payload (measured SDUI values start
- * empty — editing them is a documented follow-up).
+ * the list; the shared form builds the API payload, including the measured
+ * (SDUI) values seeded from the selected sport's attribute set.
  */
 
 import { useForm } from "@refinedev/core";

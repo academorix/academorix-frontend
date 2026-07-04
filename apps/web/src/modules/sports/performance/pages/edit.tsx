@@ -4,8 +4,8 @@
  *
  * @description
  * Performance-test edit screen. Renders the shared form once the record has
- * loaded; the record's existing measured (`attributes`) values are preserved
- * untouched by the form's payload builder.
+ * loaded; the record's existing measured (`attributes`) values are loaded into
+ * the shared form's live SDUI editor.
  */
 
 import { Spinner } from "@academorix/ui/react";
