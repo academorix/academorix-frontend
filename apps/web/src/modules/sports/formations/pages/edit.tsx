@@ -3,8 +3,9 @@
  * @module modules/sports/formations/pages/edit
  *
  * @description
- * Formation edit screen. Renders the shared form once the record has loaded and
- * preserves the record's existing on-pitch slots unchanged (metadata-only edit).
+ * Formation edit screen. Renders the shared form once the record has loaded; the
+ * form seeds its metadata and on-pitch slots from the record, so the payload is
+ * built from the edited form values alone.
  */
 
 import { Spinner } from "@academorix/ui/react";
@@ -39,7 +40,7 @@ export default function FormationEdit(): ReactNode {
           isSubmitting={formLoading}
           submitLabel="Save changes"
           onSubmit={(values) => {
-            void onFinish(toFormationPayload(values, scope, record.slots));
+            void onFinish(toFormationPayload(values, scope));
           }}
         />
       ) : (

@@ -15,6 +15,7 @@ import { Card, Separator } from "@academorix/ui/react";
 
 import type { ReactNode } from "react";
 
+import { ResourceAccessGuard } from "@/components/access";
 import { Breadcrumbs } from "@/components/refine";
 
 /** Planned assistant capabilities, shown as a preview list. */
@@ -40,34 +41,37 @@ const PLANNED_CAPABILITIES: { title: string; description: string }[] = [
 /** The AI assistant placeholder page. */
 export default function AiAssistant(): ReactNode {
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <div className="flex flex-col gap-4">
-        <Breadcrumbs />
-        <Separator />
-        <h1 className="text-2xl font-semibold text-foreground">AI Assistant</h1>
-      </div>
+    <ResourceAccessGuard action="list" resource="ai">
+      <div className="flex flex-col gap-6 p-6">
+        <div className="flex flex-col gap-4">
+          <Breadcrumbs />
+          <Separator />
+          <h1 className="text-2xl font-semibold text-foreground">AI Assistant</h1>
+        </div>
 
-      <Card>
-        <Card.Header>
-          <div className="flex items-center gap-2">
-            <SparklesIcon aria-hidden="true" className="size-5 text-accent" />
-            <Card.Title>Coming soon</Card.Title>
-          </div>
-          <Card.Description>
-            The assistant will help staff work faster across the academy. It isn&apos;t enabled yet.
-          </Card.Description>
-        </Card.Header>
-        <Card.Content>
-          <ul className="flex flex-col gap-4">
-            {PLANNED_CAPABILITIES.map((capability) => (
-              <li key={capability.title} className="flex flex-col gap-1">
-                <span className="text-sm font-medium text-foreground">{capability.title}</span>
-                <span className="text-sm text-muted">{capability.description}</span>
-              </li>
-            ))}
-          </ul>
-        </Card.Content>
-      </Card>
-    </div>
+        <Card>
+          <Card.Header>
+            <div className="flex items-center gap-2">
+              <SparklesIcon aria-hidden="true" className="size-5 text-accent" />
+              <Card.Title>Coming soon</Card.Title>
+            </div>
+            <Card.Description>
+              The assistant will help staff work faster across the academy. It isn&apos;t enabled
+              yet.
+            </Card.Description>
+          </Card.Header>
+          <Card.Content>
+            <ul className="flex flex-col gap-4">
+              {PLANNED_CAPABILITIES.map((capability) => (
+                <li key={capability.title} className="flex flex-col gap-1">
+                  <span className="text-sm font-medium text-foreground">{capability.title}</span>
+                  <span className="text-sm text-muted">{capability.description}</span>
+                </li>
+              ))}
+            </ul>
+          </Card.Content>
+        </Card>
+      </div>
+    </ResourceAccessGuard>
   );
 }

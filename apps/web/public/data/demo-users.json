@@ -71,7 +71,7 @@
       "integrations",
       "offline-sync"
     ],
-    "terminology": { "athletes": "Students" },
+    "terminology": { "athletes": "Players" },
     "tenant": {
       "id": "tnt_riverside",
       "slug": "riverside",
@@ -192,7 +192,7 @@
       "integrations",
       "offline-sync"
     ],
-    "terminology": { "athletes": "Students" },
+    "terminology": { "athletes": "Players" },
     "tenant": {
       "id": "tnt_riverside",
       "slug": "riverside",
@@ -369,7 +369,7 @@
       "conversations",
       "reports"
     ],
-    "terminology": { "athletes": "Students" },
+    "terminology": { "athletes": "Players" },
     "tenant": {
       "id": "tnt_riverside",
       "slug": "riverside",
@@ -476,7 +476,7 @@
       "announcements",
       "conversations"
     ],
-    "terminology": { "athletes": "Students" },
+    "terminology": { "athletes": "Players" },
     "tenant": {
       "id": "tnt_riverside",
       "slug": "riverside",
@@ -578,7 +578,7 @@
       "announcements",
       "conversations"
     ],
-    "terminology": { "athletes": "Students" },
+    "terminology": { "athletes": "Players" },
     "tenant": {
       "id": "tnt_riverside",
       "slug": "riverside",
@@ -654,7 +654,7 @@
       "reports.view"
     ],
     "features": ["dashboard", "payments", "memberships", "expenses", "subscription", "reports"],
-    "terminology": { "athletes": "Students" },
+    "terminology": { "athletes": "Players" },
     "tenant": {
       "id": "tnt_riverside",
       "slug": "riverside",
@@ -757,7 +757,7 @@
       "announcements",
       "conversations"
     ],
-    "terminology": { "athletes": "Students" },
+    "terminology": { "athletes": "Players" },
     "tenant": {
       "id": "tnt_riverside",
       "slug": "riverside",

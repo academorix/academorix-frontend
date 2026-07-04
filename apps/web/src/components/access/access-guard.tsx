@@ -17,7 +17,7 @@
  */
 
 import { LockClosedIcon } from "@academorix/ui/icons/outline";
-import { useCan, useResourceParams } from "@refinedev/core";
+import { useCan, useResourceParams, useTranslate } from "@refinedev/core";
 
 import type { ReactNode } from "react";
 
@@ -26,15 +26,23 @@ export type ResourceAction = "list" | "show" | "create" | "edit" | "delete" | "c
 
 /** Full-height empty state shown when the current user lacks access. */
 export function AccessDenied({ reason }: { reason?: string }): ReactNode {
+  const translate = useTranslate();
+
   return (
     <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 px-6 text-center">
       <div className="flex size-12 items-center justify-center rounded-full bg-danger/10 text-danger">
         <LockClosedIcon aria-hidden="true" className="size-6" />
       </div>
       <div className="flex flex-col gap-1">
-        <h2 className="text-lg font-semibold text-foreground">Access denied</h2>
+        <h2 className="text-lg font-semibold text-foreground">
+          {translate("app.accessDenied.title", "Access denied")}
+        </h2>
         <p className="max-w-sm text-sm text-muted">
-          {reason ?? "You don't have permission to view this page."}
+          {reason ??
+            translate(
+              "app.accessDenied.description",
+              "You don't have permission to view this page.",
+            )}
         </p>
       </div>
     </div>
