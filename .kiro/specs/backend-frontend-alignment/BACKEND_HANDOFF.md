@@ -89,33 +89,34 @@ Emitted by `php artisan route:list --except-vendor`. Grouped by concern:
 
 ### Tenant-scoped API (served on `{slug}.academorix.app`, prefix `/api`)
 
-| Method  | URI                                        | Auth                              | Purpose                                  |
-| ------- | ------------------------------------------ | --------------------------------- | ---------------------------------------- |
-| GET     | `api/current-tenant`                       | public                            | Host-resolved TenantData                 |
-| GET     | `api/ping`                                 | public                            | Foundation health                        |
-| POST    | `api/auth/login`                           | throttle:login                    | login flow                               |
-| POST    | `api/auth/logout`                          | sanctum + tenant.user             | logout                                   |
-| POST    | `api/auth/refresh`                         | sanctum + tenant.user             | rotate token                             |
-| POST    | `api/auth/register`                        | throttle:6,1                      | register                                 |
-| **GET** | **`api/auth/me`**                          | **sanctum + tenant.user**         | **identity bootstrap (NEW)**             |
-| GET     | `api/auth/email/verify`                    | sanctum + tenant.user             | notice                                   |
-| GET     | `api/auth/email/verify/{id}/{hash}`        | signed + throttle                 | consume                                  |
-| POST    | `api/auth/email/verification-notification` | sanctum + tenant.user + throttle  | resend                                   |
-| POST    | `api/auth/forgot-password`                 | throttle:6,1                      | password reset request                   |
-| POST    | `api/auth/reset-password`                  | throttle:6,1                      | reset                                    |
-| POST    | `api/auth/confirm-password`                | sanctum + tenant.user             | step-up                                  |
-| POST    | `api/auth/change-password`                 | sanctum + tenant.user             | rotate                                   |
-| POST    | `api/auth/two-factor/*`                    | mixed                             | **all return 501** (tenant 2FA deferred) |
-| GET     | `api/billing/catalog`                      | public                            | **public pricing page (NEW)**            |
-| GET     | `api/billing/status`                       | sanctum + tenant                  | current subscription                     |
-| POST    | `api/billing/checkout`                     | sanctum + tenant + manage_billing | start checkout                           |
-| POST    | `api/billing/change-plan`                  | sanctum + tenant + manage_billing | upgrade/downgrade                        |
-| POST    | `api/billing/pause`                        | sanctum + tenant + manage_billing | pause                                    |
-| POST    | `api/billing/resume`                       | sanctum + tenant + manage_billing | resume                                   |
-| POST    | `api/billing/cancel`                       | sanctum + tenant + manage_billing | cancel                                   |
-| GET     | `api/billing/portal`                       | sanctum + tenant + manage_billing | provider portal URL                      |
-| GET     | `api/billing/invoices`                     | sanctum + tenant                  | list invoices                            |
-| GET     | `api/entitlements/usage`                   | sanctum + tenant                  | full quota matrix                        |
+| Method   | URI                                                      | Auth                                     | Purpose                                                  |
+| -------- | -------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------- |
+| GET      | `api/current-tenant`                                     | public                                   | Host-resolved TenantData                                 |
+| GET      | `api/ping`                                               | public                                   | Foundation health                                        |
+| POST     | `api/auth/login`                                         | throttle:login                           | login flow                                               |
+| POST     | `api/auth/logout`                                        | sanctum + tenant.user                    | logout                                                   |
+| POST     | `api/auth/refresh`                                       | sanctum + tenant.user                    | rotate token                                             |
+| POST     | `api/auth/register`                                      | throttle:6,1                             | register                                                 |
+| **GET**  | **`api/auth/me`**                                        | **sanctum + tenant.user**                | **identity bootstrap (NEW)**                             |
+| GET      | `api/auth/email/verify`                                  | sanctum + tenant.user                    | notice                                                   |
+| GET      | `api/auth/email/verify/{id}/{hash}`                      | signed + throttle                        | consume                                                  |
+| POST     | `api/auth/email/verification-notification`               | sanctum + tenant.user + throttle         | resend                                                   |
+| POST     | `api/auth/forgot-password`                               | throttle:6,1                             | password reset request                                   |
+| POST     | `api/auth/reset-password`                                | throttle:6,1                             | reset                                                    |
+| POST     | `api/auth/confirm-password`                              | sanctum + tenant.user                    | step-up                                                  |
+| POST     | `api/auth/change-password`                               | sanctum + tenant.user                    | rotate                                                   |
+| POST     | `api/auth/two-factor/{enable,confirm,disable,challenge}` | mixed                                    | **live** — tenant 2FA is fully implemented (F6 complete) |
+| GET/POST | `api/auth/two-factor/recovery-codes`                     | sanctum + tenant.user + password.confirm | tenant 2FA recovery codes                                |
+| GET      | `api/billing/catalog`                                    | public                                   | **public pricing page (NEW)**                            |
+| GET      | `api/billing/status`                                     | sanctum + tenant                         | current subscription                                     |
+| POST     | `api/billing/checkout`                                   | sanctum + tenant + manage_billing        | start checkout                                           |
+| POST     | `api/billing/change-plan`                                | sanctum + tenant + manage_billing        | upgrade/downgrade                                        |
+| POST     | `api/billing/pause`                                      | sanctum + tenant + manage_billing        | pause                                                    |
+| POST     | `api/billing/resume`                                     | sanctum + tenant + manage_billing        | resume                                                   |
+| POST     | `api/billing/cancel`                                     | sanctum + tenant + manage_billing        | cancel                                                   |
+| GET      | `api/billing/portal`                                     | sanctum + tenant + manage_billing        | provider portal URL                                      |
+| GET      | `api/billing/invoices`                                   | sanctum + tenant                         | list invoices                                            |
+| GET      | `api/entitlements/usage`                                 | sanctum + tenant                         | full quota matrix                                        |
 
 ### Platform surface (served on central domain)
 
@@ -385,9 +386,12 @@ Priority-ordered from the FE-integration point of view:
    `terminology` field is `{}` for a fresh tenant unless someone manually
    inserts a row into `tenant_settings`. Backend to hook
    `BusinessType::defaultTerminology()` into the tenant-created listener.
-6. **G9 — tenant 2FA** still returns 501. `User` model lacks Fortify's
-   `TwoFactorAuthenticatable` trait. Deferred by design; unblock only if the FE
-   needs it before the platform admin console ships.
+6. **G9 — tenant 2FA fully live**. `User` model carries Fortify's
+   `TwoFactorAuthenticatable` trait. All five endpoints (enable / confirm /
+   disable / challenge / recovery-codes) work end-to-end. Tenant login detects
+   `two_factor_confirmed_at` and returns `TwoFactorRequiredData` when the caller
+   has enrolled. Challenge endpoint mirrors the platform surface — accepts a
+   valid TOTP or recovery code, redeems, mints access token.
 7. **Scopes are empty** — `organizations` / `branches` / `seasons` all `[]`
    until the Organization module lands. Frontend must render the workspace
    switcher gracefully with no scopes.
