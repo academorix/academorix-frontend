@@ -142,5 +142,41 @@
     "decided_by": null,
     "created_at": "2026-06-28T09:00:00Z",
     "updated_at": "2026-06-28T09:00:00Z"
+  },
+  {
+    "id": "apt_conflict_marco_20260716",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_downtown",
+    "approvable_type": "resource_booking",
+    "approvable_id": "bkg_marco_downtown_20260716_15_blocked",
+    "subject": "Cross-branch coach conflict — Marco Ferrari, 2026-07-16 15:00",
+    "requested_by": "stf_coach_marco",
+    "requested_by_email": "marco.ferrari@example.com",
+    "assigned_to": "usr_coach_mike",
+    "status": "pending",
+    "reason": "Coach double-booked across branches within the same slot; head coach must decide which branch keeps the booking.",
+    "decided_at": null,
+    "decided_by": null,
+    "created_at": "2026-07-11T09:05:00Z",
+    "updated_at": "2026-07-11T09:05:00Z"
+  },
+  {
+    "id": "apt_cross_academy_link_liam_harbor",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": null,
+    "approvable_type": "link_request",
+    "approvable_id": "pcp_liam_garcia",
+    "subject": "Cross-academy link request — Liam Garcia (Harbor Aquatics)",
+    "requested_by": "usr_guardian_liam",
+    "requested_by_email": "liam.parent@example.com",
+    "assigned_to": "usr_admin",
+    "status": "approved",
+    "reason": "Guardian consent granted; first_name, last_name, dob, and nationality shared with Harbor.",
+    "decided_at": "2026-04-15T09:00:00Z",
+    "decided_by": "usr_guardian_liam",
+    "created_at": "2026-04-12T09:00:00Z",
+    "updated_at": "2026-04-15T09:00:00Z"
   }
 ]

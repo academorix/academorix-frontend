@@ -20,17 +20,18 @@
 
 ### Platform & tenancy
 
-| Prefix | Resource            | File                      | Example                                     |
-| ------ | ------------------- | ------------------------- | ------------------------------------------- |
-| `tnt_` | Tenant              | tenants.json              | `tnt_riverside`                             |
-| `bt_`  | Business Type       | business-types.json       | `bt_academy`                                |
-| `dom_` | Tenant Domain       | tenants.json              | `dom_riverside_primary`                     |
-| `org_` | Organization        | organizations.json        | `org_riverside`, `org_downtown`             |
-| `brn_` | Branch              | branches.json             | `brn_river`, `brn_marina`, `brn_downtown`   |
-| `reg_` | Region              | regions.json              | `reg_us_east`                               |
-| `ssn_` | Season              | seasons.json              | `ssn_2025_26`, `ssn_2026_27`, `ssn_2024_25` |
-| `rw_`  | Registration Window | registration-windows.json | `rw_2526_main`, `rw_2627_main`              |
-| `agp_` | Age Group           | age-groups.json           | `agp_river_u12`, `agp_marina_u10`           |
+| Prefix     | Resource            | File                      | Example                                     |
+| ---------- | ------------------- | ------------------------- | ------------------------------------------- |
+| `tnt_`     | Tenant              | tenants.json              | `tnt_riverside`                             |
+| `bt_`      | Business Type       | business-types.json       | `bt_academy`                                |
+| `dom_`     | Tenant Domain       | tenants.json              | `dom_riverside_primary`                     |
+| `org_`     | Organization        | organizations.json        | `org_riverside`, `org_downtown`             |
+| `brn_`     | Branch              | branches.json             | `brn_river`, `brn_marina`, `brn_downtown`   |
+| `reg_`     | Region              | regions.json              | `reg_us_east`                               |
+| `ssn_`     | Season              | seasons.json              | `ssn_2025_26`, `ssn_2026_27`, `ssn_2024_25` |
+| `rw_`      | Registration Window | registration-windows.json | `rw_2526_main`, `rw_2627_main`              |
+| `agp_`     | Age Group           | age-groups.json           | `agp_river_u12`, `agp_marina_u10`           |
+| `agerule_` | Age Cutoff Rule     | age-cutoff-rules.json     | `agerule_2526_u12_football`                 |
 
 ### Identity & access
 
@@ -122,14 +123,14 @@
 
 ### Coaching content
 
-| Prefix  | Resource          | File                                   | Example                |
-| ------- | ----------------- | -------------------------------------- | ---------------------- |
-| `drl_`  | Drill             | drills.json                            | `drl_passing_diamond`  |
-| `dcat_` | Drill Category    | drills.json (or drill-categories.json) | `dcat_passing`         |
-| `sp_`   | Session Plan      | session-plans.json                     | `sp_u12_passing_thurs` |
-| `spi_`  | Session Plan Item | session-plans.json                     | `spi_sp_u12_1`         |
-| `curr_` | Curriculum        | curriculums.json                       | `curr_u12_autumn`      |
-| `curw_` | Curriculum Week   | curriculum-weeks.json (new)            | `curw_u12_autumn_w1`   |
+| Prefix  | Resource          | File                                   | Example                                                                                     |
+| ------- | ----------------- | -------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `drl_`  | Drill             | drills.json                            | `drl_passing_diamond`                                                                       |
+| `dcat_` | Drill Category    | drills.json (or drill-categories.json) | `dcat_passing`                                                                              |
+| `sp_`   | Session Plan      | session-plans.json                     | `sp_u12_passing_thurs`                                                                      |
+| `spi_`  | Session Plan Item | session-plans.json                     | `spi_sp_u12_1`                                                                              |
+| `curr_` | Curriculum        | curriculums.json                       | `curr_u12_autumn` (legacy prefix `cur_` also present — do not add new records under `cur_`) |
+| `curw_` | Curriculum Week   | curriculum-weeks.json (new)            | `curw_u12_autumn_w1`                                                                        |
 
 ### Competition
 
@@ -156,8 +157,9 @@
 | `sc_`      | Session Credit Ledger            | session-credits.json         | `sc_001`–`sc_006`, `sc_liam_pack_1`          |
 | `pack_`    | Session Pack Definition          | packs.json                   | `pack_private_10`, `pack_swim_10`            |
 | `sdr_`     | Sibling Discount Rule            | sibling-discount-rules.json  | `sdr_two_kids_ten_percent`                   |
+| `fibnd_`   | Family Invoice Bundle            | family-invoice-bundles.json  | `fibnd_emma_family_202607`                   |
 | `tpa_`     | Tenant Payment Account (Connect) | tenant-payment-accounts.json | `tpa_riverside_stripe`                       |
-| `gwevt_`   | Gateway Event (webhook)          | gateway-events.json          | `gwevt_charge_succeeded_1001`                |
+| `gev_`     | Gateway Event (webhook)          | gateway-events.json          | `gev_001` (was `gwevt_` in an earlier draft) |
 | `invrem_`  | Invoice Reminder                 | invoice-reminders.json       | `invrem_inv1003_step3`                       |
 | `exp_`     | Expense                          | expenses.json                | `exp_1`–`exp_5`                              |
 | `expcat_`  | Expense Category                 | expense-categories.json      | `expcat_rent` (or `cat_rent`)                |
@@ -168,14 +170,14 @@
 
 ### Communication
 
-| Prefix   | Resource                 | File                          | Example                      |
-| -------- | ------------------------ | ----------------------------- | ---------------------------- |
-| `conv_`  | Conversation             | conversations.json            | `conv_emma_coach`            |
-| `msg_`   | Message                  | messages.json                 | `msg_conv_emma_1`            |
-| `ann_`   | Announcement             | announcements.json            | `ann_summer_camp`            |
-| `ntpl_`  | Notification Template    | notification-templates.json   | `ntpl_invoice_issued_en`     |
-| `notif_` | Notification (delivered) | notifications.json (new)      | `notif_emma_lineup_20260628` |
-| `npref_` | Notification Preference  | notification-preferences.json | `npref_emma_push_only`       |
+| Prefix   | Resource                 | File                          | Example                                                |
+| -------- | ------------------------ | ----------------------------- | ------------------------------------------------------ |
+| `conv_`  | Conversation             | conversations.json            | `conv_emma_coach`                                      |
+| `msg_`   | Message                  | messages.json                 | `msg_conv_emma_1`                                      |
+| `ann_`   | Announcement             | announcements.json            | `ann_summer_camp`                                      |
+| `tpl_`   | Notification Template    | notification-templates.json   | `tpl_invite_push_en` (was `ntpl_` in an earlier draft) |
+| `notif_` | Notification (delivered) | notifications.json (new)      | `notif_emma_lineup_20260628`                           |
+| `npref_` | Notification Preference  | notification-preferences.json | `npref_emma_push_only`                                 |
 
 ### Enrollment funnel
 

@@ -1,0 +1,40 @@
+[
+  {
+    "id": "fibnd_emma_family_202607",
+    "tenant_id": "tnt_riverside",
+    "payer_user_id": "usr_guardian_emma",
+    "period_start": "2026-07-01",
+    "period_end": "2026-07-31",
+    "member_invoice_ids": ["inv_1005", "inv_1002"],
+    "subtotal_minor": 19200,
+    "tax_minor": 0,
+    "total_minor": 19200,
+    "currency": "USD",
+    "pdf_document_id": "doc_family_bundle_202607_emma",
+    "generated_at": "2026-07-02T02:00:00Z",
+    "is_opt_in": true,
+    "status": "rendered",
+    "notes": "D4 opt-in demo — one consolidated PDF that bundles the underlying per-child invoices for the Emma family (July 2026). The ledger keeps one invoice per membership; this bundle is a rendered convenience artifact only.",
+    "created_at": "2026-07-02T02:00:00Z",
+    "updated_at": "2026-07-02T02:00:00Z"
+  },
+  {
+    "id": "fibnd_emma_family_202606",
+    "tenant_id": "tnt_riverside",
+    "payer_user_id": "usr_guardian_emma",
+    "period_start": "2026-06-01",
+    "period_end": "2026-06-30",
+    "member_invoice_ids": ["inv_1004", "inv_ps_emma_1"],
+    "subtotal_minor": 19500,
+    "tax_minor": 0,
+    "total_minor": 19500,
+    "currency": "USD",
+    "pdf_document_id": null,
+    "generated_at": null,
+    "is_opt_in": true,
+    "status": "pending",
+    "notes": "Backfill bundle for June 2026 — queued for the render worker. Demonstrates the pending state before the consolidated PDF is produced.",
+    "created_at": "2026-07-02T00:05:00Z",
+    "updated_at": "2026-07-02T00:05:00Z"
+  }
+]

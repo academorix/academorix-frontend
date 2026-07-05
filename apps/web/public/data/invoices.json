@@ -380,5 +380,112 @@
     },
     "created_at": "2026-06-02T10:00:00Z",
     "updated_at": "2026-06-15T11:15:00Z"
+  },
+  {
+    "id": "inv_1007_pre_recompute",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
+    "region_id": "reg_us_east",
+    "payer_user_id": "usr_guardian_emma",
+    "athlete_id": "ath_emma",
+    "source_type": "membership",
+    "source_id": "mem_emma_football",
+    "number": "INV-1007-PRE",
+    "status": "issued",
+    "currency": "USD",
+    "subtotal_minor": 7200,
+    "tax_minor": 0,
+    "total_minor": 7200,
+    "paid_minor": 0,
+    "credited_minor": 0,
+    "lines": [
+      {
+        "description": "Football U10 Monthly — July 2026",
+        "quantity": 1,
+        "unit_price_minor": 8000,
+        "tax_rate_bps": 0,
+        "tax_minor": 0,
+        "amount_minor": 8000
+      },
+      {
+        "description": "Sibling discount (10% off each — 2 active memberships)",
+        "quantity": 1,
+        "unit_price_minor": -800,
+        "tax_rate_bps": 0,
+        "tax_minor": 0,
+        "amount_minor": -800,
+        "discount_rule_id": "sdr_two_kids_ten_percent"
+      }
+    ],
+    "due_at": "2026-07-10",
+    "issued_at": "2026-07-01",
+    "voided_at": null,
+    "void_reason": null,
+    "pdf_document_id": null,
+    "version": 1,
+    "metadata": {
+      "period_start": "2026-07-01",
+      "period_end": "2026-08-01",
+      "plan_version": 3,
+      "sibling_discount_rule_id": "sdr_two_kids_ten_percent",
+      "sibling_discount_saved_minor": 800,
+      "active_sibling_memberships_snapshot": 2,
+      "scenario_notes": "Sibling-discount demo — the state as of 2026-07-01 with Emma + Sofia both active. Parallel demo record to inv_1005 for the S8 recomputation scenario."
+    },
+    "notes": "Demo record for the S8 sibling-discount recomputation flow. Snapshot of the invoice as originally issued (with the 10% discount) before Sofia's mem_sofia_football was cancelled. Superseded by inv_1007_post_recompute.",
+    "created_at": "2026-07-01T00:10:00Z",
+    "updated_at": "2026-07-01T00:10:00Z"
+  },
+  {
+    "id": "inv_1007_post_recompute",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
+    "region_id": "reg_us_east",
+    "payer_user_id": "usr_guardian_emma",
+    "athlete_id": "ath_emma",
+    "source_type": "membership",
+    "source_id": "mem_emma_football",
+    "number": "INV-1007-POST",
+    "status": "issued",
+    "currency": "USD",
+    "subtotal_minor": 8000,
+    "tax_minor": 0,
+    "total_minor": 8000,
+    "paid_minor": 0,
+    "credited_minor": 0,
+    "lines": [
+      {
+        "description": "Football U10 Monthly — July 2026 (recomputed)",
+        "quantity": 1,
+        "unit_price_minor": 8000,
+        "tax_rate_bps": 0,
+        "tax_minor": 0,
+        "amount_minor": 8000
+      }
+    ],
+    "due_at": "2026-07-10",
+    "issued_at": "2026-07-05",
+    "voided_at": null,
+    "void_reason": null,
+    "pdf_document_id": null,
+    "version": 1,
+    "metadata": {
+      "period_start": "2026-07-01",
+      "period_end": "2026-08-01",
+      "plan_version": 3,
+      "recomputed_from_invoice_id": "inv_1007_pre_recompute",
+      "recomputed_at": "2026-07-05T09:00:00Z",
+      "recompute_reason": "sibling_membership_cancelled",
+      "removed_membership_id": "mem_sofia_football",
+      "active_sibling_memberships_snapshot": 1,
+      "sibling_discount_rule_id": null,
+      "sibling_discount_saved_minor": 0,
+      "credit_memo_id": "cm_sibling_recompute_emma_202607"
+    },
+    "notes": "Recomputed July invoice after Sofia's membership was cancelled. Only 1 active sibling membership remains — below sdr_two_kids_ten_percent's min_active_memberships=2 threshold, so no discount applies. Goodwill credit cm_sibling_recompute_emma_202607 offsets the $8 delta.",
+    "created_at": "2026-07-05T09:00:00Z",
+    "updated_at": "2026-07-05T09:00:00Z"
   }
 ]

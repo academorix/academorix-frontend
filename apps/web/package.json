@@ -12,6 +12,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "mock:validate": "node scripts/validate-mock-data.mjs",
+    "mock:validate:json": "node scripts/validate-mock-data.mjs --json",
     "codegen": "openapi-typescript ${ACADEMORIX_OPENAPI_URL:-http://localhost:8000/api/openapi.json} --output ./src/lib/api/schema.d.ts",
     "clean": "rm -rf dist coverage .turbo"
   },

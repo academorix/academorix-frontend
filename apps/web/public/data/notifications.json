@@ -199,5 +199,138 @@
     "failure_reason": "SMTP 550 5.1.1: recipient inbox full",
     "created_at": "2026-06-02T09:00:00Z",
     "updated_at": "2026-06-02T09:00:03Z"
+  },
+  {
+    "id": "notif_conflict_marco_head_coach_alert",
+    "tenant_id": "tnt_riverside",
+    "user_id": "usr_coach_mike",
+    "template_id": null,
+    "type": "booking_conflict_detected",
+    "channel": "push",
+    "title": "Cross-branch coach conflict — action needed",
+    "body_preview": "Marco Ferrari is double-booked at Marina and Downtown for 2026-07-16 15:00. Review and pick which branch keeps the slot.",
+    "data_ref": {
+      "approval_task_id": "apt_conflict_marco_20260716",
+      "conflicting_booking_id": "bkg_marco_marina_20260716_15",
+      "blocked_booking_id": "bkg_marco_downtown_20260716_15_blocked",
+      "coach_staff_id": "stf_coach_marco",
+      "slot_start_at": "2026-07-16T15:00:00Z"
+    },
+    "status": "delivered",
+    "sent_at": "2026-07-11T09:05:10Z",
+    "read_at": null,
+    "failure_reason": null,
+    "created_at": "2026-07-11T09:05:10Z",
+    "updated_at": "2026-07-11T09:05:10Z"
+  },
+  {
+    "id": "notif_admin_ai_quota_exceeded",
+    "tenant_id": "tnt_riverside",
+    "user_id": "usr_admin",
+    "template_id": null,
+    "type": "ai_quota_exhausted",
+    "channel": "email",
+    "title": "AI monthly quota exhausted",
+    "body_preview": "Riverside has used its full monthly AI token quota (500,000 / 500,000). Assistant calls will resume next billing cycle or after a quota top-up.",
+    "data_ref": {
+      "pool_key": "AiTokens",
+      "used": 500000,
+      "limit": 500000,
+      "entitlement_license_id": "ent_riverside_ai_tokens_exhausted"
+    },
+    "status": "sent",
+    "sent_at": "2026-06-29T14:22:15Z",
+    "read_at": null,
+    "failure_reason": null,
+    "created_at": "2026-06-29T14:22:15Z",
+    "updated_at": "2026-06-29T14:22:15Z"
+  },
+  {
+    "id": "notif_demo_past_due_owner_auto_cancelled",
+    "tenant_id": "tnt_demo_past_due",
+    "user_id": null,
+    "template_id": null,
+    "type": "subscription_auto_canceled",
+    "channel": "email",
+    "title": "Your Academorix subscription has been canceled",
+    "body_preview": "The grace period for your Academorix subscription expired without a successful payment. Access will end at midnight UTC.",
+    "data_ref": {
+      "tenant_id": "tnt_demo_past_due",
+      "subscription_id": "sub_demo_past_due",
+      "snapshot_subscription_id": "sub_demo_past_due_auto_cancelled"
+    },
+    "status": "sent",
+    "sent_at": "2026-07-06T00:05:30Z",
+    "read_at": null,
+    "failure_reason": null,
+    "notes": "Demo-tenant auto-cancel notification — user_id is null because tnt_demo_past_due has no live owner user in the mock set; tenant_id is captured in data_ref for downstream routing.",
+    "created_at": "2026-07-06T00:05:30Z",
+    "updated_at": "2026-07-06T00:05:30Z"
+  },
+  {
+    "id": "notif_harbor_admin_link_request_liam",
+    "tenant_id": "tnt_harbor",
+    "user_id": "usr_harbor_owner",
+    "template_id": null,
+    "type": "cross_academy_link_requested",
+    "channel": "email",
+    "title": "New cross-academy link request — Liam Garcia",
+    "body_preview": "A guardian has requested to link Liam Garcia's Harbor athlete profile to their Riverside identity. Review the shared fields and approve.",
+    "data_ref": {
+      "person_identity_id": "pcp_liam_garcia",
+      "source_tenant_id": "tnt_riverside",
+      "target_tenant_id": "tnt_harbor",
+      "approval_task_id": "apt_cross_academy_link_liam_harbor"
+    },
+    "status": "read",
+    "sent_at": "2026-04-12T09:05:00Z",
+    "read_at": "2026-04-13T08:30:00Z",
+    "failure_reason": null,
+    "created_at": "2026-04-12T09:05:00Z",
+    "updated_at": "2026-04-13T08:30:00Z"
+  },
+  {
+    "id": "notif_emma_sibling_discount_recomputed",
+    "tenant_id": "tnt_riverside",
+    "user_id": "usr_guardian_emma",
+    "template_id": null,
+    "type": "sibling_discount_recomputed",
+    "channel": "email",
+    "title": "Your July invoice was recalculated",
+    "body_preview": "Because Sofia's membership was cancelled, Emma's July invoice no longer qualifies for the sibling discount. We issued a credit to hold the total steady this month.",
+    "data_ref": {
+      "invoice_id_before": "inv_1007_pre_recompute",
+      "invoice_id_after": "inv_1007_post_recompute",
+      "credit_memo_id": "cm_sibling_recompute_emma_202607",
+      "removed_membership_id": "mem_sofia_football"
+    },
+    "status": "delivered",
+    "sent_at": "2026-07-05T09:15:00Z",
+    "read_at": null,
+    "failure_reason": null,
+    "created_at": "2026-07-05T09:15:00Z",
+    "updated_at": "2026-07-05T09:15:00Z"
+  },
+  {
+    "id": "notif_emma_pass_updated",
+    "tenant_id": "tnt_riverside",
+    "user_id": "usr_guardian_emma",
+    "template_id": null,
+    "type": "wallet_pass_updated",
+    "channel": "push",
+    "title": "Emma's Academorix pass is updated",
+    "body_preview": "Emma's wallet pass was refreshed for July. Tap to open your Apple Wallet — the previous pass has been superseded automatically.",
+    "data_ref": {
+      "pass_id": "pass_emma_apple_v2_renewed_202607",
+      "superseded_pass_id": "pass_emma_apple",
+      "membership_period_before": "2026-06",
+      "membership_period_after": "2026-07"
+    },
+    "status": "delivered",
+    "sent_at": "2026-07-01T00:15:30Z",
+    "read_at": null,
+    "failure_reason": null,
+    "created_at": "2026-07-01T00:15:30Z",
+    "updated_at": "2026-07-01T00:15:30Z"
   }
 ]

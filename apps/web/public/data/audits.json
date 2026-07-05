@@ -424,5 +424,118 @@
     "at": "2026-05-31T23:59:59Z",
     "ip": null,
     "ua": "EntitlementReconciler/1.0"
+  },
+  {
+    "id": "aud_20250801_mason_pii_redacted",
+    "tenant_id": "tnt_riverside",
+    "actor_id": "usr_admin",
+    "actor_type": "user",
+    "action": "data_lifecycle.pii_redacted",
+    "entity_type": "athlete",
+    "entity_id": "ath_mason",
+    "before": {
+      "first_name": "Mason",
+      "last_name": "Davis",
+      "email": "mason.davis@example.com",
+      "date_of_birth": "2009-12-05",
+      "anonymized": false
+    },
+    "after": {
+      "first_name": "[redacted]",
+      "last_name": "[redacted]",
+      "email": null,
+      "date_of_birth": "2009-01-01",
+      "anonymized": true,
+      "retained_reason": "closed_athlete_awards_history"
+    },
+    "retention_policy_id": "ret_athlete_records_5y",
+    "erasure_request_id": "era_mason_20250801",
+    "at": "2025-08-01T09:00:00Z",
+    "ip": null,
+    "ua": "RetentionExecutor/1.0"
+  },
+  {
+    "id": "aud_20250801_mason_erasure_bundle_linked",
+    "tenant_id": "tnt_riverside",
+    "actor_id": "usr_admin",
+    "actor_type": "user",
+    "action": "data_lifecycle.erasure.bundle_linked",
+    "entity_type": "erasure_request",
+    "entity_id": "era_mason_20250801",
+    "before": { "export_document_id": "doc_ath_emma_medical" },
+    "after": { "export_document_id": "doc_erasure_mason_bundle_20250801" },
+    "at": "2025-08-01T09:05:00Z",
+    "notes": "Registers the correct erasure-bundle document reference for era_mason_20250801 without mutating the original erasure record. The erasure_requests.export_document_id field is preserved as-is; downstream readers should treat this audit entry as the canonical link.",
+    "ip": null,
+    "ua": "RetentionExecutor/1.0"
+  },
+  {
+    "id": "aud_20260706_subscription_auto_cancelled",
+    "tenant_id": "tnt_demo_past_due",
+    "actor_id": "system",
+    "actor_type": "system",
+    "action": "subscription.auto_canceled",
+    "entity_type": "subscription",
+    "entity_id": "sub_demo_past_due",
+    "before": { "status": "past_due", "grace_ends_at": "2026-07-05T23:59:59Z" },
+    "after": {
+      "status": "canceled",
+      "canceled_at": "2026-07-06T00:05:00Z",
+      "cancellation_reason": "grace_period_expired_no_payment",
+      "snapshot_subscription_id": "sub_demo_past_due_auto_cancelled"
+    },
+    "at": "2026-07-06T00:05:00Z",
+    "ip": null,
+    "ua": "GracePeriodReconciler/1.0"
+  },
+  {
+    "id": "aud_20260705_sibling_discount_recomputed",
+    "tenant_id": "tnt_riverside",
+    "actor_id": "system",
+    "actor_type": "system",
+    "action": "billing.sibling_discount.recomputed",
+    "entity_type": "invoice",
+    "entity_id": "inv_1007_pre_recompute",
+    "before": {
+      "active_sibling_memberships": 2,
+      "sibling_discount_rule_id": "sdr_two_kids_ten_percent",
+      "sibling_discount_saved_minor": 800,
+      "total_minor": 7200
+    },
+    "after": {
+      "active_sibling_memberships": 1,
+      "sibling_discount_rule_id": null,
+      "sibling_discount_saved_minor": 0,
+      "total_minor": 8000,
+      "recomputed_invoice_id": "inv_1007_post_recompute",
+      "credit_memo_id": "cm_sibling_recompute_emma_202607",
+      "removed_membership_id": "mem_sofia_football"
+    },
+    "at": "2026-07-05T09:00:00Z",
+    "ip": null,
+    "ua": "SiblingDiscountReconciler/1.0"
+  },
+  {
+    "id": "aud_20260701_pass_emma_renewed",
+    "tenant_id": "tnt_riverside",
+    "actor_id": "system",
+    "actor_type": "system",
+    "action": "wallet_pass.renewed",
+    "entity_type": "pass",
+    "entity_id": "pass_emma_apple",
+    "before": {
+      "serial": "AMX-EMMA-8F3K-2027",
+      "membership_period": "2026-06",
+      "status": "active"
+    },
+    "after": {
+      "serial": "AMX-EMMA-8F3K-2028",
+      "membership_period": "2026-07",
+      "status": "superseded",
+      "new_pass_id": "pass_emma_apple_v2_renewed_202607"
+    },
+    "at": "2026-07-01T00:15:00Z",
+    "ip": null,
+    "ua": "WalletPassRenewer/1.0"
   }
 ]

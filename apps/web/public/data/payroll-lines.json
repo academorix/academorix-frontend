@@ -104,7 +104,12 @@
     "tax_minor": 25200,
     "net_minor": 100800,
     "currency": "USD",
-    "notes": "30 sessions × $42.00 — Riverside HQ + Downtown cover.",
+    "branch_allocations": [
+      { "branch_id": "brn_river", "sessions": 12, "ratio": 0.4, "amount_minor": 50400 },
+      { "branch_id": "brn_marina", "sessions": 10, "ratio": 0.3333, "amount_minor": 42000 },
+      { "branch_id": "brn_downtown", "sessions": 8, "ratio": 0.2667, "amount_minor": 33600 }
+    ],
+    "notes": "30 sessions × $42.00 — Riverside HQ + Downtown cover. D2 allocation: split by sessions delivered per branch; amounts sum to gross_minor.",
     "created_at": "2026-06-28T09:00:00Z"
   },
   {
@@ -142,5 +147,28 @@
     "currency": "USD",
     "notes": "Medical officer monthly salary — June 2026.",
     "created_at": "2026-06-28T09:00:00Z"
+  },
+  {
+    "id": "pyrl_pyrn_202607_marco_draft",
+    "tenant_id": "tnt_riverside",
+    "run_id": "pyrn_202607_riverside",
+    "staff_id": "stf_coach_marco",
+    "pay_type": "per_session",
+    "base_amount_minor": 105000,
+    "sessions_delivered": 25,
+    "hours_worked": null,
+    "bonus_minor": 0,
+    "deductions_minor": 0,
+    "gross_minor": 105000,
+    "tax_minor": 21000,
+    "net_minor": 84000,
+    "currency": "USD",
+    "branch_allocations": [
+      { "branch_id": "brn_river", "sessions": 8, "ratio": 0.32, "amount_minor": 33600 },
+      { "branch_id": "brn_marina", "sessions": 10, "ratio": 0.4, "amount_minor": 42000 },
+      { "branch_id": "brn_downtown", "sessions": 7, "ratio": 0.28, "amount_minor": 29400 }
+    ],
+    "notes": "Draft — 25 sessions × $42.00 projected mid-July. Split per D2: sessions delivered per branch (8 river + 10 marina + 7 downtown). Amounts sum to gross_minor.",
+    "created_at": "2026-07-15T09:00:00Z"
   }
 ]

@@ -134,5 +134,38 @@
     ],
     "created_at": "2026-06-10T14:00:00Z",
     "updated_at": "2026-06-10T14:05:00Z"
+  },
+  {
+    "id": "pcp_liam_garcia",
+    "academorix_id": "AX-LMG-8D53",
+    "first_name": "Liam",
+    "last_name": "Garcia",
+    "display_name": "Liam Garcia",
+    "dob": "2011-11-02",
+    "nationality": "US",
+    "verified": true,
+    "verified_at": "2025-09-06T10:00:00Z",
+    "tenant_links": [
+      {
+        "tenant_id": "tnt_riverside",
+        "local_user_id": null,
+        "local_athlete_id": "ath_liam",
+        "role_category": "athlete",
+        "shared_fields": ["first_name", "last_name", "dob", "nationality"],
+        "consent_status": "granted",
+        "linked_at": "2025-09-06T10:00:00Z"
+      },
+      {
+        "tenant_id": "tnt_harbor",
+        "local_user_id": null,
+        "local_athlete_id": "ath_harbor_liam",
+        "role_category": "athlete",
+        "shared_fields": ["first_name", "last_name", "dob", "nationality"],
+        "consent_status": "granted",
+        "linked_at": "2026-03-12T10:00:00Z"
+      }
+    ],
+    "created_at": "2025-09-06T10:00:00Z",
+    "updated_at": "2026-03-12T10:00:00Z"
   }
 ]

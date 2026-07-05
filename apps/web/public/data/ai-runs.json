@@ -118,5 +118,20 @@
     "error": null,
     "started_at": "2026-06-28T10:10:00Z",
     "completed_at": "2026-06-28T10:10:06Z"
+  },
+  {
+    "id": "airun_admin_retention_3_quota_blocked",
+    "tenant_id": "tnt_riverside",
+    "conversation_id": "aiconv_admin_retention_202606",
+    "model": "anthropic:claude-4-sonnet",
+    "prompt_id": "prompt_admin_retention_v1",
+    "tokens_in": 0,
+    "tokens_out": 0,
+    "cost_minor": 0,
+    "latency_ms": 42,
+    "status": "quota_exceeded",
+    "error": "tenant_ai_token_limit_reached: 500000/500000 monthly quota consumed",
+    "started_at": "2026-06-29T14:22:00Z",
+    "completed_at": "2026-06-29T14:22:00Z"
   }
 ]

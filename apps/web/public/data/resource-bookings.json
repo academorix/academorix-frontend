@@ -82,5 +82,40 @@
     "notes": "Cancelled — thunderstorm.",
     "created_at": "2026-06-25T10:00:00Z",
     "updated_at": "2026-06-30T13:15:00Z"
+  },
+  {
+    "id": "bkg_marco_marina_20260716_15",
+    "tenant_id": "tnt_riverside",
+    "resource_id": "fac_marina_court_1",
+    "activity_type": "session",
+    "activity_id": "ps_marco_marina_20260716",
+    "coach_id": "stf_coach_marco",
+    "branch_id": "brn_marina",
+    "start_at": "2026-07-16T15:00:00Z",
+    "end_at": "2026-07-16T16:00:00Z",
+    "status": "confirmed",
+    "booked_by": "stf_coach_marco",
+    "notes": "Marina wins the 15:00 slot via first-write-wins (D3). Marco is concurrently employed at brn_marina and brn_downtown; the Downtown counterpart is blocked and escalated to the head coach.",
+    "created_at": "2026-07-11T09:00:00Z",
+    "updated_at": "2026-07-11T09:00:00Z"
+  },
+  {
+    "id": "bkg_marco_downtown_20260716_15_blocked",
+    "tenant_id": "tnt_riverside",
+    "resource_id": "fac_downtown_court_1",
+    "activity_type": "blackout",
+    "activity_id": "blk_marco_conflict_downtown_20260716",
+    "coach_id": "stf_coach_marco",
+    "branch_id": "brn_downtown",
+    "start_at": "2026-07-16T15:00:00Z",
+    "end_at": "2026-07-16T16:00:00Z",
+    "status": "blocked",
+    "blocked_reason": "cross_branch_coach_conflict",
+    "conflicting_booking_id": "bkg_marco_marina_20260716_15",
+    "escalation_task_id": "apt_conflict_marco_20260716",
+    "booked_by": "stf_coach_marco",
+    "notes": "Blocked by cross-branch coach-conflict detection (D3). Marco is already booked at brn_marina for the same 15:00-16:00 slot; head coach usr_coach_mike must decide which branch keeps the booking.",
+    "created_at": "2026-07-11T09:05:00Z",
+    "updated_at": "2026-07-11T09:05:00Z"
   }
 ]
