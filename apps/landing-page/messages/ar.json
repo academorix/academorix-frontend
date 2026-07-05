@@ -27,10 +27,20 @@
 
   "footer": {
     "columns": {
-      "product": "المنتج",
+      "product": "المنتجات",
       "sports": "الرياضات",
       "resources": "الموارد",
-      "legal": "القانوني"
+      "legal": "القانوني",
+      "solutions": "الحلول",
+      "enterprise": "الشركات",
+      "personas": "الأدوار",
+      "regions": "المناطق",
+      "build": "التطوير",
+      "learn": "التعلّم",
+      "explore": "الاستكشاف",
+      "company": "الشركة",
+      "trust": "القانوني والامتثال",
+      "social": "الشبكات الاجتماعية"
     },
     "product": {
       "athletes": "اللاعبون",
@@ -38,7 +48,12 @@
       "scheduling": "الجدولة",
       "payments": "المدفوعات",
       "performance": "الأداء",
-      "pricing": "الأسعار"
+      "pricing": "الأسعار",
+      "reception": "الاستقبال",
+      "reports": "التقارير",
+      "safeguarding": "حماية الأطفال",
+      "aiAssistant": "المساعد الذكي",
+      "attributeEngine": "محرّك السمات"
     },
     "sports": {
       "football": "كرة القدم",
@@ -46,7 +61,11 @@
       "basketball": "كرة السلة",
       "tennis": "التنس",
       "martialArts": "الفنون القتالية",
-      "gymnastics": "الجمباز"
+      "gymnastics": "الجمباز",
+      "volleyball": "الكرة الطائرة",
+      "padel": "البادل",
+      "athletics": "ألعاب القوى",
+      "comingSoon": "قريباً"
     },
     "resources": {
       "documentation": "التوثيق",
@@ -61,6 +80,85 @@
       "security": "الأمان",
       "cookies": "الكوكيز",
       "dpa": "معالجة البيانات"
+    },
+    "solutions": {
+      "multiBranch": "متعدّد الفروع",
+      "multiTenant": "متعدّد المستأجرين",
+      "sportAgnostic": "غير مقيّد برياضة",
+      "rtlBilingual": "دعم RTL وثنائي اللغة",
+      "offlineFirst": "يعمل دون اتصال"
+    },
+    "enterprise": {
+      "security": "أمان المؤسسات",
+      "onboarding": "التهيئة والترحيل",
+      "contracts": "عقود مخصّصة",
+      "talkToSales": "تحدث مع فريق المبيعات",
+      "customerStories": "قصص العملاء"
+    },
+    "personas": {
+      "owners": "للمالكين",
+      "coaches": "للمدرّبين",
+      "athletes": "للاعبين",
+      "guardians": "لأولياء الأمور",
+      "frontDesk": "لموظّفي الاستقبال",
+      "finance": "للمالية",
+      "platformAdmins": "لمشرفي المنصّة"
+    },
+    "regions": {
+      "mena": "الشرق الأوسط وشمال أفريقيا",
+      "europe": "أوروبا",
+      "americas": "الأمريكيتان",
+      "dataResidency": "إقامة البيانات",
+      "localisedInvoicing": "فوترة محلية"
+    },
+    "build": {
+      "docs": "التوثيق",
+      "apiReference": "مرجع الواجهة البرمجية",
+      "gettingStarted": "ابدأ الآن",
+      "changelog": "سجل التغييرات",
+      "status": "حالة الخدمة"
+    },
+    "learn": {
+      "blog": "المدوّنة",
+      "customerStories": "قصص العملاء",
+      "guides": "الأدلّة",
+      "videoTutorials": "دروس مصوّرة",
+      "newsletter": "النشرة البريدية"
+    },
+    "explore": {
+      "roadmap": "خارطة الطريق",
+      "community": "المجتمع",
+      "github": "GitHub",
+      "templates": "القوالب",
+      "integrations": "التكاملات"
+    },
+    "company": {
+      "about": "من نحن",
+      "careers": "الوظائف",
+      "press": "الصحافة",
+      "contact": "تواصل معنا",
+      "partners": "الشركاء"
+    },
+    "trust": {
+      "privacy": "الخصوصية",
+      "terms": "الشروط",
+      "security": "الأمان",
+      "dpa": "معالجة البيانات",
+      "cookies": "الكوكيز",
+      "acceptableUse": "الاستخدام المقبول"
+    },
+    "social": {
+      "github": "GitHub",
+      "x": "X",
+      "linkedin": "LinkedIn"
+    },
+    "status": {
+      "allSystemsNormal": "كل الأنظمة تعمل بشكل طبيعي",
+      "aria": "حالة النظام — تفتح في تبويب جديد"
+    },
+    "regionSelector": {
+      "label": "المنطقة",
+      "aria": "اختر المنطقة"
     },
     "copyright": "© {year} {name}. جميع الحقوق محفوظة."
   },

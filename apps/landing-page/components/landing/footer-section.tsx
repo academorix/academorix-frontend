@@ -3,35 +3,46 @@
  * @module components/landing/footer-section
  *
  * @description
- * Enterprise-grade site footer: brand + tagline, four columns of navigation,
- * a hairline separator, and a bottom utility bar carrying the copyright,
- * a compact language switcher, a "Sign in" link, and the social row
- * (GitHub / X / Community) driven off `site.social.*`.
+ * Enterprise mega-footer for the marketing surface — modelled on the
+ * two-row Vercel / Stripe / Linear pattern. Twelve navigation columns
+ * (six product-facing, six company + resources + legal), a utility bar
+ * carrying the brand mark + tagline + copyright on the leading edge and
+ * the status pill / language switcher / theme toggle / region selector
+ * on the trailing edge.
  *
- * Every column title + link label is pulled from the active locale's
- * `messages/{locale}.json` so translations ship without touching JSX.
- * The bottom bar's language switcher lets visitors flip locale from the
- * fold as well as the header, matching the pattern used by every large
- * SaaS marketing site (Vercel, Stripe, Segment, Linear, HubSpot).
+ * ## What lives where
  *
- * Server Component — the `LanguageSwitcher` inside is a `"use client"`
- * component and React handles the boundary automatically.
+ *  - **Row 1 (product-facing)**: Products, Sports, Solutions, Enterprise,
+ *    Personas, Regions. This is the "what can I buy?" surface.
+ *  - **Row 2 (company + resources + legal)**: Build, Learn, Explore,
+ *    Company, Legal & Trust, Social. This is the "who are you?" surface.
+ *  - **Utility bar**: brand + tagline + copyright on the left; status,
+ *    language, theme, region on the right.
+ *
+ * Every visible string flows through `useTranslations("footer")` so
+ * English and Arabic are both first-class. Locale-aware links use the
+ * typed `Link` from `@/i18n/navigation`; anything external (docs, status,
+ * changelog, YouTube, social handles) uses a raw `<a>` with the safe rel.
+ *
+ * ## Server Component
+ *
+ * The wrapper renders on the server — cheap, no JS runs for the columns
+ * themselves. Interactive parts (`LanguageSwitcher`, `ThemeSwitch`,
+ * `RegionSelector`) are Client Components; React handles the boundary.
  */
 
-import {
-  ChatBubbleLeftRightIcon,
-  CodeBracketSquareIcon,
-  HashtagIcon,
-} from "@academorix/ui/icons/outline";
-import { Separator } from "@academorix/ui/react";
+import { Chip, Separator } from "@academorix/ui/react";
 import { useTranslations } from "next-intl";
 
 import type { SiteData } from "@/lib/types";
 import type { ReactNode } from "react";
 
+import { RegionSelector } from "@/components/footer/region-selector";
+import { StatusIndicator } from "@/components/footer/status-indicator";
 import { LanguageSwitcher } from "@/components/nav/language-switcher";
+import { ThemeSwitch } from "@/components/theme-switch";
 import { Link } from "@/i18n/navigation";
-import { getAppUrl } from "@/lib/env";
+import { getChangelogUrl, getDocsUrl, getStatusUrl, getTutorialsUrl } from "@/lib/env";
 import { isExternalHref } from "@/lib/marketing/cta";
 
 /** Props for {@link FooterSection}. */
@@ -43,68 +54,100 @@ interface FooterSectionProps {
 interface FooterLink {
   label: string;
   href: string;
+  /** Optional inline badge (e.g. "Coming soon" for unreleased sports). */
+  badge?: string;
 }
 
 /** A titled column of footer links. */
 interface FooterColumn {
+  /** Stable React key — independent of the translated title. */
+  key: string;
   title: string;
   links: readonly FooterLink[];
 }
 
-/** Renders a single footer link, choosing anchor attributes by target type. */
+/**
+ * Renders a single footer link. Chooses the right anchor primitive based
+ * on the href — internal paths use the locale-aware `Link`, everything
+ * external goes through a raw `<a>` with the safe rel + target.
+ *
+ * When a badge is present, we render a small HeroUI `Chip` right after
+ * the label so the "Coming soon" callout stays inline with the row.
+ */
 function FooterLinkItem({ link }: { link: FooterLink }): ReactNode {
-  const className = "text-sm text-muted transition-colors hover:text-foreground";
+  const className =
+    "inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded";
+
+  const body = (
+    <>
+      <span>{link.label}</span>
+      {link.badge ? (
+        <Chip color="warning" size="sm" variant="soft">
+          <Chip.Label>{link.badge}</Chip.Label>
+        </Chip>
+      ) : null}
+    </>
+  );
 
   if (isExternalHref(link.href)) {
     return (
       <a className={className} href={link.href} rel="noopener noreferrer" target="_blank">
-        {link.label}
+        {body}
       </a>
     );
   }
 
   return (
     <Link className={className} href={link.href}>
-      {link.label}
+      {body}
     </Link>
   );
 }
 
 /**
- * Small icon-only anchor used in the footer social row. External-only —
- * every href is expected to point at a third-party domain (GitHub, X,
- * community forum), so we always open in a new tab with the safe rel.
+ * Renders a titled column of links. Heading is a level-2 heading — the
+ * footer sits at the bottom of the page and every column represents a
+ * distinct section, so h2 is the correct semantic level.
  */
-function SocialIconLink({
-  href,
-  label,
-  icon: Icon,
-}: {
-  href: string;
-  label: string;
-  icon: (props: { className?: string; "aria-hidden"?: boolean }) => ReactNode;
-}): ReactNode {
+function ColumnBlock({ column }: { column: FooterColumn }): ReactNode {
   return (
-    <a
-      aria-label={label}
-      className="inline-flex size-9 items-center justify-center rounded-lg text-muted transition-colors hover:bg-default/40 hover:text-foreground"
-      href={href}
-      rel="noopener noreferrer"
-      target="_blank"
-    >
-      <Icon aria-hidden className="size-5" />
-    </a>
+    <nav aria-label={column.title} className="flex flex-col gap-4">
+      <h2 className="text-xs font-semibold tracking-wider text-foreground uppercase">
+        {column.title}
+      </h2>
+      <ul className="flex flex-col gap-3">
+        {column.links.map((link) => (
+          <li key={`${column.key}-${link.label}`}>
+            <FooterLinkItem link={link} />
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 }
 
-/** The landing-page footer. */
+/** The landing-page mega-footer. */
 export function FooterSection({ site }: FooterSectionProps): ReactNode {
   const t = useTranslations("footer");
-  const tCommon = useTranslations("common");
   const year = new Date().getFullYear();
 
-  const columns: readonly FooterColumn[] = [
+  // Resolve external endpoints once up-front so the JSX stays flat.
+  const docsUrl = getDocsUrl();
+  const changelogUrl = getChangelogUrl();
+  const statusUrl = getStatusUrl();
+  const tutorialsUrl = getTutorialsUrl();
+
+  // LinkedIn falls back to the community URL until we ship a real
+  // LinkedIn company page — the brief calls this a placeholder.
+  const linkedinHref = site.social.linkedin ?? site.social.community;
+
+  // ─────────────────────────────────────────────────────────────────
+  // Row 1 — product-facing columns (Products / Sports / Solutions /
+  // Enterprise / Personas / Regions).
+  // ─────────────────────────────────────────────────────────────────
+  const rowOne: readonly FooterColumn[] = [
     {
+      key: "products",
       title: t("columns.product"),
       links: [
         { label: t("product.athletes"), href: "/products/athletes" },
@@ -112,10 +155,15 @@ export function FooterSection({ site }: FooterSectionProps): ReactNode {
         { label: t("product.scheduling"), href: "/products/scheduling" },
         { label: t("product.payments"), href: "/products/payments" },
         { label: t("product.performance"), href: "/products/performance" },
-        { label: t("product.pricing"), href: "/pricing" },
+        { label: t("product.reception"), href: "/products/reception" },
+        { label: t("product.reports"), href: "/products/reports" },
+        { label: t("product.safeguarding"), href: "/products/safeguarding" },
+        { label: t("product.aiAssistant"), href: "/products/ai" },
+        { label: t("product.attributeEngine"), href: "/products/attribute-engine" },
       ],
     },
     {
+      key: "sports",
       title: t("columns.sports"),
       links: [
         { label: t("sports.football"), href: "/sports/football" },
@@ -124,39 +172,190 @@ export function FooterSection({ site }: FooterSectionProps): ReactNode {
         { label: t("sports.tennis"), href: "/sports/tennis" },
         { label: t("sports.martialArts"), href: "/sports/martial-arts" },
         { label: t("sports.gymnastics"), href: "/sports/gymnastics" },
+        {
+          label: t("sports.volleyball"),
+          href: "/sports/volleyball",
+          badge: t("sports.comingSoon"),
+        },
+        {
+          label: t("sports.padel"),
+          href: "/sports/padel",
+          badge: t("sports.comingSoon"),
+        },
+        {
+          label: t("sports.athletics"),
+          href: "/sports/athletics",
+          badge: t("sports.comingSoon"),
+        },
       ],
     },
     {
-      title: t("columns.resources"),
+      key: "solutions",
+      title: t("columns.solutions"),
       links: [
-        { label: t("resources.documentation"), href: "/docs" },
-        { label: t("resources.blog"), href: "/blog" },
-        { label: t("resources.changelog"), href: "/changelog" },
-        { label: t("resources.customerStories"), href: "/customers" },
-        { label: t("resources.newsletter"), href: "/newsletter" },
+        { label: t("solutions.multiBranch"), href: "/solutions/multi-branch" },
+        { label: t("solutions.multiTenant"), href: "/solutions/multi-tenant" },
+        { label: t("solutions.sportAgnostic"), href: "/solutions/sport-agnostic" },
+        { label: t("solutions.rtlBilingual"), href: "/solutions/rtl-bilingual" },
+        { label: t("solutions.offlineFirst"), href: "/solutions/offline-first" },
       ],
     },
     {
-      title: t("columns.legal"),
+      key: "enterprise",
+      title: t("columns.enterprise"),
       links: [
-        { label: t("legal.privacy"), href: "/legal/privacy" },
-        { label: t("legal.terms"), href: "/legal/terms" },
-        { label: t("legal.security"), href: "/legal/security" },
-        { label: t("legal.cookies"), href: "/legal/cookies" },
-        { label: t("legal.dpa"), href: "/legal/dpa" },
+        { label: t("enterprise.security"), href: "/enterprise/security" },
+        { label: t("enterprise.onboarding"), href: "/enterprise/onboarding" },
+        { label: t("enterprise.contracts"), href: "/enterprise/contracts" },
+        { label: t("enterprise.talkToSales"), href: "/contact-sales" },
+        { label: t("enterprise.customerStories"), href: "/customers" },
       ],
+    },
+    {
+      key: "personas",
+      title: t("columns.personas"),
+      links: [
+        { label: t("personas.owners"), href: "/personas/owners" },
+        { label: t("personas.coaches"), href: "/personas/coaches" },
+        { label: t("personas.athletes"), href: "/personas/athletes" },
+        { label: t("personas.guardians"), href: "/personas/guardians" },
+        { label: t("personas.frontDesk"), href: "/personas/front-desk" },
+        { label: t("personas.finance"), href: "/personas/finance" },
+        { label: t("personas.platformAdmins"), href: "/personas/platform-admins" },
+      ],
+    },
+    {
+      key: "regions",
+      title: t("columns.regions"),
+      links: [
+        { label: t("regions.mena"), href: "/regions/mena" },
+        { label: t("regions.europe"), href: "/regions/europe" },
+        { label: t("regions.americas"), href: "/regions/americas" },
+        { label: t("regions.dataResidency"), href: "/regions/data-residency" },
+        { label: t("regions.localisedInvoicing"), href: "/regions/localised-invoicing" },
+      ],
+    },
+  ];
+
+  // ─────────────────────────────────────────────────────────────────
+  // Row 2 — company + resources + legal columns.
+  // Build / Learn / Explore / Company / Legal & Trust / Social.
+  //
+  // Explore + Social iterate over `site.social.*` so a missing handle
+  // silently drops the row rather than rendering a broken `#` anchor.
+  // ─────────────────────────────────────────────────────────────────
+  const exploreLinks: FooterLink[] = [{ label: t("explore.roadmap"), href: changelogUrl }];
+
+  if (site.social.community) {
+    exploreLinks.push({ label: t("explore.community"), href: site.social.community });
+  }
+
+  if (site.social.github) {
+    exploreLinks.push({ label: t("explore.github"), href: site.social.github });
+  }
+
+  exploreLinks.push(
+    { label: t("explore.templates"), href: "/templates" },
+    { label: t("explore.integrations"), href: "/integrations" },
+  );
+
+  const socialLinks: FooterLink[] = [];
+
+  if (site.social.github) {
+    socialLinks.push({ label: t("social.github"), href: site.social.github });
+  }
+
+  if (site.social.twitter) {
+    socialLinks.push({ label: t("social.x"), href: site.social.twitter });
+  }
+
+  if (linkedinHref) {
+    socialLinks.push({ label: t("social.linkedin"), href: linkedinHref });
+  }
+
+  const rowTwo: readonly FooterColumn[] = [
+    {
+      key: "build",
+      title: t("columns.build"),
+      links: [
+        { label: t("build.docs"), href: docsUrl },
+        { label: t("build.apiReference"), href: `${docsUrl}/api-reference` },
+        { label: t("build.gettingStarted"), href: `${docsUrl}/getting-started` },
+        { label: t("build.changelog"), href: changelogUrl },
+        { label: t("build.status"), href: statusUrl },
+      ],
+    },
+    {
+      key: "learn",
+      title: t("columns.learn"),
+      links: [
+        { label: t("learn.blog"), href: "/blog" },
+        { label: t("learn.customerStories"), href: "/customers" },
+        { label: t("learn.guides"), href: `${docsUrl}/guides` },
+        { label: t("learn.videoTutorials"), href: tutorialsUrl },
+        { label: t("learn.newsletter"), href: "/newsletter" },
+      ],
+    },
+    {
+      key: "explore",
+      title: t("columns.explore"),
+      links: exploreLinks,
+    },
+    {
+      key: "company",
+      title: t("columns.company"),
+      links: [
+        { label: t("company.about"), href: "/about" },
+        { label: t("company.careers"), href: "/careers" },
+        { label: t("company.press"), href: "/press" },
+        { label: t("company.contact"), href: "/contact" },
+        { label: t("company.partners"), href: "/partners" },
+      ],
+    },
+    {
+      key: "trust",
+      title: t("columns.trust"),
+      links: [
+        { label: t("trust.privacy"), href: "/legal/privacy" },
+        { label: t("trust.terms"), href: "/legal/terms" },
+        { label: t("trust.security"), href: "/legal/security" },
+        { label: t("trust.dpa"), href: "/legal/dpa" },
+        { label: t("trust.cookies"), href: "/legal/cookies" },
+        { label: t("trust.acceptableUse"), href: "/legal/acceptable-use" },
+      ],
+    },
+    {
+      key: "social",
+      title: t("columns.social"),
+      links: socialLinks,
     },
   ];
 
   return (
     <footer className="border-t border-default bg-background">
-      <div className="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 lg:px-8">
-        {/* Brand + columns */}
-        <div className="grid grid-cols-2 gap-10 md:grid-cols-6">
-          <div className="col-span-2">
+      <div className="mx-auto w-full max-w-[1400px] px-4 py-16 sm:px-6 lg:px-8">
+        {/* Row 1 — product-facing */}
+        <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:grid-cols-6">
+          {rowOne.map((column) => (
+            <ColumnBlock key={column.key} column={column} />
+          ))}
+        </div>
+
+        {/* Row 2 — company + resources + legal, separated by generous space */}
+        <div className="mt-14 grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:grid-cols-6">
+          {rowTwo.map((column) => (
+            <ColumnBlock key={column.key} column={column} />
+          ))}
+        </div>
+
+        <Separator className="my-12" />
+
+        {/* Utility bar — brand + copyright on the leading edge, controls on the trailing edge. */}
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
+          <div className="flex flex-col gap-3">
             <Link
-              aria-label={`${site.name}`}
-              className="flex items-center gap-2 text-accent transition-opacity hover:opacity-80"
+              aria-label={site.name}
+              className="inline-flex items-center gap-2 self-start text-accent transition-opacity hover:opacity-80"
               href="/"
             >
               <span
@@ -167,62 +366,19 @@ export function FooterSection({ site }: FooterSectionProps): ReactNode {
               </span>
               <span className="text-base font-semibold text-foreground">{site.name}</span>
             </Link>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted">{site.description}</p>
-
-            {/* Social row */}
-            <div className="mt-6 flex items-center gap-1">
-              {site.social.github ? (
-                <SocialIconLink
-                  href={site.social.github}
-                  icon={CodeBracketSquareIcon}
-                  label="GitHub"
-                />
-              ) : null}
-              {site.social.twitter ? (
-                <SocialIconLink href={site.social.twitter} icon={HashtagIcon} label="X" />
-              ) : null}
-              {site.social.community ? (
-                <SocialIconLink
-                  href={site.social.community}
-                  icon={ChatBubbleLeftRightIcon}
-                  label="Community"
-                />
-              ) : null}
-            </div>
+            <p className="max-w-md text-sm text-muted">{site.tagline}</p>
+            <p className="text-xs text-muted">{t("copyright", { year, name: site.name })}</p>
           </div>
 
-          {columns.map((column) => (
-            <nav key={column.title} aria-label={column.title} className="flex flex-col gap-3">
-              <h2 className="text-sm font-semibold text-foreground">{column.title}</h2>
-              <ul className="flex flex-col gap-2.5">
-                {column.links.map((link) => (
-                  <li key={`${column.title}-${link.label}`}>
-                    <FooterLinkItem link={link} />
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
-        </div>
-
-        <Separator className="my-8" />
-
-        {/* Bottom utility bar */}
-        <div className="flex flex-col-reverse items-center justify-between gap-4 sm:flex-row">
-          <div className="flex items-center gap-4">
-            <p className="text-sm text-muted">{t("copyright", { year, name: site.name })}</p>
-          </div>
-
-          <div className="flex items-center gap-1">
+          {/* Utility strip. Flex-wrap so mobile stacks the controls cleanly
+              rather than shoving them past the viewport edge. */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            <StatusIndicator />
+            <span aria-hidden="true" className="mx-1 hidden h-5 w-px bg-default sm:inline-block" />
             <LanguageSwitcher placement="top end" variant="compact" />
-            <span aria-hidden="true" className="mx-1 h-5 w-px bg-default" />
-            <a
-              className="rounded-lg px-2.5 py-1.5 text-sm font-medium text-muted transition-colors hover:bg-default/40 hover:text-foreground"
-              href={`${getAppUrl()}/login`}
-              rel="noreferrer"
-            >
-              {tCommon("signIn")}
-            </a>
+            <ThemeSwitch />
+            <span aria-hidden="true" className="mx-1 hidden h-5 w-px bg-default sm:inline-block" />
+            <RegionSelector />
           </div>
         </div>
       </div>

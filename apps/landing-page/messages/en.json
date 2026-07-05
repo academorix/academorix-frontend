@@ -27,10 +27,20 @@
 
   "footer": {
     "columns": {
-      "product": "Product",
+      "product": "Products",
       "sports": "Sports",
       "resources": "Resources",
-      "legal": "Legal"
+      "legal": "Legal",
+      "solutions": "Solutions",
+      "enterprise": "Enterprise",
+      "personas": "Personas",
+      "regions": "Regions",
+      "build": "Build",
+      "learn": "Learn",
+      "explore": "Explore",
+      "company": "Company",
+      "trust": "Legal & Trust",
+      "social": "Social"
     },
     "product": {
       "athletes": "Athletes",
@@ -38,7 +48,12 @@
       "scheduling": "Scheduling",
       "payments": "Payments",
       "performance": "Performance",
-      "pricing": "Pricing"
+      "pricing": "Pricing",
+      "reception": "Reception",
+      "reports": "Reports",
+      "safeguarding": "Safeguarding",
+      "aiAssistant": "AI Assistant",
+      "attributeEngine": "Attribute Engine"
     },
     "sports": {
       "football": "Football",
@@ -46,7 +61,11 @@
       "basketball": "Basketball",
       "tennis": "Tennis",
       "martialArts": "Martial Arts",
-      "gymnastics": "Gymnastics"
+      "gymnastics": "Gymnastics",
+      "volleyball": "Volleyball",
+      "padel": "Padel",
+      "athletics": "Athletics",
+      "comingSoon": "Coming soon"
     },
     "resources": {
       "documentation": "Documentation",
@@ -61,6 +80,85 @@
       "security": "Security",
       "cookies": "Cookies",
       "dpa": "DPA"
+    },
+    "solutions": {
+      "multiBranch": "Multi-branch",
+      "multiTenant": "Multi-tenant",
+      "sportAgnostic": "Sport-agnostic",
+      "rtlBilingual": "RTL / Bilingual",
+      "offlineFirst": "Offline-first"
+    },
+    "enterprise": {
+      "security": "Enterprise security",
+      "onboarding": "Onboarding & migration",
+      "contracts": "Custom contracts",
+      "talkToSales": "Talk to sales",
+      "customerStories": "Customer stories"
+    },
+    "personas": {
+      "owners": "For owners",
+      "coaches": "For coaches",
+      "athletes": "For athletes",
+      "guardians": "For guardians",
+      "frontDesk": "For front desk",
+      "finance": "For finance",
+      "platformAdmins": "For platform admins"
+    },
+    "regions": {
+      "mena": "MENA",
+      "europe": "Europe",
+      "americas": "Americas",
+      "dataResidency": "Data residency",
+      "localisedInvoicing": "Localised invoicing"
+    },
+    "build": {
+      "docs": "Docs",
+      "apiReference": "API reference",
+      "gettingStarted": "Getting started",
+      "changelog": "Changelog",
+      "status": "Status"
+    },
+    "learn": {
+      "blog": "Blog",
+      "customerStories": "Customer stories",
+      "guides": "Guides",
+      "videoTutorials": "Video tutorials",
+      "newsletter": "Newsletter"
+    },
+    "explore": {
+      "roadmap": "Roadmap",
+      "community": "Community",
+      "github": "GitHub",
+      "templates": "Templates",
+      "integrations": "Integrations"
+    },
+    "company": {
+      "about": "About",
+      "careers": "Careers",
+      "press": "Press",
+      "contact": "Contact",
+      "partners": "Partners"
+    },
+    "trust": {
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "security": "Security",
+      "dpa": "DPA",
+      "cookies": "Cookies",
+      "acceptableUse": "Acceptable Use"
+    },
+    "social": {
+      "github": "GitHub",
+      "x": "X",
+      "linkedin": "LinkedIn"
+    },
+    "status": {
+      "allSystemsNormal": "All systems normal",
+      "aria": "System status — opens in a new tab"
+    },
+    "regionSelector": {
+      "label": "Region",
+      "aria": "Choose region"
     },
     "copyright": "© {year} {name}. All rights reserved."
   },
