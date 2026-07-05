@@ -46,6 +46,46 @@ export interface AppModuleRoute {
 }
 
 /**
+ * Keyboard shortcut sequences for a resource. Global chrome shortcuts (⌘K,
+ * ⌘B, ?) live in `lib/keyboard/registry.ts`; anything resource-scoped lives
+ * here so the module owns its bindings alongside its label, icon, and
+ * permission.
+ *
+ * Sequences are written as space-separated tokens (`"G A"`, `"N A"`), matching
+ * the leader-key convention documented in `DASHBOARD_UX_PLAN.md` §13.2. The
+ * `G` prefix opens a `Navigate to <label>` action; the `N` prefix opens
+ * `Create <singular label>`. The module registry validates uniqueness at boot
+ * and warns on any collision.
+ *
+ * Resources without shortcuts remain reachable through the command palette
+ * (`⌘K`). Only the highest-traffic ~15 modules get a leader-key binding to
+ * keep the collision surface small; the rest lean on fuzzy search.
+ */
+export interface AppResourceShortcuts {
+  /**
+   * Sequence for the "Navigate to <label>" action, prefixed by `G`. Example:
+   * `"G A"` opens `/athletes`. The registry re-uses `resource.list` as the
+   * target URL, so the manifest does not repeat it.
+   */
+  navigate?: string;
+
+  /**
+   * Sequence for the "Create <singular label>" action, prefixed by `N`. Only
+   * meaningful when the resource declares a `create` route; otherwise the
+   * shortcut is silently ignored at boot.
+   */
+  create?: string;
+
+  /**
+   * Optional custom resource-scoped verbs. Keys map to the verb id used by the
+   * module's own command catalogue (see `DASHBOARD_UX_PLAN.md` §12).
+   *
+   * @example { export: "E X", archive: "A R" }
+   */
+  actions?: Record<string, string>;
+}
+
+/**
  * Academorix-specific resource metadata, stored on `ResourceProps.meta`.
  * Drives the sidebar (label/icon/order) and gating (feature toggle + permission).
  */
@@ -79,6 +119,12 @@ export interface AppResourceMeta {
    * {@link "@/providers/data".BACKEND_READY_RESOURCES} allow-list.
    */
   dataProviderName?: string;
+  /**
+   * Optional keyboard shortcut bindings for this resource. See
+   * {@link AppResourceShortcuts} for the full contract and
+   * `DASHBOARD_UX_PLAN.md` §13.2 for the design rationale.
+   */
+  shortcuts?: AppResourceShortcuts;
 }
 
 /**

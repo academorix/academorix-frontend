@@ -37,6 +37,10 @@ const branchesModule: AppModule = {
         requiredPermission: "branches.viewAny",
         order: 91,
         scopedBy: ["organization"],
+        shortcuts: {
+          navigate: "G B",
+          create: "N B",
+        },
       },
     },
   ],

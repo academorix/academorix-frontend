@@ -30,6 +30,9 @@ const reportsModule: AppModule = {
         featureKey: "reports",
         requiredPermission: "reports.viewAny",
         order: 50,
+        shortcuts: {
+          navigate: "G R",
+        },
       },
     },
   ],

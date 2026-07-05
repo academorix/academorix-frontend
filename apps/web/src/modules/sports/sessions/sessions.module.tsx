@@ -39,6 +39,10 @@ const sessionsModule: AppModule = {
         requiredPermission: "private-sessions.viewAny",
         order: 23,
         scopedBy: ["branch", "season"],
+        shortcuts: {
+          navigate: "G S",
+          create: "N S",
+        },
       },
     },
   ],

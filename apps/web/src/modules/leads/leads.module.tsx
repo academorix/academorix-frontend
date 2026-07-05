@@ -35,6 +35,10 @@ const leadsModule: AppModule = {
         featureKey: "leads",
         requiredPermission: "leads.viewAny",
         order: 44,
+        shortcuts: {
+          navigate: "G L",
+          create: "N L",
+        },
       },
     },
   ],

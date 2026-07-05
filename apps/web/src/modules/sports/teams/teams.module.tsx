@@ -37,6 +37,10 @@ const teamsModule: AppModule = {
         requiredPermission: "teams.viewAny",
         order: 11,
         scopedBy: ["branch", "season"],
+        shortcuts: {
+          navigate: "G T",
+          create: "N T",
+        },
       },
     },
   ],

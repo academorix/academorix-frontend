@@ -33,6 +33,9 @@ const coachingModule: AppModule = {
         requiredPermission: "coaches.viewAny",
         order: 16,
         scopedBy: ["branch", "season"],
+        shortcuts: {
+          navigate: "G C",
+        },
       },
     },
   ],

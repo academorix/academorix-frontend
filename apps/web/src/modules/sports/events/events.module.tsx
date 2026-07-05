@@ -37,6 +37,10 @@ const eventsModule: AppModule = {
         requiredPermission: "events.viewAny",
         order: 14,
         scopedBy: ["branch", "season"],
+        shortcuts: {
+          navigate: "G E",
+          create: "N E",
+        },
       },
     },
   ],

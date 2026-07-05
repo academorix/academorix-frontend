@@ -33,6 +33,10 @@ const athletesModule: AppModule = {
         requiredPermission: "athletes.viewAny",
         order: 10,
         scopedBy: ["branch"],
+        shortcuts: {
+          navigate: "G A",
+          create: "N A",
+        },
       },
     },
   ],

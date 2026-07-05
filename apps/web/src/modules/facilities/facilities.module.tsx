@@ -31,6 +31,9 @@ const facilitiesModule: AppModule = {
         requiredPermission: "facilities.viewAny",
         order: 15,
         scopedBy: ["branch"],
+        shortcuts: {
+          navigate: "G F",
+        },
       },
     },
   ],

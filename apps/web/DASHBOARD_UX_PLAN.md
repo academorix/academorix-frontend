@@ -2785,12 +2785,42 @@ components must maintain that.
 
 ### 13.2 Keyboard shortcuts registry
 
-Every keyboard shortcut is registered centrally in
-`apps/web/src/lib/keyboard/registry.ts`. The user can view the registry via `?`
-from anywhere in the app, or via the `Show keyboard shortcuts` command. Personal
-overrides live in `settings.user.keyboard_shortcuts_enabled` (Section 9.3).
+Keyboard shortcuts come from two sources that compose at boot:
 
-Global shortcuts:
+1. Global chrome shortcuts. A central catalogue in
+   `apps/web/src/lib/keyboard/registry.ts` for verbs that do not belong to any
+   resource (open the command palette, toggle a sidebar, focus a search field,
+   toggle theme or density). These are hand-authored in a single file and
+   shipped as part of the shell.
+2. Resource-scoped shortcuts. Declared on each module manifest via
+   `AppResourceMeta.shortcuts` (see `apps/web/src/lib/module/module.ts`). The
+   `import.meta.glob` registry in `apps/web/src/lib/module/registry.ts`
+   aggregates every manifest at boot, resolves the target route from the
+   resource's `list` and `create` URLs, and emits `appResourceShortcuts` for the
+   shell to consume. A duplicate-sequence check runs in the same pass and logs
+   `console.warn` in dev on any collision; the first-registered binding wins.
+
+Why the split. Global shortcuts belong to no module and would drift if pushed
+into module manifests. Resource shortcuts are the same class of identifier as
+`label`, `icon`, `requiredPermission`, and `order`: they belong with the module
+that owns the route, they inherit its permission gating for free, they carry the
+tenant terminology through `useResourceLabel` when rendered in the `?` panel,
+and they get uniqueness validation at the same layer that already validates
+`dataProviderName`. Ownership stays with the module; adding, renaming, or
+deleting a module carries its shortcut with it.
+
+The user can view the effective registry via `?` from anywhere in the app, or
+via the `Show keyboard shortcuts` command. Personal overrides live in
+`settings.user.keyboard_shortcuts_enabled` (Section 9.3); when the shell later
+supports remapping, the remap replaces the sequence but keeps the action id
+(`resourceName` + `action`) stable so a saved layout does not break when a
+shortcut is rebound.
+
+Only high-traffic modules get a leader-key binding today. The command palette
+(`⌘ K`) is the fallback for every module, so the collision surface stays small
+and the shortcut list stays memorisable.
+
+Global shortcuts (central registry):
 
 | Shortcut         | Action                                                        |
 | ---------------- | ------------------------------------------------------------- |
@@ -2801,25 +2831,66 @@ Global shortcuts:
 | `Esc`            | Close topmost overlay                                         |
 | `/`              | Focus search on active listing                                |
 | `?`              | Open keyboard shortcuts panel                                 |
-| `G` then `A`     | Go to Athletes                                                |
-| `G` then `C`     | Go to Coaches                                                 |
-| `G` then `T`     | Go to Teams                                                   |
-| `G` then `S`     | Go to Sessions                                                |
-| `G` then `M`     | Go to Matches                                                 |
-| `G` then `L`     | Go to Leads                                                   |
-| `G` then `P`     | Go to Payments                                                |
-| `G` then `R`     | Go to Reports                                                 |
-| `G` then `D`     | Go to Dashboard                                               |
-| `G` then `,`     | Go to Settings                                                |
-| `N` then `A`     | New athlete                                                   |
-| `N` then `C`     | New coach                                                     |
-| `N` then `T`     | New team                                                      |
-| `N` then `S`     | New session                                                   |
-| `N` then `M`     | New match                                                     |
-| `N` then `L`     | New lead                                                      |
-| `N` then `P`     | New payment / invoice                                         |
 | `T`              | Toggle theme                                                  |
 | `Shift D`        | Toggle density (compact / comfortable)                        |
+
+Resource-scoped shortcuts (declared on each module's
+`AppResourceMeta.shortcuts`):
+
+| Sequence      | Action            | Module            | Resource                 | List URL                  | Create URL                 |
+| ------------- | ----------------- | ----------------- | ------------------------ | ------------------------- | -------------------------- |
+| `G D`         | Navigate          | `dashboard`       | `dashboard`              | `/dashboard`              | -                          |
+| `G A` / `N A` | Navigate / Create | `sports/athletes` | `athletes`               | `/athletes`               | `/athletes/create`         |
+| `G T` / `N T` | Navigate / Create | `sports/teams`    | `teams`                  | `/teams`                  | `/teams/create`            |
+| `G S` / `N S` | Navigate / Create | `sports/sessions` | `private-sessions`       | `/private-sessions`       | `/private-sessions/create` |
+| `G M` / `N M` | Navigate / Create | `sports/matches`  | `matches`                | `/matches`                | `/matches/create`          |
+| `G E` / `N E` | Navigate / Create | `sports/events`   | `events`                 | `/events`                 | `/events/create`           |
+| `G C`         | Navigate          | `sports/coaching` | `coaches`                | `/coaches`                | -                          |
+| `G L` / `N L` | Navigate / Create | `leads`           | `leads`                  | `/leads`                  | `/leads/create`            |
+| `G P`         | Navigate          | `payments`        | `invoices`               | `/invoices`               | -                          |
+| `G R`         | Navigate          | `reports`         | `reports`                | `/reports`                | -                          |
+| `G B` / `N B` | Navigate / Create | `branches`        | `branches`               | `/branches`               | `/branches/create`         |
+| `G F`         | Navigate          | `facilities`      | `facilities`             | `/facilities`             | -                          |
+| `G I` / `N I` | Navigate / Create | `integrations`    | `integrations`           | `/integrations`           | `/integrations/create`     |
+| `G N`         | Navigate          | `notifications`   | `notification-templates` | `/notification-templates` | -                          |
+| `G X` / `N X` | Navigate / Create | `expenses`        | `expenses`               | `/expenses`               | `/expenses/create`         |
+
+Modules not in the table (access, admin, ai, announcements, attributes, awards,
+coaching sub-resources, credentials, documents, memberships, messaging,
+offline-sync, organization, passes, people, public-site, reception, regions,
+safeguarding, staff, seasons, competition, drills, formations, medical,
+performance, progress, registrations, registry, training, attendance, users,
+workspace) are reachable through the command palette (`⌘ K → Go to <label>` or
+`⌘ K → New <singular label>`). The command palette is populated from the same
+`appResources` array, so every module is reachable without ceremony.
+
+The `G ,` binding for Settings appears once the Settings module ships (Phase 4
+of the roadmap). Until then, `G ,` is unassigned.
+
+Manifest example (Athletes):
+
+```tsx
+// apps/web/src/modules/sports/athletes/athletes.module.tsx
+{
+  name: "athletes",
+  list: "/athletes",
+  create: "/athletes/create",
+  edit: "/athletes/:id/edit",
+  show: "/athletes/:id",
+  meta: {
+    label: "Athletes",
+    icon: AcademicCapIcon,
+    featureKey: "athletes",
+    requiredPermission: "athletes.viewAny",
+    order: 10,
+    scopedBy: ["branch"],
+    shortcuts: {
+      navigate: "G A",
+      create: "N A",
+    },
+  },
+}
+```
 
 Listing-scoped shortcuts (active only when a DataGrid has focus):
 
@@ -3282,8 +3353,14 @@ Command palette:
 42. Palette scope switching. Should the palette respect the current working
     scope (create-a-session in the current branch) by default, or offer a scope
     selector inside the create flow? Section 12.
-43. Palette shortcuts customisation. Are the `G X` / `N X` shortcuts fixed, or
-    can users remap them? Section 12.
+43. ~~Palette shortcuts customisation. Are the `G X` / `N X` shortcuts fixed, or
+    can users remap them? Section 12.~~ **Resolved.** Sequences are declared at
+    the metadata layer (`AppResourceMeta.shortcuts` on each module manifest),
+    aggregated by the module registry at boot, and validated for uniqueness with
+    a dev-time `console.warn` on collisions. The action identity
+    (`resourceName` + `action`) is the stable primary key; a future
+    user-preference remap can override the sequence string without touching the
+    module code or breaking saved layouts. See Section 13.2.
 
 Accessibility and i18n:
 
