@@ -1,16 +1,22 @@
 {
   "data": {
-    "id": "01h8-riverside-tenant-uuid-000000",
+    "id": "tnt_riverside",
     "slug": "riverside",
     "name": "Riverside Sports Academy",
     "business_type": "academy",
+    "business_type_id": "bt_academy",
     "business_type_label": "Academy",
     "status": "active",
     "status_label": "Active",
+    "reporting_currency": "USD",
+    "default_locale": "en",
+    "default_timezone": "America/New_York",
     "branding": {
       "logo_url": null,
       "primary_color": null,
       "favicon_url": null
-    }
+    },
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-30T10:00:00Z"
   }
 }

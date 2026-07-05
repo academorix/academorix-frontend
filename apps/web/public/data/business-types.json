@@ -1,0 +1,296 @@
+[
+  {
+    "id": "bt_academy",
+    "key": "academy",
+    "label": "Academy",
+    "description": "Multi-sport academy running structured programs, teams, and seasons for youth athletes.",
+    "default_config": {
+      "roles": [
+        "owner",
+        "admin",
+        "branch_manager",
+        "head_coach",
+        "coach",
+        "reception",
+        "finance",
+        "medical",
+        "parent_guardian",
+        "athlete",
+        "viewer"
+      ],
+      "terminology": {
+        "branch": "Branch",
+        "team": "Team",
+        "athlete": "Athlete",
+        "match": "Match",
+        "training": "Training",
+        "venue": "Pitch"
+      },
+      "features": [
+        "athletes",
+        "teams",
+        "seasons",
+        "registrations",
+        "events",
+        "training-sessions",
+        "matches",
+        "attendance",
+        "progress",
+        "performance",
+        "development",
+        "drills",
+        "competitions",
+        "formations",
+        "coaches",
+        "safeguarding",
+        "medical",
+        "memberships",
+        "payments",
+        "reception",
+        "announcements",
+        "conversations",
+        "reports"
+      ]
+    },
+    "created_at": "2025-06-01T10:00:00Z",
+    "updated_at": "2026-01-15T09:00:00Z"
+  },
+  {
+    "id": "bt_sports_center",
+    "key": "sports_center",
+    "label": "Sports Center",
+    "description": "Multi-purpose sports center running open programs, drop-in classes, and facility bookings.",
+    "default_config": {
+      "roles": [
+        "owner",
+        "admin",
+        "branch_manager",
+        "coach",
+        "reception",
+        "finance",
+        "parent_guardian",
+        "athlete",
+        "viewer"
+      ],
+      "terminology": {
+        "branch": "Center",
+        "team": "Class",
+        "athlete": "Member",
+        "match": "Event",
+        "training": "Session",
+        "venue": "Facility"
+      },
+      "features": [
+        "athletes",
+        "teams",
+        "registrations",
+        "events",
+        "training-sessions",
+        "attendance",
+        "memberships",
+        "payments",
+        "reception",
+        "facilities",
+        "announcements",
+        "conversations",
+        "reports"
+      ]
+    },
+    "created_at": "2025-06-01T10:00:00Z",
+    "updated_at": "2026-01-15T09:00:00Z"
+  },
+  {
+    "id": "bt_gym",
+    "key": "gym",
+    "label": "Gym",
+    "description": "Fitness gym focused on individual memberships, group classes, and check-ins.",
+    "default_config": {
+      "roles": [
+        "owner",
+        "admin",
+        "branch_manager",
+        "coach",
+        "reception",
+        "finance",
+        "member",
+        "viewer"
+      ],
+      "terminology": {
+        "branch": "Location",
+        "team": "Class",
+        "athlete": "Member",
+        "match": "Class",
+        "training": "Workout",
+        "venue": "Studio"
+      },
+      "features": [
+        "athletes",
+        "memberships",
+        "payments",
+        "attendance",
+        "credentials",
+        "passes",
+        "reception",
+        "facilities",
+        "announcements",
+        "reports"
+      ]
+    },
+    "created_at": "2025-06-01T10:00:00Z",
+    "updated_at": "2026-01-15T09:00:00Z"
+  },
+  {
+    "id": "bt_activity_center",
+    "key": "activity_center",
+    "label": "Activity Center",
+    "description": "After-school and extracurricular activity center with rotating programs and instructors.",
+    "default_config": {
+      "roles": [
+        "owner",
+        "admin",
+        "branch_manager",
+        "instructor",
+        "reception",
+        "finance",
+        "parent_guardian",
+        "student",
+        "viewer"
+      ],
+      "terminology": {
+        "branch": "Center",
+        "team": "Group",
+        "athlete": "Student",
+        "coach": "Instructor",
+        "match": "Showcase",
+        "training": "Class",
+        "venue": "Room"
+      },
+      "features": [
+        "athletes",
+        "teams",
+        "registrations",
+        "events",
+        "training-sessions",
+        "attendance",
+        "progress",
+        "memberships",
+        "payments",
+        "reception",
+        "announcements",
+        "conversations"
+      ]
+    },
+    "created_at": "2025-06-01T10:00:00Z",
+    "updated_at": "2026-01-15T09:00:00Z"
+  },
+  {
+    "id": "bt_club",
+    "key": "club",
+    "label": "Club",
+    "description": "Sports club with a single sport focus, seasonal squads, and competitive fixtures.",
+    "default_config": {
+      "roles": [
+        "owner",
+        "admin",
+        "branch_manager",
+        "head_coach",
+        "coach",
+        "finance",
+        "medical",
+        "parent_guardian",
+        "athlete",
+        "viewer"
+      ],
+      "terminology": {
+        "branch": "Ground",
+        "team": "Squad",
+        "athlete": "Player",
+        "match": "Fixture",
+        "training": "Session",
+        "venue": "Pitch"
+      },
+      "features": [
+        "athletes",
+        "teams",
+        "seasons",
+        "registrations",
+        "events",
+        "training-sessions",
+        "matches",
+        "attendance",
+        "progress",
+        "development",
+        "drills",
+        "competitions",
+        "formations",
+        "coaches",
+        "safeguarding",
+        "medical",
+        "memberships",
+        "payments",
+        "announcements",
+        "conversations",
+        "reports"
+      ]
+    },
+    "created_at": "2025-06-01T10:00:00Z",
+    "updated_at": "2026-01-15T09:00:00Z"
+  },
+  {
+    "id": "bt_multi_sport",
+    "key": "multi_sport",
+    "label": "Multi-Sport Complex",
+    "description": "Large multi-sport complex hosting several disciplines across shared branches and staff.",
+    "default_config": {
+      "roles": [
+        "owner",
+        "admin",
+        "branch_manager",
+        "head_coach",
+        "coach",
+        "reception",
+        "finance",
+        "medical",
+        "parent_guardian",
+        "athlete",
+        "viewer"
+      ],
+      "terminology": {
+        "branch": "Branch",
+        "team": "Squad",
+        "athlete": "Athlete",
+        "match": "Match",
+        "training": "Training",
+        "venue": "Venue"
+      },
+      "features": [
+        "athletes",
+        "teams",
+        "seasons",
+        "registrations",
+        "events",
+        "training-sessions",
+        "matches",
+        "attendance",
+        "progress",
+        "performance",
+        "development",
+        "drills",
+        "competitions",
+        "formations",
+        "coaches",
+        "safeguarding",
+        "medical",
+        "memberships",
+        "payments",
+        "reception",
+        "facilities",
+        "announcements",
+        "conversations",
+        "reports"
+      ]
+    },
+    "created_at": "2025-06-01T10:00:00Z",
+    "updated_at": "2026-01-15T09:00:00Z"
+  }
+]

@@ -2,6 +2,8 @@
   {
     "id": "aen_emma_football",
     "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
     "athlete_id": "ath_emma",
     "sport_key": "football",
     "team_id": "tm_river_u12",
@@ -10,6 +12,7 @@
     "level": "intermediate",
     "status": "active",
     "enrolled_at": "2025-09-05",
+    "attribute_set_version": 1,
     "attributes": {
       "primary_position": "mid",
       "preferred_foot": "right",
@@ -25,6 +28,8 @@
   {
     "id": "aen_liam_football",
     "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
     "athlete_id": "ath_liam",
     "sport_key": "football",
     "team_id": "tm_river_u12",
@@ -33,6 +38,7 @@
     "level": "advanced",
     "status": "active",
     "enrolled_at": "2025-09-06",
+    "attribute_set_version": 1,
     "attributes": {
       "primary_position": "fwd",
       "preferred_foot": "left",
@@ -48,14 +54,17 @@
   {
     "id": "aen_emma_swimming",
     "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
     "athlete_id": "ath_emma",
     "sport_key": "swimming",
-    "team_id": null,
+    "team_id": "tm_river_swim",
     "season_id": "ssn_2025_26",
     "squad_role": null,
     "level": "beginner",
     "status": "active",
     "enrolled_at": "2026-01-15",
+    "attribute_set_version": 1,
     "attributes": {
       "primary_stroke": "freestyle",
       "squad": "junior",
@@ -67,16 +76,46 @@
     "updated_at": "2026-06-01T09:00:00Z"
   },
   {
+    "id": "aen_emma_football_marina",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_marina",
+    "athlete_id": "ath_emma",
+    "sport_key": "football",
+    "team_id": "tm_marina_u10",
+    "season_id": "ssn_2025_26",
+    "squad_role": "midfielder",
+    "level": "intermediate",
+    "status": "active",
+    "enrolled_at": "2026-03-01",
+    "attribute_set_version": 1,
+    "_note": "Cross-branch athlete case — Emma trains at Riverside HQ and also joins the Marina U10 group as an over-age technical example (blueprint §2.1).",
+    "attributes": {
+      "primary_position": "mid",
+      "preferred_foot": "right",
+      "jersey_number": 12,
+      "pace": 78,
+      "shooting": 65,
+      "passing": 82,
+      "dribbling": 75
+    },
+    "created_at": "2026-03-01T10:00:00Z",
+    "updated_at": "2026-06-01T09:00:00Z"
+  },
+  {
     "id": "aen_noah_swimming",
     "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_marina",
     "athlete_id": "ath_noah",
     "sport_key": "swimming",
-    "team_id": null,
+    "team_id": "tm_river_swim",
     "season_id": "ssn_2025_26",
     "squad_role": null,
     "level": "advanced",
     "status": "active",
     "enrolled_at": "2025-10-02",
+    "attribute_set_version": 1,
     "attributes": {
       "primary_stroke": "butterfly",
       "squad": "senior",
@@ -86,5 +125,31 @@
     },
     "created_at": "2025-10-02T10:00:00Z",
     "updated_at": "2026-06-01T09:00:00Z"
+  },
+  {
+    "id": "aen_olivia_football_trial",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
+    "athlete_id": "ath_olivia",
+    "sport_key": "football",
+    "team_id": "tm_river_u12",
+    "season_id": "ssn_2025_26",
+    "squad_role": "defender",
+    "level": "beginner",
+    "status": "trial",
+    "enrolled_at": "2026-06-10",
+    "attribute_set_version": 1,
+    "attributes": {
+      "primary_position": "def",
+      "preferred_foot": "right",
+      "jersey_number": null,
+      "pace": 60,
+      "shooting": 45,
+      "passing": 55,
+      "dribbling": 50
+    },
+    "created_at": "2026-06-10T14:00:00Z",
+    "updated_at": "2026-06-25T10:00:00Z"
   }
 ]

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "rw_2526_main",
+    "tenant_id": "tnt_riverside",
+    "season_id": "ssn_2025_26",
+    "name": "2025/26 Main Registration",
+    "opens_at": "2025-07-01T00:00:00Z",
+    "closes_at": "2025-09-30T23:59:00Z",
+    "status": "closed",
+    "capacity_by_program": {
+      "football_u10": 16,
+      "football_u12": 18,
+      "swimming_junior": 24
+    },
+    "created_at": "2025-06-15T10:00:00Z",
+    "updated_at": "2025-10-01T00:00:00Z"
+  },
+  {
+    "id": "rw_2526_midyear",
+    "tenant_id": "tnt_riverside",
+    "season_id": "ssn_2025_26",
+    "name": "2025/26 Mid-Year Reopen",
+    "opens_at": "2026-01-05T00:00:00Z",
+    "closes_at": "2026-02-15T23:59:00Z",
+    "status": "closed",
+    "capacity_by_program": {
+      "swimming_junior": 6
+    },
+    "created_at": "2025-12-15T10:00:00Z",
+    "updated_at": "2026-02-16T00:00:00Z"
+  },
+  {
+    "id": "rw_2627_main",
+    "tenant_id": "tnt_riverside",
+    "season_id": "ssn_2026_27",
+    "name": "2026/27 Main Registration",
+    "opens_at": "2026-06-01T00:00:00Z",
+    "closes_at": "2026-09-15T23:59:00Z",
+    "status": "open",
+    "capacity_by_program": {
+      "football_u10": 18,
+      "football_u12": 20,
+      "football_u14": 20,
+      "swimming_junior": 26,
+      "swimming_senior": 20
+    },
+    "created_at": "2026-05-01T10:00:00Z",
+    "updated_at": "2026-06-01T00:00:00Z"
+  }
+]

@@ -1,0 +1,251 @@
+[
+  {
+    "id": "cur_u12_autumn",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "football",
+    "team_id": "tm_river_u12",
+    "season_id": "ssn_2025_26",
+    "name": "U12 Autumn Development (12 weeks)",
+    "description": "Autumn term curriculum focused on passing, movement, and match-application.",
+    "total_weeks": 12,
+    "status": "active",
+    "weeks": [
+      {
+        "week_number": 1,
+        "theme": "Ball mastery basics",
+        "session_plan_ids": ["spl_u12_passing_v1"]
+      },
+      {
+        "week_number": 2,
+        "theme": "First touch under pressure",
+        "session_plan_ids": ["spl_u12_passing_v1"]
+      },
+      {
+        "week_number": 3,
+        "theme": "Set-piece introduction",
+        "session_plan_ids": ["spl_u12_setpieces_v1"]
+      },
+      {
+        "week_number": 4,
+        "theme": "Small-sided decision making",
+        "session_plan_ids": ["spl_u12_passing_v1"]
+      }
+    ],
+    "created_by": "stf_coach_mike",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-01T10:00:00Z"
+  },
+  {
+    "id": "cur_swim_junior_2526",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "swimming",
+    "team_id": "tm_river_swim",
+    "season_id": "ssn_2025_26",
+    "name": "Junior Swim 2025/26",
+    "description": "Full-season curriculum for junior swim squad — stroke technique and endurance progression.",
+    "total_weeks": 30,
+    "status": "active",
+    "weeks": [
+      {
+        "week_number": 1,
+        "theme": "Freestyle basics",
+        "session_plan_ids": ["spl_swim_freestyle_v1"]
+      },
+      { "week_number": 2, "theme": "Backstroke intro", "session_plan_ids": [] }
+    ],
+    "created_by": "stf_coach_sara",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-01T10:00:00Z"
+  },
+  {
+    "id": "curr_swim_junior_autumn",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "swimming",
+    "team_id": "tm_river_swim",
+    "season_id": "ssn_2026_27",
+    "name": "Junior Swim — Autumn 2026/27",
+    "description": "Autumn term curriculum: 10 weeks of freestyle mastery, backstroke intro, and endurance build.",
+    "total_weeks": 10,
+    "status": "draft",
+    "weeks_count": 10,
+    "is_published": false,
+    "weeks": [
+      {
+        "week_number": 1,
+        "theme": "Freestyle catch-and-pull baseline",
+        "session_plan_ids": ["sp_swim_technique_wed"]
+      },
+      {
+        "week_number": 2,
+        "theme": "Rotation and breathing",
+        "session_plan_ids": ["sp_swim_technique_wed"]
+      },
+      {
+        "week_number": 3,
+        "theme": "Kick endurance foundation",
+        "session_plan_ids": ["sp_swim_technique_wed"]
+      },
+      { "week_number": 4, "theme": "Backstroke introduction", "session_plan_ids": [] },
+      {
+        "week_number": 5,
+        "theme": "Aerobic base — 200m sets",
+        "session_plan_ids": ["sp_swim_technique_wed"]
+      }
+    ],
+    "created_by": "stf_coach_sara",
+    "created_by_staff_id": "stf_coach_sara",
+    "created_at": "2026-06-20T10:00:00Z",
+    "updated_at": "2026-06-25T10:00:00Z"
+  },
+  {
+    "id": "curr_marina_u10_spring",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "football",
+    "team_id": "tm_marina_u10",
+    "season_id": "ssn_2026_27",
+    "name": "Marina U10 — Spring 2026/27",
+    "description": "12-week spring curriculum for Marina U10 Sharks: ball mastery, small-sided game principles, and basic defending.",
+    "total_weeks": 12,
+    "status": "draft",
+    "weeks_count": 12,
+    "is_published": false,
+    "weeks": [
+      {
+        "week_number": 1,
+        "theme": "Ball mastery basics",
+        "session_plan_ids": ["spl_u12_passing_v1"]
+      },
+      {
+        "week_number": 2,
+        "theme": "Dribbling under mild pressure",
+        "session_plan_ids": ["spl_u12_passing_v1"]
+      },
+      {
+        "week_number": 3,
+        "theme": "Passing and receiving",
+        "session_plan_ids": ["sp_u12_passing_thurs"]
+      },
+      {
+        "week_number": 4,
+        "theme": "1v1 defending — foundation",
+        "session_plan_ids": ["sp_u12_defending_mon"]
+      }
+    ],
+    "created_by": "stf_coach_marco",
+    "created_by_staff_id": "stf_coach_marco",
+    "created_at": "2026-06-22T10:00:00Z",
+    "updated_at": "2026-06-25T10:00:00Z"
+  },
+  {
+    "id": "curr_u10_intro_autumn",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "football",
+    "team_id": "tm_marina_u10",
+    "season_id": "ssn_2026_27",
+    "name": "U10 Introduction to Football — Autumn 2026/27",
+    "description": "8-week onboarding curriculum for new-joiner U10 athletes. Focuses on ball familiarity, small-sided decision making, and safe contact/defending intro.",
+    "total_weeks": 8,
+    "status": "draft",
+    "weeks_count": 8,
+    "is_published": false,
+    "weeks": [
+      {
+        "week_number": 1,
+        "theme": "Welcome & ball familiarity",
+        "session_plan_ids": ["spl_u12_passing_v1"]
+      },
+      {
+        "week_number": 2,
+        "theme": "Passing and receiving basics",
+        "session_plan_ids": ["sp_u12_passing_thurs"]
+      },
+      {
+        "week_number": 3,
+        "theme": "Attacking 1v1 — dribbling",
+        "session_plan_ids": ["spl_u12_passing_v1"]
+      },
+      {
+        "week_number": 4,
+        "theme": "Defending 1v1 — foundation",
+        "session_plan_ids": ["sp_u12_defending_mon"]
+      }
+    ],
+    "created_by": "stf_coach_marco",
+    "created_by_staff_id": "stf_coach_marco",
+    "created_at": "2026-06-28T10:00:00Z",
+    "updated_at": "2026-06-28T10:00:00Z"
+  },
+  {
+    "id": "curr_u14_tactical_block",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "football",
+    "team_id": "tm_river_u12",
+    "season_id": "ssn_2026_27",
+    "name": "U14 Tactical Block — Autumn 2026/27",
+    "description": "6-week tactical block for the U14 rising squad. Structured to cover build-up phases, pressing triggers, and defensive transitions.",
+    "total_weeks": 6,
+    "status": "active",
+    "weeks_count": 6,
+    "is_published": true,
+    "weeks": [
+      {
+        "week_number": 1,
+        "theme": "Build-up phases — GK to third",
+        "session_plan_ids": ["sp_u12_passing_thurs"]
+      },
+      {
+        "week_number": 2,
+        "theme": "Middle third combinations",
+        "session_plan_ids": ["sp_u12_passing_thurs"]
+      },
+      {
+        "week_number": 3,
+        "theme": "Pressing triggers",
+        "session_plan_ids": ["sp_u12_defending_mon"]
+      },
+      {
+        "week_number": 4,
+        "theme": "Defensive transitions & recovery",
+        "session_plan_ids": ["sp_u12_defending_mon"]
+      },
+      {
+        "week_number": 5,
+        "theme": "Set-piece routines (attacking)",
+        "session_plan_ids": ["spl_u12_setpieces_v1"]
+      },
+      {
+        "week_number": 6,
+        "theme": "Match-application week",
+        "session_plan_ids": ["spl_u12_setpieces_v1"]
+      }
+    ],
+    "created_by": "stf_coach_mike",
+    "created_by_staff_id": "stf_coach_mike",
+    "created_at": "2026-06-25T10:00:00Z",
+    "updated_at": "2026-06-25T10:00:00Z"
+  },
+  {
+    "id": "curr_cpd_safeguarding_2026",
+    "tenant_id": "tnt_riverside",
+    "sport_key": null,
+    "team_id": null,
+    "season_id": "ssn_2026_27",
+    "name": "Coach CPD — Safeguarding Refresh 2026/27",
+    "description": "Staff-facing curriculum (linked to pw_coach_cpd_riverside). Six-week refresher on safeguarding policy, incident reporting, and duty-of-care scenarios.",
+    "total_weeks": 6,
+    "status": "draft",
+    "weeks_count": 6,
+    "is_published": false,
+    "for_staff": true,
+    "weeks": [
+      { "week_number": 1, "theme": "Policy refresh & duty of care", "session_plan_ids": [] },
+      { "week_number": 2, "theme": "Signs of concern — recognising", "session_plan_ids": [] },
+      { "week_number": 3, "theme": "Reporting flow & confidentiality", "session_plan_ids": [] }
+    ],
+    "linked_pathway_id": "pw_coach_cpd_riverside",
+    "created_by": "usr_admin",
+    "created_by_staff_id": null,
+    "created_at": "2026-06-27T10:00:00Z",
+    "updated_at": "2026-06-27T10:00:00Z"
+  }
+]

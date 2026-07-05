@@ -1,0 +1,72 @@
+[
+  {
+    "id": "sc_001",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_emma",
+    "delta": 10,
+    "source_type": "pack_invoice",
+    "source_id": "inv_1006",
+    "reason": "Private session pack — 10 sessions (Football)",
+    "occurred_at": "2026-06-15T09:20:00Z"
+  },
+  {
+    "id": "sc_002",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_emma",
+    "delta": -1,
+    "source_type": "private_session",
+    "source_id": "ps_emma_101",
+    "reason": "Consumed — private coaching (2026-06-18)",
+    "occurred_at": "2026-06-18T15:00:00Z"
+  },
+  {
+    "id": "sc_003",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_emma",
+    "delta": -1,
+    "source_type": "private_session",
+    "source_id": "ps_emma_102",
+    "reason": "Consumed — private coaching (2026-06-22)",
+    "occurred_at": "2026-06-22T15:00:00Z"
+  },
+  {
+    "id": "sc_004",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_emma",
+    "delta": -1,
+    "source_type": "private_session",
+    "source_id": "ps_emma_103",
+    "reason": "Consumed — private coaching (2026-06-29)",
+    "occurred_at": "2026-06-29T15:00:00Z"
+  },
+  {
+    "id": "sc_005",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_noah",
+    "delta": 5,
+    "source_type": "adjustment",
+    "source_id": "adj_noah_carryover",
+    "reason": "Carry-over credits from previous term",
+    "occurred_at": "2026-04-01T09:00:00Z"
+  },
+  {
+    "id": "sc_006",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_noah",
+    "delta": -1,
+    "source_type": "private_session",
+    "source_id": "ps_noah_201",
+    "reason": "Consumed — private swim coaching (2026-05-12)",
+    "occurred_at": "2026-05-12T14:00:00Z"
+  },
+  {
+    "id": "sc_liam_pack_1",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_liam",
+    "delta": -1,
+    "source_type": "private_session",
+    "source_id": "ps_2",
+    "reason": "Consumed — private football coaching (2026-06-25)",
+    "occurred_at": "2026-06-25T17:00:00Z"
+  }
+]

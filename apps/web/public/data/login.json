@@ -7,7 +7,8 @@
   "recovery_codes_remaining": null,
   "two_factor_setup_required": false,
   "user": {
-    "id": "01h8xkq4-e4b4-y000-0000-alexrivera000",
+    "id": "usr_owner",
+    "tenant_id": "tnt_riverside",
     "name": "Alex Rivera",
     "email": "owner@academorix.test",
     "email_verified_at": "2025-09-01T10:00:00Z",

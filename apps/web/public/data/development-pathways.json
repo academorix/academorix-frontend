@@ -1,0 +1,83 @@
+[
+  {
+    "id": "pw_football_river",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "sport_key": "football",
+    "name": "Riverside Football Pathway",
+    "description": "Foundation to Elite pathway for football at Riverside HQ.",
+    "stages_count": 4,
+    "is_active": true,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-01T09:00:00Z"
+  },
+  {
+    "id": "pw_swim_river",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "sport_key": "swimming",
+    "name": "Riverside Swim Development",
+    "description": "Learn-to-swim through competitive squad progression.",
+    "stages_count": 3,
+    "is_active": true,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-01T09:00:00Z"
+  },
+  {
+    "id": "pw_football_downtown",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_downtown",
+    "sport_key": "football",
+    "name": "Downtown Football Development",
+    "description": "Foundation to Youth Development progression for the Downtown org — smaller two-stage pathway aligned to community volume.",
+    "stages_count": 2,
+    "is_active": true,
+    "for_athletes": true,
+    "for_staff": false,
+    "created_at": "2025-11-01T10:00:00Z",
+    "updated_at": "2026-06-01T09:00:00Z"
+  },
+  {
+    "id": "pw_swim_junior_to_senior",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "sport_key": "swimming",
+    "name": "Junior → Senior Competitive Swim Track",
+    "description": "Targeted swim pathway for athletes ready to progress from junior technique work to senior competitive squad training and meet qualification.",
+    "stages_count": 2,
+    "is_active": true,
+    "for_athletes": true,
+    "for_staff": false,
+    "created_at": "2026-04-01T10:00:00Z",
+    "updated_at": "2026-06-01T09:00:00Z"
+  },
+  {
+    "id": "pw_coach_cpd_riverside",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "sport_key": null,
+    "name": "Coach CPD — Riverside Continuing Development",
+    "description": "Staff-facing pathway. Continuing Professional Development track for coaches: safeguarding refreshers, licence upgrades (UEFA/ASA), advanced tactics, and mentor certification.",
+    "stages_count": 3,
+    "is_active": true,
+    "for_athletes": false,
+    "for_staff": true,
+    "created_at": "2025-10-15T10:00:00Z",
+    "updated_at": "2026-06-01T09:00:00Z"
+  },
+  {
+    "id": "pw_football_river_archive",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "sport_key": "football",
+    "name": "Riverside Football Pathway (2024/25 archive)",
+    "description": "Prior season's version of the football pathway kept for reporting/history. Superseded by pw_football_river.",
+    "stages_count": 3,
+    "is_active": false,
+    "for_athletes": true,
+    "for_staff": false,
+    "archived_at": "2025-07-01T00:00:00Z",
+    "created_at": "2024-09-01T10:00:00Z",
+    "updated_at": "2025-07-01T00:00:00Z"
+  }
+]

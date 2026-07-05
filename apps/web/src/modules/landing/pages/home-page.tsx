@@ -16,6 +16,8 @@
 
 import type { ReactNode } from "react";
 
+import { siteConfig } from "@/config/site";
+import { useDocumentMetadata } from "@/lib/seo";
 import { CtaSection } from "@/modules/landing/components/cta-section";
 import { FeaturesSection } from "@/modules/landing/components/features-section";
 import { FooterSection } from "@/modules/landing/components/footer-section";
@@ -29,6 +31,13 @@ import { TestimonialsSection } from "@/modules/landing/components/testimonials-s
 
 /** The public landing page, composed from the landing section subcomponents. */
 export default function HomePage(): ReactNode {
+  useDocumentMetadata({
+    title: "The operating system for modern academies",
+    description:
+      "Academorix brings athletes, teams, scheduling, performance, payments, and multi-branch operations together — one platform that adapts to any sport, any language.",
+    siteName: siteConfig.name,
+  });
+
   return (
     <div className="flex min-h-dvh flex-col bg-background text-foreground" id="top">
       <LandingHeader />

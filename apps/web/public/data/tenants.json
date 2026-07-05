@@ -1,9 +1,10 @@
 [
   {
-    "id": "01h8-riverside-tenant-uuid-000000",
+    "id": "tnt_riverside",
     "slug": "riverside",
     "name": "Riverside Sports Academy",
     "business_type": "academy",
+    "business_type_id": "bt_academy",
     "business_type_label": "Academy",
     "status": "active",
     "status_label": "Active",
@@ -13,10 +14,11 @@
     "updated_at": "2026-06-30T10:00:00Z"
   },
   {
-    "id": "01h8-eastside-tenant-uuid-000001",
+    "id": "tnt_eastside",
     "slug": "eastside",
     "name": "Eastside Fitness Club",
     "business_type": "gym",
+    "business_type_id": "bt_gym",
     "business_type_label": "Gym",
     "status": "trialing",
     "status_label": "Trialing",
@@ -26,10 +28,11 @@
     "updated_at": "2026-06-01T10:00:00Z"
   },
   {
-    "id": "01h8-harbor-tenant-uuid-000002",
+    "id": "tnt_harbor",
     "slug": "harbor",
     "name": "Harbor Aquatics",
     "business_type": "sports_center",
+    "business_type_id": "bt_sports_center",
     "business_type_label": "Sports Center",
     "status": "active",
     "status_label": "Active",
@@ -37,5 +40,19 @@
     "scheduled_for_deletion": false,
     "created_at": "2025-06-15T10:00:00Z",
     "updated_at": "2026-06-30T10:00:00Z"
+  },
+  {
+    "id": "tnt_summit",
+    "slug": "summit",
+    "name": "Summit Martial Arts Club",
+    "business_type": "club",
+    "business_type_id": "bt_club",
+    "business_type_label": "Club",
+    "status": "suspended",
+    "status_label": "Suspended",
+    "purge_at": "2026-09-30T00:00:00Z",
+    "scheduled_for_deletion": true,
+    "created_at": "2025-01-10T10:00:00Z",
+    "updated_at": "2026-06-15T10:00:00Z"
   }
 ]

@@ -1,0 +1,203 @@
+[
+  {
+    "id": "notif_emma_invitation_train1",
+    "tenant_id": "tnt_riverside",
+    "user_id": "usr_guardian_emma",
+    "template_id": "tpl_invite_push_en",
+    "type": "invitation_sent",
+    "channel": "push",
+    "title": "You're invited: U12 Training",
+    "body_preview": "New invite: U12 Training on 2026-07-06. Tap to RSVP.",
+    "data_ref": {
+      "event_id": "evt_u12_training_1",
+      "invitation_id": "einv_train_emma"
+    },
+    "status": "read",
+    "sent_at": "2026-06-20T10:05:00Z",
+    "read_at": "2026-06-21T08:50:00Z",
+    "failure_reason": null,
+    "created_at": "2026-06-20T10:05:00Z",
+    "updated_at": "2026-06-21T08:50:00Z"
+  },
+  {
+    "id": "notif_liam_rsvp_reminder",
+    "tenant_id": "tnt_riverside",
+    "user_id": "usr_guardian_liam",
+    "template_id": "tpl_invite_push_en",
+    "type": "rsvp_reminder",
+    "channel": "push",
+    "title": "Reminder: RSVP for U12 vs United Youth",
+    "body_preview": "You haven't RSVP'd yet — please respond before Sunday.",
+    "data_ref": {
+      "event_id": "evt_u12_match_1",
+      "invitation_id": "einv_match_liam"
+    },
+    "status": "delivered",
+    "sent_at": "2026-06-30T09:00:00Z",
+    "read_at": null,
+    "failure_reason": null,
+    "created_at": "2026-06-30T09:00:00Z",
+    "updated_at": "2026-06-30T09:00:00Z"
+  },
+  {
+    "id": "notif_emma_lineup_mat2",
+    "tenant_id": "tnt_riverside",
+    "user_id": "usr_guardian_emma",
+    "template_id": "tpl_lineup_published_push_en",
+    "type": "lineup_published",
+    "channel": "push",
+    "title": "Lineup published — U12 Falcons",
+    "body_preview": "U12 Falcons lineup for United Youth is out. Tap to view.",
+    "data_ref": {
+      "match_id": "mat_2",
+      "team_id": "tm_river_u12"
+    },
+    "status": "read",
+    "sent_at": "2026-07-10T09:00:00Z",
+    "read_at": "2026-07-10T09:14:00Z",
+    "failure_reason": null,
+    "created_at": "2026-07-10T09:00:00Z",
+    "updated_at": "2026-07-10T09:14:00Z"
+  },
+  {
+    "id": "notif_emma_attendance_trn2",
+    "tenant_id": "tnt_riverside",
+    "user_id": "usr_guardian_emma",
+    "template_id": null,
+    "type": "attendance_confirmed",
+    "channel": "push",
+    "title": "Attendance confirmed",
+    "body_preview": "Emma was marked present at U12 Training (2026-06-28).",
+    "data_ref": {
+      "attendance_id": "att_emma_trn2",
+      "training_session_id": "trn_2",
+      "athlete_id": "ath_emma"
+    },
+    "status": "read",
+    "sent_at": "2026-06-28T11:15:00Z",
+    "read_at": "2026-06-28T12:00:00Z",
+    "failure_reason": null,
+    "created_at": "2026-06-28T11:15:00Z",
+    "updated_at": "2026-06-28T12:00:00Z"
+  },
+  {
+    "id": "notif_noah_payment_due_inv1003",
+    "tenant_id": "tnt_riverside",
+    "user_id": "usr_guardian_noah",
+    "template_id": "tpl_payment_due_sms_en",
+    "type": "payment_due",
+    "channel": "sms",
+    "title": null,
+    "body_preview": "Riverside Sports Academy: invoice INV-1003 for $300.00 is due on 2026-06-01.",
+    "data_ref": {
+      "invoice_id": "inv_1003"
+    },
+    "status": "delivered",
+    "sent_at": "2026-05-27T09:00:00Z",
+    "read_at": null,
+    "failure_reason": null,
+    "created_at": "2026-05-27T09:00:00Z",
+    "updated_at": "2026-05-27T09:00:00Z"
+  },
+  {
+    "id": "notif_emma_clearance_expiring",
+    "tenant_id": "tnt_riverside",
+    "user_id": "usr_guardian_emma",
+    "template_id": "tpl_clearance_expiring_email_en",
+    "type": "clearance_expiring",
+    "channel": "email",
+    "title": "Medical clearance expiring for Emma Johnson",
+    "body_preview": "The medical clearance for Emma Johnson expires on 2027-06-30. Please upload a new one before that date.",
+    "data_ref": {
+      "athlete_id": "ath_emma",
+      "clearance_id": "mc_emma_annual",
+      "document_id": "doc_ath_emma_medical"
+    },
+    "status": "sent",
+    "sent_at": "2026-04-30T09:00:00Z",
+    "read_at": null,
+    "failure_reason": null,
+    "created_at": "2026-04-30T09:00:00Z",
+    "updated_at": "2026-04-30T09:00:00Z"
+  },
+  {
+    "id": "notif_liam_injury_reported",
+    "tenant_id": "tnt_riverside",
+    "user_id": "usr_guardian_liam",
+    "template_id": null,
+    "type": "injury_reported",
+    "channel": "push",
+    "title": "Injury update for Liam",
+    "body_preview": "Coach Mike reported a right-ankle injury during today's match. Full details in the app.",
+    "data_ref": {
+      "athlete_id": "ath_liam",
+      "injury_id": "inj_liam_ankle",
+      "match_id": "mat_1"
+    },
+    "status": "read",
+    "sent_at": "2026-06-20T14:05:00Z",
+    "read_at": "2026-06-20T14:22:00Z",
+    "failure_reason": null,
+    "created_at": "2026-06-20T14:05:00Z",
+    "updated_at": "2026-06-20T14:22:00Z"
+  },
+  {
+    "id": "notif_mike_announcement_kickoff",
+    "tenant_id": "tnt_riverside",
+    "user_id": "usr_coach_mike",
+    "template_id": null,
+    "type": "announcement_published",
+    "channel": "push",
+    "title": "New announcement",
+    "body_preview": "2025/26 Season Kick-off — Welcome back! Training resumes Monday.",
+    "data_ref": {
+      "announcement_id": "ann_kickoff"
+    },
+    "status": "read",
+    "sent_at": "2025-09-01T09:00:15Z",
+    "read_at": "2025-09-01T09:02:00Z",
+    "failure_reason": null,
+    "created_at": "2025-09-01T09:00:15Z",
+    "updated_at": "2025-09-01T09:02:00Z"
+  },
+  {
+    "id": "notif_noah_membership_paused_ava",
+    "tenant_id": "tnt_riverside",
+    "user_id": "usr_guardian_noah",
+    "template_id": null,
+    "type": "membership_paused",
+    "channel": "whatsapp",
+    "title": null,
+    "body_preview": "Ava's swim membership has been paused effective 2026-06-01. Reply to resume.",
+    "data_ref": {
+      "membership_id": "mem_ava_swim",
+      "athlete_id": "ath_ava"
+    },
+    "status": "delivered",
+    "sent_at": "2026-06-01T09:15:00Z",
+    "read_at": null,
+    "failure_reason": null,
+    "created_at": "2026-06-01T09:15:00Z",
+    "updated_at": "2026-06-01T09:15:00Z"
+  },
+  {
+    "id": "notif_noah_dunning_step_1",
+    "tenant_id": "tnt_riverside",
+    "user_id": "usr_guardian_noah",
+    "template_id": "tpl_payment_due_sms_en",
+    "type": "dunning_step_1",
+    "channel": "email",
+    "title": "Invoice INV-1003 needs your attention",
+    "body_preview": "Your invoice INV-1003 for $300.00 is now past due. Please pay to avoid further reminders.",
+    "data_ref": {
+      "invoice_id": "inv_1003",
+      "dunning_step": 1
+    },
+    "status": "bounced",
+    "sent_at": "2026-06-02T09:00:00Z",
+    "read_at": null,
+    "failure_reason": "SMTP 550 5.1.1: recipient inbox full",
+    "created_at": "2026-06-02T09:00:00Z",
+    "updated_at": "2026-06-02T09:00:03Z"
+  }
+]

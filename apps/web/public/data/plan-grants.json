@@ -1,0 +1,293 @@
+[
+  {
+    "id": "pg_starter_branch",
+    "plan_key": "starter",
+    "entitlement_type": "BranchSlot",
+    "kind": "slot",
+    "limit": 1,
+    "meta": null
+  },
+  {
+    "id": "pg_starter_team",
+    "plan_key": "starter",
+    "entitlement_type": "TeamSlot",
+    "kind": "slot",
+    "limit": 10,
+    "meta": null
+  },
+  {
+    "id": "pg_starter_athlete",
+    "plan_key": "starter",
+    "entitlement_type": "AthleteSlot",
+    "kind": "slot",
+    "limit": 100,
+    "meta": null
+  },
+  {
+    "id": "pg_starter_storage",
+    "plan_key": "starter",
+    "entitlement_type": "StorageBytes",
+    "kind": "pool",
+    "limit": 5368709120,
+    "meta": { "unit": "bytes", "label": "5 GB" }
+  },
+  {
+    "id": "pg_starter_ai",
+    "plan_key": "starter",
+    "entitlement_type": "FeatureAi",
+    "kind": "feature",
+    "limit": null,
+    "meta": { "enabled": false }
+  },
+  {
+    "id": "pg_starter_facility",
+    "plan_key": "starter",
+    "entitlement_type": "FeatureFacilityBooking",
+    "kind": "feature",
+    "limit": null,
+    "meta": { "enabled": false }
+  },
+
+  {
+    "id": "pg_growth_org",
+    "plan_key": "growth",
+    "entitlement_type": "OrganizationSlot",
+    "kind": "slot",
+    "limit": 2,
+    "meta": null
+  },
+  {
+    "id": "pg_growth_branch",
+    "plan_key": "growth",
+    "entitlement_type": "BranchSlot",
+    "kind": "slot",
+    "limit": 3,
+    "meta": null
+  },
+  {
+    "id": "pg_growth_team",
+    "plan_key": "growth",
+    "entitlement_type": "TeamSlot",
+    "kind": "slot",
+    "limit": 40,
+    "meta": null
+  },
+  {
+    "id": "pg_growth_athlete",
+    "plan_key": "growth",
+    "entitlement_type": "AthleteSlot",
+    "kind": "slot",
+    "limit": 500,
+    "meta": null
+  },
+  {
+    "id": "pg_growth_staff",
+    "plan_key": "growth",
+    "entitlement_type": "StaffSeat",
+    "kind": "slot",
+    "limit": 30,
+    "meta": null
+  },
+  {
+    "id": "pg_growth_storage",
+    "plan_key": "growth",
+    "entitlement_type": "StorageBytes",
+    "kind": "pool",
+    "limit": 26843545600,
+    "meta": { "unit": "bytes", "label": "25 GB" }
+  },
+  {
+    "id": "pg_growth_ai_tokens",
+    "plan_key": "growth",
+    "entitlement_type": "AiTokens",
+    "kind": "pool",
+    "limit": 50000,
+    "meta": { "unit": "tokens_per_month" }
+  },
+  {
+    "id": "pg_growth_ai",
+    "plan_key": "growth",
+    "entitlement_type": "FeatureAi",
+    "kind": "feature",
+    "limit": null,
+    "meta": { "enabled": true }
+  },
+  {
+    "id": "pg_growth_facility",
+    "plan_key": "growth",
+    "entitlement_type": "FeatureFacilityBooking",
+    "kind": "feature",
+    "limit": null,
+    "meta": { "enabled": true }
+  },
+
+  {
+    "id": "pg_pro_org",
+    "plan_key": "pro",
+    "entitlement_type": "OrganizationSlot",
+    "kind": "slot",
+    "limit": 5,
+    "meta": null
+  },
+  {
+    "id": "pg_pro_branch",
+    "plan_key": "pro",
+    "entitlement_type": "BranchSlot",
+    "kind": "slot",
+    "limit": 10,
+    "meta": null
+  },
+  {
+    "id": "pg_pro_team",
+    "plan_key": "pro",
+    "entitlement_type": "TeamSlot",
+    "kind": "slot",
+    "limit": 150,
+    "meta": null
+  },
+  {
+    "id": "pg_pro_athlete",
+    "plan_key": "pro",
+    "entitlement_type": "AthleteSlot",
+    "kind": "slot",
+    "limit": 2000,
+    "meta": null
+  },
+  {
+    "id": "pg_pro_staff",
+    "plan_key": "pro",
+    "entitlement_type": "StaffSeat",
+    "kind": "slot",
+    "limit": 100,
+    "meta": null
+  },
+  {
+    "id": "pg_pro_storage",
+    "plan_key": "pro",
+    "entitlement_type": "StorageBytes",
+    "kind": "pool",
+    "limit": 107374182400,
+    "meta": { "unit": "bytes", "label": "100 GB" }
+  },
+  {
+    "id": "pg_pro_ai_tokens",
+    "plan_key": "pro",
+    "entitlement_type": "AiTokens",
+    "kind": "pool",
+    "limit": 500000,
+    "meta": { "unit": "tokens_per_month" }
+  },
+  {
+    "id": "pg_pro_ai",
+    "plan_key": "pro",
+    "entitlement_type": "FeatureAi",
+    "kind": "feature",
+    "limit": null,
+    "meta": { "enabled": true }
+  },
+  {
+    "id": "pg_pro_facility",
+    "plan_key": "pro",
+    "entitlement_type": "FeatureFacilityBooking",
+    "kind": "feature",
+    "limit": null,
+    "meta": { "enabled": true }
+  },
+  {
+    "id": "pg_pro_reporting",
+    "plan_key": "pro",
+    "entitlement_type": "FeatureAdvancedReporting",
+    "kind": "feature",
+    "limit": null,
+    "meta": { "enabled": true }
+  },
+  {
+    "id": "pg_pro_whitelabel",
+    "plan_key": "pro",
+    "entitlement_type": "FeatureWhiteLabel",
+    "kind": "feature",
+    "limit": null,
+    "meta": { "enabled": true }
+  },
+
+  {
+    "id": "pg_ent_org",
+    "plan_key": "enterprise",
+    "entitlement_type": "OrganizationSlot",
+    "kind": "slot",
+    "limit": null,
+    "meta": { "label": "Unlimited" }
+  },
+  {
+    "id": "pg_ent_branch",
+    "plan_key": "enterprise",
+    "entitlement_type": "BranchSlot",
+    "kind": "slot",
+    "limit": null,
+    "meta": { "label": "Unlimited" }
+  },
+  {
+    "id": "pg_ent_team",
+    "plan_key": "enterprise",
+    "entitlement_type": "TeamSlot",
+    "kind": "slot",
+    "limit": null,
+    "meta": { "label": "Unlimited" }
+  },
+  {
+    "id": "pg_ent_athlete",
+    "plan_key": "enterprise",
+    "entitlement_type": "AthleteSlot",
+    "kind": "slot",
+    "limit": null,
+    "meta": { "label": "Unlimited" }
+  },
+  {
+    "id": "pg_ent_staff",
+    "plan_key": "enterprise",
+    "entitlement_type": "StaffSeat",
+    "kind": "slot",
+    "limit": null,
+    "meta": { "label": "Unlimited" }
+  },
+  {
+    "id": "pg_ent_storage",
+    "plan_key": "enterprise",
+    "entitlement_type": "StorageBytes",
+    "kind": "pool",
+    "limit": null,
+    "meta": { "unit": "bytes", "label": "Custom" }
+  },
+  {
+    "id": "pg_ent_ai_tokens",
+    "plan_key": "enterprise",
+    "entitlement_type": "AiTokens",
+    "kind": "pool",
+    "limit": null,
+    "meta": { "unit": "tokens_per_month", "label": "Custom" }
+  },
+  {
+    "id": "pg_ent_ai",
+    "plan_key": "enterprise",
+    "entitlement_type": "FeatureAi",
+    "kind": "feature",
+    "limit": null,
+    "meta": { "enabled": true }
+  },
+  {
+    "id": "pg_ent_api",
+    "plan_key": "enterprise",
+    "entitlement_type": "FeatureApiAccess",
+    "kind": "feature",
+    "limit": null,
+    "meta": { "enabled": true }
+  },
+  {
+    "id": "pg_ent_whitelabel",
+    "plan_key": "enterprise",
+    "entitlement_type": "FeatureWhiteLabel",
+    "kind": "feature",
+    "limit": null,
+    "meta": { "enabled": true }
+  }
+]

@@ -1,0 +1,79 @@
+[
+  {
+    "id": "syn_cur_mike_attendance",
+    "tenant_id": "tnt_riverside",
+    "device_id": "dev_coach_mike_pixel",
+    "user_id": "usr_coach_mike",
+    "entity": "attendance",
+    "last_synced_at": "2026-06-30T21:12:00Z",
+    "last_cursor": "att:2026-06-30T21:12:00Z",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-30T21:12:00Z"
+  },
+  {
+    "id": "syn_cur_mike_progress",
+    "tenant_id": "tnt_riverside",
+    "device_id": "dev_coach_mike_pixel",
+    "user_id": "usr_coach_mike",
+    "entity": "progress",
+    "last_synced_at": "2026-06-30T21:12:00Z",
+    "last_cursor": "prg:2026-06-30T21:12:00Z",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-06-30T21:12:00Z"
+  },
+  {
+    "id": "syn_cur_sara_attendance",
+    "tenant_id": "tnt_riverside",
+    "device_id": "dev_coach_sara_ipad",
+    "user_id": null,
+    "entity": "attendance",
+    "last_synced_at": "2026-06-28T10:30:00Z",
+    "last_cursor": "att:2026-06-28T10:30:00Z",
+    "created_at": "2025-10-01T10:00:00Z",
+    "updated_at": "2026-06-28T10:30:00Z"
+  },
+  {
+    "id": "syn_cur_gate_river",
+    "tenant_id": "tnt_riverside",
+    "device_id": "dev_nfc_gate_river_main",
+    "user_id": null,
+    "entity": "checkin_log",
+    "last_synced_at": "2026-07-06T17:35:00Z",
+    "last_cursor": "chk:2026-07-06T17:35:00Z",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-07-06T17:35:00Z"
+  },
+  {
+    "id": "syn_cur_mike_iphone_attendance",
+    "tenant_id": "tnt_riverside",
+    "device_id": "dev_coach_mike_iphone",
+    "user_id": "usr_coach_mike",
+    "entity": "attendance",
+    "last_synced_at": "2026-06-30T20:45:00Z",
+    "last_cursor": "att:2026-06-30T20:45:00Z",
+    "created_at": "2026-01-15T10:00:00Z",
+    "updated_at": "2026-06-30T20:45:00Z"
+  },
+  {
+    "id": "syn_cur_sara_ipad_progress",
+    "tenant_id": "tnt_riverside",
+    "device_id": "dev_coach_sara_ipad",
+    "user_id": "usr_coach_sara",
+    "entity": "progress",
+    "last_synced_at": "2026-06-28T10:32:00Z",
+    "last_cursor": "prg:2026-06-28T10:32:00Z",
+    "created_at": "2025-10-01T10:00:00Z",
+    "updated_at": "2026-06-28T10:32:00Z"
+  },
+  {
+    "id": "syn_cur_amy_kiosk_registration",
+    "tenant_id": "tnt_riverside",
+    "device_id": "dev_reception_amy_kiosk",
+    "user_id": "usr_reception_amy",
+    "entity": "registrations",
+    "last_synced_at": "2026-06-30T18:50:00Z",
+    "last_cursor": "reg:2026-06-30T18:50:00Z",
+    "created_at": "2026-06-01T10:00:00Z",
+    "updated_at": "2026-06-30T18:50:00Z"
+  }
+]

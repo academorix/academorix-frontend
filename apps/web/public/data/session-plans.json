@@ -1,0 +1,314 @@
+[
+  {
+    "id": "spl_u12_passing_v1",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "football",
+    "name": "U12 Passing & Movement",
+    "description": "90-minute session focused on short passing, first touch, and third-man runs.",
+    "duration_minutes": 90,
+    "level": "intermediate",
+    "objectives": ["Improve first-touch direction", "Third-man runs", "Weight of pass"],
+    "equipment": ["cones", "bibs", "balls_x8"],
+    "items": [
+      {
+        "order": 1,
+        "drill_id": "drl_rondo_4v1",
+        "duration_minutes": 15,
+        "coaching_points": ["Body shape", "One-touch under pressure"]
+      },
+      {
+        "order": 2,
+        "drill_id": "drl_cone_dribble",
+        "duration_minutes": 20,
+        "coaching_points": ["Head up after every touch"]
+      },
+      {
+        "order": 3,
+        "drill_id": "drl_finishing_channels",
+        "duration_minutes": 25,
+        "coaching_points": ["Timing of cross", "Near/far post runs"]
+      }
+    ],
+    "created_by": "stf_coach_mike",
+    "curriculum_id": "cur_u12_autumn",
+    "created_at": "2025-09-15T10:00:00Z",
+    "updated_at": "2026-06-01T10:00:00Z"
+  },
+  {
+    "id": "spl_u12_setpieces_v1",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "football",
+    "name": "U12 Set Pieces",
+    "description": "75-minute match-prep session on attacking and defensive set pieces.",
+    "duration_minutes": 75,
+    "level": "intermediate",
+    "objectives": ["Attacking corner routines", "Defensive marking"],
+    "equipment": ["cones", "bibs", "balls_x8"],
+    "items": [
+      {
+        "order": 1,
+        "drill_id": "drl_rondo_4v1",
+        "duration_minutes": 10,
+        "coaching_points": ["Warm-up focus"]
+      },
+      {
+        "order": 2,
+        "drill_id": "drl_finishing_channels",
+        "duration_minutes": 30,
+        "coaching_points": ["Timing runs into box"]
+      }
+    ],
+    "created_by": "stf_coach_mike",
+    "curriculum_id": "cur_u12_autumn",
+    "created_at": "2025-09-20T10:00:00Z",
+    "updated_at": "2026-06-01T10:00:00Z"
+  },
+  {
+    "id": "spl_swim_freestyle_v1",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "swimming",
+    "name": "Junior Freestyle Kick & Breathe",
+    "description": "60-min technique session for junior squad.",
+    "duration_minutes": 60,
+    "level": "beginner",
+    "objectives": ["Streamline kick", "Bilateral breathing", "Consistent stroke count"],
+    "equipment": ["kickboards", "pull_buoys", "fins"],
+    "items": [],
+    "created_by": "stf_coach_sara",
+    "curriculum_id": null,
+    "created_at": "2025-10-01T10:00:00Z",
+    "updated_at": "2026-06-01T10:00:00Z"
+  },
+  {
+    "id": "sp_u12_passing_thurs",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "football",
+    "name": "U12 Thursday — Passing & Finishing",
+    "description": "90-minute Thursday evening session combining rondo warm-up, ball-mastery, and finishing channels.",
+    "duration_minutes": 90,
+    "level": "intermediate",
+    "objectives": [
+      "Sharpen first-touch under pressure",
+      "Improve crossing accuracy",
+      "Attacking movement in the final third"
+    ],
+    "equipment": ["cones", "bibs", "balls_x12", "mini_goals_x2"],
+    "items": [
+      {
+        "order": 1,
+        "drill_id": "drl_rondo_4v1",
+        "duration_minutes": 15,
+        "coaching_points": ["Body shape", "One-touch under pressure"]
+      },
+      {
+        "order": 2,
+        "drill_id": "drl_cone_dribble",
+        "duration_minutes": 15,
+        "coaching_points": ["Head up after every touch"]
+      },
+      {
+        "order": 3,
+        "drill_id": "drl_finishing_channels",
+        "duration_minutes": 30,
+        "coaching_points": ["Timing runs into box", "First-time finish"]
+      }
+    ],
+    "team_id": "tm_river_u12",
+    "scheduled_for": "2026-07-09T16:00:00Z",
+    "created_by": "stf_coach_mike",
+    "curriculum_id": "cur_u12_autumn",
+    "created_at": "2026-06-25T10:00:00Z",
+    "updated_at": "2026-06-25T10:00:00Z"
+  },
+  {
+    "id": "sp_u12_defending_mon",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "football",
+    "name": "U12 Monday — Defending Foundations",
+    "description": "75-minute Monday session focused on 1v1 defending, angle of approach, and recovery runs.",
+    "duration_minutes": 75,
+    "level": "intermediate",
+    "objectives": [
+      "Force attacker onto weak foot",
+      "Master 1v1 body shape",
+      "Recovery-run discipline"
+    ],
+    "equipment": ["cones", "bibs", "mini_goals_x2", "balls_x8"],
+    "items": [
+      {
+        "order": 1,
+        "drill_id": "drl_rondo_4v1",
+        "duration_minutes": 10,
+        "coaching_points": ["Warm-up focus — first touch"]
+      },
+      {
+        "order": 2,
+        "drill_id": "drl_1v1_defending",
+        "duration_minutes": 30,
+        "coaching_points": ["Angle of approach", "Side-on stance", "Force onto weak foot"]
+      },
+      {
+        "order": 3,
+        "drill_id": "drl_finishing_channels",
+        "duration_minutes": 25,
+        "coaching_points": ["Game situation transfer — defend the cross"]
+      }
+    ],
+    "team_id": "tm_river_u12",
+    "scheduled_for": "2026-07-06T16:00:00Z",
+    "created_by": "stf_coach_mike",
+    "curriculum_id": "cur_u12_autumn",
+    "created_at": "2026-06-25T10:00:00Z",
+    "updated_at": "2026-06-25T10:00:00Z"
+  },
+  {
+    "id": "sp_swim_technique_wed",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "swimming",
+    "name": "Junior Swim Wednesday — Technique + Endurance",
+    "description": "75-minute Wednesday pool session combining stroke technique work and a kickboard endurance set.",
+    "duration_minutes": 75,
+    "level": "beginner",
+    "objectives": [
+      "Refine freestyle catch-and-pull",
+      "Build 200m aerobic base",
+      "Consistent stroke count across sets"
+    ],
+    "equipment": ["kickboards_x8", "fins_x8", "pull_buoys_x8", "pace_clock"],
+    "items": [
+      {
+        "order": 1,
+        "drill_id": "drl_stroke_technique_free",
+        "duration_minutes": 25,
+        "coaching_points": ["High elbow catch", "Rotate from hips"]
+      },
+      {
+        "order": 2,
+        "drill_id": "drl_kick_board_endurance",
+        "duration_minutes": 30,
+        "coaching_points": ["Consistent tempo", "Descend splits by 1s"]
+      }
+    ],
+    "team_id": "tm_river_swim",
+    "scheduled_for": "2026-07-08T17:00:00Z",
+    "created_by": "stf_coach_sara",
+    "curriculum_id": "cur_swim_junior_2526",
+    "created_at": "2026-06-25T10:00:00Z",
+    "updated_at": "2026-06-25T10:00:00Z"
+  },
+  {
+    "id": "sp_bball_shooting_fri",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "basketball",
+    "name": "Downtown Basketball Friday — Shooting Form",
+    "description": "60-minute Friday session focused on BEEF shooting mechanics, catch-and-shoot progressions, and stationary ball-handling warmup.",
+    "duration_minutes": 60,
+    "level": "beginner",
+    "objectives": [
+      "Consistent BEEF shooting form",
+      "Catch-and-shoot rhythm",
+      "Two-hand equal ball-handling reps"
+    ],
+    "equipment": ["basketballs_x8", "hoops_x2", "cones_for_spots"],
+    "items": [
+      {
+        "order": 1,
+        "drill_id": "drl_ballhandling_stationary",
+        "duration_minutes": 10,
+        "coaching_points": ["Fingertips control the ball", "Head up on every rep"]
+      },
+      {
+        "order": 2,
+        "drill_id": "drl_shooting_form",
+        "duration_minutes": 35,
+        "coaching_points": [
+          "Balance-Eyes-Elbow-Follow-through",
+          "Hold follow-through until ball hits rim"
+        ]
+      }
+    ],
+    "team_id": null,
+    "branch_id": "brn_downtown",
+    "scheduled_for": "2026-07-03T17:00:00Z",
+    "created_by": "stf_coach_marco",
+    "curriculum_id": null,
+    "created_at": "2026-06-28T10:00:00Z",
+    "updated_at": "2026-06-28T10:00:00Z"
+  },
+  {
+    "id": "sp_u14_tactical_buildup",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "football",
+    "name": "U14 Tactical — Build-up Phases",
+    "description": "90-minute tactical session for the U14 rising squad. Focus on GK-to-third build-up patterns, pressing triggers in the middle third, and rest-defence positioning.",
+    "duration_minutes": 90,
+    "level": "advanced",
+    "objectives": [
+      "Structured build-up from goalkeeper",
+      "Pressing triggers on the second pass",
+      "Rest-defence line height"
+    ],
+    "equipment": ["cones", "bibs", "balls_x12", "large_goals_x2"],
+    "items": [
+      {
+        "order": 1,
+        "drill_id": "drl_rondo_4v1",
+        "duration_minutes": 15,
+        "coaching_points": ["Body shape for third-man pass"]
+      },
+      {
+        "order": 2,
+        "drill_id": "drl_1v1_defending",
+        "duration_minutes": 20,
+        "coaching_points": ["Pressing trigger on heavy touch"]
+      },
+      {
+        "order": 3,
+        "drill_id": "drl_finishing_channels",
+        "duration_minutes": 30,
+        "coaching_points": ["Attack final third with numbers"]
+      }
+    ],
+    "team_id": "tm_river_u12",
+    "scheduled_for": "2026-09-16T16:00:00Z",
+    "created_by": "stf_coach_mike",
+    "curriculum_id": "curr_u14_tactical_block",
+    "created_at": "2026-06-25T10:00:00Z",
+    "updated_at": "2026-06-25T10:00:00Z"
+  },
+  {
+    "id": "sp_u10_intro_ballfriendly",
+    "tenant_id": "tnt_riverside",
+    "sport_key": "football",
+    "name": "U10 Intro — Ball-Friendly Session",
+    "description": "50-minute onboarding session for brand-new U10 athletes. Focus on ball familiarity, fun small games, and low-pressure passing exercises.",
+    "duration_minutes": 50,
+    "level": "beginner",
+    "objectives": [
+      "Ball comfort with both feet",
+      "Introduce short passing",
+      "Positive first-touch habit"
+    ],
+    "equipment": ["cones", "bibs", "balls_x10"],
+    "items": [
+      {
+        "order": 1,
+        "drill_id": "drl_cone_dribble",
+        "duration_minutes": 15,
+        "coaching_points": ["Head up between touches", "Use both feet equally"]
+      },
+      {
+        "order": 2,
+        "drill_id": "drl_rondo_4v1",
+        "duration_minutes": 15,
+        "coaching_points": ["Simple, positive first touch"]
+      }
+    ],
+    "team_id": "tm_marina_u10",
+    "scheduled_for": "2026-09-08T16:00:00Z",
+    "created_by": "stf_coach_marco",
+    "curriculum_id": "curr_u10_intro_autumn",
+    "created_at": "2026-06-28T10:00:00Z",
+    "updated_at": "2026-06-28T10:00:00Z"
+  }
+]

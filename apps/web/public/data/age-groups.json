@@ -1,0 +1,90 @@
+[
+  {
+    "id": "agp_river_u8",
+    "tenant_id": "tnt_riverside",
+    "branch_id": "brn_river",
+    "key": "U8",
+    "min_age": 6,
+    "max_age": 7,
+    "sort_order": 1,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-01T10:00:00Z"
+  },
+  {
+    "id": "agp_river_u10",
+    "tenant_id": "tnt_riverside",
+    "branch_id": "brn_river",
+    "key": "U10",
+    "min_age": 8,
+    "max_age": 9,
+    "sort_order": 2,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-01T10:00:00Z"
+  },
+  {
+    "id": "agp_river_u12",
+    "tenant_id": "tnt_riverside",
+    "branch_id": "brn_river",
+    "key": "U12",
+    "min_age": 10,
+    "max_age": 11,
+    "sort_order": 3,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-01T10:00:00Z"
+  },
+  {
+    "id": "agp_river_u14",
+    "tenant_id": "tnt_riverside",
+    "branch_id": "brn_river",
+    "key": "U14",
+    "min_age": 12,
+    "max_age": 13,
+    "sort_order": 4,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-01T10:00:00Z"
+  },
+  {
+    "id": "agp_river_u16",
+    "tenant_id": "tnt_riverside",
+    "branch_id": "brn_river",
+    "key": "U16",
+    "min_age": 14,
+    "max_age": 15,
+    "sort_order": 5,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-01T10:00:00Z"
+  },
+  {
+    "id": "agp_river_u18",
+    "tenant_id": "tnt_riverside",
+    "branch_id": "brn_river",
+    "key": "U18",
+    "min_age": 16,
+    "max_age": 17,
+    "sort_order": 6,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-01T10:00:00Z"
+  },
+  {
+    "id": "agp_marina_u10",
+    "tenant_id": "tnt_riverside",
+    "branch_id": "brn_marina",
+    "key": "U10",
+    "min_age": 8,
+    "max_age": 9,
+    "sort_order": 2,
+    "created_at": "2025-10-05T10:00:00Z",
+    "updated_at": "2025-10-05T10:00:00Z"
+  },
+  {
+    "id": "agp_marina_u12",
+    "tenant_id": "tnt_riverside",
+    "branch_id": "brn_marina",
+    "key": "U12",
+    "min_age": 10,
+    "max_age": 11,
+    "sort_order": 3,
+    "created_at": "2025-10-05T10:00:00Z",
+    "updated_at": "2025-10-05T10:00:00Z"
+  }
+]
