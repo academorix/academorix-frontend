@@ -15,7 +15,7 @@ export default defineConfig({
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: `pnpm --filter @academorix/web preview --port ${PORT} --strictPort`,
+    command: `pnpm --filter @academorix/dashboard preview --port ${PORT} --strictPort`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

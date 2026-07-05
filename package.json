@@ -23,7 +23,7 @@
     "quality": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm knip",
     "quality:fix": "pnpm format && pnpm lint:fix",
     "ci": "pnpm quality && pnpm test && pnpm build",
-    "e2e": "pnpm --filter @academorix/web build && playwright test",
+    "e2e": "pnpm --filter @academorix/dashboard build && playwright test",
     "e2e:ui": "playwright test --ui",
     "e2e:report": "playwright show-report",
     "heroui:login": "pnpm dlx heroui-pro@latest login",
