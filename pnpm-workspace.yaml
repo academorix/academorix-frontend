@@ -70,6 +70,26 @@ catalog:
   typescript: ^5.6.3
   "@types/node": ^22.12.0
 
+  # --- Marketing app (Next.js 16 + React 19 + Tailwind v4) ---
+  # Public marketing surface lives in `apps/landing-page` — a Next.js App
+  # Router app so the tenant SPA (`apps/web`) stays CSR-only. Next.js is
+  # required for SEO-quality prerendering, MDX, and the `next/image`
+  # optimizer used for the pricing + landing artwork.
+  next: ^16.2.6
+  eslint-config-next: ^16.2.0
+  "@next/eslint-plugin-next": ^16.2.0
+  "@next/bundle-analyzer": ^16.2.6
+  next-themes: ^0.4.6
+  "@tailwindcss/postcss": 4.3.1
+  "@next/mdx": ^16.2.0
+  "@types/mdx": ^2.0.13
+  "@eslint/compat": ^1.2.8
+  "@eslint/eslintrc": ^3.3.1
+  clsx: ^2.1.1
+  intl-messageformat: ^10.7.16
+  # Reserved for Wave 5 (i18n) — locale routing + typed navigation.
+  next-intl: ^4.4.0
+
   # --- Testing ---
   vitest: ^4.1.9
   "@vitest/coverage-v8": ^4.1.9
