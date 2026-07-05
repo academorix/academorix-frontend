@@ -27,6 +27,7 @@ const dashboardModule: AppModule = {
         icon: Squares2X2Icon,
         featureKey: "dashboard",
         order: 0,
+        groupKey: "overview",
         shortcuts: {
           navigate: "G D",
         },

@@ -32,6 +32,7 @@ const attributesModule: AppModule = {
         featureKey: "attributes",
         requiredPermission: "attributes.viewAny",
         order: 94,
+        groupKey: "administration",
       },
     },
   ],

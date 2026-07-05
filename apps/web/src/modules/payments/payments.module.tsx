@@ -32,6 +32,7 @@ const paymentsModule: AppModule = {
         requiredPermission: "invoices.viewAny",
         order: 30,
         scopedBy: ["branch"],
+        groupKey: "finance",
         shortcuts: {
           navigate: "G P",
         },

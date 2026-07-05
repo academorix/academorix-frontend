@@ -36,6 +36,7 @@ const membershipsModule: AppModule = {
         requiredPermission: "memberships.viewAny",
         order: 31,
         scopedBy: ["branch"],
+        groupKey: "growth",
       },
     },
   ],

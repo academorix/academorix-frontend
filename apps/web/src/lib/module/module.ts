@@ -46,6 +46,35 @@ export interface AppModuleRoute {
 }
 
 /**
+ * The set of sidebar groups a resource can belong to. The primary sidebar
+ * groups every registered resource into one of these buckets so operators can
+ * find features even as the module count grows past ~50. Feature modules
+ * declare their group via {@link AppResourceMeta.groupKey}; the shell renders
+ * `Sidebar.Group` blocks in the canonical order defined in
+ * `DASHBOARD_UX_PLAN.md` §3.1.
+ *
+ * - `overview`: the dashboard landing surface.
+ * - `operations`: the everyday sports and community modules (athletes, teams,
+ *   sessions, matches, training, attendance, awards, coaching, competition,
+ *   development, drills, events, formations, medical, performance, progress,
+ *   registrations, registry, seasons, reception, announcements, messaging,
+ *   documents, people, staff).
+ * - `growth`: acquisition and outbound surfaces (leads, memberships, passes,
+ *   public-site, notifications).
+ * - `finance`: money in and out (payments, billing, expenses, entitlements).
+ * - `administration`: tenant configuration and platform infrastructure
+ *   (access, admin, attributes, branches, credentials, facilities,
+ *   integrations, offline-sync, organization, regions, safeguarding, users,
+ *   workspace, reports).
+ * - `ai`: AI and automation surfaces.
+ *
+ * A resource that omits `groupKey` renders in an implicit trailing "Other"
+ * group — the shell logs a dev-mode warning so the miss is fixed in a follow-up.
+ */
+export type SidebarGroupKey =
+  "overview" | "operations" | "growth" | "finance" | "administration" | "ai";
+
+/**
  * Keyboard shortcut sequences for a resource. Global chrome shortcuts (⌘K,
  * ⌘B, ?) live in `lib/keyboard/registry.ts`; anything resource-scoped lives
  * here so the module owns its bindings alongside its label, icon, and
@@ -119,6 +148,14 @@ export interface AppResourceMeta {
    * {@link "@/providers/data".BACKEND_READY_RESOURCES} allow-list.
    */
   dataProviderName?: string;
+  /**
+   * Which primary-sidebar group this resource belongs to. Drives the
+   * `Sidebar.Group` blocks in the app shell (see `authenticated-layout.tsx`).
+   * Resources without a `groupKey` render in an implicit trailing "Other"
+   * group and log a warning in dev; every shipped module should declare one.
+   * See {@link SidebarGroupKey} for the canonical group order.
+   */
+  groupKey?: SidebarGroupKey;
   /**
    * Optional keyboard shortcut bindings for this resource. See
    * {@link AppResourceShortcuts} for the full contract and

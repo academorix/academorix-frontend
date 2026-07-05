@@ -36,6 +36,7 @@ const expensesModule: AppModule = {
         requiredPermission: "expenses.viewAny",
         order: 32,
         scopedBy: ["branch"],
+        groupKey: "finance",
         shortcuts: {
           navigate: "G X",
           create: "N X",

@@ -29,6 +29,7 @@ const offlineSyncModule: AppModule = {
         featureKey: "offline-sync",
         requiredPermission: "offline.view",
         order: 86,
+        groupKey: "administration",
       },
     },
   ],

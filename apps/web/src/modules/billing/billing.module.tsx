@@ -49,6 +49,7 @@ const billingModule: AppModule = {
         // `dataProviderName: "mock"` short-circuits any accidental `useList`
         // to the fixture provider so a stale hook doesn't 404 in production.
         dataProviderName: "mock",
+        groupKey: "finance",
       },
     },
   ],

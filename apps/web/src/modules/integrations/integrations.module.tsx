@@ -35,6 +35,7 @@ const integrationsModule: AppModule = {
         featureKey: "integrations",
         requiredPermission: "integrations.viewAny",
         order: 85,
+        groupKey: "administration",
         shortcuts: {
           navigate: "G I",
           create: "N I",

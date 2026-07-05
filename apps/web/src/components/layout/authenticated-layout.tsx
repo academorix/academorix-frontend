@@ -43,6 +43,7 @@ import { useGetIdentity, useLogout } from "@refinedev/core";
 import { useLocation, useNavigate } from "react-router";
 
 import type { AppResource } from "@/lib/module";
+import type { SidebarGroupKey } from "@/lib/module";
 import type { Identity } from "@/types";
 import type { IconType } from "@academorix/ui/icons";
 import type { Key, ReactNode } from "react";
@@ -69,7 +70,34 @@ interface NavEntry {
   label: string;
   Icon?: IconType;
   isCurrent: boolean;
+  groupKey: SidebarGroupKey | "other";
 }
+
+/**
+ * Canonical primary-sidebar group order. Matches `DASHBOARD_UX_PLAN.md` §3.1.
+ * The trailing `"other"` bucket catches resources whose manifest forgot to
+ * declare a `groupKey`; the shell logs a dev warning in that case.
+ */
+const SIDEBAR_GROUP_ORDER: (SidebarGroupKey | "other")[] = [
+  "overview",
+  "operations",
+  "growth",
+  "finance",
+  "administration",
+  "ai",
+  "other",
+];
+
+/** Human-readable label for each sidebar group (English default). */
+const SIDEBAR_GROUP_LABEL: Record<SidebarGroupKey | "other", string> = {
+  overview: "Overview",
+  operations: "Operations",
+  growth: "Growth",
+  finance: "Finance",
+  administration: "Administration",
+  ai: "AI",
+  other: "Other",
+};
 
 /** Whether a tenant feature is enabled (fail-open when the set is unknown). */
 function featureAllowed(identity: Identity | undefined, featureKey?: string): boolean {
@@ -118,8 +146,62 @@ function useNavEntries(identity: Identity | undefined): NavEntry[] {
         label: identity?.terminology?.[resource.name] ?? resource.meta.label,
         Icon: resource.meta.icon,
         isCurrent: pathname === href || pathname.startsWith(`${href}/`),
+        groupKey: resource.meta.groupKey ?? "other",
       };
     });
+}
+
+/**
+ * Splits nav entries into the canonical primary-sidebar groups (Overview,
+ * Operations, Growth, Finance, Administration, AI). Returns groups in the
+ * order defined by {@link SIDEBAR_GROUP_ORDER}, dropping any group with no
+ * visible entries so we do not render an empty header. Any entry whose module
+ * forgot to declare `groupKey` lands in the trailing `"other"` bucket and
+ * emits a dev-only warning so the miss is fixed in a follow-up.
+ */
+function useNavGroups(entries: NavEntry[]): {
+  key: SidebarGroupKey | "other";
+  label: string;
+  entries: NavEntry[];
+}[] {
+  const byGroup = new Map<SidebarGroupKey | "other", NavEntry[]>();
+
+  for (const entry of entries) {
+    const bucket = byGroup.get(entry.groupKey) ?? [];
+
+    bucket.push(entry);
+    byGroup.set(entry.groupKey, bucket);
+  }
+
+  if (import.meta.env.DEV) {
+    const stray = byGroup.get("other");
+
+    if (stray && stray.length > 0) {
+      const names = stray.map((entry) => entry.name).join(", ");
+
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[sidebar] The following resources have no groupKey and fell into "Other": ${names}. ` +
+          `Set AppResourceMeta.groupKey on each module manifest.`,
+      );
+    }
+  }
+
+  return SIDEBAR_GROUP_ORDER.flatMap((key) => {
+    const bucket = byGroup.get(key);
+
+    if (!bucket || bucket.length === 0) {
+      return [];
+    }
+
+    return [
+      {
+        key,
+        label: SIDEBAR_GROUP_LABEL[key],
+        entries: bucket,
+      },
+    ];
+  });
 }
 
 /** Navbar user menu, driven by the current identity. */
@@ -184,8 +266,10 @@ function UserMenu(): ReactNode {
   );
 }
 
-/** The sidebar: brand header + identity-filtered navigation menu. */
+/** The sidebar: brand header + identity-filtered navigation menu, grouped. */
 function AppSidebar({ entries }: { entries: NavEntry[] }): ReactNode {
+  const groups = useNavGroups(entries);
+
   return (
     <Sidebar>
       <Sidebar.Header>
@@ -202,22 +286,27 @@ function AppSidebar({ entries }: { entries: NavEntry[] }): ReactNode {
       </Sidebar.Header>
 
       <Sidebar.Content>
-        <Sidebar.Menu>
-          {entries.map((entry) => (
-            <Sidebar.MenuItem
-              key={entry.name}
-              href={entry.href}
-              id={entry.name}
-              isCurrent={entry.isCurrent}
-              tooltip={entry.label}
-            >
-              <Sidebar.MenuIcon>
-                {entry.Icon ? <entry.Icon aria-hidden="true" className="size-5" /> : null}
-              </Sidebar.MenuIcon>
-              <Sidebar.MenuLabel>{entry.label}</Sidebar.MenuLabel>
-            </Sidebar.MenuItem>
-          ))}
-        </Sidebar.Menu>
+        {groups.map((group) => (
+          <Sidebar.Group key={group.key}>
+            <Sidebar.GroupLabel>{group.label}</Sidebar.GroupLabel>
+            <Sidebar.Menu>
+              {group.entries.map((entry) => (
+                <Sidebar.MenuItem
+                  key={entry.name}
+                  href={entry.href}
+                  id={entry.name}
+                  isCurrent={entry.isCurrent}
+                  tooltip={entry.label}
+                >
+                  <Sidebar.MenuIcon>
+                    {entry.Icon ? <entry.Icon aria-hidden="true" className="size-5" /> : null}
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{entry.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        ))}
       </Sidebar.Content>
     </Sidebar>
   );

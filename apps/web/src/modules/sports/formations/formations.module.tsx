@@ -35,6 +35,7 @@ const formationsModule: AppModule = {
         featureKey: "formations",
         requiredPermission: "formations.viewAny",
         order: 33,
+        groupKey: "operations",
       },
     },
   ],

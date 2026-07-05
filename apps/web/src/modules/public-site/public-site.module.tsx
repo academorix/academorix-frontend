@@ -35,6 +35,7 @@ const publicSiteModule: AppModule = {
         featureKey: "public-site",
         requiredPermission: "public-site.viewAny",
         order: 60,
+        groupKey: "growth",
       },
     },
   ],

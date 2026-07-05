@@ -35,6 +35,7 @@ const performanceModule: AppModule = {
         featureKey: "performance",
         requiredPermission: "performance.viewAny",
         order: 28,
+        groupKey: "operations",
       },
     },
   ],

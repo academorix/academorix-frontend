@@ -30,6 +30,7 @@ const notificationsModule: AppModule = {
         featureKey: "notification-templates",
         requiredPermission: "notification-templates.viewAny",
         order: 97,
+        groupKey: "growth",
         shortcuts: {
           navigate: "G N",
         },

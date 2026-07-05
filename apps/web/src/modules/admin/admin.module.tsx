@@ -29,6 +29,7 @@ const adminModule: AppModule = {
         featureKey: "admin",
         requiredPermission: "admin.view",
         order: 99,
+        groupKey: "administration",
       },
     },
   ],

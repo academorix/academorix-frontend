@@ -35,6 +35,7 @@ const awardsModule: AppModule = {
         featureKey: "awards",
         requiredPermission: "awards.viewAny",
         order: 35,
+        groupKey: "operations",
       },
     },
   ],

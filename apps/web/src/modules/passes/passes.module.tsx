@@ -35,6 +35,7 @@ const passesModule: AppModule = {
         featureKey: "passes",
         requiredPermission: "passes.viewAny",
         order: 45,
+        groupKey: "growth",
       },
     },
   ],

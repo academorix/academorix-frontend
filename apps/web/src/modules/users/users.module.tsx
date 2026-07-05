@@ -35,6 +35,7 @@ const usersModule: AppModule = {
         featureKey: "users",
         requiredPermission: "users.viewAny",
         order: 41,
+        groupKey: "administration",
       },
     },
   ],

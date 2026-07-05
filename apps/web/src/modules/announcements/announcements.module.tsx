@@ -36,6 +36,7 @@ const announcementsModule: AppModule = {
         requiredPermission: "announcements.viewAny",
         order: 33,
         scopedBy: ["branch"],
+        groupKey: "growth",
       },
     },
   ],

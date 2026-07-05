@@ -37,6 +37,7 @@ const eventsModule: AppModule = {
         requiredPermission: "events.viewAny",
         order: 14,
         scopedBy: ["branch", "season"],
+        groupKey: "operations",
         shortcuts: {
           navigate: "G E",
           create: "N E",

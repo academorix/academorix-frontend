@@ -35,6 +35,7 @@ const developmentModule: AppModule = {
         featureKey: "development",
         requiredPermission: "development.viewAny",
         order: 30,
+        groupKey: "operations",
       },
     },
   ],

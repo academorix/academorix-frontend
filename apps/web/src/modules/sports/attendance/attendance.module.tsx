@@ -30,6 +30,7 @@ const attendanceModule: AppModule = {
         requiredPermission: "attendance.viewAny",
         order: 24,
         scopedBy: ["branch"],
+        groupKey: "operations",
       },
     },
   ],

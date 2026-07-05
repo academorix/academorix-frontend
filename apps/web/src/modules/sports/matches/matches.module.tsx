@@ -37,6 +37,7 @@ const matchesModule: AppModule = {
         requiredPermission: "matches.viewAny",
         order: 22,
         scopedBy: ["branch", "season"],
+        groupKey: "operations",
         shortcuts: {
           navigate: "G M",
           create: "N M",

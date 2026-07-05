@@ -29,6 +29,7 @@ const aiModule: AppModule = {
         featureKey: "ai",
         requiredPermission: "ai.use",
         order: 52,
+        groupKey: "ai",
       },
     },
   ],

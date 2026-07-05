@@ -45,6 +45,7 @@ const entitlementsModule: AppModule = {
         // accidental `useList("entitlements")` doesn't hit the real REST
         // endpoint (which is an RPC, not a paged collection).
         dataProviderName: "mock",
+        groupKey: "finance",
       },
     },
   ],
