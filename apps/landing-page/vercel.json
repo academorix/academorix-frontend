@@ -3,6 +3,5 @@
   "installCommand": "pnpm install --frozen-lockfile",
   "outputDirectory": ".next",
   "framework": "nextjs",
-  "regions": ["cdg1", "iad1"],
   "cleanUrls": true
 }
