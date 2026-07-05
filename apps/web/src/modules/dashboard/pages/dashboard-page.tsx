@@ -3,85 +3,80 @@
  * @module modules/dashboard/pages/dashboard-page
  *
  * @description
- * The authenticated landing surface. KPI cards derive their counts from the
- * data layer itself — each issues a `useList` with `pageSize: 1` and reads
- * `result.total`, so numbers are real in both mock and REST modes without a
- * bespoke stats endpoint. Labels use tenant terminology (an academy shows
- * "Students" for the `athletes` resource).
+ * The authenticated landing surface. Renders three regions:
+ *
+ * 1. A page header with title, description, and a Segment view switcher
+ *    (Overview vs Analytics) driven by the `?view=` query parameter. See plan
+ *    §4.1 for the rationale of keeping analytics on the same route.
+ * 2. The onboarding checklist widget while any step is incomplete or the
+ *    workspace has not dismissed it. See plan §4.6.
+ * 3. A responsive widget grid rendered from the tenant's active layout. The
+ *    layout is stored per-user in `localStorage` in Phase 1c; Phase 1d
+ *    upgrades this to drag-and-drop + saved-layout persistence.
+ *
+ * Every widget renders inside its own Suspense boundary so one slow probe
+ * cannot block the whole page.
  */
 
-import {
-  AcademicCapIcon,
-  CalendarIcon,
-  UserGroupIcon,
-  UsersIcon,
-} from "@academorix/ui/icons/outline";
-import { Card, Spinner } from "@academorix/ui/react";
-import { useList } from "@refinedev/core";
+import { AdjustmentsHorizontalIcon, Squares2X2Icon } from "@academorix/ui/icons/outline";
+import { Button, Segment } from "@academorix/ui/react";
+import { useSearchParams } from "react-router";
 
-import type { IconType } from "@academorix/ui/icons";
+import type { Key } from "@academorix/ui/react";
 import type { ReactNode } from "react";
 
-import { useResourceLabel } from "@/lib/refine";
+import { WidgetGrid } from "@/modules/dashboard/components/widget-grid";
+import OnboardingChecklistWidget from "@/modules/dashboard/widgets/renderers/onboarding-checklist";
 
-/** Declarative KPI definition. */
-interface KpiConfig {
-  /** Canonical resource whose row count is displayed. */
-  resource: string;
-  /** Default label (overridden by tenant terminology). */
-  label: string;
-  /** Glyph rendered in the card corner. */
-  Icon: IconType;
-}
+/** Overview view keys. Persisted in `?view=` on the URL. */
+type ViewKey = "overview" | "analytics";
 
-/** The KPIs shown on the dashboard, in display order. */
-const KPIS: KpiConfig[] = [
-  { resource: "athletes", label: "Athletes", Icon: AcademicCapIcon },
-  { resource: "coaches", label: "Coaches", Icon: UsersIcon },
-  { resource: "events", label: "Events", Icon: CalendarIcon },
-  { resource: "teams", label: "Teams", Icon: UserGroupIcon },
-];
-
-/** A single KPI card — resolves its count from the data provider. */
-function KpiCard({ resource, label, Icon }: KpiConfig): ReactNode {
-  const { result, query } = useList({
-    resource,
-    pagination: { currentPage: 1, pageSize: 1 },
-  });
-
-  const displayLabel = useResourceLabel(resource, label);
-  const total = result.total ?? 0;
-  const isLoading = query.isLoading;
-
-  return (
-    <Card>
-      <Card.Header>
-        <div className="flex items-center justify-between">
-          <Card.Description>{displayLabel}</Card.Description>
-          <Icon aria-hidden="true" className="size-5 text-muted" />
-        </div>
-        <Card.Title className="text-3xl tabular-nums">
-          {isLoading ? <Spinner size="sm" /> : total}
-        </Card.Title>
-      </Card.Header>
-    </Card>
-  );
-}
-
-/** The dashboard page: heading + KPI grid. */
+/** Overview page — the authenticated landing surface. */
 export default function DashboardPage(): ReactNode {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const view: ViewKey = searchParams.get("view") === "analytics" ? "analytics" : "overview";
+
+  const handleViewChange = (next: Key | null): void => {
+    if (next === null) {
+      return;
+    }
+
+    const nextParams = new URLSearchParams(searchParams);
+
+    if (next === "overview") {
+      nextParams.delete("view");
+    } else {
+      nextParams.set("view", String(next));
+    }
+    setSearchParams(nextParams);
+  };
+
   return (
     <div className="flex flex-col gap-6 p-6">
-      <header>
-        <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
-        <p className="text-sm text-muted">An overview of your academy.</p>
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
+          <p className="text-sm text-muted">An overview of your academy.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Segment selectedKey={view} onSelectionChange={handleViewChange}>
+            <Segment.Item id="overview">Overview</Segment.Item>
+            <Segment.Item id="analytics">Analytics</Segment.Item>
+          </Segment>
+          <Button size="sm" variant="secondary">
+            <AdjustmentsHorizontalIcon />
+            Customise
+          </Button>
+          <Button size="sm" variant="secondary">
+            <Squares2X2Icon />
+            Layouts
+          </Button>
+        </div>
       </header>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {KPIS.map((kpi) => (
-          <KpiCard key={kpi.resource} Icon={kpi.Icon} label={kpi.label} resource={kpi.resource} />
-        ))}
-      </div>
+      {view === "overview" ? <OnboardingChecklistWidget /> : null}
+
+      <WidgetGrid view={view} />
     </div>
   );
 }
