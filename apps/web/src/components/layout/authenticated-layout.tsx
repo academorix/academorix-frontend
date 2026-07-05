@@ -48,15 +48,11 @@ import type { IconType } from "@academorix/ui/icons";
 import type { Key, ReactNode } from "react";
 
 import { LanguageSwitcher } from "@/components/i18n/language-switcher";
-import {
-  BranchSwitcher,
-  OrganizationSwitcher,
-  SeasonSwitcher,
-  TenantSwitcher,
-} from "@/components/scope";
+import { BranchSwitcher, OrganizationSwitcher, SeasonSwitcher } from "@/components/scope";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 import { siteConfig } from "@/config/site";
 import { appResources } from "@/lib/module";
+import { WorkspaceSwitcher } from "@/lib/tenancy";
 import { ImpersonationBanner } from "@/modules/auth/components/impersonation-banner";
 
 /** Props for {@link AuthenticatedLayout}. */
@@ -200,7 +196,7 @@ function AppSidebar({ entries }: { entries: NavEntry[] }): ReactNode {
             </span>
           </div>
           {/* Active academy (tenant) context; a switcher for cross-tenant users. */}
-          <TenantSwitcher />
+          <WorkspaceSwitcher />
         </div>
       </Sidebar.Header>
 
