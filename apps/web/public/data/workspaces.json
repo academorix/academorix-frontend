@@ -1,0 +1,18 @@
+[
+  {
+    "id": "01h8-riverside-tenant-uuid-000000",
+    "slug": "riverside",
+    "name": "Riverside Sports Academy",
+    "logo_url": null,
+    "role": "Owner",
+    "last_active_at": "2026-06-30T08:15:00Z"
+  },
+  {
+    "id": "01h8-harbor-tenant-uuid-000002",
+    "slug": "harbor",
+    "name": "Harbor Aquatics",
+    "logo_url": null,
+    "role": "Admin",
+    "last_active_at": "2026-06-20T14:30:00Z"
+  }
+]

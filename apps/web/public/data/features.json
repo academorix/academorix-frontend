@@ -1,0 +1,10 @@
+[
+  { "feature": "athletes", "enabled": true, "source": "business_type" },
+  { "feature": "teams", "enabled": true, "source": "business_type" },
+  { "feature": "scheduling", "enabled": true, "source": "business_type" },
+  { "feature": "attendance", "enabled": true, "source": "business_type" },
+  { "feature": "competition", "enabled": true, "source": "business_type" },
+  { "feature": "progress", "enabled": true, "source": "business_type" },
+  { "feature": "development", "enabled": true, "source": "business_type" },
+  { "feature": "multi_sport", "enabled": false, "source": "business_type" }
+]

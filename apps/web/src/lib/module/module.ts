@@ -12,6 +12,7 @@
  * See `.kiro/steering/frontend-module-architecture.md` for the full standard.
  */
 
+import type { HostKind } from "@/lib/http";
 import type { ScopeDimension } from "@/lib/scope/scope.types";
 import type { IconType } from "@academorix/ui/icons";
 import type { ResourceProps } from "@refinedev/core";
@@ -35,6 +36,13 @@ export interface AppModuleRoute {
    * here instead of rendering the element (e.g. `/login` → `/dashboard`).
    */
   redirectAuthenticatedTo?: string;
+  /**
+   * Restrict this route to a subset of host contexts (central, central-admin,
+   * tenant). Omit to register on every host (the default). Used by the
+   * workspace module to bind its picker + self-serve pages to central hosts
+   * only, and by the landing module to bind marketing to tenant hosts only.
+   */
+  hosts?: HostKind[];
 }
 
 /**
@@ -61,6 +69,16 @@ export interface AppResourceMeta {
    * reflects the current scope and refetches when it changes.
    */
   scopedBy?: ScopeDimension[];
+  /**
+   * Refine multi-data-provider key. When set, Refine reads from
+   * `dataProvider[dataProviderName]` for this resource; when omitted the
+   * `default` provider is used. See PLAN.md §4.5 for the migration recipe.
+   *
+   * Feature modules almost never set this by hand — the registry auto-applies
+   * `"mock"` for resources whose backend module has not shipped, based on the
+   * {@link "@/providers/data".BACKEND_READY_RESOURCES} allow-list.
+   */
+  dataProviderName?: string;
 }
 
 /**

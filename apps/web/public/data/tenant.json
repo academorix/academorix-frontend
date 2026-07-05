@@ -1,0 +1,16 @@
+{
+  "data": {
+    "id": "01h8-riverside-tenant-uuid-000000",
+    "slug": "riverside",
+    "name": "Riverside Sports Academy",
+    "business_type": "academy",
+    "business_type_label": "Academy",
+    "status": "active",
+    "status_label": "Active",
+    "branding": {
+      "logo_url": null,
+      "primary_color": null,
+      "favicon_url": null
+    }
+  }
+}

@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { fileURLToPath, URL } from "node:url";
 
 import tailwindcss from "@tailwindcss/vite";
@@ -7,12 +8,26 @@ import { defineConfig } from "vitest/config";
 /** Resolve a path relative to this config file. */
 const resolvePath = (path: string): string => fileURLToPath(new URL(path, import.meta.url));
 
+/**
+ * Reads the workspace `package.json` to expose its version as
+ * `__ACADEMORIX_VERSION__` via Vite's `define` — used by
+ * `src/lib/http/device.ts` to send `X-Client: academorix-web/<version>`.
+ */
+const pkg = JSON.parse(readFileSync(resolvePath("./package.json"), "utf-8")) as {
+  version?: string;
+};
+const version = pkg.version ?? "dev";
+
 export default defineConfig({
   // Env files live in a dedicated folder instead of the package root.
   envDir: resolvePath("./environments"),
   envPrefix: "VITE_",
 
   plugins: [react(), tailwindcss()],
+
+  define: {
+    __ACADEMORIX_VERSION__: JSON.stringify(version),
+  },
 
   resolve: {
     alias: {

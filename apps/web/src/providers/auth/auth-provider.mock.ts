@@ -4,8 +4,8 @@
  *
  * @description
  * Mock Refine `AuthProvider` used when `VITE_API_MOCK` is on. It mirrors the
- * REST provider's contract exactly (same methods, same redirects, same session
- * seeding) so screens behave identically in both modes.
+ * real backend's contract (same login DTO shape, same envelope semantics) so
+ * screens behave identically in both modes.
  *
  * ## Multi-persona RBAC demo
  * The mock backend ships a **roster of demo users** in
@@ -16,8 +16,8 @@
  * authorization. The chosen persona is persisted in `localStorage` so a reload
  * keeps you signed in as the same user. Any non-empty password is accepted.
  *
- * If the roster is unavailable, it falls back to the single `me.json` fixture
- * (the owner), preserving the original behaviour.
+ * If the roster is unavailable, the provider falls back to the single
+ * `me.json` fixture (the owner), preserving the original behaviour.
  */
 
 import type { TokenStore } from "@/lib/http";
@@ -163,7 +163,8 @@ export function createMockAuthProvider(
         // Resolve the persona from the entered email (drives RBAC everywhere).
         const user = await loadUser(params.email);
 
-        // Any non-empty credentials succeed in mock mode.
+        // Any non-empty credentials succeed in mock mode. The token shape
+        // mirrors the real backend's Sanctum PAT format for realism.
         tokens.setToken(`mock-token.${Date.now().toString(36)}`, null);
         writeActivePersonaEmail(user.email);
         setCurrentIdentity(toIdentity(user));
