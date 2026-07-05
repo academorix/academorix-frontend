@@ -91,7 +91,17 @@ export function createMockDataProvider(options: MockDataProviderOptions = {}): D
    */
   const cache = new Map<string, BaseRecord[]>();
 
-  /** Fetches and caches a resource's fixture the first time it is requested. */
+  /**
+   * Fetches and caches a resource's fixture the first time it is requested.
+   *
+   * When deployed to a SPA host with a catch-all rewrite (Vercel's default is
+   * `/(.*) → /`) a missing fixture path returns the SPA shell (`index.html`)
+   * with `Content-Type: text/html` and HTTP 200 — which would otherwise flow
+   * past `response.ok` and crash `response.json()` with
+   * `Unexpected token '<'`. We defend against that here by rejecting responses
+   * that are not JSON (either by content-type or by a leading `<`), and
+   * surface a 404 the notification provider can format properly.
+   */
   async function load(resource: string): Promise<BaseRecord[]> {
     const cached = cache.get(resource);
 
@@ -108,7 +118,31 @@ export function createMockDataProvider(options: MockDataProviderOptions = {}): D
       );
     }
 
-    const payload: unknown = await response.json();
+    // Guard: a SPA fallback (index.html) surfaces here with `response.ok=true`
+    // because Vercel/Netlify catch-all rewrites return the shell with 200. Read
+    // the body as text first and reject anything that is not JSON before we
+    // hand it to `JSON.parse`.
+    const contentType = response.headers.get("content-type") ?? "";
+    const rawText = await response.text();
+    const looksLikeHtml = /^\s*</.test(rawText);
+
+    if (looksLikeHtml || (contentType.length > 0 && !contentType.includes("json"))) {
+      throw new ApiError(
+        `No mock fixture found for resource "${resource}" (expected ${basePath}/${resource}.json — got ${contentType || "unknown"} instead of JSON, likely a SPA fallback).`,
+        404,
+      );
+    }
+
+    let payload: unknown;
+
+    try {
+      payload = JSON.parse(rawText);
+    } catch (cause) {
+      throw new ApiError(
+        `Mock fixture for resource "${resource}" is not valid JSON (${(cause as Error).message}).`,
+        500,
+      );
+    }
 
     // Accept either a bare array or a Laravel-style `{ data: [...] }` envelope.
     const records: BaseRecord[] = Array.isArray(payload)

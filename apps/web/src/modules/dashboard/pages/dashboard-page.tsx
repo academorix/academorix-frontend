@@ -12,7 +12,7 @@
 
 import {
   AcademicCapIcon,
-  BookOpenIcon,
+  CalendarIcon,
   UserGroupIcon,
   UsersIcon,
 } from "@academorix/ui/icons/outline";
@@ -38,7 +38,7 @@ interface KpiConfig {
 const KPIS: KpiConfig[] = [
   { resource: "athletes", label: "Athletes", Icon: AcademicCapIcon },
   { resource: "coaches", label: "Coaches", Icon: UsersIcon },
-  { resource: "courses", label: "Courses", Icon: BookOpenIcon },
+  { resource: "events", label: "Events", Icon: CalendarIcon },
   { resource: "teams", label: "Teams", Icon: UserGroupIcon },
 ];
 
