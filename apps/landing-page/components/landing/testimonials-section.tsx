@@ -52,7 +52,7 @@ const TESTIMONIALS: readonly Testimonial[] = [
 export function TestimonialsSection(): ReactNode {
   return (
     <section aria-labelledby="testimonials-heading" className="px-4 py-20 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-[1400px]">
         <SectionHeading
           eyebrow="Testimonials"
           headingId="testimonials-heading"

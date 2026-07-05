@@ -48,7 +48,7 @@ export function HowItWorksSection(): ReactNode {
       className="scroll-mt-24 px-4 py-20 sm:px-6 lg:px-8"
       id="how-it-works"
     >
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-[1400px]">
         <SectionHeading
           description="Go from setup to your first tracked session in an afternoon."
           eyebrow="How it works"

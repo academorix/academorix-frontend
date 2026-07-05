@@ -58,7 +58,7 @@ export function PricingSection({ plans }: PricingSectionProps): ReactNode {
       className="scroll-mt-24 bg-default/20 px-4 py-20 sm:px-6 lg:px-8"
       id="pricing"
     >
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-[1400px]">
         <SectionHeading
           description="Straightforward plans that scale with your academy. No hidden fees."
           eyebrow="Pricing"

@@ -19,7 +19,7 @@ import { getAppUrl } from "@/lib/env";
  * Rules:
  *   - `"signup"`       → `${APP_URL}/register`
  *   - `"trial"`        → `${APP_URL}/register?trial=1`
- *   - `"contact_sales"`→ `mailto:sales@academorix.com`
+ *   - `"contact_sales"`→ `/contact-sales` (in-app Talk to Sales page)
  *   - `"link"`         → whatever `href` the descriptor carries
  *
  * @param cta - Descriptor from a JSON fixture.
@@ -33,7 +33,7 @@ export function resolveCta(cta: CtaDescriptor): string {
     case "trial":
       return `${app}/register?trial=1`;
     case "contact_sales":
-      return "mailto:sales@academorix.com";
+      return "/contact-sales";
     case "link":
       return cta.href ?? "/";
     default:

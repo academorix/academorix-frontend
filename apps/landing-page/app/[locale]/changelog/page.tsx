@@ -3,60 +3,53 @@
  * @module app/[locale]/changelog/page
  *
  * @description
- * Placeholder route for the product changelog. Real entries land here once
- * the release-notes MDX pipeline is wired up. Meanwhile: a branded
- * "coming soon" state.
+ * Product changelog handoff. We forward every request under `/changelog`
+ * (bare English + locale-prefixed) to the Featurebase board configured via
+ * `NEXT_PUBLIC_FEATUREBASE_URL` (default `academorix.featurebase.app`).
+ *
+ * Featurebase owns the roadmap board, changelog stream, and user upvote
+ * flow, so the marketing app doesn't try to duplicate it. Users are
+ * redirected server-side at the edge — no client roundtrip, no flash of
+ * placeholder content.
+ *
+ * Because this is a permanent handoff, we use HTTP 308 (permanent + method
+ * preserved) so search engines transfer any accumulated authority to the
+ * external destination and browsers cache the redirect aggressively.
  */
 
-import { ClockIcon } from "@academorix/ui/icons/outline";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { permanentRedirect } from "next/navigation";
 
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-import { ComingSoon } from "@/components/marketing/coming-soon";
-import { MarketingShell } from "@/components/marketing/marketing-shell";
+import { getChangelogUrl } from "@/lib/env";
 
 /** Props for {@link ChangelogPage}. */
 interface ChangelogPageProps {
   params: Promise<{ locale: string }>;
 }
 
-/** Per-page metadata. */
+/**
+ * Metadata — never actually rendered (the redirect fires before the body
+ * ships) but kept so search-engine crawlers that probe the metadata endpoint
+ * see the right title + canonical.
+ */
 export async function generateMetadata({ params }: ChangelogPageProps): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "changelog.meta" });
 
   return {
-    title: t("title"),
-    description: t("description"),
+    title: "Changelog · Academorix",
+    description: "Product updates, release notes, and roadmap for Academorix.",
     alternates: { canonical: locale === "en" ? "/changelog" : `/${locale}/changelog` },
+    robots: { index: false, follow: false },
   };
 }
 
-/** The changelog page. */
-export default async function ChangelogPage({ params }: ChangelogPageProps): Promise<ReactNode> {
-  const { locale } = await params;
-
-  setRequestLocale(locale);
-
-  const [t, tCommon] = await Promise.all([
-    getTranslations({ locale, namespace: "changelog" }),
-    getTranslations({ locale, namespace: "common" }),
-  ]);
-
-  return (
-    <MarketingShell>
-      <ComingSoon
-        description={t("description")}
-        eyebrow={t("eyebrow")}
-        icon={ClockIcon}
-        primaryHref="mailto:hello@academorix.com?subject=Subscribe%20to%20the%20changelog"
-        primaryLabel={tCommon("subscribe")}
-        secondaryHref="/docs"
-        secondaryLabel={t("readDocs")}
-        title={t("title")}
-      />
-    </MarketingShell>
-  );
+/**
+ * The changelog "page" is a server-side redirect to Featurebase. Rendering
+ * `permanentRedirect` inside a Server Component throws a `NEXT_REDIRECT`
+ * signal Next.js intercepts to emit a 308 to the client.
+ */
+export default function ChangelogPage(): ReactNode {
+  permanentRedirect(getChangelogUrl());
 }

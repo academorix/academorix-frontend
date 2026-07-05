@@ -14,9 +14,10 @@ import {
   ArrowTopRightOnSquareIcon,
   CheckIcon,
   InformationCircleIcon,
+  MagnifyingGlassIcon,
   MinusIcon,
 } from "@academorix/ui/icons/outline";
-import { Button, Chip, Label, SearchField, Tooltip } from "@academorix/ui/react";
+import { Button, Chip, EmptyState, Label, SearchField, Tooltip } from "@academorix/ui/react";
 import { useCallback, useMemo, useState } from "react";
 
 import type { CompareCell, CompareRow, CompareSection, PlanCta, PlanTierData } from "@/lib/types";
@@ -247,6 +248,36 @@ interface PricingMatrixProps {
 export function PricingMatrix({ plans, sections }: PricingMatrixProps): ReactNode {
   const [query, setQuery] = useState("");
 
+  // Count how many rows the current query resolves to across all sections.
+  // If zero, we show an EmptyState instead of the section list — otherwise
+  // the search field ends up alone above an empty matrix, which reads as
+  // a broken state (the exact bug the screenshot flagged).
+  const totalMatchingRows = useMemo(() => {
+    if (!query) {
+      return sections.reduce(
+        (total, section) =>
+          total + section.subcategories.reduce((sub, s) => sub + s.rows.length, 0),
+        0,
+      );
+    }
+
+    let total = 0;
+
+    for (const section of sections) {
+      for (const sub of section.subcategories) {
+        for (const row of sub.rows) {
+          if (rowMatches(row, query)) {
+            total += 1;
+          }
+        }
+      }
+    }
+
+    return total;
+  }, [sections, query]);
+
+  const hasResults = totalMatchingRows > 0;
+
   return (
     <section
       aria-labelledby="pricing-compare-heading"
@@ -261,18 +292,45 @@ export function PricingMatrix({ plans, sections }: PricingMatrixProps): ReactNod
 
       <StickyHeader plans={plans} query={query} onQueryChange={setQuery} />
 
-      <div className="pb-4">
-        {sections.map((section) => (
-          <SectionBlock
-            key={`${section.icon}-${section.title}`}
-            plans={plans}
-            query={query}
-            section={section}
-          />
-        ))}
-      </div>
+      {hasResults ? (
+        <>
+          <div className="pb-4">
+            {sections.map((section) => (
+              <SectionBlock
+                key={`${section.icon}-${section.title}`}
+                plans={plans}
+                query={query}
+                section={section}
+              />
+            ))}
+          </div>
 
-      <MatrixCtas plans={plans} />
+          <MatrixCtas plans={plans} />
+        </>
+      ) : (
+        <div className="mt-12 flex justify-center border-t border-default pt-16">
+          <EmptyState size="lg">
+            <EmptyState.Header>
+              <EmptyState.Media variant="icon">
+                <MagnifyingGlassIcon className="size-6" />
+              </EmptyState.Media>
+              <EmptyState.Title>No matching features</EmptyState.Title>
+              <EmptyState.Description className="max-w-md text-pretty">
+                We couldn&apos;t find a feature matching <b>&ldquo;{query}&rdquo;</b>. Try a broader
+                term, or clear the search to see the full comparison.
+              </EmptyState.Description>
+            </EmptyState.Header>
+            <EmptyState.Content className="flex-row gap-2">
+              <Button size="sm" variant="primary" onPress={() => setQuery("")}>
+                Clear search
+              </Button>
+              <Button size="sm" variant="secondary" onPress={() => setQuery("attendance")}>
+                Try &ldquo;attendance&rdquo;
+              </Button>
+            </EmptyState.Content>
+          </EmptyState>
+        </div>
+      )}
     </section>
   );
 }

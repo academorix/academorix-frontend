@@ -3,62 +3,47 @@
  * @module app/[locale]/docs/page
  *
  * @description
- * Placeholder route for the Academorix documentation portal. Links out to
- * the external `docs.academorix.com` origin (from `site.docs_url`) while
- * we occupy the `/docs` route within the app so footer + mega-menu links
- * resolve cleanly.
+ * Docs portal handoff. We forward every request under `/docs` to the
+ * Mintlify-hosted documentation origin configured via `NEXT_PUBLIC_DOCS_URL`
+ * (default `docs.academorix.com`).
+ *
+ * Mintlify owns the docs IA, versioning, search, and API reference render
+ * pipeline, so the marketing app doesn't try to embed or duplicate it.
+ * Users are redirected server-side at the edge — no client roundtrip, no
+ * flash of placeholder content.
+ *
+ * A permanent 308 hands SEO authority to the docs origin, which is where
+ * we want documentation queries to land.
  */
 
-import { BookOpenIcon } from "@academorix/ui/icons/outline";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { permanentRedirect } from "next/navigation";
 
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-import { ComingSoon } from "@/components/marketing/coming-soon";
-import { MarketingShell } from "@/components/marketing/marketing-shell";
-import { getSite } from "@/lib/api";
+import { getDocsUrl } from "@/lib/env";
 
 /** Props for {@link DocsPage}. */
 interface DocsPageProps {
   params: Promise<{ locale: string }>;
 }
 
-/** Per-page metadata. */
+/**
+ * Metadata — see {@link ChangelogPage} rationale. Not rendered but kept for
+ * crawler probes.
+ */
 export async function generateMetadata({ params }: DocsPageProps): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "docs.meta" });
 
   return {
-    title: t("title"),
-    description: t("description"),
+    title: "Docs · Academorix",
+    description: "Guides, API reference, and best practices for building on Academorix.",
     alternates: { canonical: locale === "en" ? "/docs" : `/${locale}/docs` },
+    robots: { index: false, follow: false },
   };
 }
 
-/** The docs landing page. */
-export default async function DocsPage({ params }: DocsPageProps): Promise<ReactNode> {
-  const { locale } = await params;
-
-  setRequestLocale(locale);
-
-  const [site, t] = await Promise.all([
-    getSite(locale),
-    getTranslations({ locale, namespace: "docs" }),
-  ]);
-
-  return (
-    <MarketingShell>
-      <ComingSoon
-        description={t("description")}
-        eyebrow={t("eyebrow")}
-        icon={BookOpenIcon}
-        primaryHref={site.docs_url}
-        primaryLabel={t("preview")}
-        secondaryHref="mailto:hello@academorix.com?subject=Docs%20feedback"
-        secondaryLabel={t("sendFeedback")}
-        title={t("title")}
-      />
-    </MarketingShell>
-  );
+/** Server-side 308 redirect to the Mintlify docs origin. */
+export default function DocsPage(): ReactNode {
+  permanentRedirect(getDocsUrl());
 }

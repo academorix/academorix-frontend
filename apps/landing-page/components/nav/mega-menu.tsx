@@ -201,7 +201,7 @@ export function MegaMenu({ label, panel }: MegaMenuProps): ReactNode {
         <div
           className={`${panelWidthClass(
             panel.layout,
-          )} rounded-xl border border-default bg-surface p-4 shadow-2xl`}
+          )} rounded-xl border border-default bg-background/95 p-5 shadow-2xl ring-1 ring-default/50 backdrop-blur-xl supports-[backdrop-filter]:bg-background/85`}
         >
           <PanelBody panel={panel} />
         </div>

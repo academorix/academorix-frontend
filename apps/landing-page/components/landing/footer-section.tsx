@@ -150,7 +150,7 @@ export function FooterSection({ site }: FooterSectionProps): ReactNode {
 
   return (
     <footer className="border-t border-default bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 lg:px-8">
         {/* Brand + columns */}
         <div className="grid grid-cols-2 gap-10 md:grid-cols-6">
           <div className="col-span-2">

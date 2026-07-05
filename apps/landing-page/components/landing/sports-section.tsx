@@ -41,7 +41,7 @@ export function SportsSection(): ReactNode {
       className="scroll-mt-24 bg-default/20 px-4 py-20 sm:px-6 lg:px-8"
       id="sports"
     >
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-[1400px]">
         <SectionHeading
           description="Start with the sports below, or configure your own. The engine adapts to the discipline — you don't adapt to the tool."
           eyebrow="Sports"

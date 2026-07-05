@@ -299,5 +299,159 @@
     "title": "One inbox. One month. Everything academy operations.",
     "description": "A monthly digest of product updates, industry insights, and stories from the academies we work with. Reply to this email to be added to the launch list.",
     "readStories": "Read customer stories"
+  },
+
+  "contactSales": {
+    "meta": {
+      "title": "Talk to sales · Academorix",
+      "description": "Scoped demos, volume pricing, and multi-tenant deployments. Our team responds within one business day."
+    },
+    "hero": {
+      "eyebrow": "Enterprise · Sales",
+      "title": "Let's plan your rollout together",
+      "subtitle": "Whether you run one branch or a hundred, our team will scope the deployment, walk you through the security stack, and hand off a repeatable rollout plan tailored to your operation."
+    },
+    "stats": {
+      "aria": "Academorix trust indicators",
+      "academies": {
+        "label": "Academies onboard",
+        "value": "200+",
+        "hint": "From single-branch dojos to 30-location networks"
+      },
+      "athletes": {
+        "label": "Athletes managed",
+        "value": "50k+",
+        "hint": "Across 40 countries and three continents"
+      },
+      "sports": {
+        "label": "Sports supported",
+        "value": "12",
+        "hint": "Sport-agnostic engine — new disciplines in days"
+      },
+      "uptime": {
+        "label": "Enterprise uptime",
+        "value": "99.99%",
+        "hint": "Financial credits if we miss the target"
+      }
+    },
+    "form": {
+      "heading": "Tell us about your academy",
+      "subheading": "Ten fields, one business day. A senior product specialist will follow up with next steps.",
+      "fields": {
+        "firstName": {
+          "label": "First name",
+          "placeholder": "Ada"
+        },
+        "lastName": {
+          "label": "Last name",
+          "placeholder": "Lovelace"
+        },
+        "workEmail": {
+          "label": "Work email",
+          "placeholder": "ada@academy.com",
+          "help": "Please use your work email — we don't sell to consumer emails."
+        },
+        "company": {
+          "label": "Academy or company name",
+          "placeholder": "Northgate Sports Academy"
+        },
+        "workspaceUrl": {
+          "label": "Existing workspace URL",
+          "placeholder": "https://northgate.academorix.com",
+          "help": "Optional — leave blank if you're new to Academorix."
+        },
+        "teamSize": {
+          "label": "Athletes managed",
+          "placeholder": "Select a range",
+          "options": {
+            "1_25": "1 – 25 athletes",
+            "26_100": "26 – 100 athletes",
+            "101_500": "101 – 500 athletes",
+            "500_plus": "500+ athletes"
+          }
+        },
+        "primaryInterest": {
+          "label": "What's driving this conversation?",
+          "placeholder": "Choose one",
+          "options": {
+            "multi_branch": "Multi-branch operations",
+            "compliance": "Security & compliance requirements",
+            "migration": "Migration from an existing tool",
+            "custom_gateway": "Custom payment gateway or invoicing",
+            "volume_pricing": "Volume pricing / multi-year contract",
+            "other": "Something else"
+          }
+        },
+        "message": {
+          "label": "What should we know before the call?",
+          "placeholder": "Number of branches, sports offered, current tools, pain points, timeline…",
+          "help": "The more you share, the better we can prepare — 20 characters minimum."
+        },
+        "optIn": {
+          "label": "It's OK to send occasional product + industry updates. You can unsubscribe anytime."
+        }
+      },
+      "submit": {
+        "idle": "Send request",
+        "busy": "Sending…"
+      },
+      "privacy": "By submitting, you agree to our Privacy Policy. We never share your details with third parties.",
+      "errors": {
+        "transport": "We couldn't reach the server. Please check your connection or email us directly.",
+        "fallbackPrompt": "Or email us at",
+        "fallbackSubject": "Talk to sales — enterprise inquiry"
+      },
+      "sent": {
+        "title": "Request received",
+        "description": "Thanks — a senior product specialist will be in touch within one business day. Expect an email from a real person, not a form response.",
+        "sendAnother": "Send another"
+      }
+    },
+    "sidebar": {
+      "heading": "What to expect from the call"
+    },
+    "trust": {
+      "demo": {
+        "title": "Scoped, hands-on demo",
+        "description": "A 45-minute walkthrough tailored to your sport, your branches, and your compliance needs — not a generic pitch deck."
+      },
+      "security": {
+        "title": "Security review",
+        "description": "SOC 2, GDPR DPA, HIPAA BAA, data residency, and SSO — we ship the paperwork before the trial."
+      },
+      "onboarding": {
+        "title": "Named implementation engineer",
+        "description": "Every enterprise rollout gets a dedicated engineer through go-live. Weekly check-ins during setup, on-call during launch week."
+      },
+      "migration": {
+        "title": "Migration in weeks, not months",
+        "description": "We handle the ETL from TeamSnap, Sportlyzer, Playmetrics, spreadsheets, or your bespoke system. Parallel run for 30 days."
+      }
+    },
+    "testimonial": {
+      "quote": "The Academorix team scoped, migrated, and launched our three-branch network in six weeks. Onboarding a new athlete used to take 40 minutes across three spreadsheets. Now it's one form.",
+      "author": "Layla Haddad",
+      "role": "Director, AquaElite Swim",
+      "initials": "LH"
+    },
+    "response": {
+      "eyebrow": "Response time",
+      "body": "We staff sales across MENA, EU, and North America — you'll hear back within one business day, in the timezone your headers say you're in."
+    },
+    "related": {
+      "heading": "Continue reading",
+      "security": {
+        "title": "Enterprise security",
+        "description": "SSO, audit logs, data residency, and the SLA."
+      },
+      "onboarding": {
+        "title": "Migration & onboarding",
+        "description": "Hands-on rollout with a named engineer."
+      },
+      "contracts": {
+        "title": "Custom contracts",
+        "description": "NET-30 terms, DPA, HIPAA BAA, multi-year discounts."
+      }
+    }
   }
 }

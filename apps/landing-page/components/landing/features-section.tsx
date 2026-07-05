@@ -93,7 +93,7 @@ export function FeaturesSection(): ReactNode {
       className="scroll-mt-24 px-4 py-20 sm:px-6 lg:px-8"
       id="features"
     >
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-[1400px]">
         <SectionHeading
           description="One connected platform for every part of academy operations — from the front desk to the field."
           eyebrow="Features"
