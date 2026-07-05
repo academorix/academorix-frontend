@@ -102,7 +102,13 @@ describe("toIdentity", () => {
   });
 
   it("passes provided tenants and scopes through", () => {
-    const other = { id: "t-2", slug: "beta", name: "Beta Club", business_type: "club" as const };
+    const other = {
+      id: "t-2",
+      slug: "beta",
+      name: "Beta Club",
+      business_type: "club" as const,
+      branding: null,
+    };
     const scopes = {
       organizations: [{ id: "o1", name: "Org 1" }],
       branches: [{ id: "b1", name: "Branch 1", organization_id: "o1" }],

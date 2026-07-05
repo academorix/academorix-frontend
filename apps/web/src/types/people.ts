@@ -23,6 +23,7 @@ import type {
   UserStatus,
 } from "@/types/enums";
 import type { TenantSummary } from "@/types/platform";
+import type { QuotaHeadline, SubscriptionSummary } from "@/types/subscription";
 
 /**
  * PII satellite of a user (mirrors the backend `profiles` table — redactable
@@ -41,15 +42,23 @@ export interface UserProfile {
 }
 
 /**
- * The full authenticated user as returned by `GET /api/v1/auth/me`. The auth
- * provider condenses this into the leaner {@link "@/types/platform".Identity}
- * for UI consumption.
+ * The full authenticated user as returned by `GET /api/auth/me` (tenant) or
+ * `GET /api/v1/platform/auth/me` (platform). The auth provider condenses this
+ * into the leaner {@link "@/types/platform".Identity} for UI consumption.
+ *
+ * Backend `MeData` shape — see BACKEND_HANDOFF.md §5.1 for the field-by-field
+ * contract.
  */
 export interface AuthUser extends BaseModel, TenantScoped {
   email: string;
   username: string | null;
   phone: string | null;
-  status: UserStatus;
+  /**
+   * User lifecycle. Historically the machine values (`"active"`, `"pending"`),
+   * but the backend `MeData` returns the human label from `UserState`
+   * (`"Active"`, `"Pending"`, `"Disabled"`). We accept both shapes.
+   */
+  status: UserStatus | string;
   email_verified_at: string | null;
   phone_verified_at: string | null;
   last_login_at: string | null;
@@ -77,6 +86,10 @@ export interface AuthUser extends BaseModel, TenantScoped {
     }>;
     seasons: Array<{ id: string; name: string; status?: string; is_current?: boolean }>;
   };
+  /** Current subscription snapshot, or `null` when unsubscribed. */
+  subscription?: SubscriptionSummary | null;
+  /** Headline quota rows for the shell. */
+  quota_summary?: QuotaHeadline[];
 }
 
 /**

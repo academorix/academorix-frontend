@@ -28,4 +28,5 @@ export * from "@/types/scheduling";
 export * from "@/types/development";
 export * from "@/types/commerce";
 export * from "@/types/attributes";
+export * from "@/types/subscription";
 export * from "@/types/api";

@@ -21,6 +21,7 @@ const TENANT: TenantSummary = {
   slug: "elite",
   name: "Elite Academy",
   business_type: "academy",
+  branding: null,
 };
 
 /** Builds a {@link UserProfile}, overriding any fields the test cares about. */
@@ -78,6 +79,8 @@ export function makeIdentity(overrides: Partial<Identity> = {}): Identity {
     tenant: TENANT,
     tenants: [TENANT],
     scopes: { organizations: [], branches: [], seasons: [] },
+    subscription: null,
+    quota_summary: [],
     ...overrides,
   };
 }
