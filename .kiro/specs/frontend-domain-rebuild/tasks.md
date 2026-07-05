@@ -135,3 +135,73 @@ commit. Requirement references point to `requirements.md`.
 > note); on-pitch slot-geometry authoring and per-test SDUI value editing
 > (performance) are tracked follow-ups. All write surfaces target the mock
 > provider today and swap to the REST API unchanged.
+
+## Wave 6 — Backend/frontend alignment (Phase 1–4 of PLAN.md)
+
+Executes the deliverables in `.kiro/specs/backend-frontend-alignment/PLAN.md`
+Phases 1–4. Phases 5–9 depend on backend gaps (G1, G2, G6, G7, G8, G9, G10)
+landing; the frontend structure is in place to consume them the moment they
+ship.
+
+- [x] 42. **Phase 1** — HTTP layer rebuild (`src/lib/http/`): host resolver
+      (`resolveHostContext`, `buildTenantUrl`, `buildCentralUrl`), device
+      headers (`getDeviceId`, `deviceHeaders`, `deviceLabel`), envelope helpers
+      (`unwrapEnvelope`, `extractPaginationMeta`), single-flight refresh
+      coordinator, and a rewritten `HttpClient` that carries the full backend
+      header contract (`X-Api-Version`, `X-Client`, `X-Device-*`, `X-Timezone`,
+      `X-Locale`, `Authorization`).
+- [x] 43. **Phase 1** — Tenancy library (`src/lib/tenancy/`): `TenancyProvider`
+      resolves the current tenant via `GET /api/current-tenant`; `useTenancy()`
+      returns `{host, tenant, isCentral, isTenant, isCentralAdmin, …}`;
+      `useMyWorkspaces()` powers the Slack-style picker.
+- [x] 44. **Phase 1** — `config/env.ts` extended with `VITE_API_PATH`,
+      `VITE_CENTRAL_HOST`, `VITE_PLATFORM_ADMIN_HOST`; `vite.config.ts` injects
+      `__ACADEMORIX_VERSION__` for the `X-Client` header.
+- [x] 45. **Phase 2** — Split auth providers: `auth-provider.tenant` (POST
+      `/auth/*` + companion `TenantAuthApi` for register/forgot/reset/
+      email-verify/confirm/change), `auth-provider.platform` (POST
+      `/v1/platform/auth/*` + `PlatformAuthApi` for 2FA + impersonation),
+      updated `auth-provider.mock`. `providers/auth/index.ts` picks the provider
+      by host + `VITE_API_MOCK`.
+- [x] 46. **Phase 2** — Identity layer aligned with backend DTOs: `types/api.ts`
+      matches `AuthTokenData` (`access_token`, `token_type`, `abilities`,
+      `risk_score`, `expires_at`, `user`, `two_factor_setup_required`) plus
+      `TwoFactorRequiredResponse` + `isTwoFactorRequired` discriminator.
+      `map-identity` has `toIdentity(rich AuthUser)` +
+      `synthesizeIdentityFromMinimalUser` fallback for when `/me` (gap G1) has
+      not shipped yet. `session.ts` carries the impersonation state
+      (sessionStorage-scoped). `password-policy.ts` mirrors backend.
+- [x] 47. **Phase 2** — All auth pages: `login` (unchanged), `register`,
+      `forgot-password`, `reset-password`, `verify-email`,
+      `verify-email-notice`, `confirm-password`, `change-password`,
+      `two-factor-challenge`, `two-factor-setup`, plus `AuthCard`,
+      `PasswordChecklist`, and `ImpersonationBanner`. Auth manifest registers
+      all 11 routes.
+- [x] 48. **Phase 3** — Multi-data-provider wiring. `providers/data/index.ts`
+      exports `dataProviders: { default, mock }` (Refine multi-provider map).
+      `BACKEND_READY_RESOURCES = new Set(["tenants", "features"])` allow-list;
+      the registry auto-applies `meta.dataProviderName = "mock"` for any
+      resource NOT in the list, so migrating a resource to the real API is a
+      single edit — add its name to the list.
+- [x] 49. **Phase 3** — Fixtures aligned with backend DTOs: `login.json`
+      (AuthTokenData), `tenants.json` (TenantData collection), `tenant.json`
+      (single TenantData envelope), `features.json`, `workspaces.json`.
+- [x] 50. **Phase 4** — Workspace module (central host): Slack-style
+      `workspace-picker` (grid of workspaces, powered by `useMyWorkspaces`),
+      `create-workspace` (self-serve tenant provisioning; posts to backend gap
+      G5's endpoint), `find-workspaces` (email me my list; gap G4).
+- [x] 51. **Phase 4** — Host-aware route filtering: `AppModuleRoute` gained
+      `hosts?: HostKind[]`; the registry filters routes by
+      `resolveHostContext().kind`. Landing module gated to tenant hosts;
+      workspace module gated to central/central-admin hosts. `App.tsx` mounts
+      `<TenancyProvider>` above all routes. Impersonation banner mounted in the
+      authenticated shell.
+- [x] 52. Docs refresh (steering + spec), run all gates, commit + push + merge
+      to main.
+
+**Backend gaps documented for the backend team** (`PLAN.md` §8): G0 CORS
+origins, G1 `/me`, G2 seed permissions/roles, G3 workspaces list, G4
+find-workspaces, G5 self-serve tenant creation, G6 Organization module, G7
+device headers, G8 `user_sessions` recorder, G9 tenant 2FA, G10 SPA features
+endpoint, G11 wildcard CORS, G12 exposed API-version header, G13 password-policy
+config.

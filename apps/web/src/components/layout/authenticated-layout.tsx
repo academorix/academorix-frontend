@@ -57,6 +57,7 @@ import {
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 import { siteConfig } from "@/config/site";
 import { appResources } from "@/lib/module";
+import { ImpersonationBanner } from "@/modules/auth/components/impersonation-banner";
 
 /** Props for {@link AuthenticatedLayout}. */
 interface AuthenticatedLayoutProps {
@@ -266,6 +267,7 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps): Rea
       sidebarCollapsible="icon"
       sidebarVariant="inset"
     >
+      <ImpersonationBanner />
       {children}
     </AppLayout>
   );

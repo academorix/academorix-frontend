@@ -73,6 +73,8 @@ apps/web/src/
 │   ├── scope/               # tenant/org/branch/season scope: provider, hooks, filters
 │   ├── attributes/          # SDUI engine: use-attribute-set + field/form/view renderers
 │   ├── i18n/                # i18n: LocaleProvider + Refine i18nProvider (en/ar catalogs, RTL)
+│   ├── tenancy/             # workspace/host layer: TenancyProvider + useTenancy + useMyWorkspaces
+│   ├── http/                # HTTP client + host resolver + device headers + refresh coordinator
 │   ├── query/ http/ api/    # spatie query builder, HTTP client, OpenAPI types
 │   └── format.ts            # shared date/money formatters
 ├── components/              # shared, reusable UI widgets
@@ -423,6 +425,42 @@ Rules:
   map (`list→viewAny`, `show→view`, `create→create`, `edit→update`,
   `delete→delete`, `clone→create`); everything the user _can do_ comes from
   `me`.
+
+### Tenancy, hosts, and workspaces (Wave 6)
+
+Academorix ships **one** SPA build served under three host kinds, matching the
+backend's `stancl/tenancy` identification model:
+
+- **Central** (`academorix.app`) — workspace picker, marketing, self-serve
+  tenant creation.
+- **Central admin** (`admin.academorix.app`) — Academorix staff surface;
+  `platform.domain` middleware rejects tenant hosts.
+- **Tenant** (`{slug}.academorix.app`, custom domains, dev localhost) — every
+  tenant-scoped screen.
+
+`src/lib/http/host.ts` resolves the active context at boot; `src/lib/tenancy/`
+exposes `TenancyProvider`, `useTenancy()`, and `useMyWorkspaces()`. Modules can
+declare `route.hosts: ["central"]` (etc.) so their routes only mount on matching
+hosts — the workspace module uses this, and the landing module is gated to
+tenant hosts.
+
+**Auth is split** into two Refine providers, chosen by host at boot:
+`auth-provider.tenant` (POST `/api/auth/*`) and `auth-provider.platform` (POST
+`/api/v1/platform/auth/*`). Each returns Refine's `AuthProvider` + a companion
+API (`TenantAuthApi` / `PlatformAuthApi`) covering the flows Refine does not
+model directly (register, password reset, email verify, 2FA, impersonation). The
+`providers/auth/index.ts` module picks the right one and falls back to the mock
+provider when `VITE_API_MOCK=true`.
+
+### Multi-data-provider migration (Refine v5)
+
+`providers/data/index.ts` exports `dataProviders: { default, mock }`. Refine
+resources declare `meta.dataProviderName: "mock"` to opt into the fixture
+provider — but they almost never do so by hand: the registry auto-applies
+`"mock"` for any resource NOT in the {@link
+"@/providers/data".BACKEND_READY_RESOURCES} allow-list. Migrating a resource to
+the real API is a **single-line edit** — add its name to the allow-list. See
+`.kiro/specs/backend-frontend-alignment/PLAN.md` §4.5 for the recipe.
 
 ### Enforcement & demo personas
 

@@ -3,23 +3,31 @@
  * @module lib/http/http-client
  *
  * @description
- * A small, dependency-free `fetch` wrapper that centralises every concern the
- * REST data + auth providers share:
+ * A dependency-free `fetch` wrapper that centralises every concern the REST
+ * data + auth providers share (see PLAN.md §4.1):
  *
- * - **Base URL** resolution from a configured origin.
+ * - **Base URL** derived from the active host context (same-origin in
+ *   production, `VITE_API_URL` in dev).
  * - **Bearer token** injection from the shared {@link TokenStore}.
- * - **JSON** request/response handling (with `FormData` pass-through for
- *   uploads).
+ * - **Device + client fingerprint headers** on every request
+ *   (`X-Device-*, X-Client, X-Timezone, X-Locale, X-Api-Version`).
+ * - **JSON** request/response handling with `FormData` pass-through for
+ *   uploads.
+ * - **Dual response envelope** — Foundation `{data, meta}` or bare auth DTO —
+ *   handled by `unwrapEnvelope()` in the callers that want to lift `data`.
  * - **Error normalisation** to {@link ApiError} (Refine's `HttpError`).
- * - **401 handling** — clears the token so a stale credential is never reused,
- *   then delegates redirect/logout to the caller via `onUnauthorized`.
+ * - **Single-flight refresh** on `401` — one refresh attempt, then retry the
+ *   original request once. If the refresh fails, the caller's original error
+ *   propagates so `authProvider.onError` redirects to `/login`.
  *
- * It deliberately does *not* know about Refine. The data/auth providers build
- * on top of it, which keeps this layer unit-testable in isolation.
+ * Deliberately Refine-agnostic — the data/auth providers build on top of it,
+ * which keeps the layer unit-testable in isolation.
  */
 
+import type { RefreshCoordinator } from "@/lib/http/refresh";
 import type { TokenStore } from "@/lib/http/token-store";
 
+import { deviceHeaders } from "@/lib/http/device";
 import { toApiError, toNetworkError } from "@/lib/http/errors";
 
 /** HTTP verbs supported by {@link HttpClient.request}. */
@@ -39,19 +47,33 @@ export interface RequestOptions {
   headers?: Record<string, string>;
   /** Abort signal for cancellation (Refine passes one from React Query). */
   signal?: AbortSignal;
+  /**
+   * When `false`, disables the single-flight refresh + retry loop for this
+   * request. Used by the auth provider's own refresh call to avoid recursion.
+   */
+  allowRefresh?: boolean;
 }
 
 /** Construction config for {@link HttpClient}. */
 export interface HttpClientConfig {
-  /** API origin, e.g. `https://api.academorix.com`. */
+  /**
+   * API origin **including** the API path prefix, e.g.
+   * `https://riverside.academorix.app/api`.
+   */
   baseUrl: string;
   /** Shared token store used to read the bearer token. */
   tokens: TokenStore;
   /**
-   * Invoked once when a request returns `401 Unauthorized`, after the token is
-   * cleared. Wire this to your router/auth flow to redirect to `/login`.
+   * Invoked once when a request returns `401 Unauthorized` and the refresh
+   * flow could not recover. Wire this to your router/auth flow to redirect to
+   * `/login`.
    */
   onUnauthorized?: () => void;
+  /**
+   * API version echoed on every request in the `X-Api-Version` header. Read by
+   * the backend's `api.version` middleware. Defaults to `1.0`.
+   */
+  apiVersion?: string;
 }
 
 /**
@@ -62,12 +84,23 @@ export class HttpClient {
   private readonly baseUrl: string;
   private readonly tokens: TokenStore;
   private readonly onUnauthorized?: () => void;
+  private readonly apiVersion: string;
+  private refreshCoordinator: RefreshCoordinator | null = null;
 
   constructor(config: HttpClientConfig) {
     // Normalise to no trailing slash; `buildUrl` handles joining.
     this.baseUrl = config.baseUrl.replace(/\/+$/, "");
     this.tokens = config.tokens;
     this.onUnauthorized = config.onUnauthorized;
+    this.apiVersion = config.apiVersion ?? "1.0";
+  }
+
+  /**
+   * Attaches a refresh coordinator (typically bound to the same client + token
+   * store). Optional — without one, a 401 immediately clears the token.
+   */
+  attachRefreshCoordinator(coordinator: RefreshCoordinator): void {
+    this.refreshCoordinator = coordinator;
   }
 
   /** The configured API origin (Refine's `dataProvider.getApiUrl`). */
@@ -79,42 +112,11 @@ export class HttpClient {
    * Performs a request and returns the parsed JSON body typed as `T`.
    *
    * @typeParam T - Expected shape of the response body.
-   * @param path - Absolute path beginning with `/`, e.g. `/api/v1/students`.
+   * @param path - Absolute path beginning with `/`, e.g. `/v1/tenants`.
    * @throws {ApiError} on non-2xx responses or transport failures.
    */
   async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-    const { method = "GET", searchParams, body, headers, signal } = options;
-
-    const requestInit: RequestInit = {
-      method,
-      headers: this.buildHeaders(body, headers),
-      signal,
-    };
-
-    if (body !== undefined && method !== "GET" && method !== "HEAD") {
-      requestInit.body = body instanceof FormData ? body : JSON.stringify(body);
-    }
-
-    let response: Response;
-
-    try {
-      response = await fetch(this.buildUrl(path, searchParams), requestInit);
-    } catch (cause) {
-      // Network/transport failure — no HTTP status available.
-      throw toNetworkError(cause);
-    }
-
-    if (response.status === 401) {
-      // Drop the stale credential before anyone can retry with it.
-      this.tokens.clearToken();
-      this.onUnauthorized?.();
-    }
-
-    if (!response.ok) {
-      throw await toApiError(response);
-    }
-
-    return this.parseBody<T>(response);
+    return this.executeWithRefresh<T>(path, options, /* isRetry */ false);
   }
 
   /** Convenience wrapper for `GET`. */
@@ -142,9 +144,69 @@ export class HttpClient {
     return this.request<T>(path, { ...options, method: "DELETE" });
   }
 
+  /**
+   * The core request loop with a single-flight refresh + retry on 401. Split
+   * out from `request` so a retry does not re-recurse infinitely: `isRetry`
+   * short-circuits the second attempt to a hard failure.
+   */
+  private async executeWithRefresh<T>(
+    path: string,
+    options: RequestOptions,
+    isRetry: boolean,
+  ): Promise<T> {
+    const { method = "GET", searchParams, body, headers, signal, allowRefresh = true } = options;
+
+    const requestInit: RequestInit = {
+      method,
+      headers: this.buildHeaders(body, headers),
+      signal,
+    };
+
+    if (body !== undefined && method !== "GET" && method !== "HEAD") {
+      requestInit.body = body instanceof FormData ? body : JSON.stringify(body);
+    }
+
+    let response: Response;
+
+    try {
+      response = await fetch(this.buildUrl(path, searchParams), requestInit);
+    } catch (cause) {
+      // Network/transport failure — no HTTP status available.
+      throw toNetworkError(cause);
+    }
+
+    if (response.status === 401) {
+      // Try to refresh once, then retry the original request. If refresh is
+      // disabled (auth provider paths) or already used its single retry, fall
+      // through to the hard-failure path below.
+      const canRefresh =
+        !isRetry && allowRefresh && this.refreshCoordinator !== null && this.tokens.hasValidToken();
+
+      if (canRefresh && this.refreshCoordinator) {
+        const refreshed = await this.refreshCoordinator.refresh();
+
+        if (refreshed) {
+          return this.executeWithRefresh<T>(path, options, /* isRetry */ true);
+        }
+      }
+
+      // Drop the stale credential before anyone can retry with it.
+      this.tokens.clearToken();
+      this.onUnauthorized?.();
+    }
+
+    if (!response.ok) {
+      throw await toApiError(response);
+    }
+
+    return this.parseBody<T>(response);
+  }
+
   /** Joins the base URL with an absolute path and applies query params. */
   private buildUrl(path: string, searchParams?: URLSearchParams): string {
-    const url = new URL(path, `${this.baseUrl}/`);
+    // Preserve the API path prefix (`/api`) that lives on `baseUrl`.
+    const normalisedPath = path.startsWith("/") ? path : `/${path}`;
+    const url = new URL(`${this.baseUrl}${normalisedPath}`);
 
     if (searchParams && [...searchParams.keys()].length > 0) {
       url.search = searchParams.toString();
@@ -153,13 +215,22 @@ export class HttpClient {
     return url.toString();
   }
 
-  /** Builds the default header set, injecting the bearer token when present. */
+  /**
+   * Builds the default header set: JSON accept, XHR hint, API version, device
+   * fingerprint, bearer token when present, plus any per-request overrides.
+   */
   private buildHeaders(body: unknown, extra?: Record<string, string>): Headers {
     const headers = new Headers({
       Accept: "application/json",
       // Signals Laravel to return JSON (and 419/422 instead of redirects).
       "X-Requested-With": "XMLHttpRequest",
+      "X-Api-Version": this.apiVersion,
     });
+
+    // Device/client fingerprint headers (§6 of PLAN.md).
+    for (const [key, value] of Object.entries(deviceHeaders())) {
+      headers.set(key, value);
+    }
 
     // Let the browser set multipart boundaries for FormData uploads.
     if (body !== undefined && !(body instanceof FormData)) {

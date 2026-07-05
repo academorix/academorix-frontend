@@ -32,7 +32,7 @@ import { LocaleProvider, useI18nProvider } from "@/lib/i18n";
 import { appResources } from "@/lib/module";
 import { accessControlProvider } from "@/providers/access-control";
 import { authProvider } from "@/providers/auth";
-import { dataProvider } from "@/providers/data";
+import { dataProviders } from "@/providers/data";
 import { liveProvider } from "@/providers/live";
 import { notificationProvider } from "@/providers/notification";
 
@@ -54,7 +54,7 @@ function RefineRoot({ children }: ProvidersProps): ReactNode {
     <Refine
       accessControlProvider={accessControlProvider}
       authProvider={authProvider}
-      dataProvider={dataProvider}
+      dataProvider={dataProviders}
       i18nProvider={i18nProvider}
       liveProvider={liveProvider}
       notificationProvider={notificationProvider}

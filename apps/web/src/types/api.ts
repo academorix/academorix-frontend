@@ -18,8 +18,6 @@
  * `{ data, total }` shape Refine expects.
  */
 
-import type { AuthUser } from "@/types/people";
-
 /**
  * Laravel API Resource envelope for a **single** record. Mutation endpoints
  * (create/update/delete) may include a human-readable `message` for toasts;
@@ -91,19 +89,72 @@ export interface LoginCredentials {
 }
 
 /**
- * Successful login/refresh payload. The backend issues a Sanctum bearer token
- * plus the authenticated user so the client can seed its identity cache
- * without a second round-trip.
+ * Successful login/refresh payload from the tenant + platform auth endpoints.
+ * Matches the backend's `Academorix\Auth\Data\AuthTokenData` DTO (see PLAN.md
+ * §1.4 for the exact shape) — the token + freshly authenticated user + the
+ * ability list encoded on the token.
+ *
+ * The user embedded in this response is intentionally **minimal**
+ * ({@link BackendUserData}); the rich identity (roles, permissions, features,
+ * terminology, tenants, scopes) is loaded from `GET /api/v1/auth/me` after
+ * login (PLAN.md gap G1).
  *
  * @see IDENTITY_AND_TENANCY_SPEC.md §4 "Authentication" (laravel/sanctum tokens)
  */
 export interface AuthTokenResponse {
-  /** Plain-text Sanctum bearer token. */
-  token: string;
-  /** Always `"Bearer"`; typed for forward-compatibility. */
-  token_type: "Bearer";
-  /** ISO-8601 expiry, or `null` for non-expiring tokens. */
+  /** Plain-text Sanctum bearer token — only appears here at issue time. */
+  access_token: string;
+  /** Always `"Bearer"`; typed loosely for forward-compatibility. */
+  token_type: string;
+  /** Sorted, deduplicated ability list encoded on this token. */
+  abilities: string[];
+  /** Additive rule-based risk score (0..100). */
+  risk_score: number;
+  /** ISO-8601 absolute expiry; `null` for non-expiring login tokens. */
   expires_at: string | null;
-  /** The freshly authenticated user. */
-  user: AuthUser;
+  /** Count of recovery codes remaining after a successful redemption. */
+  recovery_codes_remaining?: number | null;
+  /**
+   * `true` only on the platform pre-enrolment path where the caller's token
+   * carries a single restricted ability of `two_factor_enable`.
+   */
+  two_factor_setup_required?: boolean;
+  /** The freshly authenticated user (minimal shape). */
+  user: BackendUserData;
+}
+
+/**
+ * Minimal user representation returned by the backend's login/register/refresh
+ * DTOs (`UserData` on tenant surface, `PlatformUserData` on platform surface).
+ *
+ * NOTE: the rich, shell-facing identity (roles/permissions/features/tenants/
+ * scopes) lives on {@link AuthUser} and is delivered by the `/me` bootstrap
+ * endpoint after login.
+ */
+export interface BackendUserData {
+  id: string;
+  name: string;
+  email: string;
+  email_verified_at: string | null;
+  status: string;
+  last_login_at: string | null;
+}
+
+/**
+ * Alternate login response when the account has 2FA enabled. Matches the
+ * backend's `TwoFactorRequiredData` — no bearer token is issued; the caller
+ * must redeem the challenge token via `POST /two-factor/challenge`.
+ */
+export interface TwoFactorRequiredResponse {
+  two_factor_required: true;
+  challenge_token: string;
+  challenge_url: string;
+  challenge_expires_in: number;
+}
+
+/** Discriminates the two login response shapes. */
+export function isTwoFactorRequired(
+  response: AuthTokenResponse | TwoFactorRequiredResponse,
+): response is TwoFactorRequiredResponse {
+  return "two_factor_required" in response && response.two_factor_required === true;
 }
