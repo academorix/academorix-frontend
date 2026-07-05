@@ -65,6 +65,10 @@
       "modules": [],
       "description": "This file - index of every mock fixture and its owning module(s)."
     },
+    "README.md": {
+      "modules": [],
+      "description": "Entry-point doc for the mock-data contract. Points at the manifest, ID registry, naming convention, and validator."
+    },
     "SHARED_IDS.md": {
       "modules": [],
       "description": "Canonical ID prefix registry. Every ID prefix and every cross-cutting canonical ID is declared here."
@@ -74,14 +78,6 @@
       "description": "File-naming rules, ID conventions, and how to add a new fixture."
     },
 
-    "tenants.json": {
-      "modules": ["Tenancy"],
-      "description": "Every tenant that can be switched to via the workspace picker."
-    },
-    "tenant.json": {
-      "modules": ["Tenancy"],
-      "description": "Current-tenant summary object returned by /tenant."
-    },
     "business-types.json": {
       "modules": ["Tenancy"],
       "description": "Business-type catalogue (academy, gym, activity_center) with default_config."
@@ -96,10 +92,6 @@
       "description": "Regions - currency/tax/locale scope per tenant."
     },
 
-    "organizations.json": {
-      "modules": ["Organization / Branch / Team"],
-      "description": "Sub-brands / divisions inside a tenant."
-    },
     "branches.json": {
       "modules": ["Organization / Branch / Team"],
       "description": "Physical venues per organization."
@@ -117,23 +109,11 @@
       "description": "Age-group definitions per branch."
     },
 
-    "users.json": {
-      "modules": ["User", "Auth", "Access (RBAC)", "Staff & HR", "Athletes"],
-      "description": "Every tenant user - owner, admin, coaches, reception, finance, medical, parents/guardians."
-    },
-    "me.json": {
-      "modules": ["User", "Auth", "Access (RBAC)", "Billing (Platform Subscription)"],
-      "description": "GET /auth/me payload - self, tenants, scopes, features, entitlements, subscription."
-    },
     "demo-users.json": {
       "modules": ["User"],
       "description": "Demo/seed user list for the tenant onboarding sandbox."
     },
 
-    "login.json": {
-      "modules": ["Auth"],
-      "description": "Login response shape - sample tokens and cookies."
-    },
     "sessions.json": { "modules": ["Auth"], "description": "Active device sessions per user." },
     "login-history.json": {
       "modules": ["Auth"],
@@ -161,19 +141,6 @@
     "invitations.json": {
       "modules": ["Invitations"],
       "description": "Invite links - pending, accepted, expired, revoked."
-    },
-
-    "subscription.json": {
-      "modules": ["Billing (Platform Subscription)"],
-      "description": "Platform subscription state per tenant - trialing, active, past_due, paused, canceled."
-    },
-    "plan-grants.json": {
-      "modules": ["Billing (Platform Subscription)"],
-      "description": "Entitlement grants tied to each plan tier."
-    },
-    "entitlement-licenses.json": {
-      "modules": ["Billing (Platform Subscription)"],
-      "description": "Per-tenant entitlement licenses (slots, pools, feature toggles) with usage snapshots."
     },
 
     "attribute-sets.json": {
@@ -665,18 +632,6 @@
       "modules": ["Finance - Billing & Payments"],
       "description": "Saved payment methods per payer - cards, Apple Pay, Google Pay, expired, needs_reauth."
     },
-    "refunds.json": {
-      "modules": ["Finance - Billing & Payments"],
-      "description": "Refunds - pending, succeeded, failed, canceled."
-    },
-    "credit-memos.json": {
-      "modules": ["Finance - Billing & Payments"],
-      "description": "Credit memos with applied_history and lifecycle states (open/settled/expired/void)."
-    },
-    "chargebacks.json": {
-      "modules": ["Finance - Billing & Payments"],
-      "description": "Chargebacks across opened/needs_response/evidence_submitted/won/lost/reversed."
-    },
     "transactions.json": {
       "modules": ["Finance - Billing & Payments"],
       "description": "Immutable ledger with parent_transaction_id lineage across the full charge/refund/chargeback/credit chain."
@@ -697,6 +652,10 @@
     "membership-plans.json": {
       "modules": ["Recurring Membership & Subscriptions"],
       "description": "Membership plan catalogue - monthly, termly, annual."
+    },
+    "family-invoice-bundles.json": {
+      "modules": ["Recurring Membership & Subscriptions", "Finance - Billing & Payments"],
+      "description": "D4 opt-in — consolidated family invoice bundles. One record per payer per period, listing the underlying per-membership invoice IDs plus the rendered PDF document reference."
     },
 
     "passes.json": {
@@ -728,9 +687,9 @@
     }
   },
   "counts": {
-    "files_indexed": 148,
+    "files_indexed": 155,
     "modules_declared": 55,
-    "records_estimated_arrays_only": 1109
+    "records_estimated_arrays_only": 1727
   },
   "coverage": {
     "modules_with_fixtures": [
@@ -791,7 +750,8 @@
       "Foundation",
       "Real-time",
       "Search",
-      "Admin & Platform Console"
+      "Admin & Platform Console",
+      "Billing (Platform Subscription)"
     ]
   }
 }
