@@ -29,7 +29,6 @@ import { createElement, lazy } from "react";
 import type { AppModule } from "@/lib/module";
 
 const BillingSettingsPage = lazy(() => import("@/modules/billing/pages/settings-page"));
-const PricingPage = lazy(() => import("@/modules/billing/pages/pricing-page"));
 
 /** The Billing feature module. */
 const billingModule: AppModule = {
@@ -58,11 +57,6 @@ const billingModule: AppModule = {
       tier: "protected",
       path: "/settings/billing",
       element: createElement(BillingSettingsPage),
-    },
-    {
-      tier: "public",
-      path: "/pricing",
-      element: createElement(PricingPage),
     },
   ],
 };

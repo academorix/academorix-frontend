@@ -8,14 +8,18 @@
  * client at the module boundary so each test observes exactly one call and
  * asserts on the path + payload.
  *
- * Read hooks (`useBillingStatus`, `useBillingInvoices`, `useBillingCatalog`)
- * follow a common shape (`data`, `isLoading`, `error`, `refetch`) — we test
- * the shape once per hook plus the shared error path.
+ * Read hooks (`useBillingStatus`, `useBillingInvoices`) follow a common shape
+ * (`data`, `isLoading`, `error`, `refetch`) — we test the shape once per hook
+ * plus the shared error + refetch paths.
  *
- * Mutation hooks (`useStartCheckout`, `useChangePlan`, `usePauseSubscription`,
- * `useResumeSubscription`, `useCancelSubscription`, `useOpenBillingPortal`)
- * follow `{ isPending, error, mutate }` — we test the happy path (fetch → data)
- * + the error path (fetch rejects → error state).
+ * Mutation hooks (`usePauseSubscription`, `useResumeSubscription`,
+ * `useCancelSubscription`, `useOpenBillingPortal`) follow
+ * `{ isPending, error, mutate }` — we test the happy path (fetch → data) +
+ * the error path (fetch rejects → error state).
+ *
+ * The public pricing catalog + first-time checkout used to live here as
+ * `useBillingCatalog` + `useStartCheckout`; those moved to the marketing
+ * app (apps/landing-page). This test file mirrors that trimmed surface.
  */
 
 import { renderHook, waitFor } from "@testing-library/react";
@@ -49,15 +53,12 @@ vi.mock("@/lib/http", () => ({
 
 // Import AFTER the mock so the hooks pick up the stubbed httpClient.
 import {
-  useBillingCatalog,
   useBillingInvoices,
   useBillingStatus,
   useCancelSubscription,
-  useChangePlan,
   useOpenBillingPortal,
   usePauseSubscription,
   useResumeSubscription,
-  useStartCheckout,
 } from "@/modules/billing/hooks/use-billing";
 
 /** Convenience — an active subscription payload used in mutation results. */
@@ -167,83 +168,9 @@ describe("useBillingInvoices", () => {
   });
 });
 
-describe("useBillingCatalog", () => {
-  it("fetches /billing/catalog", async () => {
-    const plans = [
-      {
-        key: "starter" as const,
-        label: "Starter",
-        description: "",
-        is_popular: false,
-        prices: [{ billing_period: "monthly" as const, amount: "0", currency: "USD" }],
-        grants: [],
-      },
-    ];
-
-    httpGet.mockResolvedValueOnce({ data: plans });
-
-    const { result } = renderHook(() => useBillingCatalog());
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    expect(httpGet).toHaveBeenCalledWith("/billing/catalog");
-    expect(result.current.data).toEqual(plans);
-  });
-});
-
 // ─────────────────────────────────────────────────────────────────────
 // Mutation hooks
 // ─────────────────────────────────────────────────────────────────────
-
-describe("useStartCheckout", () => {
-  it("POSTs /billing/checkout with the plan+period payload and returns the redirect", async () => {
-    httpPost.mockResolvedValueOnce({ data: { url: "https://paddle.example/pay/abc" } });
-
-    const { result } = renderHook(() => useStartCheckout());
-
-    const args = {
-      plan_key: "growth" as const,
-      billing_period: "monthly" as const,
-      success_url: "https://app/settings/billing",
-      cancel_url: "https://app/pricing",
-    };
-    const response = await result.current.mutate(args);
-
-    expect(httpPost).toHaveBeenCalledWith("/billing/checkout", args);
-    expect(response).toEqual({ url: "https://paddle.example/pay/abc" });
-    expect(result.current.error).toBeNull();
-  });
-
-  it("captures the thrown error on state", async () => {
-    httpPost.mockRejectedValueOnce(new Error("payment required"));
-
-    const { result } = renderHook(() => useStartCheckout());
-
-    await expect(
-      result.current.mutate({ plan_key: "growth", billing_period: "monthly" }),
-    ).rejects.toThrow("payment required");
-
-    await waitFor(() => {
-      expect(result.current.error?.message).toBe("payment required");
-    });
-  });
-});
-
-describe("useChangePlan", () => {
-  it("POSTs /billing/change-plan with the plan+period payload", async () => {
-    httpPost.mockResolvedValueOnce({ data: ACTIVE_SUBSCRIPTION });
-
-    const { result } = renderHook(() => useChangePlan());
-    const args = { plan_key: "pro" as const, billing_period: "yearly" as const };
-
-    const response = await result.current.mutate(args);
-
-    expect(httpPost).toHaveBeenCalledWith("/billing/change-plan", args);
-    expect(response).toEqual(ACTIVE_SUBSCRIPTION);
-  });
-});
 
 describe("usePauseSubscription", () => {
   it("POSTs /billing/pause with no body", async () => {
@@ -254,6 +181,18 @@ describe("usePauseSubscription", () => {
     await result.current.mutate();
 
     expect(httpPost).toHaveBeenCalledWith("/billing/pause", undefined);
+  });
+
+  it("captures the thrown error on state", async () => {
+    httpPost.mockRejectedValueOnce(new Error("cannot pause"));
+
+    const { result } = renderHook(() => usePauseSubscription());
+
+    await expect(result.current.mutate()).rejects.toThrow("cannot pause");
+
+    await waitFor(() => {
+      expect(result.current.error?.message).toBe("cannot pause");
+    });
   });
 });
 

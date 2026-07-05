@@ -26,6 +26,7 @@ const ResetPasswordPage = lazy(() => import("@/modules/auth/pages/reset-password
 const VerifyEmailPage = lazy(() => import("@/modules/auth/pages/verify-email-page"));
 const TwoFactorChallengePage = lazy(() => import("@/modules/auth/pages/two-factor-challenge-page"));
 const TwoFactorSetupPage = lazy(() => import("@/modules/auth/pages/two-factor-setup-page"));
+const TenantIndexRedirect = lazy(() => import("@/modules/auth/pages/tenant-index-redirect"));
 
 // --- Protected auth pages ------------------------------------------------
 const VerifyEmailNoticePage = lazy(() => import("@/modules/auth/pages/verify-email-notice-page"));
@@ -35,6 +36,16 @@ const ChangePasswordPage = lazy(() => import("@/modules/auth/pages/change-passwo
 const authModule: AppModule = {
   name: "auth",
   routes: [
+    // Tenant-host `/` → redirect to /login (marketing content moved to
+    // apps/landing-page). Central hosts have their own index route via
+    // the workspace module (workspace picker).
+    {
+      tier: "public",
+      index: true,
+      element: createElement(TenantIndexRedirect),
+      hosts: ["tenant"],
+      redirectAuthenticatedTo: appRoutes.dashboard,
+    },
     // Public — anonymous callers only (auth'd users bounced to dashboard).
     {
       tier: "public",

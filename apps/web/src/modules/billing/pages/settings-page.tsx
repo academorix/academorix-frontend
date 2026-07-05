@@ -17,9 +17,12 @@
  * - `useBillingInvoices()` — invoices list.
  * - `useQuotaSummary()` — headline quotas (3-5 rows) from `/me`.
  *
- * Mutations mount their own hooks (`useChangePlan`, `usePauseSubscription`,
+ * Mutations mount their own hooks (`usePauseSubscription`,
  * `useResumeSubscription`, `useCancelSubscription`, `useOpenBillingPortal`)
- * so a click flow only allocates what it uses.
+ * so a click flow only allocates what it uses. Plan-change kicks the user
+ * out to the marketing pricing catalog (apps/landing-page) via the
+ * `siteConfig.links.marketingPricing` URL — checkout itself is now a
+ * marketing concern.
  *
  * @see BACKEND_HANDOFF.md §4 (route table) + §5 (payload shapes)
  */
@@ -35,6 +38,7 @@ import type { ReactNode } from "react";
 import { ResourceAccessGuard } from "@/components/access";
 import { QuotaMeter } from "@/components/billing";
 import { Breadcrumbs } from "@/components/refine";
+import { siteConfig } from "@/config/site";
 import { bannerFor, subscriptionStatusLabel, useQuotaSummary } from "@/lib/billing";
 import { formatDate, formatMoney } from "@/lib/format";
 import {
@@ -47,8 +51,14 @@ import {
 } from "@/modules/billing/hooks/use-billing";
 import { PLAN_KEY_LABELS } from "@/types";
 
-/** Path the "Change plan" / "Choose a plan" CTA sends the user to. */
-const PRICING_PATH = "/pricing";
+/**
+ * Absolute URL for the "Change plan" / "Choose a plan" CTA. The public
+ * pricing catalog now lives on the marketing site (apps/landing-page);
+ * clicking here takes the tenant out of the SPA into that catalog. The
+ * URL is env-scoped (VITE_MARKETING_URL) so preview / staging / prod
+ * each resolve to their matching marketing origin.
+ */
+const PRICING_URL = siteConfig.links.marketingPricing;
 
 /** Chip color per subscription status. */
 const STATUS_COLOR: Record<SubscriptionStatus, "success" | "warning" | "danger" | "default"> = {
@@ -305,8 +315,8 @@ export default function BillingSettingsPage(): ReactNode {
   } = useBillingStatus();
 
   const changePlan = useCallback((): void => {
-    navigate(PRICING_PATH);
-  }, [navigate]);
+    window.location.href = PRICING_URL;
+  }, []);
 
   const seeAllQuotas = useCallback((): void => {
     navigate("/usage");

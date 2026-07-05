@@ -17,7 +17,8 @@
  * Covers:
  *   1. Choose-a-plan card renders when subscription is null.
  *   2. Plan card renders with status chip and change-plan/pause buttons.
- *   3. Change plan navigates to `/pricing`.
+ *   3. Change plan opens the marketing pricing catalog (outbound to
+ *      apps/landing-page's `/pricing`).
  *   4. Pause / Resume / Cancel mutations fire and refetch.
  *   5. Loading + error states render.
  *   6. Invoices table renders per invoice.
@@ -206,14 +207,31 @@ describe("BillingSettingsPage", () => {
     expect(screen.getByRole("button", { name: /cancel subscription/i })).toBeInTheDocument();
   });
 
-  it("navigates to /pricing when 'Change plan' is clicked", () => {
+  it("opens the marketing pricing catalog when 'Change plan' is clicked", () => {
     setupHappyPath();
+
+    // Stub window.location.href — jsdom throws on real navigation, and we
+    // want to observe what URL the SPA points the browser at.
+    const originalLocation = window.location;
+
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: { href: "" },
+    });
 
     renderPage();
 
     screen.getByRole("button", { name: /change plan/i }).click();
 
-    expect(navigateMock).toHaveBeenCalledWith("/pricing");
+    expect(window.location.href).toMatch(/\/pricing$/);
+    // The marketing origin comes from VITE_MARKETING_URL; in tests it
+    // resolves to the env default (localhost:3001) unless overridden.
+    expect(window.location.href).toMatch(/^https?:\/\//);
+
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: originalLocation,
+    });
   });
 
   it("invokes pause() and refetches on 'Pause' click", async () => {
