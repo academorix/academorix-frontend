@@ -21,3 +21,4 @@ export type {
 export { TenancyProvider, useTenancy } from "@/lib/tenancy/tenant-context";
 export { useMyWorkspaces } from "@/lib/tenancy/use-workspaces";
 export type { UseMyWorkspacesResult } from "@/lib/tenancy/use-workspaces";
+export { WorkspaceSwitcher } from "@/lib/tenancy/workspace-switcher";

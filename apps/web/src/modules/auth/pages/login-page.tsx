@@ -13,16 +13,18 @@
  * the sidebar, action buttons, and page guards all reflect the chosen role.
  */
 
-import { AcademicCapIcon } from "@academorix/ui/icons/outline";
+import { AcademicCapIcon, CheckCircleIcon } from "@academorix/ui/icons/outline";
 import { Button, Card, Description, Form, Input, Label, TextField } from "@academorix/ui/react";
 import { useLogin } from "@refinedev/core";
 import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router";
 
 import type { LoginCredentials } from "@/types";
 import type { FormEvent, ReactNode } from "react";
 
 import { env } from "@/config/env";
 import { siteConfig } from "@/config/site";
+import { appRoutes } from "@/lib/module";
 
 /** Credentials collected by the form (subset of {@link LoginCredentials}). */
 type LoginFormValues = Pick<LoginCredentials, "email" | "password">;
@@ -48,9 +50,23 @@ function formatRole(role: string): string {
     .join(" ");
 }
 
+/**
+ * Flash messages the login screen shows after upstream redirects (register,
+ * password reset, email verification). Keyed by the `?flash=` query param.
+ */
+const FLASH_MESSAGES: Record<string, string> = {
+  "check-email": "Account created. Check your email to verify your address, then sign in.",
+  "password-reset": "Password updated. Sign in with your new password.",
+  "email-verified": "Email verified. You can sign in now.",
+  "session-expired": "Your session expired. Please sign in again.",
+};
+
 /** Renders the login card and wires submission to Refine's auth flow. */
 export default function LoginPage(): ReactNode {
   const { mutate: login, isPending } = useLogin<LoginFormValues>();
+  const [params] = useSearchParams();
+  const flash = params.get("flash");
+  const flashMessage = flash ? FLASH_MESSAGES[flash] : null;
 
   const [email, setEmail] = useState(env.VITE_API_MOCK ? MOCK_DEFAULTS.email : "");
   const [password, setPassword] = useState(env.VITE_API_MOCK ? MOCK_DEFAULTS.password : "");
@@ -123,6 +139,16 @@ export default function LoginPage(): ReactNode {
         <Form onSubmit={handleSubmit}>
           <Card.Content>
             <div className="flex flex-col gap-4">
+              {flashMessage ? (
+                <div
+                  className="flex items-start gap-2 rounded-md border border-success/30 bg-success/10 p-3 text-sm text-success"
+                  role="status"
+                >
+                  <CheckCircleIcon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+                  <span>{flashMessage}</span>
+                </div>
+              ) : null}
+
               <TextField isRequired name="email" type="email" value={email} onChange={setEmail}>
                 <Label>Email</Label>
                 <Input placeholder="you@academy.com" variant="secondary" />
@@ -151,6 +177,15 @@ export default function LoginPage(): ReactNode {
             <Button className="w-full" isDisabled={isPending} type="submit">
               {isPending ? "Signing in…" : "Sign in"}
             </Button>
+
+            <div className="flex justify-between text-xs text-muted">
+              <Link className="hover:text-foreground" to={appRoutes.forgotPassword}>
+                Forgot password?
+              </Link>
+              <Link className="hover:text-foreground" to={appRoutes.register}>
+                Create an account
+              </Link>
+            </div>
 
             {env.VITE_API_MOCK && personas.length > 0 ? (
               <div className="flex flex-col gap-2">
