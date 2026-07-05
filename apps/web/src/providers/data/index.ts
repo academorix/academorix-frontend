@@ -37,6 +37,22 @@ import { createRestDataProvider } from "@/providers/data/rest-data-provider";
  *  1. Add its resource name here.
  *  2. Optional cleanup: delete the fixture at `public/data/<resource>.json`.
  *  3. Ship.
+ *
+ * ## What does NOT belong here
+ *
+ * Backend endpoints that are exposed as **RPC calls** (not paginated CRUD
+ * collections) must not be added — Refine's data provider would issue
+ * `getList` shaped requests they don't answer. Today that includes:
+ *
+ *  - `/api/billing/*` (status, catalog, invoices, checkout, portal, …)
+ *    — used by the Billing module's `httpClient`-driven hooks.
+ *  - `/api/entitlements/usage`
+ *    — used by the Entitlements module's `httpClient` hook.
+ *
+ * Modules that expose those endpoints register their sidebar entry as a
+ * Refine resource with `meta.dataProviderName = "mock"` so any accidental
+ * `useList("subscription")` short-circuits to the (empty) mock provider
+ * instead of hitting the RPC endpoint.
  */
 export const BACKEND_READY_RESOURCES: ReadonlySet<string> = new Set([
   // ✅ Tenant admin CRUD (platform admin surface).

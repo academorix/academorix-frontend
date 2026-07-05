@@ -4,9 +4,13 @@
  *
  * @description
  * Commerce shapes: customer invoices and payments (money-in / AR), recurring
- * memberships, money-out expenses (AP), and the platform subscription
- * (academy → Academorix). Money is captured in a Region's currency; all amounts
- * are decimal **strings** (as Laravel serializes them) to avoid float drift.
+ * memberships (academy → member), and money-out expenses (AP). Money is
+ * captured in a Region's currency; all amounts are decimal **strings** (as
+ * Laravel serializes them) to avoid float drift.
+ *
+ * The platform-level subscription (academy → Academorix) lives in
+ * `@/types/subscription` — those are backend-served DTOs, not tenant-scoped
+ * models, so they're in their own file.
  *
  * @see DOMAIN_MODULES_BLUEPRINT.md §16.3 (Payments), §16.5 (Memberships),
  *      §10.19 (Expenses), §10.8 (Billing)
@@ -126,33 +130,4 @@ export interface Expense extends BaseModel, TenantScoped {
   receipt_document_id: string | null;
   /** ISO-8601 date the expense was incurred. */
   incurred_at: string;
-}
-
-/**
- * The platform **Subscription** (academy → Academorix), with entitlement quotas.
- * A single record per tenant, shown read-mostly in the Billing view.
- *
- * @see DOMAIN_MODULES_BLUEPRINT.md §10.8 "Billing"
- */
-export interface Subscription extends BaseModel, TenantScoped {
-  /** Plan key, e.g. `"pro"`, `"enterprise"`. */
-  plan: string;
-  status: MembershipStatus;
-  currency: string;
-  /** Recurring platform fee as a decimal string. */
-  price: string;
-  interval: "month" | "year";
-  /** ISO-8601 current period end / next renewal. */
-  current_period_end: string;
-  /** Counted entitlement quotas granted by the plan. */
-  quotas: {
-    max_organizations: number;
-    max_branches: number;
-    max_teams: number;
-    max_athletes: number;
-    /** Storage quota in gigabytes. */
-    max_storage_gb: number;
-  };
-  /** Boolean feature flags granted by the plan. */
-  feature_flags: string[];
 }

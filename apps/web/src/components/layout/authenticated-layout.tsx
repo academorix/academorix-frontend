@@ -47,6 +47,7 @@ import type { Identity } from "@/types";
 import type { IconType } from "@academorix/ui/icons";
 import type { Key, ReactNode } from "react";
 
+import { SubscriptionBanner } from "@/components/billing";
 import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import { BranchSwitcher, OrganizationSwitcher, SeasonSwitcher } from "@/components/scope";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
@@ -264,6 +265,7 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps): Rea
       sidebarVariant="inset"
     >
       <ImpersonationBanner />
+      <SubscriptionBanner />
       {children}
     </AppLayout>
   );

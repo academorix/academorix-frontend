@@ -205,3 +205,62 @@ find-workspaces, G5 self-serve tenant creation, G6 Organization module, G7
 device headers, G8 `user_sessions` recorder, G9 tenant 2FA, G10 SPA features
 endpoint, G11 wildcard CORS, G12 exposed API-version header, G13 password-policy
 config.
+
+## Wave 7 — Wire shipped backend endpoints (`/auth/me`, `/billing/*`, `/entitlements/usage`)
+
+Executes the deliverables in
+`.kiro/specs/backend-frontend-alignment/BACKEND_HANDOFF.md`. The backend
+Subscription + Entitlements modules landed, plus the identity bootstrap
+`/api/auth/me` (tenant) and `/api/v1/platform/auth/me` (platform). This wave
+threads those into the SPA.
+
+- [x] 53. **`/me` path correction**: tenant `mePath` moved from `/v1/auth/me` to
+      `/auth/me` (tenant surface has no `v1` prefix — that's reserved for the
+      platform admin surface). Platform provider's `/v1/platform/auth/me`
+      confirmed as-is. Steering + PLAN.md updated in-place.
+- [x] 54. **Type layer for the new payload**: `types/subscription.ts` added with
+      `SubscriptionSummary`, `QuotaHeadline`, `EntitlementUsage`, `PlanTier`,
+      `PlanGrant`, `PlanPrice`, `BillingInvoice` + enums (`PLAN_KEYS`,
+      `SUBSCRIPTION_STATUSES`, `BILLING_PERIODS`) + `*_LABELS`. `TenantBranding`
+      extended with `secondary_color`, `accent_color`,
+      `email_from_name`/`_address`/`_reply_to`, `custom_css`. `TenantSummary`
+      widened: `business_type` nullable, `status`/`status_label` optional,
+      `branding` nullable. `Identity` gained
+      `subscription: SubscriptionSummary     | null` +
+      `quota_summary: QuotaHeadline[]`. `AuthUser.status` widened to
+      `UserStatus | string` (backend returns human labels). `PlatformIdentity`
+      added (`id: number`, `is_platform_admin: true`,
+      `two_factor_confirmed_at`).
+- [x] 55. **`toIdentity` + fixtures** consume the extended payload; empty
+      `subscription: null` + `quota_summary: []` fallback in
+      `synthesizeIdentityFromMinimalUser`. Test fixtures updated.
+- [x] 56. **Shared billing UI**: `components/billing/subscription-banner.tsx` +
+      `quota-meter.tsx` (variants `inline` + `card`) + barrel.
+      `lib/billing/use-subscription.ts` (`useSubscription`, `useQuotaSummary`,
+      `useQuotaFor`) reads from `useGetIdentity`.
+      `lib/billing/subscription-status.ts` (`bannerFor`,
+      `subscriptionStatusLabel`) drives the banner state machine — covers all 7
+      statuses + the `null` onboarding state. Banner wired into
+      `authenticated-layout` after the impersonation banner.
+- [x] 57. **Billing module** (`modules/billing/`): protected settings page at
+      `/settings/billing` (status card + quotas + invoices + pause/resume/
+      cancel/change-plan/portal actions) and public pricing page at `/pricing`
+      (plan catalog, monthly/yearly toggle, `Get started` redirects
+      authenticated users to the checkout provider). Reads via
+      `httpClient`-backed hooks (`useBillingStatus`, `useBillingCatalog`,
+      `useBillingInvoices`, `useStartCheckout`, `useChangePlan`, `usePause…`,
+      `useResume…`, `useCancel…`, `useOpenBillingPortal`) — no Refine CRUD
+      resource, since these are RPC endpoints.
+- [x] 58. **Entitlements module** (`modules/entitlements/`): protected page at
+      `/usage` shows the full entitlements matrix returned by
+      `GET /api/entitlements/usage`, grouped by grant type (slot / pool /
+      feature) with `QuotaMeter` cards for metered rows, `Unlimited` chip for
+      unmetered, and enable/disable icons for boolean features.
+- [x] 59. **Multi-provider allow-list doc**: `BACKEND_READY_RESOURCES` comment
+      expanded to document that RPC endpoints (`/billing/*`,
+      `/entitlements/usage`) must NOT be added — Refine would emit `getList`
+      calls those endpoints don't answer. `subscription` + `entitlements`
+      resources are registered with `dataProviderName: "mock"` explicitly to
+      short-circuit any accidental `useList`.
+- [x] 60. Run all gates + tests + build + size, commit + push, open PR, merge to
+      main.

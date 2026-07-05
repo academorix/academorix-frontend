@@ -34,8 +34,8 @@ codebases stay conceptually 1:1.
   **frontend module code** — that is the whole reason we use HeroUI Pro.
 - The backend decides, per tenant / `business_type`, **which** resources are
   enabled, their **terminology labels**, and the caller's **permissions** —
-  delivered in the bootstrap payload (`GET /api/v1/auth/me`). This maps directly
-  to the backend's `business_type.default_config` (feature toggles + terminology
+  delivered in the bootstrap payload (`GET /api/auth/me`). This maps directly to
+  the backend's `business_type.default_config` (feature toggles + terminology
   - default roles).
 - The app registers **all** modules statically, then **filters / labels /
   orders** them at runtime from the manifest. Adding a resource = add a frontend
@@ -384,7 +384,7 @@ export const protectedRoutes: AppModuleRoute[] = appModules.flatMap(
 Authorization is **100% data-driven** from `/auth/me`. The frontend never
 hard-codes role→permission maps.
 
-`GET /api/v1/auth/me` returns the bootstrap manifest:
+`GET /api/auth/me` returns the bootstrap manifest:
 
 ```jsonc
 {

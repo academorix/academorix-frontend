@@ -14,7 +14,7 @@
  * | `login`         | `POST /auth/login`                          |
  * | `logout`        | `POST /auth/logout`                         |
  * | `check`         | (token store — no round-trip)               |
- * | `getIdentity`   | `GET /v1/auth/me` (fallback: synth from login DTO) |
+ * | `getIdentity`   | `GET /auth/me` (fallback: synth from login DTO) |
  * | `getPermissions`| (cached from `getIdentity`)                 |
  * | `onError`       | 401 → logout                                |
  *
@@ -50,7 +50,7 @@ import { isTwoFactorRequired } from "@/types";
 export interface TenantAuthProviderOptions {
   /** Endpoint prefix; `/auth` on the tenant surface (default). */
   authPrefix?: string;
-  /** Endpoint for the identity bootstrap; `/v1/auth/me` (default). */
+  /** Endpoint for the identity bootstrap; `/auth/me` (default). */
   mePath?: string;
   /** The resolved host context (drives placeholder tenant + redirects). */
   host: HostContext;
@@ -124,11 +124,11 @@ export function createTenantAuthProvider(
   options: TenantAuthProviderOptions,
 ): { authProvider: AuthProvider; api: TenantAuthApi } {
   const authPrefix = options.authPrefix ?? "/auth";
-  const mePath = options.mePath ?? "/v1/auth/me";
+  const mePath = options.mePath ?? "/auth/me";
   const host = options.host;
 
   /**
-   * Fetches the rich identity from `GET /v1/auth/me`. Returns `null` when the
+   * Fetches the rich identity from `GET /auth/me`. Returns `null` when the
    * endpoint has not shipped yet (PLAN.md gap G1) so callers can fall back to
    * a synthesized identity built from the login DTO.
    */
@@ -164,7 +164,7 @@ export function createTenantAuthProvider(
   /**
    * Resolves the app's identity from whatever the backend gives us today:
    *
-   * 1. If `/v1/auth/me` responds, map it directly (rich).
+   * 1. If `/auth/me` responds, map it directly (rich).
    * 2. Otherwise, if we have any stored token, synth a minimal identity
    *    (empty roles/permissions/features) so the shell still renders and RBAC
    *    fails open until the endpoint lands.

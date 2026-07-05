@@ -54,12 +54,17 @@ export function computeInitialsFromName(name: string): string {
 
 /**
  * Condenses a full {@link AuthUser} into the {@link Identity} the app shell
- * renders (name, avatar, roles, permissions, tenant, and the caller's
- * accessible scopes). Drops PII the UI does not need.
+ * renders (name, avatar, roles, permissions, tenant, scopes, subscription
+ * snapshot, and quota headlines). Drops PII the UI does not need.
  *
- * `tenants` and `scopes` back the tenant/organization/branch/season switchers;
- * when the backend omits them (older payloads) we default to the single active
- * tenant and empty scope lists so the shell still renders.
+ * `tenants` and `scopes` back the workspace/organization/branch/season
+ * switchers; when the backend omits them (older payloads) we default to the
+ * single active tenant and empty scope lists so the shell still renders.
+ *
+ * `subscription` is the `SubscriptionSummary` (or `null` for tenants who
+ * haven't checked out yet). `quota_summary` is capped at 3-5 headline rows —
+ * unlimited grants are stripped by the backend, so an empty array simply
+ * means no metered grants apply.
  */
 export function toIdentity(user: AuthUser): Identity {
   const fullName = `${user.profile.first_name} ${user.profile.last_name}`.trim();
@@ -78,6 +83,8 @@ export function toIdentity(user: AuthUser): Identity {
     tenant: user.tenant,
     tenants: user.tenants ?? [user.tenant],
     scopes: user.scopes ?? { organizations: [], branches: [], seasons: [] },
+    subscription: user.subscription ?? null,
+    quota_summary: user.quota_summary ?? [],
   };
 }
 
@@ -116,6 +123,8 @@ export function synthesizeIdentityFromMinimalUser(
     tenant,
     tenants: [tenant],
     scopes: { organizations: [], branches: [], seasons: [] },
+    subscription: null,
+    quota_summary: [],
   };
 }
 
