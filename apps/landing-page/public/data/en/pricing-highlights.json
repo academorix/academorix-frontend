@@ -1,0 +1,16 @@
+[
+  {
+    "title": "No idle, no waste",
+    "description": "Only pay for actual usage — athletes on your roster, seats you assign — not idle capacity.",
+    "learn_label": "Learn about usage-based billing",
+    "learn_href": "/docs/billing/usage",
+    "illustration": "growth"
+  },
+  {
+    "title": "Control your spending",
+    "description": "Set spend limits, get real-time alerts, and pause usage before you go over budget.",
+    "learn_label": "Learn about spend controls",
+    "learn_href": "/docs/billing/limits",
+    "illustration": "spending"
+  }
+]

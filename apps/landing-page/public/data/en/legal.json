@@ -1,0 +1,268 @@
+{
+  "privacy": {
+    "slug": "privacy",
+    "title": "Privacy Policy",
+    "description": "How Academorix collects, uses, and safeguards personal data. Read in full before you sign up.",
+    "effective_date": "2026-07-01",
+    "sections": [
+      {
+        "title": "1. Who we are",
+        "paragraphs": [
+          "Academorix (\"we\", \"us\", \"our\") operates the platform available at academorix.com and every tenant subdomain (`{slug}.academorix.com`). This policy explains what personal data we collect, why, and what rights you have.",
+          "For any question about this policy, contact us at privacy@academorix.com. Enterprise customers should contact their assigned DPO representative."
+        ]
+      },
+      {
+        "title": "2. What data we collect",
+        "paragraphs": [
+          "**Account data.** Name, email, password hash, phone (optional), and profile photo you upload.",
+          "**Athlete + operational data.** Everything you enter into your workspace — athletes, guardians, teams, sessions, invoices — belongs to your tenant and is processed on your behalf.",
+          "**Technical data.** IP address, device fingerprint (via our custom headers), browser type, and OS. Used for security, session logging, and fraud detection.",
+          "**Usage data.** Page views, feature clicks, and error reports. Aggregated for product improvement; never sold."
+        ]
+      },
+      {
+        "title": "3. Why we process it",
+        "paragraphs": [
+          "To provide the service (deliver the SPA, sync your data, send transactional emails).",
+          "To secure the platform (block brute-force attempts, detect suspicious sessions).",
+          "To improve the product (aggregated analytics + error monitoring).",
+          "To comply with legal obligations (tax records, safeguarding legislation)."
+        ]
+      },
+      {
+        "title": "4. Your rights",
+        "paragraphs": [
+          "You have the right to access, correct, delete, and export your personal data. Contact privacy@academorix.com — we respond within 30 days.",
+          "For EU / UK residents, you also have the right to lodge a complaint with your data protection authority.",
+          "Enterprise customers can opt into data residency (EU / MENA / US) as part of their contract."
+        ]
+      },
+      {
+        "title": "5. Data retention",
+        "paragraphs": [
+          "Active accounts: we retain your data until you close the workspace.",
+          "Closed accounts: 30-day grace period for recovery, then permanent deletion within 90 days.",
+          "Legal + tax records: retained for the period required by law (typically 7 years for invoicing data)."
+        ]
+      },
+      {
+        "title": "6. Cookies + tracking",
+        "paragraphs": [
+          "We use strictly necessary cookies for authentication + session management. See the Cookie Policy for the full list.",
+          "We do NOT use third-party advertising trackers. Marketing analytics is served through first-party endpoints via Vercel Analytics."
+        ]
+      },
+      {
+        "title": "7. Changes to this policy",
+        "paragraphs": [
+          "We'll notify workspace owners by email 30 days before any material change. Non-material changes (typos, clarifications) may go live without notice — the effective date at the top of this page always reflects the current version."
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "slug": "terms",
+    "title": "Terms of Service",
+    "description": "The contract between you and Academorix. By using the platform you agree to these terms.",
+    "effective_date": "2026-07-01",
+    "sections": [
+      {
+        "title": "1. Acceptance of terms",
+        "paragraphs": [
+          "By creating an Academorix workspace or accessing the marketing site, you agree to be bound by these terms. If you disagree, don't use the service."
+        ]
+      },
+      {
+        "title": "2. Your workspace, your data",
+        "paragraphs": [
+          "Every workspace is tenant-scoped. You retain all rights to the data you input. We act as a data processor on your behalf.",
+          "You are responsible for ensuring you have the right to input the data you provide — parental consent for minor athletes, staff acknowledgment for coach records, and so on."
+        ]
+      },
+      {
+        "title": "3. Acceptable use",
+        "paragraphs": [
+          "You will not use Academorix to store or process unlawful content, to spam guardians, or to attempt to compromise the platform's security.",
+          "We reserve the right to suspend accounts that violate this section, with 7 days written notice unless the violation is severe."
+        ]
+      },
+      {
+        "title": "4. Payment + refunds",
+        "paragraphs": [
+          "Paid plans are billed monthly or yearly in advance. Yearly plans are non-refundable but pro-rate downgrades are honored.",
+          "Enterprise contracts govern their own payment terms — see the signed agreement."
+        ]
+      },
+      {
+        "title": "5. Availability",
+        "paragraphs": [
+          "We target 99.9% uptime on Pro and 99.99% on Enterprise plans. See the SLA for details on credits.",
+          "Scheduled maintenance is announced 72 hours in advance via email and status.academorix.com."
+        ]
+      },
+      {
+        "title": "6. Liability",
+        "paragraphs": [
+          "To the extent permitted by law, our aggregate liability is capped at the fees paid in the 12 months preceding the claim. Nothing in these terms limits liability for fraud, willful misconduct, or gross negligence."
+        ]
+      },
+      {
+        "title": "7. Termination",
+        "paragraphs": [
+          "You may close your workspace at any time from Settings → Billing. We may terminate the service on 30 days notice or immediately for material breach.",
+          "On termination, we'll provide a full data export within 14 days and permanently delete your data within 90 days."
+        ]
+      }
+    ]
+  },
+  "security": {
+    "slug": "security",
+    "title": "Security",
+    "description": "How Academorix protects your workspace, your data, and your athletes. Enterprise-grade practices from day one.",
+    "effective_date": "2026-07-01",
+    "sections": [
+      {
+        "title": "Infrastructure",
+        "paragraphs": [
+          "Academorix runs on tier-1 cloud infrastructure (AWS + Vercel) with automatic failover between regions.",
+          "All traffic is served over TLS 1.3. HSTS is enforced with a 2-year max-age. Certificates auto-renew via Let's Encrypt."
+        ]
+      },
+      {
+        "title": "Data isolation",
+        "paragraphs": [
+          "Every workspace is a fully isolated tenant. Row-level security enforces boundaries at the database layer — a bug in application code cannot leak data across tenants.",
+          "Multi-region customers can opt into data residency in EU / MENA / US on Enterprise plans."
+        ]
+      },
+      {
+        "title": "Authentication",
+        "paragraphs": [
+          "Bearer-token authentication with single-flight refresh. Sessions are pinned to device fingerprints (client + device headers) so a stolen token from a new device is rejected.",
+          "Platform admin accounts require 2FA (TOTP). Tenant 2FA is on the roadmap for Q4 2026."
+        ]
+      },
+      {
+        "title": "Encryption",
+        "paragraphs": [
+          "Data at rest: AES-256 via the cloud provider's KMS.",
+          "Data in transit: TLS 1.3.",
+          "Backups: encrypted with a separate KMS key, retained for 30 days, tested quarterly."
+        ]
+      },
+      {
+        "title": "Access control",
+        "paragraphs": [
+          "Employee access to production data is scoped to the on-call rotation and requires MFA. Every access is logged and reviewed weekly.",
+          "Customer-side: fine-grained RBAC with role-scoped access to sensitive fields (medical, safeguarding)."
+        ]
+      },
+      {
+        "title": "Vulnerability management",
+        "paragraphs": [
+          "We run automated dependency scanning (Dependabot + Snyk) on every commit.",
+          "Annual penetration tests by an independent third party. Reports available under NDA to Enterprise customers."
+        ]
+      },
+      {
+        "title": "Incident response",
+        "paragraphs": [
+          "24/7 on-call rotation. Notification within 72 hours of any confirmed breach affecting your workspace, per GDPR obligations.",
+          "Public status page at status.academorix.com with a subscribe-by-email option."
+        ]
+      }
+    ]
+  },
+  "cookies": {
+    "slug": "cookies",
+    "title": "Cookie Policy",
+    "description": "Cookies and similar technologies Academorix uses to run the platform.",
+    "effective_date": "2026-07-01",
+    "sections": [
+      {
+        "title": "What are cookies?",
+        "paragraphs": [
+          "Cookies are small text files stored on your device by your browser. Academorix uses them sparingly — only what's needed for authentication + preferences."
+        ]
+      },
+      {
+        "title": "Cookies we set",
+        "paragraphs": [
+          "**Authentication.** `academorix_session` — httpOnly, secure, samesite=lax. Expires when you sign out.",
+          "**Preferences.** `academorix_theme` — remembers dark / light mode. Non-secret.",
+          "**Consent.** `academorix_cookie_consent` — remembers your cookie preferences.",
+          "We do not set third-party advertising cookies."
+        ]
+      },
+      {
+        "title": "How to control cookies",
+        "paragraphs": [
+          "Your browser lets you block or delete cookies at any time. Blocking the authentication cookie will prevent you from signing in.",
+          "Some browsers offer a \"Do Not Track\" signal — we honor it by disabling non-essential analytics."
+        ]
+      }
+    ]
+  },
+  "dpa": {
+    "slug": "dpa",
+    "title": "Data Processing Addendum",
+    "description": "The DPA that governs Academorix's role as a data processor under GDPR + UK Data Protection Act.",
+    "effective_date": "2026-07-01",
+    "sections": [
+      {
+        "title": "1. Parties",
+        "paragraphs": [
+          "This DPA supplements your master services agreement with Academorix. The customer is the controller; Academorix is the processor.",
+          "For sub-processors, see the current list at academorix.com/legal/subprocessors."
+        ]
+      },
+      {
+        "title": "2. Scope + duration",
+        "paragraphs": [
+          "This DPA applies for as long as Academorix processes personal data on your behalf. On termination, we'll return or delete all personal data as specified in section 7 of the Terms."
+        ]
+      },
+      {
+        "title": "3. Nature + purpose of processing",
+        "paragraphs": [
+          "We process personal data solely to provide the Academorix service — hosting your workspace, delivering transactional emails, and maintaining backups.",
+          "We do not process your personal data for any secondary purpose without your written instruction."
+        ]
+      },
+      {
+        "title": "4. Data subject rights",
+        "paragraphs": [
+          "We assist you in responding to data subject requests within 30 days. Access, correction, deletion, and portability are all supported natively via our admin console.",
+          "For any request you receive that requires our involvement, contact dpo@academorix.com."
+        ]
+      },
+      {
+        "title": "5. Sub-processors",
+        "paragraphs": [
+          "We maintain a current list of sub-processors at academorix.com/legal/subprocessors. We notify you 30 days before adding a new sub-processor, giving you an opportunity to object.",
+          "Every sub-processor is bound by written terms at least as protective as this DPA."
+        ]
+      },
+      {
+        "title": "6. International transfers",
+        "paragraphs": [
+          "Personal data may be transferred outside the EEA / UK subject to appropriate safeguards — Standard Contractual Clauses (SCCs) with transfer impact assessments where required.",
+          "Enterprise customers can pin data residency to EU / MENA / US regions."
+        ]
+      },
+      {
+        "title": "7. Security measures",
+        "paragraphs": [
+          "See our Security page for the technical + organisational measures we maintain. Independently tested annually."
+        ]
+      },
+      {
+        "title": "8. Breach notification",
+        "paragraphs": [
+          "We notify you without undue delay — and within 72 hours where feasible — of any personal-data breach that affects your workspace. Notifications include the nature of the breach, categories affected, and mitigation steps."
+        ]
+      }
+    ]
+  }
+}

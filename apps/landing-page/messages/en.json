@@ -1,0 +1,303 @@
+{
+  "$comment": "English UI chrome for the marketing site. Marketing content (product descriptions, sport features, testimonials, legal docs, FAQ answers) lives in public/data/en/*.json so it can be localised incrementally by content teams.",
+
+  "common": {
+    "getStarted": "Get started",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "talkToSales": "Talk to sales",
+    "learnMore": "Learn more",
+    "seePricing": "See pricing",
+    "goHome": "Go home",
+    "getNotified": "Get notified",
+    "subscribe": "Subscribe",
+    "comingSoon": "Coming soon",
+    "backToHome": "Back to home"
+  },
+
+  "header": {
+    "brandAria": "{name} home",
+    "primaryNavAria": "Primary",
+    "signInCta": "Sign in",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "chooseLanguage": "Choose language",
+    "languageLabel": "Language"
+  },
+
+  "footer": {
+    "columns": {
+      "product": "Product",
+      "sports": "Sports",
+      "resources": "Resources",
+      "legal": "Legal"
+    },
+    "product": {
+      "athletes": "Athletes",
+      "teams": "Teams",
+      "scheduling": "Scheduling",
+      "payments": "Payments",
+      "performance": "Performance",
+      "pricing": "Pricing"
+    },
+    "sports": {
+      "football": "Football",
+      "swimming": "Swimming",
+      "basketball": "Basketball",
+      "tennis": "Tennis",
+      "martialArts": "Martial Arts",
+      "gymnastics": "Gymnastics"
+    },
+    "resources": {
+      "documentation": "Documentation",
+      "blog": "Blog",
+      "changelog": "Changelog",
+      "customerStories": "Customer stories",
+      "newsletter": "Newsletter"
+    },
+    "legal": {
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "security": "Security",
+      "cookies": "Cookies",
+      "dpa": "DPA"
+    },
+    "copyright": "© {year} {name}. All rights reserved."
+  },
+
+  "hero": {
+    "heading": "Run your entire sports academy from one place",
+    "cta": "Get started",
+    "exploreFeatures": "Explore features",
+    "stats": {
+      "academies": "Academies onboard",
+      "athletes": "Athletes managed",
+      "sports": "Sports supported"
+    }
+  },
+
+  "cta": {
+    "heading": "Ready to run your academy the modern way?",
+    "description": "Join the academies already managing athletes, teams, and payments with {name}. Get set up in minutes.",
+    "primary": "Get started",
+    "secondary": "See pricing"
+  },
+
+  "pricing": {
+    "meta": {
+      "title": "Plans and pricing",
+      "description": "Simple, scalable pricing that grows with your academy. Start free — no credit card required — and only pay when you outgrow the Starter tier."
+    },
+    "heroTitle": "Scale your academy, control your costs",
+    "heroDescription": "Simple, scalable pricing that grows with your academy. Start free — no credit card required — and only pay when you outgrow the Starter tier.",
+    "billingPeriod": "Billing period",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "yearlySavings": "Save 20%",
+    "monthlySuffix": "/mo",
+    "yearlySuffix": "/yr",
+    "popular": "Popular",
+    "custom": "Custom",
+    "compareHeading": "Compare every plan",
+    "featuresSpotlight": "Pricing benefits",
+    "regionalPricing": "Regional pricing",
+    "searchFeatures": "Search features",
+    "searchPlaceholder": "Search features…",
+    "cantDecide": "Can't decide?",
+    "getStartedFree": "Get started for free",
+    "compareAllFeatures": "Compare all features →",
+    "landingTitle": "Simple, scalable pricing",
+    "landingDescription": "Straightforward plans that scale with your academy. No hidden fees.",
+    "landingEyebrow": "Pricing",
+    "included": "Included",
+    "notIncluded": "Not included",
+    "learnAbout": "Learn about"
+  },
+
+  "faq": {
+    "heading": "Frequently asked questions."
+  },
+
+  "products": {
+    "meta": {
+      "title": "Products",
+      "description": "The Academorix product line — everything you need to run a modern sports academy, from athlete management to payments and performance."
+    },
+    "eyebrow": "Products",
+    "indexTitle": "Everything your academy needs, in one platform.",
+    "indexDescription": "Explore each product in depth — every one designed to plug into the same tenant workspace so your team never leaves the platform to get work done.",
+    "featuresHeading": "What's included",
+    "featuresDescription": "Every capability listed here is available from the day you provision your workspace — no add-on packages, no per-feature upsells."
+  },
+
+  "sports": {
+    "meta": {
+      "title": "Sports",
+      "description": "Football, swimming, basketball, tennis, martial arts, gymnastics — Academorix adapts to every sport with per-discipline attributes, performance metrics, and workflows."
+    },
+    "eyebrow": "Sports",
+    "indexTitle": "Built for every sport, sport by sport.",
+    "indexDescription": "One platform, many disciplines. Every sport gets its own attribute sets, performance metrics, and coaching workflows — no half-measures, no forced compromises.",
+    "explore": "Explore",
+    "featuresHeading": "Built for the way this sport works",
+    "featuresDescription": "Every capability listed here works out of the box for this sport — no bespoke setup, no professional-services engagement required."
+  },
+
+  "legal": {
+    "meta": {
+      "title": "Legal",
+      "description": "Privacy policy, terms of service, security practices, cookie policy, and data processing addendum for the Academorix platform."
+    },
+    "eyebrow": "Legal",
+    "indexTitle": "Policies, practices, and paperwork.",
+    "indexDescriptionPrefix": "Every legal document that governs your use of Academorix. If you can't find what you're looking for, email ",
+    "indexDescriptionSuffix": ".",
+    "effectiveDate": "Effective {date}"
+  },
+
+  "enterprise": {
+    "meta": {
+      "title": "Enterprise",
+      "description": "Enterprise-grade security, onboarding, and contracting for multi-branch academies. SSO, audit logs, data residency, and dedicated implementation engineers."
+    },
+    "eyebrow": "Enterprise",
+    "indexTitle": "Built for the largest sports networks.",
+    "indexDescription": "Multi-branch academies get purpose-built tooling — enterprise SSO, audit logs, data residency, and dedicated implementation engineers to run the migration end-to-end.",
+    "featuresHeading": "What's included",
+    "featuresDescription": "What every enterprise engagement includes as standard — no bespoke SOWs, no per-feature bolt-ons.",
+    "ctaHeading": "Ready to talk?",
+    "ctaDescription": "Every enterprise workspace ships with a named implementation engineer and a dedicated Slack channel."
+  },
+
+  "relatedLinks": {
+    "heading": "Continue exploring",
+    "learnMore": "Learn more"
+  },
+
+  "ctaBand": {
+    "heading": "Ready to run your academy the modern way?",
+    "description": "Start free — no credit card required. Upgrade when you outgrow the Starter tier."
+  },
+
+  "createWorkspace": {
+    "meta": {
+      "title": "Create a workspace",
+      "description": "Provision a new academy workspace and its owner account."
+    },
+    "title": "Create a workspace",
+    "description": "Provision a new academy workspace and its owner account.",
+    "workspaceHeading": "Your workspace",
+    "workspaceNameLabel": "Workspace name",
+    "workspaceNamePlaceholder": "Riverside Sports Academy",
+    "slugLabel": "URL slug",
+    "slugPlaceholder": "riverside",
+    "businessTypeLabel": "Business type",
+    "businessTypePlaceholder": "Choose a business type",
+    "ownerHeading": "Owner account",
+    "fullNameLabel": "Full name",
+    "fullNamePlaceholder": "Alex Rivera",
+    "emailLabel": "Email",
+    "emailPlaceholder": "alex@academy.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "••••••••••••",
+    "confirmPasswordLabel": "Confirm password",
+    "submitting": "Provisioning…",
+    "submit": "Create workspace",
+    "haveWorkspacePrefix": "Already have a workspace?",
+    "haveWorkspaceLink": "Find your workspaces",
+    "errors": {
+      "policy": "Password does not meet the requirements below.",
+      "mismatch": "Passwords do not match.",
+      "generic": "Could not create the workspace. Please try again."
+    }
+  },
+
+  "findWorkspaces": {
+    "meta": {
+      "title": "Find my workspaces",
+      "description": "Enter your email and we'll send you the workspaces you belong to."
+    },
+    "title": "Find my workspaces",
+    "description": "Enter the email you used and we'll send you the workspaces you belong to.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@academy.com",
+    "submit": "Email me the list",
+    "submitting": "Sending…",
+    "sentTitle": "If any workspaces are linked to that email, we have sent them your way.",
+    "sentDescription": "Check your inbox — including spam.",
+    "needWorkspacePrefix": "Need a new workspace?",
+    "needWorkspaceLink": "Create one"
+  },
+
+  "notFound": {
+    "meta": {
+      "title": "Page not found"
+    },
+    "code": "404",
+    "title": "Page not found",
+    "description": "The page you were looking for moved, or maybe it never existed. Try one of the routes below.",
+    "goHome": "Go home",
+    "seePricing": "See pricing"
+  },
+
+  "blog": {
+    "meta": {
+      "title": "Blog",
+      "description": "Product updates, engineering deep-dives, and stories from academies running on Academorix. Coming soon."
+    },
+    "eyebrow": "Blog",
+    "title": "Stories from the field. Coming soon.",
+    "description": "Product updates, engineering deep-dives, and stories from real academies running on Academorix. We'll email you when the first posts go live.",
+    "readDocs": "Read the docs"
+  },
+
+  "docs": {
+    "meta": {
+      "title": "Documentation",
+      "description": "How to install, integrate, and operate Academorix — from workspace provisioning to SSO to the Attribute Engine."
+    },
+    "eyebrow": "Documentation",
+    "title": "Every screen, every setting, documented.",
+    "description": "How to install, integrate, and operate Academorix — from workspace provisioning to SSO to the Attribute Engine. Our full documentation portal opens for public browsing shortly.",
+    "preview": "Preview the docs",
+    "sendFeedback": "Send feedback"
+  },
+
+  "changelog": {
+    "meta": {
+      "title": "Changelog",
+      "description": "Every product release, deprecation, and breaking change — chronologically. Coming soon."
+    },
+    "eyebrow": "Changelog",
+    "title": "What we shipped, and when.",
+    "description": "Every product release, deprecation, and breaking change — chronologically. Subscribe to get an email digest whenever we ship.",
+    "readDocs": "Read the docs"
+  },
+
+  "customers": {
+    "meta": {
+      "title": "Customer stories",
+      "description": "How academies of every size use Academorix to grow — case studies, quotes, and hard numbers."
+    },
+    "eyebrow": "Customer stories",
+    "title": "Real academies, real growth.",
+    "description": "How academies of every size use Academorix to grow — case studies, quotes, and hard numbers. We're finalising the first wave of stories now.",
+    "shareStory": "Share your story",
+    "seePricing": "See pricing",
+    "backToStories": "Back to stories",
+    "individualEyebrow": "Customer story",
+    "individualTitleSuffix": "— coming soon.",
+    "individualDescription": "We're finalising the {name} case study now — it'll be live shortly. In the meantime, browse the other stories we've already shared."
+  },
+
+  "newsletter": {
+    "meta": {
+      "title": "Newsletter",
+      "description": "Monthly digest of product updates, industry insights, and stories from the academies we work with."
+    },
+    "eyebrow": "Newsletter",
+    "title": "One inbox. One month. Everything academy operations.",
+    "description": "A monthly digest of product updates, industry insights, and stories from the academies we work with. Reply to this email to be added to the launch list.",
+    "readStories": "Read customer stories"
+  }
+}
