@@ -5,12 +5,18 @@
  * @description
  * Application-wide provider composition. Mounts, in order:
  *
- * 1. `<ToastProvider>` — HeroUI's toast region, required for the notification
- *    provider's `toast()` calls to render.
- * 2. `<Refine>` — wires every provider (data, auth, live, notification, access
- *    control), the router bindings, the `resources` registry, and global
- *    options. Refine must live inside the router (mounted in `main.tsx`), which
- *    is why this component is rendered under `<BrowserRouter>`.
+ * 1. `<LocaleProvider>` — reactive locale + `i18nProvider` factory. Wraps
+ *    every child so a language switch re-translates the tree.
+ * 2. `<ToastProvider>` — HeroUI's toast region, required for the notification
+ *    provider's `toast()` calls (and the PWA update toast) to render.
+ * 3. `<PwaUpdateToast>` — production-only side-effect component that
+ *    registers the service worker and surfaces install/update prompts
+ *    through the HeroUI toast queue. See {@link "@/pwa"} for details.
+ * 4. `<Refine>` — wires every provider (data, auth, live, notification,
+ *    access control), the router bindings, the `resources` registry, and
+ *    global options. Refine must live inside the router (mounted in
+ *    `main.tsx`), which is why this component is rendered under
+ *    `<BrowserRouter>`.
  *
  * `<UnsavedChangesNotifier>` guards navigation away from dirty forms, and
  * `<DocumentTitleHandler>` keeps the tab title in sync with the active
@@ -35,6 +41,21 @@ import { authProvider } from "@/providers/auth";
 import { dataProviders } from "@/providers/data";
 import { liveProvider } from "@/providers/live";
 import { notificationProvider } from "@/providers/notification";
+import { PwaUpdateToast } from "@/pwa";
+
+/**
+ * Compile-time flag — `true` for `vite build` output, `false` for `vite dev`.
+ * Vite substitutes this at bundle time so the branch below tree-shakes away
+ * in dev builds.
+ *
+ * We gate {@link PwaUpdateToast} on this because the underlying service
+ * worker is only registered in production builds
+ * (`vite.config.ts` → `VitePWA.devOptions.enabled = false`). Mounting the
+ * hook in dev would still work (`useRegisterSW` no-ops when the plugin's
+ * virtual module is inactive), but it would emit console-info noise and
+ * spin up a useless effect on every dev reload.
+ */
+const IS_PRODUCTION = import.meta.env.PROD;
 
 /** Props for {@link Providers}. */
 interface ProvidersProps {
@@ -76,13 +97,19 @@ function RefineRoot({ children }: ProvidersProps): ReactNode {
 }
 
 /**
- * Wraps the app in the locale layer, the toast region, and the fully-configured
- * Refine context.
+ * Wraps the app in the locale layer, the toast region, the production-only
+ * PWA update toast, and the fully-configured Refine context.
  */
 export function Providers({ children }: ProvidersProps): ReactNode {
   return (
     <LocaleProvider>
       <ToastProvider />
+      {/*
+       * PWA update prompt — production-only, side-effect component that
+       * registers the service worker and pushes toast notifications into
+       * the queue mounted just above. Renders no visible DOM.
+       */}
+      {IS_PRODUCTION ? <PwaUpdateToast /> : null}
       <RefineRoot>{children}</RefineRoot>
     </LocaleProvider>
   );
