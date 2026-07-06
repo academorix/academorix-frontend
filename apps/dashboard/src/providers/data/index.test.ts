@@ -60,12 +60,29 @@ describe("BACKEND_READY_RESOURCES", () => {
   });
 
   it("contains the resources whose backend module has shipped", () => {
+    // Sample across the shipped modules: platform admin, roles/permissions,
+    // Finance, Athletics, Competitions. Adding a resource to the allow-list
+    // must never regress these checks.
     expect(BACKEND_READY_RESOURCES.has("tenants")).toBe(true);
     expect(BACKEND_READY_RESOURCES.has("features")).toBe(true);
+    expect(BACKEND_READY_RESOURCES.has("roles")).toBe(true);
+    expect(BACKEND_READY_RESOURCES.has("invoices")).toBe(true);
+    expect(BACKEND_READY_RESOURCES.has("athletes")).toBe(true);
+    expect(BACKEND_READY_RESOURCES.has("matches")).toBe(true);
   });
 
   it("does not contain resources still served by fixtures", () => {
-    for (const notReady of ["athletes", "users", "coaches", "teams", "matches"]) {
+    // These names correspond to frontend module folders that don't yet
+    // have a matching `/api/v1/{name}` route on the backend. Update this
+    // list as those backend modules ship.
+    for (const notReady of [
+      "credentials",
+      "documents",
+      "people",
+      "users",
+      "workspaces",
+      "organizations",
+    ]) {
       expect(BACKEND_READY_RESOURCES.has(notReady)).toBe(false);
     }
   });

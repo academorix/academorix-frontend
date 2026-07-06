@@ -72,8 +72,8 @@ catalog:
 
   # --- Marketing app (Next.js 16 + React 19 + Tailwind v4) ---
   # Public marketing surface lives in `apps/landing-page` — a Next.js App
-  # Router app so the tenant SPA (`apps/web`) stays CSR-only. Next.js is
-  # required for SEO-quality prerendering, MDX, and the `next/image`
+  # Router app so the tenant SPA (`apps/dashboard`) stays CSR-only. Next.js
+  # is required for SEO-quality prerendering, MDX, and the `next/image`
   # optimizer used for the pricing + landing artwork.
   next: ^16.2.6
   eslint-config-next: ^16.2.0

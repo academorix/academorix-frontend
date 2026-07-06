@@ -31,7 +31,7 @@
     "heroui:setup": "pnpm dlx heroui-pro@latest install react --yes",
     "heroui:update": "pnpm dlx heroui-pro@latest update --yes",
     "heroui:status": "pnpm dlx heroui-pro@latest status",
-    "secrets:pull:web": "doppler secrets download --project academorix-dashboard --config dev --no-file --format env > apps/web/environments/.env",
+    "secrets:pull:web": "doppler secrets download --project academorix-dashboard --config dev --no-file --format env > apps/dashboard/environments/.env",
     "secrets:pull:landing": "doppler secrets download --project academorix-marketing --config dev --no-file --format env > apps/landing-page/environments/.env",
     "secrets:pull": "pnpm secrets:pull:web && pnpm secrets:pull:landing",
     "secrets:open:web": "doppler open dashboard --project academorix-dashboard --config dev",

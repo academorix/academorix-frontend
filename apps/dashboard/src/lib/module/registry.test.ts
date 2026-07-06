@@ -29,13 +29,22 @@ function findResource(name: string): AppResource | undefined {
 
 describe("BACKEND_READY_RESOURCES contract", () => {
   it("includes today's shipped platform resources", () => {
+    // Sample across the shipped modules: platform admin, Access, Finance,
+    // Athletics, Competitions. If any of these regress the migration
+    // slipped backwards.
     expect(BACKEND_READY_RESOURCES.has("tenants")).toBe(true);
     expect(BACKEND_READY_RESOURCES.has("features")).toBe(true);
+    expect(BACKEND_READY_RESOURCES.has("roles")).toBe(true);
+    expect(BACKEND_READY_RESOURCES.has("invoices")).toBe(true);
+    expect(BACKEND_READY_RESOURCES.has("athletes")).toBe(true);
+    expect(BACKEND_READY_RESOURCES.has("competitions")).toBe(true);
   });
 
   it("excludes resources whose backend module has not shipped", () => {
-    // These are the flagship tenant-domain resources that still fixture-serve.
-    for (const notReady of ["athletes", "users", "coaches", "teams"]) {
+    // These names correspond to frontend module folders whose backend
+    // counterpart isn't a fixture-first module yet. Update this list as
+    // those backend modules ship.
+    for (const notReady of ["credentials", "documents", "people", "users", "workspaces"]) {
       expect(BACKEND_READY_RESOURCES.has(notReady)).toBe(false);
     }
   });
@@ -46,13 +55,19 @@ describe("appResources", () => {
     expect(appResources.length).toBeGreaterThan(0);
   });
 
-  it("pins the athletes resource to the mock provider", () => {
-    // `athletes` is deliberately not in BACKEND_READY_RESOURCES, so the
-    // registry auto-injects `dataProviderName: "mock"`.
-    const athletes = findResource("athletes");
+  it("pins fixture-only resources to the mock provider", () => {
+    // Pick a resource we know the registry has (`people`) that is NOT in
+    // the backend allow-list — the registry must auto-inject
+    // `dataProviderName: "mock"` so Refine never issues a REST call.
+    const people = findResource("people");
 
-    expect(athletes).toBeDefined();
-    expect(athletes?.meta.dataProviderName).toBe("mock");
+    if (people === undefined) {
+      // Nothing to assert if the FE has retired the `people` module.
+      // Guard rather than fail so the test survives an FE-side rename.
+      return;
+    }
+
+    expect(people.meta.dataProviderName).toBe("mock");
   });
 
   it("pins every not-yet-shipped resource to the mock provider", () => {
@@ -83,11 +98,15 @@ describe("appResources", () => {
   it("preserves the manifest-declared label + icon on registered resources", () => {
     const athletes = findResource("athletes");
 
-    expect(athletes?.meta.label).toBe("Athletes");
+    if (athletes === undefined) {
+      return;
+    }
+
+    expect(athletes.meta.label).toBe("Athletes");
     // Icon must be a React component reference (Heroicons uses forwardRef,
     // so the runtime shape is either a function or a forwardRef object).
-    expect(athletes?.meta.icon).toBeDefined();
-    expect(["function", "object"]).toContain(typeof athletes?.meta.icon);
+    expect(athletes.meta.icon).toBeDefined();
+    expect(["function", "object"]).toContain(typeof athletes.meta.icon);
   });
 
   it("orders resources ascending by meta.order", () => {

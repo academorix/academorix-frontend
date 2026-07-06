@@ -1,9 +1,9 @@
 # Deploying `@academorix/landing-page` to Vercel
 
 The marketing surface deploys as its own Vercel project so it stays independent
-of the tenant SPA (`apps/web`). Deploys are triggered from the same monorepo but
-the two apps have separate Vercel project IDs, separate environment variables,
-and separate domains.
+of the tenant SPA (`apps/dashboard`). Deploys are triggered from the same
+monorepo but the two apps have separate Vercel project IDs, separate environment
+variables, and separate domains.
 
 ## One-time setup
 
@@ -67,8 +67,8 @@ optimizer + potential future middleware).
 
 ## What NOT to deploy to Vercel
 
-- **Never** deploy this app to the SPA's Vercel project (`apps/web`) — they must
-  stay separate so each can scale + roll back independently.
+- **Never** deploy this app to the SPA's Vercel project (`apps/dashboard`) —
+  they must stay separate so each can scale + roll back independently.
 - **Never** commit `.vercel/` from this directory — the linkage file contains
   the Vercel org ID and should stay local.
 
@@ -79,11 +79,11 @@ optimizer + potential future middleware).
 | `academorix.com`                  | `academorix-marketing`      | `apps/landing-page` |
 | `academorix.com/pricing`          | `academorix-marketing`      | `apps/landing-page` |
 | `academorix.com/create-workspace` | `academorix-marketing`      | `apps/landing-page` |
-| `app.academorix.com`              | `academorix-frontend` (SPA) | `apps/web`          |
-| `app.academorix.com/login`        | `academorix-frontend` (SPA) | `apps/web`          |
-| `app.academorix.com/dashboard`    | `academorix-frontend` (SPA) | `apps/web`          |
-| `{slug}.academorix.com/*`         | `academorix-frontend` (SPA) | `apps/web`          |
-| `admin.academorix.com`            | `academorix-frontend` (SPA) | `apps/web`          |
+| `app.academorix.com`              | `academorix-frontend` (SPA) | `apps/dashboard`    |
+| `app.academorix.com/login`        | `academorix-frontend` (SPA) | `apps/dashboard`    |
+| `app.academorix.com/dashboard`    | `academorix-frontend` (SPA) | `apps/dashboard`    |
+| `{slug}.academorix.com/*`         | `academorix-frontend` (SPA) | `apps/dashboard`    |
+| `admin.academorix.com`            | `academorix-frontend` (SPA) | `apps/dashboard`    |
 
 Add a tenant subdomain to the SPA project's wildcard config once G6
 (Organization module) ships and tenants can self-serve.
