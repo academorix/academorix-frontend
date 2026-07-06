@@ -12,8 +12,8 @@
  * request and exposes `tenant: null`.
  *
  * On a **tenant** host, the provider calls `GET /api/current-tenant` (public,
- * host-resolved, no auth needed). If the endpoint 404s (fixture missing, mock
- * mode, or a misconfigured DNS entry), we log a warning and continue with
+ * host-resolved, no auth needed). If the endpoint 404s (misconfigured DNS
+ * entry mapping to no tenant), we log a warning and continue with
  * `tenant: null` so the app still boots.
  */
 
@@ -22,7 +22,6 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { TenancyContextValue, TenantWorkspace } from "@/lib/tenancy/tenancy.types";
 import type { ReactNode } from "react";
 
-import { env } from "@/config/env";
 import { ApiError, httpClient, resolveHostContext } from "@/lib/http";
 
 /**
@@ -33,28 +32,10 @@ const TenancyContext = createContext<TenancyContextValue | undefined>(undefined)
 
 /**
  * Fetches the tenant currently hosting this request from the backend's public
- * `GET /api/current-tenant` endpoint. In mock mode we read `/data/tenant.json`
- * as a fallback (fixture‑backed dev boot).
+ * `GET /api/current-tenant` endpoint (host-resolved by the `tenant`
+ * middleware group; no bearer token required).
  */
 async function fetchTenantWorkspace(): Promise<TenantWorkspace | null> {
-  // Mock mode: fixture is the source of truth.
-  if (env.VITE_API_MOCK) {
-    try {
-      const response = await fetch("/data/tenant.json");
-
-      if (!response.ok) {
-        return null;
-      }
-
-      const payload = (await response.json()) as TenantWorkspace | { data: TenantWorkspace };
-
-      return "data" in payload ? payload.data : payload;
-    } catch {
-      return null;
-    }
-  }
-
-  // Real backend: public endpoint served on the tenant host.
   try {
     const response = await httpClient.get<TenantWorkspace | { data: TenantWorkspace }>(
       "/current-tenant",

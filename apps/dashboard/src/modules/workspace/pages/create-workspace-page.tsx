@@ -7,10 +7,11 @@
  * new Academorix tenant + a default owner user, then navigates the browser to
  * the new subdomain's login page.
  *
- * Backend contract: `POST /api/v1/tenants/register` (PLAN.md gap G5).
- * Currently only the platform-admin `POST /api/v1/tenants` endpoint exists,
- * so this page targets the new public endpoint the backend team is asked to
- * add; in mock mode we simulate the flow so the demo journey is complete.
+ * Backend contract: `POST /api/v1/tenants/register` — the platform-admin
+ * `POST /api/v1/tenants` endpoint is gated behind `manage-tenants`; the
+ * public self-serve endpoint is the throttled anonymous surface used here.
+ * If the endpoint is not yet deployed the caller will see the backend's
+ * error envelope instead of an artificial success — no more mock fake-out.
  */
 
 import { RocketLaunchIcon } from "@academorix/ui/icons/outline";
@@ -30,7 +31,6 @@ import { Link } from "react-router";
 import type { ApiError } from "@/lib/http";
 import type { FormEvent, Key, ReactNode } from "react";
 
-import { env } from "@/config/env";
 import { buildTenantUrl, httpClient } from "@/lib/http";
 import { appRoutes } from "@/lib/module";
 import { AuthCard } from "@/modules/auth/components/auth-card";
@@ -97,16 +97,6 @@ export default function CreateWorkspacePage(): ReactNode {
     setIsSubmitting(true);
 
     try {
-      if (env.VITE_API_MOCK) {
-        // Fixture mode: pretend we provisioned successfully, then bounce to
-        // the new tenant's login. A real backend call happens in REST mode.
-        window.setTimeout(() => {
-          window.location.href = buildTenantUrl(slug, appRoutes.login);
-        }, 300);
-
-        return;
-      }
-
       await httpClient.post("/v1/tenants/register", {
         workspace_name: workspaceName,
         slug,

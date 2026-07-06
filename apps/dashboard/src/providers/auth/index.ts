@@ -3,28 +3,28 @@
  * @module providers/auth
  *
  * @description
- * Selects the active auth provider by host + env (see PLAN.md §4.4):
+ * Selects the active Refine {@link AuthProvider} by host at boot time:
  *
- * - `VITE_API_MOCK=true` → {@link createMockAuthProvider} (JSON fixtures).
- * - Central admin host → {@link createPlatformAuthProvider}.
- * - Anything else (tenant subdomain, custom domain, dev) →
- *   {@link createTenantAuthProvider}.
+ * - Central admin host (e.g. {@code admin.academorix.app}) →
+ *   {@link createPlatformAuthProvider}, targeting
+ *   {@code POST /api/v1/platform/auth/*}.
+ * - Anything else (tenant subdomain, custom domain, local dev) →
+ *   {@link createTenantAuthProvider}, targeting {@code POST /api/auth/*}.
  *
- * All three share the same {@link tokenStore} and identity cache, so the rest
- * of the app is agnostic to which one is live.
+ * Both providers share the same {@link tokenStore} and identity cache, so
+ * the rest of the app is agnostic to which one is live.
  *
  * The tenant and platform surfaces also expose a companion **API** object
- * ({@link tenantAuthApi} / {@link platformAuthApi}) carrying the extra flows
- * Refine's `AuthProvider` interface doesn't cover — register, password reset,
- * email verification, 2FA, impersonation. Auth pages import these directly
- * (Refine handles `useLogin`/`useLogout`; the rest is called by hand).
+ * ({@link tenantAuthApi} / {@link platformAuthApi}) carrying the extra
+ * flows Refine's {@link AuthProvider} interface does not cover — register,
+ * password reset, email verification, MFA / step-up, impersonation. Auth
+ * pages import these directly (Refine handles {@code useLogin} /
+ * {@code useLogout}; the rest is called by hand).
  */
 
 import type { AuthProvider } from "@refinedev/core";
 
-import { env } from "@/config/env";
 import { httpClient, resolveHostContext, tokenStore } from "@/lib/http";
-import { createMockAuthProvider } from "@/providers/auth/auth-provider.mock";
 import {
   createPlatformAuthProvider,
   type PlatformAuthApi,
@@ -37,30 +37,25 @@ import {
 const host = resolveHostContext();
 
 /**
- * The active auth provider and (for real backends) its companion API. In mock
- * mode `tenantApi` / `platformApi` are `null` because the mock provider does
- * not model those flows.
+ * Builds the active auth provider + its companion API for the current
+ * host. Exactly one of {@code tenantApi} / {@code platformApi} is
+ * non-null; the other is {@code null} to let callers feature-detect
+ * with a straightforward {@code if (tenantAuthApi) { … }}.
  */
 function buildAuthProviders(): {
   authProvider: AuthProvider;
   tenantApi: TenantAuthApi | null;
   platformApi: PlatformAuthApi | null;
 } {
-  if (env.VITE_API_MOCK) {
-    return {
-      authProvider: createMockAuthProvider(tokenStore),
-      tenantApi: null,
-      platformApi: null,
-    };
-  }
-
   if (host.kind === "central-admin") {
     const { authProvider, api } = createPlatformAuthProvider(httpClient, tokenStore, { host });
 
     return { authProvider, tenantApi: null, platformApi: api };
   }
 
-  // Tenant (subdomain, custom domain, dev localhost, central-that-picks-a-workspace).
+  // Tenant (subdomain, custom domain, local dev, or a central host that
+  // renders the workspace picker — the picker never logs in, but the
+  // provider is still needed to answer {@code check} / {@code getIdentity}).
   const { authProvider, api } = createTenantAuthProvider(httpClient, tokenStore, { host });
 
   return { authProvider, tenantApi: api, platformApi: null };
@@ -68,24 +63,24 @@ function buildAuthProviders(): {
 
 const providers = buildAuthProviders();
 
-/** The auth provider Refine will use for this session. */
+/** The auth provider Refine uses for this session. */
 export const authProvider: AuthProvider = providers.authProvider;
 
 /**
  * Extra tenant flows (register / password reset / email verify / step-up /
- * change-password). `null` when we booted the platform admin surface or when
- * `VITE_API_MOCK=true`. Auth pages should feature-detect via
- * `if (tenantAuthApi) { … }` before calling.
+ * change-password). {@code null} when the app booted the platform-admin
+ * surface. Auth pages should feature-detect via
+ * {@code if (tenantAuthApi) { … }} before calling.
  */
 export const tenantAuthApi: TenantAuthApi | null = providers.tenantApi;
 
 /**
- * Extra platform flows (2FA enrol/confirm/challenge/recovery, impersonation,
- * step-up, change-password). `null` on the tenant surface / mock mode.
+ * Extra platform flows (MFA enrol/confirm/challenge/recovery,
+ * impersonation, step-up, change-password). {@code null} on the tenant
+ * surface.
  */
 export const platformAuthApi: PlatformAuthApi | null = providers.platformApi;
 
-export { createMockAuthProvider } from "@/providers/auth/auth-provider.mock";
 export { createPlatformAuthProvider } from "@/providers/auth/auth-provider.platform";
 export { createTenantAuthProvider } from "@/providers/auth/auth-provider.tenant";
 export type {

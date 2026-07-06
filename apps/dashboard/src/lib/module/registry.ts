@@ -3,36 +3,39 @@
  * @module lib/module/registry
  *
  * @description
- * Auto-discovers every feature module manifest under `src/modules/<name>/`
- * with Vite's `import.meta.glob` and aggregates their Refine resources and
- * routes. Add a module folder with a manifest and it is registered — no
+ * Auto-discovers every feature module manifest under {@code src/modules/<name>/}
+ * with Vite's {@code import.meta.glob} and aggregates their Refine resources
+ * and routes. Add a module folder with a manifest and it is registered — no
  * central edit required.
  *
- * NOTE: `import.meta.glob` patterns do **not** resolve the `@` alias, so the
- * glob below is written relative to this file (`../../modules/...`, since this
- * file sits two levels deep under `src/lib/module/`). The page components
- * inside each manifest still use `@/...` lazy imports and stay code-split.
+ * NOTE: {@code import.meta.glob} patterns do **not** resolve the {@code @}
+ * alias, so the glob below is written relative to this file
+ * ({@code ../../modules/...}, since this file sits two levels deep under
+ * {@code src/lib/module/}). The page components inside each manifest still
+ * use {@code @/...} lazy imports and stay code-split.
  *
- * ## Multi-data-provider migration
- * A resource whose backend module has not shipped yet has its
- * `meta.dataProviderName` set to `"mock"` here at boot, based on the
- * {@link BACKEND_READY_RESOURCES} allow-list. This lets us keep every
- * feature module `dataProviderName`-free (fewer per-manifest edits) and
- * migrate to the real REST provider by editing a single allow-list —
- * see PLAN.md §4.5.
+ * ## Single-provider mode
+ *
+ * The dashboard used to ship a dual-provider layer (real REST + mock
+ * fixture-backed) with a {@code BACKEND_READY_RESOURCES} allow-list that
+ * pinned unmigrated resources to {@code meta.dataProviderName = "mock"}
+ * here. That mock layer has been removed now that every domain module
+ * ships a real backend surface. Manifests may still set a
+ * {@code meta.dataProviderName} explicitly (e.g. to target a future
+ * secondary provider), but nothing is injected implicitly by the
+ * registry anymore.
  */
 
 import type { AppModule, AppModuleRoute, AppResource } from "@/lib/module/module";
 
 import { resolveHostContext } from "@/lib/http";
-import { BACKEND_READY_RESOURCES } from "@/providers/data";
 
 /**
  * Eagerly-loaded module manifests (tiny; the page components stay lazy).
  *
- * Two depths are matched: top-level modules (`modules/<name>/<name>.module.tsx`)
+ * Two depths are matched: top-level modules ({@code modules/<name>/<name>.module.tsx})
  * and one level of sub-domain nesting for the sports domain
- * (`modules/sports/<sub-domain>/<name>.module.tsx`).
+ * ({@code modules/sports/<sub-domain>/<name>.module.tsx}).
  */
 const manifests = import.meta.glob<{ default: AppModule }>(
   ["../../modules/*/*.module.tsx", "../../modules/*/*/*.module.tsx"],
@@ -42,72 +45,50 @@ const manifests = import.meta.glob<{ default: AppModule }>(
 /** Every registered feature module. */
 export const appModules: AppModule[] = Object.values(manifests).map((manifest) => manifest.default);
 
-/** Reads a resource's sidebar sort order (default `0`). */
+/** Reads a resource's sidebar sort order (default {@code 0}). */
 function resourceOrder(resource: AppResource): number {
   return resource.meta.order ?? 0;
-}
-
-/**
- * Applies the backend-ready allow-list to a resource: if the resource is NOT
- * in the list AND its manifest has not already set a `dataProviderName`, we
- * pin it to `"mock"` so Refine reads from the fixture provider instead of the
- * REST provider (which would 404).
- */
-function withDataProvider(resource: AppResource): AppResource {
-  if (resource.meta.dataProviderName) {
-    return resource;
-  }
-
-  if (BACKEND_READY_RESOURCES.has(resource.name)) {
-    return resource;
-  }
-
-  return {
-    ...resource,
-    meta: { ...resource.meta, dataProviderName: "mock" },
-  };
 }
 
 /** All resources across every module, sorted for stable sidebar order. */
 export const appResources: AppResource[] = appModules
   .flatMap((module) => module.resources ?? [])
-  .map(withDataProvider)
   .sort((a, b) => resourceOrder(a) - resourceOrder(b));
 
 /**
  * A resolved keyboard shortcut binding for a resource. Emitted at boot from
- * every module's `AppResourceMeta.shortcuts`, then consumed by the shell's
- * keyboard listener. Global chrome shortcuts (⌘K, ⌘B, ?) come from
- * `lib/keyboard/registry.ts`, not from here.
+ * every module's {@code AppResourceMeta.shortcuts}, then consumed by the
+ * shell's keyboard listener. Global chrome shortcuts (⌘K, ⌘B, ?) come from
+ * {@code lib/keyboard/registry.ts}, not from here.
  */
 export interface ResolvedResourceShortcut {
-  /** The resource this binding belongs to (`athletes`, `teams`, …). */
+  /** The resource this binding belongs to ({@code athletes}, {@code teams}, …). */
   resourceName: string;
   /**
-   * `"navigate"` for `G X` bindings, `"create"` for `N X` bindings, or
-   * `"custom"` for any resource-scoped verb declared under
-   * `AppResourceShortcuts.actions`.
+   * {@code "navigate"} for {@code G X} bindings, {@code "create"} for
+   * {@code N X} bindings, or {@code "custom"} for any resource-scoped verb
+   * declared under {@code AppResourceShortcuts.actions}.
    */
   action: "navigate" | "create" | "custom";
   /**
    * The verb identifier for custom actions (matches the key in
-   * `AppResourceShortcuts.actions`, e.g. `"export"`, `"archive"`). Undefined
-   * for `"navigate"` and `"create"`.
+   * {@code AppResourceShortcuts.actions}, e.g. {@code "export"},
+   * {@code "archive"}). Undefined for {@code "navigate"} and {@code "create"}.
    */
   verbId?: string;
-  /** The key sequence, e.g. `"G A"` or `"N A"`. */
+  /** The key sequence, e.g. {@code "G A"} or {@code "N A"}. */
   keys: string;
   /**
    * The route the shell should navigate to when the binding fires. Falls back
-   * to `resource.list` for navigate bindings and `resource.create` for create
-   * bindings; undefined for custom verbs (the shell resolves those through the
-   * module's command catalogue).
+   * to {@code resource.list} for navigate bindings and {@code resource.create}
+   * for create bindings; undefined for custom verbs (the shell resolves those
+   * through the module's command catalogue).
    */
   route: string | undefined;
   /**
    * The permission required to execute this shortcut, mirroring
-   * `AppResourceMeta.requiredPermission`. The listener silently drops the
-   * action when the identity lacks the permission.
+   * {@code AppResourceMeta.requiredPermission}. The listener silently drops
+   * the action when the identity lacks the permission.
    */
   requiredPermission: string | undefined;
 }
@@ -139,7 +120,7 @@ function warnOnDuplicateShortcut(
 /**
  * Resource-scoped keyboard shortcut bindings, aggregated across every module
  * manifest. See {@link ResolvedResourceShortcut} for the shape and
- * `DASHBOARD_UX_PLAN.md` §13.2 for the design rationale.
+ * {@code DASHBOARD_UX_PLAN.md} §13.2 for the design rationale.
  */
 export const appResourceShortcuts: ResolvedResourceShortcut[] = (() => {
   const bindings: ResolvedResourceShortcut[] = [];
@@ -194,9 +175,10 @@ export const appResourceShortcuts: ResolvedResourceShortcut[] = (() => {
 
 /**
  * Whether a route is registered under the current host. Routes without a
- * `hosts` filter are registered everywhere; a filtered route is only mounted
- * when the active host kind is in its list. Keeps central-host workspace
- * pages out of tenant subdomains and vice versa without per-App conditionals.
+ * {@code hosts} filter are registered everywhere; a filtered route is only
+ * mounted when the active host kind is in its list. Keeps central-host
+ * workspace pages out of tenant subdomains and vice versa without per-App
+ * conditionals.
  */
 function isRouteVisibleOnCurrentHost(route: AppModuleRoute): boolean {
   if (!route.hosts || route.hosts.length === 0) {

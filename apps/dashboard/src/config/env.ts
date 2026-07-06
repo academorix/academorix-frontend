@@ -59,27 +59,6 @@ const envSchema = z.object({
    */
   VITE_MARKETING_URL: z.url().default("http://localhost:3001"),
 
-  /**
-   * Master switch between the two Refine data/auth providers.
-   *
-   * - `true`  → the JSON-file **mock** backend (`public/data/*.json`). Lets the
-   *   whole UI run before every backend module exists.
-   * - `false` → the real **REST** backend at the current host's `/api` path.
-   *
-   * Vite only exposes strings, so we accept the string literals `"true"` /
-   * `"false"` and coerce to a real boolean. Defaults to mock so a fresh
-   * checkout boots against fixtures with zero backend setup.
-   *
-   * Note: even with `VITE_API_MOCK=false`, resources whose backend module has
-   * not shipped yet stay pinned to the mock provider via
-   * `resource.meta.dataProviderName = "mock"` — see the migration matrix in
-   * PLAN.md §4.5.
-   */
-  VITE_API_MOCK: z
-    .enum(["true", "false"])
-    .default("true")
-    .transform((value) => value === "true"),
-
   /** Reverb (Laravel Echo) config for realtime updates. */
   VITE_REVERB_APP_KEY: z.string().min(1).default("academorix-local-key"),
   VITE_REVERB_HOST: z.string().min(1).default("localhost"),

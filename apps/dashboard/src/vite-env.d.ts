@@ -76,13 +76,6 @@ interface ImportMetaEnv {
   /** Absolute origin of the marketing site (public CTAs link here). */
   readonly VITE_MARKETING_URL: string;
 
-  /**
-   * `"true"` → JSON-file mock backend (`public/data/*.json`).
-   * `"false"` → real REST backend.
-   * Zod coerces this to a boolean at runtime.
-   */
-  readonly VITE_API_MOCK: "true" | "false";
-
   /** Reverb (Laravel Echo) — realtime updates. */
   readonly VITE_REVERB_APP_KEY: string;
   readonly VITE_REVERB_HOST: string;

@@ -7,17 +7,17 @@
  * on the Slack-style workspace picker (central host) and the "switch
  * workspace" dropdown inside the authenticated shell.
  *
- * Backend contract: `GET /api/v1/auth/workspaces` (PLAN.md gap G3). Until that
- * ships, the fixture at `/data/workspaces.json` powers the picker. In mock
- * mode we always use the fixture; in real mode we hit the endpoint and fall
- * back to `[]` on 404 so the UI keeps working during phased rollouts.
+ * Backend contract: {@code GET /api/v1/auth/workspaces} (a projection of the
+ * caller's tenant memberships). Until that endpoint ships in every deploy
+ * environment we fall back to {@code []} on 404 so the UI keeps working
+ * during phased rollouts — the picker simply shows the "no workspaces" empty
+ * state and the "Find my workspaces" recovery link stays available.
  */
 
 import { useEffect, useState } from "react";
 
 import type { WorkspaceListEntry } from "@/lib/tenancy/tenancy.types";
 
-import { env } from "@/config/env";
 import { ApiError, httpClient } from "@/lib/http";
 
 /** Return shape for {@link useMyWorkspaces}. */
@@ -26,11 +26,11 @@ export interface UseMyWorkspacesResult {
   workspaces: WorkspaceListEntry[];
   /** Whether the fetch is still in flight. */
   isLoading: boolean;
-  /** The last fetch error, or `null`. */
+  /** The last fetch error, or {@code null}. */
   error: Error | null;
 }
 
-/** Response envelope for the workspaces endpoint (both mock and REST). */
+/** Response envelope for the workspaces endpoint. */
 interface WorkspacesResponse {
   data: WorkspaceListEntry[];
 }
@@ -52,28 +52,19 @@ export function useMyWorkspaces(): UseMyWorkspacesResult {
       try {
         let list: WorkspaceListEntry[] = [];
 
-        if (env.VITE_API_MOCK) {
-          const response = await fetch("/data/workspaces.json");
+        try {
+          const payload = await httpClient.get<WorkspacesResponse | WorkspaceListEntry[]>(
+            "/v1/auth/workspaces",
+          );
 
-          if (response.ok) {
-            const payload = (await response.json()) as WorkspaceListEntry[] | WorkspacesResponse;
-
-            list = Array.isArray(payload) ? payload : payload.data;
-          }
-        } else {
-          try {
-            const payload = await httpClient.get<WorkspacesResponse | WorkspaceListEntry[]>(
-              "/v1/auth/workspaces",
-            );
-
-            list = Array.isArray(payload) ? payload : payload.data;
-          } catch (caught) {
-            // Endpoint not built yet (G3): return an empty list, not an error.
-            if (caught instanceof ApiError && caught.statusCode === 404) {
-              list = [];
-            } else {
-              throw caught;
-            }
+          list = Array.isArray(payload) ? payload : payload.data;
+        } catch (caught) {
+          // Endpoint not deployed yet: return an empty list, not an error,
+          // so the picker renders its "no workspaces" empty state.
+          if (caught instanceof ApiError && caught.statusCode === 404) {
+            list = [];
+          } else {
+            throw caught;
           }
         }
 

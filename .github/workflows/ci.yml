@@ -58,13 +58,6 @@ jobs:
       - name: Knip (unused deps / exports)
         run: pnpm knip
 
-      - name: Mock fixture validation
-        # Validates every JSON fixture under apps/dashboard/public/data/
-        # against the shared schema — catches shape drift between the
-        # backend OpenAPI contract and the frontend fixtures during the
-        # migration window.
-        run: pnpm mock:validate
-
   test:
     name: Unit tests
     runs-on: ubuntu-latest

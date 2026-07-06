@@ -175,13 +175,10 @@ export default defineConfig(() => {
         /**
          * Files that the plugin should include in the precache manifest. The
          * defaults cover JS/CSS/HTML/SVG; we add font files explicitly because
-         * a self-hosted webfont in `public/fonts/` would otherwise fall to
-         * runtime caching only.
-         *
-         * `globIgnores` deliberately excludes JSON fixture data — those are
-         * mock-only and huge; we don't want them precached in production
-         * where `VITE_API_MOCK=false`. The build never emits `data/` when
-         * mocks are off, but keeping the ignore future-proofs the config.
+         * `globIgnores` is left at its default. The `public/data/*.json`
+         * mock fixtures they used to exclude were deleted alongside the
+         * mock data layer, and every runtime asset that Vite emits should
+         * be precached to keep the offline experience honest.
          */
         includeAssets: ["favicon.svg", "favicon.ico", "robots.txt", "apple-touch-icon.png"],
         includeManifestIcons: true,

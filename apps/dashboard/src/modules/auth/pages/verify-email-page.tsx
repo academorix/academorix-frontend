@@ -4,10 +4,10 @@
  *
  * @description
  * Landing page for the emailed verify-email signed link. The backend serves
- * `GET /api/auth/email/verify/{id}/{hash}?signature=…` directly (Laravel's
- * `signed` middleware validates the HMAC), but visitors may hit the link on a
- * device that is not signed in, so the SPA renders a friendly redirector page
- * that reads the params + shows the result.
+ * {@code GET /api/auth/email/verify/{id}/{hash}?signature=…} directly
+ * (Laravel's {@code signed} middleware validates the HMAC), but visitors may
+ * hit the link on a device that is not signed in, so the SPA renders a
+ * friendly redirector page that reads the params + shows the result.
  *
  * If the params are present, the page redirects to the backend URL after a
  * short delay (giving the user a chance to read the message). Otherwise we
@@ -36,17 +36,24 @@ export default function VerifyEmailPage(): ReactNode {
 
   const hasParams = Boolean(id && hash && signature);
 
+  /**
+   * Builds the backend URL that Laravel's signed middleware validates.
+   * Undefined when any required param is missing so the effect below can
+   * short-circuit without touching {@code window.location}.
+   */
+  const verifyUrl = hasParams
+    ? `${env.VITE_API_URL}${env.VITE_API_PATH}/auth/email/verify/${id}/${hash}?signature=${signature}&expires=${expires ?? ""}`
+    : undefined;
+
   useEffect(() => {
-    if (!hasParams || env.VITE_API_MOCK) {
+    if (!verifyUrl) {
       return;
     }
 
     // The verification endpoint is on the backend; navigate the browser
     // directly so the signed URL retains its query string intact.
-    const target = `${env.VITE_API_URL}${env.VITE_API_PATH}/auth/email/verify/${id}/${hash}?signature=${signature}&expires=${expires ?? ""}`;
-
-    window.location.replace(target);
-  }, [expires, hasParams, hash, id, signature]);
+    window.location.replace(verifyUrl);
+  }, [verifyUrl]);
 
   if (!hasParams) {
     return (
@@ -73,29 +80,19 @@ export default function VerifyEmailPage(): ReactNode {
       <div className="flex flex-col items-center gap-4 px-6 pb-6 text-center">
         <CheckCircleIcon aria-hidden="true" className="size-10 text-accent" />
         <p className="text-sm text-muted">
-          {env.VITE_API_MOCK
-            ? "Mock mode: verification is confirmed."
-            : "You will be redirected in a moment. If nothing happens, click the button below."}
+          You will be redirected in a moment. If nothing happens, click the button below.
         </p>
-        {!env.VITE_API_MOCK ? (
-          <Button
-            className="w-full"
-            variant="secondary"
-            onPress={() => {
-              window.location.href = `${env.VITE_API_URL}${env.VITE_API_PATH}/auth/email/verify/${id}/${hash}?signature=${signature}&expires=${expires ?? ""}`;
-            }}
-          >
-            Verify now
-          </Button>
-        ) : (
-          <Button
-            className="w-full"
-            variant="secondary"
-            onPress={() => navigate(appRoutes.dashboard)}
-          >
-            Continue
-          </Button>
-        )}
+        <Button
+          className="w-full"
+          variant="secondary"
+          onPress={() => {
+            if (verifyUrl) {
+              window.location.href = verifyUrl;
+            }
+          }}
+        >
+          Verify now
+        </Button>
       </div>
     </AuthCard>
   );

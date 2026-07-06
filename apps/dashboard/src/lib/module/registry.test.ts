@@ -4,15 +4,17 @@
  *
  * @description
  * Unit tests for the module registry — the pure aggregation of feature-module
- * manifests. The `import.meta.glob` in `registry.ts` runs at module load, so
- * we import `appResources` + `publicRoutes` + `protectedRoutes` directly and
- * assert on the aggregated result (rather than trying to isolate the glob
- * itself).
+ * manifests. The {@code import.meta.glob} in {@code registry.ts} runs at
+ * module load, so we import {@code appResources} + {@code publicRoutes} +
+ * {@code protectedRoutes} directly and assert on the aggregated result
+ * (rather than trying to isolate the glob itself).
  *
- * The dominant behaviour under test is the {@link BACKEND_READY_RESOURCES}
- * allow-list: any resource NOT in the set — and whose manifest has not
- * overridden `meta.dataProviderName` — is transparently pinned to `"mock"` by
- * the registry so Refine reads from fixtures instead of the REST provider.
+ * Previous versions of this file exercised the mock-provider allow-list
+ * ({@code BACKEND_READY_RESOURCES}) that auto-pinned unmigrated resources to
+ * {@code meta.dataProviderName = "mock"}. That behaviour was removed
+ * alongside the mock data layer; the tests below now only assert the
+ * registry's remaining responsibilities: manifest aggregation, sidebar
+ * ordering, and public / protected route partitioning.
  */
 
 import { describe, expect, it } from "vitest";
@@ -20,79 +22,15 @@ import { describe, expect, it } from "vitest";
 import type { AppResource } from "@/lib/module";
 
 import { appResources, protectedRoutes, publicRoutes } from "@/lib/module";
-import { BACKEND_READY_RESOURCES } from "@/providers/data";
 
-/** Finds a registered resource by canonical name (returns `undefined` if absent). */
+/** Finds a registered resource by canonical name (returns {@code undefined} if absent). */
 function findResource(name: string): AppResource | undefined {
   return appResources.find((resource) => resource.name === name);
 }
 
-describe("BACKEND_READY_RESOURCES contract", () => {
-  it("includes today's shipped platform resources", () => {
-    // Sample across the shipped modules: platform admin, Access, Finance,
-    // Athletics, Competitions. If any of these regress the migration
-    // slipped backwards.
-    expect(BACKEND_READY_RESOURCES.has("tenants")).toBe(true);
-    expect(BACKEND_READY_RESOURCES.has("features")).toBe(true);
-    expect(BACKEND_READY_RESOURCES.has("roles")).toBe(true);
-    expect(BACKEND_READY_RESOURCES.has("invoices")).toBe(true);
-    expect(BACKEND_READY_RESOURCES.has("athletes")).toBe(true);
-    expect(BACKEND_READY_RESOURCES.has("competitions")).toBe(true);
-  });
-
-  it("excludes resources whose backend module has not shipped", () => {
-    // These names correspond to frontend module folders whose backend
-    // counterpart isn't a fixture-first module yet. Update this list as
-    // those backend modules ship.
-    for (const notReady of ["credentials", "documents", "people", "users", "workspaces"]) {
-      expect(BACKEND_READY_RESOURCES.has(notReady)).toBe(false);
-    }
-  });
-});
-
 describe("appResources", () => {
   it("registers at least one resource", () => {
     expect(appResources.length).toBeGreaterThan(0);
-  });
-
-  it("pins fixture-only resources to the mock provider", () => {
-    // Pick a resource we know the registry has (`people`) that is NOT in
-    // the backend allow-list — the registry must auto-inject
-    // `dataProviderName: "mock"` so Refine never issues a REST call.
-    const people = findResource("people");
-
-    if (people === undefined) {
-      // Nothing to assert if the FE has retired the `people` module.
-      // Guard rather than fail so the test survives an FE-side rename.
-      return;
-    }
-
-    expect(people.meta.dataProviderName).toBe("mock");
-  });
-
-  it("pins every not-yet-shipped resource to the mock provider", () => {
-    // Every registered resource that is NOT in the allow-list must end up on
-    // mock, otherwise Refine would call a REST endpoint that does not exist.
-    for (const resource of appResources) {
-      if (BACKEND_READY_RESOURCES.has(resource.name)) {
-        continue;
-      }
-
-      expect(resource.meta.dataProviderName).toBe("mock");
-    }
-  });
-
-  it("leaves backend-ready resources on the default provider", () => {
-    // Any registered resource that IS in the allow-list must NOT be pinned
-    // to mock. `dataProviderName === undefined` is acceptable (Refine falls
-    // back to the `default` key).
-    for (const resource of appResources) {
-      if (!BACKEND_READY_RESOURCES.has(resource.name)) {
-        continue;
-      }
-
-      expect(resource.meta.dataProviderName).not.toBe("mock");
-    }
   });
 
   it("preserves the manifest-declared label + icon on registered resources", () => {
@@ -114,6 +52,15 @@ describe("appResources", () => {
     const sorted = [...orders].sort((a, b) => a - b);
 
     expect(orders).toEqual(sorted);
+  });
+
+  it("does not silently inject a 'mock' data-provider name", () => {
+    // With the mock layer removed the registry must never rewrite
+    // `meta.dataProviderName` to `"mock"`. Manifests that opt into a
+    // secondary provider explicitly stay untouched.
+    for (const resource of appResources) {
+      expect(resource.meta.dataProviderName).not.toBe("mock");
+    }
   });
 });
 

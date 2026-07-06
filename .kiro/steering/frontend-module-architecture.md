@@ -448,21 +448,22 @@ tenant hosts.
 `auth-provider.tenant` (POST `/api/auth/*`) and `auth-provider.platform` (POST
 `/api/v1/platform/auth/*`). Each returns Refine's `AuthProvider` + a companion
 API (`TenantAuthApi` / `PlatformAuthApi`) covering the flows Refine does not
-model directly (register, password reset, email verify, 2FA, impersonation). The
-`providers/auth/index.ts` module picks the right one and falls back to the mock
-provider when `VITE_API_MOCK=true`.
+model directly (register, password reset, email verify, MFA, impersonation). The
+`providers/auth/index.ts` module picks the tenant provider by default and
+switches to the platform provider on the central-admin host.
 
-### Multi-data-provider migration (Refine v5)
+### Data provider (Refine v5)
 
-`providers/data/index.ts` exports `dataProviders: { default, mock }`. Refine
-resources declare `meta.dataProviderName: "mock"` to opt into the fixture
-provider — but they almost never do so by hand: the registry auto-applies
-`"mock"` for any resource NOT in the {@link
-"@/providers/data".BACKEND_READY_RESOURCES} allow-list. Migrating a resource to
-the real API is a **single-line edit** — add its name to the allow-list. See
-`.kiro/specs/backend-frontend-alignment/PLAN.md` §4.5 for the recipe.
+`providers/data/index.ts` exports `dataProviders: { default }` — a single REST
+provider built on top of `httpClient` (Sanctum-authenticated, host-scoped by
+`resolveHostContext()`). Every Refine resource resolves through it; RPC- style
+endpoints (`/api/auth/*`, `/api/billing/*`, `/api/entitlements/usage`) are
+called through `httpClient` directly. The earlier dual-provider layer (mock JSON
+fixtures + a `BACKEND_READY_RESOURCES` allow-list) was retired alongside the
+mock data folder now that every domain module ships a real HTTP surface — see
+`backend/modules/**`.
 
-### Enforcement & demo personas
+### Enforcement
 
 - **Provider:** `src/providers/access-control/` maps each Refine action to a
   policy ability and answers `can` from the cached identity's `permissions`
@@ -473,25 +474,17 @@ the real API is a **single-line edit** — add its name to the allow-list. See
   who reaches a route they lack permission for sees `AccessDenied` instead of
   the content — closing the direct-URL gap (the sidebar already hides the
   entry). Use `<CanAccess>` / `useCan` directly for finer-grained inline gating.
-- **Demo personas (mock mode):** `public/data/demo-users.json` seeds seven users
-  — owner + admin (superuser `"*"`), plus head_coach, coach, reception, finance,
-  and medical_officer, each with a curated `permissions` + `features` set so
-  RBAC differences are visible end-to-end (nav, buttons, guards). The login
-  screen offers one-click sign-in per persona; the mock auth provider resolves
-  the persona by email and persists the choice across reloads.
 
 ---
 
 ## 6. Data layer & response contract
 
-Providers live in `src/providers/` and are selected by `VITE_API_MOCK` (mock
-JSON fixtures vs the Laravel REST API). Domain models mirror the backend
-verbatim (**snake_case**, ISO-8601 timestamps) so mock and REST are
-interchangeable.
+Providers live in `src/providers/` and target the Laravel REST API exclusively.
+Domain models mirror the backend verbatim (**snake_case**, ISO-8601 timestamps)
+so wire responses land in Refine caches unchanged.
 
-Canonical response contract (both the mock and the future backend modules follow
-it; the backend uses `spatie/laravel-data`, so enable `wrap => 'data'` for
-resource endpoints):
+Canonical response contract (the backend uses `spatie/laravel-data` with
+`wrap => 'data'` for resource endpoints):
 
 | Kind                     | Shape                                                                                     |
 | ------------------------ | ----------------------------------------------------------------------------------------- |
@@ -504,9 +497,6 @@ resource endpoints):
 - **`message`** — yes, on **mutations only** (for toasts); noise on reads.
 - **No body-level `success`/`status`** — the HTTP status code is the single
   source of truth (redundant flags drift).
-- **Fixtures are pure record arrays.** The mock data provider synthesizes the
-  `meta`/`message` envelope + pagination at runtime, so it behaves exactly like
-  the paginated backend. Do not bake `meta` into fixture files.
 - Query contract follows
   [spatie/laravel-query-builder v7](https://spatie.be/docs/laravel-query-builder/v7/introduction):
   `page` + `per_page` (Laravel paginator), `sort=-created_at,name`,
@@ -533,8 +523,8 @@ resource endpoints):
 - The app shell is HeroUI Pro `AppLayout` + `Sidebar` + `Navbar`; the sidebar is
   generated from Refine `useMenu()` (resources), filtered by permission/feature.
 - List/detail/form screens use Refine headless hooks (`useTable`, `useForm`,
-  `useShow`, `useList`, `useCustom`) — the data source is transparent (mock vs
-  REST).
+  `useShow`, `useList`, `useCustom`) — every call resolves through the single
+  REST data provider.
 - Routes are **code-split**: page components are `lazy`; a single `Suspense`
   boundary renders a spinner.
 
@@ -598,8 +588,6 @@ Before finalizing any change:
 - [ ] Resource `meta` sets `label`, `icon`, `featureKey`, `requiredPermission`.
 - [ ] Create/edit share one controlled form in `modules/<domain>/components/`.
 - [ ] Domain shapes reused from `@/types` (module-only shapes stay local).
-- [ ] Mock fixture `public/data/<resource>.json` (pure record array,
-      snake_case).
 - [ ] UI gated with `<CanAccess>` / kit buttons; nav filtered by
       permission/feature.
 - [ ] Docblocks throughout; `pnpm quality` + `pnpm test` green; conventional

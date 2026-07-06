@@ -4,9 +4,10 @@
  *
  * @description
  * The "Find my workspaces" form (central host `/find-workspaces`). Anonymous
- * visitors enter their email and the backend emails a list of every workspace
- * that email belongs to (backend gap G4). Always resolves 200 to avoid
- * enumeration.
+ * visitors enter their email and the backend emails a list of every
+ * workspace that email belongs to. Anti-enumeration: the endpoint always
+ * responds 2xx so the client can safely surface a "sent" affirmative
+ * regardless of whether the address matched.
  */
 
 import { EnvelopeIcon, MagnifyingGlassIcon } from "@academorix/ui/icons/outline";
@@ -16,7 +17,6 @@ import { Link } from "react-router";
 
 import type { FormEvent, ReactNode } from "react";
 
-import { env } from "@/config/env";
 import { httpClient } from "@/lib/http";
 import { appRoutes } from "@/lib/module";
 import { AuthCard } from "@/modules/auth/components/auth-card";
@@ -30,14 +30,6 @@ export default function FindWorkspacesPage(): ReactNode {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     setError(null);
-
-    // In mock mode we just simulate the always-succeed contract.
-    if (env.VITE_API_MOCK) {
-      setState("sent");
-
-      return;
-    }
-
     setState("submitting");
 
     try {
@@ -45,7 +37,7 @@ export default function FindWorkspacesPage(): ReactNode {
       setState("sent");
     } catch (caught) {
       // Anti-enumeration: still show a "sent" affirmative on the client for
-      // non-4xx failures. Only surface actual client-side/network issues.
+      // non-4xx failures. Only surface actual client-side / network issues.
       if (caught instanceof Error && caught.message) {
         setError(caught.message);
       }

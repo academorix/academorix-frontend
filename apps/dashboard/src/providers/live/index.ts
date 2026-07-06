@@ -3,20 +3,22 @@
  * @module providers/live
  *
  * @description
- * Selects the active live provider based on `VITE_API_MOCK`:
- * - `true`  → {@link createNoopLiveProvider} (no realtime server in mock mode).
- * - `false` → {@link createReverbLiveProvider} (Laravel Reverb via Echo).
+ * Wires the Refine {@link LiveProvider} used for realtime updates. The
+ * dashboard always connects to Laravel Reverb via Echo — there is no
+ * offline / mock branch anymore now that every domain module ships a
+ * real HTTP surface.
+ *
+ * {@link createNoopLiveProvider} stays exported so callers with a hard
+ * requirement to disable realtime (SSR previews, storybook fixtures,
+ * automated a11y snapshots) can still opt in explicitly.
  */
 
 import type { LiveProvider } from "@refinedev/core";
 
-import { env } from "@/config/env";
-import { createNoopLiveProvider, createReverbLiveProvider } from "@/providers/live/live-provider";
+import { createReverbLiveProvider } from "@/providers/live/live-provider";
 
-/** The live provider Refine will use for this session. */
-export const liveProvider: LiveProvider = env.VITE_API_MOCK
-  ? createNoopLiveProvider()
-  : createReverbLiveProvider();
+/** The live provider Refine uses for this session. */
+export const liveProvider: LiveProvider = createReverbLiveProvider();
 
 export { createNoopLiveProvider, createReverbLiveProvider } from "@/providers/live/live-provider";
 export { disconnectEcho, getEcho } from "@/providers/live/echo";
