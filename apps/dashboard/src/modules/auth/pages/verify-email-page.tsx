@@ -21,7 +21,7 @@ import { useNavigate, useSearchParams } from "react-router";
 
 import type { ReactNode } from "react";
 
-import { env } from "@/config/env";
+import { envConfig } from "@/config/env.config";
 import { appRoutes } from "@/lib/module";
 import { AuthCard } from "@/modules/auth/components/auth-card";
 
@@ -42,7 +42,7 @@ export default function VerifyEmailPage(): ReactNode {
    * short-circuit without touching {@code window.location}.
    */
   const verifyUrl = hasParams
-    ? `${env.VITE_API_URL}${env.VITE_API_PATH}/auth/email/verify/${id}/${hash}?signature=${signature}&expires=${expires ?? ""}`
+    ? `${envConfig.apiUrl}${envConfig.apiPath}/auth/email/verify/${id}/${hash}?signature=${signature}&expires=${expires ?? ""}`
     : undefined;
 
   useEffect(() => {

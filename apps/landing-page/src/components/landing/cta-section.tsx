@@ -16,8 +16,8 @@ import { useCallback } from "react";
 import type { SiteData } from "@/lib/types";
 import type { ReactNode } from "react";
 
+import { envConfig } from "@/config/env.config";
 import { Link } from "@/i18n/navigation";
-import { getAppUrl } from "@/lib/env";
 
 /** Props for {@link CtaSection}. */
 interface CtaSectionProps {
@@ -27,7 +27,7 @@ interface CtaSectionProps {
 /** The final call-to-action section on the landing page. */
 export function CtaSection({ site }: CtaSectionProps): ReactNode {
   const goToRegister = useCallback((): void => {
-    window.location.href = `${getAppUrl()}/register`;
+    window.location.href = `${envConfig.appUrl}/register`;
   }, []);
 
   return (

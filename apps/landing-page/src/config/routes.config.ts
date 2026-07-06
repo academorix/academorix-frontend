@@ -18,7 +18,7 @@
  * ## Split with `lib/routes.ts`
  *
  * External + cross-app URLs (SPA links) are handled by `lib/routes.ts`
- * because those need runtime env resolution (`getAppUrl()` reads
+ * because those need runtime env resolution ({@link envConfig.appUrl} reads
  * `process.env.NEXT_PUBLIC_APP_URL`). This file stays fully static
  * so it's safe to import from `next.config.ts` at build time.
  */

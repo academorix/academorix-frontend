@@ -12,10 +12,11 @@
 import { LanguageIcon } from "@academorix/ui/icons/outline";
 import { Button, Dropdown, Label } from "@academorix/ui/react";
 
-import type { Locale } from "@/lib/i18n";
+import type { Locale } from "@/config/i18n.config";
 import type { Key, ReactNode } from "react";
 
-import { LOCALE_LABELS, LOCALES, useLocale } from "@/lib/i18n";
+import { LOCALE_LABELS, LOCALES } from "@/config/i18n.config";
+import { useLocale } from "@/lib/i18n";
 
 /** Props for {@link LanguageSwitcher}. */
 interface LanguageSwitcherProps {

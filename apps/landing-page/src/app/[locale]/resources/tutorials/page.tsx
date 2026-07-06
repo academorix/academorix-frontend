@@ -18,7 +18,7 @@ import { permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-import { getTutorialsUrl } from "@/lib/env";
+import { envConfig } from "@/config/env.config";
 
 /** Props for {@link TutorialsPage}. */
 interface TutorialsPageProps {
@@ -44,5 +44,5 @@ export async function generateMetadata({ params }: TutorialsPageProps): Promise<
 
 /** Server-side 308 redirect to the YouTube channel. */
 export default function TutorialsPage(): ReactNode {
-  permanentRedirect(getTutorialsUrl());
+  permanentRedirect(envConfig.tutorialsUrl);
 }

@@ -15,7 +15,7 @@ import { useCallback } from "react";
 
 import type { ReactNode } from "react";
 
-import { getAppUrl } from "@/lib/env";
+import { envConfig } from "@/config/env.config";
 
 /** The bottom conversion band. */
 export function PricingBottomCta(): ReactNode {
@@ -24,7 +24,7 @@ export function PricingBottomCta(): ReactNode {
   }, []);
 
   const openSignup = useCallback((): void => {
-    window.location.href = `${getAppUrl()}/register`;
+    window.location.href = `${envConfig.appUrl}/register`;
   }, []);
 
   return (

@@ -4,21 +4,32 @@
  *
  * @description
  * Production-grade Vite configuration for the Academorix tenant SPA
- * (`@academorix/dashboard`). The file is intentionally verbose so every option
- * below documents the reason it exists — a Vite config is a load-bearing piece
- * of infrastructure and drift here silently degrades the shipped bundle.
+ * (`@academorix/dashboard`).
  *
- * Layout of the config:
- * 1. **Env + version** — read from `environments/` and `package.json`.
- * 2. **Plugins** — React + Tailwind v4 + PWA (Workbox service worker).
- * 3. **Path aliases** — `@` → `./src`.
- * 4. **Dev server** — port + HMR conventions.
- * 5. **Preview** — production-parity local preview.
- * 6. **Build** — code-splitting, minification, hashed filenames, sourcemaps.
- * 7. **Test (vitest)** — jsdom + coverage config.
+ * ## Layout
  *
- * The PWA plugin is opinionated on purpose. See §Plugins below for the full
- * ADR (why `prompt` over `autoUpdate`, why `NetworkFirst` for the API, etc.).
+ *  1. **Env + version** — read from `environments/` and `package.json`.
+ *  2. **Plugins** — React + Tailwind v4 + PWA (Workbox service worker).
+ *     The PWA options are a single import from `src/config/pwa.config.ts`
+ *     so the manifest, icons, shortcuts, runtime caching, and Arabic
+ *     translations are one grep away.
+ *  3. **Path aliases** — `@` → `./src`.
+ *  4. **Dev server** — port + HMR conventions.
+ *  5. **Preview** — production-parity local preview.
+ *  6. **Build** — code-splitting, minification, hashed filenames, sourcemaps.
+ *  7. **Test (vitest)** — jsdom + coverage config.
+ *
+ * ## Source of truth for PWA + Manifest
+ *
+ *  - Manifest content (name, icons, shortcuts, translations, brand colors)
+ *    lives in `src/config/pwa.config.ts` → `buildManifest()`.
+ *  - Workbox runtime caching lives in `src/config/pwa.config.ts` →
+ *    `WORKBOX_OPTIONS`.
+ *  - Arabic + future locale strings live in `src/config/i18n.config.ts` →
+ *    `PWA_MANIFEST_TRANSLATIONS`, consumed by `buildManifest()`.
+ *
+ * Every downstream consumer (the Vite plugin below, the Tauri desktop
+ * shell in future, admin surfaces, e2e snapshots) reads the same values.
  */
 
 import { readFileSync } from "node:fs";
@@ -28,6 +39,8 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 import { defineConfig } from "vitest/config";
+
+import { PWA_PLUGIN_OPTIONS } from "./src/config/pwa.config";
 
 /**
  * Resolve a path relative to this config file. Using `fileURLToPath` (instead
@@ -108,402 +121,18 @@ export default defineConfig(() => {
       tailwindcss(),
 
       /**
-       * ----------------------------------------------------------------------
-       * `vite-plugin-pwa` — Progressive Web App (Workbox service worker)
-       * ----------------------------------------------------------------------
+       * `vite-plugin-pwa` — options come verbatim from
+       * `src/config/pwa.config.ts` (see file docblock). Everything about
+       * the manifest, icons, Arabic translations, and Workbox runtime
+       * caching lives there so this file stays about the Vite pipeline.
        *
-       * WHY:
-       * - The dashboard is a long-lived work-tool users leave open for hours.
-       *   A service worker gives us (a) instant subsequent loads (precache),
-       *   (b) resilient reads for reference data while offline, (c) a proper
-       *   installable app on desktop + mobile that competes with native.
-       *
-       * ADRs baked into the config below:
-       *
-       * • `registerType: "prompt"` (NOT `"autoUpdate"`).
-       *   Business apps can hold unsaved form state. We refuse to silently
-       *   reload the page underneath the user. Instead the app shows a HeroUI
-       *   toast ("New version available — Refresh") wired through
-       *   `virtual:pwa-register/react` → `useRegisterSW`.
-       *
-       * • `injectRegister: null`.
-       *   We register the SW ourselves inside React (see `src/pwa/`), because
-       *   we need the `needRefresh` / `offlineReady` React state to drive the
-       *   toast UI. Letting the plugin inject a `<script>` in `index.html`
-       *   would fire the registration before React is mounted and we'd lose
-       *   that hook.
-       *
-       * • `strategies: "generateSW"`.
-       *   Workbox generates the SW from `workbox` options below. We do NOT
-       *   need `injectManifest` (custom SW file) — every runtime-caching rule
-       *   we want is expressible declaratively.
-       *
-       * • `workbox.navigateFallback: "/index.html"` + `navigateFallbackDenylist`.
-       *   Standard SPA rewrite for cold offline loads — matches the Vercel
-       *   rewrite in `vercel.json`. The denylist excludes `/api/*` so an
-       *   offline fetch to the backend fails cleanly instead of returning
-       *   the HTML shell (which would break `mock-data-provider.load()`'s
-       *   HTML-not-JSON guard).
-       *
-       * • Runtime caching strategies:
-       *   – `/api/*`             → NetworkFirst with 5s timeout, so users get
-       *                             fresh data online but a stale copy while
-       *                             offline. 200 responses only, 1h max age.
-       *   – Fonts (CSS + files)  → StaleWhileRevalidate (safe: fonts are
-       *                             pinned by URL, mutations are rare).
-       *   – Images                → CacheFirst with a 60-entry LRU + 30d TTL.
-       *   – App shell JS/CSS      → Precached at build time via
-       *                             `globPatterns`.
-       *
-       * • `devOptions.enabled: false`.
-       *   Never register a SW in dev. It ruins HMR (the SW intercepts fetches
-       *   and Vite loses control). `mode = development` in the runtime hook
-       *   also short-circuits on this.
-       *
-       * SEE ALSO:
-       * - `src/pwa/register-sw.ts`      — React registration hook.
-       * - `src/pwa/pwa-update-toast.tsx` — user-facing update UX.
-       * - `vercel.json`                  — SPA rewrite + SW cache headers.
-       * - `public/favicon.svg`           — master vector referenced by
-       *                                    manifest icons.
+       * See also:
+       *   - `src/pwa/register-sw.ts`      — React registration hook.
+       *   - `src/pwa/pwa-update-toast.tsx` — user-facing update UX.
+       *   - `vercel.json`                  — SPA rewrite + SW cache headers.
+       *   - `public/favicon.svg`           — master vector for the icon set.
        */
-      VitePWA({
-        strategies: "generateSW",
-        registerType: "prompt",
-        injectRegister: null,
-
-        /**
-         * Files that the plugin should include in the precache manifest. The
-         * defaults cover JS/CSS/HTML/SVG; we add font files explicitly because
-         * `globIgnores` is left at its default. The `public/data/*.json`
-         * mock fixtures they used to exclude were deleted alongside the
-         * mock data layer, and every runtime asset that Vite emits should
-         * be precached to keep the offline experience honest.
-         */
-        includeAssets: ["favicon.svg", "favicon.ico", "robots.txt", "apple-touch-icon.png"],
-        includeManifestIcons: true,
-
-        /**
-         * Web App Manifest. This is the metadata browsers use for the install
-         * prompt, home-screen icon, splash screen, and shortcuts menu. Every
-         * field below is intentional — do not remove one without checking
-         * https://developer.mozilla.org/en-US/docs/Web/Manifest first.
-         */
-        manifest: {
-          /** Full product name shown on the install prompt + splash screen. */
-          name: "Academorix — Academy Operations",
-
-          /** Short name (≤12 chars is ideal) for the home-screen icon. */
-          short_name: "Academorix",
-
-          /** One-line pitch. Shown in some install prompts + store listings. */
-          description:
-            "Academorix — the operating system for modern academies. Manage athletes, teams, sessions, matches, payments, and safeguarding from one place.",
-
-          /** Sanctioned locale — helps browsers pick the right typography. */
-          lang: "en",
-
-          /** LTR by default; runtime i18n switches `<html dir>` at load. */
-          dir: "ltr",
-
-          /**
-           * `standalone` renders without the browser chrome (address bar,
-           * tabs) — the "app" feel. We deliberately avoid `fullscreen` which
-           * hides the status bar and clashes with mobile safe-areas.
-           */
-          display: "standalone",
-
-          /** Fallback list — if `standalone` isn't supported, try these. */
-          display_override: ["window-controls-overlay", "standalone", "minimal-ui", "browser"],
-
-          /** Vertical for phones, natural on tablets/desktops. */
-          orientation: "any",
-
-          /**
-           * `theme_color` — used for the address bar tint on mobile Chrome/
-           * Edge, the title-bar tint in installed PWAs, and the splash screen
-           * top strip. This tracks HeroUI Pro's default accent (sky blue).
-           * Kept in sync with the `<meta name="theme-color">` in index.html.
-           */
-          theme_color: "#0EA5E9",
-
-          /**
-           * `background_color` — splash screen background before the app
-           * paints. White to match the default light-mode canvas so there is
-           * no dark→light flash.
-           */
-          background_color: "#FFFFFF",
-
-          /**
-           * `scope` + `start_url` — required for the app to be installable.
-           * `scope: "/"` lets the SW control every route; `start_url` opens
-           * the workspace picker (which redirects to the appropriate landing
-           * page once auth resolves).
-           *
-           * We embed a `source=pwa` query param on `start_url` so analytics
-           * can distinguish installed-app opens from tab opens.
-           */
-          scope: "/",
-          start_url: "/?source=pwa",
-
-          /** Store-listing category hints. */
-          categories: ["business", "productivity", "sports"],
-
-          /**
-           * Icons — referenced from the served origin. The manifest MUST list
-           * at least one icon of each of these forms for full install
-           * support:
-           *   • 192×192 PNG (`purpose: "any"`) — Android launcher standard.
-           *   • 512×512 PNG (`purpose: "any"`) — Android splash + Windows.
-           *   • 512×512 PNG (`purpose: "maskable"`) — Android adaptive icons
-           *     (the OS crops to a circle/squircle; we bleed the graphic
-           *     into the safe zone).
-           *   • SVG (`purpose: "any"`, `sizes: "any"`) — scalable fallback +
-           *     favicon.
-           *
-           * The PNGs are generated on demand by
-           * `pnpm --filter @academorix/dashboard generate-pwa-assets`, which
-           * rasterizes `favicon.svg` via `@vite-pwa/assets-generator`. Until
-           * that runs, browsers gracefully fall back to the SVG icon.
-           *
-           * NOTE: filenames match the `minimal-2023` preset defaults so
-           * consumers don't need to remember custom names.
-           */
-          icons: [
-            {
-              src: "/favicon.svg",
-              sizes: "any",
-              type: "image/svg+xml",
-              purpose: "any",
-            },
-            {
-              src: "/pwa-64x64.png",
-              sizes: "64x64",
-              type: "image/png",
-              purpose: "any",
-            },
-            {
-              src: "/pwa-192x192.png",
-              sizes: "192x192",
-              type: "image/png",
-              purpose: "any",
-            },
-            {
-              src: "/pwa-512x512.png",
-              sizes: "512x512",
-              type: "image/png",
-              purpose: "any",
-            },
-            {
-              src: "/maskable-icon-512x512.png",
-              sizes: "512x512",
-              type: "image/png",
-              purpose: "maskable",
-            },
-          ],
-
-          /**
-           * App shortcuts — right-click on the installed app (Windows/Android
-           * long-press, macOS dock context menu) exposes these as jump links.
-           * Curated to the four screens most-loaded during a shift.
-           */
-          shortcuts: [
-            {
-              name: "Dashboard",
-              short_name: "Home",
-              description: "Overview of today's activity + KPIs",
-              url: "/dashboard?source=pwa-shortcut",
-              icons: [{ src: "/favicon.svg", sizes: "any", type: "image/svg+xml" }],
-            },
-            {
-              name: "Athletes",
-              short_name: "Athletes",
-              description: "Roster + registration + safeguarding",
-              url: "/athletes?source=pwa-shortcut",
-              icons: [{ src: "/favicon.svg", sizes: "any", type: "image/svg+xml" }],
-            },
-            {
-              name: "Sessions",
-              short_name: "Sessions",
-              description: "Training sessions + attendance",
-              url: "/sessions?source=pwa-shortcut",
-              icons: [{ src: "/favicon.svg", sizes: "any", type: "image/svg+xml" }],
-            },
-            {
-              name: "Command Palette",
-              short_name: "Search",
-              description: "Jump anywhere with ⌘K",
-              url: "/?command=open&source=pwa-shortcut",
-              icons: [{ src: "/favicon.svg", sizes: "any", type: "image/svg+xml" }],
-            },
-          ],
-        },
-
-        /**
-         * Workbox generation options — control what the plugin bakes into
-         * the emitted `sw.js`.
-         */
-        workbox: {
-          /**
-           * Precache manifest inputs. `**\/*.{js,css,html,ico,png,svg,webp}`
-           * covers every asset Vite emits. We deliberately DO NOT precache
-           * source maps (they can be > 1 MB each) and DO NOT precache the
-           * mock JSON fixtures.
-           */
-          globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,woff,woff2}"],
-          globIgnores: ["**/data/**", "**/*.map"],
-
-          /**
-           * Some routes (e.g. `/dashboard/athletes/{id}`) are dynamic and
-           * cannot be precached individually — the SW should serve
-           * `/index.html` for any navigation request that isn't precached.
-           * `navigateFallbackDenylist` keeps the fallback OUT of `/api/*`
-           * paths so a failed API call surfaces the real network error, not
-           * the SPA shell.
-           */
-          navigateFallback: "/index.html",
-          navigateFallbackDenylist: [
-            /^\/api\//, // Backend API — never fall back to the SPA shell.
-            /^\/sw\.js$/, // The service worker itself.
-            /^\/workbox-.*\.js$/, // Workbox runtime chunks.
-            /^\/manifest\.webmanifest$/, // Manifest — must be served as-is.
-          ],
-
-          /**
-           * Runtime caching — everything that isn't precached goes through
-           * these rules on request. Order matters: the first matching entry
-           * wins.
-           */
-          runtimeCaching: [
-            {
-              // -----------------------------------------------------------------
-              // Backend API — NetworkFirst
-              // -----------------------------------------------------------------
-              // Users need fresh data. When online, the browser talks to the
-              // network; if the network fails or times out (5s), it falls back
-              // to the cached copy. Cached responses expire after 1h so we
-              // never serve dangerously stale content.
-              urlPattern: ({ url }) =>
-                url.pathname.startsWith("/api/") && url.origin === self.location.origin,
-              handler: "NetworkFirst",
-              method: "GET",
-              options: {
-                cacheName: "academorix-api-v1",
-                networkTimeoutSeconds: 5,
-                expiration: {
-                  maxEntries: 200,
-                  maxAgeSeconds: 60 * 60, // 1 hour
-                  purgeOnQuotaError: true,
-                },
-                cacheableResponse: {
-                  statuses: [0, 200],
-                },
-              },
-            },
-            {
-              // -----------------------------------------------------------------
-              // Same-origin images — CacheFirst
-              // -----------------------------------------------------------------
-              // Images (avatars, thumbnails, badges) rarely change and are
-              // heavy. Cache aggressively; LRU-evict past 100 entries.
-              urlPattern: ({ request, url }) =>
-                request.destination === "image" && url.origin === self.location.origin,
-              handler: "CacheFirst",
-              options: {
-                cacheName: "academorix-images-v1",
-                expiration: {
-                  maxEntries: 100,
-                  maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
-                  purgeOnQuotaError: true,
-                },
-                cacheableResponse: {
-                  statuses: [0, 200],
-                },
-              },
-            },
-            {
-              // -----------------------------------------------------------------
-              // Google Fonts stylesheet — StaleWhileRevalidate
-              // -----------------------------------------------------------------
-              // Even though we self-host in production, some HeroUI Pro chart
-              // stubs pull Inter from fonts.googleapis.com in dev. Cache it
-              // safely; the stylesheet is tiny.
-              urlPattern: ({ url }) => url.origin === "https://fonts.googleapis.com",
-              handler: "StaleWhileRevalidate",
-              options: {
-                cacheName: "google-fonts-stylesheets-v1",
-                expiration: {
-                  maxEntries: 10,
-                  maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
-                },
-              },
-            },
-            {
-              // -----------------------------------------------------------------
-              // Google Fonts files — CacheFirst
-              // -----------------------------------------------------------------
-              // Font binaries are content-hashed by Google, so a CacheFirst
-              // strategy with a long TTL is safe.
-              urlPattern: ({ url }) => url.origin === "https://fonts.gstatic.com",
-              handler: "CacheFirst",
-              options: {
-                cacheName: "google-fonts-webfonts-v1",
-                expiration: {
-                  maxEntries: 30,
-                  maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
-                },
-                cacheableResponse: {
-                  statuses: [0, 200],
-                },
-              },
-            },
-          ],
-
-          /**
-           * Delete every cache from previous Workbox versions on activate.
-           * Prevents "why is my SW still serving last week's build" bugs.
-           */
-          cleanupOutdatedCaches: true,
-
-          /**
-           * `clientsClaim: true` means the new SW immediately controls every
-           * open tab as soon as it activates. Combined with `skipWaiting:
-           * false` and our `prompt` register type, the sequence is:
-           *   1. New SW installs in the background.
-           *   2. React's `needRefresh` state flips to `true`.
-           *   3. User clicks "Refresh" in the toast.
-           *   4. We call `updateSW(true)` which triggers `skipWaiting()` and
-           *      then reloads — at which point `clientsClaim` puts the new
-           *      SW in control immediately.
-           */
-          clientsClaim: true,
-          skipWaiting: false,
-
-          /**
-           * Max precached asset size. 5 MB is generous but keeps us from
-           * accidentally precaching a huge JSON blob if the mock data ever
-           * ends up in the build output.
-           */
-          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-
-          /** Never emit sourcemaps for the SW itself. */
-          sourcemap: false,
-        },
-
-        /**
-         * Dev-mode behaviour. We deliberately keep the SW OFF during `vite
-         * dev` because it interferes with HMR (the SW would intercept module
-         * requests). The dev experience matters more than testing the SW
-         * locally; we validate PWA behaviour against `vite build && vite
-         * preview` and in Vercel preview deploys instead.
-         */
-        devOptions: {
-          enabled: false,
-          type: "module",
-          navigateFallback: "index.html",
-          suppressWarnings: true,
-        },
-      }),
+      VitePWA(PWA_PLUGIN_OPTIONS),
     ],
 
     /*
@@ -516,6 +145,21 @@ export default defineConfig(() => {
     define: {
       __ACADEMORIX_VERSION__: JSON.stringify(version),
     },
+
+    /*
+     * ------------------------------------------------------------------------
+     * Oxc transformer
+     * ------------------------------------------------------------------------
+     * Vite 8 uses Oxc (Rust-based) as the JS/TS/JSX transformer, replacing
+     * esbuild from earlier Vite versions. We keep the default JSX config
+     * (`@vitejs/plugin-react` handles React 19 fast refresh) and add no
+     * global JSX injection.
+     *
+     * Console/debugger stripping in production is delegated to Oxc-minify
+     * (invoked automatically by `build.minify: true`), which drops
+     * `debugger` statements by default and does dead-code elimination.
+     */
+    oxc: undefined,
 
     /*
      * ------------------------------------------------------------------------
@@ -625,11 +269,6 @@ export default defineConfig(() => {
        * Minify with the default Rust minifier (Oxc-minify, shipped with
        * Vite 8 via Rolldown). Much faster than esbuild/Terser and produces
        * comparable output.
-       *
-       * NOTE: Vite 8 replaced esbuild with Oxc/Rolldown as the primary
-       * transformer + minifier. `"esbuild"` is still accepted as a legacy
-       * value but internally maps to Oxc. Setting `true` picks the built-in
-       * default and side-steps the compat shim.
        */
       minify: true,
 
@@ -728,25 +367,6 @@ export default defineConfig(() => {
         },
       },
     },
-
-    /*
-     * ------------------------------------------------------------------------
-     * Oxc transformer
-     * ------------------------------------------------------------------------
-     * Vite 8 uses Oxc (Rust-based) as the JS/TS/JSX transformer, replacing
-     * esbuild from earlier Vite versions. We keep the default JSX config
-     * (`@vitejs/plugin-react` handles React 19 fast refresh) and add no
-     * global JSX injection.
-     *
-     * Console/debugger stripping in production is delegated to Oxc-minify
-     * (invoked automatically by `build.minify: true` above), which drops
-     * `debugger` statements by default. If we ever want to also strip
-     * `console.log`/`.info`/etc., migrate to `build.minifyOptions =
-     * { compress: { dropConsole: true } }` when Vite exposes that key.
-     * For now the calls survive but with our custom logging discipline
-     * that's fine.
-     */
-    oxc: undefined,
 
     /*
      * ------------------------------------------------------------------------

@@ -18,7 +18,7 @@
 
 import type Echo from "laravel-echo";
 
-import { env } from "@/config/env";
+import { envConfig } from "@/config/env.config";
 import { tokenStore } from "@/lib/http";
 
 /** Broadcaster driver we target. Reverb reuses the Pusher client transport. */
@@ -62,15 +62,15 @@ async function createEcho(): Promise<ReverbEcho> {
 
   return new EchoConstructor<"reverb">({
     broadcaster: "reverb",
-    key: env.VITE_REVERB_APP_KEY,
-    wsHost: env.VITE_REVERB_HOST,
-    wsPort: env.VITE_REVERB_PORT,
-    wssPort: env.VITE_REVERB_PORT,
-    forceTLS: env.VITE_REVERB_SCHEME === "https",
+    key: envConfig.reverb.appKey,
+    wsHost: envConfig.reverb.host,
+    wsPort: envConfig.reverb.port,
+    wssPort: envConfig.reverb.port,
+    forceTLS: envConfig.reverb.scheme === "https",
     enabledTransports: ["ws", "wss"],
     // Private/presence channel authorisation goes through the API with the
     // current bearer token.
-    authEndpoint: `${env.VITE_API_URL}/broadcasting/auth`,
+    authEndpoint: `${envConfig.apiUrl}/broadcasting/auth`,
     auth: {
       headers: {
         Authorization: token ? `Bearer ${token}` : "",

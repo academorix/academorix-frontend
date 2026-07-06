@@ -6,24 +6,31 @@
  * Holds the active {@link Locale} for the app and exposes it (plus a setter and
  * the derived Refine {@link I18nProvider}) via context. Responsibilities:
  *
- * - Initialize from the persisted preference (`localStorage`), else `"en"`.
+ * - Initialize from the persisted preference (`localStorage`), else the
+ *   {@link DEFAULT_LOCALE} declared in {@link "@/config/i18n.config"}.
  * - Persist changes so the choice survives reloads.
  * - Keep the document's `lang`/`dir` attributes in sync (drives RTL for Arabic).
  * - Rebuild the `i18nProvider` whenever the locale changes so translations and
  *   `getLocale()` stay correct.
+ *
+ * All locale primitives (LOCALES / Locale / RTL_LOCALES / storage key /
+ * predicates) are imported directly from `@/config/i18n.config` — the single
+ * source of truth. This module owns only the React runtime layer.
  */
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
-import type { Locale } from "@/lib/i18n/i18n.types";
+import type { Locale } from "@/config/i18n.config";
 import type { I18nProvider } from "@refinedev/core";
 import type { ReactNode } from "react";
 
+import {
+  DEFAULT_LOCALE,
+  isRtlLocale,
+  isSupportedLocale,
+  LOCALE_STORAGE_KEY,
+} from "@/config/i18n.config";
 import { createI18nProvider } from "@/lib/i18n/i18n-provider";
-import { isRtlLocale, LOCALES } from "@/lib/i18n/i18n.types";
-
-/** `localStorage` key holding the user's locale preference. */
-const STORAGE_KEY = "academorix.locale";
 
 /** The value exposed by {@link LocaleContext}. */
 interface LocaleContextValue {
@@ -37,19 +44,24 @@ interface LocaleContextValue {
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
-/** Reads and validates the persisted locale, defaulting to `"en"`. */
+/**
+ * Reads and validates the persisted locale, defaulting to {@link DEFAULT_LOCALE}.
+ *
+ * Tolerates disabled / cross-origin-blocked storage (private browsing, iframe
+ * without `allow-same-origin`, corporate policy) by silently falling back.
+ */
 function readStoredLocale(): Locale {
   try {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
+    const stored = window.localStorage.getItem(LOCALE_STORAGE_KEY);
 
-    if (stored && (LOCALES as readonly string[]).includes(stored)) {
-      return stored as Locale;
+    if (stored && isSupportedLocale(stored)) {
+      return stored;
     }
   } catch {
     // Ignore storage access errors (private mode, disabled storage).
   }
 
-  return "en";
+  return DEFAULT_LOCALE;
 }
 
 /** Props for {@link LocaleProvider}. */
@@ -68,7 +80,7 @@ export function LocaleProvider({ children }: LocaleProviderProps): ReactNode {
     setLocaleState(next);
 
     try {
-      window.localStorage.setItem(STORAGE_KEY, next);
+      window.localStorage.setItem(LOCALE_STORAGE_KEY, next);
     } catch {
       // Ignore storage write errors.
     }

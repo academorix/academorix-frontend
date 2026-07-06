@@ -10,7 +10,7 @@
  * browser-side writes.
  */
 
-import { getBackendUrl } from "@/lib/env";
+import { envConfig } from "@/config/env.config";
 
 /** Foundation-style JSON envelope used by every Academorix API response. */
 export interface FoundationEnvelope<T> {
@@ -44,7 +44,7 @@ export class MarketingApiError extends Error {
  * @param body - JSON body to send.
  */
 export async function postJson<T>(path: string, body: unknown): Promise<T> {
-  const url = `${getBackendUrl()}/api${path.startsWith("/") ? path : `/${path}`}`;
+  const url = `${envConfig.backendUrl}/api${path.startsWith("/") ? path : `/${path}`}`;
   const response = await fetch(url, {
     method: "POST",
     headers: {

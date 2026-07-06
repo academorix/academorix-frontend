@@ -41,10 +41,10 @@ const entitlementsModule: AppModule = {
         // should be able to see the quotas the plan grants.
         requiredPermission: "view_billing",
         order: 99,
-        // Nav-only — no Refine CRUD is used. Pin to the mock provider so an
+        // Nav-only — no Refine CRUD is used. Pin to the noop provider so an
         // accidental `useList("entitlements")` doesn't hit the real REST
         // endpoint (which is an RPC, not a paged collection).
-        dataProviderName: "mock",
+        dataProviderName: "noop",
         groupKey: "finance",
       },
     },

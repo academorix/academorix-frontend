@@ -26,7 +26,7 @@ import { useNavigate } from "react-router";
 
 import type { ReactNode } from "react";
 
-import { siteConfig } from "@/config/site";
+import { siteConfig } from "@/config/site.config";
 import { buildTenantUrl } from "@/lib/http";
 import { appRoutes } from "@/lib/module";
 import { useMyWorkspaces } from "@/lib/tenancy";

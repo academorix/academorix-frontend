@@ -27,7 +27,8 @@
     "next-themes": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "tailwind-variants": "catalog:"
+    "tailwind-variants": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@academorix/eslint-config": "workspace:*",

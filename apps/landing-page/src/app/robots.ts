@@ -24,9 +24,9 @@
 
 import type { MetadataRoute } from "next";
 
+import { envConfig } from "@/config/env.config";
 import { NON_INDEXED_PATHS } from "@/config/routes.config";
 import { LOCALES, routing } from "@/i18n/routing";
-import { getMarketingUrl } from "@/lib/env";
 
 /** Builds the localised disallow list — bare for `en`, `/{locale}/…` otherwise. */
 function buildDisallow(): string[] {
@@ -46,7 +46,7 @@ function buildDisallow(): string[] {
  * `robots.txt` file at the site root.
  */
 export default function robots(): MetadataRoute.Robots {
-  const base = getMarketingUrl();
+  const base = envConfig.marketingUrl;
 
   return {
     rules: [

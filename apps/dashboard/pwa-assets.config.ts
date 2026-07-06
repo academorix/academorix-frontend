@@ -4,8 +4,9 @@
  *
  * @description
  * Declarative configuration for `@vite-pwa/assets-generator` — the CLI that
- * rasterizes `public/favicon.svg` into every PNG icon referenced by the Web
- * App Manifest and the `<link rel="apple-touch-icon">` tag.
+ * rasterizes `public/academorix-icon-tile.png` (the brand-provided app
+ * tile) into every PNG icon referenced by the Web App Manifest and the
+ * `<link rel="apple-touch-icon">` tag.
  *
  * ## When this runs
  *
@@ -16,11 +17,24 @@
  *
  * Keeping icon generation out of CI avoids installing `sharp` (a native
  * binary that's slow to install and platform-sensitive) on every build. The
- * generated PNGs are committed to the repo alongside `favicon.svg`.
+ * generated PNGs are committed to the repo alongside the master tile.
+ *
+ * ## Master image
+ *
+ * `public/academorix-icon-tile.png` is the 1024×1024 designed app tile
+ * shipped by the brand team (see `/brand/academorix-icon-tile.png` at the
+ * monorepo root). It's opaque with the brand background baked in — the
+ * right choice for maskable Android adaptive icons (which crop to a
+ * circle, so the safe zone must be visible) and iOS home screen tiles
+ * (which don't support transparency at all).
+ *
+ * The same source drives the landing-page's PWA icons — both apps stay
+ * visually consistent by design.
  *
  * ## When to rerun
  *
- * - Whenever `public/favicon.svg` changes (new brand color, new glyph).
+ * - Whenever `public/academorix-icon-tile.png` changes (new brand color,
+ *   new glyph, new mark).
  * - Whenever we bump the `minimal-2023` preset (new required icon size).
  *
  * ## Output layout
@@ -58,7 +72,7 @@ export default defineConfig({
   /**
    * The rasterization preset. `minimal-2023` matches the Web App Manifest
    * baseline recommended by MDN + web.dev in 2023 and is the source of truth
-   * for our `manifest.icons` in `vite.config.ts`.
+   * for our `MANIFEST_ICONS` in `src/config/pwa.config.ts`.
    *
    * If we ever add PWA push notifications or badging, revisit this to add
    * `badge` + notification icons.
@@ -66,9 +80,12 @@ export default defineConfig({
   preset,
 
   /**
-   * Master SVG. Path is relative to this config file's directory
-   * (`apps/dashboard/`). The generator overwrites raster outputs in-place
-   * next to this source file — do not point at a temp directory.
+   * Master image. Path is relative to this config file's directory
+   * (`apps/dashboard/`). The generator writes raster outputs into the same
+   * `public/` folder as this source — do not point at a temp directory.
+   *
+   * PNG input at 1024×1024 gives sharp enough downscales for every size in
+   * the `minimal-2023` preset (largest emitted is 512×512).
    */
-  images: ["public/favicon.svg"],
+  images: ["public/academorix-icon-tile.png"],
 });

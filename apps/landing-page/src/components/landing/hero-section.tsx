@@ -16,7 +16,7 @@ import { useCallback } from "react";
 import type { SiteData } from "@/lib/types";
 import type { ReactNode } from "react";
 
-import { getAppUrl } from "@/lib/env";
+import { envConfig } from "@/config/env.config";
 
 /** Props for {@link HeroSection}. */
 interface HeroSectionProps {
@@ -39,7 +39,7 @@ const HERO_STATS: readonly HeroStat[] = [
 /** The landing-page hero section. */
 export function HeroSection({ site }: HeroSectionProps): ReactNode {
   const goToLogin = useCallback((): void => {
-    window.location.href = `${getAppUrl()}/login`;
+    window.location.href = `${envConfig.appUrl}/login`;
   }, []);
 
   return (

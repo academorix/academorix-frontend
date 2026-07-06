@@ -27,7 +27,7 @@
  * `apiOrigin` from `VITE_API_URL`, so requests reach the local Laravel server.
  */
 
-import { env } from "@/config/env";
+import { envConfig } from "@/config/env.config";
 
 /** The three host kinds the SPA can boot in. */
 export type HostKind = "central" | "central-admin" | "tenant";
@@ -134,9 +134,9 @@ export function resolveHostContext(): HostContext {
     return cached;
   }
 
-  const centralHost = env.VITE_CENTRAL_HOST.toLowerCase();
-  const adminHost = env.VITE_PLATFORM_ADMIN_HOST.toLowerCase();
-  const apiPath = env.VITE_API_PATH.startsWith("/") ? env.VITE_API_PATH : `/${env.VITE_API_PATH}`;
+  const centralHost = envConfig.centralHost.toLowerCase();
+  const adminHost = envConfig.platformAdminHost.toLowerCase();
+  const apiPath = envConfig.apiPath.startsWith("/") ? envConfig.apiPath : `/${envConfig.apiPath}`;
 
   // SSR / test fallback.
   if (typeof window === "undefined" || !window.location) {
@@ -144,7 +144,7 @@ export function resolveHostContext(): HostContext {
       kind: "tenant",
       hostname: "localhost",
       tenantSlug: null,
-      apiOrigin: `${trimTrailingSlash(env.VITE_API_URL)}${apiPath}`,
+      apiOrigin: `${trimTrailingSlash(envConfig.apiUrl)}${apiPath}`,
       isCentral: false,
       isLocalhost: true,
     };
@@ -158,7 +158,7 @@ export function resolveHostContext(): HostContext {
   // Same-origin API in production (SPA is served from the same host as Laravel).
   // In dev, point at `VITE_API_URL` because Vite is on :3000 and Laravel on :8000.
   const apiOrigin = isLocalhost
-    ? `${trimTrailingSlash(env.VITE_API_URL)}${apiPath}`
+    ? `${trimTrailingSlash(envConfig.apiUrl)}${apiPath}`
     : `${window.location.origin}${apiPath}`;
 
   let kind: HostKind;
@@ -197,7 +197,7 @@ export function __resetHostContextForTests(): void {
  * different tenant.
  */
 export function buildTenantUrl(slug: string, pathname = "/"): string {
-  const centralHost = env.VITE_CENTRAL_HOST;
+  const centralHost = envConfig.centralHost;
 
   if (typeof window === "undefined") {
     return `https://${slug}.${centralHost}${pathname}`;
@@ -214,7 +214,7 @@ export function buildTenantUrl(slug: string, pathname = "/"): string {
  * "back to workspaces" links from a tenant page.
  */
 export function buildCentralUrl(pathname = "/"): string {
-  const centralHost = env.VITE_CENTRAL_HOST;
+  const centralHost = envConfig.centralHost;
 
   if (typeof window === "undefined") {
     return `https://${centralHost}${pathname}`;

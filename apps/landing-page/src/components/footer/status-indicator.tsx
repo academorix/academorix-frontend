@@ -4,8 +4,8 @@
  *
  * @description
  * Compact "All systems normal" pill rendered in the footer utility bar.
- * Links out to the public status page (`getStatusUrl()`) and shows a
- * subtly-pulsing green dot to signal the healthy default state.
+ * Links out to the public status page ({@link envConfig.statusUrl}) and
+ * shows a subtly-pulsing green dot to signal the healthy default state.
  *
  * Server Component — no interactivity beyond following the anchor, and
  * the pulse is pure CSS (`animate-ping`) so no JS runs on the client for
@@ -21,7 +21,7 @@ import { useTranslations } from "next-intl";
 
 import type { ReactNode } from "react";
 
-import { getStatusUrl } from "@/lib/env";
+import { envConfig } from "@/config/env.config";
 
 /**
  * Renders the footer's status pill. Anchor + green dot + label — always
@@ -35,7 +35,7 @@ export function StatusIndicator(): ReactNode {
     <a
       aria-label={t("status.aria")}
       className="inline-flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm font-medium text-muted transition-colors hover:bg-default/40 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-      href={getStatusUrl()}
+      href={envConfig.statusUrl}
       rel="noopener noreferrer"
       target="_blank"
     >

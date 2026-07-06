@@ -11,7 +11,7 @@
 
 import type { CtaDescriptor } from "@/lib/types";
 
-import { getAppUrl } from "@/lib/env";
+import { envConfig } from "@/config/env.config";
 
 /**
  * Resolves a CTA descriptor to a concrete URL.
@@ -25,7 +25,7 @@ import { getAppUrl } from "@/lib/env";
  * @param cta - Descriptor from a JSON fixture.
  */
 export function resolveCta(cta: CtaDescriptor): string {
-  const app = getAppUrl();
+  const app = envConfig.appUrl;
 
   switch (cta.type) {
     case "signup":

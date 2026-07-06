@@ -27,10 +27,10 @@
 
 import type { MetadataRoute } from "next";
 
+import { envConfig } from "@/config/env.config";
 import { STATIC_SITEMAP_ROUTES } from "@/config/routes.config";
 import { LOCALES, routing } from "@/i18n/routing";
 import { getEnterpriseSlugs, getLegalSlugs, getProductSlugs, getSportSlugs } from "@/lib/api";
-import { getMarketingUrl } from "@/lib/env";
 
 /**
  * Builds the locale-scoped absolute URL for a given `path`. English
@@ -80,7 +80,7 @@ function entriesFor(
  * valid `sitemap.xml` at the site root.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = getMarketingUrl();
+  const base = envConfig.marketingUrl;
   const now = new Date();
 
   // Static entries first — one row per (locale × static path) with

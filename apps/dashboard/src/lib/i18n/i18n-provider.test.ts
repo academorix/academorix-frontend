@@ -18,10 +18,10 @@
 
 import { describe, expect, it, vi } from "vitest";
 
-import type { Locale } from "@/lib/i18n/i18n.types";
+import type { Locale } from "@/config/i18n.config";
 
+import { isRtlLocale } from "@/config/i18n.config";
 import { createI18nProvider, translateMessage } from "@/lib/i18n/i18n-provider";
-import { isRtlLocale } from "@/lib/i18n/i18n.types";
 
 /** A locale with no catalog of its own, used to reach the English-fallback branch. */
 const UNCATALOGED_LOCALE = "fr" as unknown as Locale;

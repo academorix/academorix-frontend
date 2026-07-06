@@ -14,7 +14,7 @@ import { Card } from "@academorix/ui/react";
 
 import type { ReactNode } from "react";
 
-import { siteConfig } from "@/config/site";
+import { siteConfig } from "@/config/site.config";
 
 /** Props for {@link AuthCard}. */
 interface AuthCardProps {

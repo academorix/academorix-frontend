@@ -33,7 +33,7 @@ import routerProvider, {
 import type { ResourceProps } from "@refinedev/core";
 import type { ReactNode } from "react";
 
-import { siteConfig } from "@/config/site";
+import { siteConfig } from "@/config/site.config";
 import { LocaleProvider, useI18nProvider } from "@/lib/i18n";
 import { appResources } from "@/lib/module";
 import { accessControlProvider } from "@/providers/access-control";

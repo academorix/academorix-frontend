@@ -15,7 +15,7 @@ import { useCallback } from "react";
 
 import type { ReactNode } from "react";
 
-import { getAppUrl } from "@/lib/env";
+import { envConfig } from "@/config/env.config";
 
 /** Props for {@link CtaBand}. */
 interface CtaBandProps {
@@ -29,7 +29,7 @@ export function CtaBand({
   description = "Start free — no credit card required. Upgrade when you outgrow the Starter tier.",
 }: CtaBandProps): ReactNode {
   const goToRegister = useCallback((): void => {
-    window.location.href = `${getAppUrl()}/register`;
+    window.location.href = `${envConfig.appUrl}/register`;
   }, []);
 
   const goToSales = useCallback((): void => {

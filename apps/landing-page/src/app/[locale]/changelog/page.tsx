@@ -22,7 +22,7 @@ import { permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-import { getChangelogUrl } from "@/lib/env";
+import { envConfig } from "@/config/env.config";
 
 /** Props for {@link ChangelogPage}. */
 interface ChangelogPageProps {
@@ -51,5 +51,5 @@ export async function generateMetadata({ params }: ChangelogPageProps): Promise<
  * signal Next.js intercepts to emit a 308 to the client.
  */
 export default function ChangelogPage(): ReactNode {
-  permanentRedirect(getChangelogUrl());
+  permanentRedirect(envConfig.changelogUrl);
 }

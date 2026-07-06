@@ -17,7 +17,8 @@
  * separate mechanism sourced from `/auth/me`; see `@/lib/refine`.
  */
 
-import type { Locale, MessageCatalog } from "@/lib/i18n/i18n.types";
+import type { Locale } from "@/config/i18n.config";
+import type { MessageCatalog } from "@/lib/i18n/i18n-provider";
 
 /** English (source) catalog. */
 const en: MessageCatalog = {

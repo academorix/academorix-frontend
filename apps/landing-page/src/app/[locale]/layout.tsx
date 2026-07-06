@@ -38,9 +38,9 @@ import "@/styles/globals.css";
 
 import { Providers } from "@/app/providers";
 import { PwaInstallPrompt } from "@/components/pwa/install-prompt";
+import { envConfig } from "@/config/env.config";
 import { fontMono, fontSans } from "@/config/fonts.config";
 import { isRtlLocale, LOCALES, routing } from "@/i18n/routing";
-import { getMarketingUrl } from "@/lib/env";
 
 /**
  * Pre-renders every supported locale at build time. Ensures each locale's
@@ -75,7 +75,7 @@ export async function generateMetadata({
   const { getSite } = await import("@/lib/api");
   const siteData = await getSite(locale);
 
-  const marketing = getMarketingUrl();
+  const marketing = envConfig.marketingUrl;
 
   return {
     metadataBase: new URL(marketing),

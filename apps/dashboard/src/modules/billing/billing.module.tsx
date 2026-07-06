@@ -46,9 +46,10 @@ const billingModule: AppModule = {
         requiredPermission: "view_billing",
         order: 98,
         // Nav-only — no Refine CRUD is used against this resource. Setting
-        // `dataProviderName: "mock"` short-circuits any accidental `useList`
-        // to the fixture provider so a stale hook doesn't 404 in production.
-        dataProviderName: "mock",
+        // `dataProviderName: "noop"` short-circuits any accidental `useList`
+        // to a stub provider that returns empty results so a stale hook
+        // doesn't 404 in production. See `providers/data/noop-data-provider`.
+        dataProviderName: "noop",
         groupKey: "finance",
       },
     },

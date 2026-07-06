@@ -11,7 +11,7 @@
  * router with zero framework knowledge required.
  */
 
-import { getAppUrl } from "@/lib/env";
+import { envConfig } from "@/config/env.config";
 
 /**
  * Builds an absolute URL into the tenant SPA. Falls back to the local dev port
@@ -20,7 +20,7 @@ import { getAppUrl } from "@/lib/env";
  * @param path - Path segment starting with `/`, e.g. `/login`.
  */
 export function appUrl(path: string): string {
-  const base = getAppUrl();
+  const base = envConfig.appUrl;
   const normalisedPath = path.startsWith("/") ? path : `/${path}`;
 
   return `${base}${normalisedPath}`;

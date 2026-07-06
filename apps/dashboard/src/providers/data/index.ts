@@ -35,6 +35,7 @@
 import type { DataProvider } from "@refinedev/core";
 
 import { httpClient } from "@/lib/http";
+import { noopDataProvider } from "@/providers/data/noop-data-provider";
 import { createRestDataProvider } from "@/providers/data/rest-data-provider";
 
 /**
@@ -45,15 +46,23 @@ import { createRestDataProvider } from "@/providers/data/rest-data-provider";
 const restDataProvider: DataProvider = createRestDataProvider(httpClient, { apiPrefix: "/v1" });
 
 /**
- * The provider map Refine consumes. Only the {@code default} key is
- * populated; Refine falls back to it whenever a resource does not set
- * {@code meta.dataProviderName}.
+ * The provider map Refine consumes.
+ *
+ *  - `default` — every CRUD-backed resource resolves here (the REST
+ *    provider). Refine falls back to it whenever a resource does not
+ *    set {@code meta.dataProviderName}.
+ *  - `noop` — a stub for nav-only resources whose page talks to
+ *    the backend through {@link "@/lib/http" httpClient} directly
+ *    (RPC-style endpoints, not CRUD collections). See
+ *    {@link "@/providers/data/noop-data-provider"} for rationale.
  */
-export const dataProviders: { default: DataProvider } = {
+export const dataProviders: { default: DataProvider; noop: DataProvider } = {
   default: restDataProvider,
+  noop: noopDataProvider,
 };
 
 /** Convenience export — the default provider (mostly for tests). */
 export const dataProvider: DataProvider = dataProviders.default;
 
 export { createRestDataProvider } from "@/providers/data/rest-data-provider";
+export { noopDataProvider } from "@/providers/data/noop-data-provider";

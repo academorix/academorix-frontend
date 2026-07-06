@@ -35,8 +35,8 @@ import { LanguageSwitcher } from "@/components/nav/language-switcher";
 import { MegaMenu } from "@/components/nav/mega-menu";
 import { MobileNav } from "@/components/nav/mobile-nav";
 import { ThemeSwitch } from "@/components/theme-switch";
+import { envConfig } from "@/config/env.config";
 import { Link } from "@/i18n/navigation";
-import { getAppUrl } from "@/lib/env";
 
 /** Props for {@link LandingHeader}. */
 interface LandingHeaderProps {
@@ -51,11 +51,11 @@ export function LandingHeader({ nav, site }: LandingHeaderProps): ReactNode {
   const [isMobileNavOpen, setMobileNavOpen] = useState(false);
 
   const goToLogin = useCallback((): void => {
-    window.location.href = `${getAppUrl()}/login`;
+    window.location.href = `${envConfig.appUrl}/login`;
   }, []);
 
   const goToRegister = useCallback((): void => {
-    window.location.href = `${getAppUrl()}/register`;
+    window.location.href = `${envConfig.appUrl}/register`;
   }, []);
 
   return (

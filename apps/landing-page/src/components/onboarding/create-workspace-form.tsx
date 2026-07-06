@@ -28,9 +28,9 @@ import type { FormEvent, Key, ReactNode } from "react";
 
 import { AuthCard } from "@/components/auth-card";
 import { PasswordChecklist } from "@/components/password-checklist";
+import { envConfig } from "@/config/env.config";
 import { Link } from "@/i18n/navigation";
 import { MarketingApiError, postJson } from "@/lib/api-client/http";
-import { getAppUrl } from "@/lib/env";
 import { compilePasswordRules, validatePassword } from "@/lib/marketing/password";
 
 /** Props for {@link CreateWorkspaceForm}. */
@@ -42,7 +42,7 @@ interface CreateWorkspaceFormProps {
 
 /** Assembles the destination tenant URL after successful provision. */
 function buildTenantLoginUrl(slug: string): string {
-  const app = new URL(getAppUrl());
+  const app = new URL(envConfig.appUrl);
 
   if (app.hostname.split(".").length >= 2 && app.hostname !== "localhost") {
     const [, ...rest] = app.hostname.split(".");

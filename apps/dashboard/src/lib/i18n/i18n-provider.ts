@@ -6,12 +6,23 @@
  * Builds a Refine {@link I18nProvider} over the static {@link MESSAGES} catalogs.
  * `useTranslate`, `useSetLocale`, and `useGetLocale` throughout the app (and
  * inside Refine's own components) resolve against this provider.
+ *
+ * Also owns the {@link MessageCatalog} type — it's runtime-only (references
+ * Refine's `I18nProvider` shape) and never needed by build-time code, so it
+ * doesn't belong in `@/config/i18n.config`.
  */
 
-import type { Locale } from "@/lib/i18n/i18n.types";
+import type { Locale } from "@/config/i18n.config";
 import type { I18nProvider } from "@refinedev/core";
 
 import { MESSAGES } from "@/lib/i18n/messages";
+
+/**
+ * A message catalog: a flat map of dot-keyed message ids to translated strings.
+ * Keys mirror Refine's translation namespace (`buttons.*`, `pages.error.*`, …)
+ * plus an app-specific `app.*` namespace.
+ */
+export type MessageCatalog = Record<string, string>;
 
 /**
  * Interpolates `{{name}}` placeholders in a message with values from `params`.

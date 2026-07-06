@@ -38,7 +38,7 @@ import type { ReactNode } from "react";
 import { ResourceAccessGuard } from "@/components/access";
 import { QuotaMeter } from "@/components/billing";
 import { Breadcrumbs } from "@/components/refine";
-import { siteConfig } from "@/config/site";
+import { siteConfig } from "@/config/site.config";
 import { bannerFor, subscriptionStatusLabel, useQuotaSummary } from "@/lib/billing";
 import { formatDate, formatMoney } from "@/lib/format";
 import {

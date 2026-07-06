@@ -41,8 +41,8 @@ import { RegionSelector } from "@/components/footer/region-selector";
 import { StatusIndicator } from "@/components/footer/status-indicator";
 import { LanguageSwitcher } from "@/components/nav/language-switcher";
 import { ThemeSwitch } from "@/components/theme-switch";
+import { envConfig } from "@/config/env.config";
 import { Link } from "@/i18n/navigation";
-import { getChangelogUrl, getDocsUrl, getStatusUrl, getTutorialsUrl } from "@/lib/env";
 import { isExternalHref } from "@/lib/marketing/cta";
 
 /** Props for {@link FooterSection}. */
@@ -132,10 +132,10 @@ export function FooterSection({ site }: FooterSectionProps): ReactNode {
   const year = new Date().getFullYear();
 
   // Resolve external endpoints once up-front so the JSX stays flat.
-  const docsUrl = getDocsUrl();
-  const changelogUrl = getChangelogUrl();
-  const statusUrl = getStatusUrl();
-  const tutorialsUrl = getTutorialsUrl();
+  const docsUrl = envConfig.docsUrl;
+  const changelogUrl = envConfig.changelogUrl;
+  const statusUrl = envConfig.statusUrl;
+  const tutorialsUrl = envConfig.tutorialsUrl;
 
   // LinkedIn falls back to the community URL until we ship a real
   // LinkedIn company page — the brief calls this a placeholder.

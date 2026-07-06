@@ -21,7 +21,7 @@ import { permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-import { getDocsUrl } from "@/lib/env";
+import { envConfig } from "@/config/env.config";
 
 /** Props for {@link DocsPage}. */
 interface DocsPageProps {
@@ -45,5 +45,5 @@ export async function generateMetadata({ params }: DocsPageProps): Promise<Metad
 
 /** Server-side 308 redirect to the Mintlify docs origin. */
 export default function DocsPage(): ReactNode {
-  permanentRedirect(getDocsUrl());
+  permanentRedirect(envConfig.docsUrl);
 }

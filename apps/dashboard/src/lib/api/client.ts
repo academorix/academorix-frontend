@@ -25,7 +25,7 @@ import createClient from "openapi-fetch";
 import type { paths } from "@/lib/api/schema";
 import type { Middleware } from "openapi-fetch";
 
-import { env } from "@/config/env";
+import { envConfig } from "@/config/env.config";
 import { tokenStore } from "@/lib/http/token-store";
 
 /**
@@ -54,6 +54,6 @@ const authMiddleware: Middleware = {
  * after `pnpm codegen` populates the schema, every `GET`/`POST`/… call becomes
  * path- and payload-checked at compile time.
  */
-export const apiClient = createClient<paths>({ baseUrl: env.VITE_API_URL });
+export const apiClient = createClient<paths>({ baseUrl: envConfig.apiUrl });
 
 apiClient.use(authMiddleware);

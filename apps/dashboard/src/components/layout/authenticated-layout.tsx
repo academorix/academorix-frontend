@@ -58,7 +58,7 @@ import { CommandPalette, CommandPaletteProvider, useCommandPalette } from "@/com
 import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import { BranchSwitcher, OrganizationSwitcher, SeasonSwitcher } from "@/components/scope";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
-import { siteConfig } from "@/config/site";
+import { siteConfig } from "@/config/site.config";
 import { appResources } from "@/lib/module";
 import { WorkspaceSwitcher } from "@/lib/tenancy";
 import { ImpersonationBanner } from "@/modules/auth/components/impersonation-banner";

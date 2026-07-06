@@ -19,7 +19,7 @@ import { I18nContext } from "@refinedev/core";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import type { Locale } from "@/lib/i18n/i18n.types";
+import type { Locale } from "@/config/i18n.config";
 import type { ReactNode } from "react";
 
 import { AccessDenied } from "@/components/access/access-guard";

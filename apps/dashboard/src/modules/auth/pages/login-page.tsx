@@ -22,7 +22,7 @@ import { Link, useSearchParams } from "react-router";
 import type { LoginCredentials } from "@/types";
 import type { FormEvent, ReactNode } from "react";
 
-import { siteConfig } from "@/config/site";
+import { siteConfig } from "@/config/site.config";
 import { appRoutes } from "@/lib/module";
 
 /** Credentials collected by the form (subset of {@link LoginCredentials}). */

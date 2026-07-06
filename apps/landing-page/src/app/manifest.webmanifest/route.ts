@@ -51,11 +51,11 @@ export const runtime = "nodejs";
  * language to every request.
  */
 async function loadPwaMessages(locale: Locale): Promise<PwaMessages> {
-  const module = (await import(`@/messages/${locale}.json`)) as {
+  const catalog = (await import(`@/messages/${locale}.json`)) as {
     default: { pwa: PwaMessages };
   };
 
-  return module.default.pwa;
+  return catalog.default.pwa;
 }
 
 /** Emits `application/manifest+json` for the requested locale. */
