@@ -1,6 +1,51 @@
 {
   "$comment": "English UI chrome for the marketing site. Marketing content (product descriptions, sport features, testimonials, legal docs, FAQ answers) lives in public/data/en/*.json so it can be localised incrementally by content teams.",
 
+  "pwa": {
+    "name": "Academorix",
+    "shortName": "Academorix",
+    "description": "The multi-sport academy OS. Manage athletes, teams, sessions, and payments — right from your home screen.",
+    "shortcuts": {
+      "pricing": {
+        "name": "Plans & pricing",
+        "shortName": "Pricing",
+        "description": "Compare every plan and pick the right fit"
+      },
+      "products": {
+        "name": "Products",
+        "shortName": "Products",
+        "description": "Every product in the Academorix suite"
+      },
+      "sports": {
+        "name": "Sports",
+        "shortName": "Sports",
+        "description": "Every sport we support"
+      },
+      "contactSales": {
+        "name": "Talk to sales",
+        "shortName": "Sales",
+        "description": "Scope your rollout with our team"
+      }
+    },
+    "install": {
+      "title": "Install Academorix",
+      "description": "Add Academorix to your home screen for one-tap access and offline-ready reading.",
+      "primary": "Install",
+      "secondary": "Not now",
+      "ariaClose": "Dismiss install prompt"
+    },
+    "updateAvailable": {
+      "title": "A new version is ready",
+      "description": "Refresh to pick up the latest improvements.",
+      "primary": "Refresh",
+      "secondary": "Later"
+    },
+    "offlineReady": {
+      "title": "Ready to browse offline",
+      "description": "Academorix keeps working even without a connection."
+    }
+  },
+
   "common": {
     "getStarted": "Get started",
     "signIn": "Sign in",

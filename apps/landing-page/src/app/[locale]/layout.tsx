@@ -37,7 +37,8 @@ import type { ReactNode } from "react";
 import "@/styles/globals.css";
 
 import { Providers } from "@/app/providers";
-import { fontMono, fontSans } from "@/config/fonts";
+import { PwaInstallPrompt } from "@/components/pwa/install-prompt";
+import { fontMono, fontSans } from "@/config/fonts.config";
 import { isRtlLocale, LOCALES, routing } from "@/i18n/routing";
 import { getMarketingUrl } from "@/lib/env";
 
@@ -98,7 +99,21 @@ export async function generateMetadata({
       title: `${siteData.name} — ${siteData.tagline}`,
       description: siteData.description,
     },
-    icons: { icon: "/favicon.ico" },
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "any" },
+        { url: "/pwa-64x64.png", type: "image/png", sizes: "64x64" },
+        { url: "/pwa-192x192.png", type: "image/png", sizes: "192x192" },
+      ],
+      apple: "/apple-touch-icon.png",
+    },
+    /**
+     * Locale-aware Web App Manifest. Every locale installs as its own
+     * PWA flavour with translated `name`, `short_name`, `description`,
+     * and shortcut labels + the correct `dir` / `lang` for RTL
+     * support. See `src/app/manifest.webmanifest/route.ts`.
+     */
+    manifest: `/manifest.webmanifest?locale=${locale}`,
     alternates: {
       canonical: "/",
       languages: Object.fromEntries(
@@ -160,6 +175,7 @@ export default async function LocaleLayout({
             themeProps={{ attribute: "class", defaultTheme: "system", enableSystem: true }}
           >
             {children}
+            <PwaInstallPrompt />
           </Providers>
         </NextIntlClientProvider>
       </body>

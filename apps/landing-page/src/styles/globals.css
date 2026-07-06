@@ -16,7 +16,7 @@
 @import "@heroui/styles";
 @import "@academorix/ui/react/styles";
 
-@source "../../../packages/ui/src/**/*.{ts,tsx}";
+@source "../../../../packages/ui/src/**/*.{ts,tsx}";
 
 @custom-variant dark (&:is(.dark *));
 

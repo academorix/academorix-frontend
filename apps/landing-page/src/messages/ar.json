@@ -1,6 +1,51 @@
 {
   "$comment": "Arabic UI chrome. Translations are a first-draft baseline reviewed against the English catalogue — a native Arabic content editor should validate tone + terminology before production launch. Marketing content lives in public/data/ar/*.json (falls back to English when absent).",
 
+  "pwa": {
+    "name": "Academorix",
+    "shortName": "Academorix",
+    "description": "نظام تشغيل الأكاديميات الرياضية المتعدّدة. أدر اللاعبين والفرق والجلسات والمدفوعات من شاشتك الرئيسية.",
+    "shortcuts": {
+      "pricing": {
+        "name": "الخطط والأسعار",
+        "shortName": "الأسعار",
+        "description": "قارن كل الخطط واختر ما يناسبك"
+      },
+      "products": {
+        "name": "المنتجات",
+        "shortName": "المنتجات",
+        "description": "كل منتج في مجموعة Academorix"
+      },
+      "sports": {
+        "name": "الرياضات",
+        "shortName": "الرياضات",
+        "description": "كل الرياضات التي ندعمها"
+      },
+      "contactSales": {
+        "name": "تحدّث مع المبيعات",
+        "shortName": "المبيعات",
+        "description": "خطّط لنشر أكاديميتك مع فريقنا"
+      }
+    },
+    "install": {
+      "title": "ثبّت Academorix",
+      "description": "أضف Academorix إلى شاشتك الرئيسية للوصول السريع وتصفّح المحتوى دون اتصال.",
+      "primary": "تثبيت",
+      "secondary": "ليس الآن",
+      "ariaClose": "إغلاق نافذة التثبيت"
+    },
+    "updateAvailable": {
+      "title": "إصدار جديد جاهز",
+      "description": "أعد التحميل للحصول على أحدث التحسينات.",
+      "primary": "تحديث",
+      "secondary": "لاحقاً"
+    },
+    "offlineReady": {
+      "title": "جاهز للتصفّح دون اتصال",
+      "description": "يواصل Academorix العمل حتى دون اتصال بالإنترنت."
+    }
+  },
+
   "common": {
     "getStarted": "ابدأ الآن",
     "signIn": "تسجيل الدخول",

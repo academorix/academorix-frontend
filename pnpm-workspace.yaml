@@ -99,6 +99,20 @@ catalog:
   # Reserved for Wave 5 (i18n) — locale routing + typed navigation.
   next-intl: ^4.4.0
 
+  # --- Progressive Web App (marketing app) ---
+  # Serwist is the Workbox-based PWA toolkit maintained by Google's PWA
+  # working group. `@serwist/turbopack` is the Turbopack-native
+  # integration (Next 16 defaults to Turbopack for both `next dev` and
+  # `next build`; the older `@serwist/next` package requires webpack).
+  # `serwist` is the runtime library the service worker source imports;
+  # the two versions must match. `esbuild` is invoked by Serwist at
+  # request time to compile the service worker source — the Serwist
+  # route handler `import`s it directly, so it must be resolvable at
+  # the app level (not just as a transitive dep).
+  serwist: ^9.5.11
+  "@serwist/turbopack": ^9.5.11
+  esbuild: ^0.28.0
+
   # --- Testing ---
   vitest: ^4.1.9
   "@vitest/coverage-v8": ^4.1.9

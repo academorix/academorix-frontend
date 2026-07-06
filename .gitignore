@@ -50,3 +50,4 @@ bun.lockb
 
 # Kiro MCP config holds secret tokens (heroui-pro personal token) — keep local
 .kiro/settings/mcp.json
+.env*.local

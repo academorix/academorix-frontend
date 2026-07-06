@@ -1,10 +1,11 @@
 /**
- * @file middleware.ts
- * @module middleware
+ * @file proxy.ts
+ * @module proxy
  *
  * @description
- * Edge middleware that runs before every request to the marketing site.
- * Delegates entirely to `next-intl`'s middleware factory, which handles:
+ * Edge proxy (formerly "middleware") that runs before every request to
+ * the marketing site. Delegates entirely to `next-intl`'s middleware
+ * factory, which handles:
  *
  *   - Locale detection (URL segment > `NEXT_LOCALE` cookie > `Accept-Language`
  *     header > `routing.defaultLocale`)
@@ -14,6 +15,17 @@
  *     locale-prefixed URL (persists their choice across visits)
  *   - Populating `x-next-intl-locale` headers so RSC + `getRequestConfig`
  *     can read the resolved locale server-side
+ *
+ * ## Naming
+ *
+ * Next.js 16.2 renamed the `middleware.ts` file convention to `proxy.ts`
+ * — the old name still works but emits a deprecation warning during
+ * build. The exported `default` function and `config` object are
+ * unchanged; only the file name moved. `next-intl`'s `createMiddleware`
+ * factory keeps its old package export path (`next-intl/middleware`)
+ * because that ships from the `next-intl` package, not Next itself.
+ *
+ * See: https://nextjs.org/docs/app/api-reference/file-conventions/proxy
  *
  * ## The matcher
  *
@@ -26,7 +38,7 @@ import createMiddleware from "next-intl/middleware";
 
 import { routing } from "@/i18n/routing";
 
-/** The middleware entry — one factory call, one `next-intl` instance. */
+/** The proxy entry — one factory call, one `next-intl` instance. */
 export default createMiddleware(routing);
 
 /**
