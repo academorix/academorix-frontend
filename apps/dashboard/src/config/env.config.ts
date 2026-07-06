@@ -3,7 +3,10 @@
  * @module config/env.config
  *
  * @description
- * Type-safe, schema-validated access to the browser-exposed environment.
+ * Type-safe, schema-validated access to the dashboard's browser-exposed
+ * environment. Composes {@link "@academorix/core/env"}'s `createEnvReader`
+ * (the shared workspace primitive) with a Vite-specific `read` closure that
+ * lets Vite substitute `import.meta.env.VITE_*` at build time.
  *
  * All keys must be prefixed `VITE_*` (Vite enforces this at build time and
  * strips everything else). We fail fast at startup on any malformed value so
@@ -25,16 +28,7 @@
  *    ```
  *
  * 2. **Ad-hoc generic reader** ({@link env}) — for one-off env vars that
- *    don't warrant a permanent slot in the config surface (e.g. a temporary
- *    feature flag, a build-time marker consumed by a single file).
- *
- *    ```ts
- *    import { env } from "@/config/env.config";
- *    import { z } from "zod";
- *
- *    const timeoutMs = env("VITE_FEATURE_X_TIMEOUT_MS", 5000, z.coerce.number());
- *    const debugMode = env("VITE_DEBUG", false);
- *    ```
+ *    don't warrant a permanent slot in the config surface.
  *
  * ## Host-aware runtime
  *
@@ -45,105 +39,32 @@
  * exposes the raw values; `@/lib/http/host` derives the active host context.
  */
 
+import { createEnvReader } from "@academorix/core/env";
 import { z } from "zod";
 
 // ---------------------------------------------------------------------------
-// Low-level primitive: env<T>(key, default, schema?)
+// Env reader — bound to Vite's `import.meta.env` at build time.
 // ---------------------------------------------------------------------------
 
-/** Vite substitutes missing vars with `undefined`; some CI systems inject empty strings. */
-const EMPTY_STRING_VALUES = new Set(["", "undefined", "null"]);
-
 /**
- * Reads a `VITE_*` env var from `import.meta.env`. Returns `undefined`
- * when the key is absent, empty, or literally `"undefined"` / `"null"` so
- * downstream code can uniformly fall back to defaults.
- */
-function readRawEnv(key: string): string | undefined {
-  const raw = (import.meta.env as Record<string, unknown>)[key];
-
-  if (raw === undefined || raw === null) {
-    return undefined;
-  }
-
-  const str = String(raw);
-
-  return EMPTY_STRING_VALUES.has(str) ? undefined : str;
-}
-
-/**
- * Generic, type-safe environment variable reader.
+ * Generic, type-safe environment variable reader. Wraps
+ * `createEnvReader` from `@academorix/core/env` with a closure over
+ * `import.meta.env` — the closure LIVES in this file so Vite can
+ * substitute the values at build time (the substitution only happens
+ * inside the caller's compilation unit, not inside a package).
  *
- * When called without a `schema`, the return type is inferred from
- * `defaultValue`:
+ * See `@academorix/core/env` for the full contract.
  *
- *  - `string` default → returns the raw string when present, else default.
- *  - `number` default → coerces via `Number(raw)`; falls back on `NaN`.
- *  - `boolean` default → accepts `"true"`, `"1"`, `"yes"` (case-insensitive) as
- *    `true`; anything else present as `false`.
- *
- * When called with a Zod schema, the raw value (or the default when
- * missing) is passed through `safeParse` and any validation failure
- * throws — the intended behaviour for boot-time verification.
- *
- * @param key - The env var name (must start with `VITE_`).
- * @param defaultValue - Fallback returned when the var is absent or empty.
- * @param schema - Optional Zod schema for structural validation.
- * @returns The parsed value.
- * @throws Error when the value fails schema validation.
- *
- * @example Basic reads (no schema)
+ * @example
  * ```ts
  * const port = env("VITE_PORT", 3000);              // number
  * const host = env("VITE_HOST", "localhost");       // string
  * const debug = env("VITE_DEBUG", false);           // boolean
- * ```
- *
- * @example Schema-validated
- * ```ts
  * const tier = env("VITE_APP_ENV", "local" as const,
  *   z.enum(["local", "staging", "production"]));
  * ```
  */
-export function env<T>(key: string, defaultValue: T, schema?: z.ZodType<T>): T {
-  const raw = readRawEnv(key);
-
-  if (schema) {
-    const candidate: unknown = raw ?? defaultValue;
-    const parsed = schema.safeParse(candidate);
-
-    if (parsed.success) {
-      return parsed.data;
-    }
-
-    // eslint-disable-next-line no-console
-    console.error(
-      `[env] Invalid value for ${key}: ${JSON.stringify(candidate)}\n` +
-        z.prettifyError(parsed.error),
-    );
-    throw new Error(
-      `Invalid environment variable "${key}". Check apps/dashboard/environments/.env`,
-    );
-  }
-
-  if (raw === undefined) {
-    return defaultValue;
-  }
-
-  // Auto-coerce based on the shape of the default value.
-  switch (typeof defaultValue) {
-    case "number": {
-      const parsed = Number(raw);
-
-      return (Number.isFinite(parsed) ? parsed : defaultValue) as T;
-    }
-    case "boolean": {
-      return ["true", "1", "yes", "on"].includes(raw.toLowerCase()) as unknown as T;
-    }
-    default:
-      return raw as T;
-  }
-}
+export const env = createEnvReader((key) => (import.meta.env as Record<string, unknown>)[key]);
 
 // ---------------------------------------------------------------------------
 // Composed config surface: envConfig

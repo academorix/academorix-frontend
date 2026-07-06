@@ -16,10 +16,18 @@
     "clean": "rm -rf .next .turbo out"
   },
   "dependencies": {
+    "@academorix/analytics": "workspace:*",
+    "@academorix/core": "workspace:*",
+    "@academorix/feature-flags": "workspace:*",
+    "@academorix/http": "workspace:*",
+    "@academorix/i18n": "workspace:*",
+    "@academorix/pwa": "workspace:*",
+    "@academorix/query": "workspace:*",
     "@academorix/ui": "workspace:*",
     "@heroui-pro/react": "catalog:",
     "@heroui/react": "catalog:",
     "@heroui/styles": "catalog:",
+    "@tanstack/react-query": "catalog:",
     "clsx": "catalog:",
     "intl-messageformat": "catalog:",
     "next": "catalog:",

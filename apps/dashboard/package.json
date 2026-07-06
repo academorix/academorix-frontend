@@ -17,6 +17,15 @@
     "clean": "rm -rf dist coverage .turbo dev-dist"
   },
   "dependencies": {
+    "@academorix/analytics": "workspace:*",
+    "@academorix/core": "workspace:*",
+    "@academorix/feature-flags": "workspace:*",
+    "@academorix/http": "workspace:*",
+    "@academorix/i18n": "workspace:*",
+    "@academorix/notifications": "workspace:*",
+    "@academorix/pwa": "workspace:*",
+    "@academorix/query": "workspace:*",
+    "@academorix/realtime": "workspace:*",
     "@academorix/ui": "workspace:*",
     "@heroui/styles": "catalog:",
     "@refinedev/core": "catalog:",

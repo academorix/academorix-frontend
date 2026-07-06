@@ -320,6 +320,33 @@ importers:
 
   apps/dashboard:
     dependencies:
+      '@academorix/analytics':
+        specifier: workspace:*
+        version: link:../../packages/analytics
+      '@academorix/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@academorix/feature-flags':
+        specifier: workspace:*
+        version: link:../../packages/feature-flags
+      '@academorix/http':
+        specifier: workspace:*
+        version: link:../../packages/http
+      '@academorix/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
+      '@academorix/notifications':
+        specifier: workspace:*
+        version: link:../../packages/notifications
+      '@academorix/pwa':
+        specifier: workspace:*
+        version: link:../../packages/pwa
+      '@academorix/query':
+        specifier: workspace:*
+        version: link:../../packages/query
+      '@academorix/realtime':
+        specifier: workspace:*
+        version: link:../../packages/realtime
       '@academorix/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -420,6 +447,27 @@ importers:
 
   apps/landing-page:
     dependencies:
+      '@academorix/analytics':
+        specifier: workspace:*
+        version: link:../../packages/analytics
+      '@academorix/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@academorix/feature-flags':
+        specifier: workspace:*
+        version: link:../../packages/feature-flags
+      '@academorix/http':
+        specifier: workspace:*
+        version: link:../../packages/http
+      '@academorix/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
+      '@academorix/pwa':
+        specifier: workspace:*
+        version: link:../../packages/pwa
+      '@academorix/query':
+        specifier: workspace:*
+        version: link:../../packages/query
       '@academorix/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -432,6 +480,9 @@ importers:
       '@heroui/styles':
         specifier: 'catalog:'
         version: 3.2.1(tailwind-merge@3.4.0)(tailwindcss@4.3.1)
+      '@tanstack/react-query':
+        specifier: 'catalog:'
+        version: 5.101.2(react@19.2.7)
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -518,6 +569,31 @@ importers:
         specifier: 'catalog:'
         version: 5.6.3
 
+  packages/analytics:
+    dependencies:
+      '@academorix/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@academorix/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@academorix/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.17
+      eslint:
+        specifier: 'catalog:'
+        version: 9.25.1(jiti@2.7.0)
+      react:
+        specifier: 'catalog:'
+        version: 19.2.7
+      typescript:
+        specifier: 'catalog:'
+        version: 5.6.3
+
   packages/api-types:
     dependencies:
       zod:
@@ -530,6 +606,28 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.6.3
+
+  packages/core:
+    dependencies:
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
+    devDependencies:
+      '@academorix/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@academorix/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      eslint:
+        specifier: 'catalog:'
+        version: 9.25.1(jiti@2.7.0)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.6.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.9(@types/node@22.12.0)(@vitest/coverage-v8@4.1.9)(jsdom@29.1.1)(vite@8.1.2(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(yaml@2.9.0))
 
   packages/eslint-config:
     dependencies:
@@ -563,6 +661,187 @@ importers:
       typescript-eslint:
         specifier: 'catalog:'
         version: 8.62.1(eslint@9.25.1(jiti@2.7.0))(typescript@5.6.3)
+
+  packages/feature-flags:
+    dependencies:
+      '@academorix/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@academorix/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@academorix/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.17
+      eslint:
+        specifier: 'catalog:'
+        version: 9.25.1(jiti@2.7.0)
+      react:
+        specifier: 'catalog:'
+        version: 19.2.7
+      typescript:
+        specifier: 'catalog:'
+        version: 5.6.3
+
+  packages/http:
+    dependencies:
+      '@academorix/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@academorix/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@academorix/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      eslint:
+        specifier: 'catalog:'
+        version: 9.25.1(jiti@2.7.0)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.6.3
+
+  packages/i18n:
+    dependencies:
+      '@academorix/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@academorix/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@academorix/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.17
+      eslint:
+        specifier: 'catalog:'
+        version: 9.25.1(jiti@2.7.0)
+      react:
+        specifier: 'catalog:'
+        version: 19.2.7
+      typescript:
+        specifier: 'catalog:'
+        version: 5.6.3
+
+  packages/notifications:
+    dependencies:
+      '@academorix/core':
+        specifier: workspace:*
+        version: link:../core
+      '@academorix/http':
+        specifier: workspace:*
+        version: link:../http
+      '@academorix/realtime':
+        specifier: workspace:*
+        version: link:../realtime
+    devDependencies:
+      '@academorix/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@academorix/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.17
+      eslint:
+        specifier: 'catalog:'
+        version: 9.25.1(jiti@2.7.0)
+      react:
+        specifier: 'catalog:'
+        version: 19.2.7
+      typescript:
+        specifier: 'catalog:'
+        version: 5.6.3
+
+  packages/pwa:
+    dependencies:
+      '@academorix/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@academorix/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@academorix/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      eslint:
+        specifier: 'catalog:'
+        version: 9.25.1(jiti@2.7.0)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.6.3
+
+  packages/query:
+    dependencies:
+      '@academorix/core':
+        specifier: workspace:*
+        version: link:../core
+      '@academorix/http':
+        specifier: workspace:*
+        version: link:../http
+    devDependencies:
+      '@academorix/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@academorix/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@tanstack/react-query':
+        specifier: 'catalog:'
+        version: 5.101.2(react@19.2.7)
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.17
+      eslint:
+        specifier: 'catalog:'
+        version: 9.25.1(jiti@2.7.0)
+      react:
+        specifier: 'catalog:'
+        version: 19.2.7
+      typescript:
+        specifier: 'catalog:'
+        version: 5.6.3
+
+  packages/realtime:
+    dependencies:
+      '@academorix/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@academorix/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@academorix/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.17
+      eslint:
+        specifier: 'catalog:'
+        version: 9.25.1(jiti@2.7.0)
+      laravel-echo:
+        specifier: 'catalog:'
+        version: 2.3.7(pusher-js@8.5.0)
+      pusher-js:
+        specifier: 'catalog:'
+        version: 8.5.0
+      react:
+        specifier: 'catalog:'
+        version: 19.2.7
+      typescript:
+        specifier: 'catalog:'
+        version: 5.6.3
 
   packages/typescript-config: {}
 
