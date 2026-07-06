@@ -37,6 +37,7 @@ const seasonsModule: AppModule = {
         featureKey: "seasons",
         requiredPermission: "seasons.viewAny",
         order: 12,
+        groupKey: "operations",
       },
     },
   ],

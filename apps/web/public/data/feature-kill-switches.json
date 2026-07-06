@@ -1,0 +1,29 @@
+[
+  {
+    "id": "fks_ai_agent_beta",
+    "feature": "ai_agent_beta",
+    "enabled": false,
+    "reason": null,
+    "updated_by": "usr_platform_ops",
+    "updated_at": "2026-06-25T09:00:00Z",
+    "created_at": "2026-05-20T09:00:00Z"
+  },
+  {
+    "id": "fks_offline_sync_v2",
+    "feature": "offline_sync_v2",
+    "enabled": true,
+    "reason": "Data-corruption bug detected in sync reconciliation — disable while patch is validated.",
+    "updated_by": "usr_platform_oncall",
+    "updated_at": "2026-06-28T22:15:00Z",
+    "created_at": "2026-06-28T22:15:00Z"
+  },
+  {
+    "id": "fks_public_signup",
+    "feature": "public_signup",
+    "enabled": false,
+    "reason": null,
+    "updated_by": "usr_platform_ops",
+    "updated_at": "2026-03-01T09:00:00Z",
+    "created_at": "2026-03-01T09:00:00Z"
+  }
+]

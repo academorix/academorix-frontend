@@ -2,6 +2,7 @@
   {
     "id": "usr_owner",
     "tenant_id": "tnt_riverside",
+    "person_identity_id": "pcp_alex_rivera",
     "email": "owner@academorix.test",
     "username": "owner",
     "phone": "+1 555 0100",
@@ -21,62 +22,62 @@
     },
     "roles": ["owner"],
     "permissions": ["*"],
+    "grants": [
+      {
+        "id": "grant_owner_tenant",
+        "role_id": "role_owner",
+        "role_name": "owner",
+        "scope_type": "tenant",
+        "scope_id": "tnt_riverside",
+        "expires_at": null
+      }
+    ],
     "features": [
-      "dashboard",
-      "organizations",
-      "branches",
-      "regions",
-      "sports",
-      "attributes",
-      "documents",
-      "notification-templates",
       "athletes",
       "teams",
       "seasons",
       "registrations",
       "events",
-      "payments",
-      "memberships",
-      "staff",
-      "users",
-      "roles",
-      "reception",
-      "admin",
-      "subscription",
-      "facilities",
-      "people",
-      "coaches",
       "training-sessions",
       "matches",
-      "private-sessions",
       "attendance",
       "progress",
       "performance",
-      "medical",
       "development",
       "drills",
       "competitions",
       "formations",
+      "coaches",
       "safeguarding",
-      "expenses",
-      "credentials",
+      "medical",
+      "memberships",
+      "payments",
+      "reception",
+      "facilities",
       "announcements",
       "conversations",
       "reports",
-      "leads",
       "ai",
-      "awards",
-      "passes",
-      "public-site",
-      "integrations",
-      "offline-sync"
+      "advanced_reporting"
     ],
+    "entitlements": {
+      "BranchSlot": { "kind": "slot", "used": 3, "limit": 10 },
+      "TeamSlot": { "kind": "slot", "used": 24, "limit": 150 },
+      "AthleteSlot": { "kind": "slot", "used": 412, "limit": 2000 },
+      "StaffSeat": { "kind": "slot", "used": 18, "limit": 100 },
+      "StorageBytes": { "kind": "pool", "used": 18253611008, "limit": 107374182400 },
+      "AiTokens": { "kind": "pool", "used": 214750, "limit": 500000 },
+      "FeatureAi": { "kind": "feature", "enabled": true },
+      "FeatureFacilityBooking": { "kind": "feature", "enabled": true },
+      "FeatureAdvancedReporting": { "kind": "feature", "enabled": true }
+    },
     "terminology": { "athletes": "Players" },
     "tenant": {
       "id": "tnt_riverside",
       "slug": "riverside",
       "name": "Riverside Sports Academy",
       "business_type": "academy",
+      "business_type_id": "bt_academy",
       "branding": { "logo_url": null, "primary_color": null, "favicon_url": null }
     },
     "tenants": [
@@ -84,7 +85,8 @@
         "id": "tnt_riverside",
         "slug": "riverside",
         "name": "Riverside Sports Academy",
-        "business_type": "academy"
+        "business_type": "academy",
+        "role": "Owner"
       }
     ],
     "scopes": {
@@ -124,6 +126,7 @@
   {
     "id": "usr_admin",
     "tenant_id": "tnt_riverside",
+    "person_identity_id": null,
     "email": "admin@academorix.test",
     "username": "admin",
     "phone": "+1 555 0101",
@@ -142,62 +145,75 @@
       "timezone": "America/New_York"
     },
     "roles": ["admin"],
-    "permissions": ["*"],
+    "permissions": [
+      "organizations.viewAny",
+      "organizations.view",
+      "branches.manage",
+      "regions.viewAny",
+      "staff.manage",
+      "users.viewAny",
+      "roles.viewAny",
+      "athletes.manage",
+      "teams.viewAny",
+      "seasons.manage",
+      "registrations.viewAny",
+      "events.viewAny",
+      "invoices.viewAny",
+      "memberships.viewAny",
+      "expenses.viewAny",
+      "reception.manage",
+      "approval-tasks.viewAny",
+      "approval-tasks.update",
+      "announcements.create",
+      "reports.viewAny",
+      "manage_billing"
+    ],
+    "grants": [
+      {
+        "id": "grant_admin_tenant",
+        "role_id": "role_admin",
+        "role_name": "admin",
+        "scope_type": "tenant",
+        "scope_id": "tnt_riverside",
+        "expires_at": null
+      }
+    ],
     "features": [
-      "dashboard",
-      "organizations",
-      "branches",
-      "regions",
-      "sports",
-      "attributes",
-      "documents",
-      "notification-templates",
       "athletes",
       "teams",
       "seasons",
       "registrations",
       "events",
-      "payments",
+      "training-sessions",
+      "matches",
+      "attendance",
       "memberships",
+      "payments",
       "staff",
       "users",
       "roles",
       "reception",
-      "admin",
       "facilities",
-      "people",
-      "coaches",
-      "training-sessions",
-      "matches",
-      "private-sessions",
-      "attendance",
-      "progress",
-      "performance",
-      "medical",
-      "development",
-      "drills",
-      "competitions",
-      "formations",
-      "safeguarding",
-      "expenses",
-      "credentials",
       "announcements",
       "conversations",
-      "reports",
-      "leads",
-      "ai",
-      "awards",
-      "passes",
-      "public-site",
-      "integrations",
-      "offline-sync"
+      "reports"
     ],
+    "entitlements": {
+      "BranchSlot": { "kind": "slot", "used": 3, "limit": 10 },
+      "TeamSlot": { "kind": "slot", "used": 24, "limit": 150 },
+      "AthleteSlot": { "kind": "slot", "used": 412, "limit": 2000 },
+      "StaffSeat": { "kind": "slot", "used": 18, "limit": 100 },
+      "FeatureAi": { "kind": "feature", "enabled": true },
+      "FeatureFacilityBooking": { "kind": "feature", "enabled": true },
+      "FeatureAdvancedReporting": { "kind": "feature", "enabled": true }
+    },
     "terminology": { "athletes": "Players" },
     "tenant": {
       "id": "tnt_riverside",
       "slug": "riverside",
       "name": "Riverside Sports Academy",
       "business_type": "academy",
+      "business_type_id": "bt_academy",
       "branding": { "logo_url": null, "primary_color": null, "favicon_url": null }
     },
     "tenants": [
@@ -205,7 +221,8 @@
         "id": "tnt_riverside",
         "slug": "riverside",
         "name": "Riverside Sports Academy",
-        "business_type": "academy"
+        "business_type": "academy",
+        "role": "Admin"
       }
     ],
     "scopes": {
@@ -243,26 +260,27 @@
     }
   },
   {
-    "id": "stf_coach_mike",
+    "id": "usr_coach_mike",
     "tenant_id": "tnt_riverside",
-    "email": "coach.mike@academorix.test",
-    "username": "coach_mike",
-    "phone": "+1 555 0110",
+    "person_identity_id": null,
+    "email": "mike.turner@example.com",
+    "username": "mike",
+    "phone": "+1 555 3001",
     "status": "active",
-    "email_verified_at": "2025-09-01T10:00:00Z",
+    "email_verified_at": "2024-08-15T10:00:00Z",
     "phone_verified_at": null,
-    "last_login_at": "2026-06-30T07:00:00Z",
-    "created_at": "2025-09-01T10:00:00Z",
-    "updated_at": "2026-06-30T07:00:00Z",
+    "last_login_at": "2026-06-29T18:00:00Z",
+    "created_at": "2024-08-15T10:00:00Z",
+    "updated_at": "2026-06-29T18:00:00Z",
     "profile": {
       "first_name": "Mike",
-      "last_name": "Thompson",
+      "last_name": "Turner",
       "display_name": "Coach Mike",
       "avatar_url": null,
       "locale": "en",
       "timezone": "America/New_York"
     },
-    "roles": ["head_coach"],
+    "roles": ["head_coach", "coach"],
     "permissions": [
       "athletes.viewAny",
       "athletes.view",
@@ -275,88 +293,57 @@
       "teams.delete",
       "seasons.viewAny",
       "seasons.view",
-      "registrations.viewAny",
-      "registrations.view",
-      "registrations.update",
       "events.viewAny",
-      "events.view",
       "events.create",
       "events.update",
       "events.delete",
-      "facilities.viewAny",
-      "facilities.view",
-      "coaches.viewAny",
-      "coaches.view",
-      "training-sessions.viewAny",
-      "training-sessions.view",
       "training-sessions.create",
       "training-sessions.update",
       "training-sessions.delete",
       "matches.viewAny",
-      "matches.view",
       "matches.create",
       "matches.update",
-      "matches.delete",
-      "private-sessions.viewAny",
-      "private-sessions.view",
-      "private-sessions.create",
-      "private-sessions.update",
       "attendance.viewAny",
-      "attendance.view",
       "attendance.create",
       "attendance.update",
       "progress.viewAny",
-      "progress.view",
       "progress.create",
       "progress.update",
       "performance.viewAny",
-      "performance.view",
-      "performance.create",
-      "performance.update",
-      "development.viewAny",
-      "development.view",
-      "development.create",
-      "development.update",
       "drills.viewAny",
-      "drills.view",
       "drills.create",
       "drills.update",
-      "drills.delete",
-      "competitions.viewAny",
-      "competitions.view",
-      "competitions.create",
-      "competitions.update",
       "formations.viewAny",
-      "formations.view",
       "formations.create",
-      "formations.update",
-      "formations.delete",
-      "awards.viewAny",
-      "awards.view",
-      "awards.create",
-      "awards.update",
-      "announcements.viewAny",
-      "announcements.view",
       "announcements.create",
-      "announcements.update",
-      "conversations.viewAny",
-      "conversations.view",
       "conversations.create",
-      "reports.viewAny",
-      "reports.view"
+      "reports.viewAny"
+    ],
+    "grants": [
+      {
+        "id": "grant_coach_mike_headcoach_river",
+        "role_id": "role_head_coach",
+        "role_name": "head_coach",
+        "scope_type": "branch",
+        "scope_id": "brn_river",
+        "expires_at": null
+      },
+      {
+        "id": "grant_coach_mike_coach_marina",
+        "role_id": "role_coach",
+        "role_name": "coach",
+        "scope_type": "branch",
+        "scope_id": "brn_marina",
+        "expires_at": null
+      }
     ],
     "features": [
-      "dashboard",
       "athletes",
       "teams",
       "seasons",
-      "registrations",
       "events",
-      "facilities",
-      "coaches",
       "training-sessions",
       "matches",
-      "private-sessions",
       "attendance",
       "progress",
       "performance",
@@ -364,17 +351,22 @@
       "drills",
       "competitions",
       "formations",
-      "awards",
       "announcements",
       "conversations",
       "reports"
     ],
+    "entitlements": {
+      "TeamSlot": { "kind": "slot", "used": 24, "limit": 150 },
+      "AthleteSlot": { "kind": "slot", "used": 412, "limit": 2000 },
+      "FeatureAi": { "kind": "feature", "enabled": true }
+    },
     "terminology": { "athletes": "Players" },
     "tenant": {
       "id": "tnt_riverside",
       "slug": "riverside",
       "name": "Riverside Sports Academy",
       "business_type": "academy",
+      "business_type_id": "bt_academy",
       "branding": { "logo_url": null, "primary_color": null, "favicon_url": null }
     },
     "tenants": [
@@ -382,7 +374,8 @@
         "id": "tnt_riverside",
         "slug": "riverside",
         "name": "Riverside Sports Academy",
-        "business_type": "academy"
+        "business_type": "academy",
+        "role": "Head Coach"
       }
     ],
     "scopes": {
@@ -410,16 +403,17 @@
     }
   },
   {
-    "id": "stf_coach_sara",
+    "id": "usr_coach_sara",
     "tenant_id": "tnt_riverside",
-    "email": "coach.sara@academorix.test",
-    "username": "coach_sara",
-    "phone": "+1 555 0111",
+    "person_identity_id": null,
+    "email": "sara.nolan@example.com",
+    "username": "sara",
+    "phone": "+1 555 3002",
     "status": "active",
-    "email_verified_at": "2025-09-01T10:00:00Z",
+    "email_verified_at": "2025-01-10T10:00:00Z",
     "phone_verified_at": null,
     "last_login_at": "2026-06-30T06:30:00Z",
-    "created_at": "2025-09-01T10:00:00Z",
+    "created_at": "2025-01-10T10:00:00Z",
     "updated_at": "2026-06-30T06:30:00Z",
     "profile": {
       "first_name": "Sara",
@@ -436,33 +430,28 @@
       "teams.viewAny",
       "teams.view",
       "events.viewAny",
-      "events.view",
       "training-sessions.viewAny",
-      "training-sessions.view",
       "matches.viewAny",
-      "matches.view",
       "attendance.viewAny",
-      "attendance.view",
       "attendance.create",
       "attendance.update",
       "progress.viewAny",
-      "progress.view",
       "progress.create",
       "progress.update",
-      "performance.viewAny",
-      "performance.view",
-      "development.viewAny",
-      "development.view",
       "drills.viewAny",
-      "drills.view",
-      "announcements.viewAny",
-      "announcements.view",
-      "conversations.viewAny",
-      "conversations.view",
       "conversations.create"
     ],
+    "grants": [
+      {
+        "id": "grant_coach_sara_river",
+        "role_id": "role_coach",
+        "role_name": "coach",
+        "scope_type": "branch",
+        "scope_id": "brn_river",
+        "expires_at": null
+      }
+    ],
     "features": [
-      "dashboard",
       "athletes",
       "teams",
       "events",
@@ -470,18 +459,20 @@
       "matches",
       "attendance",
       "progress",
-      "performance",
-      "development",
       "drills",
       "announcements",
       "conversations"
     ],
+    "entitlements": {
+      "FeatureAi": { "kind": "feature", "enabled": true }
+    },
     "terminology": { "athletes": "Players" },
     "tenant": {
       "id": "tnt_riverside",
       "slug": "riverside",
       "name": "Riverside Sports Academy",
       "business_type": "academy",
+      "business_type_id": "bt_academy",
       "branding": { "logo_url": null, "primary_color": null, "favicon_url": null }
     },
     "tenants": [
@@ -489,7 +480,8 @@
         "id": "tnt_riverside",
         "slug": "riverside",
         "name": "Riverside Sports Academy",
-        "business_type": "academy"
+        "business_type": "academy",
+        "role": "Coach"
       }
     ],
     "scopes": {
@@ -509,21 +501,22 @@
     }
   },
   {
-    "id": "stf_reception_amy",
+    "id": "usr_reception_amy",
     "tenant_id": "tnt_riverside",
-    "email": "reception@academorix.test",
-    "username": "reception_amy",
-    "phone": "+1 555 0120",
+    "person_identity_id": null,
+    "email": "amy.lopez@example.com",
+    "username": "amy",
+    "phone": "+1 555 3003",
     "status": "active",
-    "email_verified_at": "2025-09-01T10:00:00Z",
+    "email_verified_at": "2026-06-01T10:00:00Z",
     "phone_verified_at": null,
     "last_login_at": "2026-06-30T08:00:00Z",
-    "created_at": "2025-09-01T10:00:00Z",
-    "updated_at": "2026-06-30T08:00:00Z",
+    "created_at": "2026-06-01T10:00:00Z",
+    "updated_at": "2026-06-01T10:00:00Z",
     "profile": {
       "first_name": "Amy",
-      "last_name": "Chen",
-      "display_name": "Amy Chen",
+      "last_name": "Lopez",
+      "display_name": "Amy Lopez",
       "avatar_url": null,
       "locale": "en",
       "timezone": "America/New_York"
@@ -535,38 +528,35 @@
       "athletes.create",
       "athletes.update",
       "registrations.viewAny",
-      "registrations.view",
       "registrations.create",
       "registrations.update",
-      "registrations.delete",
       "leads.viewAny",
-      "leads.view",
       "leads.create",
       "leads.update",
-      "leads.delete",
-      "reception.viewAny",
+      "reception.manage",
       "approval-tasks.viewAny",
-      "approval-tasks.view",
       "approval-tasks.update",
       "memberships.viewAny",
-      "memberships.view",
       "invoices.viewAny",
-      "invoices.view",
       "passes.viewAny",
-      "passes.view",
       "passes.create",
-      "passes.update",
-      "passes.delete",
+      "credentials.viewAny",
+      "credentials.create",
       "events.viewAny",
-      "events.view",
       "announcements.viewAny",
-      "announcements.view",
-      "conversations.viewAny",
-      "conversations.view",
       "conversations.create"
     ],
+    "grants": [
+      {
+        "id": "grant_reception_amy_marina",
+        "role_id": "role_reception",
+        "role_name": "reception",
+        "scope_type": "branch",
+        "scope_id": "brn_marina",
+        "expires_at": null
+      }
+    ],
     "features": [
-      "dashboard",
       "athletes",
       "registrations",
       "leads",
@@ -574,16 +564,21 @@
       "memberships",
       "payments",
       "passes",
+      "credentials",
       "events",
       "announcements",
       "conversations"
     ],
+    "entitlements": {
+      "AthleteSlot": { "kind": "slot", "used": 412, "limit": 2000 }
+    },
     "terminology": { "athletes": "Players" },
     "tenant": {
       "id": "tnt_riverside",
       "slug": "riverside",
       "name": "Riverside Sports Academy",
       "business_type": "academy",
+      "business_type_id": "bt_academy",
       "branding": { "logo_url": null, "primary_color": null, "favicon_url": null }
     },
     "tenants": [
@@ -591,15 +586,16 @@
         "id": "tnt_riverside",
         "slug": "riverside",
         "name": "Riverside Sports Academy",
-        "business_type": "academy"
+        "business_type": "academy",
+        "role": "Reception"
       }
     ],
     "scopes": {
       "organizations": [{ "id": "org_riverside", "name": "Riverside (Main)", "is_default": true }],
       "branches": [
         {
-          "id": "brn_river",
-          "name": "Riverside HQ",
+          "id": "brn_marina",
+          "name": "Marina Center",
           "organization_id": "org_riverside",
           "region_id": "reg_us_east",
           "is_default": true
@@ -611,8 +607,9 @@
     }
   },
   {
-    "id": "stf_finance_omar",
+    "id": "usr_finance_omar",
     "tenant_id": "tnt_riverside",
+    "person_identity_id": null,
     "email": "finance@academorix.test",
     "username": "finance_omar",
     "phone": "+1 555 0130",
@@ -636,30 +633,41 @@
       "invoices.view",
       "invoices.create",
       "invoices.update",
-      "invoices.delete",
       "memberships.viewAny",
       "memberships.view",
       "memberships.create",
       "memberships.update",
-      "memberships.delete",
       "expenses.viewAny",
       "expenses.view",
       "expenses.create",
       "expenses.update",
-      "expenses.delete",
       "subscription.viewAny",
       "subscription.view",
       "subscription.update",
       "reports.viewAny",
-      "reports.view"
+      "manage_billing"
     ],
-    "features": ["dashboard", "payments", "memberships", "expenses", "subscription", "reports"],
+    "grants": [
+      {
+        "id": "grant_finance_omar_tenant",
+        "role_id": "role_finance",
+        "role_name": "finance",
+        "scope_type": "tenant",
+        "scope_id": "tnt_riverside",
+        "expires_at": null
+      }
+    ],
+    "features": ["payments", "memberships", "expenses", "subscription", "reports"],
+    "entitlements": {
+      "FeatureAdvancedReporting": { "kind": "feature", "enabled": true }
+    },
     "terminology": { "athletes": "Players" },
     "tenant": {
       "id": "tnt_riverside",
       "slug": "riverside",
       "name": "Riverside Sports Academy",
       "business_type": "academy",
+      "business_type_id": "bt_academy",
       "branding": { "logo_url": null, "primary_color": null, "favicon_url": null }
     },
     "tenants": [
@@ -667,7 +675,8 @@
         "id": "tnt_riverside",
         "slug": "riverside",
         "name": "Riverside Sports Academy",
-        "business_type": "academy"
+        "business_type": "academy",
+        "role": "Finance"
       }
     ],
     "scopes": {
@@ -705,8 +714,9 @@
     }
   },
   {
-    "id": "stf_medical_nadia",
+    "id": "usr_medical_nadia",
     "tenant_id": "tnt_riverside",
+    "person_identity_id": null,
     "email": "medical@academorix.test",
     "username": "medical_nadia",
     "phone": "+1 555 0140",
@@ -724,7 +734,7 @@
       "locale": "en",
       "timezone": "America/New_York"
     },
-    "roles": ["medical_officer"],
+    "roles": ["medical"],
     "permissions": [
       "athletes.viewAny",
       "athletes.view",
@@ -737,19 +747,22 @@
       "safeguarding.view",
       "safeguarding.create",
       "safeguarding.update",
-      "safeguarding.delete",
       "credentials.viewAny",
       "credentials.view",
-      "credentials.create",
-      "credentials.update",
       "announcements.viewAny",
-      "announcements.view",
-      "conversations.viewAny",
-      "conversations.view",
       "conversations.create"
     ],
+    "grants": [
+      {
+        "id": "grant_medical_nadia_org_riverside",
+        "role_id": "role_medical",
+        "role_name": "medical",
+        "scope_type": "organization",
+        "scope_id": "org_riverside",
+        "expires_at": null
+      }
+    ],
     "features": [
-      "dashboard",
       "athletes",
       "medical",
       "safeguarding",
@@ -757,12 +770,14 @@
       "announcements",
       "conversations"
     ],
+    "entitlements": {},
     "terminology": { "athletes": "Players" },
     "tenant": {
       "id": "tnt_riverside",
       "slug": "riverside",
       "name": "Riverside Sports Academy",
       "business_type": "academy",
+      "business_type_id": "bt_academy",
       "branding": { "logo_url": null, "primary_color": null, "favicon_url": null }
     },
     "tenants": [
@@ -770,7 +785,8 @@
         "id": "tnt_riverside",
         "slug": "riverside",
         "name": "Riverside Sports Academy",
-        "business_type": "academy"
+        "business_type": "academy",
+        "role": "Medical"
       }
     ],
     "scopes": {

@@ -1,0 +1,68 @@
+[
+  {
+    "id": "wh_riverside_quickbooks",
+    "tenant_id": "tnt_riverside",
+    "name": "QuickBooks — Paid Invoices Sync",
+    "url": "https://sync.quickbooks.example.com/tnt_riverside/paid-invoices",
+    "secret_masked": "whsec_qbk_••••••••••••1a3f",
+    "events": ["invoice.paid", "refund.issued", "credit_memo.issued"],
+    "status": "paused",
+    "last_delivery_at": "2026-05-31T23:45:00Z",
+    "failure_count": 0,
+    "created_at": "2025-11-10T10:00:00Z",
+    "updated_at": "2026-06-15T10:00:00Z"
+  },
+  {
+    "id": "wh_riverside_zapier",
+    "tenant_id": "tnt_riverside",
+    "name": "Zapier — General Event Firehose",
+    "url": "https://hooks.zapier.com/hooks/catch/12345/riverside/",
+    "secret_masked": "whsec_zap_••••••••••••7b2c",
+    "events": [
+      "invoice.paid",
+      "invoice.overdue",
+      "refund.issued",
+      "registration.submitted",
+      "membership.created",
+      "membership.canceled",
+      "attendance.confirmed"
+    ],
+    "status": "active",
+    "last_delivery_at": "2026-06-30T08:20:00Z",
+    "failure_count": 1,
+    "created_at": "2025-10-05T10:00:00Z",
+    "updated_at": "2026-06-30T08:20:00Z"
+  },
+  {
+    "id": "wh_riverside_slack_finance",
+    "tenant_id": "tnt_riverside",
+    "name": "Slack — #finance Dunning Alerts",
+    "url": "https://hooks.slack.com/services/T0RVR/BFIN/RiversideMockToken",
+    "secret_masked": "whsec_slk_••••••••••••9e10",
+    "events": [
+      "invoice.overdue",
+      "dunning.step_1",
+      "dunning.step_2",
+      "dunning.step_3",
+      "chargeback.opened"
+    ],
+    "status": "active",
+    "last_delivery_at": "2026-06-06T11:20:00Z",
+    "failure_count": 0,
+    "created_at": "2026-02-01T10:00:00Z",
+    "updated_at": "2026-06-06T11:20:00Z"
+  },
+  {
+    "id": "wh_riverside_google_cal",
+    "tenant_id": "tnt_riverside",
+    "name": "Google Calendar — Event Publish",
+    "url": "https://calendar-relay.example.com/tnt_riverside/events",
+    "secret_masked": "whsec_gcal_••••••••••••4d8b",
+    "events": ["event.published", "event.rescheduled", "event.cancelled", "match.scheduled"],
+    "status": "failed",
+    "last_delivery_at": "2026-06-28T14:00:00Z",
+    "failure_count": 12,
+    "created_at": "2025-12-01T10:00:00Z",
+    "updated_at": "2026-06-28T14:00:00Z"
+  }
+]

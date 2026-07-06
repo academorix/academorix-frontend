@@ -1,0 +1,134 @@
+[
+  {
+    "id": "aitc_recap1_find_athlete",
+    "tenant_id": "tnt_riverside",
+    "run_id": "airun_recap_1",
+    "tool": "find_athlete",
+    "args_hash": "a1c2f3e4",
+    "result_summary": "Resolved 3 athletes for team tm_river_u12: ath_emma, ath_liam, ath_sofia.",
+    "duration_ms": 42,
+    "error": null,
+    "authorized_by_scope": "grant_coach_mike_headcoach_river"
+  },
+  {
+    "id": "aitc_recap1_list_teams",
+    "tenant_id": "tnt_riverside",
+    "run_id": "airun_recap_1",
+    "tool": "list_teams",
+    "args_hash": "b8d9e0f1",
+    "result_summary": "Returned 4 teams in scope (river branch): tm_river_u12, tm_river_u12_dev, tm_river_swim, tm_river_u10.",
+    "duration_ms": 28,
+    "error": null,
+    "authorized_by_scope": "grant_coach_mike_headcoach_river"
+  },
+  {
+    "id": "aitc_recap1_get_recent_matches",
+    "tenant_id": "tnt_riverside",
+    "run_id": "airun_recap_1",
+    "tool": "get_recent_matches",
+    "args_hash": "c4e5b6a7",
+    "result_summary": "Fetched 1 recent match: mat_1 (final 3-1 vs Rovers FC, 2026-06-28).",
+    "duration_ms": 61,
+    "error": null,
+    "authorized_by_scope": "grant_coach_mike_headcoach_river"
+  },
+  {
+    "id": "aitc_recap1_draft_match_recap",
+    "tenant_id": "tnt_riverside",
+    "run_id": "airun_recap_1",
+    "tool": "draft_match_recap",
+    "args_hash": "d1f2a3b4",
+    "result_summary": "Drafted 220-word match recap for mat_1 — highlights Liam MOTM, Emma captaincy.",
+    "duration_ms": 118,
+    "error": null,
+    "authorized_by_scope": "grant_coach_mike_headcoach_river"
+  },
+  {
+    "id": "aitc_recap2_search_drills",
+    "tenant_id": "tnt_riverside",
+    "run_id": "airun_recap_2",
+    "tool": "search_drills",
+    "args_hash": "e5b6c7d8",
+    "result_summary": "Semantic search returned 3 finishing drills; top match drl_finishing_channels (score 0.87).",
+    "duration_ms": 84,
+    "error": null,
+    "authorized_by_scope": "grant_coach_mike_headcoach_river"
+  },
+  {
+    "id": "aitc_parent_get_attendance_streak",
+    "tenant_id": "tnt_riverside",
+    "run_id": "airun_parent_digest_1",
+    "tool": "get_attendance_streak",
+    "args_hash": "f2a3b4c5",
+    "result_summary": "Emma current streak: 6 sessions attended; last absence 2026-05-14.",
+    "duration_ms": 34,
+    "error": null,
+    "authorized_by_scope": "grant_guardian_emma_tenant"
+  },
+  {
+    "id": "aitc_parent_get_progress_card",
+    "tenant_id": "tnt_riverside",
+    "run_id": "airun_parent_digest_1",
+    "tool": "get_progress_card",
+    "args_hash": "a9b0c1d2",
+    "result_summary": "Loaded progress card for ath_emma: 3 attribute scores up, 1 stable, 0 down.",
+    "duration_ms": 52,
+    "error": null,
+    "authorized_by_scope": "grant_guardian_emma_tenant"
+  },
+  {
+    "id": "aitc_admin_retention_run_report",
+    "tenant_id": "tnt_riverside",
+    "run_id": "airun_admin_retention_2",
+    "tool": "run_report",
+    "args_hash": "b3c4d5e6",
+    "result_summary": "Ran report rptdef_retention_cohort_by_season for ssn_2025_26 — 3 branch cohorts, 84% overall retention.",
+    "duration_ms": 412,
+    "error": null,
+    "authorized_by_scope": "grant_admin_tenant"
+  },
+  {
+    "id": "aitc_omar_get_open_invoices",
+    "tenant_id": "tnt_riverside",
+    "run_id": "airun_dunning_1",
+    "tool": "get_open_invoices",
+    "args_hash": "c7d8e9f0",
+    "result_summary": "2 invoices past-due: inv_1003 (Noah, dunning step 3), inv_1002 (Emma, not yet overdue).",
+    "duration_ms": 71,
+    "error": null,
+    "authorized_by_scope": "grant_finance_omar_tenant"
+  },
+  {
+    "id": "aitc_omar_draft_dunning",
+    "tenant_id": "tnt_riverside",
+    "run_id": "airun_dunning_1",
+    "tool": "draft_dunning_message",
+    "args_hash": "d4e5f6a7",
+    "result_summary": "Drafted step-3 dunning message for usr_guardian_noah (invoice inv_1003) — 82 words, empathetic tone.",
+    "duration_ms": 96,
+    "error": null,
+    "authorized_by_scope": "grant_finance_omar_tenant"
+  },
+  {
+    "id": "aitc_omar_predict_rsvp",
+    "tenant_id": "tnt_riverside",
+    "run_id": "airun_dunning_2",
+    "tool": "predict_rsvp_likelihood",
+    "args_hash": "e0a1b2c3",
+    "result_summary": "Tool invocation failed — target athlete had fewer than 5 past events in analytics window.",
+    "duration_ms": 118,
+    "error": "insufficient_history: minimum 5 events required, found 2",
+    "authorized_by_scope": "grant_finance_omar_tenant"
+  },
+  {
+    "id": "aitc_nadia_medical_read",
+    "tenant_id": "tnt_riverside",
+    "run_id": "airun_rtp_1",
+    "tool": "get_medical_summary",
+    "args_hash": "f1a2b3c4",
+    "result_summary": "Loaded medical timeline for ath_liam: inj_liam_ankle (moderate, under_treatment), no active clearances.",
+    "duration_ms": 88,
+    "error": null,
+    "authorized_by_scope": "grant_medical_nadia_org_riverside"
+  }
+]

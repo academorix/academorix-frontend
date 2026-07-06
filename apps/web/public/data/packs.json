@@ -1,0 +1,98 @@
+[
+  {
+    "id": "pack_private_10",
+    "tenant_id": "tnt_riverside",
+    "region_id": "reg_us_east",
+    "sport_id": "spt_football",
+    "sport_key": "football",
+    "key": "private-football-10",
+    "name": {
+      "en": "Private Football Coaching — 10 Sessions",
+      "ar": "تدريب خاص لكرة القدم — 10 حصص"
+    },
+    "description": "Pre-paid pack of ten 60-minute private coaching sessions. Sessions are booked as the athlete/parent requests availability with an eligible coach and consumed one credit per completed session.",
+    "session_count": 10,
+    "session_duration_minutes": 60,
+    "price_minor": 20000,
+    "currency": "USD",
+    "unit_credit_minor": 2000,
+    "validity_days": 180,
+    "eligible_coach_ids": ["cch_mike"],
+    "is_active": true,
+    "version": 2,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2026-01-05T10:00:00Z"
+  },
+  {
+    "id": "pack_private_5",
+    "tenant_id": "tnt_riverside",
+    "region_id": "reg_us_east",
+    "sport_id": "spt_football",
+    "sport_key": "football",
+    "key": "private-football-5",
+    "name": {
+      "en": "Private Football Coaching — 5 Sessions",
+      "ar": "تدريب خاص لكرة القدم — 5 حصص"
+    },
+    "description": "Introductory 5-session private coaching pack.",
+    "session_count": 5,
+    "session_duration_minutes": 60,
+    "price_minor": 11000,
+    "currency": "USD",
+    "unit_credit_minor": 2200,
+    "validity_days": 90,
+    "eligible_coach_ids": ["cch_mike"],
+    "is_active": true,
+    "version": 1,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-01T10:00:00Z"
+  },
+  {
+    "id": "pack_swim_10",
+    "tenant_id": "tnt_riverside",
+    "region_id": "reg_us_east",
+    "sport_id": "spt_swimming",
+    "sport_key": "swimming",
+    "key": "private-swim-10",
+    "name": {
+      "en": "Private Swim Coaching — 10 Sessions",
+      "ar": "تدريب السباحة الخاص — 10 حصص"
+    },
+    "description": "Pre-paid pack of ten 45-minute private swim coaching sessions.",
+    "session_count": 10,
+    "session_duration_minutes": 45,
+    "price_minor": 18000,
+    "currency": "USD",
+    "unit_credit_minor": 1800,
+    "validity_days": 180,
+    "eligible_coach_ids": ["cch_sara"],
+    "is_active": true,
+    "version": 1,
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-01T10:00:00Z"
+  },
+  {
+    "id": "pack_multi_5",
+    "tenant_id": "tnt_riverside",
+    "region_id": "reg_us_east",
+    "sport_id": null,
+    "sport_key": null,
+    "key": "private-multi-5",
+    "name": {
+      "en": "Private Multi-Sport Coaching — 5 Sessions",
+      "ar": "تدريب متعدد الرياضات — 5 حصص"
+    },
+    "description": "5-session pack redeemable against any private coach at the Downtown branch.",
+    "session_count": 5,
+    "session_duration_minutes": 60,
+    "price_minor": 12000,
+    "currency": "USD",
+    "unit_credit_minor": 2400,
+    "validity_days": 120,
+    "eligible_coach_ids": ["cch_marco"],
+    "is_active": false,
+    "version": 1,
+    "created_at": "2025-11-01T10:00:00Z",
+    "updated_at": "2026-05-20T10:00:00Z"
+  }
+]

@@ -32,6 +32,7 @@ const messagingModule: AppModule = {
         requiredPermission: "conversations.viewAny",
         order: 34,
         scopedBy: ["branch"],
+        groupKey: "operations",
       },
     },
   ],

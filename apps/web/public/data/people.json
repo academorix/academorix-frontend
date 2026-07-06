@@ -1,0 +1,171 @@
+[
+  {
+    "id": "pcp_alex_rivera",
+    "academorix_id": "AX-ALX-2035",
+    "first_name": "Alex",
+    "last_name": "Rivera",
+    "display_name": "Alex Rivera",
+    "dob": "1984-02-11",
+    "nationality": "US",
+    "verified": true,
+    "verified_at": "2025-09-01T10:00:00Z",
+    "tenant_links": [
+      {
+        "tenant_id": "tnt_riverside",
+        "local_user_id": "usr_owner",
+        "local_athlete_id": null,
+        "role_category": "owner",
+        "shared_fields": ["first_name", "last_name", "dob", "nationality"],
+        "consent_status": "granted",
+        "linked_at": "2025-09-01T10:00:00Z"
+      }
+    ],
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-01T10:00:00Z"
+  },
+  {
+    "id": "pcp_emma_johnson",
+    "academorix_id": "AX-EMJ-7A21",
+    "first_name": "Emma",
+    "last_name": "Johnson",
+    "display_name": "Emma Johnson",
+    "dob": "2012-04-18",
+    "nationality": "US",
+    "verified": true,
+    "verified_at": "2025-09-06T10:00:00Z",
+    "tenant_links": [
+      {
+        "tenant_id": "tnt_riverside",
+        "local_user_id": null,
+        "local_athlete_id": "ath_emma",
+        "role_category": "athlete",
+        "shared_fields": [
+          "first_name",
+          "last_name",
+          "dob",
+          "nationality",
+          "emergency_contact",
+          "allergies"
+        ],
+        "consent_status": "granted",
+        "linked_at": "2025-09-06T10:00:00Z"
+      },
+      {
+        "tenant_id": "tnt_harbor",
+        "local_user_id": null,
+        "local_athlete_id": "ath_harbor_emma",
+        "role_category": "athlete",
+        "shared_fields": ["first_name", "last_name", "dob"],
+        "consent_status": "granted",
+        "linked_at": "2026-02-14T10:00:00Z"
+      }
+    ],
+    "created_at": "2025-09-05T10:00:00Z",
+    "updated_at": "2026-02-14T10:00:00Z"
+  },
+  {
+    "id": "pcp_noah_williams",
+    "academorix_id": "AX-NOW-4BX9",
+    "first_name": "Noah",
+    "last_name": "Williams",
+    "display_name": "Noah Williams",
+    "dob": "2010-07-14",
+    "nationality": "US",
+    "verified": true,
+    "verified_at": "2025-10-05T10:00:00Z",
+    "tenant_links": [
+      {
+        "tenant_id": "tnt_riverside",
+        "local_user_id": null,
+        "local_athlete_id": "ath_noah",
+        "role_category": "athlete",
+        "shared_fields": ["first_name", "last_name", "dob", "nationality"],
+        "consent_status": "granted",
+        "linked_at": "2025-10-05T10:00:00Z"
+      }
+    ],
+    "created_at": "2025-10-01T10:00:00Z",
+    "updated_at": "2025-10-05T10:00:00Z"
+  },
+  {
+    "id": "pcp_marco_ferrari",
+    "academorix_id": "AX-MRF-9C13",
+    "first_name": "Marco",
+    "last_name": "Ferrari",
+    "display_name": "Marco Ferrari",
+    "dob": "1990-11-23",
+    "nationality": "IT",
+    "verified": true,
+    "verified_at": "2026-01-15T10:00:00Z",
+    "tenant_links": [
+      {
+        "tenant_id": "tnt_riverside",
+        "local_user_id": "usr_coach_marco",
+        "local_athlete_id": null,
+        "role_category": "staff",
+        "shared_fields": ["first_name", "last_name", "dob", "nationality", "work_permit_status"],
+        "consent_status": "granted",
+        "linked_at": "2026-01-20T10:00:00Z"
+      }
+    ],
+    "created_at": "2026-01-15T10:00:00Z",
+    "updated_at": "2026-01-20T10:00:00Z"
+  },
+  {
+    "id": "pcp_olivia_chen",
+    "academorix_id": "AX-OLC-3F42",
+    "first_name": "Olivia",
+    "last_name": "Chen",
+    "display_name": "Olivia Chen",
+    "dob": "2013-08-09",
+    "nationality": "CA",
+    "verified": false,
+    "verified_at": null,
+    "tenant_links": [
+      {
+        "tenant_id": "tnt_riverside",
+        "local_user_id": null,
+        "local_athlete_id": "ath_olivia",
+        "role_category": "athlete",
+        "shared_fields": ["first_name", "last_name", "dob"],
+        "consent_status": "pending",
+        "linked_at": "2026-06-10T14:05:00Z"
+      }
+    ],
+    "created_at": "2026-06-10T14:00:00Z",
+    "updated_at": "2026-06-10T14:05:00Z"
+  },
+  {
+    "id": "pcp_liam_garcia",
+    "academorix_id": "AX-LMG-8D53",
+    "first_name": "Liam",
+    "last_name": "Garcia",
+    "display_name": "Liam Garcia",
+    "dob": "2011-11-02",
+    "nationality": "US",
+    "verified": true,
+    "verified_at": "2025-09-06T10:00:00Z",
+    "tenant_links": [
+      {
+        "tenant_id": "tnt_riverside",
+        "local_user_id": null,
+        "local_athlete_id": "ath_liam",
+        "role_category": "athlete",
+        "shared_fields": ["first_name", "last_name", "dob", "nationality"],
+        "consent_status": "granted",
+        "linked_at": "2025-09-06T10:00:00Z"
+      },
+      {
+        "tenant_id": "tnt_harbor",
+        "local_user_id": null,
+        "local_athlete_id": "ath_harbor_liam",
+        "role_category": "athlete",
+        "shared_fields": ["first_name", "last_name", "dob", "nationality"],
+        "consent_status": "granted",
+        "linked_at": "2026-03-12T10:00:00Z"
+      }
+    ],
+    "created_at": "2025-09-06T10:00:00Z",
+    "updated_at": "2026-03-12T10:00:00Z"
+  }
+]

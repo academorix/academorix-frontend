@@ -1,0 +1,109 @@
+[
+  {
+    "id": "tpl_invite_email_en",
+    "tenant_id": "tnt_riverside",
+    "key": "event_invitation",
+    "channel": "email",
+    "locale": "en",
+    "subject": "You're invited: {{event_title}} on {{event_date}}",
+    "body": "Hi {{recipient_first_name}},\n\nYou are invited to {{event_title}} at {{venue_name}} on {{event_date}} at {{event_time}}. Please RSVP before {{rsvp_deadline}}.\n\n{{tenant_name}}",
+    "variables": [
+      "recipient_first_name",
+      "event_title",
+      "event_date",
+      "event_time",
+      "venue_name",
+      "rsvp_deadline",
+      "tenant_name"
+    ],
+    "status": "active",
+    "created_at": "2025-09-10T10:00:00Z",
+    "updated_at": "2026-04-01T10:00:00Z"
+  },
+  {
+    "id": "tpl_invite_email_ar",
+    "tenant_id": "tnt_riverside",
+    "key": "event_invitation",
+    "channel": "email",
+    "locale": "ar",
+    "subject": "دعوة: {{event_title}} بتاريخ {{event_date}}",
+    "body": "مرحبًا {{recipient_first_name}},\n\nأنت مدعو إلى {{event_title}} في {{venue_name}} بتاريخ {{event_date}} في {{event_time}}. الرجاء تأكيد الحضور قبل {{rsvp_deadline}}.\n\n{{tenant_name}}",
+    "variables": [
+      "recipient_first_name",
+      "event_title",
+      "event_date",
+      "event_time",
+      "venue_name",
+      "rsvp_deadline",
+      "tenant_name"
+    ],
+    "status": "active",
+    "created_at": "2025-09-10T10:00:00Z",
+    "updated_at": "2026-04-01T10:00:00Z"
+  },
+  {
+    "id": "tpl_invite_push_en",
+    "tenant_id": "tnt_riverside",
+    "key": "event_invitation",
+    "channel": "push",
+    "locale": "en",
+    "subject": null,
+    "body": "New invite: {{event_title}} on {{event_date}}. Tap to RSVP.",
+    "variables": ["event_title", "event_date"],
+    "status": "active",
+    "created_at": "2025-09-10T10:00:00Z",
+    "updated_at": "2025-09-10T10:00:00Z"
+  },
+  {
+    "id": "tpl_lineup_published_push_en",
+    "tenant_id": "tnt_riverside",
+    "key": "lineup_published",
+    "channel": "push",
+    "locale": "en",
+    "subject": null,
+    "body": "{{team_name}} lineup for {{match_title}} is out. Tap to view.",
+    "variables": ["team_name", "match_title"],
+    "status": "active",
+    "created_at": "2025-11-01T10:00:00Z",
+    "updated_at": "2025-11-01T10:00:00Z"
+  },
+  {
+    "id": "tpl_payment_due_sms_en",
+    "tenant_id": "tnt_riverside",
+    "key": "payment_due",
+    "channel": "sms",
+    "locale": "en",
+    "subject": null,
+    "body": "{{tenant_name}}: invoice {{invoice_number}} for {{amount_display}} is due on {{due_date}}. Pay: {{pay_link}}",
+    "variables": ["tenant_name", "invoice_number", "amount_display", "due_date", "pay_link"],
+    "status": "active",
+    "created_at": "2025-09-10T10:00:00Z",
+    "updated_at": "2026-01-15T10:00:00Z"
+  },
+  {
+    "id": "tpl_clearance_expiring_email_en",
+    "tenant_id": "tnt_riverside",
+    "key": "clearance_expiring",
+    "channel": "email",
+    "locale": "en",
+    "subject": "Medical clearance expiring for {{athlete_name}}",
+    "body": "Hi {{recipient_first_name}},\n\nThe medical clearance for {{athlete_name}} expires on {{expiry_date}}. Please upload a new one before that date to avoid interruption.\n\n{{tenant_name}}",
+    "variables": ["recipient_first_name", "athlete_name", "expiry_date", "tenant_name"],
+    "status": "active",
+    "created_at": "2025-10-01T10:00:00Z",
+    "updated_at": "2025-10-01T10:00:00Z"
+  },
+  {
+    "id": "tpl_welcome_whatsapp_en",
+    "tenant_id": "tnt_riverside",
+    "key": "welcome",
+    "channel": "whatsapp",
+    "locale": "en",
+    "subject": null,
+    "body": "Welcome to {{tenant_name}}, {{recipient_first_name}}! Your first session is on {{first_session_date}}. Reply HELP for support.",
+    "variables": ["tenant_name", "recipient_first_name", "first_session_date"],
+    "status": "draft",
+    "created_at": "2026-05-01T10:00:00Z",
+    "updated_at": "2026-05-01T10:00:00Z"
+  }
+]

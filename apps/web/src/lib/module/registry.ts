@@ -75,6 +75,124 @@ export const appResources: AppResource[] = appModules
   .sort((a, b) => resourceOrder(a) - resourceOrder(b));
 
 /**
+ * A resolved keyboard shortcut binding for a resource. Emitted at boot from
+ * every module's `AppResourceMeta.shortcuts`, then consumed by the shell's
+ * keyboard listener. Global chrome shortcuts (⌘K, ⌘B, ?) come from
+ * `lib/keyboard/registry.ts`, not from here.
+ */
+export interface ResolvedResourceShortcut {
+  /** The resource this binding belongs to (`athletes`, `teams`, …). */
+  resourceName: string;
+  /**
+   * `"navigate"` for `G X` bindings, `"create"` for `N X` bindings, or
+   * `"custom"` for any resource-scoped verb declared under
+   * `AppResourceShortcuts.actions`.
+   */
+  action: "navigate" | "create" | "custom";
+  /**
+   * The verb identifier for custom actions (matches the key in
+   * `AppResourceShortcuts.actions`, e.g. `"export"`, `"archive"`). Undefined
+   * for `"navigate"` and `"create"`.
+   */
+  verbId?: string;
+  /** The key sequence, e.g. `"G A"` or `"N A"`. */
+  keys: string;
+  /**
+   * The route the shell should navigate to when the binding fires. Falls back
+   * to `resource.list` for navigate bindings and `resource.create` for create
+   * bindings; undefined for custom verbs (the shell resolves those through the
+   * module's command catalogue).
+   */
+  route: string | undefined;
+  /**
+   * The permission required to execute this shortcut, mirroring
+   * `AppResourceMeta.requiredPermission`. The listener silently drops the
+   * action when the identity lacks the permission.
+   */
+  requiredPermission: string | undefined;
+}
+
+/**
+ * Warns (in dev) if two resources claim the same keyboard shortcut sequence.
+ * Silent in production so a badly-authored PR does not spam an end user's
+ * console; the shell simply picks the first-registered binding in that case.
+ */
+function warnOnDuplicateShortcut(
+  seen: Map<string, string>,
+  keys: string,
+  resourceName: string,
+): void {
+  const existing = seen.get(keys);
+
+  if (existing && existing !== resourceName) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[module-registry] Duplicate keyboard shortcut "${keys}" on resources "${existing}" and "${resourceName}". First binding wins.`,
+    );
+
+    return;
+  }
+
+  seen.set(keys, resourceName);
+}
+
+/**
+ * Resource-scoped keyboard shortcut bindings, aggregated across every module
+ * manifest. See {@link ResolvedResourceShortcut} for the shape and
+ * `DASHBOARD_UX_PLAN.md` §13.2 for the design rationale.
+ */
+export const appResourceShortcuts: ResolvedResourceShortcut[] = (() => {
+  const bindings: ResolvedResourceShortcut[] = [];
+  const seen = new Map<string, string>();
+
+  for (const resource of appResources) {
+    const shortcuts = resource.meta.shortcuts;
+
+    if (!shortcuts) {
+      continue;
+    }
+
+    if (shortcuts.navigate) {
+      warnOnDuplicateShortcut(seen, shortcuts.navigate, resource.name);
+      bindings.push({
+        resourceName: resource.name,
+        action: "navigate",
+        keys: shortcuts.navigate,
+        route: typeof resource.list === "string" ? resource.list : undefined,
+        requiredPermission: resource.meta.requiredPermission,
+      });
+    }
+
+    if (shortcuts.create && resource.create) {
+      warnOnDuplicateShortcut(seen, shortcuts.create, resource.name);
+      bindings.push({
+        resourceName: resource.name,
+        action: "create",
+        keys: shortcuts.create,
+        route: typeof resource.create === "string" ? resource.create : undefined,
+        requiredPermission: resource.meta.requiredPermission,
+      });
+    }
+
+    if (shortcuts.actions) {
+      for (const [verbId, keys] of Object.entries(shortcuts.actions)) {
+        warnOnDuplicateShortcut(seen, keys, resource.name);
+        bindings.push({
+          resourceName: resource.name,
+          action: "custom",
+          verbId,
+          keys,
+          route: undefined,
+          requiredPermission: resource.meta.requiredPermission,
+        });
+      }
+    }
+  }
+
+  return bindings;
+})();
+
+/**
  * Whether a route is registered under the current host. Routes without a
  * `hosts` filter are registered everywhere; a filtered route is only mounted
  * when the active host kind is in its list. Keeps central-host workspace

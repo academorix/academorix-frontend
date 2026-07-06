@@ -35,6 +35,7 @@ const competitionModule: AppModule = {
         featureKey: "competitions",
         requiredPermission: "competitions.viewAny",
         order: 32,
+        groupKey: "operations",
       },
     },
   ],

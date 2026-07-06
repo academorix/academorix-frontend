@@ -1,0 +1,46 @@
+[
+  {
+    "question": "Which Academorix plan is right for me?",
+    "answer": "Starter is perfect for a single branch just getting off the ground. Growth adds recurring memberships, performance tracking, and payments for a multi-team academy. Pro adds SSO, custom reports, and a success manager. Enterprise is for multi-branch networks with strict security or SLA needs."
+  },
+  {
+    "question": "Do you offer custom invoicing?",
+    "answer": "Yes — Enterprise plans include custom contracts and invoicing on NET-30 terms. Contact sales to get started."
+  },
+  {
+    "question": "What are the limits for each plan?",
+    "answer": "See the comparison matrix above for exact per-plan limits on athletes, branches, teams, invoices, and audit-log retention."
+  },
+  {
+    "question": "I went over my included usage. What can I do?",
+    "answer": "You'll see live usage meters in-app and get an email when you approach a limit. Overage is billed at the rate shown in the matrix — nothing gets cut off mid-session."
+  },
+  {
+    "question": "Can I buy additional usage?",
+    "answer": "Yes. You can either enable overage billing (pay-as-you-go) or upgrade to a plan with a higher included allowance."
+  },
+  {
+    "question": "I have a Starter account, how do I upgrade to a paid plan?",
+    "answer": "Head to Settings → Billing and pick a plan. Your workspace stays online during the upgrade — no downtime, no data migration."
+  },
+  {
+    "question": "Is there a limit to how many staff seats I can have?",
+    "answer": "No — seats scale with your plan tier. Starter includes 3 seats, Growth 15, Pro 100, Enterprise unlimited. Additional seats are $12/seat/month."
+  },
+  {
+    "question": "How does Academorix calculate usage?",
+    "answer": "Usage is measured monthly across three axes: athletes on your roster, branches you operate, and invoices you send. Attendance, sessions, and messages are all unlimited on every plan."
+  },
+  {
+    "question": "I want to transfer a custom domain to Academorix. Is there a fee?",
+    "answer": "No fee to bring your own domain. TLS certificates are provisioned automatically. Enterprise plans get vanity domains on our infrastructure."
+  },
+  {
+    "question": "Do cached responses affect usage?",
+    "answer": "No — cached responses (dashboard reloads, list re-fetches) don't count against your monthly usage."
+  },
+  {
+    "question": "How can I manage my spend?",
+    "answer": "Set a monthly spend limit in Settings → Billing → Limits. We'll email you at 80%, 100%, and pause overage billing beyond your ceiling."
+  }
+]

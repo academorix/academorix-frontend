@@ -30,6 +30,7 @@ const receptionModule: AppModule = {
         requiredPermission: "reception.viewAny",
         order: 43,
         scopedBy: ["branch"],
+        groupKey: "operations",
       },
     },
   ],

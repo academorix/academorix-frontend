@@ -1,0 +1,146 @@
+[
+  {
+    "id": "curw_u12_autumn_w1",
+    "tenant_id": "tnt_riverside",
+    "curriculum_id": "cur_u12_autumn",
+    "week_number": 1,
+    "starts_on": "2025-09-08",
+    "ends_on": "2025-09-14",
+    "theme": "Ball mastery basics",
+    "objectives": [
+      "Introduce warm-up ball mastery patterns",
+      "Both-foot rolls, taps, and turns",
+      "Establish training standards and expectations"
+    ],
+    "session_plan_ids": ["spl_u12_passing_v1"],
+    "notes": "Opening week — coaches to reinforce culture and set squad benchmarks.",
+    "status": "completed",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-14T20:00:00Z"
+  },
+  {
+    "id": "curw_u12_autumn_w2",
+    "tenant_id": "tnt_riverside",
+    "curriculum_id": "cur_u12_autumn",
+    "week_number": 2,
+    "starts_on": "2025-09-15",
+    "ends_on": "2025-09-21",
+    "theme": "First touch under pressure",
+    "objectives": [
+      "Direct the first touch away from pressure",
+      "Body shape when receiving",
+      "Support angles for the receiver"
+    ],
+    "session_plan_ids": ["spl_u12_passing_v1", "spl_u12_setpieces_v1"],
+    "notes": null,
+    "status": "completed",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-21T20:00:00Z"
+  },
+  {
+    "id": "curw_u12_autumn_w3",
+    "tenant_id": "tnt_riverside",
+    "curriculum_id": "cur_u12_autumn",
+    "week_number": 3,
+    "starts_on": "2025-09-22",
+    "ends_on": "2025-09-28",
+    "theme": "Set-piece introduction",
+    "objectives": [
+      "Attacking corner routines",
+      "Defensive marking basics",
+      "Free-kick delivery — near and far post"
+    ],
+    "session_plan_ids": ["spl_u12_setpieces_v1"],
+    "notes": "Introduce set-piece language ahead of first competitive block.",
+    "status": "completed",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-09-28T20:00:00Z"
+  },
+  {
+    "id": "curw_u12_autumn_w4",
+    "tenant_id": "tnt_riverside",
+    "curriculum_id": "cur_u12_autumn",
+    "week_number": 4,
+    "starts_on": "2025-09-29",
+    "ends_on": "2025-10-05",
+    "theme": "Small-sided decision making",
+    "objectives": ["Scan before receiving", "Third-man movement", "Weight and timing of pass"],
+    "session_plan_ids": ["sp_u12_passing_thurs"],
+    "notes": "Bad-weather week — one session moved indoors.",
+    "status": "completed",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-10-05T20:00:00Z"
+  },
+  {
+    "id": "curw_u12_autumn_w5",
+    "tenant_id": "tnt_riverside",
+    "curriculum_id": "cur_u12_autumn",
+    "week_number": 5,
+    "starts_on": "2025-10-06",
+    "ends_on": "2025-10-12",
+    "theme": "Attacking transitions",
+    "objectives": [
+      "Counter-attack triggers",
+      "Runs in behind the line",
+      "Support runs from midfield"
+    ],
+    "session_plan_ids": ["spl_u12_passing_v1", "spl_u12_setpieces_v1"],
+    "notes": "Half-term following this week.",
+    "status": "in_progress",
+    "created_at": "2025-09-01T10:00:00Z",
+    "updated_at": "2025-10-06T09:00:00Z"
+  },
+  {
+    "id": "curw_swim_autumn_w1",
+    "tenant_id": "tnt_riverside",
+    "curriculum_id": "curr_swim_junior_autumn",
+    "week_number": 1,
+    "starts_on": "2026-09-07",
+    "ends_on": "2026-09-13",
+    "theme": "Water re-acclimatisation",
+    "objectives": [
+      "Re-establish streamlined position",
+      "Baseline 100m timing on freestyle and back",
+      "Bilateral breathing recap"
+    ],
+    "session_plan_ids": ["sp_swim_technique_wed"],
+    "notes": "Planned for 2026/27 season kickoff.",
+    "status": "planned",
+    "created_at": "2026-06-10T10:00:00Z",
+    "updated_at": "2026-06-10T10:00:00Z"
+  },
+  {
+    "id": "curw_swim_autumn_w2",
+    "tenant_id": "tnt_riverside",
+    "curriculum_id": "curr_swim_junior_autumn",
+    "week_number": 2,
+    "starts_on": "2026-09-14",
+    "ends_on": "2026-09-20",
+    "theme": "Freestyle technique block",
+    "objectives": ["High-elbow catch drills", "Front-quadrant timing", "Kick tempo work"],
+    "session_plan_ids": ["spl_swim_freestyle_v1", "sp_swim_technique_wed"],
+    "notes": null,
+    "status": "planned",
+    "created_at": "2026-06-10T10:00:00Z",
+    "updated_at": "2026-06-10T10:00:00Z"
+  },
+  {
+    "id": "curw_swim_autumn_w3_skipped",
+    "tenant_id": "tnt_riverside",
+    "curriculum_id": "curr_swim_junior_autumn",
+    "week_number": 3,
+    "starts_on": "2026-09-21",
+    "ends_on": "2026-09-27",
+    "theme": "Backstroke technique block",
+    "objectives": [
+      "Head position and hip rotation",
+      "Six-beat kick consistency",
+      "Wall touch and turn"
+    ],
+    "session_plan_ids": [],
+    "notes": "Skipped in the plan — pool refurbishment week; content merged into weeks 4-5.",
+    "status": "skipped",
+    "created_at": "2026-06-10T10:00:00Z",
+    "updated_at": "2026-06-30T10:00:00Z"
+  }
+]

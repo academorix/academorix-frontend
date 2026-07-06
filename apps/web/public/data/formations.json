@@ -10,17 +10,72 @@
     "shape": "4-3-3",
     "note": "High press, inverted wingers.",
     "slots": [
-      { "id": "s_gk", "label": "GK", "x": 50, "y": 6 },
-      { "id": "s_lb", "label": "LB", "x": 18, "y": 26 },
-      { "id": "s_lcb", "label": "CB", "x": 40, "y": 22 },
-      { "id": "s_rcb", "label": "CB", "x": 60, "y": 22 },
-      { "id": "s_rb", "label": "RB", "x": 82, "y": 26 },
-      { "id": "s_lcm", "label": "CM", "x": 30, "y": 50 },
-      { "id": "s_cm", "label": "CM", "x": 50, "y": 46 },
-      { "id": "s_rcm", "label": "CM", "x": 70, "y": 50 },
-      { "id": "s_lw", "label": "LW", "x": 20, "y": 78 },
-      { "id": "s_st", "label": "ST", "x": 50, "y": 84 },
-      { "id": "s_rw", "label": "RW", "x": 80, "y": 78 }
+      {
+        "id": "s_gk",
+        "label": "GK",
+        "x": 50,
+        "y": 6
+      },
+      {
+        "id": "s_lb",
+        "label": "LB",
+        "x": 18,
+        "y": 26
+      },
+      {
+        "id": "s_lcb",
+        "label": "CB",
+        "x": 40,
+        "y": 22
+      },
+      {
+        "id": "s_rcb",
+        "label": "CB",
+        "x": 60,
+        "y": 22
+      },
+      {
+        "id": "s_rb",
+        "label": "RB",
+        "x": 82,
+        "y": 26
+      },
+      {
+        "id": "s_lcm",
+        "label": "CM",
+        "x": 30,
+        "y": 50
+      },
+      {
+        "id": "s_cm",
+        "label": "CM",
+        "x": 50,
+        "y": 46
+      },
+      {
+        "id": "s_rcm",
+        "label": "CM",
+        "x": 70,
+        "y": 50
+      },
+      {
+        "id": "s_lw",
+        "label": "LW",
+        "x": 20,
+        "y": 78
+      },
+      {
+        "id": "s_st",
+        "label": "ST",
+        "x": 50,
+        "y": 84
+      },
+      {
+        "id": "s_rw",
+        "label": "RW",
+        "x": 80,
+        "y": 78
+      }
     ],
     "created_at": "2025-09-05T10:00:00Z",
     "updated_at": "2026-06-01T10:00:00Z"
@@ -36,19 +91,492 @@
     "shape": "4-4-2",
     "note": "Balanced shape for development matches.",
     "slots": [
-      { "id": "s_gk", "label": "GK", "x": 50, "y": 6 },
-      { "id": "s_lb", "label": "LB", "x": 18, "y": 26 },
-      { "id": "s_lcb", "label": "CB", "x": 40, "y": 22 },
-      { "id": "s_rcb", "label": "CB", "x": 60, "y": 22 },
-      { "id": "s_rb", "label": "RB", "x": 82, "y": 26 },
-      { "id": "s_lm", "label": "LM", "x": 18, "y": 52 },
-      { "id": "s_lcm", "label": "CM", "x": 40, "y": 48 },
-      { "id": "s_rcm", "label": "CM", "x": 60, "y": 48 },
-      { "id": "s_rm", "label": "RM", "x": 82, "y": 52 },
-      { "id": "s_lst", "label": "ST", "x": 40, "y": 82 },
-      { "id": "s_rst", "label": "ST", "x": 60, "y": 82 }
+      {
+        "id": "s_gk",
+        "label": "GK",
+        "x": 50,
+        "y": 6
+      },
+      {
+        "id": "s_lb",
+        "label": "LB",
+        "x": 18,
+        "y": 26
+      },
+      {
+        "id": "s_lcb",
+        "label": "CB",
+        "x": 40,
+        "y": 22
+      },
+      {
+        "id": "s_rcb",
+        "label": "CB",
+        "x": 60,
+        "y": 22
+      },
+      {
+        "id": "s_rb",
+        "label": "RB",
+        "x": 82,
+        "y": 26
+      },
+      {
+        "id": "s_lm",
+        "label": "LM",
+        "x": 18,
+        "y": 52
+      },
+      {
+        "id": "s_lcm",
+        "label": "CM",
+        "x": 40,
+        "y": 48
+      },
+      {
+        "id": "s_rcm",
+        "label": "CM",
+        "x": 60,
+        "y": 48
+      },
+      {
+        "id": "s_rm",
+        "label": "RM",
+        "x": 82,
+        "y": 52
+      },
+      {
+        "id": "s_lst",
+        "label": "ST",
+        "x": 40,
+        "y": 82
+      },
+      {
+        "id": "s_rst",
+        "label": "ST",
+        "x": 60,
+        "y": 82
+      }
     ],
     "created_at": "2025-09-05T10:00:00Z",
     "updated_at": "2026-06-01T10:00:00Z"
+  },
+  {
+    "id": "frm_u12_433",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
+    "sport_key": "football",
+    "team_id": "tm_river_u12",
+    "name": "U12 4-3-3",
+    "shape": "4-3-3",
+    "field_type": "grass_pitch",
+    "note": "High-press attacking shape used for June league matches.",
+    "slots": [
+      {
+        "id": "s_gk",
+        "label": "GK",
+        "x": 50,
+        "y": 6
+      },
+      {
+        "id": "s_lb",
+        "label": "LB",
+        "x": 18,
+        "y": 26
+      },
+      {
+        "id": "s_lcb",
+        "label": "CB",
+        "x": 40,
+        "y": 22
+      },
+      {
+        "id": "s_rcb",
+        "label": "CB",
+        "x": 60,
+        "y": 22
+      },
+      {
+        "id": "s_rb",
+        "label": "RB",
+        "x": 82,
+        "y": 26
+      },
+      {
+        "id": "s_lcm",
+        "label": "CM",
+        "x": 30,
+        "y": 50
+      },
+      {
+        "id": "s_cm",
+        "label": "CM",
+        "x": 50,
+        "y": 46
+      },
+      {
+        "id": "s_rcm",
+        "label": "CM",
+        "x": 70,
+        "y": 50
+      },
+      {
+        "id": "s_lw",
+        "label": "LW",
+        "x": 20,
+        "y": 78
+      },
+      {
+        "id": "s_st",
+        "label": "ST",
+        "x": 50,
+        "y": 84
+      },
+      {
+        "id": "s_rw",
+        "label": "RW",
+        "x": 80,
+        "y": 78
+      }
+    ],
+    "created_at": "2026-06-15T10:00:00Z",
+    "updated_at": "2026-06-15T10:00:00Z"
+  },
+  {
+    "id": "frm_u12_352",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
+    "sport_key": "football",
+    "team_id": "tm_river_u12",
+    "name": "U12 3-5-2",
+    "shape": "3-5-2",
+    "field_type": "grass_pitch",
+    "note": "Wingback shape for possession play.",
+    "slots": [
+      {
+        "id": "s_gk",
+        "label": "GK",
+        "x": 50,
+        "y": 6
+      },
+      {
+        "id": "s_lcb",
+        "label": "CB",
+        "x": 30,
+        "y": 22
+      },
+      {
+        "id": "s_cb",
+        "label": "CB",
+        "x": 50,
+        "y": 20
+      },
+      {
+        "id": "s_rcb",
+        "label": "CB",
+        "x": 70,
+        "y": 22
+      },
+      {
+        "id": "s_lwb",
+        "label": "LWB",
+        "x": 12,
+        "y": 48
+      },
+      {
+        "id": "s_lcm",
+        "label": "CM",
+        "x": 34,
+        "y": 46
+      },
+      {
+        "id": "s_cm",
+        "label": "CM",
+        "x": 50,
+        "y": 46
+      },
+      {
+        "id": "s_rcm",
+        "label": "CM",
+        "x": 66,
+        "y": 46
+      },
+      {
+        "id": "s_rwb",
+        "label": "RWB",
+        "x": 88,
+        "y": 48
+      },
+      {
+        "id": "s_lst",
+        "label": "ST",
+        "x": 40,
+        "y": 82
+      },
+      {
+        "id": "s_rst",
+        "label": "ST",
+        "x": 60,
+        "y": 82
+      }
+    ],
+    "created_at": "2026-06-15T10:00:00Z",
+    "updated_at": "2026-06-15T10:00:00Z"
+  },
+  {
+    "id": "frm_u10_231",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_marina",
+    "sport_key": "football",
+    "team_id": "tm_marina_u10",
+    "name": "U10 2-3-1 (7v7)",
+    "shape": "2-3-1",
+    "field_type": "small_sided_pitch",
+    "note": "Small-sided 7v7 for U10 development matches.",
+    "slots": [
+      {
+        "id": "s_gk",
+        "label": "GK",
+        "x": 50,
+        "y": 8
+      },
+      {
+        "id": "s_lb",
+        "label": "LB",
+        "x": 30,
+        "y": 26
+      },
+      {
+        "id": "s_rb",
+        "label": "RB",
+        "x": 70,
+        "y": 26
+      },
+      {
+        "id": "s_lm",
+        "label": "LM",
+        "x": 20,
+        "y": 50
+      },
+      {
+        "id": "s_cm",
+        "label": "CM",
+        "x": 50,
+        "y": 46
+      },
+      {
+        "id": "s_rm",
+        "label": "RM",
+        "x": 80,
+        "y": 50
+      },
+      {
+        "id": "s_st",
+        "label": "ST",
+        "x": 50,
+        "y": 82
+      }
+    ],
+    "created_at": "2026-06-15T10:00:00Z",
+    "updated_at": "2026-06-15T10:00:00Z"
+  },
+  {
+    "id": "frm_basketball_15",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_downtown",
+    "branch_id": "brn_downtown",
+    "sport_key": "basketball",
+    "team_id": null,
+    "name": "1-5 Spread Offense",
+    "shape": "1-5",
+    "field_type": "basketball_court",
+    "note": "5-out spread offense template for pick-and-roll actions.",
+    "slots": [
+      {
+        "id": "s_pg",
+        "label": "PG",
+        "x": 50,
+        "y": 84
+      },
+      {
+        "id": "s_sg",
+        "label": "SG",
+        "x": 18,
+        "y": 66
+      },
+      {
+        "id": "s_sf",
+        "label": "SF",
+        "x": 82,
+        "y": 66
+      },
+      {
+        "id": "s_pf",
+        "label": "PF",
+        "x": 22,
+        "y": 30
+      },
+      {
+        "id": "s_c",
+        "label": "C",
+        "x": 78,
+        "y": 30
+      }
+    ],
+    "created_at": "2026-06-15T10:00:00Z",
+    "updated_at": "2026-06-15T10:00:00Z"
+  },
+  {
+    "id": "frm_tennis_doubles_zones",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
+    "sport_key": "tennis",
+    "team_id": null,
+    "name": "Tennis Doubles — Zone Coverage",
+    "shape": "2-2",
+    "field_type": "tennis_court",
+    "note": "Standard doubles net-and-baseline zone coverage.",
+    "slots": [
+      {
+        "id": "s_net_left",
+        "label": "Net Left",
+        "x": 30,
+        "y": 70,
+        "zone": "net_left"
+      },
+      {
+        "id": "s_net_right",
+        "label": "Net Right",
+        "x": 70,
+        "y": 70,
+        "zone": "net_right"
+      },
+      {
+        "id": "s_base_left",
+        "label": "Baseline Left",
+        "x": 30,
+        "y": 15,
+        "zone": "baseline_left"
+      },
+      {
+        "id": "s_base_right",
+        "label": "Baseline Right",
+        "x": 70,
+        "y": 15,
+        "zone": "baseline_right"
+      }
+    ],
+    "created_at": "2026-06-15T10:00:00Z",
+    "updated_at": "2026-06-15T10:00:00Z"
+  },
+  {
+    "id": "frm_volleyball_54_rotation",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
+    "sport_key": "volleyball",
+    "team_id": null,
+    "name": "Volleyball 5-4 Serve Receive",
+    "shape": "5-4",
+    "field_type": "volleyball_court",
+    "note": "5-4 rotation template used in international-rules serve receive.",
+    "slots": [
+      {
+        "id": "s_p1",
+        "label": "P1",
+        "x": 82,
+        "y": 22,
+        "zone": "back_right"
+      },
+      {
+        "id": "s_p2",
+        "label": "P2",
+        "x": 82,
+        "y": 70,
+        "zone": "front_right"
+      },
+      {
+        "id": "s_p3",
+        "label": "P3",
+        "x": 50,
+        "y": 70,
+        "zone": "front_center"
+      },
+      {
+        "id": "s_p4",
+        "label": "P4",
+        "x": 18,
+        "y": 70,
+        "zone": "front_left"
+      },
+      {
+        "id": "s_p5",
+        "label": "P5",
+        "x": 18,
+        "y": 22,
+        "zone": "back_left"
+      },
+      {
+        "id": "s_p6",
+        "label": "P6",
+        "x": 50,
+        "y": 22,
+        "zone": "back_center"
+      }
+    ],
+    "created_at": "2026-06-15T10:00:00Z",
+    "updated_at": "2026-06-15T10:00:00Z"
+  },
+  {
+    "id": "frm_swim_medley_relay_order",
+    "tenant_id": "tnt_riverside",
+    "organization_id": "org_riverside",
+    "branch_id": "brn_river",
+    "sport_key": "swimming",
+    "team_id": "tm_river_swim",
+    "name": "Medley Relay Order",
+    "shape": "relay-4",
+    "field_type": "pool_lane",
+    "note": "4x100 medley relay leg assignments (back, breast, fly, free).",
+    "slots": [
+      {
+        "id": "s_leg1",
+        "label": "Backstroke",
+        "x": 50,
+        "y": 20,
+        "zone": "leg_1",
+        "stroke": "backstroke"
+      },
+      {
+        "id": "s_leg2",
+        "label": "Breaststroke",
+        "x": 50,
+        "y": 40,
+        "zone": "leg_2",
+        "stroke": "breaststroke"
+      },
+      {
+        "id": "s_leg3",
+        "label": "Butterfly",
+        "x": 50,
+        "y": 60,
+        "zone": "leg_3",
+        "stroke": "butterfly"
+      },
+      {
+        "id": "s_leg4",
+        "label": "Freestyle",
+        "x": 50,
+        "y": 80,
+        "zone": "leg_4",
+        "stroke": "freestyle"
+      }
+    ],
+    "created_at": "2026-06-15T10:00:00Z",
+    "updated_at": "2026-06-15T10:00:00Z"
   }
 ]

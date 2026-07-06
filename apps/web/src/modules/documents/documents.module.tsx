@@ -31,6 +31,7 @@ const documentsModule: AppModule = {
         featureKey: "documents",
         requiredPermission: "documents.viewAny",
         order: 96,
+        groupKey: "operations",
       },
     },
   ],

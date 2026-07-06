@@ -1,0 +1,62 @@
+[
+  {
+    "id": "med_emma_baseline",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_emma",
+    "type": "record",
+    "summary": "Baseline health record — no known allergies, immunisations current.",
+    "allergies": [],
+    "medications": [],
+    "conditions": [],
+    "emergency_contact": {
+      "name": "Dana Johnson",
+      "relationship": "mother",
+      "phone": "+1 555 5001"
+    },
+    "recorded_by": "stf_coach_sara",
+    "recorded_at": "2025-09-08",
+    "restricted": true,
+    "created_at": "2025-09-08T10:00:00Z",
+    "updated_at": "2025-09-08T10:00:00Z"
+  },
+  {
+    "id": "med_liam_baseline",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_liam",
+    "type": "record",
+    "summary": "Baseline health record — mild seasonal asthma controlled with inhaler.",
+    "allergies": ["pollen"],
+    "medications": ["ventolin_inhaler_prn"],
+    "conditions": ["mild_seasonal_asthma"],
+    "emergency_contact": {
+      "name": "Marta Garcia",
+      "relationship": "mother",
+      "phone": "+1 555 5002"
+    },
+    "recorded_by": "stf_coach_sara",
+    "recorded_at": "2025-09-06",
+    "restricted": true,
+    "created_at": "2025-09-06T10:00:00Z",
+    "updated_at": "2025-09-06T10:00:00Z"
+  },
+  {
+    "id": "med_noah_baseline",
+    "tenant_id": "tnt_riverside",
+    "athlete_id": "ath_noah",
+    "type": "record",
+    "summary": "Baseline health record — nut allergy (EpiPen on file).",
+    "allergies": ["nuts"],
+    "medications": ["epipen"],
+    "conditions": [],
+    "emergency_contact": {
+      "name": "Ben Williams",
+      "relationship": "father",
+      "phone": "+1 555 5003"
+    },
+    "recorded_by": "stf_coach_sara",
+    "recorded_at": "2025-10-01",
+    "restricted": true,
+    "created_at": "2025-10-01T10:00:00Z",
+    "updated_at": "2025-10-01T10:00:00Z"
+  }
+]

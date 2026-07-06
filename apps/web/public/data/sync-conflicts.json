@@ -1,0 +1,51 @@
+[
+  {
+    "id": "syncf_att_emma_dup",
+    "tenant_id": "tnt_riverside",
+    "entity": "attendance",
+    "entity_id": "att_emma_evt1",
+    "device_id": "dev_coach_mike_pixel",
+    "conflict_type": "duplicate_mark",
+    "server_value": { "status": "present", "marked_at": "2026-07-06T16:03:00Z" },
+    "client_value": { "status": "present", "marked_at": "2026-07-06T16:04:12Z" },
+    "resolution_strategy": "last_write_wins",
+    "resolution": "merged",
+    "resolved_at": "2026-07-06T17:35:00Z",
+    "resolved_by": "system",
+    "created_at": "2026-07-06T17:00:00Z",
+    "updated_at": "2026-07-06T17:35:00Z"
+  },
+  {
+    "id": "syncf_progress_race",
+    "tenant_id": "tnt_riverside",
+    "entity": "progress",
+    "entity_id": "ar_emma_20260601",
+    "device_id": "dev_coach_mike_pixel",
+    "conflict_type": "concurrent_update",
+    "server_value": { "overall": 74, "updated_at": "2026-06-30T18:00:00Z" },
+    "client_value": { "overall": 75, "updated_at": "2026-06-30T21:00:00Z" },
+    "resolution_strategy": "last_write_wins",
+    "resolution": "client_won",
+    "resolved_at": "2026-06-30T21:12:00Z",
+    "resolved_by": "system",
+    "created_at": "2026-06-30T21:00:00Z",
+    "updated_at": "2026-06-30T21:12:00Z"
+  },
+  {
+    "id": "syncf_manual_review",
+    "tenant_id": "tnt_riverside",
+    "entity": "checkin_log",
+    "entity_id": "chk_manual_orphan",
+    "device_id": "dev_nfc_gate_river_main",
+    "conflict_type": "unresolvable_reference",
+    "server_value": null,
+    "client_value": { "uid": "04D9F02218CC", "gate_id": "gt_river_main" },
+    "resolution_strategy": "manual",
+    "resolution": "pending",
+    "resolved_at": null,
+    "resolved_by": null,
+    "_note": "Credential UID belongs to a revoked card — needs reception review.",
+    "created_at": "2026-06-15T09:00:00Z",
+    "updated_at": "2026-06-15T09:00:00Z"
+  }
+]

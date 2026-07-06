@@ -32,6 +32,7 @@ const regionsModule: AppModule = {
         featureKey: "regions",
         requiredPermission: "regions.viewAny",
         order: 92,
+        groupKey: "administration",
       },
     },
   ],

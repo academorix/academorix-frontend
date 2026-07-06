@@ -33,6 +33,7 @@ const organizationModule: AppModule = {
         featureKey: "organizations",
         requiredPermission: "organizations.viewAny",
         order: 90,
+        groupKey: "administration",
       },
     },
   ],

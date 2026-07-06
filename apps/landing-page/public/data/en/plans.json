@@ -1,0 +1,80 @@
+[
+  {
+    "key": "starter",
+    "eyebrow": "STARTER",
+    "is_popular": false,
+    "description": "The perfect starting place for a single branch just getting off the ground.",
+    "highlights": [
+      "Up to 100 athletes",
+      "1 branch",
+      "Scheduling & attendance",
+      "Athlete profiles & guardians",
+      "Email support"
+    ],
+    "prices": [
+      { "billing_period": "monthly", "amount": "0.00", "currency": "USD" },
+      { "billing_period": "yearly", "amount": "0.00", "currency": "USD" }
+    ],
+    "cta": { "label": "Start for free", "type": "signup" },
+    "matrix_cta": { "label": "Sign up for free", "type": "signup" }
+  },
+  {
+    "key": "growth",
+    "eyebrow": "GROWTH",
+    "is_popular": true,
+    "description": "Everything a growing academy needs to run daily operations end to end.",
+    "highlights": [
+      "Up to 500 athletes",
+      "3 branches",
+      "Performance & progress tracking",
+      "Payments & memberships",
+      "Priority email support",
+      "$50 of usage credit"
+    ],
+    "prices": [
+      { "billing_period": "monthly", "amount": "99.00", "currency": "USD" },
+      { "billing_period": "yearly", "amount": "950.00", "currency": "USD" }
+    ],
+    "cta": { "label": "Start free trial", "type": "trial" },
+    "matrix_cta": { "label": "Start a free Growth trial", "type": "trial" }
+  },
+  {
+    "key": "pro",
+    "eyebrow": "PRO",
+    "is_popular": false,
+    "description": "For established academies scaling multi-branch operations with advanced needs.",
+    "highlights": [
+      "Up to 2,000 athletes",
+      "10 branches",
+      "SSO & advanced RBAC",
+      "Custom reports & dashboards",
+      "Dedicated success manager",
+      "$200 of usage credit"
+    ],
+    "prices": [
+      { "billing_period": "monthly", "amount": "249.00", "currency": "USD" },
+      { "billing_period": "yearly", "amount": "2390.00", "currency": "USD" }
+    ],
+    "cta": { "label": "Upgrade to Pro", "type": "signup" },
+    "matrix_cta": { "label": "Start a free Pro trial", "type": "trial" }
+  },
+  {
+    "key": "enterprise",
+    "eyebrow": "ENTERPRISE",
+    "is_popular": false,
+    "description": "Critical security, performance, observability, and support for large multi-branch networks.",
+    "highlights": [
+      "Unlimited athletes & branches",
+      "Custom onboarding & SLA",
+      "Advanced security & audit logs",
+      "24/7 priority support",
+      "Custom contracts & invoicing"
+    ],
+    "prices": [
+      { "billing_period": "monthly", "amount": "custom", "currency": "USD" },
+      { "billing_period": "yearly", "amount": "custom", "currency": "USD" }
+    ],
+    "cta": { "label": "Get a demo", "type": "contact_sales" },
+    "matrix_cta": { "label": "Contact sales", "type": "contact_sales" }
+  }
+]

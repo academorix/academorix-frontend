@@ -15,5 +15,9 @@ export const siteConfig = {
   },
   links: {
     github: "https://github.com/academorix",
+    /** Public marketing site (apps/landing-page). Used by outbound CTAs. */
+    marketing: env.VITE_MARKETING_URL,
+    /** Deep-link into the marketing pricing catalog. */
+    marketingPricing: `${env.VITE_MARKETING_URL}/pricing`,
   },
 } as const;

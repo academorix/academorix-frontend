@@ -33,6 +33,7 @@ const registrationsModule: AppModule = {
         requiredPermission: "registrations.viewAny",
         order: 13,
         scopedBy: ["branch", "season"],
+        groupKey: "operations",
       },
     },
   ],

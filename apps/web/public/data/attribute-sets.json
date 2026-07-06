@@ -1,17 +1,20 @@
 [
   {
     "id": "attrset_enrollment_football_v1",
+    "tenant_id": "tnt_riverside",
     "code": "athlete_enrollment.football",
     "entity_type": "athlete_enrollment",
     "discriminator_field": "sport_key",
     "discriminator_value": "football",
     "version": 1,
+    "status": "active",
     "created_at": "2025-09-01T10:00:00Z",
     "updated_at": "2026-01-01T09:00:00Z",
     "groups": [
       {
         "code": "positioning",
         "label": { "en": "Positioning", "ar": "المركز" },
+        "icon": null,
         "collapsible": false,
         "order": 1,
         "attributes": [
@@ -55,6 +58,7 @@
       {
         "code": "attributes",
         "label": { "en": "Attributes", "ar": "الصفات" },
+        "icon": null,
         "collapsible": true,
         "order": 2,
         "attributes": [
@@ -96,17 +100,20 @@
   },
   {
     "id": "attrset_enrollment_swimming_v1",
+    "tenant_id": "tnt_riverside",
     "code": "athlete_enrollment.swimming",
     "entity_type": "athlete_enrollment",
     "discriminator_field": "sport_key",
     "discriminator_value": "swimming",
     "version": 1,
+    "status": "active",
     "created_at": "2025-09-01T10:00:00Z",
     "updated_at": "2026-01-01T09:00:00Z",
     "groups": [
       {
         "code": "profile",
         "label": { "en": "Profile", "ar": "الملف" },
+        "icon": null,
         "collapsible": false,
         "order": 1,
         "attributes": [
@@ -141,6 +148,7 @@
       {
         "code": "personal_bests",
         "label": { "en": "Personal Bests", "ar": "أفضل الأوقات" },
+        "icon": null,
         "collapsible": true,
         "order": 2,
         "attributes": [
@@ -174,17 +182,20 @@
   },
   {
     "id": "attrset_progress_football_v1",
+    "tenant_id": "tnt_riverside",
     "code": "progress.football",
     "entity_type": "progress",
     "discriminator_field": "sport_key",
     "discriminator_value": "football",
     "version": 1,
+    "status": "active",
     "created_at": "2025-09-01T10:00:00Z",
     "updated_at": "2026-01-01T09:00:00Z",
     "groups": [
       {
         "code": "technical",
         "label": { "en": "Technical", "ar": "المهارات الفنية" },
+        "icon": null,
         "collapsible": false,
         "order": 1,
         "attributes": [
@@ -217,6 +228,7 @@
       {
         "code": "physical",
         "label": { "en": "Physical", "ar": "البدني" },
+        "icon": null,
         "collapsible": false,
         "order": 2,
         "attributes": [
@@ -241,6 +253,7 @@
       {
         "code": "mental",
         "label": { "en": "Mental", "ar": "الذهني" },
+        "icon": null,
         "collapsible": false,
         "order": 3,
         "attributes": [
@@ -266,17 +279,20 @@
   },
   {
     "id": "attrset_performance_football_v1",
+    "tenant_id": "tnt_riverside",
     "code": "performance.football",
     "entity_type": "performance",
     "discriminator_field": "sport_key",
     "discriminator_value": "football",
     "version": 1,
+    "status": "active",
     "created_at": "2025-09-01T10:00:00Z",
     "updated_at": "2026-01-01T09:00:00Z",
     "groups": [
       {
         "code": "speed_power",
         "label": { "en": "Speed & Power", "ar": "السرعة والقوة" },
+        "icon": null,
         "collapsible": false,
         "order": 1,
         "attributes": [
@@ -301,6 +317,7 @@
       {
         "code": "endurance",
         "label": { "en": "Endurance", "ar": "التحمل" },
+        "icon": null,
         "collapsible": false,
         "order": 2,
         "attributes": [

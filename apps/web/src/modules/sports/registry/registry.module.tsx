@@ -32,6 +32,7 @@ const registryModule: AppModule = {
         featureKey: "sports",
         requiredPermission: "sports.viewAny",
         order: 80,
+        groupKey: "operations",
       },
     },
   ],

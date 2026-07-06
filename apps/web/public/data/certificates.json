@@ -1,0 +1,30 @@
+[
+  {
+    "id": "cert_emma_potm",
+    "tenant_id": "tnt_riverside",
+    "award_id": "awd_emma_potm",
+    "athlete_id": "ath_emma",
+    "template_key": "potm_v1",
+    "issued_at": "2026-06-01T10:00:00Z",
+    "document_id": "doc_cert_emma_potm",
+    "share_url": "https://riverside.academorix.app/certificates/cert_emma_potm",
+    "download_url": "/downloads/certificates/cert_emma_potm.pdf",
+    "status": "issued",
+    "created_at": "2026-06-01T10:00:00Z",
+    "updated_at": "2026-06-01T10:00:00Z"
+  },
+  {
+    "id": "cert_liam_syllabus",
+    "tenant_id": "tnt_riverside",
+    "award_id": "awd_liam_syllabus",
+    "athlete_id": "ath_liam",
+    "template_key": "syllabus_v1",
+    "issued_at": "2026-02-02T10:00:00Z",
+    "document_id": null,
+    "share_url": null,
+    "download_url": "/downloads/certificates/cert_liam_syllabus.pdf",
+    "status": "issued",
+    "created_at": "2026-02-02T10:00:00Z",
+    "updated_at": "2026-02-02T10:00:00Z"
+  }
+]

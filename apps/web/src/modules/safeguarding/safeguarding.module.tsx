@@ -36,6 +36,7 @@ const safeguardingModule: AppModule = {
         featureKey: "safeguarding",
         requiredPermission: "safeguarding.viewAny",
         order: 34,
+        groupKey: "administration",
       },
     },
   ],

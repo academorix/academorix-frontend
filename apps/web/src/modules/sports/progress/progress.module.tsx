@@ -32,6 +32,7 @@ const progressModule: AppModule = {
         featureKey: "progress",
         requiredPermission: "progress.viewAny",
         order: 26,
+        groupKey: "operations",
       },
     },
   ],

@@ -36,9 +36,9 @@ const envSchema = z.object({
   VITE_API_PATH: z.string().default("/api"),
 
   /**
-   * The **central** host that serves the workspace picker + marketing pages
-   * (`academorix.app`). Requests from this host land on the platform-admin
-   * auth endpoints when a user signs in as an admin.
+   * The **central** host that serves the workspace picker (`academorix.app`).
+   * Requests from this host land on the platform-admin auth endpoints when a
+   * user signs in as an admin.
    */
   VITE_CENTRAL_HOST: z.string().min(1).default("academorix.app"),
 
@@ -49,6 +49,15 @@ const envSchema = z.object({
    * MUST be served on a central host.
    */
   VITE_PLATFORM_ADMIN_HOST: z.string().min(1).default("admin.academorix.app"),
+
+  /**
+   * Absolute origin of the public marketing site (Next.js app at
+   * `apps/landing-page`, deployed as its own Vercel project). Used for
+   * outbound CTAs from inside the SPA — e.g. Billing → "Change plan" opens
+   * `${VITE_MARKETING_URL}/pricing`. Falls back to localhost:3001 for local
+   * dev so the two apps can run side-by-side.
+   */
+  VITE_MARKETING_URL: z.url().default("http://localhost:3001"),
 
   /**
    * Master switch between the two Refine data/auth providers.

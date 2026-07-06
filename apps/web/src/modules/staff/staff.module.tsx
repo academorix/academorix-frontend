@@ -37,6 +37,7 @@ const staffModule: AppModule = {
         requiredPermission: "staff.viewAny",
         order: 40,
         scopedBy: ["branch"],
+        groupKey: "operations",
       },
     },
   ],

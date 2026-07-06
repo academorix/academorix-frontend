@@ -32,6 +32,7 @@ const credentialsModule: AppModule = {
         requiredPermission: "credentials.viewAny",
         order: 27,
         scopedBy: ["branch"],
+        groupKey: "operations",
       },
     },
   ],

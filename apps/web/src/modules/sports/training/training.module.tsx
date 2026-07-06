@@ -36,6 +36,7 @@ const trainingModule: AppModule = {
         requiredPermission: "training-sessions.viewAny",
         order: 21,
         scopedBy: ["branch", "season"],
+        groupKey: "operations",
       },
     },
   ],

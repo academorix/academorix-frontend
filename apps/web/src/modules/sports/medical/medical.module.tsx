@@ -36,6 +36,7 @@ const medicalModule: AppModule = {
         featureKey: "medical",
         requiredPermission: "medical.viewAny",
         order: 29,
+        groupKey: "operations",
       },
     },
   ],

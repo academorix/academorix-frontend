@@ -10,7 +10,7 @@
  * spec, regenerate this file with:
  *
  * ```sh
- * pnpm --filter @academorix/web codegen
+ * pnpm --filter @academorix/dashboard codegen
  * # → openapi-typescript <VITE_API_URL>/api/openapi.json -o src/lib/api/schema.d.ts
  * ```
  *

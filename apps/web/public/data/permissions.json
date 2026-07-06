@@ -1,34 +1,432 @@
 [
   {
-    "id": "perm_athletes_viewany",
-    "name": "athletes.viewAny",
-    "description": "View the athletes list.",
-    "resource": "athletes",
-    "created_at": "2025-09-01T10:00:00Z",
-    "updated_at": "2025-09-01T10:00:00Z"
+    "key": "*",
+    "description": "Wildcard — full access to everything in the tenant.",
+    "category": "platform"
   },
   {
-    "id": "perm_athletes_manage",
-    "name": "athletes.manage",
-    "description": "Create, edit, and delete athletes.",
-    "resource": "athletes",
-    "created_at": "2025-09-01T10:00:00Z",
-    "updated_at": "2025-09-01T10:00:00Z"
+    "key": "manage_billing",
+    "description": "Manage the tenant's subscription and billing.",
+    "category": "platform"
   },
   {
-    "id": "perm_events_viewany",
-    "name": "events.viewAny",
-    "description": "View the events calendar.",
-    "resource": "events",
-    "created_at": "2025-09-01T10:00:00Z",
-    "updated_at": "2025-09-01T10:00:00Z"
+    "key": "manage_tenants",
+    "description": "Manage tenants (platform staff only).",
+    "category": "platform"
   },
   {
-    "id": "perm_invoices_viewany",
-    "name": "invoices.viewAny",
-    "description": "View invoices.",
-    "resource": "invoices",
-    "created_at": "2025-09-01T10:00:00Z",
-    "updated_at": "2025-09-01T10:00:00Z"
-  }
+    "key": "impersonate_tenant",
+    "description": "Impersonate a tenant user (audited).",
+    "category": "platform"
+  },
+
+  {
+    "key": "organizations.viewAny",
+    "description": "View the organizations list.",
+    "category": "organizations"
+  },
+  {
+    "key": "organizations.view",
+    "description": "View an organization.",
+    "category": "organizations"
+  },
+  {
+    "key": "organizations.create",
+    "description": "Create an organization.",
+    "category": "organizations"
+  },
+  {
+    "key": "organizations.update",
+    "description": "Update an organization.",
+    "category": "organizations"
+  },
+  {
+    "key": "organizations.delete",
+    "description": "Delete an organization.",
+    "category": "organizations"
+  },
+
+  {
+    "key": "branches.viewAny",
+    "description": "View the branches list.",
+    "category": "organizations"
+  },
+  { "key": "branches.view", "description": "View a branch.", "category": "organizations" },
+  { "key": "branches.create", "description": "Create a branch.", "category": "organizations" },
+  { "key": "branches.update", "description": "Update a branch.", "category": "organizations" },
+  { "key": "branches.delete", "description": "Delete a branch.", "category": "organizations" },
+  {
+    "key": "branches.manage",
+    "description": "Full management on branches (viewAny/view/create/update/delete).",
+    "category": "organizations"
+  },
+
+  { "key": "regions.viewAny", "description": "View regions.", "category": "organizations" },
+  { "key": "regions.manage", "description": "Manage regions.", "category": "organizations" },
+
+  { "key": "staff.viewAny", "description": "View staff list.", "category": "hr" },
+  { "key": "staff.view", "description": "View a staff profile.", "category": "hr" },
+  {
+    "key": "staff.manage",
+    "description": "Manage staff profiles, pay, and documents.",
+    "category": "hr"
+  },
+
+  { "key": "users.viewAny", "description": "View users list.", "category": "identity" },
+  { "key": "users.view", "description": "View a user.", "category": "identity" },
+  { "key": "users.create", "description": "Create a user (invite).", "category": "identity" },
+  { "key": "users.update", "description": "Update a user.", "category": "identity" },
+  { "key": "users.delete", "description": "Delete a user.", "category": "identity" },
+
+  { "key": "roles.viewAny", "description": "View roles.", "category": "identity" },
+  { "key": "roles.manage", "description": "Manage roles and permissions.", "category": "identity" },
+
+  { "key": "athletes.viewAny", "description": "View the athletes list.", "category": "athletes" },
+  {
+    "key": "athletes.viewOwn",
+    "description": "View the caller's own children.",
+    "category": "athletes"
+  },
+  { "key": "athletes.view", "description": "View an athlete.", "category": "athletes" },
+  { "key": "athletes.create", "description": "Create an athlete.", "category": "athletes" },
+  { "key": "athletes.update", "description": "Update an athlete.", "category": "athletes" },
+  { "key": "athletes.delete", "description": "Delete an athlete.", "category": "athletes" },
+  {
+    "key": "athletes.manage",
+    "description": "Full management on athletes.",
+    "category": "athletes"
+  },
+
+  { "key": "teams.viewAny", "description": "View teams.", "category": "sports" },
+  { "key": "teams.view", "description": "View a team.", "category": "sports" },
+  { "key": "teams.create", "description": "Create a team.", "category": "sports" },
+  { "key": "teams.update", "description": "Update a team.", "category": "sports" },
+  { "key": "teams.delete", "description": "Delete a team.", "category": "sports" },
+
+  { "key": "seasons.viewAny", "description": "View seasons.", "category": "sports" },
+  { "key": "seasons.view", "description": "View a season.", "category": "sports" },
+  { "key": "seasons.manage", "description": "Manage seasons.", "category": "sports" },
+
+  {
+    "key": "registrations.viewAny",
+    "description": "View registrations.",
+    "category": "acquisition"
+  },
+  { "key": "registrations.view", "description": "View a registration.", "category": "acquisition" },
+  {
+    "key": "registrations.create",
+    "description": "Create a registration.",
+    "category": "acquisition"
+  },
+  {
+    "key": "registrations.update",
+    "description": "Update a registration.",
+    "category": "acquisition"
+  },
+  {
+    "key": "registrations.delete",
+    "description": "Delete a registration.",
+    "category": "acquisition"
+  },
+
+  { "key": "leads.viewAny", "description": "View leads.", "category": "acquisition" },
+  { "key": "leads.view", "description": "View a lead.", "category": "acquisition" },
+  { "key": "leads.create", "description": "Create a lead.", "category": "acquisition" },
+  { "key": "leads.update", "description": "Update a lead.", "category": "acquisition" },
+  { "key": "leads.delete", "description": "Delete a lead.", "category": "acquisition" },
+
+  { "key": "events.viewAny", "description": "View events calendar.", "category": "scheduling" },
+  { "key": "events.view", "description": "View an event.", "category": "scheduling" },
+  { "key": "events.create", "description": "Create an event.", "category": "scheduling" },
+  { "key": "events.update", "description": "Update an event.", "category": "scheduling" },
+  { "key": "events.delete", "description": "Delete an event.", "category": "scheduling" },
+  { "key": "events.rsvp", "description": "RSVP to an event.", "category": "scheduling" },
+
+  {
+    "key": "training-sessions.viewAny",
+    "description": "View training sessions.",
+    "category": "sports"
+  },
+  {
+    "key": "training-sessions.view",
+    "description": "View a training session.",
+    "category": "sports"
+  },
+  {
+    "key": "training-sessions.create",
+    "description": "Create a training session.",
+    "category": "sports"
+  },
+  {
+    "key": "training-sessions.update",
+    "description": "Update a training session.",
+    "category": "sports"
+  },
+  {
+    "key": "training-sessions.delete",
+    "description": "Delete a training session.",
+    "category": "sports"
+  },
+
+  { "key": "matches.viewAny", "description": "View matches.", "category": "sports" },
+  { "key": "matches.view", "description": "View a match.", "category": "sports" },
+  { "key": "matches.create", "description": "Create a match.", "category": "sports" },
+  { "key": "matches.update", "description": "Update a match.", "category": "sports" },
+  { "key": "matches.delete", "description": "Delete a match.", "category": "sports" },
+
+  {
+    "key": "private-sessions.viewAny",
+    "description": "View private sessions.",
+    "category": "sports"
+  },
+  {
+    "key": "private-sessions.view",
+    "description": "View a private session.",
+    "category": "sports"
+  },
+  {
+    "key": "private-sessions.create",
+    "description": "Create a private session.",
+    "category": "sports"
+  },
+  {
+    "key": "private-sessions.update",
+    "description": "Update a private session.",
+    "category": "sports"
+  },
+
+  { "key": "attendance.viewAny", "description": "View attendance.", "category": "sports" },
+  { "key": "attendance.view", "description": "View an attendance record.", "category": "sports" },
+  { "key": "attendance.create", "description": "Take attendance.", "category": "sports" },
+  {
+    "key": "attendance.update",
+    "description": "Update / confirm attendance.",
+    "category": "sports"
+  },
+  {
+    "key": "attendance.manage",
+    "description": "Full management on attendance.",
+    "category": "sports"
+  },
+
+  { "key": "progress.viewAny", "description": "View progress cards.", "category": "development" },
+  { "key": "progress.view", "description": "View a progress card.", "category": "development" },
+  { "key": "progress.create", "description": "Record progress.", "category": "development" },
+  { "key": "progress.update", "description": "Update progress.", "category": "development" },
+  {
+    "key": "progress.manage",
+    "description": "Full management on progress.",
+    "category": "development"
+  },
+
+  {
+    "key": "performance.viewAny",
+    "description": "View performance test results.",
+    "category": "development"
+  },
+  {
+    "key": "performance.view",
+    "description": "View a performance test.",
+    "category": "development"
+  },
+  {
+    "key": "performance.create",
+    "description": "Record performance test results.",
+    "category": "development"
+  },
+  {
+    "key": "performance.update",
+    "description": "Update performance test results.",
+    "category": "development"
+  },
+
+  {
+    "key": "development.viewAny",
+    "description": "View development pathways.",
+    "category": "development"
+  },
+  { "key": "development.view", "description": "View a pathway or IDP.", "category": "development" },
+  {
+    "key": "development.create",
+    "description": "Create a pathway or IDP.",
+    "category": "development"
+  },
+  {
+    "key": "development.update",
+    "description": "Update a pathway or IDP.",
+    "category": "development"
+  },
+
+  { "key": "drills.viewAny", "description": "View drills library.", "category": "sports" },
+  { "key": "drills.view", "description": "View a drill.", "category": "sports" },
+  { "key": "drills.create", "description": "Create a drill.", "category": "sports" },
+  { "key": "drills.update", "description": "Update a drill.", "category": "sports" },
+  { "key": "drills.delete", "description": "Delete a drill.", "category": "sports" },
+
+  { "key": "competitions.viewAny", "description": "View competitions.", "category": "sports" },
+  { "key": "competitions.view", "description": "View a competition.", "category": "sports" },
+  { "key": "competitions.create", "description": "Create a competition.", "category": "sports" },
+  { "key": "competitions.update", "description": "Update a competition.", "category": "sports" },
+
+  { "key": "formations.viewAny", "description": "View formations.", "category": "sports" },
+  { "key": "formations.view", "description": "View a formation.", "category": "sports" },
+  { "key": "formations.create", "description": "Create a formation.", "category": "sports" },
+  { "key": "formations.update", "description": "Update a formation.", "category": "sports" },
+  { "key": "formations.delete", "description": "Delete a formation.", "category": "sports" },
+
+  { "key": "medical.viewAny", "description": "View medical records.", "category": "medical" },
+  { "key": "medical.view", "description": "View a medical record.", "category": "medical" },
+  { "key": "medical.create", "description": "Record medical entries.", "category": "medical" },
+  { "key": "medical.update", "description": "Update medical entries.", "category": "medical" },
+  { "key": "medical.delete", "description": "Delete medical entries.", "category": "medical" },
+
+  {
+    "key": "safeguarding.viewAny",
+    "description": "View safeguarding data.",
+    "category": "medical"
+  },
+  { "key": "safeguarding.view", "description": "View a safeguarding case.", "category": "medical" },
+  {
+    "key": "safeguarding.create",
+    "description": "Record safeguarding entries.",
+    "category": "medical"
+  },
+  {
+    "key": "safeguarding.update",
+    "description": "Update safeguarding entries.",
+    "category": "medical"
+  },
+  {
+    "key": "safeguarding.delete",
+    "description": "Delete safeguarding entries.",
+    "category": "medical"
+  },
+
+  { "key": "coaches.viewAny", "description": "View coaches.", "category": "sports" },
+  { "key": "coaches.view", "description": "View a coach.", "category": "sports" },
+
+  { "key": "facilities.viewAny", "description": "View facilities.", "category": "scheduling" },
+  { "key": "facilities.view", "description": "View a facility.", "category": "scheduling" },
+
+  { "key": "invoices.viewAny", "description": "View invoices.", "category": "finance" },
+  { "key": "invoices.viewOwn", "description": "View own invoices.", "category": "finance" },
+  { "key": "invoices.view", "description": "View an invoice.", "category": "finance" },
+  { "key": "invoices.create", "description": "Create an invoice.", "category": "finance" },
+  { "key": "invoices.update", "description": "Update an invoice.", "category": "finance" },
+  { "key": "invoices.delete", "description": "Delete an invoice.", "category": "finance" },
+
+  { "key": "memberships.viewAny", "description": "View memberships.", "category": "finance" },
+  { "key": "memberships.view", "description": "View a membership.", "category": "finance" },
+  { "key": "memberships.create", "description": "Create a membership.", "category": "finance" },
+  { "key": "memberships.update", "description": "Update a membership.", "category": "finance" },
+  { "key": "memberships.delete", "description": "Delete a membership.", "category": "finance" },
+
+  { "key": "expenses.viewAny", "description": "View expenses.", "category": "finance" },
+  { "key": "expenses.view", "description": "View an expense.", "category": "finance" },
+  { "key": "expenses.create", "description": "Create an expense.", "category": "finance" },
+  { "key": "expenses.update", "description": "Update an expense.", "category": "finance" },
+  { "key": "expenses.delete", "description": "Delete an expense.", "category": "finance" },
+
+  {
+    "key": "subscription.viewAny",
+    "description": "View the tenant's subscription state.",
+    "category": "finance"
+  },
+  {
+    "key": "subscription.view",
+    "description": "View the tenant's subscription.",
+    "category": "finance"
+  },
+  {
+    "key": "subscription.update",
+    "description": "Change the tenant's subscription.",
+    "category": "finance"
+  },
+
+  {
+    "key": "reception.viewAny",
+    "description": "View the reception queue.",
+    "category": "operations"
+  },
+  {
+    "key": "reception.manage",
+    "description": "Manage the reception queue.",
+    "category": "operations"
+  },
+
+  {
+    "key": "approval-tasks.viewAny",
+    "description": "View approval tasks.",
+    "category": "operations"
+  },
+  {
+    "key": "approval-tasks.view",
+    "description": "View an approval task.",
+    "category": "operations"
+  },
+  {
+    "key": "approval-tasks.update",
+    "description": "Approve/reject a task.",
+    "category": "operations"
+  },
+
+  { "key": "passes.viewAny", "description": "View wallet passes.", "category": "operations" },
+  { "key": "passes.view", "description": "View a wallet pass.", "category": "operations" },
+  { "key": "passes.create", "description": "Issue a wallet pass.", "category": "operations" },
+  { "key": "passes.update", "description": "Update a wallet pass.", "category": "operations" },
+  { "key": "passes.delete", "description": "Revoke a wallet pass.", "category": "operations" },
+
+  {
+    "key": "credentials.viewAny",
+    "description": "View NFC/RFID credentials.",
+    "category": "operations"
+  },
+  { "key": "credentials.view", "description": "View a credential.", "category": "operations" },
+  { "key": "credentials.create", "description": "Issue a credential.", "category": "operations" },
+  { "key": "credentials.update", "description": "Update a credential.", "category": "operations" },
+
+  {
+    "key": "announcements.viewAny",
+    "description": "View announcements.",
+    "category": "communication"
+  },
+  {
+    "key": "announcements.view",
+    "description": "View an announcement.",
+    "category": "communication"
+  },
+  {
+    "key": "announcements.create",
+    "description": "Publish an announcement.",
+    "category": "communication"
+  },
+  {
+    "key": "announcements.update",
+    "description": "Update an announcement.",
+    "category": "communication"
+  },
+
+  {
+    "key": "conversations.viewAny",
+    "description": "View conversations.",
+    "category": "communication"
+  },
+  {
+    "key": "conversations.view",
+    "description": "View a conversation.",
+    "category": "communication"
+  },
+  {
+    "key": "conversations.create",
+    "description": "Start a conversation.",
+    "category": "communication"
+  },
+
+  { "key": "awards.viewAny", "description": "View awards.", "category": "development" },
+  { "key": "awards.view", "description": "View an award.", "category": "development" },
+  { "key": "awards.create", "description": "Grant an award.", "category": "development" },
+  { "key": "awards.update", "description": "Update an award.", "category": "development" },
+
+  { "key": "reports.viewAny", "description": "View reports.", "category": "analytics" },
+  { "key": "reports.view", "description": "View a report.", "category": "analytics" }
 ]

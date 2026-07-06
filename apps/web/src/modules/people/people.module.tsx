@@ -30,6 +30,7 @@ const peopleModule: AppModule = {
         featureKey: "people",
         requiredPermission: "people.viewAny",
         order: 45,
+        groupKey: "operations",
       },
     },
   ],

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "spr_mike_base",
+    "tenant_id": "tnt_riverside",
+    "staff_id": "stf_coach_mike",
+    "rate_type": "monthly_salary",
+    "amount_minor": 420000,
+    "currency": "USD",
+    "effective_from": "2024-08-15",
+    "effective_to": null,
+    "is_active": true,
+    "notes": "Head coach salary — full-time.",
+    "created_at": "2024-08-15T10:00:00Z",
+    "updated_at": "2024-08-15T10:00:00Z"
+  },
+  {
+    "id": "spr_mike_private_session",
+    "tenant_id": "tnt_riverside",
+    "staff_id": "stf_coach_mike",
+    "rate_type": "per_session",
+    "amount_minor": 4500,
+    "currency": "USD",
+    "effective_from": "2024-08-15",
+    "effective_to": null,
+    "is_active": true,
+    "notes": "Rate per delivered private session (bonus over base).",
+    "created_at": "2024-08-15T10:00:00Z",
+    "updated_at": "2024-08-15T10:00:00Z"
+  },
+  {
+    "id": "spr_sara_hourly",
+    "tenant_id": "tnt_riverside",
+    "staff_id": "stf_coach_sara",
+    "rate_type": "hourly",
+    "amount_minor": 3500,
+    "currency": "USD",
+    "effective_from": "2025-01-10",
+    "effective_to": null,
+    "is_active": true,
+    "notes": "Swim coach hourly rate.",
+    "created_at": "2025-01-10T10:00:00Z",
+    "updated_at": "2025-01-10T10:00:00Z"
+  },
+  {
+    "id": "spr_marco_session_aed",
+    "tenant_id": "tnt_riverside",
+    "staff_id": "stf_coach_marco",
+    "rate_type": "per_session",
+    "amount_minor": 4200,
+    "currency": "USD",
+    "effective_from": "2025-11-25",
+    "effective_to": null,
+    "is_active": true,
+    "notes": "Per-session rate — blueprint §10.18 example (200 AED/session equivalent converted to reporting currency).",
+    "created_at": "2025-11-25T10:00:00Z",
+    "updated_at": "2025-11-25T10:00:00Z"
+  },
+  {
+    "id": "spr_amy_monthly",
+    "tenant_id": "tnt_riverside",
+    "staff_id": "stf_reception_amy",
+    "rate_type": "monthly_salary",
+    "amount_minor": 300000,
+    "currency": "USD",
+    "effective_from": "2026-06-01",
+    "effective_to": null,
+    "is_active": true,
+    "notes": "Front desk — onboarding.",
+    "created_at": "2026-06-01T10:00:00Z",
+    "updated_at": "2026-06-01T10:00:00Z"
+  }
+]

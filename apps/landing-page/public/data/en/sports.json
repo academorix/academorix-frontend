@@ -1,0 +1,350 @@
+{
+  "football": {
+    "slug": "football",
+    "eyebrow": "FOOTBALL ACADEMIES",
+    "title": "Academorix for Football",
+    "description": "Run football academies of every size — from local grassroots clubs to full multi-branch networks. Squads, matches, formations, and per-position performance in one place.",
+    "hero_icon": "TrophyIcon",
+    "features": [
+      {
+        "icon": "UsersIcon",
+        "title": "Squads by age & level",
+        "description": "U8s to U18s, first team to reserves — build the pyramid your club needs and let athletes move up as they grow."
+      },
+      {
+        "icon": "CalendarDaysIcon",
+        "title": "Training + fixtures",
+        "description": "Weekly training blocks and league fixtures on one calendar. RSVPs from guardians before every kick-off."
+      },
+      {
+        "icon": "PuzzlePieceIcon",
+        "title": "Formation builder",
+        "description": "Draft starting XI + subs per fixture. Save formations as templates and reuse them across squads."
+      },
+      {
+        "icon": "ChartBarIcon",
+        "title": "Per-position performance",
+        "description": "Configurable attribute sets for GK / DEF / MID / FWD. Track pass %, shots on target, tackle wins — the numbers that matter for each role."
+      },
+      {
+        "icon": "TrophyIcon",
+        "title": "League tables",
+        "description": "Internal competitions and inter-branch tournaments with automatic standings, top scorers, and clean sheets."
+      },
+      {
+        "icon": "CreditCardIcon",
+        "title": "Membership fees",
+        "description": "Seasonal, monthly, or match-pack fees with family discounts and automatic renewal reminders."
+      }
+    ],
+    "testimonial": {
+      "quote": "We track pass %, shot conversion, and tackle wins per position now. Previously we did none of this because the tools didn't fit football.",
+      "author": "Sara Nassar",
+      "role": "Operations Lead, Northgate FC",
+      "initials": "SN"
+    },
+    "related": [
+      {
+        "href": "/sports/basketball",
+        "title": "Basketball",
+        "description": "Rosters, minutes, and per-quarter stats."
+      },
+      {
+        "href": "/products/performance",
+        "title": "Performance",
+        "description": "Configurable attribute sets per position."
+      },
+      {
+        "href": "/products/attribute-engine",
+        "title": "Attribute engine",
+        "description": "How sport-agnostic forms work under the hood."
+      }
+    ]
+  },
+  "swimming": {
+    "slug": "swimming",
+    "eyebrow": "SWIMMING ACADEMIES",
+    "title": "Academorix for Swimming",
+    "description": "Lane management, splits, meets, and per-stroke time series — everything a swimming academy needs, from learn-to-swim through competitive squads.",
+    "hero_icon": "HeartIcon",
+    "features": [
+      {
+        "icon": "MapIcon",
+        "title": "Lane management",
+        "description": "Assign swimmers to lanes based on level and stroke. Move them between sets as they progress within a session."
+      },
+      {
+        "icon": "ClockIcon",
+        "title": "Split & PB tracking",
+        "description": "Log per-length splits, personal bests, and season targets. Automatic PB detection with family notifications."
+      },
+      {
+        "icon": "TrophyIcon",
+        "title": "Meet scheduling",
+        "description": "Manage entries for internal galas and external meets. Auto-generate heat sheets and result cards."
+      },
+      {
+        "icon": "ChartBarIcon",
+        "title": "Per-stroke performance",
+        "description": "Freestyle, backstroke, breaststroke, butterfly — separate attribute sets so you're never comparing apples to oranges."
+      },
+      {
+        "icon": "AcademicCapIcon",
+        "title": "Level progression",
+        "description": "Stage-based curricula (Learn to Swim → Improvers → Squads). Awards + certificates auto-generated on completion."
+      },
+      {
+        "icon": "BellAlertIcon",
+        "title": "Pool session reminders",
+        "description": "Guardians get reminders with the exact time and lane 30 minutes before each session."
+      }
+    ],
+    "testimonial": {
+      "quote": "Academorix replaced three tools and a stack of spreadsheets. Our coaches finally spend their time coaching.",
+      "author": "Layla Haddad",
+      "role": "Director, AquaElite Swim",
+      "initials": "LH"
+    },
+    "related": [
+      {
+        "href": "/sports/gymnastics",
+        "title": "Gymnastics",
+        "description": "Apparatus scoring and progression."
+      },
+      {
+        "href": "/products/performance",
+        "title": "Performance",
+        "description": "Per-stroke attribute sets."
+      },
+      {
+        "href": "/products/reports",
+        "title": "Reports",
+        "description": "Meet results + season summaries."
+      }
+    ]
+  },
+  "basketball": {
+    "slug": "basketball",
+    "eyebrow": "BASKETBALL ACADEMIES",
+    "title": "Academorix for Basketball",
+    "description": "Rosters, minutes played, per-quarter stats, and league management — purpose-built for basketball academies running youth, high-school, and prep programs.",
+    "hero_icon": "TrophyIcon",
+    "features": [
+      {
+        "icon": "UsersIcon",
+        "title": "Rosters + rotations",
+        "description": "Build 12-player rosters with starting five and bench rotations. Track minutes played per game and per season."
+      },
+      {
+        "icon": "ChartBarIcon",
+        "title": "Per-quarter stats",
+        "description": "Points, rebounds, assists, steals, blocks, turnovers — logged per quarter, aggregated per game and season."
+      },
+      {
+        "icon": "TrophyIcon",
+        "title": "League play",
+        "description": "Internal leagues + inter-branch competitions with automatic standings, playoffs, and bracket generation."
+      },
+      {
+        "icon": "CalendarDaysIcon",
+        "title": "Practice + game calendars",
+        "description": "Practices, film sessions, and games on one calendar. Court bookings integrated with facility availability."
+      },
+      {
+        "icon": "ChartPieIcon",
+        "title": "Shot charts",
+        "description": "Track shot attempts + makes with court coordinates. Heat maps show hot zones per player."
+      },
+      {
+        "icon": "AcademicCapIcon",
+        "title": "Recruit tracking",
+        "description": "Track prospects, evaluate them at events, and manage the pipeline from scout to signing."
+      }
+    ],
+    "related": [
+      {
+        "href": "/sports/football",
+        "title": "Football",
+        "description": "Squads, matches, formations."
+      },
+      {
+        "href": "/products/performance",
+        "title": "Performance",
+        "description": "Per-position stat tracking."
+      },
+      {
+        "href": "/products/scheduling",
+        "title": "Scheduling",
+        "description": "Practice and game calendars."
+      }
+    ]
+  },
+  "tennis": {
+    "slug": "tennis",
+    "eyebrow": "TENNIS ACADEMIES",
+    "title": "Academorix for Tennis",
+    "description": "Ladders, court bookings, match rating systems, and per-player stroke tracking — everything a tennis academy needs to run competitive and recreational programs.",
+    "hero_icon": "TrophyIcon",
+    "features": [
+      {
+        "icon": "ChartPieIcon",
+        "title": "Player ladders",
+        "description": "Automatic ladder rankings from match results. Weekly challenge matches move players up and down the ladder."
+      },
+      {
+        "icon": "MapIcon",
+        "title": "Court bookings",
+        "description": "Reserve courts for lessons, matches, or open play. Integrated with your academy's court availability."
+      },
+      {
+        "icon": "TrophyIcon",
+        "title": "Tournament management",
+        "description": "Round-robin, single-elimination, and consolation brackets. Auto-generated draws and match schedules."
+      },
+      {
+        "icon": "ChartBarIcon",
+        "title": "Match rating (UTR-style)",
+        "description": "Elo-style rating updated after every match. Handicap younger players against older opponents fairly."
+      },
+      {
+        "icon": "AdjustmentsHorizontalIcon",
+        "title": "Per-stroke evaluations",
+        "description": "Coach-side attribute sets for forehand, backhand, serve, volley, and movement — track technique over time."
+      },
+      {
+        "icon": "AcademicCapIcon",
+        "title": "Level progression",
+        "description": "Red → Orange → Green → Yellow ball progression for junior programs, with automatic level-up triggers."
+      }
+    ],
+    "related": [
+      {
+        "href": "/sports/martial-arts",
+        "title": "Martial Arts",
+        "description": "Belt progression and grading."
+      },
+      {
+        "href": "/products/performance",
+        "title": "Performance",
+        "description": "Per-stroke attribute sets."
+      },
+      {
+        "href": "/products/scheduling",
+        "title": "Scheduling",
+        "description": "Court bookings + private lessons."
+      }
+    ]
+  },
+  "martial-arts": {
+    "slug": "martial-arts",
+    "eyebrow": "MARTIAL ARTS DOJOS",
+    "title": "Academorix for Martial Arts",
+    "description": "Belt progression, grading schemes, and dojo-first workflows for karate, taekwondo, judo, jiu-jitsu, and more. Sport-agnostic engine adapts to your style.",
+    "hero_icon": "TrophyIcon",
+    "features": [
+      {
+        "icon": "AcademicCapIcon",
+        "title": "Belt & grading progression",
+        "description": "Configurable belt schemes with prerequisites, testing dates, and automatic certificate generation on grading pass."
+      },
+      {
+        "icon": "CheckCircleIcon",
+        "title": "Grading exams",
+        "description": "Schedule grading exams with panel assignments, video capture, and per-technique scoring."
+      },
+      {
+        "icon": "TrophyIcon",
+        "title": "Tournament entries",
+        "description": "Manage entries for open and closed tournaments. Weight class + belt division seeding automated."
+      },
+      {
+        "icon": "DocumentTextIcon",
+        "title": "Kata & form libraries",
+        "description": "Video library of katas and forms tied to belt levels. Athletes can review any technique from their profile."
+      },
+      {
+        "icon": "IdentificationIcon",
+        "title": "Multi-style support",
+        "description": "Karate, taekwondo, judo, BJJ, aikido — one platform, sport-specific belt schemes and terminology per style."
+      },
+      {
+        "icon": "UsersIcon",
+        "title": "Family memberships",
+        "description": "Common in martial arts — one guardian, multiple children on family plans with sibling discounts."
+      }
+    ],
+    "related": [
+      {
+        "href": "/sports/gymnastics",
+        "title": "Gymnastics",
+        "description": "Apparatus scoring and progression."
+      },
+      {
+        "href": "/sports/tennis",
+        "title": "Tennis",
+        "description": "Level progression and ratings."
+      },
+      {
+        "href": "/products/attribute-engine",
+        "title": "Attribute engine",
+        "description": "Per-style scoring schemes."
+      }
+    ]
+  },
+  "gymnastics": {
+    "slug": "gymnastics",
+    "eyebrow": "GYMNASTICS CLUBS",
+    "title": "Academorix for Gymnastics",
+    "description": "Apparatus scoring, meet management, and progression schemes for artistic, rhythmic, and trampoline gymnastics. Compliant scoring systems built in.",
+    "hero_icon": "TrophyIcon",
+    "features": [
+      {
+        "icon": "ChartBarIcon",
+        "title": "Apparatus scoring",
+        "description": "Vault, uneven bars, balance beam, floor — code of points + difficulty scoring, execution deductions, and neutral deductions."
+      },
+      {
+        "icon": "AcademicCapIcon",
+        "title": "Level progression",
+        "description": "Level 1 → 10, elite, and international elite. Prerequisites tracked automatically as gymnasts complete skills."
+      },
+      {
+        "icon": "TrophyIcon",
+        "title": "Meet management",
+        "description": "Manage entries for local, regional, and national meets. Squad selection based on all-around scores."
+      },
+      {
+        "icon": "AdjustmentsHorizontalIcon",
+        "title": "Skill libraries",
+        "description": "Track which skills each gymnast has mastered. Auto-suggest the next progression based on level."
+      },
+      {
+        "icon": "ChartPieIcon",
+        "title": "Elite tracking",
+        "description": "Dedicated dashboards for elite squads — hours trained, injury reports, and international qualification progress."
+      },
+      {
+        "icon": "ShieldCheckIcon",
+        "title": "Safeguarding built in",
+        "description": "Given the age of most gymnasts, safeguarding is first-class — pickup verification, guardian consent, incident logs."
+      }
+    ],
+    "related": [
+      {
+        "href": "/sports/martial-arts",
+        "title": "Martial Arts",
+        "description": "Belt-based progression."
+      },
+      {
+        "href": "/products/safeguarding",
+        "title": "Safeguarding",
+        "description": "Compliance records + incident logging."
+      },
+      {
+        "href": "/products/performance",
+        "title": "Performance",
+        "description": "Skill libraries + longitudinal tracking."
+      }
+    ]
+  }
+}

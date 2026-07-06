@@ -35,6 +35,7 @@ const drillsModule: AppModule = {
         featureKey: "drills",
         requiredPermission: "drills.viewAny",
         order: 31,
+        groupKey: "operations",
       },
     },
   ],

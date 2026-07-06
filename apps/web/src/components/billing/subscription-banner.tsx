@@ -23,7 +23,7 @@ import {
   XMarkIcon,
 } from "@academorix/ui/icons/outline";
 import { Button } from "@academorix/ui/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 
 import type { SubscriptionBannerDescriptor, SubscriptionTone } from "@/lib/billing";
@@ -145,18 +145,27 @@ function BannerRow({
  */
 export function SubscriptionBanner(): ReactNode {
   const subscription = useSubscription();
-  const [dismissed, setDismissed] = useState<boolean>(false);
-
-  // Hydrate from sessionStorage once on mount.
-  useEffect(() => {
-    setDismissed(readDismissed());
-  }, []);
+  // Lazy initialiser reads sessionStorage **synchronously** on first render
+  // so a page reload with a prior dismissal never flashes the banner before
+  // it hides itself. Falls back to `false` in environments without storage.
+  const [dismissed, setDismissed] = useState<boolean>(() => readDismissed());
 
   const descriptor = bannerFor(subscription);
 
   // Reset dismissal when the underlying state changes (a trial ending should
   // re-surface the banner even if the user dismissed the trial-still-going one).
+  // The `isFirstRun` guard prevents this effect from wiping the sessionStorage-
+  // hydrated dismissal on the initial mount — we only want to reset when the
+  // status *actually* transitions after the component is already alive.
+  const isFirstRun = useRef(true);
+
   useEffect(() => {
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+
+      return;
+    }
+
     setDismissed(false);
     writeDismissed(false);
   }, [subscription?.status]);

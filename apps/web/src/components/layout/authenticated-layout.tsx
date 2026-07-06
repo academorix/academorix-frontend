@@ -26,14 +26,19 @@
 import { AcademicCapIcon } from "@academorix/ui/icons/outline";
 import {
   ArrowRightStartOnRectangleIcon,
+  BellIcon,
   Cog6ToothIcon,
+  MagnifyingGlassIcon,
+  QuestionMarkCircleIcon,
   UserCircleIcon,
 } from "@academorix/ui/icons/outline";
 import {
   AppLayout,
   Avatar,
+  Badge,
   Button,
   Dropdown,
+  Kbd,
   Label,
   Navbar,
   Separator,
@@ -43,11 +48,13 @@ import { useGetIdentity, useLogout } from "@refinedev/core";
 import { useLocation, useNavigate } from "react-router";
 
 import type { AppResource } from "@/lib/module";
+import type { SidebarGroupKey } from "@/lib/module";
 import type { Identity } from "@/types";
 import type { IconType } from "@academorix/ui/icons";
 import type { Key, ReactNode } from "react";
 
 import { SubscriptionBanner } from "@/components/billing";
+import { CommandPalette, CommandPaletteProvider, useCommandPalette } from "@/components/command";
 import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import { BranchSwitcher, OrganizationSwitcher, SeasonSwitcher } from "@/components/scope";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
@@ -69,7 +76,34 @@ interface NavEntry {
   label: string;
   Icon?: IconType;
   isCurrent: boolean;
+  groupKey: SidebarGroupKey | "other";
 }
+
+/**
+ * Canonical primary-sidebar group order. Matches `DASHBOARD_UX_PLAN.md` §3.1.
+ * The trailing `"other"` bucket catches resources whose manifest forgot to
+ * declare a `groupKey`; the shell logs a dev warning in that case.
+ */
+const SIDEBAR_GROUP_ORDER: (SidebarGroupKey | "other")[] = [
+  "overview",
+  "operations",
+  "growth",
+  "finance",
+  "administration",
+  "ai",
+  "other",
+];
+
+/** Human-readable label for each sidebar group (English default). */
+const SIDEBAR_GROUP_LABEL: Record<SidebarGroupKey | "other", string> = {
+  overview: "Overview",
+  operations: "Operations",
+  growth: "Growth",
+  finance: "Finance",
+  administration: "Administration",
+  ai: "AI",
+  other: "Other",
+};
 
 /** Whether a tenant feature is enabled (fail-open when the set is unknown). */
 function featureAllowed(identity: Identity | undefined, featureKey?: string): boolean {
@@ -118,8 +152,133 @@ function useNavEntries(identity: Identity | undefined): NavEntry[] {
         label: identity?.terminology?.[resource.name] ?? resource.meta.label,
         Icon: resource.meta.icon,
         isCurrent: pathname === href || pathname.startsWith(`${href}/`),
+        groupKey: resource.meta.groupKey ?? "other",
       };
     });
+}
+
+/**
+ * Splits nav entries into the canonical primary-sidebar groups (Overview,
+ * Operations, Growth, Finance, Administration, AI). Returns groups in the
+ * order defined by {@link SIDEBAR_GROUP_ORDER}, dropping any group with no
+ * visible entries so we do not render an empty header. Any entry whose module
+ * forgot to declare `groupKey` lands in the trailing `"other"` bucket and
+ * emits a dev-only warning so the miss is fixed in a follow-up.
+ */
+function useNavGroups(entries: NavEntry[]): {
+  key: SidebarGroupKey | "other";
+  label: string;
+  entries: NavEntry[];
+}[] {
+  const byGroup = new Map<SidebarGroupKey | "other", NavEntry[]>();
+
+  for (const entry of entries) {
+    const bucket = byGroup.get(entry.groupKey) ?? [];
+
+    bucket.push(entry);
+    byGroup.set(entry.groupKey, bucket);
+  }
+
+  if (import.meta.env.DEV) {
+    const stray = byGroup.get("other");
+
+    if (stray && stray.length > 0) {
+      const names = stray.map((entry) => entry.name).join(", ");
+
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[sidebar] The following resources have no groupKey and fell into "Other": ${names}. ` +
+          `Set AppResourceMeta.groupKey on each module manifest.`,
+      );
+    }
+  }
+
+  return SIDEBAR_GROUP_ORDER.flatMap((key) => {
+    const bucket = byGroup.get(key);
+
+    if (!bucket || bucket.length === 0) {
+      return [];
+    }
+
+    return [
+      {
+        key,
+        label: SIDEBAR_GROUP_LABEL[key],
+        entries: bucket,
+      },
+    ];
+  });
+}
+
+/**
+ * Global search trigger rendered in the navbar. Opens the command palette
+ * (⌘K) via {@link useCommandPalette}. Renders a chip-shaped button so the
+ * affordance looks like a search input at rest.
+ */
+function GlobalSearchTrigger(): ReactNode {
+  const { open } = useCommandPalette();
+
+  return (
+    <button
+      aria-label="Open command palette"
+      className="hidden h-8 min-w-[200px] items-center gap-2 rounded-lg border border-border bg-default/40 px-2.5 text-left text-sm text-muted transition-colors hover:bg-default/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent md:inline-flex"
+      type="button"
+      onClick={open}
+    >
+      <MagnifyingGlassIcon aria-hidden="true" className="size-4" />
+      <span className="flex-1 truncate">Search or jump to…</span>
+      <Kbd className="text-xs">
+        <Kbd.Abbr keyValue="command" />
+        <Kbd.Content>K</Kbd.Content>
+      </Kbd>
+    </button>
+  );
+}
+
+/**
+ * Notification bell with an unread-count badge. Phase 1e ships the visual;
+ * the drawer + real-time counts land alongside the notifications module in
+ * Phase 5 (see `DASHBOARD_UX_PLAN.md` §11.2).
+ */
+function NotificationBell(): ReactNode {
+  return (
+    <Button isIconOnly aria-label="Notifications" variant="ghost">
+      <Badge color="danger" size="sm">
+        <BellIcon aria-hidden="true" className="size-5" />
+      </Badge>
+    </Button>
+  );
+}
+
+/**
+ * Help popover trigger. Phase 1e renders the button and a static dropdown
+ * with placeholder links; a richer help surface (docs, changelog, contact
+ * support) lands later.
+ */
+function HelpMenu(): ReactNode {
+  return (
+    <Dropdown>
+      <Button isIconOnly aria-label="Help and resources" variant="ghost">
+        <QuestionMarkCircleIcon aria-hidden="true" className="size-5" />
+      </Button>
+      <Dropdown.Popover className="min-w-[220px]" placement="bottom end">
+        <Dropdown.Menu>
+          <Dropdown.Item id="docs" textValue="Documentation">
+            <Label>Documentation</Label>
+          </Dropdown.Item>
+          <Dropdown.Item id="shortcuts" textValue="Keyboard shortcuts">
+            <Label>Keyboard shortcuts</Label>
+          </Dropdown.Item>
+          <Dropdown.Item id="changelog" textValue="Changelog">
+            <Label>Changelog</Label>
+          </Dropdown.Item>
+          <Dropdown.Item id="support" textValue="Contact support">
+            <Label>Contact support</Label>
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown.Popover>
+    </Dropdown>
+  );
 }
 
 /** Navbar user menu, driven by the current identity. */
@@ -184,8 +343,10 @@ function UserMenu(): ReactNode {
   );
 }
 
-/** The sidebar: brand header + identity-filtered navigation menu. */
+/** The sidebar: brand header + identity-filtered navigation menu, grouped. */
 function AppSidebar({ entries }: { entries: NavEntry[] }): ReactNode {
+  const groups = useNavGroups(entries);
+
   return (
     <Sidebar>
       <Sidebar.Header>
@@ -202,22 +363,27 @@ function AppSidebar({ entries }: { entries: NavEntry[] }): ReactNode {
       </Sidebar.Header>
 
       <Sidebar.Content>
-        <Sidebar.Menu>
-          {entries.map((entry) => (
-            <Sidebar.MenuItem
-              key={entry.name}
-              href={entry.href}
-              id={entry.name}
-              isCurrent={entry.isCurrent}
-              tooltip={entry.label}
-            >
-              <Sidebar.MenuIcon>
-                {entry.Icon ? <entry.Icon aria-hidden="true" className="size-5" /> : null}
-              </Sidebar.MenuIcon>
-              <Sidebar.MenuLabel>{entry.label}</Sidebar.MenuLabel>
-            </Sidebar.MenuItem>
-          ))}
-        </Sidebar.Menu>
+        {groups.map((group) => (
+          <Sidebar.Group key={group.key}>
+            <Sidebar.GroupLabel>{group.label}</Sidebar.GroupLabel>
+            <Sidebar.Menu>
+              {group.entries.map((entry) => (
+                <Sidebar.MenuItem
+                  key={entry.name}
+                  href={entry.href}
+                  id={entry.name}
+                  isCurrent={entry.isCurrent}
+                  tooltip={entry.label}
+                >
+                  <Sidebar.MenuIcon>
+                    {entry.Icon ? <entry.Icon aria-hidden="true" className="size-5" /> : null}
+                  </Sidebar.MenuIcon>
+                  <Sidebar.MenuLabel>{entry.label}</Sidebar.MenuLabel>
+                </Sidebar.MenuItem>
+              ))}
+            </Sidebar.Menu>
+          </Sidebar.Group>
+        ))}
       </Sidebar.Content>
     </Sidebar>
   );
@@ -229,6 +395,19 @@ function AppSidebar({ entries }: { entries: NavEntry[] }): ReactNode {
  * @param props - The routed page to render inside the shell.
  */
 export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps): ReactNode {
+  return (
+    <CommandPaletteProvider>
+      <AuthenticatedLayoutInner>{children}</AuthenticatedLayoutInner>
+      <CommandPalette />
+    </CommandPaletteProvider>
+  );
+}
+
+/**
+ * The inner shell — extracted so it can consume `useCommandPalette` (which
+ * requires the provider) inside the navbar's search-trigger button.
+ */
+function AuthenticatedLayoutInner({ children }: AuthenticatedLayoutProps): ReactNode {
   const navigate = useNavigate();
   const { data: identity } = useGetIdentity<Identity>();
   const entries = useNavEntries(identity);
@@ -246,12 +425,15 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps): Rea
               {activeLabel}
             </span>
             <Navbar.Spacer />
+            <GlobalSearchTrigger />
             {/* Working-scope switchers — hidden on small screens to save room. */}
             <div className="hidden items-center gap-1.5 lg:flex">
               <OrganizationSwitcher />
               <BranchSwitcher />
               <SeasonSwitcher />
             </div>
+            <NotificationBell />
+            <HelpMenu />
             <LanguageSwitcher />
             <ThemeSwitcher />
             <UserMenu />
