@@ -38,3 +38,18 @@ pnpm-lock.yaml
 yarn.lock
 package-lock.json
 bun.lockb
+
+# --- Serwist / PWA build artefacts ------------------------------------------
+# `@serwist/turbopack` serves the compiled service worker through a Next.js
+# Route Handler at `/serwist/sw.js` (see `src/app/serwist/[path]/route.ts`),
+# so nothing is emitted into `public/`. These entries are kept as a
+# safety net in case someone flips the setup back to the classic
+# `@serwist/next` (webpack) plugin which emits `public/sw.js`.
+/public/sw.js
+/public/sw.js.map
+/public/swe-worker-*.js
+/public/swe-worker-*.js.map
+/public/worker-*.js
+/public/worker-*.js.map
+/public/workbox-*.js
+/public/workbox-*.js.map

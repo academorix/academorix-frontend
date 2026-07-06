@@ -1,0 +1,43 @@
+{
+  "name": "@academorix/notifications",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "Notification primitives for the Academorix workspace: canonical Notification DTO, category preferences model, in-app / web-push / native-OS delivery surfaces, service-worker push handlers, and typed React hooks (useNotifications, usePushSubscription). Composes on top of @academorix/http + @academorix/realtime.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./config": "./src/config/index.ts",
+    "./context": "./src/context/index.ts",
+    "./hooks": "./src/hooks/index.ts",
+    "./push": "./src/push/index.ts",
+    "./preferences": "./src/preferences/index.ts",
+    "./service-worker": "./src/service-worker/index.ts",
+    "./types": "./src/types/index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf .turbo"
+  },
+  "dependencies": {
+    "@academorix/core": "workspace:*",
+    "@academorix/http": "workspace:*",
+    "@academorix/realtime": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=19"
+  },
+  "devDependencies": {
+    "@academorix/eslint-config": "workspace:*",
+    "@academorix/typescript-config": "workspace:*",
+    "@types/react": "catalog:",
+    "eslint": "catalog:",
+    "react": "catalog:",
+    "typescript": "catalog:"
+  }
+}

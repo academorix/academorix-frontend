@@ -686,8 +686,9 @@ land:
 3. In the resource's `*.module.tsx`, change `meta.dataProviderName` from
    `"mock"` to `"default"` (or remove the meta entirely — `default` is
    implicit).
-4. Delete the resource's fixture from `apps/web/public/data/<resource>.json` (or
-   keep it for the storybook/tests — TBD).
+4. Delete the resource's fixture from
+   `apps/dashboard/public/data/<resource>.json` (or keep it for the
+   storybook/tests — TBD).
 5. Run the frontend against the real backend on `localhost` or a preview deploy;
    smoke‑test the list/show/create/edit flows.
 6. Commit + merge — no other module is affected because they're still pointed at
@@ -769,8 +770,8 @@ MODIFIED
   src/modules/auth/auth.module.tsx                   # register all new routes
   src/App.tsx                                        # host-aware routing (central vs tenant vs admin)
   src/lib/scope/scope-context.tsx                    # decouple from me.json when backend serves it
-  apps/web/public/data/demo-users.json               # align to backend UserData shape (see §7)
-  apps/web/public/data/me.json                       # align (see §7)
+  apps/dashboard/public/data/demo-users.json         # align to backend UserData shape (see §7)
+  apps/dashboard/public/data/me.json                 # align (see §7)
 ```
 
 ---
@@ -890,7 +891,7 @@ this backend):
 The frontend fixtures pretend to be the real API. Let's align them so we can
 flip `VITE_API_MOCK=false` on a per‑endpoint basis as backend modules land.
 
-### 7.1 `apps/web/public/data/demo-users.json`
+### 7.1 `apps/dashboard/public/data/demo-users.json`
 
 **Today** (each persona): rich flat identity with
 `roles[], permissions[], features[], terminology, tenant, tenants[], scopes.{organizations,branches,seasons}[]`.
@@ -926,9 +927,9 @@ fields on the User.
 }
 ```
 
-- Add a separate `apps/web/public/data/login.json` (or per‑persona) matching the
-  **actual** `AuthTokenData` shape so mock login mirrors the real backend
-  byte‑for‑byte:
+- Add a separate `apps/dashboard/public/data/login.json` (or per‑persona)
+  matching the **actual** `AuthTokenData` shape so mock login mirrors the real
+  backend byte‑for‑byte:
 
 ```jsonc
 {

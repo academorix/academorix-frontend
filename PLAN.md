@@ -31,7 +31,7 @@ These are settled. Revisit only with a documented reason.
 | **Transport**    | **REST** (not GraphQL).                                                                                                                     | Laravel-native (API Resources, Sanctum, form requests). Reverb covers realtime, so no need for GraphQL subscriptions.                                                                          |
 | **Auth**         | **Token auth** (Sanctum tokens), token held **in memory** with a refresh path (not raw `localStorage`).                                     | Token mode keeps mobile parity open. In-memory storage reduces XSS blast radius.                                                                                                               |
 | **Codegen**      | **`openapi-typescript` + `openapi-fetch`** for **types only** (not hook generation). `@hey-api/openapi-ts` is the fallback. **Not** Orval.  | Refine owns fetching; generating query hooks would duplicate/compete with it. We only need typed models + a typed fetch instance.                                                              |
-| **Mock backend** | **JSON-file mock data provider** reading `apps/web/public/data/*.json`, switched by `VITE_API_MOCK`.                                        | Lets us build the full UI before the Laravel API is ready; flip one env flag to go live.                                                                                                       |
+| **Mock backend** | **JSON-file mock data provider** reading `apps/dashboard/public/data/*.json`, switched by `VITE_API_MOCK`.                                  | Lets us build the full UI before the Laravel API is ready; flip one env flag to go live.                                                                                                       |
 
 ---
 
@@ -39,9 +39,9 @@ These are settled. Revisit only with a documented reason.
 
 ### Done
 
-- [x] **Monorepo** — pnpm workspaces + Turborepo. `apps/web`, `packages/ui`,
-      `packages/eslint-config`, `packages/typescript-config`. All dep versions
-      in the pnpm **catalog**.
+- [x] **Monorepo** — pnpm workspaces + Turborepo. `apps/dashboard`,
+      `packages/ui`, `packages/eslint-config`, `packages/typescript-config`. All
+      dep versions in the pnpm **catalog**.
 - [x] **HeroUI Pro** installed (`@heroui-pro/react`) + `.ref/ui` web surface
       ported into `@academorix/ui` (react/core/icons + composites).
 - [x] **Deploy** — GitHub repo created, pushed, Vercel Git auto-deploy wired
@@ -64,11 +64,12 @@ Full provider set + REST **and** JSON-mock data providers with an env switch,
 wired into a `<Refine>` app with a login page and one example resource. Every
 file carries heavy docblocks + inline comments. All quality gates green.
 
-- [x] **1. Dependencies + mock env flag** — catalog + `apps/web/package.json`
-      updated (`@refinedev/core`, `@refinedev/react-router`,
-      `@tanstack/react-query`, `laravel-echo`, `pusher-js`, `openapi-fetch`,
-      `openapi-typescript`); **React Router upgraded to v7**. `VITE_API_MOCK`
-      added to env + zod schema + `vite-env.d.ts` + `.env*`.
+- [x] **1. Dependencies + mock env flag** — catalog +
+      `apps/dashboard/package.json` updated (`@refinedev/core`,
+      `@refinedev/react-router`, `@tanstack/react-query`, `laravel-echo`,
+      `pusher-js`, `openapi-fetch`, `openapi-typescript`); **React Router
+      upgraded to v7**. `VITE_API_MOCK` added to env + zod schema +
+      `vite-env.d.ts` + `.env*`.
 - [x] **2. Typed HTTP client + token store** — `src/lib/http/` (Bearer
       injection, 401 → token clear, `ApiError` = Refine `HttpError`) + in-memory
       token store with session-storage persistence.
@@ -82,7 +83,7 @@ file carries heavy docblocks + inline comments. All quality gates green.
 - [x] **6. Notification + access-control providers** — HeroUI `toast` mapped to
       Refine `open`/`close` (incl. undoable); permission-based
       `accessControlProvider` reading the session cache.
-- [x] **7. Mock datasets** — `apps/web/public/data/`: `me.json` +
+- [x] **7. Mock datasets** — `apps/dashboard/public/data/`: `me.json` +
       `students`/`coaches`/`courses`/`teams`/`branches`/`users` JSON, shaped to
       the backend identity/tenancy spec.
 - [x] **8. Wire the Refine app** — `<Refine>` + all providers + `resources`; `/`
@@ -152,7 +153,7 @@ Sequenced, not yet scheduled.
 ## 8. Reference
 
 - Agent/contributor guide: [`AGENTS.md`](./AGENTS.md).
-- Env vars: `apps/web/environments/` (validated in
-  `apps/web/src/config/env.ts`).
+- Env vars: `apps/dashboard/environments/` (validated in
+  `apps/dashboard/src/config/env.ts`).
 - Commands: `pnpm dev` · `pnpm build` · `pnpm test` · `pnpm e2e` ·
   `pnpm quality` · `pnpm size`.

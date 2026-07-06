@@ -11,14 +11,23 @@
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.sw.json --noEmit",
+    "generate-pwa-assets": "pwa-assets-generator",
     "clean": "rm -rf .next .turbo out"
   },
   "dependencies": {
+    "@academorix/analytics": "workspace:*",
+    "@academorix/core": "workspace:*",
+    "@academorix/feature-flags": "workspace:*",
+    "@academorix/http": "workspace:*",
+    "@academorix/i18n": "workspace:*",
+    "@academorix/pwa": "workspace:*",
+    "@academorix/query": "workspace:*",
     "@academorix/ui": "workspace:*",
     "@heroui-pro/react": "catalog:",
     "@heroui/react": "catalog:",
     "@heroui/styles": "catalog:",
+    "@tanstack/react-query": "catalog:",
     "clsx": "catalog:",
     "intl-messageformat": "catalog:",
     "next": "catalog:",
@@ -26,7 +35,8 @@
     "next-themes": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "tailwind-variants": "catalog:"
+    "tailwind-variants": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@academorix/eslint-config": "workspace:*",
@@ -35,13 +45,17 @@
     "@eslint/eslintrc": "catalog:",
     "@next/bundle-analyzer": "^16.2.10",
     "@next/eslint-plugin-next": "catalog:",
+    "@serwist/turbopack": "catalog:",
     "@tailwindcss/postcss": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@vite-pwa/assets-generator": "catalog:",
+    "esbuild": "catalog:",
     "eslint": "catalog:",
     "eslint-config-next": "catalog:",
     "postcss": "^8.5.6",
+    "serwist": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
   }

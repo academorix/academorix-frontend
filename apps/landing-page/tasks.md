@@ -93,9 +93,9 @@ _Last snapshot: 2026-07-05._
 
 ## Wave 3.5 — Content refactor: JSON fixtures + Server-Component reader ✅ SHIPPED
 
-**Why:** Match `apps/web`'s mock-data-provider pattern so marketing content
-lives in `public/data/*.json` rather than TypeScript config files. Server
-Components read from the filesystem at build time via a tiny reader that
+**Why:** Match `apps/dashboard`'s mock-data-provider pattern so marketing
+content lives in `public/data/*.json` rather than TypeScript config files.
+Server Components read from the filesystem at build time via a tiny reader that
 transparently unwraps `{ data: … }` envelopes.
 
 - [x] 28. Delete every `config/*.ts` fixture (`site.ts`, `nav.ts`, `plans.ts`,
@@ -309,20 +309,21 @@ own route with `generateStaticParams` at build time:
 - [ ] 97. Docs scaffold — either link out to an external docs subdomain or embed
       MDX docs
 
-## Wave 10 — Post-launch cleanup + apps/web reconciliation ⏭ PLANNED
+## Wave 10 — Post-launch cleanup + apps/dashboard reconciliation ⏭ PLANNED
 
-- [ ] 98. Delete `apps/web/src/modules/landing/` (migrated to marketing app)
-- [ ] 99. Delete `apps/web/src/modules/billing/pages/pricing-page.tsx` (public
-      pricing — SPA keeps `/settings/billing`)
+- [ ] 98. Delete `apps/dashboard/src/modules/landing/` (migrated to marketing
+      app)
+- [ ] 99. Delete `apps/dashboard/src/modules/billing/pages/pricing-page.tsx`
+      (public pricing — SPA keeps `/settings/billing`)
 - [ ] 100. Delete
-      `apps/web/src/modules/workspace/pages/create-workspace-page.tsx`
+      `apps/dashboard/src/modules/workspace/pages/create-workspace-page.tsx`
 - [ ] 101. Delete
-      `apps/web/src/modules/workspace/pages/find-workspaces-page.tsx`
-- [ ] 102. Update `apps/web/src/modules/workspace/workspace.module.tsx` — remove
-      create-workspace + find-workspaces routes
-- [ ] 103. Update `apps/web/src/modules/billing/billing.module.tsx` — remove the
-      public `/pricing` route
-- [ ] 104. Update `apps/web/src/lib/module/routes.ts` — remove
+      `apps/dashboard/src/modules/workspace/pages/find-workspaces-page.tsx`
+- [ ] 102. Update `apps/dashboard/src/modules/workspace/workspace.module.tsx` —
+      remove create-workspace + find-workspaces routes
+- [ ] 103. Update `apps/dashboard/src/modules/billing/billing.module.tsx` —
+      remove the public `/pricing` route
+- [ ] 104. Update `apps/dashboard/src/lib/module/routes.ts` — remove
       `createWorkspace` + `findWorkspaces` from `appRoutes`
 - [ ] 105. Run all SPA gates (`typecheck`, `lint`, `knip`, `test`, `build`,
       `size`) — verify nothing broke after the deletes

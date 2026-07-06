@@ -1,7 +1,0 @@
-{
-  "buildCommand": "pnpm turbo run build --filter=@academorix/landing-page",
-  "installCommand": "pnpm install --frozen-lockfile",
-  "outputDirectory": ".next",
-  "framework": "nextjs",
-  "cleanUrls": true
-}

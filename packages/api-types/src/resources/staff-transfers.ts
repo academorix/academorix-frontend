@@ -27,7 +27,7 @@ export const StaffTransfer = z
     status: StaffTransferStatus,
     requested_by: z.string(),
     approved_by: z.string().nullable(),
-    timeline: z.array(z.record(z.string(), z.unknown()).loose()),
+    timeline: z.array(z.record(z.string(), z.unknown())),
     created_at: Timestamp,
     updated_at: Timestamp,
     handover_document_id: z.unknown().nullable().optional(),

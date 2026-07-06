@@ -1,18 +1,18 @@
 [
   {
-    "name": "web app initial JS — app + React + Refine core (gzip)",
+    "name": "dashboard app initial JS — app + React + Refine core (gzip)",
     "path": [
-      "apps/web/dist/assets/index-*.js",
-      "apps/web/dist/assets/react-vendor-*.js",
-      "apps/web/dist/assets/refine-vendor-*.js",
-      "apps/web/dist/assets/rolldown-runtime-*.js"
+      "apps/dashboard/dist/assets/index-*.js",
+      "apps/dashboard/dist/assets/react-vendor-*.js",
+      "apps/dashboard/dist/assets/refine-vendor-*.js",
+      "apps/dashboard/dist/assets/rolldown-runtime-*.js"
     ],
     "limit": "210 KB",
     "gzip": true
   },
   {
-    "name": "web app CSS (gzip)",
-    "path": "apps/web/dist/assets/*.css",
+    "name": "dashboard app CSS (gzip)",
+    "path": "apps/dashboard/dist/assets/*.css",
     "limit": "90 KB",
     "gzip": true
   }

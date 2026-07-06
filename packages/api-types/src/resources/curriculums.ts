@@ -25,7 +25,7 @@ export const Curriculum = z
     description: z.string(),
     total_weeks: z.number(),
     status: z.enum(["active", "draft"]),
-    weeks: z.array(z.record(z.string(), z.unknown()).loose()),
+    weeks: z.array(z.record(z.string(), z.unknown())),
     created_by: z.string(),
     created_at: Timestamp,
     updated_at: Timestamp,

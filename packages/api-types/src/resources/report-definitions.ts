@@ -21,7 +21,7 @@ export const ReportDefinition = z
     name: z.record(z.string(), z.unknown()),
     domain: z.enum(["attendance", "facilities", "finance", "medical", "memberships", "payroll"]),
     default_range: z.enum(["last_30d", "last_7d", "last_90d", "month_to_date", "season"]),
-    parameters_schema: z.array(z.record(z.string(), z.unknown()).loose()),
+    parameters_schema: z.array(z.record(z.string(), z.unknown())),
     scope_by: z.enum(["branch", "team"]),
     output_format: z.enum(["both", "chart", "table"]),
     created_at: Timestamp,

@@ -70,25 +70,48 @@ catalog:
   typescript: ^5.6.3
   "@types/node": ^22.12.0
 
+  # --- Progressive Web App (dashboard SPA) ---
+  # `vite-plugin-pwa` wires a Workbox-generated service worker into the Vite
+  # build. `workbox-window` is the client-side counterpart that our
+  # `useRegisterSW` React hook uses under the hood. `@vite-pwa/assets-generator`
+  # is an optional CLI that rasterizes `favicon.svg` into the PNG icon set
+  # referenced by the web manifest — invoked manually via
+  # `pnpm --filter @academorix/dashboard generate-pwa-assets`, never at build
+  # time, so it stays out of the CI hot path.
+  vite-plugin-pwa: ^1.3.0
+  workbox-window: ^7.4.1
+  "@vite-pwa/assets-generator": ^1.0.2
+
   # --- Marketing app (Next.js 16 + React 19 + Tailwind v4) ---
   # Public marketing surface lives in `apps/landing-page` — a Next.js App
-  # Router app so the tenant SPA (`apps/web`) stays CSR-only. Next.js is
-  # required for SEO-quality prerendering, MDX, and the `next/image`
+  # Router app so the tenant SPA (`apps/dashboard`) stays CSR-only. Next.js
+  # is required for SEO-quality prerendering, MDX, and the `next/image`
   # optimizer used for the pricing + landing artwork.
   next: ^16.2.6
   eslint-config-next: ^16.2.0
   "@next/eslint-plugin-next": ^16.2.0
-  "@next/bundle-analyzer": ^16.2.6
   next-themes: ^0.4.6
   "@tailwindcss/postcss": 4.3.1
-  "@next/mdx": ^16.2.0
-  "@types/mdx": ^2.0.13
   "@eslint/compat": ^1.2.8
   "@eslint/eslintrc": ^3.3.1
   clsx: ^2.1.1
   intl-messageformat: ^10.7.16
   # Reserved for Wave 5 (i18n) — locale routing + typed navigation.
   next-intl: ^4.4.0
+
+  # --- Progressive Web App (marketing app) ---
+  # Serwist is the Workbox-based PWA toolkit maintained by Google's PWA
+  # working group. `@serwist/turbopack` is the Turbopack-native
+  # integration (Next 16 defaults to Turbopack for both `next dev` and
+  # `next build`; the older `@serwist/next` package requires webpack).
+  # `serwist` is the runtime library the service worker source imports;
+  # the two versions must match. `esbuild` is invoked by Serwist at
+  # request time to compile the service worker source — the Serwist
+  # route handler `import`s it directly, so it must be resolvable at
+  # the app level (not just as a transitive dep).
+  serwist: ^9.5.11
+  "@serwist/turbopack": ^9.5.11
+  esbuild: ^0.28.0
 
   # --- Testing ---
   vitest: ^4.1.9

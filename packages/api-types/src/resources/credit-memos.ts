@@ -38,7 +38,7 @@ export const CreditMemo = z
     last_applied_transaction_id: LedgerTransactionId.optional(),
     last_applied_amount_minor: z.number().optional(),
     last_applied_at: Timestamp.optional(),
-    applied_history: z.array(z.record(z.string(), z.unknown()).loose()).optional(),
+    applied_history: z.array(z.record(z.string(), z.unknown())).optional(),
   })
   .loose();
 export type CreditMemo = z.infer<typeof CreditMemo>;

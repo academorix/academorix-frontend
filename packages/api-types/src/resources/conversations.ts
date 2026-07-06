@@ -25,7 +25,7 @@ export const Conversation = z
     scope: z.enum(["athlete", "branch", "team"]),
     subject: z.string(),
     created_by_user_id: z.string(),
-    participants: z.array(z.record(z.string(), z.unknown()).loose()),
+    participants: z.array(z.record(z.string(), z.unknown())),
     participant_count: z.number(),
     last_message_at: Timestamp,
     last_message_preview: z.string(),

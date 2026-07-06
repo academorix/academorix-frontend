@@ -25,7 +25,7 @@ export const Formation = z
     name: z.string(),
     shape: z.enum(["1-5", "2-2", "2-3-1", "3-5-2", "4-3-3", "4-4-2", "5-4", "relay-4"]),
     note: z.string(),
-    slots: z.array(z.record(z.string(), z.unknown()).loose()),
+    slots: z.array(z.record(z.string(), z.unknown())),
     created_at: Timestamp,
     updated_at: Timestamp,
     field_type: z.string().optional(),
