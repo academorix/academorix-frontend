@@ -22,7 +22,7 @@ export const TestBatterie = z
     sport_key: SportKey.nullable(),
     name: z.string(),
     version: z.number(),
-    tests: z.array(z.record(z.string(), z.unknown()).loose()),
+    tests: z.array(z.record(z.string(), z.unknown())),
     created_at: Timestamp,
     updated_at: Timestamp,
   })

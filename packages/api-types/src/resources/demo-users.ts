@@ -38,12 +38,12 @@ export const DemoUser = z
     profile: z.record(z.string(), z.unknown()),
     roles: z.array(z.string()),
     permissions: z.array(z.string()),
-    grants: z.array(z.record(z.string(), z.unknown()).loose()),
+    grants: z.array(z.record(z.string(), z.unknown())),
     features: z.array(z.string()),
     entitlements: z.record(z.string(), z.unknown()),
     terminology: z.record(z.string(), z.unknown()),
     tenant: z.record(z.string(), z.unknown()),
-    tenants: z.array(z.record(z.string(), z.unknown()).loose()),
+    tenants: z.array(z.record(z.string(), z.unknown())),
     scopes: z.record(z.string(), z.unknown()),
   })
   .loose();

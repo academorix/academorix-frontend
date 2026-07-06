@@ -31,7 +31,7 @@ export const PayrollLine = z
     currency: z.enum(["USD"]),
     notes: z.string(),
     created_at: Timestamp,
-    branch_allocations: z.array(z.record(z.string(), z.unknown()).loose()).optional(),
+    branch_allocations: z.array(z.record(z.string(), z.unknown())).optional(),
   })
   .loose();
 export type PayrollLine = z.infer<typeof PayrollLine>;

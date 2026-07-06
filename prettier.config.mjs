@@ -15,7 +15,7 @@ export default {
   bracketSameLine: false,
   plugins: ["prettier-plugin-tailwindcss"],
   // Tailwind v4 resolves its theme from the CSS entrypoint (not a JS config).
-  tailwindStylesheet: "./apps/web/src/styles/globals.css",
+  tailwindStylesheet: "./apps/dashboard/src/styles/globals.css",
   overrides: [
     {
       files: ["*.json", "*.jsonc"],

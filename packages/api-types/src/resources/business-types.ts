@@ -9,7 +9,9 @@
 import { z } from "zod";
 
 import { Timestamp } from "../common.js";
-import { BusinessType } from "../enums.js";
+// `BusinessType` in ../enums.ts is the closed-enum for `key`; alias it so we
+// can keep the resource schema class-name matching the file (BusinessType).
+import { BusinessType as BusinessTypeKey } from "../enums.js";
 import { BusinessTypeId } from "../ids.js";
 
 import { collectionHelpers } from "./_helpers.js";
@@ -17,7 +19,7 @@ import { collectionHelpers } from "./_helpers.js";
 export const BusinessType = z
   .object({
     id: BusinessTypeId,
-    key: BusinessType,
+    key: BusinessTypeKey,
     label: z.string(),
     description: z.string(),
     default_config: z.record(z.string(), z.unknown()),

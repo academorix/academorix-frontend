@@ -23,7 +23,7 @@ import { z } from "zod";
  *   - must start with `<prefix>_`
  *   - carries a nominal brand tag for compile-time discrimination
  */
-function idSchema<Brand extends string>(prefix: string, brand: Brand) {
+function idSchema<Brand extends string>(prefix: string, _brand: Brand) {
   // Escape any regex metacharacters in the prefix. Prefixes are always plain
   // lowercase ASCII, so no metacharacters exist today, but we future-proof.
   const escaped = prefix.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

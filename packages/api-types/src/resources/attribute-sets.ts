@@ -25,7 +25,7 @@ export const AttributeSet = z
     status: z.enum(["active"]),
     created_at: Timestamp,
     updated_at: Timestamp,
-    groups: z.array(z.record(z.string(), z.unknown()).loose()),
+    groups: z.array(z.record(z.string(), z.unknown())),
   })
   .loose();
 export type AttributeSet = z.infer<typeof AttributeSet>;

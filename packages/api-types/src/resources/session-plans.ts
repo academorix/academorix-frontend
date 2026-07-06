@@ -25,7 +25,7 @@ export const SessionPlan = z
     level: z.enum(["advanced", "beginner", "intermediate"]),
     objectives: z.array(z.string()),
     equipment: z.array(z.string()),
-    items: z.array(z.record(z.string(), z.unknown()).loose()),
+    items: z.array(z.record(z.string(), z.unknown())),
     created_by: z.string(),
     curriculum_id: z.string().nullable(),
     created_at: Timestamp,

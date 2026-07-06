@@ -38,7 +38,7 @@ export const People = z
     nationality: z.enum(["CA", "IT", "US"]),
     verified: z.boolean(),
     verified_at: Timestamp.nullable(),
-    tenant_links: z.array(z.record(z.string(), z.unknown()).loose()),
+    tenant_links: z.array(z.record(z.string(), z.unknown())),
     created_at: Timestamp,
     updated_at: Timestamp,
   })

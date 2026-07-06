@@ -53,7 +53,7 @@ export const Invoice = z
     total_minor: z.number(),
     paid_minor: z.number(),
     credited_minor: z.number(),
-    lines: z.array(z.record(z.string(), z.unknown()).loose()),
+    lines: z.array(z.record(z.string(), z.unknown())),
     due_at: Timestamp,
     issued_at: Timestamp,
     voided_at: z.unknown().nullable(),

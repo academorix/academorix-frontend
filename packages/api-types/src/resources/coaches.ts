@@ -24,7 +24,7 @@ export const Coache = z
     specialization: z.string(),
     years_experience: z.number(),
     bio: z.string(),
-    sport_certifications: z.array(z.record(z.string(), z.unknown()).loose()),
+    sport_certifications: z.array(z.record(z.string(), z.unknown())),
     is_head_coach: z.boolean(),
     is_active: z.boolean(),
     accepts_private_sessions: z.boolean(),

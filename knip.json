@@ -1,18 +1,35 @@
 {
   "workspaces": {
-    "apps/web": {
+    "apps/dashboard": {
       "ignoreDependencies": ["@heroui/styles", "openapi-fetch"],
       "ignore": ["src/lib/api/**"]
     },
+    "apps/landing-page": {
+      "ignoreDependencies": [
+        "@heroui-pro/react",
+        "intl-messageformat",
+        "tailwind-variants",
+        "@eslint/compat",
+        "@eslint/eslintrc",
+        "eslint-config-next"
+      ],
+      "ignore": ["postcss.config.mjs"]
+    },
+    "packages/api-types": {
+      "ignoreDependencies": ["zod"],
+      "entry": ["src/{common,enums,errors,ids}.ts", "src/resources/*.ts"]
+    },
     "packages/typescript-config": {
-      "entry": ["*.json"]
+      "entry": ["*.json"],
+      "ignoreDependencies": ["next"]
     }
   },
   "rules": {
-    "files": "warn",
-    "exports": "warn",
-    "types": "warn",
-    "duplicates": "warn",
+    "files": "off",
+    "exports": "off",
+    "types": "off",
+    "duplicates": "off",
+    "enumMembers": "off",
     "dependencies": "error",
     "unlisted": "error",
     "unresolved": "error",
