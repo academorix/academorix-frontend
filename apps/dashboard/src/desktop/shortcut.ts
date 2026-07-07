@@ -75,10 +75,12 @@ export async function registerGlobalShortcut(
 
   try {
     // Dynamic imports so the web bundle never touches the plugin's
-    // JS surface. The plugin ships its own npm module — importing
-    // it in the web build would leak Rust-side names into a plain
-    // browser bundle.
-    const { register, unregister } = await import("@tauri-apps/plugin-global-shortcut");
+    // JS surface. The plugin package is only present when the
+    // `phase3` cargo feature is on. Storing the module id in a
+    // variable stops Vite's static import analyser from trying to
+    // resolve it at bundle time.
+    const pluginId = "@tauri-apps/plugin-global-shortcut";
+    const { register, unregister } = await import(/* @vite-ignore */ pluginId);
 
     // Callback fires ONCE per keydown event; the plugin dedupes
     // repeats. Wire the default raise-window behaviour + let the
@@ -124,7 +126,11 @@ export async function unregisterGlobalShortcut(
   if (!isDesktop) return;
 
   try {
-    const { unregister } = await import("@tauri-apps/plugin-global-shortcut");
+    // `@vite-ignore` + variable prevents Vite from resolving the
+    // plugin at bundle time — it's only installed when the `phase3`
+    // cargo feature is on.
+    const pluginId = "@tauri-apps/plugin-global-shortcut";
+    const { unregister } = await import(/* @vite-ignore */ pluginId);
 
     await unregister(accelerator);
   } catch (err) {

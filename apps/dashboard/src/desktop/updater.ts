@@ -67,7 +67,11 @@ export async function checkForUpdates(): Promise<UpdateInfo | null> {
   if (!isDesktop) return null;
 
   try {
-    const { check } = await import("@tauri-apps/plugin-updater");
+    // `@vite-ignore` + variable prevents Vite from resolving the
+    // plugin at bundle time — the updater plugin is only installed
+    // when the `phase4` cargo feature is on.
+    const updaterId = "@tauri-apps/plugin-updater";
+    const { check } = await import(/* @vite-ignore */ updaterId);
     const update = await check();
 
     if (update === null) {
@@ -131,7 +135,8 @@ export async function installUpdateAndRestart(): Promise<void> {
     let handle = pendingUpdateHandle;
 
     if (handle === null) {
-      const { check } = await import("@tauri-apps/plugin-updater");
+      const updaterId = "@tauri-apps/plugin-updater";
+      const { check } = await import(/* @vite-ignore */ updaterId);
 
       handle = await check();
     }
@@ -146,7 +151,8 @@ export async function installUpdateAndRestart(): Promise<void> {
 
     // Relaunch to load the new binary. The plugin re-executes the
     // desktop app with the new build.
-    const { relaunch } = await import("@tauri-apps/plugin-process");
+    const processId = "@tauri-apps/plugin-process";
+    const { relaunch } = await import(/* @vite-ignore */ processId);
 
     await relaunch();
   } catch (err) {

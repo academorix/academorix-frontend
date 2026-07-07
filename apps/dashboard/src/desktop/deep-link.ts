@@ -129,12 +129,19 @@ export function onDeepLink(handler: (payload: DeepLinkPayload) => void): () => v
     disposed = true;
   };
 
-  void import("@tauri-apps/plugin-deep-link")
+  // Optional plugin package; only present when the `phase3` cargo
+  // feature is on. Storing the module id in a variable stops Vite's
+  // static import analyser from trying to resolve it at bundle time
+  // — the dynamic import fails at runtime when the plugin isn't
+  // installed, which we handle in the catch below.
+  const pluginId = "@tauri-apps/plugin-deep-link";
+
+  void import(/* @vite-ignore */ pluginId)
     .then((mod) => {
       // Tauri v2's deep-link plugin exposes `onOpenUrl` which fires
       // for every URL matching the registered scheme. It resolves
       // with an unsubscribe function.
-      return mod.onOpenUrl((urls) => {
+      return mod.onOpenUrl((urls: readonly string[]) => {
         // The plugin passes an array in v2 (some OSes forward
         // multiple URLs simultaneously; e.g. a "share to" invocation
         // on Android). Forward each one to the handler.
