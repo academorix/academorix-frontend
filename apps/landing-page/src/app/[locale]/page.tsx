@@ -28,6 +28,7 @@ import { LogoStrip } from "@/components/marketing/logo-strip";
 import { MarketingHero } from "@/components/marketing/marketing-hero";
 import { PersonaCards } from "@/components/marketing/persona-cards";
 import { PlanTiers } from "@/components/marketing/plan-tiers";
+import { ProductShowcase } from "@/components/marketing/product-showcase";
 import { SectionHeading } from "@/components/marketing/section-heading";
 import { TestimonialsGrid } from "@/components/marketing/testimonials-grid";
 import { TimelineSteps } from "@/components/marketing/timeline-steps";
@@ -90,6 +91,16 @@ export default async function HomePage({ params }: HomePageProps): Promise<React
           title={home.products_bento.title}
         />
         <FeatureBento items={home.products_bento.items} />
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 py-24" id="tour">
+        <SectionHeading
+          className="mb-12"
+          description={home.showcase.description}
+          eyebrow={home.showcase.eyebrow}
+          title={home.showcase.title}
+        />
+        <ProductShowcase showcase={home.showcase} />
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-24" id="sports">

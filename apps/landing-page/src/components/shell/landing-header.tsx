@@ -19,6 +19,7 @@ import Link from "next/link";
 import type { Locale } from "@/i18n/routing";
 import type { Localized, NavData, SiteData } from "@/lib/types";
 
+import { BrandMark } from "@/components/brand/brand-mark";
 import { CtaButton } from "@/components/marketing/cta-button";
 import { LanguageSwitcher } from "@/components/shell/language-switcher";
 import { MegaMenu } from "@/components/shell/mega-menu";
@@ -48,15 +49,11 @@ export function LandingHeader({ site, nav, locale, className }: LandingHeaderPro
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3">
         <div className="flex items-center gap-8">
           <Link
+            aria-label={site.name}
             className="inline-flex items-center gap-2 text-lg font-semibold tracking-tight text-foreground"
             href="/"
           >
-            <span
-              aria-hidden
-              className="grid size-7 place-content-center rounded-lg bg-accent text-xs font-bold text-accent-foreground"
-            >
-              A
-            </span>
+            <BrandMark priority alt="" height={28} variant="mark" />
             <span>{site.name}</span>
           </Link>
 
