@@ -17,7 +17,7 @@
  * without needing the whole Refine + router tree.
  */
 
-import { render, renderHook, screen } from "@testing-library/react";
+import { act, render, renderHook, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -220,8 +220,16 @@ describe("<TourProvider>", () => {
     });
 
     // Manually restart to activate — plain web + no firstRun means no auto-trigger.
-    result.current.restart();
-    result.current.next();
+    // Wrap each imperative call in `act()` so React 18's automatic batching
+    // flushes the state updater (including the `writeTourState()` side effect
+    // inside it) before we read localStorage. Without `act()` the reducer
+    // stays queued and the persisted step is stale.
+    act(() => {
+      result.current.restart();
+    });
+    act(() => {
+      result.current.next();
+    });
 
     const persisted = readTourState("user-tour-test");
 
@@ -236,12 +244,29 @@ describe("<TourProvider>", () => {
       wrapper: ({ children }) => <Wrapper>{children}</Wrapper>,
     });
 
-    result.current.restart();
-    result.current.next();
-    result.current.next();
-    result.current.back();
-    result.current.back();
-    result.current.back();
+    // Wrap every state-mutating call in `act()` — see the `advance()` test
+    // above for the rationale. Splitting into individual `act()` blocks (as
+    // opposed to grouping into one) ensures each update flushes before the
+    // next reducer runs, so `current.step` in the functional updater is
+    // fresh.
+    act(() => {
+      result.current.restart();
+    });
+    act(() => {
+      result.current.next();
+    });
+    act(() => {
+      result.current.next();
+    });
+    act(() => {
+      result.current.back();
+    });
+    act(() => {
+      result.current.back();
+    });
+    act(() => {
+      result.current.back();
+    });
 
     const persisted = readTourState("user-tour-test");
 
@@ -255,8 +280,12 @@ describe("<TourProvider>", () => {
       wrapper: ({ children }) => <Wrapper>{children}</Wrapper>,
     });
 
-    result.current.restart();
-    result.current.skip();
+    act(() => {
+      result.current.restart();
+    });
+    act(() => {
+      result.current.skip();
+    });
 
     const persisted = readTourState("user-tour-test");
 
@@ -270,11 +299,23 @@ describe("<TourProvider>", () => {
       wrapper: ({ children }) => <Wrapper>{children}</Wrapper>,
     });
 
-    result.current.restart();
-    result.current.next(); // 0 -> 1
-    result.current.next(); // 1 -> 2
-    result.current.next(); // 2 -> 3
-    result.current.next(); // 3 -> completed
+    // Web surface has 4 canonical steps (indices 0..3). Advancing from step
+    // 3 with `next()` triggers the completion path.
+    act(() => {
+      result.current.restart();
+    });
+    act(() => {
+      result.current.next();
+    }); // 0 -> 1
+    act(() => {
+      result.current.next();
+    }); // 1 -> 2
+    act(() => {
+      result.current.next();
+    }); // 2 -> 3
+    act(() => {
+      result.current.next();
+    }); // 3 -> completed
 
     const persisted = readTourState("user-tour-test");
 
@@ -331,7 +372,12 @@ describe("restartTour (imperative entry)", () => {
     // Not active initially — plain web URL, no firstRun marker.
     expect(screen.queryByTestId("onboarding-tour-overlay")).not.toBeInTheDocument();
 
-    restartTour();
+    // The imperative entry calls the provider's `restart` under the hood,
+    // which sets React state — wrap in `act()` so the effect flush is
+    // deterministic before we assert the overlay renders.
+    act(() => {
+      restartTour();
+    });
 
     expect(await screen.findByTestId("onboarding-tour-overlay")).toBeInTheDocument();
   });
