@@ -3,9 +3,9 @@
  * @module config/menu.config
  *
  * @description
- * Static schema + command-registry scaffold for the three menu surfaces
- * (native top-bar, in-app top bar, right-click context menu). Runtime
- * wiring lives in `src/menus/*` and mounts against this file.
+ * Static schema + command-registry for the three menu surfaces (native
+ * top-bar, in-app top bar, right-click context menu). Runtime wiring
+ * lives in `src/menus/*` and mounts against this file.
  *
  * See `MENUS_PLAN.md` for the full architecture, per-surface rendering
  * rules, permission gating, and rollout phases.
@@ -13,25 +13,45 @@
  * ## Status
  *
  * The command **types** are stable — every renderer (`src/menus/*`)
- * imports them from here. The command **registry** below is a starter
- * seed with the high-value entries; new commands land alongside the
- * feature they belong to. Adding a command is a one-line change plus a
- * translation key.
+ * imports them from here. The command **registry** below carries the
+ * high-value entries (Application, View, Help, Developer) that ship
+ * with the initial rollout. Resource-scoped commands
+ * (`athlete.create`, `session.create`, …) land alongside their module
+ * manifests and are merged into the registry at boot.
  *
  * ## Contract
  *
- *  - Every `id` is stable and analytics-friendly (`athlete.create`,
- *    `view.command_palette`).
- *  - Every `labelKey` is a dot-key into the message catalog.
+ *  - Every `id` is stable and analytics-friendly (`view.command_palette`,
+ *    `help.docs`). Consumers may compare ids across releases.
+ *  - Every `labelKey` is a dot-key into the message catalog; renderers
+ *    resolve them through Refine's `useTranslate()`.
  *  - `shortcut` uses the leader-key convention (`"G A"`, `"N A"`) for
  *    chords, and Tauri's accelerator format (`"CmdOrCtrl+K"`) for
- *    single-key shortcuts. See `shortcuts.config.ts` for the format.
- *  - `execute` is a side-effect callable. Async is fine.
+ *    single-key shortcuts. See `shortcuts.config.ts`.
+ *  - `execute` is a side-effect callable. Actions that need to reach
+ *    into a live React subtree call {@link "@/menus/menu-actions"
+ *    invokeMenuAction}, an event bus wired by
+ *    {@link "@/menus/menu-actions-bridge" MenuActionsBridge}. Actions
+ *    that just open a URL or navigate stay inline.
  *  - `requires` names one or more permission codes; the shell hides
  *    (not disables) commands the user can't invoke.
+ *
+ * ## Native-only commands
+ *
+ * Three commands ship with `surfaces: ["native"]` — they never render on
+ * web and therefore never fire their `execute` on this build. Their
+ * handlers are placeholders that log a warning; the desktop bridge
+ * (`src/desktop/native-menu.ts` — Sub-agent D) replaces them with real
+ * Tauri IPC calls at Phase 2:
+ *
+ *  - `app.about`            → opens a native About panel
+ *  - `app.quit`             → asks Tauri to close every window
+ *  - `dev.toggle_devtools`  → opens the WebView devtools
  */
 
 import type { ComponentType } from "react";
+
+import { invokeMenuAction } from "@/menus/menu-actions";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -121,44 +141,109 @@ export interface MenuCommand {
 }
 
 // ---------------------------------------------------------------------------
-// Registry seed
+// Handler helpers
 // ---------------------------------------------------------------------------
 
 /**
- * Placeholder execute — every real command replaces this with a proper
- * side-effect. Left as a named function (not inline) so a call-site
- * showing `unimplemented` is instantly grep-friendly.
+ * Handler stub for commands that only run on the desktop native surface.
+ * The web bundle never renders these (they carry `surfaces: ["native"]`)
+ * so `execute` is unreachable in practice — but a defensive log helps
+ * during the interim before Sub-agent D wires the Tauri IPC bridge.
  */
-function unimplemented(id: string): (ctx: MenuContext) => void {
+function nativePlaceholder(id: string): (ctx: MenuContext) => void {
   return () => {
     // eslint-disable-next-line no-console
-    console.warn(`[menu] command '${id}' is not implemented yet — see MENUS_PLAN.md`);
+    console.warn(
+      `[menu] native-only command "${id}" fired on the web bundle — this should be unreachable. See MENUS_PLAN.md §4 for the Tauri wiring plan.`,
+    );
   };
 }
 
 /**
- * Starter registry. Populated with the commands from MENUS_PLAN.md §3
- * that every version of the app should surface. Feature-specific
- * commands (e.g. `athlete.export`) land alongside their module.
+ * External-link helper for commands that navigate to an out-of-app
+ * resource (docs, issue tracker). Uses `window.open` with the
+ * `noopener,noreferrer` combo so the linked site cannot reach back into
+ * the SPA's `window` reference. Silent no-op when `window` is absent
+ * (test env, SSR probe).
+ */
+function openExternal(url: string): (ctx: MenuContext) => void {
+  return () => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+}
+
+/**
+ * Navigate to an in-app path via full-document assignment. We can't
+ * pull in `useNavigate` at module scope; a hash-based assignment is the
+ * simplest cross-tree navigation that still respects the SPA's routes
+ * (Vite dev server + Vercel rewrites both treat `location.assign('/x')`
+ * as a client-side navigation because the shell owns every route).
+ */
+function navigateTo(path: string): (ctx: MenuContext) => void {
+  return () => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.location.assign(path);
+  };
+}
+
+/**
+ * Restart the onboarding tour. Imports the module-scoped entry point
+ * from `@/onboarding` (owned by Sub-agent O) — the entry is a stable
+ * side-effect handle the tour provider populates on mount, so a call
+ * before the provider mounts is a silent no-op.
+ *
+ * Kept as a named handler (not inline) so the analytics trigger stays
+ * grep-friendly — every `restartTour` call in the app funnels here.
+ *
+ * We use a dynamic import to avoid a boot-time cycle: the onboarding
+ * module imports menu types from this file for its tour anchors, so a
+ * top-level import here would create a circular dependency during
+ * module resolution.
+ */
+function restartTour(): void {
+  void import("@/onboarding").then((mod) => {
+    mod.restartTour();
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Registry
+// ---------------------------------------------------------------------------
+
+/**
+ * The starter registry. Populated with the commands from MENUS_PLAN.md
+ * §3 that every version of the app surfaces. Feature-specific commands
+ * (`athlete.export`, `session.duplicate`, …) land alongside their
+ * module manifest and merge into the registry at boot.
  *
  * The **navigate** category is generated at runtime from
  * `AppResourceShortcuts` — DON'T list resource-navigate commands here.
  */
 export const menuCommands: readonly MenuCommand[] = [
-  // -------- Application (native menu bar) --------
+  // -------- Application (native menu bar only) --------
   {
     id: "app.about",
     labelKey: "menu.about",
     category: "application",
     surfaces: ["native"],
-    execute: unimplemented("app.about"),
+    execute: nativePlaceholder("app.about"),
   },
   {
     id: "app.preferences",
     labelKey: "menu.preferences",
     shortcut: "CmdOrCtrl+,",
     category: "application",
-    execute: unimplemented("app.preferences"),
+    // Navigate to the settings landing route. The tenant SPA owns
+    // `/settings` today; a future workspace-scoped preferences page
+    // takes over without changing the menu id.
+    execute: navigateTo("/settings"),
   },
   {
     id: "app.quit",
@@ -166,7 +251,7 @@ export const menuCommands: readonly MenuCommand[] = [
     shortcut: "CmdOrCtrl+Q",
     category: "application",
     surfaces: ["native"],
-    execute: unimplemented("app.quit"),
+    execute: nativePlaceholder("app.quit"),
   },
 
   // -------- View --------
@@ -175,21 +260,31 @@ export const menuCommands: readonly MenuCommand[] = [
     labelKey: "menu.command_palette",
     shortcut: "CmdOrCtrl+K",
     category: "view",
-    execute: unimplemented("view.command_palette"),
+    // Bridged to `CommandPaletteProvider.open()` by MenuActionsBridge.
+    // The ⌘K shortcut itself is bound inside the palette provider so
+    // this menu entry is the mouse/touch fallback.
+    execute: () => invokeMenuAction("view.command_palette"),
   },
   {
     id: "view.toggle_sidebar",
     labelKey: "menu.toggle_sidebar",
     shortcut: "CmdOrCtrl+\\",
     category: "view",
-    execute: unimplemented("view.toggle_sidebar"),
+    // Sidebar.Provider (in HeroUI's AppLayout) exposes `toggleSidebar()`
+    // via its context; the bridge component reads that context and
+    // subscribes to this action.
+    execute: () => invokeMenuAction("view.toggle_sidebar"),
   },
   {
     id: "view.toggle_theme",
     labelKey: "menu.toggle_theme",
     shortcut: "CmdOrCtrl+Shift+T",
     category: "view",
-    execute: unimplemented("view.toggle_theme"),
+    // Bridged to HeroUI's `useTheme` — flips between light and dark.
+    // The theme switcher UI (`components/theme/theme-switcher.tsx`)
+    // still owns the "system" preference; this shortcut just toggles
+    // resolved appearance for immediate visual feedback.
+    execute: () => invokeMenuAction("view.toggle_theme"),
   },
 
   // -------- Help --------
@@ -197,26 +292,33 @@ export const menuCommands: readonly MenuCommand[] = [
     id: "help.docs",
     labelKey: "menu.docs",
     category: "help",
-    execute: unimplemented("help.docs"),
+    // External docs site — always opens in a new tab. Kept as a
+    // stable URL so a docs re-platforming is a single-line change.
+    execute: openExternal("https://docs.academorix.com/"),
   },
   {
     id: "help.keyboard_shortcuts",
     labelKey: "menu.keyboard_shortcuts",
     shortcut: "?",
     category: "help",
-    execute: unimplemented("help.keyboard_shortcuts"),
+    // Opens the shortcut sheet via the same action bus. The `?`
+    // shortcut itself is bound inside the sheet provider — this menu
+    // entry is the pointer fallback.
+    execute: () => invokeMenuAction("help.keyboard_shortcuts"),
   },
   {
     id: "help.restart_tour",
     labelKey: "menu.restart_tour",
     category: "help",
-    execute: unimplemented("help.restart_tour"),
+    execute: restartTour,
   },
   {
     id: "help.report_issue",
     labelKey: "menu.report_issue",
     category: "help",
-    execute: unimplemented("help.report_issue"),
+    // GitHub issue tracker for now; replaced with a first-party
+    // support form when the marketing site lands.
+    execute: openExternal("https://github.com/academorix/academorix/issues/new"),
   },
 
   // -------- Developer (dev builds only) --------
@@ -227,7 +329,7 @@ export const menuCommands: readonly MenuCommand[] = [
     category: "developer",
     surfaces: ["native"],
     isVisible: () => import.meta.env.DEV,
-    execute: unimplemented("dev.toggle_devtools"),
+    execute: nativePlaceholder("dev.toggle_devtools"),
   },
 ] as const;
 
