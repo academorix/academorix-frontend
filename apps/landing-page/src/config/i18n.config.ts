@@ -54,6 +54,15 @@ export const LOCALE_LABELS: Readonly<Record<Locale, string>> = {
   en: "English",
   ar: "العربية",
 };
+/**
+ * BCP-47 tag per locale — used by `Intl.*` formatters (date, number,
+ * relative time) and by `<html lang>`. Mirrors the dashboard so both
+ * apps agree on the format tags.
+ */
+export const LOCALE_BCP47_TAGS: Readonly<Record<Locale, string>> = {
+  en: "en-US",
+  ar: "ar-EG",
+};
 
 /** Cookie next-intl writes when a visitor switches languages. */
 export const LOCALE_COOKIE_NAME = "NEXT_LOCALE";
@@ -91,6 +100,19 @@ export function isRtlLocale(locale: string): boolean {
 /** Type-narrowing predicate — true when `value` is a supported locale. */
 export function isSupportedLocale(value: string): value is Locale {
   return (LOCALES as readonly string[]).includes(value);
+}
+/**
+ * Resolve any raw string to a safe {@link Locale}. Returns the
+ * matching locale if supported, else {@link DEFAULT_LOCALE}. Useful
+ * when reading from `localStorage`, URLs, or `Accept-Language`
+ * headers where the input could be anything.
+ */
+export function resolveLocale(value: string | null | undefined): Locale {
+  if (value && isSupportedLocale(value)) {
+    return value;
+  }
+
+  return DEFAULT_LOCALE;
 }
 
 /**

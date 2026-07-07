@@ -1,8 +1,0 @@
-[
-  { "id": "academy", "label": "Academy" },
-  { "id": "sports_center", "label": "Sports Center" },
-  { "id": "gym", "label": "Gym" },
-  { "id": "activity_center", "label": "Activity Center" },
-  { "id": "club", "label": "Club" },
-  { "id": "multi_sport", "label": "Multi-Sport" }
-]

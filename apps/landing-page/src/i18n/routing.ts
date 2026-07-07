@@ -8,11 +8,6 @@
  * Re-exports the primitives so existing consumers (`@/i18n/routing`)
  * keep working without an import-path change.
  *
- * All actual constants (`LOCALES`, `DEFAULT_LOCALE`, cookie name,
- * etc.) live in `config/i18n.config.ts` so `next.config.ts` and any
- * other build-time surface can read them without pulling in
- * `next-intl`.
- *
  * ## Prefix policy
  *
  * `LOCALE_PREFIX === "as-needed"` keeps the English URLs bare
@@ -38,8 +33,12 @@ export {
   DEFAULT_LOCALE,
   isRtlLocale,
   isSupportedLocale,
+  LOCALE_BCP47_TAGS,
+  LOCALE_COOKIE_MAX_AGE,
+  LOCALE_COOKIE_NAME,
   LOCALE_LABELS,
   LOCALES,
+  resolveLocale,
   RTL_LOCALES,
 } from "@/config/i18n.config";
 export type { Locale } from "@/config/i18n.config";

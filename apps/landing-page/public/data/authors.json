@@ -1,0 +1,84 @@
+{
+  "ali-rahimi": {
+    "slug": "ali-rahimi",
+    "name": "Ali Rahimi",
+    "role": {
+      "en": "Head of Product",
+      "ar": "رئيس المنتج"
+    },
+    "bio": {
+      "en": "Ali leads product at Academorix. Ten years shipping platform software for sport, most recently at a multi-branch swim federation.",
+      "ar": "يقود علي فريق المنتج في Academorix. عشر سنوات في تطوير برامج المنصات للرياضة، آخرها في اتحاد سباحة متعدد الفروع."
+    },
+    "initials": "AR",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/ali-rahimi",
+      "github": "https://github.com/alirahimi"
+    }
+  },
+  "noor-al-mansouri": {
+    "slug": "noor-al-mansouri",
+    "name": "Noor Al Mansouri",
+    "role": {
+      "en": "Design Lead",
+      "ar": "قائدة التصميم"
+    },
+    "bio": {
+      "en": "Noor leads design at Academorix. Bilingual-first interfaces, RTL typography, and enterprise dashboards are her home ground.",
+      "ar": "تقود نور فريق التصميم في Academorix. الواجهات ثنائية اللغة أولاً، والطباعة من اليمين إلى اليسار، ولوحات المؤسسات هي ميدانها الأصلي."
+    },
+    "initials": "NM",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/noor-al-mansouri"
+    }
+  },
+  "yusuf-el-amrani": {
+    "slug": "yusuf-el-amrani",
+    "name": "Yusuf El Amrani",
+    "role": {
+      "en": "Staff Engineer",
+      "ar": "مهندس رئيسي"
+    },
+    "bio": {
+      "en": "Yusuf works on the attribute engine and the offline sync layer. Prior life: infrastructure at a fintech serving MENA.",
+      "ar": "يعمل يوسف على محرك السمات وطبقة المزامنة دون اتصال. حياته السابقة: البنية التحتية في شركة مالية تخدم منطقة MENA."
+    },
+    "initials": "YA",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/yusuf-el-amrani",
+      "github": "https://github.com/yusufelamrani"
+    }
+  },
+  "sara-hosseini": {
+    "slug": "sara-hosseini",
+    "name": "Sara Hosseini",
+    "role": {
+      "en": "Head of Customer Success",
+      "ar": "رئيسة نجاح العملاء"
+    },
+    "bio": {
+      "en": "Sara runs customer success at Academorix. She previously scaled onboarding operations at a regional gymnastics federation.",
+      "ar": "تدير سارة نجاح العملاء في Academorix. سبق أن قادت توسيع عمليات التهيئة في اتحاد جمباز إقليمي."
+    },
+    "initials": "SH",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/sara-hosseini"
+    }
+  },
+  "kenji-tanaka": {
+    "slug": "kenji-tanaka",
+    "name": "Kenji Tanaka",
+    "role": {
+      "en": "Head of Compliance",
+      "ar": "رئيس الامتثال"
+    },
+    "bio": {
+      "en": "Kenji runs security and compliance at Academorix. Ex-audit lead at a global sports data provider. SOC 2, ISO 27001, and GDPR are his day-to-day.",
+      "ar": "يقود كينجي فريق الأمن والامتثال في Academorix. قائد تدقيق سابق لدى مزوّد بيانات رياضية عالمي. SOC 2 و ISO 27001 و GDPR هي عمله اليومي."
+    },
+    "initials": "KT",
+    "social": {
+      "linkedin": "https://www.linkedin.com/in/kenji-tanaka"
+    }
+  }
+}
