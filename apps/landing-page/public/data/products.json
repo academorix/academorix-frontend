@@ -1,19 +1,31 @@
 {
   "athletes": {
     "slug": "athletes",
-    "eyebrow": { "en": "Product", "ar": "منتج" },
-    "title": { "en": "Athletes", "ar": "الرياضيون" },
+    "eyebrow": {
+      "en": "Product",
+      "ar": "منتج"
+    },
+    "title": {
+      "en": "Athletes",
+      "ar": "الرياضيون"
+    },
     "description": {
       "en": "A single record that follows every athlete from first inquiry to graduation. Rich profiles, guardians, documents, and enrollment in one place.",
       "ar": "سجل واحد يرافق كل رياضي من أول استفسار إلى التخرج. ملفات ثرية وأولياء أمور ومستندات وتسجيلات في مكان واحد."
     },
-    "cta_label": { "en": "Start managing athletes", "ar": "ابدأ إدارة الرياضيين" },
+    "cta_label": {
+      "en": "Start managing athletes",
+      "ar": "ابدأ إدارة الرياضيين"
+    },
     "cta_type": "signup",
     "hero_icon": "UserGroupIcon",
     "features": [
       {
         "icon": "IdentificationIcon",
-        "title": { "en": "Rich athlete profiles", "ar": "ملفات رياضيين غنية" },
+        "title": {
+          "en": "Rich athlete profiles",
+          "ar": "ملفات رياضيين غنية"
+        },
         "description": {
           "en": "Age, contact, sport, level, and configurable attributes.",
           "ar": "العمر، التواصل، الرياضة، المستوى، وسمات قابلة للتخصيص."
@@ -21,7 +33,10 @@
       },
       {
         "icon": "UsersIcon",
-        "title": { "en": "Guardian relationships", "ar": "علاقات أولياء الأمور" },
+        "title": {
+          "en": "Guardian relationships",
+          "ar": "علاقات أولياء الأمور"
+        },
         "description": {
           "en": "Link parents, guardians, and emergency contacts.",
           "ar": "اربط الأهل وأولياء الأمور وجهات الطوارئ."
@@ -29,7 +44,10 @@
       },
       {
         "icon": "DocumentTextIcon",
-        "title": { "en": "Documents and waivers", "ar": "المستندات والإقرارات" },
+        "title": {
+          "en": "Documents and waivers",
+          "ar": "المستندات والإقرارات"
+        },
         "description": {
           "en": "Store medical forms with expiry-triggered renewals.",
           "ar": "احفظ النماذج الطبية مع تجديدات تتبع المواعيد."
@@ -37,7 +55,10 @@
       },
       {
         "icon": "MapIcon",
-        "title": { "en": "Multi-branch enrollment", "ar": "تسجيل متعدد الفروع" },
+        "title": {
+          "en": "Multi-branch enrollment",
+          "ar": "تسجيل متعدد الفروع"
+        },
         "description": {
           "en": "Enroll across branches without duplicating records.",
           "ar": "سجّل عبر الفروع دون تكرار السجلات."
@@ -45,7 +66,10 @@
       },
       {
         "icon": "ChartBarIcon",
-        "title": { "en": "Progress history", "ar": "سجل التقدم" },
+        "title": {
+          "en": "Progress history",
+          "ar": "سجل التقدم"
+        },
         "description": {
           "en": "Attendance, performance, and payment on one timeline.",
           "ar": "الحضور والأداء والمدفوعات على خط زمني واحد."
@@ -53,10 +77,35 @@
       },
       {
         "icon": "ShieldCheckIcon",
-        "title": { "en": "Privacy by design", "ar": "خصوصية بالتصميم" },
+        "title": {
+          "en": "Privacy by design",
+          "ar": "خصوصية بالتصميم"
+        },
         "description": {
           "en": "Fine-grained access control by role.",
           "ar": "تحكم دقيق بالصلاحيات حسب الدور."
+        }
+      },
+      {
+        "icon": "ArrowUpTrayIcon",
+        "title": {
+          "en": "Bulk import",
+          "ar": "استيراد جماعي"
+        },
+        "description": {
+          "en": "Onboard hundreds of athletes from Excel or CSV in one pass, with row-level validation reports before anything commits.",
+          "ar": "أدخل مئات الرياضيين من Excel أو CSV دفعة واحدة، مع تقارير تحقّق على مستوى الصف قبل أن يُعتمَد أي شيء."
+        }
+      },
+      {
+        "icon": "ClipboardDocumentCheckIcon",
+        "title": {
+          "en": "Full lifecycle",
+          "ar": "دورة حياة كاملة"
+        },
+        "description": {
+          "en": "Suspend, reactivate, graduate, or transfer athletes with a full audit trail on every state change.",
+          "ar": "علّق أو أعد تفعيل أو خرّج أو انقل الرياضيين مع سجل تدقيق كامل لكل تغيّر حالة."
         }
       }
     ],
@@ -65,19 +114,34 @@
         "en": "Onboarding a new athlete used to take 40 minutes across three spreadsheets. Now it is one form.",
         "ar": "كان إدخال رياضي جديد يستغرق 40 دقيقة عبر ثلاث جداول. الآن هو نموذج واحد."
       },
-      "author": { "en": "Layla Haddad", "ar": "ليلى حداد" },
-      "role": { "en": "Director, AquaElite Swim", "ar": "المديرة، AquaElite Swim" },
+      "author": {
+        "en": "Layla Haddad",
+        "ar": "ليلى حداد"
+      },
+      "role": {
+        "en": "Director, AquaElite Swim",
+        "ar": "المديرة، AquaElite Swim"
+      },
       "initials": "LH"
     },
     "related": [
       {
         "href": "/products/teams",
-        "title": { "en": "Teams", "ar": "الفرق" },
-        "description": { "en": "Group athletes into squads.", "ar": "اجمع الرياضيين في فرق." }
+        "title": {
+          "en": "Teams",
+          "ar": "الفرق"
+        },
+        "description": {
+          "en": "Group athletes into squads.",
+          "ar": "اجمع الرياضيين في فرق."
+        }
       },
       {
         "href": "/products/scheduling",
-        "title": { "en": "Scheduling", "ar": "الجدولة" },
+        "title": {
+          "en": "Scheduling",
+          "ar": "الجدولة"
+        },
         "description": {
           "en": "Sessions, RSVPs, and attendance.",
           "ar": "الجلسات وتأكيدات الحضور."
@@ -85,26 +149,44 @@
       },
       {
         "href": "/products/performance",
-        "title": { "en": "Performance", "ar": "الأداء" },
-        "description": { "en": "Sport-specific metrics.", "ar": "مقاييس خاصة بالرياضة." }
+        "title": {
+          "en": "Performance",
+          "ar": "الأداء"
+        },
+        "description": {
+          "en": "Sport-specific metrics.",
+          "ar": "مقاييس خاصة بالرياضة."
+        }
       }
     ]
   },
   "teams": {
     "slug": "teams",
-    "eyebrow": { "en": "Product", "ar": "منتج" },
-    "title": { "en": "Teams", "ar": "الفرق" },
+    "eyebrow": {
+      "en": "Product",
+      "ar": "منتج"
+    },
+    "title": {
+      "en": "Teams",
+      "ar": "الفرق"
+    },
     "description": {
       "en": "Build squads and age groups, assign coaches, and keep rosters in sync across every program.",
       "ar": "أنشئ الفرق والفئات العمرية، عيّن المدربين، حافظ على تزامن القوائم عبر البرامج."
     },
-    "cta_label": { "en": "Build your rosters", "ar": "أنشئ قوائم لاعبيك" },
+    "cta_label": {
+      "en": "Build your rosters",
+      "ar": "أنشئ قوائم لاعبيك"
+    },
     "cta_type": "signup",
     "hero_icon": "UsersIcon",
     "features": [
       {
         "icon": "RectangleStackIcon",
-        "title": { "en": "Squads and age groups", "ar": "الفرق والفئات العمرية" },
+        "title": {
+          "en": "Squads and age groups",
+          "ar": "الفرق والفئات العمرية"
+        },
         "description": {
           "en": "Teams by sport, level, or age band.",
           "ar": "فرق حسب الرياضة أو المستوى أو الفئة العمرية."
@@ -112,7 +194,10 @@
       },
       {
         "icon": "UserGroupIcon",
-        "title": { "en": "Coach assignments", "ar": "تعيينات المدربين" },
+        "title": {
+          "en": "Coach assignments",
+          "ar": "تعيينات المدربين"
+        },
         "description": {
           "en": "Head coaches and assistants per team.",
           "ar": "مدربون رئيسيون ومساعدون لكل فريق."
@@ -120,7 +205,10 @@
       },
       {
         "icon": "CheckCircleIcon",
-        "title": { "en": "Roster limits", "ar": "حدود القوائم" },
+        "title": {
+          "en": "Roster limits",
+          "ar": "حدود القوائم"
+        },
         "description": {
           "en": "Min and max sizes per team with waitlists.",
           "ar": "حد أدنى وأقصى لحجم الفريق مع قوائم انتظار."
@@ -128,7 +216,10 @@
       },
       {
         "icon": "ChartBarIcon",
-        "title": { "en": "Team performance", "ar": "أداء الفريق" },
+        "title": {
+          "en": "Team performance",
+          "ar": "أداء الفريق"
+        },
         "description": {
           "en": "Aggregate metrics into team dashboards.",
           "ar": "اجمع المقاييس في لوحات الفريق."
@@ -136,7 +227,10 @@
       },
       {
         "icon": "MegaphoneIcon",
-        "title": { "en": "Team broadcasts", "ar": "بث الفريق" },
+        "title": {
+          "en": "Team broadcasts",
+          "ar": "بث الفريق"
+        },
         "description": {
           "en": "Message a squad and its guardians in one action.",
           "ar": "راسل الفريق وأولياء أموره بإجراء واحد."
@@ -144,22 +238,56 @@
       },
       {
         "icon": "TrophyIcon",
-        "title": { "en": "Season history", "ar": "سجل الموسم" },
+        "title": {
+          "en": "Season history",
+          "ar": "سجل الموسم"
+        },
         "description": {
           "en": "Every roster and result tracked per season.",
           "ar": "كل قائمة ونتيجة متتبعة لكل موسم."
+        }
+      },
+      {
+        "icon": "CreditCardIcon",
+        "title": {
+          "en": "Team-based invoicing",
+          "ar": "فوترة على مستوى الفريق"
+        },
+        "description": {
+          "en": "Bill by team. One invoice covers every athlete on the roster with automatic guardian split.",
+          "ar": "فوتِر حسب الفريق. فاتورة واحدة تغطي كل رياضي في القائمة مع توزيع تلقائي بين أولياء الأمور."
+        }
+      },
+      {
+        "icon": "ArrowPathIcon",
+        "title": {
+          "en": "Transfers",
+          "ar": "الانتقالات"
+        },
+        "description": {
+          "en": "Move athletes between teams and branches with a full audit trail on every transfer.",
+          "ar": "انقل الرياضيين بين الفرق والفروع مع سجل تدقيق كامل لكل انتقال."
         }
       }
     ],
     "related": [
       {
         "href": "/products/athletes",
-        "title": { "en": "Athletes", "ar": "الرياضيون" },
-        "description": { "en": "Rich profiles and documents.", "ar": "ملفات ثرية ومستندات." }
+        "title": {
+          "en": "Athletes",
+          "ar": "الرياضيون"
+        },
+        "description": {
+          "en": "Rich profiles and documents.",
+          "ar": "ملفات ثرية ومستندات."
+        }
       },
       {
         "href": "/products/scheduling",
-        "title": { "en": "Scheduling", "ar": "الجدولة" },
+        "title": {
+          "en": "Scheduling",
+          "ar": "الجدولة"
+        },
         "description": {
           "en": "Sessions, matches, and RSVPs per team.",
           "ar": "الجلسات والمباريات وتأكيدات الفريق."
@@ -167,7 +295,10 @@
       },
       {
         "href": "/products/payments",
-        "title": { "en": "Payments", "ar": "المدفوعات" },
+        "title": {
+          "en": "Payments",
+          "ar": "المدفوعات"
+        },
         "description": {
           "en": "Invoice by team with guardian split.",
           "ar": "فوتر حسب الفريق مع توزيع للأولياء."
@@ -177,19 +308,31 @@
   },
   "scheduling": {
     "slug": "scheduling",
-    "eyebrow": { "en": "Product", "ar": "منتج" },
-    "title": { "en": "Scheduling and attendance", "ar": "الجدولة والحضور" },
+    "eyebrow": {
+      "en": "Product",
+      "ar": "منتج"
+    },
+    "title": {
+      "en": "Scheduling and attendance",
+      "ar": "الجدولة والحضور"
+    },
     "description": {
       "en": "Plan training and fixtures, then capture attendance in a tap. Recurring schedules, RSVP reminders, and per-branch calendars all in one place.",
       "ar": "خطط للتدريبات والمباريات، وسجل الحضور بلمسة. جداول متكررة وتذكيرات RSVP وتقاويم لكل فرع."
     },
-    "cta_label": { "en": "Try scheduling", "ar": "جرّب الجدولة" },
+    "cta_label": {
+      "en": "Try scheduling",
+      "ar": "جرّب الجدولة"
+    },
     "cta_type": "trial",
     "hero_icon": "CalendarDaysIcon",
     "features": [
       {
         "icon": "ClockIcon",
-        "title": { "en": "Recurring sessions", "ar": "جلسات متكررة" },
+        "title": {
+          "en": "Recurring sessions",
+          "ar": "جلسات متكررة"
+        },
         "description": {
           "en": "Weekly training in one click with per-instance overrides.",
           "ar": "تدريب أسبوعي بنقرة واحدة مع تعديلات لكل حدث."
@@ -197,7 +340,10 @@
       },
       {
         "icon": "BellAlertIcon",
-        "title": { "en": "RSVP and reminders", "ar": "تأكيدات وتذكيرات" },
+        "title": {
+          "en": "RSVP and reminders",
+          "ar": "تأكيدات وتذكيرات"
+        },
         "description": {
           "en": "Email and SMS reminders before each session.",
           "ar": "تذكيرات بريد إلكتروني و SMS قبل كل جلسة."
@@ -205,7 +351,10 @@
       },
       {
         "icon": "QrCodeIcon",
-        "title": { "en": "Tap-to-check-in", "ar": "التسجيل بلمسة" },
+        "title": {
+          "en": "Tap-to-check-in",
+          "ar": "التسجيل بلمسة"
+        },
         "description": {
           "en": "QR or NFC card at the door; live coach view.",
           "ar": "QR أو NFC عند الباب مع عرض المدرب المباشر."
@@ -213,7 +362,10 @@
       },
       {
         "icon": "MapIcon",
-        "title": { "en": "Multi-branch calendars", "ar": "تقاويم متعددة الفروع" },
+        "title": {
+          "en": "Multi-branch calendars",
+          "ar": "تقاويم متعددة الفروع"
+        },
         "description": {
           "en": "Per-branch or network-composite view.",
           "ar": "عرض لكل فرع أو مجمع للشبكة."
@@ -221,7 +373,10 @@
       },
       {
         "icon": "CloudArrowUpIcon",
-        "title": { "en": "Offline capture", "ar": "التقاط دون اتصال" },
+        "title": {
+          "en": "Offline capture",
+          "ar": "التقاط دون اتصال"
+        },
         "description": {
           "en": "Coaches without signal sync when they return.",
           "ar": "المدربون دون إشارة يتزامنون عند العودة."
@@ -229,17 +384,45 @@
       },
       {
         "icon": "CalendarIcon",
-        "title": { "en": "iCal subscriptions", "ar": "اشتراكات iCal" },
+        "title": {
+          "en": "iCal subscriptions",
+          "ar": "اشتراكات iCal"
+        },
         "description": {
           "en": "Every user gets an iCal feed of their events.",
           "ar": "كل مستخدم يحصل على تغذية iCal لأحداثه."
+        }
+      },
+      {
+        "icon": "ChartPieIcon",
+        "title": {
+          "en": "Attendance analytics",
+          "ar": "تحليلات الحضور"
+        },
+        "description": {
+          "en": "Attendance rates per athlete, team, and coach. Flag drop-offs before retention becomes a problem.",
+          "ar": "معدّلات الحضور لكل رياضي وفريق ومدرّب. حدّد الانخفاضات قبل أن يصبح الاحتفاظ مشكلة."
+        }
+      },
+      {
+        "icon": "CheckCircleIcon",
+        "title": {
+          "en": "Guardian pickup verification",
+          "ar": "توثيق استلام ولي الأمر"
+        },
+        "description": {
+          "en": "Digital log of who dropped off and picked up each athlete. Signed, timestamped, and searchable.",
+          "ar": "سجل رقمي لمن أوصل واستلم كل رياضي. موقّع ومختوم زمنياً وقابل للبحث."
         }
       }
     ],
     "related": [
       {
         "href": "/products/teams",
-        "title": { "en": "Teams", "ar": "الفرق" },
+        "title": {
+          "en": "Teams",
+          "ar": "الفرق"
+        },
         "description": {
           "en": "Assign coaches and size rosters.",
           "ar": "عيّن المدربين وحدد حجم القوائم."
@@ -247,7 +430,10 @@
       },
       {
         "href": "/products/reception",
-        "title": { "en": "Reception", "ar": "الاستقبال" },
+        "title": {
+          "en": "Reception",
+          "ar": "الاستقبال"
+        },
         "description": {
           "en": "Approvals for registrations and refunds.",
           "ar": "موافقات على التسجيلات والاسترداد."
@@ -255,7 +441,10 @@
       },
       {
         "href": "/products/reports",
-        "title": { "en": "Reports", "ar": "التقارير" },
+        "title": {
+          "en": "Reports",
+          "ar": "التقارير"
+        },
         "description": {
           "en": "Attendance dashboards for finance and ops.",
           "ar": "لوحات الحضور للمالية والعمليات."
@@ -265,19 +454,31 @@
   },
   "payments": {
     "slug": "payments",
-    "eyebrow": { "en": "Product", "ar": "منتج" },
-    "title": { "en": "Payments and memberships", "ar": "المدفوعات والاشتراكات" },
+    "eyebrow": {
+      "en": "Product",
+      "ar": "منتج"
+    },
+    "title": {
+      "en": "Payments and memberships",
+      "ar": "المدفوعات والاشتراكات"
+    },
     "description": {
       "en": "Plans, invoices, and renewals with a clear view of outstanding balances. Stripe and Paddle built in; local gateways on Enterprise.",
       "ar": "خطط اشتراك وفواتير وتجديدات مع رؤية واضحة للأرصدة المستحقة. Stripe و Paddle مدمجان، وبوابات محلية على Enterprise."
     },
-    "cta_label": { "en": "Set up billing", "ar": "أعدّ الفوترة" },
+    "cta_label": {
+      "en": "Set up billing",
+      "ar": "أعدّ الفوترة"
+    },
     "cta_type": "signup",
     "hero_icon": "CreditCardIcon",
     "features": [
       {
         "icon": "ReceiptPercentIcon",
-        "title": { "en": "Recurring memberships", "ar": "اشتراكات متكررة" },
+        "title": {
+          "en": "Recurring memberships",
+          "ar": "اشتراكات متكررة"
+        },
         "description": {
           "en": "Monthly, quarterly, or annual with proration.",
           "ar": "شهرية أو ربع سنوية أو سنوية مع احتساب نسبي."
@@ -285,7 +486,10 @@
       },
       {
         "icon": "DocumentTextIcon",
-        "title": { "en": "Invoices and reminders", "ar": "الفواتير والتذكيرات" },
+        "title": {
+          "en": "Invoices and reminders",
+          "ar": "الفواتير والتذكيرات"
+        },
         "description": {
           "en": "Automated PDF invoices with configurable cadences.",
           "ar": "فواتير PDF تلقائية بإيقاعات قابلة للتخصيص."
@@ -293,7 +497,10 @@
       },
       {
         "icon": "CreditCardIcon",
-        "title": { "en": "Multiple gateways", "ar": "بوابات دفع متعددة" },
+        "title": {
+          "en": "Multiple gateways",
+          "ar": "بوابات دفع متعددة"
+        },
         "description": {
           "en": "Stripe, Paddle, HyperPay, Tap, Moyasar.",
           "ar": "Stripe و Paddle و HyperPay و Tap و Moyasar."
@@ -301,7 +508,10 @@
       },
       {
         "icon": "UsersIcon",
-        "title": { "en": "Family accounts", "ar": "حسابات عائلية" },
+        "title": {
+          "en": "Family accounts",
+          "ar": "حسابات عائلية"
+        },
         "description": {
           "en": "One guardian pays for multiple athletes.",
           "ar": "ولي أمر واحد يدفع لأكثر من رياضي."
@@ -309,7 +519,10 @@
       },
       {
         "icon": "ChartBarIcon",
-        "title": { "en": "AR dashboards", "ar": "لوحات ذمم" },
+        "title": {
+          "en": "AR dashboards",
+          "ar": "لوحات ذمم"
+        },
         "description": {
           "en": "Outstanding balances with follow-up workflows.",
           "ar": "أرصدة مستحقة مع تدفقات متابعة."
@@ -317,17 +530,45 @@
       },
       {
         "icon": "ShieldCheckIcon",
-        "title": { "en": "PCI-safe by default", "ar": "متوافق مع PCI افتراضياً" },
+        "title": {
+          "en": "PCI-safe by default",
+          "ar": "متوافق مع PCI افتراضياً"
+        },
         "description": {
           "en": "Card data never touches our servers.",
           "ar": "بيانات البطاقات لا تلمس خوادمنا."
+        }
+      },
+      {
+        "icon": "GlobeAltIcon",
+        "title": {
+          "en": "Multi-currency",
+          "ar": "متعدد العملات"
+        },
+        "description": {
+          "en": "Bill in SAR, AED, EGP, USD, GBP, and every currency Stripe supports.",
+          "ar": "فوتِر بالريال السعودي والدرهم الإماراتي والجنيه المصري والدولار والجنيه الإسترليني، وكل عملة يدعمها Stripe."
+        }
+      },
+      {
+        "icon": "ArrowPathIcon",
+        "title": {
+          "en": "Refunds with approval",
+          "ar": "استرداد مع اعتماد"
+        },
+        "description": {
+          "en": "Refunds route to the reception queue with an audit trail and clean reversal against the original invoice.",
+          "ar": "تُوجَّه طلبات الاسترداد إلى طابور الاستقبال مع سجل تدقيق وإلغاء نظيف مقابل الفاتورة الأصلية."
         }
       }
     ],
     "related": [
       {
         "href": "/products/athletes",
-        "title": { "en": "Athletes", "ar": "الرياضيون" },
+        "title": {
+          "en": "Athletes",
+          "ar": "الرياضيون"
+        },
         "description": {
           "en": "Link invoices to athlete records.",
           "ar": "اربط الفواتير بسجلات الرياضيين."
@@ -335,7 +576,10 @@
       },
       {
         "href": "/products/reception",
-        "title": { "en": "Reception", "ar": "الاستقبال" },
+        "title": {
+          "en": "Reception",
+          "ar": "الاستقبال"
+        },
         "description": {
           "en": "Refund and adjustment approvals.",
           "ar": "موافقات الاسترداد والتعديل."
@@ -343,7 +587,10 @@
       },
       {
         "href": "/products/reports",
-        "title": { "en": "Reports", "ar": "التقارير" },
+        "title": {
+          "en": "Reports",
+          "ar": "التقارير"
+        },
         "description": {
           "en": "Revenue, AR, and churn dashboards.",
           "ar": "لوحات الإيرادات والذمم والتسرب."
@@ -353,19 +600,31 @@
   },
   "performance": {
     "slug": "performance",
-    "eyebrow": { "en": "Product", "ar": "منتج" },
-    "title": { "en": "Performance and progress", "ar": "الأداء والتقدم" },
+    "eyebrow": {
+      "en": "Product",
+      "ar": "منتج"
+    },
+    "title": {
+      "en": "Performance and progress",
+      "ar": "الأداء والتقدم"
+    },
     "description": {
       "en": "Sport-specific metrics rendered from configurable attribute sets. Track fitness benchmarks, skill progression, and match stats.",
       "ar": "مقاييس خاصة بكل رياضة تُعرض من مجموعات سمات قابلة للتخصيص. تتبّع معايير اللياقة وتطور المهارات وإحصائيات المباريات."
     },
-    "cta_label": { "en": "Track performance", "ar": "تتبّع الأداء" },
+    "cta_label": {
+      "en": "Track performance",
+      "ar": "تتبّع الأداء"
+    },
     "cta_type": "signup",
     "hero_icon": "ChartBarIcon",
     "features": [
       {
         "icon": "AdjustmentsHorizontalIcon",
-        "title": { "en": "Configurable attribute sets", "ar": "مجموعات سمات قابلة للتخصيص" },
+        "title": {
+          "en": "Configurable attribute sets",
+          "ar": "مجموعات سمات قابلة للتخصيص"
+        },
         "description": {
           "en": "Define what performance means for your sport.",
           "ar": "حدّد ما يعنيه الأداء لرياضتك."
@@ -373,7 +632,10 @@
       },
       {
         "icon": "ClockIcon",
-        "title": { "en": "Longitudinal history", "ar": "سجل طولي" },
+        "title": {
+          "en": "Longitudinal history",
+          "ar": "سجل طولي"
+        },
         "description": {
           "en": "Every metric captured over time.",
           "ar": "كل مقياس ملتقط عبر الزمن."
@@ -381,7 +643,10 @@
       },
       {
         "icon": "SparklesIcon",
-        "title": { "en": "AI-drafted summaries", "ar": "ملخصات ذكاء اصطناعي" },
+        "title": {
+          "en": "AI-drafted summaries",
+          "ar": "ملخصات ذكاء اصطناعي"
+        },
         "description": {
           "en": "Turn a season into a family-ready summary.",
           "ar": "حوّل موسماً إلى ملخص جاهز للعائلة."
@@ -389,7 +654,10 @@
       },
       {
         "icon": "ChartPieIcon",
-        "title": { "en": "Squad comparisons", "ar": "مقارنات الفريق" },
+        "title": {
+          "en": "Squad comparisons",
+          "ar": "مقارنات الفريق"
+        },
         "description": {
           "en": "Compare athletes against squad benchmarks.",
           "ar": "قارن الرياضيين مع معايير الفريق."
@@ -397,7 +665,10 @@
       },
       {
         "icon": "CheckCircleIcon",
-        "title": { "en": "Belt and grading", "ar": "الأحزمة والاختبارات" },
+        "title": {
+          "en": "Belt and grading",
+          "ar": "الأحزمة والاختبارات"
+        },
         "description": {
           "en": "Martial arts and gymnastics progression schemes.",
           "ar": "أنظمة تدرج الفنون القتالية والجمباز."
@@ -405,17 +676,45 @@
       },
       {
         "icon": "ScaleIcon",
-        "title": { "en": "Fitness testing", "ar": "اختبارات اللياقة" },
+        "title": {
+          "en": "Fitness testing",
+          "ar": "اختبارات اللياقة"
+        },
         "description": {
           "en": "Termly batteries with age-band percentiles.",
           "ar": "بطاريات فصلية مع نسب مئوية للفئات العمرية."
+        }
+      },
+      {
+        "icon": "TrophyIcon",
+        "title": {
+          "en": "Man-of-the-match and awards",
+          "ar": "رجل المباراة والجوائز"
+        },
+        "description": {
+          "en": "Recognize standout performances and roll them into season awards.",
+          "ar": "كافئ الأداءات المميّزة وادمجها في جوائز الموسم."
+        }
+      },
+      {
+        "icon": "DocumentTextIcon",
+        "title": {
+          "en": "Sport-specific reports",
+          "ar": "تقارير خاصة بكل رياضة"
+        },
+        "description": {
+          "en": "Auto-generated progress reports customized per sport. Share as branded PDFs with families.",
+          "ar": "تقارير تقدّم تُنشأ تلقائياً ومخصّصة لكل رياضة. شاركها كـ PDF بهوية الأكاديمية مع العائلات."
         }
       }
     ],
     "related": [
       {
         "href": "/products/attribute-engine",
-        "title": { "en": "Attribute engine", "ar": "محرك السمات" },
+        "title": {
+          "en": "Attribute engine",
+          "ar": "محرك السمات"
+        },
         "description": {
           "en": "The engine behind sport-agnostic forms.",
           "ar": "المحرك خلف النماذج المستقلة عن الرياضة."
@@ -423,31 +722,55 @@
       },
       {
         "href": "/products/ai",
-        "title": { "en": "AI Assistant", "ar": "المساعد الذكي" },
-        "description": { "en": "Auto-draft summaries.", "ar": "مسودات تلقائية للملخصات." }
+        "title": {
+          "en": "AI Assistant",
+          "ar": "المساعد الذكي"
+        },
+        "description": {
+          "en": "Auto-draft summaries.",
+          "ar": "مسودات تلقائية للملخصات."
+        }
       },
       {
         "href": "/products/reports",
-        "title": { "en": "Reports", "ar": "التقارير" },
-        "description": { "en": "Development dashboards.", "ar": "لوحات التطوير." }
+        "title": {
+          "en": "Reports",
+          "ar": "التقارير"
+        },
+        "description": {
+          "en": "Development dashboards.",
+          "ar": "لوحات التطوير."
+        }
       }
     ]
   },
   "reception": {
     "slug": "reception",
-    "eyebrow": { "en": "Product", "ar": "منتج" },
-    "title": { "en": "Reception", "ar": "الاستقبال" },
+    "eyebrow": {
+      "en": "Product",
+      "ar": "منتج"
+    },
+    "title": {
+      "en": "Reception",
+      "ar": "الاستقبال"
+    },
     "description": {
       "en": "The front-desk approvals queue for registrations, documents, refunds, and adjustments. Keep the desk running.",
       "ar": "طابور موافقات الاستقبال للتسجيلات والمستندات والاسترداد. أبقِ المكتب يعمل."
     },
-    "cta_label": { "en": "Open your desk", "ar": "افتح مكتب الاستقبال" },
+    "cta_label": {
+      "en": "Open your desk",
+      "ar": "افتح مكتب الاستقبال"
+    },
     "cta_type": "signup",
     "hero_icon": "InboxStackIcon",
     "features": [
       {
         "icon": "InboxStackIcon",
-        "title": { "en": "Unified queue", "ar": "طابور موحّد" },
+        "title": {
+          "en": "Unified queue",
+          "ar": "طابور موحّد"
+        },
         "description": {
           "en": "Every pending action in one prioritized list.",
           "ar": "كل إجراء معلّق في قائمة مرتّبة."
@@ -455,12 +778,21 @@
       },
       {
         "icon": "CheckCircleIcon",
-        "title": { "en": "One-click approvals", "ar": "موافقات بضغطة" },
-        "description": { "en": "Approve or reject with reasons.", "ar": "اعتمد أو ارفض مع أسباب." }
+        "title": {
+          "en": "One-click approvals",
+          "ar": "موافقات بضغطة"
+        },
+        "description": {
+          "en": "Approve or reject with reasons.",
+          "ar": "اعتمد أو ارفض مع أسباب."
+        }
       },
       {
         "icon": "DocumentTextIcon",
-        "title": { "en": "Document verification", "ar": "التحقق من المستندات" },
+        "title": {
+          "en": "Document verification",
+          "ar": "التحقق من المستندات"
+        },
         "description": {
           "en": "Preview forms inline; verify or request fixes.",
           "ar": "استعرض النماذج ضمن الصفحة."
@@ -468,7 +800,10 @@
       },
       {
         "icon": "ChatBubbleLeftRightIcon",
-        "title": { "en": "Guardian communication", "ar": "التواصل مع الأولياء" },
+        "title": {
+          "en": "Guardian communication",
+          "ar": "التواصل مع الأولياء"
+        },
         "description": {
           "en": "Message the family from the approval task.",
           "ar": "راسل العائلة من مهمة الموافقة."
@@ -476,7 +811,10 @@
       },
       {
         "icon": "ShieldCheckIcon",
-        "title": { "en": "Branch-scoped access", "ar": "وصول محدود بالفرع" },
+        "title": {
+          "en": "Branch-scoped access",
+          "ar": "وصول محدود بالفرع"
+        },
         "description": {
           "en": "Front desk sees only their branch's queue.",
           "ar": "الاستقبال يرى طابور فرعه فقط."
@@ -484,17 +822,45 @@
       },
       {
         "icon": "BoltIcon",
-        "title": { "en": "SLA timers", "ar": "مؤقتات SLA" },
+        "title": {
+          "en": "SLA timers",
+          "ar": "مؤقتات SLA"
+        },
         "description": {
           "en": "Urgent tasks float to the top.",
           "ar": "المهام العاجلة تطفو للأعلى."
+        }
+      },
+      {
+        "icon": "ChatBubbleLeftRightIcon",
+        "title": {
+          "en": "Guardian communication",
+          "ar": "التواصل مع ولي الأمر"
+        },
+        "description": {
+          "en": "Message the family directly from the approval task. Full thread history stays attached.",
+          "ar": "راسل العائلة مباشرة من مهمة الاعتماد. يبقى سجل المحادثة كاملاً مرفقاً."
+        }
+      },
+      {
+        "icon": "ChartPieIcon",
+        "title": {
+          "en": "Desk-level analytics",
+          "ar": "تحليلات على مستوى المكتب"
+        },
+        "description": {
+          "en": "Average approval time, refund rates, and backlog per desk.",
+          "ar": "متوسط زمن الاعتماد، ومعدّلات الاسترداد، والمتراكم لكل مكتب."
         }
       }
     ],
     "related": [
       {
         "href": "/products/payments",
-        "title": { "en": "Payments", "ar": "المدفوعات" },
+        "title": {
+          "en": "Payments",
+          "ar": "المدفوعات"
+        },
         "description": {
           "en": "Approve refunds from the queue.",
           "ar": "اعتمد الاسترداد من الطابور."
@@ -502,31 +868,55 @@
       },
       {
         "href": "/products/athletes",
-        "title": { "en": "Athletes", "ar": "الرياضيون" },
-        "description": { "en": "Verify documents.", "ar": "تحقق من المستندات." }
+        "title": {
+          "en": "Athletes",
+          "ar": "الرياضيون"
+        },
+        "description": {
+          "en": "Verify documents.",
+          "ar": "تحقق من المستندات."
+        }
       },
       {
         "href": "/products/reports",
-        "title": { "en": "Reports", "ar": "التقارير" },
-        "description": { "en": "Desk performance dashboards.", "ar": "لوحات أداء المكتب." }
+        "title": {
+          "en": "Reports",
+          "ar": "التقارير"
+        },
+        "description": {
+          "en": "Desk performance dashboards.",
+          "ar": "لوحات أداء المكتب."
+        }
       }
     ]
   },
   "reports": {
     "slug": "reports",
-    "eyebrow": { "en": "Product", "ar": "منتج" },
-    "title": { "en": "Reports and dashboards", "ar": "التقارير ولوحات المعلومات" },
+    "eyebrow": {
+      "en": "Product",
+      "ar": "منتج"
+    },
+    "title": {
+      "en": "Reports and dashboards",
+      "ar": "التقارير ولوحات المعلومات"
+    },
     "description": {
       "en": "Prebuilt dashboards for finance, ops, retention, and performance. Custom reports and scheduled exports on Pro and Enterprise.",
       "ar": "لوحات جاهزة للمالية والعمليات والاحتفاظ والأداء. تقارير مخصصة وتصديرات مجدولة على Pro و Enterprise."
     },
-    "cta_label": { "en": "Explore reports", "ar": "استكشف التقارير" },
+    "cta_label": {
+      "en": "Explore reports",
+      "ar": "استكشف التقارير"
+    },
     "cta_type": "signup",
     "hero_icon": "PresentationChartLineIcon",
     "features": [
       {
         "icon": "ChartBarIcon",
-        "title": { "en": "Prebuilt dashboards", "ar": "لوحات جاهزة" },
+        "title": {
+          "en": "Prebuilt dashboards",
+          "ar": "لوحات جاهزة"
+        },
         "description": {
           "en": "Finance, ops, retention, safeguarding.",
           "ar": "المالية والعمليات والاحتفاظ والحماية."
@@ -534,7 +924,10 @@
       },
       {
         "icon": "AdjustmentsHorizontalIcon",
-        "title": { "en": "Custom reports", "ar": "تقارير مخصصة" },
+        "title": {
+          "en": "Custom reports",
+          "ar": "تقارير مخصصة"
+        },
         "description": {
           "en": "Drag-and-drop report builder.",
           "ar": "منشئ تقارير بالسحب والإفلات."
@@ -542,7 +935,10 @@
       },
       {
         "icon": "ClockIcon",
-        "title": { "en": "Scheduled exports", "ar": "تصديرات مجدولة" },
+        "title": {
+          "en": "Scheduled exports",
+          "ar": "تصديرات مجدولة"
+        },
         "description": {
           "en": "Auto-email CSVs and PDFs on your cadence.",
           "ar": "أرسل CSV و PDF بإيقاعك."
@@ -550,7 +946,10 @@
       },
       {
         "icon": "MapIcon",
-        "title": { "en": "Multi-branch roll-ups", "ar": "تجميع الفروع" },
+        "title": {
+          "en": "Multi-branch roll-ups",
+          "ar": "تجميع الفروع"
+        },
         "description": {
           "en": "One number for the network, or slice.",
           "ar": "رقم للشبكة كلها أو تقسيم."
@@ -558,7 +957,10 @@
       },
       {
         "icon": "SparklesIcon",
-        "title": { "en": "Natural-language queries", "ar": "استعلامات بلغة طبيعية" },
+        "title": {
+          "en": "Natural-language queries",
+          "ar": "استعلامات بلغة طبيعية"
+        },
         "description": {
           "en": "Ask a question, get a chart back.",
           "ar": "اطرح سؤالاً، احصل على رسم."
@@ -566,46 +968,101 @@
       },
       {
         "icon": "ArrowUpTrayIcon",
-        "title": { "en": "Warehouse export", "ar": "تصدير مستودع" },
+        "title": {
+          "en": "Warehouse export",
+          "ar": "تصدير مستودع"
+        },
         "description": {
           "en": "Nightly extracts to Snowflake or BigQuery.",
           "ar": "استخراج ليلي إلى Snowflake أو BigQuery."
+        }
+      },
+      {
+        "icon": "EnvelopeIcon",
+        "title": {
+          "en": "Email delivery",
+          "ar": "التسليم عبر البريد"
+        },
+        "description": {
+          "en": "Reports land in inboxes on your cadence, with configurable recipients and formats.",
+          "ar": "تصل التقارير إلى صناديق البريد بإيقاعك، مع مستلمين وصيغ قابلة للتكوين."
+        }
+      },
+      {
+        "icon": "DocumentTextIcon",
+        "title": {
+          "en": "Board-ready PDFs",
+          "ar": "PDF جاهزة للمجلس"
+        },
+        "description": {
+          "en": "Every report exports as a branded PDF suitable for board decks.",
+          "ar": "كل تقرير يُصدَّر كـ PDF بهوية الأكاديمية مناسب لعروض المجلس."
         }
       }
     ],
     "related": [
       {
         "href": "/products/payments",
-        "title": { "en": "Payments", "ar": "المدفوعات" },
-        "description": { "en": "Revenue and AR data.", "ar": "بيانات الإيرادات والذمم." }
+        "title": {
+          "en": "Payments",
+          "ar": "المدفوعات"
+        },
+        "description": {
+          "en": "Revenue and AR data.",
+          "ar": "بيانات الإيرادات والذمم."
+        }
       },
       {
         "href": "/products/scheduling",
-        "title": { "en": "Scheduling", "ar": "الجدولة" },
-        "description": { "en": "Attendance retention reports.", "ar": "تقارير احتفاظ الحضور." }
+        "title": {
+          "en": "Scheduling",
+          "ar": "الجدولة"
+        },
+        "description": {
+          "en": "Attendance retention reports.",
+          "ar": "تقارير احتفاظ الحضور."
+        }
       },
       {
         "href": "/products/ai",
-        "title": { "en": "AI Assistant", "ar": "المساعد الذكي" },
-        "description": { "en": "Natural-language queries.", "ar": "استعلامات باللغة الطبيعية." }
+        "title": {
+          "en": "AI Assistant",
+          "ar": "المساعد الذكي"
+        },
+        "description": {
+          "en": "Natural-language queries.",
+          "ar": "استعلامات باللغة الطبيعية."
+        }
       }
     ]
   },
   "safeguarding": {
     "slug": "safeguarding",
-    "eyebrow": { "en": "Product", "ar": "منتج" },
-    "title": { "en": "Safeguarding", "ar": "الحماية" },
+    "eyebrow": {
+      "en": "Product",
+      "ar": "منتج"
+    },
+    "title": {
+      "en": "Safeguarding",
+      "ar": "الحماية"
+    },
     "description": {
       "en": "Compliance records, incident logging, and role-scoped access. Everything a modern academy needs to demonstrate a culture of safety.",
       "ar": "سجلات الامتثال، توثيق الحوادث، وصلاحيات وصول بالدور. كل ما يحتاجه أكاديمية حديثة لإثبات ثقافة السلامة."
     },
-    "cta_label": { "en": "Talk to compliance", "ar": "تحدّث إلى فريق الامتثال" },
+    "cta_label": {
+      "en": "Talk to compliance",
+      "ar": "تحدّث إلى فريق الامتثال"
+    },
     "cta_type": "contact_sales",
     "hero_icon": "ShieldCheckIcon",
     "features": [
       {
         "icon": "DocumentTextIcon",
-        "title": { "en": "Coach credential tracking", "ar": "تتبع اعتمادات المدربين" },
+        "title": {
+          "en": "Coach credential tracking",
+          "ar": "تتبع اعتمادات المدربين"
+        },
         "description": {
           "en": "Certifications and background checks with expiry alerts.",
           "ar": "شهادات وفحوصات مع تنبيهات انتهاء."
@@ -613,7 +1070,10 @@
       },
       {
         "icon": "BellAlertIcon",
-        "title": { "en": "Incident reporting", "ar": "الإبلاغ عن الحوادث" },
+        "title": {
+          "en": "Incident reporting",
+          "ar": "الإبلاغ عن الحوادث"
+        },
         "description": {
           "en": "Structured forms with severity and audit trail.",
           "ar": "نماذج منظمة بدرجات خطورة وسجل تدقيق."
@@ -621,7 +1081,10 @@
       },
       {
         "icon": "KeyIcon",
-        "title": { "en": "Role-scoped access", "ar": "وصول محدود بالدور" },
+        "title": {
+          "en": "Role-scoped access",
+          "ar": "وصول محدود بالدور"
+        },
         "description": {
           "en": "Safeguarding officer sees the full picture.",
           "ar": "مسؤول الحماية يرى الصورة الكاملة."
@@ -629,7 +1092,10 @@
       },
       {
         "icon": "CheckCircleIcon",
-        "title": { "en": "Guardian pickup verification", "ar": "توثيق استلام ولي الأمر" },
+        "title": {
+          "en": "Guardian pickup verification",
+          "ar": "توثيق استلام ولي الأمر"
+        },
         "description": {
           "en": "Signed, timestamped, searchable.",
           "ar": "موقع ومختوم زمنياً وقابل للبحث."
@@ -637,7 +1103,10 @@
       },
       {
         "icon": "ChartPieIcon",
-        "title": { "en": "Compliance dashboards", "ar": "لوحات الامتثال" },
+        "title": {
+          "en": "Compliance dashboards",
+          "ar": "لوحات الامتثال"
+        },
         "description": {
           "en": "Every open incident and expiring credential.",
           "ar": "كل حادث مفتوح واعتماد على وشك الانتهاء."
@@ -645,17 +1114,45 @@
       },
       {
         "icon": "ShieldCheckIcon",
-        "title": { "en": "GDPR and DPA ready", "ar": "جاهز لـ GDPR و DPA" },
+        "title": {
+          "en": "GDPR and DPA ready",
+          "ar": "جاهز لـ GDPR و DPA"
+        },
         "description": {
           "en": "Export or delete personal data on request.",
           "ar": "صدّر أو احذف البيانات الشخصية عند الطلب."
+        }
+      },
+      {
+        "icon": "HeartIcon",
+        "title": {
+          "en": "Medical clearance workflow",
+          "ar": "تدفق الإقرار الطبي"
+        },
+        "description": {
+          "en": "Expired clearance blocks squad selection automatically.",
+          "ar": "الإقرار المنتهي يمنع الاختيار تلقائياً."
+        }
+      },
+      {
+        "icon": "AcademicCapIcon",
+        "title": {
+          "en": "Training and testing",
+          "ar": "التدريب والاختبار"
+        },
+        "description": {
+          "en": "Track every mandatory training a coach has completed, with reminders on renewals.",
+          "ar": "تتبّع كل تدريب إلزامي أكمله المدرّب، مع تذكيرات عند التجديد."
         }
       }
     ],
     "related": [
       {
         "href": "/products/reception",
-        "title": { "en": "Reception", "ar": "الاستقبال" },
+        "title": {
+          "en": "Reception",
+          "ar": "الاستقبال"
+        },
         "description": {
           "en": "Verify documents at intake.",
           "ar": "تحقق من المستندات عند الاستقبال."
@@ -663,7 +1160,10 @@
       },
       {
         "href": "/enterprise/security",
-        "title": { "en": "Enterprise security", "ar": "أمن المؤسسات" },
+        "title": {
+          "en": "Enterprise security",
+          "ar": "أمن المؤسسات"
+        },
         "description": {
           "en": "SSO, audit logs, data residency.",
           "ar": "SSO وسجلات وإقامة بيانات."
@@ -671,7 +1171,10 @@
       },
       {
         "href": "/products/reports",
-        "title": { "en": "Reports", "ar": "التقارير" },
+        "title": {
+          "en": "Reports",
+          "ar": "التقارير"
+        },
         "description": {
           "en": "Compliance dashboards and exports.",
           "ar": "لوحات الامتثال والتصديرات."
@@ -681,19 +1184,31 @@
   },
   "ai": {
     "slug": "ai",
-    "eyebrow": { "en": "AI Assistant", "ar": "المساعد الذكي" },
-    "title": { "en": "AI Assistant", "ar": "المساعد الذكي" },
+    "eyebrow": {
+      "en": "AI Assistant",
+      "ar": "المساعد الذكي"
+    },
+    "title": {
+      "en": "AI Assistant",
+      "ar": "المساعد الذكي"
+    },
     "description": {
       "en": "Ship attribute-set drafts, progress summaries, and drill recommendations from a plain-language prompt. Available on Growth and above as a paid add-on.",
       "ar": "أنجز مسودات مجموعات السمات وملخصات التقدم وتوصيات التدريبات من مطالبة بلغة طبيعية. متوفر على Growth فما فوق كإضافة مدفوعة."
     },
-    "cta_label": { "en": "See AI in action", "ar": "شاهد الذكاء الاصطناعي" },
+    "cta_label": {
+      "en": "See AI in action",
+      "ar": "شاهد الذكاء الاصطناعي"
+    },
     "cta_type": "signup",
     "hero_icon": "SparklesIcon",
     "features": [
       {
         "icon": "SparklesIcon",
-        "title": { "en": "Attribute-set drafts", "ar": "مسودات مجموعات سمات" },
+        "title": {
+          "en": "Attribute-set drafts",
+          "ar": "مسودات مجموعات سمات"
+        },
         "description": {
           "en": "Describe a sport, get a proposed set.",
           "ar": "صف رياضة، احصل على مجموعة مقترحة."
@@ -701,7 +1216,10 @@
       },
       {
         "icon": "DocumentTextIcon",
-        "title": { "en": "Progress summaries", "ar": "ملخصات التقدم" },
+        "title": {
+          "en": "Progress summaries",
+          "ar": "ملخصات التقدم"
+        },
         "description": {
           "en": "Turn raw data into family-ready reports.",
           "ar": "حوّل البيانات الخام إلى تقارير للعائلة."
@@ -709,7 +1227,10 @@
       },
       {
         "icon": "ChartBarIcon",
-        "title": { "en": "Insight queries", "ar": "استعلامات رؤية" },
+        "title": {
+          "en": "Insight queries",
+          "ar": "استعلامات رؤية"
+        },
         "description": {
           "en": "Ask a question, get a chart back.",
           "ar": "اطرح سؤالاً، احصل على رسم."
@@ -717,7 +1238,10 @@
       },
       {
         "icon": "ShieldCheckIcon",
-        "title": { "en": "Private by design", "ar": "خصوصية بالتصميم" },
+        "title": {
+          "en": "Private by design",
+          "ar": "خصوصية بالتصميم"
+        },
         "description": {
           "en": "Your data never trains external models.",
           "ar": "بياناتك لا تدرّب النماذج الخارجية."
@@ -725,7 +1249,10 @@
       },
       {
         "icon": "KeyIcon",
-        "title": { "en": "Bring your own key", "ar": "أحضر مفتاحك" },
+        "title": {
+          "en": "Bring your own key",
+          "ar": "أحضر مفتاحك"
+        },
         "description": {
           "en": "Enterprise supports BYO OpenAI or Anthropic.",
           "ar": "Enterprise يدعم مفاتيح OpenAI أو Anthropic."
@@ -733,17 +1260,45 @@
       },
       {
         "icon": "DocumentCheckIcon",
-        "title": { "en": "Full audit trail", "ar": "سجل تدقيق كامل" },
+        "title": {
+          "en": "Full audit trail",
+          "ar": "سجل تدقيق كامل"
+        },
         "description": {
           "en": "Every query and response is logged.",
           "ar": "كل استعلام وردّ يُسجَّل."
+        }
+      },
+      {
+        "icon": "ChatBubbleLeftRightIcon",
+        "title": {
+          "en": "Conversational context",
+          "ar": "سياق محادثة"
+        },
+        "description": {
+          "en": "Follow-up questions preserve context so you can iterate on a report or a summary in a natural back-and-forth.",
+          "ar": "أسئلة المتابعة تحفظ السياق لتتمكن من التكرار على تقرير أو ملخص بحوار طبيعي."
+        }
+      },
+      {
+        "icon": "AdjustmentsHorizontalIcon",
+        "title": {
+          "en": "Tuneable prompts",
+          "ar": "مطالبات قابلة للضبط"
+        },
+        "description": {
+          "en": "Every AI-generated output has a coach-tuned system prompt so the voice matches your academy.",
+          "ar": "لكل مخرج من الذكاء الاصطناعي مطالبة نظام مضبوطة من المدرّب لتطابق نبرة أكاديميتك."
         }
       }
     ],
     "related": [
       {
         "href": "/products/performance",
-        "title": { "en": "Performance", "ar": "الأداء" },
+        "title": {
+          "en": "Performance",
+          "ar": "الأداء"
+        },
         "description": {
           "en": "AI-drafted progress summaries.",
           "ar": "ملخصات تقدم بمسودات ذكاء اصطناعي."
@@ -751,7 +1306,10 @@
       },
       {
         "href": "/products/reports",
-        "title": { "en": "Reports", "ar": "التقارير" },
+        "title": {
+          "en": "Reports",
+          "ar": "التقارير"
+        },
         "description": {
           "en": "Natural-language queries on your data.",
           "ar": "استعلامات باللغة الطبيعية."
@@ -759,7 +1317,10 @@
       },
       {
         "href": "/products/attribute-engine",
-        "title": { "en": "Attribute engine", "ar": "محرك السمات" },
+        "title": {
+          "en": "Attribute engine",
+          "ar": "محرك السمات"
+        },
         "description": {
           "en": "AI-generated attribute sets.",
           "ar": "مجموعات سمات من الذكاء الاصطناعي."
@@ -769,19 +1330,31 @@
   },
   "attribute-engine": {
     "slug": "attribute-engine",
-    "eyebrow": { "en": "Engine", "ar": "محرك" },
-    "title": { "en": "Attribute engine", "ar": "محرك السمات" },
+    "eyebrow": {
+      "en": "Engine",
+      "ar": "محرك"
+    },
+    "title": {
+      "en": "Attribute engine",
+      "ar": "محرك السمات"
+    },
     "description": {
       "en": "The sport-agnostic engine behind Academorix. Every sport-variable field is configuration. Add a discipline, tune its metrics, and the right forms and views appear.",
       "ar": "المحرك المستقل عن الرياضة خلف Academorix. كل حقل متغيّر حسب الرياضة هو مجرد إعداد. أضف تخصصاً واضبط مقاييسه."
     },
-    "cta_label": { "en": "Learn how it works", "ar": "تعرّف على طريقة عمله" },
+    "cta_label": {
+      "en": "Learn how it works",
+      "ar": "تعرّف على طريقة عمله"
+    },
     "cta_type": "signup",
     "hero_icon": "AdjustmentsHorizontalIcon",
     "features": [
       {
         "icon": "AdjustmentsHorizontalIcon",
-        "title": { "en": "Server-driven UI", "ar": "واجهة مدفوعة من الخادم" },
+        "title": {
+          "en": "Server-driven UI",
+          "ar": "واجهة مدفوعة من الخادم"
+        },
         "description": {
           "en": "Forms and views render from JSON schemas.",
           "ar": "النماذج والعروض تُعرض من مخططات JSON."
@@ -789,7 +1362,10 @@
       },
       {
         "icon": "LanguageIcon",
-        "title": { "en": "Bilingual labels", "ar": "تسميات ثنائية اللغة" },
+        "title": {
+          "en": "Bilingual labels",
+          "ar": "تسميات ثنائية اللغة"
+        },
         "description": {
           "en": "Every attribute carries English and Arabic.",
           "ar": "كل سمة تحمل تسميات بلغتين."
@@ -797,7 +1373,10 @@
       },
       {
         "icon": "ClockIcon",
-        "title": { "en": "Versioned schemas", "ar": "مخططات ذات إصدارات" },
+        "title": {
+          "en": "Versioned schemas",
+          "ar": "مخططات ذات إصدارات"
+        },
         "description": {
           "en": "Old records keep their schema; new ones use current.",
           "ar": "السجلات القديمة تحتفظ بمخططها؛ الجديدة تستخدم الحالي."
@@ -805,7 +1384,10 @@
       },
       {
         "icon": "SparklesIcon",
-        "title": { "en": "AI-generated drafts", "ar": "مسودات ذكاء اصطناعي" },
+        "title": {
+          "en": "AI-generated drafts",
+          "ar": "مسودات ذكاء اصطناعي"
+        },
         "description": {
           "en": "Describe a sport, get a proposed schema.",
           "ar": "صف رياضة، احصل على مخطط مقترح."
@@ -813,7 +1395,10 @@
       },
       {
         "icon": "CheckCircleIcon",
-        "title": { "en": "Validation built in", "ar": "تحقق مدمج" },
+        "title": {
+          "en": "Validation built in",
+          "ar": "تحقق مدمج"
+        },
         "description": {
           "en": "Type-safe fields with patterns and conditions.",
           "ar": "حقول آمنة الأنواع مع أنماط وشروط."
@@ -821,17 +1406,45 @@
       },
       {
         "icon": "CodeBracketIcon",
-        "title": { "en": "API and SDK", "ar": "API و SDK" },
+        "title": {
+          "en": "API and SDK",
+          "ar": "API و SDK"
+        },
         "description": {
           "en": "Schema queryable and mutable via API.",
           "ar": "المخطط قابل للاستعلام والتعديل عبر API."
+        }
+      },
+      {
+        "icon": "ChartBarIcon",
+        "title": {
+          "en": "Reports-aware",
+          "ar": "مدرك للتقارير"
+        },
+        "description": {
+          "en": "Every attribute is automatically available in the report builder and the AI Assistant.",
+          "ar": "كل سمة متاحة تلقائياً في منشئ التقارير والمساعد الذكي."
+        }
+      },
+      {
+        "icon": "ShieldCheckIcon",
+        "title": {
+          "en": "Access-controlled",
+          "ar": "خاضع للتحكم بالصلاحيات"
+        },
+        "description": {
+          "en": "Some fields, like medical and safeguarding, can be role-scoped so only authorized staff see them.",
+          "ar": "بعض الحقول، مثل الطبية والحماية، يمكن حصر الوصول إليها بالدور فلا يراها إلا الموظفون المصرَّح لهم."
         }
       }
     ],
     "related": [
       {
         "href": "/products/performance",
-        "title": { "en": "Performance", "ar": "الأداء" },
+        "title": {
+          "en": "Performance",
+          "ar": "الأداء"
+        },
         "description": {
           "en": "The primary consumer of attribute sets.",
           "ar": "المستهلك الأساسي لمجموعات السمات."
@@ -839,7 +1452,10 @@
       },
       {
         "href": "/products/ai",
-        "title": { "en": "AI Assistant", "ar": "المساعد الذكي" },
+        "title": {
+          "en": "AI Assistant",
+          "ar": "المساعد الذكي"
+        },
         "description": {
           "en": "AI-drafted attribute sets.",
           "ar": "مسودات مجموعات سمات من الذكاء الاصطناعي."
@@ -847,7 +1463,10 @@
       },
       {
         "href": "/products/reports",
-        "title": { "en": "Reports", "ar": "التقارير" },
+        "title": {
+          "en": "Reports",
+          "ar": "التقارير"
+        },
         "description": {
           "en": "Every attribute is queryable in reports.",
           "ar": "كل سمة قابلة للاستعلام في التقارير."
