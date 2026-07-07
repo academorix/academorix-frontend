@@ -35,10 +35,10 @@
  *
  * ## Backend gaps
  *
- *  - `POST /notifications/push-subscriptions` — endpoint does NOT
+ *  - `POST /api/v1/notifications/subscriptions` — endpoint does NOT
  *    exist yet. Payload:
  *      `{ endpoint, expiration_time, keys: { p256dh, auth }, user_agent, locale }`.
- *  - `DELETE /notifications/push-subscriptions/{id}` — companion for
+ *  - `DELETE /api/v1/notifications/subscriptions/{id}` — companion for
  *    unsubscribes. Payload: no body, `id` is the row id we get back
  *    from the POST.
  *
@@ -53,6 +53,7 @@ import {
   subscribeToPush,
 } from "@academorix/notifications";
 
+import { NOTIFICATION_ENDPOINTS } from "@/config/notifications.config";
 import { httpClient } from "@/lib/http";
 import { fetchVapidPublicKey } from "@/notifications/push/vapid-provider";
 
@@ -61,7 +62,7 @@ import { fetchVapidPublicKey } from "@/notifications/push/vapid-provider";
  * NOTIFICATIONS_PLAN §4.2. **Not implemented on the backend yet** —
  * see the module docblock.
  */
-export const PUSH_SUBSCRIBE_ENDPOINT = "/notifications/push-subscriptions";
+export const PUSH_SUBSCRIBE_ENDPOINT = NOTIFICATION_ENDPOINTS.subscribe;
 
 /** Outcomes of {@link registerPush}. */
 export type RegisterPushOutcome =
@@ -116,8 +117,9 @@ async function readServiceWorkerRegistration(): Promise<ServiceWorkerRegistratio
  */
 export async function _postSubscriptionToBackend(body: PushSubscribeRequestBody): Promise<void> {
   try {
-    // TODO(backend-gap): POST /notifications/push-subscriptions —
-    //   endpoint does NOT exist yet. When it lands, remove this try/catch.
+    // TODO(backend-endpoint): POST /api/v1/notifications/subscriptions
+    //   — endpoint does NOT exist yet. When it lands, drop this
+    //   try/catch and let the fetch surface non-2xx as an error.
     await httpClient.post(PUSH_SUBSCRIBE_ENDPOINT, body);
   } catch {
     // Silent: the browser already has a valid subscription and the SW

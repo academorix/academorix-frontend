@@ -6,10 +6,11 @@
  * Sources the Web Push VAPID public key at runtime. Order of
  * preference:
  *
- *   1. `GET /config/vapid` — server-issued, per-environment. Documented
- *      in NOTIFICATIONS_PLAN §4.7. **TODO(backend-gap): endpoint DOES
- *      NOT exist yet.** See Communication module `routes/api.php`.
- *      Expected response shape:
+ *   1. `GET /api/v1/config/vapid` — server-issued, per-environment.
+ *      Documented in NOTIFICATIONS_PLAN §4.7.
+ *
+ *      TODO(backend-endpoint): endpoint DOES NOT exist yet. See the
+ *      Communication module `routes/tenant.php`. Expected response:
  *
  *      ```json
  *      { "public_key": "<base64url-encoded VAPID public key>" }
@@ -23,10 +24,11 @@
  *
  *      Both shapes are handled by `unwrapEnvelope` below.
  *
- *   2. `VITE_VAPID_PUBLIC_KEY` build-time env var — fallback for local
- *      dev + tenants that pin the key at deploy time. Kept as a plain
- *      env var (not in `env.config.ts`) so it stays inert until the
- *      web-push feature flag is enabled.
+ *   2. `envConfig.vapidPublicKey` (backed by `VITE_VAPID_PUBLIC_KEY`) —
+ *      fallback for local dev + tenants that pin the key at deploy
+ *      time. Read through the typed env layer rather than
+ *      `import.meta.env` directly so any misconfiguration surfaces on
+ *      boot (see `config/env.config.ts`).
  *
  * If neither source yields a key, {@link fetchVapidPublicKey} throws.
  * The push subscribe flow catches that + surfaces a friendly error.
@@ -40,14 +42,19 @@
  * new key.
  */
 
+import { envConfig } from "@/config/env.config";
+import { NOTIFICATION_ENDPOINTS } from "@/config/notifications.config";
 import { httpClient } from "@/lib/http";
 import { unwrapEnvelope } from "@/lib/http/envelope";
 
 /** In-memory cache. `null` = not fetched yet. */
 let cachedKey: string | null = null;
 
-/** Path passed to `httpClient.get`. Kept as a constant for tests. */
-export const VAPID_ENDPOINT = "/config/vapid";
+/**
+ * Path passed to `httpClient.get`. Kept as a constant for tests +
+ * observability — mirrors {@link NOTIFICATION_ENDPOINTS.vapidPublicKey}.
+ */
+export const VAPID_ENDPOINT = NOTIFICATION_ENDPOINTS.vapidPublicKey;
 
 /**
  * The response shape both `data`-wrapped and bare responses reduce
@@ -82,9 +89,10 @@ export async function fetchVapidPublicKey(): Promise<string> {
   }
 
   try {
-    // TODO(backend-gap): GET /config/vapid — endpoint does NOT exist yet.
-    //   See Communication module routes. Response should be a public
-    //   base64url string; no auth required (per NOTIFICATIONS_PLAN §4.7).
+    // TODO(backend-endpoint): GET /api/v1/config/vapid — endpoint does
+    //   NOT exist yet. See Communication module routes. Response
+    //   should be a public base64url string; no auth required (per
+    //   NOTIFICATIONS_PLAN §4.7).
     const body = await httpClient.get<unknown>(VAPID_ENDPOINT);
     const payload = unwrapEnvelope<VapidPayload>(body);
     const key = extractKey(payload);
@@ -96,13 +104,11 @@ export async function fetchVapidPublicKey(): Promise<string> {
     }
   } catch {
     // Fall through to the env fallback — expected while the endpoint
-    // is still being built.
+    // is still being built. We do NOT surface the caught error: a
+    // 404 here is a normal boot state, not something to log noisily.
   }
 
-  const envKey =
-    typeof import.meta.env === "object"
-      ? ((import.meta.env as Record<string, string | undefined>).VITE_VAPID_PUBLIC_KEY ?? "")
-      : "";
+  const envKey = envConfig.vapidPublicKey;
 
   if (envKey) {
     cachedKey = envKey;
@@ -112,7 +118,7 @@ export async function fetchVapidPublicKey(): Promise<string> {
 
   throw new Error(
     "No VAPID public key available. Set VITE_VAPID_PUBLIC_KEY in the dashboard env " +
-      "or ship the /config/vapid endpoint (see NOTIFICATIONS_PLAN §4.7).",
+      "or ship the /api/v1/config/vapid endpoint (see NOTIFICATIONS_PLAN §4.7).",
   );
 }
 

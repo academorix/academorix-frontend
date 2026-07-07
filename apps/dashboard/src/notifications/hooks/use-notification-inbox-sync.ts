@@ -4,9 +4,10 @@
  *
  * @description
  * `useNotificationInboxSync()` — presence hook that hydrates the
- * in-memory inbox from `GET /notifications` on mount and keeps it live
- * via a Reverb private channel subscription. The syncer produces no
- * DOM — it exists purely to wire realtime + fetch into the shared
+ * in-memory inbox from `GET /api/v1/notifications` on mount and keeps
+ * it live via a Reverb private-channel subscription. The syncer
+ * produces no DOM — it exists purely to wire realtime + fetch into
+ * the shared
  * {@link "@/notifications/provider/notifications-bundle".useNotifications}
  * context.
  *
@@ -14,49 +15,53 @@
  *
  *   - **On identity resolve**: fetches page 1 of `/notifications` and
  *     seeds the context. A per-run fetch id guards against a stale
- *     resolve overwriting a fresher one when the user switches tenants.
- *   - **While mounted**: subscribes to
- *     `private-user.{userId}.notifications` and listens for the
- *     `notifications.created` event (per NOTIFICATIONS_PLAN §4.6, with
- *     the private-channel adjustment agreed for Phase 1). Each event
- *     payload is a full {@link Notification} DTO which we hand to the
- *     context's `add()` — the context dedupes by `id`.
- *   - **On identity clear (logout)**: clears the context and leaves
- *     the channel so a subsequent login re-subscribes with fresh
- *     credentials.
+ *     resolve overwriting a fresher one when the user switches
+ *     tenants.
+ *   - **While mounted**: subscribes to the private channel
+ *     `user.{userId}.notifications` via
+ *     {@link "@academorix/realtime".usePrivateChannel} and listens for
+ *     the `notifications.created` event (per NOTIFICATIONS_PLAN §4.6,
+ *     with the private-channel adjustment agreed for Phase 1). Each
+ *     event payload is a full {@link Notification} DTO which we hand
+ *     to the context's `add()` — the context dedupes by `id`.
+ *   - **On identity clear (logout)**: clears the context. The realtime
+ *     hook itself handles unsubscribing when the channel name empties.
  *
- * ## Why not `@academorix/realtime`?
+ * ## Why `usePrivateChannel` (not raw `getEcho()`)
  *
- * The dashboard has not yet migrated its realtime plumbing to
- * `@academorix/realtime` — that lives behind a later wave of the
- * package migration. Today the app talks to Laravel Reverb through
- * `@/providers/live/echo`'s `getEcho()` singleton. This hook wraps
- * that singleton with the same lifecycle discipline that
- * `@academorix/realtime`'s `usePrivateChannel` uses (mount / listen /
- * teardown), so a follow-up migration reduces to a two-line change.
+ * The dashboard's shared Echo singleton lives in
+ * `@/providers/live/echo`. Rather than mounting a second `laravel-echo`
+ * instance, we wrap the singleton behind an adapter (see
+ * `notifications/realtime/echo-realtime-client.ts`) that satisfies the
+ * `RealtimeClient` interface `@academorix/realtime` expects — so both
+ * Refine's live provider AND this hook share a single WebSocket.
  *
- * TODO(realtime-migration): once `@academorix/realtime` is wired into
- *   the dashboard providers tree, replace the internal `getEcho()`
- *   call with `usePrivateChannel(client, channelName, handlers)`.
+ * ## Backend endpoints
  *
- * ## Backend endpoint
- *
- *   - `GET /notifications` — exists (read-only, fixture-first). Returns
- *     a Foundation envelope with `data: Notification[]` and paginated
- *     `meta`. We ignore the pagination for now — the drawer's "load
- *     more" flow lands with the Refine `useInfiniteQuery` migration.
+ *   - `GET /api/v1/notifications` — exists (read-only, fixture-first).
+ *     Returns a Foundation envelope with `data: Notification[]` and
+ *     paginated `meta`. We ignore the pagination for now — the
+ *     drawer's "load more" flow lands with the Refine `useInfiniteQuery`
+ *     migration.
  */
 
+import { usePrivateChannel } from "@academorix/realtime";
 import { useGetIdentity } from "@refinedev/core";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import type { Identity } from "@/types";
 import type { Notification } from "@academorix/notifications";
+import type { ChannelHandlers } from "@academorix/realtime";
 
+import {
+  NOTIFICATION_ENDPOINTS,
+  NOTIFICATION_REVERB_EVENT,
+  buildUserNotificationsChannelName,
+} from "@/config/notifications.config";
 import { httpClient } from "@/lib/http";
 import { unwrapEnvelope } from "@/lib/http/envelope";
 import { useNotifications } from "@/notifications/provider/notifications-bundle";
-import { getEcho } from "@/providers/live/echo";
+import { echoRealtimeClient } from "@/notifications/realtime";
 
 /**
  * Options accepted by {@link useNotificationInboxSync}. Kept as an
@@ -66,18 +71,16 @@ import { getEcho } from "@/providers/live/echo";
  */
 export interface UseNotificationInboxSyncOptions {
   /**
-   * Overrides the default `GET /notifications` endpoint. Kept typed as
-   * a plain string rather than importing from
-   * `@/config/notifications.config` — the config file's endpoint map
-   * still uses the Phase-2 URL naming (`/notifications/push-subscriptions`)
-   * whereas the backend today exposes plain `/notifications`.
+   * Overrides the default `GET /api/v1/notifications` endpoint. Kept
+   * typed as a plain string so tests can inject a fixture URL without
+   * mocking the whole config module.
    */
   readonly listEndpoint?: string;
 
   /**
    * Reverb event name emitted by the Communication module when a
    * notification row lands. Matches
-   * {@link "@/config/notifications.config".REVERB_EVENTS.notificationCreated}.
+   * {@link "@/config/notifications.config".NOTIFICATION_REVERB_EVENT}.
    */
   readonly eventName?: string;
 
@@ -88,19 +91,6 @@ export interface UseNotificationInboxSyncOptions {
    */
   readonly channelName?: (userId: string) => string;
 }
-
-/** Default `GET` endpoint. */
-const DEFAULT_LIST_ENDPOINT = "/notifications";
-
-/** Default Reverb event name (see `notifications.config.ts`). */
-const DEFAULT_EVENT_NAME = "notifications.created";
-
-/**
- * Default channel-name builder. Note we return the name WITHOUT the
- * `private-` prefix; Echo prepends it internally when we call
- * `echo.private(name)`.
- */
-const defaultChannelName = (userId: string): string => `user.${userId}.notifications`;
 
 /**
  * Hydrates + subscribes the app-wide notifications context to the
@@ -115,52 +105,55 @@ const defaultChannelName = (userId: string): string => `user.${userId}.notificat
  */
 export function useNotificationInboxSync(options: UseNotificationInboxSyncOptions = {}): void {
   const {
-    listEndpoint = DEFAULT_LIST_ENDPOINT,
-    eventName = DEFAULT_EVENT_NAME,
-    channelName = defaultChannelName,
+    listEndpoint = NOTIFICATION_ENDPOINTS.list,
+    eventName = NOTIFICATION_REVERB_EVENT,
+    channelName = buildUserNotificationsChannelName,
   } = options;
 
   const { data: identity } = useGetIdentity<Identity>();
   const { add, clear } = useNotifications();
 
-  // Tracks the identity we last synced for. Used both to detect
+  // Tracks the identity we last hydrated for. Used both to detect
   // logouts (identity → undefined) and tenant switches (id changes).
-  const lastSyncedUserId = useRef<string | null>(null);
+  const lastHydratedUserId = useRef<string | null>(null);
 
   // A monotonically-increasing token that guards the async fetch
   // effect against a stale response overwriting a fresher one after
   // a tenant switch.
   const fetchToken = useRef(0);
 
+  // Callback stored in a ref so `handlers` below can stay
+  // referentially stable across renders — the realtime hook only
+  // rebinds when the channel name changes, so a fresh handler on
+  // every render would silently drop realtime events.
+  const addRef = useRef(add);
+
+  addRef.current = add;
+
+  // ---- Initial hydration ------------------------------------------
+  //
+  // We intentionally seed the context by REPLAYING each row through
+  // `add()` rather than reaching for a `setAll()`-style API. The
+  // context factory guarantees `add` deduplicates by id, so a race
+  // with the first realtime broadcast is harmless.
   useEffect(() => {
-    // Not signed in. Wipe the context so a stale unread badge does
-    // not survive across sessions, then bail out of the subscribe.
     if (!identity?.id) {
-      if (lastSyncedUserId.current !== null) {
+      if (lastHydratedUserId.current !== null) {
         clear();
-        lastSyncedUserId.current = null;
+        lastHydratedUserId.current = null;
       }
 
       return;
     }
 
-    // Already subscribed for this user — nothing to do.
-    if (lastSyncedUserId.current === identity.id) {
+    if (lastHydratedUserId.current === identity.id) {
       return;
     }
 
     const userId = identity.id;
-    const channel = channelName(userId);
     const runId = ++fetchToken.current;
 
-    lastSyncedUserId.current = userId;
-
-    // ---- Initial hydration -----------------------------------------
-    //
-    // We intentionally seed the context by REPLAYING each row through
-    // `add()` rather than reaching for a `setAll()`-style API. The
-    // context factory guarantees `add` deduplicates by id, so a race
-    // with the first realtime broadcast is harmless.
+    lastHydratedUserId.current = userId;
 
     void (async (): Promise<void> => {
       try {
@@ -187,51 +180,44 @@ export function useNotificationInboxSync(options: UseNotificationInboxSyncOption
         // with the surface it's inside.
       }
     })();
+  }, [identity, add, clear, listEndpoint]);
 
-    // ---- Realtime subscription -------------------------------------
-    //
-    // We fire-and-forget the Echo boot so this hook stays synchronous
-    // and the effect's cleanup can capture the channel name without
-    // waiting on the transport.
+  // ---- Realtime subscription --------------------------------------
+  //
+  // Building the channel name here (rather than inside the hook)
+  // gives us a stable empty-string when the identity hasn't resolved
+  // yet — `usePrivateChannel` treats an empty name as "skip
+  // subscription", which is exactly what we want for logged-out users.
+  const resolvedChannel = identity?.id ? channelName(identity.id) : "";
 
-    let cleaned = false;
+  // Realtime payload handler. Ref-cell forwarding keeps the object
+  // identity stable across renders (see comment above); the actual
+  // callback stays fresh via `addRef.current`.
+  const handleCreated = useCallback((payload: unknown): void => {
+    // A malformed payload is a data-integrity bug on the backend;
+    // silently dropping it in dev is more useful than adding a
+    // runtime cost (like zod) that every consumer pays.
+    if (!payload || typeof payload !== "object") {
+      return;
+    }
 
-    void getEcho().then((echo) => {
-      if (cleaned) {
-        return;
-      }
+    // The backend broadcast wraps the DTO in either
+    // `{ notification: {...} }` or emits the DTO directly. Accept
+    // both shapes so we survive a broadcaster refactor.
+    const record = payload as Record<string, unknown>;
+    const dto = (record.notification as Notification | undefined) ?? (payload as Notification);
 
-      const listenable = echo.private(channel);
+    if (!dto?.id) {
+      return;
+    }
 
-      listenable.listen(eventName, (payload: unknown): void => {
-        // A malformed payload is a data-integrity bug on the backend;
-        // logging it in dev is more useful than adding a runtime cost
-        // (like zod) that every consumer pays.
-        if (!payload || typeof payload !== "object") {
-          return;
-        }
+    addRef.current(dto);
+  }, []);
 
-        // The backend broadcast wraps the DTO in either
-        // `{ notification: {...} }` or emits the DTO directly. Accept
-        // both shapes so we survive a broadcaster refactor.
-        const record = payload as Record<string, unknown>;
-        const dto = (record.notification as Notification | undefined) ?? (payload as Notification);
+  const handlers = useMemo<ChannelHandlers>(
+    () => ({ [eventName]: handleCreated }),
+    [eventName, handleCreated],
+  );
 
-        if (!dto?.id) {
-          return;
-        }
-
-        add(dto);
-      });
-    });
-
-    return (): void => {
-      // Guard against double-cleanup and leave the private channel so
-      // a re-mount (StrictMode) or tenant switch subscribes cleanly.
-      cleaned = true;
-      void getEcho().then((echo) => {
-        echo.leave(`private-${channel}`);
-      });
-    };
-  }, [identity, add, clear, listEndpoint, eventName, channelName]);
+  usePrivateChannel(echoRealtimeClient, resolvedChannel, handlers);
 }

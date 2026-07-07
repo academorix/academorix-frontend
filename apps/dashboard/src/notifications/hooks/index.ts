@@ -13,5 +13,8 @@ export type { UseNotificationInboxSyncOptions } from "./use-notification-inbox-s
 
 export { toastForNotification, useNotificationToast } from "./use-notification-toast";
 
+export { useNotificationWrites } from "./use-notification-writes";
+export type { UseNotificationWritesResult } from "./use-notification-writes";
+
 export { SNOOZE_PRESETS, useSnoozeStore } from "./use-snooze-store";
 export type { SnoozePreset, UseSnoozeStoreResult } from "./use-snooze-store";

@@ -132,6 +132,25 @@ export const envConfig = Object.freeze({
     port: env("VITE_REVERB_PORT", 8080, z.coerce.number().int().positive()),
     scheme: env("VITE_REVERB_SCHEME", "http" as "http" | "https", z.enum(["http", "https"])),
   }),
+
+  /**
+   * Web Push VAPID public key (base64url encoded). Used to identify the
+   * application server when subscribing to push notifications.
+   *
+   * When empty, the push registration flow first attempts
+   * `GET /api/v1/config/vapid` (also currently a backend gap — see
+   * NOTIFICATIONS_PLAN.md §4.7); this variable is the deploy-time
+   * fallback. One of the two paths MUST resolve to a key before push
+   * registration can succeed. An empty string at boot is acceptable
+   * because the `webPush` feature flag is defaulted OFF (see
+   * `features.config.ts`) — the whole surface stays dark until an
+   * environment ships the key + flips the flag.
+   *
+   * Kept as a plain string (not `.min(1)`) so the app boots without
+   * a key configured; `fetchVapidPublicKey` surfaces a specific error
+   * when the value is actually consumed.
+   */
+  vapidPublicKey: env("VITE_VAPID_PUBLIC_KEY", "", z.string()),
 } as const);
 
 /** Static type of the {@link envConfig} snapshot. */
