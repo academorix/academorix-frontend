@@ -1,20 +1,29 @@
 /*
  * @academorix/landing-page — Global Styles
  *
- * Same style graph as `apps/web` so the marketing surface renders with the
- * exact same design tokens as the app shell:
+ * Style graph:
  *   1. Tailwind v4 core
  *   2. HeroUI OSS core styles (@heroui/styles)
- *   3. Our shared UI package: HeroUI Pro CSS + controllers.css + rtl.css
+ *   3. @academorix/ui/react/styles — bundles @heroui-pro/react/css + our
+ *      controllers.css (cursor conventions) + rtl.css (Arabic layout)
+ *   4. @heroui-pro/react/themes/glass — the HeroUI Pro Glass theme
+ *      variant. Ships two modes (glass-light / glass-dark) scoped
+ *      under `html.glass-{mode}` and `html[data-theme="glass-{mode}"]`
+ *      selectors. Overrides shadow-using components (cards, popovers,
+ *      modals, dropdowns, fields, etc.) with backdrop-filter blur.
+ *      The `<GlassThemeSync />` client component in `src/components/
+ *      theme/` mirrors `next-themes`' `resolvedTheme` into the
+ *      `data-theme` attribute so a mode is always active.
  *
- * The `@source` directive tells Tailwind v4 to scan the shared UI package's
- * source files so utility classes referenced from our reusable components
- * are generated into this app's stylesheet.
+ * The `@source` directive tells Tailwind v4 to scan the shared UI
+ * package's source files so utility classes referenced from our
+ * reusable components are generated into this app's stylesheet.
  */
 
 @import "tailwindcss";
 @import "@heroui/styles";
 @import "@academorix/ui/react/styles";
+@import "@heroui-pro/react/themes/glass";
 
 @source "../../../../packages/ui/src/**/*.{ts,tsx}";
 
@@ -23,4 +32,18 @@
 @theme {
   --font-sans: "Inter", system-ui, sans-serif;
   --font-mono: "Fira Code", ui-monospace, monospace;
+}
+
+/*
+ * Paint the Glass theme's `--background-gradient` on the body so blur
+ * has visible content behind it. Without a gradient (or an image),
+ * `backdrop-filter: blur(...)` has nothing to blur and the effect
+ * reads as a flat translucent panel. `background-attachment: fixed`
+ * keeps the gradient anchored while the page scrolls, which reads
+ * cleanly on long marketing pages.
+ */
+body {
+  background: var(--background), var(--background-gradient);
+  background-attachment: fixed;
+  min-height: 100dvh;
 }

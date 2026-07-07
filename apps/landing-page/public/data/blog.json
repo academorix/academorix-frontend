@@ -1,0 +1,464 @@
+{
+  "multi-branch-operations": {
+    "slug": "multi-branch-operations",
+    "title": {
+      "en": "One workspace, nine branches, three currencies",
+      "ar": "مساحة عمل واحدة، تسعة فروع، ثلاث عملات"
+    },
+    "description": {
+      "en": "How Northgate FC unified regional football operations without giving up local flexibility.",
+      "ar": "كيف وحّد Northgate FC عمليات كرة القدم الإقليمية دون التخلي عن المرونة المحلية."
+    },
+    "date": "2026-06-24",
+    "author": "ali-rahimi",
+    "reading_minutes": 7,
+    "category": { "en": "Product", "ar": "المنتج" },
+    "hero_icon": "BuildingOffice2Icon",
+    "body": [
+      {
+        "en": "The hardest problem in multi-branch academy operations is not scale. It is consistency. If every branch runs a different tool, the CEO cannot see the network. If the CEO uses one tool and the branches use another, the data never matches. The temptation is to force uniformity by policy, and the reality is that policy alone cannot bridge three currencies and two languages.",
+        "ar": "أصعب مشكلة في عمليات الأكاديميات متعددة الفروع ليست الحجم، بل الاتساق. إذا شغّل كل فرع أداة مختلفة، فلن يرى الرئيس التنفيذي الشبكة. وإذا استخدم الرئيس التنفيذي أداةً واستخدمت الفروع أخرى، فلن تتطابق البيانات. الإغراء هو فرض التوحيد بالسياسة، والواقع أن السياسة وحدها لا تجسر ثلاث عملات ولغتَين."
+      },
+      {
+        "en": "Our answer is to make the branch a first-class entity in a single tenant workspace. Every branch has its own calendar, its own finance ledger, its own coach roster, and its own front-desk queue. Every roll-up (revenue, attendance, retention, safeguarding) is a live query against the same underlying data. Branch managers work in their branch's view. Regional directors see their region. The CEO sees everything.",
+        "ar": "جوابنا هو جعل الفرع كياناً محورياً في مساحة عمل مستأجر واحدة. لكل فرع تقويمه ودفتره المالي وقائمة مدرّبيه وطابور استقباله. كل تجميع (الإيرادات، الحضور، الاحتفاظ، الحماية) استعلام مباشر على البيانات نفسها. مدراء الفروع يعملون في نطاق فرعهم. المدراء الإقليميون يرون منطقتهم. الرئيس التنفيذي يرى كل شيء."
+      },
+      {
+        "en": "The consolidated AR ledger is the linchpin. JOD, EGP, and AED all recognized correctly, VAT computed per branch's jurisdiction, and one board pack rolled up from all nine branches on the first of every month. No exports, no reconciliation, no arguments about numbers.",
+        "ar": "دفتر الذمم الموحّد هو المحور. الدينار الأردني والجنيه المصري والدرهم الإماراتي كلها مُدرَجة صحيحة، و VAT محسوبة حسب ولاية كل فرع، وحزمة مجلس واحدة تُجمَع من الفروع التسعة في اليوم الأول من كل شهر. لا صادرات، لا تسويات، ولا نقاشات حول الأرقام."
+      }
+    ],
+    "related": [
+      {
+        "href": "/solutions/multi-branch",
+        "title": { "en": "Multi-branch solution", "ar": "حل تعدد الفروع" },
+        "description": { "en": "The pattern behind the story.", "ar": "النمط خلف القصة." }
+      },
+      {
+        "href": "/customers/northgate-fc",
+        "title": { "en": "Northgate FC story", "ar": "قصة Northgate FC" },
+        "description": { "en": "The full case study.", "ar": "دراسة الحالة الكاملة." }
+      },
+      {
+        "href": "/enterprise/multi-branch",
+        "title": { "en": "Enterprise multi-branch", "ar": "المؤسسات متعددة الفروع" },
+        "description": { "en": "Network-scale operations.", "ar": "عمليات على نطاق الشبكة." }
+      }
+    ]
+  },
+  "bilingual-product-design": {
+    "slug": "bilingual-product-design",
+    "title": {
+      "en": "RTL is a design constraint, not a translation feature",
+      "ar": "RTL قيد تصميمي، لا ميزة ترجمة"
+    },
+    "description": {
+      "en": "Why bilingual UX is a first-class engineering decision, and what it means for buttons, icons, dates, and dashboards.",
+      "ar": "لماذا تجربة ثنائية اللغة قرار هندسي من الدرجة الأولى، وماذا يعني ذلك للأزرار والأيقونات والتواريخ ولوحات المعلومات."
+    },
+    "date": "2026-06-10",
+    "author": "noor-al-mansouri",
+    "reading_minutes": 6,
+    "category": { "en": "Design", "ar": "التصميم" },
+    "hero_icon": "LanguageIcon",
+    "body": [
+      {
+        "en": "Bilingual UX is not a translation feature. It is a design constraint. Buttons flip. Icons flip (arrows, chevrons, and any directional glyph). Numbers keep their Latin form in Arabic contexts. Dates and currencies respect local conventions. Sports terminology has established translations that vary by region.",
+        "ar": "تجربة ثنائية اللغة ليست ميزة ترجمة، بل قيداً تصميمياً. الأزرار تنقلب. الأيقونات تنقلب (الأسهم والزوايا وكل رمز اتجاهي). الأرقام تحافظ على شكلها اللاتيني في السياقات العربية. التواريخ والعملات تحترم الأعراف المحلية. لمصطلحات الرياضة ترجمات راسخة تختلف بين المناطق."
+      },
+      {
+        "en": "The right way is to treat RTL as a first-class rendering mode enforced at the component library, not as CSS overrides bolted onto a left-to-right assumption. Every layout primitive in Academorix reads the active direction, flips its inline axis where it should, and stays where it is where it should not.",
+        "ar": "الطريقة الصحيحة هي معاملة RTL كنمط عرض من الدرجة الأولى مُطبَّق في مكتبة المكوّنات، لا كتجاوزات CSS مضافة إلى افتراض من اليسار إلى اليمين. كل بدائية تخطيط في Academorix تقرأ الاتجاه الفعّال، تنقلب على محورها الداخلي حيث ينبغي، وتبقى حيث ينبغي أن تبقى."
+      },
+      {
+        "en": "The payoff is that a Gulf academy owner and a Berlin engineer look at the same dashboard, see the same data, and consume it in the language and layout of their own working life. Neither experience is a translation of the other. Both are equally native.",
+        "ar": "المكافأة هي أن مالك أكاديمية خليجي ومهندساً في برلين ينظران إلى اللوحة نفسها، ويريان البيانات نفسها، ويستهلكانها بلغة وتخطيط حياتهما العملية. لا تجربة منهما ترجمة للأخرى. كلاهما محلي بالمثل."
+      }
+    ],
+    "related": [
+      {
+        "href": "/solutions/bilingual-rtl",
+        "title": { "en": "Bilingual and RTL", "ar": "ثنائية اللغة و RTL" },
+        "description": { "en": "How the solution ships.", "ar": "كيف يُشحن الحل." }
+      },
+      {
+        "href": "/products/attribute-engine",
+        "title": { "en": "Attribute engine", "ar": "محرك السمات" },
+        "description": {
+          "en": "Bilingual labels on every field.",
+          "ar": "تسميات ثنائية اللغة على كل حقل."
+        }
+      }
+    ]
+  },
+  "attribute-engine-deep-dive": {
+    "slug": "attribute-engine-deep-dive",
+    "title": {
+      "en": "The engine behind sport-agnostic Academorix",
+      "ar": "المحرك خلف Academorix المستقل عن الرياضة"
+    },
+    "description": {
+      "en": "Server-driven UI, versioned schemas, and a JSON contract that lets a new sport go live in an afternoon.",
+      "ar": "واجهة مدفوعة من الخادم، ومخططات ذات إصدارات، وعقد JSON يجعل رياضة جديدة تعمل في بعد ظهر."
+    },
+    "date": "2026-05-27",
+    "author": "yusuf-el-amrani",
+    "reading_minutes": 8,
+    "category": { "en": "Engineering", "ar": "الهندسة" },
+    "hero_icon": "AdjustmentsHorizontalIcon",
+    "body": [
+      {
+        "en": "Every sport-specific field on Academorix (pass percentage in football, split times in swimming, apparatus scores in gymnastics) is a JSON-declared attribute. The attribute engine renders forms, reports, and drill-down views from these schemas on demand. The client does not know what a discipline is; it renders whatever the server tells it to render.",
+        "ar": "كل حقل خاص برياضة على Academorix (نسبة التمرير في كرة القدم، الأزمنة الجزئية في السباحة، درجات الأجهزة في الجمباز) هو سمة معلَنة بـ JSON. يعرض محرك السمات النماذج والتقارير والعروض المتعمّقة من هذه المخططات عند الطلب. لا يعرف العميل ما هو التخصص، بل يعرض ما يأمره الخادم بعرضه."
+      },
+      {
+        "en": "Schemas are versioned. Old records keep their old schema; new records use the current one. History stays accurate. Every attribute carries English and Arabic labels and hints, so RTL forms render automatically. Access-controlled fields (medical, safeguarding) can be role-scoped so only authorized staff see them.",
+        "ar": "المخططات ذات إصدارات. السجلات القديمة تحتفظ بمخططها القديم، والجديدة تستخدم الحالي. يبقى السجل التاريخي دقيقاً. كل سمة تحمل تسميات وتلميحات بالعربية والإنجليزية، فتُعرض نماذج RTL تلقائياً. الحقول الخاضعة للتحكم بالصلاحيات (الطبية، الحماية) يمكن حصر رؤيتها بالدور."
+      },
+      {
+        "en": "The AI Assistant plugs into the engine: describe a sport in a paragraph and it drafts an attribute set. Every attribute the engine knows about is automatically queryable in Reports and by natural-language queries. A new discipline goes from concept to production in an afternoon.",
+        "ar": "المساعد الذكي يندمج مع المحرك: صف رياضة في فقرة فيصوغ مجموعة سمات. كل سمة يعرفها المحرك قابلة للاستعلام تلقائياً في التقارير وعبر الاستعلامات باللغة الطبيعية. تنتقل رياضة جديدة من الفكرة إلى الإنتاج في بعد ظهر واحد."
+      }
+    ],
+    "related": [
+      {
+        "href": "/products/attribute-engine",
+        "title": { "en": "Attribute engine", "ar": "محرك السمات" },
+        "description": { "en": "The product page.", "ar": "صفحة المنتج." }
+      },
+      {
+        "href": "/products/ai",
+        "title": { "en": "AI Assistant", "ar": "المساعد الذكي" },
+        "description": {
+          "en": "AI-drafted attribute sets.",
+          "ar": "مسودات مجموعات سمات من الذكاء الاصطناعي."
+        }
+      }
+    ]
+  },
+  "offline-first-coaches": {
+    "slug": "offline-first-coaches",
+    "title": { "en": "Coaches without a signal", "ar": "مدرّبون دون إشارة" },
+    "description": {
+      "en": "Why an offline-first mobile experience matters for sport, and how Academorix handles conflicts on sync.",
+      "ar": "لماذا تجربة الجوّال التي تبدأ من عدم الاتصال مهمة للرياضة، وكيف تعالج Academorix التعارضات عند المزامنة."
+    },
+    "date": "2026-05-13",
+    "author": "yusuf-el-amrani",
+    "reading_minutes": 5,
+    "category": { "en": "Engineering", "ar": "الهندسة" },
+    "hero_icon": "CloudArrowUpIcon",
+    "body": [
+      {
+        "en": "Coaches are not office workers. They stand on football pitches, poolside decks, and gymnasium floors. Some of those places have signal. Many do not. If your platform requires a live connection to log attendance, half the sessions never get logged.",
+        "ar": "المدرّبون ليسوا موظفي مكاتب. يقفون على ملاعب كرة القدم وأسطح المسابح وأرضيات الصالات. بعض تلك الأماكن تحمل إشارة. كثير منها لا. إذا كانت منصّتك تتطلّب اتصالاً مباشراً لتسجيل الحضور، فلن يُسجَّل نصف الجلسات."
+      },
+      {
+        "en": "Academorix's mobile view is offline-first. Attendance, match results, private-session notes, and drill logs work without a network. Records queue locally, encrypt at rest, and sync automatically on reconnect. Two coaches editing the same roster offline both get to keep their work: the platform surfaces the conflict on sync and lets the head coach resolve it.",
+        "ar": "عرض الجوّال في Academorix يبدأ من عدم الاتصال. الحضور ونتائج المباريات وملاحظات الجلسات الخاصة وسجلات التدريبات تعمل دون شبكة. تُطابَر السجلات محلياً، وتُشفَّر عند السكون، وتتزامن تلقائياً عند إعادة الاتصال. مدرّبان يعدّلان القائمة نفسها دون اتصال يحتفظ كل منهما بعمله: تُظهر المنصة التعارض عند المزامنة ويحسمه المدرّب الأول."
+      }
+    ],
+    "related": [
+      {
+        "href": "/solutions/offline-first",
+        "title": { "en": "Offline-first solution", "ar": "حل عدم الاتصال أولاً" },
+        "description": { "en": "The full solution page.", "ar": "صفحة الحل الكاملة." }
+      },
+      {
+        "href": "/for/coaches",
+        "title": { "en": "For coaches", "ar": "للمدرّبين" },
+        "description": { "en": "Coach persona view.", "ar": "عرض الشخصية للمدرّب." }
+      }
+    ]
+  },
+  "soc-2-road": {
+    "slug": "soc-2-road",
+    "title": { "en": "The road to SOC 2 Type II", "ar": "الطريق إلى SOC 2 Type II" },
+    "description": {
+      "en": "Where Academorix stands on SOC 2, what Type I already covers, and the timeline to Type II certification.",
+      "ar": "أين تقف Academorix من SOC 2، وما يغطّيه Type I بالفعل، والجدول الزمني لاعتماد Type II."
+    },
+    "date": "2026-04-29",
+    "author": "kenji-tanaka",
+    "reading_minutes": 6,
+    "category": { "en": "Compliance", "ar": "الامتثال" },
+    "hero_icon": "ShieldCheckIcon",
+    "body": [
+      {
+        "en": "SOC 2 Type I attests to the design of security controls at a point in time. Academorix Type I is complete. SOC 2 Type II attests to the operation of those controls over a period, typically six to twelve months. Our Type II audit is scheduled for Q4 2026.",
+        "ar": "SOC 2 Type I يوثّق تصميم ضوابط الأمن في نقطة زمنية. Type I لـ Academorix مكتمل. SOC 2 Type II يوثّق تشغيل تلك الضوابط عبر فترة، عادةً ستة إلى اثني عشر شهراً. تدقيقنا لـ Type II مقرَّر في الربع الرابع من 2026."
+      },
+      {
+        "en": "In parallel, we operate as if we were already Type II certified: immutable audit logs with actor and timestamp on every write, SSO with SAML/OIDC and SCIM sync on Pro+, streamable audit logs to your SIEM on Enterprise, data residency options for regulated tenants, and a security team on 24/7 on-call for incidents. Prospective customers can request the Type I report under NDA today.",
+        "ar": "بالتوازي، نعمل كما لو كنا مُعتمدين بالفعل: سجلات تدقيق ثابتة بالمنفّذ والوقت على كل عملية كتابة، و SSO عبر SAML/OIDC ومزامنة SCIM على Pro فما فوق، وسجلات تدقيق قابلة للبث إلى SIEM لديك على Enterprise، وخيارات إقامة البيانات للمستأجرين الخاضعين للتنظيم، وفريق أمن على مناوبة على مدار الساعة للحوادث. يمكن للعملاء المرتقبين طلب تقرير Type I بموجب اتفاقية عدم إفشاء اليوم."
+      }
+    ],
+    "related": [
+      {
+        "href": "/enterprise/compliance",
+        "title": { "en": "Compliance", "ar": "الامتثال" },
+        "description": { "en": "Full compliance posture.", "ar": "وضع الامتثال الكامل." }
+      },
+      {
+        "href": "/legal/security",
+        "title": { "en": "Security practices", "ar": "ممارسات الأمن" },
+        "description": { "en": "The details.", "ar": "التفاصيل." }
+      }
+    ]
+  },
+  "family-invoicing-patterns": {
+    "slug": "family-invoicing-patterns",
+    "title": { "en": "One bill, many kids", "ar": "فاتورة واحدة، أطفال كثيرون" },
+    "description": {
+      "en": "How family accounts work, why sibling discounts belong as line items, and what breaks when they do not.",
+      "ar": "كيف تعمل الحسابات العائلية، ولماذا تنتمي خصومات الإخوة كبنود، وما الذي ينكسر إن لم تفعل."
+    },
+    "date": "2026-04-08",
+    "author": "ali-rahimi",
+    "reading_minutes": 5,
+    "category": { "en": "Product", "ar": "المنتج" },
+    "hero_icon": "CreditCardIcon",
+    "body": [
+      {
+        "en": "Family accounts are common in sports academies and rare in enterprise SaaS. Two kids in two sports across two branches on one invoice is the normal case, not the exception. Our billing model treats a family as an entity with per-athlete line items and automatic sibling discounts calculated on the invoice line, not tacked on as a manual credit note.",
+        "ar": "الحسابات العائلية شائعة في الأكاديميات الرياضية ونادرة في SaaS المؤسسية. طفلان في رياضتَين عبر فرعَين على فاتورة واحدة هي الحالة الطبيعية، لا الاستثناء. نموذج فوترتنا يعامل العائلة ككيان له بنود لكل رياضي وخصومات إخوة محسوبة تلقائياً على البند، لا مضافة كملاحظة دائنة يدوية."
+      },
+      {
+        "en": "When sibling discounts live as free-text notes, revenue recognition becomes a manual process and audit trails go dark. When they live as line items, month-end runs on rails and every discount is defensible to a regulator or auditor line-by-line.",
+        "ar": "عندما تعيش خصومات الإخوة كملاحظات نصية، يصبح إدراج الإيرادات عملية يدوية وتصبح سجلات التدقيق مظلمة. عندما تعيش كبنود، يعمل إغلاق الشهر على قضبان، وكل خصم يمكن الدفاع عنه أمام جهة تنظيمية أو مدقّق سطراً بسطر."
+      }
+    ],
+    "related": [
+      {
+        "href": "/products/payments",
+        "title": { "en": "Payments", "ar": "المدفوعات" },
+        "description": { "en": "How the model works.", "ar": "كيف يعمل النموذج." }
+      },
+      {
+        "href": "/for/guardians",
+        "title": { "en": "For guardians", "ar": "لأولياء الأمور" },
+        "description": { "en": "The family experience.", "ar": "تجربة العائلة." }
+      }
+    ]
+  },
+  "season-end-reports-ai": {
+    "slug": "season-end-reports-ai",
+    "title": {
+      "en": "Season-end reports with AI Assistant",
+      "ar": "تقارير نهاية الموسم مع المساعد الذكي"
+    },
+    "description": {
+      "en": "Two weekends of manual writing collapsed to an afternoon. Here is the workflow.",
+      "ar": "عطلتا أسبوع من الكتابة اليدوية اختُصرت إلى بعد ظهر. إليك سير العمل."
+    },
+    "date": "2026-03-20",
+    "author": "sara-hosseini",
+    "reading_minutes": 5,
+    "category": { "en": "Product", "ar": "المنتج" },
+    "hero_icon": "SparklesIcon",
+    "body": [
+      {
+        "en": "Season-end reports used to take Head Coaches two weekends of manual data entry: pulling attendance, aggregating stats, and writing a family-ready summary per athlete. Now it takes an afternoon. The AI Assistant drafts a plain-language summary from the season's data; the coach reviews and edits in five minutes; the family receives a report they can actually read.",
+        "ar": "كانت تقارير نهاية الموسم تستغرق من المدرّبين الرئيسيين عطلتَي أسبوع من الإدخال اليدوي: سحب الحضور، وتجميع الإحصاءات، وكتابة ملخّص جاهز للعائلة لكل رياضي. الآن تستغرق بعد ظهر. يصوغ المساعد الذكي ملخّصاً بلغة طبيعية من بيانات الموسم، يراجعه المدرّب ويعدّله في خمس دقائق، وتتلقّى العائلة تقريراً تستطيع قراءته فعلاً."
+      },
+      {
+        "en": "The workflow runs against your isolated tenant. Your data never trains external models. Every query and response is logged for audit. Enterprise plans support bring-your-own OpenAI or Anthropic keys so cost and governance stay on your side.",
+        "ar": "يعمل سير العمل على مستأجرك المعزول. بياناتك لا تدرّب النماذج الخارجية أبداً. كل استعلام وردّ يُسجَّل للتدقيق. تدعم خطط Enterprise إحضار مفاتيح OpenAI أو Anthropic الخاصة بك، فتبقى التكلفة والحوكمة بيدك."
+      }
+    ],
+    "related": [
+      {
+        "href": "/products/ai",
+        "title": { "en": "AI Assistant", "ar": "المساعد الذكي" },
+        "description": { "en": "The product page.", "ar": "صفحة المنتج." }
+      },
+      {
+        "href": "/products/performance",
+        "title": { "en": "Performance", "ar": "الأداء" },
+        "description": { "en": "Where the data comes from.", "ar": "من أين تأتي البيانات." }
+      }
+    ]
+  },
+  "migrating-from-teamsnap": {
+    "slug": "migrating-from-teamsnap",
+    "title": {
+      "en": "Migrating from TeamSnap in three weeks",
+      "ar": "الهجرة من TeamSnap في ثلاثة أسابيع"
+    },
+    "description": {
+      "en": "The playbook. Data mapping, parallel runs, and how to keep coaches shipping sessions during cutover.",
+      "ar": "كتاب اللعبة. تعيين البيانات، والتشغيل الموازي، وكيفية إبقاء المدرّبين ينفّذون جلساتهم أثناء التحويل."
+    },
+    "date": "2026-02-27",
+    "author": "sara-hosseini",
+    "reading_minutes": 7,
+    "category": { "en": "Product", "ar": "المنتج" },
+    "hero_icon": "CubeTransparentIcon",
+    "body": [
+      {
+        "en": "Most single-branch academies migrate from TeamSnap in under three weeks. The playbook has four stages: data mapping, staff training, parallel run, and cutover. Week one is a two-day data mapping workshop and a full historical import into a sandbox tenant. Week two is coach and admin training against the sandbox. Week three is a 30-day parallel run that starts before cutover and completes after, so nothing switches abruptly.",
+        "ar": "تهاجر معظم الأكاديميات ذات الفرع الواحد من TeamSnap في أقل من ثلاثة أسابيع. كتاب اللعبة له أربع مراحل: تعيين البيانات، وتدريب الموظفين، والتشغيل الموازي، والتحويل. الأسبوع الأول ورشة تعيين بيانات لمدة يومين واستيراد تاريخي كامل إلى مستأجر تجريبي. الأسبوع الثاني تدريب المدرّبين والمشرفين على المستأجر التجريبي. الأسبوع الثالث تشغيل موازٍ لمدة 30 يوماً يبدأ قبل التحويل وينتهي بعده، فلا يتغيّر شيء فجأة."
+      },
+      {
+        "en": "The mapping workshop is where the hard decisions get made. TeamSnap does not have the concept of a family, only a roster. Our engineers help you decide how to group guardians, athletes, and payments into the family shape without losing any pre-existing relationships. Every decision is documented, reviewed with your team, and reversible.",
+        "ar": "ورشة التعيين هي حيث تُتّخذ القرارات الصعبة. لا يمتلك TeamSnap مفهوم العائلة، بل قائمة اللاعبين فقط. يساعدك مهندسونا في تحديد كيفية تجميع أولياء الأمور والرياضيين والمدفوعات في شكل العائلة دون فقدان أي علاقات قائمة. كل قرار موثَّق ومراجَع مع فريقك وقابل للتراجع."
+      }
+    ],
+    "related": [
+      {
+        "href": "/enterprise/migration",
+        "title": { "en": "Enterprise migration", "ar": "هجرة المؤسسات" },
+        "description": { "en": "The full playbook.", "ar": "كتاب اللعبة الكامل." }
+      },
+      {
+        "href": "/enterprise/onboarding",
+        "title": { "en": "Onboarding", "ar": "التهيئة" },
+        "description": { "en": "White-glove support.", "ar": "دعم متميّز." }
+      }
+    ]
+  },
+  "guardian-pickup-verification": {
+    "slug": "guardian-pickup-verification",
+    "title": {
+      "en": "Guardian pickup verification is a safeguarding pattern",
+      "ar": "توثيق استلام ولي الأمر نمط حماية"
+    },
+    "description": {
+      "en": "A digital log of who dropped off and picked up each athlete. Signed, timestamped, and searchable.",
+      "ar": "سجل رقمي لمن أوصل واستلم كل رياضي. مُوقَّع ومختوم زمنياً وقابل للبحث."
+    },
+    "date": "2026-02-06",
+    "author": "kenji-tanaka",
+    "reading_minutes": 4,
+    "category": { "en": "Compliance", "ar": "الامتثال" },
+    "hero_icon": "CheckBadgeIcon",
+    "body": [
+      {
+        "en": "Guardian pickup verification sounds like a minor feature. In practice it is a full safeguarding pattern. Every drop-off and pickup gets a digital signature, a timestamp, and (optionally) a photo of the guardian's ID. The record lives on the athlete profile and is searchable by date, coach, or family.",
+        "ar": "قد يبدو توثيق استلام ولي الأمر ميزة صغيرة. في الواقع هو نمط حماية كامل. كل توصيل واستلام يحصل على توقيع رقمي وطابع زمني (واختياري) صورة لهوية ولي الأمر. يعيش السجل على ملف الرياضي وقابل للبحث بالتاريخ أو المدرّب أو العائلة."
+      },
+      {
+        "en": "The value shows up during regulator visits. What used to be a written incident book on a shelf is now a query. Compliance conversations that used to take an afternoon take fifteen minutes.",
+        "ar": "تظهر القيمة أثناء الزيارات التنظيمية. ما كان دفتر حوادث ورقياً على الرف أصبح استعلاماً. محادثات الامتثال التي كانت تستغرق بعد ظهر تستغرق خمس عشرة دقيقة."
+      }
+    ],
+    "related": [
+      {
+        "href": "/products/safeguarding",
+        "title": { "en": "Safeguarding", "ar": "الحماية" },
+        "description": { "en": "The product page.", "ar": "صفحة المنتج." }
+      },
+      {
+        "href": "/enterprise/compliance",
+        "title": { "en": "Compliance", "ar": "الامتثال" },
+        "description": { "en": "Regulator-ready posture.", "ar": "وضع جاهز للجهات التنظيمية." }
+      }
+    ]
+  },
+  "realtime-at-scale": {
+    "slug": "realtime-at-scale",
+    "title": {
+      "en": "Real-time updates at academy scale",
+      "ar": "التحديثات الآنية على نطاق الأكاديمية"
+    },
+    "description": {
+      "en": "WebSocket infrastructure, connection routing, and how we keep thousands of live sessions responsive.",
+      "ar": "بنية WebSocket التحتية، وتوجيه الاتصالات، وكيف نبقي آلاف الجلسات المباشرة مستجيبة."
+    },
+    "date": "2026-01-16",
+    "author": "yusuf-el-amrani",
+    "reading_minutes": 6,
+    "category": { "en": "Engineering", "ar": "الهندسة" },
+    "hero_icon": "BoltIcon",
+    "body": [
+      {
+        "en": "Real-time RSVP updates, live attendance capture, and live standings all run on the same WebSocket infrastructure. Each tenant gets a routing key, and connections fan out from the API layer to a per-region cluster of push nodes. We routinely hold thousands of concurrent connections per tenant during peak Saturday morning hours.",
+        "ar": "تحديثات تأكيدات الحضور الآنية، والتقاط الحضور مباشرة، والترتيبات الحية كلها تعمل على البنية التحتية نفسها لـ WebSocket. لكل مستأجر مفتاح توجيه، وتتوسع الاتصالات من طبقة API إلى مجموعة عقد دفع لكل منطقة. نحمل بانتظام آلاف الاتصالات المتزامنة لكل مستأجر خلال ذروة صباح السبت."
+      },
+      {
+        "en": "The engineering trade-off is between broadcast fan-out and per-connection responsiveness. Our answer is to route by resource (team, branch, athlete) so only clients that care about a change get the update. A branch-scoped user does not receive events from a branch they do not access, which keeps their bandwidth clean and our infrastructure lean.",
+        "ar": "المفاضلة الهندسية بين توسّع البث واستجابة كل اتصال. جوابنا هو التوجيه حسب المورد (فريق، فرع، رياضي) فلا يتلقى التحديث سوى العملاء الذين يهتمّون بالتغيير. مستخدم محصور بفرع لا يتلقى أحداثاً من فرع لا يصل إليه، وهو ما يبقي عرض النطاق نظيفاً وبنيتنا التحتية رشيقة."
+      }
+    ],
+    "related": [
+      {
+        "href": "/solutions/real-time",
+        "title": { "en": "Real-time solution", "ar": "حل الوقت الفعلي" },
+        "description": { "en": "The full solution page.", "ar": "صفحة الحل الكاملة." }
+      },
+      {
+        "href": "/products/scheduling",
+        "title": { "en": "Scheduling", "ar": "الجدولة" },
+        "description": { "en": "Where real-time starts.", "ar": "حيث تبدأ الآنية." }
+      }
+    ]
+  },
+  "sports-terminology-regions": {
+    "slug": "sports-terminology-regions",
+    "title": {
+      "en": "Designing sports terminology across regions",
+      "ar": "تصميم مصطلحات الرياضة عبر المناطق"
+    },
+    "description": {
+      "en": "\"Football\" is not the same word in every Arabic-speaking country. Here is how we handle it.",
+      "ar": "\"كرة القدم\" ليست الكلمة نفسها في كل دولة عربية. إليك كيف نعالجها."
+    },
+    "date": "2025-12-20",
+    "author": "noor-al-mansouri",
+    "reading_minutes": 4,
+    "category": { "en": "Design", "ar": "التصميم" },
+    "hero_icon": "GlobeAmericasIcon",
+    "body": [
+      {
+        "en": "Sports terminology varies across Arabic-speaking regions. In the Gulf, the standard is كرة القدم. In the Levant, some clubs still use كرة قدم without the definite article. In North Africa, French loanwords occasionally appear (le foot). Our approach is to make regional terminology a per-workspace preference, seeded from the tenant's country on signup.",
+        "ar": "تختلف مصطلحات الرياضة بين المناطق العربية. في الخليج، المعيار هو كرة القدم. في الشام، لا تزال بعض الأندية تستخدم كرة قدم دون تعريف. في شمال أفريقيا، تظهر أحياناً كلمات فرنسية مقتبسة (le foot). نهجنا هو جعل المصطلحات الإقليمية تفضيلاً لكل مساحة عمل، يُبذَر من دولة المستأجر عند التسجيل."
+      },
+      {
+        "en": "This decision compounds nicely with the attribute engine: sport-specific labels can be regionalized per workspace without a rebuild. It is the difference between a platform that reads as translated and a platform that reads as native.",
+        "ar": "يتراكم هذا القرار بشكل جميل مع محرك السمات: يمكن جعل التسميات الخاصة بكل رياضة إقليمية لكل مساحة عمل دون إعادة بناء. هذا هو الفرق بين منصة تُقرأ مترجَمة ومنصة تُقرأ محلية."
+      }
+    ],
+    "related": [
+      {
+        "href": "/solutions/bilingual-rtl",
+        "title": { "en": "Bilingual and RTL", "ar": "ثنائية اللغة و RTL" },
+        "description": { "en": "The full solution.", "ar": "الحل الكامل." }
+      }
+    ]
+  },
+  "new-branch-economics": {
+    "slug": "new-branch-economics",
+    "title": { "en": "The economics of a new branch", "ar": "اقتصاديات الفرع الجديد" },
+    "description": {
+      "en": "Revenue per athlete, staff cost per athlete, retention curves. What Academorix gives owners for board-level forecasts.",
+      "ar": "الإيراد لكل رياضي، وتكلفة الموظف لكل رياضي، ومنحنيات الاحتفاظ. ما تمنحه Academorix للملّاك لتوقعات مستوى المجلس."
+    },
+    "date": "2025-11-14",
+    "author": "ali-rahimi",
+    "reading_minutes": 6,
+    "category": { "en": "Company", "ar": "الشركة" },
+    "hero_icon": "ChartBarIcon",
+    "body": [
+      {
+        "en": "Owners who are considering a new branch usually have a spreadsheet full of assumptions. Academorix replaces the spreadsheet with a reference model built from your existing branches: revenue per athlete, staff cost per athlete, retention curves by cohort, and safeguarding compliance rate. Forecasting a new branch against three existing branches with similar demographics takes an afternoon, not a quarter.",
+        "ar": "يمتلك الملّاك الذين يفكّرون في فرع جديد عادةً جدول بيانات مليئاً بالافتراضات. تستبدل Academorix جدول البيانات بنموذج مرجعي مبني من فروعك القائمة: الإيراد لكل رياضي، وتكلفة الموظف لكل رياضي، ومنحنيات الاحتفاظ حسب الدفعة، ومعدل الالتزام بالحماية. توقّع فرع جديد بمقارنته بثلاثة فروع قائمة بديموغرافيات مماثلة يستغرق بعد ظهر، لا ربع سنة."
+      },
+      {
+        "en": "The reference model is not a proprietary black box. Every input is exposed in Reports; every assumption is a slider the owner can move. Board conversations move from \"here is a plan we hope will work\" to \"here are the sensitivities that determine the outcome.\"",
+        "ar": "النموذج المرجعي ليس صندوقاً أسود احتكارياً. كل مُدخل معروض في التقارير، وكل افتراض مُنزلق يستطيع المالك تحريكه. تنتقل محادثات المجلس من \"هذه خطة نأمل أن تنجح\" إلى \"هذه هي الحساسيات التي تحدد النتيجة.\""
+      }
+    ],
+    "related": [
+      {
+        "href": "/for/owners",
+        "title": { "en": "For owners", "ar": "لأصحاب الأكاديميات" },
+        "description": { "en": "The owner experience.", "ar": "تجربة المالك." }
+      },
+      {
+        "href": "/products/reports",
+        "title": { "en": "Reports", "ar": "التقارير" },
+        "description": { "en": "The engine behind the model.", "ar": "المحرك خلف النموذج." }
+      }
+    ]
+  }
+}

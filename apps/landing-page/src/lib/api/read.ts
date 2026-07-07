@@ -3,148 +3,157 @@
  * @module lib/api/read
  *
  * @description
- * Server-side reader for the marketing app's mock JSON fixtures under
- * `public/data/{locale}/`. Mirrors the pattern in `apps/web/src/providers/
- * data/mock-data-provider.ts` — same envelope-or-bare-array handling —
- * optimised for Next.js Server Components in an i18n-aware setup:
+ * Bilingual reader for the marketing app's flat JSON fixtures under
+ * `public/data/*.json`. Every fixture stores translatable strings as
+ * `{ en, ar }` leaves; this module walks the parsed tree at request
+ * time and collapses every leaf to the visitor's active locale.
  *
- *   - Reads directly from the filesystem via `fs.readFile` (works during
- *     `next build`, no dev server required).
- *   - Locale-aware: `readJson<T>("site", "ar")` reads
- *     `public/data/ar/site.json`, falling back to `public/data/en/site.json`
- *     if the Arabic version isn't shipped yet. Content teams can ship
- *     translations incrementally.
- *   - Caches parsed payloads in-process (keyed by `{locale}:{name}`) so
- *     re-renders within a request don't re-open the file.
- *   - Never bundles the JSON into the client — every call is Server-only.
- *
- * When we're ready to hit a real API (backend or CMS), swap this file's
- * internals for `fetch()` against the origin — every consumer function in
- * `lib/api/*.ts` stays the same. Just add a `locale` header/query and
- * fall back to `en` on 404.
+ * Server-only. Uses Node's `fs.readFile`. Import from Server
+ * Components, route handlers, `generateStaticParams`,
+ * `generateMetadata`, and `sitemap.ts`. Never from Client Components.
  */
 
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
-import { routing } from "@/i18n/routing";
+import type { Locale } from "@/config/i18n.config";
+import type { Localized, LocalizedString } from "@/lib/types";
 
-/** Shape of a Laravel-style envelope (`{ data: ... }`). Accepted transparently. */
-type Envelope<T> = { data: T };
+import { DEFAULT_LOCALE, isSupportedLocale } from "@/config/i18n.config";
 
-/** In-process cache so a single request only reads each fixture once. */
-const CACHE = new Map<string, unknown>();
-
-/** Absolute filesystem path to the `public/data/` directory. */
+/** Absolute filesystem path to the flat JSON root. */
 const DATA_ROOT = path.join(process.cwd(), "public", "data");
 
-/** The always-present fallback locale — every fixture ships in English. */
-const FALLBACK_LOCALE: string = routing.defaultLocale;
+/**
+ * In-process cache of collapsed payloads. Next.js reuses the same
+ * process across streaming render passes so caching here saves
+ * repeated FS + parse + walk cost per page. Keyed by
+ * `{locale}:{name}` so two locales don't collide.
+ */
+const CACHE = new Map<string, unknown>();
+
+/** Foundation-envelope shape (`{ data: ... }`). */
+interface Envelope<T> {
+  data: T;
+}
 
 /**
- * Reads `public/data/{locale}/{name}.json` (falling back to English when
- * the localised file is missing), transparently unwrapping `{ data }`
- * envelopes so consumers always receive the payload directly.
- *
- * Throws when neither the localised nor the English file exists — feed
- * that exception to Next's `notFound()` in a route handler.
- *
- * @typeParam T - Expected payload shape after unwrapping.
- * @param name - Fixture name without extension (e.g. `"products"`).
- * @param locale - The visitor's active locale (`"en"`, `"ar"`, …).
+ * Reads `public/data/{name}.json` and returns the payload collapsed
+ * for `locale`. Throws when the file is missing so getters can turn
+ * that into `notFound()` for dynamic routes.
  */
-export async function readJson<T>(name: string, locale: string): Promise<T> {
-  const cacheKey = `${locale}:${name}`;
+export async function readJson<T>(name: string, locale: string): Promise<Localized<T>> {
+  const safeLocale = normalizeLocale(locale);
+  const cacheKey = `${safeLocale}:${name}`;
   const cached = CACHE.get(cacheKey);
 
   if (cached !== undefined) {
-    return cached as T;
+    return cached as Localized<T>;
   }
 
-  const raw = await readLocalisedFile(name, locale);
+  const raw = await fs.readFile(path.join(DATA_ROOT, `${name}.json`), "utf-8");
   const parsed: unknown = JSON.parse(raw);
+  const payload = unwrapEnvelope<T>(parsed);
+  const localized = localize(payload, safeLocale) as Localized<T>;
 
-  // Transparent envelope unwrap — matches apps/web's mock provider.
-  const payload: T =
-    parsed !== null &&
-    typeof parsed === "object" &&
-    !Array.isArray(parsed) &&
-    "data" in (parsed as Record<string, unknown>)
-      ? (parsed as Envelope<T>).data
-      : (parsed as T);
+  CACHE.set(cacheKey, localized);
 
-  CACHE.set(cacheKey, payload);
-
-  return payload;
+  return localized;
 }
 
-/**
- * Reads the raw JSON string for a fixture, preferring the localised file
- * and falling back to English when the translation hasn't been shipped.
- */
-async function readLocalisedFile(name: string, locale: string): Promise<string> {
-  const primary = path.join(DATA_ROOT, locale, `${name}.json`);
-
-  try {
-    return await fs.readFile(primary, "utf-8");
-  } catch (error) {
-    // Only fall back for missing-file errors — other IO issues should bubble.
-    const isMissing = (error as NodeJS.ErrnoException).code === "ENOENT";
-
-    if (!isMissing || locale === FALLBACK_LOCALE) {
-      throw error;
-    }
-  }
-
-  const fallback = path.join(DATA_ROOT, FALLBACK_LOCALE, `${name}.json`);
-
-  return fs.readFile(fallback, "utf-8");
-}
-
-/**
- * Convenience wrapper — reads a fixture that stores a `Record<slug, T>`
- * (e.g. `products.json`), returning the values as an ordered array in the
- * order the JSON declares them.
- *
- * @typeParam T - Entry shape.
- * @param name - Fixture name.
- * @param locale - Active locale.
- */
-export async function readCollection<T>(name: string, locale: string): Promise<T[]> {
+/** Reads a `Record<slug, T>` fixture and returns values in JSON key order. */
+export async function readCollection<T>(
+  name: string,
+  locale: string,
+): Promise<Array<Localized<T>>> {
   const map = await readJson<Record<string, T>>(name, locale);
 
-  return Object.values(map);
+  return Object.values(map) as Array<Localized<T>>;
 }
 
-/**
- * Convenience wrapper — reads a fixture that stores a `Record<slug, T>`
- * and returns the entry for `slug`, or `null` if absent.
- *
- * @typeParam T - Entry shape.
- * @param name - Fixture name.
- * @param slug - Key inside the fixture.
- * @param locale - Active locale.
- */
+/** Reads a `Record<slug, T>` fixture and returns the entry for `slug`, or `null`. */
 export async function readCollectionEntry<T>(
   name: string,
   slug: string,
   locale: string,
-): Promise<T | null> {
+): Promise<Localized<T> | null> {
   const map = await readJson<Record<string, T>>(name, locale);
+  const entry = (map as Record<string, unknown>)[slug];
 
-  return map[slug] ?? null;
+  return (entry as Localized<T> | undefined) ?? null;
 }
 
-/**
- * Returns every key in a `Record<slug, T>` fixture — used by dynamic
- * routes for `generateStaticParams()`. Reads from the English (default)
- * catalogue so slugs stay stable across locales; localised routes rely
- * on the shared slug and translate the surrounding content.
- *
- * @param name - Fixture name.
- */
+/** Returns every top-level key from a `Record<slug, T>` fixture. */
 export async function readCollectionSlugs(name: string): Promise<string[]> {
-  const map = await readJson<Record<string, unknown>>(name, FALLBACK_LOCALE);
+  const map = await readJson<Record<string, unknown>>(name, DEFAULT_LOCALE);
 
   return Object.keys(map);
+}
+
+// ─────────────────────────────────────────────────────────────
+// Internal helpers
+// ─────────────────────────────────────────────────────────────
+
+function normalizeLocale(value: string): Locale {
+  return isSupportedLocale(value) ? value : DEFAULT_LOCALE;
+}
+
+function unwrapEnvelope<T>(parsed: unknown): T {
+  if (
+    parsed !== null &&
+    typeof parsed === "object" &&
+    !Array.isArray(parsed) &&
+    "data" in (parsed as Record<string, unknown>)
+  ) {
+    return (parsed as Envelope<T>).data;
+  }
+
+  return parsed as T;
+}
+
+function isLocalizedLeaf(value: unknown): value is LocalizedString {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) {
+    return false;
+  }
+
+  const record = value as Record<string, unknown>;
+
+  if (typeof record.en !== "string") {
+    return false;
+  }
+
+  for (const [key, val] of Object.entries(record)) {
+    if (typeof val !== "string") {
+      return false;
+    }
+    if (key.length < 2 || key.length > 3) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function localize(value: unknown, locale: Locale): unknown {
+  if (isLocalizedLeaf(value)) {
+    const record = value as unknown as Record<string, string>;
+
+    return record[locale] ?? record[DEFAULT_LOCALE] ?? "";
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((entry) => localize(entry, locale));
+  }
+
+  if (value !== null && typeof value === "object") {
+    const result: Record<string, unknown> = {};
+
+    for (const [key, val] of Object.entries(value)) {
+      result[key] = localize(val, locale);
+    }
+
+    return result;
+  }
+
+  return value;
 }

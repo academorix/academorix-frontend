@@ -1,0 +1,485 @@
+{
+  "security": {
+    "slug": "security",
+    "eyebrow": { "en": "Enterprise security", "ar": "أمن المؤسسات" },
+    "title": { "en": "Enterprise security and compliance", "ar": "أمن المؤسسات والامتثال" },
+    "description": {
+      "en": "SSO, audit logs, data residency, and custom SLAs. Everything a security team needs to say yes to a multi-branch rollout.",
+      "ar": "SSO وسجلات تدقيق وإقامة بيانات واتفاقيات SLA مخصصة. كل ما يحتاجه فريق الأمن ليوافق."
+    },
+    "hero_icon": "ShieldCheckIcon",
+    "features": [
+      {
+        "icon": "KeyIcon",
+        "title": { "en": "SSO with SAML and OIDC", "ar": "SSO عبر SAML و OIDC" },
+        "description": {
+          "en": "Bring your existing identity provider (Okta, Azure AD, Google Workspace, Ping).",
+          "ar": "أحضر مزود الهوية الحالي (Okta و Azure AD و Google Workspace و Ping)."
+        }
+      },
+      {
+        "icon": "UsersIcon",
+        "title": { "en": "SCIM and directory sync", "ar": "SCIM ومزامنة الدليل" },
+        "description": {
+          "en": "Provision and de-provision automatically. Departures lose access immediately.",
+          "ar": "منح وسحب الوصول تلقائياً. المغادرون يفقدون الوصول فوراً."
+        }
+      },
+      {
+        "icon": "DocumentTextIcon",
+        "title": { "en": "Audit logs", "ar": "سجلات التدقيق" },
+        "description": {
+          "en": "Immutable log of every write. Retention up to 7 years. Streamable to SIEM.",
+          "ar": "سجل ثابت لكل عملية كتابة. احتفاظ حتى 7 سنوات. قابل للبث إلى SIEM."
+        }
+      },
+      {
+        "icon": "MapIcon",
+        "title": { "en": "Data residency", "ar": "إقامة البيانات" },
+        "description": {
+          "en": "Pin your workspace to EU, MENA, or US infrastructure.",
+          "ar": "ثبّت مساحة عملك على البنية التحتية في الاتحاد الأوروبي أو MENA أو الولايات المتحدة."
+        }
+      },
+      {
+        "icon": "FingerPrintIcon",
+        "title": { "en": "IP allowlisting", "ar": "قوائم IP مسموح بها" },
+        "description": {
+          "en": "Restrict console access to your corporate IP ranges.",
+          "ar": "قصر الوصول إلى لوحة التحكم على نطاقات IP لشركتك."
+        }
+      },
+      {
+        "icon": "ClockIcon",
+        "title": { "en": "99.99% uptime SLA", "ar": "اتفاقية تشغيل 99.99%" },
+        "description": {
+          "en": "Financial credits for missed SLA targets.",
+          "ar": "أرصدة مالية عند عدم تحقيق أهداف الاتفاقية."
+        }
+      }
+    ],
+    "related": [
+      {
+        "href": "/enterprise/onboarding",
+        "title": { "en": "Onboarding", "ar": "التهيئة" },
+        "description": {
+          "en": "Hands-on migration from your current system.",
+          "ar": "ترحيل عملي من نظامك الحالي."
+        }
+      },
+      {
+        "href": "/enterprise/contracts",
+        "title": { "en": "Contracts", "ar": "العقود" },
+        "description": {
+          "en": "NET-30 terms, DPA, HIPAA BAA.",
+          "ar": "شروط NET-30 و DPA و HIPAA BAA."
+        }
+      },
+      {
+        "href": "/enterprise/compliance",
+        "title": { "en": "Compliance", "ar": "الامتثال" },
+        "description": {
+          "en": "SOC 2, ISO 27001, GDPR, HIPAA, CCPA.",
+          "ar": "SOC 2 و ISO 27001 و GDPR و HIPAA و CCPA."
+        }
+      }
+    ]
+  },
+  "onboarding": {
+    "slug": "onboarding",
+    "eyebrow": { "en": "Enterprise onboarding", "ar": "تأهيل المؤسسات" },
+    "title": {
+      "en": "Migration and onboarding, done for you",
+      "ar": "الترحيل والتأهيل، ينفذ نيابة عنك"
+    },
+    "description": {
+      "en": "Hands-on migration from your existing system with a dedicated implementation engineer. Weeks, not months.",
+      "ar": "ترحيل عملي بمهندس تنفيذ مخصص. أسابيع، لا أشهر."
+    },
+    "hero_icon": "LifebuoyIcon",
+    "features": [
+      {
+        "icon": "DocumentTextIcon",
+        "title": { "en": "Data migration", "ar": "ترحيل البيانات" },
+        "description": {
+          "en": "Import from spreadsheets, TeamSnap, Sportlyzer, Playmetrics.",
+          "ar": "استورد من جداول أو TeamSnap أو Sportlyzer أو Playmetrics."
+        }
+      },
+      {
+        "icon": "UserGroupIcon",
+        "title": { "en": "Dedicated engineer", "ar": "مهندس مخصص" },
+        "description": {
+          "en": "A named implementation engineer runs your rollout.",
+          "ar": "مهندس تنفيذ مخصص باسمه يدير التفعيل."
+        }
+      },
+      {
+        "icon": "AcademicCapIcon",
+        "title": { "en": "Staff training", "ar": "تدريب الموظفين" },
+        "description": {
+          "en": "On-site or virtual training sessions.",
+          "ar": "جلسات تدريب في الموقع أو افتراضية."
+        }
+      },
+      {
+        "icon": "AdjustmentsHorizontalIcon",
+        "title": { "en": "Custom attribute sets", "ar": "مجموعات سمات مخصصة" },
+        "description": {
+          "en": "Sport-specific sets captured from your best coaches.",
+          "ar": "مجموعات خاصة بالرياضة من أفضل مدربيك."
+        }
+      },
+      {
+        "icon": "CheckCircleIcon",
+        "title": { "en": "Gradual rollout", "ar": "تفعيل تدريجي" },
+        "description": {
+          "en": "Start with one branch, iterate, then roll to the network.",
+          "ar": "ابدأ بفرع، طوّر، ثم انتقل للشبكة."
+        }
+      },
+      {
+        "icon": "PhoneIcon",
+        "title": { "en": "White-glove support", "ar": "دعم متميز" },
+        "description": {
+          "en": "Direct Slack channel and phone hotline for launch week.",
+          "ar": "قناة Slack مباشرة وخط هاتفي في أسبوع الإطلاق."
+        }
+      }
+    ],
+    "related": [
+      {
+        "href": "/enterprise/security",
+        "title": { "en": "Security", "ar": "الأمن" },
+        "description": {
+          "en": "SSO, audit logs, data residency.",
+          "ar": "SSO وسجلات وإقامة بيانات."
+        }
+      },
+      {
+        "href": "/enterprise/migration",
+        "title": { "en": "Migration", "ar": "الترحيل" },
+        "description": { "en": "The migration playbook.", "ar": "كتاب لعبة الترحيل." }
+      },
+      {
+        "href": "/customers",
+        "title": { "en": "Customer stories", "ar": "قصص العملاء" },
+        "description": { "en": "Real migrations.", "ar": "ترحيلات حقيقية." }
+      }
+    ]
+  },
+  "contracts": {
+    "slug": "contracts",
+    "eyebrow": { "en": "Enterprise contracts", "ar": "عقود المؤسسات" },
+    "title": { "en": "Custom contracts and billing", "ar": "عقود وفوترة مخصصة" },
+    "description": {
+      "en": "NET-30 terms, custom DPA, HIPAA BAA, localised invoicing, and multi-year commitments.",
+      "ar": "شروط NET-30 و DPA و HIPAA BAA وفوترة موطنة."
+    },
+    "hero_icon": "BriefcaseIcon",
+    "features": [
+      {
+        "icon": "ReceiptPercentIcon",
+        "title": { "en": "NET-30 or NET-60", "ar": "دفع NET-30 أو NET-60" },
+        "description": {
+          "en": "Invoice-based billing on standard commercial terms.",
+          "ar": "فوترة قائمة على الفواتير."
+        }
+      },
+      {
+        "icon": "DocumentTextIcon",
+        "title": { "en": "Custom MSA", "ar": "اتفاقية MSA مخصصة" },
+        "description": {
+          "en": "Legal turnaround typically 5-10 business days.",
+          "ar": "مراجعة قانونية 5 إلى 10 أيام عمل."
+        }
+      },
+      {
+        "icon": "ShieldCheckIcon",
+        "title": { "en": "Data Processing Addendum", "ar": "ملحق DPA" },
+        "description": {
+          "en": "GDPR-compliant DPA signed by our DPO.",
+          "ar": "DPA متوافق مع GDPR موقّع من DPO."
+        }
+      },
+      {
+        "icon": "DocumentCheckIcon",
+        "title": { "en": "HIPAA BAA", "ar": "اتفاقية BAA" },
+        "description": {
+          "en": "For customers subject to HIPAA, on Growth-plus with surcharge.",
+          "ar": "للعملاء الخاضعين لـ HIPAA على Growth فما فوق مع رسوم."
+        }
+      },
+      {
+        "icon": "GlobeAmericasIcon",
+        "title": { "en": "Localised invoicing", "ar": "فوترة موطنة" },
+        "description": {
+          "en": "VAT-compliant across EU, UK, GCC.",
+          "ar": "متوافقة مع VAT للاتحاد الأوروبي والمملكة المتحدة والخليج."
+        }
+      },
+      {
+        "icon": "ClockIcon",
+        "title": { "en": "Multi-year commitments", "ar": "التزامات متعددة السنوات" },
+        "description": {
+          "en": "Volume discounts for 2-year and 3-year contracts.",
+          "ar": "خصومات كمية لعقود سنتين وثلاث سنوات."
+        }
+      }
+    ],
+    "related": [
+      {
+        "href": "/enterprise/security",
+        "title": { "en": "Security", "ar": "الأمن" },
+        "description": {
+          "en": "SSO, audit logs, data residency.",
+          "ar": "SSO وسجلات وإقامة بيانات."
+        }
+      },
+      {
+        "href": "/enterprise/onboarding",
+        "title": { "en": "Onboarding", "ar": "التهيئة" },
+        "description": { "en": "Hands-on migration.", "ar": "ترحيل عملي." }
+      },
+      {
+        "href": "/legal/dpa",
+        "title": { "en": "DPA", "ar": "DPA" },
+        "description": { "en": "Read the DPA in full.", "ar": "اقرأ DPA كاملاً." }
+      }
+    ]
+  },
+  "compliance": {
+    "slug": "compliance",
+    "eyebrow": { "en": "Enterprise compliance", "ar": "امتثال المؤسسات" },
+    "title": { "en": "Compliance and certifications", "ar": "الامتثال والاعتمادات" },
+    "description": {
+      "en": "SOC 2, ISO 27001, GDPR, HIPAA, CCPA. What we cover today and what is on the roadmap.",
+      "ar": "SOC 2 و ISO 27001 و GDPR و HIPAA و CCPA. ما نغطيه اليوم وما هو على خارطة الطريق."
+    },
+    "hero_icon": "ScaleIcon",
+    "features": [
+      {
+        "icon": "ShieldCheckIcon",
+        "title": { "en": "SOC 2 Type II", "ar": "SOC 2 Type II" },
+        "description": {
+          "en": "Type II audit scheduled Q4 2026. Type I is complete.",
+          "ar": "تدقيق Type II مقرر في الربع الرابع من 2026. Type I مكتمل."
+        }
+      },
+      {
+        "icon": "DocumentCheckIcon",
+        "title": { "en": "ISO 27001", "ar": "ISO 27001" },
+        "description": {
+          "en": "Certification scheduled 2027. Gap analysis complete.",
+          "ar": "الاعتماد مقرر لعام 2027. تحليل الفجوات مكتمل."
+        }
+      },
+      {
+        "icon": "GlobeAmericasIcon",
+        "title": { "en": "GDPR", "ar": "GDPR" },
+        "description": {
+          "en": "Full compliance today. DPA signed by DPO.",
+          "ar": "امتثال كامل اليوم. DPA موقّع من DPO."
+        }
+      },
+      {
+        "icon": "ClipboardDocumentCheckIcon",
+        "title": { "en": "HIPAA", "ar": "HIPAA" },
+        "description": {
+          "en": "BAA available on Growth-plus with surcharge.",
+          "ar": "BAA متاح على Growth فما فوق برسوم."
+        }
+      },
+      {
+        "icon": "KeyIcon",
+        "title": { "en": "CCPA", "ar": "CCPA" },
+        "description": {
+          "en": "California consumer rights fulfilled within 30 days.",
+          "ar": "حقوق المستهلك في كاليفورنيا خلال 30 يوماً."
+        }
+      },
+      {
+        "icon": "CreditCardIcon",
+        "title": { "en": "PCI DSS", "ar": "PCI DSS" },
+        "description": {
+          "en": "Level 1 inherited from Stripe and Paddle.",
+          "ar": "المستوى الأول موروث من Stripe و Paddle."
+        }
+      }
+    ],
+    "related": [
+      {
+        "href": "/enterprise/security",
+        "title": { "en": "Security", "ar": "الأمن" },
+        "description": { "en": "The full security posture.", "ar": "الوضع الأمني الكامل." }
+      },
+      {
+        "href": "/legal/security",
+        "title": { "en": "Security practices", "ar": "ممارسات الأمن" },
+        "description": { "en": "Full stack detail.", "ar": "تفاصيل الرزمة الكاملة." }
+      },
+      {
+        "href": "/legal/dpa",
+        "title": { "en": "DPA", "ar": "DPA" },
+        "description": { "en": "The Data Processing Addendum.", "ar": "ملحق معالجة البيانات." }
+      }
+    ]
+  },
+  "migration": {
+    "slug": "migration",
+    "eyebrow": { "en": "Enterprise migration", "ar": "ترحيل المؤسسات" },
+    "title": {
+      "en": "Migrate from TeamSnap, Sportlyzer, Playmetrics, or spreadsheets",
+      "ar": "الترحيل من TeamSnap أو Sportlyzer أو Playmetrics"
+    },
+    "description": {
+      "en": "Every enterprise migration follows a proven playbook. Zero data loss, zero downtime.",
+      "ar": "كل ترحيل مؤسسي يتبع كتاب لعبة مجرباً. صفر فقدان بيانات وصفر توقف."
+    },
+    "hero_icon": "CubeTransparentIcon",
+    "features": [
+      {
+        "icon": "InboxStackIcon",
+        "title": { "en": "Data export ingestion", "ar": "استيعاب البيانات المصدرة" },
+        "description": {
+          "en": "Every major sports platform plus custom ETL.",
+          "ar": "كل منصة رياضية رئيسية إضافة إلى ETL مخصص."
+        }
+      },
+      {
+        "icon": "DocumentDuplicateIcon",
+        "title": { "en": "Data mapping workshop", "ar": "ورشة تعيين البيانات" },
+        "description": {
+          "en": "Two-day workshop with your team.",
+          "ar": "ورشة عمل ليومين مع فريقك."
+        }
+      },
+      {
+        "icon": "CheckCircleIcon",
+        "title": { "en": "Data validation reports", "ar": "تقارير التحقق من البيانات" },
+        "description": {
+          "en": "Every import produces a validation report before commit.",
+          "ar": "كل استيراد ينتج تقرير تحقق قبل الاعتماد."
+        }
+      },
+      {
+        "icon": "ArrowPathIcon",
+        "title": { "en": "Parallel run", "ar": "تشغيل موازٍ" },
+        "description": {
+          "en": "30 days side by side with your existing system.",
+          "ar": "30 يوماً بجانب نظامك الحالي."
+        }
+      },
+      {
+        "icon": "AcademicCapIcon",
+        "title": { "en": "Staff training", "ar": "تدريب الموظفين" },
+        "description": {
+          "en": "On-site or virtual, tailored to your migration.",
+          "ar": "في الموقع أو افتراضياً، مخصص لترحيلك."
+        }
+      },
+      {
+        "icon": "PhoneIcon",
+        "title": { "en": "Launch week support", "ar": "دعم أسبوع الإطلاق" },
+        "description": {
+          "en": "Direct Slack and phone hotline.",
+          "ar": "قناة Slack وخط هاتفي مباشر."
+        }
+      }
+    ],
+    "related": [
+      {
+        "href": "/enterprise/onboarding",
+        "title": { "en": "Onboarding", "ar": "التهيئة" },
+        "description": { "en": "The full onboarding process.", "ar": "عملية التهيئة الكاملة." }
+      },
+      {
+        "href": "/enterprise/security",
+        "title": { "en": "Security", "ar": "الأمن" },
+        "description": { "en": "SSO, audit logs, residency.", "ar": "SSO وسجلات وإقامة بيانات." }
+      },
+      {
+        "href": "/customers",
+        "title": { "en": "Customer stories", "ar": "قصص العملاء" },
+        "description": { "en": "Real migrations.", "ar": "ترحيلات حقيقية." }
+      }
+    ]
+  },
+  "multi-branch": {
+    "slug": "multi-branch",
+    "eyebrow": { "en": "Enterprise multi-branch", "ar": "المؤسسات متعددة الفروع" },
+    "title": {
+      "en": "Multi-branch, network-scale operations",
+      "ar": "عمليات متعددة الفروع على نطاق الشبكة"
+    },
+    "description": {
+      "en": "One platform for every branch, every sport, every region. Consolidated finance, network-wide reporting, and branch-scoped access.",
+      "ar": "منصة واحدة لكل فرع ورياضة ومنطقة. مالية موحدة وتقارير على مستوى الشبكة ووصول محدود بالفرع."
+    },
+    "hero_icon": "BuildingOffice2Icon",
+    "features": [
+      {
+        "icon": "MapIcon",
+        "title": { "en": "Branch-scoped workspaces", "ar": "مساحات عمل محدودة بالفرع" },
+        "description": { "en": "Every branch is a first-class entity.", "ar": "كل فرع كيان محوري." }
+      },
+      {
+        "icon": "ChartBarIcon",
+        "title": { "en": "Network-wide reporting", "ar": "تقارير على مستوى الشبكة" },
+        "description": {
+          "en": "Roll up every branch into one view.",
+          "ar": "اجمع كل فرع في عرض واحد."
+        }
+      },
+      {
+        "icon": "UserGroupIcon",
+        "title": { "en": "Cross-branch athletes", "ar": "رياضيون عبر الفروع" },
+        "description": {
+          "en": "An athlete belongs to the network.",
+          "ar": "الرياضي ينتمي إلى الشبكة."
+        }
+      },
+      {
+        "icon": "CreditCardIcon",
+        "title": { "en": "Consolidated finance", "ar": "مالية موحدة" },
+        "description": {
+          "en": "One AR ledger with per-branch allocation.",
+          "ar": "دفتر ذمم واحد بتوزيع لكل فرع."
+        }
+      },
+      {
+        "icon": "ShieldCheckIcon",
+        "title": { "en": "Role and branch scoping", "ar": "حصر بالدور والفرع" },
+        "description": {
+          "en": "Managers see their branch, CEO sees everything.",
+          "ar": "المدراء يرون فرعهم، والرئيس يرى كل شيء."
+        }
+      },
+      {
+        "icon": "LanguageIcon",
+        "title": { "en": "Multi-region operations", "ar": "عمليات متعددة المناطق" },
+        "description": {
+          "en": "Each branch operates in its own language and currency.",
+          "ar": "كل فرع يعمل بلغته وعملته."
+        }
+      }
+    ],
+    "related": [
+      {
+        "href": "/enterprise/security",
+        "title": { "en": "Security", "ar": "الأمن" },
+        "description": { "en": "SSO, audit logs, residency.", "ar": "SSO وسجلات وإقامة بيانات." }
+      },
+      {
+        "href": "/enterprise/onboarding",
+        "title": { "en": "Onboarding", "ar": "التهيئة" },
+        "description": { "en": "Multi-branch rollout playbook.", "ar": "كتاب لعبة التفعيل." }
+      },
+      {
+        "href": "/solutions/multi-branch",
+        "title": { "en": "Multi-branch solution", "ar": "حل متعدد الفروع" },
+        "description": { "en": "The cross-cutting solution.", "ar": "الحل الشامل." }
+      }
+    ]
+  }
+}

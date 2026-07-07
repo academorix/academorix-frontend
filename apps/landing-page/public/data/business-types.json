@@ -1,0 +1,58 @@
+{
+  "multi-sport-academy": {
+    "id": "multi-sport-academy",
+    "label": {
+      "en": "Multi-sport academy",
+      "ar": "أكاديمية متعددة الرياضات"
+    }
+  },
+  "football-club": {
+    "id": "football-club",
+    "label": {
+      "en": "Football club or academy",
+      "ar": "نادٍ أو أكاديمية لكرة القدم"
+    }
+  },
+  "swim-school": {
+    "id": "swim-school",
+    "label": {
+      "en": "Swim school or swimming academy",
+      "ar": "مدرسة أو أكاديمية للسباحة"
+    }
+  },
+  "basketball-club": {
+    "id": "basketball-club",
+    "label": {
+      "en": "Basketball club or academy",
+      "ar": "نادٍ أو أكاديمية لكرة السلة"
+    }
+  },
+  "tennis-academy": {
+    "id": "tennis-academy",
+    "label": {
+      "en": "Tennis academy",
+      "ar": "أكاديمية للتنس"
+    }
+  },
+  "martial-arts-dojo": {
+    "id": "martial-arts-dojo",
+    "label": {
+      "en": "Martial arts dojo or center",
+      "ar": "دوجو أو مركز للفنون القتالية"
+    }
+  },
+  "gymnastics-academy": {
+    "id": "gymnastics-academy",
+    "label": {
+      "en": "Gymnastics academy",
+      "ar": "أكاديمية للجمباز"
+    }
+  },
+  "other": {
+    "id": "other",
+    "label": {
+      "en": "Other sports business",
+      "ar": "نشاط رياضي آخر"
+    }
+  }
+}

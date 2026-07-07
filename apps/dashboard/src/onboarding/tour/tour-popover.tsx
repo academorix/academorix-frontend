@@ -107,9 +107,7 @@ function resolveAnchorForStep(step: OnboardingTourStep): HTMLElement | null {
 
   // Preferred: the tour-scoped attribute. Reads exactly the step's stable id,
   // so a module tags its DOM once and the tour picks it up.
-  const scoped = document.querySelector<HTMLElement>(
-    `[data-tour-anchor="${cssEscape(step.id)}"]`,
-  );
+  const scoped = document.querySelector<HTMLElement>(`[data-tour-anchor="${cssEscape(step.id)}"]`);
 
   if (scoped) {
     return scoped;

@@ -3,108 +3,68 @@
  * @module components/marketing/marketing-hero
  *
  * @description
- * Reusable deep-page hero used by product, sport, and enterprise pages.
- * Renders an eyebrow, a large heading, a supporting description, one or
- * two CTAs, and a decorative icon panel on the right. Interactive because
- * the primary CTA opens either the SPA or a `mailto:` link.
+ * The hero band used at the top of every marketing page. Composes
+ * an eyebrow, a large balanced headline, a subheading, an optional
+ * CTA row, and an optional trust line. Renders as a Server
+ * Component; the CTAs delegate to the shared {@link CtaButton}
+ * client wrapper for signup/trial/contact-sales intent resolution.
  */
 
-"use client";
+import clsx from "clsx";
 
-import { ArrowRightIcon } from "@academorix/ui/icons/outline";
-import { Button } from "@academorix/ui/react";
-import { useCallback } from "react";
+import { CtaButton } from "./cta-button";
 
-import type { CtaDescriptor } from "@/lib/types";
+import type { CtaButtonCta } from "./cta-button";
 import type { ReactNode } from "react";
 
-import { Link } from "@/i18n/navigation";
-import { resolveIcon } from "@/lib/icon-registry";
-import { isExternalHref, resolveCta } from "@/lib/marketing/cta";
-
 /** Props for {@link MarketingHero}. */
-interface MarketingHeroProps {
-  eyebrow: string;
-  title: string;
-  description: string;
-  primaryCta: CtaDescriptor;
-  /** Optional secondary CTA (e.g. "See pricing" from an enterprise page). */
-  secondaryCta?: CtaDescriptor;
-  /**
-   * String key of the big decorative icon rendered inside the right-hand
-   * panel. Resolved via `lib/icon-registry.ts` at render time so we don't
-   * need to pass an actual icon component across the Server→Client
-   * boundary (React Server Components rejects that).
-   */
-  iconKey: string;
+export interface MarketingHeroProps {
+  eyebrow?: ReactNode;
+  title: ReactNode;
+  subtitle?: ReactNode;
+  ctaPrimary?: CtaButtonCta;
+  ctaSecondary?: CtaButtonCta;
+  trustLine?: ReactNode;
+  className?: string;
 }
 
-/** The deep-page hero. */
+/** Full-width marketing hero, server-safe. */
 export function MarketingHero({
   eyebrow,
   title,
-  description,
-  primaryCta,
-  secondaryCta,
-  iconKey,
-}: MarketingHeroProps): ReactNode {
-  const Icon = resolveIcon(iconKey);
-  const primaryHref = resolveCta(primaryCta);
-  const secondaryHref = secondaryCta ? resolveCta(secondaryCta) : null;
-
-  const pressPrimary = useCallback((): void => {
-    window.location.href = primaryHref;
-  }, [primaryHref]);
-
+  subtitle,
+  ctaPrimary,
+  ctaSecondary,
+  trustLine,
+  className,
+}: MarketingHeroProps) {
   return (
     <section
-      aria-labelledby="page-hero-heading"
-      className="mx-auto w-full max-w-6xl px-6 pt-20 pb-16 md:pb-20"
+      className={clsx("relative overflow-hidden px-6 pt-24 pb-16 sm:pt-32 sm:pb-24", className)}
     >
-      <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-        <div className="flex flex-col gap-6">
-          <span className="text-xs font-semibold tracking-wider text-muted uppercase">
+      <div className="mx-auto flex max-w-4xl flex-col items-center gap-6 text-center">
+        {eyebrow ? (
+          <span className="inline-flex items-center rounded-full border border-default/60 bg-surface/60 px-3 py-1 text-xs font-medium tracking-wider text-muted uppercase backdrop-blur-sm">
             {eyebrow}
           </span>
-          <h1
-            className="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl"
-            id="page-hero-heading"
-          >
-            {title}
-          </h1>
-          <p className="max-w-2xl text-lg text-muted">{description}</p>
-          <div className="flex flex-wrap items-center gap-3 pt-2">
-            <Button className="rounded-full" size="lg" variant="primary" onPress={pressPrimary}>
-              {primaryCta.label}
-              <ArrowRightIcon aria-hidden="true" className="size-4" />
-            </Button>
-            {secondaryCta && secondaryHref ? (
-              isExternalHref(secondaryHref) ? (
-                <a
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-default px-6 py-3 text-sm font-medium text-foreground transition-colors hover:bg-default/40"
-                  href={secondaryHref}
-                  rel="noreferrer"
-                >
-                  {secondaryCta.label}
-                </a>
-              ) : (
-                <Link
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-default px-6 py-3 text-sm font-medium text-foreground transition-colors hover:bg-default/40"
-                  href={secondaryHref}
-                >
-                  {secondaryCta.label}
-                </Link>
-              )
-            ) : null}
-          </div>
-        </div>
+        ) : null}
 
-        {/* Decorative right panel — big icon on a gradient tile. */}
-        <div className="hidden md:flex md:justify-end">
-          <div className="flex size-64 items-center justify-center rounded-3xl bg-gradient-to-br from-accent/20 via-surface to-surface lg:size-80">
-            <Icon aria-hidden="true" className="size-24 text-accent lg:size-32" />
+        <h1 className="text-4xl font-semibold tracking-tight text-balance text-foreground sm:text-5xl md:text-6xl">
+          {title}
+        </h1>
+
+        {subtitle ? (
+          <p className="max-w-2xl text-base text-balance text-muted sm:text-lg">{subtitle}</p>
+        ) : null}
+
+        {(ctaPrimary || ctaSecondary) && (
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
+            {ctaPrimary ? <CtaButton cta={ctaPrimary} variant="primary" /> : null}
+            {ctaSecondary ? <CtaButton cta={ctaSecondary} variant="ghost" /> : null}
           </div>
-        </div>
+        )}
+
+        {trustLine ? <p className="text-xs text-muted">{trustLine}</p> : null}
       </div>
     </section>
   );

@@ -7,20 +7,24 @@
  * components carry their own React Aria bindings — so this file
  * only needs:
  *
- *  1. `<ToastProvider>` from `@academorix/ui/react` — the HeroUI v3
- *     toast region + portal boundary. Required for any `toast()`
- *     calls from our shared UI kit to render.
- *  2. `NextThemesProvider` — applies `class="dark"` / `class="light"`
+ *  1. `<NextThemesProvider>` — applies `class="dark"` / `class="light"`
  *     to `<html>` based on the user's preference, matching the
  *     `dark:` variant we use throughout `@academorix/ui`.
- *  3. `<SerwistProvider>` — registers the Serwist-compiled service
+ *  2. `<GlassThemeSync>` — client-side companion that mirrors
+ *     `resolvedTheme` from next-themes into `html[data-theme=
+ *     "glass-{light|dark}"]`, activating the HeroUI Pro Glass
+ *     theme variant. Renders nothing.
+ *  3. `<ToastProvider>` from `@academorix/ui/react` — the HeroUI v3
+ *     toast region + portal boundary. Required for any `toast()`
+ *     calls from our shared UI kit to render.
+ *  4. `<SerwistProvider>` — registers the Serwist-compiled service
  *     worker (served at `/serwist/sw.js`) as soon as the client
  *     hydrates. Silently disabled in development so HMR isn't
  *     intercepted.
  *
  * Server Components inside `app/` cross this file's boundary once
  * at the root layout, so every downstream Client Component gets
- * all three contexts for free.
+ * all four contexts for free.
  */
 
 "use client";
@@ -31,6 +35,8 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 import type { ThemeProviderProps } from "next-themes";
 import type { ReactNode } from "react";
+
+import { GlassThemeSync } from "@/components/theme/glass-theme-sync";
 
 /** Props for {@link Providers}. */
 export interface ProvidersProps {
@@ -49,15 +55,17 @@ export interface ProvidersProps {
 const SERWIST_SW_URL = "/serwist/sw.js";
 
 /**
- * Mounts the client-side context stack (SW registration + toast
- * region + next-themes) once at the root of the App Router. Every
- * interactive HeroUI component beneath it inherits theme awareness
- * and can raise toasts through the portal; every navigation is
+ * Mounts the client-side context stack once at the root of the
+ * App Router. Every interactive HeroUI component beneath it
+ * inherits theme awareness (both next-themes' class-based
+ * variant AND the HeroUI Pro Glass data-attribute variant) and
+ * can raise toasts through the portal; every navigation is
  * transparently precached by the SW for offline use.
  */
 export function Providers({ children, themeProps }: ProvidersProps) {
   return (
     <NextThemesProvider {...themeProps}>
+      <GlassThemeSync />
       <ToastProvider />
       <SerwistProvider
         cacheOnNavigation
