@@ -1,0 +1,155 @@
+{
+  "layla-haddad-swim": {
+    "slug": "layla-haddad-swim",
+    "quote": {
+      "en": "Academorix replaced three tools and a stack of spreadsheets. Our coaches finally spend their time coaching.",
+      "ar": "استبدل Academorix ثلاث أدوات وكومة من جداول البيانات. أصبح مدرّبونا أخيراً يقضون وقتهم في التدريب."
+    },
+    "author": { "en": "Layla Haddad", "ar": "ليلى حداد" },
+    "role": { "en": "Director", "ar": "مديرة" },
+    "org": { "en": "AquaElite Swim", "ar": "AquaElite Swim" },
+    "initials": "LH",
+    "sport": "swimming",
+    "persona": "owners"
+  },
+  "sara-nassar-football": {
+    "slug": "sara-nassar-football",
+    "quote": {
+      "en": "Multi-branch billing used to be a nightmare. Now renewals just work, in Arabic and English, across three currencies.",
+      "ar": "كانت الفوترة متعددة الفروع كابوساً. الآن التجديدات تعمل ببساطة، بالعربية والإنجليزية، عبر ثلاث عملات."
+    },
+    "author": { "en": "Sara Nassar", "ar": "سارة نصار" },
+    "role": { "en": "Operations Lead", "ar": "قائدة العمليات" },
+    "org": { "en": "Northgate FC", "ar": "Northgate FC" },
+    "initials": "SN",
+    "sport": "football",
+    "persona": "front-desk"
+  },
+  "marcus-bell-basketball": {
+    "slug": "marcus-bell-basketball",
+    "quote": {
+      "en": "Attendance and performance in one place changed how we run tryouts. Setup took a single afternoon.",
+      "ar": "الحضور والأداء في مكان واحد غيّرا طريقة إدارتنا للاختبارات. الإعداد لم يستغرق سوى بعد ظهر واحد."
+    },
+    "author": { "en": "Marcus Bell", "ar": "Marcus Bell" },
+    "role": { "en": "Head Coach", "ar": "المدرب الأول" },
+    "org": { "en": "Summit Hoops", "ar": "Summit Hoops" },
+    "initials": "MB",
+    "sport": "basketball",
+    "persona": "coaches"
+  },
+  "andrea-delgado-federation": {
+    "slug": "andrea-delgado-federation",
+    "quote": {
+      "en": "Twenty-two branches, three countries, one workspace. Every branch manager sees their branch. I see everything.",
+      "ar": "اثنان وعشرون فرعاً في ثلاث دول ومساحة عمل واحدة. كل مدير فرع يرى فرعه، وأنا أرى كل شيء."
+    },
+    "author": { "en": "Andrea Delgado", "ar": "Andrea Delgado" },
+    "role": { "en": "COO", "ar": "المديرة التنفيذية للعمليات" },
+    "org": { "en": "Continental Sports Federation", "ar": "Continental Sports Federation" },
+    "initials": "AD",
+    "persona": "owners"
+  },
+  "hisham-al-farsi-martial-arts": {
+    "slug": "hisham-al-farsi-martial-arts",
+    "quote": {
+      "en": "Our karate program runs 300 kids across four dojos. Belts, gradings, and family memberships used to be a mess. Now every family has one login and one invoice.",
+      "ar": "برنامج الكاراتيه لدينا يخدم 300 طفل عبر أربعة دوجوهات. كانت الأحزمة والاختبارات والعضويات العائلية فوضى. الآن لكل عائلة تسجيل دخول واحد وفاتورة واحدة."
+    },
+    "author": { "en": "Hisham Al-Farsi", "ar": "هشام الفارسي" },
+    "role": { "en": "Chief Instructor", "ar": "المدرب الرئيسي" },
+    "org": { "en": "Elite Martial Arts Center", "ar": "Elite Martial Arts Center" },
+    "initials": "HF",
+    "sport": "martial-arts",
+    "persona": "owners"
+  },
+  "ahmed-al-sabah-tennis": {
+    "slug": "ahmed-al-sabah-tennis",
+    "quote": {
+      "en": "Ladders, brackets, and court bookings on one platform. Our coaches stopped juggling four apps.",
+      "ar": "السلالم والقرعات وحجوزات الملاعب على منصة واحدة. توقف مدرّبونا عن التنقل بين أربعة تطبيقات."
+    },
+    "author": { "en": "Ahmed Al-Sabah", "ar": "أحمد الصباح" },
+    "role": { "en": "Director", "ar": "المدير" },
+    "org": { "en": "Cascade Tennis Academy", "ar": "Cascade Tennis Academy" },
+    "initials": "AA",
+    "sport": "tennis",
+    "persona": "owners"
+  },
+  "sarah-kingsley-gymnastics": {
+    "slug": "sarah-kingsley-gymnastics",
+    "quote": {
+      "en": "Apparatus scoring, meet entries, and safeguarding all in one place. Regulators, insurers, and boards ask fewer questions.",
+      "ar": "تسجيل الأجهزة وتسجيلات البطولات وحماية الصغار في مكان واحد. تقلّ أسئلة الجهات التنظيمية وشركات التأمين والمجالس."
+    },
+    "author": { "en": "Sarah Kingsley", "ar": "Sarah Kingsley" },
+    "role": { "en": "Head Coach", "ar": "المدربة الرئيسية" },
+    "org": { "en": "Vertex Gymnastics Academy", "ar": "Vertex Gymnastics Academy" },
+    "initials": "SK",
+    "sport": "gymnastics",
+    "persona": "coaches"
+  },
+  "rafael-alonso-guardian": {
+    "slug": "rafael-alonso-guardian",
+    "quote": {
+      "en": "One app for two kids across two sports. Invoices in Spanish, schedules on my calendar, and a coach message that reaches me the same day.",
+      "ar": "تطبيق واحد لطفلَين في رياضتَين مختلفتَين. الفواتير باللغتين، والجداول على تقويمي، ورسالة المدرب تصلني في اليوم نفسه."
+    },
+    "author": { "en": "Rafael Alonso", "ar": "Rafael Alonso" },
+    "role": { "en": "Guardian", "ar": "ولي أمر" },
+    "org": {
+      "en": "Two kids at Northgate FC and AquaElite Swim",
+      "ar": "طفلان في Northgate FC و AquaElite Swim"
+    },
+    "initials": "RA",
+    "persona": "guardians"
+  },
+  "amira-tahir-coach": {
+    "slug": "amira-tahir-coach",
+    "quote": {
+      "en": "I show up on Saturday morning and every RSVP, every attribute update, every note from the previous session is already on my phone.",
+      "ar": "أصل صباح السبت لأجد كل تأكيد حضور وكل تحديث سمة وكل ملاحظة من الجلسة السابقة جاهزة على هاتفي."
+    },
+    "author": { "en": "Amira Tahir", "ar": "أميرة طاهر" },
+    "role": { "en": "Assistant Coach", "ar": "مدربة مساعدة" },
+    "org": { "en": "Riverside Sports Academy", "ar": "Riverside Sports Academy" },
+    "initials": "AT",
+    "persona": "coaches"
+  },
+  "raj-patel-finance": {
+    "slug": "raj-patel-finance",
+    "quote": {
+      "en": "Month-end closes went from three days to three hours. Every branch reconciles the same way, and audit trails answer every follow-up.",
+      "ar": "اختصر إغلاق الشهر من ثلاثة أيام إلى ثلاث ساعات. كل فرع يُسوّي بالطريقة نفسها، وسجلات التدقيق تجيب على كل استفسار."
+    },
+    "author": { "en": "Raj Patel", "ar": "Raj Patel" },
+    "role": { "en": "Finance Director", "ar": "المدير المالي" },
+    "org": { "en": "Continental Sports Federation", "ar": "Continental Sports Federation" },
+    "initials": "RP",
+    "persona": "finance"
+  },
+  "farida-hakim-frontdesk": {
+    "slug": "farida-hakim-frontdesk",
+    "quote": {
+      "en": "Refunds used to bounce between reception and finance for a week. Now they route in the queue and we close them within a day.",
+      "ar": "كانت طلبات الاسترداد تتنقل بين الاستقبال والمالية لأسبوع. الآن تُوجَّه في الطابور ونغلقها خلال يوم."
+    },
+    "author": { "en": "Farida Hakim", "ar": "فريدة حكيم" },
+    "role": { "en": "Front-Desk Lead", "ar": "قائدة الاستقبال" },
+    "org": { "en": "AquaElite Swim", "ar": "AquaElite Swim" },
+    "initials": "FH",
+    "persona": "front-desk"
+  },
+  "omar-khoury-athlete": {
+    "slug": "omar-khoury-athlete",
+    "quote": {
+      "en": "My progress card shows every fitness test I have taken. My coach sees the same numbers. We work on the same plan.",
+      "ar": "تُظهر بطاقة تقدّمي كل اختبار لياقة أجريته. يرى مدربي الأرقام نفسها. نعمل على الخطة نفسها."
+    },
+    "author": { "en": "Omar Khoury", "ar": "عمر خوري" },
+    "role": { "en": "Athlete", "ar": "رياضي" },
+    "org": { "en": "Northgate FC U16", "ar": "Northgate FC — تحت 16" },
+    "initials": "OK",
+    "persona": "athletes"
+  }
+}

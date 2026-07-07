@@ -1,98 +1,124 @@
 /**
- * @file page.tsx
+ * @file sports/[slug]/page.tsx
  * @module app/[locale]/sports/[slug]/page
  *
  * @description
- * Sport deep page. Pre-rendered from every entry in
- * `public/data/{locale}/sports.json`. Composition mirrors the product deep
- * page but uses `testimonial` (sport-specific) instead of `use_case`, and
- * has no top-level CTA in the fixture so the hero defaults to a
- * "Get started" signup intent.
+ * Sport deep-page template. Renders one sport from `sports.json`
+ * with hero, feature grid, optional testimonial, and related links.
+ * Coming-soon sports render the same structure but with a
+ * "join waitlist" primary CTA instead of "start free trial".
  */
 
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { setRequestLocale } from "next-intl/server";
 
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { CtaBand } from "@/components/marketing/cta-band";
-import { FeatureGrid } from "@/components/marketing/feature-grid";
+import { FeatureList } from "@/components/marketing/feature-list";
 import { MarketingHero } from "@/components/marketing/marketing-hero";
-import { MarketingShell } from "@/components/marketing/marketing-shell";
 import { QuoteBlock } from "@/components/marketing/quote-block";
 import { RelatedLinks } from "@/components/marketing/related-links";
-import { LOCALES } from "@/i18n/routing";
-import { getSport, getSportOrNotFound, getSportSlugs } from "@/lib/api";
+import { MarketingShell } from "@/components/shell/marketing-shell";
+import { getSport, getSportSlugs } from "@/lib/api";
 
-/** Route props. */
-interface SportPageProps {
+interface PageProps {
   params: Promise<{ locale: string; slug: string }>;
 }
 
-/** Pre-renders every sport slug for every locale at build time. */
 export async function generateStaticParams(): Promise<Array<{ locale: string; slug: string }>> {
   const slugs = await getSportSlugs();
 
-  return LOCALES.flatMap((locale) => slugs.map((slug) => ({ locale, slug })));
+  return slugs.flatMap((slug) => [
+    { locale: "en", slug },
+    { locale: "ar", slug },
+  ]);
 }
 
-/** Generates the tab title + OG card + canonical URL. */
-export async function generateMetadata({ params }: SportPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale, slug } = await params;
   const sport = await getSport(slug, locale);
 
-  if (!sport) {
-    return { title: "Not found", robots: { index: false } };
-  }
-
-  const canonical = locale === "en" ? `/sports/${sport.slug}` : `/${locale}/sports/${sport.slug}`;
+  if (!sport) return {};
 
   return {
     title: sport.title,
     description: sport.description,
-    alternates: { canonical },
-    openGraph: {
-      title: `Academorix — ${sport.title}`,
-      description: sport.description,
-      url: canonical,
+    alternates: {
+      canonical: locale === "en" ? `/sports/${slug}` : `/${locale}/sports/${slug}`,
     },
   };
 }
 
-/** The sport deep page. */
-export default async function SportPage({ params }: SportPageProps): Promise<ReactNode> {
+export default async function SportPage({ params }: PageProps): Promise<ReactNode> {
   const { locale, slug } = await params;
 
   setRequestLocale(locale);
 
-  const [sport, t, tCommon] = await Promise.all([
-    getSportOrNotFound(slug, locale),
-    getTranslations({ locale, namespace: "sports" }),
-    getTranslations({ locale, namespace: "common" }),
-  ]);
+  const sport = await getSport(slug, locale);
+
+  if (!sport) notFound();
+
+  const primaryCta = sport.is_supported
+    ? {
+        label: locale === "ar" ? "ابدأ تجربة مجانية" : "Start free trial",
+        type: "trial" as const,
+      }
+    : {
+        label: locale === "ar" ? "انضم إلى قائمة الانتظار" : "Join the waitlist",
+        type: "contact_sales" as const,
+      };
 
   return (
     <MarketingShell>
       <MarketingHero
-        description={sport.description}
+        ctaPrimary={primaryCta}
+        ctaSecondary={{
+          label: locale === "ar" ? "تحدث مع المبيعات" : "Talk to sales",
+          type: "contact_sales",
+        }}
         eyebrow={sport.eyebrow}
-        iconKey={sport.hero_icon}
-        primaryCta={{ label: tCommon("getStarted"), type: "signup" }}
-        secondaryCta={{ label: tCommon("seePricing"), type: "link", href: "/pricing" }}
+        subtitle={sport.description}
         title={sport.title}
       />
 
-      <FeatureGrid
-        description={t("featuresDescription")}
-        heading={t("featuresHeading")}
-        items={sport.features}
+      <section className="mx-auto max-w-7xl px-6 py-16">
+        <FeatureList items={sport.features} />
+      </section>
+
+      {sport.testimonial ? (
+        <section className="mx-auto max-w-7xl px-6 py-16">
+          <QuoteBlock quote={sport.testimonial} />
+        </section>
+      ) : null}
+
+      <RelatedLinks
+        heading={locale === "ar" ? "قد يهمك أيضاً" : "You might also like"}
+        items={sport.related}
       />
 
-      {sport.testimonial ? <QuoteBlock quote={sport.testimonial} /> : null}
-
-      <RelatedLinks items={sport.related} />
-
-      <CtaBand />
+      <CtaBand
+        ctaPrimary={primaryCta}
+        description={
+          sport.is_supported
+            ? locale === "ar"
+              ? "أنشئ مساحة عملك في دقائق. لا حاجة إلى بطاقة ائتمان."
+              : "Create your workspace in minutes. No credit card required."
+            : locale === "ar"
+              ? "سجل اهتمامك واحصل على وصول مبكر عند الإطلاق."
+              : "Register your interest and get early access at launch."
+        }
+        title={
+          sport.is_supported
+            ? locale === "ar"
+              ? `ابدأ استخدام ${sport.title} اليوم`
+              : `Start with ${sport.title} today`
+            : locale === "ar"
+              ? `احصل على وصول مبكر إلى ${sport.title}`
+              : `Get early access to ${sport.title}`
+        }
+      />
     </MarketingShell>
   );
 }

@@ -101,10 +101,14 @@ export const features = {
   nativeNotifications: envFlag("NATIVE_NOTIFICATIONS", true),
 
   /**
-   * Desktop shell (Tauri). Currently a design-doc flag — no shell code
-   * ships until `DESKTOP_PLAN.md` Phase 1 lands.
+   * Desktop shell (Tauri). Auto-detected at runtime by the
+   * `isDesktop()` helper (see `src/desktop/is-desktop.ts`), but kept as
+   * a compile-time kill-switch so ops can disable the desktop-only
+   * code paths (native menu bar, tray, badge, native notifications)
+   * if the native binding is broken in a given release. On in dev by
+   * default; ops can flip via `VITE_FLAG_DESKTOP_SHELL=0`.
    */
-  desktopShell: envFlag("DESKTOP_SHELL", false),
+  desktopShell: envFlag("DESKTOP_SHELL", true),
 
   /**
    * Widget drag-and-drop on the overview dashboard (`DASHBOARD_UX_PLAN.md`

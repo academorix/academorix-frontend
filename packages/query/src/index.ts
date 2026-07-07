@@ -15,6 +15,13 @@
  *  - {@link "@academorix/query/query-keys"} — canonical query-key
  *    helpers (`listKey`, `oneKey`, `manyKey`) for downstream
  *    invalidation.
+ *  - {@link "@academorix/query/laravel"} — `serializeLaravelQuery()`
+ *    that turns Refine-style `{ pagination, sorters, filters, include }`
+ *    into a `URLSearchParams` matching spatie/laravel-query-builder
+ *    v7's wire format.
+ *  - {@link "@academorix/query/refine"} —
+ *    `createRefineRestDataProvider()` — the dashboard's Refine
+ *    `DataProvider` bound to an `@academorix/http` `HttpClient`.
  */
 
 export { createQueryClient } from "./client";
@@ -31,3 +38,22 @@ export type {
 
 export { buildQueryKey, DEFAULT_QUERY_KEY_PREFIX, listKey, manyKey, oneKey } from "./query-keys";
 export type { ResourceOperation } from "./query-keys";
+
+export { serializeLaravelQuery } from "./laravel";
+export type {
+  LaravelConditionalFilter,
+  LaravelFilter,
+  LaravelFilterOperator,
+  LaravelListPagination,
+  LaravelLogicalFilter,
+  LaravelQueryInput,
+  LaravelSortOrder,
+  LaravelSorter,
+} from "./laravel";
+
+export { createRefineRestDataProvider } from "./refine";
+export type {
+  BaseRecord as RefineBaseRecord,
+  CreateRefineRestDataProviderOptions,
+  RefineDataProvider,
+} from "./refine";

@@ -1,0 +1,59 @@
+# Companion to Vercel's own preview comments. Vercel's GitHub App drops
+# per-deploy URLs on the PR once its build finishes; this workflow runs
+# earlier and posts a lightweight "which apps did you touch" summary so
+# reviewers know what to test even before Vercel is done building.
+#
+# Triggers only on paths that could affect an app's deploy so it stays
+# quiet on doc-only or unrelated PRs.
+
+name: Preview scope
+
+on:
+  pull_request:
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - "pnpm-workspace.yaml"
+      - "pnpm-lock.yaml"
+      - "turbo.json"
+
+permissions:
+  # `write` on pull-requests so the action can post/update the comment.
+  pull-requests: write
+  contents: read
+
+jobs:
+  scope:
+    name: Report affected apps
+    runs-on: ubuntu-latest
+    # Trivial diff + comment step; 5 min cap is generous.
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Need history back to the merge-base so the diff below can
+          # compare against the target branch.
+          fetch-depth: 2
+
+      # Detect which app subtrees changed. Refinements come later; for now
+      # a simple git-diff --name-only + grep is enough to answer
+      # "does this PR affect the dashboard, the landing page, or both?"
+      - name: Diff paths
+        id: diff
+        run: |
+          BASE=$(git merge-base HEAD "origin/${{ github.event.pull_request.base.ref }}")
+          echo "changed_dashboard=$(git diff --name-only "$BASE"...HEAD | grep -E '^(apps/dashboard|packages/)' | head -1 | wc -l)" >> "$GITHUB_OUTPUT"
+          echo "changed_landing=$(git diff --name-only "$BASE"...HEAD | grep -E '^(apps/landing-page|packages/)' | head -1 | wc -l)" >> "$GITHUB_OUTPUT"
+
+      - name: Comment scope
+        if: steps.diff.outputs.changed_dashboard == '1' || steps.diff.outputs.changed_landing == '1'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            **Preview scope**
+
+            - Dashboard SPA: ${{ steps.diff.outputs.changed_dashboard == '1' && 'affected — verify at https://dashboard-academorix.vercel.app after Vercel builds this PR' || 'not affected' }}
+            - Landing page: ${{ steps.diff.outputs.changed_landing == '1' && 'affected — verify at https://academorix-frontend-landing-page.vercel.app after Vercel builds this PR' || 'not affected' }}
+
+            Vercel will comment with the exact preview URLs once its build completes.

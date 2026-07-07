@@ -19,6 +19,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "clean": "rm -rf .turbo"
   },
   "dependencies": {
@@ -40,11 +42,16 @@
   "devDependencies": {
     "@academorix/eslint-config": "workspace:*",
     "@academorix/typescript-config": "workspace:*",
+    "@testing-library/react": "catalog:",
+    "@testing-library/user-event": "catalog:",
     "@types/react": "catalog:",
     "eslint": "catalog:",
+    "jsdom": "catalog:",
     "laravel-echo": "catalog:",
     "pusher-js": "catalog:",
     "react": "catalog:",
-    "typescript": "catalog:"
+    "react-dom": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }

@@ -343,7 +343,16 @@ Baseline directives:
   Reverb WebSocket; landing allows the analytics origin + iframe embed targets.
   Both use nonces on inline scripts.
 
-The dashboard currently lacks a CSP header — see task list.
+The dashboard ships its CSP from `apps/dashboard/vercel.json`, covering `'self'`
+for scripts + styles + images, `https://*.academorix.app` and
+`wss://*.academorix.app` for the tenant API + Reverb WebSocket connection, and
+`https://us.i.posthog.com` + `https://vitals.vercel-insights.com` on the
+`connect-src` for PostHog product analytics + Vercel Web Vitals. The landing
+page ships its own CSP from `apps/landing-page/next.config.ts` via the Next.js
+`headers()` hook (analytics CSP origins are sourced from
+`apps/landing-page/src/config/analytics.config.ts`, so adding a provider is a
+one-file change). The follow-up is to centralise the CSP source-of-truth into
+`@academorix/pwa/security` so a single directive bump updates both apps.
 
 ---
 

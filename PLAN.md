@@ -11,7 +11,12 @@
 ## 1. Overview
 
 - **Repo:** `academorix/academorix-frontend` (standalone, public). Web only.
-- **Live:** https://academorix.vercel.app (Vercel team `academorix`, Hobby).
+- **Live:**
+  - Dashboard SPA → https://dashboard-academorix.vercel.app (Vercel project
+    `academorix-frontend`).
+  - Landing page → https://academorix-frontend-landing-page.vercel.app (Vercel
+    project `academorix-marketing`).
+  - Both deploy from this monorepo via Vercel Git auto-deploy on `main`.
 - **Backend:** separate Laravel repo (`../backend`). REST + Sanctum tokens +
   Reverb (WebSockets). Not yet publishing an OpenAPI spec.
 - **Stack:** pnpm workspaces + Turborepo · Vite 8 + React 19 SPA · HeroUI
@@ -103,11 +108,13 @@ file carries heavy docblocks + inline comments. All quality gates green.
       dashboard → Integrations → Vercel → `academorix-frontend`/`prd`). Then
       drop committed `.env.production` in favor of Doppler-injected `VITE_*`, so
       Doppler is the single source for builds too.
-- [ ] **GitHub Actions CI** — on PRs run `pnpm quality` + `pnpm test`, plus
-      `playwright install` + `pnpm e2e`. Moves checks beyond local hooks +
+- [x] **GitHub Actions CI** — `.github/workflows/ci.yml` runs `pnpm quality` +
+      `pnpm test` on every PR, then `pnpm build`, then Playwright e2e. Blocks
+      merges to `main` when a job fails. Moves checks beyond local hooks +
       Vercel.
-- [ ] **Frontend MCP config** — create `frontend/.kiro/settings/mcp.json`
-      (gitignored). Pull the HeroUI token from Doppler rather than hardcoding:
+- [x] **Frontend MCP config** — `frontend/.kiro/settings/mcp.json` exists and is
+      gitignored (see `.gitignore` line 52). The HeroUI token is pulled from
+      Doppler at author time:
       `doppler secrets get HEROUI_PERSONAL_TOKEN -p academorix-frontend -c prd --plain`.
 
 ---

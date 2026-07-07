@@ -1,0 +1,16 @@
+{
+  "identifier": "phase3",
+  "description": "Phase 3 capabilities — the OS-integration wave. Adds notification.send, fs read/write scoped to $APPDATA, shell.open (URL allowlist enforced by the runtime), dialog.open (file picker for imports), deep-link registration, and global-shortcut registration. Only merged when the `phase3` cargo feature is enabled — see Cargo.toml.",
+  "platforms": ["macOS", "windows", "linux"],
+  "windows": ["main"],
+  "permissions": [
+    "notification:default",
+    "shell:allow-open",
+    "dialog:allow-open",
+    "fs:default",
+    "fs:allow-app-read",
+    "fs:allow-app-write",
+    "deep-link:default",
+    "global-shortcut:default"
+  ]
+}

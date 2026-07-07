@@ -1,0 +1,171 @@
+# ============================================================================
+# Cargo manifest — Academorix dashboard desktop shell.
+# ----------------------------------------------------------------------------
+# Rust project that wraps the `@academorix/dashboard` SPA in a Tauri v2 native
+# window. See `DESKTOP_PLAN.md` at the app root for the full architecture,
+# phased rollout, and integration points. This crate ships the shell only —
+# the SPA is a byte-for-byte identical bundle loaded via `tauri://localhost`
+# in production and `http://localhost:3000` in development.
+#
+# ## Version pinning
+#
+# Every dependency is pinned to a minor range (`x.y`) so patch-level fixes
+# roll in automatically but breaking-change bumps are opt-in. Tauri's own
+# `2.x` line is API-stable per the Tauri v2 GA promise.
+#
+# ## Optional plugins
+#
+# Deep-link + global-shortcut + updater land in DESKTOP_PLAN.md Phase 3/4.
+# Their deps are declared here (so `cargo check` compiles them into the
+# binary) but the runtime wiring in `src/main.rs` is gated behind
+# `#[cfg(feature = "phase3")]` blocks. Enabling the feature at build time
+# activates the corresponding capability files under `capabilities/`.
+# ============================================================================
+
+[package]
+name = "academorix-dashboard"
+version = "0.0.0"
+description = "Academorix dashboard — native desktop shell."
+authors = ["Academorix Platform Team"]
+license = "UNLICENSED"
+repository = "https://github.com/academorix/academorix"
+edition = "2021"
+rust-version = "1.77"
+
+# ----------------------------------------------------------------------------
+# Library target — Tauri v2 expects the app entry to be a `cdylib` when
+# building for mobile targets (iOS / Android) and a `staticlib` when building
+# for desktop. The `lib.rs` module is thin — it just re-exports `run()` from
+# `main.rs`. Keeping the binary target lets `cargo run` work from the
+# command line for quick local iteration.
+# ----------------------------------------------------------------------------
+
+[lib]
+name = "academorix_dashboard_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[[bin]]
+name = "academorix-dashboard"
+path = "src/main.rs"
+
+# ----------------------------------------------------------------------------
+# Build-time deps
+# ----------------------------------------------------------------------------
+# `tauri-build` runs during `cargo build` and injects the compiled schema,
+# icons, and generated capability manifests into the final binary. It's
+# invoked from `build.rs`.
+#
+# `serde` + `serde_json` are additionally needed at build time because
+# `build.rs` deserializes `desktop-config.json` into typed constants that
+# the shell reads via `include!()`. Runtime code doesn't touch those types
+# — only the build script does — so declaring them under
+# `[build-dependencies]` keeps the runtime crate slim.
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# ----------------------------------------------------------------------------
+# Runtime deps
+# ----------------------------------------------------------------------------
+
+[dependencies]
+# --- Core Tauri runtime -----------------------------------------------------
+# `tauri = "2"` — Tauri v2 GA. Features:
+#   - `tray-icon` — system-tray icon support (`tauri::tray`).
+#   - `image-png` — decodes the PNG icons we ship for tray + notifications.
+#
+# `protocol-asset` (the `asset://` scheme for local files) lands with the
+# fs plugin in Phase 3 — enabling it here requires the matching
+# `security.assetProtocol` block in `tauri.conf.json`, which we defer.
+tauri = { version = "2", features = ["tray-icon", "image-png"] }
+
+# --- Plugins we wire in Phase 1 + 2 -----------------------------------------
+# `tauri-plugin-window-state` — persist window position + size across
+# launches. See DESKTOP_PLAN.md §4.1.
+tauri-plugin-window-state = "2"
+
+# `tauri-plugin-log` — structured log writer that respects
+# `desktopConfig.logging.level`. Default sink is the OS-standard log dir
+# (`~/Library/Logs/Academorix` on macOS, `%APPDATA%\Academorix\logs` on
+# Windows).
+tauri-plugin-log = "2"
+
+# --- Plugins we wire in Phase 3+ (declared now so the binary is self-
+# --- contained but the runtime code is behind a feature gate). --------------
+# `tauri-plugin-notification` — native OS notifications (macOS Notification
+# Center, Windows Action Center, Linux DBus). Wired in Phase 3.
+tauri-plugin-notification = "2"
+
+# `tauri-plugin-shell` — `shell.open` for the `Help → Documentation` menu
+# entry. URL allowlist enforced via the capability manifest.
+tauri-plugin-shell = "2"
+
+# `tauri-plugin-dialog` — file-open dialog for the imports module (deferred
+# until Phase 3).
+tauri-plugin-dialog = "2"
+
+# `tauri-plugin-fs` — capability-gated `fs.readTextFile` / `fs.writeTextFile`
+# scoped to `$APPDATA/*` only. Wired in Phase 3.
+tauri-plugin-fs = "2"
+
+# --- Serde ------------------------------------------------------------------
+# Used by `build.rs` to deserialize `desktop-config.json` into a Rust struct
+# consumed by `main.rs` at compile time.
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# --- Logging / diagnostics --------------------------------------------------
+log = "0.4"
+
+# ----------------------------------------------------------------------------
+# Desktop-only deps (Phase 3+ — declared but gated behind the feature flag)
+# ----------------------------------------------------------------------------
+
+[target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
+# `tauri-plugin-global-shortcut` — the `Cmd/Ctrl+Shift+A` raise-app hotkey.
+# Not supported on mobile targets.
+tauri-plugin-global-shortcut = "2"
+
+# `tauri-plugin-updater` — auto-updater. Desktop-only per the plugin's own
+# platform matrix.
+tauri-plugin-updater = "2"
+
+# `tauri-plugin-deep-link` — registers `academorix://` as an OS URL handler.
+# Desktop only; mobile has a different deep-link story.
+tauri-plugin-deep-link = "2"
+
+# ----------------------------------------------------------------------------
+# Build profiles
+# ----------------------------------------------------------------------------
+# `dev` favours compile speed over runtime speed — devs iterate on the
+# native side rarely and want the fastest incremental rebuild. `release`
+# turns on LTO + a single codegen unit for the smallest binary.
+
+[profile.dev]
+incremental = true
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true
+
+# ----------------------------------------------------------------------------
+# Cargo features
+# ----------------------------------------------------------------------------
+# `default` currently enables only the Phase 1/2 subset. Turning on
+# `phase3` wires deep-links, global shortcuts, and native notifications.
+# `phase4` layers the auto-updater on top of `phase3`.
+
+[features]
+default = []
+phase3 = []
+phase4 = ["phase3"]
+
+# ----------------------------------------------------------------------------
+# See DESKTOP_PLAN.md §7.3 — `cargo audit` runs on every CI build. Blocks
+# merge on any `RUSTSEC-*` advisory ≥ medium.
+# ----------------------------------------------------------------------------

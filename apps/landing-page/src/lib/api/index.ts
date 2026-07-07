@@ -3,224 +3,224 @@
  * @module lib/api
  *
  * @description
- * Public API surface for the marketing app's mock data layer. Every function
- * here reads from `public/data/{locale}/*.json` via the shared `read`
- * helper, so consumers never touch the filesystem directly and can be
- * swapped for a real backend / CMS call later without changing call-sites.
- *
- * ## Locale resolution
- *
- * Each getter accepts an explicit `locale` argument. Server Components at
- * the route level pass the locale resolved from `params` (or via
- * `getLocale()` from `next-intl/server`), so a page rendering under
- * `/ar/pricing` reads the Arabic plan copy and a page under `/pricing`
- * reads English. Missing localisations transparently fall back to English
- * inside `read.ts` — teams can ship translations incrementally.
- *
- * All functions return promises so the same signatures work with a future
- * `fetch()` implementation. Server Components can `await` them directly.
+ * Server-only getters for every content bucket the marketing app
+ * renders. Each getter reads the matching `public/data/*.json`
+ * fixture through the bilingual reader, collapses it to the
+ * caller's locale, and returns a fully-typed `Localized<T>`.
  */
 
-import { notFound } from "next/navigation";
+import "server-only";
 
 import type {
+  AuthorData,
+  BlogPostData,
   BusinessTypeOption,
+  CompanyPageData,
   CompareSection,
+  CustomerStoryData,
   EnterpriseData,
   FaqItem,
+  HomeData,
   LegalData,
+  Localized,
   NavData,
   PasswordRuleData,
+  PersonaData,
   PlanTierData,
   PricingHighlight,
   ProductData,
   SiteData,
+  SolutionData,
   SportData,
+  TestimonialData,
 } from "@/lib/types";
 
 import { readCollection, readCollectionEntry, readCollectionSlugs, readJson } from "@/lib/api/read";
 
-// ─────────────────────────────────────────────────────────────────────
-// Site metadata
-// ─────────────────────────────────────────────────────────────────────
-
-/** Reads the marketing site's static metadata (name, tagline, links). */
-export async function getSite(locale: string): Promise<SiteData> {
+// Global metadata
+export async function getSite(locale: string): Promise<Localized<SiteData>> {
   return readJson<SiteData>("site", locale);
 }
-
-// ─────────────────────────────────────────────────────────────────────
-// Top nav (mega menu)
-// ─────────────────────────────────────────────────────────────────────
-
-/** Reads the top nav definition used by the desktop mega menu + mobile drawer. */
-export async function getNav(locale: string): Promise<NavData> {
+export async function getNav(locale: string): Promise<Localized<NavData>> {
   return readJson<NavData>("nav", locale);
 }
 
-// ─────────────────────────────────────────────────────────────────────
-// Products (/products/[slug])
-// ─────────────────────────────────────────────────────────────────────
-
-/** Every product in the catalog. */
-export async function getProducts(locale: string): Promise<ProductData[]> {
-  return readCollection<ProductData>("products", locale);
+// Landing
+export async function getHome(locale: string): Promise<Localized<HomeData>> {
+  return readJson<HomeData>("home", locale);
 }
 
-/** Every product slug — used by `generateStaticParams()`. Locale-agnostic. */
+// Pricing
+export async function getPlans(locale: string): Promise<Array<Localized<PlanTierData>>> {
+  return readCollection<PlanTierData>("plans", locale);
+}
+export async function getPricingHighlights(
+  locale: string,
+): Promise<Array<Localized<PricingHighlight>>> {
+  return readCollection<PricingHighlight>("pricing-highlights", locale);
+}
+export async function getPricingCompare(locale: string): Promise<Array<Localized<CompareSection>>> {
+  return readCollection<CompareSection>("pricing-compare", locale);
+}
+export async function getFaq(locale: string): Promise<Array<Localized<FaqItem>>> {
+  return readCollection<FaqItem>("faq", locale);
+}
+/** Site-wide FAQ pool. ~40 questions across pricing/security/sports/etc. */
+export async function getFaqPool(locale: string): Promise<Array<Localized<FaqItem>>> {
+  return readCollection<FaqItem>("faq-pool", locale);
+}
+
+// Products
+export async function getProducts(locale: string): Promise<Array<Localized<ProductData>>> {
+  return readCollection<ProductData>("products", locale);
+}
+export async function getProduct(
+  slug: string,
+  locale: string,
+): Promise<Localized<ProductData> | null> {
+  return readCollectionEntry<ProductData>("products", slug, locale);
+}
 export async function getProductSlugs(): Promise<string[]> {
   return readCollectionSlugs("products");
 }
 
-/** A single product by slug, or `null` if not found. */
-export async function getProduct(slug: string, locale: string): Promise<ProductData | null> {
-  return readCollectionEntry<ProductData>("products", slug, locale);
-}
-
-/**
- * Same as {@link getProduct} but throws Next's `notFound()` when absent.
- * Convenient inside route handlers.
- */
-export async function getProductOrNotFound(slug: string, locale: string): Promise<ProductData> {
-  const product = await getProduct(slug, locale);
-
-  if (!product) {
-    notFound();
-  }
-
-  return product;
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// Sports (/sports/[slug])
-// ─────────────────────────────────────────────────────────────────────
-
-/** Every sport in the catalog. */
-export async function getSports(locale: string): Promise<SportData[]> {
+// Sports
+export async function getSports(locale: string): Promise<Array<Localized<SportData>>> {
   return readCollection<SportData>("sports", locale);
 }
-
-/** Every sport slug — used by `generateStaticParams()`. Locale-agnostic. */
+export async function getSport(slug: string, locale: string): Promise<Localized<SportData> | null> {
+  return readCollectionEntry<SportData>("sports", slug, locale);
+}
 export async function getSportSlugs(): Promise<string[]> {
   return readCollectionSlugs("sports");
 }
 
-/** A single sport by slug, or `null`. */
-export async function getSport(slug: string, locale: string): Promise<SportData | null> {
-  return readCollectionEntry<SportData>("sports", slug, locale);
-}
-
-/** Same as {@link getSport} but throws `notFound()` when absent. */
-export async function getSportOrNotFound(slug: string, locale: string): Promise<SportData> {
-  const sport = await getSport(slug, locale);
-
-  if (!sport) {
-    notFound();
-  }
-
-  return sport;
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// Legal pages (/legal/[slug])
-// ─────────────────────────────────────────────────────────────────────
-
-/** Every legal page. */
-export async function getLegalPages(locale: string): Promise<LegalData[]> {
-  return readCollection<LegalData>("legal", locale);
-}
-
-/** Every legal slug — locale-agnostic. */
-export async function getLegalSlugs(): Promise<string[]> {
-  return readCollectionSlugs("legal");
-}
-
-/** A single legal page by slug, or `null`. */
-export async function getLegal(slug: string, locale: string): Promise<LegalData | null> {
-  return readCollectionEntry<LegalData>("legal", slug, locale);
-}
-
-/** Same as {@link getLegal} but throws `notFound()` when absent. */
-export async function getLegalOrNotFound(slug: string, locale: string): Promise<LegalData> {
-  const page = await getLegal(slug, locale);
-
-  if (!page) {
-    notFound();
-  }
-
-  return page;
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// Enterprise pages (/enterprise/[slug])
-// ─────────────────────────────────────────────────────────────────────
-
-/** Every enterprise page. */
-export async function getEnterprisePages(locale: string): Promise<EnterpriseData[]> {
+// Enterprise
+export async function getEnterprisePages(
+  locale: string,
+): Promise<Array<Localized<EnterpriseData>>> {
   return readCollection<EnterpriseData>("enterprise", locale);
 }
-
-/** Every enterprise slug — locale-agnostic. */
+export async function getEnterprisePage(
+  slug: string,
+  locale: string,
+): Promise<Localized<EnterpriseData> | null> {
+  return readCollectionEntry<EnterpriseData>("enterprise", slug, locale);
+}
 export async function getEnterpriseSlugs(): Promise<string[]> {
   return readCollectionSlugs("enterprise");
 }
 
-/** A single enterprise page by slug, or `null`. */
-export async function getEnterprise(slug: string, locale: string): Promise<EnterpriseData | null> {
-  return readCollectionEntry<EnterpriseData>("enterprise", slug, locale);
+// Solutions
+export async function getSolutions(locale: string): Promise<Array<Localized<SolutionData>>> {
+  return readCollection<SolutionData>("solutions", locale);
 }
-
-/** Same as {@link getEnterprise} but throws `notFound()` when absent. */
-export async function getEnterpriseOrNotFound(
+export async function getSolution(
   slug: string,
   locale: string,
-): Promise<EnterpriseData> {
-  const page = await getEnterprise(slug, locale);
-
-  if (!page) {
-    notFound();
-  }
-
-  return page;
+): Promise<Localized<SolutionData> | null> {
+  return readCollectionEntry<SolutionData>("solutions", slug, locale);
+}
+export async function getSolutionSlugs(): Promise<string[]> {
+  return readCollectionSlugs("solutions");
 }
 
-// ─────────────────────────────────────────────────────────────────────
-// Pricing
-// ─────────────────────────────────────────────────────────────────────
-
-/** The four public plan tiers. */
-export async function getPlans(locale: string): Promise<PlanTierData[]> {
-  return readJson<PlanTierData[]>("plans", locale);
+// Personas
+export async function getPersonas(locale: string): Promise<Array<Localized<PersonaData>>> {
+  return readCollection<PersonaData>("personas", locale);
+}
+export async function getPersona(
+  slug: string,
+  locale: string,
+): Promise<Localized<PersonaData> | null> {
+  return readCollectionEntry<PersonaData>("personas", slug, locale);
+}
+export async function getPersonaSlugs(): Promise<string[]> {
+  return readCollectionSlugs("personas");
 }
 
-/** The two pricing spotlight cards. */
-export async function getPricingHighlights(locale: string): Promise<PricingHighlight[]> {
-  return readJson<PricingHighlight[]>("pricing-highlights", locale);
+// Legal
+export async function getLegalPages(locale: string): Promise<Array<Localized<LegalData>>> {
+  return readCollection<LegalData>("legal", locale);
+}
+export async function getLegalPage(
+  slug: string,
+  locale: string,
+): Promise<Localized<LegalData> | null> {
+  return readCollectionEntry<LegalData>("legal", slug, locale);
+}
+export async function getLegalSlugs(): Promise<string[]> {
+  return readCollectionSlugs("legal");
 }
 
-/** The full feature-comparison matrix. */
-export async function getPricingCompare(locale: string): Promise<CompareSection[]> {
-  return readJson<CompareSection[]>("pricing-compare", locale);
+// Company
+export async function getCompanyPages(locale: string): Promise<Array<Localized<CompanyPageData>>> {
+  return readCollection<CompanyPageData>("company", locale);
+}
+export async function getCompanyPage(
+  slug: string,
+  locale: string,
+): Promise<Localized<CompanyPageData> | null> {
+  return readCollectionEntry<CompanyPageData>("company", slug, locale);
+}
+export async function getCompanySlugs(): Promise<string[]> {
+  return readCollectionSlugs("company");
 }
 
-/** Numbered FAQ items. */
-export async function getFaq(locale: string): Promise<FaqItem[]> {
-  return readJson<FaqItem[]>("faq", locale);
+// Customers
+export async function getCustomerStories(
+  locale: string,
+): Promise<Array<Localized<CustomerStoryData>>> {
+  return readCollection<CustomerStoryData>("customers", locale);
+}
+export async function getCustomerStory(
+  slug: string,
+  locale: string,
+): Promise<Localized<CustomerStoryData> | null> {
+  return readCollectionEntry<CustomerStoryData>("customers", slug, locale);
+}
+export async function getCustomerStorySlugs(): Promise<string[]> {
+  return readCollectionSlugs("customers");
 }
 
-// ─────────────────────────────────────────────────────────────────────
-// Onboarding form data
-// ─────────────────────────────────────────────────────────────────────
+// Blog + authors
+export async function getBlogPosts(locale: string): Promise<Array<Localized<BlogPostData>>> {
+  const posts = await readCollection<BlogPostData>("blog", locale);
 
-/** Business-type options for the create-workspace form. */
-export async function getBusinessTypes(locale: string): Promise<BusinessTypeOption[]> {
-  return readJson<BusinessTypeOption[]>("business-types", locale);
+  return [...posts].sort((a, b) => b.date.localeCompare(a.date));
+}
+export async function getBlogPost(
+  slug: string,
+  locale: string,
+): Promise<Localized<BlogPostData> | null> {
+  return readCollectionEntry<BlogPostData>("blog", slug, locale);
+}
+export async function getBlogSlugs(): Promise<string[]> {
+  return readCollectionSlugs("blog");
+}
+export async function getAuthors(locale: string): Promise<Array<Localized<AuthorData>>> {
+  return readCollection<AuthorData>("authors", locale);
+}
+export async function getAuthor(
+  slug: string,
+  locale: string,
+): Promise<Localized<AuthorData> | null> {
+  return readCollectionEntry<AuthorData>("authors", slug, locale);
 }
 
-/** Password rules mirrored from the backend policy. */
-export async function getPasswordRules(locale: string): Promise<{
-  min_length: number;
-  rules: readonly PasswordRuleData[];
-}> {
-  return readJson("password-rules", locale);
+// Testimonials
+export async function getTestimonials(locale: string): Promise<Array<Localized<TestimonialData>>> {
+  return readCollection<TestimonialData>("testimonials", locale);
+}
+
+// Forms
+export async function getBusinessTypes(
+  locale: string,
+): Promise<Array<Localized<BusinessTypeOption>>> {
+  return readCollection<BusinessTypeOption>("business-types", locale);
+}
+export async function getPasswordRules(
+  locale: string,
+): Promise<Array<Localized<PasswordRuleData>>> {
+  return readCollection<PasswordRuleData>("password-rules", locale);
 }

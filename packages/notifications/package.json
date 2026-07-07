@@ -4,12 +4,11 @@
   "private": true,
   "type": "module",
   "license": "MIT",
-  "description": "Notification primitives for the Academorix workspace: canonical Notification DTO, category preferences model, in-app / web-push / native-OS delivery surfaces, service-worker push handlers, and typed React hooks (useNotifications, usePushSubscription). Composes on top of @academorix/http + @academorix/realtime.",
+  "description": "Notification primitives for the Academorix workspace: backend-shaped Notification DTO, preferences model with quiet-hours + mandatory-push allowlist, in-app / web-push / native-OS delivery surfaces, service-worker push handlers, and typed React hooks (useNotifications, usePushSubscription). Composes on top of @academorix/http + @academorix/realtime.",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./config": "./src/config/index.ts",
     "./context": "./src/context/index.ts",
     "./hooks": "./src/hooks/index.ts",
     "./push": "./src/push/index.ts",
@@ -22,7 +21,9 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "clean": "rm -rf .turbo"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf .turbo coverage"
   },
   "dependencies": {
     "@academorix/core": "workspace:*",
@@ -35,9 +36,13 @@
   "devDependencies": {
     "@academorix/eslint-config": "workspace:*",
     "@academorix/typescript-config": "workspace:*",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
     "@types/react": "catalog:",
     "eslint": "catalog:",
+    "jsdom": "catalog:",
     "react": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }

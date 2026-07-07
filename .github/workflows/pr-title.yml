@@ -1,0 +1,51 @@
+# Enforces conventional-commit style on pull-request titles. Complements
+# the `commitlint` husky hook (which enforces the same rule per commit) by
+# adding a repo-level status check that GitHub can require before merge.
+#
+# Squash-merges use the PR title as the commit subject, so this check is
+# what keeps `main`'s history conventional even when the branch history
+# is messy.
+
+name: PR title
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+# Only needs to read PR metadata — no writes.
+permissions:
+  pull-requests: read
+
+jobs:
+  lint-pr-title:
+    name: Enforce conventional-commit PR title
+    runs-on: ubuntu-latest
+    # Trivial title-check job; 5 min is plenty of headroom.
+    timeout-minutes: 5
+    steps:
+      # Officially maintained action for conventional-commit title enforcement.
+      # See https://github.com/amannn/action-semantic-pull-request
+      - uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # Allow-list of conventional-commit types. Mirrors the commitlint
+          # config so a title that would pass commitlint also passes here.
+          types: |
+            feat
+            fix
+            refactor
+            perf
+            test
+            docs
+            chore
+            build
+            ci
+            revert
+          # Scopes are free-form (packages / apps / infra areas) — no
+          # allow-list so the check doesn't fight naming choices.
+          requireScope: false
+          # Enforce lowercase subject line.
+          subjectPattern: ^[a-z].+$
+          subjectPatternError: |
+            The subject "{subject}" must start with a lowercase letter.

@@ -1,96 +1,95 @@
 /**
- * @file page.tsx
+ * @file enterprise/[slug]/page.tsx
  * @module app/[locale]/enterprise/[slug]/page
  *
  * @description
- * Enterprise deep page. Pre-rendered from every entry in
- * `public/data/{locale}/enterprise.json`. Same composition as the product
- * deep page but with a "Talk to sales" primary CTA (enterprise routes
- * never point anonymous visitors at the self-serve signup flow) and no
- * customer quote.
+ * Enterprise deep-page template. Renders one enterprise page from
+ * `enterprise.json` with hero, feature grid, and related links.
  */
 
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { setRequestLocale } from "next-intl/server";
 
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { CtaBand } from "@/components/marketing/cta-band";
-import { FeatureGrid } from "@/components/marketing/feature-grid";
+import { FeatureList } from "@/components/marketing/feature-list";
 import { MarketingHero } from "@/components/marketing/marketing-hero";
-import { MarketingShell } from "@/components/marketing/marketing-shell";
 import { RelatedLinks } from "@/components/marketing/related-links";
-import { LOCALES } from "@/i18n/routing";
-import { getEnterprise, getEnterpriseOrNotFound, getEnterpriseSlugs } from "@/lib/api";
+import { MarketingShell } from "@/components/shell/marketing-shell";
+import { getEnterprisePage, getEnterpriseSlugs } from "@/lib/api";
 
-/** Route props. */
-interface EnterprisePageProps {
+interface PageProps {
   params: Promise<{ locale: string; slug: string }>;
 }
 
-/** Pre-renders every enterprise slug for every locale. */
 export async function generateStaticParams(): Promise<Array<{ locale: string; slug: string }>> {
   const slugs = await getEnterpriseSlugs();
 
-  return LOCALES.flatMap((locale) => slugs.map((slug) => ({ locale, slug })));
+  return slugs.flatMap((slug) => [
+    { locale: "en", slug },
+    { locale: "ar", slug },
+  ]);
 }
 
-/** Generates the tab title + OG card + canonical URL. */
-export async function generateMetadata({ params }: EnterprisePageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale, slug } = await params;
-  const page = await getEnterprise(slug, locale);
+  const page = await getEnterprisePage(slug, locale);
 
-  if (!page) {
-    return { title: "Not found", robots: { index: false } };
-  }
-
-  const canonical =
-    locale === "en" ? `/enterprise/${page.slug}` : `/${locale}/enterprise/${page.slug}`;
+  if (!page) return {};
 
   return {
     title: page.title,
     description: page.description,
-    alternates: { canonical },
-    openGraph: {
-      title: `Academorix — ${page.title}`,
-      description: page.description,
-      url: canonical,
+    alternates: {
+      canonical: locale === "en" ? `/enterprise/${slug}` : `/${locale}/enterprise/${slug}`,
     },
   };
 }
 
-/** The enterprise deep page. */
-export default async function EnterprisePage({ params }: EnterprisePageProps): Promise<ReactNode> {
+export default async function EnterprisePage({ params }: PageProps): Promise<ReactNode> {
   const { locale, slug } = await params;
 
   setRequestLocale(locale);
 
-  const [page, t, tCommon] = await Promise.all([
-    getEnterpriseOrNotFound(slug, locale),
-    getTranslations({ locale, namespace: "enterprise" }),
-    getTranslations({ locale, namespace: "common" }),
-  ]);
+  const page = await getEnterprisePage(slug, locale);
+
+  if (!page) notFound();
 
   return (
     <MarketingShell>
       <MarketingHero
-        description={page.description}
+        ctaPrimary={{
+          label: locale === "ar" ? "تحدث مع المبيعات" : "Talk to sales",
+          type: "contact_sales",
+        }}
         eyebrow={page.eyebrow}
-        iconKey={page.hero_icon}
-        primaryCta={{ label: tCommon("talkToSales"), type: "contact_sales" }}
-        secondaryCta={{ label: tCommon("seePricing"), type: "link", href: "/pricing" }}
+        subtitle={page.description}
         title={page.title}
       />
 
-      <FeatureGrid
-        description={t("featuresDescription")}
-        heading={t("featuresHeading")}
-        items={page.features}
+      <section className="mx-auto max-w-7xl px-6 py-16">
+        <FeatureList items={page.features} />
+      </section>
+
+      <RelatedLinks
+        heading={locale === "ar" ? "استكشف أيضاً" : "Explore also"}
+        items={page.related}
       />
 
-      <RelatedLinks items={page.related} />
-
-      <CtaBand description={t("ctaDescription")} heading={t("ctaHeading")} />
+      <CtaBand
+        ctaPrimary={{
+          label: locale === "ar" ? "تحدث مع المبيعات" : "Talk to sales",
+          type: "contact_sales",
+        }}
+        description={
+          locale === "ar"
+            ? "فريقنا يجيب على أسئلة الأمن والامتثال والترحيل خلال يوم عمل."
+            : "Our team answers security, compliance, and migration questions within a business day."
+        }
+        title={locale === "ar" ? "لديك أسئلة عن التفعيل؟" : "Have questions about rollout?"}
+      />
     </MarketingShell>
   );
 }

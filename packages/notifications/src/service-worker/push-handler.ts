@@ -1,3 +1,5 @@
+/// <reference lib="webworker" />
+
 /**
  * @file push-handler.ts
  * @module @academorix/notifications/service-worker/push-handler
@@ -20,24 +22,43 @@
  * ## Payload shape
  *
  * The backend serialises a {@link Notification} DTO as JSON and
- * ships it as the push payload. The SW deserialises + calls
+ * ships it as the push payload. Field naming is snake_case — see
+ * `@academorix/notifications/types`. The SW deserialises + calls
  * `registration.showNotification(title, options)`.
+ *
+ *  - Title: `payload.title` → fall back to `payload.type` → fall
+ *    back to `"New notification"`.
+ *  - Body:  `payload.body_preview` → fall back to a generic string.
+ *  - Icon:  `/pwa-192x192.png` (constant — apps override in their
+ *    manifest, not per-notification).
+ *  - Click URL: `payload.data_ref.action_url` when present + a
+ *    string; else no navigation.
  *
  * ## Robustness
  *
- * A push event that fails to parse (empty payload, malformed JSON,
- * missing title) falls back to a generic "New notification"
- * message rather than throwing — a thrown exception from the SW
- * push handler drops the notification silently on some browsers,
- * which is worse UX than a generic message.
+ * A push event that fails to parse (empty payload, malformed JSON)
+ * still shows a generic "New notification" rather than throwing —
+ * a thrown exception from the SW push handler drops the
+ * notification silently on some browsers, which is worse UX than a
+ * generic message.
  */
 
 import type { Notification as AppNotification } from "../types/notification.type";
 
 /**
+ * Icon shown on every push notification. Apps that need per-tenant
+ * branding should ship it via the web manifest instead of trying to
+ * override this per-notification.
+ */
+const DEFAULT_NOTIFICATION_ICON = "/pwa-192x192.png";
+
+/** Badge (Chrome-only) shown next to the notification title. */
+const DEFAULT_NOTIFICATION_BADGE = "/pwa-64x64.png";
+
+/**
  * Parses the push payload into an `AppNotification`, tolerating
- * missing / malformed data by falling back to a generic
- * notification.
+ * missing / malformed data by returning `null` — callers render the
+ * generic fallback in that case.
  */
 function parsePushPayload(event: PushEvent): AppNotification | null {
   if (!event.data) {
@@ -54,6 +75,20 @@ function parsePushPayload(event: PushEvent): AppNotification | null {
 }
 
 /**
+ * Reads `payload.data_ref.action_url` if present and a string,
+ * else `undefined`. Never throws.
+ */
+function extractActionUrl(payload: AppNotification | null): string | undefined {
+  if (!payload) {
+    return undefined;
+  }
+
+  const candidate = payload.data_ref["action_url"];
+
+  return typeof candidate === "string" && candidate.length > 0 ? candidate : undefined;
+}
+
+/**
  * Handles a `push` event by rendering a system notification. Call
  * from inside `self.addEventListener("push", ...)` with the event
  * and the SW's `registration` object.
@@ -64,11 +99,11 @@ function parsePushPayload(event: PushEvent): AppNotification | null {
 export function handlePushEvent(event: PushEvent, registration: ServiceWorkerRegistration): void {
   const payload = parsePushPayload(event);
 
-  const title = payload?.title ?? "New notification";
+  const title = payload?.title ?? payload?.type ?? "New notification";
   const options: NotificationOptions = {
-    body: payload?.body ?? "You have a new update in Academorix.",
-    icon: payload?.iconUrl ?? "/pwa-192x192.png",
-    badge: "/pwa-64x64.png",
+    body: payload?.body_preview ?? "You have a new update in Academorix.",
+    icon: DEFAULT_NOTIFICATION_ICON,
+    badge: DEFAULT_NOTIFICATION_BADGE,
     tag: payload?.id, // dedupe repeat pushes for the same notification
     data: payload,
   };
@@ -78,16 +113,18 @@ export function handlePushEvent(event: PushEvent, registration: ServiceWorkerReg
 
 /**
  * Handles a `notificationclick` event by focusing an existing app
- * window (if any) and navigating to `payload.actionUrl`, or opening
- * a new window when none exists.
+ * window (if any) and navigating to `payload.data_ref.action_url`,
+ * or opening a new window when none exists. When no action URL is
+ * present, the click just closes the notification.
  *
- * Must be called from the SW's `self.addEventListener("notificationclick", ...)`.
+ * Must be called from the SW's
+ * `self.addEventListener("notificationclick", ...)`.
  */
 export function handleNotificationClickEvent(event: NotificationEvent): void {
   event.notification.close();
 
-  const payload = event.notification.data as AppNotification | undefined;
-  const actionUrl = payload?.actionUrl;
+  const payload = event.notification.data as AppNotification | undefined | null;
+  const actionUrl = extractActionUrl(payload ?? null);
 
   event.waitUntil(
     (async () => {

@@ -13,10 +13,37 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Workflow-level env — inherited by every job unless overridden.
+env:
+  # Bump Node's heap ceiling to 4 GiB. Vite (rolldown) + Next.js (Turbopack)
+  # builds hold the module graph in memory; GitHub's default 8 GB runners
+  # can hit V8's ~2.6 GB default limit on cold cache runs and OOM with a
+  # non-obvious "JavaScript heap out of memory" trace. 4 GiB gives comfortable
+  # headroom without leaving the smaller runner tier.
+  NODE_OPTIONS: "--max-old-space-size=4096"
+
 jobs:
   quality:
     name: Format, lint, typecheck, knip
     runs-on: ubuntu-latest
+    # Static-analysis job — should never legitimately run more than a few
+    # minutes; the cap prevents a hung tool from burning Actions minutes.
+    timeout-minutes: 15
+    env:
+      # `@heroui-pro/react` has a postinstall step that authenticates
+      # against the private Pro registry. Without this token, pnpm install
+      # silently degrades or fails outright once the postinstall enforces
+      # auth — surface any regression here rather than at deploy time.
+      HEROUI_AUTH_TOKEN: ${{ secrets.HEROUI_AUTH_TOKEN }}
+      # Personal token is the alternative auth surface used by the
+      # `heroui-pro` CLI; mirror it so both auth paths keep working.
+      HEROUI_PERSONAL_TOKEN: ${{ secrets.HEROUI_PERSONAL_TOKEN }}
+      # Turborepo remote-cache credentials. When either value is unset
+      # (secret/var not configured on the repo), Turbo falls back to the
+      # local `.turbo/` cache silently — so this pair is a no-op until
+      # the org opts into remote caching.
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
     steps:
       - uses: actions/checkout@v4
 
@@ -58,9 +85,29 @@ jobs:
       - name: Knip (unused deps / exports)
         run: pnpm knip
 
+      - name: Knip production reachability
+        # Second pass with `--production` restricts the reachability graph
+        # to production entry points (drops test files + devDependencies).
+        # Catches a class of drift the default pass tolerates: a runtime
+        # dependency that is only actually imported from a test file. If
+        # such a dep exists, prod bundles ship dead weight — this step
+        # surfaces it before it lands.
+        run: pnpm knip --production
+
   test:
     name: Unit tests
     runs-on: ubuntu-latest
+    # Unit suites run against every workspace package via Turbo fan-out;
+    # 20 min gives headroom for a full cold-cache run.
+    timeout-minutes: 20
+    env:
+      # HeroUI Pro auth — same rationale as the `quality` job. `pnpm
+      # install` runs here too, so the postinstall needs a token.
+      HEROUI_AUTH_TOKEN: ${{ secrets.HEROUI_AUTH_TOKEN }}
+      HEROUI_PERSONAL_TOKEN: ${{ secrets.HEROUI_PERSONAL_TOKEN }}
+      # Turborepo remote-cache — empty values disable it silently.
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
     steps:
       - uses: actions/checkout@v4
 
@@ -93,6 +140,16 @@ jobs:
     name: Production build
     runs-on: ubuntu-latest
     needs: [quality, test]
+    # Both apps + every dependent package; 25 min is enough for a fully
+    # cold Turbo build with no remote-cache assist.
+    timeout-minutes: 25
+    env:
+      # HeroUI Pro auth — required by the postinstall on `pnpm install`.
+      HEROUI_AUTH_TOKEN: ${{ secrets.HEROUI_AUTH_TOKEN }}
+      HEROUI_PERSONAL_TOKEN: ${{ secrets.HEROUI_PERSONAL_TOKEN }}
+      # Turborepo remote-cache — empty values disable it silently.
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
     steps:
       - uses: actions/checkout@v4
 
@@ -126,6 +183,21 @@ jobs:
     name: End-to-end (Playwright)
     runs-on: ubuntu-latest
     needs: [build]
+    # Skip on draft PRs — Playwright + browser install + build is the most
+    # expensive part of the pipeline and drafts explicitly signal "not
+    # ready for review". The expression is written so `push` events (merge
+    # to main) still run this job: on push there is no `pull_request`
+    # payload, so the first clause short-circuits true.
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    # Playwright + browser download + full dashboard build; 30 min cap.
+    timeout-minutes: 30
+    env:
+      # HeroUI Pro auth — required by the postinstall on `pnpm install`.
+      HEROUI_AUTH_TOKEN: ${{ secrets.HEROUI_AUTH_TOKEN }}
+      HEROUI_PERSONAL_TOKEN: ${{ secrets.HEROUI_PERSONAL_TOKEN }}
+      # Turborepo remote-cache — empty values disable it silently.
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
     # E2E is expensive; keep it out of the fast-feedback path but block
     # merges to main until it passes. The `build` dependency ensures the
     # dashboard bundle is present before Playwright serves it.
@@ -167,4 +239,113 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
-          retention-days: 14
+          # 7-day retention keeps failure triage cheap on a public repo
+          # (per-repo artifact storage counts against the org quota) while
+          # still covering a normal weekend + Monday review cycle.
+          retention-days: 7
+
+  desktop-build:
+    name: Desktop shell — cargo check (${{ matrix.os }})
+    # Fast fingerprint check for the Tauri shell. We deliberately DON'T run
+    # `cargo build --release` — a full desktop release build takes 10-20 min
+    # per platform, way too slow for PR feedback. `cargo check` catches
+    # every real Rust error (missing traits, wrong types, feature flag
+    # mismatches) in under 2 min on a cold cache.
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-14, windows-2022, ubuntu-22.04]
+    # `cargo check` on a cold cache pulls ~500 crates for Tauri v2 + its
+    # plugins; 25 min gives comfortable headroom on the smaller runner tier.
+    timeout-minutes: 25
+    env:
+      # HeroUI Pro auth — required by the postinstall on `pnpm install`
+      # (the desktop job installs Node deps too because tauri-build reads
+      # from `tauri.conf.json` at compile time, and the CSP + schema paths
+      # in that file live under `src/`).
+      HEROUI_AUTH_TOKEN: ${{ secrets.HEROUI_AUTH_TOKEN }}
+      HEROUI_PERSONAL_TOKEN: ${{ secrets.HEROUI_PERSONAL_TOKEN }}
+      # Turborepo remote-cache — empty values disable it silently.
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
+    # Path-filtered skip: only run when the desktop shell OR its inputs
+    # change. Every other PR gets a green cheap no-op via `paths` on the
+    # workflow trigger.
+    if: |
+      github.event_name == 'push' ||
+      contains(github.event.pull_request.labels.*.name, 'desktop') ||
+      github.event.pull_request.head.repo.fork == false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store
+          key: pnpm-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: pnpm-${{ runner.os }}-
+
+      - name: Install Node dependencies
+        # pnpm install is required because build.rs and tauri-build resolve
+        # paths relative to the crate's manifest, and the JSON snapshot
+        # sync-script runs from Node. Without Node deps the sync script
+        # can't import `desktop.config.ts`.
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup Rust
+        # Stable toolchain matches `Cargo.toml`'s `rust-version = "1.77"`.
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo registry + build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            apps/dashboard/src-tauri/target/
+          key: cargo-check-${{ runner.os }}-${{ hashFiles('apps/dashboard/src-tauri/Cargo.lock', 'apps/dashboard/src-tauri/Cargo.toml') }}
+          restore-keys: cargo-check-${{ runner.os }}-
+
+      - name: Install Linux system dependencies
+        if: runner.os == 'Linux'
+        # Tauri v2 links WebKitGTK 4.1 + libappindicator on Linux. These
+        # aren't in the default Ubuntu image on GitHub Actions, so cargo
+        # check itself fails without them.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            libssl-dev
+
+      - name: Sync desktop config snapshot
+        working-directory: apps/dashboard
+        # build.rs reads desktop-config.json — make sure the checked-in
+        # snapshot matches the TS source of truth before compiling.
+        run: pnpm sync:desktop-config
+
+      - name: Cargo check (default features)
+        working-directory: apps/dashboard/src-tauri
+        run: cargo check --locked
+
+      - name: Cargo check (phase3 feature)
+        working-directory: apps/dashboard/src-tauri
+        # Explicit second check with the phase3 feature turned on so a
+        # broken plugin registration is caught by the same PR that
+        # introduces it.
+        run: cargo check --locked --features phase3

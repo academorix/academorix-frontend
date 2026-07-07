@@ -17,6 +17,10 @@
  *    global options. Refine must live inside the router (mounted in
  *    `main.tsx`), which is why this component is rendered under
  *    `<BrowserRouter>`.
+ * 5. `<NotificationsRoot>` — composed inside `<RefineRoot>` so its
+ *    presence hooks (inbox sync + toast bridge) can read
+ *    `useGetIdentity()`. Provides the shared notifications context to
+ *    every downstream consumer (bell, drawer, preferences page).
  *
  * `<UnsavedChangesNotifier>` guards navigation away from dirty forms, and
  * `<DocumentTitleHandler>` keeps the tab title in sync with the active
@@ -34,8 +38,10 @@ import type { ResourceProps } from "@refinedev/core";
 import type { ReactNode } from "react";
 
 import { siteConfig } from "@/config/site.config";
+import { DesktopBootstrap } from "@/desktop";
 import { LocaleProvider, useI18nProvider } from "@/lib/i18n";
 import { appResources } from "@/lib/module";
+import { NotificationsRoot } from "@/notifications/provider";
 import { accessControlProvider } from "@/providers/access-control";
 import { authProvider } from "@/providers/auth";
 import { dataProviders } from "@/providers/data";
@@ -89,7 +95,7 @@ function RefineRoot({ children }: ProvidersProps): ReactNode {
       resources={appResources as unknown as ResourceProps[]}
       routerProvider={routerProvider}
     >
-      {children}
+      <NotificationsRoot>{children}</NotificationsRoot>
       <UnsavedChangesNotifier />
       <DocumentTitleHandler />
     </Refine>
@@ -98,7 +104,8 @@ function RefineRoot({ children }: ProvidersProps): ReactNode {
 
 /**
  * Wraps the app in the locale layer, the toast region, the production-only
- * PWA update toast, and the fully-configured Refine context.
+ * PWA update toast, the desktop-shell bootstrap (no-op on web), and the
+ * fully-configured Refine context.
  */
 export function Providers({ children }: ProvidersProps): ReactNode {
   return (
@@ -110,7 +117,15 @@ export function Providers({ children }: ProvidersProps): ReactNode {
        * the queue mounted just above. Renders no visible DOM.
        */}
       {IS_PRODUCTION ? <PwaUpdateToast /> : null}
-      <RefineRoot>{children}</RefineRoot>
+      {/*
+       * Desktop shell bootstrap — sets the OS window title, mirrors the
+       * OS theme, and attaches the tray-command IPC listeners. Renders
+       * children unchanged; no-ops entirely when `window.__TAURI__` is
+       * absent (i.e. on every web build).
+       */}
+      <DesktopBootstrap>
+        <RefineRoot>{children}</RefineRoot>
+      </DesktopBootstrap>
     </LocaleProvider>
   );
 }

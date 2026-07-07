@@ -117,21 +117,135 @@ export const TOAST_TIMEOUT_MS: Readonly<Record<NotificationPriority, number>> = 
 
 /**
  * REST paths for the notification subsystem. Relative to the
- * `VITE_API_URL + VITE_API_PATH` origin. Runtime code should build
- * URLs via these constants, never inline strings.
+ * `VITE_API_URL + VITE_API_PATH` origin (which is `/api` by default —
+ * see `env.config.ts`). Runtime code should build URLs via these
+ * constants, never inline strings.
+ *
+ * The Communication module mounts its routes under `/api/v1/*` (see
+ * `backend/modules/Communication/src/Providers/CommunicationRouteServiceProvider.php`),
+ * so every path here begins with `/v1/`.
+ *
+ * ## Backend endpoint status
+ *
+ * Read-only endpoints (already shipped):
+ *   - {@link NOTIFICATION_ENDPOINTS.list}
+ *   - {@link NOTIFICATION_ENDPOINTS.preferences}
+ *   - {@link NOTIFICATION_ENDPOINTS.preference}
+ *
+ * Write endpoints (backend TODO — the frontend calls the URL and
+ * silently degrades on 404/501 until the backend catches up):
+ *   - {@link NOTIFICATION_ENDPOINTS.markRead}
+ *   - {@link NOTIFICATION_ENDPOINTS.markAllRead}
+ *   - {@link NOTIFICATION_ENDPOINTS.remove}
+ *   - {@link NOTIFICATION_ENDPOINTS.subscribe}
+ *   - {@link NOTIFICATION_ENDPOINTS.unsubscribe}
+ *   - {@link NOTIFICATION_ENDPOINTS.updatePreference}
+ *   - {@link NOTIFICATION_ENDPOINTS.vapidPublicKey}
  */
 export const NOTIFICATION_ENDPOINTS = {
-  /** `GET /notifications` — paginated list. */
-  list: "/notifications",
-  /** `POST /notifications/push-subscriptions` — subscribe a browser. */
-  subscribe: "/notifications/push-subscriptions",
-  /** `DELETE /notifications/push-subscriptions/{id}` */
-  unsubscribe: "/notifications/push-subscriptions/:id",
-  /** `PATCH /notifications/bulk` — mark read en masse. */
-  bulkMark: "/notifications/bulk",
-  /** `GET /config/vapid` — public VAPID key. Anonymous. */
-  vapidPublicKey: "/config/vapid",
+  /** `GET /api/v1/notifications` — paginated list (read-only, exists). */
+  list: "/v1/notifications",
+  /**
+   * `POST /api/v1/notifications/subscriptions` — subscribe a browser.
+   *
+   * TODO(backend-endpoint): endpoint does NOT exist yet.
+   */
+  subscribe: "/v1/notifications/subscriptions",
+  /**
+   * `DELETE /api/v1/notifications/subscriptions/{id}` — unsubscribe.
+   *
+   * TODO(backend-endpoint): endpoint does NOT exist yet.
+   */
+  unsubscribe: "/v1/notifications/subscriptions/:id",
+  /**
+   * `PATCH /api/v1/notifications/bulk` — mark read en masse. Retained
+   * as an alias for the sync-only bulk write shape from
+   * NOTIFICATIONS_PLAN §4.5. Callers today use {@link markAllRead}.
+   *
+   * TODO(backend-endpoint): endpoint does NOT exist yet.
+   */
+  bulkMark: "/v1/notifications/bulk",
+  /**
+   * `POST /api/v1/notifications/{id}/read` — mark a single row read.
+   *
+   * TODO(backend-endpoint): endpoint does NOT exist yet.
+   */
+  markRead: "/v1/notifications/:id/read",
+  /**
+   * `POST /api/v1/notifications/read-all` — mark every unread row read.
+   *
+   * TODO(backend-endpoint): endpoint does NOT exist yet.
+   */
+  markAllRead: "/v1/notifications/read-all",
+  /**
+   * `DELETE /api/v1/notifications/{id}` — drop a row from the inbox.
+   *
+   * TODO(backend-endpoint): endpoint does NOT exist yet.
+   */
+  remove: "/v1/notifications/:id",
+  /**
+   * `GET /api/v1/notification-preferences` — list all user preference
+   * rows (read-only, exists — normally one row per user, so callers
+   * pick the first).
+   */
+  preferences: "/v1/notification-preferences",
+  /**
+   * `GET /api/v1/notification-preferences/{id}` — single preference
+   * row (read-only, exists).
+   */
+  preference: "/v1/notification-preferences/:id",
+  /**
+   * `PUT /api/v1/notification-preferences/{id}` — save preference
+   * updates. Idempotent by user.
+   *
+   * TODO(backend-endpoint): endpoint does NOT exist yet.
+   */
+  updatePreference: "/v1/notification-preferences/:id",
+  /**
+   * `GET /api/v1/config/vapid` — public VAPID key. Anonymous.
+   *
+   * TODO(backend-endpoint): endpoint does NOT exist yet. Fallback is
+   * the `VITE_VAPID_PUBLIC_KEY` env var — see
+   * `notifications/push/vapid-provider.ts`.
+   */
+  vapidPublicKey: "/v1/config/vapid",
 } as const;
+
+/**
+ * Substitutes a `:param` placeholder in a URL template with an
+ * `encodeURIComponent`-safe value. Kept trivially small so callers
+ * can inline it without a dependency on `path-to-regexp`.
+ *
+ * @example
+ * ```ts
+ * // "/v1/notifications/notif_abc/read"
+ * buildEndpointPath(NOTIFICATION_ENDPOINTS.markRead, { id: "notif_abc" });
+ * ```
+ */
+export function buildEndpointPath(
+  template: string,
+  params: Readonly<Record<string, string>>,
+): string {
+  let result = template;
+
+  for (const [key, value] of Object.entries(params)) {
+    result = result.replace(`:${key}`, encodeURIComponent(value));
+  }
+
+  return result;
+}
+
+/** Reverb event name emitted on the private user channel. */
+export const NOTIFICATION_REVERB_EVENT = "notifications.created" as const;
+
+/**
+ * Builds the private-channel name for a user's realtime notifications
+ * feed. Echo prepends `private-` internally when we call
+ * `client.private(name)` — we return the bare name here.
+ */
+export function buildUserNotificationsChannelName(userId: string): string {
+  return `user.${userId}.notifications`;
+}
 
 // ---------------------------------------------------------------------------
 // Reverb channels

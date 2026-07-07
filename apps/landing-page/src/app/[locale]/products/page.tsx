@@ -1,101 +1,68 @@
 /**
- * @file page.tsx
+ * @file products/page.tsx
  * @module app/[locale]/products/page
  *
  * @description
- * Product index — grid of every product deep page. Server Component;
- * awaits `getProducts()` for the active locale and renders a responsive
- * tile list linking to `/products/[slug]` (or `/{locale}/products/[slug]`
- * for non-default locales).
+ * Products index. Grid of every product deep-page in the catalog.
+ * Reads from `products.json` and renders a bento-style feature grid
+ * pointing to each `/products/[slug]` route.
  */
 
-import { ArrowRightIcon } from "@academorix/ui/icons/outline";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-import { MarketingShell } from "@/components/marketing/marketing-shell";
-import { Link } from "@/i18n/navigation";
+import { FeatureBento } from "@/components/marketing/feature-bento";
+import { MarketingHero } from "@/components/marketing/marketing-hero";
+import { MarketingShell } from "@/components/shell/marketing-shell";
 import { getProducts } from "@/lib/api";
-import { resolveIcon } from "@/lib/icon-registry";
 
-/** Props for {@link ProductsIndexPage}. */
-interface ProductsIndexPageProps {
+interface PageProps {
   params: Promise<{ locale: string }>;
 }
 
-/** Per-page metadata. */
-export async function generateMetadata({ params }: ProductsIndexPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "products.meta" });
 
   return {
-    title: t("title"),
-    description: t("description"),
+    title: locale === "ar" ? "المنتجات" : "Products",
     alternates: { canonical: locale === "en" ? "/products" : `/${locale}/products` },
   };
 }
 
-/** The products index page. */
-export default async function ProductsIndexPage({
-  params,
-}: ProductsIndexPageProps): Promise<ReactNode> {
+export default async function ProductsIndexPage({ params }: PageProps): Promise<ReactNode> {
   const { locale } = await params;
 
   setRequestLocale(locale);
 
-  const [products, t, tCommon] = await Promise.all([
-    getProducts(locale),
-    getTranslations({ locale, namespace: "products" }),
-    getTranslations({ locale, namespace: "common" }),
-  ]);
+  const products = await getProducts(locale);
+
+  const tiles = products.map((p) => ({
+    slug: p.slug,
+    icon: p.hero_icon,
+    title: p.title,
+    description: p.description,
+    href: `/products/${p.slug}`,
+  }));
 
   return (
     <MarketingShell>
-      <section
-        aria-labelledby="products-index-heading"
-        className="mx-auto w-full max-w-6xl px-6 pt-20 pb-16"
-      >
-        <div className="mb-14 flex flex-col items-start gap-4">
-          <span className="text-xs font-semibold tracking-wider text-muted uppercase">
-            {t("eyebrow")}
-          </span>
-          <h1
-            className="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl"
-            id="products-index-heading"
-          >
-            {t("indexTitle")}
-          </h1>
-          <p className="max-w-2xl text-lg text-muted">{t("indexDescription")}</p>
-        </div>
-
-        <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {products.map((product) => {
-            const Icon = resolveIcon(product.hero_icon);
-
-            return (
-              <li key={product.slug}>
-                <Link
-                  className="group flex h-full flex-col gap-4 rounded-xl border border-default bg-surface p-6 transition-colors hover:border-foreground/20"
-                  href={`/products/${product.slug}`}
-                >
-                  <span className="flex size-11 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                    <Icon aria-hidden="true" className="size-6" />
-                  </span>
-                  <div className="flex flex-1 flex-col gap-2">
-                    <h2 className="text-lg font-semibold text-foreground">{product.title}</h2>
-                    <p className="text-sm leading-relaxed text-muted">{product.description}</p>
-                  </div>
-                  <span className="inline-flex items-center gap-1 text-sm font-medium text-accent transition-transform group-hover:translate-x-0.5">
-                    {tCommon("learnMore")}
-                    <ArrowRightIcon aria-hidden="true" className="size-3.5" />
-                  </span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+      <MarketingHero
+        eyebrow={locale === "ar" ? "المنتجات" : "Products"}
+        subtitle={
+          locale === "ar"
+            ? "كل قدرة تندمج في مساحة العمل نفسها."
+            : "Every capability plugs into the same tenant workspace."
+        }
+        title={
+          locale === "ar"
+            ? "كل ما تحتاجه أكاديميتك، في منصة واحدة"
+            : "Everything your academy needs, in one platform"
+        }
+      />
+      <section className="mx-auto max-w-7xl px-6 pb-24">
+        <FeatureBento items={tiles} />
       </section>
     </MarketingShell>
   );

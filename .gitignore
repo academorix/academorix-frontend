@@ -43,6 +43,14 @@ lerna-debug.log*
 # Vercel
 .vercel
 
+# Tauri / Rust build artefacts under src-tauri/ — the compiled binary and
+# generated codegen (mobile scaffolds, capability schemas) are deterministic
+# outputs and must never be committed. Local per-crate .gitignores also
+# cover this, but the workspace-level match keeps things safe for
+# contributors who bypass the crate ignores.
+apps/dashboard/src-tauri/target
+apps/dashboard/src-tauri/gen
+
 # Lockfiles from other package managers (this repo standardizes on pnpm)
 yarn.lock
 package-lock.json

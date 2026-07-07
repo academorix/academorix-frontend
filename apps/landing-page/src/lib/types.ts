@@ -3,113 +3,140 @@
  * @module lib/types
  *
  * @description
- * Shared TypeScript shapes for the marketing app's content model. Every JSON
- * fixture under `public/data/` conforms to one of the types declared here,
- * and every `lib/api/*.ts` reader returns one of these types.
+ * Shared TypeScript shapes for every content JSON the marketing app
+ * consumes.
  *
- * ## Icon encoding
+ * ## Bilingual leaves — `LocalizedString`
  *
- * Every place a UI icon appears in a fixture, the JSON stores its **string
- * key** (`"UserGroupIcon"`, `"CreditCardIcon"`, …). Callers resolve the
- * string via `resolveIcon()` from `@/lib/icon-registry` at render time. See
- * that file for the full registry.
+ * Every user-visible string in `public/data/*.json` is stored as
+ * `{ en: string; ar: string }`. The bilingual reader in
+ * `src/lib/api/read.ts` walks the tree at request time and collapses
+ * each leaf to the visitor's active locale, so every downstream page
+ * still consumes plain `string`s via `Localized<T>`. This keeps the
+ * source-of-truth data self-describing while page code stays simple.
  *
- * ## CTA encoding
+ * ## `Localized<T>` — post-collapse view
  *
- * Marketing CTAs never bake absolute URLs into the JSON. They store an
- * intent (`"signup"` / `"trial"` / `"contact_sales"` / `"link"`) plus an
- * optional path, and the render layer resolves the intent to the current
- * SPA / marketing URL via `lib/env.ts` + `lib/routes.ts`. That way rotating
- * the tenant SPA to a new domain doesn't require re-editing every JSON file.
+ * Page code imports `Localized<HomeData>`, `Localized<ProductData>`,
+ * etc. — the type-level equivalent of "run every `LocalizedString`
+ * leaf through the reader and hand me back plain `string`s." That
+ * way the JSON schema (bilingual) and the render schema (plain) are
+ * always in lockstep and can never drift.
+ *
+ * ## Icons
+ *
+ * Every icon field stores the exact `IconKey` from
+ * `@/lib/icon-registry`. Validation happens at render time via
+ * `resolveIcon(key)`.
+ *
+ * ## CTAs
+ *
+ * Marketing CTAs never bake absolute URLs. They carry an intent
+ * (`"signup"` / `"trial"` / `"contact_sales"` / `"link"`) plus an
+ * optional path. The render layer resolves the intent against
+ * `envConfig` so rotating the SPA to a new domain is a one-file
+ * edit.
  */
 
-// ─────────────────────────────────────────────────────────────────────
-// Common primitives
-// ─────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// Bilingual primitives
+// ═══════════════════════════════════════════════════════════════════
 
-/** How a marketing CTA behaves when pressed. */
+/** A user-visible string in every supported locale. */
+export interface LocalizedString {
+  en: string;
+  ar: string;
+}
+
+/**
+ * Type-level operator that walks a shape and rewrites every
+ * `LocalizedString` leaf to plain `string`. Everything else — slugs,
+ * URLs, icon keys, enums, numbers, booleans — passes through
+ * unchanged.
+ */
+export type Localized<T> = T extends LocalizedString
+  ? string
+  : T extends readonly (infer U)[]
+    ? readonly Localized<U>[]
+    : T extends (infer U)[]
+      ? Localized<U>[]
+      : T extends object
+        ? { [K in keyof T]: Localized<T[K]> }
+        : T;
+
+// ═══════════════════════════════════════════════════════════════════
+// CTA + shared primitives
+// ═══════════════════════════════════════════════════════════════════
+
 export type CtaType = "signup" | "trial" | "contact_sales" | "link";
 
-/** A single call-to-action button descriptor. */
 export interface CtaDescriptor {
-  /** Visible label. */
-  label: string;
-  /** What this button does when pressed. */
+  label: LocalizedString;
   type: CtaType;
-  /**
-   * When `type === "link"`, the target path (either marketing-relative or
-   * absolute). Ignored for the other types.
-   */
   href?: string;
 }
 
-/** A generic icon reference (string key resolved at render time). */
 export type IconRef = string;
 
-// ─────────────────────────────────────────────────────────────────────
-// Site metadata
-// ─────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// site.json
+// ═══════════════════════════════════════════════════════════════════
 
-/** A single link entry in the site nav / footer. */
 export interface SiteNavLink {
-  label: string;
+  label: LocalizedString;
   href: string;
 }
 
-/** Static marketing site metadata (name, tagline, links). */
+export interface SiteSocial {
+  github?: string;
+  twitter?: string;
+  linkedin?: string;
+  community?: string;
+}
+
 export interface SiteData {
   name: string;
-  tagline: string;
-  description: string;
+  tagline: LocalizedString;
+  description: LocalizedString;
   contact_email: string;
   sales_email: string;
   nav_items: readonly SiteNavLink[];
-  social: {
-    github?: string;
-    twitter?: string;
-    linkedin?: string;
-    community?: string;
-  };
+  social: SiteSocial;
   docs_url: string;
 }
 
-// ─────────────────────────────────────────────────────────────────────
-// Mega menu
-// ─────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// nav.json
+// ═══════════════════════════════════════════════════════════════════
 
-/** A single link inside a mega-menu column. */
 export interface MegaLink {
-  label: string;
+  label: LocalizedString;
   href: string;
-  badge?: string;
+  badge?: LocalizedString;
 }
 
-/** A small link column inside a mega-menu panel. */
 export interface MegaMenuColumn {
-  title: string;
+  title: LocalizedString;
   links: readonly MegaLink[];
 }
 
-/** An icon + title + description tile inside a mega-menu panel. */
 export interface MegaMenuFeatureCard {
   icon: IconRef;
-  title: string;
-  description: string;
+  title: LocalizedString;
+  description: LocalizedString;
   href: string;
-  badge?: string;
+  badge?: LocalizedString;
 }
 
-/** A right-column banner (icon + eyebrow + title + description + CTA). */
 export interface MegaMenuBanner {
-  eyebrow: string;
-  title: string;
-  description: string;
-  cta_label: string;
+  eyebrow: LocalizedString;
+  title: LocalizedString;
+  description: LocalizedString;
+  cta_label: LocalizedString;
   cta_href: string;
   icon: IconRef;
 }
 
-/** Composition of a single mega-menu panel. */
 export interface MegaMenuPanel {
   layout: "columns-only" | "cards" | "cards-plus-banner";
   columns?: readonly MegaMenuColumn[];
@@ -117,47 +144,238 @@ export interface MegaMenuPanel {
   banner?: MegaMenuBanner;
 }
 
-/** A top-level nav entry. */
 export type TopNavItem =
-  | { kind: "link"; label: string; href: string }
-  | { kind: "menu"; label: string; panel: MegaMenuPanel };
+  | { kind: "link"; label: LocalizedString; href: string }
+  | { kind: "menu"; label: LocalizedString; panel: MegaMenuPanel };
 
-/** The whole top nav — used by the desktop header + mobile drawer. */
 export type NavData = readonly TopNavItem[];
 
-// ─────────────────────────────────────────────────────────────────────
-// Products (deep pages under /products/[slug])
-// ─────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// home.json
+// ═══════════════════════════════════════════════════════════════════
 
-/** A sub-feature listed on a product deep page. */
-export interface ProductFeature {
+export interface HomeHero {
+  eyebrow: LocalizedString;
+  title: LocalizedString;
+  subtitle: LocalizedString;
+  cta_primary: CtaDescriptor;
+  cta_secondary: CtaDescriptor;
+  trust_line: LocalizedString;
+}
+
+export interface HomeKpi {
+  value: number;
+  suffix?: string;
+  label: LocalizedString;
+  caption: LocalizedString;
+}
+
+export interface HomeLogo {
+  name: LocalizedString;
+  initials?: string;
+  logo_href?: string;
+}
+
+export interface HomeProductTile {
+  slug: string;
   icon: IconRef;
-  title: string;
-  description: string;
-}
-
-/** A cross-link rendered at the bottom of a product deep page. */
-export interface RelatedLink {
+  title: LocalizedString;
+  description: LocalizedString;
   href: string;
-  title: string;
-  description: string;
+  span?: "single" | "double";
 }
 
-/** An optional customer quote / use-case narrative. */
-export interface CustomerQuote {
-  quote: string;
-  author: string;
-  role: string;
+export interface HomeSportTile {
+  slug: string;
+  icon: IconRef;
+  title: LocalizedString;
+  description: LocalizedString;
+  href: string;
+  is_supported: boolean;
+  badge?: LocalizedString;
+}
+
+export interface HomeHowStep {
+  number: string;
+  title: LocalizedString;
+  description: LocalizedString;
+  icon: IconRef;
+}
+
+export interface HomePersonaCard {
+  slug: string;
+  icon: IconRef;
+  title: LocalizedString;
+  description: LocalizedString;
+  cta_label: LocalizedString;
+  cta_href: string;
+}
+
+export interface HomeTestimonial {
+  quote: LocalizedString;
+  author: LocalizedString;
+  role: LocalizedString;
+  org: LocalizedString;
   initials: string;
 }
 
-/** A single product's deep-page data. */
+export interface HomePricingPreview {
+  eyebrow: LocalizedString;
+  title: LocalizedString;
+  description: LocalizedString;
+  cta_label: LocalizedString;
+  cta_href: string;
+}
+
+export interface HomeCtaBand {
+  title: LocalizedString;
+  description: LocalizedString;
+  cta_primary: CtaDescriptor;
+  cta_secondary: CtaDescriptor;
+}
+
+export interface HomeFaqBlock {
+  eyebrow: LocalizedString;
+  title: LocalizedString;
+  description: LocalizedString;
+  items: readonly FaqItem[];
+}
+
+// ─── Showcase (Intercom-style tabbed product preview) ───────────────
+
+/** Preset accent palette used to tint a showcase panel's backdrop. */
+export type ShowcaseAccent = "indigo" | "amber" | "mint" | "purple" | "rose";
+
+/**
+ * A single labeled statistic rendered inside the mock preview card
+ * of a showcase tab. Both `value` and `label` are bilingual so
+ * numbers with unit suffixes ("42 new") localize cleanly.
+ */
+export interface HomeShowcaseStatCard {
+  label: LocalizedString;
+  value: LocalizedString;
+  trend?: LocalizedString;
+}
+
+/** An item in the mock sidebar of a showcase preview card. */
+export interface HomeShowcaseSidebarItem {
+  label: LocalizedString;
+  is_active: boolean;
+}
+
+/**
+ * One tab inside the home-page product showcase. Each tab reveals a
+ * full-width panel with a headline, description, feature bullets, a
+ * CTA, and a stylized preview card that mimics the corresponding
+ * product surface (window chrome + sidebar + stat cards).
+ */
+export interface HomeShowcaseTab {
+  /** Stable, non-translatable identifier used as the tab key. */
+  id: string;
+  /** Icon key from `ICON_REGISTRY` — rendered next to the tab label. */
+  icon: IconRef;
+  /** Short tab-button label (fits comfortably in the tab list). */
+  label: LocalizedString;
+  /** Panel headline (H3-scale copy). */
+  headline: LocalizedString;
+  /** Panel supporting paragraph. */
+  description: LocalizedString;
+  /** Bulleted highlights rendered next to the preview card. */
+  highlights: readonly LocalizedString[];
+  /** CTA label + href jumping into the deep-dive product page. */
+  cta_label: LocalizedString;
+  cta_href: string;
+  /** Which preset backdrop color the panel should paint with. */
+  accent: ShowcaseAccent;
+  /** Title bar text for the mock preview window. */
+  window_title: LocalizedString;
+  /** Faux sidebar items rendered on the left of the preview card. */
+  sidebar_items: readonly HomeShowcaseSidebarItem[];
+  /** Stat cards rendered in the main content area of the preview. */
+  stat_cards: readonly HomeShowcaseStatCard[];
+}
+
+/** Full home-page product showcase section. */
+export interface HomeShowcase {
+  eyebrow: LocalizedString;
+  title: LocalizedString;
+  description: LocalizedString;
+  tabs: readonly HomeShowcaseTab[];
+}
+
+export interface HomeData {
+  hero: HomeHero;
+  kpi: readonly HomeKpi[];
+  logos: {
+    eyebrow: LocalizedString;
+    caption: LocalizedString;
+    items: readonly HomeLogo[];
+  };
+  products_bento: {
+    eyebrow: LocalizedString;
+    title: LocalizedString;
+    description: LocalizedString;
+    items: readonly HomeProductTile[];
+  };
+  showcase: HomeShowcase;
+  sports_bento: {
+    eyebrow: LocalizedString;
+    title: LocalizedString;
+    description: LocalizedString;
+    items: readonly HomeSportTile[];
+    footnote: LocalizedString;
+  };
+  how_it_works: {
+    eyebrow: LocalizedString;
+    title: LocalizedString;
+    description: LocalizedString;
+    steps: readonly HomeHowStep[];
+  };
+  personas: {
+    eyebrow: LocalizedString;
+    title: LocalizedString;
+    description: LocalizedString;
+    items: readonly HomePersonaCard[];
+  };
+  testimonials: {
+    eyebrow: LocalizedString;
+    title: LocalizedString;
+    items: readonly HomeTestimonial[];
+  };
+  pricing_preview: HomePricingPreview;
+  cta_band: HomeCtaBand;
+  faq: HomeFaqBlock;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// products.json / sports.json / enterprise.json
+// ═══════════════════════════════════════════════════════════════════
+
+export interface ProductFeature {
+  icon: IconRef;
+  title: LocalizedString;
+  description: LocalizedString;
+}
+
+export interface CustomerQuote {
+  quote: LocalizedString;
+  author: LocalizedString;
+  role: LocalizedString;
+  initials: string;
+}
+
+export interface RelatedLink {
+  href: string;
+  title: LocalizedString;
+  description: LocalizedString;
+}
+
 export interface ProductData {
   slug: string;
-  eyebrow: string;
-  title: string;
-  description: string;
-  cta_label: string;
+  eyebrow: LocalizedString;
+  title: LocalizedString;
+  description: LocalizedString;
+  cta_label: LocalizedString;
   cta_type: CtaType;
   hero_icon: IconRef;
   features: readonly ProductFeature[];
@@ -165,160 +383,262 @@ export interface ProductData {
   related: readonly RelatedLink[];
 }
 
-// ─────────────────────────────────────────────────────────────────────
-// Sports (deep pages under /sports/[slug])
-// ─────────────────────────────────────────────────────────────────────
-
-/** A single sport's deep-page data. */
 export interface SportData {
   slug: string;
-  eyebrow: string;
-  title: string;
-  description: string;
+  eyebrow: LocalizedString;
+  title: LocalizedString;
+  description: LocalizedString;
   hero_icon: IconRef;
-  /** 5-8 sport-specific capability tiles. */
+  is_supported: boolean;
   features: readonly ProductFeature[];
-  /** Optional testimonial from a coach/director in that sport. */
   testimonial?: CustomerQuote;
   related: readonly RelatedLink[];
 }
 
-// ─────────────────────────────────────────────────────────────────────
-// Legal pages (deep pages under /legal/[slug])
-// ─────────────────────────────────────────────────────────────────────
-
-/** A single content block on a legal page — headline + paragraphs. */
-export interface LegalSection {
-  title: string;
-  paragraphs: readonly string[];
-}
-
-/** A legal page (Privacy / Terms / Security / Cookies / DPA). */
-export interface LegalData {
-  slug: string;
-  title: string;
-  description: string;
-  effective_date: string;
-  sections: readonly LegalSection[];
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// Enterprise pages (deep pages under /enterprise/[slug])
-// ─────────────────────────────────────────────────────────────────────
-
-/** An enterprise-tier landing page (Security / Onboarding / Contracts). */
 export interface EnterpriseData {
   slug: string;
-  eyebrow: string;
-  title: string;
-  description: string;
+  eyebrow: LocalizedString;
+  title: LocalizedString;
+  description: LocalizedString;
   hero_icon: IconRef;
   features: readonly ProductFeature[];
   related: readonly RelatedLink[];
 }
 
-// ─────────────────────────────────────────────────────────────────────
-// Pricing
-// ─────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// solutions.json / personas.json
+// ═══════════════════════════════════════════════════════════════════
 
-/** Backend plan key (mirrors `PlanKey`). */
+export type LongFormParagraph = LocalizedString;
+
+export interface SolutionData {
+  slug: string;
+  eyebrow: LocalizedString;
+  title: LocalizedString;
+  description: LocalizedString;
+  hero_icon: IconRef;
+  what_is: readonly LongFormParagraph[];
+  features: readonly ProductFeature[];
+  related: readonly RelatedLink[];
+}
+
+export interface PersonaData {
+  slug: string;
+  eyebrow: LocalizedString;
+  title: LocalizedString;
+  description: LocalizedString;
+  hero_icon: IconRef;
+  what_is: readonly LongFormParagraph[];
+  features: readonly ProductFeature[];
+  related: readonly RelatedLink[];
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// legal.json
+// ═══════════════════════════════════════════════════════════════════
+
+export interface LegalSection {
+  title: LocalizedString;
+  paragraphs: readonly LocalizedString[];
+}
+
+export interface LegalData {
+  slug: string;
+  title: LocalizedString;
+  description: LocalizedString;
+  effective_date: string;
+  sections: readonly LegalSection[];
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// company.json
+// ═══════════════════════════════════════════════════════════════════
+
+export interface CompanyStat {
+  value: LocalizedString;
+  label: LocalizedString;
+}
+
+export interface CompanyTeamMember {
+  name: string;
+  role: LocalizedString;
+  bio: LocalizedString;
+  initials: string;
+}
+
+export interface CompanyMilestone {
+  year: string;
+  title: LocalizedString;
+  description: LocalizedString;
+}
+
+export interface CompanyPageData {
+  slug: string;
+  eyebrow: LocalizedString;
+  title: LocalizedString;
+  description: LocalizedString;
+  hero_icon: IconRef;
+  narrative: readonly LocalizedString[];
+  stats?: readonly CompanyStat[];
+  team?: readonly CompanyTeamMember[];
+  milestones?: readonly CompanyMilestone[];
+  related: readonly RelatedLink[];
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// customers.json
+// ═══════════════════════════════════════════════════════════════════
+
+export interface CustomerMetric {
+  value: LocalizedString;
+  label: LocalizedString;
+}
+
+export interface CustomerStoryData {
+  slug: string;
+  eyebrow: LocalizedString;
+  title: LocalizedString;
+  description: LocalizedString;
+  hero_icon: IconRef;
+  vitals: {
+    industry: LocalizedString;
+    branches: LocalizedString;
+    athletes: LocalizedString;
+    sports: LocalizedString;
+    based: LocalizedString;
+  };
+  metrics: readonly CustomerMetric[];
+  narrative: readonly LocalizedString[];
+  quote: CustomerQuote;
+  related: readonly RelatedLink[];
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// blog.json / authors.json
+// ═══════════════════════════════════════════════════════════════════
+
+export interface BlogPostData {
+  slug: string;
+  title: LocalizedString;
+  description: LocalizedString;
+  date: string;
+  author: string;
+  reading_minutes: number;
+  category: LocalizedString;
+  hero_icon: IconRef;
+  body: readonly LocalizedString[];
+  related: readonly RelatedLink[];
+}
+
+export interface AuthorData {
+  slug: string;
+  name: string;
+  role: LocalizedString;
+  bio: LocalizedString;
+  initials: string;
+  social?: {
+    twitter?: string;
+    linkedin?: string;
+    github?: string;
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// testimonials.json (site-wide pool)
+// ═══════════════════════════════════════════════════════════════════
+
+export interface TestimonialData {
+  slug: string;
+  quote: LocalizedString;
+  author: LocalizedString;
+  role: LocalizedString;
+  org: LocalizedString;
+  initials: string;
+  sport?: string;
+  persona?: string;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// plans.json / pricing-highlights.json / pricing-compare.json / faq.json
+// ═══════════════════════════════════════════════════════════════════
+
 export type PlanKey = "starter" | "growth" | "pro" | "enterprise";
-
-/** Billing cadence (mirrors backend `BillingPeriod`). */
 export type BillingPeriod = "monthly" | "yearly";
 
-/** A single price for a plan (per billing period). */
 export interface PlanPrice {
   billing_period: BillingPeriod;
-  /** Decimal string or `"custom"` for Enterprise. */
   amount: string;
   currency: string;
 }
 
-/** CTA descriptor scoped to a plan tier. */
 export interface PlanCta {
-  label: string;
+  label: LocalizedString;
   type: "signup" | "trial" | "contact_sales";
 }
 
-/** A single plan tier. */
 export interface PlanTierData {
   key: PlanKey;
-  eyebrow: string;
+  eyebrow: LocalizedString;
   is_popular: boolean;
-  description: string;
-  highlights: readonly string[];
+  description: LocalizedString;
+  highlights: readonly LocalizedString[];
   prices: readonly PlanPrice[];
   cta: PlanCta;
   matrix_cta: PlanCta;
 }
 
-/** A pricing-page spotlight card ("No idle" / "Control your spending"). */
 export interface PricingHighlight {
-  title: string;
-  description: string;
-  learn_label: string;
+  title: LocalizedString;
+  description: LocalizedString;
+  learn_label: LocalizedString;
   learn_href: string;
-  /** Which built-in illustration variant to render. */
   illustration: "spending" | "growth";
 }
 
-/** A single comparison-matrix cell value. */
 export type CompareCell =
   | { type: "included" }
   | { type: "excluded" }
-  | { type: "value"; primary: string; secondary?: string }
+  | { type: "value"; primary: LocalizedString; secondary?: LocalizedString }
   | { type: "custom" }
-  | { type: "addon"; label?: string };
+  | { type: "addon"; label?: LocalizedString };
 
-/** A single row in the comparison matrix. */
 export interface CompareRow {
-  label: string;
-  info?: string;
+  label: LocalizedString;
+  info?: LocalizedString;
   values: Partial<Record<PlanKey, CompareCell>>;
 }
 
-/** A sub-category inside a section (empty label = no sub-heading). */
 export interface CompareSubcategory {
-  label: string;
+  label: LocalizedString;
   rows: readonly CompareRow[];
 }
 
-/** A top-level section inside the comparison matrix. */
 export interface CompareSection {
   icon: IconRef;
-  title: string;
-  description: string;
+  title: LocalizedString;
+  description: LocalizedString;
   subcategories: readonly CompareSubcategory[];
   regional_pricing_href?: string;
 }
 
-/** A single FAQ entry (question + answer). */
 export interface FaqItem {
-  question: string;
-  answer: string;
+  slug: string;
+  question: LocalizedString;
+  answer: LocalizedString;
 }
 
-// ─────────────────────────────────────────────────────────────────────
-// Business types (create-workspace form)
-// ─────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// business-types.json / password-rules.json
+// ═══════════════════════════════════════════════════════════════════
 
-/** A single business-type option in the create-workspace form select. */
 export interface BusinessTypeOption {
   id: string;
-  label: string;
+  label: LocalizedString;
 }
 
-// ─────────────────────────────────────────────────────────────────────
-// Password policy (mirrors backend)
-// ─────────────────────────────────────────────────────────────────────
-
-/** A single client-checkable password rule. */
 export interface PasswordRuleData {
   id: string;
-  label: string;
-  /** Regex source (compiled at render time) or `"min_length"` sentinel. */
+  label: LocalizedString;
   test: string;
-  /** Minimum length target when `test === "min_length"`. */
   min?: number;
 }

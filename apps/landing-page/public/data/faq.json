@@ -1,0 +1,100 @@
+{
+  "plan-choice": {
+    "slug": "plan-choice",
+    "question": {
+      "en": "Which Academorix plan is right for me?",
+      "ar": "أي خطة من Academorix تناسبني؟"
+    },
+    "answer": {
+      "en": "Starter is perfect for a single branch just getting off the ground. Growth adds recurring memberships, performance tracking, and payments for a multi-team academy. Pro adds SSO, custom reports, and a success manager. Enterprise is for multi-branch networks with strict security or SLA needs.",
+      "ar": "خطة Starter مثالية لفرع واحد في بداياته. خطة Growth تضيف الاشتراكات المتكررة وتتبع الأداء والمدفوعات لأكاديمية متعددة الفرق. خطة Pro تضيف SSO وتقارير مخصصة ومدير نجاح مخصص. خطة Enterprise للشبكات متعددة الفروع ذات المتطلبات الصارمة."
+    }
+  },
+  "how-long-migration": {
+    "slug": "how-long-migration",
+    "question": { "en": "How long does migration take?", "ar": "كم تستغرق عملية الهجرة؟" },
+    "answer": {
+      "en": "Most single-branch academies migrate in under two weeks. Multi-branch networks typically run a 30-day parallel period with a dedicated implementation engineer.",
+      "ar": "تنتهي معظم الأكاديميات ذات الفرع الواحد من الهجرة في أقل من أسبوعين. تشغّل الشبكات متعددة الفروع عادةً فترة موازية مدتها 30 يوماً مع مهندس تنفيذ مخصص."
+    }
+  },
+  "arabic-support": {
+    "slug": "arabic-support",
+    "question": {
+      "en": "Does Academorix support Arabic?",
+      "ar": "هل يدعم Academorix اللغة العربية؟"
+    },
+    "answer": {
+      "en": "Yes. Every screen, form, email, and PDF ships in English and Arabic with full right-to-left rendering. Users pick their preferred language.",
+      "ar": "نعم. كل شاشة ونموذج وبريد إلكتروني وملف PDF متاح بالإنجليزية والعربية مع دعم كامل للعرض من اليمين إلى اليسار. يختار المستخدمون اللغة المفضلة لهم."
+    }
+  },
+  "supported-sports": {
+    "slug": "supported-sports",
+    "question": { "en": "What sports do you support?", "ar": "ما الرياضات التي تدعمونها؟" },
+    "answer": {
+      "en": "Football, swimming, basketball, tennis, martial arts, and gymnastics ship out of the box. Volleyball, padel, and athletics are on the near-term roadmap. Any discipline can run on our attribute engine on day one.",
+      "ar": "كرة القدم والسباحة وكرة السلة والتنس والفنون القتالية والجمباز مدعومة جاهزة. الكرة الطائرة وبادل وألعاب القوى ضمن خارطة الطريق القريبة. أي تخصص يمكن أن يعمل على محرك السمات لدينا منذ اليوم الأول."
+    }
+  },
+  "family-billing": {
+    "slug": "family-billing",
+    "question": {
+      "en": "How does billing work for families with multiple athletes?",
+      "ar": "كيف تعمل الفوترة للعائلات التي لديها أكثر من رياضي؟"
+    },
+    "answer": {
+      "en": "Family accounts pay one invoice per period, with automatic sibling discounts, per-athlete line items, and a single reminder cadence.",
+      "ar": "تدفع حسابات العائلات فاتورة واحدة لكل فترة، مع خصومات الإخوة تلقائياً، وبنود لكل رياضي، وجدول تذكير موحّد."
+    }
+  },
+  "custom-invoicing": {
+    "slug": "custom-invoicing",
+    "question": { "en": "Do you offer custom invoicing?", "ar": "هل تقدمون فوترة مخصصة؟" },
+    "answer": {
+      "en": "Yes on Enterprise. NET-30 is standard, NET-60 available on request.",
+      "ar": "نعم في خطة Enterprise. شروط NET-30 هي الافتراضية، و NET-60 متاحة عند الطلب."
+    }
+  },
+  "usage-overage": {
+    "slug": "usage-overage",
+    "question": {
+      "en": "What happens if I go over my plan's limits?",
+      "ar": "ماذا يحدث إذا تجاوزت حدود خطتي؟"
+    },
+    "answer": {
+      "en": "Live usage meters warn you at 80 percent. At 100 percent, overage rolls to the pay-as-you-go rate shown in the compare matrix. Nothing gets cut off mid-session.",
+      "ar": "تنبّهك مقاييس الاستخدام المباشرة عند 80 بالمئة. عند 100 بالمئة، تُحتسب الزيادة وفق سعر الدفع حسب الاستخدام الموضح في جدول المقارنة. لا يتوقف شيء أثناء الجلسة."
+    }
+  },
+  "staff-seats": {
+    "slug": "staff-seats",
+    "question": {
+      "en": "Is there a limit to how many staff seats I can have?",
+      "ar": "هل هناك حد لعدد مقاعد الموظفين؟"
+    },
+    "answer": {
+      "en": "Seats scale with your plan tier: 3 on Starter, 15 on Growth, 100 on Pro, unlimited on Enterprise. Additional seats are 12 USD per seat per month.",
+      "ar": "تتوسع المقاعد مع مستوى خطتك: 3 مع Starter، و15 مع Growth، و100 مع Pro، وغير محدودة مع Enterprise. المقاعد الإضافية بـ 12 دولاراً لكل مقعد شهرياً."
+    }
+  },
+  "security-compliance": {
+    "slug": "security-compliance",
+    "question": {
+      "en": "What is your security and compliance posture?",
+      "ar": "ما وضعكم في الأمان والامتثال؟"
+    },
+    "answer": {
+      "en": "SOC 2 Type I is complete and Type II audit is scheduled for Q4 2026. GDPR, CCPA, and HIPAA BAA are supported. SSO, SCIM, IP allowlisting, and data residency are available on Pro and Enterprise.",
+      "ar": "SOC 2 Type I مكتمل، وتدقيق Type II مقرَّر في الربع الرابع من 2026. GDPR و CCPA و HIPAA BAA مدعومة. SSO و SCIM وقوائم IP وإقامة البيانات متاحة في Pro و Enterprise."
+    }
+  },
+  "spend-management": {
+    "slug": "spend-management",
+    "question": { "en": "How can I manage my spend?", "ar": "كيف يمكنني إدارة إنفاقي؟" },
+    "answer": {
+      "en": "Set a monthly spend limit in Settings, Billing, Limits. We email you at 80 percent and 100 percent, and pause overage billing beyond your ceiling.",
+      "ar": "حدد سقفاً شهرياً للإنفاق من Settings ثم Billing ثم Limits. نرسل بريداً عند 80 بالمئة و100 بالمئة، ونوقف فوترة الزيادة عند تجاوز السقف."
+    }
+  }
+}

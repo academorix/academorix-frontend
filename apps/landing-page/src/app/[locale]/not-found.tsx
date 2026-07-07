@@ -3,22 +3,16 @@
  * @module app/[locale]/not-found
  *
  * @description
- * Locale-scoped 404 page shown when Next can't match a route inside the
- * `[locale]` subtree. Keeps the marketing chrome (header + footer) via
- * `<MarketingShell />` so users can bounce back into the site without a
- * full page reload.
- *
- * The un-localised root-level 404 (`app/not-found.tsx`) is a bare English
- * fallback used when the middleware couldn't resolve a locale at all —
- * that only fires on very-unusual traffic and doesn't need the full
- * marketing chrome.
+ * Locale-scoped 404 shown when Next can't match a route inside the
+ * `[locale]` subtree. Keeps the marketing chrome via
+ * `<MarketingShell>` so users can bounce back into the site.
  */
 
 import { getTranslations } from "next-intl/server";
 
 import type { ReactNode } from "react";
 
-import { MarketingShell } from "@/components/marketing/marketing-shell";
+import { MarketingShell } from "@/components/shell/marketing-shell";
 import { Link } from "@/i18n/navigation";
 
 /** Renders the branded 404 page for the current locale. */
