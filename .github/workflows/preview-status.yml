@@ -29,7 +29,7 @@ jobs:
     # Trivial diff + comment step; 5 min cap is generous.
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # Need history back to the merge-base so the diff below can
           # compare against the target branch.

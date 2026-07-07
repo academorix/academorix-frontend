@@ -58,7 +58,7 @@ jobs:
       # grows.
       NODE_OPTIONS: "--max-old-space-size=4096"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Match .nvmrc + package.json engines (`node: >=22`).
       - name: Setup Node

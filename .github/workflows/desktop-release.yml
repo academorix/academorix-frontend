@@ -98,7 +98,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -231,7 +231,7 @@ jobs:
   #   runs-on: ubuntu-latest
   #   steps:
   #     - name: Checkout
-  #       uses: actions/checkout@v4
+  #       uses: actions/checkout@v7
   #     - name: Publish manifest to R2
   #       env:
   #         R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
