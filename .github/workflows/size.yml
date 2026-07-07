@@ -67,7 +67,7 @@ jobs:
           node-version-file: .nvmrc
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         # `packageManager` in package.json pins the exact pnpm version.
         with:
           run_install: false
