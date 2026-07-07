@@ -1,8 +1,42 @@
 @import "tailwindcss";
 @import "@heroui/styles";
 @import "@academorix/ui/react/styles";
+/*
+ * HeroUI Pro "Glass" theme.
+ *
+ * A glassmorphism theme with backdrop blur, semi-transparent surfaces, and
+ * soft overlay shadows. Overrides shadow-using components (cards, popovers,
+ * modals, dropdowns, fields) with `backdrop-filter: blur(...)`, keeping the
+ * default typography untouched. Activation:
+ *   <html data-theme="glass-light">   or   <html data-theme="glass-dark">
+ *
+ * The <ThemeSwitcher> component in `src/components/theme/theme-switcher.tsx`
+ * writes those data-theme values via HeroUI's `useTheme` hook. Blur intensity
+ * is tunable per-mode via the `--glass-blur` CSS variable.
+ *
+ * Glass relies on `backdrop-filter` — surfaces BEHIND blurred components need
+ * visible content (a gradient) to blur through. We paint the theme's exposed
+ * `--background-gradient` on `<body>` below so the shell always has that.
+ */
+@import "@heroui-pro/react/themes/glass";
 
 /* Scan the shared UI package so its utility classes are generated. */
 @source "../../../../packages/ui/src/**/*.{ts,tsx}";
 
 @custom-variant dark (&:is(.dark *));
+
+/*
+ * Glass theme prerequisite — every blurred surface (card, popover, modal,
+ * dropdown) needs a busy background behind it or the effect is invisible.
+ * We paint the theme's exposed `--background-gradient` variable on `<body>`
+ * so the shell always has something to blur through, then let dark mode
+ * shift the gradient stops via the `[data-theme="glass-dark"]` scope that
+ * the theme ships. `background-attachment: fixed` keeps the gradient
+ * anchored to the viewport (not the scroll container) so long tables scroll
+ * over a stable pane of colour rather than smearing it downward.
+ */
+body {
+  background: var(--background-gradient, var(--color-background, #ffffff));
+  background-attachment: fixed;
+  min-height: 100dvh;
+}

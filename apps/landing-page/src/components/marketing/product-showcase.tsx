@@ -10,35 +10,31 @@
  * reading-order-end side a stylized "product preview" card that
  * evokes the surface the tab represents.
  *
- * ## HeroUI compound API
+ * ## Auto-advance (buttery smooth)
  *
- * ```tsx
- * <Tabs variant="secondary" defaultSelectedKey="athletes">
- *   <Tabs.ListContainer>
- *     <Tabs.List aria-label="...">
- *       <Tabs.Tab id="athletes">
- *         <Icon /> <span>Label</span>
- *         <Tabs.Indicator />
- *       </Tabs.Tab>
- *       // …
- *     </Tabs.List>
- *   </Tabs.ListContainer>
- *   <Tabs.Panel id="athletes"> … </Tabs.Panel>
- *   // …
- * </Tabs>
- * ```
+ * Each tab exposes a thin progress bar under its label. The **active
+ * tab's** bar fills via a CSS `@keyframes` animation (`showcase-
+ * progress-fill`, declared in `globals.css`). That runs on the
+ * browser's compositor thread rather than React's render loop, so
+ * there are zero per-frame `setState` calls — the bar animates at a
+ * true 60fps regardless of what else the page is doing.
  *
- * The `secondary` variant renders an underline indicator that reads
- * as a design-system-level tab bar (matches the Intercom style
- * reference in `screencapture-intercom-2026-07-07-16_11_06.png`).
- * `ListContainer` auto-manages overflow scrolling on narrow
- * viewports so we don't need custom breakpoint logic.
+ * When the active bar's animation completes, `onAnimationEnd`
+ * advances to the next tab (wrapping back to the first at the end).
+ * Manually clicking a tab restarts the timer for that tab (React
+ * key change → animation restart from `0%`).
  *
- * ## Content contract
+ * Pause on hover is done by toggling `animation-play-state` — a
+ * pure CSS change, no state churn. `prefers-reduced-motion: reduce`
+ * disables the auto-advance entirely so no motion plays for users
+ * who've opted out.
  *
- * The component consumes the locale-collapsed `Localized<HomeShowcase>`
- * shape from `home.json`, sliced by the bilingual reader before it
- * hits this Client Component. See `src/lib/types.ts` for the shape.
+ * ## Manual navigation
+ *
+ * The component is a **controlled** `<Tabs>`. `selectedKey` follows
+ * `activeIndex`; `onSelectionChange` updates the index and bumps a
+ * `cycleId` counter that participates in the animated bar's React
+ * key, forcing a clean animation restart on manual switch.
  *
  * ## Accent palette
  *
@@ -53,11 +49,16 @@
 
 import { Tabs } from "@heroui/react";
 import clsx from "clsx";
+import { useCallback, useEffect, useState } from "react";
 
-import type { Localized, HomeShowcase, ShowcaseAccent } from "@/lib/types";
+import type { HomeShowcase, Localized, ShowcaseAccent } from "@/lib/types";
+import type { CSSProperties, Key } from "react";
 
 import { CtaButton } from "@/components/marketing/cta-button";
 import { resolveIcon } from "@/lib/icon-registry";
+
+/** Auto-advance duration per tab, in milliseconds. */
+const AUTO_ADVANCE_MS = 7000;
 
 /** Props for {@link ProductShowcase}. */
 export interface ProductShowcaseProps {
@@ -100,42 +101,129 @@ const ACCENT_STYLES: Record<ShowcaseAccent, { backdrop: string; stripe: string; 
 };
 
 /**
- * Intercom-style tabbed product showcase. Rendered as a Client
- * Component so the underlying HeroUI Tabs primitive can wire up
- * keyboard navigation, aria attributes, and the animated indicator.
- *
- * Section spacing and heading are the caller's responsibility so
- * the page can compose it consistently with the rest of the
- * marketing sections.
+ * Intercom-style tabbed product showcase with auto-advance progress
+ * bars. Section spacing and heading are the caller's responsibility
+ * so the page can compose the showcase consistently with the rest
+ * of the marketing sections.
  */
 export function ProductShowcase({ showcase, className }: ProductShowcaseProps) {
-  const firstTab = showcase.tabs[0];
+  const tabs = showcase.tabs;
+  const firstTab = tabs[0];
+
+  // `activeIndex` — which tab is currently showing.
+  // `cycleId` — bumped on every activation so the active-bar
+  //   `<span>` remounts and restarts its CSS animation from 0%.
+  // `isPaused` — pointer hover state; toggles the CSS
+  //   `animation-play-state` on the active bar without dirtying
+  //   the rest of the render tree.
+  // `reducedMotion` — mirrors the user's OS-level preference so we
+  //   never auto-advance for a visitor who's asked us not to.
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [cycleId, setCycleId] = useState<number>(0);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
+  const [reducedMotion, setReducedMotion] = useState<boolean>(false);
+
+  // Mirror `prefers-reduced-motion` into state so downstream JSX
+  // can conditionally opt out of the animation.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    setReducedMotion(mediaQuery.matches);
+
+    const onChange = (event: MediaQueryListEvent) => {
+      setReducedMotion(event.matches);
+    };
+
+    mediaQuery.addEventListener("change", onChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", onChange);
+    };
+  }, []);
+
+  /**
+   * User picked a tab manually. Update the index and bump `cycleId`
+   * so the animated fill on the new active tab remounts, restarting
+   * from 0% instead of picking up where a previous animation was.
+   */
+  const handleSelectionChange = useCallback(
+    (key: Key) => {
+      const nextIndex = tabs.findIndex((t) => t.id === String(key));
+
+      if (nextIndex < 0 || nextIndex === activeIndex) return;
+      setActiveIndex(nextIndex);
+      setCycleId((n) => n + 1);
+    },
+    [tabs, activeIndex],
+  );
+
+  /**
+   * Fired by the browser when the active bar's CSS animation
+   * completes. Advances to the next tab (wrapping) and bumps
+   * `cycleId` so the next tab's fresh bar restarts from 0%.
+   */
+  const handleAdvance = useCallback(() => {
+    setActiveIndex((current) => (current + 1) % tabs.length);
+    setCycleId((n) => n + 1);
+  }, [tabs.length]);
+
+  const handlePointerEnter = useCallback(() => {
+    setIsPaused(true);
+  }, []);
+
+  const handlePointerLeave = useCallback(() => {
+    setIsPaused(false);
+  }, []);
 
   if (!firstTab) return null;
 
+  const activeTab = tabs[activeIndex] ?? firstTab;
+
   return (
-    <div className={clsx("w-full", className)}>
-      <Tabs className="w-full" defaultSelectedKey={firstTab.id} variant="secondary">
+    <div
+      className={clsx("w-full", className)}
+      onBlur={handlePointerLeave}
+      onFocus={handlePointerEnter}
+      onMouseEnter={handlePointerEnter}
+      onMouseLeave={handlePointerLeave}
+    >
+      <Tabs
+        className="w-full"
+        selectedKey={activeTab.id}
+        variant="secondary"
+        onSelectionChange={handleSelectionChange}
+      >
         <Tabs.ListContainer className="border-b border-default/40">
           <Tabs.List
             aria-label="Product showcase tabs"
-            className="mx-auto flex w-fit gap-2 px-2 *:gap-2 *:px-4 *:py-3 *:text-sm *:font-medium"
+            className="mx-auto flex w-fit gap-2 px-2 *:relative *:gap-2 *:px-4 *:py-3 *:text-sm *:font-medium"
           >
-            {showcase.tabs.map((tab) => {
+            {tabs.map((tab, index) => {
               const Icon = resolveIcon(tab.icon);
+              const isActive = index === activeIndex;
+              const isPast = index < activeIndex;
 
               return (
                 <Tabs.Tab key={tab.id} id={tab.id}>
                   <Icon aria-hidden className="size-4" />
                   <span>{tab.label}</span>
-                  <Tabs.Indicator />
+                  <TabProgressBar
+                    cycleId={cycleId}
+                    isActive={isActive}
+                    isPast={isPast}
+                    isPaused={isPaused}
+                    isReducedMotion={reducedMotion}
+                    onComplete={handleAdvance}
+                  />
                 </Tabs.Tab>
               );
             })}
           </Tabs.List>
         </Tabs.ListContainer>
 
-        {showcase.tabs.map((tab) => (
+        {tabs.map((tab) => (
           <Tabs.Panel key={tab.id} className="pt-12" id={tab.id}>
             <ShowcasePanelBody tab={tab} />
           </Tabs.Panel>
@@ -143,6 +231,90 @@ export function ProductShowcase({ showcase, className }: ProductShowcaseProps) {
       </Tabs>
     </div>
   );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Progress bar under each tab
+// ═══════════════════════════════════════════════════════════════════
+
+interface TabProgressBarProps {
+  /** Whether this bar belongs to the currently active tab. */
+  isActive: boolean;
+  /** Whether this tab has already been visited during the current cycle. */
+  isPast: boolean;
+  /** Whether the pointer is over the showcase (freezes animation). */
+  isPaused: boolean;
+  /** Whether the user has opted into reduced motion. */
+  isReducedMotion: boolean;
+  /** Cycle counter — used as part of the animated span's React key. */
+  cycleId: number;
+  /** Called when the active bar's CSS animation completes. */
+  onComplete: () => void;
+}
+
+/**
+ * The thin horizontal fill under a single tab. Three visual states:
+ *
+ *   - **active**: CSS `@keyframes` animation fills the bar 0 → 100%
+ *     over `AUTO_ADVANCE_MS`. React re-keys the element on every
+ *     new cycle so the animation always starts fresh from 0%.
+ *   - **past**: static 100% fill (looks "already watched").
+ *   - **future**: static 0% fill (looks "not visited yet").
+ *
+ * The active variant is inside its own memoized-key `<span>` so the
+ * DOM node is recycled by React on manual tab clicks — the
+ * animation restarts naturally without a JS-driven `.reset()`.
+ */
+function TabProgressBar({
+  isActive,
+  isPast,
+  isPaused,
+  isReducedMotion,
+  cycleId,
+  onComplete,
+}: TabProgressBarProps) {
+  // Base track that sits under the label on every tab.
+  const track = (
+    <span
+      aria-hidden
+      className="pointer-events-none absolute inset-x-2 -bottom-px h-[3px] overflow-hidden rounded-full bg-default/40"
+    >
+      {isActive && !isReducedMotion ? (
+        // Re-keyed by cycleId so React remounts the span on each
+        // activation, restarting the CSS animation from 0%.
+        <span
+          key={cycleId}
+          className="absolute inset-y-0 start-0 rounded-full bg-accent"
+          style={ACTIVE_FILL_STYLE(isPaused)}
+          onAnimationEnd={onComplete}
+        />
+      ) : (
+        // Non-animated fill: full-width for "past" tabs, zero-width
+        // for "future" tabs. Reduced-motion visitors get the same
+        // treatment (active tab shows a static 100% bar).
+        <span
+          className="absolute inset-y-0 start-0 rounded-full bg-accent"
+          style={{ width: isPast || (isActive && isReducedMotion) ? "100%" : "0%" }}
+        />
+      )}
+    </span>
+  );
+
+  return track;
+}
+
+/**
+ * The style object applied to the active-tab animated fill. Kept as
+ * a factory (rather than a static const) so React sees a fresh
+ * reference when `isPaused` flips, which forces the browser to
+ * pick up the `animation-play-state` change.
+ */
+function ACTIVE_FILL_STYLE(isPaused: boolean): CSSProperties {
+  return {
+    width: "0%",
+    animation: `showcase-progress-fill ${AUTO_ADVANCE_MS}ms linear forwards`,
+    animationPlayState: isPaused ? "paused" : "running",
+  };
 }
 
 // ═══════════════════════════════════════════════════════════════════

@@ -182,3 +182,27 @@ body::before {
     28px 28px;
   opacity: 0.35;
 }
+
+/* ══════════════════════════════════════════════════════════════════
+ * Product showcase auto-advance progress bar animation.
+ *
+ * The `ProductShowcase` component fills its active-tab progress bar
+ * by running this keyframe animation on the compositor thread — no
+ * React state updates per frame, so it stays smooth at 60fps under
+ * concurrent renders. The active bar's `onAnimationEnd` handler
+ * advances the tab index, restarting the animation on the next tab.
+ *
+ * Pause is driven by `animation-play-state: paused` on hover, so
+ * mouse-in / mouse-out changes don't allocate anything.
+ *
+ * @see src/components/marketing/product-showcase.tsx
+ * ══════════════════════════════════════════════════════════════════ */
+
+@keyframes showcase-progress-fill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
