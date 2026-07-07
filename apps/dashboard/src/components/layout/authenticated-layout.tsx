@@ -20,7 +20,22 @@
  *   active section title, and a user dropdown wired to `useGetIdentity` /
  *   `useLogout`.
  *
+ * ## Menu / shortcut wiring
+ *
+ * The shell hosts the three cross-cutting menu concerns documented in
+ * `MENUS_PLAN.md`:
+ *
+ *  1. `CommandPaletteProvider` — owns `⌘K` state.
+ *  2. `KeyboardShortcutSheetProvider` — owns the `?` sheet + subscribes
+ *     to `help.keyboard_shortcuts` from the menu action bus.
+ *  3. `MenuActionsBridge` — subscribes to `view.*` actions and bridges
+ *     them to `useCommandPalette` / `useSidebar` / `useTheme`.
+ *
+ * The bridge is mounted **inside** `AppLayout` so it can consume the
+ * `Sidebar.Provider` context that AppLayout sets up internally.
+ *
  * @see https://docs.heroui.pro/react/components/app-layout
+ * @see MENUS_PLAN.md §5 — top-bar layout
  */
 
 import { AcademicCapIcon } from "@academorix/ui/icons/outline";
@@ -43,10 +58,12 @@ import {
   Sidebar,
 } from "@academorix/ui/react";
 import { useGetIdentity, useLogout } from "@refinedev/core";
+import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 import type { AppResource } from "@/lib/module";
 import type { SidebarGroupKey } from "@/lib/module";
+import type { MenuCommand } from "@/menus/command.types";
 import type { Identity } from "@/types";
 import type { IconType } from "@academorix/ui/icons";
 import type { Key, ReactNode } from "react";
@@ -54,11 +71,15 @@ import type { Key, ReactNode } from "react";
 import { SubscriptionBanner } from "@/components/billing";
 import { CommandPalette, CommandPaletteProvider, useCommandPalette } from "@/components/command";
 import { LanguageSwitcher } from "@/components/i18n/language-switcher";
+import { KeyboardShortcutSheetProvider } from "@/components/keyboard/keyboard-shortcut-sheet";
 import { BranchSwitcher, OrganizationSwitcher, SeasonSwitcher } from "@/components/scope";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
+import { menuCommands } from "@/config/menu.config";
 import { siteConfig } from "@/config/site.config";
 import { appResources } from "@/lib/module";
 import { WorkspaceSwitcher } from "@/lib/tenancy";
+import { MenuActionsBridge } from "@/menus/menu-actions-bridge";
+import { filterVisibleCommands } from "@/menus/registry-helpers";
 import { ImpersonationBanner } from "@/modules/auth/components/impersonation-banner";
 import { NotificationBell } from "@/notifications/components/notification-bell";
 
@@ -235,34 +256,71 @@ function GlobalSearchTrigger(): ReactNode {
 }
 
 /**
- * Help popover trigger. Phase 1e renders the button and a static dropdown
- * with placeholder links; a richer help surface (docs, changelog, contact
- * support) lands later.
+ * Help popover trigger. Renders the `help` category from the unified menu
+ * registry so a new help entry (Docs, Restart tour, Report an issue…)
+ * lands here automatically. Every item resolves through the same
+ * `execute` handler exposed by {@link "@/config/menu.config"} — the menu
+ * config is the single source of truth.
  */
 function HelpMenu(): ReactNode {
+  const helpItems = useMemo<readonly MenuCommand[]>(
+    () =>
+      filterVisibleCommands(menuCommands, "app", { source: "app-menu" }).filter(
+        (command) => command.category === "help",
+      ),
+    [],
+  );
+
+  const handleAction = (key: Key): void => {
+    const command = helpItems.find((entry) => entry.id === String(key));
+
+    if (!command) {
+      return;
+    }
+
+    // Fire-and-forget — every help command runs its own side effect and
+    // does not surface errors up. Errors that need user feedback belong
+    // in the command's own error handling (e.g. a toast).
+    void Promise.resolve(command.execute({ source: "app-menu" }));
+  };
+
   return (
     <Dropdown>
       <Button isIconOnly aria-label="Help and resources" variant="ghost">
         <QuestionMarkCircleIcon aria-hidden="true" className="size-5" />
       </Button>
-      <Dropdown.Popover className="min-w-[220px]" placement="bottom end">
-        <Dropdown.Menu>
-          <Dropdown.Item id="docs" textValue="Documentation">
-            <Label>Documentation</Label>
-          </Dropdown.Item>
-          <Dropdown.Item id="shortcuts" textValue="Keyboard shortcuts">
-            <Label>Keyboard shortcuts</Label>
-          </Dropdown.Item>
-          <Dropdown.Item id="changelog" textValue="Changelog">
-            <Label>Changelog</Label>
-          </Dropdown.Item>
-          <Dropdown.Item id="support" textValue="Contact support">
-            <Label>Contact support</Label>
-          </Dropdown.Item>
+      <Dropdown.Popover className="min-w-[240px]" placement="bottom end">
+        <Dropdown.Menu onAction={handleAction}>
+          {helpItems.map((command) => (
+            <Dropdown.Item key={command.id} id={command.id} textValue={command.labelKey}>
+              <Label>{helpItemLabel(command.id)}</Label>
+            </Dropdown.Item>
+          ))}
         </Dropdown.Menu>
       </Dropdown.Popover>
     </Dropdown>
   );
+}
+
+/**
+ * Fallback English label for a help item, keyed by command id. Renderers
+ * would normally resolve `command.labelKey` through Refine's translator;
+ * we hard-code the English defaults so the menu is usable during the
+ * i18n rollout without a message catalog entry.
+ */
+function helpItemLabel(id: string): string {
+  switch (id) {
+    case "help.docs":
+      return "Documentation";
+    case "help.keyboard_shortcuts":
+      return "Keyboard shortcuts";
+    case "help.restart_tour":
+      return "Restart tour";
+    case "help.report_issue":
+      return "Report an issue";
+    default:
+      return id;
+  }
 }
 
 /** Navbar user menu, driven by the current identity. */
@@ -376,13 +434,20 @@ function AppSidebar({ entries }: { entries: NavEntry[] }): ReactNode {
 /**
  * Wraps authenticated pages in the HeroUI Pro app shell (sidebar + navbar).
  *
+ * The outer providers own cross-cutting menu concerns:
+ *  - `CommandPaletteProvider` — the ⌘K palette + its state.
+ *  - `KeyboardShortcutSheetProvider` — the `?` sheet, which reads from
+ *    the menu registry itself so a new command shows up automatically.
+ *
  * @param props - The routed page to render inside the shell.
  */
 export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps): ReactNode {
   return (
     <CommandPaletteProvider>
-      <AuthenticatedLayoutInner>{children}</AuthenticatedLayoutInner>
-      <CommandPalette />
+      <KeyboardShortcutSheetProvider>
+        <AuthenticatedLayoutInner>{children}</AuthenticatedLayoutInner>
+        <CommandPalette />
+      </KeyboardShortcutSheetProvider>
     </CommandPaletteProvider>
   );
 }
@@ -430,6 +495,8 @@ function AuthenticatedLayoutInner({ children }: AuthenticatedLayoutProps): React
       sidebarCollapsible="icon"
       sidebarVariant="inset"
     >
+      {/* Mounted inside AppLayout so it can consume Sidebar.Provider. */}
+      <MenuActionsBridge />
       <ImpersonationBanner />
       <SubscriptionBanner />
       {children}

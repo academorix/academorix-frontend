@@ -67,3 +67,19 @@ export {
 export { TourProvider, restartTour, useTour } from "@/onboarding/tour/tour-provider";
 export { emitOnboardingEvent } from "@/onboarding/tour/tour-analytics";
 export type { OnboardingEventProps } from "@/onboarding/tour/tour-analytics";
+
+// -- PWA welcome toast --
+// Rendered by `<TourProvider>`; also exported so a future refactor that
+// mounts the toast next to `<PwaUpdateToast>` (rather than inside the
+// tour provider) can pull it in without a follow-up change.
+export { PwaWelcomeToast } from "@/onboarding/pwa-welcome-toast";
+
+// -- Cloud state sync --
+// One-shot backend sync of the onboarding state. See `cloud-state.ts`
+// for the TODO(backend-endpoint) contract.
+export {
+  applyCloudOnboardingState,
+  collectLocalOnboardingState,
+  syncOnboardingStateOnce,
+  useCloudOnboardingSync,
+} from "@/onboarding/cloud-state";

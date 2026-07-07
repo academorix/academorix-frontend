@@ -66,7 +66,9 @@ import type { ReactNode } from "react";
 import { EVENTS } from "@/config/analytics.config";
 import { features } from "@/config/features.config";
 import { ONBOARDING_SCHEMA_VERSION, TOUR_STEPS } from "@/config/onboarding.config";
+import { useCloudOnboardingSync } from "@/onboarding/cloud-state";
 import { DEFAULT_TOUR_STATE } from "@/onboarding/onboarding.types";
+import { PwaWelcomeToast } from "@/onboarding/pwa-welcome-toast";
 import { readPwaState, readTourState, writeTourState } from "@/onboarding/storage";
 import { emitOnboardingEvent } from "@/onboarding/tour/tour-analytics";
 import { TourPopover } from "@/onboarding/tour/tour-popover";
@@ -467,8 +469,29 @@ export function TourProvider({ children }: TourProviderProps): ReactNode {
       {/* Render the popover shell so it lives once, positioned by the
           active step's anchor selector. Renders null when inactive. */}
       <TourPopover />
+      {/* Side-effect siblings — render nothing but each hooks up a
+          one-shot behaviour when its precondition fires:
+          - `<PwaWelcomeToast />` fires the "Academorix installed"
+            toast on the first PWA launch (plan §6).
+          - `<CloudStateSync />` opportunistically syncs onboarding
+            state to the backend so a device swap picks up progress. */}
+      <PwaWelcomeToast />
+      <CloudStateSync />
     </TourContext.Provider>
   );
+}
+
+/**
+ * Renderless side-effect wrapper around `useCloudOnboardingSync` so the
+ * hook can be mounted inside the TourProvider without adding a hook
+ * call to `TourProvider` itself (keeps the provider's dependency graph
+ * unchanged, which matters for the mount-order guarantees the tests
+ * assert on).
+ */
+function CloudStateSync(): ReactNode {
+  useCloudOnboardingSync();
+
+  return null;
 }
 
 /**
