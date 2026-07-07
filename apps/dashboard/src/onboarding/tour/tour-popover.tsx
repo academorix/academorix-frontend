@@ -5,15 +5,33 @@
  * @description
  * The HeroUI Popover shell that renders the active tour step. Reads
  * the active step from {@link useTour} and positions itself against
- * the step's anchor selector. Falls back to a centered "spotlight"
- * dialog when the anchor is missing (preface steps, or a step whose
- * anchor hasn't rendered yet).
+ * the step's anchor. Falls back to a centered "spotlight" dialog when
+ * the anchor is missing (preface steps, or a step whose anchor hasn't
+ * rendered yet — a route transition can unmount it between steps).
  *
  * ## Anchoring
  *
- * HeroUI's Popover only positions against an element wrapped by
- * `<Popover.Trigger>` — it does NOT support "give me any DOM node
- * and I'll anchor there". Two workarounds we could pick:
+ * The popover resolves anchors through TWO attribute channels, in this
+ * order:
+ *
+ *  1. **`[data-tour-anchor="<step-id>"]`** — the preferred hook. Any
+ *     module can tag its sentinel element (sidebar item, `⌘K` chip,
+ *     notification bell, settings gear) with a stable, human-readable
+ *     value that matches the step id in
+ *     {@link "@/config/onboarding.config".TOUR_STEPS}. This attribute
+ *     is namespaced to the tour so a test-id refactor cannot break it.
+ *  2. **Fallback selector** on the step definition (`step.anchorSelector`)
+ *     — usually a `[data-testid="…"]` selector. Retained so surfaces that
+ *     already ship a test-id do not need to add a second attribute.
+ *
+ * If NEITHER resolves at measurement time (route transition mid-tour,
+ * anchor not yet mounted, target module disabled by permissions), the
+ * popover renders as a centered "spotlight" dialog. This keeps the tour
+ * flowing without visually appearing broken.
+ *
+ * HeroUI's Popover positions against an element wrapped by
+ * `<Popover.Trigger>`; it does NOT support "give me any DOM node and
+ * I'll anchor there". Two workarounds we could pick:
  *
  * 1. Wrap the real anchor with `<Popover.Trigger>`. Doesn't work —
  *    the anchors are owned by other modules (sidebar, navbar) and
@@ -71,26 +89,85 @@ interface AnchorRect {
 type Placement = "top" | "bottom" | "left" | "right" | "center";
 
 /**
- * Resolves an anchor element from a selector, or `null` if the
- * selector is empty / the element isn't in the DOM yet.
+ * Resolves an anchor element for a tour step. Two channels in priority order:
+ *
+ *  1. `[data-tour-anchor="<step.id>"]` — the preferred, tour-scoped attribute
+ *     module authors add to sentinel DOM nodes.
+ *  2. `step.anchorSelector` — the fallback selector shipped in
+ *     {@link "@/config/onboarding.config".TOUR_STEPS}. Usually a
+ *     `[data-testid="…"]`.
+ *
+ * Returns `null` when nothing matches so the caller can render a centered
+ * spotlight dialog.
  */
-function resolveAnchor(selector: string | undefined): HTMLElement | null {
-  if (!selector || typeof document === "undefined") {
+function resolveAnchorForStep(step: OnboardingTourStep): HTMLElement | null {
+  if (typeof document === "undefined") {
     return null;
   }
 
-  return document.querySelector<HTMLElement>(selector);
+  // Preferred: the tour-scoped attribute. Reads exactly the step's stable id,
+  // so a module tags its DOM once and the tour picks it up.
+  const scoped = document.querySelector<HTMLElement>(
+    `[data-tour-anchor="${cssEscape(step.id)}"]`,
+  );
+
+  if (scoped) {
+    return scoped;
+  }
+
+  // Fallback: the config's selector. Guarded against invalid selectors so a
+  // typo in the config never throws at render time.
+  if (step.anchorSelector) {
+    try {
+      const fallback = document.querySelector<HTMLElement>(step.anchorSelector);
+
+      if (fallback) {
+        return fallback;
+      }
+    } catch (err) {
+      if (import.meta.env.DEV) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `[onboarding/tour-popover] invalid anchorSelector for step '${step.id}': ${step.anchorSelector}`,
+          err,
+        );
+      }
+    }
+  }
+
+  return null;
 }
 
-/** Reads the bounding rect of the anchor, coping with SSR + missing elements. */
-function measureAnchor(selector: string | undefined): AnchorRect | null {
-  const el = resolveAnchor(selector);
+/**
+ * Minimal `CSS.escape` polyfill. We only escape the characters that could
+ * plausibly appear in a tour step id (dot for the namespace, colon in
+ * pseudo-classes) so a well-formed id like `tour.workspace` becomes a valid
+ * attribute-selector value. Full spec compliance is not needed — the input
+ * comes from our own config, not from user input.
+ */
+function cssEscape(value: string): string {
+  if (typeof CSS !== "undefined" && typeof CSS.escape === "function") {
+    return CSS.escape(value);
+  }
+
+  return value.replace(/([\\"'.:#[\]()+~>*])/g, "\\$1");
+}
+
+/** Reads the bounding rect of the resolved anchor, coping with SSR + missing elements. */
+function measureAnchorForStep(step: OnboardingTourStep): AnchorRect | null {
+  const el = resolveAnchorForStep(step);
 
   if (!el) {
     return null;
   }
 
   const rect = el.getBoundingClientRect();
+
+  // If the anchor is hidden (display:none, offscreen), treat as missing so
+  // we render the centered fallback instead of anchoring off-screen.
+  if (rect.width === 0 && rect.height === 0) {
+    return null;
+  }
 
   return {
     top: rect.top,
@@ -225,13 +302,13 @@ export function TourPopover(): ReactNode {
       return;
     }
 
-    const measure = (): void => setAnchor(measureAnchor(step.anchorSelector));
+    const measure = (): void => setAnchor(measureAnchorForStep(step));
 
     measure();
 
     // Poll for the first ~2s in case the anchor mounts later (route
-    // navigation delay). After that the resize handler + observer
-    // take over.
+    // navigation delay, lazy module hydration). After that the resize
+    // handler + observer take over.
     const pollHandle = window.setInterval(measure, 200);
     const stopPolling = window.setTimeout(() => window.clearInterval(pollHandle), 2000);
 
@@ -255,6 +332,10 @@ export function TourPopover(): ReactNode {
   const isLastStep = currentStep === totalSteps - 1;
   const placement = inferPlacement(step, anchor);
   const position = computePopoverPosition(anchor, placement, 380);
+  // `data-anchor-mode` is exposed so tests + e2e can assert whether the
+  // popover is anchored to a real element or fell back to the centered
+  // "spotlight" mode. Cheaper than re-measuring in the assertion.
+  const anchorMode = anchor === null ? "centered" : "anchored";
 
   // PWA-specific tweak: last step swaps "Finish" for "Enable
   // notifications" so we hand off to the push permission flow.
@@ -267,6 +348,7 @@ export function TourPopover(): ReactNode {
       className="fixed inset-0 z-[1000]"
       // Not a click-to-dismiss backdrop — clicking the overlay is
       // intentional dismissal, so we mount the button separately.
+      data-anchor-mode={anchorMode}
       data-testid="onboarding-tour-overlay"
     >
       {/* Dim overlay — 40% opacity per plan §4.1. Pointer events

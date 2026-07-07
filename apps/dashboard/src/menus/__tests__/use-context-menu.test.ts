@@ -14,10 +14,10 @@
  */
 
 import { act, renderHook } from "@testing-library/react";
-import { createRef } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import type { MenuCommand } from "@/menus/command.types";
+import type { RefObject } from "react";
 
 import { clampToViewport, useContextMenu } from "@/menus/use-context-menu";
 
@@ -35,23 +35,32 @@ function makeCommand(overrides: Partial<MenuCommand> = {}): MenuCommand {
 /**
  * Attaches a real `<div>` to `document.body` and returns a ref pointing at it
  * plus a cleanup callback. jsdom does not automatically clean up between
- * cases; `renderHook`'s unmount + the returned `cleanup()` keeps the DOM
- * pristine.
+ * cases; the returned `cleanup()` (paired with `renderHook`'s unmount) keeps
+ * the DOM pristine.
+ *
+ * React 19 hardened `createRef()` so `current` is non-configurable, meaning
+ * `Object.defineProperty(ref, "current", …)` throws `Cannot redefine
+ * property`. The hook only needs an object with a `current` field pointing
+ * at the anchor DOM node, so we construct a plain object matching the
+ * `RefObject<HTMLElement>` shape — no React machinery involved.
  */
 function mountAnchor(): {
-  ref: React.RefObject<HTMLDivElement>;
+  ref: RefObject<HTMLDivElement>;
   cleanup: () => void;
 } {
   const element = document.createElement("div");
 
   document.body.appendChild(element);
 
-  const ref = createRef<HTMLDivElement>();
-
-  Object.defineProperty(ref, "current", { value: element, configurable: true });
+  // A plain object satisfies the structural `RefObject<T>` contract. The
+  // `readonly current` is a TypeScript-only guardrail; runtime access is
+  // just a property read, so the hook sees `ref.current === element` and
+  // wires the listener onto the anchor without any React ref-forwarding
+  // gymnastics.
+  const ref: RefObject<HTMLDivElement> = { current: element };
 
   return {
-    ref: ref as React.RefObject<HTMLDivElement>,
+    ref,
     cleanup: (): void => {
       document.body.removeChild(element);
     },
