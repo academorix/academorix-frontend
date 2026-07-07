@@ -71,8 +71,19 @@ function shouldRetry(failureCount: number, error: unknown): boolean {
  * Constructs a `QueryClient` with Academorix-flavored defaults. Apps
  * may pass `defaults` to override individual fields; passed values
  * shallow-merge over the built-ins.
+ *
+ * The merge is structural: consumer-supplied `queries` / `mutations`
+ * fields are merged over the built-ins (so passing
+ * `{ queries: { staleTime: 60_000 } }` keeps `gcTime`, `retry`, and
+ * the other built-ins intact). Any other top-level `DefaultOptions`
+ * field (`hydrate`, `dehydrate`) passes through unchanged.
  */
 export function createQueryClient(options: CreateQueryClientOptions = {}): QueryClient {
+  // Peel `queries` + `mutations` off so they don't clobber the merged
+  // versions below — everything else in `defaults` (hydrate/dehydrate,
+  // future v6 fields) passes through as-is.
+  const { queries: _queries, mutations: _mutations, ...restDefaults } = options.defaults ?? {};
+
   return new QueryClient({
     defaultOptions: {
       queries: {
@@ -86,7 +97,7 @@ export function createQueryClient(options: CreateQueryClientOptions = {}): Query
         retry: false,
         ...options.defaults?.mutations,
       },
-      ...options.defaults,
+      ...restDefaults,
     },
   });
 }
