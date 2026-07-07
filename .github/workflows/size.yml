@@ -1,0 +1,94 @@
+# -----------------------------------------------------------------------------
+# @file        .github/workflows/size.yml
+# @description Bundle-size guardrail. Runs `size-limit` against a fresh
+#              production build of the dashboard SPA on every pull request
+#              and reports the diff versus the PR's base branch as a
+#              GitHub comment (created once, updated in-place on every
+#              subsequent push).
+#
+# Budget source-of-truth: `.size-limit.json` at the workspace root. Each
+# entry there declares a chunk (globbed path) and a limit (KB, gzipped).
+# If any chunk exceeds its limit, the action fails the check — which is
+# how the "prevent silent bloat" guarantee is enforced. To relax a limit
+# on purpose, update `.size-limit.json` in the same PR that grows the
+# bundle; the reviewer will see both the size delta and the intentional
+# limit change.
+#
+# Why a dedicated workflow rather than a step in ci.yml:
+#   * The size-limit-action needs `pull-requests: write` to post the
+#     comment. Keeping that permission out of ci.yml avoids widening the
+#     scope of the main pipeline.
+#   * Size checks are only meaningful on PRs (there is no base branch to
+#     diff against on push-to-main), so `on: pull_request` is the exact
+#     trigger.
+# -----------------------------------------------------------------------------
+name: Size
+
+on:
+  pull_request:
+    branches: [main]
+
+# The action needs to comment on the PR; other operations are read-only.
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: size-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  size:
+    name: size-limit
+    runs-on: ubuntu-latest
+    # Cold build + measure; 20 min is comfortable headroom without hiding
+    # a stuck build behind the default 6-hour Actions cap.
+    timeout-minutes: 20
+    env:
+      # HeroUI Pro auth — the action runs `pnpm install` internally to
+      # rebuild the base branch for its diff, which in turn triggers the
+      # `@heroui-pro/react` postinstall. Same tokens as ci.yml.
+      HEROUI_AUTH_TOKEN: ${{ secrets.HEROUI_AUTH_TOKEN }}
+      HEROUI_PERSONAL_TOKEN: ${{ secrets.HEROUI_PERSONAL_TOKEN }}
+      # Turborepo remote-cache — empty values disable it silently.
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+      # Same 4 GiB heap as ci.yml — Vite (rolldown) build fits here easily,
+      # but headroom prevents a cold-cache OOM regression when the graph
+      # grows.
+      NODE_OPTIONS: "--max-old-space-size=4096"
+    steps:
+      - uses: actions/checkout@v4
+
+      # Match .nvmrc + package.json engines (`node: >=22`).
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        # `packageManager` in package.json pins the exact pnpm version.
+        with:
+          run_install: false
+
+      # andresz1/size-limit-action drives the full compare cycle:
+      #   1. `pnpm install` on the PR head + build via `build_script`
+      #   2. `pnpm size` — the root package.json's `size` script wraps
+      #      `size-limit`, which reads `.size-limit.json`
+      #   3. Checkout of the PR base, install, build, and measure again
+      #      to compute the delta
+      #   4. Post/update a single PR comment with the delta table
+      #
+      # Pinned to v1.8.0 (the current stable release). Dependabot's
+      # `github-actions` ecosystem bumps this as new releases ship.
+      - name: Check bundle size
+        uses: andresz1/size-limit-action@v1.8.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Auto-detect would probably work (pnpm-lock.yaml is present),
+          # but explicit is safer against future action heuristics changing.
+          package_manager: pnpm
+          # Root `pnpm build` fans out via turbo to both apps + every
+          # dependent package — same command as ci.yml's build job.
+          build_script: build

@@ -1,0 +1,85 @@
+# -----------------------------------------------------------------------------
+# @file        .github/labeler.yml
+# @description Configuration for `actions/labeler@v5`. Auto-applies labels
+#              to pull requests based on which paths the PR touches. The
+#              matching workflow at `.github/workflows/labeler.yml` reads
+#              this file and calls the GitHub API to sync labels.
+#
+# v5 syntax notes (breaking change from v4):
+#   * Top-level keys are label names.
+#   * Each label maps to a list of rules. A PR receives the label if ANY
+#     rule matches.
+#   * Rules use the `changed-files` matcher (v5 dropped implicit path
+#     matching entirely).
+#   * `any-glob-to-any-file` fires the label if AT LEAST ONE changed file
+#       matches AT LEAST ONE listed glob.
+#   * `all-globs-to-all-files` would fire only if EVERY changed file
+#       matches. We do not use it here — a PR that touches one dashboard
+#       file and one package should get both `area/dashboard` and
+#       `area/packages`.
+#   * Globs are anchored to the repo root and use standard glob syntax
+#     (`**` matches any depth, `*` matches anything but a slash).
+#
+# Docs: https://github.com/actions/labeler
+# -----------------------------------------------------------------------------
+
+# Dashboard SPA — anything under apps/dashboard/.
+area/dashboard:
+  - changed-files:
+      - any-glob-to-any-file:
+          - apps/dashboard/**
+
+# Marketing / landing-page Next.js app.
+area/landing-page:
+  - changed-files:
+      - any-glob-to-any-file:
+          - apps/landing-page/**
+
+# Shared packages — any workspace package.
+area/packages:
+  - changed-files:
+      - any-glob-to-any-file:
+          - packages/**
+
+# CI/CD, Dependabot, workflows, and repo-level automation.
+area/ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/**
+
+# Docs — Markdown + MDX anywhere in the tree.
+area/docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.md"
+          - "**/*.mdx"
+
+# Dependency-manifest changes — lockfile, workspace manifest, and every
+# per-package package.json. Overlaps with `area/packages` on package
+# updates, which is intentional — a Refine bump both bumps deps AND
+# touches a package.
+area/deps:
+  - changed-files:
+      - any-glob-to-any-file:
+          - pnpm-lock.yaml
+          - pnpm-workspace.yaml
+          - "**/package.json"
+
+# Tests — unit tests colocated with source, and the top-level Playwright
+# suite. The dedicated globs stay narrow so a docs-only PR that mentions
+# `.test.` in a filename does not accidentally get flagged.
+area/tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.test.ts"
+          - "**/*.test.tsx"
+          - e2e/**
+
+# Config surfaces inside apps + packages (env plumbing, i18n routing,
+# feature-flag defaults, etc.). Explicit label so a config-only PR
+# reviewer can filter for the review-heavy changes.
+area/config:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "apps/*/src/config/**"
+          - "packages/*/src/config/**"

@@ -1,0 +1,79 @@
+# -----------------------------------------------------------------------------
+# @file        .github/workflows/preview.yml
+# @description Vercel preview smoke test. Runs after Vercel's native GitHub
+#              app has finished building + deploying a preview environment
+#              for a pull request and confirms the preview URL actually
+#              serves HTTP 200.
+#
+# How this hooks into Vercel:
+#   * Vercel's GitHub App is the source-of-truth for preview builds.
+#     When it finishes deploying a preview, Vercel creates a GitHub
+#     Deployment (via the Deployments API) with `environment` set to a
+#     "Preview – <project>" string and `environment_url` set to the
+#     preview URL. It then reports success on that deployment.
+#   * GitHub emits a `deployment_status` webhook whenever the state of a
+#     Deployment changes. That is the trigger this workflow listens on.
+#   * The `if:` guard scopes the job to successful preview deployments
+#     only — production deploys emit the same event and we do not want
+#     to smoke-test those from here.
+#
+# Why this workflow exists at all (Vercel already deploys automatically):
+#   * Confirms the preview URL is actually reachable from the public
+#     internet — Vercel's own "success" status only means the build
+#     succeeded, not that the runtime is healthy.
+#   * Gives reviewers a green status check they can require in branch
+#     protection, without needing to eyeball the Vercel dashboard.
+#   * Total cost is ~5 seconds of curl on the cheapest runner tier.
+#
+# Note: this workflow is a no-op if Vercel is not wired up. `deployment_status`
+# never fires without a corresponding Deployment, so the workflow simply
+# never runs — no cost, no false alarms.
+# -----------------------------------------------------------------------------
+name: Preview smoke test
+
+on:
+  deployment_status:
+
+# Read-only — the smoke test does not need to write anything back.
+permissions:
+  contents: read
+  deployments: read
+
+jobs:
+  smoke:
+    name: Curl preview URL
+    runs-on: ubuntu-latest
+    # Only smoke-test successful preview deployments. `environment` is a
+    # free-form string set by whichever tool created the deployment; the
+    # Vercel GitHub App uses "Preview – <project>" (Unicode en-dash),
+    # so a case-insensitive `startsWith` on "preview" is the safest
+    # match. Production deploys use "Production" and are skipped.
+    if: >-
+      github.event.deployment_status.state == 'success' &&
+      startsWith(github.event.deployment.environment, 'Preview')
+    # curl-only job — 5 min cap is plenty of headroom.
+    timeout-minutes: 5
+    steps:
+      - name: Fail fast if the preview URL is missing
+        # `environment_url` should always be present on a Vercel success,
+        # but a misconfigured deployment (or a deploy from a fork) could
+        # send it as an empty string. Bail loudly rather than curl `""`.
+        if: github.event.deployment_status.environment_url == ''
+        run: |
+          echo "::error::deployment_status.environment_url is empty; aborting smoke test."
+          exit 1
+
+      - name: Curl the preview URL
+        env:
+          PREVIEW_URL: ${{ github.event.deployment_status.environment_url }}
+        # `-f` makes curl exit non-zero on any 4xx/5xx response, `-sSL`
+        # keeps output quiet but still shows errors and follows the
+        # 3xx chain (Vercel serves an auth redirect on private previews;
+        # `--fail` will surface that as a 401/403 which the reviewer can
+        # investigate). Max time keeps a hung Vercel edge from stalling
+        # the runner for the full 5-minute cap.
+        run: |
+          echo "Smoke-testing preview at: $PREVIEW_URL"
+          curl -fsSL --max-time 30 --retry 3 --retry-delay 5 \
+            -o /dev/null -w "HTTP %{http_code} in %{time_total}s\n" \
+            "$PREVIEW_URL"

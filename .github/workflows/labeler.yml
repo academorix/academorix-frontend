@@ -1,0 +1,50 @@
+# -----------------------------------------------------------------------------
+# @file        .github/workflows/labeler.yml
+# @description Auto-labels pull requests based on the paths they touch.
+#              The list of `<label> → <glob>` mappings lives in
+#              `.github/labeler.yml`; this workflow calls the
+#              `actions/labeler` action which reads that file and syncs
+#              the PR's labels via the GitHub API.
+#
+# Why `pull_request_target` and not `pull_request`:
+#   * `pull_request` runs in the fork's context and (correctly) has
+#     read-only access to the base repo's issues + labels. It cannot
+#     apply labels on a PR from a fork.
+#   * `pull_request_target` runs in the base-repo context and can grant
+#     `pull-requests: write` to workflows. This is safe here because we
+#     never check out or execute the PR's code — we only read metadata
+#     (the diff file list is fetched from the API, not from a checkout).
+#
+# v5 note: `actions/labeler@v5` was a breaking release. It requires the
+# structured `changed-files` matcher rather than the v4 top-level path
+# lists. `.github/labeler.yml` uses the v5 shape.
+# -----------------------------------------------------------------------------
+name: Labeler
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  # `write` on pull-requests so the action can add/remove labels.
+  pull-requests: write
+
+jobs:
+  label:
+    name: Apply path-based labels
+    runs-on: ubuntu-latest
+    # Metadata-only job — 5 min cap is plenty of headroom for the API
+    # round-trips.
+    timeout-minutes: 5
+    steps:
+      - uses: actions/labeler@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          # `sync-labels: true` removes a previously-applied label if the
+          # PR no longer touches paths matching that label's rule. Keeps
+          # labels honest as the PR evolves through review.
+          sync-labels: true
+          # Explicit path to the config for readers — it is the default,
+          # but naming it here makes the link discoverable.
+          configuration-path: .github/labeler.yml
