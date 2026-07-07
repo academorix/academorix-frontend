@@ -82,6 +82,13 @@ catalog:
   workbox-window: ^7.4.1
   "@vite-pwa/assets-generator": ^1.0.2
 
+  # --- Real-user monitoring ---
+  # `web-vitals` is Google's official library for Core Web Vitals (CLS, LCP,
+  # INP, FID, TTFB, FCP). The dashboard registers observers at idle time so
+  # metrics don't compete with hydration for main-thread budget; the
+  # telemetry helper fans them out to the analytics adapter registry.
+  web-vitals: ^5.3.0
+
   # --- Marketing app (Next.js 16 + React 19 + Tailwind v4) ---
   # Public marketing surface lives in `apps/landing-page` — a Next.js App
   # Router app so the tenant SPA (`apps/dashboard`) stays CSR-only. Next.js
