@@ -21,6 +21,34 @@ export type WidgetCategory =
   "onboarding" | "numbers" | "charts" | "calendar" | "people" | "money" | "compliance";
 
 /**
+ * The grid-layout constraints for a single widget. Widths (`w`, `minW`,
+ * `maxW`) are expressed in **12-column grid cells** (the plan's default —
+ * see `DASHBOARD_UX_PLAN.md` §4.2); heights (`h`, `minH`, `maxH`) are
+ * expressed in **60px row units** so 1 row is one KPI card tall and 2 rows
+ * is roughly a chart card. Kept as a plain interface (not a class) so it
+ * survives JSON round-trips into `localStorage` and back.
+ *
+ * `react-grid-layout`'s own `Layout` type is a superset of these fields
+ * (adding `i`, `x`, `y`, plus drag/resize flags); we deliberately narrow to
+ * only the size hints here — position + drag flags are computed at render
+ * time from the persisted per-user layout state.
+ */
+export interface WidgetDefaultLayout {
+  /** Width in 12-col grid cells (1–12). */
+  w: number;
+  /** Height in 60px row units (1–4 for the overview page). */
+  h: number;
+  /** Minimum width in grid cells. Prevents users from shrinking KPI cards. */
+  minW: number;
+  /** Minimum height in row units. Prevents chart widgets from collapsing. */
+  minH: number;
+  /** Maximum width in grid cells. Caps a widget at the container width. */
+  maxW: number;
+  /** Maximum height in row units. Caps chart widgets so they don't dominate. */
+  maxH: number;
+}
+
+/**
  * Runtime context passed to every widget renderer. The shell resolves scope
  * and identity once per session and hands them to each renderer, so a widget
  * never has to `useGetIdentity` or `useScope` on its own.
@@ -77,6 +105,14 @@ export interface WidgetDefinition {
   defaultWidth: 1 | 2 | 3;
   /** Default height in grid cells (1–2). */
   defaultHeight: 1 | 2;
+  /**
+   * Grid-layout defaults consumed by the drag-and-drop widget grid
+   * (`components/widget-grid.tsx`). Supplies the width, height, and
+   * clamp bounds `react-grid-layout` needs — position (`x`, `y`) is
+   * computed at render time from the saved per-user layout, not this
+   * definition. See {@link WidgetDefaultLayout} for the unit conventions.
+   */
+  defaultLayout: WidgetDefaultLayout;
   /**
    * Whether this widget is available in the picker today. `false` means the
    * definition is reserved (the plan lists it) but the renderer has not

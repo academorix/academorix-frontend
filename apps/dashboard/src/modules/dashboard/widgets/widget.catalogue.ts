@@ -12,6 +12,30 @@
  * See `DASHBOARD_UX_PLAN.md` §4.5 for the full catalogue and its rationale.
  * Grouping in the picker is driven by `category`; ordering within a category
  * is the array order below.
+ *
+ * ## Grid-layout defaults
+ *
+ * The overview page renders every widget inside a `react-grid-layout`
+ * `Responsive` grid at 12 columns wide (breakpoint `lg` — see
+ * `components/widget-grid.tsx`). Each `defaultLayout` entry below states
+ * width / height in **12-col grid cells** and **60px row units**:
+ *
+ *   - KPI cards: `{ w: 3, h: 1 }` — four fit across at `lg`, two at `md`,
+ *     one at `sm`. They can shrink to 2×1 and grow to 6×2 for owners who
+ *     want a single "hero" number card.
+ *   - List widgets (recent registrations, upcoming events): `{ w: 6, h: 2 }`
+ *     — a half-width panel that lists 4–5 entities without scrolling.
+ *   - Chart widgets: `{ w: 6, h: 2 }` — same footprint as lists so charts and
+ *     lists interleave on the grid without users having to think about it.
+ *   - Onboarding checklist: `{ w: 12, h: 2 }` — full-width so it sits above
+ *     the KPI strip when active.
+ *   - Agenda widgets: `{ w: 9, h: 3 }` (today) and `{ w: 12, h: 4 }` (week)
+ *     — read a lot of vertical space to render an actual calendar.
+ *
+ * The `minW`/`minH`/`maxW`/`maxH` bounds are the constraints `react-grid-
+ * layout` enforces at drag / resize time. They exist to stop users from
+ * shrinking a chart to 1×1 (unreadable) or expanding a KPI card past its
+ * container (breaks the visual rhythm).
  */
 
 import type { WidgetDefinition } from "@/modules/dashboard/widgets/widget.types";
@@ -30,10 +54,17 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "dashboard",
     defaultWidth: 3,
     defaultHeight: 2,
+    // Full-width banner: 12/12 cols by 2 row units (~120px). Height stays
+    // fixed because the checklist has a known step count. Users cannot
+    // shrink below 6 cols — narrower and the copy wraps illegibly.
+    defaultLayout: { w: 12, h: 2, minW: 6, minH: 2, maxW: 12, maxH: 3 },
     isAvailable: true,
   },
 
   // -- Numbers (KPIs) -------------------------------------------------------
+  // KPIs share a common footprint (3×1) so the KPI strip lines up naturally
+  // at every breakpoint. Users can shrink to 2×1 to fit six KPIs across, or
+  // grow to 6×2 to emphasise one number.
   {
     key: "kpi-athletes",
     title: "Athletes",
@@ -42,6 +73,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "athletes",
     defaultWidth: 1,
     defaultHeight: 1,
+    defaultLayout: { w: 3, h: 1, minW: 2, minH: 1, maxW: 6, maxH: 2 },
     isAvailable: true,
   },
   {
@@ -52,6 +84,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "coaches",
     defaultWidth: 1,
     defaultHeight: 1,
+    defaultLayout: { w: 3, h: 1, minW: 2, minH: 1, maxW: 6, maxH: 2 },
     isAvailable: true,
   },
   {
@@ -62,6 +95,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "teams",
     defaultWidth: 1,
     defaultHeight: 1,
+    defaultLayout: { w: 3, h: 1, minW: 2, minH: 1, maxW: 6, maxH: 2 },
     isAvailable: true,
   },
   {
@@ -72,6 +106,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "events",
     defaultWidth: 1,
     defaultHeight: 1,
+    defaultLayout: { w: 3, h: 1, minW: 2, minH: 1, maxW: 6, maxH: 2 },
     isAvailable: true,
   },
   {
@@ -82,6 +117,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "memberships",
     defaultWidth: 1,
     defaultHeight: 1,
+    defaultLayout: { w: 3, h: 1, minW: 2, minH: 1, maxW: 6, maxH: 2 },
     isAvailable: true,
   },
   {
@@ -92,6 +128,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "leads",
     defaultWidth: 1,
     defaultHeight: 1,
+    defaultLayout: { w: 3, h: 1, minW: 2, minH: 1, maxW: 6, maxH: 2 },
     isAvailable: true,
   },
   {
@@ -102,6 +139,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "branches",
     defaultWidth: 1,
     defaultHeight: 1,
+    defaultLayout: { w: 3, h: 1, minW: 2, minH: 1, maxW: 6, maxH: 2 },
     isAvailable: true,
   },
 
@@ -115,6 +153,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     requiredPermission: "invoices.viewAny",
     defaultWidth: 1,
     defaultHeight: 1,
+    defaultLayout: { w: 3, h: 1, minW: 2, minH: 1, maxW: 6, maxH: 2 },
     isAvailable: true,
   },
   {
@@ -126,6 +165,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     requiredPermission: "invoices.viewAny",
     defaultWidth: 1,
     defaultHeight: 1,
+    defaultLayout: { w: 3, h: 1, minW: 2, minH: 1, maxW: 6, maxH: 2 },
     isAvailable: true,
   },
   {
@@ -137,6 +177,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     requiredPermission: "invoices.viewAny",
     defaultWidth: 1,
     defaultHeight: 1,
+    defaultLayout: { w: 3, h: 1, minW: 2, minH: 1, maxW: 6, maxH: 2 },
     isAvailable: false,
   },
   {
@@ -148,10 +189,15 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     requiredPermission: "invoices.viewAny",
     defaultWidth: 2,
     defaultHeight: 1,
+    // Forecast is a chart, so it wants width for the axis but only one row
+    // for the line itself. Users can grow it to 12×3 to see it "full screen".
+    defaultLayout: { w: 6, h: 2, minW: 4, minH: 2, maxW: 12, maxH: 3 },
     isAvailable: false,
   },
 
   // -- Charts ---------------------------------------------------------------
+  // Every chart shares a 6×2 default so a two-chart row fills the grid and a
+  // three-chart row wraps cleanly.
   {
     key: "chart-revenue-90d",
     title: "Revenue trend",
@@ -160,6 +206,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "invoices",
     defaultWidth: 2,
     defaultHeight: 1,
+    defaultLayout: { w: 6, h: 2, minW: 4, minH: 2, maxW: 12, maxH: 4 },
     isAvailable: false,
   },
   {
@@ -170,6 +217,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "registrations",
     defaultWidth: 2,
     defaultHeight: 1,
+    defaultLayout: { w: 6, h: 2, minW: 4, minH: 2, maxW: 12, maxH: 4 },
     isAvailable: false,
   },
   {
@@ -180,6 +228,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "attendance",
     defaultWidth: 2,
     defaultHeight: 1,
+    defaultLayout: { w: 6, h: 2, minW: 4, minH: 2, maxW: 12, maxH: 4 },
     isAvailable: false,
   },
   {
@@ -190,6 +239,9 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "leads",
     defaultWidth: 1,
     defaultHeight: 1,
+    // Pie chart: half-width narrower footprint since it's a donut, not a
+    // time-series that benefits from long horizontal space.
+    defaultLayout: { w: 4, h: 2, minW: 3, minH: 2, maxW: 8, maxH: 4 },
     isAvailable: false,
   },
   {
@@ -200,6 +252,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "coaches",
     defaultWidth: 1,
     defaultHeight: 1,
+    defaultLayout: { w: 4, h: 2, minW: 3, minH: 2, maxW: 8, maxH: 4 },
     isAvailable: false,
   },
   {
@@ -210,6 +263,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "memberships",
     defaultWidth: 2,
     defaultHeight: 1,
+    defaultLayout: { w: 6, h: 2, minW: 4, minH: 2, maxW: 12, maxH: 4 },
     isAvailable: false,
   },
 
@@ -222,6 +276,8 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "events",
     defaultWidth: 2,
     defaultHeight: 2,
+    // A day-view agenda: tall so the hour rail stays legible.
+    defaultLayout: { w: 6, h: 3, minW: 4, minH: 2, maxW: 12, maxH: 6 },
     isAvailable: false,
   },
   {
@@ -232,6 +288,9 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "events",
     defaultWidth: 3,
     defaultHeight: 2,
+    // A week view: full width so all seven columns fit; four row units for
+    // the day/hour grid at readable density.
+    defaultLayout: { w: 12, h: 4, minW: 6, minH: 3, maxW: 12, maxH: 6 },
     isAvailable: false,
   },
   {
@@ -242,6 +301,9 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "events",
     defaultWidth: 2,
     defaultHeight: 1,
+    // List widget footprint — matches recent registrations for visual
+    // symmetry when both are on the grid.
+    defaultLayout: { w: 6, h: 2, minW: 3, minH: 2, maxW: 12, maxH: 4 },
     isAvailable: true,
   },
 
@@ -254,6 +316,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "registrations",
     defaultWidth: 2,
     defaultHeight: 1,
+    defaultLayout: { w: 6, h: 2, minW: 3, minH: 2, maxW: 12, maxH: 4 },
     isAvailable: true,
   },
   {
@@ -264,6 +327,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "athletes",
     defaultWidth: 2,
     defaultHeight: 1,
+    defaultLayout: { w: 6, h: 2, minW: 3, minH: 2, maxW: 12, maxH: 4 },
     isAvailable: false,
   },
   {
@@ -274,6 +338,8 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "athletes",
     defaultWidth: 1,
     defaultHeight: 1,
+    // Compact list: short and half-narrow so it sits next to a KPI strip.
+    defaultLayout: { w: 4, h: 2, minW: 3, minH: 2, maxW: 8, maxH: 4 },
     isAvailable: false,
   },
   {
@@ -284,6 +350,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "attendance",
     defaultWidth: 2,
     defaultHeight: 1,
+    defaultLayout: { w: 6, h: 2, minW: 3, minH: 2, maxW: 12, maxH: 4 },
     isAvailable: false,
   },
 
@@ -296,6 +363,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "credentials",
     defaultWidth: 2,
     defaultHeight: 1,
+    defaultLayout: { w: 6, h: 2, minW: 3, minH: 2, maxW: 12, maxH: 4 },
     isAvailable: false,
   },
   {
@@ -307,6 +375,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     requiredPermission: "safeguarding.viewAny",
     defaultWidth: 1,
     defaultHeight: 1,
+    defaultLayout: { w: 4, h: 2, minW: 3, minH: 2, maxW: 8, maxH: 4 },
     isAvailable: false,
   },
   {
@@ -317,6 +386,7 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "documents",
     defaultWidth: 2,
     defaultHeight: 1,
+    defaultLayout: { w: 6, h: 2, minW: 3, minH: 2, maxW: 12, maxH: 4 },
     isAvailable: false,
   },
 ] as const;
