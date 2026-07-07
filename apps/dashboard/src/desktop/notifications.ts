@@ -48,9 +48,11 @@ export interface NativeNotificationOptions {
 }
 
 /**
- * Fire an OS notification. Phase 1/2 uses the browser Notification API
- * regardless of surface; Phase 3 will route through the Tauri plugin on
- * desktop for native fidelity.
+ * Fire an OS notification. Prefers the native Tauri notification
+ * plugin when running as desktop (macOS Notification Center groups,
+ * Windows Action Center categories, Linux DBus) and falls back to
+ * the browser `Notification` API on the web build and inside the
+ * WKWebView / WebView2 when the plugin isn't loaded.
  *
  * Returns `true` if the notification was scheduled, `false` otherwise
  * (missing permission, unsupported browser, exception).
@@ -59,19 +61,45 @@ export async function showNativeNotification(
   title: string,
   options: NativeNotificationOptions = {},
 ): Promise<boolean> {
-  // Phase 3 upgrade path — currently `#[cfg(feature = "phase3")]` on the
-  // Rust side, so we route through the browser API today. The plugin
-  // import is placed behind an `if (false)` sentinel (kept as a TODO so
-  // grepping for "phase3" finds this file) to avoid dead-import churn.
   if (isDesktop) {
-    // TODO(phase3): swap to `@tauri-apps/plugin-notification`.
-    // const { sendNotification, isPermissionGranted, requestPermission } =
-    //   await import("@tauri-apps/plugin-notification");
-    // let granted = await isPermissionGranted();
-    // if (!granted) granted = (await requestPermission()) === "granted";
-    // if (!granted) return false;
-    // await sendNotification({ title, body: options.body, icon: options.icon });
-    // return true;
+    // Route through the Tauri plugin when the phase3 cargo feature is
+    // on. Storing the module id in a variable stops Vite from trying
+    // to resolve the plugin at bundle time — the runtime import falls
+    // through to the browser API path on failure.
+    try {
+      const notificationPluginId = "@tauri-apps/plugin-notification";
+      const mod = await import(/* @vite-ignore */ notificationPluginId);
+      let granted = await mod.isPermissionGranted();
+
+      if (!granted) {
+        const result = await mod.requestPermission();
+
+        granted = result === "granted";
+      }
+
+      if (!granted) {
+        return false;
+      }
+
+      await mod.sendNotification({
+        title,
+        body: options.body,
+        icon: options.icon,
+      });
+
+      return true;
+    } catch (err) {
+      // Plugin unavailable (phase-gated off). Fall through to the
+      // browser Notification API which the WKWebView / WebView2 host
+      // still exposes.
+      if (import.meta.env.DEV) {
+        // eslint-disable-next-line no-console
+        console.info(
+          "[desktop/notifications] tauri notification plugin unavailable — falling back to browser API",
+          err,
+        );
+      }
+    }
   }
 
   if (typeof window === "undefined" || typeof window.Notification !== "function") {
