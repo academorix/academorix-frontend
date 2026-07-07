@@ -15,6 +15,7 @@ import { setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+import { BlogCover } from "@/components/marketing/blog-cover";
 import { CtaBand } from "@/components/marketing/cta-band";
 import { RelatedLinks } from "@/components/marketing/related-links";
 import { MarketingShell } from "@/components/shell/marketing-shell";
@@ -74,7 +75,14 @@ export default async function BlogPostPage({ params }: PageProps): Promise<React
 
   return (
     <MarketingShell>
-      <article className="mx-auto max-w-3xl px-6 py-24">
+      <article className="mx-auto max-w-3xl px-6 py-16">
+        <div className="relative mb-10 aspect-[5/3] overflow-hidden rounded-2xl border border-default/40 bg-surface/60 shadow-sm">
+          <BlogCover category={post.category} className="h-full w-full" slug={post.slug} />
+          <span className="absolute end-4 top-4 inline-flex items-center rounded-full border border-default/60 bg-surface/85 px-3 py-1 text-[11px] font-medium tracking-wider text-muted uppercase backdrop-blur-sm">
+            {post.category}
+          </span>
+        </div>
+
         <header className="mb-10 flex flex-col gap-4">
           <div className="flex items-center gap-3">
             <span className="inline-flex size-10 items-center justify-center rounded-xl bg-default/60 text-foreground">

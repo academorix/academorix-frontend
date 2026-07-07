@@ -25,11 +25,11 @@ variables, and separate domains.
 
 3. **Set environment variables** in Vercel (Settings → Environment Variables):
 
-   | Variable                    | Production                   | Preview                              | Local                   |
-   | --------------------------- | ---------------------------- | ------------------------------------ | ----------------------- |
-   | `NEXT_PUBLIC_APP_URL`       | `https://app.academorix.com` | `https://app-preview.academorix.com` | `http://localhost:3000` |
-   | `NEXT_PUBLIC_MARKETING_URL` | `https://academorix.com`     | Vercel-provided                      | `http://localhost:3001` |
-   | `NEXT_PUBLIC_BACKEND_URL`   | `https://api.academorix.com` | `https://api-preview.academorix.com` | `http://localhost:8000` |
+   | Variable                    | Production                                | Preview                                           | Local                   |
+   | --------------------------- | ----------------------------------------- | ------------------------------------------------- | ----------------------- |
+   | `NEXT_PUBLIC_APP_URL`       | `https://dashboard-academorix.vercel.app` | `https://dashboard-academorix-preview.vercel.app` | `http://localhost:3000` |
+   | `NEXT_PUBLIC_MARKETING_URL` | `https://academorix.com`                  | Vercel-provided                                   | `http://localhost:3001` |
+   | `NEXT_PUBLIC_BACKEND_URL`   | `https://api.academorix.com`              | `https://api-preview.academorix.com`              | `http://localhost:8000` |
 
 4. **Attach the domain** (Settings → Domains):
 

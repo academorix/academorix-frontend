@@ -7,14 +7,27 @@
  * styled anchor. Every marketing surface routes its CTAs through
  * this component so the intent-to-URL mapping stays centralized:
  *
- *   - `signup` → `${envConfig.appUrl}/signup`
- *   - `trial`  → `${envConfig.appUrl}/signup?trial=true`
+ *   - `signup` → `${envConfig.appUrl}/register`
+ *   - `signin` → `${envConfig.appUrl}/login`
+ *   - `trial`  → `${envConfig.appUrl}/register?trial=true`
  *   - `contact_sales` → `/contact-sales` on the marketing site
  *   - `link` → the descriptor's `href` (marketing-relative or absolute)
  *
- * External links (dashboard, docs) render as `<a target="_blank">`.
- * Marketing-relative links render as Next `<Link>` so client-side
- * transitions stay snappy.
+ * ## Auth hand-off
+ *
+ * The dashboard owns the entire auth surface (register, login,
+ * email verification, 2FA setup, workspace creation, onboarding).
+ * Marketing CTAs hand off with a hard navigation so the dashboard's
+ * own session bootstrap runs — no client-side session leakage
+ * between the marketing origin and the app origin.
+ *
+ * The dashboard route paths live in
+ * `apps/dashboard/src/lib/module/routes.ts` as `appRoutes.login`
+ * and `appRoutes.register`. Keep these two in sync.
+ *
+ * External links (dashboard, docs) render as plain `<a>` anchors so
+ * the browser performs a full page load. Marketing-relative links
+ * render as Next `<Link>` so client-side transitions stay snappy.
  */
 
 import clsx from "clsx";
@@ -45,9 +58,11 @@ export interface CtaButtonProps {
 function resolveHref(cta: CtaButtonCta): string {
   switch (cta.type) {
     case "signup":
-      return `${envConfig.appUrl}/signup`;
+      return `${envConfig.appUrl}/register`;
+    case "signin":
+      return `${envConfig.appUrl}/login`;
     case "trial":
-      return `${envConfig.appUrl}/signup?trial=true`;
+      return `${envConfig.appUrl}/register?trial=true`;
     case "contact_sales":
       return "/contact-sales";
     case "link":
@@ -60,9 +75,20 @@ function isExternal(href: string): boolean {
   return /^https?:\/\//i.test(href);
 }
 
+/**
+ * Auth handoffs (signup, signin, trial) navigate to the dashboard
+ * origin. They render as plain `<a>` anchors targeting the same tab,
+ * NEVER `target="_blank"`, so the user experiences a single fluid
+ * navigation into the product's own auth surface.
+ */
+function isAuthHandoff(type: CtaType): boolean {
+  return type === "signup" || type === "signin" || type === "trial";
+}
+
 /** Renders a marketing CTA anchor. */
 export function CtaButton({ cta, variant = "primary", className }: CtaButtonProps) {
   const href = resolveHref(cta);
+  const authHandoff = isAuthHandoff(cta.type);
   const external = isExternal(href);
 
   const base =
@@ -76,6 +102,18 @@ export function CtaButton({ cta, variant = "primary", className }: CtaButtonProp
 
   const classes = clsx(base, variants[variant], className);
 
+  // Auth handoffs bounce to the dashboard origin in the same tab so
+  // the product owns the full sign-in / register / verify flow.
+  if (authHandoff) {
+    return (
+      <a className={classes} href={href}>
+        {cta.label}
+      </a>
+    );
+  }
+
+  // Non-auth external links (docs, status page) open in a new tab so
+  // the marketing tour is preserved.
   if (external) {
     return (
       <a className={classes} href={href} rel="noreferrer" target="_blank">
