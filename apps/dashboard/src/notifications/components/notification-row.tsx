@@ -50,6 +50,7 @@ import type { IconType } from "@academorix/ui/icons";
 import type { Key, ReactNode } from "react";
 
 import { EVENTS } from "@/config/analytics.config";
+import { useNotificationWrites } from "@/notifications/hooks/use-notification-writes";
 import { useSnoozeStore } from "@/notifications/hooks/use-snooze-store";
 import { useNotifications } from "@/notifications/provider/notifications-bundle";
 import { emitNotificationTelemetry } from "@/notifications/telemetry";
@@ -172,6 +173,7 @@ export function NotificationRow({
   now = new Date(),
 }: NotificationRowProps): ReactNode {
   const { markRead, remove } = useNotifications();
+  const { markRead: markReadOnServer, remove: removeOnServer } = useNotificationWrites();
   const { snooze } = useSnoozeStore();
   const navigate = useNavigate();
 
@@ -188,10 +190,14 @@ export function NotificationRow({
   // Called when the row body is clicked. Marks read + navigates.
   const handlePress = (): void => {
     if (!isRead) {
-      // TODO(backend-gap): POST /notifications/{id}/read — endpoint
-      //   does NOT exist yet. See Communication module. Optimistic
-      //   local flip only for now.
+      // Optimistic local flip so the badge count updates immediately.
       markRead(notification.id);
+      // Fire the persistence call; the hook swallows 404/501 silently
+      // so the endpoint gap doesn't surface as an error toast.
+      // TODO(backend-endpoint): POST /api/v1/notifications/{id}/read —
+      //   see `use-notification-writes.ts` for the graceful-failure
+      //   contract. Once shipped, no callsite change required.
+      void markReadOnServer(notification.id);
     }
 
     emitNotificationTelemetry(EVENTS.notificationClicked, {
@@ -215,14 +221,17 @@ export function NotificationRow({
   };
 
   const handleMarkRead = (): void => {
-    // TODO(backend-gap): POST /notifications/{id}/read — endpoint
-    //   does NOT exist yet.
+    // Optimistic local flip first — the write hook silently swallows
+    // backend gaps (404/501) so the user never sees a red banner for
+    // "read receipt not persisted".
     markRead(notification.id);
+    // TODO(backend-endpoint): POST /api/v1/notifications/{id}/read —
+    //   see `use-notification-writes.ts`.
+    void markReadOnServer(notification.id);
   };
 
   const handleDelete = (): void => {
-    // TODO(backend-gap): DELETE /notifications/{id} — endpoint does
-    //   NOT exist yet. Optimistic local removal for now.
+    // Optimistic local removal first.
     remove(notification.id);
     emitNotificationTelemetry(EVENTS.notificationDismissed, {
       channel: notification.channel,
@@ -230,6 +239,9 @@ export function NotificationRow({
       priority,
       surface: "drawer",
     });
+    // TODO(backend-endpoint): DELETE /api/v1/notifications/{id} —
+    //   see `use-notification-writes.ts`.
+    void removeOnServer(notification.id);
   };
 
   const handleSnoozeAction = (key: Key): void => {

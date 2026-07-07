@@ -36,6 +36,7 @@ import type { NotificationChannel } from "@academorix/notifications";
 import type { ReactNode } from "react";
 
 import { NotificationList } from "@/notifications/components/notification-list";
+import { useNotificationWrites } from "@/notifications/hooks/use-notification-writes";
 import { useSnoozeStore } from "@/notifications/hooks/use-snooze-store";
 import {
   deriveNotificationPriority,
@@ -102,6 +103,7 @@ function matchesCategory(type: string, category: NotificationDrawerCategoryFilte
  */
 export default function NotificationInboxPage(): ReactNode {
   const { notifications, unreadCount, markAllRead } = useNotifications();
+  const { markAllRead: markAllReadOnServer } = useNotificationWrites();
   const { isSnoozed } = useSnoozeStore();
   const navigate = useNavigate();
 
@@ -174,9 +176,13 @@ export default function NotificationInboxPage(): ReactNode {
             size="sm"
             variant="secondary"
             onPress={() => {
-              // TODO(backend-gap): POST /notifications/read-all — see
-              //   the module docblock for the endpoint spec.
+              // Optimistic local flip so the badge clears; the write
+              // hook silently swallows the 404/501 backend gap until
+              // the endpoint ships.
+              // TODO(backend-endpoint): POST /api/v1/notifications/read-all
+              //   — see `use-notification-writes.ts`.
               markAllRead();
+              void markAllReadOnServer();
             }}
           >
             <CheckIcon aria-hidden="true" className="size-4" />

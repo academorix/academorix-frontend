@@ -24,7 +24,7 @@
  * comes online.
  */
 
-import { CheckIcon, Cog6ToothIcon } from "@academorix/ui/icons/outline";
+import { CheckIcon, Cog6ToothIcon, TrashIcon } from "@academorix/ui/icons/outline";
 import { Button, Chip, Drawer, Label } from "@academorix/ui/react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
@@ -40,6 +40,7 @@ import type { ReactNode } from "react";
 import { EVENTS } from "@/config/analytics.config";
 import { NotificationList } from "@/notifications/components/notification-list";
 import { PushPermissionBanner } from "@/notifications/components/push-permission-banner";
+import { useNotificationWrites } from "@/notifications/hooks/use-notification-writes";
 import { useSnoozeStore } from "@/notifications/hooks/use-snooze-store";
 import {
   deriveNotificationPriority,
@@ -125,7 +126,8 @@ function matchesCategory(type: string, category: NotificationDrawerCategoryFilte
  * the operators actually reach for.
  */
 export function NotificationDrawer({ isOpen, onOpenChange }: NotificationDrawerProps): ReactNode {
-  const { notifications, unreadCount, markAllRead } = useNotifications();
+  const { notifications, unreadCount, markAllRead, remove } = useNotifications();
+  const { markAllRead: markAllReadOnServer, remove: removeOnServer } = useNotificationWrites();
   const { isSnoozed } = useSnoozeStore();
   const navigate = useNavigate();
 
@@ -173,13 +175,40 @@ export function NotificationDrawer({ isOpen, onOpenChange }: NotificationDrawerP
   }, [renderable, section, category, channel]);
 
   const handleMarkAllRead = (): void => {
-    // TODO(backend-gap): POST /notifications/read-all — endpoint does
-    //   NOT exist yet. See Communication module `routes/api.php`. The
-    //   local `markAllRead` flips every `read_at` optimistically so
-    //   the badge clears, but the next `GET /notifications` will
-    //   restore the unread state until the endpoint ships.
+    // Optimistic local flip so the badge clears immediately. The
+    // hook silently swallows a backend gap (404/501) so the
+    // endpoint being missing does not surface as an error toast.
+    // TODO(backend-endpoint): POST /api/v1/notifications/read-all —
+    //   see `use-notification-writes.ts` for the graceful-failure
+    //   contract.
     markAllRead();
+    void markAllReadOnServer();
   };
+
+  /**
+   * "Clear read" bulk action — removes every already-read entry from
+   * the local inbox and fires an optimistic DELETE per row. Snoozed
+   * rows are left in place because a snoozed row is still "pending"
+   * from the user's perspective regardless of its `read_at` value.
+   */
+  const handleClearRead = (): void => {
+    const readIds = notifications
+      .filter((entry) => entry.read_at !== null)
+      .map((entry) => entry.id);
+
+    for (const id of readIds) {
+      remove(id);
+      // TODO(backend-endpoint): DELETE /api/v1/notifications/{id} —
+      //   see `use-notification-writes.ts`. Fire-and-forget so the
+      //   UI stays responsive; the hook logs a backend-gap silently.
+      void removeOnServer(id);
+    }
+  };
+
+  const readCount = useMemo(
+    () => notifications.filter((entry) => entry.read_at !== null).length,
+    [notifications],
+  );
 
   const handlePreferences = (): void => {
     onOpenChange(false);
@@ -225,16 +254,30 @@ export function NotificationDrawer({ isOpen, onOpenChange }: NotificationDrawerP
                   : `${unreadCount} unread notification${unreadCount === 1 ? "" : "s"}`}
               </span>
             </div>
-            <Button
-              aria-label="Mark all as read"
-              isDisabled={unreadCount === 0}
-              size="sm"
-              variant="ghost"
-              onPress={handleMarkAllRead}
-            >
-              <CheckIcon aria-hidden="true" className="size-4" />
-              Mark all read
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button
+                aria-label="Mark all as read"
+                data-testid="notification-drawer-mark-all-read"
+                isDisabled={unreadCount === 0}
+                size="sm"
+                variant="ghost"
+                onPress={handleMarkAllRead}
+              >
+                <CheckIcon aria-hidden="true" className="size-4" />
+                Mark all read
+              </Button>
+              <Button
+                aria-label="Clear read notifications"
+                data-testid="notification-drawer-clear-read"
+                isDisabled={readCount === 0}
+                size="sm"
+                variant="ghost"
+                onPress={handleClearRead}
+              >
+                <TrashIcon aria-hidden="true" className="size-4" />
+                Clear read
+              </Button>
+            </div>
           </Drawer.Header>
 
           <PushPermissionBanner onSubscribed={() => onOpenChange(false)} />
