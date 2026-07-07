@@ -1,103 +1,146 @@
 # @academorix/notifications
 
-Notification primitives for the Academorix workspace: canonical `Notification`
-DTO, category preferences model, `usePushSubscription` hook, service-worker push
-handlers, and a React notifications inbox provider.
+Backend-shaped `Notification` DTO, preferences model with quiet hours + safety
+allowlist, a React inbox provider, `usePushSubscription` hook, and
+service-worker push handlers.
 
 - Depends on `@academorix/core`, `@academorix/http`, `@academorix/realtime`.
 - Peer-depends on React 19.
 
 ## Public API
 
-| Subpath                                    | Exports                                                                                                                                          |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `@academorix/notifications/types`          | `Notification<TCategory>`, `NotificationChannel`, `NotificationPriority`                                                                         |
-| `@academorix/notifications/config`         | `defineNotificationCategories(list)`, `NotificationCategoryConfig<TId>`                                                                          |
-| `@academorix/notifications/preferences`    | `NotificationPreferences<TCategory>`, `CategoryChannelPreferences`, `QuietHoursWindow`, `isDeliveryAllowed`, `isWithinQuietHours`                |
-| `@academorix/notifications/context`        | `createNotificationsContext<TCategory>()` → `{ NotificationsProvider, useNotifications }`                                                        |
-| `@academorix/notifications/push`           | `isPushSupported`, `getExistingPushSubscription`, `subscribeToPush`, `unsubscribeFromPush`, `serializePushSubscription`, `urlBase64ToUint8Array` |
-| `@academorix/notifications/hooks`          | `usePushSubscription({ registration, vapidPublicKey })`                                                                                          |
-| `@academorix/notifications/service-worker` | `handlePushEvent(event, registration)`, `handleNotificationClickEvent(event)`                                                                    |
+| Subpath                                    | Exports                                                                                                                                                                             |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@academorix/notifications/types`          | `Notification`, `NotificationChannel`, `NotificationStatus`, `NotificationDataRef`                                                                                                  |
+| `@academorix/notifications/preferences`    | `NotificationPreferences`, `PreferenceDefaults`, `PerChildPreferences`, `QuietHoursWindow`, `isDeliveryAllowed`, `isWithinQuietHours`, `isQuietHoursWindow`, `MANDATORY_PUSH_TYPES` |
+| `@academorix/notifications/context`        | `createNotificationsContext()` → `{ NotificationsProvider, useNotifications }`                                                                                                      |
+| `@academorix/notifications/push`           | `isPushSupported`, `getExistingPushSubscription`, `subscribeToPush`, `unsubscribeFromPush`, `serializePushSubscription`, `urlBase64ToUint8Array`                                    |
+| `@academorix/notifications/hooks`          | `usePushSubscription({ registration, vapidPublicKey })`                                                                                                                             |
+| `@academorix/notifications/service-worker` | `handlePushEvent(event, registration)`, `handleNotificationClickEvent(event)`                                                                                                       |
+
+> No more `/config` subpath. Categories are gone — routing is driven by
+> `channel + type` on the wire, and the safety allowlist lives in
+> `MANDATORY_PUSH_TYPES`.
 
 ## Design principles
 
-- **One DTO, three surfaces.** In-app React toasts, Web Push, and native OS
+- **One DTO, three surfaces.** In-app React lists, Web Push, and native OS
   (Tauri) all render the same `Notification` object; the backend picks the
   channel and the client observes.
-- **Compliance is a first-class predicate.** `isDeliveryAllowed` encodes DND,
-  quiet hours, mandatory-push categories, and per- category channel toggles in
-  one function used by both the UI and the backend contract check.
-- **Never auto-prompt.** `subscribeToPush` MUST be called from a user gesture.
-  `usePushSubscription` doesn't fire the prompt on mount — the caller decides
-  when to ask.
+- **Wire-format snake_case.** Field names match the Laravel `NotificationData`
+  DTO one-for-one so a fetched JSON payload casts directly to `Notification` —
+  no mapper layer.
+- **Compliance is a first-class predicate.** `isDeliveryAllowed` encodes
+  mandatory-push types, per-channel opt-outs, per-event opt-outs, and quiet
+  hours in one function shared by the UI and the fixture-preview flow.
+- **Never auto-prompt.** `subscribeToPush` must be called from a user gesture.
+  `usePushSubscription` doesn't fire the prompt on mount — the caller decides.
 - **Presentation-agnostic.** The provider stores state; apps choose the
   rendering (HeroUI Popover, side sheet, native panel). No forced dependency on
   a specific toast library.
 
-## Usage
+## Backend contract
 
-### 1. Declare categories
+The types in `types/notification.type.ts` + `preferences/preferences.type.ts`
+mirror the Laravel DTOs one-for-one. Both DTOs emit snake_case via
+`MapOutputName(SnakeCaseMapper::class)`.
+
+### `Notification` ↔ `NotificationData`
+
+| Wire field       | TS field         | Type                                                       |
+| ---------------- | ---------------- | ---------------------------------------------------------- |
+| `id`             | `id`             | `string` (prefixed `notif_*`)                              |
+| `tenant_id`      | `tenant_id`      | `string \| null`                                           |
+| `user_id`        | `user_id`        | `string \| null`                                           |
+| `template_id`    | `template_id`    | `string \| null`                                           |
+| `type`           | `type`           | `string` (domain event, e.g. `"invitation_sent"`)          |
+| `channel`        | `channel`        | `"push" \| "email" \| "sms" \| "whatsapp"`                 |
+| `title`          | `title`          | `string \| null`                                           |
+| `body_preview`   | `body_preview`   | `string \| null`                                           |
+| `data_ref`       | `data_ref`       | `Record<string, unknown>` (small primitives + ids only)    |
+| `status`         | `status`         | `"queued" \| "sent" \| "delivered" \| "read" \| "bounced"` |
+| `sent_at`        | `sent_at`        | `string \| null` (ISO 8601)                                |
+| `read_at`        | `read_at`        | `string \| null`                                           |
+| `failure_reason` | `failure_reason` | `string \| null`                                           |
+| `notes`          | `notes`          | `string \| null`                                           |
+| `created_at`     | `created_at`     | `string \| null`                                           |
+| `updated_at`     | `updated_at`     | `string \| null`                                           |
+
+Source:
+`backend/modules/Communication/src/Data/Notifications/NotificationData.php`.
+
+### `NotificationPreferences` ↔ `NotificationPreferenceData`
+
+| Wire field    | TS field      | Type                                                           |
+| ------------- | ------------- | -------------------------------------------------------------- |
+| `id`          | `id`          | `string` (prefixed `np_*`)                                     |
+| `tenant_id`   | `tenant_id`   | `string \| null`                                               |
+| `user_id`     | `user_id`     | `string \| null`                                               |
+| `defaults`    | `defaults`    | `Record<string, unknown>` (channel + event opt-ins)            |
+| `per_child`   | `per_child`   | `Record<string, PreferenceDefaults>` (keyed by athlete id)     |
+| `quiet_hours` | `quiet_hours` | `QuietHoursWindow \| Record<string, never>` (empty when unset) |
+| `updated_at`  | `updated_at`  | `string \| null`                                               |
+
+Source:
+`backend/modules/Communication/src/Data/NotificationPreferences/NotificationPreferenceData.php`.
+
+## Delivery predicate — `isDeliveryAllowed`
+
+The client's compliance-check for `(channel, type)` tuples. Precedence:
+
+1. `MANDATORY_PUSH_TYPES` bypasses every gate on the push channel.
+2. `preferences.defaults[type] === false` — per-event opt-out (all channels).
+3. `preferences.defaults[channel] === false` — per-channel opt-out.
+4. Quiet hours window blocks in-window deliveries (non-mandatory only).
+5. Otherwise, allow.
 
 ```ts
-// apps/dashboard/src/config/notifications.config.ts
-import { defineNotificationCategories } from "@academorix/notifications/config";
+import { isDeliveryAllowed } from "@academorix/notifications/preferences";
 
-export const NOTIFICATION_CATEGORIES = defineNotificationCategories([
-  {
-    id: "operational",
-    label: "Operational",
-    description: "Attendance, sessions, day-to-day tenant activity",
-    defaultPriority: "normal",
-    defaultChannels: ["in-app"],
-  },
-  {
-    id: "billing",
-    label: "Billing",
-    description: "Invoices, payments, plan changes",
-    defaultPriority: "normal",
-    defaultChannels: ["in-app", "email"],
-  },
-  {
-    id: "safety",
-    label: "Child safety",
-    description: "Safeguarding + emergency alerts",
-    defaultPriority: "critical",
-    defaultChannels: ["in-app", "push", "email"],
-    mandatoryPush: true,
-  },
-] as const);
-
-export type NotificationCategory =
-  (typeof NOTIFICATION_CATEGORIES)[number]["id"];
+const allowed = isDeliveryAllowed({
+  channel: "push",
+  type: "payment_due",
+  preferences: userPreferences,
+});
 ```
 
-### 2. Wire the provider
+The predicate is deliberately generous — no explicit opt-in is required. The
+backend is the source of truth; this predicate exists so the UI can preview what
+a preferences change will affect and so consumers can filter historical
+notifications correctly.
+
+## Usage
+
+### 1. Wire the provider
 
 ```tsx
+// apps/dashboard/src/lib/notifications.ts
 import { createNotificationsContext } from "@academorix/notifications/context";
-import type { NotificationCategory } from "@/config/notifications.config";
 
 export const { NotificationsProvider, useNotifications } =
-  createNotificationsContext<NotificationCategory>();
+  createNotificationsContext();
+```
 
+```tsx
 // apps/dashboard/src/providers.tsx
 <NotificationsProvider initialNotifications={initial}>
   <App />
-</NotificationsProvider>;
+</NotificationsProvider>
 ```
 
-### 3. Consume in components
+### 2. Consume in components
 
 ```tsx
 import { useNotifications } from "@/lib/notifications";
 
 function NotificationBell() {
   const { unreadCount } = useNotifications();
+
   return <Badge count={unreadCount} />;
 }
 ```
 
-### 4. Push subscription (in a user gesture!)
+### 3. Push subscription (in a user gesture!)
 
 ```tsx
 import {
@@ -121,7 +164,10 @@ function EnableNotificationsButton({
     <Button
       onPress={async () => {
         const fresh = await subscribe();
+
         if (fresh) {
+          // TODO(backend): POST /notifications/subscriptions
+          // doesn't exist yet — see "TODO — backend endpoints".
           await httpClient.post(
             "/notifications/subscriptions",
             serializePushSubscription(fresh),
@@ -135,7 +181,7 @@ function EnableNotificationsButton({
 }
 ```
 
-### 5. Service worker
+### 4. Service worker
 
 ```ts
 // apps/dashboard/src/pwa/sw.ts (Workbox injectManifest source)
@@ -155,3 +201,24 @@ self.addEventListener(
   handleNotificationClickEvent as EventListener,
 );
 ```
+
+## TODO — backend endpoints
+
+The read endpoints exist (fixture-first, read-only):
+
+- `GET /notifications`
+- `GET /notifications/{id}`
+- `GET /notification-preferences`
+- `GET /notification-preferences/{id}`
+
+The following write endpoints DO NOT exist yet. Consumers wire them with TODO
+markers until the backend catches up:
+
+- `POST /notifications/{id}/read` — mark a single notification as read.
+- `POST /notifications/read-all` — bulk mark-read.
+- `POST /notifications/subscriptions` — register a Web Push subscription.
+- `DELETE /notifications/subscriptions/{id}` — tear down a subscription.
+- `PUT /notification-preferences` — update preferences.
+
+Filed as: backend Communication module write endpoints (see
+`.kiro/specs/*/tasks.md` in the backend workspace once the tasks land).

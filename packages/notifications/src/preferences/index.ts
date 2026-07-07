@@ -3,14 +3,15 @@
  * @module @academorix/notifications/preferences
  *
  * @description
- * Public barrel for the preferences model + predicates.
+ * Public barrel for the preferences model + delivery predicates.
  */
 
-export { isDeliveryAllowed } from "./is-delivery-allowed.util";
+export { isDeliveryAllowed, MANDATORY_PUSH_TYPES } from "./is-delivery-allowed.util";
 export type { IsDeliveryAllowedArgs } from "./is-delivery-allowed.util";
 export type {
-  CategoryChannelPreferences,
   NotificationPreferences,
+  PerChildPreferences,
+  PreferenceDefaults,
   QuietHoursWindow,
 } from "./preferences.type";
-export { isWithinQuietHours } from "./quiet-hours.util";
+export { isQuietHoursWindow, isWithinQuietHours } from "./quiet-hours.util";

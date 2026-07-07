@@ -6,4 +6,9 @@
  * Public barrel for the canonical notification types.
  */
 
-export type { Notification, NotificationChannel, NotificationPriority } from "./notification.type";
+export type {
+  Notification,
+  NotificationChannel,
+  NotificationDataRef,
+  NotificationStatus,
+} from "./notification.type";
