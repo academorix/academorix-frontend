@@ -166,6 +166,259 @@
       }
     ]
   },
+  "showcase": {
+    "eyebrow": { "en": "Product tour", "ar": "جولة في المنتج" },
+    "title": {
+      "en": "See how Academorix runs a modern academy",
+      "ar": "شاهد كيف يدير Academorix أكاديمية عصرية"
+    },
+    "description": {
+      "en": "Four connected surfaces. One tenant workspace. Every team member sees exactly what they need, in English or Arabic.",
+      "ar": "أربع واجهات متصلة. مساحة عمل موحدة. كل عضو في الفريق يرى ما يحتاجه فقط، بالإنجليزية أو العربية."
+    },
+    "tabs": [
+      {
+        "id": "athletes",
+        "icon": "UserGroupIcon",
+        "label": { "en": "One record per athlete", "ar": "سجل واحد لكل رياضي" },
+        "headline": {
+          "en": "A single record that follows every athlete",
+          "ar": "سجل واحد يرافق كل رياضي"
+        },
+        "description": {
+          "en": "Rich profiles, guardians, documents, and enrollment in one place, from first inquiry to graduation.",
+          "ar": "ملفات غنية وأولياء أمور ومستندات وتسجيلات في مكان واحد، من أول استفسار إلى التخرج."
+        },
+        "highlights": [
+          {
+            "en": "One canonical record across sports and branches",
+            "ar": "سجل موحد عبر الرياضات والفروع"
+          },
+          {
+            "en": "Guardians, documents, and enrollments attached",
+            "ar": "أولياء الأمور والمستندات والتسجيلات مرتبطة"
+          },
+          {
+            "en": "Sport-specific fields via configurable attributes",
+            "ar": "حقول خاصة بكل رياضة عبر سمات قابلة للتخصيص"
+          },
+          {
+            "en": "Full history preserved across seasons and branches",
+            "ar": "سجل كامل محفوظ عبر المواسم والفروع"
+          }
+        ],
+        "cta_label": { "en": "Explore Athletes", "ar": "استكشف الرياضيين" },
+        "cta_href": "/products/athletes",
+        "accent": "indigo",
+        "window_title": { "en": "Athletes", "ar": "الرياضيون" },
+        "sidebar_items": [
+          { "label": { "en": "All athletes", "ar": "كل الرياضيين" }, "is_active": true },
+          { "label": { "en": "Enrollments", "ar": "التسجيلات" }, "is_active": false },
+          { "label": { "en": "Guardians", "ar": "أولياء الأمور" }, "is_active": false },
+          { "label": { "en": "Documents", "ar": "المستندات" }, "is_active": false },
+          { "label": { "en": "Attendance", "ar": "الحضور" }, "is_active": false },
+          { "label": { "en": "Reports", "ar": "التقارير" }, "is_active": false }
+        ],
+        "stat_cards": [
+          {
+            "label": { "en": "Active athletes", "ar": "رياضيون نشطون" },
+            "value": { "en": "1,284", "ar": "1,284" },
+            "trend": { "en": "+42 this month", "ar": "+42 هذا الشهر" }
+          },
+          {
+            "label": { "en": "Retention", "ar": "معدل الاحتفاظ" },
+            "value": { "en": "94%", "ar": "94%" },
+            "trend": { "en": "12 months trailing", "ar": "آخر 12 شهرًا" }
+          },
+          {
+            "label": { "en": "New this week", "ar": "جديد هذا الأسبوع" },
+            "value": { "en": "37", "ar": "37" },
+            "trend": { "en": "5 branches", "ar": "5 فروع" }
+          }
+        ]
+      },
+      {
+        "id": "scheduling",
+        "icon": "CalendarDaysIcon",
+        "label": { "en": "Scheduling that runs itself", "ar": "جدولة تدير نفسها" },
+        "headline": {
+          "en": "Sessions, matches, and check-ins in one place",
+          "ar": "جلسات ومباريات وتسجيلات دخول في مكان واحد"
+        },
+        "description": {
+          "en": "Training, matches, RSVPs, and tap-to-check-in attendance across every branch and program.",
+          "ar": "التدريبات والمباريات وتأكيدات الحضور بلمسة عبر كل فرع وبرنامج."
+        },
+        "highlights": [
+          {
+            "en": "Recurring sessions with RRULE-driven schedules",
+            "ar": "جلسات متكررة بجداول قائمة على RRULE"
+          },
+          {
+            "en": "Tap-to-attend via QR or NFC on any device",
+            "ar": "حضور بلمسة عبر QR أو NFC على أي جهاز"
+          },
+          {
+            "en": "Conflict detection across coaches and venues",
+            "ar": "اكتشاف التعارضات بين المدربين والملاعب"
+          },
+          {
+            "en": "Guardian RSVPs with automated reminders",
+            "ar": "تأكيدات أولياء الأمور مع تذكيرات آلية"
+          }
+        ],
+        "cta_label": { "en": "Explore Scheduling", "ar": "استكشف الجدولة" },
+        "cta_href": "/products/scheduling",
+        "accent": "amber",
+        "window_title": { "en": "Week of March 4", "ar": "أسبوع 4 مارس" },
+        "sidebar_items": [
+          { "label": { "en": "Week", "ar": "الأسبوع" }, "is_active": true },
+          { "label": { "en": "Month", "ar": "الشهر" }, "is_active": false },
+          { "label": { "en": "Sessions", "ar": "الجلسات" }, "is_active": false },
+          { "label": { "en": "Attendance", "ar": "الحضور" }, "is_active": false },
+          { "label": { "en": "Locations", "ar": "المواقع" }, "is_active": false },
+          { "label": { "en": "Conflicts", "ar": "التعارضات" }, "is_active": false }
+        ],
+        "stat_cards": [
+          {
+            "label": { "en": "Sessions this week", "ar": "جلسات هذا الأسبوع" },
+            "value": { "en": "126", "ar": "126" },
+            "trend": { "en": "8 branches", "ar": "8 فروع" }
+          },
+          {
+            "label": { "en": "Check-in rate", "ar": "معدل تسجيل الحضور" },
+            "value": { "en": "97%", "ar": "97%" },
+            "trend": { "en": "Tap-to-attend", "ar": "حضور بلمسة" }
+          },
+          {
+            "label": { "en": "Open RSVPs", "ar": "تأكيدات مفتوحة" },
+            "value": { "en": "23", "ar": "23" },
+            "trend": { "en": "Ends Friday", "ar": "تنتهي الجمعة" }
+          }
+        ]
+      },
+      {
+        "id": "payments",
+        "icon": "CreditCardIcon",
+        "label": { "en": "Payments that reconcile themselves", "ar": "مدفوعات تُوفَّق ذاتيًا" },
+        "headline": {
+          "en": "Invoices, memberships, and reminders with clear AR",
+          "ar": "الفواتير والاشتراكات والتذكيرات مع رؤية واضحة للذمم"
+        },
+        "description": {
+          "en": "Family accounts, sibling discounts, and multi-gateway support with regional processors ready out of the box.",
+          "ar": "حسابات عائلية وخصومات للأشقاء ودعم بوابات متعددة مع مزودي الدفع الإقليميين جاهزين من البداية."
+        },
+        "highlights": [
+          {
+            "en": "Regional processors: Stripe, Tap, HyperPay, Moyasar",
+            "ar": "مزودو الدفع الإقليميون: Stripe و Tap و HyperPay و Moyasar"
+          },
+          {
+            "en": "Family invoices with sibling discounts",
+            "ar": "فواتير عائلية مع خصومات للأشقاء"
+          },
+          {
+            "en": "AR aging visible per branch and per family",
+            "ar": "تقادم الذمم مرئي لكل فرع ولكل عائلة"
+          },
+          {
+            "en": "PCI-compliant tokenization on every gateway",
+            "ar": "ترميز متوافق مع PCI عبر كل بوابة"
+          }
+        ],
+        "cta_label": { "en": "Explore Payments", "ar": "استكشف المدفوعات" },
+        "cta_href": "/products/payments",
+        "accent": "mint",
+        "window_title": { "en": "Invoices - March", "ar": "الفواتير - مارس" },
+        "sidebar_items": [
+          { "label": { "en": "Invoices", "ar": "الفواتير" }, "is_active": true },
+          { "label": { "en": "Memberships", "ar": "الاشتراكات" }, "is_active": false },
+          { "label": { "en": "Discounts", "ar": "الخصومات" }, "is_active": false },
+          { "label": { "en": "AR aging", "ar": "تقادم الذمم" }, "is_active": false },
+          { "label": { "en": "Gateways", "ar": "بوابات الدفع" }, "is_active": false },
+          { "label": { "en": "Refunds", "ar": "المبالغ المستردة" }, "is_active": false }
+        ],
+        "stat_cards": [
+          {
+            "label": { "en": "Recurring MRR", "ar": "الإيرادات الشهرية المتكررة" },
+            "value": { "en": "$48,200", "ar": "$48,200" },
+            "trend": { "en": "+8% month over month", "ar": "+8% شهريًا" }
+          },
+          {
+            "label": { "en": "Collected on time", "ar": "محصّل في الوقت" },
+            "value": { "en": "92%", "ar": "92%" },
+            "trend": { "en": "AR aging under control", "ar": "الذمم تحت السيطرة" }
+          },
+          {
+            "label": { "en": "Failed retries", "ar": "محاولات فاشلة" },
+            "value": { "en": "6", "ar": "6" },
+            "trend": { "en": "Auto-retried", "ar": "أُعيدت تلقائيًا" }
+          }
+        ]
+      },
+      {
+        "id": "performance",
+        "icon": "ChartBarIcon",
+        "label": { "en": "Performance you can act on", "ar": "أداء يمكنك التصرف بناءً عليه" },
+        "headline": {
+          "en": "Sport-specific metrics from configurable attribute sets",
+          "ar": "مقاييس خاصة بكل رياضة من مجموعات سمات قابلة للتخصيص"
+        },
+        "description": {
+          "en": "Log tests, drills, and match stats. See progression per athlete, per squad, and per age bracket.",
+          "ar": "سجّل الاختبارات والتمارين وإحصائيات المباريات. تابع التطور لكل رياضي وفريق وفئة عمرية."
+        },
+        "highlights": [
+          {
+            "en": "Configurable attribute sets per sport and per age",
+            "ar": "مجموعات سمات قابلة للتخصيص لكل رياضة وفئة عمرية"
+          },
+          {
+            "en": "Longitudinal progression per athlete and squad",
+            "ar": "تطور طولي لكل رياضي وفريق"
+          },
+          {
+            "en": "Benchmarks against sport-specific baselines",
+            "ar": "مقارنات بخطوط أساس خاصة بكل رياضة"
+          },
+          {
+            "en": "Custom export to CSV, PDF, or scheduled email",
+            "ar": "تصدير مخصص إلى CSV أو PDF أو بريد إلكتروني مجدول"
+          }
+        ],
+        "cta_label": { "en": "Explore Performance", "ar": "استكشف الأداء" },
+        "cta_href": "/products/performance",
+        "accent": "purple",
+        "window_title": { "en": "Progression - Q1", "ar": "التطور - الربع الأول" },
+        "sidebar_items": [
+          { "label": { "en": "Progression", "ar": "التطور" }, "is_active": true },
+          { "label": { "en": "Tests", "ar": "الاختبارات" }, "is_active": false },
+          { "label": { "en": "Drills", "ar": "التمارين" }, "is_active": false },
+          { "label": { "en": "Match stats", "ar": "إحصائيات المباريات" }, "is_active": false },
+          { "label": { "en": "Benchmarks", "ar": "خطوط الأساس" }, "is_active": false },
+          { "label": { "en": "Exports", "ar": "التصديرات" }, "is_active": false }
+        ],
+        "stat_cards": [
+          {
+            "label": { "en": "Athletes tested", "ar": "رياضيون تم اختبارهم" },
+            "value": { "en": "1,140", "ar": "1,140" },
+            "trend": { "en": "This quarter", "ar": "هذا الربع" }
+          },
+          {
+            "label": { "en": "Average improvement", "ar": "متوسط التحسن" },
+            "value": { "en": "+14%", "ar": "+14%" },
+            "trend": { "en": "Versus baseline", "ar": "مقابل خط الأساس" }
+          },
+          {
+            "label": { "en": "Elite candidates", "ar": "مرشحون للنخبة" },
+            "value": { "en": "58", "ar": "58" },
+            "trend": { "en": "Auto flagged", "ar": "مُوسَّمون تلقائيًا" }
+          }
+        ]
+      }
+    ]
+  },
   "sports_bento": {
     "eyebrow": { "en": "Sports", "ar": "الرياضات" },
     "title": {

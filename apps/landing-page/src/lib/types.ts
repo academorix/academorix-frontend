@@ -241,6 +241,68 @@ export interface HomeFaqBlock {
   items: readonly FaqItem[];
 }
 
+// ─── Showcase (Intercom-style tabbed product preview) ───────────────
+
+/** Preset accent palette used to tint a showcase panel's backdrop. */
+export type ShowcaseAccent = "indigo" | "amber" | "mint" | "purple" | "rose";
+
+/**
+ * A single labeled statistic rendered inside the mock preview card
+ * of a showcase tab. Both `value` and `label` are bilingual so
+ * numbers with unit suffixes ("42 new") localize cleanly.
+ */
+export interface HomeShowcaseStatCard {
+  label: LocalizedString;
+  value: LocalizedString;
+  trend?: LocalizedString;
+}
+
+/** An item in the mock sidebar of a showcase preview card. */
+export interface HomeShowcaseSidebarItem {
+  label: LocalizedString;
+  is_active: boolean;
+}
+
+/**
+ * One tab inside the home-page product showcase. Each tab reveals a
+ * full-width panel with a headline, description, feature bullets, a
+ * CTA, and a stylized preview card that mimics the corresponding
+ * product surface (window chrome + sidebar + stat cards).
+ */
+export interface HomeShowcaseTab {
+  /** Stable, non-translatable identifier used as the tab key. */
+  id: string;
+  /** Icon key from `ICON_REGISTRY` — rendered next to the tab label. */
+  icon: IconRef;
+  /** Short tab-button label (fits comfortably in the tab list). */
+  label: LocalizedString;
+  /** Panel headline (H3-scale copy). */
+  headline: LocalizedString;
+  /** Panel supporting paragraph. */
+  description: LocalizedString;
+  /** Bulleted highlights rendered next to the preview card. */
+  highlights: readonly LocalizedString[];
+  /** CTA label + href jumping into the deep-dive product page. */
+  cta_label: LocalizedString;
+  cta_href: string;
+  /** Which preset backdrop color the panel should paint with. */
+  accent: ShowcaseAccent;
+  /** Title bar text for the mock preview window. */
+  window_title: LocalizedString;
+  /** Faux sidebar items rendered on the left of the preview card. */
+  sidebar_items: readonly HomeShowcaseSidebarItem[];
+  /** Stat cards rendered in the main content area of the preview. */
+  stat_cards: readonly HomeShowcaseStatCard[];
+}
+
+/** Full home-page product showcase section. */
+export interface HomeShowcase {
+  eyebrow: LocalizedString;
+  title: LocalizedString;
+  description: LocalizedString;
+  tabs: readonly HomeShowcaseTab[];
+}
+
 export interface HomeData {
   hero: HomeHero;
   kpi: readonly HomeKpi[];
@@ -255,6 +317,7 @@ export interface HomeData {
     description: LocalizedString;
     items: readonly HomeProductTile[];
   };
+  showcase: HomeShowcase;
   sports_bento: {
     eyebrow: LocalizedString;
     title: LocalizedString;

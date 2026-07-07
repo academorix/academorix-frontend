@@ -19,6 +19,7 @@ import { useState } from "react";
 import type { Locale } from "@/i18n/routing";
 import type { Localized, NavData, SiteData } from "@/lib/types";
 
+import { BrandMark } from "@/components/brand/brand-mark";
 import { CtaButton } from "@/components/marketing/cta-button";
 import { LanguageSwitcher } from "@/components/shell/language-switcher";
 import { ThemeSwitch } from "@/components/shell/theme-switch";
@@ -65,16 +66,12 @@ export function MobileDrawer({ site, nav, locale, className }: MobileDrawerProps
           >
             <div className="flex items-center justify-between">
               <Link
+                aria-label={site.name}
                 className="inline-flex items-center gap-2 text-lg font-semibold text-foreground"
                 href="/"
                 onClick={() => setOpen(false)}
               >
-                <span
-                  aria-hidden
-                  className="grid size-7 place-content-center rounded-lg bg-accent text-xs font-bold text-accent-foreground"
-                >
-                  A
-                </span>
+                <BrandMark alt="" height={28} variant="mark" />
                 <span>{site.name}</span>
               </Link>
               <button
