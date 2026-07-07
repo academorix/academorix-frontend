@@ -13,6 +13,7 @@ import { setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+import { BlogCover } from "@/components/marketing/blog-cover";
 import { MarketingHero } from "@/components/marketing/marketing-hero";
 import { MarketingShell } from "@/components/shell/marketing-shell";
 import { LOCALE_BCP47_TAGS } from "@/i18n/routing";
@@ -69,25 +70,35 @@ export default async function BlogIndexPage({ params }: PageProps): Promise<Reac
             return (
               <li key={post.slug}>
                 <Link
-                  className="group flex h-full flex-col gap-4 rounded-2xl border border-default/40 bg-surface/60 p-6 backdrop-blur-md transition-colors hover:border-default hover:bg-surface/80"
+                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-default/40 bg-surface/60 backdrop-blur-md transition-[transform,border-color,background-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-default hover:bg-surface/80 hover:shadow-lg"
                   href={`/blog/${post.slug}`}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="inline-flex size-10 items-center justify-center rounded-xl bg-default/60 text-foreground">
-                      <Icon aria-hidden className="size-5" />
-                    </span>
-                    <span className="text-xs font-medium tracking-wider text-muted uppercase">
+                  <div className="relative aspect-[5/3] overflow-hidden border-b border-default/30">
+                    <BlogCover
+                      category={post.category}
+                      className="h-full w-full transition-transform duration-500 group-hover:scale-[1.03]"
+                      slug={post.slug}
+                    />
+                    <span className="absolute end-3 top-3 inline-flex items-center rounded-full border border-default/60 bg-surface/85 px-2.5 py-0.5 text-[10px] font-medium tracking-wider text-muted uppercase backdrop-blur-sm">
                       {post.category}
                     </span>
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground group-hover:text-accent">
-                    {post.title}
-                  </h3>
-                  <p className="text-sm text-muted">{post.description}</p>
-                  <p className="mt-auto pt-2 text-xs text-muted">
-                    {formatDate(post.date, locale)} · {post.reading_minutes}{" "}
-                    {locale === "ar" ? "دقيقة قراءة" : "min read"}
-                  </p>
+                  <div className="flex flex-1 flex-col gap-3 p-6">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex size-8 items-center justify-center rounded-lg bg-default/60 text-foreground">
+                        <Icon aria-hidden className="size-4" />
+                      </span>
+                      <span className="text-[11px] text-muted">
+                        {formatDate(post.date, locale)}
+                        {" · "}
+                        {post.reading_minutes} {locale === "ar" ? "دقيقة قراءة" : "min read"}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground group-hover:text-accent">
+                      {post.title}
+                    </h3>
+                    <p className="text-sm text-muted">{post.description}</p>
+                  </div>
                 </Link>
               </li>
             );

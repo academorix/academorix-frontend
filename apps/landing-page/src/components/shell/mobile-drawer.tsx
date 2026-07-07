@@ -19,6 +19,7 @@ import { useState } from "react";
 import type { Locale } from "@/i18n/routing";
 import type { Localized, NavData, SiteData } from "@/lib/types";
 
+import { BrandLink } from "@/components/brand/brand-link";
 import { BrandMark } from "@/components/brand/brand-mark";
 import { CtaButton } from "@/components/marketing/cta-button";
 import { LanguageSwitcher } from "@/components/shell/language-switcher";
@@ -65,15 +66,14 @@ export function MobileDrawer({ site, nav, locale, className }: MobileDrawerProps
             onKeyDown={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">
-              <Link
+              <BrandLink
                 aria-label={site.name}
                 className="inline-flex items-center gap-2 text-lg font-semibold text-foreground"
-                href="/"
                 onClick={() => setOpen(false)}
               >
                 <BrandMark alt="" height={28} variant="mark" />
                 <span>{site.name}</span>
-              </Link>
+              </BrandLink>
               <button
                 aria-label="Close menu"
                 className="inline-flex size-9 items-center justify-center rounded-full border border-default/60 bg-surface/60 text-foreground"
@@ -137,10 +137,7 @@ export function MobileDrawer({ site, nav, locale, className }: MobileDrawerProps
             </div>
 
             <div className="flex flex-col gap-2">
-              <CtaButton
-                cta={{ label: "Sign in", type: "link", href: `/signin` }}
-                variant="ghost"
-              />
+              <CtaButton cta={{ label: "Sign in", type: "signin" }} variant="ghost" />
               <CtaButton cta={{ label: "Get started", type: "signup" }} variant="primary" />
             </div>
           </div>

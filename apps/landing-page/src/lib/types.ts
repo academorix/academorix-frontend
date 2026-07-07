@@ -68,7 +68,7 @@ export type Localized<T> = T extends LocalizedString
 // CTA + shared primitives
 // ═══════════════════════════════════════════════════════════════════
 
-export type CtaType = "signup" | "trial" | "contact_sales" | "link";
+export type CtaType = "signup" | "signin" | "trial" | "contact_sales" | "link";
 
 export interface CtaDescriptor {
   label: LocalizedString;

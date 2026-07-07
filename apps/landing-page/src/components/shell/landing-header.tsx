@@ -19,6 +19,7 @@ import Link from "next/link";
 import type { Locale } from "@/i18n/routing";
 import type { Localized, NavData, SiteData } from "@/lib/types";
 
+import { BrandLink } from "@/components/brand/brand-link";
 import { BrandMark } from "@/components/brand/brand-mark";
 import { CtaButton } from "@/components/marketing/cta-button";
 import { LanguageSwitcher } from "@/components/shell/language-switcher";
@@ -48,14 +49,13 @@ export function LandingHeader({ site, nav, locale, className }: LandingHeaderPro
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3">
         <div className="flex items-center gap-8">
-          <Link
+          <BrandLink
             aria-label={site.name}
             className="inline-flex items-center gap-2 text-lg font-semibold tracking-tight text-foreground"
-            href="/"
           >
             <BrandMark priority alt="" height={28} variant="mark" />
             <span>{site.name}</span>
-          </Link>
+          </BrandLink>
 
           <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
             {nav.map((item, i) =>
@@ -81,7 +81,7 @@ export function LandingHeader({ site, nav, locale, className }: LandingHeaderPro
           <div className="hidden items-center gap-2 md:flex">
             <CtaButton
               className="px-4 py-2"
-              cta={{ label: signInLabel, type: "link", href: "/signin" }}
+              cta={{ label: signInLabel, type: "signin" }}
               variant="ghost"
             />
             <CtaButton

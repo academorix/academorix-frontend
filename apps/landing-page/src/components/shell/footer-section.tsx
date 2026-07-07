@@ -14,6 +14,7 @@ import { getLocale } from "next-intl/server";
 
 import type { Localized, SiteData } from "@/lib/types";
 
+import { BrandLink } from "@/components/brand/brand-link";
 import { BrandMark } from "@/components/brand/brand-mark";
 import { resolveLocale } from "@/i18n/routing";
 
@@ -78,14 +79,13 @@ export async function FooterSection({ site }: FooterSectionProps) {
     <footer className="border-t border-default/40 bg-surface/40 backdrop-blur-md">
       <div className="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-6 py-16 lg:grid-cols-6">
         <div className="col-span-2 flex flex-col gap-4">
-          <Link
+          <BrandLink
             aria-label={site.name}
             className="inline-flex items-center gap-2 text-lg font-semibold text-foreground"
-            href="/"
           >
             <BrandMark alt="" height={28} variant="mark" />
             <span>{site.name}</span>
-          </Link>
+          </BrandLink>
           <p className="max-w-xs text-sm text-muted">{site.tagline}</p>
           {site.social.linkedin ? (
             <a
