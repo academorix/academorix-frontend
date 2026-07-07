@@ -1,3 +1,5 @@
+/// <reference lib="webworker" />
+
 /**
  * @file push-handler.ts
  * @module @academorix/notifications/service-worker/push-handler

@@ -243,3 +243,109 @@ jobs:
           # (per-repo artifact storage counts against the org quota) while
           # still covering a normal weekend + Monday review cycle.
           retention-days: 7
+
+  desktop-build:
+    name: Desktop shell — cargo check (${{ matrix.os }})
+    # Fast fingerprint check for the Tauri shell. We deliberately DON'T run
+    # `cargo build --release` — a full desktop release build takes 10-20 min
+    # per platform, way too slow for PR feedback. `cargo check` catches
+    # every real Rust error (missing traits, wrong types, feature flag
+    # mismatches) in under 2 min on a cold cache.
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-14, windows-2022, ubuntu-22.04]
+    # `cargo check` on a cold cache pulls ~500 crates for Tauri v2 + its
+    # plugins; 25 min gives comfortable headroom on the smaller runner tier.
+    timeout-minutes: 25
+    env:
+      # HeroUI Pro auth — required by the postinstall on `pnpm install`
+      # (the desktop job installs Node deps too because tauri-build reads
+      # from `tauri.conf.json` at compile time, and the CSP + schema paths
+      # in that file live under `src/`).
+      HEROUI_AUTH_TOKEN: ${{ secrets.HEROUI_AUTH_TOKEN }}
+      HEROUI_PERSONAL_TOKEN: ${{ secrets.HEROUI_PERSONAL_TOKEN }}
+      # Turborepo remote-cache — empty values disable it silently.
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
+    # Path-filtered skip: only run when the desktop shell OR its inputs
+    # change. Every other PR gets a green cheap no-op via `paths` on the
+    # workflow trigger.
+    if: |
+      github.event_name == 'push' ||
+      contains(github.event.pull_request.labels.*.name, 'desktop') ||
+      github.event.pull_request.head.repo.fork == false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store
+          key: pnpm-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: pnpm-${{ runner.os }}-
+
+      - name: Install Node dependencies
+        # pnpm install is required because build.rs and tauri-build resolve
+        # paths relative to the crate's manifest, and the JSON snapshot
+        # sync-script runs from Node. Without Node deps the sync script
+        # can't import `desktop.config.ts`.
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup Rust
+        # Stable toolchain matches `Cargo.toml`'s `rust-version = "1.77"`.
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo registry + build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            apps/dashboard/src-tauri/target/
+          key: cargo-check-${{ runner.os }}-${{ hashFiles('apps/dashboard/src-tauri/Cargo.lock', 'apps/dashboard/src-tauri/Cargo.toml') }}
+          restore-keys: cargo-check-${{ runner.os }}-
+
+      - name: Install Linux system dependencies
+        if: runner.os == 'Linux'
+        # Tauri v2 links WebKitGTK 4.1 + libappindicator on Linux. These
+        # aren't in the default Ubuntu image on GitHub Actions, so cargo
+        # check itself fails without them.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            libssl-dev
+
+      - name: Sync desktop config snapshot
+        working-directory: apps/dashboard
+        # build.rs reads desktop-config.json — make sure the checked-in
+        # snapshot matches the TS source of truth before compiling.
+        run: pnpm sync:desktop-config
+
+      - name: Cargo check (default features)
+        working-directory: apps/dashboard/src-tauri
+        run: cargo check --locked
+
+      - name: Cargo check (phase3 feature)
+        working-directory: apps/dashboard/src-tauri
+        # Explicit second check with the phase3 feature turned on so a
+        # broken plugin registration is caught by the same PR that
+        # introduces it.
+        run: cargo check --locked --features phase3

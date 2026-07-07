@@ -70,6 +70,17 @@ catalog:
   typescript: ^5.6.3
   "@types/node": ^22.12.0
 
+  # --- Tauri (desktop shell for @academorix/dashboard) ---
+  # `@tauri-apps/cli` runs `tauri dev` + `tauri build` from
+  # `apps/dashboard`; the CLI shells out to the Rust toolchain and
+  # `apps/dashboard/src-tauri/` — see `DESKTOP_PLAN.md` for the phased
+  # rollout. `@tauri-apps/api` is the renderer-side bindings the SPA
+  # uses to invoke Rust commands + subscribe to shell events (only
+  # active behind the `isDesktop` feature detection helper — the same
+  # bundle keeps working in the web build).
+  "@tauri-apps/cli": ^2.9.0
+  "@tauri-apps/api": ^2.9.0
+
   # --- Progressive Web App (dashboard SPA) ---
   # `vite-plugin-pwa` wires a Workbox-generated service worker into the Vite
   # build. `workbox-window` is the client-side counterpart that our

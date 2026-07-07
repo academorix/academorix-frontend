@@ -26,7 +26,6 @@
 import { AcademicCapIcon } from "@academorix/ui/icons/outline";
 import {
   ArrowRightStartOnRectangleIcon,
-  BellIcon,
   Cog6ToothIcon,
   MagnifyingGlassIcon,
   QuestionMarkCircleIcon,
@@ -35,7 +34,6 @@ import {
 import {
   AppLayout,
   Avatar,
-  Badge,
   Button,
   Dropdown,
   Kbd,
@@ -62,6 +60,7 @@ import { siteConfig } from "@/config/site.config";
 import { appResources } from "@/lib/module";
 import { WorkspaceSwitcher } from "@/lib/tenancy";
 import { ImpersonationBanner } from "@/modules/auth/components/impersonation-banner";
+import { NotificationBell } from "@/notifications/components/notification-bell";
 
 /** Props for {@link AuthenticatedLayout}. */
 interface AuthenticatedLayoutProps {
@@ -232,21 +231,6 @@ function GlobalSearchTrigger(): ReactNode {
         <Kbd.Content>K</Kbd.Content>
       </Kbd>
     </button>
-  );
-}
-
-/**
- * Notification bell with an unread-count badge. Phase 1e ships the visual;
- * the drawer + real-time counts land alongside the notifications module in
- * Phase 5 (see `DASHBOARD_UX_PLAN.md` §11.2).
- */
-function NotificationBell(): ReactNode {
-  return (
-    <Button isIconOnly aria-label="Notifications" variant="ghost">
-      <Badge color="danger" size="sm">
-        <BellIcon aria-hidden="true" className="size-5" />
-      </Badge>
-    </Button>
   );
 }
 

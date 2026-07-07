@@ -18,9 +18,11 @@
  *
  * ## Status
  *
- * Currently a **scaffold** — none of the SPA yet reads this file because
- * `apps/dashboard/src-tauri/` doesn't exist. Ships now so the values are
- * reviewable and stable when Phase 1 (see DESKTOP_PLAN.md §3) lands.
+ * Phase 1 of the desktop rollout — the `apps/dashboard/src-tauri/`
+ * Rust project reads a JSON snapshot of this file at build time (see
+ * `src-tauri/build.rs`), so any change here must be paired with a
+ * clean rebuild of the Rust side (`cargo build`). The SPA reads the
+ * same values via `src/desktop/*`.
  */
 
 // ---------------------------------------------------------------------------

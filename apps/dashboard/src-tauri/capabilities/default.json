@@ -1,0 +1,6 @@
+{
+  "identifier": "default",
+  "description": "Phase 1/2 baseline capabilities for the Academorix dashboard shell. Default-deny — only the plugins the shell actually wires (window-state + log) plus core essentials get an explicit allow. Phase 3+ capabilities live in phase3.json and are only merged in when the `phase3` cargo feature is enabled.",
+  "windows": ["main"],
+  "permissions": ["core:default", "log:default"]
+}

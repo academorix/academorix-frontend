@@ -1,0 +1,86 @@
+{
+  "productName": "Academorix",
+  "version": "0.0.0",
+  "identifier": "com.academorix.dashboard",
+  "build": {
+    "beforeBuildCommand": "pnpm --filter @academorix/dashboard build",
+    "beforeDevCommand": "pnpm --filter @academorix/dashboard dev",
+    "devUrl": "http://localhost:3000",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [
+      {
+        "label": "main",
+        "title": "Academorix",
+        "width": 1440,
+        "height": 900,
+        "minWidth": 1024,
+        "minHeight": 720,
+        "resizable": true,
+        "fullscreen": false,
+        "decorations": true,
+        "transparent": false,
+        "alwaysOnTop": false,
+        "contentProtected": false,
+        "dragDropEnabled": false,
+        "url": "index.html"
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' tauri://localhost ipc:; script-src 'self' tauri://localhost ipc: https://vercel.live; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob: tauri://localhost; font-src 'self' data:; connect-src 'self' tauri://localhost ipc: https://*.academorix.app wss://*.academorix.app https://us.i.posthog.com https://vitals.vercel-insights.com https://updates.academorix.com; frame-src 'self'; media-src 'self'; worker-src 'self' blob:; manifest-src 'self'; frame-ancestors 'none'; form-action 'self'; base-uri 'self'; object-src 'none'"
+    }
+  },
+  "plugins": {
+    "log": {
+      "level": "info"
+    },
+    "window-state": {}
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["dmg", "app", "msi", "nsis", "appimage", "deb"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "publisher": "Academorix Platform Team",
+    "category": "Business",
+    "shortDescription": "Academorix - the operating system for sports academies.",
+    "longDescription": "The Academorix dashboard - a native desktop shell wrapping the same React SPA that runs on the web. Manage athletes, sessions, teams, invoices, and safeguarding without a browser tab.",
+    "copyright": "Copyright 2026 Academorix. All rights reserved.",
+    "homepage": "https://academorix.com",
+    "macOS": {
+      "minimumSystemVersion": "12.0",
+      "signingIdentity": null,
+      "hardenedRuntime": true,
+      "entitlements": null,
+      "exceptionDomain": null
+    },
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": "http://timestamp.digicert.com",
+      "wix": {
+        "language": ["en-US"]
+      },
+      "nsis": {
+        "installMode": "currentUser",
+        "languages": ["English"],
+        "displayLanguageSelector": false
+      }
+    },
+    "linux": {
+      "deb": {
+        "depends": ["libwebkit2gtk-4.1-0", "libgtk-3-0"]
+      },
+      "appimage": {
+        "bundleMediaFramework": false
+      }
+    }
+  }
+}

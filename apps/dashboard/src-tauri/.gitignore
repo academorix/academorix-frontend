@@ -1,0 +1,8 @@
+# Rust build output — the compiled binary and every artifact under it can
+# reach hundreds of MB. Never commit.
+target/
+
+# Tauri v2 codegen — mobile target scaffolds, generated capability schemas,
+# and other files the CLI regenerates on every build. Everything under
+# gen/ is deterministic from the config + source tree.
+gen/

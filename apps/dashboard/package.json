@@ -14,7 +14,12 @@
     "test:watch": "vitest",
     "codegen": "openapi-typescript ${ACADEMORIX_OPENAPI_URL:-http://localhost:8000/api/openapi.json} --output ./src/lib/api/schema.d.ts",
     "generate-pwa-assets": "pwa-assets-generator --preset minimal-2023 public/favicon.svg",
-    "clean": "rm -rf dist coverage .turbo dev-dist"
+    "sync:desktop-config": "node scripts/sync-desktop-config.mjs",
+    "tauri": "tauri",
+    "tauri:dev": "pnpm sync:desktop-config && tauri dev",
+    "tauri:build": "pnpm sync:desktop-config && tauri build",
+    "tauri:build:debug": "pnpm sync:desktop-config && tauri build --debug",
+    "clean": "rm -rf dist coverage .turbo dev-dist src-tauri/target src-tauri/gen"
   },
   "dependencies": {
     "@academorix/analytics": "workspace:*",
@@ -31,6 +36,7 @@
     "@refinedev/core": "catalog:",
     "@refinedev/react-router": "catalog:",
     "@tanstack/react-query": "catalog:",
+    "@tauri-apps/api": "catalog:",
     "laravel-echo": "catalog:",
     "openapi-fetch": "catalog:",
     "pusher-js": "catalog:",
@@ -44,6 +50,7 @@
     "@academorix/eslint-config": "workspace:*",
     "@academorix/typescript-config": "workspace:*",
     "@tailwindcss/vite": "catalog:",
+    "@tauri-apps/cli": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/node": "catalog:",

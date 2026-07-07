@@ -1,0 +1,241 @@
+name: Desktop release
+
+# Runs on every `v*` tag push. Produces unsigned artifacts per platform
+# and — once the ops team provisions the Doppler-backed cert secrets —
+# signs + notarizes them. See `apps/dashboard/DESKTOP_OPS.md` for the cert
+# provisioning + signing steps to uncomment when ready.
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write # required for `softprops/action-gh-release` uploads
+
+concurrency:
+  group: desktop-release-${{ github.ref }}
+  cancel-in-progress: false # never abort a release job
+
+env:
+  # Same heap ceiling as `ci.yml` — Vite + Rolldown builds hold the module
+  # graph in memory and OOM under V8's default 2.6 GB limit on cold cache.
+  NODE_OPTIONS: "--max-old-space-size=4096"
+
+jobs:
+  build:
+    name: Build ${{ matrix.name }}
+    strategy:
+      # Never fail-fast — if one platform's toolchain breaks we still want
+      # the other artifacts uploaded so the release isn't blocked entirely.
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS (Apple Silicon)
+            os: macos-14
+            tauri_target: aarch64-apple-darwin
+            rust_targets: aarch64-apple-darwin
+            artifact_glob: |
+              apps/dashboard/src-tauri/target/**/release/bundle/dmg/*.dmg
+              apps/dashboard/src-tauri/target/**/release/bundle/macos/*.app.tar.gz
+              apps/dashboard/src-tauri/target/**/release/bundle/macos/*.app.tar.gz.sig
+          - name: macOS (Intel)
+            os: macos-14
+            tauri_target: x86_64-apple-darwin
+            rust_targets: x86_64-apple-darwin
+            artifact_glob: |
+              apps/dashboard/src-tauri/target/**/release/bundle/dmg/*.dmg
+              apps/dashboard/src-tauri/target/**/release/bundle/macos/*.app.tar.gz
+              apps/dashboard/src-tauri/target/**/release/bundle/macos/*.app.tar.gz.sig
+          - name: Windows
+            os: windows-2022
+            tauri_target: x86_64-pc-windows-msvc
+            rust_targets: x86_64-pc-windows-msvc
+            artifact_glob: |
+              apps/dashboard/src-tauri/target/**/release/bundle/msi/*.msi
+              apps/dashboard/src-tauri/target/**/release/bundle/nsis/*-setup.exe
+              apps/dashboard/src-tauri/target/**/release/bundle/nsis/*-setup.nsis.zip
+              apps/dashboard/src-tauri/target/**/release/bundle/nsis/*-setup.nsis.zip.sig
+          - name: Linux
+            os: ubuntu-22.04
+            tauri_target: x86_64-unknown-linux-gnu
+            rust_targets: x86_64-unknown-linux-gnu
+            artifact_glob: |
+              apps/dashboard/src-tauri/target/**/release/bundle/deb/*.deb
+              apps/dashboard/src-tauri/target/**/release/bundle/appimage/*.AppImage
+              apps/dashboard/src-tauri/target/**/release/bundle/appimage/*.AppImage.tar.gz
+              apps/dashboard/src-tauri/target/**/release/bundle/appimage/*.AppImage.tar.gz.sig
+
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+
+    env:
+      # HeroUI Pro auth — required by the postinstall on `pnpm install`.
+      HEROUI_AUTH_TOKEN: ${{ secrets.HEROUI_AUTH_TOKEN }}
+      HEROUI_PERSONAL_TOKEN: ${{ secrets.HEROUI_PERSONAL_TOKEN }}
+      # Turborepo remote-cache — empty values disable it silently.
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
+      # -----------------------------------------------------------------
+      # Signing + notarization credentials.
+      # -----------------------------------------------------------------
+      # These values are read from GitHub org secrets (mirrored from
+      # Doppler by an out-of-band sync script). Every one of them is
+      # optional — a fresh clone without the secrets configured still
+      # produces unsigned artifacts so devs can test the release flow.
+      # Once the ops team has the certs in place (per DESKTOP_OPS.md),
+      # uncomment the referencing steps below.
+      # -----------------------------------------------------------------
+      TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+      TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+      APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+      APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      WINDOWS_CERT_PASSWORD: ${{ secrets.WINDOWS_CERT_PASSWORD }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store
+          key: pnpm-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: pnpm-${{ runner.os }}-
+
+      - name: Install Node dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust_targets }}
+
+      - name: Cache Cargo registry + build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            apps/dashboard/src-tauri/target/
+          key: cargo-${{ runner.os }}-${{ matrix.tauri_target }}-${{ hashFiles('apps/dashboard/src-tauri/Cargo.lock') }}
+          restore-keys: cargo-${{ runner.os }}-${{ matrix.tauri_target }}-
+
+      # -----------------------------------------------------------------
+      # Linux — WebKitGTK + friends for Tauri v2.
+      # -----------------------------------------------------------------
+      - name: Install Linux system dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            libssl-dev \
+            build-essential
+
+      # -----------------------------------------------------------------
+      # macOS — import the Developer ID cert into a temporary keychain
+      # so `codesign` (invoked by `tauri build`) can find it.
+      # -----------------------------------------------------------------
+      # TODO: uncomment after adding APPLE_CERTIFICATE secrets to the repo.
+      # - name: Import Apple certificate
+      #   if: runner.os == 'macOS' && env.APPLE_CERTIFICATE != ''
+      #   env:
+      #     KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      #   run: |
+      #     echo "$APPLE_CERTIFICATE" | base64 --decode > /tmp/apple.p12
+      #     security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+      #     security default-keychain -s build.keychain
+      #     security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+      #     security import /tmp/apple.p12 -k build.keychain \
+      #       -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+      #     security set-key-partition-list -S apple-tool:,apple: \
+      #       -s -k "$KEYCHAIN_PASSWORD" build.keychain
+      #     rm /tmp/apple.p12
+
+      # -----------------------------------------------------------------
+      # Windows — install AzureSignTool for HSM-backed signing.
+      # -----------------------------------------------------------------
+      # TODO: uncomment after adding AZURE_* secrets to the repo.
+      # - name: Install AzureSignTool
+      #   if: runner.os == 'Windows'
+      #   run: dotnet tool install --global AzureSignTool
+
+      # -----------------------------------------------------------------
+      # Build the SPA + native shell in one shot. `tauri build`'s
+      # `beforeBuildCommand` in `tauri.conf.json` runs the pnpm build first.
+      # -----------------------------------------------------------------
+      - name: Sync desktop config snapshot
+        working-directory: apps/dashboard
+        run: pnpm sync:desktop-config
+
+      - name: Build desktop bundle
+        working-directory: apps/dashboard
+        run: pnpm exec tauri build --target ${{ matrix.tauri_target }}
+
+      # -----------------------------------------------------------------
+      # Post-build signing (only when the cert secrets are configured).
+      # -----------------------------------------------------------------
+      # TODO: uncomment after adding signing secrets to the repo.
+      # - name: Notarize macOS bundle
+      #   if: runner.os == 'macOS' && env.APPLE_ID != ''
+      #   working-directory: apps/dashboard/src-tauri/target/${{ matrix.tauri_target }}/release/bundle/dmg
+      #   run: |
+      #     for dmg in *.dmg; do
+      #       xcrun notarytool submit "$dmg" \
+      #         --apple-id "$APPLE_ID" \
+      #         --team-id "$APPLE_TEAM_ID" \
+      #         --password "$APPLE_PASSWORD" \
+      #         --wait
+      #       xcrun stapler staple "$dmg"
+      #     done
+
+      # -----------------------------------------------------------------
+      # Upload artifacts to the GitHub release.
+      # -----------------------------------------------------------------
+      - name: Upload release artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ matrix.artifact_glob }}
+          fail_on_unmatched_files: false
+          generate_release_notes: true
+          draft: true
+
+  # ---------------------------------------------------------------------
+  # After all four builds finish, publish the auto-update manifest so
+  # existing installs pick up the new version.
+  # ---------------------------------------------------------------------
+  # TODO: uncomment after provisioning R2 bucket + credentials.
+  # publish-manifest:
+  #   name: Publish update manifest
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Publish manifest to R2
+  #       env:
+  #         R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+  #         R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+  #         R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+  #         R2_BUCKET: ${{ secrets.R2_BUCKET }}
+  #       run: scripts/publish-desktop-manifest.sh "${{ github.ref_name }}"

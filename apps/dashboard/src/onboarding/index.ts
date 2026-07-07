@@ -62,3 +62,8 @@ export {
   writePwaState,
   writeTourState,
 } from "@/onboarding/storage";
+
+// -- Tour runtime --
+export { TourProvider, restartTour, useTour } from "@/onboarding/tour/tour-provider";
+export { emitOnboardingEvent } from "@/onboarding/tour/tour-analytics";
+export type { OnboardingEventProps } from "@/onboarding/tour/tour-analytics";
