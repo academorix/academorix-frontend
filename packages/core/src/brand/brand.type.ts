@@ -49,5 +49,27 @@ export type Brand<T, Name extends string> = T & {
  * Utility that unwraps a Brand back to its base type. Useful when
  * interoping with libraries that don't know about the tag (e.g. a
  * form library expecting a plain string).
+ *
+ * Implemented as a nested conditional over the primitive base types
+ * rather than a single `T extends Brand<infer Base, string> ? Base : T`.
+ * The single-level `infer Base` is unreliable when `Brand<T, N>` is
+ * expressed as an intersection: TypeScript's inference algorithm is
+ * free to pick `Base = T` (the whole branded type) instead of the
+ * underlying primitive, in which case the type wouldn't actually
+ * unwrap. Distributing over the primitive shape neutralises that
+ * choice — any `Base` still narrows to its primitive first.
  */
-export type Unbrand<T> = T extends Brand<infer Base, string> ? Base : T;
+export type Unbrand<T> =
+  T extends Brand<infer Base, string>
+    ? Base extends string
+      ? string
+      : Base extends number
+        ? number
+        : Base extends boolean
+          ? boolean
+          : Base extends bigint
+            ? bigint
+            : Base extends symbol
+              ? symbol
+              : Base
+    : T;

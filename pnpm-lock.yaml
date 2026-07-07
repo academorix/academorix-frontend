@@ -69,6 +69,9 @@ catalogs:
     '@testing-library/react':
       specifier: ^16.3.2
       version: 16.3.2
+    '@testing-library/user-event':
+      specifier: ^14.6.1
+      version: 14.6.1
     '@tiptap/core':
       specifier: ^3.27.1
       version: 3.27.1
@@ -581,18 +584,33 @@ importers:
       '@academorix/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.1)
       '@types/react':
         specifier: 'catalog:'
         version: 19.2.17
       eslint:
         specifier: 'catalog:'
         version: 9.25.1(jiti@2.7.0)
+      jsdom:
+        specifier: 'catalog:'
+        version: 29.1.1
       react:
         specifier: 'catalog:'
         version: 19.2.7
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.7(react@19.2.7)
       typescript:
         specifier: 'catalog:'
         version: 5.6.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.9(@types/node@22.12.0)(@vitest/coverage-v8@4.1.9)(jsdom@29.1.1)(vite@8.1.2(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(yaml@2.9.0))
 
   packages/api-types:
     dependencies:
@@ -674,18 +692,33 @@ importers:
       '@academorix/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.1)
       '@types/react':
         specifier: 'catalog:'
         version: 19.2.17
       eslint:
         specifier: 'catalog:'
         version: 9.25.1(jiti@2.7.0)
+      jsdom:
+        specifier: 'catalog:'
+        version: 29.1.1
       react:
         specifier: 'catalog:'
         version: 19.2.7
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.7(react@19.2.7)
       typescript:
         specifier: 'catalog:'
         version: 5.6.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.9(@types/node@22.12.0)(@vitest/coverage-v8@4.1.9)(jsdom@29.1.1)(vite@8.1.2(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(yaml@2.9.0))
 
   packages/http:
     dependencies:
@@ -699,12 +732,21 @@ importers:
       '@academorix/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.12.0
       eslint:
         specifier: 'catalog:'
         version: 9.25.1(jiti@2.7.0)
+      jsdom:
+        specifier: 'catalog:'
+        version: 29.1.1
       typescript:
         specifier: 'catalog:'
         version: 5.6.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.9(@types/node@22.12.0)(@vitest/coverage-v8@4.1.9)(jsdom@29.1.1)(vite@8.1.2(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(yaml@2.9.0))
 
   packages/i18n:
     dependencies:
@@ -718,18 +760,33 @@ importers:
       '@academorix/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.1)
       '@types/react':
         specifier: 'catalog:'
         version: 19.2.17
       eslint:
         specifier: 'catalog:'
         version: 9.25.1(jiti@2.7.0)
+      jsdom:
+        specifier: 'catalog:'
+        version: 29.1.1
       react:
         specifier: 'catalog:'
         version: 19.2.7
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.7(react@19.2.7)
       typescript:
         specifier: 'catalog:'
         version: 5.6.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.9(@types/node@22.12.0)(@vitest/coverage-v8@4.1.9)(jsdom@29.1.1)(vite@8.1.2(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(yaml@2.9.0))
 
   packages/notifications:
     dependencies:
@@ -749,18 +806,30 @@ importers:
       '@academorix/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@types/react':
         specifier: 'catalog:'
         version: 19.2.17
       eslint:
         specifier: 'catalog:'
         version: 9.25.1(jiti@2.7.0)
+      jsdom:
+        specifier: 'catalog:'
+        version: 29.1.1
       react:
         specifier: 'catalog:'
         version: 19.2.7
       typescript:
         specifier: 'catalog:'
         version: 5.6.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.9(@types/node@22.12.0)(@vitest/coverage-v8@4.1.9)(jsdom@29.1.1)(vite@8.1.2(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(yaml@2.9.0))
 
   packages/pwa:
     dependencies:
@@ -780,6 +849,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.6.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.9(@types/node@22.12.0)(@vitest/coverage-v8@4.1.9)(jsdom@29.1.1)(vite@8.1.2(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(yaml@2.9.0))
 
   packages/query:
     dependencies:
@@ -799,18 +871,33 @@ importers:
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.101.2(react@19.2.7)
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@types/react':
         specifier: 'catalog:'
         version: 19.2.17
       eslint:
         specifier: 'catalog:'
         version: 9.25.1(jiti@2.7.0)
+      jsdom:
+        specifier: 'catalog:'
+        version: 29.1.1
       react:
         specifier: 'catalog:'
         version: 19.2.7
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.7(react@19.2.7)
       typescript:
         specifier: 'catalog:'
         version: 5.6.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.9(@types/node@22.12.0)(@vitest/coverage-v8@4.1.9)(jsdom@29.1.1)(vite@8.1.2(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(yaml@2.9.0))
 
   packages/realtime:
     dependencies:
@@ -824,12 +911,21 @@ importers:
       '@academorix/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.1)
       '@types/react':
         specifier: 'catalog:'
         version: 19.2.17
       eslint:
         specifier: 'catalog:'
         version: 9.25.1(jiti@2.7.0)
+      jsdom:
+        specifier: 'catalog:'
+        version: 29.1.1
       laravel-echo:
         specifier: 'catalog:'
         version: 2.3.7(pusher-js@8.5.0)
@@ -839,9 +935,15 @@ importers:
       react:
         specifier: 'catalog:'
         version: 19.2.7
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.7(react@19.2.7)
       typescript:
         specifier: 'catalog:'
         version: 5.6.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.9(@types/node@22.12.0)(@vitest/coverage-v8@4.1.9)(jsdom@29.1.1)(vite@8.1.2(@types/node@22.12.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(yaml@2.9.0))
 
   packages/typescript-config: {}
 
@@ -3633,6 +3735,12 @@ packages:
         optional: true
       '@types/react-dom':
         optional: true
+
+  '@testing-library/user-event@14.6.1':
+    resolution: {integrity: sha512-vq7fv0rnt+QTXgPxr5Hjc210p6YKq2kmdziLgnsZGgLJ9e6VAShx1pACLuRjd/AS/sr7phAR58OIIpf0LlmQNw==}
+    engines: {node: '>=12', npm: '>=6'}
+    peerDependencies:
+      '@testing-library/dom': '>=7.21.4'
 
   '@tiptap/core@3.27.1':
     resolution: {integrity: sha512-rV6Qn4wmC6BxfF+4mu6bqGWj9vA4oXXhsrpXaJL2uhjxeHAGofjwcHof2X84VYzeyXgdlsGmqKie4TAppVXZUQ==}
@@ -10227,6 +10335,10 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.17
       '@types/react-dom': 19.2.3(@types/react@19.2.17)
+
+  '@testing-library/user-event@14.6.1(@testing-library/dom@10.4.1)':
+    dependencies:
+      '@testing-library/dom': 10.4.1
 
   '@tiptap/core@3.27.1(@tiptap/pm@3.27.1)':
     dependencies:
