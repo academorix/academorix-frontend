@@ -1,19 +1,68 @@
 [
   {
-    "name": "dashboard app initial JS — app + React + Refine core (gzip)",
-    "path": [
-      "apps/dashboard/dist/assets/index-*.js",
-      "apps/dashboard/dist/assets/react-vendor-*.js",
-      "apps/dashboard/dist/assets/refine-vendor-*.js",
-      "apps/dashboard/dist/assets/rolldown-runtime-*.js"
-    ],
-    "limit": "210 KB",
+    "name": "dashboard — main entry (index chunk, gzip)",
+    "path": "apps/dashboard/dist/assets/index-*.js",
+    "limit": "200 KB",
     "gzip": true
   },
   {
-    "name": "dashboard app CSS (gzip)",
+    "name": "dashboard — React vendor (react + react-dom + router, gzip)",
+    "path": "apps/dashboard/dist/assets/react-vendor-*.js",
+    "limit": "75 KB",
+    "gzip": true
+  },
+  {
+    "name": "dashboard — Refine vendor (Refine + TanStack Query, gzip)",
+    "path": "apps/dashboard/dist/assets/refine-vendor-*.js",
+    "limit": "65 KB",
+    "gzip": true
+  },
+  {
+    "name": "dashboard — HeroUI OSS vendor (@heroui + react-aria, gzip)",
+    "path": "apps/dashboard/dist/assets/heroui-oss-vendor-*.js",
+    "limit": "250 KB",
+    "gzip": true
+  },
+  {
+    "name": "dashboard — HeroUI Pro vendor (@heroui-pro/react, gzip)",
+    "path": "apps/dashboard/dist/assets/heroui-pro-vendor-*.js",
+    "limit": "80 KB",
+    "gzip": true
+  },
+  {
+    "name": "dashboard — Charts vendor (recharts + d3 satellites, gzip)",
+    "path": "apps/dashboard/dist/assets/charts-vendor-*.js",
+    "limit": "90 KB",
+    "gzip": true
+  },
+  {
+    "name": "dashboard — Realtime vendor (laravel-echo + pusher-js, gzip)",
+    "path": "apps/dashboard/dist/assets/realtime-vendor-*.js",
+    "limit": "25 KB",
+    "gzip": true
+  },
+  {
+    "name": "dashboard — largest route chunk (dashboard-page, gzip)",
+    "path": "apps/dashboard/dist/assets/dashboard-page-*.js",
+    "limit": "25 KB",
+    "gzip": true
+  },
+  {
+    "name": "dashboard — authenticated shell (layout, gzip)",
+    "path": "apps/dashboard/dist/assets/authenticated-layout-*.js",
+    "limit": "25 KB",
+    "gzip": true
+  },
+  {
+    "name": "dashboard — CSS (Tailwind + HeroUI Pro tokens, gzip)",
     "path": "apps/dashboard/dist/assets/*.css",
     "limit": "90 KB",
+    "gzip": true
+  },
+  {
+    "name": "dashboard — total JS (all emitted chunks, gzip)",
+    "path": "apps/dashboard/dist/assets/*.js",
+    "limit": "900 KB",
     "gzip": true
   }
 ]
