@@ -46,6 +46,16 @@
  * a flat section instead. If a deployment grows past this trade-off, we
  * upgrade to a full `Dropdown` wrapper — TODO tagged in MENUS_PLAN.md §6.3.
  *
+ * ## React Aria collection constraints
+ *
+ * `MenuSection` is a **collection wrapper** — the React Aria collection
+ * walker only recognises `Header`, `MenuItem`, and `Separator` descendants.
+ * A stray `<div>` inside a `MenuSection` blows the walker up silently: the
+ * whole section renders empty (including sibling `MenuItem`s). We therefore
+ * use HeroUI's `Header` (a thin wrapper around `react-aria-components/Header`)
+ * for the category label and forward `data-testid` through it, and we keep
+ * separators between sections rather than inside them.
+ *
  * ## `isDisabled` memoisation
  *
  * `command.isDisabled(ctx)` is invoked ONCE per open cycle — resolved on the
@@ -55,8 +65,8 @@
  * (React Query cache warming up mid-open).
  */
 
-import { Menu, MenuItem, MenuSection, Popover, Separator } from "@academorix/ui/react";
-import { useMemo, useRef } from "react";
+import { Header, Menu, MenuItem, MenuSection, Popover, Separator } from "@academorix/ui/react";
+import { Fragment, useMemo, useRef } from "react";
 
 import type { MenuCategory, MenuCommand, MenuContext, ShortcutOs } from "@/menus/command.types";
 import type { ContextMenuPosition } from "@/menus/use-context-menu";
@@ -157,6 +167,7 @@ export function ContextMenu({
   // Split top-level items from overflow. Categories that fit stay; the
   // over-cap tail rolls into its own group.
   const { visible, overflow } = useMemo(() => splitOverflow(grouped, TOP_LEVEL_LIMIT), [grouped]);
+  const visibleEntries = useMemo(() => [...visible.entries()], [visible]);
 
   const handleAction = (key: Key): void => {
     const command = items.find((entry) => entry.id === String(key));
@@ -207,26 +218,51 @@ export function ContextMenu({
               onAction={handleAction}
               onClose={close}
             >
-              {[...visible.entries()].map(([category, groupItems], index) =>
-                renderCategorySection({
-                  category,
-                  groupItems,
-                  disabledMap,
-                  os: resolvedOs,
-                  isFirst: index === 0,
-                  translate,
-                }),
-              )}
+              {visibleEntries.map(([category, groupItems], index) => (
+                <Fragment key={category}>
+                  {index === 0 ? null : (
+                    <Separator
+                      aria-hidden="true"
+                      className="my-1 h-px w-full bg-border"
+                      data-testid={`context-menu-separator-${category}`}
+                    />
+                  )}
+                  <MenuSection className="flex flex-col gap-0.5">
+                    <Header
+                      className="px-2 py-1 text-xs font-medium tracking-wide text-muted uppercase"
+                      data-testid={`context-menu-heading-${category}`}
+                    >
+                      {CATEGORY_LABEL[category]}
+                    </Header>
+                    {groupItems.map((command) =>
+                      renderMenuItem({ command, disabledMap, os: resolvedOs, translate }),
+                    )}
+                  </MenuSection>
+                </Fragment>
+              ))}
 
-              {overflow.length > 0
-                ? renderOverflowSection({
-                    overflow,
-                    disabledMap,
-                    os: resolvedOs,
-                    hasVisible: visible.size > 0,
-                    translate,
-                  })
-                : null}
+              {overflow.length > 0 ? (
+                <Fragment key="__overflow">
+                  {visibleEntries.length > 0 ? (
+                    <Separator
+                      aria-hidden="true"
+                      className="my-1 h-px w-full bg-border"
+                      data-testid="context-menu-separator-overflow"
+                    />
+                  ) : null}
+                  <MenuSection className="flex flex-col gap-0.5">
+                    <Header
+                      className="px-2 py-1 text-xs font-medium tracking-wide text-muted uppercase"
+                      data-testid="context-menu-heading-overflow"
+                    >
+                      More
+                    </Header>
+                    {overflow.map((command) =>
+                      renderMenuItem({ command, disabledMap, os: resolvedOs, translate }),
+                    )}
+                  </MenuSection>
+                </Fragment>
+              ) : null}
             </Menu>
           </Popover.Dialog>
         </Popover.Content>
@@ -261,86 +297,6 @@ function VirtualAnchor({
   };
 
   return <div ref={anchorRef} aria-hidden="true" data-testid="context-menu-anchor" style={style} />;
-}
-
-/**
- * Renders a single category section. Kept as a helper (not a component) so
- * the parent `<Menu>` receives static `MenuSection` children — React Aria's
- * Menu requires its children to be primitive collection elements to build
- * an internal collection tree correctly, and a wrapping component breaks
- * that inference.
- */
-function renderCategorySection({
-  category,
-  groupItems,
-  disabledMap,
-  os,
-  isFirst,
-  translate,
-}: {
-  category: MenuCategory;
-  groupItems: MenuCommand[];
-  disabledMap: Map<string, boolean>;
-  os: ShortcutOs;
-  isFirst: boolean;
-  translate: (key: string) => string;
-}): ReactNode {
-  return (
-    <MenuSection key={category} className="flex flex-col gap-0.5">
-      {isFirst ? null : (
-        <Separator
-          aria-hidden="true"
-          className="my-1 h-px w-full bg-border"
-          data-testid={`context-menu-separator-${category}`}
-        />
-      )}
-      <div
-        className="px-2 py-1 text-xs font-medium tracking-wide text-muted uppercase"
-        data-testid={`context-menu-heading-${category}`}
-      >
-        {CATEGORY_LABEL[category]}
-      </div>
-      {groupItems.map((command) => renderMenuItem({ command, disabledMap, os, translate }))}
-    </MenuSection>
-  );
-}
-
-/**
- * Renders the overflow section — everything past the top-level cap. Kept
- * as a flat section (not a nested submenu) for the reason documented in
- * the file docblock; the visual boundary is a divider + "More" heading.
- */
-function renderOverflowSection({
-  overflow,
-  disabledMap,
-  os,
-  hasVisible,
-  translate,
-}: {
-  overflow: MenuCommand[];
-  disabledMap: Map<string, boolean>;
-  os: ShortcutOs;
-  hasVisible: boolean;
-  translate: (key: string) => string;
-}): ReactNode {
-  return (
-    <MenuSection key="__overflow" className="flex flex-col gap-0.5">
-      {hasVisible ? (
-        <Separator
-          aria-hidden="true"
-          className="my-1 h-px w-full bg-border"
-          data-testid="context-menu-separator-overflow"
-        />
-      ) : null}
-      <div
-        className="px-2 py-1 text-xs font-medium tracking-wide text-muted uppercase"
-        data-testid="context-menu-heading-overflow"
-      >
-        More
-      </div>
-      {overflow.map((command) => renderMenuItem({ command, disabledMap, os, translate }))}
-    </MenuSection>
-  );
 }
 
 /** Renders a single menu item — label on the left, shortcut on the right. */
