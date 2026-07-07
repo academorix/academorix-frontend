@@ -1,11 +1,13 @@
 {
   "ui": "tui",
+  "globalEnv": ["NODE_ENV", "CI"],
+  "globalPassThroughEnv": ["PATH", "HOME", "NODE_OPTIONS"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "environments/.env*"],
-      "outputs": ["dist/**"],
-      "env": ["VITE_*", "NODE_ENV"]
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "env": ["VITE_*", "NODE_ENV", "HEROUI_AUTH_TOKEN", "HEROUI_PERSONAL_TOKEN"]
     },
     "dev": {
       "cache": false,
