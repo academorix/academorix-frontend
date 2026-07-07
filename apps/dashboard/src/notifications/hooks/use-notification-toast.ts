@@ -18,6 +18,22 @@
  * A per-mount `seenIds` ref bounds the memory usage — we only track
  * the ids the user has been shown a toast for, not the whole history.
  *
+ * ## Toast variant selection
+ *
+ * Per NOTIFICATIONS_PLAN §5.3, specific event types map explicitly to
+ * fixed variants regardless of derived priority:
+ *
+ *   - `invoice.paid`, `coach.checked_in`, `payment_captured`     → `toast.success`
+ *   - `attendance.missing`, `attendance_missing`, `payment_retry` → `toast()`   (neutral)
+ *   - `safeguarding.alert`, `safeguarding_follow_up`, `security_alert`, `child_safety_alert`
+ *                                                                 → `toast.danger`
+ *
+ * Anything not in the explicit lookup falls back to the priority-based
+ * mapping from {@link mapPriorityToToastVariant}. The explicit override
+ * lives here (not in `priority.util.ts`) because "priority" is a
+ * general concept while these mappings are a UX choice specific to the
+ * in-app toast bridge.
+ *
  * ## Rules
  *
  *   - The first render after mount is a "warm-up": we mark every
@@ -28,6 +44,9 @@
  *     visible in the drawer only.
  *   - `urgent` toasts are persistent (`timeout: 0`) per
  *     NOTIFICATIONS_PLAN §5.3.
+ *   - Every toast carries an **Open** action that navigates to
+ *     `data_ref.action_url` when present. Rendered via HeroUI's
+ *     `actionProps` slot.
  *
  * ## Analytics
  *
@@ -39,7 +58,7 @@
 import { toast } from "@academorix/ui/react";
 import { useEffect, useRef } from "react";
 
-import type { RenderableNotification } from "@/notifications/types";
+import type { NotificationToastVariant, RenderableNotification } from "@/notifications/types";
 import type { Notification } from "@academorix/notifications";
 
 import { EVENTS } from "@/config/analytics.config";
@@ -50,6 +69,74 @@ import {
 } from "@/notifications/priority.util";
 import { useNotifications } from "@/notifications/provider/notifications-bundle";
 import { emitNotificationTelemetry } from "@/notifications/telemetry";
+
+/**
+ * Explicit event-type → toast variant overrides. Keyed on lowercase
+ * `type` strings so a backend that emits either dot- or underscore-
+ * separated names still hits the right row.
+ *
+ * Kept internal so callers can't accidentally paint a `success`
+ * variant on a `safeguarding.alert` — the overrides are opinionated
+ * on purpose.
+ */
+const TYPE_VARIANT_OVERRIDES: Readonly<Record<string, NotificationToastVariant>> = {
+  "invoice.paid": "success",
+  invoice_paid: "success",
+  "coach.checked_in": "success",
+  coach_checked_in: "success",
+  payment_captured: "success",
+
+  "attendance.missing": "default",
+  attendance_missing: "default",
+  payment_retry: "default",
+
+  "safeguarding.alert": "danger",
+  safeguarding_alert: "danger",
+  safeguarding_follow_up: "danger",
+  security_alert: "danger",
+  child_safety_alert: "danger",
+};
+
+/**
+ * Returns the toast variant to use for a notification, giving
+ * priority to explicit overrides before falling back to the derived
+ * priority mapping.
+ *
+ * @internal exported for the toast-bridge unit test.
+ */
+export function resolveToastVariant(notification: Notification): NotificationToastVariant {
+  const override = TYPE_VARIANT_OVERRIDES[notification.type.toLowerCase()];
+
+  if (override) {
+    return override;
+  }
+
+  return mapPriorityToToastVariant(deriveNotificationPriority(notification));
+}
+
+/**
+ * Reads a click-target URL from a DTO's `data_ref`, if present. Kept
+ * mirror-identical to the row-level helper so both surfaces resolve
+ * the same value from the same field.
+ */
+function extractActionUrl(notification: Notification): string | undefined {
+  const candidate = notification.data_ref["action_url"];
+
+  return typeof candidate === "string" && candidate.length > 0 ? candidate : undefined;
+}
+
+/**
+ * Navigates to `url` using `location.assign`. Absolute URLs escape
+ * the SPA; relative URLs still work because the destination is
+ * unambiguous on a fresh page load.
+ */
+function navigateToActionUrl(url: string): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.location.assign(url);
+}
 
 /**
  * Dispatches a HeroUI toast for a freshly-added notification.
@@ -66,23 +153,51 @@ export function toastForNotification(notification: Notification): void {
     return;
   }
 
-  const variant = mapPriorityToToastVariant(priority);
+  const variant = resolveToastVariant(notification);
   const title = notification.title ?? "New notification";
   const description = notification.body_preview ?? undefined;
   const timeout = toastTimeoutForPriority(priority);
+  const actionUrl = extractActionUrl(notification);
 
-  // Route through the priority-specific toast method so HeroUI applies
-  // its own icon + colour treatment on top of ours.
-  const payload = { description, timeout };
+  // Every toast that has an `action_url` gets an "Open" button that
+  // navigates on press. Rendered via `actionProps` — HeroUI's
+  // recommended slot for the primary CTA per the OSS toast docs.
+  const actionProps = actionUrl
+    ? {
+        children: "Open",
+        onPress: (): void => {
+          emitNotificationTelemetry(EVENTS.notificationClicked, {
+            channel: notification.channel,
+            type: notification.type,
+            priority,
+            surface: "in_app_toast",
+          });
+          navigateToActionUrl(actionUrl);
+        },
+      }
+    : undefined;
 
+  const payload = {
+    description,
+    timeout,
+    actionProps,
+  } as const;
+
+  // Route through the priority-specific toast method so HeroUI
+  // applies its own icon + colour treatment. The `default` variant
+  // uses the plain `toast()` signature — semantically the "no accent"
+  // tier per the plan (e.g. `attendance.missing` — informative, not
+  // alarming).
   if (variant === "danger") {
     toast.danger(title, payload);
   } else if (variant === "warning") {
     toast.warning(title, payload);
   } else if (variant === "success") {
     toast.success(title, payload);
-  } else {
+  } else if (variant === "accent") {
     toast.info(title, payload);
+  } else {
+    toast(title, payload);
   }
 
   emitNotificationTelemetry(EVENTS.notificationShown, {
