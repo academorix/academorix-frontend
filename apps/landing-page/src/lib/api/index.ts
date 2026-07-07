@@ -65,6 +65,10 @@ export async function getPricingCompare(locale: string): Promise<Array<Localized
 export async function getFaq(locale: string): Promise<Array<Localized<FaqItem>>> {
   return readCollection<FaqItem>("faq", locale);
 }
+/** Site-wide FAQ pool. ~40 questions across pricing/security/sports/etc. */
+export async function getFaqPool(locale: string): Promise<Array<Localized<FaqItem>>> {
+  return readCollection<FaqItem>("faq-pool", locale);
+}
 
 // Products
 export async function getProducts(locale: string): Promise<Array<Localized<ProductData>>> {
