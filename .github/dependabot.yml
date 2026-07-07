@@ -1,0 +1,136 @@
+# -----------------------------------------------------------------------------
+# @file        .github/dependabot.yml
+# @description Dependabot configuration for the Academorix frontend workspace.
+#              Dependabot walks every package.json under the pnpm workspace
+#              (root + apps/* + packages/*) and opens a PR per dependency
+#              update that is not filtered by the rules below.
+#
+# Grouping rationale — every group here batches packages that MUST move
+# together for the workspace to keep building. Landing separately triggers
+# peer-dep churn, cache misses, and mid-week merge-conflict noise.
+#
+#   refinedev      — @refinedev/* is a single meta-release. Mixing versions
+#                    across @refinedev/core, @refinedev/react-router, etc.
+#                    is unsupported by upstream. Batch them.
+#
+#   heroui         — @heroui/* (OSS) and @heroui-pro/* (Pro) share a single
+#                    theme token pipeline + peer-deps on react-aria. Pro
+#                    releases are cut against a specific OSS version; any
+#                    upgrade must move both in lockstep.
+#
+#   testing-library — @testing-library/{react,jest-dom,user-event} share
+#                    peer-deps and expected DOM behaviours. Version skew
+#                    breaks matchers in subtle ways.
+#
+#   vitest         — vitest + @vitest/* (coverage-v8, ui, browser, etc.)
+#                    are versioned in lockstep by the Vitest team; a v4
+#                    coverage plugin against v3 core fails at load time.
+#
+#   eslint         — eslint core + eslint-* plugins + @eslint/* infra
+#                    (compat, eslintrc) must stay compatible with the flat-
+#                    config API. Cross-version PRs land red every time.
+#
+#   sentry         — @sentry/* (browser, react, nextjs, tracing) share a
+#                    transport + hub. Not currently a workspace dep, but
+#                    the group is pre-defined so it will just work the
+#                    moment @sentry/react is added.
+#
+#   tanstack       — @tanstack/react-query (and future @tanstack/*: table,
+#                    virtual, router) share the query-core internals. A
+#                    partial upgrade breaks devtools + hydration.
+#
+# Docs: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+# -----------------------------------------------------------------------------
+version: 2
+updates:
+  # ---------------------------------------------------------------------------
+  # NPM / pnpm workspace — root scan picks up every package.json in the
+  # workspace thanks to pnpm-workspace.yaml discovery.
+  # ---------------------------------------------------------------------------
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Africa/Cairo"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "automerge-candidate"
+    # Team handle in `org/team-slug` form. Adjust once the org + team
+    # are provisioned — see CODEOWNERS for the same placeholder.
+    reviewers:
+      - "academorix/platform-team"
+    assignees:
+      - "academorix/platform-team"
+    commit-message:
+      # Conventional-commit prefix keeps titles green against the
+      # `pr-title.yml` semantic-PR check + husky commitlint hook.
+      prefix: "chore(deps)"
+      include: "scope"
+    groups:
+      # Refine data layer — every @refinedev/* package ships against a
+      # coherent meta-release. Never mix versions.
+      refinedev:
+        patterns:
+          - "@refinedev/*"
+      # HeroUI OSS + Pro — must move together (Pro pins an OSS peer).
+      heroui:
+        patterns:
+          - "@heroui/*"
+          - "@heroui-pro/*"
+      # Testing Library family — matchers + hooks share peer versions.
+      testing-library:
+        patterns:
+          - "@testing-library/*"
+      # Vitest + its plugins — versioned as a suite.
+      vitest:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+      # ESLint core + config packages + all plugins.
+      eslint:
+        patterns:
+          - "eslint"
+          - "eslint-*"
+          - "@eslint/*"
+      # Sentry SDK bundle — pre-defined even though not yet installed.
+      sentry:
+        patterns:
+          - "@sentry/*"
+      # TanStack Query + adjacent libs (table, virtual, router, form).
+      tanstack:
+        patterns:
+          - "@tanstack/*"
+    ignore:
+      # Never auto-PR a major bump. Majors ship breaking changes and
+      # require a design pass. Dependabot still surfaces the availability
+      # on the Insights tab.
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+
+  # ---------------------------------------------------------------------------
+  # GitHub Actions — keeps every `uses:` reference on latest patch/minor.
+  # Runs in its own PR stream so npm churn does not delay action bumps
+  # (or vice versa).
+  # ---------------------------------------------------------------------------
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Africa/Cairo"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "automerge-candidate"
+      - "ci"
+    reviewers:
+      - "academorix/platform-team"
+    assignees:
+      - "academorix/platform-team"
+    commit-message:
+      prefix: "chore(actions)"
