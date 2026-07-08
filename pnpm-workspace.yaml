@@ -131,7 +131,7 @@ catalog:
   next-themes: ^0.4.6
   "@tailwindcss/postcss": 4.3.1
   "@eslint/compat": ^1.2.8
-  "@eslint/eslintrc": ^3.3.1
+  "@eslint/eslintrc": ^3.3.5
   clsx: ^2.1.1
   intl-messageformat: ^10.7.16
   # Reserved for Wave 5 (i18n) — locale routing + typed navigation.
@@ -160,15 +160,15 @@ catalog:
   jsdom: ^29.1.1
 
   # --- Lint / format ---
-  eslint: ^9.25.1
-  "@eslint/js": ^9.25.1
+  eslint: ^9.39.4
+  "@eslint/js": ^9.39.4
   typescript-eslint: ^8.31.1
-  eslint-config-prettier: ^9.1.0
+  eslint-config-prettier: ^9.1.2
   eslint-plugin-react: ^7.37.5
   eslint-plugin-react-hooks: ^5.2.0
   eslint-plugin-jsx-a11y: ^6.10.2
   eslint-plugin-import: ^2.31.0
-  eslint-plugin-unused-imports: ^4.1.4
+  eslint-plugin-unused-imports: ^4.4.1
   globals: ^16.0.0
   prettier: ^3.9.4
   prettier-plugin-tailwindcss: ^0.8.0
