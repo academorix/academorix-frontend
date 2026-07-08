@@ -226,3 +226,78 @@ export interface BillingInvoice {
   /** Downloadable PDF URL, or `null` when not yet available. */
   pdf_url: string | null;
 }
+
+// ─────────────────────────────────────────────────────────────────────
+// Plans catalog (dashboard-facing) — returned by GET /api/v1/plans
+// ─────────────────────────────────────────────────────────────────────
+
+/**
+ * A single plan record as consumed by the authenticated shell's billing
+ * pages. Distinct from {@link PlanTier} (the *marketing* catalog served by
+ * the public `/api/billing/catalog` endpoint): dashboard plans are keyed by
+ * a stable backend `id`, carry a single already-selected `price` + `cadence`
+ * (rather than the full price matrix), and expose the concrete quota grants
+ * used to render "you'll get X athlete slots" comparisons on the change-plan
+ * card.
+ *
+ * The wire shape is the byte-compatible mirror of the backend `PlanData` DTO
+ * (once shipped) — snake_case, decimal string for `price`, `null` in
+ * `quotas` for unlimited grants. See `TODO(backend-endpoint)` markers on
+ * `use-plans` for the endpoint status.
+ */
+export interface Plan {
+  /** Stable backend identifier (e.g. `"plan_growth_monthly"`). */
+  id: string;
+  /** Human-readable plan name (e.g. `"Growth"`). */
+  name: string;
+  /** Plan tier — matches {@link PlanKey} so callers can map to the
+   *  shared label / order tables. */
+  tier: PlanKey;
+  /** Billing cadence for the price on this record. */
+  cadence: BillingPeriod;
+  /** Price in decimal string form (e.g. `"49.00"`). Callers pass it
+   *  through {@link "@/lib/format" formatMoney} for display. */
+  price: string;
+  /** ISO-4217 currency code, e.g. `"USD"`. */
+  currency: string;
+  /**
+   * Flat list of highlight feature keys included with this plan
+   * (e.g. `["sso", "priority_support"]`). Order is authoritative —
+   * the backend/fixture decides the sort. Localise on the FE via a
+   * catalog lookup (not baked into this DTO).
+   */
+  features: string[];
+  /**
+   * Concrete quota grants, keyed by entitlement key. `null` denotes an
+   * unlimited grant so the UI can render an "Unlimited" chip instead of
+   * a numeric limit.
+   */
+  quotas: Record<string, number | null>;
+}
+
+/**
+ * Metadata that accompanies a {@link PlansResponse}. `default_plan_id`
+ * points to the plan the SPA should preselect on the "choose a plan" flow
+ * for a brand-new tenant; `currency` is the currency the catalog is priced
+ * in (the tenant's locale can trigger a switch on the backend).
+ */
+export interface PlansResponseMeta {
+  /** ID of the plan the catalog considers the "default" pick. */
+  default_plan_id: string;
+  /** ISO-4217 currency code the catalog is priced in. */
+  currency: string;
+}
+
+/**
+ * The full response envelope for `GET /api/v1/plans`. The dashboard reads
+ * this shape from two sources — the live backend when
+ * {@link "@/config/features.config" features.billingLivePlans} is on, or the
+ * static fixture at `public/data/plans.json` when the flag is off (or the
+ * live endpoint responds 404/501).
+ */
+export interface PlansResponse {
+  /** Every plan in the catalog. */
+  data: Plan[];
+  /** Catalog-level metadata (default plan + currency). */
+  meta: PlansResponseMeta;
+}

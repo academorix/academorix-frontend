@@ -1,0 +1,105 @@
+{
+  "data": [
+    {
+      "id": "plan_starter_monthly",
+      "name": "Starter",
+      "tier": "starter",
+      "cadence": "monthly",
+      "price": "0.00",
+      "currency": "USD",
+      "features": [
+        "single_branch",
+        "scheduling",
+        "attendance",
+        "athlete_profiles",
+        "email_support"
+      ],
+      "quotas": {
+        "athlete_slot": 100,
+        "branch_slot": 1,
+        "team_slot": 5,
+        "staff_slot": 3
+      }
+    },
+    {
+      "id": "plan_growth_monthly",
+      "name": "Growth",
+      "tier": "growth",
+      "cadence": "monthly",
+      "price": "99.00",
+      "currency": "USD",
+      "features": [
+        "multi_branch",
+        "scheduling",
+        "attendance",
+        "performance_tracking",
+        "memberships",
+        "payments",
+        "priority_email_support"
+      ],
+      "quotas": {
+        "athlete_slot": 500,
+        "branch_slot": 3,
+        "team_slot": 20,
+        "staff_slot": 15
+      }
+    },
+    {
+      "id": "plan_pro_monthly",
+      "name": "Pro",
+      "tier": "pro",
+      "cadence": "monthly",
+      "price": "249.00",
+      "currency": "USD",
+      "features": [
+        "multi_branch",
+        "scheduling",
+        "attendance",
+        "performance_tracking",
+        "memberships",
+        "payments",
+        "sso",
+        "advanced_rbac",
+        "custom_reports",
+        "dedicated_success_manager"
+      ],
+      "quotas": {
+        "athlete_slot": 2000,
+        "branch_slot": 10,
+        "team_slot": 100,
+        "staff_slot": 50
+      }
+    },
+    {
+      "id": "plan_enterprise_monthly",
+      "name": "Enterprise",
+      "tier": "enterprise",
+      "cadence": "monthly",
+      "price": "0.00",
+      "currency": "USD",
+      "features": [
+        "multi_branch",
+        "unlimited_athletes",
+        "unlimited_branches",
+        "sso",
+        "advanced_rbac",
+        "custom_reports",
+        "custom_onboarding",
+        "sla",
+        "audit_log",
+        "priority_24_7_support",
+        "custom_contract"
+      ],
+      "quotas": {
+        "athlete_slot": null,
+        "branch_slot": null,
+        "team_slot": null,
+        "staff_slot": null
+      }
+    }
+  ],
+  "meta": {
+    "default_plan_id": "plan_growth_monthly",
+    "currency": "USD"
+  }
+}
