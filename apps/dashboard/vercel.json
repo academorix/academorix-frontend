@@ -60,7 +60,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' https://vercel.live; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://*.academorix.app wss://*.academorix.app https://us.i.posthog.com https://vitals.vercel-insights.com; frame-src 'self'; media-src 'self'; worker-src 'self' blob:; manifest-src 'self'; frame-ancestors 'none'; form-action 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
+          "value": "default-src 'self'; script-src 'self' https://vercel.live; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://api.academorix.com https://*.academorix.com https://*.academorix.app wss://ws.academorix.com wss://*.academorix.com wss://*.academorix.app https://us.i.posthog.com https://vitals.vercel-insights.com https://vercel.live; frame-src 'self'; media-src 'self'; worker-src 'self' blob:; manifest-src 'self'; frame-ancestors 'none'; form-action 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
         }
       ]
     }
