@@ -10,6 +10,8 @@
  * Component can call `getTranslations()` / `useTranslations()`.
  */
 
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import clsx from "clsx";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
@@ -25,6 +27,7 @@ import { envConfig } from "@/config/env.config";
 import { fontMono, fontSans } from "@/config/fonts.config";
 import { isRtlLocale, LOCALE_BCP47_TAGS, LOCALES, routing } from "@/i18n/routing";
 import { getSite } from "@/lib/api";
+import { JsonLd, organizationSchema, websiteSchema } from "@/lib/seo/json-ld";
 
 /** Pre-render every supported locale at build time. */
 export function generateStaticParams(): Array<{ locale: string }> {
@@ -114,10 +117,31 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   const messages = await getMessages();
+  const site = await getSite(locale);
+  const marketingUrl = envConfig.marketingUrl;
+
+  // Brand-level JSON-LD blocks — every page inherits Organization +
+  // WebSite. Deep-dive pages add their own schemas (Product, FAQ,
+  // BreadcrumbList) on top.
+  const brandSchemas = [
+    organizationSchema({
+      siteUrl: marketingUrl,
+      name: site.name,
+      description: site.description,
+      logoUrl: `${marketingUrl}/brand/wordmark.png`,
+      contactEmail: site.sales_email,
+      sameAs: [site.social.linkedin, site.social.github, site.social.twitter].filter(
+        (u): u is string => Boolean(u),
+      ),
+    }),
+    websiteSchema({ siteUrl: marketingUrl, name: site.name }),
+  ];
 
   return (
     <html suppressHydrationWarning dir={isRtlLocale(locale) ? "rtl" : "ltr"} lang={locale}>
-      <head />
+      <head>
+        <JsonLd schemas={brandSchemas} />
+      </head>
       <body
         className={clsx(
           "min-h-dvh bg-background font-sans text-foreground antialiased",
@@ -132,6 +156,8 @@ export default async function LocaleLayout({
             {children}
           </Providers>
         </NextIntlClientProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

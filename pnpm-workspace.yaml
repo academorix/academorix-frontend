@@ -100,6 +100,14 @@ catalog:
   # telemetry helper fans them out to the analytics adapter registry.
   web-vitals: ^5.3.0
 
+  # --- Vercel-native analytics + speed insights (landing-page) ---
+  # First-party Vercel packages that report to the analytics + speed
+  # insights dashboards attached to a Vercel project. Zero-config: the
+  # `<Analytics />` and `<SpeedInsights />` components no-op outside a
+  # Vercel deployment, so keeping them in the tree costs ~2KB gz.
+  "@vercel/analytics": ^1.6.1
+  "@vercel/speed-insights": ^1.2.0
+
   # --- Overview dashboard drag-and-drop grid ---
   # `react-grid-layout` powers the overview widget grid on the dashboard
   # (`DASHBOARD_UX_PLAN.md` §4.2). It ships responsive breakpoint handling,

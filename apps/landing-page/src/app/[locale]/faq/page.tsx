@@ -18,6 +18,7 @@ import { FaqAccordion } from "@/components/marketing/faq-accordion";
 import { MarketingHero } from "@/components/marketing/marketing-hero";
 import { MarketingShell } from "@/components/shell/marketing-shell";
 import { getFaqPool } from "@/lib/api";
+import { faqSchema, JsonLd } from "@/lib/seo/json-ld";
 
 interface PageProps {
   params: Promise<{ locale: string }>;
@@ -39,8 +40,18 @@ export default async function FaqPage({ params }: PageProps): Promise<ReactNode>
 
   const faq = await getFaqPool(locale);
 
+  const jsonLdSchemas = [
+    faqSchema({
+      items: faq.map((item) => ({
+        question: item.question,
+        answer: item.answer,
+      })),
+    }),
+  ];
+
   return (
     <MarketingShell>
+      <JsonLd schemas={jsonLdSchemas} />
       <MarketingHero
         eyebrow={locale === "ar" ? "الأسئلة الشائعة" : "FAQ"}
         subtitle={

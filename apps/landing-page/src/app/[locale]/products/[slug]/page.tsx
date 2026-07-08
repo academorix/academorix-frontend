@@ -21,7 +21,9 @@ import { MarketingHero } from "@/components/marketing/marketing-hero";
 import { QuoteBlock } from "@/components/marketing/quote-block";
 import { RelatedLinks } from "@/components/marketing/related-links";
 import { MarketingShell } from "@/components/shell/marketing-shell";
+import { envConfig } from "@/config/env.config";
 import { getProduct, getProductSlugs } from "@/lib/api";
+import { breadcrumbSchema, JsonLd, productSchema } from "@/lib/seo/json-ld";
 
 interface PageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -60,8 +62,31 @@ export default async function ProductPage({ params }: PageProps): Promise<ReactN
 
   if (!product) notFound();
 
+  const productPagePath = locale === "en" ? `/products/${slug}` : `/${locale}/products/${slug}`;
+  const jsonLdSchemas = [
+    productSchema({
+      siteUrl: envConfig.marketingUrl,
+      slug,
+      name: product.title,
+      description: product.description,
+      category: "BusinessApplication",
+    }),
+    breadcrumbSchema({
+      siteUrl: envConfig.marketingUrl,
+      trail: [
+        { name: locale === "ar" ? "الرئيسية" : "Home", path: locale === "en" ? "/" : `/${locale}` },
+        {
+          name: locale === "ar" ? "المنتجات" : "Products",
+          path: locale === "en" ? "/products" : `/${locale}/products`,
+        },
+        { name: product.title, path: productPagePath },
+      ],
+    }),
+  ];
+
   return (
     <MarketingShell>
+      <JsonLd schemas={jsonLdSchemas} />
       <MarketingHero
         ctaPrimary={{ label: product.cta_label, type: product.cta_type }}
         ctaSecondary={{
