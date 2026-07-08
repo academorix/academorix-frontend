@@ -63,15 +63,16 @@ export const features = {
   pwaUpdatePrompt: envFlag("PWA_UPDATE_PROMPT", true),
 
   /**
-   * Show the onboarding tour on first launch. Kill-switch for the flow
-   * described in `ONBOARDING_PLAN.md`.
+   * Show the onboarding tour on first launch. Kill-switch for the tour
+   * flow implemented in `src/onboarding/tour/**`.
    */
   onboardingTour: envFlag("ONBOARDING_TOUR", true),
 
   /**
-   * Show the dashboard onboarding checklist widget (`ONBOARDING_PLAN.md`
-   * §5). Independent from the tour — some environments want just the
-   * checklist without the popover walkthrough.
+   * Show the dashboard onboarding checklist widget. Independent from the
+   * tour — some environments want just the checklist without the popover
+   * walkthrough. Implementation:
+   * `src/modules/dashboard/widgets/onboarding-checklist/**`.
    */
   onboardingChecklist: envFlag("ONBOARDING_CHECKLIST", true),
 
@@ -83,20 +84,23 @@ export const features = {
 
   /**
    * Right-click context menu on data grid rows / sidebar items.
-   * Disabled by default until `MENUS_PLAN.md` Phase 1 lands.
+   * Implementation: `src/menus/context-menu.tsx` +
+   * `src/menus/use-context-menu.ts`.
    */
   contextMenu: envFlag("CONTEXT_MENU", false),
 
   /**
-   * Web Push notifications (`NOTIFICATIONS_PLAN.md` Phase 2). Off by
-   * default — turned on per-tenant when VAPID keys land in Doppler.
+   * Web Push notifications. Off by default — turned on per-tenant when
+   * VAPID keys land in Doppler. Implementation:
+   * `src/notifications/push/**`.
    */
   webPush: envFlag("WEB_PUSH", false),
 
   /**
-   * Native OS notifications via Tauri (`NOTIFICATIONS_PLAN.md` §7 + §11
-   * Phase 4). Auto-enabled when `window.__TAURI__` is truthy; kept as a
-   * flag so a broken native binding doesn't take down the app.
+   * Native OS notifications via Tauri. Auto-enabled when `window.__TAURI__`
+   * is truthy; kept as a flag so a broken native binding doesn't take down
+   * the app. Implementation: `src/desktop/notifications.ts` +
+   * `src-tauri/src/notification.rs`.
    */
   nativeNotifications: envFlag("NATIVE_NOTIFICATIONS", true),
 
@@ -144,7 +148,7 @@ export const features = {
   debugHeaders: envFlag("DEBUG_HEADERS", false),
 
   /**
-   * Show the developer menu in the top bar (see `MENUS_PLAN.md`
+   * Show the developer menu in the top bar (see menus module
    * §developer category). Auto-on in dev, off in prod unless
    * explicitly overridden.
    */

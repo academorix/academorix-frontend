@@ -36,12 +36,15 @@
 import { useGetIdentity, useList } from "@refinedev/core";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import type { ChecklistStorageState, OnboardingChecklistTask } from "@/onboarding/onboarding.types";
+import type {
+  ChecklistStorageState,
+  OnboardingChecklistTask,
+} from "@/lib/onboarding/onboarding.types";
 import type { Identity } from "@/types";
 
 import { CHECKLIST_TASKS } from "@/config/onboarding.config";
+import { readChecklistState, writeChecklistState } from "@/lib/onboarding/storage";
 import { useInstallDetection } from "@/modules/dashboard/widgets/onboarding-checklist/use-install-detection";
-import { readChecklistState, writeChecklistState } from "@/onboarding/storage";
 
 // ---------------------------------------------------------------------------
 // Types

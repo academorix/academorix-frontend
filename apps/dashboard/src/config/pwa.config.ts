@@ -43,7 +43,7 @@
  *    root. Consumed by `@vite-pwa/assets-generator`, invoked manually.
  *  - Service-worker JS handlers (push, click) — those will live in
  *    `src/pwa/sw/` once we migrate from `generateSW` to `injectManifest`
- *    per NOTIFICATIONS_PLAN.md § phase 2.
+ *    per notifications module § phase 2.
  *
  * ## Design notes
  *

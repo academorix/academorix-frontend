@@ -55,11 +55,7 @@ type PrivateChannelCall = {
 const privateChannelCalls: PrivateChannelCall[] = [];
 
 vi.mock("@academorix/realtime", () => ({
-  usePrivateChannel: (
-    _client: unknown,
-    channelName: string,
-    handlers: ChannelHandlers,
-  ): void => {
+  usePrivateChannel: (_client: unknown, channelName: string, handlers: ChannelHandlers): void => {
     privateChannelCalls.push({ channelName, handlers });
   },
 }));

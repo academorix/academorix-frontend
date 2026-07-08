@@ -31,7 +31,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-import { useSurface } from "@/onboarding/use-surface";
+import { useSurface } from "@/lib/onboarding/use-surface";
 
 /**
  * Non-standard `BeforeInstallPromptEvent` shape. The DOM lib doesn't ship

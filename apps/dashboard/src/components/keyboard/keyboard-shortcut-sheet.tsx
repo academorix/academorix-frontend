@@ -3,7 +3,7 @@
  * @module components/keyboard/keyboard-shortcut-sheet
  *
  * @description
- * The **discoverability sheet** documented in `MENUS_PLAN.md` §7 — a
+ * The **discoverability sheet** documented in menus module — a
  * HeroUI Modal that lists every menu command, grouped by category, with
  * its OS-appropriate shortcut glyph rendered next to the label. Opens on
  * `?`, closes on Escape, and pulls its content directly from the unified
@@ -38,18 +38,18 @@
 import { Button, Kbd, Modal, useOverlayState } from "@academorix/ui/react";
 import { createContext, useCallback, useContext, useMemo } from "react";
 
-import type { MenuCategory, MenuCommand, MenuContext, ShortcutOs } from "@/menus/command.types";
+import type { MenuCategory, MenuCommand, MenuContext, ShortcutOs } from "@/lib/menus/command.types";
 import type { ReactNode } from "react";
 
 import { menuCommands } from "@/config/menu.config";
 import { detectOs } from "@/config/shortcuts.config";
 import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
-import { useMenuAction } from "@/menus/menu-actions";
+import { useMenuAction } from "@/lib/menus/menu-actions";
 import {
   filterVisibleCommands,
   groupByCategory,
   resolveShortcutDisplay,
-} from "@/menus/registry-helpers";
+} from "@/lib/menus/registry-helpers";
 
 // ---------------------------------------------------------------------------
 // Context + provider

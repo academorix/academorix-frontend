@@ -7,7 +7,8 @@
  * (subscriptions, unread queue, permission flag) lives in
  * `src/notifications/*`; this file is only the compile-time knobs.
  *
- * See `NOTIFICATIONS_PLAN.md` for the architecture that this backs.
+ * Runtime implementation lives across `src/notifications/**`; this file
+ * only exposes the compile-time knobs consumed by that module.
  *
  * ## What lives here
  *
@@ -20,7 +21,7 @@
  * ## What does NOT live here
  *
  *  - The service worker push handler (`src/pwa/sw/push-handler.ts` once
- *    we migrate to `injectManifest` per NOTIFICATIONS_PLAN.md Phase 2).
+ *    we migrate to `injectManifest`).
  *  - The Reverb channel subscription code
  *    (`src/notifications/transport/reverb-transport.ts`).
  *  - The React provider + context (`src/notifications/*`).
@@ -79,7 +80,8 @@ export const NOTIFICATION_CATEGORIES: Readonly<Record<NotificationCategory, Cate
   safety: {
     labelKey: "notifications.category.safety",
     descriptionKey: "notifications.category.safety_desc",
-    // Push is ALWAYS on for safety — see NOTIFICATIONS_PLAN.md §8.
+    // Push is ALWAYS on for safety. Users cannot opt out — this is a
+    // deliberate escalation rule enforced by the backend too.
     toggleableChannels: ["in_app", "email"],
     mandatoryChannels: ["push"],
   },
@@ -160,7 +162,7 @@ export const NOTIFICATION_ENDPOINTS = {
   /**
    * `PATCH /api/v1/notifications/bulk` — mark read en masse. Retained
    * as an alias for the sync-only bulk write shape from
-   * NOTIFICATIONS_PLAN §4.5. Callers today use {@link markAllRead}.
+   * notifications module Callers today use {@link markAllRead}.
    *
    * TODO(backend-endpoint): endpoint does NOT exist yet.
    */
@@ -270,8 +272,8 @@ export const REVERB_EVENTS = {
 
 /**
  * Default per-category channel preferences applied on first login,
- * before the user visits `Settings → Notifications`. Mirrors the sane
- * defaults documented in NOTIFICATIONS_PLAN.md §8.
+ * before the user visits `Settings → Notifications`. Kept in sync with
+ * the mandatory / toggleable channel matrix on each category above.
  */
 export const DEFAULT_CHANNEL_PREFERENCES: Readonly<
   Record<NotificationCategory, Readonly<Record<NotificationChannel, boolean>>>

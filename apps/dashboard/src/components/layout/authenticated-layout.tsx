@@ -23,7 +23,7 @@
  * ## Menu / shortcut wiring
  *
  * The shell hosts the three cross-cutting menu concerns documented in
- * `MENUS_PLAN.md`:
+ * menus module:
  *
  *  1. `CommandPaletteProvider` — owns `⌘K` state.
  *  2. `KeyboardShortcutSheetProvider` — owns the `?` sheet + subscribes
@@ -35,7 +35,7 @@
  * `Sidebar.Provider` context that AppLayout sets up internally.
  *
  * @see https://docs.heroui.pro/react/components/app-layout
- * @see MENUS_PLAN.md §5 — top-bar layout
+ * @see menus module — top-bar layout
  */
 
 import { AcademicCapIcon } from "@academorix/ui/icons/outline";
@@ -61,9 +61,9 @@ import { useGetIdentity, useLogout } from "@refinedev/core";
 import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router";
 
+import type { MenuCommand } from "@/lib/menus/command.types";
 import type { AppResource } from "@/lib/module";
 import type { SidebarGroupKey } from "@/lib/module";
-import type { MenuCommand } from "@/menus/command.types";
 import type { Identity } from "@/types";
 import type { IconType } from "@academorix/ui/icons";
 import type { Key, ReactNode } from "react";
@@ -76,12 +76,12 @@ import { BranchSwitcher, OrganizationSwitcher, SeasonSwitcher } from "@/componen
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 import { menuCommands } from "@/config/menu.config";
 import { siteConfig } from "@/config/site.config";
+import { MenuActionsBridge } from "@/lib/menus/menu-actions-bridge";
+import { filterVisibleCommands } from "@/lib/menus/registry-helpers";
 import { appResources } from "@/lib/module";
+import { NotificationBell } from "@/lib/notifications/components/notification-bell";
 import { WorkspaceSwitcher } from "@/lib/tenancy";
-import { MenuActionsBridge } from "@/menus/menu-actions-bridge";
-import { filterVisibleCommands } from "@/menus/registry-helpers";
 import { ImpersonationBanner } from "@/modules/auth/components/impersonation-banner";
-import { NotificationBell } from "@/notifications/components/notification-bell";
 
 /** Props for {@link AuthenticatedLayout}. */
 interface AuthenticatedLayoutProps {

@@ -7,8 +7,10 @@
  * top-bar, in-app top bar, right-click context menu). Runtime wiring
  * lives in `src/menus/*` and mounts against this file.
  *
- * See `MENUS_PLAN.md` for the full architecture, per-surface rendering
- * rules, permission gating, and rollout phases.
+ * The three surfaces (native menu bar on Tauri, in-app top-bar dropdowns,
+ * right-click context menu) all read this same registry — see the modules
+ * under `src/menus/**` for the per-surface renderers, permission gating,
+ * and IPC bridge to the Tauri Rust side.
  *
  * ## Status
  *
@@ -29,9 +31,9 @@
  *    chords, and Tauri's accelerator format (`"CmdOrCtrl+K"`) for
  *    single-key shortcuts. See `shortcuts.config.ts`.
  *  - `execute` is a side-effect callable. Actions that need to reach
- *    into a live React subtree call {@link "@/menus/menu-actions"
+ *    into a live React subtree call {@link "@/lib/menus/menu-actions"
  *    invokeMenuAction}, an event bus wired by
- *    {@link "@/menus/menu-actions-bridge" MenuActionsBridge}. Actions
+ *    {@link "@/lib/menus/menu-actions-bridge" MenuActionsBridge}. Actions
  *    that just open a URL or navigate stay inline.
  *  - `requires` names one or more permission codes; the shell hides
  *    (not disables) commands the user can't invoke.
@@ -51,7 +53,7 @@
 
 import type { ComponentType } from "react";
 
-import { invokeMenuAction } from "@/menus/menu-actions";
+import { invokeMenuAction } from "@/lib/menus/menu-actions";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -154,7 +156,7 @@ function nativePlaceholder(id: string): (ctx: MenuContext) => void {
   return () => {
     // eslint-disable-next-line no-console
     console.warn(
-      `[menu] native-only command "${id}" fired on the web bundle — this should be unreachable. See MENUS_PLAN.md §4 for the Tauri wiring plan.`,
+      `[menu] native-only command "${id}" fired on the web bundle — this should be unreachable. The Tauri IPC bridge in \`src/desktop/native-menu.ts\` is responsible for routing native menu clicks.`,
     );
   };
 }
@@ -195,7 +197,7 @@ function navigateTo(path: string): (ctx: MenuContext) => void {
 
 /**
  * Restart the onboarding tour. Imports the module-scoped entry point
- * from `@/onboarding` (owned by Sub-agent O) — the entry is a stable
+ * from `@/lib/onboarding` (owned by Sub-agent O) — the entry is a stable
  * side-effect handle the tour provider populates on mount, so a call
  * before the provider mounts is a silent no-op.
  *
@@ -208,7 +210,7 @@ function navigateTo(path: string): (ctx: MenuContext) => void {
  * module resolution.
  */
 function restartTour(): void {
-  void import("@/onboarding").then((mod) => {
+  void import("@/lib/onboarding").then((mod) => {
     mod.restartTour();
   });
 }
@@ -218,9 +220,10 @@ function restartTour(): void {
 // ---------------------------------------------------------------------------
 
 /**
- * The starter registry. Populated with the commands from MENUS_PLAN.md
- * §3 that every version of the app surfaces. Feature-specific commands
- * (`athlete.export`, `session.duplicate`, …) land alongside their
+ * The starter registry. Populated with every command surfaced by the app
+ * chrome (help, view, workspace, and per-resource navigate/create actions).
+ * Feature-specific commands (`athlete.export`, `session.duplicate`, …) land
+ * alongside their
  * module manifest and merge into the registry at boot.
  *
  * The **navigate** category is generated at runtime from

@@ -23,7 +23,7 @@
  * the boundary tidy.
  *
  * @see DOMAIN_MODULES_BLUEPRINT.md §10.11 "Notification Delivery & Templates"
- * @see NOTIFICATIONS_PLAN.md — end-to-end architecture.
+ * @see notifications module — end-to-end architecture.
  */
 
 import { BellIcon } from "@academorix/ui/icons/outline";
@@ -31,9 +31,9 @@ import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";
 
-const NotificationInboxPage = lazy(() => import("@/notifications/pages/inbox-page"));
+const NotificationInboxPage = lazy(() => import("@/lib/notifications/pages/inbox-page"));
 const NotificationPreferencesPage = lazy(
-  () => import("@/notifications/preferences/preferences-page"),
+  () => import("@/lib/notifications/preferences/preferences-page"),
 );
 
 /** The Notifications feature module (Phase 1 — in-app inbox). */

@@ -104,7 +104,7 @@ const en: MessageCatalog = {
 /**
  * Arabic catalog. Translates every key the English table declares; anything
  * missing at runtime falls back through the resolution order in
- * {@link "@/onboarding/tour/use-tour-translate"} (translator → English →
+ * {@link "@/lib/onboarding/tour/use-tour-translate"} (translator → English →
  * caller default → raw key).
  */
 const ar: MessageCatalog = {

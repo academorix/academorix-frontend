@@ -11,7 +11,7 @@
  *    provider's `toast()` calls (and the PWA update toast) to render.
  * 3. `<PwaUpdateToast>` — production-only side-effect component that
  *    registers the service worker and surfaces install/update prompts
- *    through the HeroUI toast queue. See {@link "@/pwa"} for details.
+ *    through the HeroUI toast queue. See {@link "@/lib/pwa"} for details.
  * 4. `<Refine>` — wires every provider (data, auth, live, notification,
  *    access control), the router bindings, the `resources` registry, and
  *    global options. Refine must live inside the router (mounted in
@@ -38,16 +38,16 @@ import type { ResourceProps } from "@refinedev/core";
 import type { ReactNode } from "react";
 
 import { siteConfig } from "@/config/site.config";
-import { DesktopBootstrap } from "@/desktop";
+import { DesktopBootstrap } from "@/lib/desktop";
 import { LocaleProvider, useI18nProvider } from "@/lib/i18n";
 import { appResources } from "@/lib/module";
-import { NotificationsRoot } from "@/notifications/provider";
+import { NotificationsRoot } from "@/lib/notifications/provider";
+import { PwaUpdateToast } from "@/lib/pwa";
 import { accessControlProvider } from "@/providers/access-control";
 import { authProvider } from "@/providers/auth";
 import { dataProviders } from "@/providers/data";
 import { liveProvider } from "@/providers/live";
 import { notificationProvider } from "@/providers/notification";
-import { PwaUpdateToast } from "@/pwa";
 
 /**
  * Compile-time flag — `true` for `vite build` output, `false` for `vite dev`.

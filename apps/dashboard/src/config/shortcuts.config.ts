@@ -8,7 +8,7 @@
  * manifest — this file only owns the app-chrome shortcuts that are the
  * same everywhere, plus the formatting helpers every renderer needs.
  *
- * See `MENUS_PLAN.md` §7 and `DASHBOARD_UX_PLAN.md` §13.2 for the design
+ * See menus module and `DASHBOARD_UX_PLAN.md` §13.2 for the design
  * rationale.
  *
  * ## Format

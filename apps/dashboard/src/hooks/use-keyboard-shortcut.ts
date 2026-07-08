@@ -26,7 +26,7 @@
  *  - The context-menu hook owns `Escape` on the popover.
  *
  * A generic library would want to consolidate all three; that consolidation
- * is Phase 3 material (MENUS_PLAN.md §11.3 "user-editable shortcuts"). For
+ * is Phase 3 material (menus module "user-editable shortcuts"). For
  * now, this hook is intentionally small — one key, one handler — so the
  * `?` binding lands without any library churn.
  */

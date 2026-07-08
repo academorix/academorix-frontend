@@ -6,7 +6,7 @@
  * The compact onboarding checklist widget — a card that lives in the
  * top-right of the dashboard overview when the workspace is not yet fully
  * set up. Expands into a right-anchored drawer showing all 12 tasks (see
- * ONBOARDING_PLAN.md §5).
+ * onboarding module).
  *
  * Structure:
  *
@@ -31,7 +31,7 @@
  * detection contract. This component is pure presentation on top of that
  * hook.
  *
- * @see ONBOARDING_PLAN.md §5 — Onboarding checklist.
+ * @see onboarding module — Onboarding checklist.
  */
 
 import { CheckCircleIcon, EyeSlashIcon, XMarkIcon } from "@academorix/ui/icons/outline";

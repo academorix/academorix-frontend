@@ -8,8 +8,8 @@
  * flags. Runtime state (which step the user is on, what's completed)
  * lives in `src/onboarding/*`.
  *
- * See `ONBOARDING_PLAN.md` for the flow rationale, surface detection,
- * localization notes, and analytics.
+ * See the surface-detection + storage + tour + checklist modules under
+ * `src/onboarding/**` for the concrete flows this config drives.
  *
  * ## Status
  *
@@ -63,8 +63,8 @@ export interface OnboardingChecklistTask {
   path: string;
   /**
    * If true, the task is only completed when the user explicitly
-   * clicks "Mark done" — no automatic detection. See ONBOARDING_PLAN.md
-   * §5.1 for the taxonomy.
+   * clicks "Mark done" — no automatic detection. Used for the manual-
+   * mark tasks in the 12-task checklist below.
    */
   manualMark: boolean;
   /**
@@ -104,8 +104,8 @@ export const ONBOARDING_SCHEMA_VERSION = 1;
 // ---------------------------------------------------------------------------
 
 /**
- * The four canonical tour steps from ONBOARDING_PLAN.md §4.2. Actual
- * step components live in `src/onboarding/tour/steps/*`.
+ * The four canonical tour steps. Actual step components live in
+ * `src/onboarding/tour/steps/*`.
  */
 export const TOUR_STEPS: readonly OnboardingTourStep[] = [
   {
@@ -145,9 +145,8 @@ export const TOUR_STEPS: readonly OnboardingTourStep[] = [
 // ---------------------------------------------------------------------------
 
 /**
- * The 12-task checklist from ONBOARDING_PLAN.md §5.1. 9 auto-detected
- * via resource row counts + 3 manual-mark. Order matters — this is the
- * rendered display order.
+ * The 12-task checklist. 9 auto-detected via resource row counts + 3
+ * manual-mark. Order matters — this is the rendered display order.
  */
 export const CHECKLIST_TASKS: readonly OnboardingChecklistTask[] = [
   {

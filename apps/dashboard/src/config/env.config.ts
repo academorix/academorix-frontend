@@ -139,7 +139,7 @@ export const envConfig = Object.freeze({
    *
    * When empty, the push registration flow first attempts
    * `GET /api/v1/config/vapid` (also currently a backend gap — see
-   * NOTIFICATIONS_PLAN.md §4.7); this variable is the deploy-time
+   * notifications module); this variable is the deploy-time
    * fallback. One of the two paths MUST resolve to a key before push
    * registration can succeed. An empty string at boot is acceptable
    * because the `webPush` feature flag is defaulted OFF (see

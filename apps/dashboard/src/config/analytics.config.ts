@@ -33,9 +33,9 @@
  *  - Anything the user can enter into a form field (safeguarding data,
  *    medical notes, guardian details).
  *
- * See NOTIFICATIONS_PLAN.md §10, ONBOARDING_PLAN.md §11, MENUS_PLAN.md
- * for the events those subsystems emit. Adding an event there means
- * adding it here too.
+ * See the analytics-emitting modules for the concrete events each subsystem
+ * ships: `src/notifications/**`, `src/onboarding/**`, `src/menus/**`.
+ * Adding an event there means adding it here too.
  */
 
 /** Provider settings. Env-driven so ops can flip without a redeploy. */
@@ -105,7 +105,7 @@ export const EVENTS = {
   commandPaletteSelected: "command_palette_selected",
   keyboardShortcutInvoked: "keyboard_shortcut_invoked",
 
-  // -------- Notifications (see NOTIFICATIONS_PLAN.md §10) --------
+  // -------- Notifications (emitters live in `src/notifications/**`) --------
   notificationShown: "notification_shown",
   notificationClicked: "notification_clicked",
   notificationDismissed: "notification_dismissed",
@@ -118,7 +118,7 @@ export const EVENTS = {
   notificationCenterOpened: "notification_center_opened",
   notificationSnoozed: "notification_snoozed",
 
-  // -------- Onboarding (see ONBOARDING_PLAN.md §11) --------
+  // -------- Onboarding (emitters live in `src/onboarding/**`) --------
   onboardingTourStarted: "onboarding_tour_started",
   onboardingTourStepAdvanced: "onboarding_tour_step_advanced",
   onboardingTourStepBacked: "onboarding_tour_step_backed",
@@ -131,7 +131,7 @@ export const EVENTS = {
   onboardingPwaWelcomeShown: "onboarding_pwa_welcome_shown",
   onboardingDesktopWelcomeShown: "onboarding_desktop_welcome_shown",
 
-  // -------- Menus (see MENUS_PLAN.md) --------
+  // -------- Menus (emitters live in `src/menus/**`) --------
   menuNativeItemClicked: "menu_native_item_clicked",
   menuContextItemClicked: "menu_context_item_clicked",
   menuHelpOpened: "menu_help_opened",
