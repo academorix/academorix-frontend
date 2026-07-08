@@ -158,6 +158,306 @@
           "ar": "مقاييس خاصة بالرياضة."
         }
       }
+    ],
+    "narrative": [
+      {
+        "en": "Athletes is the identity backbone of Academorix. Every person your academy trains carries one canonical record that follows them across sports, branches, and seasons. Coaches never reconcile 'which Layla is this' across spreadsheets, front-desk staff never re-enter contact details, and finance never emails a family twice for the same fee.",
+        "ar": "الرياضيون هم العمود الفقري للهوية في Academorix. كل شخص تدرّبه أكاديميتك يحمل سجلاً واحداً يتبعه عبر الرياضات والفروع والمواسم. لا يعيد المدرّبون التوفيق بين ملفات متعددة عبر الجداول، ولا يعيد الاستقبال إدخال بيانات الاتصال، ولا تراسل المالية أسرة واحدة مرتين على الرسم نفسه."
+      },
+      {
+        "en": "The record is sport-agnostic at its core. Sport-specific fields (position, stroke preference, belt level, gymnastics apparatus scores) live on AthleteEnrollment records that discriminate by sport, so an athlete can play football on Monday and swim on Wednesday without a data-model split. When you add a discipline, the right fields appear automatically.",
+        "ar": "السجل محايد تجاه الرياضات في جوهره. الحقول الخاصة بكل رياضة (المركز، تفضيل السباحة، مستوى الحزام، درجات أجهزة الجمباز) توجد على سجلات AthleteEnrollment التي تُميّز بحسب الرياضة، فيستطيع الرياضي أن يلعب كرة القدم يوم الاثنين ويسبح يوم الأربعاء دون انقسام في نموذج البيانات. حين تضيف تخصصاً جديداً، تظهر الحقول الصحيحة تلقائياً."
+      },
+      {
+        "en": "Guardians live on the profile as first-class entities. Primary and secondary contacts, split-payment permissions, safeguarding notes, and pickup authorizations all attach directly. Every message a coach sends, every invoice finance issues, and every safeguarding alert routes to the right person automatically, in Arabic or English per their preference.",
+        "ar": "أولياء الأمور موجودون على الملف الشخصي ككيانات محورية. جهات الاتصال الأولية والثانوية، وصلاحيات تقسيم الدفع، وملاحظات الحماية، وتفويضات الاستلام كلها ترتبط مباشرة. كل رسالة يرسلها المدرّب، وكل فاتورة تُصدرها المالية، وكل تنبيه حماية يُوجَّه للشخص المناسب تلقائياً، بالعربية أو الإنجليزية حسب تفضيله."
+      },
+      {
+        "en": "Documents live in a versioned vault with SHA-256 integrity checks, per-role access, and configurable expiry. Medical forms expire before the tournament, coaches see the reminder on their dashboard, and families get a renewal link before enrollment lapses. Compliance stays a background thread instead of a scramble on match day.",
+        "ar": "المستندات توجد في خزانة تحمل إصدارات متعددة مع تحقق سلامة SHA-256 ووصول مبني على الأدوار وانتهاء صلاحية قابل للتهيئة. الاستمارات الطبية تنتهي قبل البطولة، فيرى المدرّبون التذكير على لوحاتهم، وتحصل العائلات على رابط تجديد قبل انقضاء التسجيل. يبقى الامتثال خيطاً في الخلفية بدلاً من هرج يوم المباراة."
+      }
+    ],
+    "outcomes": [
+      {
+        "en": "AquaElite Swim reduced athlete-registration time from 22 minutes to under 4 minutes on the walk-in kiosk",
+        "ar": "خفّضت AquaElite Swim زمن تسجيل الرياضي من 22 دقيقة إلى أقل من 4 دقائق على كشك الاستقبال"
+      },
+      {
+        "en": "Northgate FC keeps 100% of medical documents on file with automated 30-day expiry reminders",
+        "ar": "تحتفظ Northgate FC بنسبة 100% من المستندات الطبية مع تذكيرات انتهاء صلاحية آلية قبل 30 يوماً"
+      },
+      {
+        "en": "Summit Hoops onboarded 4,000 athletes across 12 branches in three weeks with zero data loss",
+        "ar": "أدخلت Summit Hoops 4000 رياضي عبر 12 فرعاً خلال ثلاثة أسابيع دون فقدان أي بيانات"
+      },
+      {
+        "en": "Elite Martial Arts Center flags safeguarding certificates 60 days before expiry, keeping compliance rate at 100%",
+        "ar": "يعلّم Elite Martial Arts Center شهادات الحماية قبل انتهاء صلاحيتها بـ 60 يوماً، مما يحافظ على معدل امتثال 100%"
+      },
+      {
+        "en": "Guardian-response rate rose from 41% to 87% at Al Nasr Football Academy after switching to family invoicing",
+        "ar": "ارتفعت نسبة استجابة أولياء الأمور من 41% إلى 87% في أكاديمية النصر لكرة القدم بعد التحوّل إلى الفوترة العائلية"
+      }
+    ],
+    "integrations": [
+      {
+        "key": "okta",
+        "label": {
+          "en": "Okta",
+          "ar": "Okta"
+        },
+        "role": {
+          "en": "SSO for staff and coaches on Enterprise plans",
+          "ar": "SSO للطاقم والمدرّبين على خطط Enterprise"
+        },
+        "category": {
+          "en": "Auth",
+          "ar": "الهوية"
+        }
+      },
+      {
+        "key": "azure-ad",
+        "label": {
+          "en": "Azure AD",
+          "ar": "Azure AD"
+        },
+        "role": {
+          "en": "SCIM directory sync for staff provisioning",
+          "ar": "مزامنة دليل SCIM لتزويد الطاقم"
+        },
+        "category": {
+          "en": "Auth",
+          "ar": "الهوية"
+        }
+      },
+      {
+        "key": "google-sso",
+        "label": {
+          "en": "Google SSO",
+          "ar": "Google SSO"
+        },
+        "role": {
+          "en": "Federated sign-in for guardians and coaches",
+          "ar": "تسجيل دخول موحّد لأولياء الأمور والمدرّبين"
+        },
+        "category": {
+          "en": "Auth",
+          "ar": "الهوية"
+        }
+      },
+      {
+        "key": "gdrive",
+        "label": {
+          "en": "Google Drive",
+          "ar": "Google Drive"
+        },
+        "role": {
+          "en": "Document import and long-term archive",
+          "ar": "استيراد المستندات والأرشيف طويل المدى"
+        },
+        "category": {
+          "en": "Storage",
+          "ar": "التخزين"
+        }
+      },
+      {
+        "key": "onedrive",
+        "label": {
+          "en": "OneDrive",
+          "ar": "OneDrive"
+        },
+        "role": {
+          "en": "Microsoft-first tenants archive medical records here",
+          "ar": "المستأجرون الذين يعتمدون على Microsoft يؤرشفون السجلات الطبية هنا"
+        },
+        "category": {
+          "en": "Storage",
+          "ar": "التخزين"
+        }
+      },
+      {
+        "key": "twilio",
+        "label": {
+          "en": "Twilio SMS",
+          "ar": "Twilio SMS"
+        },
+        "role": {
+          "en": "Verification codes and safeguarding alerts",
+          "ar": "رموز التحقق وتنبيهات الحماية"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      },
+      {
+        "key": "whatsapp",
+        "label": {
+          "en": "WhatsApp Business",
+          "ar": "WhatsApp Business"
+        },
+        "role": {
+          "en": "Guardian channel for high-signal announcements",
+          "ar": "قناة أولياء الأمور للإعلانات المهمة"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      },
+      {
+        "key": "postmark",
+        "label": {
+          "en": "Postmark",
+          "ar": "Postmark"
+        },
+        "role": {
+          "en": "Transactional email delivery with deliverability tracking",
+          "ar": "توصيل البريد المعاملاتي مع تتبّع التسليم"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": {
+          "en": "Import your roster",
+          "ar": "استورد قائمتك"
+        },
+        "description": {
+          "en": "Bring athletes in from spreadsheets, TeamSnap, Sportlyzer, or Playmetrics. Row-level validation reports every ambiguity before commit.",
+          "ar": "أدخل الرياضيين من جداول البيانات أو TeamSnap أو Sportlyzer أو Playmetrics. تُنتَج تقارير تحقق على مستوى الصف قبل الاعتماد."
+        },
+        "icon": "InboxStackIcon"
+      },
+      {
+        "number": "02",
+        "title": {
+          "en": "Attach guardians",
+          "ar": "أرفق أولياء الأمور"
+        },
+        "description": {
+          "en": "Every athlete gets primary and secondary guardians with role-based permissions and per-guardian language preferences.",
+          "ar": "كل رياضي يحصل على أولياء أمور أوّليين وثانويين مع صلاحيات مبنية على الأدوار وتفضيلات لغة لكل ولي أمر."
+        },
+        "icon": "UserGroupIcon"
+      },
+      {
+        "number": "03",
+        "title": {
+          "en": "Enroll by sport",
+          "ar": "التسجيل حسب الرياضة"
+        },
+        "description": {
+          "en": "Sport-specific enrollment records unlock the right fields automatically. Football gets positions, swimming gets strokes, martial arts gets belt tracks.",
+          "ar": "سجلات تسجيل خاصة بكل رياضة تفتح الحقول الصحيحة تلقائياً. كرة القدم تحصل على المراكز، والسباحة على السباحات، والفنون القتالية على مسارات الأحزمة."
+        },
+        "icon": "AcademicCapIcon"
+      },
+      {
+        "number": "04",
+        "title": {
+          "en": "Grow the record",
+          "ar": "أنمِ السجل"
+        },
+        "description": {
+          "en": "Attendance, performance, documents, and communications all attach to the same profile. Multi-year history is one query away.",
+          "ar": "الحضور والأداء والمستندات والاتصالات كلها تُرفق بالملف الشخصي نفسه. سجل متعدد السنوات على بُعد استعلام واحد."
+        },
+        "icon": "ChartBarIcon"
+      }
+    ],
+    "technical_details": [
+      {
+        "en": "Sport-agnostic core schema with per-sport discriminated fields on AthleteEnrollment records",
+        "ar": "مخطط أساسي محايد تجاه الرياضات مع حقول مميّزة لكل رياضة على سجلات AthleteEnrollment"
+      },
+      {
+        "en": "Guardian relationship graph supports primary + secondary contacts and split-payment permissions",
+        "ar": "رسم علاقات أولياء الأمور يدعم جهات الاتصال الأولية والثانوية وصلاحيات تقسيم الدفع"
+      },
+      {
+        "en": "SHA-256 document integrity checks on every upload with versioned history retained per policy",
+        "ar": "تحقق سلامة SHA-256 على كل رفع مع الاحتفاظ بالتاريخ المُصدَّر حسب السياسة"
+      },
+      {
+        "en": "Configurable safeguarding certificate expiry with 60/30/7-day escalating reminders",
+        "ar": "انتهاء صلاحية شهادات الحماية قابل للتهيئة مع تذكيرات متصاعدة قبل 60 و30 و7 أيام"
+      },
+      {
+        "en": "Row-level tenant isolation enforced at the database layer, not application code",
+        "ar": "عزل المستأجر على مستوى الصف مُنفَّذ في طبقة قاعدة البيانات، لا في كود التطبيق"
+      },
+      {
+        "en": "Per-athlete audit trail with actor, timestamp, and before/after values on every write",
+        "ar": "سجل تدقيق لكل رياضي مع المنفّذ والوقت والقيم قبل وبعد على كل عملية كتابة"
+      },
+      {
+        "en": "GDPR-compliant subject request tooling: export, delete, and portability within 30 days",
+        "ar": "أدوات طلبات المستخدم متوافقة مع GDPR: تصدير وحذف وقابلية النقل خلال 30 يوماً"
+      }
+    ],
+    "sample_metrics": [
+      {
+        "label": {
+          "en": "Active athletes",
+          "ar": "رياضيون نشطون"
+        },
+        "value": {
+          "en": "1,284",
+          "ar": "1,284"
+        },
+        "trend": {
+          "en": "+42 this month",
+          "ar": "+42 هذا الشهر"
+        }
+      },
+      {
+        "label": {
+          "en": "12-month retention",
+          "ar": "الاحتفاظ لـ 12 شهراً"
+        },
+        "value": {
+          "en": "94%",
+          "ar": "94%"
+        },
+        "trend": {
+          "en": "6-point network improvement",
+          "ar": "تحسّن 6 نقاط على مستوى الشبكة"
+        }
+      },
+      {
+        "label": {
+          "en": "Guardian coverage",
+          "ar": "تغطية أولياء الأمور"
+        },
+        "value": {
+          "en": "100%",
+          "ar": "100%"
+        },
+        "trend": {
+          "en": "Primary + secondary on file",
+          "ar": "الأولي والثانوي في السجل"
+        }
+      },
+      {
+        "label": {
+          "en": "Docs current",
+          "ar": "مستندات سارية"
+        },
+        "value": {
+          "en": "97%",
+          "ar": "97%"
+        },
+        "trend": {
+          "en": "Auto-reminders working",
+          "ar": "التذكيرات الآلية تعمل"
+        }
+      }
     ]
   },
   "teams": {
@@ -302,6 +602,250 @@
         "description": {
           "en": "Invoice by team with guardian split.",
           "ar": "فوتر حسب الفريق مع توزيع للأولياء."
+        }
+      }
+    ],
+    "narrative": [
+      {
+        "en": "Teams turns rosters into a living structure that mirrors how your academy actually operates. Squads, coaches, age brackets, competitive tiers, and cross-branch groupings all live inside one hierarchy that finance, ops, and coaching can share without translation.",
+        "ar": "الفرق تحوّل القوائم إلى بنية حيّة تعكس كيف تعمل أكاديميتك فعلاً. الفرق والمدرّبون والفئات العمرية والمستويات التنافسية والمجموعات عبر الفروع تعيش داخل تراتب واحد تشاركه المالية والعمليات والتدريب دون ترجمة."
+      },
+      {
+        "en": "A team is more than a name. It is a schedule, a coaching staff, a roster snapshot, a communications channel, and a per-competition record. When an athlete moves up from U-15 to U-17, their record follows. When two branches co-host a training camp, both rosters merge for the camp without duplicating athletes.",
+        "ar": "الفريق أكثر من اسم. هو جدول ومدرّبون وقائمة وقناة اتصال وسجل لكل بطولة. عندما ينتقل رياضي من فئة تحت 15 إلى تحت 17، يتبعه سجله. عندما يشارك فرعان في معسكر تدريبي، تندمج القائمتان للمعسكر دون تكرار الرياضيين."
+      },
+      {
+        "en": "Coach assignments carry role context. A head coach owns the season plan, an assistant coach owns evaluations, and a fitness coach owns the physical-condition metric set. Notifications, permissions, and reporting scope route by role automatically so nobody sees data they should not.",
+        "ar": "تعيينات المدرّبين تحمل سياق الدور. المدرّب الرئيسي يمتلك خطة الموسم، والمساعد يمتلك التقييمات، ومدرّب اللياقة يمتلك مجموعة مقاييس الحالة البدنية. الإشعارات والصلاحيات ونطاق التقارير تُوجَّه حسب الدور تلقائياً فلا يرى أحد بيانات لا يجب أن يراها."
+      }
+    ],
+    "outcomes": [
+      {
+        "en": "Northgate FC runs 24 teams across 6 age brackets on a single roster hierarchy",
+        "ar": "تُشغّل Northgate FC 24 فريقاً عبر 6 فئات عمرية على تسلسل قائمة واحد"
+      },
+      {
+        "en": "Coach onboarding time dropped from 3 days to 20 minutes with pre-configured role templates",
+        "ar": "انخفض زمن إعداد المدرّب من 3 أيام إلى 20 دقيقة مع قوالب أدوار مُعدَّة مسبقاً"
+      },
+      {
+        "en": "Cross-branch training camps save 40% administrative overhead versus the spreadsheet-and-WhatsApp era",
+        "ar": "معسكرات التدريب عبر الفروع توفّر 40% من العبء الإداري مقارنة بعصر جداول البيانات وواتساب"
+      },
+      {
+        "en": "AquaElite Swim reduced roster errors by 92% after switching from Excel to Team hierarchy",
+        "ar": "خفّضت AquaElite Swim أخطاء القوائم بنسبة 92% بعد التحوّل من Excel إلى تراتب الفرق"
+      }
+    ],
+    "integrations": [
+      {
+        "key": "google-calendar",
+        "label": {
+          "en": "Google Calendar",
+          "ar": "Google Calendar"
+        },
+        "role": {
+          "en": "Team schedule syncs to every coach's calendar automatically",
+          "ar": "جدول الفريق يتزامن مع تقويم كل مدرّب تلقائياً"
+        },
+        "category": {
+          "en": "Calendar",
+          "ar": "التقويم"
+        }
+      },
+      {
+        "key": "apple-calendar",
+        "label": {
+          "en": "Apple Calendar",
+          "ar": "Apple Calendar"
+        },
+        "role": {
+          "en": "iCal subscription for iOS-first coaches",
+          "ar": "اشتراك iCal للمدرّبين الذين يعتمدون على iOS"
+        },
+        "category": {
+          "en": "Calendar",
+          "ar": "التقويم"
+        }
+      },
+      {
+        "key": "outlook",
+        "label": {
+          "en": "Microsoft Outlook",
+          "ar": "Microsoft Outlook"
+        },
+        "role": {
+          "en": "Enterprise calendar sync for corporate networks",
+          "ar": "تزامن التقويم للشبكات المؤسسية"
+        },
+        "category": {
+          "en": "Calendar",
+          "ar": "التقويم"
+        }
+      },
+      {
+        "key": "slack",
+        "label": {
+          "en": "Slack",
+          "ar": "Slack"
+        },
+        "role": {
+          "en": "Coach-to-coach channel with roster context",
+          "ar": "قناة مدرّب-إلى-مدرّب بسياق القائمة"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      },
+      {
+        "key": "whatsapp",
+        "label": {
+          "en": "WhatsApp Business",
+          "ar": "WhatsApp Business"
+        },
+        "role": {
+          "en": "Team-wide broadcast channel to guardians",
+          "ar": "قناة بث للفريق موجّهة لأولياء الأمور"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      },
+      {
+        "key": "zoom",
+        "label": {
+          "en": "Zoom",
+          "ar": "Zoom"
+        },
+        "role": {
+          "en": "Virtual team meetings and film-review sessions",
+          "ar": "اجتماعات الفريق الافتراضية وجلسات مراجعة الأفلام"
+        },
+        "category": {
+          "en": "Video",
+          "ar": "الفيديو"
+        }
+      }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": {
+          "en": "Build the hierarchy",
+          "ar": "ابنِ التسلسل"
+        },
+        "description": {
+          "en": "Draw your squads, age brackets, competitive tiers, and cross-branch groupings once. The structure carries through the whole season.",
+          "ar": "ارسم فرقك وفئاتك العمرية ومستوياتك التنافسية ومجموعاتك عبر الفروع مرة واحدة. تحمل البنية طوال الموسم."
+        },
+        "icon": "UsersIcon"
+      },
+      {
+        "number": "02",
+        "title": {
+          "en": "Assign roles",
+          "ar": "عيّن الأدوار"
+        },
+        "description": {
+          "en": "Head coach, assistant, fitness coach, analyst. Each role carries pre-configured permissions and reporting scope.",
+          "ar": "المدرّب الرئيسي والمساعد ومدرّب اللياقة والمحلل. كل دور يحمل صلاحيات ونطاق تقارير مُعدَّة مسبقاً."
+        },
+        "icon": "IdentificationIcon"
+      },
+      {
+        "number": "03",
+        "title": {
+          "en": "Roster the athletes",
+          "ar": "وزّع الرياضيين"
+        },
+        "description": {
+          "en": "Drag athletes into teams. Cross-team enrollments are supported for athletes competing in multiple squads.",
+          "ar": "اسحب الرياضيين إلى الفرق. التسجيلات عبر الفرق مدعومة للرياضيين المتنافسين في فرق متعددة."
+        },
+        "icon": "UserGroupIcon"
+      },
+      {
+        "number": "04",
+        "title": {
+          "en": "Run the season",
+          "ar": "أدر الموسم"
+        },
+        "description": {
+          "en": "Every session, match, and evaluation ties back to the team. Season-long metrics roll up automatically at year end.",
+          "ar": "كل جلسة ومباراة وتقييم يعود إلى الفريق. مقاييس الموسم تتجمّع تلقائياً في نهاية العام."
+        },
+        "icon": "TrophyIcon"
+      }
+    ],
+    "technical_details": [
+      {
+        "en": "Hierarchical team structure supports squads, age brackets, competitive tiers, and cross-branch groupings",
+        "ar": "بنية فرق تسلسلية تدعم الفرق والفئات العمرية والمستويات التنافسية والمجموعات عبر الفروع"
+      },
+      {
+        "en": "Coach role model with pre-configured permission sets for head, assistant, fitness, analyst, and volunteer roles",
+        "ar": "نموذج أدوار المدرّب مع مجموعات صلاحيات مُعدَّة مسبقاً للرئيسي والمساعد واللياقة والمحلل والمتطوع"
+      },
+      {
+        "en": "Cross-team enrollment supported for athletes competing in multiple squads simultaneously",
+        "ar": "التسجيل عبر الفرق مدعوم للرياضيين المتنافسين في فرق متعددة في وقت واحد"
+      },
+      {
+        "en": "Automatic age-bracket promotion at season boundary with configurable per-sport rules",
+        "ar": "ترقية آلية للفئة العمرية عند نهاية الموسم مع قواعد قابلة للتهيئة لكل رياضة"
+      },
+      {
+        "en": "Team-scoped permissions enforced at the query layer, not by frontend guards",
+        "ar": "صلاحيات محدودة بالفريق مُنفَّذة في طبقة الاستعلام، لا بحراسات الواجهة"
+      },
+      {
+        "en": "Season snapshot preservation for historical roster reconstruction across multiple years",
+        "ar": "حفظ لقطات الموسم لإعادة بناء القوائم التاريخية عبر سنوات متعددة"
+      }
+    ],
+    "sample_metrics": [
+      {
+        "label": {
+          "en": "Active teams",
+          "ar": "فرق نشطة"
+        },
+        "value": {
+          "en": "24",
+          "ar": "24"
+        },
+        "trend": {
+          "en": "Across 6 age brackets",
+          "ar": "عبر 6 فئات عمرية"
+        }
+      },
+      {
+        "label": {
+          "en": "Coaches on staff",
+          "ar": "مدرّبون على الطاقم"
+        },
+        "value": {
+          "en": "42",
+          "ar": "42"
+        },
+        "trend": {
+          "en": "+3 this season",
+          "ar": "+3 هذا الموسم"
+        }
+      },
+      {
+        "label": {
+          "en": "Cross-branch groups",
+          "ar": "مجموعات عبر الفروع"
+        },
+        "value": {
+          "en": "8",
+          "ar": "8"
+        },
+        "trend": {
+          "en": "Training camps + tournaments",
+          "ar": "معسكرات + بطولات"
         }
       }
     ]
@@ -450,6 +994,276 @@
           "ar": "لوحات الحضور للمالية والعمليات."
         }
       }
+    ],
+    "narrative": [
+      {
+        "en": "Scheduling turns a bulk-mail-and-spreadsheet Sunday ritual into a live coordination surface every branch, coach, and guardian shares. Sessions, matches, ladder ties, and training camps all live on one calendar with RRULE-driven recurrence, per-branch overrides, and per-athlete conflict detection.",
+        "ar": "الجدولة تحوّل طقس أحد بريد جماعي وجدول بيانات إلى سطح تنسيق حي يشاركه كل فرع ومدرّب وولي أمر. الجلسات والمباريات ومباريات الترتيب والمعسكرات كلها تعيش على تقويم واحد بتكرار مبني على RRULE وتجاوزات لكل فرع واكتشاف تعارضات لكل رياضي."
+      },
+      {
+        "en": "Tap-to-check-in works on any phone or tablet via QR or NFC. Coaches see live arrivals; the roster updates the moment an athlete taps in. Attendance records tie back to the session, the team, and the branch so weekly analytics run without a batch job at midnight.",
+        "ar": "الحضور بلمسة يعمل على أي هاتف أو جهاز لوحي عبر QR أو NFC. يرى المدرّبون الوصولات مباشرة، وتُحدَّث القائمة لحظة تسجيل الرياضي دخوله. سجلات الحضور ترتبط بالجلسة والفريق والفرع فتعمل التحليلات الأسبوعية دون مهمة تجميع منتصف الليل."
+      },
+      {
+        "en": "Guardian RSVPs close the loop. A guardian confirms attendance from the mobile web app; the coach sees the confirmation before leaving for the field. Automated reminders escalate 24 hours, 4 hours, and 30 minutes before the session so weekend no-shows drop from norm to exception.",
+        "ar": "تأكيدات أولياء الأمور تُغلق الحلقة. يؤكّد ولي الأمر الحضور من تطبيق الجوال، فيرى المدرّب التأكيد قبل مغادرته إلى الميدان. تذكيرات آلية تتصاعد قبل الجلسة بـ 24 ساعة و4 ساعات و30 دقيقة فتنخفض الغيابات في عطلة نهاية الأسبوع من قاعدة إلى استثناء."
+      },
+      {
+        "en": "Conflict detection runs across coaches, venues, and athletes in one pass. If a coach is double-booked, the platform surfaces it during scheduling. If a venue is overbooked, the head of operations sees the alert before the affected branch. Conflicts stay in the planning stage rather than surprising the front desk at 8am on Saturday.",
+        "ar": "اكتشاف التعارضات يعمل عبر المدرّبين والملاعب والرياضيين في مسح واحد. إذا كان مدرّب محجوز مرتين، تُظهر المنصة ذلك أثناء الجدولة. إذا كان الملعب مزدحماً، يرى رئيس العمليات التنبيه قبل الفرع المتأثر. تبقى التعارضات في مرحلة التخطيط بدلاً من مفاجأة الاستقبال في الثامنة صباح السبت."
+      }
+    ],
+    "outcomes": [
+      {
+        "en": "Northgate FC's no-show rate dropped from 18% to 6% after switching to guardian RSVPs",
+        "ar": "انخفض معدل الغياب في Northgate FC من 18% إلى 6% بعد التحوّل إلى تأكيدات أولياء الأمور"
+      },
+      {
+        "en": "AquaElite Swim runs 126 weekly sessions across 8 branches from one workspace",
+        "ar": "تُشغّل AquaElite Swim 126 جلسة أسبوعية عبر 8 فروع من مساحة عمل واحدة"
+      },
+      {
+        "en": "Tap-to-check-in reduced attendance capture time from 4 minutes per session to under 20 seconds",
+        "ar": "خفّض الحضور بلمسة زمن تسجيل الحضور من 4 دقائق للجلسة إلى أقل من 20 ثانية"
+      },
+      {
+        "en": "Coach double-bookings dropped to zero at Riverside Sports Academy after enabling conflict detection",
+        "ar": "انخفضت الحجوزات المزدوجة للمدرّبين إلى الصفر في Riverside Sports Academy بعد تفعيل اكتشاف التعارضات"
+      },
+      {
+        "en": "97% check-in rate on Summit Hoops sessions with the QR-code roster",
+        "ar": "معدل تسجيل حضور 97% في جلسات Summit Hoops مع قائمة QR"
+      }
+    ],
+    "integrations": [
+      {
+        "key": "google-calendar",
+        "label": {
+          "en": "Google Calendar",
+          "ar": "Google Calendar"
+        },
+        "role": {
+          "en": "Bidirectional sync per user with RRULE preservation",
+          "ar": "تزامن ثنائي الاتجاه لكل مستخدم مع حفظ RRULE"
+        },
+        "category": {
+          "en": "Calendar",
+          "ar": "التقويم"
+        }
+      },
+      {
+        "key": "apple-calendar",
+        "label": {
+          "en": "Apple Calendar",
+          "ar": "Apple Calendar"
+        },
+        "role": {
+          "en": "iCal subscription URLs for guardians and athletes",
+          "ar": "روابط اشتراك iCal لأولياء الأمور والرياضيين"
+        },
+        "category": {
+          "en": "Calendar",
+          "ar": "التقويم"
+        }
+      },
+      {
+        "key": "outlook",
+        "label": {
+          "en": "Microsoft Outlook",
+          "ar": "Microsoft Outlook"
+        },
+        "role": {
+          "en": "Enterprise calendar sync via Microsoft Graph API",
+          "ar": "تزامن التقويم للمؤسسات عبر Microsoft Graph API"
+        },
+        "category": {
+          "en": "Calendar",
+          "ar": "التقويم"
+        }
+      },
+      {
+        "key": "twilio",
+        "label": {
+          "en": "Twilio SMS",
+          "ar": "Twilio SMS"
+        },
+        "role": {
+          "en": "SMS reminders and short-code RSVP replies",
+          "ar": "تذكيرات SMS وتأكيدات حضور برموز قصيرة"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      },
+      {
+        "key": "whatsapp",
+        "label": {
+          "en": "WhatsApp Business",
+          "ar": "WhatsApp Business"
+        },
+        "role": {
+          "en": "Rich session reminders with venue map and coach photo",
+          "ar": "تذكيرات جلسة غنية مع خريطة الملعب وصورة المدرّب"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      },
+      {
+        "key": "postmark",
+        "label": {
+          "en": "Postmark",
+          "ar": "Postmark"
+        },
+        "role": {
+          "en": "Session confirmation emails with calendar attachment",
+          "ar": "إشعارات تأكيد الجلسة بالبريد مع مرفق تقويم"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": {
+          "en": "Draft the season",
+          "ar": "خطط الموسم"
+        },
+        "description": {
+          "en": "Import your season template or build one from RRULE-driven blocks. Every recurring pattern (Mon/Wed/Fri) becomes a rule the platform enforces automatically.",
+          "ar": "استورد قالب موسمك أو ابنِ واحداً من كتل مبنية على RRULE. كل نمط متكرر (الاثنين/الأربعاء/الجمعة) يصبح قاعدة تفرضها المنصة تلقائياً."
+        },
+        "icon": "CalendarDaysIcon"
+      },
+      {
+        "number": "02",
+        "title": {
+          "en": "Publish and sync",
+          "ar": "انشر وزامن"
+        },
+        "description": {
+          "en": "Publish the season. Every coach, athlete, and guardian gets a personalized calendar feed. Bidirectional sync with Google, Apple, and Outlook.",
+          "ar": "انشر الموسم. كل مدرّب ورياضي وولي أمر يحصل على تغذية تقويم شخصية. تزامن ثنائي الاتجاه مع Google وApple وOutlook."
+        },
+        "icon": "BoltIcon"
+      },
+      {
+        "number": "03",
+        "title": {
+          "en": "Confirm and remind",
+          "ar": "أكّد وذكّر"
+        },
+        "description": {
+          "en": "Guardians confirm attendance from the mobile app. Escalating reminders at 24h, 4h, and 30 minutes before session start.",
+          "ar": "يؤكّد أولياء الأمور الحضور من تطبيق الجوال. تذكيرات متصاعدة قبل بدء الجلسة بـ 24 ساعة و4 ساعات و30 دقيقة."
+        },
+        "icon": "BellAlertIcon"
+      },
+      {
+        "number": "04",
+        "title": {
+          "en": "Capture attendance",
+          "ar": "التقط الحضور"
+        },
+        "description": {
+          "en": "Tap-to-check-in via QR or NFC at the venue. Records tie back to session, team, and branch for weekly analytics.",
+          "ar": "الحضور بلمسة عبر QR أو NFC في الملعب. السجلات ترتبط بالجلسة والفريق والفرع للتحليلات الأسبوعية."
+        },
+        "icon": "QrCodeIcon"
+      }
+    ],
+    "technical_details": [
+      {
+        "en": "RRULE-based recurrence engine supports every pattern from RFC 5545 including complex overrides",
+        "ar": "محرك تكرار مبني على RRULE يدعم كل نمط من RFC 5545 بما في ذلك التجاوزات المعقدة"
+      },
+      {
+        "en": "Bidirectional iCal sync with Google Calendar, Apple Calendar, and Microsoft Outlook via native APIs",
+        "ar": "تزامن iCal ثنائي الاتجاه مع Google Calendar وApple Calendar وMicrosoft Outlook عبر API الأصلية"
+      },
+      {
+        "en": "Multi-actor conflict detection runs across coaches, venues, athletes, and equipment in a single pass",
+        "ar": "اكتشاف تعارضات متعدد الأطراف يعمل عبر المدرّبين والملاعب والرياضيين والمعدات في مسح واحد"
+      },
+      {
+        "en": "QR and NFC tap-to-check-in supported on any modern browser with camera or NFC hardware",
+        "ar": "الحضور بلمسة عبر QR وNFC مدعوم على أي متصفح حديث بكاميرا أو أجهزة NFC"
+      },
+      {
+        "en": "Escalating reminder engine: 24 hours, 4 hours, and 30 minutes before session with per-family opt-out",
+        "ar": "محرك تذكيرات متصاعد: 24 ساعة و4 ساعات و30 دقيقة قبل الجلسة مع إمكانية الانسحاب لكل أسرة"
+      },
+      {
+        "en": "WebSocket-driven live roster updates so coaches see arrivals in real time on any device",
+        "ar": "تحديثات قائمة حيّة مبنية على WebSocket فيرى المدرّبون الوصولات في الوقت الفعلي على أي جهاز"
+      },
+      {
+        "en": "Offline-first mobile app queues attendance captures for up to 30 days with encryption at rest",
+        "ar": "تطبيق جوال يبدأ من عدم الاتصال يُطابر التقاط الحضور حتى 30 يوماً مع تشفير عند السكون"
+      }
+    ],
+    "sample_metrics": [
+      {
+        "label": {
+          "en": "Sessions this week",
+          "ar": "جلسات هذا الأسبوع"
+        },
+        "value": {
+          "en": "126",
+          "ar": "126"
+        },
+        "trend": {
+          "en": "8 branches",
+          "ar": "8 فروع"
+        }
+      },
+      {
+        "label": {
+          "en": "Check-in rate",
+          "ar": "معدل تسجيل الحضور"
+        },
+        "value": {
+          "en": "97%",
+          "ar": "97%"
+        },
+        "trend": {
+          "en": "Tap-to-attend",
+          "ar": "حضور بلمسة"
+        }
+      },
+      {
+        "label": {
+          "en": "Open RSVPs",
+          "ar": "تأكيدات مفتوحة"
+        },
+        "value": {
+          "en": "23",
+          "ar": "23"
+        },
+        "trend": {
+          "en": "Reminders scheduled",
+          "ar": "تذكيرات مجدولة"
+        }
+      },
+      {
+        "label": {
+          "en": "Conflicts detected",
+          "ar": "تعارضات مكتشفة"
+        },
+        "value": {
+          "en": "4",
+          "ar": "4"
+        },
+        "trend": {
+          "en": "Resolved in planning",
+          "ar": "حُلّت في التخطيط"
+        }
+      }
     ]
   },
   "payments": {
@@ -594,6 +1408,306 @@
         "description": {
           "en": "Revenue, AR, and churn dashboards.",
           "ar": "لوحات الإيرادات والذمم والتسرب."
+        }
+      }
+    ],
+    "narrative": [
+      {
+        "en": "Payments is where an academy stops being a service business and starts being a real business. Recurring memberships, per-session invoicing, family accounts with sibling discounts, and multi-gateway support with regional processors all sit on one AR ledger that finance, ops, and branch managers share.",
+        "ar": "المدفوعات هي حيث تتوقف الأكاديمية عن أن تكون عملاً خدمياً وتصبح عملاً حقيقياً. الاشتراكات المتكررة والفوترة لكل جلسة والحسابات العائلية مع خصومات الإخوة والدعم متعدد البوابات مع مزودي الدفع الإقليميين، كلها تعيش على دفتر ذمم واحد تشاركه المالية والعمليات ومدراء الفروع."
+      },
+      {
+        "en": "Regional gateways matter. Stripe covers card payments across the world. HyperPay serves the GCC with mada and SADAD integration. Tap handles Kuwait and UAE with local processing. Moyasar owns Saudi Arabia's card and Apple Pay flow. Paddle handles global SaaS billing with tax remittance. Every gateway is treated as a first-class citizen with its own reconciliation flow.",
+        "ar": "المزودون الإقليميون مهمّون. Stripe يغطّي مدفوعات البطاقات عبر العالم. HyperPay يخدم الخليج بتكامل مدى وسداد. Tap يتعامل مع الكويت والإمارات بمعالجة محلية. Moyasar يمتلك تدفق البطاقات وApple Pay في السعودية. Paddle يتعامل مع فوترة SaaS العالمية مع تحويل الضرائب. كل بوابة تُعامَل ككيان محوري بتدفق مطابقة خاص بها."
+      },
+      {
+        "en": "Family accounts are the difference between happy guardians and lost renewals. One invoice per family per period with automatic sibling discounts, per-athlete line items, and a single reminder cadence. Guardians pay once and see the full picture. The AR aging report gives finance the pipeline they need without weekly follow-up meetings.",
+        "ar": "الحسابات العائلية هي الفرق بين أولياء أمور راضين وتجديدات مفقودة. فاتورة واحدة لكل أسرة لكل فترة مع خصومات آلية للإخوة وبنود لكل رياضي وجدول تذكير موحّد. يدفع أولياء الأمور مرة واحدة ويرون الصورة الكاملة. يعطي تقرير أعمار الذمم للمالية الأنبوب الذي تحتاجه دون اجتماعات متابعة أسبوعية."
+      },
+      {
+        "en": "PCI compliance is inherited from the underlying gateways because card data never touches Academorix servers. Tokenization lives in the gateway's vault; Academorix stores only the token. The regulatory surface is reduced to what actually matters: audit logs on token operations, retention policies on transaction records, and configurable data-residency for the ledger itself.",
+        "ar": "الامتثال لـ PCI موروث من البوابات الأساسية لأن بيانات البطاقات لا تلمس خوادم Academorix أبداً. الترميز يعيش في خزانة البوابة، وتخزّن Academorix الرمز فقط. السطح التنظيمي يتقلّص إلى ما يهم فعلاً: سجلات تدقيق على عمليات الرمز، وسياسات احتفاظ على سجلات المعاملات، وإقامة بيانات قابلة للتهيئة للدفتر نفسه."
+      }
+    ],
+    "outcomes": [
+      {
+        "en": "AquaElite Swim reduced invoicing time by 82% after switching to family accounts with automated sibling discounts",
+        "ar": "خفّضت AquaElite Swim زمن الفوترة بنسبة 82% بعد التحوّل إلى الحسابات العائلية مع خصومات آلية للإخوة"
+      },
+      {
+        "en": "Northgate FC collected 92% of invoices on time versus 68% before Academorix",
+        "ar": "حصّلت Northgate FC 92% من الفواتير في الوقت مقابل 68% قبل Academorix"
+      },
+      {
+        "en": "Summit Hoops recovered $47,000 in past-due AR in the first 90 days using automated escalation",
+        "ar": "استعادت Summit Hoops 47000 دولار من الذمم المتأخّرة في أول 90 يوماً باستخدام التصعيد الآلي"
+      },
+      {
+        "en": "Al Nasr Football Academy grew MRR by 34% after enabling recurring HyperPay memberships",
+        "ar": "نمت الإيرادات الشهرية المتكررة في أكاديمية النصر بنسبة 34% بعد تفعيل اشتراكات HyperPay المتكررة"
+      },
+      {
+        "en": "Failed retries dropped 71% at Riverside Sports Academy with the smart-retry engine",
+        "ar": "انخفضت المحاولات الفاشلة 71% في Riverside Sports Academy مع محرك إعادة المحاولة الذكي"
+      }
+    ],
+    "integrations": [
+      {
+        "key": "stripe",
+        "label": {
+          "en": "Stripe",
+          "ar": "Stripe"
+        },
+        "role": {
+          "en": "Global card payments across USD, EUR, GBP with Apple Pay and Google Pay",
+          "ar": "مدفوعات البطاقات العالمية عبر USD وEUR وGBP مع Apple Pay وGoogle Pay"
+        },
+        "category": {
+          "en": "Payments",
+          "ar": "المدفوعات"
+        }
+      },
+      {
+        "key": "hyperpay",
+        "label": {
+          "en": "HyperPay",
+          "ar": "HyperPay"
+        },
+        "role": {
+          "en": "GCC-focused with mada, SADAD, and local card acquirers",
+          "ar": "متخصّص في الخليج مع مدى وسداد ومحصّلي البطاقات المحلية"
+        },
+        "category": {
+          "en": "Payments",
+          "ar": "المدفوعات"
+        }
+      },
+      {
+        "key": "tap",
+        "label": {
+          "en": "Tap Payments",
+          "ar": "Tap Payments"
+        },
+        "role": {
+          "en": "Kuwait and UAE processing with KNET and BENEFIT support",
+          "ar": "معالجة الكويت والإمارات مع دعم KNET وBENEFIT"
+        },
+        "category": {
+          "en": "Payments",
+          "ar": "المدفوعات"
+        }
+      },
+      {
+        "key": "moyasar",
+        "label": {
+          "en": "Moyasar",
+          "ar": "Moyasar"
+        },
+        "role": {
+          "en": "Saudi Arabia mada, Visa, MasterCard, Apple Pay, and STC Pay",
+          "ar": "السعودية مدى وVisa وMasterCard وApple Pay وSTC Pay"
+        },
+        "category": {
+          "en": "Payments",
+          "ar": "المدفوعات"
+        }
+      },
+      {
+        "key": "paddle",
+        "label": {
+          "en": "Paddle",
+          "ar": "Paddle"
+        },
+        "role": {
+          "en": "Merchant-of-record with global tax remittance for enterprise SaaS billing",
+          "ar": "التاجر المسجّل مع تحويل الضرائب العالمي لفوترة SaaS للمؤسسات"
+        },
+        "category": {
+          "en": "Payments",
+          "ar": "المدفوعات"
+        }
+      },
+      {
+        "key": "twilio",
+        "label": {
+          "en": "Twilio SMS",
+          "ar": "Twilio SMS"
+        },
+        "role": {
+          "en": "Payment reminder SMS with short-link checkout",
+          "ar": "SMS تذكير بالدفع مع رابط دفع قصير"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      },
+      {
+        "key": "postmark",
+        "label": {
+          "en": "Postmark",
+          "ar": "Postmark"
+        },
+        "role": {
+          "en": "Invoice email delivery with attached PDF and payment link",
+          "ar": "توصيل بريد الفواتير مع PDF مرفق ورابط دفع"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      },
+      {
+        "key": "bigquery",
+        "label": {
+          "en": "BigQuery",
+          "ar": "BigQuery"
+        },
+        "role": {
+          "en": "Nightly export of AR ledger for warehouse analytics",
+          "ar": "تصدير ليلي لدفتر الذمم لتحليلات المستودع"
+        },
+        "category": {
+          "en": "Analytics",
+          "ar": "التحليلات"
+        }
+      }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": {
+          "en": "Wire your gateway",
+          "ar": "وصّل بوابتك"
+        },
+        "description": {
+          "en": "Pick one or more from Stripe, HyperPay, Tap, Moyasar, Paddle. Each gateway carries its own reconciliation flow and reporting.",
+          "ar": "اختر واحداً أو أكثر من Stripe وHyperPay وTap وMoyasar وPaddle. كل بوابة تحمل تدفق مطابقتها وتقاريرها الخاصة."
+        },
+        "icon": "CreditCardIcon"
+      },
+      {
+        "number": "02",
+        "title": {
+          "en": "Model your pricing",
+          "ar": "صمّم تسعيرك"
+        },
+        "description": {
+          "en": "Monthly memberships, per-session drop-ins, seasonal packages, family bundles with sibling discounts. All configurable, none hard-coded.",
+          "ar": "اشتراكات شهرية وحضور لكل جلسة وحزم موسمية وحزم عائلية مع خصومات الإخوة. كلها قابلة للتهيئة، لا شيء مبرمج بشكل صلب."
+        },
+        "icon": "ReceiptPercentIcon"
+      },
+      {
+        "number": "03",
+        "title": {
+          "en": "Invoice the families",
+          "ar": "افتر الأسر"
+        },
+        "description": {
+          "en": "One invoice per family per period with per-athlete line items. Automatic sibling discounts and configurable reminder cadences.",
+          "ar": "فاتورة واحدة لكل أسرة لكل فترة مع بنود لكل رياضي. خصومات آلية للإخوة وجداول تذكير قابلة للتهيئة."
+        },
+        "icon": "BanknotesIcon"
+      },
+      {
+        "number": "04",
+        "title": {
+          "en": "Collect and reconcile",
+          "ar": "احصل وطابق"
+        },
+        "description": {
+          "en": "Automated payment retries, escalating reminders, and clean AR aging. Finance closes the month in an afternoon instead of three days.",
+          "ar": "إعادة محاولات آلية للدفع وتذكيرات متصاعدة وتقرير أعمار ذمم نظيف. تُغلق المالية الشهر في بعد ظهر بدلاً من ثلاثة أيام."
+        },
+        "icon": "ChartBarIcon"
+      }
+    ],
+    "technical_details": [
+      {
+        "en": "PCI-compliant tokenization inherited from every gateway; card data never touches Academorix servers",
+        "ar": "ترميز متوافق مع PCI موروث من كل بوابة، وبيانات البطاقات لا تلمس خوادم Academorix أبداً"
+      },
+      {
+        "en": "Family invoicing engine with automated sibling discounts, per-athlete line items, and single reminder cadence",
+        "ar": "محرك فوترة عائلية مع خصومات آلية للإخوة وبنود لكل رياضي وجدول تذكير موحّد"
+      },
+      {
+        "en": "Multi-gateway routing lets you accept USD via Stripe, SAR via Moyasar, and AED via Tap on the same tenant",
+        "ar": "توجيه متعدد البوابات يسمح بقبول USD عبر Stripe وSAR عبر Moyasar وAED عبر Tap على المستأجر نفسه"
+      },
+      {
+        "en": "Smart retry engine adapts to gateway signals: exponential backoff on soft declines, immediate re-attempt on 5xx",
+        "ar": "محرك إعادة محاولة ذكي يتكيّف مع إشارات البوابة: تراجع أسّي على الرفض الناعم وإعادة محاولة فورية على 5xx"
+      },
+      {
+        "en": "AR aging report generated per branch, per family, and network-wide with configurable buckets (30/60/90 days)",
+        "ar": "تقرير أعمار الذمم مُوَلّد لكل فرع ولكل أسرة ولمستوى الشبكة مع دلاء قابلة للتهيئة (30/60/90 يوم)"
+      },
+      {
+        "en": "VAT-compliant invoice generation with per-branch tax profiles for GCC, EU, UK, and US jurisdictions",
+        "ar": "توليد فواتير متوافقة مع VAT بملفات ضريبية لكل فرع لولايات GCC وEU وUK والولايات المتحدة"
+      },
+      {
+        "en": "Automated dunning escalation: reminder at 7 days, notice at 30 days, hold on services at 60 days, escalate at 90 days",
+        "ar": "تصعيد آلي للتحصيل: تذكير بعد 7 أيام وإشعار بعد 30 يوماً وتعليق الخدمات بعد 60 يوماً وتصعيد بعد 90 يوماً"
+      }
+    ],
+    "sample_metrics": [
+      {
+        "label": {
+          "en": "Recurring MRR",
+          "ar": "الإيرادات الشهرية المتكررة"
+        },
+        "value": {
+          "en": "$48,200",
+          "ar": "$48,200"
+        },
+        "trend": {
+          "en": "+8% month over month",
+          "ar": "+8% شهرياً"
+        }
+      },
+      {
+        "label": {
+          "en": "Collected on time",
+          "ar": "محصّل في الوقت"
+        },
+        "value": {
+          "en": "92%",
+          "ar": "92%"
+        },
+        "trend": {
+          "en": "AR aging under control",
+          "ar": "أعمار الذمم تحت السيطرة"
+        }
+      },
+      {
+        "label": {
+          "en": "Failed retries",
+          "ar": "محاولات فاشلة"
+        },
+        "value": {
+          "en": "6",
+          "ar": "6"
+        },
+        "trend": {
+          "en": "Auto-retried",
+          "ar": "أُعيدت تلقائياً"
+        }
+      },
+      {
+        "label": {
+          "en": "Family accounts",
+          "ar": "حسابات عائلية"
+        },
+        "value": {
+          "en": "342",
+          "ar": "342"
+        },
+        "trend": {
+          "en": "1.7 athletes each",
+          "ar": "1.7 رياضي لكل حساب"
         }
       }
     ]
@@ -742,6 +1856,268 @@
           "ar": "لوحات التطوير."
         }
       }
+    ],
+    "narrative": [
+      {
+        "en": "Performance is where sport-specific attribute engines earn their keep. Football has different metrics than swimming, martial arts different from tennis. A generic performance tracker forces every coach to compromise. Academorix lets each sport configure its own attribute set once and consume the same longitudinal-progression engine everywhere.",
+        "ar": "الأداء هو حيث تكسب محركات السمات الخاصة بكل رياضة قيمتها. كرة القدم لها مقاييس مختلفة عن السباحة، والفنون القتالية مختلفة عن التنس. متتبّع أداء عام يفرض على كل مدرّب تنازلات. تدع Academorix كل رياضة تُهيّئ مجموعة سمات خاصة بها مرة واحدة وتستهلك محرك التقدم الطولي نفسه في كل مكان."
+      },
+      {
+        "en": "The attribute engine is a no-code editor. A head coach describes what they measure (dribbling, passing, shooting) with a scale (0-100, star rating, pass/fail) and a description. Coaches log against those attributes. The platform builds progression charts, benchmark comparisons, and longitudinal analyses automatically.",
+        "ar": "محرك السمات محرّر بلا كود. يصف مدرّب رئيسي ما يقيسه (المراوغة، التمرير، التسديد) بمقياس (0-100، تقييم بالنجوم، نجح/فشل) ووصف. يسجّل المدرّبون على تلك السمات. تبني المنصة رسوم التقدم ومقارنات المعايير والتحليلات الطولية تلقائياً."
+      },
+      {
+        "en": "Benchmarks are the difference between raw data and useful insight. Every attribute can carry age-band benchmarks so a 14-year-old's dribbling score has context. Elite candidates surface automatically. Development plans get generated per athlete. The coach walks into every family meeting armed with the data, not the anecdote.",
+        "ar": "المعايير هي الفرق بين البيانات الخام والرؤية المفيدة. كل سمة يمكن أن تحمل معايير حسب الفئة العمرية فتحصل درجة مراوغة طفل عمره 14 على سياق. المرشحون للنخبة يظهرون تلقائياً. تُوَلَّد خطط التطوير لكل رياضي. يدخل المدرّب كل اجتماع مع الأسرة مسلّحاً بالبيانات، لا بالحكاية."
+      }
+    ],
+    "outcomes": [
+      {
+        "en": "Summit Hoops identified 12 elite basketball candidates in a season versus 2 the year before",
+        "ar": "حدّدت Summit Hoops 12 مرشح كرة سلة للنخبة في موسم مقابل 2 في العام السابق"
+      },
+      {
+        "en": "AquaElite Swim's average time improvement rose 14% after enabling per-stroke progression tracking",
+        "ar": "ارتفع تحسّن الزمن المتوسط في AquaElite Swim بنسبة 14% بعد تفعيل تتبّع التقدم لكل سباحة"
+      },
+      {
+        "en": "Northgate FC produces per-player development plans in 2 minutes versus 45 minutes on the previous stack",
+        "ar": "تنتج Northgate FC خطط تطوير لكل لاعب في دقيقتين مقابل 45 دقيقة على المكدس السابق"
+      },
+      {
+        "en": "Al Nasr Football Academy tests 1,140 athletes per quarter with configurable per-position attribute sets",
+        "ar": "تختبر أكاديمية النصر لكرة القدم 1140 رياضي كل ربع مع مجموعات سمات قابلة للتهيئة لكل مركز"
+      },
+      {
+        "en": "Family meeting satisfaction rose from 62% to 91% at Elite Martial Arts Center with data-backed progression cards",
+        "ar": "ارتفع رضا اجتماعات الأسر من 62% إلى 91% في Elite Martial Arts Center مع بطاقات تقدم مدعومة بالبيانات"
+      }
+    ],
+    "integrations": [
+      {
+        "key": "bigquery",
+        "label": {
+          "en": "BigQuery",
+          "ar": "BigQuery"
+        },
+        "role": {
+          "en": "Warehouse export for advanced sports-science analytics",
+          "ar": "تصدير مستودع لتحليلات علوم الرياضة المتقدمة"
+        },
+        "category": {
+          "en": "Analytics",
+          "ar": "التحليلات"
+        }
+      },
+      {
+        "key": "mixpanel",
+        "label": {
+          "en": "Mixpanel",
+          "ar": "Mixpanel"
+        },
+        "role": {
+          "en": "Coach-behavior analytics on how attributes get used",
+          "ar": "تحليلات سلوك المدرّبين على كيفية استخدام السمات"
+        },
+        "category": {
+          "en": "Analytics",
+          "ar": "التحليلات"
+        }
+      },
+      {
+        "key": "segment",
+        "label": {
+          "en": "Segment",
+          "ar": "Segment"
+        },
+        "role": {
+          "en": "Event streaming to your existing analytics stack",
+          "ar": "بث الأحداث إلى مكدس تحليلاتك الحالي"
+        },
+        "category": {
+          "en": "Analytics",
+          "ar": "التحليلات"
+        }
+      },
+      {
+        "key": "vimeo",
+        "label": {
+          "en": "Vimeo",
+          "ar": "Vimeo"
+        },
+        "role": {
+          "en": "Match footage and drill videos attached to performance records",
+          "ar": "لقطات المباريات وفيديوهات التدريبات مرفقة بسجلات الأداء"
+        },
+        "category": {
+          "en": "Video",
+          "ar": "الفيديو"
+        }
+      },
+      {
+        "key": "youtube",
+        "label": {
+          "en": "YouTube",
+          "ar": "YouTube"
+        },
+        "role": {
+          "en": "Public film archive with per-athlete highlight reels",
+          "ar": "أرشيف أفلام عام مع أشرطة أهداف لكل رياضي"
+        },
+        "category": {
+          "en": "Video",
+          "ar": "الفيديو"
+        }
+      },
+      {
+        "key": "gdrive",
+        "label": {
+          "en": "Google Drive",
+          "ar": "Google Drive"
+        },
+        "role": {
+          "en": "Attach evaluation PDFs to performance profiles",
+          "ar": "أرفق ملفات PDF للتقييم بملفات الأداء"
+        },
+        "category": {
+          "en": "Storage",
+          "ar": "التخزين"
+        }
+      }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": {
+          "en": "Define the attribute set",
+          "ar": "حدّد مجموعة السمات"
+        },
+        "description": {
+          "en": "Head coaches describe what they measure per sport (positioning, endurance, technique) with scales and descriptions. No code required.",
+          "ar": "يصف المدرّبون الرئيسيون ما يقيسونه لكل رياضة (التمركز، التحمّل، الأسلوب) بمقاييس وأوصاف. لا حاجة إلى كود."
+        },
+        "icon": "AdjustmentsHorizontalIcon"
+      },
+      {
+        "number": "02",
+        "title": {
+          "en": "Log against the set",
+          "ar": "سجّل على المجموعة"
+        },
+        "description": {
+          "en": "Coaches log evaluations on mobile after every session or match. Fitness tests, technical drills, and match observations all flow to the same profile.",
+          "ar": "يسجّل المدرّبون التقييمات على الجوال بعد كل جلسة أو مباراة. اختبارات اللياقة والتدريبات التقنية وملاحظات المباريات كلها تتدفق إلى الملف نفسه."
+        },
+        "icon": "ChartBarIcon"
+      },
+      {
+        "number": "03",
+        "title": {
+          "en": "See progression",
+          "ar": "شاهد التقدم"
+        },
+        "description": {
+          "en": "Longitudinal charts render per attribute, per athlete, per team. Elite candidates surface automatically against age-band benchmarks.",
+          "ar": "رسوم طولية تُعرَض لكل سمة ولكل رياضي ولكل فريق. المرشحون للنخبة يظهرون تلقائياً مقابل معايير الفئات العمرية."
+        },
+        "icon": "ArrowTrendingUpIcon"
+      },
+      {
+        "number": "04",
+        "title": {
+          "en": "Ship the progress card",
+          "ar": "أرسل بطاقة التقدم"
+        },
+        "description": {
+          "en": "Every quarter, families get a bilingual progress card with the coach's narrative on top of the data. AI-assisted drafts speed up the write-up.",
+          "ar": "كل ربع، تحصل الأسر على بطاقة تقدم ثنائية اللغة مع سرد المدرّب فوق البيانات. مسودات بمساعدة الذكاء الاصطناعي تسرّع الكتابة."
+        },
+        "icon": "DocumentTextIcon"
+      }
+    ],
+    "technical_details": [
+      {
+        "en": "No-code attribute-set editor with numeric, categorical, and boolean scales plus per-scale descriptions",
+        "ar": "محرّر مجموعة سمات بلا كود بمقاييس رقمية وفئوية ومنطقية ووصف لكل مقياس"
+      },
+      {
+        "en": "Age-band benchmarks configurable per attribute with automatic percentile ranking",
+        "ar": "معايير حسب الفئة العمرية قابلة للتهيئة لكل سمة مع ترتيب مئوي آلي"
+      },
+      {
+        "en": "Longitudinal progression engine renders time-series charts across athlete, team, and network scopes",
+        "ar": "محرك تقدم طولي يُعرَض رسوم سلاسل زمنية عبر نطاقات الرياضي والفريق والشبكة"
+      },
+      {
+        "en": "Elite-candidate surfacing runs configurable thresholds against age-band peers automatically each week",
+        "ar": "إظهار المرشحين للنخبة يعمل بعتبات قابلة للتهيئة مقابل نظراء الفئة العمرية تلقائياً كل أسبوع"
+      },
+      {
+        "en": "AI-drafted progress summaries turn a quarter of raw data into a family-ready card in seconds",
+        "ar": "ملخصات تقدم بمسودات ذكاء اصطناعي تحوّل ربع من البيانات الخام إلى بطاقة جاهزة للأسرة في ثوانٍ"
+      },
+      {
+        "en": "Video attachments (Vimeo, YouTube, direct upload) attach to individual evaluations for context",
+        "ar": "مرفقات الفيديو (Vimeo وYouTube ورفع مباشر) تُرفق بتقييمات فردية للسياق"
+      }
+    ],
+    "sample_metrics": [
+      {
+        "label": {
+          "en": "Athletes tested",
+          "ar": "رياضيون تم اختبارهم"
+        },
+        "value": {
+          "en": "1,140",
+          "ar": "1,140"
+        },
+        "trend": {
+          "en": "This quarter",
+          "ar": "هذا الربع"
+        }
+      },
+      {
+        "label": {
+          "en": "Average improvement",
+          "ar": "التحسّن المتوسط"
+        },
+        "value": {
+          "en": "+14%",
+          "ar": "+14%"
+        },
+        "trend": {
+          "en": "Versus baseline",
+          "ar": "مقابل خط الأساس"
+        }
+      },
+      {
+        "label": {
+          "en": "Elite candidates",
+          "ar": "مرشحون للنخبة"
+        },
+        "value": {
+          "en": "58",
+          "ar": "58"
+        },
+        "trend": {
+          "en": "Auto-flagged",
+          "ar": "مُوَسَّمون تلقائياً"
+        }
+      },
+      {
+        "label": {
+          "en": "Progress cards sent",
+          "ar": "بطاقات تقدم مُرسَلة"
+        },
+        "value": {
+          "en": "918",
+          "ar": "918"
+        },
+        "trend": {
+          "en": "AI-assisted drafts",
+          "ar": "مسودات بمساعدة الذكاء الاصطناعي"
+        }
+      }
     ]
   },
   "reception": {
@@ -886,6 +2262,231 @@
         "description": {
           "en": "Desk performance dashboards.",
           "ar": "لوحات أداء المكتب."
+        }
+      }
+    ],
+    "narrative": [
+      {
+        "en": "Reception is the desk that keeps the academy running. It handles walk-in registrations, medical form verification, refund requests, discount adjustments, and every other exception that never fits neatly into a workflow. Before Academorix, that queue lived in three inboxes and a stack of paper. Now it lives in one screen.",
+        "ar": "الاستقبال هو المكتب الذي يُبقي الأكاديمية تعمل. يعالج التسجيلات المباشرة والتحقق من الاستمارات الطبية وطلبات الاسترداد وتعديلات الخصومات وكل استثناء آخر لا يناسب سير عمل نظامي. قبل Academorix، كان الطابور يعيش في ثلاثة صناديق بريد وكومة ورق. الآن يعيش على شاشة واحدة."
+      },
+      {
+        "en": "Every task is claim-to-work, so two staff cannot pick up the same thing. Every action carries an audit trail. SLA timers float urgent tasks to the top so nothing slips. Refunds route through the queue, everyone sees the state, and they close within a day instead of bouncing between reception and finance for a week.",
+        "ar": "كل مهمة تُطالَب-للعمل، فلا يستلم موظّفان الشيء نفسه. كل إجراء يحمل سجل تدقيق. مؤقّتات SLA تطفو المهام العاجلة إلى الأعلى فلا يفلت شيء. طلبات الاسترداد تُوجَّه في الطابور، ويرى الجميع الحالة، وتُغلق خلال يوم بدلاً من التنقل بين الاستقبال والمالية لأسبوع."
+      },
+      {
+        "en": "Walk-in registration completes in under 10 minutes on a tablet or kiosk. Guardian details, medical forms, safeguarding consents, and first invoice all captured in one flow. The desk finally has the breathing room to focus on families in the lobby, not chasing paper.",
+        "ar": "التسجيل المباشر يكتمل خلال أقل من 10 دقائق على جهاز لوحي أو كشك. تفاصيل ولي الأمر والاستمارات الطبية وموافقات الحماية والفاتورة الأولى كلها تُلتقط في تدفق واحد. أخيراً يتاح للمكتب المجال للتركيز على العائلات في الردهة، لا مطاردة الأوراق."
+      }
+    ],
+    "outcomes": [
+      {
+        "en": "Refunds close within one day at Riverside Sports Academy versus 6 days on the previous stack",
+        "ar": "طلبات الاسترداد تُغلق خلال يوم واحد في Riverside Sports Academy مقابل 6 أيام على المكدس السابق"
+      },
+      {
+        "en": "Walk-in registration time dropped from 30 minutes to under 10 minutes on the tablet kiosk",
+        "ar": "انخفض زمن التسجيل المباشر من 30 دقيقة إلى أقل من 10 دقائق على كشك الجهاز اللوحي"
+      },
+      {
+        "en": "Zero duplicate task claims after enabling claim-to-work locking at Elite Martial Arts Center",
+        "ar": "صفر مطالبات مهام مكررة بعد تفعيل قفل المطالبة-للعمل في Elite Martial Arts Center"
+      },
+      {
+        "en": "SLA-flagged tasks resolve 3x faster than pre-SLA baseline",
+        "ar": "المهام الموسومة بـ SLA تُحل أسرع 3 مرات من خط الأساس قبل SLA"
+      }
+    ],
+    "integrations": [
+      {
+        "key": "twilio",
+        "label": {
+          "en": "Twilio SMS",
+          "ar": "Twilio SMS"
+        },
+        "role": {
+          "en": "Status updates to guardians during walk-ins",
+          "ar": "تحديثات حالة لأولياء الأمور أثناء المراجعات"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      },
+      {
+        "key": "whatsapp",
+        "label": {
+          "en": "WhatsApp Business",
+          "ar": "WhatsApp Business"
+        },
+        "role": {
+          "en": "Rich-media confirmations with next-step guidance",
+          "ar": "تأكيدات وسائط غنية مع توجيه للخطوة التالية"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      },
+      {
+        "key": "postmark",
+        "label": {
+          "en": "Postmark",
+          "ar": "Postmark"
+        },
+        "role": {
+          "en": "Registration confirmation emails with attached welcome pack",
+          "ar": "بريد تأكيد التسجيل مع حزمة الترحيب المرفقة"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      },
+      {
+        "key": "google-sso",
+        "label": {
+          "en": "Google SSO",
+          "ar": "Google SSO"
+        },
+        "role": {
+          "en": "Desk staff sign-in with Workspace credentials",
+          "ar": "دخول طاقم المكتب بشهادات Workspace"
+        },
+        "category": {
+          "en": "Auth",
+          "ar": "الهوية"
+        }
+      },
+      {
+        "key": "okta",
+        "label": {
+          "en": "Okta",
+          "ar": "Okta"
+        },
+        "role": {
+          "en": "SSO for enterprise-tier desk staff",
+          "ar": "SSO لطاقم المكتب في المستوى المؤسسي"
+        },
+        "category": {
+          "en": "Auth",
+          "ar": "الهوية"
+        }
+      }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": {
+          "en": "Open the queue",
+          "ar": "افتح الطابور"
+        },
+        "description": {
+          "en": "Sign in to Reception. Pending items sorted by SLA urgency, oldest at the top.",
+          "ar": "سجّل الدخول إلى الاستقبال. البنود المعلّقة مرتبة حسب استعجال SLA، الأقدم في الأعلى."
+        },
+        "icon": "InboxStackIcon"
+      },
+      {
+        "number": "02",
+        "title": {
+          "en": "Claim a task",
+          "ar": "طالِب بمهمة"
+        },
+        "description": {
+          "en": "Claim, review context, message the family from the same view, then approve or route to finance.",
+          "ar": "طالِب، وراجع السياق، وراسل الأسرة من العرض نفسه، ثم اعتمد أو وجّه إلى المالية."
+        },
+        "icon": "CheckCircleIcon"
+      },
+      {
+        "number": "03",
+        "title": {
+          "en": "Handle walk-ins",
+          "ar": "التعامل مع المراجعين"
+        },
+        "description": {
+          "en": "Register new families on the tablet kiosk. Documents captured, first invoice queued automatically.",
+          "ar": "سجّل الأسر الجديدة على كشك الجهاز اللوحي. تُلتقَط المستندات وتُطابَر الفاتورة الأولى تلقائياً."
+        },
+        "icon": "IdentificationIcon"
+      },
+      {
+        "number": "04",
+        "title": {
+          "en": "Close the shift",
+          "ar": "أغلق النوبة"
+        },
+        "description": {
+          "en": "Review resolved items, note escalations for finance, hand off SLA-flagged items to the next shift.",
+          "ar": "راجع البنود المُحلَّة، ودوّن التصعيدات للمالية، وسلّم البنود ذات SLA للنوبة التالية."
+        },
+        "icon": "ArrowPathIcon"
+      }
+    ],
+    "technical_details": [
+      {
+        "en": "Claim-to-work locking prevents two staff from picking up the same task with configurable claim expiry",
+        "ar": "قفل المطالبة-للعمل يمنع موظّفَين من استلام المهمة نفسها مع انتهاء صلاحية المطالبة قابل للتهيئة"
+      },
+      {
+        "en": "Per-task SLA timers with escalating priority as deadlines approach, configurable per branch",
+        "ar": "مؤقّتات SLA لكل مهمة بأولوية متصاعدة عند اقتراب المواعيد، قابلة للتهيئة لكل فرع"
+      },
+      {
+        "en": "Immutable audit trail on every action with actor, timestamp, before/after state, and reason string",
+        "ar": "سجل تدقيق ثابت على كل إجراء مع المنفّذ والوقت وحالة قبل وبعد وسبب نصي"
+      },
+      {
+        "en": "Walk-in kiosk PWA supports offline registration for up to 30 days with encrypted local queue",
+        "ar": "PWA كشك الاستقبال يدعم التسجيل دون اتصال حتى 30 يوماً بطابور محلي مشفّر"
+      },
+      {
+        "en": "Guardian communication threaded per task with full history retained for the life of the account",
+        "ar": "تواصل مع ولي الأمر متسلسل لكل مهمة مع الاحتفاظ بالتاريخ الكامل طوال عمر الحساب"
+      }
+    ],
+    "sample_metrics": [
+      {
+        "label": {
+          "en": "Open tasks",
+          "ar": "مهام مفتوحة"
+        },
+        "value": {
+          "en": "24",
+          "ar": "24"
+        },
+        "trend": {
+          "en": "Sorted by SLA",
+          "ar": "مرتبة حسب SLA"
+        }
+      },
+      {
+        "label": {
+          "en": "Median resolve time",
+          "ar": "زمن الحل الوسيط"
+        },
+        "value": {
+          "en": "8 min",
+          "ar": "8 دقائق"
+        },
+        "trend": {
+          "en": "This shift",
+          "ar": "هذه النوبة"
+        }
+      },
+      {
+        "label": {
+          "en": "Walk-ins today",
+          "ar": "مراجعون اليوم"
+        },
+        "value": {
+          "en": "18",
+          "ar": "18"
+        },
+        "trend": {
+          "en": "6 registrations, 12 changes",
+          "ar": "6 تسجيلات، 12 تعديل"
         }
       }
     ]
@@ -1034,6 +2635,250 @@
           "ar": "استعلامات باللغة الطبيعية."
         }
       }
+    ],
+    "narrative": [
+      {
+        "en": "Reports is what turns operational data into board-ready insight without a data-analyst hire. Prebuilt dashboards cover the 20 reports every academy runs weekly: attendance rate, retention by cohort, MRR growth, safeguarding compliance, coach utilization, session yield, family AR aging. Every dashboard is drillable to the athlete, the coach, or the branch.",
+        "ar": "التقارير هي ما يحوّل البيانات التشغيلية إلى رؤية جاهزة لمجلس الإدارة دون تعيين محلل بيانات. لوحات مُعَدَّة مسبقاً تغطّي 20 تقريراً تُشغّلها كل أكاديمية أسبوعياً: معدل الحضور، والاحتفاظ حسب الدفعة، ونمو MRR، والامتثال للحماية، واستخدام المدرّبين، وناتج الجلسات، وأعمار ذمم الأسر. كل لوحة قابلة للتعمق إلى الرياضي أو المدرّب أو الفرع."
+      },
+      {
+        "en": "Custom reports use a drag-and-drop query builder that respects your permission scope automatically. Ask a plain-language question through the AI assistant and get a chart back. Save it, share it, schedule it to email at 7am every Monday. The reporting layer stops being a bottleneck and becomes an operating rhythm.",
+        "ar": "التقارير المخصصة تستخدم منشئ استعلامات بالسحب والإفلات يحترم نطاق صلاحياتك تلقائياً. اطرح سؤالاً بلغة طبيعية عبر المساعد الذكي واحصل على رسم بياني. احفظه وشاركه وجدوله ليصل بالبريد كل اثنين الساعة السابعة. تتوقف طبقة التقارير عن كونها عنق زجاجة وتصبح إيقاعاً تشغيلياً."
+      },
+      {
+        "en": "Scheduled exports feed your existing analytics stack. Nightly CSVs to your data warehouse. Weekly PDFs to the board. Real-time webhooks to Slack for anomaly alerts. Academorix stops being an island and joins the tools you already run.",
+        "ar": "التصديرات المجدولة تُغذّي مكدس تحليلاتك الحالي. ملفات CSV ليلية إلى مستودع بياناتك. ملفات PDF أسبوعية إلى المجلس. Webhooks آنية إلى Slack لتنبيهات الشذوذ. تتوقف Academorix عن أن تكون جزيرة وتنضم إلى الأدوات التي تستخدمها فعلاً."
+      }
+    ],
+    "outcomes": [
+      {
+        "en": "PanAsia Sports Group closes the month in 4 hours versus 3 days on the previous stack",
+        "ar": "تُغلق PanAsia Sports Group الشهر في 4 ساعات مقابل 3 أيام على المكدس السابق"
+      },
+      {
+        "en": "AR aging report lands in inbox at 7am Monday, zero manual export",
+        "ar": "تقرير أعمار الذمم يصل صندوق الوارد الاثنين الساعة السابعة، دون تصدير يدوي"
+      },
+      {
+        "en": "Continental Sports Federation runs 200+ custom queries per quarter on the natural-language interface",
+        "ar": "تُشغّل Continental Sports Federation أكثر من 200 استعلام مخصص لكل ربع على واجهة اللغة الطبيعية"
+      },
+      {
+        "en": "Board pack assembly time dropped from 2 days to 90 minutes at AquaElite Swim",
+        "ar": "انخفض زمن تجميع حزمة المجلس من يومين إلى 90 دقيقة في AquaElite Swim"
+      }
+    ],
+    "integrations": [
+      {
+        "key": "bigquery",
+        "label": {
+          "en": "BigQuery",
+          "ar": "BigQuery"
+        },
+        "role": {
+          "en": "Nightly full-warehouse export for advanced analytics",
+          "ar": "تصدير مستودع كامل ليلي للتحليلات المتقدمة"
+        },
+        "category": {
+          "en": "Analytics",
+          "ar": "التحليلات"
+        }
+      },
+      {
+        "key": "snowflake",
+        "label": {
+          "en": "Snowflake",
+          "ar": "Snowflake"
+        },
+        "role": {
+          "en": "Enterprise warehouse export with schema mapping",
+          "ar": "تصدير مستودع للمؤسسات مع تعيين المخطط"
+        },
+        "category": {
+          "en": "Analytics",
+          "ar": "التحليلات"
+        }
+      },
+      {
+        "key": "segment",
+        "label": {
+          "en": "Segment",
+          "ar": "Segment"
+        },
+        "role": {
+          "en": "Event streaming to your existing analytics stack",
+          "ar": "بث الأحداث إلى مكدس تحليلاتك الحالي"
+        },
+        "category": {
+          "en": "Analytics",
+          "ar": "التحليلات"
+        }
+      },
+      {
+        "key": "slack",
+        "label": {
+          "en": "Slack",
+          "ar": "Slack"
+        },
+        "role": {
+          "en": "Anomaly alerts and weekly digest to your ops channel",
+          "ar": "تنبيهات الشذوذ والملخص الأسبوعي إلى قناة العمليات"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      },
+      {
+        "key": "postmark",
+        "label": {
+          "en": "Postmark",
+          "ar": "Postmark"
+        },
+        "role": {
+          "en": "Scheduled PDF reports emailed to board members",
+          "ar": "تقارير PDF مجدولة تُرسَل للمجلس بالبريد"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      },
+      {
+        "key": "gdrive",
+        "label": {
+          "en": "Google Drive",
+          "ar": "Google Drive"
+        },
+        "role": {
+          "en": "Board decks auto-archived to a shared drive",
+          "ar": "حزم المجلس تُؤرشَف تلقائياً في مشغّل مشترك"
+        },
+        "category": {
+          "en": "Storage",
+          "ar": "التخزين"
+        }
+      }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": {
+          "en": "Pick a template",
+          "ar": "اختر قالباً"
+        },
+        "description": {
+          "en": "Twenty prebuilt dashboards cover the most-used academy reports. Clone one to start, or build from scratch with the drag-and-drop query builder.",
+          "ar": "عشرون لوحة مُعَدَّة مسبقاً تغطي التقارير الأكثر استخداماً. انسخ واحدة للبدء، أو ابنِ من الصفر بمنشئ استعلامات السحب والإفلات."
+        },
+        "icon": "PresentationChartLineIcon"
+      },
+      {
+        "number": "02",
+        "title": {
+          "en": "Ask a question",
+          "ar": "اطرح سؤالاً"
+        },
+        "description": {
+          "en": "The AI assistant turns plain-language questions into charts. Refine with follow-up questions until the shape is right.",
+          "ar": "المساعد الذكي يحوّل الأسئلة بلغة طبيعية إلى رسوم بيانية. حسّن بأسئلة متابعة حتى تصبح الشكل صحيحاً."
+        },
+        "icon": "SparklesIcon"
+      },
+      {
+        "number": "03",
+        "title": {
+          "en": "Schedule the export",
+          "ar": "جدول التصدير"
+        },
+        "description": {
+          "en": "Ship the report to email, Slack, or a data warehouse on a schedule you define. Recipients get exactly what they need.",
+          "ar": "أرسل التقرير بالبريد أو Slack أو مستودع بيانات وفق جدول تحدده. المستقبلون يحصلون على ما يحتاجونه بالضبط."
+        },
+        "icon": "ArrowPathIcon"
+      },
+      {
+        "number": "04",
+        "title": {
+          "en": "Watch the numbers",
+          "ar": "راقب الأرقام"
+        },
+        "description": {
+          "en": "Live dashboards refresh via WebSocket. Anomaly alerts route to the right people without a manual check.",
+          "ar": "لوحات مباشرة تُحدَّث عبر WebSocket. تنبيهات الشذوذ تُوجَّه للأشخاص المناسبين دون فحص يدوي."
+        },
+        "icon": "ChartBarIcon"
+      }
+    ],
+    "technical_details": [
+      {
+        "en": "Twenty prebuilt dashboards covering attendance, retention, revenue, safeguarding, and utilization",
+        "ar": "عشرون لوحة مُعَدَّة مسبقاً تغطي الحضور والاحتفاظ والإيرادات والحماية والاستخدام"
+      },
+      {
+        "en": "Drag-and-drop query builder generating SQL that respects tenant and branch scoping at the database",
+        "ar": "منشئ استعلامات بالسحب والإفلات يُوَلّد SQL يحترم حصر المستأجر والفرع في قاعدة البيانات"
+      },
+      {
+        "en": "Natural-language AI interface for ad-hoc queries with per-query audit trail for compliance review",
+        "ar": "واجهة ذكاء اصطناعي بلغة طبيعية للاستعلامات المخصصة مع سجل تدقيق لكل استعلام لمراجعة الامتثال"
+      },
+      {
+        "en": "Scheduled exports to CSV, XLSX, PDF, or JSON with configurable recurrence via RRULE",
+        "ar": "تصديرات مجدولة إلى CSV وXLSX وPDF وJSON مع تكرار قابل للتهيئة عبر RRULE"
+      },
+      {
+        "en": "Real-time WebSocket dashboards with sub-second refresh on networks under 20 branches",
+        "ar": "لوحات WebSocket في الوقت الفعلي مع تحديث دون ثانية على الشبكات ذات أقل من 20 فرعاً"
+      },
+      {
+        "en": "Anomaly detection engine runs against 15+ metrics with configurable thresholds per branch",
+        "ar": "محرك اكتشاف الشذوذ يعمل على أكثر من 15 مقياساً بعتبات قابلة للتهيئة لكل فرع"
+      }
+    ],
+    "sample_metrics": [
+      {
+        "label": {
+          "en": "Reports run",
+          "ar": "تقارير مُشغَّلة"
+        },
+        "value": {
+          "en": "1,340",
+          "ar": "1,340"
+        },
+        "trend": {
+          "en": "This month",
+          "ar": "هذا الشهر"
+        }
+      },
+      {
+        "label": {
+          "en": "Scheduled exports",
+          "ar": "تصديرات مجدولة"
+        },
+        "value": {
+          "en": "28",
+          "ar": "28"
+        },
+        "trend": {
+          "en": "Auto-delivered",
+          "ar": "تُسلَّم تلقائياً"
+        }
+      },
+      {
+        "label": {
+          "en": "Custom dashboards",
+          "ar": "لوحات مخصصة"
+        },
+        "value": {
+          "en": "62",
+          "ar": "62"
+        },
+        "trend": {
+          "en": "Across 8 branches",
+          "ar": "عبر 8 فروع"
+        }
+      }
     ]
   },
   "safeguarding": {
@@ -1178,6 +3023,235 @@
         "description": {
           "en": "Compliance dashboards and exports.",
           "ar": "لوحات الامتثال والتصديرات."
+        }
+      }
+    ],
+    "narrative": [
+      {
+        "en": "Safeguarding is the invisible work that keeps the doors open. Coach clearances, medical form currency, incident reports, background check retention, guardian consent capture, and every regulatory obligation across the sports network sit on one compliance dashboard.",
+        "ar": "الحماية هي العمل غير المرئي الذي يُبقي الأبواب مفتوحة. إقرارات المدرّبين وسريان الاستمارات الطبية وتقارير الحوادث والاحتفاظ بفحوصات الخلفية وجمع موافقات أولياء الأمور وكل التزام تنظيمي عبر الشبكة الرياضية يقع على لوحة امتثال واحدة."
+      },
+      {
+        "en": "Certificate expiry never surprises anyone. Reminders escalate 60, 30, and 7 days before expiry. Blocked coaches cannot be scheduled after their certificate lapses. Blocked athletes cannot be enrolled after their medical form expires. The platform enforces compliance at the database layer instead of relying on a spreadsheet policy nobody reads.",
+        "ar": "انتهاء صلاحية الشهادات لا يُفاجئ أحداً. التذكيرات تتصاعد قبل انتهاء الصلاحية بـ 60 و30 و7 أيام. المدرّبون المحظورون لا يمكن جدولتهم بعد انقضاء شهادتهم. الرياضيون المحظورون لا يمكن تسجيلهم بعد انتهاء صلاحية استمارتهم الطبية. تفرض المنصة الامتثال في طبقة قاعدة البيانات بدلاً من الاعتماد على سياسة جدول بيانات لا يقرأها أحد."
+      },
+      {
+        "en": "Incident reporting is a first-class flow, not an afterthought. Anyone in the academy can file a report through a mobile-friendly form. Investigations route to a designated safeguarding lead with a full audit trail. Regulators or insurers can be granted read-only access with time-limited tokens.",
+        "ar": "الإبلاغ عن الحوادث تدفق محوري، لا فكرة لاحقة. يستطيع أي شخص في الأكاديمية تقديم بلاغ عبر نموذج ملائم للجوال. تُوجَّه التحقيقات إلى مسؤول حماية معيّن مع سجل تدقيق كامل. المنظّمون أو شركات التأمين يمكن منحهم وصولاً بالقراءة فقط برموز محدودة زمنياً."
+      }
+    ],
+    "outcomes": [
+      {
+        "en": "100% coach-clearance compliance across the Northgate FC network with automated 60-day reminders",
+        "ar": "امتثال إقرار المدرّبين بنسبة 100% عبر شبكة Northgate FC مع تذكيرات آلية قبل 60 يوماً"
+      },
+      {
+        "en": "Zero expired-certificate scheduling incidents at Riverside Sports Academy in 18 months",
+        "ar": "صفر حوادث جدولة بشهادات منتهية في Riverside Sports Academy خلال 18 شهراً"
+      },
+      {
+        "en": "Incident median-close time dropped from 14 days to 3 days at Elite Martial Arts Center",
+        "ar": "انخفض زمن إغلاق الحوادث الوسيط من 14 يوماً إلى 3 أيام في Elite Martial Arts Center"
+      },
+      {
+        "en": "Regulator read-only access takes 90 seconds to provision versus the two-week email chain baseline",
+        "ar": "وصول القراءة فقط للمنظّمين يستغرق 90 ثانية للتزويد مقابل خط أساس سلسلة بريد استمرت أسبوعين"
+      }
+    ],
+    "integrations": [
+      {
+        "key": "postmark",
+        "label": {
+          "en": "Postmark",
+          "ar": "Postmark"
+        },
+        "role": {
+          "en": "Expiry reminder emails and regulator invitations",
+          "ar": "بريد تذكيرات انتهاء الصلاحية ودعوات المنظّمين"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      },
+      {
+        "key": "twilio",
+        "label": {
+          "en": "Twilio SMS",
+          "ar": "Twilio SMS"
+        },
+        "role": {
+          "en": "Escalating SMS alerts for critical safeguarding events",
+          "ar": "تنبيهات SMS متصاعدة لأحداث الحماية الحرجة"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      },
+      {
+        "key": "gdrive",
+        "label": {
+          "en": "Google Drive",
+          "ar": "Google Drive"
+        },
+        "role": {
+          "en": "Long-term document archive with retention policies",
+          "ar": "أرشيف مستندات طويل المدى مع سياسات احتفاظ"
+        },
+        "category": {
+          "en": "Storage",
+          "ar": "التخزين"
+        }
+      },
+      {
+        "key": "onedrive",
+        "label": {
+          "en": "OneDrive",
+          "ar": "OneDrive"
+        },
+        "role": {
+          "en": "Microsoft-first tenants archive incident reports here",
+          "ar": "المستأجرون الذين يعتمدون على Microsoft يؤرشفون تقارير الحوادث هنا"
+        },
+        "category": {
+          "en": "Storage",
+          "ar": "التخزين"
+        }
+      },
+      {
+        "key": "okta",
+        "label": {
+          "en": "Okta",
+          "ar": "Okta"
+        },
+        "role": {
+          "en": "SSO with SCIM for safeguarding-lead role automation",
+          "ar": "SSO مع SCIM لأتمتة دور مسؤول الحماية"
+        },
+        "category": {
+          "en": "Auth",
+          "ar": "الهوية"
+        }
+      }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": {
+          "en": "Configure obligations",
+          "ar": "هيّئ الالتزامات"
+        },
+        "description": {
+          "en": "Define required certificates per role, per sport, per region. Set expiry cadences and reminder escalation.",
+          "ar": "حدّد الشهادات المطلوبة لكل دور ولكل رياضة ولكل منطقة. اضبط إيقاعات انتهاء الصلاحية وتصعيد التذكيرات."
+        },
+        "icon": "ClipboardDocumentCheckIcon"
+      },
+      {
+        "number": "02",
+        "title": {
+          "en": "Capture credentials",
+          "ar": "التقط الشهادات"
+        },
+        "description": {
+          "en": "Coaches, staff, and athletes upload documents through mobile-friendly forms. SHA-256 integrity check on every file.",
+          "ar": "المدرّبون والطاقم والرياضيون يرفعون المستندات عبر نماذج ملائمة للجوال. فحص سلامة SHA-256 على كل ملف."
+        },
+        "icon": "CloudArrowUpIcon"
+      },
+      {
+        "number": "03",
+        "title": {
+          "en": "Enforce at the layer",
+          "ar": "افرض في الطبقة"
+        },
+        "description": {
+          "en": "Expired certificates block scheduling automatically. No coach with a lapsed clearance can be assigned to a session.",
+          "ar": "الشهادات المنتهية تحجب الجدولة تلقائياً. لا يمكن تعيين مدرّب بإقرار منقضٍ في جلسة."
+        },
+        "icon": "LockClosedIcon"
+      },
+      {
+        "number": "04",
+        "title": {
+          "en": "Report and audit",
+          "ar": "أبلغ ودقّق"
+        },
+        "description": {
+          "en": "Incident reports route to a designated safeguarding lead. Full audit trail supports regulator or insurer review.",
+          "ar": "تقارير الحوادث تُوجَّه لمسؤول حماية معيّن. سجل تدقيق كامل يدعم مراجعة المنظّم أو شركة التأمين."
+        },
+        "icon": "ShieldCheckIcon"
+      }
+    ],
+    "technical_details": [
+      {
+        "en": "Per-role, per-sport, per-region certificate requirement engine with configurable expiry cadences",
+        "ar": "محرك متطلبات شهادات لكل دور ولكل رياضة ولكل منطقة بإيقاعات انتهاء صلاحية قابلة للتهيئة"
+      },
+      {
+        "en": "Escalating reminder engine at 60/30/7 days before expiry with configurable per-role targets",
+        "ar": "محرك تذكيرات متصاعد قبل انتهاء الصلاحية بـ 60/30/7 يوماً بأهداف قابلة للتهيئة لكل دور"
+      },
+      {
+        "en": "Database-layer scheduling block on expired certificates; expired coaches cannot be assigned",
+        "ar": "حجب الجدولة في طبقة قاعدة البيانات للشهادات المنتهية؛ المدرّبون المنتهية شهاداتهم لا يمكن تعيينهم"
+      },
+      {
+        "en": "Time-limited regulator read-only access tokens with per-token audit trail",
+        "ar": "رموز وصول القراءة فقط للمنظّمين محدودة زمنياً مع سجل تدقيق لكل رمز"
+      },
+      {
+        "en": "Incident report workflow with configurable routing, investigation stages, and closure requirements",
+        "ar": "سير عمل تقارير الحوادث مع توجيه قابل للتهيئة ومراحل تحقيق ومتطلبات إغلاق"
+      },
+      {
+        "en": "Retention policies aligned with GDPR, HIPAA, and regional PDPL requirements for the archive",
+        "ar": "سياسات الاحتفاظ متوافقة مع متطلبات GDPR وHIPAA وPDPL الإقليمية للأرشيف"
+      }
+    ],
+    "sample_metrics": [
+      {
+        "label": {
+          "en": "Compliance rate",
+          "ar": "معدل الامتثال"
+        },
+        "value": {
+          "en": "100%",
+          "ar": "100%"
+        },
+        "trend": {
+          "en": "All coaches current",
+          "ar": "كل المدرّبين ساريون"
+        }
+      },
+      {
+        "label": {
+          "en": "Open incidents",
+          "ar": "حوادث مفتوحة"
+        },
+        "value": {
+          "en": "2",
+          "ar": "2"
+        },
+        "trend": {
+          "en": "Under investigation",
+          "ar": "قيد التحقيق"
+        }
+      },
+      {
+        "label": {
+          "en": "Expiring this month",
+          "ar": "منتهية هذا الشهر"
+        },
+        "value": {
+          "en": "8",
+          "ar": "8"
+        },
+        "trend": {
+          "en": "Reminders sent",
+          "ar": "تذكيرات مُرسَلة"
         }
       }
     ]
@@ -1326,6 +3400,235 @@
           "ar": "مجموعات سمات من الذكاء الاصطناعي."
         }
       }
+    ],
+    "narrative": [
+      {
+        "en": "AI Assistant is not a chatbot. It is a set of workflow-specific tools that plug into Performance, Reports, Attribute Engine, and the drill library. Every AI query runs against your isolated tenant. Your data never trains external models. Every response is logged for audit.",
+        "ar": "المساعد الذكي ليس روبوت محادثة. هو مجموعة أدوات مخصّصة لسير العمل تندمج مع الأداء والتقارير ومحرك السمات ومكتبة التدريبات. كل استعلام ذكاء اصطناعي يعمل على مستأجرك المعزول. بياناتك لا تدرّب النماذج الخارجية أبداً. كل ردّ يُسجَّل للتدقيق."
+      },
+      {
+        "en": "The most-loved workflow is AI-drafted progress summaries. A coach ends a quarter with a session log, drill history, and evaluation stack. The assistant produces a bilingual family-ready summary in seconds. The coach reviews, edits the outliers, and ships in one action. Sunday-evening report-writing goes from four hours to twenty minutes.",
+        "ar": "سير العمل الأكثر محبوبية هو ملخصات التقدم بمسودات ذكاء اصطناعي. ينهي المدرّب ربعاً بسجل جلسات وتاريخ تدريبات ومكدس تقييمات. ينتج المساعد ملخصاً ثنائي اللغة جاهزاً للأسرة في ثوانٍ. يراجع المدرّب، ويعدّل الاستثناءات، ويُرسل بإجراء واحد. كتابة تقارير مساء الأحد تنتقل من أربع ساعات إلى عشرين دقيقة."
+      },
+      {
+        "en": "Enterprise plans support bring-your-own-key for OpenAI or Anthropic. Cost, governance, and audit stay on your side. Every prompt and response passes through the same audit log stream as every other write, so compliance teams review AI activity alongside human activity.",
+        "ar": "خطط Enterprise تدعم أحضر مفتاحك الخاص لـ OpenAI أو Anthropic. التكلفة والحوكمة والتدقيق تبقى على جانبك. كل استعلام ورد يمرّ عبر تيار سجل التدقيق نفسه لكل عملية كتابة أخرى، فتراجع فرق الامتثال نشاط الذكاء الاصطناعي جنباً إلى جنب مع النشاط البشري."
+      }
+    ],
+    "outcomes": [
+      {
+        "en": "Summit Hoops turned two weekends of season-end report writing into one afternoon",
+        "ar": "حوّلت Summit Hoops عطلتَي نهاية أسبوع من كتابة تقارير نهاية الموسم إلى بعد ظهر واحد"
+      },
+      {
+        "en": "Attribute-set drafts land in minutes from a one-paragraph sport description",
+        "ar": "مسودات مجموعات السمات تصل خلال دقائق من وصف رياضة في فقرة واحدة"
+      },
+      {
+        "en": "Natural-language queries on Reports collapse hours of dashboard building into a single question",
+        "ar": "استعلامات اللغة الطبيعية على التقارير تختصر ساعات من بناء اللوحات إلى سؤال واحد"
+      },
+      {
+        "en": "100% audit coverage on every AI query and response with no hidden model activity",
+        "ar": "تغطية تدقيق بنسبة 100% على كل استعلام ورد ذكاء اصطناعي دون نشاط نموذج خفي"
+      }
+    ],
+    "integrations": [
+      {
+        "key": "openai",
+        "label": {
+          "en": "OpenAI",
+          "ar": "OpenAI"
+        },
+        "role": {
+          "en": "GPT-family models via API with per-tenant isolation",
+          "ar": "نماذج عائلة GPT عبر API مع عزل لكل مستأجر"
+        },
+        "category": {
+          "en": "Analytics",
+          "ar": "التحليلات"
+        }
+      },
+      {
+        "key": "anthropic",
+        "label": {
+          "en": "Anthropic",
+          "ar": "Anthropic"
+        },
+        "role": {
+          "en": "Claude models with configurable per-workspace routing",
+          "ar": "نماذج Claude مع توجيه قابل للتهيئة لكل مساحة عمل"
+        },
+        "category": {
+          "en": "Analytics",
+          "ar": "التحليلات"
+        }
+      },
+      {
+        "key": "azure-openai",
+        "label": {
+          "en": "Azure OpenAI",
+          "ar": "Azure OpenAI"
+        },
+        "role": {
+          "en": "Region-pinned OpenAI hosting for regulated tenants",
+          "ar": "استضافة OpenAI مُثبَّتة بالمنطقة للمستأجرين الخاضعين للتنظيم"
+        },
+        "category": {
+          "en": "Analytics",
+          "ar": "التحليلات"
+        }
+      },
+      {
+        "key": "postmark",
+        "label": {
+          "en": "Postmark",
+          "ar": "Postmark"
+        },
+        "role": {
+          "en": "AI-drafted progress cards delivered to families via email",
+          "ar": "بطاقات تقدم بمسودات ذكاء اصطناعي تُسلَّم للأسر بالبريد"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      },
+      {
+        "key": "whatsapp",
+        "label": {
+          "en": "WhatsApp Business",
+          "ar": "WhatsApp Business"
+        },
+        "role": {
+          "en": "Rich progress cards over guardian channels",
+          "ar": "بطاقات تقدم غنية عبر قنوات أولياء الأمور"
+        },
+        "category": {
+          "en": "Communications",
+          "ar": "الاتصالات"
+        }
+      }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": {
+          "en": "Enable the assistant",
+          "ar": "فعّل المساعد"
+        },
+        "description": {
+          "en": "Turn on AI Assistant on your workspace. Choose between the Academorix key and your own on Enterprise.",
+          "ar": "فعّل المساعد الذكي على مساحة عملك. اختر بين مفتاح Academorix ومفتاحك الخاص على Enterprise."
+        },
+        "icon": "SparklesIcon"
+      },
+      {
+        "number": "02",
+        "title": {
+          "en": "Ask in plain language",
+          "ar": "اسأل بلغة طبيعية"
+        },
+        "description": {
+          "en": "Type a question in English or Arabic, get a chart, a report, or a draft back within seconds.",
+          "ar": "اكتب سؤالاً بالإنجليزية أو العربية، واحصل على رسم بياني أو تقرير أو مسودة خلال ثوانٍ."
+        },
+        "icon": "ChatBubbleLeftRightIcon"
+      },
+      {
+        "number": "03",
+        "title": {
+          "en": "Review and edit",
+          "ar": "راجع وعدّل"
+        },
+        "description": {
+          "en": "Coaches, owners, and analysts review the AI output. Everything is a draft until a human ships it.",
+          "ar": "المدرّبون والملاك والمحللون يراجعون مخرجات الذكاء الاصطناعي. كل شيء مسودة حتى يعتمدها إنسان."
+        },
+        "icon": "DocumentTextIcon"
+      },
+      {
+        "number": "04",
+        "title": {
+          "en": "Log for audit",
+          "ar": "سجّل للتدقيق"
+        },
+        "description": {
+          "en": "Every prompt and response is logged. Compliance teams review AI activity in the same audit stream as everything else.",
+          "ar": "كل استعلام ورد يُسجَّل. تراجع فرق الامتثال نشاط الذكاء الاصطناعي في تيار التدقيق نفسه لكل شيء آخر."
+        },
+        "icon": "ShieldCheckIcon"
+      }
+    ],
+    "technical_details": [
+      {
+        "en": "Per-tenant isolation on every AI query; workspace data never leaves the tenant boundary",
+        "ar": "عزل لكل مستأجر على كل استعلام ذكاء اصطناعي؛ بيانات مساحة العمل لا تغادر حدود المستأجر أبداً"
+      },
+      {
+        "en": "Enterprise bring-your-own-key support for OpenAI, Anthropic, and Azure OpenAI",
+        "ar": "دعم أحضر مفتاحك الخاص للمؤسسات لـ OpenAI وAnthropic وAzure OpenAI"
+      },
+      {
+        "en": "Audit-log stream captures prompt, response, model, timestamp, and actor on every request",
+        "ar": "تيار سجل التدقيق يلتقط الاستعلام والرد والنموذج والوقت والمنفّذ على كل طلب"
+      },
+      {
+        "en": "Per-workspace and per-role usage quotas configurable with real-time consumption tracking",
+        "ar": "حصص استخدام لكل مساحة عمل ولكل دور قابلة للتهيئة مع تتبّع الاستهلاك في الوقت الفعلي"
+      },
+      {
+        "en": "Data-training opt-out enforced at the API layer; zero prompt data reaches model providers' training sets",
+        "ar": "الانسحاب من تدريب البيانات مفروض في طبقة API؛ صفر بيانات استعلام تصل مجموعات تدريب مزوّدي النماذج"
+      },
+      {
+        "en": "Streaming responses with per-token latency tracking for progress bars and typing indicators",
+        "ar": "استجابات متدفقة مع تتبّع تأخر لكل رمز لأشرطة التقدم ومؤشرات الكتابة"
+      }
+    ],
+    "sample_metrics": [
+      {
+        "label": {
+          "en": "AI queries this month",
+          "ar": "استعلامات ذكاء اصطناعي هذا الشهر"
+        },
+        "value": {
+          "en": "1,247",
+          "ar": "1,247"
+        },
+        "trend": {
+          "en": "+18% MoM",
+          "ar": "+18% شهرياً"
+        }
+      },
+      {
+        "label": {
+          "en": "Progress cards drafted",
+          "ar": "بطاقات تقدم صيغت"
+        },
+        "value": {
+          "en": "342",
+          "ar": "342"
+        },
+        "trend": {
+          "en": "Coach-reviewed",
+          "ar": "مراجَعة من المدرّبين"
+        }
+      },
+      {
+        "label": {
+          "en": "Time saved",
+          "ar": "وقت مُوَفَّر"
+        },
+        "value": {
+          "en": "620h",
+          "ar": "620 ساعة"
+        },
+        "trend": {
+          "en": "This quarter",
+          "ar": "هذا الربع"
+        }
+      }
     ]
   },
   "attribute-engine": {
@@ -1470,6 +3773,220 @@
         "description": {
           "en": "Every attribute is queryable in reports.",
           "ar": "كل سمة قابلة للاستعلام في التقارير."
+        }
+      }
+    ],
+    "narrative": [
+      {
+        "en": "The Attribute Engine is what lets Academorix serve every sport on one platform without becoming a lowest-common-denominator tool. Head coaches describe the attributes they measure per sport (position, stroke, kata, apparatus) with scales and descriptions. Coaches log against those attributes. Every downstream feature (performance charts, benchmarks, progress cards) consumes the same declarative attribute definition.",
+        "ar": "محرك السمات هو ما يسمح لـ Academorix بخدمة كل رياضة على منصة واحدة دون أن تصبح أداة القاسم المشترك الأصغر. المدرّبون الرئيسيون يصفون السمات التي يقيسونها لكل رياضة (المركز، السباحة، الكاتا، الجهاز) بمقاييس وأوصاف. يسجّل المدرّبون على تلك السمات. كل ميزة لاحقة (رسوم الأداء والمعايير وبطاقات التقدم) تستهلك تعريف السمة الإعلاني نفسه."
+      },
+      {
+        "en": "No code. No engineering ticket. A martial arts sensei configures belt tracks, kata precision, and kumite technique in an afternoon. A swim coach configures per-stroke splits, turn quality, and streamline hold. A football head coach configures positioning, passing accuracy, and defensive win rate. The engine is truly discipline-agnostic.",
+        "ar": "لا كود. لا تذكرة هندسة. مدرّب فنون قتالية يُهيّئ مسارات الأحزمة ودقّة الكاتا وأسلوب الكوميتي في بعد ظهر. مدرّب سباحة يُهيّئ الأشواط لكل سباحة وجودة الدوران وحفظ الانسياب. مدرّب كرة قدم رئيسي يُهيّئ التمركز ودقّة التمرير ومعدل الفوز الدفاعي. المحرك محايد فعلاً تجاه التخصص."
+      },
+      {
+        "en": "Because attributes are data, they are also translatable. Every attribute has EN and AR labels. Every option, description, and unit is bilingual. Coaches in Arabic-first regions get their sport in their language without a translation project.",
+        "ar": "لأن السمات بيانات، فهي أيضاً قابلة للترجمة. كل سمة لها تسميات EN وAR. كل خيار ووصف ووحدة ثنائية اللغة. المدرّبون في مناطق اللغة العربية الأولى يحصلون على رياضتهم بلغتهم دون مشروع ترجمة."
+      }
+    ],
+    "outcomes": [
+      {
+        "en": "Elite Martial Arts Center configured 3 martial-arts belt tracks (karate, taekwondo, judo) in one afternoon",
+        "ar": "هيّأ Elite Martial Arts Center 3 مسارات أحزمة للفنون القتالية (كاراتيه، تايكوندو، جودو) في بعد ظهر"
+      },
+      {
+        "en": "AquaElite Swim built its per-stroke attribute set with 34 measurements in under 2 hours",
+        "ar": "بنت AquaElite Swim مجموعة سمات لكل سباحة تحتوي 34 قياساً في أقل من ساعتين"
+      },
+      {
+        "en": "Zero engineering tickets required to launch a new sport at Riverside Sports Academy",
+        "ar": "صفر تذاكر هندسية مطلوبة لإطلاق رياضة جديدة في Riverside Sports Academy"
+      },
+      {
+        "en": "Bilingual attribute labels supported from day one across all supported sports",
+        "ar": "تسميات سمات ثنائية اللغة مدعومة من اليوم الأول عبر كل الرياضات المدعومة"
+      }
+    ],
+    "integrations": [
+      {
+        "key": "sportlyzer",
+        "label": {
+          "en": "Sportlyzer",
+          "ar": "Sportlyzer"
+        },
+        "role": {
+          "en": "Migrate legacy attribute sets from Sportlyzer templates",
+          "ar": "ترحيل مجموعات السمات القديمة من قوالب Sportlyzer"
+        },
+        "category": {
+          "en": "Federation",
+          "ar": "الاتحاد"
+        }
+      },
+      {
+        "key": "teamsnap",
+        "label": {
+          "en": "TeamSnap",
+          "ar": "TeamSnap"
+        },
+        "role": {
+          "en": "Import team-level attribute definitions during migration",
+          "ar": "استيراد تعريفات السمات على مستوى الفريق أثناء الترحيل"
+        },
+        "category": {
+          "en": "Federation",
+          "ar": "الاتحاد"
+        }
+      },
+      {
+        "key": "bigquery",
+        "label": {
+          "en": "BigQuery",
+          "ar": "BigQuery"
+        },
+        "role": {
+          "en": "Export attribute time-series for advanced analytics",
+          "ar": "تصدير سلاسل زمنية للسمات للتحليلات المتقدمة"
+        },
+        "category": {
+          "en": "Analytics",
+          "ar": "التحليلات"
+        }
+      },
+      {
+        "key": "gdrive",
+        "label": {
+          "en": "Google Drive",
+          "ar": "Google Drive"
+        },
+        "role": {
+          "en": "Archive attribute-set definitions for regulatory audit",
+          "ar": "أرشفة تعريفات مجموعات السمات لتدقيق تنظيمي"
+        },
+        "category": {
+          "en": "Storage",
+          "ar": "التخزين"
+        }
+      }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": {
+          "en": "Describe the sport",
+          "ar": "صف الرياضة"
+        },
+        "description": {
+          "en": "Head coach walks through the no-code editor. Add attributes with scales (numeric, categorical, boolean) and descriptions.",
+          "ar": "المدرّب الرئيسي يمرّ عبر المحرّر بلا كود. أضف سمات بمقاييس (رقمية، فئوية، منطقية) وأوصاف."
+        },
+        "icon": "AdjustmentsHorizontalIcon"
+      },
+      {
+        "number": "02",
+        "title": {
+          "en": "Set benchmarks",
+          "ar": "اضبط المعايير"
+        },
+        "description": {
+          "en": "Attach age-band benchmarks per attribute so a 14-year-old's dribbling score carries context.",
+          "ar": "أرفق معايير حسب الفئة العمرية لكل سمة فتحمل درجة مراوغة طفل عمره 14 سياقاً."
+        },
+        "icon": "ArrowTrendingUpIcon"
+      },
+      {
+        "number": "03",
+        "title": {
+          "en": "Deploy to coaches",
+          "ar": "انشر للمدرّبين"
+        },
+        "description": {
+          "en": "Publish the attribute set. Every coach in that sport sees the right fields on mobile immediately.",
+          "ar": "انشر مجموعة السمات. كل مدرّب في تلك الرياضة يرى الحقول الصحيحة على الجوال فوراً."
+        },
+        "icon": "BoltIcon"
+      },
+      {
+        "number": "04",
+        "title": {
+          "en": "Iterate as you learn",
+          "ar": "كرّر مع التعلّم"
+        },
+        "description": {
+          "en": "Add new attributes mid-season, retire old ones, adjust benchmarks. Every change carries an audit trail.",
+          "ar": "أضف سمات جديدة وسط الموسم، وتقاعد القديمة، واضبط المعايير. كل تغيير يحمل سجل تدقيق."
+        },
+        "icon": "ArrowPathIcon"
+      }
+    ],
+    "technical_details": [
+      {
+        "en": "No-code editor supporting numeric, categorical, boolean, and enum scales with per-scale descriptions",
+        "ar": "محرّر بلا كود يدعم مقاييس رقمية وفئوية ومنطقية وتعدادية مع وصف لكل مقياس"
+      },
+      {
+        "en": "Bilingual EN/AR labels required on every attribute; missing translations block publish",
+        "ar": "تسميات EN/AR ثنائية اللغة مطلوبة على كل سمة؛ الترجمات المفقودة تحجب النشر"
+      },
+      {
+        "en": "Age-band benchmarks configurable per attribute with automatic percentile computation",
+        "ar": "معايير حسب الفئة العمرية قابلة للتهيئة لكل سمة مع حساب مئوي آلي"
+      },
+      {
+        "en": "Attribute versioning preserves historical evaluations against the original definition",
+        "ar": "إصدار السمات يحفظ التقييمات التاريخية مقابل التعريف الأصلي"
+      },
+      {
+        "en": "Per-sport attribute-set inheritance so shared attributes (age, height) do not need re-definition",
+        "ar": "وراثة مجموعة السمات لكل رياضة فلا تحتاج السمات المشتركة (العمر، الطول) إعادة تعريف"
+      },
+      {
+        "en": "Discriminated-union schema at the database layer enforces sport-specific field validation",
+        "ar": "مخطط اتحاد مميّز في طبقة قاعدة البيانات يفرض تحقق الحقول الخاصة بكل رياضة"
+      }
+    ],
+    "sample_metrics": [
+      {
+        "label": {
+          "en": "Sports configured",
+          "ar": "رياضات مُهيّأة"
+        },
+        "value": {
+          "en": "6",
+          "ar": "6"
+        },
+        "trend": {
+          "en": "Custom attribute sets",
+          "ar": "مجموعات سمات مخصصة"
+        }
+      },
+      {
+        "label": {
+          "en": "Attributes tracked",
+          "ar": "سمات مُتتبَّعة"
+        },
+        "value": {
+          "en": "247",
+          "ar": "247"
+        },
+        "trend": {
+          "en": "Across all sports",
+          "ar": "عبر كل الرياضات"
+        }
+      },
+      {
+        "label": {
+          "en": "Bilingual coverage",
+          "ar": "التغطية ثنائية اللغة"
+        },
+        "value": {
+          "en": "100%",
+          "ar": "100%"
+        },
+        "trend": {
+          "en": "EN + AR required",
+          "ar": "EN + AR مطلوب"
         }
       }
     ]
