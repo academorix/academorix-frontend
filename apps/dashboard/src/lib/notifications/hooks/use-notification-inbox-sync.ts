@@ -8,7 +8,7 @@
  * it live via a Reverb private-channel subscription. The syncer
  * produces no DOM — it exists purely to wire realtime + fetch into
  * the shared
- * {@link "@/notifications/provider/notifications-bundle".useNotifications}
+ * {@link "@/lib/notifications/provider/notifications-bundle".useNotifications}
  * context.
  *
  * ## Lifecycle
@@ -20,7 +20,7 @@
  *   - **While mounted**: subscribes to the private channel
  *     `user.{userId}.notifications` via
  *     {@link "@academorix/realtime".usePrivateChannel} and listens for
- *     the `notifications.created` event (per NOTIFICATIONS_PLAN §4.6,
+ *     the `notifications.created` event (per notifications module,
  *     with the private-channel adjustment agreed for Phase 1). Each
  *     event payload is a full {@link Notification} DTO which we hand
  *     to the context's `add()` — the context dedupes by `id`.
@@ -60,8 +60,8 @@ import {
 } from "@/config/notifications.config";
 import { httpClient } from "@/lib/http";
 import { unwrapEnvelope } from "@/lib/http/envelope";
-import { useNotifications } from "@/notifications/provider/notifications-bundle";
-import { echoRealtimeClient } from "@/notifications/realtime";
+import { useNotifications } from "@/lib/notifications/provider/notifications-bundle";
+import { echoRealtimeClient } from "@/lib/notifications/realtime";
 
 /**
  * Options accepted by {@link useNotificationInboxSync}. Kept as an
@@ -98,7 +98,7 @@ export interface UseNotificationInboxSyncOptions {
  *
  * @remarks
  * Called exactly once from
- * {@link "@/notifications/provider/notifications-root".NotificationsRoot}.
+ * {@link "@/lib/notifications/provider/notifications-root".NotificationsRoot}.
  * Mounting it more than once produces duplicate subscriptions — the
  * hook does NOT guard against that at the moment because our
  * provider tree mounts it in one place only.

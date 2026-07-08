@@ -43,17 +43,17 @@ import { Button, Dropdown, Label } from "@academorix/ui/react";
 import { useMemo } from "react";
 import { useNavigate } from "react-router";
 
-import type { SnoozePreset } from "@/notifications/hooks";
-import type { NotificationRenderPriority, RenderableNotification } from "@/notifications/types";
+import type { SnoozePreset } from "@/lib/notifications/hooks";
+import type { NotificationRenderPriority, RenderableNotification } from "@/lib/notifications/types";
 import type { Notification, NotificationChannel } from "@academorix/notifications";
 import type { IconType } from "@academorix/ui/icons";
 import type { Key, ReactNode } from "react";
 
 import { EVENTS } from "@/config/analytics.config";
-import { useNotificationWrites } from "@/notifications/hooks/use-notification-writes";
-import { useSnoozeStore } from "@/notifications/hooks/use-snooze-store";
-import { useNotifications } from "@/notifications/provider/notifications-bundle";
-import { emitNotificationTelemetry } from "@/notifications/telemetry";
+import { useNotificationWrites } from "@/lib/notifications/hooks/use-notification-writes";
+import { useSnoozeStore } from "@/lib/notifications/hooks/use-snooze-store";
+import { useNotifications } from "@/lib/notifications/provider/notifications-bundle";
+import { emitNotificationTelemetry } from "@/lib/notifications/telemetry";
 
 /** Props for {@link NotificationRow}. */
 export interface NotificationRowProps {

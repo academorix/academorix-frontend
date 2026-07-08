@@ -4,7 +4,7 @@
  *
  * @description
  * Public entry point for the PWA layer. Consumers should import from
- * `@/pwa` and never reach into the individual files.
+ * `@/lib/pwa` and never reach into the individual files.
  *
  * Re-exports:
  *   - {@link PwaUpdateToast} — mount once inside `<Providers>` to surface the
@@ -15,6 +15,6 @@
  *     component props typing.
  */
 
-export { PwaUpdateToast } from "@/pwa/pwa-update-toast";
-export { usePwaRegistration } from "@/pwa/register-sw";
-export type { UsePwaRegistrationResult } from "@/pwa/register-sw";
+export { PwaUpdateToast } from "@/lib/pwa/pwa-update-toast";
+export { usePwaRegistration } from "@/lib/pwa/register-sw";
+export type { UsePwaRegistrationResult } from "@/lib/pwa/register-sw";

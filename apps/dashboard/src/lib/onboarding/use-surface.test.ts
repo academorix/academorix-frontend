@@ -16,7 +16,7 @@
 import { renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { __resetSurfaceForTests, resolveSurface, useSurface } from "@/onboarding/use-surface";
+import { __resetSurfaceForTests, resolveSurface, useSurface } from "@/lib/onboarding/use-surface";
 
 /**
  * Captures + restores the original `window.location` descriptor so a

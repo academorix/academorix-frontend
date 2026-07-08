@@ -16,10 +16,10 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import type { MenuCommand } from "@/menus/command.types";
+import type { MenuCommand } from "@/lib/menus/command.types";
 import type { RefObject } from "react";
 
-import { clampToViewport, useContextMenu } from "@/menus/use-context-menu";
+import { clampToViewport, useContextMenu } from "@/lib/menus/use-context-menu";
 
 /** Factory — every case shares this stub command. */
 function makeCommand(overrides: Partial<MenuCommand> = {}): MenuCommand {

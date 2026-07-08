@@ -9,7 +9,7 @@
  *
  * Types live here (and not next to their runtime) for one reason: the
  * config layer at {@link "@/config/onboarding.config"} authors the seed
- * registries, and the runtime layer at {@link "@/onboarding"} implements
+ * registries, and the runtime layer at {@link "@/lib/onboarding"} implements
  * the flows. Both consume this file, and neither knows about the other.
  * That keeps the two layers physically decoupled and prevents a config
  * change from silently breaking a runtime consumer at build time.
@@ -21,14 +21,11 @@
  * - `TourStorageState` / `ChecklistStorageState` / `PwaStorageState` /
  *   `DesktopStorageState` are the exact shapes that hit `localStorage`.
  *   Bumping any of them requires bumping `ONBOARDING_SCHEMA_VERSION` in
- *   the config file — see {@link "@/onboarding/storage"} for the version
+ *   the config file — see {@link "@/lib/onboarding/storage"} for the version
  *   migration story.
  * - Every shape carries `version` so a future migration can read a stale
  *   payload, migrate it, and write back the new version without dropping
  *   user state.
- *
- * @see ONBOARDING_PLAN.md §2 (surfaces), §4.3 (tour persistence), §5.2
- *   (checklist state), §6 (PWA state), §7 (desktop state).
  */
 
 // ---------------------------------------------------------------------------
@@ -40,7 +37,7 @@
  * OnboardingChecklistTask shapes because it's the source of truth for the
  * seed registries. We re-export them here so consumers can pull the whole
  * onboarding type surface from a single import path — mirroring the pattern
- * used by `@/menus` and the notifications module barrel.
+ * used by `@/lib/menus` and the notifications module barrel.
  */
 export type {
   OnboardingChecklistTask,
@@ -95,7 +92,7 @@ export const DEFAULT_TOUR_STATE: TourStorageState = {
 
 /**
  * Persisted checklist state. Auto-detected tasks derive their `complete`
- * status from a live row count (see {@link "@/onboarding/checklist/detectors"});
+ * status from a live row count (see {@link "@/lib/onboarding/checklist/detectors"});
  * we only persist the fields that cannot be recovered from the backend:
  *
  *  - `dismissed`: user hid the whole widget. Overrides the auto-hide rule.
@@ -134,7 +131,7 @@ export const DEFAULT_CHECKLIST_STATE: ChecklistStorageState = {
 
 /**
  * Per-user, per-schema tracking of PWA-first-launch affordances. All
- * timestamps are ISO-8601. See ONBOARDING_PLAN.md §6.
+ * timestamps are ISO-8601.
  *
  *  - `firstLaunchedAt`: the first render where `useSurface()` returned
  *    `pwa` or `pwa-shortcut`. Drives the one-shot "Academorix installed"
@@ -167,7 +164,7 @@ export const DEFAULT_PWA_STATE: PwaStorageState = {
 
 /**
  * Per-user, per-schema tracking of desktop-first-launch affordances. All
- * timestamps are ISO-8601. See ONBOARDING_PLAN.md §7.
+ * timestamps are ISO-8601.
  *
  *  - `welcomeShownAt`: when the native welcome window opened. Currently
  *    stubbed — the Tauri IPC that opens the window is owned by the
@@ -204,7 +201,7 @@ export const DEFAULT_DESKTOP_STATE: DesktopStorageState = {
  * merging is a straight object assign.
  *
  * TODO(backend-gap): the endpoint does not exist yet. When it lands, no
- * frontend change is required — the {@link "@/onboarding/cloud-state"}
+ * frontend change is required — the {@link "@/lib/onboarding/cloud-state"}
  * module already catches 404 and falls back to localStorage only.
  */
 export interface CloudOnboardingState {

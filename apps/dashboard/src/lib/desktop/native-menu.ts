@@ -38,7 +38,7 @@
 import type { MenuCategory, MenuCommand, MenuContext } from "@/config/menu.config";
 
 import { MENU_CATEGORY_ORDER, menuCommands } from "@/config/menu.config";
-import { isDesktop } from "@/desktop/is-desktop";
+import { isDesktop } from "@/lib/desktop/is-desktop";
 
 /**
  * Payload delivered to `onMenuCommand` subscribers. The `source`

@@ -34,8 +34,8 @@ import type { Notification } from "@academorix/notifications";
  * a Set for O(1) lookup — the array literal reads naturally.
  *
  * @remarks
- * These match the "high" tier documented in NOTIFICATIONS_PLAN §5.3:
- * payment/billing failures, safeguarding-related follow-ups, and
+ * These match the "high" tier for user-visible priority: payment/billing
+ * failures, safeguarding-related follow-ups, and
  * account-security anomalies. Add sparingly — every entry here is
  * one more surface that persists longer + demands more attention.
  */
@@ -82,7 +82,7 @@ export function deriveNotificationPriority(notification: Notification): Notifica
 
 /**
  * Maps a {@link NotificationRenderPriority} to the HeroUI toast
- * variant per NOTIFICATIONS_PLAN §5.3.
+ * variant.
  *
  *  - `low` / `normal` → `"accent"` (info-styled toast)
  *  - `high`           → `"warning"`
@@ -105,7 +105,7 @@ export function mapPriorityToToastVariant(
 
 /**
  * Toast timeout (ms) per priority. `0` = persist until user dismisses.
- * Matches NOTIFICATIONS_PLAN §5.3 wording (6s / 12s / persist).
+ * Low / normal = 6s, high = 12s, urgent = persist.
  */
 export function toastTimeoutForPriority(priority: NotificationRenderPriority): number {
   switch (priority) {

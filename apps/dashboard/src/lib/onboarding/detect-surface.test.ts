@@ -15,7 +15,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import { detectSurface } from "@/onboarding/detect-surface";
+import { detectSurface } from "@/lib/onboarding/detect-surface";
 
 /**
  * Constructs a fake `Window`-shaped object. Passing `standalone: true`

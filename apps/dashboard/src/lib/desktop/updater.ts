@@ -41,7 +41,7 @@
 import { toast } from "@academorix/ui/react";
 
 import { desktopConfig } from "@/config/desktop.config";
-import { isDesktop } from "@/desktop/is-desktop";
+import { isDesktop } from "@/lib/desktop/is-desktop";
 
 /** Update-available payload; matches the Tauri v2 updater plugin shape. */
 export interface UpdateInfo {

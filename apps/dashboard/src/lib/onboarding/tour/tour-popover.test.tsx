@@ -21,8 +21,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { ReactNode } from "react";
 
-import { TourProvider, restartTour } from "@/onboarding/tour/tour-provider";
-import { __resetSurfaceForTests } from "@/onboarding/use-surface";
+import { TourProvider, restartTour } from "@/lib/onboarding/tour/tour-provider";
+import { __resetSurfaceForTests } from "@/lib/onboarding/use-surface";
 
 // Same mock stack the sibling `tour-provider.test.tsx` uses.
 vi.mock("@refinedev/core", () => ({

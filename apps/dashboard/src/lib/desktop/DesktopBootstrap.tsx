@@ -30,7 +30,7 @@
  *
  * ## Web-build safety
  *
- * Every side effect runs through the `@/desktop/*` adapter layer,
+ * Every side effect runs through the `@/lib/desktop/*` adapter layer,
  * which no-ops when `isDesktop` is false. That means this component
  * mounts safely in every build — it just does nothing on the web.
  *
@@ -59,14 +59,14 @@ import type { ReactNode } from "react";
 
 import { features } from "@/config/features.config";
 import { siteConfig } from "@/config/site.config";
-import { onDeepLink, resolveDeepLinkPath } from "@/desktop/deep-link";
-import { isDesktop } from "@/desktop/is-desktop";
-import { buildNativeMenu, onMenuCommand, publishNativeMenu } from "@/desktop/native-menu";
-import { registerGlobalShortcut } from "@/desktop/shortcut";
-import { onTrayCommand } from "@/desktop/tray";
-import { startUpdateChecker } from "@/desktop/updater";
-import { showWelcomeWindowIfFirstRun } from "@/desktop/welcome-window";
-import { onOsThemeChange, raiseWindow, setWindowTitle } from "@/desktop/window";
+import { onDeepLink, resolveDeepLinkPath } from "@/lib/desktop/deep-link";
+import { isDesktop } from "@/lib/desktop/is-desktop";
+import { buildNativeMenu, onMenuCommand, publishNativeMenu } from "@/lib/desktop/native-menu";
+import { registerGlobalShortcut } from "@/lib/desktop/shortcut";
+import { onTrayCommand } from "@/lib/desktop/tray";
+import { startUpdateChecker } from "@/lib/desktop/updater";
+import { showWelcomeWindowIfFirstRun } from "@/lib/desktop/welcome-window";
+import { onOsThemeChange, raiseWindow, setWindowTitle } from "@/lib/desktop/window";
 
 /** Props for {@link DesktopBootstrap}. */
 interface DesktopBootstrapProps {

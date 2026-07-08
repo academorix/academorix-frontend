@@ -5,7 +5,7 @@
  * @description
  * Opportunistic sync of the onboarding state (tour, checklist, PWA,
  * desktop) to the backend so a user picks up where they left off across
- * devices. See ONBOARDING_PLAN.md §5.3 / Phase 2 for the migration
+ * devices. See onboarding module / Phase 2 for the migration
  * story.
  *
  * ## Contract
@@ -35,7 +35,7 @@
 import { useGetIdentity } from "@refinedev/core";
 import { useEffect, useRef } from "react";
 
-import type { CloudOnboardingState } from "@/onboarding/onboarding.types";
+import type { CloudOnboardingState } from "@/lib/onboarding/onboarding.types";
 import type { Identity } from "@/types";
 
 import { httpClient } from "@/lib/http";
@@ -48,7 +48,7 @@ import {
   writeDesktopState,
   writePwaState,
   writeTourState,
-} from "@/onboarding/storage";
+} from "@/lib/onboarding/storage";
 
 // ---------------------------------------------------------------------------
 // Endpoint contract

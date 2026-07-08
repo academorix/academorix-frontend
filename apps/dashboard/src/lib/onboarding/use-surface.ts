@@ -22,14 +22,14 @@
  * dependency-array comparators (in `useEffect`, `useMemo`) don't spin
  * unnecessarily.
  *
- * @see ONBOARDING_PLAN.md §2 — Surface detection contract.
+ * @see onboarding module — Surface detection contract.
  */
 
 import { useSyncExternalStore } from "react";
 
 import type { OnboardingSurface } from "@/config/onboarding.config";
 
-import { detectSurface, readSurfaceInput } from "@/onboarding/detect-surface";
+import { detectSurface, readSurfaceInput } from "@/lib/onboarding/detect-surface";
 
 /**
  * Session-scoped memo. Populated on the first invocation of

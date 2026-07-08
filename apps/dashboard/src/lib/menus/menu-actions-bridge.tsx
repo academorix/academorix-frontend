@@ -4,7 +4,7 @@
  *
  * @description
  * Invisible component that bridges named menu actions (from
- * {@link "@/menus/menu-actions"}) to concrete side-effects owned by the
+ * {@link "@/lib/menus/menu-actions"}) to concrete side-effects owned by the
  * authenticated shell — the command palette, the theme controller, the
  * sidebar toggle, and (in the future) other cross-tree verbs.
  *
@@ -23,7 +23,7 @@
  * ## Contract
  *
  *  - Every command declared in {@link "@/config/menu.config"} whose
- *    `execute` calls {@link "@/menus/menu-actions" invokeMenuAction} must
+ *    `execute` calls {@link "@/lib/menus/menu-actions" invokeMenuAction} must
  *    have a matching subscription below.
  *  - Actions that don't need React state (opening an external URL,
  *    navigating client-side) bypass the bridge entirely — they run
@@ -32,7 +32,7 @@
  *    the action bus to concrete effects. The registry is where
  *    permission gating lives.
  *
- * @see MENUS_PLAN.md §7 — Keyboard shortcuts + discoverability
+ * @see menus module — Keyboard shortcuts + discoverability
  * @see menus/menu-actions — the event bus this bridge subscribes to
  */
 
@@ -42,7 +42,7 @@ import { useCallback } from "react";
 import type { ReactNode } from "react";
 
 import { useCommandPalette } from "@/components/command";
-import { useMenuAction } from "@/menus/menu-actions";
+import { useMenuAction } from "@/lib/menus/menu-actions";
 
 /**
  * Bridges every registered menu action to a live handler. Mount ONCE

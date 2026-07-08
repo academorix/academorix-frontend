@@ -20,7 +20,7 @@
  *
  * ## Toast variant selection
  *
- * Per NOTIFICATIONS_PLAN §5.3, specific event types map explicitly to
+ * Per notifications module, specific event types map explicitly to
  * fixed variants regardless of derived priority:
  *
  *   - `invoice.paid`, `coach.checked_in`, `payment_captured`     → `toast.success`
@@ -43,7 +43,7 @@
  *   - `low` priority notifications skip the toast entirely — they are
  *     visible in the drawer only.
  *   - `urgent` toasts are persistent (`timeout: 0`) per
- *     NOTIFICATIONS_PLAN §5.3.
+ *     notifications module
  *   - Every toast carries an **Open** action that navigates to
  *     `data_ref.action_url` when present. Rendered via HeroUI's
  *     `actionProps` slot.
@@ -58,7 +58,7 @@
 import { toast } from "@academorix/ui/react";
 import { useEffect, useRef } from "react";
 
-import type { NotificationToastVariant, RenderableNotification } from "@/notifications/types";
+import type { NotificationToastVariant, RenderableNotification } from "@/lib/notifications/types";
 import type { Notification } from "@academorix/notifications";
 
 import { EVENTS } from "@/config/analytics.config";
@@ -66,9 +66,9 @@ import {
   deriveNotificationPriority,
   mapPriorityToToastVariant,
   toastTimeoutForPriority,
-} from "@/notifications/priority.util";
-import { useNotifications } from "@/notifications/provider/notifications-bundle";
-import { emitNotificationTelemetry } from "@/notifications/telemetry";
+} from "@/lib/notifications/priority.util";
+import { useNotifications } from "@/lib/notifications/provider/notifications-bundle";
+import { emitNotificationTelemetry } from "@/lib/notifications/telemetry";
 
 /**
  * Explicit event-type → toast variant overrides. Keyed on lowercase

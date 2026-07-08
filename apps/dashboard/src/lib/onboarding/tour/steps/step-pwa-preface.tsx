@@ -8,7 +8,7 @@
  * element. Copy: "You're using the installed app — it caches
  * offline and gets automatic updates."
  *
- * @see ONBOARDING_PLAN.md §6 — PWA first-run.
+ * @see onboarding module — PWA first-run.
  */
 
 /**

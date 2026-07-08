@@ -15,7 +15,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import { buildNativeMenu } from "@/desktop/native-menu";
+import { buildNativeMenu } from "@/lib/desktop/native-menu";
 
 const identityTranslate = (key: string, fallback?: string): string => fallback ?? key;
 

@@ -7,7 +7,7 @@
  * (`data-testid="notification-bell"`). Copy: "You'll never miss an
  * alert".
  *
- * @see ONBOARDING_PLAN.md §4.2 — Step contents (row 3).
+ * @see onboarding module — Step contents (row 3).
  */
 
 export const STEP_NOTIFICATIONS_ANCHOR = '[data-testid="notification-bell"]';

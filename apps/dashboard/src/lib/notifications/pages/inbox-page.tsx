@@ -31,18 +31,18 @@ import type {
   NotificationDrawerCategoryFilter,
   NotificationDrawerSection,
   RenderableNotification,
-} from "@/notifications/types";
+} from "@/lib/notifications/types";
 import type { NotificationChannel } from "@academorix/notifications";
 import type { ReactNode } from "react";
 
-import { NotificationList } from "@/notifications/components/notification-list";
-import { useNotificationWrites } from "@/notifications/hooks/use-notification-writes";
-import { useSnoozeStore } from "@/notifications/hooks/use-snooze-store";
+import { NotificationList } from "@/lib/notifications/components/notification-list";
+import { useNotificationWrites } from "@/lib/notifications/hooks/use-notification-writes";
+import { useSnoozeStore } from "@/lib/notifications/hooks/use-snooze-store";
 import {
   deriveNotificationPriority,
   mapPriorityToToastVariant,
-} from "@/notifications/priority.util";
-import { useNotifications } from "@/notifications/provider/notifications-bundle";
+} from "@/lib/notifications/priority.util";
+import { useNotifications } from "@/lib/notifications/provider/notifications-bundle";
 
 /**
  * Category filters + type-prefix mapping. Kept identical to the

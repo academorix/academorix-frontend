@@ -25,14 +25,19 @@
  * - The API returns `readonly` views wherever possible so callers cannot
  *   accidentally mutate the shared registry.
  *
- * @see MENUS_PLAN.md §7 (Keyboard shortcuts — boot-time conflict detection)
- * @see MENUS_PLAN.md §6.3 (Context menu — grouping + surface filter)
+ * @see menus module
+ * @see menus module
  */
 
-import type { MenuCategory, MenuCommand, MenuContext, MenuSurface } from "@/menus/command.types";
+import type {
+  MenuCategory,
+  MenuCommand,
+  MenuContext,
+  MenuSurface,
+} from "@/lib/menus/command.types";
 
 import { formatShortcut } from "@/config/shortcuts.config";
-import { MENU_CATEGORY_ORDER, type ShortcutOs } from "@/menus/command.types";
+import { MENU_CATEGORY_ORDER, type ShortcutOs } from "@/lib/menus/command.types";
 
 // ---------------------------------------------------------------------------
 // Visibility filter

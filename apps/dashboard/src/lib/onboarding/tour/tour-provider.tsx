@@ -34,11 +34,11 @@
  * ## Persistence
  *
  * Every state change (`advance`, `back`, `skip`, `complete`,
- * `restart`) writes through {@link "@/onboarding/storage"} so the
+ * `restart`) writes through {@link "@/lib/onboarding/storage"} so the
  * tour survives reloads and cross-tab switches. The provider reads
  * once on mount, mutates in memory, and writes on every commit.
  *
- * @see ONBOARDING_PLAN.md §4 — Flow 2: First-run tour.
+ * @see onboarding module — Flow 2: First-run tour.
  */
 
 import { useGetIdentity } from "@refinedev/core";
@@ -59,20 +59,20 @@ import type {
   TourActions,
   TourRuntimeState,
   TourStorageState,
-} from "@/onboarding/onboarding.types";
+} from "@/lib/onboarding/onboarding.types";
 import type { Identity } from "@/types";
 import type { ReactNode } from "react";
 
 import { EVENTS } from "@/config/analytics.config";
 import { features } from "@/config/features.config";
 import { ONBOARDING_SCHEMA_VERSION, TOUR_STEPS } from "@/config/onboarding.config";
-import { useCloudOnboardingSync } from "@/onboarding/cloud-state";
-import { DEFAULT_TOUR_STATE } from "@/onboarding/onboarding.types";
-import { PwaWelcomeToast } from "@/onboarding/pwa-welcome-toast";
-import { readPwaState, readTourState, writeTourState } from "@/onboarding/storage";
-import { emitOnboardingEvent } from "@/onboarding/tour/tour-analytics";
-import { TourPopover } from "@/onboarding/tour/tour-popover";
-import { useSurface } from "@/onboarding/use-surface";
+import { useCloudOnboardingSync } from "@/lib/onboarding/cloud-state";
+import { DEFAULT_TOUR_STATE } from "@/lib/onboarding/onboarding.types";
+import { PwaWelcomeToast } from "@/lib/onboarding/pwa-welcome-toast";
+import { readPwaState, readTourState, writeTourState } from "@/lib/onboarding/storage";
+import { emitOnboardingEvent } from "@/lib/onboarding/tour/tour-analytics";
+import { TourPopover } from "@/lib/onboarding/tour/tour-popover";
+import { useSurface } from "@/lib/onboarding/use-surface";
 
 // ---------------------------------------------------------------------------
 // Context
@@ -118,9 +118,9 @@ export function useTour(): TourContextValue {
  * stale reference can't be called after route-driven remount.
  *
  * TODO(sub-agent-integration): the menu registry at
- * `@/menus/command.types` documents `help.restart_tour` as the menu
+ * `@/lib/menus/command.types` documents `help.restart_tour` as the menu
  * id. When the Menus sub-agent wires that command up, it will
- * import {@link restartTour} from `@/onboarding` and call it here.
+ * import {@link restartTour} from `@/lib/onboarding` and call it here.
  */
 let mountedRestart: (() => void) | null = null;
 

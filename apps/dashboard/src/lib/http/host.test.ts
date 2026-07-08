@@ -151,10 +151,32 @@ describe("resolveHostContext", () => {
     expect(context.tenantSlug).toBeNull();
   });
 
-  it("uses same-origin + /api for production hosts", () => {
+  it("derives tenant-scoped API origin for a tenant subdomain", () => {
     stubLocation({ hostname: "riverside.academorix.app" });
 
-    expect(resolveHostContext().apiOrigin).toBe("https://riverside.academorix.app/api");
+    // Tenant slug lifted from the subdomain becomes the API host too:
+    // `riverside.academorix.app` → `riverside.api.academorix.app/api`.
+    expect(resolveHostContext().apiOrigin).toBe("https://riverside.api.academorix.app/api");
+  });
+
+  it("derives the central API origin for the central host", () => {
+    stubLocation({ hostname: "academorix.app" });
+
+    expect(resolveHostContext().apiOrigin).toBe("https://api.academorix.app/api");
+  });
+
+  it("derives the central API origin for the admin host", () => {
+    stubLocation({ hostname: "admin.academorix.app" });
+
+    expect(resolveHostContext().apiOrigin).toBe("https://api.academorix.app/api");
+  });
+
+  it("derives the central API origin for a custom tenant domain", () => {
+    // Custom domains fall back to the central API — the backend disambiguates
+    // via a Domain lookup (the http client attaches an X-Tenant-Domain header).
+    stubLocation({ hostname: "academy.example.com" });
+
+    expect(resolveHostContext().apiOrigin).toBe("https://api.academorix.app/api");
   });
 
   it("uses VITE_API_URL + /api on localhost (dev fallback)", () => {

@@ -19,9 +19,9 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import type { MenuCategory, MenuCommand } from "@/menus/command.types";
+import type { MenuCategory, MenuCommand } from "@/lib/menus/command.types";
 
-import { ContextMenu, TOP_LEVEL_LIMIT, splitOverflow } from "@/menus/context-menu";
+import { ContextMenu, TOP_LEVEL_LIMIT, splitOverflow } from "@/lib/menus/context-menu";
 
 /** Command factory — every case shares defaults for compactness. */
 function makeCommand(overrides: Partial<MenuCommand> = {}): MenuCommand {

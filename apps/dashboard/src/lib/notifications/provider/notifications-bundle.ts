@@ -37,7 +37,7 @@ export const notificationsBundle = createNotificationsContext();
 
 /**
  * Provider component that hosts the notification queue for the whole
- * app. Mounted from {@link "@/notifications/provider/notifications-root"}.
+ * app. Mounted from {@link "@/lib/notifications/provider/notifications-root"}.
  */
 export const NotificationsProvider = notificationsBundle.NotificationsProvider;
 

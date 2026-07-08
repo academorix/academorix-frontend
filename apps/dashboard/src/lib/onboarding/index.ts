@@ -4,7 +4,7 @@
  *
  * @description
  * Public barrel for the onboarding subsystem. Consumers should import
- * from `@/onboarding` (never reach into individual files) so we can
+ * from `@/lib/onboarding` (never reach into individual files) so we can
  * refactor internals without moving import lines.
  *
  * The five pieces surfaced here:
@@ -36,19 +36,19 @@ export type {
   TourActions,
   TourRuntimeState,
   TourStorageState,
-} from "@/onboarding/onboarding.types";
+} from "@/lib/onboarding/onboarding.types";
 
 export {
   DEFAULT_CHECKLIST_STATE,
   DEFAULT_DESKTOP_STATE,
   DEFAULT_PWA_STATE,
   DEFAULT_TOUR_STATE,
-} from "@/onboarding/onboarding.types";
+} from "@/lib/onboarding/onboarding.types";
 
 // -- Surface detection --
-export { detectSurface, readSurfaceInput } from "@/onboarding/detect-surface";
-export type { DetectSurfaceInput } from "@/onboarding/detect-surface";
-export { resolveSurface, useSurface } from "@/onboarding/use-surface";
+export { detectSurface, readSurfaceInput } from "@/lib/onboarding/detect-surface";
+export type { DetectSurfaceInput } from "@/lib/onboarding/detect-surface";
+export { resolveSurface, useSurface } from "@/lib/onboarding/use-surface";
 
 // -- Typed storage --
 export {
@@ -61,18 +61,18 @@ export {
   writeDesktopState,
   writePwaState,
   writeTourState,
-} from "@/onboarding/storage";
+} from "@/lib/onboarding/storage";
 
 // -- Tour runtime --
-export { TourProvider, restartTour, useTour } from "@/onboarding/tour/tour-provider";
-export { emitOnboardingEvent } from "@/onboarding/tour/tour-analytics";
-export type { OnboardingEventProps } from "@/onboarding/tour/tour-analytics";
+export { TourProvider, restartTour, useTour } from "@/lib/onboarding/tour/tour-provider";
+export { emitOnboardingEvent } from "@/lib/onboarding/tour/tour-analytics";
+export type { OnboardingEventProps } from "@/lib/onboarding/tour/tour-analytics";
 
 // -- PWA welcome toast --
 // Rendered by `<TourProvider>`; also exported so a future refactor that
 // mounts the toast next to `<PwaUpdateToast>` (rather than inside the
 // tour provider) can pull it in without a follow-up change.
-export { PwaWelcomeToast } from "@/onboarding/pwa-welcome-toast";
+export { PwaWelcomeToast } from "@/lib/onboarding/pwa-welcome-toast";
 
 // -- Cloud state sync --
 // One-shot backend sync of the onboarding state. See `cloud-state.ts`
@@ -82,4 +82,4 @@ export {
   collectLocalOnboardingState,
   syncOnboardingStateOnce,
   useCloudOnboardingSync,
-} from "@/onboarding/cloud-state";
+} from "@/lib/onboarding/cloud-state";

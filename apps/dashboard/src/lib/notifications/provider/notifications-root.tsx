@@ -16,7 +16,7 @@
  *
  * Every consumer downstream (bell, drawer, preferences page, pages
  * routed inside AuthenticatedLayout) reads state via
- * {@link "@/notifications/provider/notifications-bundle".useNotifications}.
+ * {@link "@/lib/notifications/provider/notifications-bundle".useNotifications}.
  *
  * ## Why a wrapper?
  *
@@ -28,9 +28,9 @@
 
 import type { ReactNode } from "react";
 
-import { useNotificationInboxSync } from "@/notifications/hooks/use-notification-inbox-sync";
-import { useNotificationToast } from "@/notifications/hooks/use-notification-toast";
-import { NotificationsProvider } from "@/notifications/provider/notifications-bundle";
+import { useNotificationInboxSync } from "@/lib/notifications/hooks/use-notification-inbox-sync";
+import { useNotificationToast } from "@/lib/notifications/hooks/use-notification-toast";
+import { NotificationsProvider } from "@/lib/notifications/provider/notifications-bundle";
 
 /** Props for {@link NotificationsRoot}. */
 export interface NotificationsRootProps {

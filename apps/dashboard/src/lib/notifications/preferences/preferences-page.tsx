@@ -63,10 +63,10 @@ import {
 } from "@/config/notifications.config";
 import { httpClient } from "@/lib/http";
 import { unwrapEnvelope } from "@/lib/http/envelope";
-import { ChannelToggle } from "@/notifications/preferences/channel-toggle";
-import { QuietHoursPicker } from "@/notifications/preferences/quiet-hours-picker";
-import { registerPush } from "@/notifications/push/register-push";
-import { emitNotificationTelemetry } from "@/notifications/telemetry";
+import { ChannelToggle } from "@/lib/notifications/preferences/channel-toggle";
+import { QuietHoursPicker } from "@/lib/notifications/preferences/quiet-hours-picker";
+import { registerPush } from "@/lib/notifications/push/register-push";
+import { emitNotificationTelemetry } from "@/lib/notifications/telemetry";
 
 /** Channels the preferences page exposes. Deliberately narrower than */
 /** `NotificationChannel` on the wire because our UI groups `in_app`. */

@@ -27,7 +27,7 @@
  */
 
 import { DEEP_LINK_SCHEME } from "@/config/desktop.config";
-import { isDesktop } from "@/desktop/is-desktop";
+import { isDesktop } from "@/lib/desktop/is-desktop";
 
 /** Payload delivered by the Rust shell when a deep link arrives. */
 export interface DeepLinkPayload {

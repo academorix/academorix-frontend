@@ -6,7 +6,7 @@
  * Coordinates the first-run 480x360 native welcome window for the
  * Tauri desktop shell. On the first launch of the desktop app the
  * Rust side raises a compact window with the brand mark and two
- * buttons: `Sign in` / `Create a workspace` (see ONBOARDING_PLAN.md
+ * buttons: `Sign in` / `Create a workspace` (see onboarding module
  * §7 and DESKTOP_PLAN.md §3 — Phase 3).
  *
  * The JS side of this handshake is minimal:
@@ -32,13 +32,13 @@
  * safe to invoke unconditionally.
  *
  * @see DESKTOP_PLAN.md §3 (Phase 3)
- * @see ONBOARDING_PLAN.md §7 (Desktop-specific first-run)
+ * @see onboarding module
  */
 
 import { envConfig } from "@/config/env.config";
 import { ONBOARDING_SCHEMA_VERSION, onboardingConfig } from "@/config/onboarding.config";
-import { isDesktop } from "@/desktop/is-desktop";
-import { readDesktopState, writeDesktopState } from "@/onboarding/storage";
+import { isDesktop } from "@/lib/desktop/is-desktop";
+import { readDesktopState, writeDesktopState } from "@/lib/onboarding/storage";
 
 /** Button ids the welcome window can fire back. */
 export type WelcomeWindowChoice = "sign-in" | "create-workspace";

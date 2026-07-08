@@ -9,7 +9,7 @@
  * ## Placement + a11y
  *
  * Placed between the workspace switcher and the profile avatar in
- * `AuthenticatedLayout` per MENUS_PLAN §5. The `aria-label` includes
+ * `AuthenticatedLayout` per menus module The `aria-label` includes
  * the current unread count so screen-reader users hear "Notifications,
  * 3 unread" every focus.
  *
@@ -28,8 +28,8 @@ import { useState } from "react";
 
 import type { ReactNode } from "react";
 
-import { NotificationDrawer } from "@/notifications/components/notification-drawer";
-import { useNotifications } from "@/notifications/provider/notifications-bundle";
+import { NotificationDrawer } from "@/lib/notifications/components/notification-drawer";
+import { useNotifications } from "@/lib/notifications/provider/notifications-bundle";
 
 /**
  * The unread-count string shown on the badge. Cap at "99+" so a user

@@ -19,7 +19,7 @@
  * {@link "@/config/onboarding.config".TOUR_STEPS} and renders the
  * same popover for each.
  *
- * @see ONBOARDING_PLAN.md §4.2 — Step contents (row 1).
+ * @see onboarding module — Step contents (row 1).
  */
 
 /** Anchor selector referenced by the tour config. Kept as a shared string. */

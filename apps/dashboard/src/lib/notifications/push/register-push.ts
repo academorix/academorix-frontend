@@ -55,11 +55,11 @@ import {
 
 import { NOTIFICATION_ENDPOINTS } from "@/config/notifications.config";
 import { httpClient } from "@/lib/http";
-import { fetchVapidPublicKey } from "@/notifications/push/vapid-provider";
+import { fetchVapidPublicKey } from "@/lib/notifications/push/vapid-provider";
 
 /**
  * Endpoint the frontend POSTs the serialised subscription to. Matches
- * NOTIFICATIONS_PLAN §4.2. **Not implemented on the backend yet** —
+ * notifications module **Not implemented on the backend yet** —
  * see the module docblock.
  */
 export const PUSH_SUBSCRIBE_ENDPOINT = NOTIFICATION_ENDPOINTS.subscribe;

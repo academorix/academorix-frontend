@@ -24,14 +24,14 @@
  * two reasons:
  *
  * 1. Unit-testable — every branch has a fixture we can hand-craft.
- * 2. Cacheable — {@link "@/onboarding/use-surface" useSurface} calls this
+ * 2. Cacheable — {@link "@/lib/onboarding/use-surface" useSurface} calls this
  *    exactly once per session and stores the result in module scope.
  *
  * The reactive React wrapper lives at `use-surface.ts`; this file is
  * pure so a background code path (e.g. an analytics dispatcher) can also
  * consume it without pulling React into its dependency graph.
  *
- * @see ONBOARDING_PLAN.md §2 — Surface detection matrix.
+ * @see onboarding module — Surface detection matrix.
  */
 
 import type { OnboardingSurface } from "@/config/onboarding.config";
@@ -172,7 +172,7 @@ function matchesStandaloneDisplayMode(win: Window): boolean {
 
 /**
  * Snapshot the current browser environment. Convenience wrapper called
- * by {@link "@/onboarding/use-surface" useSurface} on first render.
+ * by {@link "@/lib/onboarding/use-surface" useSurface} on first render.
  *
  * Returns an empty input in SSR / Node.
  */

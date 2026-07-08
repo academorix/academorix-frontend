@@ -16,7 +16,7 @@
  *
  * ## Infinite scroll — deferred
  *
- * NOTIFICATIONS_PLAN §5.4 calls for `useInfiniteQuery`-driven pagination.
+ * notifications module calls for `useInfiniteQuery`-driven pagination.
  * We ship without it in Phase 1 because:
  *
  *   - The inbox is a bounded LRU (~200 entries) in the shared context.
@@ -27,11 +27,11 @@
  *   the static array with an `IntersectionObserver`-driven cursor fetch.
  */
 
-import type { RenderableNotification } from "@/notifications/types";
+import type { RenderableNotification } from "@/lib/notifications/types";
 import type { ReactNode } from "react";
 
-import { NotificationEmptyState } from "@/notifications/components/notification-empty-state";
-import { NotificationRow } from "@/notifications/components/notification-row";
+import { NotificationEmptyState } from "@/lib/notifications/components/notification-empty-state";
+import { NotificationRow } from "@/lib/notifications/components/notification-row";
 
 /** Props for {@link NotificationList}. */
 export interface NotificationListProps {

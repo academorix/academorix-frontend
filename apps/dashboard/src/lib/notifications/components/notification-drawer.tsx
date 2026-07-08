@@ -33,21 +33,21 @@ import type {
   NotificationDrawerCategoryFilter,
   NotificationDrawerSection,
   RenderableNotification,
-} from "@/notifications/types";
+} from "@/lib/notifications/types";
 import type { NotificationChannel } from "@academorix/notifications";
 import type { ReactNode } from "react";
 
 import { EVENTS } from "@/config/analytics.config";
-import { NotificationList } from "@/notifications/components/notification-list";
-import { PushPermissionBanner } from "@/notifications/components/push-permission-banner";
-import { useNotificationWrites } from "@/notifications/hooks/use-notification-writes";
-import { useSnoozeStore } from "@/notifications/hooks/use-snooze-store";
+import { NotificationList } from "@/lib/notifications/components/notification-list";
+import { PushPermissionBanner } from "@/lib/notifications/components/push-permission-banner";
+import { useNotificationWrites } from "@/lib/notifications/hooks/use-notification-writes";
+import { useSnoozeStore } from "@/lib/notifications/hooks/use-snooze-store";
 import {
   deriveNotificationPriority,
   mapPriorityToToastVariant,
-} from "@/notifications/priority.util";
-import { useNotifications } from "@/notifications/provider/notifications-bundle";
-import { emitNotificationTelemetry } from "@/notifications/telemetry";
+} from "@/lib/notifications/priority.util";
+import { useNotifications } from "@/lib/notifications/provider/notifications-bundle";
+import { emitNotificationTelemetry } from "@/lib/notifications/telemetry";
 
 /** Props for {@link NotificationDrawer}. */
 export interface NotificationDrawerProps {
@@ -57,7 +57,7 @@ export interface NotificationDrawerProps {
   readonly onOpenChange: (isOpen: boolean) => void;
 }
 
-/** The category chips the drawer exposes. Mirrors NOTIFICATIONS_PLAN §8. */
+/** The category chips the drawer exposes. */
 const CATEGORY_FILTERS: readonly {
   readonly key: NotificationDrawerCategoryFilter;
   readonly label: string;
@@ -120,8 +120,8 @@ function matchesCategory(type: string, category: NotificationDrawerCategoryFilte
  * The right-side notification drawer. Controlled by the bell button.
  *
  * @remarks
- * The drawer opens with the Unread section selected by default per
- * NOTIFICATIONS_PLAN §5.4. Every filter change (section, category,
+ * The drawer opens with the Unread section selected by default.
+ * Every filter change (section, category,
  * channel) emits an analytics event so we can measure which surfaces
  * the operators actually reach for.
  */
@@ -228,7 +228,7 @@ export function NotificationDrawer({ isOpen, onOpenChange }: NotificationDrawerP
   };
 
   // When the drawer opens we emit the analytics event once so
-  // downstream funnels can count opens (see NOTIFICATIONS_PLAN §10).
+  // downstream funnels can count opens.
   const handleOpenChange = (nextOpen: boolean): void => {
     if (nextOpen && !isOpen) {
       emitNotificationTelemetry(EVENTS.notificationCenterOpened, {

@@ -19,14 +19,14 @@
 
 import { describe, expect, it, vi } from "vitest";
 
-import type { MenuCommand, MenuContext } from "@/menus/command.types";
+import type { MenuCommand, MenuContext } from "@/lib/menus/command.types";
 
 import {
   assertNoDuplicateShortcuts,
   filterVisibleCommands,
   groupByCategory,
   resolveShortcutDisplay,
-} from "@/menus/registry-helpers";
+} from "@/lib/menus/registry-helpers";
 
 /** Factory — builds a stub command with sane defaults so cases stay compact. */
 function makeCommand(overrides: Partial<MenuCommand> = {}): MenuCommand {

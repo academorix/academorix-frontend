@@ -29,7 +29,7 @@ export type NotificationToastVariant = "default" | "accent" | "success" | "warni
  * does NOT emit a `priority` field on the DTO today — we derive it
  * from `channel + type + data_ref` when we need a toast variant.
  *
- * The tiers map to NOTIFICATIONS_PLAN §5.3:
+ * The tiers map to notifications module:
  *  - `low`      — passive info; suppressed as a toast.
  *  - `normal`   — routine notifications; short-lived toast.
  *  - `high`     — payment failures, safeguarding follow-ups.
@@ -68,7 +68,7 @@ export interface RenderableNotification {
   readonly isRead: boolean;
   /**
    * `true` when the user snoozed this row and the snooze deadline has
-   * not yet elapsed. See {@link "@/notifications/hooks/use-snooze-store"}.
+   * not yet elapsed. See {@link "@/lib/notifications/hooks/use-snooze-store"}.
    */
   readonly isSnoozed: boolean;
   /** Toast variant driven by the derived priority. */

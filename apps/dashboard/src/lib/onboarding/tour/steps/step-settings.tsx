@@ -8,7 +8,7 @@
  * Last step of the base web tour; the CTA reads "Finish" (from
  * `menu.finish`) instead of "Next".
  *
- * @see ONBOARDING_PLAN.md §4.2 — Step contents (row 4).
+ * @see onboarding module — Step contents (row 4).
  */
 
 export const STEP_SETTINGS_ANCHOR = '[data-testid="settings-gear"]';

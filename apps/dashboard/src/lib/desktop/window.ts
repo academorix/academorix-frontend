@@ -13,7 +13,7 @@
  * @see DESKTOP_PLAN.md §4.1 (window management)
  */
 
-import { isDesktop } from "@/desktop/is-desktop";
+import { isDesktop } from "@/lib/desktop/is-desktop";
 
 /**
  * Set the tab / title-bar title. Called by `DesktopBootstrap` on mount

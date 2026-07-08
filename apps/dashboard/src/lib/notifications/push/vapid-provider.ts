@@ -7,7 +7,8 @@
  * preference:
  *
  *   1. `GET /api/v1/config/vapid` — server-issued, per-environment.
- *      Documented in NOTIFICATIONS_PLAN §4.7.
+ *      The endpoint returns the public base64url-encoded VAPID key
+ *      without requiring auth.
  *
  *      TODO(backend-endpoint): endpoint DOES NOT exist yet. See the
  *      Communication module `routes/tenant.php`. Expected response:
@@ -91,8 +92,7 @@ export async function fetchVapidPublicKey(): Promise<string> {
   try {
     // TODO(backend-endpoint): GET /api/v1/config/vapid — endpoint does
     //   NOT exist yet. See Communication module routes. Response
-    //   should be a public base64url string; no auth required (per
-    //   NOTIFICATIONS_PLAN §4.7).
+    //   should be a public base64url string; no auth required.
     const body = await httpClient.get<unknown>(VAPID_ENDPOINT);
     const payload = unwrapEnvelope<VapidPayload>(body);
     const key = extractKey(payload);
@@ -118,7 +118,7 @@ export async function fetchVapidPublicKey(): Promise<string> {
 
   throw new Error(
     "No VAPID public key available. Set VITE_VAPID_PUBLIC_KEY in the dashboard env " +
-      "or ship the /api/v1/config/vapid endpoint (see NOTIFICATIONS_PLAN §4.7).",
+      "or ship the /api/v1/config/vapid endpoint (public base64url response, no auth).",
   );
 }
 

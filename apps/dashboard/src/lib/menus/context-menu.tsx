@@ -37,14 +37,15 @@
  *
  * Items are grouped by category (`groupByCategory`) with a `Separator`
  * between adjacent groups. When the total item count exceeds
- * `TOP_LEVEL_LIMIT` (12 per MENUS_PLAN §6.3), everything past the cap lands
+ * `TOP_LEVEL_LIMIT` (12 items), everything past the cap lands
  * under an inline "More…" section — kept as its own group with a divider
  * so the visible top-level items still render their category headings. We
  * deliberately do NOT use a real nested submenu here: HeroUI's submenu
  * primitive (`Dropdown.SubmenuTrigger`) is scoped to a `Dropdown` context
  * that our context-menu Popover does not provide, so we fold overflow into
  * a flat section instead. If a deployment grows past this trade-off, we
- * upgrade to a full `Dropdown` wrapper — TODO tagged in MENUS_PLAN.md §6.3.
+ * upgrade to a full `Dropdown` wrapper (TODO: revisit when a customer hits
+ * the cap consistently).
  *
  * ## React Aria collection constraints
  *
@@ -68,17 +69,17 @@
 import { Header, Menu, MenuItem, MenuSection, Popover, Separator } from "@academorix/ui/react";
 import { Fragment, useMemo, useRef } from "react";
 
-import type { MenuCategory, MenuCommand, MenuContext, ShortcutOs } from "@/menus/command.types";
-import type { ContextMenuPosition } from "@/menus/use-context-menu";
+import type { MenuCategory, MenuCommand, MenuContext, ShortcutOs } from "@/lib/menus/command.types";
+import type { ContextMenuPosition } from "@/lib/menus/use-context-menu";
 import type { CSSProperties, Key, ReactNode, RefObject } from "react";
 
 import { detectOs } from "@/config/shortcuts.config";
-import { groupByCategory, resolveShortcutDisplay } from "@/menus/registry-helpers";
+import { groupByCategory, resolveShortcutDisplay } from "@/lib/menus/registry-helpers";
 
 /**
  * Maximum items rendered at the top level before overflow triggers a
- * "More…" section. Documented in MENUS_PLAN.md §6.3. Kept as an exported
- * constant so tests can assert against it without magic numbers.
+ * "More…" section. Exported so tests can assert against it without
+ * magic numbers.
  */
 export const TOP_LEVEL_LIMIT = 12;
 

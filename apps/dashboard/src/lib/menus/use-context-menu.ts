@@ -5,7 +5,7 @@
  * @description
  * React hook that wires a `contextmenu` handler onto any DOM element and
  * surfaces `{open, close, isOpen, position}` state a renderer can consume.
- * Documented in MENUS_PLAN.md §6.
+ * Documented in menus module
  *
  * ## Contract
  *
@@ -40,12 +40,12 @@
  *        - Tab traps focus (renderer owns via Popover/Modal).
  *   4. **Cleanup.** Every listener is removed on unmount / anchor swap.
  *
- * @see MENUS_PLAN.md §6
+ * @see menus module
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import type { MenuCommand, MenuContext } from "@/menus/command.types";
+import type { MenuCommand, MenuContext } from "@/lib/menus/command.types";
 import type { RefObject } from "react";
 
 // ---------------------------------------------------------------------------

@@ -4,7 +4,7 @@
  *
  * @description
  * Public barrel for the desktop-adapter module. Every consumer imports
- * from `@/desktop` — never from a nested path — so the module boundary
+ * from `@/lib/desktop` — never from a nested path — so the module boundary
  * stays flat and refactor-friendly.
  *
  * Layout is deliberately mirrored to `DESKTOP_PLAN.md` §2.1:
@@ -21,8 +21,8 @@
  * - `DesktopBootstrap` — provider-tree side-effect component.
  */
 
-export { DesktopBootstrap } from "@/desktop/DesktopBootstrap";
-export { isDesktop, isDesktopRuntime } from "@/desktop/is-desktop";
+export { DesktopBootstrap } from "@/lib/desktop/DesktopBootstrap";
+export { isDesktop, isDesktopRuntime } from "@/lib/desktop/is-desktop";
 
 // -- Native menu --------------------------------------------------------
 export type {
@@ -31,7 +31,7 @@ export type {
   NativeMenuSection,
   PermissionResolver,
   Unsubscribe,
-} from "@/desktop/native-menu";
+} from "@/lib/desktop/native-menu";
 export {
   buildNativeMenu,
   invokeMenuCommand,
@@ -39,37 +39,41 @@ export {
   notifyLocaleChanged,
   onMenuCommand,
   publishNativeMenu,
-} from "@/desktop/native-menu";
+} from "@/lib/desktop/native-menu";
 
 // -- Tray + window ------------------------------------------------------
-export { onTrayCommand, setTrayBadgeCount, setTrayTooltip } from "@/desktop/tray";
+export { onTrayCommand, setTrayBadgeCount, setTrayTooltip } from "@/lib/desktop/tray";
 export {
   minimizeWindow,
   onOsThemeChange,
   raiseWindow,
   setBadgeCount,
   setWindowTitle,
-} from "@/desktop/window";
+} from "@/lib/desktop/window";
 
 // -- Deep links + shortcuts --------------------------------------------
-export type { DeepLinkPayload, ResolvedDeepLink } from "@/desktop/deep-link";
-export { onDeepLink, resolveDeepLinkPath } from "@/desktop/deep-link";
-export type { RegisteredShortcut } from "@/desktop/shortcut";
-export { registerGlobalShortcut, unregisterGlobalShortcut } from "@/desktop/shortcut";
+export type { DeepLinkPayload, ResolvedDeepLink } from "@/lib/desktop/deep-link";
+export { onDeepLink, resolveDeepLinkPath } from "@/lib/desktop/deep-link";
+export type { RegisteredShortcut } from "@/lib/desktop/shortcut";
+export { registerGlobalShortcut, unregisterGlobalShortcut } from "@/lib/desktop/shortcut";
 
 // -- Updater ------------------------------------------------------------
-export type { UpdateChecker, UpdateInfo } from "@/desktop/updater";
-export { checkForUpdates, installUpdateAndRestart, startUpdateChecker } from "@/desktop/updater";
+export type { UpdateChecker, UpdateInfo } from "@/lib/desktop/updater";
+export {
+  checkForUpdates,
+  installUpdateAndRestart,
+  startUpdateChecker,
+} from "@/lib/desktop/updater";
 
 // -- Notifications ------------------------------------------------------
-export type { NativeNotificationOptions } from "@/desktop/notifications";
-export { showNativeNotification } from "@/desktop/notifications";
+export type { NativeNotificationOptions } from "@/lib/desktop/notifications";
+export { showNativeNotification } from "@/lib/desktop/notifications";
 
 // -- Welcome window -----------------------------------------------------
-export type { WelcomeWindowChoice } from "@/desktop/welcome-window";
+export type { WelcomeWindowChoice } from "@/lib/desktop/welcome-window";
 export {
   closeWelcomeWindow,
   onWelcomeWindowChoice,
   showWelcomeWindow,
   showWelcomeWindowIfFirstRun,
-} from "@/desktop/welcome-window";
+} from "@/lib/desktop/welcome-window";

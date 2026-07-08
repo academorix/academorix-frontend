@@ -14,7 +14,7 @@
  * boot. It cannot reach into React hooks like `useCommandPalette` or
  * `useTheme` because those live inside providers that mount lower in the
  * tree. A traditional "publish a module-level ref" pattern (like
- * {@link "@/onboarding/tour/tour-provider" restartTour} does) works fine
+ * {@link "@/lib/onboarding/tour/tour-provider" restartTour} does) works fine
  * for a single caller, but scales badly once every category of command
  * needs one.
  *
@@ -27,7 +27,7 @@
  *  - Each provider that owns state (command palette, theme, sidebar,
  *    shortcut sheet) registers exactly one handler, near its state.
  *  - The bridge component that wires everything together lives in ONE
- *    place ({@link "@/menus/menu-actions-bridge"}) and is unit-testable
+ *    place ({@link "@/lib/menus/menu-actions-bridge"}) and is unit-testable
  *    with a plain `dispatchEvent`.
  *
  * ## Contract

@@ -5,7 +5,7 @@
  * @description
  * The "Enable push notifications" call-to-action rendered at the top
  * of the drawer. Explicit — we NEVER auto-prompt for permission (see
- * NOTIFICATIONS_PLAN §3), the banner only triggers the browser prompt
+ * notifications module), the banner only triggers the browser prompt
  * on user gesture.
  *
  * ## Visibility rules
@@ -35,8 +35,8 @@ import type { ReactNode } from "react";
 
 import { EVENTS } from "@/config/analytics.config";
 import { features } from "@/config/features.config";
-import { registerPush } from "@/notifications/push/register-push";
-import { emitNotificationTelemetry } from "@/notifications/telemetry";
+import { registerPush } from "@/lib/notifications/push/register-push";
+import { emitNotificationTelemetry } from "@/lib/notifications/telemetry";
 
 /** Props for {@link PushPermissionBanner}. */
 export interface PushPermissionBannerProps {

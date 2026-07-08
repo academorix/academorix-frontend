@@ -35,7 +35,7 @@ import { useEffect, useRef } from "react";
 
 import type { ReactNode } from "react";
 
-import { usePwaRegistration } from "@/pwa/register-sw";
+import { usePwaRegistration } from "@/lib/pwa/register-sw";
 
 /**
  * Copy for the "update available" prompt. Kept as constants so a future i18n

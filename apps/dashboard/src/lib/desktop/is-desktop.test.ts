@@ -10,7 +10,7 @@
 
 import { afterEach, describe, expect, it } from "vitest";
 
-import { isDesktopRuntime } from "@/desktop/is-desktop";
+import { isDesktopRuntime } from "@/lib/desktop/is-desktop";
 
 interface TauriWindow extends Window {
   __TAURI_INTERNALS__?: Record<string, unknown>;

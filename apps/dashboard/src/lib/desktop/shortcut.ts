@@ -32,8 +32,8 @@
  */
 
 import { GLOBAL_SHORTCUT } from "@/config/desktop.config";
-import { isDesktop } from "@/desktop/is-desktop";
-import { raiseWindow } from "@/desktop/window";
+import { isDesktop } from "@/lib/desktop/is-desktop";
+import { raiseWindow } from "@/lib/desktop/window";
 
 /**
  * Result of {@link registerGlobalShortcut}. `dispose` cleanly

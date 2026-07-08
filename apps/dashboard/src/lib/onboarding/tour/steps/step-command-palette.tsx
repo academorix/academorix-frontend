@@ -9,10 +9,10 @@
  * ("Try it") — a live demo hook can be wired later; today the CTA
  * behaves like a normal Next.
  *
- * See {@link "@/onboarding/tour/steps/step-workspace"} for the
+ * See {@link "@/lib/onboarding/tour/steps/step-workspace"} for the
  * "why a module per step" rationale.
  *
- * @see ONBOARDING_PLAN.md §4.2 — Step contents (row 2).
+ * @see onboarding module — Step contents (row 2).
  */
 
 export const STEP_COMMAND_PALETTE_ANCHOR = '[data-testid="command-palette-trigger"]';

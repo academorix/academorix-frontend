@@ -11,7 +11,7 @@
  * Copy: "We live in the menu bar too. Click here for quick
  * actions."
  *
- * @see ONBOARDING_PLAN.md §7 — Desktop first-run.
+ * @see onboarding module — Desktop first-run.
  */
 
 export const STEP_DESKTOP_PREFACE_ANCHOR = '[data-testid="app-tray-icon"]';

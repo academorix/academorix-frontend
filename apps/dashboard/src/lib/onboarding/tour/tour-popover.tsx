@@ -60,18 +60,18 @@
  *   text so a screen reader user knows the action even if the icon
  *   changes.
  *
- * @see ONBOARDING_PLAN.md §4.1 — UX.
+ * @see onboarding module — UX.
  */
 
 import { Button, Separator } from "@academorix/ui/react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import type { OnboardingTourStep } from "@/onboarding/onboarding.types";
+import type { OnboardingTourStep } from "@/lib/onboarding/onboarding.types";
 import type { ReactNode } from "react";
 
-import { useTour } from "@/onboarding/tour/tour-provider";
-import { useTourTranslate } from "@/onboarding/tour/use-tour-translate";
+import { useTour } from "@/lib/onboarding/tour/tour-provider";
+import { useTourTranslate } from "@/lib/onboarding/tour/use-tour-translate";
 
 // ---------------------------------------------------------------------------
 // Positioning helpers

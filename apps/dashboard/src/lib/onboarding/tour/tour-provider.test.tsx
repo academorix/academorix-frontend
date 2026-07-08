@@ -24,10 +24,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ReactNode } from "react";
 
 import { ONBOARDING_STORAGE_KEYS } from "@/config/onboarding.config";
-import { DEFAULT_TOUR_STATE } from "@/onboarding/onboarding.types";
-import { readTourState } from "@/onboarding/storage";
-import { TourProvider, __testables, restartTour, useTour } from "@/onboarding/tour/tour-provider";
-import { __resetSurfaceForTests } from "@/onboarding/use-surface";
+import { DEFAULT_TOUR_STATE } from "@/lib/onboarding/onboarding.types";
+import { readTourState } from "@/lib/onboarding/storage";
+import {
+  TourProvider,
+  __testables,
+  restartTour,
+  useTour,
+} from "@/lib/onboarding/tour/tour-provider";
+import { __resetSurfaceForTests } from "@/lib/onboarding/use-surface";
 
 const { shouldAutoTrigger, buildStepList } = __testables;
 

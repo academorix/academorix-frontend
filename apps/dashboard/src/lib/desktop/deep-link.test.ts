@@ -20,7 +20,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import { resolveDeepLinkPath } from "@/desktop/deep-link";
+import { resolveDeepLinkPath } from "@/lib/desktop/deep-link";
 
 describe("resolveDeepLinkPath — workspace routes", () => {
   it("maps academorix://workspace/{slug} to /{slug}/dashboard", () => {

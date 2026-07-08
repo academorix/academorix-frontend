@@ -7,24 +7,32 @@
  * single build served from three kinds of host (matching the backend's tenant
  * identification model):
  *
- * - **Central** — `academorix.app` (workspace picker, marketing, self-serve
+ * - **Central** — `academorix.com` (workspace picker, marketing, self-serve
  *   tenant creation). Auth is the tenant surface only when the user picks a
  *   workspace and gets redirected to their subdomain; there is no "central
  *   member" concept.
- * - **Central admin** — `admin.academorix.app` (Academorix staff surface). The
+ * - **Central admin** — `admin.academorix.com` (Academorix staff surface). The
  *   backend's `platform.domain` middleware only accepts requests from central
  *   hosts, so the admin surface must be central. Auth is the **platform** flow.
- * - **Tenant** — `{slug}.academorix.app` or a custom domain (`academy.example.com`).
+ * - **Tenant** — `{slug}.academorix.com` or a custom domain (`academy.example.com`).
  *   The backend's `stancl/tenancy` `InitializeTenancyByDomain` middleware
  *   resolves the tenant from the request host. Auth is the **tenant** flow.
  *
+ * ## API host derivation
+ *
+ * The SPA is deployed on Vercel and the API on Laravel Cloud — they live on
+ * different origins. `apiOrigin` is derived from the current tenant context:
+ *
+ * - **Central / admin / www**: `https://api.academorix.com/api`
+ * - **Tenant subdomain**: `https://{slug}.api.academorix.com/api`
+ * - **Custom tenant domain** (e.g. `academy.example.com`): falls back to the
+ *   central API — the backend disambiguates via a Domain lookup and an
+ *   `X-Tenant-Domain` request header injected by the http client.
+ * - **Localhost**: uses `VITE_API_URL` (typically `http://localhost:8000`) so
+ *   Vite dev can talk to the local Laravel server.
+ *
  * The context is derived from `window.location.hostname` at boot; the SPA
  * never mutates it (a tenant switch is a full page navigation to the new host).
- *
- * ### Dev fallback
- * On `localhost` / `127.0.0.1` we treat the app as running against the tenant
- * surface (matching the mock-first developer flow) but expose the derived
- * `apiOrigin` from `VITE_API_URL`, so requests reach the local Laravel server.
  */
 
 import { envConfig } from "@/config/env.config";
@@ -36,22 +44,27 @@ export type HostKind = "central" | "central-admin" | "tenant";
 export interface HostContext {
   /** The kind of host the browser is on. */
   kind: HostKind;
-  /** The raw hostname, e.g. `"riverside.academorix.app"`. */
+  /** The raw hostname, e.g. `"riverside.academorix.com"`. */
   hostname: string;
   /**
-   * The tenant slug when `kind === "tenant"` on a subdomain of the central host
-   * (e.g. `"riverside"` for `riverside.academorix.app`). `null` for custom
-   * domains (the backend still resolves the tenant from the `Domain` row) and
-   * for central / central-admin hosts.
+   * The tenant slug when `kind === "tenant"` on a subdomain of the central
+   * host (e.g. `"riverside"` for `riverside.academorix.com`). `null` for
+   * custom domains (the backend still resolves the tenant from the `Domain`
+   * row) and for central / central-admin hosts.
    */
   tenantSlug: string | null;
   /**
    * Absolute API origin **including** the API path prefix. Requests are made
    * to `${apiOrigin}/auth/login`, `${apiOrigin}/v1/tenants`, etc.
    *
-   * In production this is same-origin (e.g. `https://riverside.academorix.app/api`)
-   * so cookies/subdomain isolation work; in dev it points at the standalone
-   * Laravel server via `VITE_API_URL`.
+   * Layout by context (production):
+   *   - Central: `https://api.academorix.com/api`
+   *   - Admin: `https://api.academorix.com/api`
+   *   - Tenant subdomain `riverside.academorix.com`: `https://riverside.api.academorix.com/api`
+   *   - Custom tenant domain: `https://api.academorix.com/api` (with header disambiguation)
+   *
+   * In localhost the URL falls back to `VITE_API_URL` so the Vite dev
+   * server (port 3000) can reach a local Laravel server (port 8000).
    */
   apiOrigin: string;
   /** Whether the current host is one of the central hosts (workspace / admin). */
@@ -105,7 +118,7 @@ function extractTenantSlug(
     const slug = lowerHost.slice(0, -suffix.length);
 
     // Reserved subdomains never resolve to a tenant.
-    if (slug === "" || slug === "www" || slug === "api") {
+    if (slug === "" || slug === "www" || slug === "api" || slug === "app" || slug === "admin") {
       return null;
     }
 
@@ -115,6 +128,34 @@ function extractTenantSlug(
   // Custom domain — the backend still resolves a tenant, but we do not know
   // its slug from the URL alone.
   return null;
+}
+
+/**
+ * Derives the API origin for a request given the resolved host context.
+ *
+ *   - Localhost → `VITE_API_URL` (typically `http://localhost:8000/api`).
+ *   - Tenant with a slug → `https://{slug}.api.{centralHost}/api`.
+ *   - Central / admin / custom-tenant-domain → `https://api.{centralHost}/api`.
+ *
+ * Kept as a pure helper so the browser resolver and the SSR/test fallback
+ * share one code path.
+ */
+function deriveApiOrigin(
+  centralHost: string,
+  apiPath: string,
+  isLocalhost: boolean,
+  kind: HostKind,
+  tenantSlug: string | null,
+): string {
+  if (isLocalhost) {
+    return `${trimTrailingSlash(envConfig.apiUrl)}${apiPath}`;
+  }
+
+  if (kind === "tenant" && tenantSlug !== null) {
+    return `https://${tenantSlug}.api.${centralHost}${apiPath}`;
+  }
+
+  return `https://api.${centralHost}${apiPath}`;
 }
 
 /**
@@ -155,17 +196,15 @@ export function resolveHostContext(): HostContext {
   const hostname = window.location.hostname.toLowerCase();
   const isLocalhost = isLocalHostname(hostname);
 
-  // Same-origin API in production (SPA is served from the same host as Laravel).
-  // In dev, point at `VITE_API_URL` because Vite is on :3000 and Laravel on :8000.
-  const apiOrigin = isLocalhost
-    ? `${trimTrailingSlash(envConfig.apiUrl)}${apiPath}`
-    : `${window.location.origin}${apiPath}`;
-
   let kind: HostKind;
 
   if (hostname === adminHost) {
     kind = "central-admin";
-  } else if (hostname === centralHost || hostname === `www.${centralHost}`) {
+  } else if (
+    hostname === centralHost ||
+    hostname === `www.${centralHost}` ||
+    hostname === `app.${centralHost}`
+  ) {
     kind = "central";
   } else {
     // Tenant subdomain OR custom domain OR localhost — all use the tenant surface.
@@ -178,7 +217,7 @@ export function resolveHostContext(): HostContext {
     kind,
     hostname,
     tenantSlug,
-    apiOrigin,
+    apiOrigin: deriveApiOrigin(centralHost, apiPath, isLocalhost, kind, tenantSlug),
     isCentral: kind === "central" || kind === "central-admin",
     isLocalhost,
   };

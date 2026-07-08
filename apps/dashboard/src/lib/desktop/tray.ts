@@ -18,8 +18,12 @@
  * Every helper no-ops on the web build.
  */
 
-import { isDesktop } from "@/desktop/is-desktop";
-import { onMenuCommand, type MenuCommandPayload, type Unsubscribe } from "@/desktop/native-menu";
+import { isDesktop } from "@/lib/desktop/is-desktop";
+import {
+  onMenuCommand,
+  type MenuCommandPayload,
+  type Unsubscribe,
+} from "@/lib/desktop/native-menu";
 
 /**
  * Subscribe to tray-menu clicks. Convenience wrapper around
@@ -63,7 +67,7 @@ export async function setTrayTooltip(tooltip: string): Promise<void> {
 
 /**
  * Update the dock/taskbar badge count. Wired to the notification
- * queue by {@link "@/desktop/window".setBadgeCount}. Kept separate here
+ * queue by {@link "@/lib/desktop/window".setBadgeCount}. Kept separate here
  * so the tray-specific unread badge (a distinct affordance on some
  * platforms) can diverge in the future.
  *

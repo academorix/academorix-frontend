@@ -8,7 +8,7 @@
  * dashboard from an installed PWA (`useSurface() === 'pwa'` or
  * `'pwa-shortcut'`).
  *
- * ## Contract (see ONBOARDING_PLAN.md §6)
+ * ## Contract (see onboarding module)
  *
  *  - Fires: `toast.success('Academorix installed', { description: "It'll
  *    work offline too.", timeout: 8000 })`.
@@ -43,10 +43,10 @@ import type { Identity } from "@/types";
 import type { ReactNode } from "react";
 
 import { ONBOARDING_SCHEMA_VERSION, onboardingConfig } from "@/config/onboarding.config";
-import { readPwaState, writePwaState } from "@/onboarding/storage";
-import { emitOnboardingEvent } from "@/onboarding/tour/tour-analytics";
-import { useTourTranslate } from "@/onboarding/tour/use-tour-translate";
-import { useSurface } from "@/onboarding/use-surface";
+import { readPwaState, writePwaState } from "@/lib/onboarding/storage";
+import { emitOnboardingEvent } from "@/lib/onboarding/tour/tour-analytics";
+import { useTourTranslate } from "@/lib/onboarding/tour/use-tour-translate";
+import { useSurface } from "@/lib/onboarding/use-surface";
 
 /**
  * Renders no visible chrome — the effect below fires a HeroUI toast on

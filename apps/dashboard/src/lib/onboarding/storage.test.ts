@@ -27,7 +27,7 @@ import type {
   DesktopStorageState,
   PwaStorageState,
   TourStorageState,
-} from "@/onboarding/onboarding.types";
+} from "@/lib/onboarding/onboarding.types";
 
 import { ONBOARDING_STORAGE_KEYS } from "@/config/onboarding.config";
 import {
@@ -41,7 +41,7 @@ import {
   writePwaState,
   writeTourState,
   __testables,
-} from "@/onboarding/storage";
+} from "@/lib/onboarding/storage";
 
 const USER_A = "user-a";
 const USER_B = "user-b";

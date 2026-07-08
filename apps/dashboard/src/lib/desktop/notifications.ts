@@ -3,7 +3,7 @@
  * @module desktop/notifications
  *
  * @description
- * Native OS notification adapter. See `NOTIFICATIONS_PLAN.md` §7 for the
+ * Native OS notification adapter. See notifications module for the
  * delivery matrix (in-app vs push vs native, foreground vs background,
  * DND vs quiet hours). This module is the desktop-native branch of that
  * delivery pipeline — the notifications sub-agent's push-handler will
@@ -18,8 +18,7 @@
  * ## Permission
  *
  * Both surfaces require permission before firing. The permission flow
- * itself is owned by `NOTIFICATIONS_PLAN.md` §3 (contextual prompts + a
- * Settings toggle). This adapter never asks — it just refuses to fire
+ * itself is owned by notifications module. This adapter never asks — it just refuses to fire
  * silently when permission is missing.
  *
  * ## Phased wiring
@@ -33,7 +32,7 @@
  * Windows Action Center, DBus).
  */
 
-import { isDesktop } from "@/desktop/is-desktop";
+import { isDesktop } from "@/lib/desktop/is-desktop";
 
 /** Options accepted by {@link showNativeNotification}. */
 export interface NativeNotificationOptions {

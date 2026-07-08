@@ -39,7 +39,7 @@
  * localStorage. Also handles Safari-private-mode quota exceptions and
  * cross-origin `SecurityError` throws.
  *
- * @see ONBOARDING_PLAN.md §4.3, §5.2, §6, §7.
+ * @see onboarding module, §5.2, §6, §7.
  */
 
 import { z } from "zod";
@@ -49,7 +49,7 @@ import type {
   DesktopStorageState,
   PwaStorageState,
   TourStorageState,
-} from "@/onboarding/onboarding.types";
+} from "@/lib/onboarding/onboarding.types";
 
 import { ONBOARDING_SCHEMA_VERSION, ONBOARDING_STORAGE_KEYS } from "@/config/onboarding.config";
 import {
@@ -57,7 +57,7 @@ import {
   DEFAULT_DESKTOP_STATE,
   DEFAULT_PWA_STATE,
   DEFAULT_TOUR_STATE,
-} from "@/onboarding/onboarding.types";
+} from "@/lib/onboarding/onboarding.types";
 
 // ---------------------------------------------------------------------------
 // Zod schemas

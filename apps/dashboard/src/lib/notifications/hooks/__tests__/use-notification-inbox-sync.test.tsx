@@ -65,7 +65,7 @@ vi.mock("@academorix/realtime", () => ({
  * `usePrivateChannel` which is itself mocked, so we can supply any
  * object here.
  */
-vi.mock("@/notifications/realtime", () => ({
+vi.mock("@/lib/notifications/realtime", () => ({
   echoRealtimeClient: {},
 }));
 
@@ -85,11 +85,11 @@ vi.mock("@refinedev/core", () => ({
 // Imports AFTER the mocks so they capture the stubs above.
 // ─────────────────────────────────────────────────────────────────────
 
-import { useNotificationInboxSync } from "@/notifications/hooks/use-notification-inbox-sync";
+import { useNotificationInboxSync } from "@/lib/notifications/hooks/use-notification-inbox-sync";
 import {
   notificationsBundle,
   useNotifications,
-} from "@/notifications/provider/notifications-bundle";
+} from "@/lib/notifications/provider/notifications-bundle";
 
 // ─────────────────────────────────────────────────────────────────────
 // Fixtures

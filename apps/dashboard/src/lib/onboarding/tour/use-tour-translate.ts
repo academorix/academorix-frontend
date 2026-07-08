@@ -18,7 +18,7 @@
 import { useCallback } from "react";
 
 import { useLocale } from "@/lib/i18n";
-import { TOUR_MESSAGES } from "@/onboarding/tour/tour-messages";
+import { TOUR_MESSAGES } from "@/lib/onboarding/tour/tour-messages";
 
 /**
  * Curried translator: pass a key + optional default and (optional)
