@@ -112,9 +112,13 @@ export const features = {
 
   /**
    * Widget drag-and-drop on the overview dashboard (`DASHBOARD_UX_PLAN.md`
-   * Phase 1d). Off until the react-grid-layout wiring lands.
+   * Phase 1d). Renders the overview widgets inside `react-grid-layout`
+   * with a per-user layout persisted in `localStorage`; ops can flip the
+   * whole feature off per-tenant via `VITE_FLAG_OVERVIEW_DND=0` and the
+   * grid falls back to the Phase 1c CSS-grid layout with the same visual
+   * arrangement (see `modules/dashboard/components/widget-grid.tsx`).
    */
-  overviewDnd: envFlag("OVERVIEW_DND", false),
+  overviewDnd: envFlag("OVERVIEW_DND", true),
 
   /**
    * Kanban view on Leads + Safeguarding lists (`DASHBOARD_UX_PLAN.md`
