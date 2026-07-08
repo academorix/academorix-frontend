@@ -368,6 +368,9 @@ importers:
       '@academorix/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@heroui-pro/react':
+        specifier: 'catalog:'
+        version: 1.0.0-beta.6
       '@heroui/styles':
         specifier: 'catalog:'
         version: 3.2.1(tailwind-merge@3.4.0)(tailwindcss@4.3.1)

@@ -32,6 +32,7 @@
     "@academorix/query": "workspace:*",
     "@academorix/realtime": "workspace:*",
     "@academorix/ui": "workspace:*",
+    "@heroui-pro/react": "catalog:",
     "@heroui/styles": "catalog:",
     "@refinedev/core": "catalog:",
     "@refinedev/react-router": "catalog:",
