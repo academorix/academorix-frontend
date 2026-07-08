@@ -3,61 +3,37 @@
     "slug": "owners",
     "eyebrow": { "en": "For owners", "ar": "لأصحاب الأكاديميات" },
     "title": { "en": "Run the network you want to run", "ar": "أدر الشبكة التي تريد إدارتها" },
-    "description": {
-      "en": "Every branch, every sport, every athlete on one dashboard. Retention, revenue, and safeguarding at a glance, drill-down at a click.",
-      "ar": "كل فرع، وكل رياضة، وكل رياضي على لوحة تحكم واحدة. الاحتفاظ والإيرادات والحماية بلمحة، والتعمّق بضغطة."
-    },
+    "description": { "en": "Every branch, every sport, every athlete on one dashboard. Retention, revenue, and safeguarding at a glance, drill-down at a click.", "ar": "كل فرع، وكل رياضة، وكل رياضي على لوحة تحكم واحدة. الاحتفاظ والإيرادات والحماية بلمحة، والتعمّق بضغطة." },
     "hero_icon": "BuildingOffice2Icon",
     "what_is": [
-      {
-        "en": "Your morning starts with the executive dashboard. Yesterday's revenue across the network. AR aging. Attendance trend by branch. Safeguarding: any open incidents, any expiring credentials. In a single glance you see the health of a network you could not have monitored a year ago, back when it lived in three spreadsheets and a WhatsApp group. If something looks off, you drill in. A branch is trending down on new registrations; you see the drop-off pattern by week and message the branch manager with context.",
-        "ar": "يبدأ صباحك بلوحة التحكم التنفيذية. إيرادات الأمس عبر الشبكة. أعمار الديون. اتجاه الحضور حسب الفرع. الحماية: أي حوادث مفتوحة، وأي شهادات على وشك الانتهاء. بلمحة واحدة ترى صحة شبكة لم تكن تستطيع مراقبتها قبل عام. إذا بدا شيء غير طبيعي، تتعمّق. فرع يتراجع في التسجيلات الجديدة، ترى نمط التراجع أسبوعياً وترسل رسالة إلى مدير الفرع بالسياق."
-      },
-      {
-        "en": "Your afternoon is strategic. You are reviewing a proposal for a new branch in a new city. Academorix already has the reference model: revenue per athlete, staff cost per athlete, retention curves by cohort, safeguarding compliance rate. You forecast the new branch's economics against three existing branches with similar demographics. You present to the board on Thursday with numbers that are defensible line-by-line.",
-        "ar": "بعد ظهرك استراتيجي. تراجع مقترحاً لفرع جديد في مدينة جديدة. تمتلك Academorix النموذج المرجعي: الإيراد لكل رياضي، وتكلفة الموظف لكل رياضي، ومنحنيات الاحتفاظ حسب الدفعة، ومعدل الالتزام بالحماية. تتنبأ باقتصاديات الفرع الجديد بمقارنتها بثلاثة فروع قائمة. تقدّم إلى مجلس الإدارة يوم الخميس بأرقام يمكن الدفاع عنها سطراً بسطر."
-      }
+      { "en": "Your morning starts with the executive dashboard. Yesterday's revenue across the network. AR aging. Attendance trend by branch. Safeguarding: any open incidents, any expiring credentials. In a single glance you see the health of a network you could not have monitored a year ago, back when it lived in three spreadsheets and a WhatsApp group. If something looks off, you drill in. A branch is trending down on new registrations; you see the drop-off pattern by week and message the branch manager with context.", "ar": "يبدأ صباحك بلوحة التحكم التنفيذية. إيرادات الأمس عبر الشبكة. أعمار الديون. اتجاه الحضور حسب الفرع. الحماية: أي حوادث مفتوحة، وأي شهادات على وشك الانتهاء. بلمحة واحدة ترى صحة شبكة لم تكن تستطيع مراقبتها قبل عام. إذا بدا شيء غير طبيعي، تتعمّق. فرع يتراجع في التسجيلات الجديدة، ترى نمط التراجع أسبوعياً وترسل رسالة إلى مدير الفرع بالسياق." },
+      { "en": "Your afternoon is strategic. You are reviewing a proposal for a new branch in a new city. Academorix already has the reference model: revenue per athlete, staff cost per athlete, retention curves by cohort, safeguarding compliance rate. You forecast the new branch's economics against three existing branches with similar demographics. You present to the board on Thursday with numbers that are defensible line-by-line.", "ar": "بعد ظهرك استراتيجي. تراجع مقترحاً لفرع جديد في مدينة جديدة. تمتلك Academorix النموذج المرجعي: الإيراد لكل رياضي، وتكلفة الموظف لكل رياضي، ومنحنيات الاحتفاظ حسب الدفعة، ومعدل الالتزام بالحماية. تتنبأ باقتصاديات الفرع الجديد بمقارنتها بثلاثة فروع قائمة. تقدّم إلى مجلس الإدارة يوم الخميس بأرقام يمكن الدفاع عنها سطراً بسطر." }
     ],
     "features": [
       {
         "icon": "ChartBarIcon",
         "title": { "en": "Executive dashboards with drill-down", "ar": "لوحات تنفيذية مع تعمّق" },
-        "description": {
-          "en": "Drill from the network to a branch, a team, or a single athlete in seconds.",
-          "ar": "تعمّق من الشبكة إلى فرع أو فريق أو رياضي واحد في ثوانٍ."
-        }
+        "description": { "en": "Drill from the network to a branch, a team, or a single athlete in seconds.", "ar": "تعمّق من الشبكة إلى فرع أو فريق أو رياضي واحد في ثوانٍ." }
       },
       {
         "icon": "CreditCardIcon",
         "title": { "en": "AR ledger with follow-ups", "ar": "دفتر ذمم مع متابعات" },
-        "description": {
-          "en": "Overdue accounts route to automated follow-up sequences with escalation paths.",
-          "ar": "تُوجَّه الحسابات المتأخّرة إلى تسلسل متابعة آلي مع مسارات تصعيد."
-        }
+        "description": { "en": "Overdue accounts route to automated follow-up sequences with escalation paths.", "ar": "تُوجَّه الحسابات المتأخّرة إلى تسلسل متابعة آلي مع مسارات تصعيد." }
       },
       {
         "icon": "ArrowTrendingUpIcon",
         "title": { "en": "Retention analytics", "ar": "تحليلات الاحتفاظ" },
-        "description": {
-          "en": "Attendance-based churn prediction so you spot drop-off before renewals lapse.",
-          "ar": "تنبّؤ بالانسحاب مبني على الحضور فترى التراجع قبل انتهاء التجديدات."
-        }
+        "description": { "en": "Attendance-based churn prediction so you spot drop-off before renewals lapse.", "ar": "تنبّؤ بالانسحاب مبني على الحضور فترى التراجع قبل انتهاء التجديدات." }
       },
       {
         "icon": "ShieldCheckIcon",
         "title": { "en": "Safeguarding dashboard", "ar": "لوحة الحماية" },
-        "description": {
-          "en": "Credentials, incidents, and clearance status in one view.",
-          "ar": "الشهادات والحوادث وحالة الإقرار في عرض واحد."
-        }
+        "description": { "en": "Credentials, incidents, and clearance status in one view.", "ar": "الشهادات والحوادث وحالة الإقرار في عرض واحد." }
       },
       {
         "icon": "KeyIcon",
         "title": { "en": "Branch-scoped roles", "ar": "أدوار مقيَّدة بالفرع" },
-        "description": {
-          "en": "Trust is enforced by the platform, not by policy documents.",
-          "ar": "الثقة تُطبَّق من المنصة، لا من الوثائق التنظيمية."
-        }
+        "description": { "en": "Trust is enforced by the platform, not by policy documents.", "ar": "الثقة تُطبَّق من المنصة، لا من الوثائق التنظيمية." }
       }
     ],
     "related": [
@@ -69,80 +45,85 @@
       {
         "href": "/products/reports",
         "title": { "en": "Reports", "ar": "التقارير" },
-        "description": {
-          "en": "Prebuilt dashboards and custom reports.",
-          "ar": "لوحات جاهزة وتقارير مخصصة."
-        }
+        "description": { "en": "Prebuilt dashboards and custom reports.", "ar": "لوحات جاهزة وتقارير مخصصة." }
       },
       {
         "href": "/customers",
         "title": { "en": "Customer stories", "ar": "قصص العملاء" },
-        "description": {
-          "en": "How other owners run their networks.",
-          "ar": "كيف يدير المالكون الآخرون شبكاتهم."
-        }
+        "description": { "en": "How other owners run their networks.", "ar": "كيف يدير المالكون الآخرون شبكاتهم." }
       }
-    ]
+    ],
+    "outcomes": [
+      { "en": "Network-wide view of revenue, retention, and safeguarding on a single dashboard", "ar": "عرض شبكي شامل للإيرادات والاحتفاظ والحماية على لوحة واحدة" },
+      { "en": "Continental Sports Federation forecasts new-branch economics against real reference branches", "ar": "تتنبأ Continental Sports Federation باقتصاديات الفرع الجديد بمقارنتها بفروع مرجعية حقيقية" },
+      { "en": "AR aging report lands in the inbox at 7am Monday, no manual export", "ar": "تقرير أعمار الذمم يصل صندوق الوارد في السابعة صباح الاثنين، دون تصدير يدوي" },
+      { "en": "Board decks assemble from the same live data every branch manager sees", "ar": "حزم مجلس الإدارة تُجمَّع من البيانات المباشرة نفسها التي يراها كل مدير فرع" },
+      { "en": "Safeguarding compliance rate visible per branch, per region, and network-wide", "ar": "معدل الالتزام بالحماية ظاهر لكل فرع ولكل منطقة وعلى مستوى الشبكة" }
+    ],
+    "workflow_steps": [
+      {
+        "number": "01",
+        "title": { "en": "Morning briefing", "ar": "الإحاطة الصباحية" },
+        "description": { "en": "Open the executive dashboard: yesterday's revenue, AR aging, attendance trend, safeguarding alerts.", "ar": "افتح لوحة التنفيذيين: إيرادات الأمس، وأعمار الذمم، واتجاه الحضور، وتنبيهات الحماية." }
+      },
+      {
+        "number": "02",
+        "title": { "en": "Branch check-in", "ar": "متابعة الفروع" },
+        "description": { "en": "Drill into any branch trending off-target and message the branch manager with context.", "ar": "تعمّق في أي فرع يخرج عن الهدف وأرسل رسالة لمدير الفرع مع السياق." }
+      },
+      {
+        "number": "03",
+        "title": { "en": "Strategic review", "ar": "المراجعة الاستراتيجية" },
+        "description": { "en": "Forecast a new branch's economics against existing reference branches with similar demographics.", "ar": "التنبؤ باقتصاديات فرع جديد بمقارنته بفروع مرجعية قائمة بديموغرافيا مشابهة." }
+      },
+      {
+        "number": "04",
+        "title": { "en": "Evening close", "ar": "الإغلاق المسائي" },
+        "description": { "en": "Sign off on the board deck. Numbers are defensible line-by-line because they came from one system.", "ar": "اعتماد حزمة مجلس الإدارة. الأرقام يمكن الدفاع عنها سطراً بسطر لأنها جاءت من نظام واحد." }
+      }
+    ],
+    "testimonial": {
+      "quote": { "en": "Every metric I care about is on one screen. The old way was three tools, four spreadsheets, and a lot of hope.", "ar": "كل مقياس يهمّني على شاشة واحدة. الطريقة القديمة كانت ثلاث أدوات وأربعة جداول وكثيراً من الأمل." },
+      "author": { "en": "Andrea Delgado", "ar": "أندريا ديلغادو" },
+      "role": { "en": "COO, Continental Sports Federation", "ar": "مدير العمليات، Continental Sports Federation" },
+      "initials": "AD"
+    }
   },
   "coaches": {
     "slug": "coaches",
     "eyebrow": { "en": "For coaches", "ar": "للمدرّبين" },
     "title": { "en": "Everything you need, one tap away", "ar": "كل ما تحتاجه على بُعد لمسة" },
-    "description": {
-      "en": "Rosters, attendance, and progress on one screen. Take a session poolside, log performance with a tap, and never chase a spreadsheet again.",
-      "ar": "القوائم والحضور والتقدم في شاشة واحدة. أدر جلسة على جانب المسبح، سجّل الأداء بلمسة، ولا تلاحق جدول بيانات بعد اليوم."
-    },
+    "description": { "en": "Rosters, attendance, and progress on one screen. Take a session poolside, log performance with a tap, and never chase a spreadsheet again.", "ar": "القوائم والحضور والتقدم في شاشة واحدة. أدر جلسة على جانب المسبح، سجّل الأداء بلمسة، ولا تلاحق جدول بيانات بعد اليوم." },
     "hero_icon": "AcademicCapIcon",
     "what_is": [
-      {
-        "en": "You show up on Saturday morning and Academorix knows: which athletes RSVP'd, who has an expiring medical, what drill you planned last week, what the last session's attendance was. The mobile view is built for the field. Everything is one tap away. Take attendance without a signal; sync happens when you get back to base.",
-        "ar": "تصل صباح السبت فتعرف Academorix: أي رياضيين أكّدوا الحضور، ومن لديه شهادة طبية على وشك الانتهاء، وما التدريب الذي خطّطت له الأسبوع الماضي، وما نتائج الجلسة السابقة. عرض الجوال مصمَّم للميدان. كل شيء على بُعد لمسة. سجّل الحضور دون إشارة، وتتم المزامنة عند عودتك إلى المقر."
-      },
-      {
-        "en": "After the session, you log performance in the same view. A configurable attribute set means the fields you see match your sport, not a generic checklist. Progress rolls into every athlete's timeline. When you sit with a family for a retention conversation, you have the data on your phone in the language they speak.",
-        "ar": "بعد الجلسة، تسجّل الأداء في العرض نفسه. مجموعة سمات قابلة للتخصيص تعني أن الحقول التي تراها تناسب رياضتك، لا قائمة عامة. يتدرّج التقدم إلى الخط الزمني لكل رياضي. عندما تجلس مع عائلة لمحادثة احتفاظ، تكون البيانات على هاتفك باللغة التي يتكلّمونها."
-      }
+      { "en": "You show up on Saturday morning and Academorix knows: which athletes RSVP'd, who has an expiring medical, what drill you planned last week, what the last session's attendance was. The mobile view is built for the field. Everything is one tap away. Take attendance without a signal; sync happens when you get back to base.", "ar": "تصل صباح السبت فتعرف Academorix: أي رياضيين أكّدوا الحضور، ومن لديه شهادة طبية على وشك الانتهاء، وما التدريب الذي خطّطت له الأسبوع الماضي، وما نتائج الجلسة السابقة. عرض الجوال مصمَّم للميدان. كل شيء على بُعد لمسة. سجّل الحضور دون إشارة، وتتم المزامنة عند عودتك إلى المقر." },
+      { "en": "After the session, you log performance in the same view. A configurable attribute set means the fields you see match your sport, not a generic checklist. Progress rolls into every athlete's timeline. When you sit with a family for a retention conversation, you have the data on your phone in the language they speak.", "ar": "بعد الجلسة، تسجّل الأداء في العرض نفسه. مجموعة سمات قابلة للتخصيص تعني أن الحقول التي تراها تناسب رياضتك، لا قائمة عامة. يتدرّج التقدم إلى الخط الزمني لكل رياضي. عندما تجلس مع عائلة لمحادثة احتفاظ، تكون البيانات على هاتفك باللغة التي يتكلّمونها." }
     ],
     "features": [
       {
         "icon": "UserGroupIcon",
         "title": { "en": "One-tap attendance", "ar": "حضور بلمسة واحدة" },
-        "description": {
-          "en": "Roster loads with your teams. Tap present, absent, or excused. Done in ten seconds.",
-          "ar": "تُحمَّل القائمة مع فرقك. المس \"حاضر\" أو \"غائب\" أو \"معذور\". انتهى في عشر ثوانٍ."
-        }
+        "description": { "en": "Roster loads with your teams. Tap present, absent, or excused. Done in ten seconds.", "ar": "تُحمَّل القائمة مع فرقك. المس \"حاضر\" أو \"غائب\" أو \"معذور\". انتهى في عشر ثوانٍ." }
       },
       {
         "icon": "ChartBarIcon",
         "title": { "en": "Sport-specific performance", "ar": "أداء خاص بالرياضة" },
-        "description": {
-          "en": "Attribute sets configured for your discipline. Log the fields you actually care about.",
-          "ar": "مجموعات سمات مصمّمة لتخصّصك. سجّل الحقول التي تهمّك فعلاً."
-        }
+        "description": { "en": "Attribute sets configured for your discipline. Log the fields you actually care about.", "ar": "مجموعات سمات مصمّمة لتخصّصك. سجّل الحقول التي تهمّك فعلاً." }
       },
       {
         "icon": "CloudArrowUpIcon",
         "title": { "en": "Offline-first mobile", "ar": "جوّال يعمل دون اتصال" },
-        "description": {
-          "en": "Take a session with no signal. Everything syncs when you reconnect.",
-          "ar": "أدر جلسة دون إشارة. كل شيء يتزامن عند الاتصال."
-        }
+        "description": { "en": "Take a session with no signal. Everything syncs when you reconnect.", "ar": "أدر جلسة دون إشارة. كل شيء يتزامن عند الاتصال." }
       },
       {
         "icon": "SparklesIcon",
         "title": { "en": "AI-drafted summaries", "ar": "ملخّصات بمسودات ذكاء اصطناعي" },
-        "description": {
-          "en": "Turn a season of data into a plain-language progress summary. Review, edit, send.",
-          "ar": "حوّل موسماً من البيانات إلى ملخّص بلغة طبيعية. راجع، عدّل، أرسل."
-        }
+        "description": { "en": "Turn a season of data into a plain-language progress summary. Review, edit, send.", "ar": "حوّل موسماً من البيانات إلى ملخّص بلغة طبيعية. راجع، عدّل، أرسل." }
       },
       {
         "icon": "MegaphoneIcon",
         "title": { "en": "Squad messaging", "ar": "مراسلة الفريق" },
-        "description": {
-          "en": "Message the whole squad and its guardians in one action. Threading built in.",
-          "ar": "راسل الفريق كله وأولياء الأمور بإجراء واحد. تسلسل الردود مدمج."
-        }
+        "description": { "en": "Message the whole squad and its guardians in one action. Threading built in.", "ar": "راسل الفريق كله وأولياء الأمور بإجراء واحد. تسلسل الردود مدمج." }
       }
     ],
     "related": [
@@ -161,70 +142,78 @@
         "title": { "en": "Offline-first", "ar": "الأولوية لعدم الاتصال" },
         "description": { "en": "For coaches without a signal.", "ar": "للمدرّبين دون إشارة." }
       }
-    ]
+    ],
+    "outcomes": [
+      { "en": "One screen for roster, attendance, and progress replaces three siloed tools", "ar": "شاشة واحدة للقائمة والحضور والتقدم تحل محل ثلاث أدوات منفصلة" },
+      { "en": "Attendance capture takes under 10 seconds per session with tap-based check-in", "ar": "تسجيل الحضور يستغرق أقل من 10 ثوانٍ لكل جلسة مع تسجيل الدخول باللمس" },
+      { "en": "AI-drafted weekly summaries turn a Sunday-evening chore into a 20-minute review", "ar": "ملخصات أسبوعية بمسودات ذكاء اصطناعي تحوّل مهمة مساء الأحد إلى مراجعة مدتها 20 دقيقة" },
+      { "en": "Sport-specific attribute sets ensure the fields on screen match your discipline", "ar": "مجموعات السمات الخاصة بالرياضة تضمن أن الحقول على الشاشة تناسب تخصّصك" },
+      { "en": "Offline-first mobile keeps sessions on the beach or in remote gyms fully productive", "ar": "الجوال الذي يبدأ من عدم الاتصال يُبقي الجلسات على الشاطئ أو الصالات النائية منتجة تماماً" }
+    ],
+    "workflow_steps": [
+      {
+        "number": "01",
+        "title": { "en": "Morning check", "ar": "المراجعة الصباحية" },
+        "description": { "en": "Roster loads on your phone with RSVPs, medical flags, and last week's evaluations.", "ar": "تُحمَّل القائمة على هاتفك مع تأكيدات الحضور والتنبيهات الطبية وتقييمات الأسبوع الماضي." }
+      },
+      {
+        "number": "02",
+        "title": { "en": "Session on the field", "ar": "الجلسة في الميدان" },
+        "description": { "en": "Tap-to-check-in, live drill logging, and technique notes recorded directly on athlete profiles.", "ar": "تسجيل الدخول باللمس، وتدوين التدريبات مباشرة، وتسجيل ملاحظات الأسلوب على ملفات الرياضيين." }
+      },
+      {
+        "number": "03",
+        "title": { "en": "Post-session logging", "ar": "التوثيق بعد الجلسة" },
+        "description": { "en": "Record attendance and performance in three taps. Progress rolls into each athlete's timeline.", "ar": "سجّل الحضور والأداء بثلاث لمسات. يتدرج التقدم إلى خط زمني كل رياضي." }
+      },
+      {
+        "number": "04",
+        "title": { "en": "Family updates", "ar": "تحديثات العائلات" },
+        "description": { "en": "AI drafts weekly summaries per athlete. Review, edit the outliers, ship in one action.", "ar": "يصوغ الذكاء الاصطناعي ملخصات أسبوعية لكل رياضي. راجع، وعدّل الاستثناءات، وأرسل بإجراء واحد." }
+      }
+    ],
+    "testimonial": {
+      "quote": { "en": "The most valuable thing Academorix gave me is my Sunday evenings back.", "ar": "أكثر شيء منحتني إياه Academorix قيمة هو استعادة مساءات الأحد لدي." },
+      "author": { "en": "Marcus Bell", "ar": "ماركوس بيل" },
+      "role": { "en": "Head Coach, Summit Hoops", "ar": "المدرب الرئيسي، Summit Hoops" },
+      "initials": "MB"
+    }
   },
   "guardians": {
     "slug": "guardians",
     "eyebrow": { "en": "For guardians", "ar": "لأولياء الأمور" },
-    "title": {
-      "en": "Everything about your athletes, in one login",
-      "ar": "كل ما يخصّ رياضيّيك، بتسجيل دخول واحد"
-    },
-    "description": {
-      "en": "Schedules, payments, progress, and messages for every child in one place. Read invoices in Arabic. See attendance in real time.",
-      "ar": "الجداول والمدفوعات والتقدم والرسائل لكل طفل في مكان واحد. اقرأ الفواتير بالعربية. تابع الحضور في الوقت الفعلي."
-    },
+    "title": { "en": "Everything about your athletes, in one login", "ar": "كل ما يخصّ رياضيّيك، بتسجيل دخول واحد" },
+    "description": { "en": "Schedules, payments, progress, and messages for every child in one place. Read invoices in Arabic. See attendance in real time.", "ar": "الجداول والمدفوعات والتقدم والرسائل لكل طفل في مكان واحد. اقرأ الفواتير بالعربية. تابع الحضور في الوقت الفعلي." },
     "hero_icon": "HeartIcon",
     "what_is": [
-      {
-        "en": "You have two kids, three sports, and two branches. Your calendar is fragmented across WhatsApp groups, school apps, and paper schedules. Academorix collapses everything into one guardian login. Both kids on one dashboard. Every session on one calendar. Every invoice on one page. Every progress update from every coach in one thread.",
-        "ar": "لديك طفلان في ثلاث رياضات في فرعَين. تقويمك مشتّت بين مجموعات WhatsApp وتطبيقات المدرسة والجداول الورقية. تجمع Academorix كل ذلك في تسجيل دخول واحد لولي الأمر. طفلان على لوحة واحدة. كل جلسة على تقويم واحد. كل فاتورة على صفحة واحدة. كل تحديث تقدّم من كل مدرّب في محادثة واحدة."
-      },
-      {
-        "en": "Payments are transparent. Family invoicing with sibling discounts, per-athlete line items, and a single reminder cadence. Pay one invoice for both kids. See your progress rolled up across sports. Read everything in the language you prefer, with dates and currencies formatted correctly for your region.",
-        "ar": "المدفوعات شفّافة. فوترة عائلية بخصومات الإخوة وبنود لكل رياضي وجدول تذكير موحّد. ادفع فاتورة واحدة لكلا الطفلَين. اطّلع على التقدم مجمّعاً عبر الرياضات. اقرأ كل شيء باللغة التي تفضّل، بتنسيق تواريخ وعملات صحيح لمنطقتك."
-      }
+      { "en": "You have two kids, three sports, and two branches. Your calendar is fragmented across WhatsApp groups, school apps, and paper schedules. Academorix collapses everything into one guardian login. Both kids on one dashboard. Every session on one calendar. Every invoice on one page. Every progress update from every coach in one thread.", "ar": "لديك طفلان في ثلاث رياضات في فرعَين. تقويمك مشتّت بين مجموعات WhatsApp وتطبيقات المدرسة والجداول الورقية. تجمع Academorix كل ذلك في تسجيل دخول واحد لولي الأمر. طفلان على لوحة واحدة. كل جلسة على تقويم واحد. كل فاتورة على صفحة واحدة. كل تحديث تقدّم من كل مدرّب في محادثة واحدة." },
+      { "en": "Payments are transparent. Family invoicing with sibling discounts, per-athlete line items, and a single reminder cadence. Pay one invoice for both kids. See your progress rolled up across sports. Read everything in the language you prefer, with dates and currencies formatted correctly for your region.", "ar": "المدفوعات شفّافة. فوترة عائلية بخصومات الإخوة وبنود لكل رياضي وجدول تذكير موحّد. ادفع فاتورة واحدة لكلا الطفلَين. اطّلع على التقدم مجمّعاً عبر الرياضات. اقرأ كل شيء باللغة التي تفضّل، بتنسيق تواريخ وعملات صحيح لمنطقتك." }
     ],
     "features": [
       {
         "icon": "UserGroupIcon",
         "title": { "en": "Every child on one dashboard", "ar": "كل طفل على لوحة واحدة" },
-        "description": {
-          "en": "One login covers every athlete in your family. Switch between them in a click.",
-          "ar": "تسجيل دخول واحد يشمل كل رياضي في عائلتك. تنقّل بينهم بضغطة."
-        }
+        "description": { "en": "One login covers every athlete in your family. Switch between them in a click.", "ar": "تسجيل دخول واحد يشمل كل رياضي في عائلتك. تنقّل بينهم بضغطة." }
       },
       {
         "icon": "CalendarDaysIcon",
         "title": { "en": "Unified calendar", "ar": "تقويم موحّد" },
-        "description": {
-          "en": "Every session, match, and event on one calendar. Subscribes to Google, Apple, or Outlook.",
-          "ar": "كل جلسة ومباراة وحدث على تقويم واحد. يشترك في Google أو Apple أو Outlook."
-        }
+        "description": { "en": "Every session, match, and event on one calendar. Subscribes to Google, Apple, or Outlook.", "ar": "كل جلسة ومباراة وحدث على تقويم واحد. يشترك في Google أو Apple أو Outlook." }
       },
       {
         "icon": "CreditCardIcon",
         "title": { "en": "Family invoicing", "ar": "فوترة عائلية" },
-        "description": {
-          "en": "One invoice per period. Sibling discounts and per-athlete line items included.",
-          "ar": "فاتورة واحدة لكل فترة. خصومات الإخوة وبنود كل رياضي مشمولة."
-        }
+        "description": { "en": "One invoice per period. Sibling discounts and per-athlete line items included.", "ar": "فاتورة واحدة لكل فترة. خصومات الإخوة وبنود كل رياضي مشمولة." }
       },
       {
         "icon": "ChatBubbleLeftRightIcon",
         "title": { "en": "Coach threads", "ar": "محادثات المدرّبين" },
-        "description": {
-          "en": "Every message from every coach in one inbox. Reply and get an answer, not a phone tag.",
-          "ar": "كل رسالة من كل مدرّب في صندوق وارد واحد. أجب واحصل على رد، لا مطاردة هاتفية."
-        }
+        "description": { "en": "Every message from every coach in one inbox. Reply and get an answer, not a phone tag.", "ar": "كل رسالة من كل مدرّب في صندوق وارد واحد. أجب واحصل على رد، لا مطاردة هاتفية." }
       },
       {
         "icon": "LanguageIcon",
         "title": { "en": "Read in Arabic or English", "ar": "اقرأ بالعربية أو الإنجليزية" },
-        "description": {
-          "en": "Every screen, every email, every invoice ships in both languages. Pick per-user.",
-          "ar": "كل شاشة وبريد وفاتورة تُشحن بلغتَين. اختر لكل مستخدم."
-        }
+        "description": { "en": "Every screen, every email, every invoice ships in both languages. Pick per-user.", "ar": "كل شاشة وبريد وفاتورة تُشحن بلغتَين. اختر لكل مستخدم." }
       }
     ],
     "related": [
@@ -236,83 +225,85 @@
       {
         "href": "/solutions/bilingual-rtl",
         "title": { "en": "Bilingual and RTL", "ar": "ثنائية اللغة و RTL" },
-        "description": {
-          "en": "Arabic-first, English-first.",
-          "ar": "العربية أولاً، الإنجليزية أولاً."
-        }
+        "description": { "en": "Arabic-first, English-first.", "ar": "العربية أولاً، الإنجليزية أولاً." }
       },
       {
         "href": "/products/scheduling",
         "title": { "en": "Scheduling", "ar": "الجدولة" },
-        "description": {
-          "en": "RSVP, reminders, calendar subscriptions.",
-          "ar": "التأكيدات والتذكيرات وحجوزات التقويم."
-        }
+        "description": { "en": "RSVP, reminders, calendar subscriptions.", "ar": "التأكيدات والتذكيرات وحجوزات التقويم." }
       }
-    ]
+    ],
+    "outcomes": [
+      { "en": "Every child's schedule, payment, and progress in one login, in Arabic or English", "ar": "جدول كل طفل ومدفوعاته وتقدمه في تسجيل دخول واحد، بالعربية أو الإنجليزية" },
+      { "en": "Family invoicing with sibling discounts collapses three invoices into one payment per period", "ar": "الفوترة العائلية مع خصومات الإخوة تختصر ثلاث فواتير إلى دفعة واحدة لكل فترة" },
+      { "en": "Real-time notifications on schedule changes replace the WhatsApp group chase", "ar": "الإشعارات الآنية على تغييرات الجدول تحل محل مطاردة مجموعة WhatsApp" },
+      { "en": "Coach threads keep every message from every coach in a single family inbox", "ar": "محادثات المدرّبين تُبقي كل رسالة من كل مدرّب في صندوق وارد عائلي واحد" },
+      { "en": "Bilingual PDFs mean invoices, reports, and certificates render in your preferred language", "ar": "ملفات PDF ثنائية اللغة تعني أن الفواتير والتقارير والشهادات تُعرَض بلغتك المفضلة" }
+    ],
+    "workflow_steps": [
+      {
+        "number": "01",
+        "title": { "en": "Morning glance", "ar": "نظرة صباحية" },
+        "description": { "en": "Open Academorix and see every child's schedule for the day on one calendar.", "ar": "افتح Academorix وشاهد جدول كل طفل لليوم على تقويم واحد." }
+      },
+      {
+        "number": "02",
+        "title": { "en": "Confirm attendance", "ar": "تأكيد الحضور" },
+        "description": { "en": "One-tap RSVP for each session. The coach sees your confirmation live before leaving for the field.", "ar": "تأكيد حضور بلمسة واحدة لكل جلسة. يرى المدرّب تأكيدك مباشرة قبل مغادرته إلى الميدان." }
+      },
+      {
+        "number": "03",
+        "title": { "en": "Track progress", "ar": "متابعة التقدم" },
+        "description": { "en": "Read the coach's notes and progress card as soon as the session ends, in whichever language you prefer.", "ar": "اقرأ ملاحظات المدرّب وبطاقة التقدم فور انتهاء الجلسة، بأي لغة تفضّل." }
+      },
+      {
+        "number": "04",
+        "title": { "en": "Pay in one action", "ar": "الدفع بإجراء واحد" },
+        "description": { "en": "One monthly invoice for the whole family with sibling discounts applied. Pay through Stripe or HyperPay in a tap.", "ar": "فاتورة شهرية واحدة للعائلة كلها مع تطبيق خصومات الإخوة. ادفع عبر Stripe أو HyperPay بلمسة." }
+      }
+    ],
+    "testimonial": {
+      "quote": { "en": "Three kids, three sports, one Academorix. My inbox is calmer and my payments are easier.", "ar": "ثلاثة أطفال، وثلاث رياضات، وAcademorix واحد. صندوق وارد أكثر هدوءاً ومدفوعات أسهل." },
+      "author": { "en": "Mona Al-Ansari", "ar": "منى الأنصاري" },
+      "role": { "en": "Parent, Elite Martial Arts Center", "ar": "ولية أمر، Elite Martial Arts Center" },
+      "initials": "MA"
+    }
   },
   "front-desk": {
     "slug": "front-desk",
     "eyebrow": { "en": "For front-desk staff", "ar": "لموظفي الاستقبال" },
-    "title": {
-      "en": "The desk that keeps the academy running",
-      "ar": "المكتب الذي يبقي الأكاديمية تعمل"
-    },
-    "description": {
-      "en": "A unified approvals queue for registrations, documents, refunds, and adjustments. One-click approvals with a full audit trail on every decision.",
-      "ar": "طابور موافقات موحّد للتسجيلات والمستندات وطلبات الاسترداد والتعديلات. موافقات بضغطة واحدة مع سجل تدقيق كامل لكل قرار."
-    },
+    "title": { "en": "The desk that keeps the academy running", "ar": "المكتب الذي يبقي الأكاديمية تعمل" },
+    "description": { "en": "A unified approvals queue for registrations, documents, refunds, and adjustments. One-click approvals with a full audit trail on every decision.", "ar": "طابور موافقات موحّد للتسجيلات والمستندات وطلبات الاسترداد والتعديلات. موافقات بضغطة واحدة مع سجل تدقيق كامل لكل قرار." },
     "hero_icon": "InboxStackIcon",
     "what_is": [
-      {
-        "en": "Every academy has a queue: new registrations to approve, medical forms to verify, refunds to process, and adjustments to make. Before Academorix, that queue lived in three inboxes and a stack of paper. Now it lives in one screen. Every task is claim-to-work, so two staff cannot pick up the same thing. Every action has an audit trail. SLA timers float the urgent tasks to the top so nothing slips.",
-        "ar": "لكل أكاديمية طابور: تسجيلات جديدة للاعتماد، ونماذج طبية للتحقق، وطلبات استرداد للمعالجة، وتعديلات للإجراء. قبل Academorix، كان الطابور يعيش في ثلاثة صناديق بريد وكومة ورق. الآن يعيش على شاشة واحدة. كل مهمة تُطالَب-للعمل، فلا يستلم موظّفان الشيء نفسه. كل إجراء له سجل تدقيق. مؤقّتات SLA تطفو المهام العاجلة إلى الأعلى فلا يفلت شيء."
-      },
-      {
-        "en": "Refunds no longer bounce between reception and finance for a week. They route in the queue, everyone sees the state, and they close within a day. Guardians get status updates in Arabic or English. The desk finally has the breathing room to focus on families in the lobby, not on chasing paper.",
-        "ar": "لم تعد طلبات الاسترداد تتنقّل بين الاستقبال والمالية لأسبوع. تُوجَّه في الطابور، ويرى الجميع الحالة، وتُغلق خلال يوم. يتلقّى أولياء الأمور تحديثات حالة بالعربية أو الإنجليزية. أخيراً يتاح للمكتب المجال للتركيز على العائلات في الردهة، لا مطاردة الأوراق."
-      }
+      { "en": "Every academy has a queue: new registrations to approve, medical forms to verify, refunds to process, and adjustments to make. Before Academorix, that queue lived in three inboxes and a stack of paper. Now it lives in one screen. Every task is claim-to-work, so two staff cannot pick up the same thing. Every action has an audit trail. SLA timers float the urgent tasks to the top so nothing slips.", "ar": "لكل أكاديمية طابور: تسجيلات جديدة للاعتماد، ونماذج طبية للتحقق، وطلبات استرداد للمعالجة، وتعديلات للإجراء. قبل Academorix، كان الطابور يعيش في ثلاثة صناديق بريد وكومة ورق. الآن يعيش على شاشة واحدة. كل مهمة تُطالَب-للعمل، فلا يستلم موظّفان الشيء نفسه. كل إجراء له سجل تدقيق. مؤقّتات SLA تطفو المهام العاجلة إلى الأعلى فلا يفلت شيء." },
+      { "en": "Refunds no longer bounce between reception and finance for a week. They route in the queue, everyone sees the state, and they close within a day. Guardians get status updates in Arabic or English. The desk finally has the breathing room to focus on families in the lobby, not on chasing paper.", "ar": "لم تعد طلبات الاسترداد تتنقّل بين الاستقبال والمالية لأسبوع. تُوجَّه في الطابور، ويرى الجميع الحالة، وتُغلق خلال يوم. يتلقّى أولياء الأمور تحديثات حالة بالعربية أو الإنجليزية. أخيراً يتاح للمكتب المجال للتركيز على العائلات في الردهة، لا مطاردة الأوراق." }
     ],
     "features": [
       {
         "icon": "InboxStackIcon",
         "title": { "en": "Unified approvals queue", "ar": "طابور موافقات موحّد" },
-        "description": {
-          "en": "Every pending action in one prioritized list.",
-          "ar": "كل إجراء معلّق في قائمة واحدة مرتّبة حسب الأولوية."
-        }
+        "description": { "en": "Every pending action in one prioritized list.", "ar": "كل إجراء معلّق في قائمة واحدة مرتّبة حسب الأولوية." }
       },
       {
         "icon": "CheckCircleIcon",
         "title": { "en": "One-click approvals", "ar": "موافقات بضغطة واحدة" },
-        "description": {
-          "en": "Approve or reject with a reason. Downstream systems update automatically.",
-          "ar": "اعتمد أو ارفض مع سبب. تتحدّث الأنظمة اللاحقة تلقائياً."
-        }
+        "description": { "en": "Approve or reject with a reason. Downstream systems update automatically.", "ar": "اعتمد أو ارفض مع سبب. تتحدّث الأنظمة اللاحقة تلقائياً." }
       },
       {
         "icon": "LockClosedIcon",
         "title": { "en": "Claim to work", "ar": "طالِب لتعمل" },
-        "description": {
-          "en": "Two staff cannot pick up the same task. Claims expire so nothing gets stuck.",
-          "ar": "لا يستلم موظّفان المهمة نفسها. تنتهي المطالبات فلا يعلق شيء."
-        }
+        "description": { "en": "Two staff cannot pick up the same task. Claims expire so nothing gets stuck.", "ar": "لا يستلم موظّفان المهمة نفسها. تنتهي المطالبات فلا يعلق شيء." }
       },
       {
         "icon": "ClockIcon",
         "title": { "en": "SLA timers", "ar": "مؤقّتات SLA" },
-        "description": {
-          "en": "Approaching deadlines float to the top of the queue.",
-          "ar": "المواعيد المقتربة تطفو إلى قمة الطابور."
-        }
+        "description": { "en": "Approaching deadlines float to the top of the queue.", "ar": "المواعيد المقتربة تطفو إلى قمة الطابور." }
       },
       {
         "icon": "ChatBubbleLeftRightIcon",
         "title": { "en": "Guardian communication", "ar": "تواصل مع أولياء الأمور" },
-        "description": {
-          "en": "Message the family directly from the task. Thread history stays attached.",
-          "ar": "راسل العائلة مباشرة من المهمة. يبقى سجل المحادثة مرفقاً."
-        }
+        "description": { "en": "Message the family directly from the task. Thread history stays attached.", "ar": "راسل العائلة مباشرة من المهمة. يبقى سجل المحادثة مرفقاً." }
       }
     ],
     "related": [
@@ -324,77 +315,85 @@
       {
         "href": "/products/payments",
         "title": { "en": "Payments", "ar": "المدفوعات" },
-        "description": {
-          "en": "Refunds route through the queue.",
-          "ar": "طلبات الاسترداد تمرّ عبر الطابور."
-        }
+        "description": { "en": "Refunds route through the queue.", "ar": "طلبات الاسترداد تمرّ عبر الطابور." }
       },
       {
         "href": "/products/reports",
         "title": { "en": "Reports", "ar": "التقارير" },
         "description": { "en": "Desk performance dashboards.", "ar": "لوحات أداء المكتب." }
       }
-    ]
+    ],
+    "outcomes": [
+      { "en": "An approvals queue that keeps the desk running with SLA-sorted priorities", "ar": "طابور موافقات يُبقي المكتب يعمل بأولويات مرتبة حسب SLA" },
+      { "en": "Refunds close within a day rather than bouncing between reception and finance for a week", "ar": "طلبات الاسترداد تُغلق خلال يوم بدلاً من التنقل بين الاستقبال والمالية لأسبوع" },
+      { "en": "Walk-in registration completes in under 10 minutes on a tablet or kiosk", "ar": "التسجيل المباشر يكتمل خلال أقل من 10 دقائق على جهاز لوحي أو كشك" },
+      { "en": "Claim-to-work prevents two staff from picking up the same task", "ar": "نظام \"طالِب لتعمل\" يمنع موظفَين من استلام المهمة نفسها" },
+      { "en": "One-click approvals with a full audit trail on every decision", "ar": "موافقات بضغطة واحدة مع سجل تدقيق كامل لكل قرار" }
+    ],
+    "workflow_steps": [
+      {
+        "number": "01",
+        "title": { "en": "Open the queue", "ar": "فتح الطابور" },
+        "description": { "en": "Log in to Reception. Pending items sorted by SLA urgency with the oldest at the top.", "ar": "سجّل الدخول إلى الاستقبال. البنود المعلقة مرتبة حسب استعجال SLA مع الأقدم في الأعلى." }
+      },
+      {
+        "number": "02",
+        "title": { "en": "Claim and resolve", "ar": "المطالبة والحل" },
+        "description": { "en": "Claim a task, review the context, message the family from the same view, then approve or route to finance.", "ar": "طالِب بمهمة، وراجع السياق، وراسل العائلة من العرض نفسه، ثم اعتمد أو وجّه إلى المالية." }
+      },
+      {
+        "number": "03",
+        "title": { "en": "Handle walk-ins", "ar": "التعامل مع المراجعين" },
+        "description": { "en": "Register a new family on the front-desk tablet. Documents captured, first invoice queued automatically.", "ar": "سجّل عائلة جديدة على الجهاز اللوحي للاستقبال. تُلتقَط المستندات وتُطابَر أول فاتورة تلقائياً." }
+      },
+      {
+        "number": "04",
+        "title": { "en": "Close the day", "ar": "إغلاق اليوم" },
+        "description": { "en": "Review resolved items, note escalations for finance, and hand off SLA-flagged items to the next shift.", "ar": "راجع البنود المُحلَّة، ودوّن التصعيدات للمالية، وسلّم البنود ذات SLA للنوبة التالية." }
+      }
+    ],
+    "testimonial": {
+      "quote": { "en": "The queue tells me what to do. I used to spend the first hour of every day figuring out where to start.", "ar": "الطابور يخبرني بما يجب فعله. كنت أقضي أول ساعة من كل يوم في اكتشاف من أين أبدأ." },
+      "author": { "en": "Fatima Yassin", "ar": "فاطمة ياسين" },
+      "role": { "en": "Front Desk Lead, Riverside Sports Academy", "ar": "قائدة الاستقبال، Riverside Sports Academy" },
+      "initials": "FY"
+    }
   },
   "athletes": {
     "slug": "athletes",
     "eyebrow": { "en": "For athletes", "ar": "للرياضيين" },
     "title": { "en": "See your progress, own your journey", "ar": "شاهد تقدّمك، وامتلك رحلتك" },
-    "description": {
-      "en": "Your schedule, your progress card, your fitness tests, and your coach's notes. Everything in one place, in the language you prefer.",
-      "ar": "جدولك، وبطاقة تقدّمك، واختبارات لياقتك، وملاحظات مدرّبك. كل شيء في مكان واحد، باللغة التي تفضّل."
-    },
+    "description": { "en": "Your schedule, your progress card, your fitness tests, and your coach's notes. Everything in one place, in the language you prefer.", "ar": "جدولك، وبطاقة تقدّمك، واختبارات لياقتك، وملاحظات مدرّبك. كل شيء في مكان واحد، باللغة التي تفضّل." },
     "hero_icon": "IdentificationIcon",
     "what_is": [
-      {
-        "en": "Your profile shows every session you have attended, every fitness test you have taken, and every skill you have graded. You can see how you compare against your age-band benchmarks and how far you are from the next belt or level. Your coach's notes are attached to the sessions they refer to, so you always know what to work on before the next practice.",
-        "ar": "يعرض ملفك كل جلسة حضرتها، وكل اختبار لياقة أجريته، وكل مهارة قُيِّمت. تستطيع رؤية موقعك مقارنة بمعايير فئتك العمرية، وكم يبعدك عن الحزام أو المستوى التالي. تُرفق ملاحظات مدرّبك بالجلسات التي تشير إليها، فتعرف دائماً على ماذا تعمل قبل التدريب القادم."
-      },
-      {
-        "en": "When it is time to move up, the platform tells you exactly what prerequisites you have completed and which remain. Every belt exam, every level jump, every fitness benchmark is transparent. No more waiting for a coach to remember; the record is yours to review anytime.",
-        "ar": "عندما يحين وقت الترقية، تخبرك المنصة بالضبط بالمتطلّبات التي أكملتَها والتي لم تكتمل بعد. كل اختبار حزام، كل قفزة مستوى، كل مرجع لياقة شفّاف. لم تعد بحاجة إلى انتظار المدرّب ليتذكّر، السجل ملكك لتراجعه في أي وقت."
-      }
+      { "en": "Your profile shows every session you have attended, every fitness test you have taken, and every skill you have graded. You can see how you compare against your age-band benchmarks and how far you are from the next belt or level. Your coach's notes are attached to the sessions they refer to, so you always know what to work on before the next practice.", "ar": "يعرض ملفك كل جلسة حضرتها، وكل اختبار لياقة أجريته، وكل مهارة قُيِّمت. تستطيع رؤية موقعك مقارنة بمعايير فئتك العمرية، وكم يبعدك عن الحزام أو المستوى التالي. تُرفق ملاحظات مدرّبك بالجلسات التي تشير إليها، فتعرف دائماً على ماذا تعمل قبل التدريب القادم." },
+      { "en": "When it is time to move up, the platform tells you exactly what prerequisites you have completed and which remain. Every belt exam, every level jump, every fitness benchmark is transparent. No more waiting for a coach to remember; the record is yours to review anytime.", "ar": "عندما يحين وقت الترقية، تخبرك المنصة بالضبط بالمتطلّبات التي أكملتَها والتي لم تكتمل بعد. كل اختبار حزام، كل قفزة مستوى، كل مرجع لياقة شفّاف. لم تعد بحاجة إلى انتظار المدرّب ليتذكّر، السجل ملكك لتراجعه في أي وقت." }
     ],
     "features": [
       {
         "icon": "CalendarDaysIcon",
         "title": { "en": "Your schedule", "ar": "جدولك" },
-        "description": {
-          "en": "Every session, match, and event on one calendar. Subscribe from your phone.",
-          "ar": "كل جلسة ومباراة وحدث على تقويم واحد. اشترك من هاتفك."
-        }
+        "description": { "en": "Every session, match, and event on one calendar. Subscribe from your phone.", "ar": "كل جلسة ومباراة وحدث على تقويم واحد. اشترك من هاتفك." }
       },
       {
         "icon": "ChartBarIcon",
         "title": { "en": "Progress card", "ar": "بطاقة التقدّم" },
-        "description": {
-          "en": "Attendance, performance, and progression on your timeline.",
-          "ar": "الحضور والأداء والتدرّج على خطك الزمني."
-        }
+        "description": { "en": "Attendance, performance, and progression on your timeline.", "ar": "الحضور والأداء والتدرّج على خطك الزمني." }
       },
       {
         "icon": "AcademicCapIcon",
         "title": { "en": "Belt and level tracking", "ar": "تتبّع الأحزمة والمستويات" },
-        "description": {
-          "en": "See prerequisites for the next grading. Know exactly what to work on.",
-          "ar": "شاهد متطلّبات الترقية التالية. اعرف بالضبط على ماذا تعمل."
-        }
+        "description": { "en": "See prerequisites for the next grading. Know exactly what to work on.", "ar": "شاهد متطلّبات الترقية التالية. اعرف بالضبط على ماذا تعمل." }
       },
       {
         "icon": "TrophyIcon",
         "title": { "en": "Personal bests", "ar": "أرقام شخصية" },
-        "description": {
-          "en": "Automatic PB detection with a moment celebrated on your profile.",
-          "ar": "رصد تلقائي للأرقام الشخصية مع لحظة يُحتفى بها في ملفك."
-        }
+        "description": { "en": "Automatic PB detection with a moment celebrated on your profile.", "ar": "رصد تلقائي للأرقام الشخصية مع لحظة يُحتفى بها في ملفك." }
       },
       {
         "icon": "ChatBubbleLeftRightIcon",
         "title": { "en": "Coach notes", "ar": "ملاحظات المدرّب" },
-        "description": {
-          "en": "Notes attached to the sessions they refer to. Always know what to work on next.",
-          "ar": "ملاحظات مرفقة بالجلسات التي تشير إليها. اعرف دائماً على ماذا تعمل بعد ذلك."
-        }
+        "description": { "en": "Notes attached to the sessions they refer to. Always know what to work on next.", "ar": "ملاحظات مرفقة بالجلسات التي تشير إليها. اعرف دائماً على ماذا تعمل بعد ذلك." }
       }
     ],
     "related": [
@@ -411,163 +410,170 @@
       {
         "href": "/for/coaches",
         "title": { "en": "For coaches", "ar": "للمدرّبين" },
-        "description": {
-          "en": "See it from your coach's side.",
-          "ar": "شاهد الأمر من جانب مدرّبك."
-        }
+        "description": { "en": "See it from your coach's side.", "ar": "شاهد الأمر من جانب مدرّبك." }
       }
-    ]
+    ],
+    "outcomes": [
+      { "en": "One profile follows you across seasons, branches, and sports", "ar": "ملف واحد يتبعك عبر المواسم والفروع والرياضات" },
+      { "en": "Personal best detection is automatic, and a moment is celebrated on your profile", "ar": "رصد الرقم الشخصي تلقائي، ويُحتفى باللحظة على ملفك" },
+      { "en": "Belt and level prerequisites are transparent, so you always know what to work on next", "ar": "متطلبات الأحزمة والمستويات شفافة، فتعرف دائماً على ماذا تعمل بعد ذلك" },
+      { "en": "Coach notes are attached to the sessions they refer to, not floating in an inbox", "ar": "ملاحظات المدرّب مرفقة بالجلسات التي تشير إليها، لا مبعثرة في صندوق وارد" },
+      { "en": "Progress cards render in whichever language you prefer, English or Arabic", "ar": "بطاقات التقدم تُعرَض بأي لغة تفضّل، الإنجليزية أو العربية" }
+    ],
+    "workflow_steps": [
+      {
+        "number": "01",
+        "title": { "en": "Check the day", "ar": "فحص اليوم" },
+        "description": { "en": "Wake up and see today's training, this week's fixtures, and your coach's last note.", "ar": "استيقظ وشاهد تدريب اليوم، ومباريات الأسبوع، وآخر ملاحظة من مدرّبك." }
+      },
+      {
+        "number": "02",
+        "title": { "en": "Show up for training", "ar": "الحضور للتدريب" },
+        "description": { "en": "Tap in on arrival. The coach's roster updates live, and your session gets logged the moment it starts.", "ar": "سجّل الدخول عند الوصول. تُحدَّث قائمة المدرّب مباشرة، وتُدوَّن جلستك لحظة بدايتها." }
+      },
+      {
+        "number": "03",
+        "title": { "en": "Review results", "ar": "مراجعة النتائج" },
+        "description": { "en": "After the session, see logged performance, notes from your coach, and any personal bests confirmed.", "ar": "بعد الجلسة، شاهد الأداء المدوّن وملاحظات مدرّبك وأي أرقام شخصية مؤكدة." }
+      },
+      {
+        "number": "04",
+        "title": { "en": "Plan the next step", "ar": "التخطيط للخطوة التالية" },
+        "description": { "en": "Check prerequisites for your next belt or level, and know exactly what to work on before the next session.", "ar": "افحص متطلبات الحزام أو المستوى التالي، واعرف بالضبط على ماذا تعمل قبل الجلسة القادمة." }
+      }
+    ],
+    "testimonial": {
+      "quote": { "en": "My daughter checks her progress card the way other kids check their game scores.", "ar": "تفحص ابنتي بطاقة تقدمها بالطريقة التي يفحص بها الأطفال الآخرون نتائج ألعابهم." },
+      "author": { "en": "Amjad Rashidi", "ar": "أمجد رشيدي" },
+      "role": { "en": "Parent, Al Nasr Football Academy", "ar": "ولي أمر، Al Nasr Football Academy" },
+      "initials": "AR"
+    }
   },
   "finance": {
     "slug": "finance",
     "eyebrow": { "en": "For finance", "ar": "للمالية" },
-    "title": {
-      "en": "Close the books, keep the auditors happy",
-      "ar": "أغلق الدفاتر، وأبقِ المدقّقين راضين"
-    },
-    "description": {
-      "en": "One AR ledger for the network, per-branch attribution, audit trails on every write, and VAT-compliant invoicing across regions.",
-      "ar": "دفتر ذمم واحد للشبكة، توزيع لكل فرع، سجلات تدقيق على كل عملية كتابة، وفوترة متوافقة مع VAT عبر المناطق."
-    },
+    "title": { "en": "Close the books, keep the auditors happy", "ar": "أغلق الدفاتر، وأبقِ المدقّقين راضين" },
+    "description": { "en": "One AR ledger for the network, per-branch attribution, audit trails on every write, and VAT-compliant invoicing across regions.", "ar": "دفتر ذمم واحد للشبكة، توزيع لكل فرع، سجلات تدقيق على كل عملية كتابة، وفوترة متوافقة مع VAT عبر المناطق." },
     "hero_icon": "BanknotesIcon",
     "what_is": [
-      {
-        "en": "Month-end used to take three days. Reconciling three branches' spreadsheets against the payment gateway. Chasing coaches for missing enrollments. Writing manual journal entries for family discounts. With Academorix, the AR ledger is one source of truth. Every invoice ties to an athlete, a team, a branch, and a payment gateway. Recognition is automated. Family discounts are line items, not free-text notes.",
-        "ar": "كان إغلاق الشهر يستغرق ثلاثة أيام: مطابقة جداول ثلاثة فروع مع بوابة الدفع، ومطاردة المدرّبين للحصول على التسجيلات المفقودة، وكتابة قيود يومية يدوية لخصومات العائلات. مع Academorix، دفتر الذمم مصدر حقيقة واحد. كل فاتورة مرتبطة برياضي وفريق وفرع وبوابة دفع. الإدراج آلي. خصومات العائلات بنود، لا ملاحظات نصية."
-      },
-      {
-        "en": "Audit trails are automatic. Every write is captured with actor, timestamp, and before/after values. When auditors ask, you produce the report in front of them. Compliance queries that used to take a week take minutes. VAT is handled per branch's jurisdiction so multi-country networks do not have to build a parallel accounting stack.",
-        "ar": "سجلات التدقيق آلية. كل عملية كتابة تُلتقط بمن أجراها ووقتها والقيم قبلها وبعدها. عندما يسأل المدقّقون، تُنتج التقرير أمامهم. استفسارات الامتثال التي كانت تستغرق أسبوعاً تستغرق دقائق. تُعالَج VAT حسب ولاية كل فرع، فلا تحتاج الشبكات متعددة الدول إلى بناء نظام محاسبة موازٍ."
-      }
+      { "en": "Month-end used to take three days. Reconciling three branches' spreadsheets against the payment gateway. Chasing coaches for missing enrollments. Writing manual journal entries for family discounts. With Academorix, the AR ledger is one source of truth. Every invoice ties to an athlete, a team, a branch, and a payment gateway. Recognition is automated. Family discounts are line items, not free-text notes.", "ar": "كان إغلاق الشهر يستغرق ثلاثة أيام: مطابقة جداول ثلاثة فروع مع بوابة الدفع، ومطاردة المدرّبين للحصول على التسجيلات المفقودة، وكتابة قيود يومية يدوية لخصومات العائلات. مع Academorix، دفتر الذمم مصدر حقيقة واحد. كل فاتورة مرتبطة برياضي وفريق وفرع وبوابة دفع. الإدراج آلي. خصومات العائلات بنود، لا ملاحظات نصية." },
+      { "en": "Audit trails are automatic. Every write is captured with actor, timestamp, and before/after values. When auditors ask, you produce the report in front of them. Compliance queries that used to take a week take minutes. VAT is handled per branch's jurisdiction so multi-country networks do not have to build a parallel accounting stack.", "ar": "سجلات التدقيق آلية. كل عملية كتابة تُلتقط بمن أجراها ووقتها والقيم قبلها وبعدها. عندما يسأل المدقّقون، تُنتج التقرير أمامهم. استفسارات الامتثال التي كانت تستغرق أسبوعاً تستغرق دقائق. تُعالَج VAT حسب ولاية كل فرع، فلا تحتاج الشبكات متعددة الدول إلى بناء نظام محاسبة موازٍ." }
     ],
     "features": [
       {
         "icon": "CreditCardIcon",
         "title": { "en": "Unified AR ledger", "ar": "دفتر ذمم موحّد" },
-        "description": {
-          "en": "One ledger for the network with per-branch attribution. Every entry ties back to a source.",
-          "ar": "دفتر واحد للشبكة مع توزيع لكل فرع. كل قيد يعود إلى مصدر."
-        }
+        "description": { "en": "One ledger for the network with per-branch attribution. Every entry ties back to a source.", "ar": "دفتر واحد للشبكة مع توزيع لكل فرع. كل قيد يعود إلى مصدر." }
       },
       {
         "icon": "DocumentCheckIcon",
         "title": { "en": "Audit trails on every write", "ar": "سجلات تدقيق على كل كتابة" },
-        "description": {
-          "en": "Actor, timestamp, before/after values captured. Retention up to 7 years on Enterprise.",
-          "ar": "المنفّذ والوقت والقيم قبل وبعد مُلتقطة. الاحتفاظ حتى 7 سنوات على Enterprise."
-        }
+        "description": { "en": "Actor, timestamp, before/after values captured. Retention up to 7 years on Enterprise.", "ar": "المنفّذ والوقت والقيم قبل وبعد مُلتقطة. الاحتفاظ حتى 7 سنوات على Enterprise." }
       },
       {
         "icon": "GlobeAmericasIcon",
         "title": { "en": "Multi-region VAT", "ar": "VAT متعدد المناطق" },
-        "description": {
-          "en": "GCC VAT for MENA, EU VAT for Europe, US 501(c)(3) exemptions. Configured per branch.",
-          "ar": "VAT الخليجية لـ MENA، وVAT الأوروبية لأوروبا، وإعفاءات 501(c)(3) الأمريكية. مُعدَّة لكل فرع."
-        }
+        "description": { "en": "GCC VAT for MENA, EU VAT for Europe, US 501(c)(3) exemptions. Configured per branch.", "ar": "VAT الخليجية لـ MENA، وVAT الأوروبية لأوروبا، وإعفاءات 501(c)(3) الأمريكية. مُعدَّة لكل فرع." }
       },
       {
         "icon": "ReceiptPercentIcon",
         "title": { "en": "Automated revenue recognition", "ar": "إدراج إيرادات آلي" },
-        "description": {
-          "en": "Recognition schedules per plan and per invoice. No manual journal entries at month-end.",
-          "ar": "جداول إدراج لكل خطة وكل فاتورة. لا قيود يومية يدوية في نهاية الشهر."
-        }
+        "description": { "en": "Recognition schedules per plan and per invoice. No manual journal entries at month-end.", "ar": "جداول إدراج لكل خطة وكل فاتورة. لا قيود يومية يدوية في نهاية الشهر." }
       },
       {
         "icon": "ChartPieIcon",
         "title": { "en": "Scheduled exports", "ar": "تصديرات مجدولة" },
-        "description": {
-          "en": "Nightly CSVs to your data warehouse. Monday morning board packs land in the inbox.",
-          "ar": "ملفات CSV ليلية إلى مستودع بياناتك. حزم مجالس الاثنين تصل إلى صندوق الوارد."
-        }
+        "description": { "en": "Nightly CSVs to your data warehouse. Monday morning board packs land in the inbox.", "ar": "ملفات CSV ليلية إلى مستودع بياناتك. حزم مجالس الاثنين تصل إلى صندوق الوارد." }
       }
     ],
     "related": [
       {
         "href": "/products/payments",
         "title": { "en": "Payments", "ar": "المدفوعات" },
-        "description": {
-          "en": "How invoices, memberships, and gateways work.",
-          "ar": "كيف تعمل الفواتير والاشتراكات والبوابات."
-        }
+        "description": { "en": "How invoices, memberships, and gateways work.", "ar": "كيف تعمل الفواتير والاشتراكات والبوابات." }
       },
       {
         "href": "/enterprise/contracts",
         "title": { "en": "Contracts", "ar": "العقود" },
-        "description": {
-          "en": "NET-30, DPA, HIPAA BAA.",
-          "ar": "NET-30 و DPA و BAA الخاصة بـ HIPAA."
-        }
+        "description": { "en": "NET-30, DPA, HIPAA BAA.", "ar": "NET-30 و DPA و BAA الخاصة بـ HIPAA." }
       },
       {
         "href": "/products/reports",
         "title": { "en": "Reports", "ar": "التقارير" },
-        "description": {
-          "en": "Finance dashboards and exports.",
-          "ar": "لوحات المالية والتصديرات."
-        }
+        "description": { "en": "Finance dashboards and exports.", "ar": "لوحات المالية والتصديرات." }
       }
-    ]
+    ],
+    "outcomes": [
+      { "en": "One AR ledger for the network replaces three branch spreadsheets and a payment gateway reconcile", "ar": "دفتر ذمم واحد للشبكة يحل محل ثلاثة جداول فروع ومطابقة بوابة الدفع" },
+      { "en": "Month-end close moved from three days to one afternoon at PanAsia Sports Group", "ar": "انتقل إغلاق الشهر من ثلاثة أيام إلى بعد ظهر واحد لدى PanAsia Sports Group" },
+      { "en": "Audit trails on every write eliminate the compliance query backlog", "ar": "سجلات التدقيق على كل عملية كتابة تلغي متأخرات استفسارات الامتثال" },
+      { "en": "Automated AR follow-ups handle the routine, so finance only handles escalations", "ar": "متابعات الذمم الآلية تتولى الروتين، فتتولى المالية التصعيدات فقط" },
+      { "en": "Scheduled exports land in the inbox at 7am Monday, no manual export ceremony", "ar": "التصديرات المجدولة تصل صندوق الوارد في السابعة صباح الاثنين، دون طقس تصدير يدوي" }
+    ],
+    "workflow_steps": [
+      {
+        "number": "01",
+        "title": { "en": "Open the AR aging report", "ar": "فتح تقرير أعمار الذمم" },
+        "description": { "en": "Every family past 30 days is routed to automated follow-ups. You handle the escalations over 60 days.", "ar": "كل عائلة تجاوزت 30 يوماً تُوجَّه إلى متابعات آلية. أنت تتولى التصعيدات التي تجاوزت 60 يوماً." }
+      },
+      {
+        "number": "02",
+        "title": { "en": "Review revenue by branch", "ar": "مراجعة الإيرادات حسب الفرع" },
+        "description": { "en": "Branch dashboards show the delta versus plan. Managers see the same view before you have to ask.", "ar": "لوحات الفروع تُظهر الفرق مقابل الخطة. يرى المدراء العرض نفسه قبل أن تحتاج للسؤال." }
+      },
+      {
+        "number": "03",
+        "title": { "en": "Handle exceptions", "ar": "معالجة الاستثناءات" },
+        "description": { "en": "Refunds, adjustments, and family discounts route through the queue with audit trails on every action.", "ar": "طلبات الاسترداد والتعديلات وخصومات العائلات تمر عبر الطابور مع سجلات تدقيق على كل إجراء." }
+      },
+      {
+        "number": "04",
+        "title": { "en": "Ship the export", "ar": "إرسال التصدير" },
+        "description": { "en": "Quarterly VAT-compliant invoice set exports to the accountants in 30 seconds, ready for filing.", "ar": "مجموعة الفواتير المتوافقة مع VAT الفصلية تُصدَّر للمحاسبين خلال 30 ثانية، جاهزة للإيداع." }
+      }
+    ],
+    "testimonial": {
+      "quote": { "en": "Every AR follow-up used to be a manual chase. Now the platform runs it, and I only see the escalations.", "ar": "كانت كل متابعة ذمم مطاردة يدوية. الآن تُشغّلها المنصة، وأرى فقط التصعيدات." },
+      "author": { "en": "Reem Zaki", "ar": "ريم زكي" },
+      "role": { "en": "Finance Director, PanAsia Sports Group", "ar": "مديرة المالية، PanAsia Sports Group" },
+      "initials": "RZ"
+    }
   },
   "platform-admins": {
     "slug": "platform-admins",
     "eyebrow": { "en": "For platform admins", "ar": "لمشرفي المنصة" },
     "title": { "en": "Own the identity, own the access", "ar": "امتلك الهوية، وامتلك الوصول" },
-    "description": {
-      "en": "SSO with your existing IdP, SCIM directory sync, IP allowlisting, and immutable audit logs. Compliance-grade access control for regulated networks.",
-      "ar": "SSO مع مزوّد الهوية لديك، ومزامنة الدليل عبر SCIM، وقوائم IP مسموح بها، وسجلات تدقيق ثابتة. تحكّم وصول بمستوى الامتثال للشبكات الخاضعة للتنظيم."
-    },
+    "description": { "en": "SSO with your existing IdP, SCIM directory sync, IP allowlisting, and immutable audit logs. Compliance-grade access control for regulated networks.", "ar": "SSO مع مزوّد الهوية لديك، ومزامنة الدليل عبر SCIM، وقوائم IP مسموح بها، وسجلات تدقيق ثابتة. تحكّم وصول بمستوى الامتثال للشبكات الخاضعة للتنظيم." },
     "hero_icon": "KeyIcon",
     "what_is": [
-      {
-        "en": "You run IT for a multi-branch academy network. Provisioning used to mean forwarding a coach's welcome email, hoping they set a good password, and hoping nobody left the company with active credentials. Academorix connects to your existing identity provider (Okta, Azure AD, Google Workspace, Ping) through SAML or OIDC. Users authenticate once and land in Academorix without an extra password.",
-        "ar": "أنت تدير IT لشبكة أكاديميات متعددة الفروع. كانت إتاحة الوصول تعني إرسال بريد ترحيب للمدرّب، والأمل في أن يضع كلمة مرور جيدة، والأمل في ألا يترك أحد الشركة وشهاداته فعّالة. تتصل Academorix بمزوّد الهوية الحالي لديك (Okta أو Azure AD أو Google Workspace أو Ping) عبر SAML أو OIDC. يسجّل المستخدمون الدخول مرة واحدة ويصلون إلى Academorix دون كلمة مرور إضافية."
-      },
-      {
-        "en": "SCIM sync closes the loop on departures. When HR marks someone inactive, Academorix removes their access on the next sync cycle. Audit logs stream to your SIEM (Splunk, Datadog, custom endpoints) so security has one view across every tool. IP allowlisting keeps the console reachable only from corporate networks. Data residency options pin the whole workspace to EU, MENA, or US infrastructure for regulated tenants.",
-        "ar": "تُغلق مزامنة SCIM حلقة المغادرات. عندما تعلّم الموارد البشرية أحداً بأنه غير فعّال، تُزيل Academorix وصوله في دورة المزامنة التالية. تتدفّق سجلات التدقيق إلى SIEM لديك (Splunk وDatadog ونقاط النهاية المخصّصة) فيحصل الأمن على عرض واحد عبر كل الأدوات. تُبقي قوائم IP المسموح بها لوحة التحكم متاحة فقط من الشبكات المؤسسية. تُثبّت خيارات إقامة البيانات مساحة العمل كاملة على البنية التحتية في الاتحاد الأوروبي أو MENA أو الولايات المتحدة للمستأجرين الخاضعين للتنظيم."
-      }
+      { "en": "You run IT for a multi-branch academy network. Provisioning used to mean forwarding a coach's welcome email, hoping they set a good password, and hoping nobody left the company with active credentials. Academorix connects to your existing identity provider (Okta, Azure AD, Google Workspace, Ping) through SAML or OIDC. Users authenticate once and land in Academorix without an extra password.", "ar": "أنت تدير IT لشبكة أكاديميات متعددة الفروع. كانت إتاحة الوصول تعني إرسال بريد ترحيب للمدرّب، والأمل في أن يضع كلمة مرور جيدة، والأمل في ألا يترك أحد الشركة وشهاداته فعّالة. تتصل Academorix بمزوّد الهوية الحالي لديك (Okta أو Azure AD أو Google Workspace أو Ping) عبر SAML أو OIDC. يسجّل المستخدمون الدخول مرة واحدة ويصلون إلى Academorix دون كلمة مرور إضافية." },
+      { "en": "SCIM sync closes the loop on departures. When HR marks someone inactive, Academorix removes their access on the next sync cycle. Audit logs stream to your SIEM (Splunk, Datadog, custom endpoints) so security has one view across every tool. IP allowlisting keeps the console reachable only from corporate networks. Data residency options pin the whole workspace to EU, MENA, or US infrastructure for regulated tenants.", "ar": "تُغلق مزامنة SCIM حلقة المغادرات. عندما تعلّم الموارد البشرية أحداً بأنه غير فعّال، تُزيل Academorix وصوله في دورة المزامنة التالية. تتدفّق سجلات التدقيق إلى SIEM لديك (Splunk وDatadog ونقاط النهاية المخصّصة) فيحصل الأمن على عرض واحد عبر كل الأدوات. تُبقي قوائم IP المسموح بها لوحة التحكم متاحة فقط من الشبكات المؤسسية. تُثبّت خيارات إقامة البيانات مساحة العمل كاملة على البنية التحتية في الاتحاد الأوروبي أو MENA أو الولايات المتحدة للمستأجرين الخاضعين للتنظيم." }
     ],
     "features": [
       {
         "icon": "FingerPrintIcon",
         "title": { "en": "SSO with SAML and OIDC", "ar": "SSO عبر SAML و OIDC" },
-        "description": {
-          "en": "Bring your existing IdP. Users authenticate once and land in Academorix.",
-          "ar": "أحضر مزوّد الهوية الحالي. يسجّل المستخدمون الدخول مرة واحدة ويصلون إلى Academorix."
-        }
+        "description": { "en": "Bring your existing IdP. Users authenticate once and land in Academorix.", "ar": "أحضر مزوّد الهوية الحالي. يسجّل المستخدمون الدخول مرة واحدة ويصلون إلى Academorix." }
       },
       {
         "icon": "UserGroupIcon",
         "title": { "en": "SCIM directory sync", "ar": "مزامنة الدليل SCIM" },
-        "description": {
-          "en": "Provision and de-provision automatically. Departures lose access on the next sync.",
-          "ar": "تفعيل وإلغاء آلي. المغادرون يفقدون الوصول في المزامنة التالية."
-        }
+        "description": { "en": "Provision and de-provision automatically. Departures lose access on the next sync.", "ar": "تفعيل وإلغاء آلي. المغادرون يفقدون الوصول في المزامنة التالية." }
       },
       {
         "icon": "LockClosedIcon",
         "title": { "en": "IP allowlisting", "ar": "قوائم IP مسموح بها" },
-        "description": {
-          "en": "Restrict console access to your corporate ranges. Per-role scoping supported.",
-          "ar": "قصر الوصول إلى لوحة التحكم على نطاقاتك المؤسسية. حصر لكل دور مدعوم."
-        }
+        "description": { "en": "Restrict console access to your corporate ranges. Per-role scoping supported.", "ar": "قصر الوصول إلى لوحة التحكم على نطاقاتك المؤسسية. حصر لكل دور مدعوم." }
       },
       {
         "icon": "DocumentCheckIcon",
         "title": { "en": "Streamable audit logs", "ar": "سجلات تدقيق قابلة للبث" },
-        "description": {
-          "en": "Ship every log to your SIEM (Splunk, Datadog, custom endpoints).",
-          "ar": "أرسل كل سجل إلى SIEM لديك (Splunk وDatadog ونقاط النهاية المخصصة)."
-        }
+        "description": { "en": "Ship every log to your SIEM (Splunk, Datadog, custom endpoints).", "ar": "أرسل كل سجل إلى SIEM لديك (Splunk وDatadog ونقاط النهاية المخصصة)." }
       },
       {
         "icon": "MapIcon",
         "title": { "en": "Data residency", "ar": "إقامة البيانات" },
-        "description": {
-          "en": "Pin the workspace to EU, MENA, or US infrastructure. Processing stays in-region.",
-          "ar": "ثبّت مساحة العمل على البنية التحتية في الاتحاد الأوروبي أو MENA أو الولايات المتحدة. تبقى المعالجة داخل المنطقة."
-        }
+        "description": { "en": "Pin the workspace to EU, MENA, or US infrastructure. Processing stays in-region.", "ar": "ثبّت مساحة العمل على البنية التحتية في الاتحاد الأوروبي أو MENA أو الولايات المتحدة. تبقى المعالجة داخل المنطقة." }
       }
     ],
     "related": [
@@ -579,16 +585,48 @@
       {
         "href": "/enterprise/compliance",
         "title": { "en": "Compliance", "ar": "الامتثال" },
-        "description": {
-          "en": "SOC 2, ISO 27001, GDPR, HIPAA.",
-          "ar": "SOC 2 و ISO 27001 و GDPR و HIPAA."
-        }
+        "description": { "en": "SOC 2, ISO 27001, GDPR, HIPAA.", "ar": "SOC 2 و ISO 27001 و GDPR و HIPAA." }
       },
       {
         "href": "/legal/security",
         "title": { "en": "Security practices", "ar": "ممارسات الأمن" },
         "description": { "en": "Read the full stack.", "ar": "اقرأ الرزمة الكاملة." }
       }
-    ]
+    ],
+    "outcomes": [
+      { "en": "SSO with SAML or OIDC replaces password-based provisioning for every workspace user", "ar": "SSO عبر SAML أو OIDC يحل محل الإعداد المعتمد على كلمة المرور لكل مستخدم على مساحة العمل" },
+      { "en": "SCIM sync closes the loop on departures, so nobody keeps access after leaving the company", "ar": "مزامنة SCIM تُغلق حلقة المغادرات، فلا يحتفظ أحد بالوصول بعد مغادرة الشركة" },
+      { "en": "Audit-log streaming to your SIEM puts Academorix activity in the same pane as every other tool", "ar": "بث سجلات التدقيق إلى SIEM لديك يضع نشاط Academorix في اللوحة نفسها لكل الأدوات الأخرى" },
+      { "en": "IP allowlisting keeps the console reachable only from your corporate networks", "ar": "قوائم IP المسموح بها تُبقي لوحة التحكم متاحة فقط من شبكاتك المؤسسية" },
+      { "en": "Data residency options pin the whole workspace to EU, MENA, or US infrastructure for regulated tenants", "ar": "خيارات إقامة البيانات تُثبّت مساحة العمل كاملة على البنية التحتية في أوروبا أو MENA أو الولايات المتحدة للمستأجرين الخاضعين للتنظيم" }
+    ],
+    "workflow_steps": [
+      {
+        "number": "01",
+        "title": { "en": "Wire the IdP", "ar": "ربط مزود الهوية" },
+        "description": { "en": "Configure Okta, Azure AD, Google Workspace, or Ping over SAML or OIDC. Metadata exchange documented.", "ar": "هيّئ Okta أو Azure AD أو Google Workspace أو Ping عبر SAML أو OIDC. تبادل البيانات الوصفية موثق." }
+      },
+      {
+        "number": "02",
+        "title": { "en": "Enable SCIM sync", "ar": "تفعيل مزامنة SCIM" },
+        "description": { "en": "Provisioning and de-provisioning run automatically from your directory. Departures lose access on the next cycle.", "ar": "الإعداد والإلغاء يعملان تلقائياً من دليلك. المغادرون يفقدون الوصول في الدورة التالية." }
+      },
+      {
+        "number": "03",
+        "title": { "en": "Stream audit logs", "ar": "بث سجلات التدقيق" },
+        "description": { "en": "Point audit logs at Splunk, Datadog, or a custom syslog endpoint. Retention up to 7 years on Enterprise.", "ar": "وجّه سجلات التدقيق إلى Splunk أو Datadog أو نقطة syslog مخصصة. الاحتفاظ حتى 7 سنوات على Enterprise." }
+      },
+      {
+        "number": "04",
+        "title": { "en": "Set residency and allowlists", "ar": "ضبط الإقامة وقوائم السماح" },
+        "description": { "en": "Pin data residency to EU, MENA, or US. Restrict console access to corporate IP ranges per role.", "ar": "ثبّت إقامة البيانات على أوروبا أو MENA أو الولايات المتحدة. قيّد وصول لوحة التحكم على نطاقات IP المؤسسية لكل دور." }
+      }
+    ],
+    "testimonial": {
+      "quote": { "en": "Provisioning used to mean forwarding a welcome email and hoping. Now it is one SCIM cycle and done.", "ar": "كان الإعداد يعني إعادة توجيه بريد ترحيبي والأمل. الآن هو دورة SCIM واحدة وانتهى." },
+      "author": { "en": "Michael Chen", "ar": "مايكل تشين" },
+      "role": { "en": "CISO, PanAsia Sports Group", "ar": "رئيس أمن المعلومات، PanAsia Sports Group" },
+      "initials": "MC"
+    }
   }
 }

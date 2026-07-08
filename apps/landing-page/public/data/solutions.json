@@ -2,499 +2,496 @@
   "multi-branch": {
     "slug": "multi-branch",
     "eyebrow": { "en": "Solution", "ar": "حل" },
-    "title": {
-      "en": "Multi-branch, one platform",
-      "ar": "فروع متعددة، منصة واحدة"
-    },
-    "description": {
-      "en": "One workspace for every branch. Consolidated finance, network-wide reporting, and branch-scoped access, all from a single tenant.",
-      "ar": "مساحة عمل واحدة لكل فرع. مالية موحّدة، وتقارير على مستوى الشبكة، ووصول مقيَّد بالفرع، كل ذلك من مستأجر واحد."
-    },
+    "title": { "en": "Multi-branch, one platform", "ar": "فروع متعددة، منصة واحدة" },
+    "description": { "en": "One workspace for every branch. Consolidated finance, network-wide reporting, and branch-scoped access, all from a single tenant.", "ar": "مساحة عمل واحدة لكل فرع. مالية موحّدة، وتقارير على مستوى الشبكة، ووصول مقيَّد بالفرع، كل ذلك من مستأجر واحد." },
     "hero_icon": "BuildingOffice2Icon",
     "what_is": [
-      {
-        "en": "Multi-branch academy networks live and die on operational consistency. If every branch runs a different tool, the CEO cannot see the network. If the CEO uses one tool and the branches use another, the data never matches. Academorix solves this by making the branch a first-class entity in a single tenant workspace. Every branch has its own calendar, its own finance ledger, its own coach roster, and its own front-desk queue. Every roll-up, whether revenue, attendance, retention, or safeguarding, is a live query against the same underlying data.",
-        "ar": "شبكات الأكاديميات متعددة الفروع تحيا وتموت على الاتساق التشغيلي. إذا شغّل كل فرع أداة مختلفة، فلن يستطيع الرئيس التنفيذي رؤية الشبكة. وإذا استخدم الرئيس التنفيذي أداةً واستخدمت الفروع أخرى، فلن تتطابق البيانات أبداً. تحل Academorix ذلك بجعل الفرع كياناً محورياً في مساحة عمل مستأجر واحدة. لكل فرع تقويمه ودفتره المالي وقائمة مدرّبيه وطابور استقباله. كل تجميع (الإيرادات والحضور والاحتفاظ والحماية) هو استعلام مباشر على البيانات نفسها."
-      },
-      {
-        "en": "The result: branch managers do their job in their branch's view. Regional directors see their region. The CEO sees everything. No exports, no reconciliation, no conversations about numbers from finance not matching numbers from ops. One system, one number, one truth.",
-        "ar": "النتيجة: يعمل مدراء الفروع في نطاق فرعهم. ويرى المدراء الإقليميون منطقتهم. ويرى الرئيس التنفيذي كل شيء. لا صادرات، لا تسويات، ولا نقاشات حول عدم تطابق أرقام المالية مع أرقام العمليات. نظام واحد، رقم واحد، حقيقة واحدة."
-      }
+      { "en": "Multi-branch academy networks live and die on operational consistency. If every branch runs a different tool, the CEO cannot see the network. If the CEO uses one tool and the branches use another, the data never matches. Academorix solves this by making the branch a first-class entity in a single tenant workspace. Every branch has its own calendar, its own finance ledger, its own coach roster, and its own front-desk queue. Every roll-up, whether revenue, attendance, retention, or safeguarding, is a live query against the same underlying data.", "ar": "شبكات الأكاديميات متعددة الفروع تحيا وتموت على الاتساق التشغيلي. إذا شغّل كل فرع أداة مختلفة، فلن يستطيع الرئيس التنفيذي رؤية الشبكة. وإذا استخدم الرئيس التنفيذي أداةً واستخدمت الفروع أخرى، فلن تتطابق البيانات أبداً. تحل Academorix ذلك بجعل الفرع كياناً محورياً في مساحة عمل مستأجر واحدة. لكل فرع تقويمه ودفتره المالي وقائمة مدرّبيه وطابور استقباله. كل تجميع (الإيرادات والحضور والاحتفاظ والحماية) هو استعلام مباشر على البيانات نفسها." },
+      { "en": "The result: branch managers do their job in their branch's view. Regional directors see their region. The CEO sees everything. No exports, no reconciliation, no conversations about numbers from finance not matching numbers from ops. One system, one number, one truth.", "ar": "النتيجة: يعمل مدراء الفروع في نطاق فرعهم. ويرى المدراء الإقليميون منطقتهم. ويرى الرئيس التنفيذي كل شيء. لا صادرات، لا تسويات، ولا نقاشات حول عدم تطابق أرقام المالية مع أرقام العمليات. نظام واحد، رقم واحد، حقيقة واحدة." }
     ],
     "features": [
       {
         "icon": "BuildingOffice2Icon",
         "title": { "en": "Branch as a first-class entity", "ar": "الفرع كيان محوري" },
-        "description": {
-          "en": "Every branch has its own scoped calendars, rosters, and finance ledgers from day one.",
-          "ar": "لكل فرع تقاويمه وقوائمه ودفاتره المالية المستقلة من اليوم الأول."
-        }
+        "description": { "en": "Every branch has its own scoped calendars, rosters, and finance ledgers from day one.", "ar": "لكل فرع تقاويمه وقوائمه ودفاتره المالية المستقلة من اليوم الأول." }
       },
       {
         "icon": "UserGroupIcon",
         "title": { "en": "Athletes across branches", "ar": "رياضيون عبر الفروع" },
-        "description": {
-          "en": "Athletes belong to the network and can enroll at multiple branches without duplicating records.",
-          "ar": "الرياضيون ينتمون إلى الشبكة ويستطيعون التسجيل في فروع متعددة دون تكرار السجلات."
-        }
+        "description": { "en": "Athletes belong to the network and can enroll at multiple branches without duplicating records.", "ar": "الرياضيون ينتمون إلى الشبكة ويستطيعون التسجيل في فروع متعددة دون تكرار السجلات." }
       },
       {
         "icon": "CreditCardIcon",
         "title": { "en": "Consolidated AR ledger", "ar": "دفتر ذمم موحّد" },
-        "description": {
-          "en": "One AR ledger for the network with per-branch attribution. Franchise and corporate models both supported.",
-          "ar": "دفتر ذمم واحد للشبكة مع توزيع لكل فرع. يدعم نموذجَي الامتياز التجاري والشركات المدمجة."
-        }
+        "description": { "en": "One AR ledger for the network with per-branch attribution. Franchise and corporate models both supported.", "ar": "دفتر ذمم واحد للشبكة مع توزيع لكل فرع. يدعم نموذجَي الامتياز التجاري والشركات المدمجة." }
       },
       {
         "icon": "ChartBarIcon",
         "title": { "en": "Executive dashboards", "ar": "لوحات التنفيذيين" },
-        "description": {
-          "en": "Roll up every branch into one view, then drill down to any branch, team, or athlete in seconds.",
-          "ar": "تجمع كل فرع في عرض واحد، ثم يتعمّق المستخدم إلى أي فرع أو فريق أو رياضي في ثوانٍ."
-        }
+        "description": { "en": "Roll up every branch into one view, then drill down to any branch, team, or athlete in seconds.", "ar": "تجمع كل فرع في عرض واحد، ثم يتعمّق المستخدم إلى أي فرع أو فريق أو رياضي في ثوانٍ." }
       },
       {
         "icon": "ShieldCheckIcon",
         "title": { "en": "Role and branch scoping", "ar": "حصر بالدور والفرع" },
-        "description": {
-          "en": "Trust is enforced at the database layer. A branch manager sees only their branch. Regional directors see their region.",
-          "ar": "تُطبَّق الثقة على مستوى قاعدة البيانات. مدير الفرع يرى فرعه فقط. والمدير الإقليمي يرى منطقته."
-        }
+        "description": { "en": "Trust is enforced at the database layer. A branch manager sees only their branch. Regional directors see their region.", "ar": "تُطبَّق الثقة على مستوى قاعدة البيانات. مدير الفرع يرى فرعه فقط. والمدير الإقليمي يرى منطقته." }
       },
       {
         "icon": "GlobeAmericasIcon",
         "title": { "en": "Multi-region operations", "ar": "عمليات متعددة المناطق" },
-        "description": {
-          "en": "EU, MENA, US, and UK regions supported from one workspace. Each branch operates in its local language and currency.",
-          "ar": "دعم مناطق الاتحاد الأوروبي و MENA والولايات المتحدة والمملكة المتحدة من مساحة عمل واحدة. كل فرع يعمل بلغته وعملته المحلية."
-        }
+        "description": { "en": "EU, MENA, US, and UK regions supported from one workspace. Each branch operates in its local language and currency.", "ar": "دعم مناطق الاتحاد الأوروبي و MENA والولايات المتحدة والمملكة المتحدة من مساحة عمل واحدة. كل فرع يعمل بلغته وعملته المحلية." }
       }
     ],
     "related": [
       {
         "href": "/enterprise/multi-branch",
         "title": { "en": "Enterprise multi-branch", "ar": "المؤسسات متعددة الفروع" },
-        "description": {
-          "en": "Network-scale operations for large networks.",
-          "ar": "عمليات على نطاق الشبكة للشبكات الكبيرة."
-        }
+        "description": { "en": "Network-scale operations for large networks.", "ar": "عمليات على نطاق الشبكة للشبكات الكبيرة." }
       },
       {
         "href": "/products/reports",
         "title": { "en": "Reports", "ar": "التقارير" },
-        "description": {
-          "en": "Prebuilt dashboards and custom reports.",
-          "ar": "لوحات معلومات جاهزة وتقارير مخصصة."
-        }
+        "description": { "en": "Prebuilt dashboards and custom reports.", "ar": "لوحات معلومات جاهزة وتقارير مخصصة." }
       },
       {
         "href": "/customers",
         "title": { "en": "Customer stories", "ar": "قصص العملاء" },
-        "description": {
-          "en": "Real multi-branch networks running on Academorix.",
-          "ar": "شبكات فعلية متعددة الفروع تعمل على Academorix."
-        }
+        "description": { "en": "Real multi-branch networks running on Academorix.", "ar": "شبكات فعلية متعددة الفروع تعمل على Academorix." }
       }
-    ]
+    ],
+    "outcomes": [
+      { "en": "Continental Sports Federation runs 22 branches across 3 countries on one workspace", "ar": "تدير Continental Sports Federation 22 فرعاً عبر 3 دول على مساحة عمل واحدة" },
+      { "en": "100% role and branch scoping enforced at the database layer, not by policy", "ar": "حصر الأدوار والفروع بنسبة 100% مُطبَّق على طبقة قاعدة البيانات، لا بالسياسات" },
+      { "en": "One AR ledger per network eliminates end-of-month reconciliation across branches", "ar": "دفتر ذمم واحد لكل شبكة يلغي مطابقة نهاية الشهر بين الفروع" },
+      { "en": "Sub-1-second dashboard roll-up on networks under 20 branches", "ar": "تجميع لوحة تحكم بأقل من ثانية على الشبكات التي لديها أقل من 20 فرعاً" },
+      { "en": "Cross-branch athlete transfers preserve history, payments, and progress in one action", "ar": "نقل الرياضي بين الفروع يحفظ التاريخ والمدفوعات والتقدم في إجراء واحد" }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": { "en": "Map the network", "ar": "مطابقة الشبكة" },
+        "description": { "en": "Branches, regions, and reporting lines mirror your org chart inside one workspace.", "ar": "الفروع والمناطق وخطوط التقارير تعكس مخطط منظمتك داخل مساحة عمل واحدة." },
+        "icon": "BuildingOffice2Icon"
+      },
+      {
+        "number": "02",
+        "title": { "en": "Scope the roles", "ar": "حصر الأدوار" },
+        "description": { "en": "Branch managers, regional directors, and network executives get access that matches their remit.", "ar": "مدراء الفروع والمدراء الإقليميون والتنفيذيون على مستوى الشبكة يحصلون على وصول يطابق نطاقهم." },
+        "icon": "KeyIcon"
+      },
+      {
+        "number": "03",
+        "title": { "en": "Wire the finance", "ar": "ربط المالية" },
+        "description": { "en": "Franchise or corporate ledger model set. Per-branch VAT, currency, and attribution configured.", "ar": "تهيئة نموذج دفتر الامتياز التجاري أو الشركات المدمجة. إعداد VAT والعملة والتوزيع لكل فرع." },
+        "icon": "CreditCardIcon"
+      },
+      {
+        "number": "04",
+        "title": { "en": "Roll up the reporting", "ar": "تجميع التقارير" },
+        "description": { "en": "Executive dashboards refresh live along the org chart. Drill down to any branch in one click.", "ar": "لوحات التنفيذيين تُحدَّث مباشرة على طول مخطط المنظمة. التعمق إلى أي فرع بضغطة واحدة." },
+        "icon": "ChartBarIcon"
+      }
+    ],
+    "testimonial": {
+      "quote": { "en": "Twenty-two branches, three countries, one workspace. Every branch manager sees their branch, I see everything. Nobody asks for exports any more.", "ar": "اثنان وعشرون فرعاً، وثلاث دول، ومساحة عمل واحدة. كل مدير فرع يرى فرعه، وأنا أرى كل شيء. لم يعد أحد يطلب تصديرات." },
+      "author": { "en": "Andrea Delgado", "ar": "أندريا ديلغادو" },
+      "role": { "en": "COO, Continental Sports Federation", "ar": "مدير العمليات، Continental Sports Federation" },
+      "initials": "AD"
+    }
   },
   "bilingual-rtl": {
     "slug": "bilingual-rtl",
     "eyebrow": { "en": "Solution", "ar": "حل" },
-    "title": {
-      "en": "Bilingual and right-to-left, by design",
-      "ar": "ثنائية اللغة ومن اليمين إلى اليسار، بالتصميم"
-    },
-    "description": {
-      "en": "Every screen, every form, every email, every PDF. English and Arabic ship together, and every layout supports right-to-left rendering as a first-class concern.",
-      "ar": "كل شاشة ونموذج وبريد وملف PDF. الإنجليزية والعربية تشحنان معاً، وكل تخطيط يدعم العرض من اليمين إلى اليسار كأولوية أولى."
-    },
+    "title": { "en": "Bilingual and right-to-left, by design", "ar": "ثنائية اللغة ومن اليمين إلى اليسار، بالتصميم" },
+    "description": { "en": "Every screen, every form, every email, every PDF. English and Arabic ship together, and every layout supports right-to-left rendering as a first-class concern.", "ar": "كل شاشة ونموذج وبريد وملف PDF. الإنجليزية والعربية تشحنان معاً، وكل تخطيط يدعم العرض من اليمين إلى اليسار كأولوية أولى." },
     "hero_icon": "LanguageIcon",
     "what_is": [
-      {
-        "en": "Bilingual UX is not a translation feature. It is a design constraint. Buttons flip. Icons flip (arrows, chevrons, and any directional glyph). Numbers keep their Latin form in Arabic contexts. Dates and currencies respect local conventions. Sports terminology has different established translations across regions. Academorix ships bilingual from day one and treats Arabic as a first-class rendering, not a translation overlay.",
-        "ar": "التجربة ثنائية اللغة ليست ميزة ترجمة، بل قيداً تصميمياً. الأزرار تنقلب. الأيقونات تنقلب (الأسهم والزوايا وكل رمز اتجاهي). الأرقام تحافظ على شكلها اللاتيني في السياقات العربية. التواريخ والعملات تحترم الأعراف المحلية. لمصطلحات الرياضة ترجمات راسخة مختلفة بين المناطق. تشحن Academorix ثنائية اللغة من اليوم الأول وتعامل العربية كعرض من الدرجة الأولى، لا طبقة ترجمة."
-      },
-      {
-        "en": "For academies in the GCC, the Levant, and North Africa, this is the difference between adopting a Western SaaS with awkward Arabic and adopting a platform that meets your families where they are. Families read invoices in Arabic. Coaches read attendance in Arabic. The owner reads the dashboard in whichever language they prefer.",
-        "ar": "بالنسبة للأكاديميات في الخليج والشام وشمال أفريقيا، هذا هو الفرق بين تبني SaaS غربي بترجمة عربية غير متقنة وتبني منصة تلتقي بعائلاتك حيث هم. تقرأ العائلات الفواتير بالعربية. يقرأ المدرّبون الحضور بالعربية. يقرأ المالك اللوحة بأي لغة يفضّل."
-      }
+      { "en": "Bilingual UX is not a translation feature. It is a design constraint. Buttons flip. Icons flip (arrows, chevrons, and any directional glyph). Numbers keep their Latin form in Arabic contexts. Dates and currencies respect local conventions. Sports terminology has different established translations across regions. Academorix ships bilingual from day one and treats Arabic as a first-class rendering, not a translation overlay.", "ar": "التجربة ثنائية اللغة ليست ميزة ترجمة، بل قيداً تصميمياً. الأزرار تنقلب. الأيقونات تنقلب (الأسهم والزوايا وكل رمز اتجاهي). الأرقام تحافظ على شكلها اللاتيني في السياقات العربية. التواريخ والعملات تحترم الأعراف المحلية. لمصطلحات الرياضة ترجمات راسخة مختلفة بين المناطق. تشحن Academorix ثنائية اللغة من اليوم الأول وتعامل العربية كعرض من الدرجة الأولى، لا طبقة ترجمة." },
+      { "en": "For academies in the GCC, the Levant, and North Africa, this is the difference between adopting a Western SaaS with awkward Arabic and adopting a platform that meets your families where they are. Families read invoices in Arabic. Coaches read attendance in Arabic. The owner reads the dashboard in whichever language they prefer.", "ar": "بالنسبة للأكاديميات في الخليج والشام وشمال أفريقيا، هذا هو الفرق بين تبني SaaS غربي بترجمة عربية غير متقنة وتبني منصة تلتقي بعائلاتك حيث هم. تقرأ العائلات الفواتير بالعربية. يقرأ المدرّبون الحضور بالعربية. يقرأ المالك اللوحة بأي لغة يفضّل." }
     ],
     "features": [
       {
         "icon": "LanguageIcon",
         "title": { "en": "Every UI string localized", "ar": "كل نص واجهة موطَّن" },
-        "description": {
-          "en": "English and Arabic on every screen. No missing translations, no fallback to English mid-flow.",
-          "ar": "الإنجليزية والعربية على كل شاشة. لا ترجمات مفقودة، ولا رجوع إلى الإنجليزية في منتصف الرحلة."
-        }
+        "description": { "en": "English and Arabic on every screen. No missing translations, no fallback to English mid-flow.", "ar": "الإنجليزية والعربية على كل شاشة. لا ترجمات مفقودة، ولا رجوع إلى الإنجليزية في منتصف الرحلة." }
       },
       {
         "icon": "AdjustmentsHorizontalIcon",
         "title": { "en": "RTL layout at the component level", "ar": "تخطيط RTL على مستوى المكوّن" },
-        "description": {
-          "en": "Right-to-left enforced by the component library, not bolted on with CSS overrides.",
-          "ar": "يُطبَّق العرض من اليمين إلى اليسار في مكتبة المكوّنات، لا بتجاوزات CSS مضافة."
-        }
+        "description": { "en": "Right-to-left enforced by the component library, not bolted on with CSS overrides.", "ar": "يُطبَّق العرض من اليمين إلى اليسار في مكتبة المكوّنات، لا بتجاوزات CSS مضافة." }
       },
       {
         "icon": "DocumentTextIcon",
         "title": { "en": "Bilingual PDFs", "ar": "ملفات PDF ثنائية اللغة" },
-        "description": {
-          "en": "Invoices, reports, and certificates render correctly in both languages with proper number and date formatting.",
-          "ar": "الفواتير والتقارير والشهادات تظهر بشكل صحيح بكلتا اللغتين مع تنسيق سليم للأرقام والتواريخ."
-        }
+        "description": { "en": "Invoices, reports, and certificates render correctly in both languages with proper number and date formatting.", "ar": "الفواتير والتقارير والشهادات تظهر بشكل صحيح بكلتا اللغتين مع تنسيق سليم للأرقام والتواريخ." }
       },
       {
         "icon": "AdjustmentsHorizontalIcon",
         "title": { "en": "Bilingual attribute labels", "ar": "تسميات سمات ثنائية اللغة" },
-        "description": {
-          "en": "Every attribute in the attribute engine carries English and Arabic labels. Coaches see their sport in their language.",
-          "ar": "كل سمة في محرك السمات تحمل تسميات بالإنجليزية والعربية. يرى المدرّبون رياضتهم بلغتهم."
-        }
+        "description": { "en": "Every attribute in the attribute engine carries English and Arabic labels. Coaches see their sport in their language.", "ar": "كل سمة في محرك السمات تحمل تسميات بالإنجليزية والعربية. يرى المدرّبون رياضتهم بلغتهم." }
       },
       {
         "icon": "ArrowPathIcon",
         "title": { "en": "Directional icons flip", "ar": "الأيقونات الاتجاهية تنقلب" },
-        "description": {
-          "en": "Arrows, chevrons, and directional glyphs mirror automatically for RTL locales. No manual per-icon adjustments.",
-          "ar": "الأسهم والزوايا والرموز الاتجاهية تنعكس تلقائياً في اللغات ذات الاتجاه من اليمين إلى اليسار. دون تعديلات يدوية لكل أيقونة."
-        }
+        "description": { "en": "Arrows, chevrons, and directional glyphs mirror automatically for RTL locales. No manual per-icon adjustments.", "ar": "الأسهم والزوايا والرموز الاتجاهية تنعكس تلقائياً في اللغات ذات الاتجاه من اليمين إلى اليسار. دون تعديلات يدوية لكل أيقونة." }
       },
       {
         "icon": "UserCircleIcon",
         "title": { "en": "Language-of-record per user", "ar": "لغة السجل لكل مستخدم" },
-        "description": {
-          "en": "Every user picks their preferred language. Guardians can read Arabic while coaches read English on the same team.",
-          "ar": "يختار كل مستخدم لغته المفضلة. يستطيع أولياء الأمور القراءة بالعربية بينما يقرأ المدرّبون بالإنجليزية في الفريق نفسه."
-        }
+        "description": { "en": "Every user picks their preferred language. Guardians can read Arabic while coaches read English on the same team.", "ar": "يختار كل مستخدم لغته المفضلة. يستطيع أولياء الأمور القراءة بالعربية بينما يقرأ المدرّبون بالإنجليزية في الفريق نفسه." }
       }
     ],
     "related": [
       {
         "href": "/products/attribute-engine",
         "title": { "en": "Attribute engine", "ar": "محرك السمات" },
-        "description": {
-          "en": "Bilingual labels on every sport-variable field.",
-          "ar": "تسميات ثنائية اللغة على كل حقل متغيّر حسب الرياضة."
-        }
+        "description": { "en": "Bilingual labels on every sport-variable field.", "ar": "تسميات ثنائية اللغة على كل حقل متغيّر حسب الرياضة." }
       },
       {
         "href": "/products/payments",
         "title": { "en": "Payments", "ar": "المدفوعات" },
-        "description": {
-          "en": "Bilingual invoices with local currency formatting.",
-          "ar": "فواتير ثنائية اللغة بتنسيق عملة محلي."
-        }
+        "description": { "en": "Bilingual invoices with local currency formatting.", "ar": "فواتير ثنائية اللغة بتنسيق عملة محلي." }
       },
       {
         "href": "/enterprise/security",
         "title": { "en": "Enterprise security", "ar": "أمن المؤسسات" },
-        "description": {
-          "en": "Data residency in MENA for regulated tenants.",
-          "ar": "إقامة البيانات في MENA للمستأجرين الخاضعين للتنظيم."
-        }
+        "description": { "en": "Data residency in MENA for regulated tenants.", "ar": "إقامة البيانات في MENA للمستأجرين الخاضعين للتنظيم." }
       }
-    ]
+    ],
+    "outcomes": [
+      { "en": "AquaElite Swim families read every invoice in Arabic with correct number and date formatting", "ar": "تقرأ عائلات AquaElite Swim كل فاتورة بالعربية بتنسيق أرقام وتواريخ صحيح" },
+      { "en": "Coaches read attendance and performance in Arabic while owners read dashboards in English", "ar": "يقرأ المدرّبون الحضور والأداء بالعربية بينما يقرأ الملاك اللوحات بالإنجليزية" },
+      { "en": "Bilingual PDFs render correctly for invoices, reports, and certificates in both languages", "ar": "ملفات PDF ثنائية اللغة تُعرَض بشكل صحيح للفواتير والتقارير والشهادات بكلتا اللغتين" },
+      { "en": "Directional icons flip automatically for RTL locales, with zero per-icon adjustments needed", "ar": "الأيقونات الاتجاهية تنعكس تلقائياً في اللغات ذات الاتجاه من اليمين إلى اليسار، دون أي تعديل يدوي" },
+      { "en": "Language-of-record configurable per user, per family, and per branch", "ar": "لغة السجل قابلة للتهيئة لكل مستخدم ولكل عائلة ولكل فرع" }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": { "en": "Pick your default", "ar": "اختيار الافتراضي" },
+        "description": { "en": "Set your workspace's default language and locale during provisioning. Branches can override.", "ar": "اضبط اللغة الافتراضية وإعدادات المحلية لمساحة عملك عند الإعداد. تستطيع الفروع تجاوزها." },
+        "icon": "LanguageIcon"
+      },
+      {
+        "number": "02",
+        "title": { "en": "Localize per user", "ar": "توطين لكل مستخدم" },
+        "description": { "en": "Every user picks their own preferred language. Coaches, guardians, and staff each read in their language.", "ar": "يختار كل مستخدم لغته المفضلة. يقرأ المدرّبون وأولياء الأمور والموظفون كل بلغته." },
+        "icon": "UsersIcon"
+      },
+      {
+        "number": "03",
+        "title": { "en": "Tune terminology", "ar": "ضبط المصطلحات" },
+        "description": { "en": "Sport-specific terminology in the attribute engine has bilingual labels. Adjust regional variants per branch.", "ar": "المصطلحات الخاصة بالرياضة في محرك السمات تحمل تسميات ثنائية اللغة. اضبط المتغيرات الإقليمية لكل فرع." },
+        "icon": "AdjustmentsHorizontalIcon"
+      },
+      {
+        "number": "04",
+        "title": { "en": "Ship bilingual outputs", "ar": "إصدار مخرجات ثنائية اللغة" },
+        "description": { "en": "Invoices, reports, and certificates render in the recipient's language automatically. No manual toggles.", "ar": "تُعرَض الفواتير والتقارير والشهادات تلقائياً بلغة المستلم. دون أي تبديل يدوي." },
+        "icon": "DocumentTextIcon"
+      }
+    ],
+    "testimonial": {
+      "quote": { "en": "Our families read their invoices in Arabic and their kids read their progress cards in Arabic. That is not a nice-to-have. That is table stakes.", "ar": "تقرأ عائلاتنا فواتيرهم بالعربية ويقرأ أطفالهم بطاقات تقدمهم بالعربية. هذا ليس أمراً كمالياً. هذا الحد الأدنى المطلوب." },
+      "author": { "en": "Layla Haddad", "ar": "ليلى حداد" },
+      "role": { "en": "Director, AquaElite Swim", "ar": "المديرة، AquaElite Swim" },
+      "initials": "LH"
+    }
   },
   "offline-first": {
     "slug": "offline-first",
     "eyebrow": { "en": "Solution", "ar": "حل" },
-    "title": {
-      "en": "Offline-first, for coaches on the field",
-      "ar": "الأولوية لوضع عدم الاتصال، للمدرّبين في الميدان"
-    },
-    "description": {
-      "en": "Take attendance without a signal. Log a match result on a beach. Record a training session in a remote gym. Everything syncs when you get back to a network.",
-      "ar": "سجّل الحضور دون إشارة. دوّن نتيجة مباراة على الشاطئ. سجّل جلسة تدريب في صالة نائية. كل شيء يتزامن عند عودتك إلى الشبكة."
-    },
+    "title": { "en": "Offline-first, for coaches on the field", "ar": "الأولوية لوضع عدم الاتصال، للمدرّبين في الميدان" },
+    "description": { "en": "Take attendance without a signal. Log a match result on a beach. Record a training session in a remote gym. Everything syncs when you get back to a network.", "ar": "سجّل الحضور دون إشارة. دوّن نتيجة مباراة على الشاطئ. سجّل جلسة تدريب في صالة نائية. كل شيء يتزامن عند عودتك إلى الشبكة." },
     "hero_icon": "CloudArrowUpIcon",
     "what_is": [
-      {
-        "en": "Coaches are not office workers. They stand on football pitches, poolside decks, and gymnasium floors. Some of those places have signal. Many do not. If your platform requires a live connection to log attendance, half the sessions never get logged. Academorix ships an offline-first mobile experience: attendance, match results, private-session notes, and drill logs all work without a network. Records queue locally, encrypt at rest on the device, and sync automatically when the device is back on Wi-Fi or cell.",
-        "ar": "المدرّبون ليسوا موظفي مكاتب. يقفون على ملاعب كرة القدم وأسطح المسابح وأرضيات الصالات. بعض تلك الأماكن تحمل إشارة. كثير منها لا. إذا كانت منصّتك تتطلّب اتصالاً مباشراً لتسجيل الحضور، فلن يُسجَّل نصف الجلسات. تشحن Academorix تجربة محمولة تبدأ من عدم الاتصال: الحضور ونتائج المباريات وملاحظات الجلسات الخاصة وسجلات التدريبات كلها تعمل دون شبكة. تُطابَر السجلات محلياً، وتُشفَّر على الجهاز، وتتزامن تلقائياً عند عودة الجهاز إلى Wi-Fi أو شبكة الهاتف."
-      },
-      {
-        "en": "The sync engine handles conflicts intelligently. If two coaches on the same team both edited a roster while offline, the platform surfaces the conflict on sync and lets the head coach resolve it. Data never gets silently overwritten.",
-        "ar": "يعالج محرك المزامنة التعارضات بذكاء. إذا حرّر مدرّبان في الفريق نفسه قائمة اللاعبين وهما دون اتصال، تُظهر المنصة التعارض عند المزامنة وتترك للمدرّب الأول الحسم. لا تُدَاس البيانات صامتاً."
-      }
+      { "en": "Coaches are not office workers. They stand on football pitches, poolside decks, and gymnasium floors. Some of those places have signal. Many do not. If your platform requires a live connection to log attendance, half the sessions never get logged. Academorix ships an offline-first mobile experience: attendance, match results, private-session notes, and drill logs all work without a network. Records queue locally, encrypt at rest on the device, and sync automatically when the device is back on Wi-Fi or cell.", "ar": "المدرّبون ليسوا موظفي مكاتب. يقفون على ملاعب كرة القدم وأسطح المسابح وأرضيات الصالات. بعض تلك الأماكن تحمل إشارة. كثير منها لا. إذا كانت منصّتك تتطلّب اتصالاً مباشراً لتسجيل الحضور، فلن يُسجَّل نصف الجلسات. تشحن Academorix تجربة محمولة تبدأ من عدم الاتصال: الحضور ونتائج المباريات وملاحظات الجلسات الخاصة وسجلات التدريبات كلها تعمل دون شبكة. تُطابَر السجلات محلياً، وتُشفَّر على الجهاز، وتتزامن تلقائياً عند عودة الجهاز إلى Wi-Fi أو شبكة الهاتف." },
+      { "en": "The sync engine handles conflicts intelligently. If two coaches on the same team both edited a roster while offline, the platform surfaces the conflict on sync and lets the head coach resolve it. Data never gets silently overwritten.", "ar": "يعالج محرك المزامنة التعارضات بذكاء. إذا حرّر مدرّبان في الفريق نفسه قائمة اللاعبين وهما دون اتصال، تُظهر المنصة التعارض عند المزامنة وتترك للمدرّب الأول الحسم. لا تُدَاس البيانات صامتاً." }
     ],
     "features": [
       {
         "icon": "QrCodeIcon",
         "title": { "en": "Offline attendance capture", "ar": "التقاط الحضور دون اتصال" },
-        "description": {
-          "en": "Tap-to-check-in works on the mobile web app without a signal. Records queue and sync when you get back online.",
-          "ar": "يعمل التسجيل بلمسة على تطبيق الجوال دون إشارة. تُطابَر السجلات وتتزامن عند عودة الاتصال."
-        }
+        "description": { "en": "Tap-to-check-in works on the mobile web app without a signal. Records queue and sync when you get back online.", "ar": "يعمل التسجيل بلمسة على تطبيق الجوال دون إشارة. تُطابَر السجلات وتتزامن عند عودة الاتصال." }
       },
       {
         "icon": "TrophyIcon",
         "title": { "en": "Offline match result logging", "ar": "تدوين نتائج المباريات دون اتصال" },
-        "description": {
-          "en": "Log a match result courtside, poolside, or on a beach. Standings recompute the next time the device connects.",
-          "ar": "دوّن نتيجة المباراة على جانب الملعب أو المسبح أو الشاطئ. تُعاد ترتيب الجداول عند عودة الجهاز إلى الاتصال."
-        }
+        "description": { "en": "Log a match result courtside, poolside, or on a beach. Standings recompute the next time the device connects.", "ar": "دوّن نتيجة المباراة على جانب الملعب أو المسبح أو الشاطئ. تُعاد ترتيب الجداول عند عودة الجهاز إلى الاتصال." }
       },
       {
         "icon": "LockClosedIcon",
         "title": { "en": "Encryption at rest", "ar": "تشفير عند السكون" },
-        "description": {
-          "en": "Every queued record is encrypted on the device. If a phone gets lost between session and sync, nothing leaks.",
-          "ar": "كل سجل مُطابَر مشفَّر على الجهاز. إذا فُقد هاتف بين الجلسة والمزامنة، لا يتسرّب شيء."
-        }
+        "description": { "en": "Every queued record is encrypted on the device. If a phone gets lost between session and sync, nothing leaks.", "ar": "كل سجل مُطابَر مشفَّر على الجهاز. إذا فُقد هاتف بين الجلسة والمزامنة، لا يتسرّب شيء." }
       },
       {
         "icon": "ArrowPathIcon",
         "title": { "en": "Conflict resolution", "ar": "حل التعارضات" },
-        "description": {
-          "en": "Two coaches editing offline both get to keep their work. The head coach resolves the conflict on sync.",
-          "ar": "المدرّبان المحرّران دون اتصال يحتفظ كل منهما بعمله. يحسم المدرّب الأول التعارض عند المزامنة."
-        }
+        "description": { "en": "Two coaches editing offline both get to keep their work. The head coach resolves the conflict on sync.", "ar": "المدرّبان المحرّران دون اتصال يحتفظ كل منهما بعمله. يحسم المدرّب الأول التعارض عند المزامنة." }
       },
       {
         "icon": "SignalIcon",
         "title": { "en": "Sync status per capture", "ar": "حالة المزامنة لكل التقاط" },
-        "description": {
-          "en": "Every offline capture shows a queued/synced badge. Coaches always know what has and has not made it to the server.",
-          "ar": "كل التقاط دون اتصال يعرض شارة \"في الانتظار\" أو \"متزامن\". يعرف المدرّبون دائماً ما وصل إلى الخادم وما لم يصل."
-        }
+        "description": { "en": "Every offline capture shows a queued/synced badge. Coaches always know what has and has not made it to the server.", "ar": "كل التقاط دون اتصال يعرض شارة \"في الانتظار\" أو \"متزامن\". يعرف المدرّبون دائماً ما وصل إلى الخادم وما لم يصل." }
       },
       {
         "icon": "ClockIcon",
         "title": { "en": "Up to 30 days offline", "ar": "حتى 30 يوماً دون اتصال" },
-        "description": {
-          "en": "Records queue for up to a month before requiring a sync. Multi-week road trips are supported.",
-          "ar": "تُطابَر السجلات حتى شهر قبل الحاجة إلى المزامنة. الرحلات متعددة الأسابيع مدعومة."
-        }
+        "description": { "en": "Records queue for up to a month before requiring a sync. Multi-week road trips are supported.", "ar": "تُطابَر السجلات حتى شهر قبل الحاجة إلى المزامنة. الرحلات متعددة الأسابيع مدعومة." }
       }
     ],
     "related": [
       {
         "href": "/products/scheduling",
         "title": { "en": "Scheduling and attendance", "ar": "الجدولة والحضور" },
-        "description": {
-          "en": "Where offline capture starts.",
-          "ar": "حيث يبدأ التقاط عدم الاتصال."
-        }
+        "description": { "en": "Where offline capture starts.", "ar": "حيث يبدأ التقاط عدم الاتصال." }
       },
       {
         "href": "/products/performance",
         "title": { "en": "Performance", "ar": "الأداء" },
-        "description": {
-          "en": "Log fitness tests without a signal.",
-          "ar": "دوّن اختبارات اللياقة دون إشارة."
-        }
+        "description": { "en": "Log fitness tests without a signal.", "ar": "دوّن اختبارات اللياقة دون إشارة." }
       },
       {
         "href": "/sports/martial-arts",
         "title": { "en": "Martial arts", "ar": "الفنون القتالية" },
-        "description": {
-          "en": "Dojo-first workflows for offline gradings.",
-          "ar": "سير عمل من الدوجو للاختبارات دون اتصال."
-        }
+        "description": { "en": "Dojo-first workflows for offline gradings.", "ar": "سير عمل من الدوجو للاختبارات دون اتصال." }
       }
-    ]
+    ],
+    "outcomes": [
+      { "en": "Elite Martial Arts Center takes attendance in beach dojos with no signal, everything syncs on return", "ar": "يأخذ Elite Martial Arts Center الحضور في دوجو على الشاطئ دون إشارة، وكل شيء يتزامن عند العودة" },
+      { "en": "Records queue for up to 30 days offline before requiring a sync", "ar": "تُطابَر السجلات حتى 30 يوماً دون اتصال قبل الحاجة إلى المزامنة" },
+      { "en": "Encryption at rest on every queued record protects data if a phone gets lost between session and sync", "ar": "التشفير عند السكون على كل سجل مطابَر يحمي البيانات إذا فُقد هاتف بين الجلسة والمزامنة" },
+      { "en": "Conflict resolution surfaces overlapping edits to the head coach, no silent overwrites", "ar": "حل التعارضات يظهر التعديلات المتداخلة للمدرب الرئيسي، لا كتابة فوقية صامتة" },
+      { "en": "Sync status per capture keeps coaches confident every record has landed on the server", "ar": "حالة المزامنة لكل التقاط تُبقي المدرّبين واثقين من وصول كل سجل إلى الخادم" }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": { "en": "Install the mobile app", "ar": "تثبيت تطبيق الجوال" },
+        "description": { "en": "Coaches sign in once and the mobile app caches their roster, drills, and last week's evaluations.", "ar": "يسجّل المدرّبون الدخول مرة واحدة ويخزّن التطبيق قائمتهم وتدريباتهم وتقييمات الأسبوع الماضي." },
+        "icon": "IdentificationIcon"
+      },
+      {
+        "number": "02",
+        "title": { "en": "Work without a signal", "ar": "العمل دون إشارة" },
+        "description": { "en": "Attendance, match results, private-session notes, and drill logs all queue locally with encryption at rest.", "ar": "الحضور ونتائج المباريات وملاحظات الجلسات الخاصة وسجلات التدريبات كلها تُطابَر محلياً مع تشفير عند السكون." },
+        "icon": "QrCodeIcon"
+      },
+      {
+        "number": "03",
+        "title": { "en": "Reconnect and sync", "ar": "إعادة الاتصال والمزامنة" },
+        "description": { "en": "When the device is back on Wi-Fi or cell, the queue drains automatically. Sync status stays visible.", "ar": "عند عودة الجهاز إلى Wi-Fi أو شبكة الهاتف، يُفرَغ الطابور تلقائياً. تبقى حالة المزامنة ظاهرة." },
+        "icon": "BoltIcon"
+      },
+      {
+        "number": "04",
+        "title": { "en": "Resolve conflicts", "ar": "حل التعارضات" },
+        "description": { "en": "If two coaches edited a roster while offline, the head coach resolves the conflict on sync.", "ar": "إذا حرّر مدرّبان قائمة وهما دون اتصال، يحسم المدرّب الرئيسي التعارض عند المزامنة." },
+        "icon": "CheckCircleIcon"
+      }
+    ],
+    "testimonial": {
+      "quote": { "en": "Our coaches take attendance in a beach dojo with no signal. Two hours later, back at the main site, everything is in Academorix. Nothing lost.", "ar": "يأخذ مدرّبونا الحضور في دوجو على الشاطئ دون إشارة. بعد ساعتين، عند العودة إلى الموقع الرئيسي، كل شيء في Academorix. لا شيء ضاع." },
+      "author": { "en": "Hisham Al-Farsi", "ar": "هشام الفارسي" },
+      "role": { "en": "Chief Instructor, Elite Martial Arts Center", "ar": "المدرب الرئيسي، Elite Martial Arts Center" },
+      "initials": "HF"
+    }
   },
   "real-time": {
     "slug": "real-time",
     "eyebrow": { "en": "Solution", "ar": "حل" },
-    "title": {
-      "en": "Real-time RSVP, attendance, and standings",
-      "ar": "تأكيدات الحضور والحضور والترتيب في الوقت الفعلي"
-    },
-    "description": {
-      "en": "Guardians confirm attendance and the coach sees it live. Attendance updates as swimmers scan in. Standings recompute the moment a fixture ends. The platform stays fresh without a manual refresh.",
-      "ar": "يؤكّد أولياء الأمور الحضور فيراه المدرّب مباشرة. يتحدّث الحضور مع تسجيل السبّاحين. يُعاد حساب الترتيب لحظة انتهاء المباراة. تبقى المنصّة محدَّثة دون تحديث يدوي."
-    },
+    "title": { "en": "Real-time RSVP, attendance, and standings", "ar": "تأكيدات الحضور والحضور والترتيب في الوقت الفعلي" },
+    "description": { "en": "Guardians confirm attendance and the coach sees it live. Attendance updates as swimmers scan in. Standings recompute the moment a fixture ends. The platform stays fresh without a manual refresh.", "ar": "يؤكّد أولياء الأمور الحضور فيراه المدرّب مباشرة. يتحدّث الحضور مع تسجيل السبّاحين. يُعاد حساب الترتيب لحظة انتهاء المباراة. تبقى المنصّة محدَّثة دون تحديث يدوي." },
     "hero_icon": "BoltIcon",
     "what_is": [
-      {
-        "en": "Sports academies operate in real time. Guardians confirm attendance an hour before a session; coaches need to see the confirmation before they leave for the field. Athletes scan in as they arrive; the coach's roster updates live. Match results roll into league tables the moment they are logged. Every screen in Academorix uses WebSocket-based updates so the data is always fresh, without a manual refresh.",
-        "ar": "تعمل الأكاديميات الرياضية في الوقت الفعلي. يؤكّد أولياء الأمور الحضور قبل الجلسة بساعة، ويحتاج المدرّبون إلى رؤية التأكيد قبل مغادرتهم إلى الملعب. يسجّل الرياضيون دخولهم عند الوصول، وتتحدّث قائمة المدرّب مباشرة. تُدرج نتائج المباريات في جداول الدوري لحظة تدوينها. تستخدم كل شاشة في Academorix تحديثات مبنية على WebSocket بحيث تبقى البيانات محدَّثة دائماً، دون تحديث يدوي."
-      },
-      {
-        "en": "The real-time layer runs on our real-time infrastructure and supports thousands of concurrent connections per tenant. Even large multi-branch networks stay responsive when everything is happening at once.",
-        "ar": "تعمل الطبقة الآنية على بنيتنا التحتية الآنية وتدعم آلاف الاتصالات المتزامنة لكل مستأجر. حتى الشبكات الكبيرة متعددة الفروع تبقى مستجيبة عندما يحدث كل شيء في الوقت نفسه."
-      }
+      { "en": "Sports academies operate in real time. Guardians confirm attendance an hour before a session; coaches need to see the confirmation before they leave for the field. Athletes scan in as they arrive; the coach's roster updates live. Match results roll into league tables the moment they are logged. Every screen in Academorix uses WebSocket-based updates so the data is always fresh, without a manual refresh.", "ar": "تعمل الأكاديميات الرياضية في الوقت الفعلي. يؤكّد أولياء الأمور الحضور قبل الجلسة بساعة، ويحتاج المدرّبون إلى رؤية التأكيد قبل مغادرتهم إلى الملعب. يسجّل الرياضيون دخولهم عند الوصول، وتتحدّث قائمة المدرّب مباشرة. تُدرج نتائج المباريات في جداول الدوري لحظة تدوينها. تستخدم كل شاشة في Academorix تحديثات مبنية على WebSocket بحيث تبقى البيانات محدَّثة دائماً، دون تحديث يدوي." },
+      { "en": "The real-time layer runs on our real-time infrastructure and supports thousands of concurrent connections per tenant. Even large multi-branch networks stay responsive when everything is happening at once.", "ar": "تعمل الطبقة الآنية على بنيتنا التحتية الآنية وتدعم آلاف الاتصالات المتزامنة لكل مستأجر. حتى الشبكات الكبيرة متعددة الفروع تبقى مستجيبة عندما يحدث كل شيء في الوقت نفسه." }
     ],
     "features": [
       {
         "icon": "BellAlertIcon",
         "title": { "en": "Real-time RSVP", "ar": "تأكيدات حضور آنية" },
-        "description": {
-          "en": "Guardians confirm attendance and coaches see the update immediately on the coach view.",
-          "ar": "يؤكّد أولياء الأمور الحضور ويرى المدرّبون التحديث فوراً على عرض المدرّب."
-        }
+        "description": { "en": "Guardians confirm attendance and coaches see the update immediately on the coach view.", "ar": "يؤكّد أولياء الأمور الحضور ويرى المدرّبون التحديث فوراً على عرض المدرّب." }
       },
       {
         "icon": "QrCodeIcon",
         "title": { "en": "Live attendance capture", "ar": "التقاط الحضور مباشرة" },
-        "description": {
-          "en": "Every scan-in flows through WebSocket updates. The coach sees roster arrivals as they happen.",
-          "ar": "كل تسجيل دخول يمرّ عبر تحديثات WebSocket. يرى المدرّب وصول القائمة لحظة حدوثه."
-        }
+        "description": { "en": "Every scan-in flows through WebSocket updates. The coach sees roster arrivals as they happen.", "ar": "كل تسجيل دخول يمرّ عبر تحديثات WebSocket. يرى المدرّب وصول القائمة لحظة حدوثه." }
       },
       {
         "icon": "TrophyIcon",
         "title": { "en": "Live standings", "ar": "ترتيب مباشر" },
-        "description": {
-          "en": "League tables recompute the moment a match result is logged. No end-of-day batch runs.",
-          "ar": "تُعاد ترتيب جداول الدوري لحظة تدوين نتيجة المباراة. لا مهام تجميع نهاية اليوم."
-        }
+        "description": { "en": "League tables recompute the moment a match result is logged. No end-of-day batch runs.", "ar": "تُعاد ترتيب جداول الدوري لحظة تدوين نتيجة المباراة. لا مهام تجميع نهاية اليوم." }
       },
       {
         "icon": "InboxStackIcon",
         "title": { "en": "Real-time approval queue", "ar": "طابور موافقات آني" },
-        "description": {
-          "en": "Reception sees new registrations, refunds, and adjustments appear in the queue live.",
-          "ar": "يرى الاستقبال التسجيلات الجديدة وطلبات الاسترداد والتعديلات تظهر في الطابور مباشرة."
-        }
+        "description": { "en": "Reception sees new registrations, refunds, and adjustments appear in the queue live.", "ar": "يرى الاستقبال التسجيلات الجديدة وطلبات الاسترداد والتعديلات تظهر في الطابور مباشرة." }
       },
       {
         "icon": "ChatBubbleLeftRightIcon",
         "title": { "en": "Live notifications", "ar": "إشعارات مباشرة" },
-        "description": {
-          "en": "Guardians and coaches get instant push notifications on schedule changes, results, and messages.",
-          "ar": "يتلقّى أولياء الأمور والمدرّبون إشعارات فورية عند تغيّر الجدول أو ظهور النتائج أو وصول الرسائل."
-        }
+        "description": { "en": "Guardians and coaches get instant push notifications on schedule changes, results, and messages.", "ar": "يتلقّى أولياء الأمور والمدرّبون إشعارات فورية عند تغيّر الجدول أو ظهور النتائج أو وصول الرسائل." }
       },
       {
         "icon": "ServerIcon",
         "title": { "en": "Thousands of concurrent connections", "ar": "آلاف الاتصالات المتزامنة" },
-        "description": {
-          "en": "The real-time infrastructure supports thousands of concurrent WebSocket connections per tenant.",
-          "ar": "تدعم البنية التحتية الآنية آلاف اتصالات WebSocket المتزامنة لكل مستأجر."
-        }
+        "description": { "en": "The real-time infrastructure supports thousands of concurrent WebSocket connections per tenant.", "ar": "تدعم البنية التحتية الآنية آلاف اتصالات WebSocket المتزامنة لكل مستأجر." }
       }
     ],
     "related": [
       {
         "href": "/products/scheduling",
         "title": { "en": "Scheduling", "ar": "الجدولة" },
-        "description": {
-          "en": "Real-time RSVP and attendance.",
-          "ar": "تأكيدات وحضور في الوقت الفعلي."
-        }
+        "description": { "en": "Real-time RSVP and attendance.", "ar": "تأكيدات وحضور في الوقت الفعلي." }
       },
       {
         "href": "/products/reception",
         "title": { "en": "Reception", "ar": "الاستقبال" },
-        "description": {
-          "en": "Live approval queue for the front desk.",
-          "ar": "طابور موافقات مباشر للاستقبال."
-        }
+        "description": { "en": "Live approval queue for the front desk.", "ar": "طابور موافقات مباشر للاستقبال." }
       },
       {
         "href": "/enterprise/security",
         "title": { "en": "Enterprise security", "ar": "أمن المؤسسات" },
-        "description": {
-          "en": "Real-time layer runs on isolated tenants.",
-          "ar": "الطبقة الآنية تعمل على مستأجرين معزولين."
-        }
+        "description": { "en": "Real-time layer runs on isolated tenants.", "ar": "الطبقة الآنية تعمل على مستأجرين معزولين." }
       }
-    ]
+    ],
+    "outcomes": [
+      { "en": "Northgate FC coaches see every RSVP update on their phone in real time, no more phone-tag with parents", "ar": "يرى مدرّبو Northgate FC كل تحديث تأكيد حضور على هواتفهم في الوقت الفعلي، دون مطاردة هاتفية للوالدين" },
+      { "en": "Live attendance capture updates the coach roster the moment an athlete taps in", "ar": "التقاط الحضور المباشر يحدّث قائمة المدرّب لحظة تسجيل الرياضي دخوله" },
+      { "en": "League standings recompute the moment a match result is logged, no end-of-day batch runs", "ar": "تُعاد ترتيب الدوري لحظة تدوين نتيجة المباراة، لا مهام تجميع نهاية اليوم" },
+      { "en": "Real-time approval queue keeps reception staff working the freshest task, not yesterday's backlog", "ar": "طابور الموافقات الآني يُبقي طاقم الاستقبال يعمل على أحدث مهمة، لا متأخرات الأمس" },
+      { "en": "WebSocket infrastructure supports thousands of concurrent connections per tenant", "ar": "بنية WebSocket التحتية تدعم آلاف الاتصالات المتزامنة لكل مستأجر" }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": { "en": "Guardians confirm", "ar": "أولياء الأمور يؤكّدون" },
+        "description": { "en": "RSVPs land on the coach view the moment a guardian confirms. No manual refresh.", "ar": "تصل تأكيدات الحضور إلى عرض المدرّب لحظة تأكيد ولي الأمر. دون تحديث يدوي." },
+        "icon": "BellAlertIcon"
+      },
+      {
+        "number": "02",
+        "title": { "en": "Athletes tap in", "ar": "الرياضيون يسجّلون دخولهم" },
+        "description": { "en": "Scan-ins flow through WebSocket updates. The coach sees roster arrivals as they happen.", "ar": "تسجيلات الدخول تمرّ عبر تحديثات WebSocket. يرى المدرّب وصول القائمة لحظة حدوثه." },
+        "icon": "QrCodeIcon"
+      },
+      {
+        "number": "03",
+        "title": { "en": "Coaches log results", "ar": "المدرّبون يدوّنون النتائج" },
+        "description": { "en": "Match results and evaluations publish to the platform, and standings recompute for the whole league.", "ar": "تُنشَر نتائج المباريات والتقييمات على المنصة، ويُعاد حساب الترتيب لكل الدوري." },
+        "icon": "TrophyIcon"
+      },
+      {
+        "number": "04",
+        "title": { "en": "Everyone stays fresh", "ar": "الجميع يبقى محدَّثاً" },
+        "description": { "en": "Guardians, coaches, athletes, and reception see live updates without ever pressing refresh.", "ar": "أولياء الأمور والمدرّبون والرياضيون والاستقبال يرون التحديثات مباشرة دون الضغط على تحديث." },
+        "icon": "BoltIcon"
+      }
+    ],
+    "testimonial": {
+      "quote": { "en": "Coach shows up on Saturday morning and every RSVP is on his phone, updated in real time. No more phone-tag with parents.", "ar": "يأتي المدرب صباح السبت وكل تأكيد حضور على هاتفه، مُحدَّث في الوقت الفعلي. لا مزيد من المطاردة الهاتفية للوالدين." },
+      "author": { "en": "Sara Nassar", "ar": "سارة نصار" },
+      "role": { "en": "Operations Lead, Northgate FC", "ar": "قائدة العمليات، Northgate FC" },
+      "initials": "SN"
+    }
   },
   "ai-assistant": {
     "slug": "ai-assistant",
     "eyebrow": { "en": "Solution", "ar": "حل" },
-    "title": {
-      "en": "AI as an operational multiplier",
-      "ar": "الذكاء الاصطناعي مضاعِف تشغيلي"
-    },
-    "description": {
-      "en": "Natural-language reports, drill drafts, attribute suggestions, and progress summaries. AI Assistant plugs into every product in the platform.",
-      "ar": "تقارير بلغة طبيعية، ومسودات تدريبات، واقتراحات سمات، وملخّصات تقدّم. يندمج المساعد الذكي مع كل منتج في المنصّة."
-    },
+    "title": { "en": "AI as an operational multiplier", "ar": "الذكاء الاصطناعي مضاعِف تشغيلي" },
+    "description": { "en": "Natural-language reports, drill drafts, attribute suggestions, and progress summaries. AI Assistant plugs into every product in the platform.", "ar": "تقارير بلغة طبيعية، ومسودات تدريبات، واقتراحات سمات، وملخّصات تقدّم. يندمج المساعد الذكي مع كل منتج في المنصّة." },
     "hero_icon": "SparklesIcon",
     "what_is": [
-      {
-        "en": "Every academy has a report backlog, a curriculum gap, and a coach who spends Sunday evenings writing progress summaries. AI Assistant collapses all three into an afternoon. Ask a plain-language question and get a chart. Describe a sport and get an attribute set. Draft a season report and get a plain-language summary the coach reviews in five minutes.",
-        "ar": "كل أكاديمية لديها متأخّرات في التقارير، فجوة منهجية، ومدرّب يقضي مساءات الأحد في كتابة ملخّصات التقدّم. يختصر المساعد الذكي هذه الثلاث في بعد ظهر واحد. اطرح سؤالاً بلغة طبيعية واحصل على رسم بياني. صف رياضة واحصل على مجموعة سمات. صمِّم تقرير موسم واحصل على ملخّص بلغة طبيعية يراجعه المدرّب في خمس دقائق."
-      },
-      {
-        "en": "AI Assistant is not a chatbot. It is a set of workflow-specific tools that plug into Performance, Reports, Attribute Engine, and the drill library. Every AI query runs against your isolated tenant. Your data never trains external models. Every response is logged for audit.",
-        "ar": "المساعد الذكي ليس روبوت محادثة. هو مجموعة أدوات مخصّصة لسير العمل تندمج مع الأداء والتقارير ومحرك السمات ومكتبة التدريبات. كل استعلام ذكاء اصطناعي يعمل على مستأجرك المعزول. بياناتك لا تدرّب النماذج الخارجية أبداً. كل ردّ يُسجَّل للتدقيق."
-      }
+      { "en": "Every academy has a report backlog, a curriculum gap, and a coach who spends Sunday evenings writing progress summaries. AI Assistant collapses all three into an afternoon. Ask a plain-language question and get a chart. Describe a sport and get an attribute set. Draft a season report and get a plain-language summary the coach reviews in five minutes.", "ar": "كل أكاديمية لديها متأخّرات في التقارير، فجوة منهجية، ومدرّب يقضي مساءات الأحد في كتابة ملخّصات التقدّم. يختصر المساعد الذكي هذه الثلاث في بعد ظهر واحد. اطرح سؤالاً بلغة طبيعية واحصل على رسم بياني. صف رياضة واحصل على مجموعة سمات. صمِّم تقرير موسم واحصل على ملخّص بلغة طبيعية يراجعه المدرّب في خمس دقائق." },
+      { "en": "AI Assistant is not a chatbot. It is a set of workflow-specific tools that plug into Performance, Reports, Attribute Engine, and the drill library. Every AI query runs against your isolated tenant. Your data never trains external models. Every response is logged for audit.", "ar": "المساعد الذكي ليس روبوت محادثة. هو مجموعة أدوات مخصّصة لسير العمل تندمج مع الأداء والتقارير ومحرك السمات ومكتبة التدريبات. كل استعلام ذكاء اصطناعي يعمل على مستأجرك المعزول. بياناتك لا تدرّب النماذج الخارجية أبداً. كل ردّ يُسجَّل للتدقيق." }
     ],
     "features": [
       {
         "icon": "ChartBarIcon",
         "title": { "en": "Natural-language queries", "ar": "استعلامات بلغة طبيعية" },
-        "description": {
-          "en": "Ask a plain-language question and get a chart back. Growth-plus paid add-on.",
-          "ar": "اطرح سؤالاً بلغة طبيعية واحصل على رسم بياني. إضافة مدفوعة على Growth فما فوق."
-        }
+        "description": { "en": "Ask a plain-language question and get a chart back. Growth-plus paid add-on.", "ar": "اطرح سؤالاً بلغة طبيعية واحصل على رسم بياني. إضافة مدفوعة على Growth فما فوق." }
       },
       {
         "icon": "DocumentTextIcon",
-        "title": {
-          "en": "AI-drafted progress summaries",
-          "ar": "ملخّصات تقدّم بمسودات ذكاء اصطناعي"
-        },
-        "description": {
-          "en": "Turn a season of raw data into a family-ready progress summary. Coaches review before sending.",
-          "ar": "حوّل موسماً من البيانات الخام إلى ملخّص تقدّم جاهز للعائلة. يراجع المدرّبون قبل الإرسال."
-        }
+        "title": { "en": "AI-drafted progress summaries", "ar": "ملخّصات تقدّم بمسودات ذكاء اصطناعي" },
+        "description": { "en": "Turn a season of raw data into a family-ready progress summary. Coaches review before sending.", "ar": "حوّل موسماً من البيانات الخام إلى ملخّص تقدّم جاهز للعائلة. يراجع المدرّبون قبل الإرسال." }
       },
       {
         "icon": "AdjustmentsHorizontalIcon",
         "title": { "en": "Attribute-set drafts", "ar": "مسودات مجموعات سمات" },
-        "description": {
-          "en": "Describe a sport in one paragraph, get a proposed attribute set back. Included on Growth-plus.",
-          "ar": "صف رياضة في فقرة واحدة واحصل على مجموعة سمات مقترحة. مشمولة على Growth فما فوق."
-        }
+        "description": { "en": "Describe a sport in one paragraph, get a proposed attribute set back. Included on Growth-plus.", "ar": "صف رياضة في فقرة واحدة واحصل على مجموعة سمات مقترحة. مشمولة على Growth فما فوق." }
       },
       {
         "icon": "RectangleStackIcon",
         "title": { "en": "Drill recommendations", "ar": "توصيات تدريبات" },
-        "description": {
-          "en": "Suggest drills from your library that target a specific development goal. Filtered by age and level.",
-          "ar": "اقتراح تدريبات من مكتبتك تستهدف هدف تطوير محدد. مُصفّاة حسب العمر والمستوى."
-        }
+        "description": { "en": "Suggest drills from your library that target a specific development goal. Filtered by age and level.", "ar": "اقتراح تدريبات من مكتبتك تستهدف هدف تطوير محدد. مُصفّاة حسب العمر والمستوى." }
       },
       {
         "icon": "KeyIcon",
         "title": { "en": "Bring your own key", "ar": "أحضر مفتاحك الخاص" },
-        "description": {
-          "en": "Enterprise plans support BYO OpenAI or Anthropic keys so cost and governance stay on your side.",
-          "ar": "تدعم خطط Enterprise إحضار مفاتيح OpenAI أو Anthropic الخاصة بك، فتبقى التكلفة والحوكمة بيدك."
-        }
+        "description": { "en": "Enterprise plans support BYO OpenAI or Anthropic keys so cost and governance stay on your side.", "ar": "تدعم خطط Enterprise إحضار مفاتيح OpenAI أو Anthropic الخاصة بك، فتبقى التكلفة والحوكمة بيدك." }
       },
       {
         "icon": "DocumentCheckIcon",
         "title": { "en": "100% audit coverage", "ar": "تغطية تدقيق 100%" },
-        "description": {
-          "en": "Every AI query and response is logged and reviewable. No hidden model activity, no silent data movement.",
-          "ar": "كل استعلام وردّ ذكاء اصطناعي يُسجَّل وقابل للمراجعة. لا نشاط نموذج خفي، ولا حركة بيانات صامتة."
-        }
+        "description": { "en": "Every AI query and response is logged and reviewable. No hidden model activity, no silent data movement.", "ar": "كل استعلام وردّ ذكاء اصطناعي يُسجَّل وقابل للمراجعة. لا نشاط نموذج خفي، ولا حركة بيانات صامتة." }
       }
     ],
     "related": [
       {
         "href": "/products/ai",
         "title": { "en": "AI Assistant product", "ar": "منتج المساعد الذكي" },
-        "description": {
-          "en": "See every AI workflow in detail.",
-          "ar": "اطّلع على كل سير عمل ذكاء اصطناعي بالتفصيل."
-        }
+        "description": { "en": "See every AI workflow in detail.", "ar": "اطّلع على كل سير عمل ذكاء اصطناعي بالتفصيل." }
       },
       {
         "href": "/products/performance",
         "title": { "en": "Performance", "ar": "الأداء" },
-        "description": {
-          "en": "AI-drafted progress summaries.",
-          "ar": "ملخّصات تقدّم بمسودات ذكاء اصطناعي."
-        }
+        "description": { "en": "AI-drafted progress summaries.", "ar": "ملخّصات تقدّم بمسودات ذكاء اصطناعي." }
       },
       {
         "href": "/enterprise/security",
         "title": { "en": "Enterprise security", "ar": "أمن المؤسسات" },
-        "description": {
-          "en": "Your data never trains external models.",
-          "ar": "بياناتك لا تدرّب النماذج الخارجية أبداً."
-        }
+        "description": { "en": "Your data never trains external models.", "ar": "بياناتك لا تدرّب النماذج الخارجية أبداً." }
       }
-    ]
+    ],
+    "outcomes": [
+      { "en": "Summit Hoops turned two weekends of season-end report writing into one afternoon", "ar": "حوّلت Summit Hoops عطلتَي نهاية أسبوع من كتابة تقارير نهاية الموسم إلى بعد ظهر واحد" },
+      { "en": "Attribute-set drafts land in minutes from a one-paragraph sport description", "ar": "مسودات مجموعات السمات تصل خلال دقائق من وصف رياضة في فقرة واحدة" },
+      { "en": "Natural-language queries on Reports collapse hours of dashboard-building into a single question", "ar": "استعلامات اللغة الطبيعية على التقارير تختصر ساعات من بناء اللوحات إلى سؤال واحد" },
+      { "en": "100% audit coverage on every AI query and response, no hidden model activity", "ar": "تغطية تدقيق بنسبة 100% على كل استعلام وردّ ذكاء اصطناعي، لا نشاط نموذج خفي" },
+      { "en": "Bring your own OpenAI or Anthropic key on Enterprise so cost and governance stay on your side", "ar": "أحضر مفتاح OpenAI أو Anthropic الخاص بك على Enterprise لتبقى التكلفة والحوكمة بيدك" }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": { "en": "Enable the assistant", "ar": "تفعيل المساعد" },
+        "description": { "en": "Turn on AI Assistant on your workspace. Choose between the Academorix key and your own on Enterprise.", "ar": "فعّل المساعد الذكي على مساحة عملك. اختر بين مفتاح Academorix ومفتاحك الخاص على Enterprise." },
+        "icon": "SparklesIcon"
+      },
+      {
+        "number": "02",
+        "title": { "en": "Ask in plain language", "ar": "اسأل بلغة طبيعية" },
+        "description": { "en": "Type a question in English or Arabic, get a chart, a report, or a draft back within seconds.", "ar": "اكتب سؤالاً بالإنجليزية أو العربية، واحصل على رسم بياني أو تقرير أو مسودة خلال ثوانٍ." },
+        "icon": "ChatBubbleLeftRightIcon"
+      },
+      {
+        "number": "03",
+        "title": { "en": "Review and edit", "ar": "راجع وعدّل" },
+        "description": { "en": "Coaches, owners, and analysts review the AI output. Everything is a draft until a human ships it.", "ar": "المدرّبون والملاك والمحللون يراجعون مخرجات الذكاء الاصطناعي. كل شيء مسودة حتى يعتمدها إنسان." },
+        "icon": "DocumentTextIcon"
+      },
+      {
+        "number": "04",
+        "title": { "en": "Log for audit", "ar": "تسجيل للتدقيق" },
+        "description": { "en": "Every prompt and response is logged. Compliance teams review AI activity in the same audit stream as everything else.", "ar": "كل استعلام وردّ يُسجَّل. تراجع فرق الامتثال نشاط الذكاء الاصطناعي في تيار التدقيق نفسه لكل شيء آخر." },
+        "icon": "ShieldCheckIcon"
+      }
+    ],
+    "testimonial": {
+      "quote": { "en": "Season-end reports used to take two weekends. Now they take one afternoon and read better than the ones we wrote by hand.", "ar": "كانت تقارير نهاية الموسم تستغرق عطلتَي نهاية أسبوع. الآن تستغرق بعد ظهر واحد وتُقرأ أفضل من التي كتبناها يدوياً." },
+      "author": { "en": "Marcus Bell", "ar": "ماركوس بيل" },
+      "role": { "en": "Head Coach, Summit Hoops", "ar": "المدرب الرئيسي، Summit Hoops" },
+      "initials": "MB"
+    }
   }
 }

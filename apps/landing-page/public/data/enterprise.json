@@ -3,158 +3,179 @@
     "slug": "security",
     "eyebrow": { "en": "Enterprise security", "ar": "أمن المؤسسات" },
     "title": { "en": "Enterprise security and compliance", "ar": "أمن المؤسسات والامتثال" },
-    "description": {
-      "en": "SSO, audit logs, data residency, and custom SLAs. Everything a security team needs to say yes to a multi-branch rollout.",
-      "ar": "SSO وسجلات تدقيق وإقامة بيانات واتفاقيات SLA مخصصة. كل ما يحتاجه فريق الأمن ليوافق."
-    },
+    "description": { "en": "SSO, audit logs, data residency, and custom SLAs. Everything a security team needs to say yes to a multi-branch rollout.", "ar": "SSO وسجلات تدقيق وإقامة بيانات واتفاقيات SLA مخصصة. كل ما يحتاجه فريق الأمن ليوافق." },
     "hero_icon": "ShieldCheckIcon",
     "features": [
       {
         "icon": "KeyIcon",
         "title": { "en": "SSO with SAML and OIDC", "ar": "SSO عبر SAML و OIDC" },
-        "description": {
-          "en": "Bring your existing identity provider (Okta, Azure AD, Google Workspace, Ping).",
-          "ar": "أحضر مزود الهوية الحالي (Okta و Azure AD و Google Workspace و Ping)."
-        }
+        "description": { "en": "Bring your existing identity provider (Okta, Azure AD, Google Workspace, Ping).", "ar": "أحضر مزود الهوية الحالي (Okta و Azure AD و Google Workspace و Ping)." }
       },
       {
         "icon": "UsersIcon",
         "title": { "en": "SCIM and directory sync", "ar": "SCIM ومزامنة الدليل" },
-        "description": {
-          "en": "Provision and de-provision automatically. Departures lose access immediately.",
-          "ar": "منح وسحب الوصول تلقائياً. المغادرون يفقدون الوصول فوراً."
-        }
+        "description": { "en": "Provision and de-provision automatically. Departures lose access immediately.", "ar": "منح وسحب الوصول تلقائياً. المغادرون يفقدون الوصول فوراً." }
       },
       {
         "icon": "DocumentTextIcon",
         "title": { "en": "Audit logs", "ar": "سجلات التدقيق" },
-        "description": {
-          "en": "Immutable log of every write. Retention up to 7 years. Streamable to SIEM.",
-          "ar": "سجل ثابت لكل عملية كتابة. احتفاظ حتى 7 سنوات. قابل للبث إلى SIEM."
-        }
+        "description": { "en": "Immutable log of every write. Retention up to 7 years. Streamable to SIEM.", "ar": "سجل ثابت لكل عملية كتابة. احتفاظ حتى 7 سنوات. قابل للبث إلى SIEM." }
       },
       {
         "icon": "MapIcon",
         "title": { "en": "Data residency", "ar": "إقامة البيانات" },
-        "description": {
-          "en": "Pin your workspace to EU, MENA, or US infrastructure.",
-          "ar": "ثبّت مساحة عملك على البنية التحتية في الاتحاد الأوروبي أو MENA أو الولايات المتحدة."
-        }
+        "description": { "en": "Pin your workspace to EU, MENA, or US infrastructure.", "ar": "ثبّت مساحة عملك على البنية التحتية في الاتحاد الأوروبي أو MENA أو الولايات المتحدة." }
       },
       {
         "icon": "FingerPrintIcon",
         "title": { "en": "IP allowlisting", "ar": "قوائم IP مسموح بها" },
-        "description": {
-          "en": "Restrict console access to your corporate IP ranges.",
-          "ar": "قصر الوصول إلى لوحة التحكم على نطاقات IP لشركتك."
-        }
+        "description": { "en": "Restrict console access to your corporate IP ranges.", "ar": "قصر الوصول إلى لوحة التحكم على نطاقات IP لشركتك." }
       },
       {
         "icon": "ClockIcon",
         "title": { "en": "99.99% uptime SLA", "ar": "اتفاقية تشغيل 99.99%" },
-        "description": {
-          "en": "Financial credits for missed SLA targets.",
-          "ar": "أرصدة مالية عند عدم تحقيق أهداف الاتفاقية."
-        }
+        "description": { "en": "Financial credits for missed SLA targets.", "ar": "أرصدة مالية عند عدم تحقيق أهداف الاتفاقية." }
       }
     ],
     "related": [
       {
         "href": "/enterprise/onboarding",
         "title": { "en": "Onboarding", "ar": "التهيئة" },
-        "description": {
-          "en": "Hands-on migration from your current system.",
-          "ar": "ترحيل عملي من نظامك الحالي."
-        }
+        "description": { "en": "Hands-on migration from your current system.", "ar": "ترحيل عملي من نظامك الحالي." }
       },
       {
         "href": "/enterprise/contracts",
         "title": { "en": "Contracts", "ar": "العقود" },
-        "description": {
-          "en": "NET-30 terms, DPA, HIPAA BAA.",
-          "ar": "شروط NET-30 و DPA و HIPAA BAA."
-        }
+        "description": { "en": "NET-30 terms, DPA, HIPAA BAA.", "ar": "شروط NET-30 و DPA و HIPAA BAA." }
       },
       {
         "href": "/enterprise/compliance",
         "title": { "en": "Compliance", "ar": "الامتثال" },
-        "description": {
-          "en": "SOC 2, ISO 27001, GDPR, HIPAA, CCPA.",
-          "ar": "SOC 2 و ISO 27001 و GDPR و HIPAA و CCPA."
-        }
+        "description": { "en": "SOC 2, ISO 27001, GDPR, HIPAA, CCPA.", "ar": "SOC 2 و ISO 27001 و GDPR و HIPAA و CCPA." }
       }
-    ]
+    ],
+    "narrative": [
+      { "en": "Enterprise security at Academorix is defense in depth, not marketing bolt-ons. Every layer of the stack, from the browser session to the database row, carries its own boundary. A compromised session cannot pivot into another tenant. A stolen API token cannot bypass branch scoping. A misconfigured integration cannot exfiltrate data outside its allowed surface.", "ar": "أمن المؤسسات في Academorix دفاع متعدد الطبقات، لا إضافات تسويقية. كل طبقة في المنصة، من جلسة المتصفح إلى صفّ قاعدة البيانات، تحمل حدودها الخاصة. جلسة مخترقة لا تستطيع التنقل إلى مستأجر آخر. رمز API مسروق لا يستطيع تجاوز حصر الفرع. تكامل بإعدادات خاطئة لا يستطيع تسريب البيانات خارج مساحته المسموح بها." },
+      { "en": "Every workspace is a strict tenant boundary. Isolation is enforced at the database with row-level scoping, at the API with per-request branch and role gates, and on the wire with TLS 1.3 configured for modern cipher suites only. Cross-tenant access is not a runtime check that could fail open, it is a query that never returns rows the caller was not supposed to see.", "ar": "كل مساحة عمل هي حدود مستأجر صارمة. تُطبَّق العزلة على قاعدة البيانات بحصر على مستوى الصف، وعلى API ببوابات فرع ودور لكل طلب، وعلى الشبكة بـ TLS 1.3 مُهيَّأ لمجموعات تشفير حديثة فقط. الوصول بين المستأجرين ليس فحصاً وقت التشغيل قد يفشل فيُفتح، بل استعلام لا يُعيد أبداً صفوفاً لم يكن للمتصل رؤيتها." },
+      { "en": "SSO is the front door. Behind it sits everything a security team actually needs to observe and control: immutable audit logs streamable to your SIEM, IP allowlists that can scope down to individual privileged roles, session governance with idle timeouts, WebAuthn-capable MFA, and a permissions model that maps cleanly onto your org chart. The security team gets the same visibility they have in every other tool without a bespoke integration layer.", "ar": "SSO هو الباب الأمامي. خلفه كل ما يحتاجه فريق الأمن فعلاً للمراقبة والتحكم: سجلات تدقيق ثابتة قابلة للبث إلى SIEM لديك، وقوائم IP مسموح بها يمكن تضييقها إلى أدوار مميزة بعينها، وحوكمة جلسات بمهلات خمول، وMFA يدعم WebAuthn، ونموذج صلاحيات ينطبق بوضوح على مخطط منظمتك. يحصل فريق الأمن على الرؤية نفسها التي يحصل عليها في كل الأدوات الأخرى دون طبقة تكامل مخصصة." },
+      { "en": "Compliance posture is deliberately honest. Where we are certified today, we say certified. Where an audit is scheduled with a specific quarter, we say scheduled. Where we align with a framework's controls but are not formally audited, we say aligned. No glossy overclaims, no half-truths that unravel in a security questionnaire. Under NDA, we share the SOC 2 Type I report, our latest penetration test, and the full compliance roadmap.", "ar": "موقف الامتثال صادق بشكل مقصود. حيث حصلنا على الاعتماد اليوم، نقول \"معتمد\". حيث يوجد تدقيق مجدول بربع محدد، نقول \"مجدول\". حيث نتوافق مع ضوابط إطار عمل دون تدقيق رسمي، نقول \"متوافق\". لا مبالغات لامعة، ولا أنصاف حقائق تنكشف في استبيان أمني. تحت NDA، نشارك تقرير SOC 2 Type I ونتائج آخر اختبار اختراق وخارطة الامتثال الكاملة." }
+    ],
+    "certifications": [
+      {
+        "slug": "soc2-type2",
+        "label": { "en": "SOC 2 Type II", "ar": "SOC 2 Type II" },
+        "description": { "en": "Type II audit scheduled Q4 2026 with a Big Four assessor. Type I report available under NDA.", "ar": "تدقيق Type II مجدول للربع الرابع من 2026 مع مدقق من الأربع الكبار. تقرير Type I متاح تحت NDA." },
+        "status": "scheduled",
+        "icon": "ShieldCheckIcon"
+      },
+      {
+        "slug": "iso-27001",
+        "label": { "en": "ISO 27001", "ar": "ISO 27001" },
+        "description": { "en": "Framework aligned, gap analysis complete. Formal certification scheduled 2027.", "ar": "متوافق مع الإطار، وتحليل الفجوات مكتمل. الاعتماد الرسمي مجدول لعام 2027." },
+        "status": "aligned",
+        "icon": "DocumentTextIcon"
+      },
+      {
+        "slug": "pen-test",
+        "label": { "en": "Annual penetration test", "ar": "اختبار اختراق سنوي" },
+        "description": { "en": "Annual third-party penetration test in-progress. Results shared under NDA to Enterprise customers.", "ar": "اختبار اختراق سنوي بطرف ثالث قيد التنفيذ. النتائج تُشارك مع عملاء Enterprise تحت NDA." },
+        "status": "in-progress",
+        "icon": "BeakerIcon"
+      }
+    ],
+    "technical_details": [
+      { "en": "AES-256 encryption at rest, TLS 1.3 in transit with modern cipher suites only", "ar": "تشفير AES-256 عند السكون، وTLS 1.3 عند النقل بمجموعات تشفير حديثة فقط" },
+      { "en": "Row-level tenant isolation with strict foreign-key scoping enforced at the query layer", "ar": "عزل المستأجر على مستوى الصف مع حصر صارم للمفاتيح الخارجية على طبقة الاستعلام" },
+      { "en": "Signed URLs with 5-minute TTL for document downloads", "ar": "روابط موقّعة بعمر 5 دقائق لتنزيلات المستندات" },
+      { "en": "Immutable audit log retained for 7 years on Enterprise plans", "ar": "سجل تدقيق ثابت يُحتفظ به لمدة 7 سنوات على خطط Enterprise" },
+      { "en": "Mandatory MFA on privileged roles with WebAuthn supported as a first-class factor", "ar": "MFA إلزامي على الأدوار المميزة مع دعم WebAuthn كعامل من الدرجة الأولى" },
+      { "en": "Data residency options: EU (Frankfurt), MENA (Riyadh), US (Virginia)", "ar": "خيارات إقامة البيانات: أوروبا (فرانكفورت)، MENA (الرياض)، الولايات المتحدة (فيرجينيا)" },
+      { "en": "99.99% uptime SLA with financial credits on missed targets", "ar": "اتفاقية تشغيل بنسبة 99.99% مع أرصدة مالية عند عدم تحقيق الأهداف" },
+      { "en": "SIEM streaming supported for Splunk, Datadog, and custom syslog endpoints", "ar": "بث SIEM مدعوم لـ Splunk وDatadog ونقاط syslog مخصصة" }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": { "en": "Security review", "ar": "مراجعة أمنية" },
+        "description": { "en": "NDA in place, questionnaire returned within 5 business days, architecture briefing with your security engineering team.", "ar": "توقيع NDA، وإعادة الاستبيان خلال 5 أيام عمل، وإحاطة معمارية مع فريق هندسة الأمن لديك." },
+        "icon": "ShieldCheckIcon"
+      },
+      {
+        "number": "02",
+        "title": { "en": "Contract paper", "ar": "أوراق العقد" },
+        "description": { "en": "MSA, DPA, and any regional addenda signed. Legal turnaround typically 5-10 business days on either side.", "ar": "توقيع MSA وDPA وأي ملاحق إقليمية. مراجعة قانونية عادة ما تستغرق 5-10 أيام عمل من كل جهة." },
+        "icon": "DocumentTextIcon"
+      },
+      {
+        "number": "03",
+        "title": { "en": "Tenant provisioning", "ar": "إعداد المستأجر" },
+        "description": { "en": "Data residency selected, SSO wired to your IdP, MFA policy applied, role and branch scoping mapped to your org chart.", "ar": "اختيار إقامة البيانات، وربط SSO بمزود الهوية لديك، وتطبيق سياسة MFA، ومطابقة حصر الأدوار والفروع مع مخطط منظمتك." },
+        "icon": "KeyIcon"
+      },
+      {
+        "number": "04",
+        "title": { "en": "Continuous assurance", "ar": "ضمان مستمر" },
+        "description": { "en": "Audit-log streaming to your SIEM, quarterly review with your success manager, incident postmortems shared under NDA.", "ar": "بث سجلات التدقيق إلى SIEM لديك، ومراجعة ربع سنوية مع مدير النجاح لديك، ومشاركة تحليلات الحوادث تحت NDA." },
+        "icon": "ChartBarIcon"
+      }
+    ],
+    "outcomes": [
+      { "en": "PanAsia Sports Group closed security review in three weeks, two of which were legal", "ar": "أغلق فريق PanAsia Sports Group مراجعة الأمن خلال ثلاثة أسابيع، أسبوعان منها كانا قانونيين" },
+      { "en": "Zero cross-tenant data incidents since Academorix launched", "ar": "صفر حوادث بيانات عبر المستأجرين منذ إطلاق Academorix" },
+      { "en": "100% audit-log coverage on every write across every Enterprise tenant", "ar": "تغطية سجلات تدقيق بنسبة 100% على كل عملية كتابة عبر كل مستأجر Enterprise" },
+      { "en": "p95 initial response time under one hour on Enterprise support", "ar": "زمن استجابة أولي p95 أقل من ساعة على دعم Enterprise" },
+      { "en": "SSO cutover typically completes within a single business day", "ar": "تحويل SSO يكتمل عادة خلال يوم عمل واحد" }
+    ],
+    "testimonial": {
+      "quote": { "en": "Our security team approved Academorix in three weeks. Two of those weeks were legal review. The security bit was almost boring.", "ar": "اعتمد فريق الأمن لدينا Academorix خلال ثلاثة أسابيع. أسبوعان منها كانا للمراجعة القانونية. الجزء الأمني كان يكاد يكون مملاً." },
+      "author": { "en": "Michael Chen", "ar": "مايكل تشين" },
+      "role": { "en": "CISO, PanAsia Sports Group", "ar": "رئيس أمن المعلومات، PanAsia Sports Group" },
+      "initials": "MC"
+    }
   },
   "onboarding": {
     "slug": "onboarding",
     "eyebrow": { "en": "Enterprise onboarding", "ar": "تأهيل المؤسسات" },
-    "title": {
-      "en": "Migration and onboarding, done for you",
-      "ar": "الترحيل والتأهيل، ينفذ نيابة عنك"
-    },
-    "description": {
-      "en": "Hands-on migration from your existing system with a dedicated implementation engineer. Weeks, not months.",
-      "ar": "ترحيل عملي بمهندس تنفيذ مخصص. أسابيع، لا أشهر."
-    },
+    "title": { "en": "Migration and onboarding, done for you", "ar": "الترحيل والتأهيل، ينفذ نيابة عنك" },
+    "description": { "en": "Hands-on migration from your existing system with a dedicated implementation engineer. Weeks, not months.", "ar": "ترحيل عملي بمهندس تنفيذ مخصص. أسابيع، لا أشهر." },
     "hero_icon": "LifebuoyIcon",
     "features": [
       {
         "icon": "DocumentTextIcon",
         "title": { "en": "Data migration", "ar": "ترحيل البيانات" },
-        "description": {
-          "en": "Import from spreadsheets, TeamSnap, Sportlyzer, Playmetrics.",
-          "ar": "استورد من جداول أو TeamSnap أو Sportlyzer أو Playmetrics."
-        }
+        "description": { "en": "Import from spreadsheets, TeamSnap, Sportlyzer, Playmetrics.", "ar": "استورد من جداول أو TeamSnap أو Sportlyzer أو Playmetrics." }
       },
       {
         "icon": "UserGroupIcon",
         "title": { "en": "Dedicated engineer", "ar": "مهندس مخصص" },
-        "description": {
-          "en": "A named implementation engineer runs your rollout.",
-          "ar": "مهندس تنفيذ مخصص باسمه يدير التفعيل."
-        }
+        "description": { "en": "A named implementation engineer runs your rollout.", "ar": "مهندس تنفيذ مخصص باسمه يدير التفعيل." }
       },
       {
         "icon": "AcademicCapIcon",
         "title": { "en": "Staff training", "ar": "تدريب الموظفين" },
-        "description": {
-          "en": "On-site or virtual training sessions.",
-          "ar": "جلسات تدريب في الموقع أو افتراضية."
-        }
+        "description": { "en": "On-site or virtual training sessions.", "ar": "جلسات تدريب في الموقع أو افتراضية." }
       },
       {
         "icon": "AdjustmentsHorizontalIcon",
         "title": { "en": "Custom attribute sets", "ar": "مجموعات سمات مخصصة" },
-        "description": {
-          "en": "Sport-specific sets captured from your best coaches.",
-          "ar": "مجموعات خاصة بالرياضة من أفضل مدربيك."
-        }
+        "description": { "en": "Sport-specific sets captured from your best coaches.", "ar": "مجموعات خاصة بالرياضة من أفضل مدربيك." }
       },
       {
         "icon": "CheckCircleIcon",
         "title": { "en": "Gradual rollout", "ar": "تفعيل تدريجي" },
-        "description": {
-          "en": "Start with one branch, iterate, then roll to the network.",
-          "ar": "ابدأ بفرع، طوّر، ثم انتقل للشبكة."
-        }
+        "description": { "en": "Start with one branch, iterate, then roll to the network.", "ar": "ابدأ بفرع، طوّر، ثم انتقل للشبكة." }
       },
       {
         "icon": "PhoneIcon",
         "title": { "en": "White-glove support", "ar": "دعم متميز" },
-        "description": {
-          "en": "Direct Slack channel and phone hotline for launch week.",
-          "ar": "قناة Slack مباشرة وخط هاتفي في أسبوع الإطلاق."
-        }
+        "description": { "en": "Direct Slack channel and phone hotline for launch week.", "ar": "قناة Slack مباشرة وخط هاتفي في أسبوع الإطلاق." }
       }
     ],
     "related": [
       {
         "href": "/enterprise/security",
         "title": { "en": "Security", "ar": "الأمن" },
-        "description": {
-          "en": "SSO, audit logs, data residency.",
-          "ar": "SSO وسجلات وإقامة بيانات."
-        }
+        "description": { "en": "SSO, audit logs, data residency.", "ar": "SSO وسجلات وإقامة بيانات." }
       },
       {
         "href": "/enterprise/migration",
@@ -166,75 +187,121 @@
         "title": { "en": "Customer stories", "ar": "قصص العملاء" },
         "description": { "en": "Real migrations.", "ar": "ترحيلات حقيقية." }
       }
-    ]
+    ],
+    "narrative": [
+      { "en": "Enterprise onboarding is a project run by named humans, not a self-serve wizard with a chat widget. From day one you are paired with an implementation engineer who owns your rollout end-to-end. They know your data model, your branches, your regulatory context, and the calendar constraints your ops team is working against.", "ar": "تأهيل المؤسسات مشروع يديره أشخاص بأسمائهم، لا معالج ذاتي بنافذة محادثة. من اليوم الأول يُقرن بك مهندس تنفيذ يتولى إطلاقك من البداية إلى النهاية. يعرف نموذج بياناتك، وفروعك، وسياقك التنظيمي، وقيود التقويم التي يعمل ضمنها فريق العمليات لديك." },
+      { "en": "The playbook has years of scar tissue behind it: kickoff workshop, data mapping, pilot branch, then network rollout. Every step is milestone-gated so nothing moves forward until your team is ready. We would rather add a week to the pilot phase than push a network cutover that leaves half the branches on legacy tools.", "ar": "لكتاب اللعب سنوات من الدروس المكتسبة: ورشة انطلاق، وتعيين بيانات، وفرع تجريبي، ثم إطلاق شبكي. كل خطوة مرتبطة بمعلم بحيث لا يتقدم شيء حتى يكون فريقك جاهزاً. نفضل إضافة أسبوع لمرحلة التجريب على دفع تحويل شبكي يترك نصف الفروع على الأدوات القديمة." },
+      { "en": "Training respects the roles that people actually play. Owners learn the executive dashboard and drill-down flows. Coaches learn the mobile-first attendance and performance flows. Front-desk staff learn the approvals queue and family-facing walk-in registration. Every session is recorded and hosted on your workspace so new hires catch up on day one instead of shadowing a colleague for two weeks.", "ar": "التدريب يحترم الأدوار التي يؤديها الناس فعلاً. يتعلم الملاك لوحة التنفيذيين وتدفقات التعمق. ويتعلم المدرّبون تدفقات الحضور والأداء التي تبدأ من الجوال. ويتعلم موظفو الاستقبال طابور الموافقات والتسجيل المباشر للعائلات. تُسجَّل كل جلسة وتُستضاف على مساحة عملك ليلحق الموظفون الجدد في اليوم الأول بدلاً من متابعة زميل لأسبوعين." },
+      { "en": "Parallel run gives your team a real safety net. Academorix runs beside your existing system for 30 days. Daily reconciliation surfaces any drift. On day 31 you cut over with production data already validated by the workflows your team runs in real life. No big-bang. No lost weekends.", "ar": "التشغيل الموازي يمنح فريقك شبكة أمان حقيقية. تعمل Academorix بجانب نظامك الحالي لمدة 30 يوماً. تكشف المطابقة اليومية أي انحراف. في اليوم 31 تنتقل إلى بيانات إنتاج تحققت منها بالفعل تدفقات فريقك في الحياة الفعلية. لا انتقال دفعة واحدة. لا عطلات نهاية أسبوع ضائعة." }
+    ],
+    "certifications": [
+      {
+        "slug": "gdpr",
+        "label": { "en": "GDPR", "ar": "GDPR" },
+        "description": { "en": "DPA signed by our DPO, Standard Contractual Clauses included for onboarding transfers.", "ar": "DPA موقّع من DPO لدينا، وShort Contractual Clauses مدرجة لتحويلات التأهيل." },
+        "status": "aligned",
+        "icon": "GlobeAltIcon"
+      },
+      {
+        "slug": "soc2-type2",
+        "label": { "en": "SOC 2 Type II", "ar": "SOC 2 Type II" },
+        "description": { "en": "Audit scheduled Q4 2026, Type I complete. Onboarding controls covered under the audit scope.", "ar": "التدقيق مجدول للربع الرابع من 2026، وType I مكتمل. تخضع ضوابط التأهيل لنطاق التدقيق." },
+        "status": "scheduled",
+        "icon": "ShieldCheckIcon"
+      }
+    ],
+    "technical_details": [
+      { "en": "Named implementation engineer assigned for the length of the engagement", "ar": "مهندس تنفيذ مخصص باسمه معيَّن طوال فترة الارتباط" },
+      { "en": "Dedicated Slack channel plus phone hotline during launch week", "ar": "قناة Slack مخصصة إضافة إلى خط هاتفي مباشر خلال أسبوع الإطلاق" },
+      { "en": "Import connectors for TeamSnap, Sportlyzer, Playmetrics, plus custom ETL for bespoke systems", "ar": "موصلات استيراد لـ TeamSnap وSportlyzer وPlaymetrics، إضافة إلى ETL مخصص للأنظمة الفريدة" },
+      { "en": "Row-by-row data validation with human sign-off before any commit", "ar": "تحقق من البيانات صفاً صفاً مع اعتماد بشري قبل أي التزام" },
+      { "en": "30-day parallel run supported on every Enterprise migration", "ar": "تشغيل موازٍ لمدة 30 يوماً مدعوم في كل ترحيل Enterprise" },
+      { "en": "Recorded training library published to your workspace for future hires", "ar": "مكتبة تدريب مسجلة تُنشر على مساحة عملك للموظفين الجدد" },
+      { "en": "Documented rollback procedures signed off before cutover", "ar": "إجراءات تراجع موثقة معتمدة قبل التحويل" }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": { "en": "Kickoff", "ar": "الانطلاق" },
+        "description": { "en": "Scope, stakeholders, success criteria, and timeline signed off. Named implementation engineer introduced.", "ar": "اعتماد النطاق وأصحاب المصلحة ومعايير النجاح والجدول الزمني. تقديم مهندس التنفيذ المخصص." },
+        "icon": "FlagIcon"
+      },
+      {
+        "number": "02",
+        "title": { "en": "Migration", "ar": "الترحيل" },
+        "description": { "en": "Data mapping workshop, ETL runs, and row-level validation reports reviewed with your ops lead.", "ar": "ورشة تعيين البيانات، وتشغيل ETL، ومراجعة تقارير التحقق على مستوى الصف مع قائد العمليات لديك." },
+        "icon": "CircleStackIcon"
+      },
+      {
+        "number": "03",
+        "title": { "en": "Pilot branch", "ar": "فرع تجريبي" },
+        "description": { "en": "One branch live end-to-end. Workflows validated with real staff, coaches trained, feedback collected.", "ar": "فرع واحد يعمل من البداية إلى النهاية. التحقق من التدفقات مع طاقم فعلي، وتدريب المدرّبين، وجمع التعليقات." },
+        "icon": "BuildingOffice2Icon"
+      },
+      {
+        "number": "04",
+        "title": { "en": "Full rollout", "ar": "الإطلاق الكامل" },
+        "description": { "en": "Network cutover with launch-week support. Handover to a named customer success manager on day 30.", "ar": "تحويل شبكي مع دعم أسبوع الإطلاق. تسليم لمدير نجاح عملاء مخصص باسمه في اليوم الثلاثين." },
+        "icon": "CheckCircleIcon"
+      }
+    ],
+    "outcomes": [
+      { "en": "4-12 weeks median time from kickoff to production launch", "ar": "4 إلى 12 أسبوعاً هي المدة الوسيطة من الانطلاق إلى الإطلاق الإنتاجي" },
+      { "en": "AquaElite Swim onboarded 12 branches in 30 days across two countries", "ar": "أطلقت AquaElite Swim 12 فرعاً خلال 30 يوماً عبر بلدين" },
+      { "en": "90% of Enterprise customers report zero support tickets during launch week", "ar": "يُفيد 90% من عملاء Enterprise بعدم فتح أي تذكرة دعم خلال أسبوع الإطلاق" },
+      { "en": "One dedicated implementation engineer per engagement, no rotating team", "ar": "مهندس تنفيذ مخصص واحد لكل ارتباط، دون فريق متبدل" },
+      { "en": "Post-launch handover to a named customer success manager after 30 days", "ar": "تسليم بعد الإطلاق لمدير نجاح عملاء مخصص باسمه بعد 30 يوماً" }
+    ],
+    "testimonial": {
+      "quote": { "en": "Our implementation engineer knew our data better than we did by week two. That is what earned us the confidence to cut over.", "ar": "عرف مهندس التنفيذ لدينا بياناتنا أفضل مما نعرفها في الأسبوع الثاني. هذا ما منحنا الثقة للتحويل." },
+      "author": { "en": "Andrea Delgado", "ar": "أندريا ديلغادو" },
+      "role": { "en": "COO, Continental Sports Federation", "ar": "مدير العمليات، Continental Sports Federation" },
+      "initials": "AD"
+    }
   },
   "contracts": {
     "slug": "contracts",
     "eyebrow": { "en": "Enterprise contracts", "ar": "عقود المؤسسات" },
     "title": { "en": "Custom contracts and billing", "ar": "عقود وفوترة مخصصة" },
-    "description": {
-      "en": "NET-30 terms, custom DPA, HIPAA BAA, localised invoicing, and multi-year commitments.",
-      "ar": "شروط NET-30 و DPA و HIPAA BAA وفوترة موطنة."
-    },
+    "description": { "en": "NET-30 terms, custom DPA, HIPAA BAA, localised invoicing, and multi-year commitments.", "ar": "شروط NET-30 و DPA و HIPAA BAA وفوترة موطنة." },
     "hero_icon": "BriefcaseIcon",
     "features": [
       {
         "icon": "ReceiptPercentIcon",
         "title": { "en": "NET-30 or NET-60", "ar": "دفع NET-30 أو NET-60" },
-        "description": {
-          "en": "Invoice-based billing on standard commercial terms.",
-          "ar": "فوترة قائمة على الفواتير."
-        }
+        "description": { "en": "Invoice-based billing on standard commercial terms.", "ar": "فوترة قائمة على الفواتير." }
       },
       {
         "icon": "DocumentTextIcon",
         "title": { "en": "Custom MSA", "ar": "اتفاقية MSA مخصصة" },
-        "description": {
-          "en": "Legal turnaround typically 5-10 business days.",
-          "ar": "مراجعة قانونية 5 إلى 10 أيام عمل."
-        }
+        "description": { "en": "Legal turnaround typically 5-10 business days.", "ar": "مراجعة قانونية 5 إلى 10 أيام عمل." }
       },
       {
         "icon": "ShieldCheckIcon",
         "title": { "en": "Data Processing Addendum", "ar": "ملحق DPA" },
-        "description": {
-          "en": "GDPR-compliant DPA signed by our DPO.",
-          "ar": "DPA متوافق مع GDPR موقّع من DPO."
-        }
+        "description": { "en": "GDPR-compliant DPA signed by our DPO.", "ar": "DPA متوافق مع GDPR موقّع من DPO." }
       },
       {
         "icon": "DocumentCheckIcon",
         "title": { "en": "HIPAA BAA", "ar": "اتفاقية BAA" },
-        "description": {
-          "en": "For customers subject to HIPAA, on Growth-plus with surcharge.",
-          "ar": "للعملاء الخاضعين لـ HIPAA على Growth فما فوق مع رسوم."
-        }
+        "description": { "en": "For customers subject to HIPAA, on Growth-plus with surcharge.", "ar": "للعملاء الخاضعين لـ HIPAA على Growth فما فوق مع رسوم." }
       },
       {
         "icon": "GlobeAmericasIcon",
         "title": { "en": "Localised invoicing", "ar": "فوترة موطنة" },
-        "description": {
-          "en": "VAT-compliant across EU, UK, GCC.",
-          "ar": "متوافقة مع VAT للاتحاد الأوروبي والمملكة المتحدة والخليج."
-        }
+        "description": { "en": "VAT-compliant across EU, UK, GCC.", "ar": "متوافقة مع VAT للاتحاد الأوروبي والمملكة المتحدة والخليج." }
       },
       {
         "icon": "ClockIcon",
         "title": { "en": "Multi-year commitments", "ar": "التزامات متعددة السنوات" },
-        "description": {
-          "en": "Volume discounts for 2-year and 3-year contracts.",
-          "ar": "خصومات كمية لعقود سنتين وثلاث سنوات."
-        }
+        "description": { "en": "Volume discounts for 2-year and 3-year contracts.", "ar": "خصومات كمية لعقود سنتين وثلاث سنوات." }
       }
     ],
     "related": [
       {
         "href": "/enterprise/security",
         "title": { "en": "Security", "ar": "الأمن" },
-        "description": {
-          "en": "SSO, audit logs, data residency.",
-          "ar": "SSO وسجلات وإقامة بيانات."
-        }
+        "description": { "en": "SSO, audit logs, data residency.", "ar": "SSO وسجلات وإقامة بيانات." }
       },
       {
         "href": "/enterprise/onboarding",
@@ -246,65 +313,114 @@
         "title": { "en": "DPA", "ar": "DPA" },
         "description": { "en": "Read the DPA in full.", "ar": "اقرأ DPA كاملاً." }
       }
-    ]
+    ],
+    "narrative": [
+      { "en": "Enterprise contracts respect the finance team on the other side of the table. NET-30 or NET-60 invoicing, purchase orders, VAT-compliant invoices, and locked pricing over the contract term. Your accounts payable process should not have to bend to onboard a new SaaS.", "ar": "عقود المؤسسات تحترم فريق المالية على الجانب الآخر من الطاولة. فوترة NET-30 أو NET-60، وطلبات شراء، وفواتير متوافقة مع VAT، وأسعار مثبتة على مدة العقد. لا ينبغي أن تنحني عملية الحسابات الدائنة لديك لاستيعاب SaaS جديد." },
+      { "en": "Legal is fast, not glacial. Our standard MSA is available in advance, we accept redlines, and turnaround from our side is typically 5-10 business days. If you prefer to work from your paper, the same team reviews it. We meet you where your legal process already lives.", "ar": "القانون سريع، لا بطيء. اتفاقية MSA القياسية لدينا متاحة مسبقاً، ونقبل الخطوط الحمراء، وتستغرق المراجعة من طرفنا عادة 5 إلى 10 أيام عمل. إذا فضّلت العمل من أوراقك، يراجعها الفريق نفسه. نلتقيك حيث تعمل عملياتك القانونية أصلاً." },
+      { "en": "DPA and Standard Contractual Clauses are signed by our DPO. Enterprise customers can opt into EU-only or MENA-only data residency to sidestep cross-border transfer questions entirely. Sub-processor register is published and versioned, with material change notifications sent 30 days ahead.", "ar": "DPA وShort Contractual Clauses موقّعة من DPO لدينا. يستطيع عملاء Enterprise الاشتراك في إقامة بيانات داخل أوروبا فقط أو داخل MENA فقط لتجاوز أسئلة النقل عبر الحدود بالكامل. سجل المعالجات الفرعية منشور ومُصدَّر، مع إشعارات بأي تغيير جوهري تُرسل قبل 30 يوماً." },
+      { "en": "HIPAA BAA is available on Growth-plus plans for sports-medicine clinics and healthcare-adjacent operators. A monthly regulatory surcharge covers the additional compliance overhead: audit-log retention, encryption key rotation cadence, and a breach notification SLA of 72 hours.", "ar": "BAA الخاصة بـ HIPAA متاحة على خطط Growth وما فوق لعيادات الطب الرياضي والجهات القريبة من الرعاية الصحية. رسم تنظيمي شهري يغطي عبء الامتثال الإضافي: الاحتفاظ بسجلات التدقيق، وإيقاع تدوير مفاتيح التشفير، وSLA لإبلاغ الخرق مدتها 72 ساعة." }
+    ],
+    "certifications": [
+      {
+        "slug": "gdpr",
+        "label": { "en": "GDPR DPA", "ar": "GDPR DPA" },
+        "description": { "en": "GDPR-compliant DPA signed by our DPO, with Standard Contractual Clauses for international transfers.", "ar": "DPA متوافقة مع GDPR موقّعة من DPO لدينا، مع Short Contractual Clauses لتحويلات دولية." },
+        "status": "aligned",
+        "icon": "GlobeAltIcon"
+      },
+      {
+        "slug": "hipaa-baa",
+        "label": { "en": "HIPAA BAA", "ar": "HIPAA BAA" },
+        "description": { "en": "BAA available on Growth-plus plans with a monthly regulatory surcharge. Executed per customer on request.", "ar": "BAA متاحة على خطط Growth وما فوق برسم تنظيمي شهري. تُنفَّذ لكل عميل عند الطلب." },
+        "status": "aligned",
+        "icon": "HeartIcon"
+      }
+    ],
+    "technical_details": [
+      { "en": "NET-30 or NET-60 invoicing available on Enterprise plans", "ar": "فوترة NET-30 أو NET-60 متاحة على خطط Enterprise" },
+      { "en": "Purchase order flow integrates with your existing AP tooling", "ar": "تدفق طلب الشراء يتكامل مع أدوات الحسابات الدائنة الحالية لديك" },
+      { "en": "Multi-year commitments (2-year, 3-year) with pricing locked over the term", "ar": "التزامات متعددة السنوات (سنتان، ثلاث سنوات) بأسعار مثبتة على مدة العقد" },
+      { "en": "Localized invoice templates for GCC VAT, EU VAT, UK VAT, US 501(c)(3), and standard US", "ar": "قوالب فواتير موطنة لـ VAT الخليجية، وVAT الأوروبية، وVAT البريطانية، و501(c)(3) الأمريكية، وأمريكا القياسية" },
+      { "en": "Volume discounts triggered above 5,000 managed athletes", "ar": "خصومات كمية تبدأ فوق 5000 رياضي مُدار" },
+      { "en": "Consolidated invoicing available for multi-tenant groups and franchise networks", "ar": "فوترة موحدة متاحة للمجموعات متعددة المستأجرين وشبكات الامتياز التجاري" },
+      { "en": "Custom MSA turnaround typically 5-10 business days from our legal team", "ar": "مراجعة MSA مخصصة عادة ما تستغرق 5 إلى 10 أيام عمل من فريقنا القانوني" }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": { "en": "Scoping", "ar": "تحديد النطاق" },
+        "description": { "en": "Plan tier, seat count, regional footprint, and add-on modules agreed with sales engineering.", "ar": "الاتفاق على مستوى الخطة وعدد المقاعد والبصمة الإقليمية والوحدات الإضافية مع فريق هندسة المبيعات." },
+        "icon": "MapIcon"
+      },
+      {
+        "number": "02",
+        "title": { "en": "MSA and DPA", "ar": "MSA وDPA" },
+        "description": { "en": "Standard MSA reviewed, redlines exchanged, DPA appended. Your legal team owns the pace.", "ar": "مراجعة MSA القياسية وتبادل الخطوط الحمراء وإرفاق DPA. فريقك القانوني يتحكم بالإيقاع." },
+        "icon": "DocumentTextIcon"
+      },
+      {
+        "number": "03",
+        "title": { "en": "Commercial setup", "ar": "الإعداد التجاري" },
+        "description": { "en": "Invoicing cadence, purchase order references, and VAT profile configured on your billing account.", "ar": "إعداد إيقاع الفوترة، ومراجع طلبات الشراء، وملف VAT على حساب الفوترة لديك." },
+        "icon": "ReceiptPercentIcon"
+      },
+      {
+        "number": "04",
+        "title": { "en": "Countersign", "ar": "التوقيع المتبادل" },
+        "description": { "en": "Both parties countersign, provisioning begins the same business day, kickoff scheduled within a week.", "ar": "توقيع الطرفين متبادلاً، ويبدأ الإعداد في يوم العمل نفسه، ويُجدَل الانطلاق خلال أسبوع." },
+        "icon": "CheckCircleIcon"
+      }
+    ],
+    "outcomes": [
+      { "en": "5-10 business days median legal turnaround from Academorix", "ar": "5 إلى 10 أيام عمل هي المدة الوسيطة للمراجعة القانونية من Academorix" },
+      { "en": "100% GDPR-compliant DPA with Standard Contractual Clauses on every Enterprise contract", "ar": "DPA بنسبة 100% متوافقة مع GDPR مع Short Contractual Clauses على كل عقد Enterprise" },
+      { "en": "3-year commitments locked with no surprise renewal increases", "ar": "التزامات لمدة 3 سنوات مثبتة دون زيادات مفاجئة عند التجديد" },
+      { "en": "Six localized invoice templates supported across GCC, EU, UK, and US jurisdictions", "ar": "دعم ستة قوالب فواتير موطنة عبر الولايات القضائية للخليج وأوروبا والمملكة المتحدة والولايات المتحدة" },
+      { "en": "HIPAA BAA executed for every US healthcare-adjacent tenant on Growth-plus", "ar": "تنفيذ BAA الخاصة بـ HIPAA لكل مستأجر أمريكي قريب من الرعاية الصحية على Growth وما فوق" }
+    ],
+    "testimonial": {
+      "quote": { "en": "They accepted our paper, closed in three weeks, and locked pricing for two years. That is what enterprise commercial looks like.", "ar": "قبلوا أوراقنا، وأغلقوا الصفقة خلال ثلاثة أسابيع، وثبتوا السعر لمدة سنتين. هكذا يبدو العمل التجاري للمؤسسات." },
+      "author": { "en": "Marcus Bell", "ar": "ماركوس بيل" },
+      "role": { "en": "Head Coach, Summit Hoops", "ar": "المدرب الرئيسي، Summit Hoops" },
+      "initials": "MB"
+    }
   },
   "compliance": {
     "slug": "compliance",
     "eyebrow": { "en": "Enterprise compliance", "ar": "امتثال المؤسسات" },
     "title": { "en": "Compliance and certifications", "ar": "الامتثال والاعتمادات" },
-    "description": {
-      "en": "SOC 2, ISO 27001, GDPR, HIPAA, CCPA. What we cover today and what is on the roadmap.",
-      "ar": "SOC 2 و ISO 27001 و GDPR و HIPAA و CCPA. ما نغطيه اليوم وما هو على خارطة الطريق."
-    },
+    "description": { "en": "SOC 2, ISO 27001, GDPR, HIPAA, CCPA. What we cover today and what is on the roadmap.", "ar": "SOC 2 و ISO 27001 و GDPR و HIPAA و CCPA. ما نغطيه اليوم وما هو على خارطة الطريق." },
     "hero_icon": "ScaleIcon",
     "features": [
       {
         "icon": "ShieldCheckIcon",
         "title": { "en": "SOC 2 Type II", "ar": "SOC 2 Type II" },
-        "description": {
-          "en": "Type II audit scheduled Q4 2026. Type I is complete.",
-          "ar": "تدقيق Type II مقرر في الربع الرابع من 2026. Type I مكتمل."
-        }
+        "description": { "en": "Type II audit scheduled Q4 2026. Type I is complete.", "ar": "تدقيق Type II مقرر في الربع الرابع من 2026. Type I مكتمل." }
       },
       {
         "icon": "DocumentCheckIcon",
         "title": { "en": "ISO 27001", "ar": "ISO 27001" },
-        "description": {
-          "en": "Certification scheduled 2027. Gap analysis complete.",
-          "ar": "الاعتماد مقرر لعام 2027. تحليل الفجوات مكتمل."
-        }
+        "description": { "en": "Certification scheduled 2027. Gap analysis complete.", "ar": "الاعتماد مقرر لعام 2027. تحليل الفجوات مكتمل." }
       },
       {
         "icon": "GlobeAmericasIcon",
         "title": { "en": "GDPR", "ar": "GDPR" },
-        "description": {
-          "en": "Full compliance today. DPA signed by DPO.",
-          "ar": "امتثال كامل اليوم. DPA موقّع من DPO."
-        }
+        "description": { "en": "Full compliance today. DPA signed by DPO.", "ar": "امتثال كامل اليوم. DPA موقّع من DPO." }
       },
       {
         "icon": "ClipboardDocumentCheckIcon",
         "title": { "en": "HIPAA", "ar": "HIPAA" },
-        "description": {
-          "en": "BAA available on Growth-plus with surcharge.",
-          "ar": "BAA متاح على Growth فما فوق برسوم."
-        }
+        "description": { "en": "BAA available on Growth-plus with surcharge.", "ar": "BAA متاح على Growth فما فوق برسوم." }
       },
       {
         "icon": "KeyIcon",
         "title": { "en": "CCPA", "ar": "CCPA" },
-        "description": {
-          "en": "California consumer rights fulfilled within 30 days.",
-          "ar": "حقوق المستهلك في كاليفورنيا خلال 30 يوماً."
-        }
+        "description": { "en": "California consumer rights fulfilled within 30 days.", "ar": "حقوق المستهلك في كاليفورنيا خلال 30 يوماً." }
       },
       {
         "icon": "CreditCardIcon",
         "title": { "en": "PCI DSS", "ar": "PCI DSS" },
-        "description": {
-          "en": "Level 1 inherited from Stripe and Paddle.",
-          "ar": "المستوى الأول موروث من Stripe و Paddle."
-        }
+        "description": { "en": "Level 1 inherited from Stripe and Paddle.", "ar": "المستوى الأول موروث من Stripe و Paddle." }
       }
     ],
     "related": [
@@ -323,68 +439,158 @@
         "title": { "en": "DPA", "ar": "DPA" },
         "description": { "en": "The Data Processing Addendum.", "ar": "ملحق معالجة البيانات." }
       }
-    ]
+    ],
+    "narrative": [
+      { "en": "Compliance posture is where a lot of vendors overreach. We publish exactly where we stand: what is certified today, what is scheduled with a specific quarter, and what is aligned but not yet formally audited. No glossy overclaims, no half-truths that unravel in a security questionnaire.", "ar": "موقف الامتثال هو المكان الذي يبالغ فيه كثير من الموردين. ننشر بالضبط أين نقف: ما هو معتمد اليوم، وما هو مجدول بربع محدد، وما هو متوافق لكن لم يُدقَّق رسمياً بعد. لا مبالغات لامعة، ولا أنصاف حقائق تنكشف في استبيان أمني." },
+      { "en": "SOC 2 Type I is complete. The Type II audit is scheduled Q4 2026 with a Big Four assessor. Between now and then the control set is unchanged; the audit period simply extends over 6 months of operations. The Type I report is available under NDA to Enterprise customers on request.", "ar": "SOC 2 Type I مكتمل. تدقيق Type II مجدول للربع الرابع من 2026 مع مدقق من الأربع الكبار. بين الآن وذلك الوقت مجموعة الضوابط ثابتة، وفترة التدقيق تمتد ببساطة على 6 أشهر من العمليات. تقرير Type I متاح تحت NDA لعملاء Enterprise عند الطلب." },
+      { "en": "GDPR and its regional cousins are handled today. Standard Contractual Clauses cover cross-border transfers. Saudi PDPL and UAE PDPL are aligned for GCC operators. CCPA covers California consumer requests. Data subject rights are fulfilled within 30 days across every jurisdiction.", "ar": "GDPR وأقرباؤه الإقليميون يُعالجون اليوم. Short Contractual Clauses تغطي التحويلات عبر الحدود. Saudi PDPL وUAE PDPL متوافقان لمشغلي الخليج. CCPA تغطي طلبات مستهلكي كاليفورنيا. تُلبَّى حقوق أصحاب البيانات خلال 30 يوماً عبر كل الولايات القضائية." },
+      { "en": "HIPAA and PCI are handled through partnership. HIPAA BAA is available on Growth-plus for regulated tenants with a monthly regulatory surcharge. PCI DSS Level 1 is inherited from Stripe and HyperPay because card data never touches Academorix servers.", "ar": "HIPAA وPCI يُعالجان عبر الشراكة. BAA الخاصة بـ HIPAA متاحة على Growth وما فوق للمستأجرين الخاضعين للتنظيم مقابل رسم تنظيمي شهري. PCI DSS المستوى الأول موروث من Stripe وHyperPay لأن بيانات البطاقات لا تلمس خوادم Academorix أبداً." },
+      { "en": "Under NDA, we share the SOC 2 Type I report, our latest third-party penetration test, the sub-processor register, and the full compliance roadmap. Enterprise security teams get the evidence they need to defend the decision to their auditors, not just a brochure.", "ar": "تحت NDA، نشارك تقرير SOC 2 Type I وأحدث اختبار اختراق بطرف ثالث وسجل المعالجات الفرعية وخارطة الامتثال الكاملة. تحصل فرق أمن المؤسسات على الأدلة التي يحتاجونها للدفاع عن قرارهم أمام مدققيهم، لا مجرد كتيب تسويقي." }
+    ],
+    "certifications": [
+      {
+        "slug": "soc2-type2",
+        "label": { "en": "SOC 2 Type II", "ar": "SOC 2 Type II" },
+        "description": { "en": "Type II audit scheduled Q4 2026 with a Big Four assessor. Type I report available under NDA.", "ar": "تدقيق Type II مجدول للربع الرابع من 2026 مع مدقق من الأربع الكبار. تقرير Type I متاح تحت NDA." },
+        "status": "scheduled",
+        "icon": "ShieldCheckIcon"
+      },
+      {
+        "slug": "iso-27001",
+        "label": { "en": "ISO 27001", "ar": "ISO 27001" },
+        "description": { "en": "Framework aligned, gap analysis complete. Certification scheduled 2027.", "ar": "متوافق مع الإطار، وتحليل الفجوات مكتمل. الاعتماد مجدول لعام 2027." },
+        "status": "aligned",
+        "icon": "DocumentTextIcon"
+      },
+      {
+        "slug": "gdpr",
+        "label": { "en": "GDPR", "ar": "GDPR" },
+        "description": { "en": "DPA signed by our DPO, Standard Contractual Clauses for international transfers, 30-day subject request SLA.", "ar": "DPA موقّعة من DPO لدينا، وShort Contractual Clauses للتحويلات الدولية، وSLA لطلبات أصحاب البيانات مدتها 30 يوماً." },
+        "status": "aligned",
+        "icon": "GlobeAltIcon"
+      },
+      {
+        "slug": "hipaa",
+        "label": { "en": "HIPAA", "ar": "HIPAA" },
+        "description": { "en": "BAA available on Growth-plus with a monthly regulatory surcharge. Executed per customer on request.", "ar": "BAA متاحة على Growth وما فوق برسم تنظيمي شهري. تُنفَّذ لكل عميل عند الطلب." },
+        "status": "aligned",
+        "icon": "HeartIcon"
+      },
+      {
+        "slug": "ccpa",
+        "label": { "en": "CCPA", "ar": "CCPA" },
+        "description": { "en": "California consumer rights of access, deletion, and portability fulfilled within 30 days.", "ar": "تُلبَّى حقوق مستهلكي كاليفورنيا في الوصول والحذف وقابلية النقل خلال 30 يوماً." },
+        "status": "aligned",
+        "icon": "KeyIcon"
+      },
+      {
+        "slug": "saudi-pdpl",
+        "label": { "en": "Saudi PDPL", "ar": "Saudi PDPL" },
+        "description": { "en": "Aligned with the Saudi Personal Data Protection Law. MENA data residency available in Riyadh.", "ar": "متوافق مع نظام حماية البيانات الشخصية السعودي. إقامة بيانات MENA متاحة في الرياض." },
+        "status": "aligned",
+        "icon": "FlagIcon"
+      },
+      {
+        "slug": "uae-pdpl",
+        "label": { "en": "UAE PDPL", "ar": "UAE PDPL" },
+        "description": { "en": "Aligned with the UAE Personal Data Protection Law. Data controller and processor duties documented.", "ar": "متوافق مع قانون حماية البيانات الشخصية الإماراتي. توثيق واجبات مراقب البيانات ومعالجها." },
+        "status": "aligned",
+        "icon": "FlagIcon"
+      },
+      {
+        "slug": "pci-dss",
+        "label": { "en": "PCI DSS Level 1", "ar": "PCI DSS Level 1" },
+        "description": { "en": "Inherited from Stripe and HyperPay. Card data never touches Academorix servers.", "ar": "موروث من Stripe وHyperPay. بيانات البطاقات لا تلمس خوادم Academorix أبداً." },
+        "status": "aligned",
+        "icon": "CreditCardIcon"
+      }
+    ],
+    "technical_details": [
+      { "en": "SOC 2 Type I complete, Type II audit scheduled Q4 2026 with a Big Four assessor", "ar": "SOC 2 Type I مكتمل، وتدقيق Type II مجدول للربع الرابع من 2026 مع مدقق من الأربع الكبار" },
+      { "en": "GDPR DPA signed by DPO, Standard Contractual Clauses appended for international transfers", "ar": "DPA الخاصة بـ GDPR موقّعة من DPO، مع إرفاق Short Contractual Clauses للتحويلات الدولية" },
+      { "en": "Data subject requests fulfilled within 30 days across every supported jurisdiction", "ar": "تُلبَّى طلبات أصحاب البيانات خلال 30 يوماً عبر كل ولاية قضائية مدعومة" },
+      { "en": "HIPAA BAA available on Growth-plus with a monthly regulatory surcharge and 72-hour breach SLA", "ar": "BAA الخاصة بـ HIPAA متاحة على Growth وما فوق برسم تنظيمي شهري وSLA للخرق مدتها 72 ساعة" },
+      { "en": "PCI DSS Level 1 inherited from Stripe and HyperPay; card data never touches our servers", "ar": "PCI DSS المستوى الأول موروث من Stripe وHyperPay؛ بيانات البطاقات لا تلمس خوادمنا أبداً" },
+      { "en": "Sub-processor register published and versioned, material changes notified 30 days ahead", "ar": "سجل المعالجات الفرعية منشور ومُصدَّر، ويُبلَّغ بأي تغيير جوهري قبل 30 يوماً" },
+      { "en": "Annual third-party penetration test; Enterprise customers receive results under NDA", "ar": "اختبار اختراق سنوي بطرف ثالث؛ يتلقى عملاء Enterprise النتائج تحت NDA" },
+      { "en": "PII pseudonymization at rest for cross-branch analytics workloads", "ar": "تسمية مستعارة لـ PII عند السكون لأعباء تحليلات الفروع المتقاطعة" }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": { "en": "DPA signing", "ar": "توقيع DPA" },
+        "description": { "en": "Standard DPA reviewed by your counsel or your paper reviewed by our DPO. Signed within 10 business days.", "ar": "مراجعة DPA القياسية بواسطة مستشارك أو مراجعة أوراقك بواسطة DPO لدينا. التوقيع خلال 10 أيام عمل." },
+        "icon": "DocumentTextIcon"
+      },
+      {
+        "number": "02",
+        "title": { "en": "Data residency", "ar": "إقامة البيانات" },
+        "description": { "en": "Choose EU (Frankfurt), MENA (Riyadh), or US (Virginia). Processing stays in-region for the whole workspace.", "ar": "اختيار أوروبا (فرانكفورت) أو MENA (الرياض) أو الولايات المتحدة (فيرجينيا). تبقى المعالجة داخل المنطقة لكامل مساحة العمل." },
+        "icon": "MapIcon"
+      },
+      {
+        "number": "03",
+        "title": { "en": "User provisioning", "ar": "إعداد المستخدمين" },
+        "description": { "en": "SSO wired to your IdP, SCIM sync configured, role and branch scoping mapped to your org chart.", "ar": "ربط SSO بمزود الهوية لديك، وإعداد مزامنة SCIM، ومطابقة حصر الأدوار والفروع مع مخطط منظمتك." },
+        "icon": "KeyIcon"
+      },
+      {
+        "number": "04",
+        "title": { "en": "Audit hand-off", "ar": "تسليم للتدقيق" },
+        "description": { "en": "SOC 2 Type I report, penetration test results, sub-processor register, and roadmap shared under NDA.", "ar": "مشاركة تقرير SOC 2 Type I ونتائج اختبار الاختراق وسجل المعالجات الفرعية وخارطة الطريق تحت NDA." },
+        "icon": "ChartBarIcon"
+      }
+    ],
+    "outcomes": [
+      { "en": "Zero cross-tenant data incidents since Academorix launched", "ar": "صفر حوادث بيانات عبر المستأجرين منذ إطلاق Academorix" },
+      { "en": "100% of Enterprise DPAs signed within 10 business days", "ar": "100% من DPA الخاصة بـ Enterprise موقّعة خلال 10 أيام عمل" },
+      { "en": "GDPR subject requests fulfilled within 30 days across every region", "ar": "تُلبَّى طلبات أصحاب البيانات في GDPR خلال 30 يوماً عبر كل منطقة" },
+      { "en": "HIPAA BAA executed for every US healthcare-adjacent tenant on Growth-plus", "ar": "تنفيذ BAA الخاصة بـ HIPAA لكل مستأجر أمريكي قريب من الرعاية الصحية على Growth وما فوق" },
+      { "en": "Sub-processor register updated on every material change with 30-day advance notice", "ar": "تحديث سجل المعالجات الفرعية عند كل تغيير جوهري بإشعار مسبق قبل 30 يوماً" }
+    ],
+    "testimonial": {
+      "quote": { "en": "The compliance briefing they gave us was the most transparent we have seen from a SaaS vendor. Where they were certified, where they were not, and what the timeline looked like.", "ar": "الإحاطة بالامتثال التي قدموها لنا كانت الأكثر شفافية بين ما رأيناه من موردي SaaS. أين اعتُمدوا، وأين لم يُعتمدوا، وكيف يبدو الجدول الزمني." },
+      "author": { "en": "Andrea Delgado", "ar": "أندريا ديلغادو" },
+      "role": { "en": "COO, Continental Sports Federation", "ar": "مدير العمليات، Continental Sports Federation" },
+      "initials": "AD"
+    }
   },
   "migration": {
     "slug": "migration",
     "eyebrow": { "en": "Enterprise migration", "ar": "ترحيل المؤسسات" },
-    "title": {
-      "en": "Migrate from TeamSnap, Sportlyzer, Playmetrics, or spreadsheets",
-      "ar": "الترحيل من TeamSnap أو Sportlyzer أو Playmetrics"
-    },
-    "description": {
-      "en": "Every enterprise migration follows a proven playbook. Zero data loss, zero downtime.",
-      "ar": "كل ترحيل مؤسسي يتبع كتاب لعبة مجرباً. صفر فقدان بيانات وصفر توقف."
-    },
+    "title": { "en": "Migrate from TeamSnap, Sportlyzer, Playmetrics, or spreadsheets", "ar": "الترحيل من TeamSnap أو Sportlyzer أو Playmetrics" },
+    "description": { "en": "Every enterprise migration follows a proven playbook. Zero data loss, zero downtime.", "ar": "كل ترحيل مؤسسي يتبع كتاب لعبة مجرباً. صفر فقدان بيانات وصفر توقف." },
     "hero_icon": "CubeTransparentIcon",
     "features": [
       {
         "icon": "InboxStackIcon",
         "title": { "en": "Data export ingestion", "ar": "استيعاب البيانات المصدرة" },
-        "description": {
-          "en": "Every major sports platform plus custom ETL.",
-          "ar": "كل منصة رياضية رئيسية إضافة إلى ETL مخصص."
-        }
+        "description": { "en": "Every major sports platform plus custom ETL.", "ar": "كل منصة رياضية رئيسية إضافة إلى ETL مخصص." }
       },
       {
         "icon": "DocumentDuplicateIcon",
         "title": { "en": "Data mapping workshop", "ar": "ورشة تعيين البيانات" },
-        "description": {
-          "en": "Two-day workshop with your team.",
-          "ar": "ورشة عمل ليومين مع فريقك."
-        }
+        "description": { "en": "Two-day workshop with your team.", "ar": "ورشة عمل ليومين مع فريقك." }
       },
       {
         "icon": "CheckCircleIcon",
         "title": { "en": "Data validation reports", "ar": "تقارير التحقق من البيانات" },
-        "description": {
-          "en": "Every import produces a validation report before commit.",
-          "ar": "كل استيراد ينتج تقرير تحقق قبل الاعتماد."
-        }
+        "description": { "en": "Every import produces a validation report before commit.", "ar": "كل استيراد ينتج تقرير تحقق قبل الاعتماد." }
       },
       {
         "icon": "ArrowPathIcon",
         "title": { "en": "Parallel run", "ar": "تشغيل موازٍ" },
-        "description": {
-          "en": "30 days side by side with your existing system.",
-          "ar": "30 يوماً بجانب نظامك الحالي."
-        }
+        "description": { "en": "30 days side by side with your existing system.", "ar": "30 يوماً بجانب نظامك الحالي." }
       },
       {
         "icon": "AcademicCapIcon",
         "title": { "en": "Staff training", "ar": "تدريب الموظفين" },
-        "description": {
-          "en": "On-site or virtual, tailored to your migration.",
-          "ar": "في الموقع أو افتراضياً، مخصص لترحيلك."
-        }
+        "description": { "en": "On-site or virtual, tailored to your migration.", "ar": "في الموقع أو افتراضياً، مخصص لترحيلك." }
       },
       {
         "icon": "PhoneIcon",
         "title": { "en": "Launch week support", "ar": "دعم أسبوع الإطلاق" },
-        "description": {
-          "en": "Direct Slack and phone hotline.",
-          "ar": "قناة Slack وخط هاتفي مباشر."
-        }
+        "description": { "en": "Direct Slack and phone hotline.", "ar": "قناة Slack وخط هاتفي مباشر." }
       }
     ],
     "related": [
@@ -403,19 +609,67 @@
         "title": { "en": "Customer stories", "ar": "قصص العملاء" },
         "description": { "en": "Real migrations.", "ar": "ترحيلات حقيقية." }
       }
-    ]
+    ],
+    "narrative": [
+      { "en": "Every enterprise migration follows the same playbook: audit source data, map to Academorix, run in parallel, cut over. What varies is the source system and the volume, not the process. That predictability is what makes migrations a project you can plan around instead of a lottery.", "ar": "كل ترحيل مؤسسي يتبع كتاب اللعب نفسه: تدقيق بيانات المصدر، والتعيين إلى Academorix، والتشغيل الموازي، ثم التحويل. ما يتغير هو النظام المصدر والحجم، لا العملية. هذه القدرة على التنبؤ هي ما يجعل الترحيلات مشروعاً يمكنك التخطيط له بدلاً من رهان." },
+      { "en": "TeamSnap, Sportlyzer, Playmetrics, and spreadsheet migrations each have battle-tested importers. Bespoke systems get custom ETL with the same validation guarantees. Whichever route you come from, your data lands in Academorix in a shape your staff recognize, not a shape our schema demanded.", "ar": "لدى TeamSnap وSportlyzer وPlaymetrics وترحيلات جداول البيانات موصلات مجربة. الأنظمة الفريدة تحصل على ETL مخصص بضمانات التحقق نفسها. أياً كان الطريق الذي تأتي منه، تصل بياناتك إلى Academorix بشكل يعرفه طاقمك، لا بشكل تفرضه قاعدة بياناتنا." },
+      { "en": "Row-by-row validation is non-negotiable. Every import produces a validation report your team signs before commit. Ambiguities and conflicts are surfaced with row-level context: missing DOBs, inconsistent phone formats, orphaned guardian records, duplicate athletes across teams. Nothing gets silently normalized behind your back.", "ar": "التحقق صفاً صفاً غير قابل للتفاوض. كل استيراد يُنتج تقرير تحقق يوقّعه فريقك قبل الاعتماد. تُبرَز الغموضات والتعارضات بسياق على مستوى الصف: تواريخ ميلاد مفقودة، وتنسيقات هاتف غير متسقة، وسجلات أولياء أمور بلا ارتباط، ورياضيون مكررون عبر الفرق. لا شيء يُطبَّع صامتاً وراء ظهرك." },
+      { "en": "Parallel run is the safety net. Your existing system stays live for 30 days while Academorix runs alongside. Reconciliation is daily. Cutover happens when your team is confident, not when the calendar says so. On day 31 you cut over with production data already validated by real workflows.", "ar": "التشغيل الموازي هو شبكة الأمان. يبقى نظامك الحالي حياً لمدة 30 يوماً بينما تعمل Academorix بجانبه. المطابقة يومية. يحدث التحويل عندما يكون فريقك واثقاً، لا عندما يقول التقويم ذلك. في اليوم 31 تنتقل إلى بيانات إنتاج تحققت منها بالفعل تدفقات حقيقية." }
+    ],
+    "technical_details": [
+      { "en": "Import connectors for TeamSnap, Sportlyzer, Playmetrics, plus custom ETL for bespoke systems", "ar": "موصلات استيراد لـ TeamSnap وSportlyzer وPlaymetrics، إضافة إلى ETL مخصص للأنظمة الفريدة" },
+      { "en": "Two-day data mapping workshop with your ops lead and implementation engineer", "ar": "ورشة تعيين بيانات ليومين مع قائد العمليات لديك ومهندس التنفيذ" },
+      { "en": "Row-level validation reports produced before every commit and signed off by your team", "ar": "تقارير تحقق على مستوى الصف تُنتَج قبل كل التزام ويوقّعها فريقك" },
+      { "en": "30-day parallel run supported on every Enterprise migration with daily reconciliation", "ar": "تشغيل موازٍ لمدة 30 يوماً مدعوم على كل ترحيل Enterprise مع مطابقة يومية" },
+      { "en": "Rollback procedures documented and signed off before cutover", "ar": "إجراءات تراجع موثقة ومعتمدة قبل التحويل" },
+      { "en": "Retention of source-system snapshots for 90 days post-cutover", "ar": "الاحتفاظ بلقطات النظام المصدر لمدة 90 يوماً بعد التحويل" },
+      { "en": "Named implementation engineer through the full engagement, no ticket-shop rotation", "ar": "مهندس تنفيذ مخصص باسمه طوال فترة الارتباط، دون تدوير على مكتب التذاكر" }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": { "en": "Audit source data", "ar": "تدقيق بيانات المصدر" },
+        "description": { "en": "Export inspection, gap analysis, and a migration timeline with named milestones.", "ar": "فحص الصادرات، وتحليل الفجوات، وجدول زمني للترحيل بمعالم مسمّاة." },
+        "icon": "BeakerIcon"
+      },
+      {
+        "number": "02",
+        "title": { "en": "Data mapping", "ar": "تعيين البيانات" },
+        "description": { "en": "Two-day workshop mapping your existing schema to Academorix. Every decision documented and reviewed.", "ar": "ورشة يومَين لتعيين مخططك الحالي على Academorix. كل قرار موثق ومراجَع." },
+        "icon": "PuzzlePieceIcon"
+      },
+      {
+        "number": "03",
+        "title": { "en": "Parallel run", "ar": "تشغيل موازٍ" },
+        "description": { "en": "30 days of dual writes with daily reconciliation. Cutover decision belongs to your team, not our calendar.", "ar": "30 يوماً من الكتابة المزدوجة مع مطابقة يومية. قرار التحويل ملك لفريقك، لا لتقويمنا." },
+        "icon": "ClockIcon"
+      },
+      {
+        "number": "04",
+        "title": { "en": "Cutover", "ar": "التحويل" },
+        "description": { "en": "Production switch with launch-week support. Direct Slack channel and phone hotline for the whole team.", "ar": "التحويل الإنتاجي مع دعم أسبوع الإطلاق. قناة Slack مباشرة وخط هاتفي مباشر للفريق بأكمله." },
+        "icon": "CheckCircleIcon"
+      }
+    ],
+    "outcomes": [
+      { "en": "2-5 weeks median migration time depending on source system and volume", "ar": "2 إلى 5 أسابيع هي المدة الوسيطة للترحيل حسب النظام المصدر والحجم" },
+      { "en": "Summit Hoops migrated 4,000 athletes across 12 branches with zero data loss", "ar": "رحّلت Summit Hoops 4000 رياضي عبر 12 فرعاً دون فقدان أي بيانات" },
+      { "en": "100% row-level validation coverage before every commit", "ar": "تغطية تحقق بنسبة 100% على مستوى الصف قبل كل التزام" },
+      { "en": "30-day parallel run supported on every Enterprise migration", "ar": "تشغيل موازٍ لمدة 30 يوماً مدعوم على كل ترحيل Enterprise" },
+      { "en": "Zero data-loss incidents on Enterprise migrations since Academorix launched", "ar": "صفر حوادث فقدان بيانات على ترحيلات Enterprise منذ إطلاق Academorix" }
+    ],
+    "testimonial": {
+      "quote": { "en": "We came off Playmetrics with 4,000 athletes across 12 branches. Every athlete, every payment history, every roster made it. Zero data loss.", "ar": "خرجنا من Playmetrics بـ 4000 رياضي عبر 12 فرعاً. كل رياضي، وكل سجل مدفوعات، وكل قائمة وصلوا. صفر فقدان بيانات." },
+      "author": { "en": "Marcus Bell", "ar": "ماركوس بيل" },
+      "role": { "en": "Head Coach, Summit Hoops", "ar": "المدرب الرئيسي، Summit Hoops" },
+      "initials": "MB"
+    }
   },
   "multi-branch": {
     "slug": "multi-branch",
     "eyebrow": { "en": "Enterprise multi-branch", "ar": "المؤسسات متعددة الفروع" },
-    "title": {
-      "en": "Multi-branch, network-scale operations",
-      "ar": "عمليات متعددة الفروع على نطاق الشبكة"
-    },
-    "description": {
-      "en": "One platform for every branch, every sport, every region. Consolidated finance, network-wide reporting, and branch-scoped access.",
-      "ar": "منصة واحدة لكل فرع ورياضة ومنطقة. مالية موحدة وتقارير على مستوى الشبكة ووصول محدود بالفرع."
-    },
+    "title": { "en": "Multi-branch, network-scale operations", "ar": "عمليات متعددة الفروع على نطاق الشبكة" },
+    "description": { "en": "One platform for every branch, every sport, every region. Consolidated finance, network-wide reporting, and branch-scoped access.", "ar": "منصة واحدة لكل فرع ورياضة ومنطقة. مالية موحدة وتقارير على مستوى الشبكة ووصول محدود بالفرع." },
     "hero_icon": "BuildingOffice2Icon",
     "features": [
       {
@@ -426,42 +680,27 @@
       {
         "icon": "ChartBarIcon",
         "title": { "en": "Network-wide reporting", "ar": "تقارير على مستوى الشبكة" },
-        "description": {
-          "en": "Roll up every branch into one view.",
-          "ar": "اجمع كل فرع في عرض واحد."
-        }
+        "description": { "en": "Roll up every branch into one view.", "ar": "اجمع كل فرع في عرض واحد." }
       },
       {
         "icon": "UserGroupIcon",
         "title": { "en": "Cross-branch athletes", "ar": "رياضيون عبر الفروع" },
-        "description": {
-          "en": "An athlete belongs to the network.",
-          "ar": "الرياضي ينتمي إلى الشبكة."
-        }
+        "description": { "en": "An athlete belongs to the network.", "ar": "الرياضي ينتمي إلى الشبكة." }
       },
       {
         "icon": "CreditCardIcon",
         "title": { "en": "Consolidated finance", "ar": "مالية موحدة" },
-        "description": {
-          "en": "One AR ledger with per-branch allocation.",
-          "ar": "دفتر ذمم واحد بتوزيع لكل فرع."
-        }
+        "description": { "en": "One AR ledger with per-branch allocation.", "ar": "دفتر ذمم واحد بتوزيع لكل فرع." }
       },
       {
         "icon": "ShieldCheckIcon",
         "title": { "en": "Role and branch scoping", "ar": "حصر بالدور والفرع" },
-        "description": {
-          "en": "Managers see their branch, CEO sees everything.",
-          "ar": "المدراء يرون فرعهم، والرئيس يرى كل شيء."
-        }
+        "description": { "en": "Managers see their branch, CEO sees everything.", "ar": "المدراء يرون فرعهم، والرئيس يرى كل شيء." }
       },
       {
         "icon": "LanguageIcon",
         "title": { "en": "Multi-region operations", "ar": "عمليات متعددة المناطق" },
-        "description": {
-          "en": "Each branch operates in its own language and currency.",
-          "ar": "كل فرع يعمل بلغته وعملته."
-        }
+        "description": { "en": "Each branch operates in its own language and currency.", "ar": "كل فرع يعمل بلغته وعملته." }
       }
     ],
     "related": [
@@ -480,6 +719,62 @@
         "title": { "en": "Multi-branch solution", "ar": "حل متعدد الفروع" },
         "description": { "en": "The cross-cutting solution.", "ar": "الحل الشامل." }
       }
-    ]
+    ],
+    "narrative": [
+      { "en": "Multi-branch networks live or die on operational consistency. If every branch runs a different tool, the CEO cannot see the network. If the CEO uses one tool and the branches use another, the data never matches. Academorix treats the branch as a first-class entity so every roll-up is a live query, not an export.", "ar": "شبكات الفروع المتعددة تحيا وتموت على الاتساق التشغيلي. إذا شغّل كل فرع أداة مختلفة، فلن يستطيع الرئيس التنفيذي رؤية الشبكة. وإذا استخدم الرئيس أداةً واستخدمت الفروع أخرى، فلن تتطابق البيانات. تعامل Academorix الفرع كياناً محورياً بحيث يكون كل تجميع استعلاماً مباشراً، لا تصديراً." },
+      { "en": "Every branch has its own calendar, its own finance ledger, its own coach roster, and its own reception queue. Rolling up to region or network is a permission-aware query executed at the database layer. A branch manager sees their branch. A regional director sees their region. The CEO sees everything. No exports, no reconciliation.", "ar": "لكل فرع تقويمه ودفتره المالي وقائمة مدرّبيه وطابور استقباله. التجميع إلى المنطقة أو الشبكة استعلام يراعي الصلاحيات ويُنفَّذ على طبقة قاعدة البيانات. مدير الفرع يرى فرعه. المدير الإقليمي يرى منطقته. الرئيس التنفيذي يرى كل شيء. لا تصديرات، ولا مطابقات." },
+      { "en": "Cross-branch athletes travel with their history. Move an athlete from Riyadh to Jeddah and their entire history follows: attendance, payments, performance, safeguarding. Nothing is left behind, nothing is duplicated. The record follows the person, not the branch.", "ar": "الرياضيون عبر الفروع يتنقلون مع تاريخهم. انقل رياضياً من الرياض إلى جدة وسيتبعه تاريخه كاملاً: الحضور، والمدفوعات، والأداء، والحماية. لا شيء يُترَك، ولا شيء يُكرَّر. السجل يتبع الشخص، لا الفرع." },
+      { "en": "Access control follows the org chart. Every role in Academorix carries a scope that maps to your structure, enforced at the database layer. A screenshot from the mobile app cannot leak data the role was not supposed to see, because the query never returned it.", "ar": "التحكم بالوصول يتبع مخطط المنظمة. كل دور في Academorix يحمل نطاقاً ينطبق على هيكلك، ويُطبَّق على طبقة قاعدة البيانات. لقطة شاشة من تطبيق الجوال لا يمكن أن تسرّب بيانات لم يكن للدور أن يراها، لأن الاستعلام لم يُعِدها أصلاً." },
+      { "en": "Franchise or corporate, both models work. Franchise networks get per-branch P&L with clean franchise-fee attribution. Corporate networks get network AR with per-branch cost allocation. Cross-border networks add per-branch language, currency, and regulatory context on top, all from one workspace.", "ar": "الامتياز التجاري أو الشركات المدمجة، كلا النموذجين يعمل. تحصل شبكات الامتياز على P&L لكل فرع مع نسب رسوم امتياز نظيفة. وتحصل الشبكات المدمجة على ذمم شبكية مع توزيع تكاليف على مستوى الفرع. الشبكات عبر الحدود تضيف فوقها لغة وعملة وسياقاً تنظيمياً لكل فرع، كل ذلك من مساحة عمل واحدة." }
+    ],
+    "technical_details": [
+      { "en": "Unlimited branches per Enterprise workspace", "ar": "فروع غير محدودة لكل مساحة عمل Enterprise" },
+      { "en": "Row-level tenant and branch scoping enforced at the database layer", "ar": "حصر المستأجر والفرع على مستوى الصف مُطبَّق على طبقة قاعدة البيانات" },
+      { "en": "Per-branch language, currency, and regulatory profile with per-user override", "ar": "لغة وعملة وملف تنظيمي لكل فرع مع إمكانية تجاوز لكل مستخدم" },
+      { "en": "Consolidated AR ledger with per-branch attribution for both franchise and corporate models", "ar": "دفتر ذمم موحّد مع توزيع لكل فرع لنموذجَي الامتياز التجاري والشركات المدمجة" },
+      { "en": "Sub-1-second dashboard roll-up on networks under 20 branches", "ar": "تجميع لوحة تحكم بأقل من ثانية على الشبكات التي لديها أقل من 20 فرعاً" },
+      { "en": "Per-role and per-branch access scoping enforced at the query layer", "ar": "حصر الوصول لكل دور ولكل فرع مُطبَّق على طبقة الاستعلام" },
+      { "en": "Cross-branch athlete transfer preserving history, payments, and progress in one transaction", "ar": "نقل الرياضي بين الفروع يحفظ التاريخ والمدفوعات والتقدم في معاملة واحدة" },
+      { "en": "Executive dashboards refresh in real time with WebSocket updates, no manual refresh needed", "ar": "لوحات التنفيذيين تُحدَّث في الوقت الحقيقي عبر WebSocket، دون الحاجة إلى تحديث يدوي" }
+    ],
+    "how_it_works": [
+      {
+        "number": "01",
+        "title": { "en": "Branch modeling", "ar": "نمذجة الفروع" },
+        "description": { "en": "Org chart mapped to workspace hierarchy. Regions, branches, and reporting lines documented.", "ar": "مطابقة مخطط المنظمة مع تراتبية مساحة العمل. توثيق المناطق والفروع وخطوط التقارير." },
+        "icon": "BuildingOffice2Icon"
+      },
+      {
+        "number": "02",
+        "title": { "en": "Role scoping", "ar": "حصر الأدوار" },
+        "description": { "en": "Branch, region, and network roles configured. Access boundaries reviewed with your compliance lead.", "ar": "تهيئة أدوار الفرع والمنطقة والشبكة. مراجعة حدود الوصول مع قائد الامتثال لديك." },
+        "icon": "KeyIcon"
+      },
+      {
+        "number": "03",
+        "title": { "en": "Finance topology", "ar": "طوبولوجيا المالية" },
+        "description": { "en": "Franchise or corporate ledger model selected. Per-branch VAT, currency, and revenue attribution set.", "ar": "اختيار نموذج دفتر الامتياز التجاري أو الشركات المدمجة. تهيئة VAT والعملة وتوزيع الإيرادات لكل فرع." },
+        "icon": "CreditCardIcon"
+      },
+      {
+        "number": "04",
+        "title": { "en": "Reporting hierarchy", "ar": "تراتبية التقارير" },
+        "description": { "en": "Executive dashboards rolled up along the org chart. Branch, region, and network views configured per role.", "ar": "لوحات التنفيذيين مجمّعة على طول مخطط المنظمة. تهيئة عروض الفرع والمنطقة والشبكة لكل دور." },
+        "icon": "ChartBarIcon"
+      }
+    ],
+    "outcomes": [
+      { "en": "Continental Sports Federation runs 22 branches across 3 countries on one workspace", "ar": "تدير Continental Sports Federation 22 فرعاً عبر 3 دول على مساحة عمل واحدة" },
+      { "en": "100% role and branch scoping enforced at the database layer", "ar": "حصر الأدوار والفروع بنسبة 100% مُطبَّق على طبقة قاعدة البيانات" },
+      { "en": "5+ regions supported concurrently (EU, MENA, US, UK, GCC subregions)", "ar": "أكثر من 5 مناطق مدعومة في نفس الوقت (أوروبا، MENA، الولايات المتحدة، المملكة المتحدة، مناطق الخليج الفرعية)" },
+      { "en": "Sub-1-second dashboard roll-up on networks under 20 branches", "ar": "تجميع لوحة تحكم بأقل من ثانية على الشبكات التي لديها أقل من 20 فرعاً" },
+      { "en": "Zero export-and-reconcile cycles once the network is on Academorix", "ar": "صفر دورات تصدير ومطابقة بمجرد أن تكون الشبكة على Academorix" }
+    ],
+    "testimonial": {
+      "quote": { "en": "We run 22 branches across 3 countries on one workspace. Every branch manager sees their branch, and I see everything. Nobody asks for exports any more.", "ar": "ندير 22 فرعاً عبر 3 دول على مساحة عمل واحدة. كل مدير فرع يرى فرعه، وأنا أرى كل شيء. لم يعد أحد يطلب تصديرات." },
+      "author": { "en": "Andrea Delgado", "ar": "أندريا ديلغادو" },
+      "role": { "en": "COO, Continental Sports Federation", "ar": "مدير العمليات، Continental Sports Federation" },
+      "initials": "AD"
+    }
   }
 }

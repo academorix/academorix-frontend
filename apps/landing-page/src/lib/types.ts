@@ -370,6 +370,134 @@ export interface RelatedLink {
   description: LocalizedString;
 }
 
+/**
+ * A numbered step in a "how it works" strip. Used by product /
+ * sport / enterprise deep-dive pages as an in-page mini-tutorial
+ * card that walks the reader through activation.
+ */
+export interface HowItWorksStep {
+  number: string;
+  title: LocalizedString;
+  description: LocalizedString;
+  icon: IconRef;
+}
+
+/**
+ * A single labelled statistic rendered inside a rich preview card
+ * (mock dashboard). Both `label`, `value`, and optional `trend` are
+ * bilingual so localized number suffixes ("42 جديد") flow cleanly.
+ */
+export interface SampleMetric {
+  label: LocalizedString;
+  value: LocalizedString;
+  trend?: LocalizedString;
+}
+
+/**
+ * One row inside a sport-specific vocabulary table (positions for
+ * football, strokes for swimming, apparatus for gymnastics, belts
+ * for martial arts, etc.). `key` is a stable, non-translatable
+ * identifier used as a React key and for anchoring links.
+ */
+export interface SportTerminologyItem {
+  key: string;
+  label: LocalizedString;
+  description: LocalizedString;
+  icon?: IconRef;
+}
+
+/**
+ * A configurable attribute tracked for a specific sport (e.g.
+ * dribbling, passing, shooting for football). `min`/`max` describe
+ * the numeric range Academorix uses when displaying the attribute
+ * on athlete profiles; `sample_value` is the illustrative fill
+ * shown in mock previews so the marketing surface doesn't look
+ * empty.
+ */
+export interface SportAttribute {
+  key: string;
+  label: LocalizedString;
+  description: LocalizedString;
+  min: number;
+  max: number;
+  sample_value: number;
+}
+
+/**
+ * A workflow step reflecting the day-to-day life of a coach or
+ * academy operator using Academorix. Rendered as a horizontal
+ * numbered strip on sport / product / persona deep-dive pages.
+ */
+export interface WorkflowStep {
+  number: string;
+  title: LocalizedString;
+  description: LocalizedString;
+}
+
+/**
+ * A compliance certification tile shown on enterprise pages
+ * (Security, Compliance). `status` supports honest posture
+ * signals for standards that are audited-but-scheduled ("audit
+ * scheduled Q4 2026") without over-claiming certification.
+ */
+export interface Certification {
+  slug: string;
+  label: LocalizedString;
+  description: LocalizedString;
+  status: "certified" | "scheduled" | "aligned" | "in-progress";
+  icon: IconRef;
+}
+
+/**
+ * A tool / platform Academorix integrates with. Grouped into
+ * categories (Payments, Calendar, Comms, Auth, Analytics, etc.)
+ * on product pages. `category` is a non-translatable enum for
+ * ordering; `label` and `role` are bilingual customer-facing text.
+ */
+export interface IntegrationItem {
+  key: string;
+  label: LocalizedString;
+  role: LocalizedString;
+  category: LocalizedString;
+}
+
+/**
+ * A single company value shown on `/about`. Renders as an icon
+ * tile with a title + supporting paragraph.
+ */
+export interface CompanyValue {
+  icon: IconRef;
+  title: LocalizedString;
+  description: LocalizedString;
+}
+
+/**
+ * A press mention (published article about Academorix). Rendered
+ * as a card with publication logo (initials), quote pull, and
+ * outbound link.
+ */
+export interface PressMention {
+  publication: LocalizedString;
+  initials: string;
+  quote: LocalizedString;
+  date: string;
+  href: string;
+}
+
+/**
+ * Regional sales presence — used on `/contact-sales` and the
+ * `/about` company page. `region` is a canonical code (`mena` /
+ * `eu` / `us`) so the world-map SVG can highlight the right slice.
+ */
+export interface RegionalOffice {
+  region: "mena" | "eu" | "us" | "apac";
+  city: LocalizedString;
+  country: LocalizedString;
+  timezone: LocalizedString;
+  languages: readonly LocalizedString[];
+  email: string;
+}
+
 export interface ProductData {
   slug: string;
   eyebrow: LocalizedString;
@@ -381,6 +509,28 @@ export interface ProductData {
   features: readonly ProductFeature[];
   use_case?: CustomerQuote;
   related: readonly RelatedLink[];
+
+  // ─── Optional richer content (populated on flagship pages) ─────────
+  /**
+   * Long-form narrative paragraphs shown on the product deep-dive
+   * page. Typically 3-5 paragraphs explaining "what is this product,
+   * why does it exist, how does it fit the rest of Academorix".
+   */
+  narrative?: readonly LongFormParagraph[];
+  /** Measurable outcome bullet list (e.g. "94% retention YoY"). */
+  outcomes?: readonly LocalizedString[];
+  /** Integration list grouped by category. */
+  integrations?: readonly IntegrationItem[];
+  /** Numbered "how it works" strip. */
+  how_it_works?: readonly HowItWorksStep[];
+  /** Technical spec bullet list. */
+  technical_details?: readonly LocalizedString[];
+  /** Sample stat cards for the mock preview surface. */
+  sample_metrics?: readonly SampleMetric[];
+  /** Absolute URL to a hero cover image (Unsplash CDN). */
+  cover_image?: string;
+  /** Alt text for `cover_image`. */
+  cover_alt?: LocalizedString;
 }
 
 export interface SportData {
@@ -393,6 +543,20 @@ export interface SportData {
   features: readonly ProductFeature[];
   testimonial?: CustomerQuote;
   related: readonly RelatedLink[];
+
+  // ─── Optional richer content ───────────────────────────────────────
+  narrative?: readonly LongFormParagraph[];
+  /** Positions / strokes / apparatus / belts / event types. */
+  sport_terminology?: readonly SportTerminologyItem[];
+  /** Configurable per-sport attribute set. */
+  attribute_sets?: readonly SportAttribute[];
+  /** Sample metrics for the mock preview surface. */
+  sample_metrics?: readonly SampleMetric[];
+  /** Daily coach workflow steps. */
+  workflow_steps?: readonly WorkflowStep[];
+  outcomes?: readonly LocalizedString[];
+  cover_image?: string;
+  cover_alt?: LocalizedString;
 }
 
 export interface EnterpriseData {
@@ -403,6 +567,17 @@ export interface EnterpriseData {
   hero_icon: IconRef;
   features: readonly ProductFeature[];
   related: readonly RelatedLink[];
+
+  // ─── Optional richer content ───────────────────────────────────────
+  narrative?: readonly LongFormParagraph[];
+  /** Certifications posture (SOC 2 scheduled, GDPR aligned, etc.). */
+  certifications?: readonly Certification[];
+  technical_details?: readonly LocalizedString[];
+  how_it_works?: readonly HowItWorksStep[];
+  outcomes?: readonly LocalizedString[];
+  testimonial?: CustomerQuote;
+  cover_image?: string;
+  cover_alt?: LocalizedString;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -420,6 +595,13 @@ export interface SolutionData {
   what_is: readonly LongFormParagraph[];
   features: readonly ProductFeature[];
   related: readonly RelatedLink[];
+
+  // ─── Optional richer content ───────────────────────────────────────
+  outcomes?: readonly LocalizedString[];
+  how_it_works?: readonly HowItWorksStep[];
+  testimonial?: CustomerQuote;
+  cover_image?: string;
+  cover_alt?: LocalizedString;
 }
 
 export interface PersonaData {
@@ -431,6 +613,13 @@ export interface PersonaData {
   what_is: readonly LongFormParagraph[];
   features: readonly ProductFeature[];
   related: readonly RelatedLink[];
+
+  // ─── Optional richer content ───────────────────────────────────────
+  outcomes?: readonly LocalizedString[];
+  workflow_steps?: readonly WorkflowStep[];
+  testimonial?: CustomerQuote;
+  cover_image?: string;
+  cover_alt?: LocalizedString;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -483,6 +672,13 @@ export interface CompanyPageData {
   team?: readonly CompanyTeamMember[];
   milestones?: readonly CompanyMilestone[];
   related: readonly RelatedLink[];
+
+  // ─── Optional richer content ───────────────────────────────────────
+  values?: readonly CompanyValue[];
+  press_mentions?: readonly PressMention[];
+  offices?: readonly RegionalOffice[];
+  cover_image?: string;
+  cover_alt?: LocalizedString;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -511,6 +707,14 @@ export interface CustomerStoryData {
   narrative: readonly LocalizedString[];
   quote: CustomerQuote;
   related: readonly RelatedLink[];
+
+  // ─── Optional richer content ───────────────────────────────────────
+  challenge?: readonly LongFormParagraph[];
+  solution?: readonly LongFormParagraph[];
+  outcome?: readonly LongFormParagraph[];
+  cover_image?: string;
+  cover_alt?: LocalizedString;
+  logo_initials?: string;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -528,6 +732,12 @@ export interface BlogPostData {
   hero_icon: IconRef;
   body: readonly LocalizedString[];
   related: readonly RelatedLink[];
+
+  // ─── Optional richer content ───────────────────────────────────────
+  /** Absolute URL to a real cover photo (Unsplash CDN). */
+  cover_image?: string;
+  cover_alt?: LocalizedString;
+  tags?: readonly LocalizedString[];
 }
 
 export interface AuthorData {
