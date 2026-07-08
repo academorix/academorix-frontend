@@ -10,7 +10,7 @@
  */
 
 import type { HostContext } from "@/lib/http";
-import type { TenantBranding, TenantSummary } from "@/types";
+import type { TenantBranding, TenantSettings, TenantSummary } from "@/types";
 
 /**
  * The tenant currently hosting this browser session, resolved on boot from
@@ -27,8 +27,19 @@ export interface TenantWorkspace extends TenantSummary {
   status_label?: string;
   /** Human-readable business type label. */
   business_type_label?: string;
-  /** Full branding (may extend `TenantSummary.branding`). */
-  branding: TenantBranding;
+  /**
+   * White-label branding — `null` when the tenant has never configured any.
+   * Follows the wire contract of `TenantData.branding` on the backend, which
+   * emits `null` rather than an empty object so consumers do not have to
+   * distinguish "unset" from "explicitly-null values".
+   */
+  branding: TenantBranding | null;
+  /**
+   * Publicly-safe subset of tenant runtime settings — always populated
+   * because the backend falls back to platform defaults when the tenant has
+   * no override rows.
+   */
+  settings: TenantSettings;
 }
 
 /**

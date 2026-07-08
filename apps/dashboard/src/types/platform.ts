@@ -46,6 +46,27 @@ export interface TenantBranding {
 }
 
 /**
+ * Publicly-safe subset of a tenant's runtime settings, delivered in the boot
+ * payload so the SPA can render dates, greetings, and calendar surfaces in
+ * the tenant's locale + timezone BEFORE the user is signed in.
+ *
+ * Backend source: `TenantSettingsData` (see the class allowlist for the
+ * exact set of keys — extending this interface requires extending the
+ * allowlist on the server too). Every field has a platform default, so the
+ * SPA can boot even when the tenant hasn't overridden any setting yet.
+ */
+export interface TenantSettings {
+  /** BCP-47 locale tag (default `"en"`). */
+  locale: string;
+  /** IANA time zone (default `"UTC"`). */
+  timezone: string;
+  /** Lowercase weekday name — the calendar's first column (default `"monday"`). */
+  week_start: string;
+  /** ISO-8601 day-of-week (1..7) the tenant treats as "start of year" (default `1`). */
+  first_day_of_year: number;
+}
+
+/**
  * The tenant — the academy business that subscribes to Academorix. It is the
  * isolation boundary; every tenant-owned record carries its `tenant_id`.
  */

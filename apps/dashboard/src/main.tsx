@@ -3,15 +3,21 @@
  * @module main
  *
  * @description
- * Boot entrypoint for the dashboard SPA. Three responsibilities, in order:
+ * Boot entrypoint for the dashboard SPA. Four responsibilities, in order:
  *
- *   1. **Mount the tree.** `createRoot` on `#root`, wrapped in `<StrictMode>`
+ *   1. **Paint the brand.** {@link bootstrapBrandingFromCache} reads the
+ *      cached tenant palette from `localStorage` and applies it to `<html>`
+ *      synchronously — before React mounts — so returning visitors never
+ *      see a flash of the default theme. Cache miss is a no-op; the
+ *      tenancy provider refetches shortly after and paints the fresh
+ *      brand.
+ *   2. **Mount the tree.** `createRoot` on `#root`, wrapped in `<StrictMode>`
  *      for double-render invariance checks in dev.
- *   2. **Guard the tree.** {@link AppErrorBoundary} sits OUTSIDE
+ *   3. **Guard the tree.** {@link AppErrorBoundary} sits OUTSIDE
  *      `<BrowserRouter>` and `<Providers>` so a broken router / provider
  *      construction still surfaces the fallback instead of a white screen.
  *      See the error-boundary docblock for the full rationale.
- *   3. **Report vitals.** {@link reportWebVitals} registers the Core Web
+ *   4. **Report vitals.** {@link reportWebVitals} registers the Core Web
  *      Vitals observers (CLS, INP, LCP, TTFB, FCP) at idle time so RUM
  *      never competes with hydration or the first paint. See the telemetry
  *      README for the fan-out story.
@@ -30,9 +36,16 @@ import type { WebVitalReport } from "@/lib/telemetry";
 import { App } from "@/App";
 import { AppErrorBoundary } from "@/lib/error-boundary";
 import { reportWebVitals } from "@/lib/telemetry";
+import { bootstrapBrandingFromCache } from "@/lib/tenancy";
 import { Providers } from "@/providers";
 
 import "@/styles/globals.css";
+
+// Paint any cached tenant brand BEFORE React mounts. This eliminates the
+// flash-of-default-theme on repeat visits to tenant subdomains — the CSS
+// variables land on `<html>` in the same synchronous tick as the module
+// evaluation, ahead of the first browser paint. See branding-boot.ts.
+bootstrapBrandingFromCache();
 
 const rootElement = document.getElementById("root");
 
