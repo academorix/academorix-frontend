@@ -170,8 +170,9 @@ WKWebView / WebView2 supports.
 - Icon set: raster the master `public/favicon.svg` into Tauri's per-platform
   icon requirements (macOS `.icns`, Windows `.ico`, Linux 32/64/128/256/512
   PNG). Wire `pnpm generate-desktop-icons` alongside `generate-pwa-assets`.
-- Native application menu (macOS/Windows) — see
-  [`MENUS_PLAN.md`](./MENUS_PLAN.md).
+- Native application menu (macOS/Windows) — implementation lives in
+  `src/config/menu.config.ts` (registry), `src/desktop/native-menu.ts` (Tauri
+  bridge) and `src-tauri/src/menu.rs` (Rust menu wiring).
 - System tray icon with quick-actions (open dashboard, sign out, check for
   updates, quit). Registry lives in `src/config/desktop.config.ts` under
   `tray.items`.
@@ -188,7 +189,8 @@ WKWebView / WebView2 supports.
 - **File system:** capability-gated `fs.readTextFile` / `fs.writeTextFile`
   scoped to the OS-standard app-data directory only (no arbitrary user files).
 - **Native notifications:** hook `showNativeNotification()` into the
-  notification queue (see [`NOTIFICATIONS_PLAN.md`](./NOTIFICATIONS_PLAN.md)).
+  notification queue (`src/notifications/**` renderer side,
+  `src-tauri/src/notification.rs` on the Rust side).
 - **Clipboard:** capability-gated. Read on user gesture only.
 - **Global shortcuts:** `Cmd/Ctrl+Shift+A` to raise the app (registered on
   install; user can disable in Settings → Desktop).
@@ -247,10 +249,12 @@ phase 5 is what customers download.
 - Handle: minimize-to-tray on close (opt-in setting; default: quit on close,
   macOS default: hide).
 
-### 4.2 Menu bar (see [`MENUS_PLAN.md`](./MENUS_PLAN.md))
+### 4.2 Menu bar
 
 - macOS-style app menu (Application, File, Edit, View, Window, Help) rendered
-  natively via `tauri::menu`.
+  natively via `tauri::menu`. Command registry lives in
+  `src/config/menu.config.ts`; the Tauri bridge is in
+  `src/desktop/native-menu.ts` and the Rust side in `src-tauri/src/menu.rs`.
 - Same command palette as the web build; menu items map 1:1 onto
   `AppResourceShortcuts` entries so shortcuts stay authoritative.
 - In web builds the menu bar is invisible — command palette is the substitute.
@@ -266,8 +270,8 @@ phase 5 is what customers download.
 
 ### 4.4 Notifications
 
-- Native notifications for background alerts (see
-  [`NOTIFICATIONS_PLAN.md`](./NOTIFICATIONS_PLAN.md)).
+- Native notifications for background alerts (see `src/notifications/**` +
+  `src-tauri/src/notification.rs`).
 - OS-integrated (macOS Notification Center, Windows Action Center, Linux
   DBus/notify-send).
 - Reverb WebSocket keeps the primary in-app notification badge live; the same
@@ -421,11 +425,17 @@ GitHub Actions injects them for signed builds only; PRs get unsigned artifacts.
 
 ## 9. Related documents
 
-- [`NOTIFICATIONS_PLAN.md`](./NOTIFICATIONS_PLAN.md) — how native notifications
-  and web push interoperate.
-- [`ONBOARDING_PLAN.md`](./ONBOARDING_PLAN.md) — first-run experience for the
-  desktop app.
-- [`MENUS_PLAN.md`](./MENUS_PLAN.md) — top-bar and context menu architecture,
-  native vs. web parity.
 - [`DASHBOARD_UX_PLAN.md`](./DASHBOARD_UX_PLAN.md) — the SPA UX spec that the
   desktop shell wraps.
+- [`DESKTOP_OPS.md`](./DESKTOP_OPS.md) — cert provisioning, notarization, CI
+  release workflow, rollback procedures.
+
+Implementation entry points (source of truth for each of the previously separate
+plans):
+
+- Menus (top-bar, context, native) — `src/config/menu.config.ts` + `src/menus/`
+  - `src/desktop/native-menu.ts` + `src-tauri/src/menu.rs`.
+- Notifications (in-app + push + native) — `src/notifications/**` +
+  `src-tauri/src/notification.rs`.
+- Onboarding (tour + checklist + surface detection) — `src/onboarding/**` +
+  `src/modules/dashboard/widgets/onboarding-checklist/`.

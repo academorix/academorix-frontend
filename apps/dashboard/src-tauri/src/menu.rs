@@ -1,7 +1,8 @@
 //! # Native application menu bar.
 //!
-//! Builds the platform-neutral menu tree described in `MENUS_PLAN.md` §4.2
-//! and installs it on the current app. Every static item that the user
+//! Builds the platform-neutral menu tree (macOS-style menu bar on Tauri,
+//! adapted per-OS by Tauri's `Menu` API) and installs it on the current
+//! app. Every static item that the user
 //! activates fires an `menu-command` IPC event carrying the command id;
 //! the renderer's `native-menu.ts` bridge dispatches to the menu registry
 //! declared in `src/config/menu.config.ts`.
@@ -187,7 +188,7 @@ fn build_view_menu<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<Submenu<R>> 
 }
 
 /// Navigate submenu — populated dynamically at runtime from the renderer
-/// (see `MENUS_PLAN.md` §4.4). Ships empty in Phase 2; the Menus
+/// (see menus module). Ships empty in Phase 2; the Menus
 /// sub-agent's bridge sends `menu.set_items` messages once its
 /// `AppResourceShortcuts` registry hydrates.
 fn build_navigate_menu<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<Submenu<R>> {

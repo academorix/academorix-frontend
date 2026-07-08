@@ -2,7 +2,7 @@
 //!
 //! Sends notifications through `tauri-plugin-notification` (macOS
 //! Notification Center, Windows Action Center, Linux DBus/notify-send).
-//! Full delivery matrix + fallback rules live in `NOTIFICATIONS_PLAN.md`
+//! Full delivery matrix + fallback rules live in notifications module
 //! §7 and §11 Phase 4.
 //!
 //! ## Status

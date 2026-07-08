@@ -443,8 +443,18 @@ Each migration is:
   [`.kiro/steering/frontend-module-architecture.md`](.kiro/steering/frontend-module-architecture.md)
 - Desktop rollout plan →
   [`apps/dashboard/DESKTOP_PLAN.md`](apps/dashboard/DESKTOP_PLAN.md)
-- Notifications plan →
-  [`apps/dashboard/NOTIFICATIONS_PLAN.md`](apps/dashboard/NOTIFICATIONS_PLAN.md)
-- Onboarding plan →
-  [`apps/dashboard/ONBOARDING_PLAN.md`](apps/dashboard/ONBOARDING_PLAN.md)
-- Menus plan → [`apps/dashboard/MENUS_PLAN.md`](apps/dashboard/MENUS_PLAN.md)
+- Desktop ops runbook →
+  [`apps/dashboard/DESKTOP_OPS.md`](apps/dashboard/DESKTOP_OPS.md)
+- Dashboard UX spec →
+  [`apps/dashboard/DASHBOARD_UX_PLAN.md`](apps/dashboard/DASHBOARD_UX_PLAN.md)
+
+Subsystem implementations (own their own docblocks in code — no separate plan MD
+anymore):
+
+- Notifications → `apps/dashboard/src/notifications/**` +
+  `apps/dashboard/src-tauri/src/notification.rs`
+- Onboarding → `apps/dashboard/src/onboarding/**` +
+  `apps/dashboard/src/modules/dashboard/widgets/onboarding-checklist/`
+- Menus → `apps/dashboard/src/menus/**` +
+  `apps/dashboard/src/config/menu.config.ts` +
+  `apps/dashboard/src-tauri/src/menu.rs`

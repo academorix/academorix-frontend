@@ -191,7 +191,7 @@ fn setup_ipc_listeners(app: &AppHandle) {
             event.payload()
         );
         // Phase 2b TODO: iterate the menu items and call
-        // `menu_item.set_text(&translated)`. See MENUS_PLAN §9.
+        // `menu_item.set_text(&translated)`. See menus module
         let _ = &app_handle;
     });
 

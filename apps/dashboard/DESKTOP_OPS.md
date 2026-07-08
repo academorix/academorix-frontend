@@ -441,7 +441,8 @@ If a release ships with a regression:
    guardrail).
 
 5. Communicate via the in-app notifications broadcast channel (`system`
-   category) — see `NOTIFICATIONS_PLAN.md` §7.
+   category) — the renderer implementation lives in `src/notifications/**` and
+   the native-side bridge in `src-tauri/src/notification.rs`.
 
 ### 6.2 Manual release (bypass CI)
 
@@ -557,9 +558,17 @@ Every issue triage request from a user includes:
 ## 10. Related documents
 
 - [`DESKTOP_PLAN.md`](./DESKTOP_PLAN.md) — architecture, phased rollout, and
-  integration points.
-- [`ONBOARDING_PLAN.md`](./ONBOARDING_PLAN.md) — desktop first-run UX (welcome
-  window, tray coachmark, global shortcut coachmark).
-- [`NOTIFICATIONS_PLAN.md`](./NOTIFICATIONS_PLAN.md) — how native notifications
-  and web push interoperate.
-- [`MENUS_PLAN.md`](./MENUS_PLAN.md) — native menu bar architecture.
+  integration points. Includes the auto-update manifest schema referenced in
+  §5.2 of this runbook.
+- [`DASHBOARD_UX_PLAN.md`](./DASHBOARD_UX_PLAN.md) — the SPA UX spec that the
+  desktop shell wraps.
+
+Implementation entry points for the surfaces that were previously covered by
+separate plans:
+
+- Native menu bar — `src/config/menu.config.ts`, `src/desktop/native-menu.ts`,
+  `src-tauri/src/menu.rs`.
+- Notifications (in-app, web push, native) — `src/notifications/**`,
+  `src-tauri/src/notification.rs`.
+- Desktop first-run UX (welcome window, tray coachmark, global shortcut
+  coachmark) — `src/onboarding/**` + `src/desktop/**`.
