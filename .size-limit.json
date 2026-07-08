@@ -64,5 +64,29 @@
     "path": "apps/dashboard/dist/assets/*.js",
     "limit": "900 KB",
     "gzip": true
+  },
+  {
+    "name": "landing — framework runtime (React + Next core, gzip)",
+    "path": "apps/landing-page/.next/static/chunks/framework-*.js",
+    "limit": "160 KB",
+    "gzip": true
+  },
+  {
+    "name": "landing — main chunk (webpack + Next runtime, gzip)",
+    "path": "apps/landing-page/.next/static/chunks/main-*.js",
+    "limit": "50 KB",
+    "gzip": true
+  },
+  {
+    "name": "landing — total CSS across all pages (Tailwind + HeroUI Pro Glass, gzip)",
+    "path": "apps/landing-page/.next/static/chunks/*.css",
+    "limit": "160 KB",
+    "gzip": true
+  },
+  {
+    "name": "landing — total JS chunks (every emitted client chunk, gzip)",
+    "path": "apps/landing-page/.next/static/chunks/*.js",
+    "limit": "1200 KB",
+    "gzip": true
   }
 ]
