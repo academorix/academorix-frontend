@@ -21,8 +21,8 @@ catalog:
   "@types/react-dom": ^19.0.0
 
   # --- HeroUI + styling ---
-  "@heroui/react": 3.2.1
-  "@heroui/styles": 3.2.1
+  "@heroui/react": 3.2.2
+  "@heroui/styles": 3.2.2
   "@heroui-pro/react": 1.0.0-beta.6
   "@heroicons/react": ^2.2.0
   tailwindcss: 4.3.1
