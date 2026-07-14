@@ -1,0 +1,124 @@
+{
+  "id": "academorix://modules/telemetry/errors",
+  "$version": 1,
+  "title": "telemetry \u2014 error codes",
+  "namespace": "telemetry",
+  "errors": [
+    {
+      "code": "TELEMETRY_OTEL_SDK_NOT_INITIALIZED",
+      "signal": "traces",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "telemetry.errors.otel_sdk_not_initialized"
+    },
+    {
+      "code": "TELEMETRY_OTEL_EXPORTER_UNREACHABLE",
+      "signal": "traces",
+      "http": 200,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "telemetry.errors.otel_exporter_unreachable",
+      "description": "Downgraded to warn \u2014 backpressure drops spans, doesn't fail requests."
+    },
+    {
+      "code": "TELEMETRY_OTEL_QUEUE_FULL",
+      "signal": "traces",
+      "http": 200,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "telemetry.errors.otel_queue_full",
+      "description": "BatchSpanProcessor internal buffer full \u2014 dropping spans."
+    },
+    {
+      "code": "TELEMETRY_OTEL_KILL_SWITCHED",
+      "signal": "traces",
+      "http": 200,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "telemetry.errors.otel_kill_switched"
+    },
+    {
+      "code": "TELEMETRY_OTEL_INVALID_ATTRIBUTE",
+      "signal": "traces",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "telemetry.errors.otel_invalid_attribute",
+      "description": "Application code passed a non-scalar / non-array value as a span attribute. Dropped from that span; span still recorded without the offending attribute."
+    },
+    {
+      "code": "TELEMETRY_OTEL_EXPORT_AUTH_FAILED",
+      "signal": "traces",
+      "http": 500,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "telemetry.errors.otel_export_auth_failed",
+      "description": "OTLP endpoint returned 401. Rotate OTEL_EXPORTER_OTLP_HEADERS secret."
+    },
+    {
+      "code": "TELEMETRY_LOGS_PIPELINE_NOT_INITIALIZED",
+      "signal": "logs",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "telemetry.errors.logs_pipeline_not_initialized"
+    },
+    {
+      "code": "TELEMETRY_LOGS_PROCESSOR_FAILED",
+      "signal": "logs",
+      "http": 200,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "telemetry.errors.logs_processor_failed",
+      "description": "A processor threw. Offending record dropped; pipeline continues for next record."
+    },
+    {
+      "code": "TELEMETRY_LOGS_SINK_UNREACHABLE",
+      "signal": "logs",
+      "http": 200,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "telemetry.errors.logs_sink_unreachable"
+    },
+    {
+      "code": "TELEMETRY_LOGS_BUFFER_FULL",
+      "signal": "logs",
+      "http": 200,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "telemetry.errors.logs_buffer_full",
+      "description": "Sink buffer full; oldest records dropped."
+    },
+    {
+      "code": "TELEMETRY_LOGS_REDACTION_DISABLED_IN_PROD",
+      "signal": "logs",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "telemetry.errors.logs_redaction_disabled_in_prod",
+      "description": "Health probe detected redaction kill-switch off in production. Pager-worthy."
+    },
+    {
+      "code": "TELEMETRY_LOGS_INVALID_CONTEXT_ENRICHER",
+      "signal": "logs",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "telemetry.errors.logs_invalid_context_enricher",
+      "description": "#[AsLogContext] method returned non-scalar. Enricher skipped for that record."
+    }
+  ]
+}

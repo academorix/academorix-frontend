@@ -2,7 +2,7 @@
   "id": "academorix://modules/geofencing/metrics",
   "$version": 1,
   "title": "geofencing \u2014 OpenTelemetry metrics",
-  "instrumentation": "self via telemetry-otel",
+  "instrumentation": "self via telemetry",
   "namespace": "academorix.geofence",
   "labelConventions": {
     "always": [],

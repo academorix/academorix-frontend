@@ -1,9 +1,0 @@
-{
-  "id": "academorix://modules/telemetry-logs/permissions",
-  "$version": 1,
-  "title": "telemetry-logs \u2014 permissions",
-  "seeder": "Academorix\\TelemetryLogs\\Database\\Seeders\\TelemetryLogsPermissionSeeder",
-  "isSystem": true,
-  "permissions": [],
-  "note": "Reuses `platform.telemetry.view` + `platform.telemetry.manage` permissions declared by telemetry-otel. No new permissions."
-}

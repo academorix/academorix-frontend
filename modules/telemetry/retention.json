@@ -1,0 +1,38 @@
+{
+  "id": "academorix://modules/telemetry/retention",
+  "$version": 1,
+  "title": "telemetry \u2014 retention windows",
+  "description": "This module has no data store \u2014 spans + metrics are pushed to the OTLP collector; log records are pushed to the configured Monolog sink. The upstream backend (Grafana Tempo/Mimir/Loki, DataDog, Honeycomb, file rotation, etc) enforces retention windows.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5 (storage limitation \u2014 the observability backend must comply, not us)",
+    "gdpr Art. 30 (records of processing \u2014 workspace_id + causer_id in span attributes / log records count as processing)"
+  ],
+  "retention": [
+    {
+      "entity": "Spans (upstream backend)",
+      "hot": {
+        "description": "backend-defined (e.g. Tempo default 14d, DataDog default 15 months for traces summary + 5 days for full)"
+      },
+      "purge": { "trigger": "backend policy" }
+    },
+    {
+      "entity": "Metrics (upstream backend)",
+      "hot": { "description": "backend-defined (Prometheus default 15d, DataDog 15 months)" }
+    },
+    {
+      "entity": "Log records (upstream sink)",
+      "hot": {
+        "description": "sink-defined. Loki default 30d, DataDog default 15d free / 15 months paid, file rotation config'd via config('logging.channels.stack.days')"
+      }
+    },
+    {
+      "entity": "Log records (local file sink)",
+      "hot": {
+        "days": 14,
+        "description": "Rotating file sink. Config: config('telemetry.logs.sinks.file.days')."
+      },
+      "purge": { "trigger": "> retention window", "action": "file unlink" }
+    }
+  ],
+  "note": "PII handling requires care: our redactor pipeline strips PII fields (email, phone, IP if config'd, card numbers, SSN patterns) BEFORE export. This is our part of the retention story \u2014 minimising what leaves the app."
+}

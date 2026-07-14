@@ -1,0 +1,50 @@
+{
+  "id": "academorix://modules/telemetry/routes",
+  "$version": 1,
+  "title": "telemetry \u2014 HTTP routes",
+  "description": "Debug + operational surface for the SRE team. Not workspace-facing. Consolidated from the previously separate /api/v1/platform/telemetry-otel/* and /api/v1/platform/telemetry-logs/* prefixes under a single /api/v1/platform/telemetry/*.",
+  "groups": [
+    {
+      "name": "platform-telemetry-internal",
+      "prefix": "/api/v1/platform/telemetry",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "auth:platform_admin",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["central_admin"],
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/status",
+          "controller": "Academorix\\Telemetry\\Http\\Controllers\\StatusController@show",
+          "permission": "platform.telemetry.view",
+          "description": "Live pipeline status across all three signals: exporter latency, sampled ratio, dropped spans, dropped log records, buffer depth per sink."
+        },
+        {
+          "method": "GET",
+          "path": "/registry",
+          "controller": "Academorix\\Telemetry\\Http\\Controllers\\RegistryController@index",
+          "permission": "platform.telemetry.view",
+          "description": "Compiled SpanRegistry + MetricRegistry + LogContextRegistry. Filter with ?signal=traces|metrics|logs to scope."
+        },
+        {
+          "method": "POST",
+          "path": "/test-export",
+          "controller": "Academorix\\Telemetry\\Http\\Controllers\\TestExportController@run",
+          "permission": "platform.telemetry.manage",
+          "description": "Fires a synthetic trace + metric to the configured exporter. Returns exporter round-trip time."
+        },
+        {
+          "method": "POST",
+          "path": "/test-emit",
+          "controller": "Academorix\\Telemetry\\Http\\Controllers\\TestEmitController@run",
+          "permission": "platform.telemetry.manage",
+          "description": "Emits a synthetic log record at each level to the configured sink for smoke testing."
+        }
+      ]
+    }
+  ]
+}

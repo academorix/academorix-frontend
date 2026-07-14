@@ -1,7 +1,0 @@
-{
-  "id": "academorix://modules/telemetry-otel/observers",
-  "$version": 1,
-  "title": "telemetry-otel \u2014 Eloquent observers",
-  "description": "No entities \u2014 no observers. keepsuit's DB auto-instrumentation covers Eloquent statement tracing at a lower level.",
-  "observers": []
-}

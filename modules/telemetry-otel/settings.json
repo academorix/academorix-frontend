@@ -1,8 +1,0 @@
-{
-  "id": "academorix://modules/telemetry-otel/settings",
-  "$version": 1,
-  "title": "telemetry-otel \u2014 settings",
-  "description": "Not workspace-facing \u2014 telemetry is developer infrastructure. No #[AsSetting] classes.",
-  "storedIn": "settings",
-  "groups": []
-}

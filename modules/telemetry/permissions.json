@@ -1,0 +1,21 @@
+{
+  "id": "academorix://modules/telemetry/permissions",
+  "$version": 1,
+  "title": "telemetry \u2014 permissions",
+  "seeder": "Academorix\\Telemetry\\Database\\Seeders\\TelemetryPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "platform.telemetry.view",
+      "guard": "platform_admin",
+      "description": "View pipeline status + registries + traces + logs across all three signals.",
+      "seededOn": ["super_admin", "ops", "sre"]
+    },
+    {
+      "name": "platform.telemetry.manage",
+      "guard": "platform_admin",
+      "description": "Trigger test-export, test-emit, flip kill switches, force-flush.",
+      "seededOn": ["super_admin", "sre"]
+    }
+  ]
+}

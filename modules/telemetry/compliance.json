@@ -1,0 +1,73 @@
+{
+  "id": "academorix://modules/telemetry/compliance",
+  "$version": 1,
+  "title": "telemetry \u2014 compliance evidence",
+  "description": "Combined compliance surface for the three signals. Traces + metrics leak less than logs (attribute values are usually structured identifiers, not free-form message bodies), so logs carry the heavier redaction obligation. All three signals ship through the same shared redactor pipeline configured under telemetry.redact.*.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "Shared redactor pipeline strips PII from span attributes AND log records BEFORE export. Rules: global key patterns (password, token, cookie, authorization, api_key, credit_card, cvv, ssn, private_key), regex value patterns (credit card, SSN, IBAN), class-level #[RedactedForLogs] for domain models. Signal-specific overrides are additive, not subtractive \u2014 redaction can only grow, never shrink."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "Log records may reference the erased subject via workspace_id + causer_id. GDPR Art. 17 does NOT require retroactive log erasure when logs are used for security / audit purposes. Sink retention naturally purges. Legal basis documented."
+        },
+        {
+          "article": "Art. 28",
+          "principle": "processor obligations",
+          "evidence": "Third-party observability backends (DataDog, Grafana Cloud, Honeycomb) are subprocessors. See subprocessors.json. Self-hosted collectors are not subprocessors."
+        },
+        {
+          "article": "Art. 30",
+          "principle": "records of processing",
+          "evidence": "Span attributes + log records include academorix.workspace_id + causer_id \u2014 count as processing records. Documented per subprocessor."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security of processing",
+          "evidence": "OTLP transport is TLS 1.2+. Log sink transport is HTTPS. Bearer-token / API-key auth via OTEL_EXPORTER_OTLP_HEADERS + sink-specific env vars. Credentials rotated quarterly."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.6",
+          "principle": "logical + physical access",
+          "evidence": "OTLP endpoint + sink credentials rotated quarterly. Stored as secrets, not in code."
+        },
+        {
+          "criterion": "CC6.8",
+          "principle": "restricting unauthorized access",
+          "evidence": "Read access to traces + logs gated by platform.telemetry.view permission at UI level. Sink-level access controlled by sink IAM (Grafana Cloud team perms, DataDog user roles)."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "Health probes on the pipeline itself \u2014 dropped-spans-ratio + dropped-records-ratio + exporter-reachable + sink-reachable + redaction-enabled all feed alerting."
+        },
+        {
+          "criterion": "CC7.3",
+          "principle": "evaluate + communicate security events",
+          "evidence": "Logs are the primary source for incident forensics. Retention windows meet the 90-day minimum for security-event correlation."
+        }
+      ]
+    },
+    "pci_dss": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "Requirement 3",
+          "principle": "never store cardholder data",
+          "evidence": "Regex redactor patterns strip anything matching card-number regex before write. PAN / CVV / expiry never touched (they don't reach our code \u2014 payment provider tokenises client-side)."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "id": "academorix://modules/telemetry/features",
+  "$version": 1,
+  "title": "telemetry \u2014 feature keys",
+  "description": "Not workspace-facing \u2014 telemetry is a platform capability, always on. Features here gate which subsystems + exporters are active.",
+  "reference": { "publishedBy": "feature-flag" },
+  "features": [
+    {
+      "key": "telemetry.traces",
+      "displayName": "Distributed tracing",
+      "description": "OTel trace export to configured backend.",
+      "defaultEnabled": true,
+      "planTiers": ["*"]
+    },
+    {
+      "key": "telemetry.metrics",
+      "displayName": "Metrics export",
+      "description": "OTel counter / histogram / gauge export via OTLP/HTTP metrics.",
+      "defaultEnabled": true,
+      "planTiers": ["*"]
+    },
+    {
+      "key": "telemetry.logs_pipeline",
+      "displayName": "Structured logging pipeline",
+      "description": "Master toggle. Off = pass through raw Monolog with no enrichment.",
+      "defaultEnabled": true,
+      "planTiers": ["*"]
+    },
+    {
+      "key": "telemetry.auto_db",
+      "displayName": "Auto DB tracing",
+      "description": "keepsuit's Eloquent query tracer.",
+      "defaultEnabled": true,
+      "planTiers": ["*"]
+    },
+    {
+      "key": "telemetry.auto_queue",
+      "displayName": "Auto queue tracing",
+      "description": "Producer + consumer spans linked via job payload.",
+      "defaultEnabled": true,
+      "planTiers": ["*"]
+    },
+    {
+      "key": "telemetry.auto_cache",
+      "displayName": "Auto cache tracing",
+      "description": "High-volume; opt-in per environment.",
+      "defaultEnabled": false,
+      "planTiers": ["*"]
+    },
+    {
+      "key": "telemetry.auto_view",
+      "displayName": "Auto view rendering tracing",
+      "description": "Only useful for template perf investigations.",
+      "defaultEnabled": false,
+      "planTiers": ["*"]
+    },
+    {
+      "key": "telemetry.trace_correlation",
+      "displayName": "Trace-to-logs correlation",
+      "description": "Add trace_id + span_id to every log record from the active OTel context.",
+      "defaultEnabled": true,
+      "planTiers": ["*"]
+    },
+    {
+      "key": "telemetry.logs_module_context",
+      "displayName": "Module context enrichment",
+      "description": "Evaluate #[AsLogContext] enrichers per class.",
+      "defaultEnabled": true,
+      "planTiers": ["*"]
+    },
+    {
+      "key": "telemetry.logs_redaction",
+      "displayName": "Redaction pipeline",
+      "description": "Strip PII + secrets before records leave. Never turn off in production.",
+      "defaultEnabled": true,
+      "planTiers": ["*"]
+    },
+    {
+      "key": "telemetry.logs_sampling",
+      "displayName": "Volume-based log sampling",
+      "description": "Drop a fraction of debug + info records at high volume.",
+      "defaultEnabled": false,
+      "planTiers": ["*"]
+    }
+  ]
+}

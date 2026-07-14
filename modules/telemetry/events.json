@@ -1,0 +1,81 @@
+{
+  "id": "academorix://modules/telemetry/events",
+  "$version": 1,
+  "title": "telemetry \u2014 published events",
+  "namespaces": {
+    "otel": "Academorix\\Telemetry\\Otel\\Events",
+    "logs": "Academorix\\Telemetry\\Logs\\Events"
+  },
+  "dispatchMode": "sync",
+  "note": "These events exist for internal debugging + testing. They are NOT the primary output \u2014 spans go out via OTLP; log records go out via Monolog. Enable at runtime via telemetry.otel.emit_span_events + telemetry.logs.emit_events (debug builds only).",
+  "events": [
+    {
+      "name": "TracerInitialized",
+      "class": "Academorix\\Telemetry\\Otel\\Events\\TracerInitialized",
+      "signal": "traces",
+      "trigger": "On app boot, once the SDK + provider are wired up.",
+      "queue": null,
+      "payload": { "service_name": "string", "resource_attributes": "object", "exporter": "string" }
+    },
+    {
+      "name": "SpanStarted",
+      "class": "Academorix\\Telemetry\\Otel\\Events\\SpanStarted",
+      "signal": "traces",
+      "trigger": "Fired only when config('telemetry.otel.emit_span_events')=true (debug builds).",
+      "queue": null,
+      "payload": {
+        "trace_id": "string",
+        "span_id": "string",
+        "name": "string",
+        "attributes": "object"
+      }
+    },
+    {
+      "name": "SpanEnded",
+      "class": "Academorix\\Telemetry\\Otel\\Events\\SpanEnded",
+      "signal": "traces",
+      "trigger": "Debug-only.",
+      "queue": null,
+      "payload": {
+        "trace_id": "string",
+        "span_id": "string",
+        "name": "string",
+        "duration_ms": "number"
+      }
+    },
+    {
+      "name": "SpanErrored",
+      "class": "Academorix\\Telemetry\\Otel\\Events\\SpanErrored",
+      "signal": "traces",
+      "trigger": "A span was recorded with status=ERROR.",
+      "queue": null,
+      "payload": {
+        "trace_id": "string",
+        "span_id": "string",
+        "name": "string",
+        "exception_class": "string",
+        "exception_message": "string"
+      }
+    },
+    {
+      "name": "LogRecordEmitted",
+      "class": "Academorix\\Telemetry\\Logs\\Events\\LogRecordEmitted",
+      "signal": "logs",
+      "trigger": "Fired only when config('telemetry.logs.emit_events')=true.",
+      "queue": null,
+      "payload": { "channel": "string", "level": "string", "message": "string" }
+    },
+    {
+      "name": "LogPipelineErrored",
+      "class": "Academorix\\Telemetry\\Logs\\Events\\LogPipelineErrored",
+      "signal": "logs",
+      "trigger": "A processor or formatter threw during record processing. The offending record is dropped; the pipeline continues; the error is exposed via metric `academorix.logs.records_dropped_total{reason=\"pipeline_error\"}`.",
+      "queue": null,
+      "payload": {
+        "processor": "string",
+        "exception_class": "string",
+        "exception_message": "string"
+      }
+    }
+  ]
+}

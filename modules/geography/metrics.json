@@ -2,17 +2,69 @@
   "id": "academorix://modules/geography/metrics",
   "$version": 1,
   "title": "geography \u2014 OpenTelemetry metrics",
-  "instrumentation": "self via telemetry-otel",
+  "instrumentation": "self via telemetry",
   "namespace": "academorix.geography",
-  "labelConventions": {"always": [], "commonlyAvailable": ["entity", "locale", "outcome", "source"], "forbiddenAsLabels": ["ip", "city_name", "country_id"]},
+  "labelConventions": {
+    "always": [],
+    "commonlyAvailable": ["entity", "locale", "outcome", "source"],
+    "forbiddenAsLabels": ["ip", "city_name", "country_id"]
+  },
   "metrics": [
-    {"name": "academorix.geography.catalog.request_total", "kind": "counter", "unit": "requests", "labels": ["entity", "outcome"], "description": "outcome: cache_hit / cache_miss / db_hit. Feeds hit-ratio computation."},
-    {"name": "academorix.geography.catalog.response_duration_ms", "kind": "histogram", "unit": "ms", "buckets": [1, 5, 25, 100, 500, 2000], "labels": ["entity"]},
-    {"name": "academorix.geography.cache.hit_ratio", "kind": "gauge", "unit": "ratio", "labels": ["entity"], "description": "Rolling 5-minute cache hit ratio per entity."},
-    {"name": "academorix.geography.geolocate.total", "kind": "counter", "unit": "resolutions", "labels": ["source", "outcome"], "description": "source: maxmind / ip_api / cache. outcome: resolved / failed / rate_limited / kill_switched."},
-    {"name": "academorix.geography.geolocate.duration_ms", "kind": "histogram", "unit": "ms", "buckets": [1, 10, 50, 200, 1000, 5000], "labels": ["source"]},
-    {"name": "academorix.geography.maxmind.database_age_days", "kind": "gauge", "unit": "days", "labels": [], "description": "Age of the GeoLite2 DB. Alert at > 14."},
-    {"name": "academorix.geography.maxmind.refresh_total", "kind": "counter", "unit": "refreshes", "labels": ["outcome"], "description": "outcome: success / failed / skipped_no_license."},
-    {"name": "academorix.geography.localized_name.lookup_total", "kind": "counter", "unit": "lookups", "labels": ["locale", "outcome"], "description": "outcome: hit / miss_fallback_to_english."}
+    {
+      "name": "academorix.geography.catalog.request_total",
+      "kind": "counter",
+      "unit": "requests",
+      "labels": ["entity", "outcome"],
+      "description": "outcome: cache_hit / cache_miss / db_hit. Feeds hit-ratio computation."
+    },
+    {
+      "name": "academorix.geography.catalog.response_duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [1, 5, 25, 100, 500, 2000],
+      "labels": ["entity"]
+    },
+    {
+      "name": "academorix.geography.cache.hit_ratio",
+      "kind": "gauge",
+      "unit": "ratio",
+      "labels": ["entity"],
+      "description": "Rolling 5-minute cache hit ratio per entity."
+    },
+    {
+      "name": "academorix.geography.geolocate.total",
+      "kind": "counter",
+      "unit": "resolutions",
+      "labels": ["source", "outcome"],
+      "description": "source: maxmind / ip_api / cache. outcome: resolved / failed / rate_limited / kill_switched."
+    },
+    {
+      "name": "academorix.geography.geolocate.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [1, 10, 50, 200, 1000, 5000],
+      "labels": ["source"]
+    },
+    {
+      "name": "academorix.geography.maxmind.database_age_days",
+      "kind": "gauge",
+      "unit": "days",
+      "labels": [],
+      "description": "Age of the GeoLite2 DB. Alert at > 14."
+    },
+    {
+      "name": "academorix.geography.maxmind.refresh_total",
+      "kind": "counter",
+      "unit": "refreshes",
+      "labels": ["outcome"],
+      "description": "outcome: success / failed / skipped_no_license."
+    },
+    {
+      "name": "academorix.geography.localized_name.lookup_total",
+      "kind": "counter",
+      "unit": "lookups",
+      "labels": ["locale", "outcome"],
+      "description": "outcome: hit / miss_fallback_to_english."
+    }
   ]
 }

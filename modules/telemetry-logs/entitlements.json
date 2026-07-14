@@ -1,9 +1,0 @@
-{
-  "id": "academorix://modules/telemetry-logs/entitlements",
-  "$version": 1,
-  "title": "telemetry-logs \u2014 declared entitlements",
-  "description": "None. Platform infrastructure.",
-  "reference": {"publishedBy": "entitlements"},
-  "kinds": [],
-  "entitlements": []
-}

@@ -1,0 +1,33 @@
+{
+  "id": "academorix://modules/telemetry/commands",
+  "$version": 1,
+  "title": "telemetry \u2014 Artisan commands",
+  "description": "Unified command surface across the three signals. Every command accepts `--signal={traces|metrics|logs|all}` to scope its behaviour when relevant.",
+  "commands": [
+    {
+      "signature": "telemetry:describe {--signal=all} {--module=} {--class=}",
+      "class": "Academorix\\Telemetry\\Console\\Commands\\DescribeCommand",
+      "purpose": "Prints the compiled registries: SpanRegistry + MetricRegistry (for traces + metrics signals) + LogContextRegistry (for logs signal). Filter by --module or --class. Supersedes `otel:describe` + `logs:describe`."
+    },
+    {
+      "signature": "telemetry:test-export {--signal=traces} {--samples=5}",
+      "class": "Academorix\\Telemetry\\Console\\Commands\\TestExportCommand",
+      "purpose": "Fires a synthetic trace + metric + log record to the configured exporters/sinks. Reports round-trip time + response. Useful for smoke-testing config on deploy. Supersedes `otel:test-export`."
+    },
+    {
+      "signature": "telemetry:sample-traces {--service=} {--limit=100}",
+      "class": "Academorix\\Telemetry\\Console\\Commands\\SampleTracesCommand",
+      "purpose": "Prints a summary of the last N sampled traces from local buffer (when the SDK's debug processor is active). Dev-only. Supersedes `otel:sample-traces`."
+    },
+    {
+      "signature": "telemetry:tail-logs {channel=default} {--level=debug}",
+      "class": "Academorix\\Telemetry\\Console\\Commands\\TailLogsCommand",
+      "purpose": "Tail structured logs from the local file sink with JSON pretty-printing. Dev-only. Supersedes `logs:tail`."
+    },
+    {
+      "signature": "telemetry:test-emit {--channel=default} {--level=info}",
+      "class": "Academorix\\Telemetry\\Console\\Commands\\TestEmitCommand",
+      "purpose": "Emit a synthetic log record. Verifies the pipeline end-to-end including trace_id enrichment from the OTel context. Supersedes `logs:test-emit`."
+    }
+  ]
+}

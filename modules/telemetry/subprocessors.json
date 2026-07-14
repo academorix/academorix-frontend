@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/telemetry/subprocessors",
+  "$version": 1,
+  "title": "telemetry \u2014 subprocessors",
+  "description": "Telemetry data (span attributes, metric labels, log records) leaves the application via OTLP + Monolog sinks. Where the collector / sink is third-party-hosted, that vendor is a subprocessor. Self-hosted collectors on our infra are NOT subprocessors.",
+  "subprocessors": [
+    {
+      "name": "Grafana Cloud (Tempo + Mimir + Loki)",
+      "role": "observability_backend",
+      "purpose": "Trace + metric + log storage + query UI.",
+      "signals": ["traces", "metrics", "logs"],
+      "data_processed": [
+        "span attributes (redacted per data-classes.json)",
+        "metric labels",
+        "log records (redacted per data-classes.json)",
+        "resource attributes (service.name, deployment.environment, k8s.*)"
+      ],
+      "location": "US / EU / AU (customer-selected)",
+      "legal_basis": "contract",
+      "dpa_url": "https://grafana.com/legal/dpa",
+      "when_engaged": "OTEL_EXPORTER_OTLP_ENDPOINT points at grafana.net OR telemetry.logs.sinks.loki.endpoint points at grafana.net"
+    },
+    {
+      "name": "DataDog (APM + Logs + Metrics)",
+      "role": "observability_backend",
+      "purpose": "APM + metrics + dashboards + log ingestion / search.",
+      "signals": ["traces", "metrics", "logs"],
+      "data_processed": [
+        "span attributes",
+        "metric labels",
+        "log records",
+        "log tags",
+        "resource attributes"
+      ],
+      "location": "US / EU / Japan (customer-selected)",
+      "legal_basis": "contract",
+      "dpa_url": "https://www.datadoghq.com/legal/dpa/",
+      "when_engaged": "OTEL_EXPORTER_OTLP_ENDPOINT points at datadoghq.com OR telemetry.logs.sinks.datadog.enabled=true"
+    },
+    {
+      "name": "Honeycomb",
+      "role": "observability_backend",
+      "purpose": "Trace analysis + high-cardinality querying.",
+      "signals": ["traces", "metrics"],
+      "data_processed": ["span attributes", "metric labels"],
+      "location": "US",
+      "legal_basis": "contract",
+      "dpa_url": "https://www.honeycomb.io/dpa/",
+      "when_engaged": "OTEL_EXPORTER_OTLP_ENDPOINT points at api.honeycomb.io"
+    }
+  ],
+  "notes": [
+    "The choice of subprocessor is deployment-specific. Multiple can be configured via a fan-out collector (OTel Collector `otlp` receiver \u2192 multiple `otlp` exporters).",
+    "Self-hosted collectors (Grafana Alloy, OTel Collector on our own K8s, DataDog Agent sidecar) are NOT subprocessors per GDPR Art. 28 \u2014 we control them; they are transport, not processing."
+  ]
+}

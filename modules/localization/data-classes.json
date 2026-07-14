@@ -57,7 +57,7 @@
     "audit_log": []
   },
   "notes": [
-    "Workspace admins are responsible for ensuring no PII passes through auto-translate. The RedactorProcessor (from telemetry-logs) is reused before dispatching to drivers; regex patterns strip credit-card / SSN / IBAN + configurable phone / email masking.",
+    "Workspace admins are responsible for ensuring no PII passes through auto-translate. The RedactorProcessor (from telemetry) is reused before dispatching to drivers; regex patterns strip credit-card / SSN / IBAN + configurable phone / email masking.",
     "The 'content' namespace is a convention for user-generated content translations \u2014 UI translations (namespaces 'validation', 'auth', 'users', etc.) are safe.",
     "GDPR Art. 44 (cross-border transfers): all drivers offer EU-region processing; workspaces in EU should configure eu-region drivers.",
     "PlatformLanguage.metadata is an opaque JSON dictionary the platform-ops team uses for tooling hints (e.g. `translator_default_driver`, `preview_string`). Never stores workspace or user data \u2014 internal-tier only."

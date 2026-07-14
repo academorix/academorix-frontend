@@ -1,0 +1,40 @@
+{
+  "id": "academorix://modules/telemetry/traits",
+  "$version": 1,
+  "title": "telemetry \u2014 trait composition",
+  "description": "Two owned traits, one per signal group. `Traceable` for classes that expose a helper to start/stop a manual span without touching the OTel SDK. `StructuredLog` for classes that want an ergonomic `$this->log()` helper. Both attributes remain the primary API; the traits cover escape hatches.",
+  "owned": [
+    {
+      "trait": "Academorix\\Telemetry\\Otel\\Concerns\\Traceable",
+      "signal": "traces",
+      "description": "Adds a `withSpan(string $name, callable $fn, array $attributes = [])` helper that starts a span, executes the callable, records exception on throw, and ends the span. Also exposes `currentSpan()` for reading the active span.",
+      "public": true,
+      "usedBy": [],
+      "conflicts_with": []
+    },
+    {
+      "trait": "Academorix\\Telemetry\\Logs\\Concerns\\StructuredLog",
+      "signal": "logs",
+      "description": "Adds `log(): LoggerInterface`, `logInfo(string $msg, array $context = [])`, `logWarning(...)`, `logError(...)`, `logException(\\Throwable $e, array $context = [])`. Resolves the correct channel via #[AsLogChannel] class attribute or falls back to config('telemetry.logs.default_channel').",
+      "public": true,
+      "usedBy": [],
+      "conflicts_with": []
+    }
+  ],
+  "consumed": {
+    "keepsuit": [
+      {
+        "trait": "Keepsuit\\LaravelOpenTelemetry\\Facades\\Tracer",
+        "description": "Facade over the OTel Tracer. Used inside our attribute discoverers + span helpers."
+      },
+      {
+        "trait": "Keepsuit\\LaravelOpenTelemetry\\Facades\\Meter",
+        "description": "Facade over the OTel Meter for counters, histograms, gauges."
+      }
+    ],
+    "framework": [{ "trait": "Illuminate\\Support\\Facades\\Log" }]
+  },
+  "composition": {
+    "note": "This module owns no entities. Traits here are helpers for other modules opting into imperative instrumentation OR ergonomic logging."
+  }
+}

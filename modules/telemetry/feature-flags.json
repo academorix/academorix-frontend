@@ -1,0 +1,86 @@
+{
+  "id": "academorix://modules/telemetry/feature-flags",
+  "$version": 1,
+  "title": "telemetry \u2014 kill switches",
+  "engine": "laravel/pennant",
+  "description": "Emergency switches for the three signals. Use during collector outages or PII incidents. Flipping is instantaneous (no deploy).",
+  "flags": [
+    {
+      "key": "telemetry.exporter_traces",
+      "kind": "kill-switch",
+      "signal": "traces",
+      "default": "on",
+      "description": "OTLP trace exporter. Off = spans buffered + dropped when queue full. Emergency-only during collector outages to prevent app slowdown."
+    },
+    {
+      "key": "telemetry.exporter_metrics",
+      "kind": "kill-switch",
+      "signal": "metrics",
+      "default": "on"
+    },
+    {
+      "key": "telemetry.auto_http_server",
+      "kind": "kill-switch",
+      "signal": "traces",
+      "default": "on"
+    },
+    {
+      "key": "telemetry.auto_http_client",
+      "kind": "kill-switch",
+      "signal": "traces",
+      "default": "on"
+    },
+    { "key": "telemetry.auto_db", "kind": "kill-switch", "signal": "traces", "default": "on" },
+    { "key": "telemetry.auto_queue", "kind": "kill-switch", "signal": "traces", "default": "on" },
+    { "key": "telemetry.auto_cache", "kind": "kill-switch", "signal": "traces", "default": "off" },
+    { "key": "telemetry.auto_view", "kind": "kill-switch", "signal": "traces", "default": "off" },
+    {
+      "key": "telemetry.sampling_override",
+      "kind": "kill-switch",
+      "signal": "traces",
+      "default": "off",
+      "description": "When on, override sampler to AlwaysOn. Use during incident debugging."
+    },
+    {
+      "key": "telemetry.logs_pipeline",
+      "kind": "kill-switch",
+      "signal": "logs",
+      "default": "on",
+      "description": "Master processor pipeline switch. Off = plain Monolog output (no enrichment / redaction). Emergency-only \u2014 turning off in production means unredacted PII may leak to logs."
+    },
+    {
+      "key": "telemetry.logs_sink_stdout",
+      "kind": "kill-switch",
+      "signal": "logs",
+      "default": "on"
+    },
+    { "key": "telemetry.logs_sink_loki", "kind": "kill-switch", "signal": "logs", "default": "on" },
+    {
+      "key": "telemetry.logs_sink_datadog",
+      "kind": "kill-switch",
+      "signal": "logs",
+      "default": "on"
+    },
+    { "key": "telemetry.logs_sink_file", "kind": "kill-switch", "signal": "logs", "default": "on" },
+    {
+      "key": "telemetry.logs_trace_correlation",
+      "kind": "kill-switch",
+      "signal": "logs",
+      "default": "on"
+    },
+    {
+      "key": "telemetry.logs_redaction_enforcement",
+      "kind": "kill-switch",
+      "signal": "logs",
+      "default": "on",
+      "description": "NEVER turn off in production. Off = redactor bypassed and PII leaks. Health probe telemetry-logs-redaction-enabled fails when this is off in prod."
+    },
+    {
+      "key": "telemetry.logs_sampling",
+      "kind": "kill-switch",
+      "signal": "logs",
+      "default": "off",
+      "description": "Volume-based sampling for debug + info levels."
+    }
+  ]
+}

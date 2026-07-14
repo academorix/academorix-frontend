@@ -1,0 +1,77 @@
+{
+  "id": "academorix://modules/telemetry/listeners",
+  "$version": 1,
+  "title": "telemetry \u2014 subscribed events",
+  "description": "Listeners for all three signals. Registry compilation runs once at boot. WorkspaceResolved fanout writes both to the OTel context (baggage + span attributes) AND to RequestContext (for log records).",
+  "listeners": [
+    {
+      "event": "foundation::ApplicationBooted",
+      "listener": "Academorix\\Telemetry\\Otel\\Listeners\\CompileInstrumentationRegistry",
+      "signal": "traces",
+      "queue": null,
+      "purpose": "Discover every #[AsSpan] / #[AsCounter] / #[AsHistogram] / #[AsGauge] / #[AsUpDownCounter] / #[AsContext] / #[AsBaggage] attribute across the codebase. Compile into SpanRegistry + MetricRegistry. Register each instrument with the OTel Meter."
+    },
+    {
+      "event": "foundation::ApplicationBooted",
+      "listener": "Academorix\\Telemetry\\Logs\\Listeners\\CompileLogContextRegistry",
+      "signal": "logs",
+      "queue": null,
+      "purpose": "Discover every #[AsLogContext] / #[AsLogChannel] / #[RedactedForLogs] attribute across the codebase. Compile into LogContextRegistry indexed by declaring class."
+    },
+    {
+      "event": "foundation::RequestFinished",
+      "listener": "Academorix\\Telemetry\\Otel\\Listeners\\FlushCurrentTrace",
+      "signal": "traces",
+      "queue": null,
+      "purpose": "Ensures the root span is closed + flushed even if the request short-circuited (e.g. auth failure)."
+    },
+    {
+      "event": "workspaces::WorkspaceResolved",
+      "listener": "Academorix\\Telemetry\\Otel\\Listeners\\SetWorkspaceBaggage",
+      "signal": "traces",
+      "queue": null,
+      "purpose": "Once WorkspaceResolver identifies the workspace, adds academorix.workspace_id to current-span attributes + baggage."
+    },
+    {
+      "event": "workspaces::WorkspaceResolved",
+      "listener": "Academorix\\Telemetry\\Logs\\Listeners\\SetWorkspaceRequestContext",
+      "signal": "logs",
+      "queue": null,
+      "purpose": "Store workspace_id in RequestContext so AcademorixContextProcessor picks it up on subsequent Log:: calls."
+    },
+    {
+      "event": "queue::JobProcessing",
+      "listener": "Academorix\\Telemetry\\Otel\\Listeners\\ResumeQueueTrace",
+      "signal": "traces",
+      "queue": null,
+      "purpose": "Extracts the trace context from the job payload + starts a consumer span linked to the producer."
+    },
+    {
+      "event": "queue::JobProcessing",
+      "listener": "Academorix\\Telemetry\\Logs\\Listeners\\PropagateContextIntoJob",
+      "signal": "logs",
+      "queue": null,
+      "purpose": "Restore RequestContext from job payload. Ensures logs inside async jobs carry the originating workspace_id + causer_id."
+    },
+    {
+      "event": "queue::JobProcessed",
+      "listener": "Academorix\\Telemetry\\Otel\\Listeners\\CloseQueueTrace",
+      "signal": "traces",
+      "queue": null,
+      "purpose": "Closes the consumer span + records success/failure status."
+    },
+    {
+      "event": "queue::JobFailed",
+      "listener": "Academorix\\Telemetry\\Otel\\Listeners\\RecordQueueException",
+      "signal": "traces",
+      "queue": null,
+      "purpose": "Records the exception on the consumer span, sets status=ERROR."
+    }
+  ],
+  "bus_middleware": [
+    {
+      "middleware": "Academorix\\Telemetry\\Otel\\Bus\\TracePropagatingBusMiddleware",
+      "purpose": "On job dispatch, serialises the current trace context + baggage + RequestContext into the job payload. Registered globally via config('queue.middleware'). Companion to ResumeQueueTrace + PropagateContextIntoJob."
+    }
+  ]
+}

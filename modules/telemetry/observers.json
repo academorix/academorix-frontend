@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/telemetry/observers",
+  "$version": 1,
+  "title": "telemetry \u2014 Eloquent observers",
+  "description": "No entities \u2014 no observers. keepsuit's DB auto-instrumentation covers Eloquent statement tracing at a lower level. Marker file present to satisfy the standard blueprint layout.",
+  "observers": []
+}
