@@ -337,43 +337,6 @@
       ]
     },
     {
-      "trait": "__REMOVED_SEARCHABLE_MARKER__",
-      "class": "MOVED_TO_SEARCH_MODULE",
-      "description": "__STUB_FOR_REMOVAL__",
-      "adds": {
-        "columns": [],
-        "compositeIndexes": [],
-        "scopes": { "local": [], "global": [] },
-        "eventHooks": [
-          {
-            "event": "saved",
-            "description": "Push the model to the search index (async via IndexSearchableJob)."
-          },
-          { "event": "deleted", "description": "Remove the model from the search index." }
-        ],
-        "methods": [
-          {
-            "name": "toSearchableArray",
-            "signature": "public function toSearchableArray(): array"
-          },
-          { "name": "searchableAs", "signature": "public function searchableAs(): string" },
-          {
-            "name": "shouldBeSearchable",
-            "signature": "public function shouldBeSearchable(): bool"
-          }
-        ]
-      },
-      "supportedEngines": ["meilisearch", "elasticsearch", "typesense", "postgres-fts", "algolia"],
-      "defaultEngine": "meilisearch",
-      "appliedBy": [
-        "Workspace (workspaces)",
-        "Domain (workspaces)",
-        "Team (teams)",
-        "Athlete (sports)",
-        "Notification (notifications)"
-      ]
-    },
-    {
       "trait": "HasVectorEmbeddings",
       "class": "Academorix\\Foundation\\Concerns\\HasVectorEmbeddings",
       "description": "v2 STUB. Adds a pgvector `embeddings` column of configurable dimension + a `nearest($vector, $count)` scope for cosine-similarity queries. Deferred until AI features land.",
@@ -471,15 +434,15 @@
   "compositionExample": {
     "language": "php",
     "note": "The canonical trait order every persistent model uses. Framework first, then workspaces boundary, then foundation, then domain-specific. Order matters \u2014 HasAuditable must land after HasUserstamps, and HasVersions must land after HasAuditable so the audit row references the userstamp and the version snapshot includes the audit.",
-    "code": "final class Branch extends Model implements BranchInterface, AuditableContract\n{\n    use HasFactory;             // framework\n    use HasUlids;               // framework\n\n    use BelongsToWorkspace;        // workspaces \u2014 adds workspace_id + global scope\n    use BelongsToApplication;   // workspaces \u2014 adds application_id (when a boundary row)\n\n    use HasSystemFlag;          // foundation\n    use HasMetadata;            // foundation\n    use HasUserstamps;          // foundation \u2014 MUST come before HasAuditable\n    use HasAuditable;           // foundation \u2014 wraps owen-it/laravel-auditing\n    use HasVersions;            // foundation \u2014 wraps mpociot/versionable; MUST come after HasAuditable\n    use Sluggable;              // foundation \u2014 auto-fills slug on saving\n    use Filterable;             // foundation \u2014 filterable() static contract\n    use Sortable;               // foundation \u2014 sort_order + reorder helpers\n    use Searchable;             // foundation \u2014 Scout integration\n\n    use HasImportable;          // transfer \u2014 opt into the import pipeline (optional)\n    use HasExportable;          // transfer \u2014 opt into the export pipeline (optional)\n\n    use SoftDeletes;            // framework \u2014 always last\n}"
+    "code": "final class Branch extends Model implements BranchInterface, AuditableContract\n{\n    use HasFactory;             // framework\n    use HasUlids;               // framework\n\n    use BelongsToWorkspace;        // workspaces \u2014 adds workspace_id + global scope\n    use BelongsToApplication;   // workspaces \u2014 adds application_id (when a boundary row)\n\n    use HasSystemFlag;          // foundation\n    use HasMetadata;            // foundation\n    use HasUserstamps;          // foundation \u2014 MUST come before HasAuditable\n    use HasAuditable;           // foundation \u2014 wraps owen-it/laravel-auditing\n    use HasVersions;            // foundation \u2014 wraps mpociot/versionable; MUST come after HasAuditable\n    use Sluggable;              // foundation \u2014 auto-fills slug on saving\n    use Filterable;             // foundation \u2014 filterable() static contract\n    use Sortable;               // foundation \u2014 sort_order + reorder helpers\n\n    use HasImportable;          // transfer \u2014 opt into the import pipeline (optional)\n    use HasExportable;          // transfer \u2014 opt into the export pipeline (optional)\n    use HasSearchable;          // search   \u2014 opt into the search pipeline (optional)\n\n    use SoftDeletes;            // framework \u2014 always last\n}"
   },
   "blueprintExample": {
     "language": "php",
-    "note": "Migrations compose paired macros in the SAME order the model composes traits. Auditable, versionable, filterable, searchable, importable, exportable are marker macros (no column changes) \u2014 they annotate intent for the CI cross-check + serve as anchoring documentation.",
-    "code": "Schema::create('branches', function (Blueprint $t) {\n    $t->string('id', 64)->primary();  // brn_<ulid>\n\n    $t->workspaceable();              // Workspaces \u2014 workspace_id + FK + composite index\n    $t->applicable();              // Workspaces \u2014 application_id + FK (boundary rows only)\n\n    $t->string('name');\n    $t->text('description')->nullable();\n\n    $t->systemFlag();              // Foundation\n    $t->metadata();                // Foundation\n    $t->userstampable();           // Foundation\n    $t->auditable();               // Foundation (marker \u2014 no column)\n    $t->versionable();             // Foundation (marker \u2014 versions table owned by mpociot/versionable)\n    $t->sluggable('name');         // Foundation \u2014 slug + unique index scoped to (workspace_id, slug)\n    $t->filterable();              // Foundation (marker)\n    $t->sortable();                // Foundation \u2014 sort_order + composite index\n    $t->searchable();              // Foundation (marker \u2014 model registers with Scout at boot)\n\n    // Import / export markers no longer live in the schema \u2014 the transfer module\n    // discovers importable / exportable models via attribute-driven registration\n    // (#[Importable] / #[Exportable] on the model class), not via migration macros.\n\n    $t->softDeletes();\n    $t->timestamps();\n});"
+    "note": "Migrations compose paired macros in the SAME order the model composes traits. Auditable, versionable, filterable are marker macros (no column changes) \u2014 they annotate intent for the CI cross-check + serve as anchoring documentation. Import / export / search markers moved out: transfer + search modules discover via PHP attributes, not migration macros.",
+    "code": "Schema::create('branches', function (Blueprint $t) {\n    $t->string('id', 64)->primary();  // brn_<ulid>\n\n    $t->workspaceable();              // Workspaces \u2014 workspace_id + FK + composite index\n    $t->applicable();              // Workspaces \u2014 application_id + FK (boundary rows only)\n\n    $t->string('name');\n    $t->text('description')->nullable();\n\n    $t->systemFlag();              // Foundation\n    $t->metadata();                // Foundation\n    $t->userstampable();           // Foundation\n    $t->auditable();               // Foundation (marker \u2014 no column)\n    $t->versionable();             // Foundation (marker \u2014 versions table owned by mpociot/versionable)\n    $t->sluggable('name');         // Foundation \u2014 slug + unique index scoped to (workspace_id, slug)\n    $t->filterable();              // Foundation (marker)\n    $t->sortable();                // Foundation \u2014 sort_order + composite index\n\n    // Import / export / search markers no longer live in the schema \u2014 the transfer\n    // and search modules discover their models via attribute-driven registration\n    // (#[Importable] / #[Exportable] / #[Searchable] on the model class), not\n    // via migration macros.\n\n    $t->softDeletes();\n    $t->timestamps();\n});"
   },
   "traitOrderContract": {
-    "rule": "Framework first (HasFactory, HasUlids), then boundary traits (BelongsToApplication, BelongsToWorkspace), then foundation lifecycle traits in this exact order: HasSystemFlag, HasMetadata, HasUserstamps, HasAuditable, HasVersions, then indexer traits (Sluggable, Filterable, Sortable, Searchable), then optional cross-module traits (transfer::HasImportable, transfer::HasExportable, activity::HasActivityLog, audit::HasAudit), then SoftDeletes last.",
+    "rule": "Framework first (HasFactory, HasUlids), then boundary traits (BelongsToApplication, BelongsToWorkspace), then foundation lifecycle traits in this exact order: HasSystemFlag, HasMetadata, HasUserstamps, HasAuditable, HasVersions, then indexer traits (Sluggable, Filterable, Sortable), then optional cross-module traits (transfer::HasImportable, transfer::HasExportable, search::HasSearchable, activity::HasActivityLog, audit::HasAudit), then SoftDeletes last.",
     "why": [
       "HasUserstamps MUST come before HasAuditable so the userstamps are set before the audit row snapshots them.",
       "HasAuditable MUST come before HasVersions so the audit row is written BEFORE the version snapshot captures the model state (otherwise the snapshot would miss the concurrent audit).",
