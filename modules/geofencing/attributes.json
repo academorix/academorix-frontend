@@ -2,18 +2,44 @@
   "id": "academorix://modules/geofencing/attributes",
   "$version": 1,
   "title": "geofencing \u2014 PHP attribute contracts",
-  "description": "One attribute: `#[GeofenceSubjectAlias]` for consumer models. Declares the snake_case morph alias that the model registers with the morph map + validates at boot that the alias is unique across the codebase.",
+  "description": "Two class-level attributes. `#[Geofenceable]` on models that carry a fence (registered against the fenceable morph map). `#[GeofenceSubjectAlias]` on models that call the evaluator on their own behalf (registered against the subject morph map). Both refuse duplicate aliases across the codebase at boot.",
   "namespace": "Academorix\\Geofencing\\Attributes",
   "attributes": [
+    {
+      "name": "Geofenceable",
+      "class": "Academorix\\Geofencing\\Attributes\\Geofenceable",
+      "targets": ["class"],
+      "params": [
+        {
+          "name": "alias",
+          "type": "string",
+          "required": true,
+          "pattern": "^[a-z][a-z0-9_]+$",
+          "description": "The snake_case identifier persisted to `geofence_checks.fenceable_type`. E.g. `branch`, `facility`, `venue`, `event`, `delivery_zone`."
+        }
+      ],
+      "example": "#[Geofenceable(alias: 'branch')]\nfinal class Branch extends Model implements Geofenceable\n{\n    use HasGeofence;\n    // ...\n}",
+      "runtime_behaviour": "The CompileMorphAliases listener (bound to foundation::ApplicationBooted) scans classes for #[Geofenceable]. Each is registered in the fenceable morph map via Relation::enforceMorphMap(). Boot fails on duplicate aliases OR on aliases whose target class doesn't implement the Geofenceable interface.",
+      "companion_interface": "Academorix\\Geofencing\\Contracts\\Geofenceable",
+      "companion_trait": "Academorix\\Geofencing\\Concerns\\HasGeofence",
+      "companion_trait_note": "Using the trait provides default implementations of all Geofenceable interface methods reading from the standard 7 columns. Models with non-standard geometry storage can implement the interface directly without the trait."
+    },
     {
       "name": "GeofenceSubjectAlias",
       "class": "Academorix\\Geofencing\\Attributes\\GeofenceSubjectAlias",
       "targets": ["class"],
       "params": [
-        {"name": "alias", "type": "string", "required": true, "pattern": "^[a-z][a-z0-9_]+$", "description": "The snake_case identifier used as `subject_type` on geofence_checks."}
+        {
+          "name": "alias",
+          "type": "string",
+          "required": true,
+          "pattern": "^[a-z][a-z0-9_]+$",
+          "description": "The snake_case identifier persisted to `geofence_checks.subject_type`. E.g. `staff_clockin`, `attendance`, `attendance_submission`, `reception_visit`."
+        }
       ],
       "example": "#[GeofenceSubjectAlias(alias: 'staff_clockin')]\nfinal class StaffClockIn extends Model { ... }",
-      "runtime_behaviour": "GeofencingServiceProvider::boot() scans classes for #[GeofenceSubjectAlias]. Registers each alias in the morph map via Relation::enforceMorphMap(). At boot, refuses duplicate aliases across the codebase (raises ModuleBootException). Also validates the alias is snake_case."
+      "runtime_behaviour": "Same discovery pipeline as #[Geofenceable] but registered against the subject morph map. Boot fails on duplicate aliases. NO required interface \u2014 subjects don't have any evaluator surface; they're just polymorphic targets for the audit trail's 'what caused this evaluation' pointer."
     }
-  ]
+  ],
+  "namespace_separation": "Fenceable + subject alias namespaces are separate. The string `branch` may only appear once in the fenceable map; the string `staff_clockin` may only appear once in the subject map. But `branch` in fenceable + `branch` in subject would be legal (though confusing \u2014 boot warns)."
 }

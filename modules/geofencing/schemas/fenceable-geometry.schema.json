@@ -1,0 +1,40 @@
+{
+  "id": "academorix://modules/geofencing/schemas/fenceable-geometry",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "FenceableGeometry",
+  "description": "READ-ONLY value-object shape describing the geofence configuration that lives on ANY model using the HasGeofence trait. The trait adds the standard 7 columns via the `$table->addGeofenceColumns()` blueprint macro on the consumer's own migration. Models with non-standard geometry storage override the Geofenceable interface methods directly and bypass column reads entirely.",
+  "type": "object",
+  "x-module": "geofencing",
+  "x-value_object_only": true,
+  "x-value_object_class": "Academorix\\Geofencing\\ValueObjects\\FenceableGeometry",
+  "x-value_object_note": "Hydrated by FenceableResolver from any Geofenceable model. Never persisted to a dedicated table. This schema documents the columns the HasGeofence trait EXPECTS on the consumer's table, added via the blueprint macro.",
+  "x-blueprint_macro": {
+    "name": "Blueprint::addGeofenceColumns()",
+    "registered_by": "GeofencingServiceProvider::registerBlueprintMacro()",
+    "target_table": "consumer's own table (branches, facilities, venues, events, delivery_zones, home_addresses, ...)",
+    "columns_added": {
+      "geofence_polygon": {"type": "geography(polygon, 4326)", "nullable": true, "description": "The fence, drawn as a simple polygon (no holes on day 1)."},
+      "location_point": {"type": "geography(point, 4326)", "nullable": true, "description": "Centroid for radius-mode fallback."},
+      "geofence_radius_m": {"type": "integer unsigned", "nullable": true, "default": 100, "description": "Radius in meters for radius-mode evaluation. Used only when geofence_polygon IS NULL."},
+      "geofence_accuracy_tolerance_m": {"type": "smallint unsigned", "nullable": false, "default": 50, "description": "Reject GPS readings noisier than this. Consumer sees SKIPPED."},
+      "geofence_enforcement_enabled": {"type": "boolean", "nullable": false, "default": false, "description": "Consumer feature toggle \u2014 evaluator ignores this, consumers read it to decide whether to block on OUTSIDE."},
+      "geofence_updated_at": {"type": "timestamptz", "nullable": true, "description": "When the fence was last edited. Powers 'stale fence' surfacing."},
+      "geofence_updated_by": {"type": "string", "length": 64, "nullable": true, "description": "Last editor's user ULID."}
+    },
+    "index_added": {"columns": ["geofence_updated_at"], "predicate": "geofence_polygon IS NOT NULL OR location_point IS NOT NULL", "description": "Powers stale-fence health probe scans."}
+  },
+  "properties": {
+    "fenceableType": {"type": "string", "description": "Snake-case alias of the fenceable model (from #[Geofenceable])."},
+    "fenceableId": {"type": "string", "description": "The fenceable model's primary key."},
+    "workspaceId": {"type": "string", "description": "Owning workspace \u2014 pulled from the fenceable model via BelongsToWorkspace."},
+    "geofencePolygon": {"type": ["object", "null"], "description": "Magellan Polygon. Wire shape: { type: 'Polygon', coordinates: [[[lng, lat], ...]], srid: 4326 }."},
+    "locationPoint": {"type": ["object", "null"], "description": "Magellan Point."},
+    "geofenceRadiusM": {"type": ["integer", "null"], "minimum": 1},
+    "geofenceAccuracyToleranceM": {"type": "integer", "minimum": 1, "maximum": 65535},
+    "geofenceEnforcementEnabled": {"type": "boolean"},
+    "geofenceUpdatedAt": {"type": ["string", "null"], "format": "date-time"}
+  },
+  "required": ["fenceableType", "fenceableId", "workspaceId", "geofenceAccuracyToleranceM", "geofenceEnforcementEnabled"],
+  "additionalProperties": false
+}

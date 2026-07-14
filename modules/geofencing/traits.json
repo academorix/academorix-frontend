@@ -2,25 +2,77 @@
   "id": "academorix://modules/geofencing/traits",
   "$version": 1,
   "title": "geofencing \u2014 trait composition",
-  "description": "No owned traits. GeofenceCheck composes the standard foundation + workspaces + audit trait stack; consuming modules do NOT compose a geofencing trait \u2014 they call the service + stamp the returned check_id.",
-  "owned": [],
+  "description": "One owned trait \u2014 `HasGeofence`. Any Eloquent model can use it to carry a fence. Ships a companion interface (`Geofenceable`) that models MUST implement so the evaluator can rely on a stable surface even when models override the trait's default column storage.",
+  "owned": [
+    {
+      "trait": "Academorix\\Geofencing\\Concerns\\HasGeofence",
+      "description": "Mixed into any Eloquent model. Adds column casts for the 5 fence columns (geofence_polygon, location_point, geofence_radius_m, geofence_accuracy_tolerance_m, geofence_enforcement_enabled), a `geofenceChecks(): MorphMany` relation, a `evaluateGeofence(EvaluateGeofenceData): GeofenceCheckResultData` helper, a `preflightGeofence(EvaluateGeofenceData): GeofenceCheckResultData` helper, `hasGeofencePolygon(): bool`, `hasGeofenceRadius(): bool`. Storage strategy: geometry columns live on the model's OWN table \u2014 added via the `$table->addGeofenceColumns()` blueprint macro in the consumer's migration.",
+      "public": true,
+      "usedBy": [
+        "Any downstream model needing a fence \u2014 future examples: Branch (facilities module), Facility, Venue, Event, DeliveryZone, HomeAddress"
+      ],
+      "conflicts_with": [],
+      "abstract_methods_when_overridden": [
+        "When the model's geometry lives elsewhere (linked spatial_features table, external service), override the corresponding method(s) on the Geofenceable interface directly: geofencePolygon(), locationPoint(), geofenceRadiusM(), geofenceAccuracyToleranceM(), isGeofenceEnforcementEnabled()."
+      ]
+    }
+  ],
+  "owned_interfaces": [
+    {
+      "interface": "Academorix\\Geofencing\\Contracts\\Geofenceable",
+      "description": "Stable surface the evaluator depends on. Every fenceable model MUST implement it. The HasGeofence trait provides the default implementation reading from the model's columns; models with non-standard storage override individual methods.",
+      "methods": [
+        "geofencePolygon(): ?Clickbar\\Magellan\\Data\\Geometries\\Polygon",
+        "locationPoint(): ?Clickbar\\Magellan\\Data\\Geometries\\Point",
+        "geofenceRadiusM(): ?int",
+        "geofenceAccuracyToleranceM(): int",
+        "isGeofenceEnforcementEnabled(): bool",
+        "geofenceableAlias(): string \u2014 returns the #[Geofenceable] attribute's alias",
+        "getKey(): string \u2014 Eloquent contract (already on Model)"
+      ]
+    }
+  ],
   "consumed": {
     "framework": [
-      {"trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory"},
-      {"trait": "Illuminate\\Database\\Eloquent\\SoftDeletes", "reason": "GDPR / retention path only. Application code cannot update (immutability guard); soft-delete flows through runSoftDelete() bypassing the saving hook."}
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "On GeofenceCheck. GDPR / retention path only. Application code cannot update (immutability guard); soft-delete flows through runSoftDelete() bypassing the saving hook."
+      }
     ],
     "foundation": [
-      {"trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid", "prefix": "gfc_"},
-      {"trait": "Academorix\\Foundation\\Concerns\\HasUserstamps"}
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid",
+        "prefix": "gfc_",
+        "usedBy": ["GeofenceCheck"]
+      },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps", "usedBy": ["GeofenceCheck"] }
     ],
-    "workspaces": [{"trait": "Academorix\\Workspaces\\Concerns\\BelongsToWorkspace"}],
-    "facilities": [{"trait": "Academorix\\Facilities\\Concerns\\BelongsToBranch", "note": "From the future facilities module. Column + index in place today; FK constraint added when facilities lands."}],
-    "audit": [{"trait": "OwenIt\\Auditing\\Auditable", "reason": "Only `created` events audited (rows are insert-only). auditInclude pins the fields that carry disputable meaning: result, mode, distance_to_fence_m, overridden_by_user_id, supersedes_check_id."}]
+    "workspaces": [
+      {
+        "trait": "Academorix\\Workspaces\\Concerns\\BelongsToWorkspace",
+        "usedBy": ["GeofenceCheck"]
+      }
+    ],
+    "audit": [
+      {
+        "trait": "OwenIt\\Auditing\\Auditable",
+        "usedBy": ["GeofenceCheck"],
+        "reason": "Only `created` events audited (rows are insert-only). auditInclude pins the fields that carry disputable meaning: result, mode, distance_to_fence_m, overridden_by_user_id, supersedes_check_id."
+      }
+    ]
   },
   "composition": {
     "geofence_check": {
-      "traits": ["HasFactory", "HasPrefixedUlid", "BelongsToWorkspace", "BelongsToBranch", "HasUserstamps", "Auditable", "SoftDeletes"],
-      "notes": "NO HasActivityLog \u2014 the Audit trait is the compliance-grade audit surface. NO custom Filterable \u2014 read queries go through GeofenceCheckRepository."
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "BelongsToWorkspace",
+        "HasUserstamps",
+        "Auditable",
+        "SoftDeletes"
+      ],
+      "notes": "NO BelongsToBranch \u2014 that trait no longer exists in this module. NO custom Filterable \u2014 read queries go through GeofenceCheckRepository. The MorphTo relationship to the fenceable + subject is declared directly on the model."
     }
   },
   "immutability_guard": {

@@ -1,0 +1,51 @@
+{
+  "id": "geofencing.screens.fence-editor",
+  "title": "Edit geofence",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/workspace/fences/{fenceableType}/{fenceableId}",
+  "host": "workspace",
+  "audience": "authenticated",
+  "resource": {"module": "geofencing", "entity": "fenceable-geometry", "action": "edit"},
+  "requiresPermission": "geofence.fences.update",
+  "params": [
+    {"name": "fenceableType", "type": "string", "in": "path", "required": true, "description": "Snake-case alias from #[Geofenceable] on the target model."},
+    {"name": "fenceableId", "type": "string", "in": "path", "required": true}
+  ],
+  "notes": ["Model-agnostic \u2014 works with ANY Geofenceable model. Consumer modules link to this screen from their own detail pages (e.g. `/workspace/facilities/branches/{id}` mounts a 'Edit geofence' button linking here with fenceableType='branch')."],
+  "dataSources": [
+    {"name": "fence", "kind": "http.get", "urlExpr": "'/api/v1/geofence/fences/' + params.fenceableType + '/' + params.fenceableId", "unwrap": "data"}
+  ],
+  "state": [
+    {"name": "mode", "defaultExpr": "fence?.geofencePolygon ? 'polygon' : 'radius'"},
+    {"name": "polygonWkt", "defaultExpr": "fence?.geofencePolygon ? magellanToWkt(fence.geofencePolygon) : null"},
+    {"name": "radiusM", "defaultExpr": "fence?.geofenceRadiusM ?? 100"},
+    {"name": "toleranceM", "defaultExpr": "fence?.geofenceAccuracyToleranceM ?? 50"},
+    {"name": "enforcement", "defaultExpr": "fence?.geofenceEnforcementEnabled ?? false"}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-4 p-6 max-w-6xl mx-auto"}, "children": [
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back"}, "actions": {"onPress": {"kind": "navigate.back"}}},
+      {"kind": "View", "children": [
+        {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold"}, "bindings": {"childrenExpr": "'Geofence \u2014 ' + params.fenceableType + ' \u00b7 ' + params.fenceableId"}},
+        {"kind": "Text", "props": {"className": "text-sm text-muted", "children": "Draw a polygon OR set a radius. Set the accuracy tolerance to reject noisy GPS readings."}},
+        {"kind": "View", "props": {"className": "flex items-center gap-2 mt-2 text-xs text-muted"}, "bindings": {"hidden": {"$expr": "!fence?.geofenceUpdatedAt"}}, "children": [
+          {"kind": "Icon", "props": {"name": "clock"}},
+          {"kind": "Text", "bindings": {"childrenExpr": "'Last edited ' + formatRelative(fence.geofenceUpdatedAt)"}}
+        ]}
+      ]},
+      {"kind": "ToggleGroup", "props": {"name": "mode"}, "options": [{"key": "polygon", "label": "Polygon"}, {"key": "radius", "label": "Radius"}]},
+      {"kind": "View", "props": {"className": "grid grid-cols-3 gap-4"}, "children": [
+        {"kind": "View", "props": {"className": "col-span-2"}, "children": [
+          {"kind": "MapEditor", "props": {"provider": "leaflet", "tileLayer": "openstreetmap-standard", "drawMode": "$mode", "style": {"height": "600px"}}, "bindings": {"center": {"$expr": "fence?.locationPoint ? [fence.locationPoint.coordinates[1], fence.locationPoint.coordinates[0]] : [0, 0]"}, "zoom": 16, "polygonWkt": {"$ref": "state.polygonWkt"}, "radius": {"$ref": "state.radiusM"}}, "actions": {"onPolygonChange": {"kind": "state.set", "field": "polygonWkt", "valueExpr": "event.wkt"}, "onRadiusChange": {"kind": "state.set", "field": "radiusM", "valueExpr": "event.meters"}}}
+        ]},
+        {"kind": "Card", "props": {"className": "p-4 flex flex-col gap-4"}, "children": [
+          {"kind": "NumberField", "props": {"name": "radiusM", "label": "Radius (m)", "min": 1, "max": 100000}, "bindings": {"value": {"$ref": "state.radiusM"}, "hidden": {"$expr": "state.mode !== 'radius'"}}},
+          {"kind": "NumberField", "props": {"name": "toleranceM", "label": "Accuracy tolerance (m)", "min": 1, "max": 5000, "helpText": "Reject GPS readings noisier than this."}, "bindings": {"value": {"$ref": "state.toleranceM"}}},
+          {"kind": "Toggle", "props": {"name": "enforcement", "label": "Enforce this fence"}, "bindings": {"value": {"$ref": "state.enforcement"}}, "helpText": "When off, evaluations still record but consumers ignore OUTSIDE verdicts (shadow mode)."},
+          {"kind": "Button", "props": {"variant": "primary", "children": "Save fence"}, "actions": {"onPress": {"kind": "http.patch", "urlExpr": "'/api/v1/geofence/fences/' + params.fenceableType + '/' + params.fenceableId", "bodyExpr": "{ mode: state.mode, polygon_wkt: state.polygonWkt, radius_m: state.radiusM, accuracy_tolerance_m: state.toleranceM, enforcement_enabled: state.enforcement }", "onSuccess": {"kind": "toast", "variant": "success", "message": "Geofence saved."}}}}
+        ]}
+      ]}
+    ]}
+  ]
+}

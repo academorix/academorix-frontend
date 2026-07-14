@@ -13,15 +13,21 @@
     }
   ],
   "consumed": [
-    {"middleware": "foundation::request.id"},
-    {"middleware": "foundation::cors.strict"},
-    {"middleware": "foundation::auth:sanctum"},
-    {"middleware": "foundation::throttle"},
-    {"middleware": "foundation::response.envelope"},
-    {"middleware": "workspaces::workspace.resolve"},
-    {"middleware": "versioning::versioning.resolve"}
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "foundation::auth:sanctum" },
+    { "middleware": "foundation::throttle" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "workspaces::workspace.resolve" },
+    { "middleware": "versioning::versioning.resolve" }
   ],
   "rate_limiter_definitions": [
-    {"name": "geofence-preflight", "class": "Academorix\\Geofencing\\RateLimiters\\PreflightRateLimiter", "registered_by": "GeofencingServiceProvider::registerRateLimiters()", "default": "60 req/min per user_id", "env_override": "GEOFENCE_PREFLIGHT_RATE_PER_MINUTE"}
+    {
+      "name": "geofence-preflight",
+      "class": "Academorix\\Geofencing\\RateLimiters\\PreflightRateLimiter",
+      "registered_by": "GeofencingServiceProvider::registerRateLimiters()",
+      "default": "60 req/min per user_id",
+      "env_override": "GEOFENCE_PREFLIGHT_RATE_PER_MINUTE"
+    }
   ]
 }

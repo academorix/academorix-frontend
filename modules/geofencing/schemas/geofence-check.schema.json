@@ -3,7 +3,7 @@
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "GeofenceCheck",
-  "description": "The write-once audit row for a single geofence evaluation. Produced by GeofenceService::evaluate() and by the override apply-listener. **Immutable in application code** \u2014 the saving hook throws on any second call to save() or update() on a persisted row. Overrides are represented as new rows via supersedes_check_id, never as mutations of the original.",
+  "description": "The write-once audit row for a single geofence evaluation. Produced by GeofenceService::evaluate() and by the override apply-listener. **Immutable in application code**. Carries TWO polymorphic pointers: (subject_type, subject_id) identifies WHY the evaluation happened (caller entity); (fenceable_type, fenceable_id) identifies WHAT the evaluation ran AGAINST (any HasGeofence model).",
   "type": "object",
   "x-module": "geofencing",
   "x-eloquent": {
@@ -15,8 +15,18 @@
     "incrementing": false,
     "model": "Academorix\\Geofencing\\Models\\GeofenceCheck",
     "interface": "Academorix\\Geofencing\\Contracts\\Data\\GeofenceCheckInterface",
-    "implements": ["Academorix\\Geofencing\\Contracts\\Data\\GeofenceCheckInterface", "OwenIt\\Auditing\\Contracts\\Auditable"],
-    "traits": ["HasFactory", "HasPrefixedUlid", "BelongsToWorkspace", "BelongsToBranch", "HasUserstamps", "Auditable", "SoftDeletes"],
+    "implements": [
+      "Academorix\\Geofencing\\Contracts\\Data\\GeofenceCheckInterface",
+      "OwenIt\\Auditing\\Contracts\\Auditable"
+    ],
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToWorkspace",
+      "HasUserstamps",
+      "Auditable",
+      "SoftDeletes"
+    ],
     "casts": {
       "captured_location": "Clickbar\\Magellan\\Data\\Geometries\\Point",
       "metadata": "array",
@@ -30,7 +40,13 @@
     "hidden": [],
     "guarded": [],
     "audit_config": {
-      "auditInclude": ["result", "mode", "distance_to_fence_m", "overridden_by_user_id", "supersedes_check_id"],
+      "auditInclude": [
+        "result",
+        "mode",
+        "distance_to_fence_m",
+        "overridden_by_user_id",
+        "supersedes_check_id"
+      ],
       "auditEvents": ["created"],
       "note": "Only `created` \u2014 rows are insert-only in application code."
     }
@@ -39,58 +55,222 @@
     "engine": "postgres_with_postgis",
     "requires_extension": "postgis",
     "columns": {
-      "id": {"type": "string", "length": 40, "primary": true, "description": "Prefixed ULID: `gfc_<26 chars>`."},
-      "workspace_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "workspaces", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}},
-      "branch_id": {"type": "string", "length": 64, "nullable": true, "description": "FK to branches(id) deferred until Facilities module ships. Column + index in place today."},
-      "evaluated_at": {"type": "timestamptz", "nullable": false, "description": "When the evaluator produced this row. Pinned to a Carbon::immutable so downstream cannot mutate."},
-      "captured_location": {"type": "geography(point, 4326)", "nullable": false, "description": "Reported lat/lng at evaluation time. SRID 4326 (WGS84). On non-Postgres drivers (SQLite in tests) falls back to a plain `geometry` column."},
-      "accuracy_m": {"type": "smallint unsigned", "nullable": false, "description": "Reported horizontal accuracy in meters. Feeds the tolerance short-circuit."},
-      "result": {"type": "string", "length": 16, "nullable": false, "description": "Enum: INSIDE / OUTSIDE / SKIPPED / ERROR."},
-      "mode": {"type": "string", "length": 16, "nullable": false, "description": "Enum: polygon / radius."},
-      "distance_to_fence_m": {"type": "integer", "nullable": true, "description": "Signed meters; 0 or negative when inside; positive when outside. Null when not computable (SKIPPED / ERROR)."},
-      "subject_type": {"type": "string", "length": 64, "nullable": false, "description": "Polymorphic morph alias \u2014 snake_case identifier registered by the caller's module."},
-      "subject_id": {"type": "string", "length": 64, "nullable": false, "description": "Application-generated ID of the subject entity."},
-      "override_task_id": {"type": "string", "length": 40, "nullable": true, "description": "Set only on override rows \u2014 the approval task that authorized this row."},
-      "overridden_by_user_id": {"type": "uuid", "nullable": true, "foreign": {"table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "set null"}, "description": "Set only on override rows \u2014 the admin who approved."},
-      "override_reason": {"type": "text", "nullable": true, "description": "Free-form justification captured on override. Minimum 10 characters enforced by service."},
-      "supersedes_check_id": {"type": "string", "length": 40, "nullable": true, "foreign": {"table": "geofence_checks", "column": "id", "onUpdate": "cascade", "onDelete": "restrict"}, "description": "Self-reference \u2014 the original check this row supersedes. Restrict on delete so the audit chain cannot be broken silently."},
-      "metadata": {"type": "jsonb", "nullable": false, "default": "'{}'::jsonb", "description": "Free-form observability bag. Evaluator debug data (e.g., which polygon vertices triggered the near-edge tie-breaker)."},
-      "created_at": {"type": "timestamptz", "nullable": false},
-      "updated_at": {"type": "timestamptz", "nullable": false},
-      "deleted_at": {"type": "timestamptz", "nullable": true, "description": "SoftDeletes for the GDPR retention path only."},
-      "created_by": {"type": "string", "length": 64, "nullable": true},
-      "updated_by": {"type": "string", "length": 64, "nullable": true},
-      "deleted_by": {"type": "string", "length": 64, "nullable": true}
+      "id": {
+        "type": "string",
+        "length": 40,
+        "primary": true,
+        "description": "Prefixed ULID: `gfc_<26 chars>`."
+      },
+      "workspace_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "workspaces",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "fenceable_type": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Snake-case morph alias of the fenceable model (registered via #[Geofenceable])."
+      },
+      "fenceable_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Application-generated ID of the fenceable entity. FK integrity enforced application-side."
+      },
+      "evaluated_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "When the evaluator produced this row. Pinned to a Carbon::immutable so downstream cannot mutate."
+      },
+      "captured_location": {
+        "type": "geography(point, 4326)",
+        "nullable": false,
+        "description": "Reported lat/lng at evaluation time. SRID 4326 (WGS84). On non-Postgres drivers (SQLite in tests) falls back to a plain `geometry` column."
+      },
+      "accuracy_m": {
+        "type": "smallint unsigned",
+        "nullable": false,
+        "description": "Reported horizontal accuracy in meters. Feeds the tolerance short-circuit."
+      },
+      "result": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: INSIDE / OUTSIDE / SKIPPED / ERROR."
+      },
+      "mode": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: polygon / radius."
+      },
+      "distance_to_fence_m": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Signed meters; 0 or negative when inside; positive when outside. Null when not computable (SKIPPED / ERROR)."
+      },
+      "subject_type": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Polymorphic morph alias of the caller entity (registered via #[GeofenceSubjectAlias])."
+      },
+      "subject_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Application-generated ID of the subject entity."
+      },
+      "override_task_id": {
+        "type": "string",
+        "length": 40,
+        "nullable": true,
+        "description": "Set only on override rows \u2014 the approval task that authorized this row."
+      },
+      "overridden_by_user_id": {
+        "type": "uuid",
+        "nullable": true,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        },
+        "description": "Set only on override rows \u2014 the admin who approved."
+      },
+      "override_reason": {
+        "type": "text",
+        "nullable": true,
+        "description": "Free-form justification captured on override. Minimum 10 characters enforced by service."
+      },
+      "supersedes_check_id": {
+        "type": "string",
+        "length": 40,
+        "nullable": true,
+        "foreign": {
+          "table": "geofence_checks",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "Self-reference \u2014 the original check this row supersedes. Restrict on delete so the audit chain cannot be broken silently."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Free-form observability bag. Evaluator debug data (e.g., which polygon vertices triggered the near-edge tie-breaker)."
+      },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "SoftDeletes for the GDPR retention path only."
+      },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true }
     },
     "indexes": [
-      {"columns": ["workspace_id", "branch_id", "evaluated_at"], "unique": false, "name": "geofence_checks_audit_console_idx", "description": "Primary audit-console query."},
-      {"columns": ["workspace_id", "subject_type", "subject_id"], "unique": false, "name": "geofence_checks_subject_idx", "description": "Powers 'show me every evaluation for this subject' \u2014 used by consuming features' history views."},
-      {"columns": ["workspace_id", "result"], "unique": false, "name": "geofence_checks_result_idx", "description": "Powers SKIPPED-spike + OUTSIDE-saturation metrics."}
+      {
+        "columns": ["workspace_id", "fenceable_type", "fenceable_id", "evaluated_at"],
+        "unique": false,
+        "name": "geofence_checks_fenceable_idx",
+        "description": "Primary 'history for this fence' query used by fenceable models' geofenceChecks() relation + admin console."
+      },
+      {
+        "columns": ["workspace_id", "subject_type", "subject_id"],
+        "unique": false,
+        "name": "geofence_checks_subject_idx",
+        "description": "'History for this caller entity' \u2014 used by consuming features' history views."
+      },
+      {
+        "columns": ["workspace_id", "result"],
+        "unique": false,
+        "name": "geofence_checks_result_idx",
+        "description": "Powers SKIPPED-spike + OUTSIDE-saturation metrics."
+      },
+      {
+        "columns": ["workspace_id", "evaluated_at"],
+        "unique": false,
+        "name": "geofence_checks_workspace_time_idx",
+        "description": "Fallback scan for cross-fenceable audit-console queries."
+      }
     ]
   },
-  "required": ["id", "workspace_id", "evaluated_at", "captured_location", "accuracy_m", "result", "mode", "subject_type", "subject_id", "metadata", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "workspace_id",
+    "fenceable_type",
+    "fenceable_id",
+    "evaluated_at",
+    "captured_location",
+    "accuracy_m",
+    "result",
+    "mode",
+    "subject_type",
+    "subject_id",
+    "metadata",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
-    "id": {"type": "string", "pattern": "^gfc_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "workspace_id": {"type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "branch_id": {"type": ["string", "null"]},
-    "evaluated_at": {"type": "string", "format": "date-time"},
-    "captured_location": {"type": "object", "description": "Magellan Point. Wire shape: { type: 'Point', coordinates: [lng, lat], srid: 4326 }.", "properties": {"type": {"const": "Point"}, "coordinates": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}}, "srid": {"const": 4326}}, "required": ["type", "coordinates"]},
-    "accuracy_m": {"type": "integer", "minimum": 0, "maximum": 65535},
-    "result": {"type": "string", "enum": ["INSIDE", "OUTSIDE", "SKIPPED", "ERROR"]},
-    "mode": {"type": "string", "enum": ["polygon", "radius"]},
-    "distance_to_fence_m": {"type": ["integer", "null"]},
-    "subject_type": {"type": "string", "pattern": "^[a-z][a-z0-9_]+$"},
-    "subject_id": {"type": "string", "maxLength": 64},
-    "override_task_id": {"type": ["string", "null"]},
-    "overridden_by_user_id": {"type": ["string", "null"], "format": "uuid"},
-    "override_reason": {"type": ["string", "null"], "minLength": 10},
-    "supersedes_check_id": {"type": ["string", "null"], "pattern": "^gfc_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "metadata": {"type": "object"},
-    "created_at": {"type": "string", "format": "date-time"},
-    "updated_at": {"type": "string", "format": "date-time"},
-    "deleted_at": {"type": ["string", "null"], "format": "date-time"}
+    "id": { "type": "string", "pattern": "^gfc_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "workspace_id": { "type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "fenceable_type": { "type": "string", "pattern": "^[a-z][a-z0-9_]+$" },
+    "fenceable_id": { "type": "string", "maxLength": 64 },
+    "evaluated_at": { "type": "string", "format": "date-time" },
+    "captured_location": {
+      "type": "object",
+      "description": "Magellan Point. Wire shape: { type: 'Point', coordinates: [lng, lat], srid: 4326 }.",
+      "properties": {
+        "type": { "const": "Point" },
+        "coordinates": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "type": "number" }
+        },
+        "srid": { "const": 4326 }
+      },
+      "required": ["type", "coordinates"]
+    },
+    "accuracy_m": { "type": "integer", "minimum": 0, "maximum": 65535 },
+    "result": { "type": "string", "enum": ["INSIDE", "OUTSIDE", "SKIPPED", "ERROR"] },
+    "mode": { "type": "string", "enum": ["polygon", "radius"] },
+    "distance_to_fence_m": { "type": ["integer", "null"] },
+    "subject_type": { "type": "string", "pattern": "^[a-z][a-z0-9_]+$" },
+    "subject_id": { "type": "string", "maxLength": 64 },
+    "override_task_id": { "type": ["string", "null"] },
+    "overridden_by_user_id": { "type": ["string", "null"], "format": "uuid" },
+    "override_reason": { "type": ["string", "null"], "minLength": 10 },
+    "supersedes_check_id": {
+      "type": ["string", "null"],
+      "pattern": "^gfc_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "metadata": { "type": "object" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
   },
   "additionalProperties": false,
-  "x-wire": {"envelope": "spatie-data", "wrap": "data", "mapper": "SnakeCaseMapper", "resource_class": "Academorix\\Geofencing\\Data\\Resources\\GeofenceCheckResourceData"},
-  "x-immutability": {"guard": "saving-hook", "override_pattern": "supersedes_check_id", "soft_delete_allowed": true}
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "resource_class": "Academorix\\Geofencing\\Data\\Resources\\GeofenceCheckResourceData"
+  },
+  "x-immutability": {
+    "guard": "saving-hook",
+    "override_pattern": "supersedes_check_id",
+    "soft_delete_allowed": true
+  }
 }

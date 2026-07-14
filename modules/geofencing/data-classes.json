@@ -6,12 +6,38 @@
   "reference": "foundation::data-classes.json.tiers",
   "classes": {
     "public": [],
-    "internal": ["GeofenceCheck.id", "GeofenceCheck.workspace_id", "GeofenceCheck.branch_id", "GeofenceCheck.result", "GeofenceCheck.mode", "GeofenceCheck.distance_to_fence_m", "GeofenceCheck.evaluated_at", "GeofenceCheck.accuracy_m", "GeofenceCheck.subject_type", "GeofenceCheck.created_at", "GeofenceCheck.updated_at"],
-    "confidential": ["GeofenceCheck.subject_id", "GeofenceCheck.override_task_id", "GeofenceCheck.overridden_by_user_id", "GeofenceCheck.supersedes_check_id", "GeofenceCheck.metadata"],
-    "restricted": ["GeofenceCheck.captured_location \u2014 precise WGS84 coordinates. Personal data under GDPR.", "GeofenceCheck.override_reason \u2014 may reference specific worker conduct or excused absences (e.g., 'I was inside the building but my phone GPS drifted')."],
-    "regulated_minor": ["ANY GeofenceCheck row for a subject_type='attendance' or 'attendance_submission' when the linked athlete is a minor \u2014 the entire row inherits regulated_minor classification, enforced by the consumer module's attendance policy."],
+    "internal": [
+      "GeofenceCheck.id",
+      "GeofenceCheck.workspace_id",
+      "GeofenceCheck.fenceable_type",
+      "GeofenceCheck.fenceable_id",
+      "GeofenceCheck.result",
+      "GeofenceCheck.mode",
+      "GeofenceCheck.distance_to_fence_m",
+      "GeofenceCheck.evaluated_at",
+      "GeofenceCheck.accuracy_m",
+      "GeofenceCheck.subject_type",
+      "GeofenceCheck.created_at",
+      "GeofenceCheck.updated_at"
+    ],
+    "confidential": [
+      "GeofenceCheck.subject_id",
+      "GeofenceCheck.override_task_id",
+      "GeofenceCheck.overridden_by_user_id",
+      "GeofenceCheck.supersedes_check_id",
+      "GeofenceCheck.metadata"
+    ],
+    "restricted": [
+      "GeofenceCheck.captured_location \u2014 precise WGS84 coordinates. Personal data under GDPR.",
+      "GeofenceCheck.override_reason \u2014 may reference specific worker conduct or excused absences (e.g., 'I was inside the building but my phone GPS drifted')."
+    ],
+    "regulated_minor": [
+      "ANY GeofenceCheck row for a subject_type='attendance' or 'attendance_submission' when the linked athlete is a minor \u2014 the entire row inherits regulated_minor classification, enforced by the consumer module's attendance policy."
+    ],
     "regulated_health": [],
-    "regulated_financial": ["GeofenceCheck rows where subject_type='staff_clockin' \u2014 constitute wage-and-hour records under FLSA."],
+    "regulated_financial": [
+      "GeofenceCheck rows where subject_type='staff_clockin' \u2014 constitute wage-and-hour records under FLSA."
+    ],
     "audit_log": ["audit_log.geofence.* rows for override applied + retention purge actions"]
   },
   "notes": [

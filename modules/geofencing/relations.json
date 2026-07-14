@@ -3,24 +3,78 @@
   "$version": 1,
   "title": "geofencing \u2014 model relationships",
   "internal": [
-    {"from": "GeofenceCheck", "kind": "belongsTo", "to": "GeofenceCheck", "as": "supersedes", "foreignKey": "supersedes_check_id", "nullable": true, "onDelete": "restrict", "description": "Self-referencing FK to the original evaluation an override row supersedes. Restrict on delete so the audit chain cannot be broken silently."}
+    {
+      "from": "GeofenceCheck",
+      "kind": "belongsTo",
+      "to": "GeofenceCheck",
+      "as": "supersedes",
+      "foreignKey": "supersedes_check_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Self-referencing FK to the original evaluation an override row supersedes. Restrict on delete so the audit chain cannot be broken silently."
+    }
   ],
   "outbound": [
-    {"from": "GeofenceCheck", "kind": "belongsTo", "to": "workspaces::Workspace", "foreignKey": "workspace_id", "onDelete": "cascade"},
-    {"from": "GeofenceCheck", "kind": "belongsTo", "to": "facilities::Branch (future)", "foreignKey": "branch_id", "nullable": true, "onDelete": "no fk yet", "description": "Column + index in place. FK constraint deferred until the Facilities module lands. Nullable to support future workspace-scoped evaluations without a specific branch."},
-    {"from": "GeofenceCheck", "kind": "belongsTo", "to": "user::User", "as": "overriddenBy", "foreignKey": "overridden_by_user_id", "nullable": true, "onDelete": "set null", "description": "The admin who approved an override. Set only on override rows."},
-    {"from": "GeofenceCheck", "kind": "morphTo", "as": "subject", "morphType": "subject_type", "morphId": "subject_id", "description": "Polymorphic pointer to the entity the evaluation is on behalf of (staff clock-in, attendance record, reception visit). Resolved via the morph map. FK integrity enforced application-side, not by DB constraint."}
+    {
+      "from": "GeofenceCheck",
+      "kind": "belongsTo",
+      "to": "workspaces::Workspace",
+      "foreignKey": "workspace_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "GeofenceCheck",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "as": "overriddenBy",
+      "foreignKey": "overridden_by_user_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "The admin who approved an override. Set only on override rows."
+    },
+    {
+      "from": "GeofenceCheck",
+      "kind": "morphTo",
+      "as": "subject",
+      "morphType": "subject_type",
+      "morphId": "subject_id",
+      "description": "Polymorphic pointer to WHY the evaluation happened (the caller's entity \u2014 staff clock-in, attendance record, reception visit). Resolved via the morph map. FK integrity enforced application-side."
+    },
+    {
+      "from": "GeofenceCheck",
+      "kind": "morphTo",
+      "as": "fenceable",
+      "morphType": "fenceable_type",
+      "morphId": "fenceable_id",
+      "description": "Polymorphic pointer to WHAT the evaluation ran AGAINST (the fenced entity \u2014 branch, facility, venue, event, ...). Any model implementing the Geofenceable interface. Resolved via the morph map. FK integrity enforced application-side."
+    }
   ],
   "inbound": {
-    "description": "Consuming modules (staff-clock-in-out, athlete-self-check-in, visitor-auto-log, attendance) stamp `geofence_check_id` on their own record. Those FKs are OWNED BY THE CONSUMER, not by this module. They point AT geofence_checks(id) with onDelete='set null' or 'no action' (choice depends on the consumer's own retention policy)."
+    "description": "Consuming modules (staff-clock-in-out, athlete-self-check-in, visitor-auto-log, attendance) stamp `geofence_check_id` on their own record. Those FKs are OWNED BY THE CONSUMER, not by this module. Fenceable models (branch, facility, venue, ...) receive an inbound `geofenceChecks(): MorphMany` relation from the HasGeofence trait for querying their own audit history."
   },
   "morph_map_registration": {
-    "description": "Consuming modules MUST enforce a morph alias for the subject_type they emit. Alias is a snake_case identifier registered via Relation::enforceMorphMap() in the consumer's EventServiceProvider.",
-    "current_aliases": [
-      {"alias": "staff_clockin", "owner": "staff-clock-in-out (future)"},
-      {"alias": "attendance", "owner": "attendance (future)"},
-      {"alias": "attendance_submission", "owner": "attendance (future)"},
-      {"alias": "reception_visit", "owner": "visitor-auto-log (future)"}
-    ]
+    "description": "Two morph pairs \u2014 two alias namespaces. Consuming modules register both via attributes discovered at boot.",
+    "subject_aliases": {
+      "attribute": "#[GeofenceSubjectAlias(alias: '...')]",
+      "target_column": "subject_type",
+      "current_aliases_in_flight": [
+        { "alias": "staff_clockin", "owner": "staff-clock-in-out (future)" },
+        { "alias": "attendance", "owner": "attendance (future)" },
+        { "alias": "attendance_submission", "owner": "attendance (future)" },
+        { "alias": "reception_visit", "owner": "visitor-auto-log (future)" }
+      ]
+    },
+    "fenceable_aliases": {
+      "attribute": "#[Geofenceable(alias: '...')]",
+      "target_column": "fenceable_type",
+      "typical_aliases": [
+        { "alias": "branch", "owner": "facilities (future)" },
+        { "alias": "facility", "owner": "facilities (future)" },
+        { "alias": "venue", "owner": "facilities (future)" },
+        { "alias": "event", "owner": "events (future)" },
+        { "alias": "delivery_zone", "owner": "logistics (future)" },
+        { "alias": "home_address", "owner": "addresses (future)" }
+      ]
+    }
   }
 }

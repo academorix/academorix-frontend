@@ -1,104 +1,135 @@
 # geofencing
 
-Shared point-in-polygon primitive. Wave 6 spatial infrastructure.
+Model-agnostic point-in-polygon primitive. Wave 6 spatial infrastructure.
 
 ## 1. What this module owns
 
-| Concern                                   | Owned artefact                                                                                                                            |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Immutable evaluation audit log            | `GeofenceCheck` (`gfc_` prefix)                                                                                                           |
-| Point-in-polygon + radius evaluator       | `GeofenceService` binding                                                                                                                 |
-| Polygon geometry math                     | `PolygonEvaluator` (delegates to spinen/laravel-geometry, falls back to hand-rolled)                                                      |
-| Polygon input validation                  | `PolygonValidator`                                                                                                                        |
-| Override request workflow                 | `GeofenceOverrideService` binding                                                                                                         |
-| Mobile pre-flight endpoint                | `POST /api/v1/geofence/preflight`                                                                                                         |
-| Geometry columns on branches / facilities | Migration adds `geofence_polygon`, `location_point`, `geofence_radius_m`, `geofence_accuracy_tolerance_m`, `geofence_enforcement_enabled` |
-| PostGIS extension                         | `enable_postgis_extension` migration on the central DB                                                                                    |
+| Concern                             | Owned artefact                                                                       |
+| ----------------------------------- | ------------------------------------------------------------------------------------ |
+| Immutable evaluation audit log      | `GeofenceCheck` (`gfc_` prefix, polymorphic on the fenced entity)                    |
+| Model-agnostic fence carrier        | `HasGeofence` trait + `Geofenceable` interface                                       |
+| Fence geometry columns macro        | `Blueprint::addGeofenceColumns()`                                                    |
+| Point-in-polygon + radius evaluator | `GeofenceService` binding                                                            |
+| Polygon geometry math               | `PolygonEvaluator` (delegates to spinen/laravel-geometry, falls back to hand-rolled) |
+| Polygon input validation            | `PolygonValidator`                                                                   |
+| Override request workflow           | `GeofenceOverrideService` binding                                                    |
+| Mobile pre-flight endpoint          | `POST /api/v1/geofence/preflight`                                                    |
+| PostGIS extension                   | `enable_postgis_extension` migration on the central DB                               |
 
-## 2. Package stack (locked)
+## 2. Model-agnostic design
 
-- **`clickbar/laravel-magellan`** — Postgres/PostGIS spatial column types on
-  Eloquent models (`POINT`, `POLYGON`, `GEOGRAPHY`).
-- **`spinen/laravel-geometry`** — runtime geometry math (point-in-polygon,
-  distance) used by the evaluator.
-- **PostGIS extension** — required. Enabled by `enable_postgis_extension.php`
-  migration.
-- No `nnjeim/world` dependency for geometry — that library only provides
-  address-normalisation data, never fence math.
+Any Eloquent model can carry a geofence. There is **no hard-wired coupling to
+Branch or any other entity**. To make a model fenceable:
 
-## 3. Public evaluator surface
-
-Every check-in feature depends on **one** method:
+**Step 1 — add the trait + attribute:**
 
 ```php
-use Academorix\Geofencing\Data\EvaluateGeofenceData;
-use Academorix\Geofencing\Enums\GeofenceResult;
-use Academorix\Geofencing\Services\GeofenceService;
+use Academorix\Geofencing\Attributes\Geofenceable;
+use Academorix\Geofencing\Concerns\HasGeofence;
+use Academorix\Geofencing\Contracts\Geofenceable as GeofenceableContract;
 
-final class RecordStaffClockInAction
+#[Geofenceable(alias: 'branch')]
+final class Branch extends Model implements GeofenceableContract
 {
-    public function __construct(private readonly GeofenceService $geofence) {}
-
-    public function __invoke(StaffClockInRequest $request): StaffClockIn
-    {
-        $result = $this->geofence->evaluate(new EvaluateGeofenceData(
-            branchId: $request->branchId,
-            lat: $request->lat,
-            lng: $request->lng,
-            accuracyM: $request->accuracyM,
-            subjectType: 'staff_clockin',
-            subjectId: $request->pendingClockInId,
-        ));
-
-        return StaffClockIn::create([
-            'geofence_check_id' => $result->checkId,
-            'status' => $result->result === GeofenceResult::INSIDE ? 'accepted' : 'rejected',
-            // ...
-        ]);
-    }
+    use HasGeofence;
+    // ...
 }
 ```
 
-Two entry points:
+The `alias` value is the snake_case string persisted to
+`geofence_checks.fenceable_type`. It MUST be unique across the codebase; boot
+fails at startup on duplicates.
 
-| Method                           | Persists? | Purpose                                                                                                                          |
-| -------------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `GeofenceService::evaluate()`    | Yes       | Writes exactly one `geofence_checks` row + fires `GeofenceEvaluated`. Consumer stamps the returned check id on their own entity. |
-| `GeofenceService::healthCheck()` | No        | Mobile pre-flight — returns the same DTO with `checkId: null`. Used by `POST /api/v1/geofence/preflight` behind `throttle:60,1`. |
+**Step 2 — add the geometry columns via the blueprint macro:**
 
-## 4. Decision tree (design §4)
+```php
+Schema::table('branches', function (Blueprint $table): void {
+    $table->addGeofenceColumns();
+});
+```
 
-Both entry points share one decision tree:
+The macro adds seven columns:
 
-1. **Cross-workspace assertion** —
-   `BranchGeofenceRepository::findForCurrentWorkspace()` returns `null` for
-   either "branch doesn't exist" or "belongs to another workspace" (collapsed to
-   shut down the enumeration attack the design flags).
+| Column                          | Type                                | Description                                         |
+| ------------------------------- | ----------------------------------- | --------------------------------------------------- |
+| `geofence_polygon`              | `geography(polygon, 4326)` nullable | The fence, drawn as a simple polygon                |
+| `location_point`                | `geography(point, 4326)` nullable   | Centroid for radius-mode fallback                   |
+| `geofence_radius_m`             | `int unsigned` nullable             | Radius (meters) for radius mode                     |
+| `geofence_accuracy_tolerance_m` | `smallint unsigned` default 50      | Reject GPS noisier than this                        |
+| `geofence_enforcement_enabled`  | `boolean` default false             | Consumer-facing "should we block on OUTSIDE" toggle |
+| `geofence_updated_at`           | `timestamptz` nullable              | When the fence was last edited                      |
+| `geofence_updated_by`           | `string(64)` nullable               | Last editor's user ULID                             |
+
+**Step 3 — call the evaluator:**
+
+Two equivalent forms. Both take **any** `Geofenceable` model:
+
+```php
+// Via the model helper on the trait
+$result = $branch->evaluateGeofence(new EvaluateGeofenceData(
+    lat: 40.7128, lng: -74.0060, accuracyM: 25,
+    subjectType: 'staff_clockin', subjectId: $clockInId,
+));
+
+// Or via the service directly
+$result = app(GeofenceService::class)->evaluate($branch, new EvaluateGeofenceData(...));
+```
+
+## 3. Two distinct morph pairs on every check row
+
+`GeofenceCheck` carries **two** polymorphic pointers:
+
+| Morph pair                        | Meaning                                                 | Example                           |
+| --------------------------------- | ------------------------------------------------------- | --------------------------------- |
+| `subject_type` / `subject_id`     | **Why** the evaluation ran (the caller's entity)        | `staff_clockin` / `sci_01HXYZ...` |
+| `fenceable_type` / `fenceable_id` | **What** the evaluation ran against (the fenced entity) | `branch` / `brn_01HXYZ...`        |
+
+Consumers register aliases for both — `#[GeofenceSubjectAlias]` on the subject
+class, `#[Geofenceable]` on the fenceable class. The evaluator refuses
+evaluation for either alias when it's not registered (unless
+`geofencing.morph_map.strict = false`).
+
+## 4. Package stack (locked)
+
+- **`clickbar/laravel-magellan`** — Postgres/PostGIS spatial column types on
+  Eloquent models.
+- **`spinen/laravel-geometry`** — runtime geometry math (point-in-polygon,
+  distance) wrapping geoPHP.
+- **PostGIS extension** — required. Enabled by `enable_postgis_extension.php`
+  migration.
+
+## 5. Decision tree (design §4)
+
+Both entry points (`evaluate()` + `healthCheck()`) share one decision tree:
+
+1. **Cross-workspace assertion** — resolves the fenceable via the polymorphic
+   `fenceable_type` morph map, scoped to the current workspace. Returns `null`
+   for either "unknown fenceable" or "belongs to another workspace" (collapsed
+   to shut down the enumeration attack the design flags).
 2. **Accuracy tolerance short-circuit** — if
-   `accuracyM > branch.geofence_accuracy_tolerance_m`, return `SKIPPED` (GPS
-   reading too noisy to trust).
-3. **Polygon branch** — if branch has `geofence_polygon`: point-in-polygon +
+   `accuracyM > fenceable.geofence_accuracy_tolerance_m`, return `SKIPPED`.
+3. **Polygon branch** — if fenceable has `geofence_polygon`: point-in-polygon +
    distance-to-polygon via `PolygonEvaluator`.
-4. **Radius fallback** — otherwise: haversine against `branch.location_point`,
-   compared to `branch.geofence_radius_m`.
+4. **Radius fallback** — otherwise: haversine against
+   `fenceable.location_point`, compared to `fenceable.geofence_radius_m`.
 
 All four leaves produce a `GeofenceCheck` row (except `healthCheck()` which
 never persists).
 
-## 5. Result enum
+## 6. Result enum
 
-| Case      | Blocks by default     | Meaning                                              |
-| --------- | --------------------- | ---------------------------------------------------- |
-| `INSIDE`  | No                    | Reported location falls inside the fence             |
-| `OUTSIDE` | **Yes**               | Reported location is outside                         |
-| `SKIPPED` | No                    | Accuracy > tolerance; evaluator refused to guess     |
+| Case      | Blocks by default     | Meaning                                                 |
+| --------- | --------------------- | ------------------------------------------------------- |
+| `INSIDE`  | No                    | Reported location falls inside the fence                |
+| `OUTSIDE` | **Yes**               | Reported location is outside                            |
+| `SKIPPED` | No                    | Accuracy > tolerance; evaluator refused to guess        |
 | `ERROR`   | **Yes** (fail-closed) | Cross-workspace, missing geometry, unexpected exception |
 
-The evaluator **does not read `branch.geofence_enforcement_enabled`** — that
+The evaluator **does not read `fenceable.geofence_enforcement_enabled`** — that
 toggle lives on the consuming feature. This module always records the truth on
 the audit log; consumers decide whether to block.
 
-## 6. Immutability
+## 7. Immutability
 
 `GeofenceCheck` rows are **insert-only in application code**. The `saving` boot
 hook throws `RuntimeException` on any update. Overrides are modelled as a
@@ -108,14 +139,12 @@ evaluation is preserved verbatim for compliance reviews and disputed clock-ins.
 Soft-delete flows through `runSoftDelete()` which does not fire `saving`, so the
 GDPR retention path stays open.
 
-## 7. Override flow (design §5)
+## 8. Override flow (design §5)
 
 When a consumer receives `OUTSIDE` (or `SKIPPED`, or `ERROR`) and the subject
 asks for manual override:
 
 ```php
-use Academorix\Geofencing\Services\GeofenceOverrideService;
-
 $overrideTaskId = app(GeofenceOverrideService::class)->requestOverride(
     originalCheckId: $originalGfcId,
     requesterUserId: auth()->id(),
@@ -128,87 +157,128 @@ $overrideTaskId = app(GeofenceOverrideService::class)->requestOverride(
   actual implementation lives in the Approvals module).
 - Fires `GeofenceOverrideRequested`.
 
-When an admin approves via the Approvals UI, `ApplyGeofenceOverrideOnApproval`
-listener catches the approval event, mints a **new** `GeofenceCheck` row with
-`result=INSIDE`, `supersedes_check_id=<original>`,
-`overridden_by_user_id=<admin>`, `override_reason=<from task>`, and fires
-`GeofenceOverrideApplied`.
+When an admin approves, `ApplyGeofenceOverrideOnApproval` listener mints a
+**new** `GeofenceCheck` row with `result=INSIDE`,
+`supersedes_check_id=<original>`, `overridden_by_user_id=<admin>`,
+`override_reason=<from task>`, and fires `GeofenceOverrideApplied`. The new row
+keeps the ORIGINAL row's `fenceable_type` + `fenceable_id` unchanged.
 
-## 8. `subject_type` — polymorphic morph alias
+## 9. `subject_type` — polymorphic morph alias for the caller
 
 `geofence_checks.subject_type` is a **snake_case morph alias**, not a class
-name. Consuming modules register their alias in their own
-`EventServiceProvider`:
+name. Consuming modules register their alias via `#[GeofenceSubjectAlias]` or
+explicit `Relation::enforceMorphMap()`:
 
 ```php
-Relation::enforceMorphMap([
-    'staff_clockin' => StaffClockIn::class,
-    'attendance' => Attendance::class,
-    'reception_visit' => ReceptionVisit::class,
-]);
+#[GeofenceSubjectAlias(alias: 'staff_clockin')]
+final class StaffClockIn extends Model { ... }
 ```
 
 Aliases in use: `staff_clockin`, `attendance`, `attendance_submission`,
-`reception_visit`. The alias flows through `EvaluateGeofenceData.subjectType`
-and is echoed on the audit row + the `GeofenceEvaluated` event.
+`reception_visit` (all future).
 
-## 9. Preflight
+## 10. `fenceable_type` — polymorphic morph alias for the fenced entity
+
+`geofence_checks.fenceable_type` is the **snake_case morph alias** of the
+fenceable model, registered via `#[Geofenceable]`:
+
+```php
+#[Geofenceable(alias: 'branch')]
+final class Branch extends Model implements Geofenceable { use HasGeofence; }
+
+#[Geofenceable(alias: 'facility')]
+final class Facility extends Model implements Geofenceable { use HasGeofence; }
+
+#[Geofenceable(alias: 'venue')]
+final class Venue extends Model implements Geofenceable { use HasGeofence; }
+```
+
+Any downstream module can add a new fenceable without touching this module.
+
+## 11. Preflight
 
 `POST /api/v1/geofence/preflight` runs the same decision tree without
-persistence. Returns the same DTO with `checkId: null`. Rate-limited to
-`60 req/min` per authenticated user via the standard `throttle:60,1` middleware
-— the service itself does not enforce the limit.
+persistence. Body carries the fenceable ref + subject ref + location:
 
-Logs one structured `geofence.health_check` line so observability can
-distinguish probe traffic from real evaluations.
+```json
+{
+  "fenceable_type": "branch",
+  "fenceable_id": "brn_01HXYZ...",
+  "lat": 40.7128,
+  "lng": -74.006,
+  "accuracy_m": 25,
+  "subject_type": "staff_clockin",
+  "subject_id": "sci_01HXYZ..."
+}
+```
 
-## 10. Event contract (frozen)
+Returns the same DTO with `checkId: null`. Rate-limited to `60 req/min` per
+authenticated user. Emits a structured `geofence.health_check` log line for
+observability.
+
+## 12. Event contract (frozen)
 
 The `GeofenceEvaluated` event ships a locked wire contract at
 `contracts/geofence-evaluated.v1.json`. Consumers read `event.check` (the
-persisted row) + `event.input` (the originating DTO). Breaking changes require a
-v2 bump + parallel event dispatch.
+persisted row) + `event.input` (the originating DTO). Both carry
+`fenceable_type` / `fenceable_id` (not `branch_id`).
 
-## 11. Health probes
+## 13. Overriding trait storage
 
-Ship five Spatie Health probes:
+The `HasGeofence` trait stores geometry as columns on the model's own table. If
+your model's geometry lives elsewhere (e.g., a linked `venues.geometry` table or
+a `spatial_features` polymorphic table), implement the `Geofenceable` interface
+methods directly:
 
-- `PostgisAvailableCheck` — critical. Extension loaded.
-- `GeofenceChecksWritableCheck` — critical. Table exists + writable.
-- `RecentGeofenceActivityCheck` — non-critical. At least one evaluation in the
-  last hour (silence detection).
-- `GeofenceOverrideRateCheck` — non-critical. Override rate < 5% of evaluations
-  (spike detection).
-- `GeofencingHealthChecks` — aggregate registration.
+```php
+final class Venue extends Model implements Geofenceable
+{
+    // No HasGeofence trait \u2014 provide the surface directly.
 
-## 12. Deferred until Facilities module lands
+    public function geofencePolygon(): ?Polygon
+    {
+        return $this->spatialFeature?->polygon;
+    }
 
-- Branch/facility geometry migrations (T1.1, T1.2, T1.4, T1.5)
-- Branch fence CRUD endpoints
-- Branch fence import/export (CSV / GeoJSON)
-- Branch-scoped enforcement toggle
-- Full feature-test suite against real branches
+    public function locationPoint(): ?Point
+    {
+        return $this->spatialFeature?->centroid;
+    }
 
-Until then, the module ships with the `branch_id` column on `geofence_checks`
-unconstrained (no FK) — the column + index exist so the evaluator can be written
-and tested today, but the actual FK constraint against `branches(id)` is added
-in the migration that ships alongside the Facilities module.
+    public function geofenceRadiusM(): ?int { ... }
+    public function geofenceAccuracyToleranceM(): int { ... }
+    public function isGeofenceEnforcementEnabled(): bool { ... }
+}
+```
 
-## 13. What this module does NOT do
+The evaluator calls these methods — never reads columns directly — so any
+storage strategy works.
 
-- **Doesn't own `branches` or `facilities` tables.** Facilities module does.
+## 14. Health probes
+
+Ship five Spatie Health probes: `PostgisAvailableCheck`,
+`GeofenceChecksWritableCheck`, `RecentGeofenceActivityCheck`,
+`GeofenceOverrideRateCheck`, and the module-wide aggregate
+`GeofencingHealthChecks`.
+
+## 15. What this module does NOT do
+
+- **Doesn't hardwire to any specific host model.** Any model with `HasGeofence`
+  works.
 - **Doesn't read `geofence_enforcement_enabled` toggle.** Consumers do.
 - **Doesn't run migrations for other modules' tables.** Only
-  `enable_postgis_extension` and `create_geofence_checks_table`.
+  `enable_postgis_extension` and `create_geofence_checks_table`. Consumer
+  modules call `$table->addGeofenceColumns()` in their own migrations.
 - **Doesn't run approvals.** Approvals module does — this module publishes
   `GeofenceOverrideRequested` and reads a repository contract, nothing else.
 
-## 14. Depended on by
+## 16. Depended on by
 
 `staff-clock-in-out`, `athlete-self-check-in`, `visitor-auto-log`, `attendance`
-(all future modules).
+(all future modules). Plus any future module whose model wants a fence — venues,
+courts, home-addresses, delivery-zones, campus-buildings, event-locations.
 
-## 15. Depends on
+## 17. Depends on
 
-Foundation, Workspaces, Activity, Audit, Entitlements. Optional: Facilities,
-Geography, Notifications.
+Foundation, Workspaces, Activity, Audit, Entitlements. Optional: Geography,
+Notifications.

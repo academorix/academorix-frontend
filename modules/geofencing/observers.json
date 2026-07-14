@@ -9,13 +9,26 @@
       "handles": [
         "creating \u2192 delegate ULID minting to HasPrefixedUlid trait (prefix `gfc_`)",
         "creating \u2192 default metadata={} when null (jsonb column has default but PHP-side we ensure it never lands as null)",
-        "creating \u2192 refuse when subject_type is not a snake_case identifier (defensive; PolygonValidator+form request also enforce)",
+        "creating \u2192 refuse when subject_type is not a registered #[GeofenceSubjectAlias] (unless geofencing.morph_map.strict = false)",
+        "creating \u2192 refuse when fenceable_type is not a registered #[Geofenceable] (unless geofencing.morph_map.strict = false)",
         "creating \u2192 refuse when supersedes_check_id references a row in a different workspace (cross-workspace defence)",
+        "creating \u2192 refuse when supersedes_check_id references a row with different fenceable_type/fenceable_id (audit chain integrity)",
         "created \u2192 fire GeofenceCheckCreated (domain event; distinct from GeofenceEvaluated which is fired by the SERVICE)",
         "updating \u2192 refuse via RuntimeException from the model's saving hook (immutability guard). Observer never receives an update event.",
         "deleting \u2192 accept only when the actor is a platform_admin (retention path) OR the caller is the SoftDeletes internal flow"
       ],
       "immutability_note": "The immutability guard is on the MODEL's booted() `saving` hook \u2014 not this observer. The observer's `updating` never fires because the exception aborts before it."
+    }
+  ],
+  "trait_boot_hooks": [
+    {
+      "trait": "HasGeofence",
+      "target": "any consumer model using the trait",
+      "hooks": [
+        "updated \u2192 if any of the 7 fence columns changed, fire FenceableGeometryUpdated event with { fenceable_type, fenceable_id, changed_fields[], updated_by }",
+        "saving \u2192 if changing geofence_polygon / location_point / geofence_radius_m / geofence_accuracy_tolerance_m / geofence_enforcement_enabled, set geofence_updated_at = now() + geofence_updated_by = auth()->id()"
+      ],
+      "note": "These hooks run on the CONSUMER's model \u2014 not on GeofenceCheck. Enables the module to invalidate its cache when downstream models edit their fences without any downstream code."
     }
   ]
 }
