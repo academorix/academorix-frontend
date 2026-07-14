@@ -1,0 +1,17 @@
+{
+  "id": "academorix://modules/search/caches",
+  "$version": 1,
+  "title": "search \u2014 cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["search"],
+  "keys": [
+    {"pattern": "search:registry",                                          "description": "Compiled SearchIndex catalogue. Loaded at boot from #[Searchable] reflection. Hourly refresh via schedule.",                                                                       "ttlSeconds": 86400, "tags": ["search", "platform"], "invalidatedBy": ["foundation::ApplicationBooted", "foundation::ConfigReloaded", "SearchIndexRegistered / SearchIndexUnregistered events", "hourly search-registry-refresh schedule entry"]},
+    {"pattern": "search:engines:{engine}:health",                           "description": "Per-engine reachability ping cache. Prevents every query from re-pinging the engine. Moved from `foundation:search:engine_health` on Wave 6 inception.",                          "ttlSeconds": 10,    "tags": ["search", "platform"], "invalidatedBy": ["health probe run"]},
+    {"pattern": "search:capabilities:workspace:{workspace_id}:user:{user_id}",    "description": "Resolved indexes-list response for GET /search/indexes filtered by workspace features + user permissions.",                                                                       "ttlSeconds": 60,    "tags": ["search", "workspace"],    "invalidatedBy": ["feature-flag::FeatureToggled", "access::PermissionsChanged for user"]},
+    {"pattern": "search:synonyms:{workspace_id}:{language}",                    "description": "Compiled synonym map (system + workspace, filtered by is_active). Rebuilt by WarmSynonymCacheJob on mutation + hourly by schedule.",                                              "ttlSeconds": 3600,  "tags": ["search", "workspace"],    "invalidatedBy": ["SearchSynonymCreated / Updated / Deleted events \u2192 WarmSynonymCacheJob"]},
+    {"pattern": "search:suggest:{workspace_id}:{index_name}:{prefix_hash}",     "description": "Autocomplete result cache. SHA-256 of the normalised prefix keeps keys bounded. Short TTL so freshly-indexed content shows up quickly.",                                       "ttlSeconds": 60,    "tags": ["search", "workspace"]},
+    {"pattern": "search:top_queries:{workspace_id}:{index_name}:{window}",     "description": "Precomputed top-queries dashboard tile (window: 24h / 7d / 30d).",                                                                                                            "ttlSeconds": 300,   "tags": ["search", "workspace"],    "invalidatedBy": ["hourly recomputation"]},
+    {"pattern": "search:concurrency:workspace:{workspace_id}",                     "description": "In-flight (queued+running) SearchSyncJob count for the workspace. Incremented at dispatch; decremented on terminal transition.",                                                 "ttlSeconds": 3600,  "tags": ["search", "workspace"],    "invalidatedBy": ["SearchSyncJobObserver on status transition"]},
+    {"pattern": "search:jobs:list:workspace:{workspace_id}:user:{user_id}:page:{page}:v:{version}", "description": "Cached SearchSyncJob list page. Version bumped on SearchSyncJob save.",                                                                                   "ttlSeconds": 15,    "tags": ["search", "workspace"],    "invalidatedBy": ["SearchSyncJob save bumps version key"]}
+  ]
+}

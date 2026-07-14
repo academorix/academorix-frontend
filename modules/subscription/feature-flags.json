@@ -1,0 +1,15 @@
+{
+  "id": "academorix://modules/subscription/feature-flags",
+  "$version": 1,
+  "title": "subscription \u2014 kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {"key": "subscription.enforcement", "kind": "kill-switch", "default": "on", "description": "Master enforcer switch. Off = subscription.active middleware always allows. Emergency-only."},
+    {"key": "subscription.checkout_stripe", "kind": "kill-switch", "default": "on", "description": "New Stripe checkouts. Off during Stripe outages. Existing subscriptions unaffected."},
+    {"key": "subscription.checkout_paddle", "kind": "kill-switch", "default": "on", "description": "New Paddle checkouts."},
+    {"key": "subscription.dunning_advance", "kind": "kill-switch", "default": "on", "description": "AdvanceDunningStageJob execution. Off during payment-provider incidents to prevent unfair suspensions."},
+    {"key": "subscription.usage_reporting", "kind": "kill-switch", "default": "on", "description": "ReportMeteredUsageJob execution. Off during Stripe/Paddle metered API outages."},
+    {"key": "subscription.trial_expiry", "kind": "kill-switch", "default": "on", "description": "ExpireTrialsJob execution. Off during trial-conversion incidents."},
+    {"key": "subscription.plan_swap", "kind": "kill-switch", "default": "on", "description": "Instant plan swaps. Off during Stripe API degradation."}
+  ]
+}

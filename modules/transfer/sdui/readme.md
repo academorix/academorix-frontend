@@ -4,11 +4,11 @@
 
 ### `resources/xfer-job/`
 
-Tenant-facing job history + control.
+Workspace-facing job history + control.
 
 - `list.screen.json` — filterable by status + kind + entity + created_at. Regular
-  users see own jobs via preset filter (initiator = auth); tenant admins with
-  `platform.transfer.viewAny` see the tenant-wide view.
+  users see own jobs via preset filter (initiator = auth); workspace admins with
+  `platform.transfer.viewAny` see the workspace-wide view.
 - `show.screen.json` — one job's detail page: header (entity + status + counters
   progress bar), shards table, artifact download buttons, cancel button (when
   queued / running), retry-shard buttons (when partially_succeeded / failed).
@@ -16,7 +16,7 @@ Tenant-facing job history + control.
 ### `resources/xfer-mapping-profile/`
 
 - `list.screen.json` — mapping profiles the caller owns or that are shared
-  tenant-wide. Create / edit / delete + mark-as-shared actions.
+  workspace-wide. Create / edit / delete + mark-as-shared actions.
 
 ### `widgets/`
 

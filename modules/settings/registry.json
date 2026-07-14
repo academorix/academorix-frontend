@@ -21,7 +21,7 @@
         "description": "string",
         "icon": "string",
         "permission": "string",
-        "scope": "'system' | 'tenant' | 'user'",
+        "scope": "'system' | 'workspace' | 'user'",
         "public": "bool",
         "sortOrder": "int",
         "sections": "SectionDescriptor[]"

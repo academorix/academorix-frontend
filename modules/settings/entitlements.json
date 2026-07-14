@@ -5,7 +5,7 @@
   "reference": {"publishedBy": "entitlements", "seededFrom": "BusinessType.default_config.entitlements"},
   "kinds": [{"kind": "slot"}, {"kind": "boolean"}],
   "entitlements": [
-    {"key": "settings.max_overrides_per_scope", "kind": "slot", "unit": "overrides", "defaultsByPlan": {"free": 100, "team": 1000, "enterprise": 10000}, "description": "Cap on active SettingValue rows per tenant/user scope. Prevents runaway growth."},
+    {"key": "settings.max_overrides_per_scope", "kind": "slot", "unit": "overrides", "defaultsByPlan": {"free": 100, "team": 1000, "enterprise": 10000}, "description": "Cap on active SettingValue rows per workspace/user scope. Prevents runaway growth."},
     {"key": "settings.encrypt_sensitive_at_rest", "kind": "boolean", "defaultsByPlan": {"free": false, "team": false, "enterprise": true}}
   ]
 }

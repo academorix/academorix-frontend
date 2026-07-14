@@ -3,8 +3,8 @@
   "title": "Invitation",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/invitations/:id",
-  "host": "tenant",
+  "route": "/workspace/invitations/:id",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "invitations", "entity": "invitation", "action": "show"},
   "requiresPermission": "invitations.viewAny",
@@ -12,7 +12,7 @@
     {
       "name": "invitation",
       "kind": "http.get",
-      "url": "/api/v1/tenant/invitations/{id}",
+      "url": "/api/v1/workspace/invitations/{id}",
       "unwrap": "data",
       "params": {"id": "$route.params.id"},
       "include": ["events", "target", "inviter", "acceptedBy", "revokedBy"]
@@ -20,7 +20,7 @@
   ],
   "subscriptions": [
     {
-      "channel": "tenant.{tenantId}.invitations",
+      "channel": "workspace.{workspaceId}.invitations",
       "kind": "private",
       "filterExpr": "event.data.id === $route.params.id",
       "onEvent": {"kind": "data.refresh", "source": "invitation"}
@@ -36,7 +36,7 @@
           "id": "breadcrumbs",
           "kind": "Breadcrumbs",
           "items": [
-            {"label": "Invitations", "to": "/tenant/invitations"},
+            {"label": "Invitations", "to": "/workspace/invitations"},
             {"label": {"$ref": "invitation.email"}, "isCurrent": true}
           ]
         },
@@ -88,7 +88,7 @@
                   "actions": {
                     "onPress": {
                       "kind": "http.post",
-                      "urlExpr": "'/api/v1/tenant/invitations/' + invitation.id + '/resend'",
+                      "urlExpr": "'/api/v1/workspace/invitations/' + invitation.id + '/resend'",
                       "confirm": {"title": "Resend invitation?", "description": "A fresh email with a new link will be sent."},
                       "onSuccess": {"kind": "sequence", "steps": [{"kind": "toast.success", "message": "Invitation resent"}, {"kind": "data.refresh", "source": "invitation"}]}
                     }
@@ -102,7 +102,7 @@
                   "actions": {
                     "onPress": {
                       "kind": "http.post",
-                      "urlExpr": "'/api/v1/tenant/invitations/' + invitation.id + '/revoke'",
+                      "urlExpr": "'/api/v1/workspace/invitations/' + invitation.id + '/revoke'",
                       "confirm": {
                         "title": "Revoke invitation?",
                         "description": "The recipient will no longer be able to accept this invitation. This cannot be undone.",

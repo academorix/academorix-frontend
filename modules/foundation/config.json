@@ -9,74 +9,178 @@
     "modules": {
       "description": "Module discovery + boot behaviour.",
       "keys": [
-        {"path": "foundation.modules.discovery_root", "type": "string", "default": "modules", "description": "Root directory under repo root where modules/*/module.json files live. Rarely changed."},
-        {"path": "foundation.modules.registry_cache_key", "type": "string", "default": "platform:modules:registry"},
-        {"path": "foundation.modules.boot_timeout_seconds", "type": "integer", "default": 30, "description": "Kill the boot process if any module's service provider boot exceeds this. Prevents stuck deploys."},
-        {"path": "foundation.modules.strict_dependency_order", "type": "boolean", "default": true, "description": "If true, missing dependencies fail the build. Off in dev is a footgun."}
+        {
+          "path": "foundation.modules.discovery_root",
+          "type": "string",
+          "default": "modules",
+          "description": "Root directory under repo root where modules/*/module.json files live. Rarely changed."
+        },
+        {
+          "path": "foundation.modules.registry_cache_key",
+          "type": "string",
+          "default": "platform:modules:registry"
+        },
+        {
+          "path": "foundation.modules.boot_timeout_seconds",
+          "type": "integer",
+          "default": 30,
+          "description": "Kill the boot process if any module's service provider boot exceeds this. Prevents stuck deploys."
+        },
+        {
+          "path": "foundation.modules.strict_dependency_order",
+          "type": "boolean",
+          "default": true,
+          "description": "If true, missing dependencies fail the build. Off in dev is a footgun."
+        }
       ]
     },
     "api": {
       "description": "API versioning + envelope.",
       "keys": [
-        {"path": "foundation.api.default_version", "type": "string", "default": "v1"},
-        {"path": "foundation.api.supported_versions", "type": "array<string>", "default": ["v1"]},
-        {"path": "foundation.api.deprecated_versions", "type": "map<version, ISO-8601 sunset date>", "default": {}, "description": "Emits RFC 8594 Sunset header for these versions."},
-        {"path": "foundation.api.accept_pattern", "type": "string", "default": "application/vnd.academorix.{version}+json"},
-        {"path": "foundation.api.envelope_strict", "type": "boolean", "default": true, "description": "See foundation.response-envelope-strict feature flag."}
+        { "path": "foundation.api.default_version", "type": "string", "default": "v1" },
+        { "path": "foundation.api.supported_versions", "type": "array<string>", "default": ["v1"] },
+        {
+          "path": "foundation.api.deprecated_versions",
+          "type": "map<version, ISO-8601 sunset date>",
+          "default": {},
+          "description": "Emits RFC 8594 Sunset header for these versions."
+        },
+        {
+          "path": "foundation.api.accept_pattern",
+          "type": "string",
+          "default": "application/vnd.academorix.{version}+json"
+        },
+        {
+          "path": "foundation.api.envelope_strict",
+          "type": "boolean",
+          "default": true,
+          "description": "See foundation.response-envelope-strict feature flag."
+        }
       ]
     },
     "health": {
       "description": "Health aggregator behaviour.",
       "keys": [
-        {"path": "foundation.health.aggregate_cache_seconds", "type": "integer", "default": 5, "description": "TTL for /api/health cached response (prevents probe stampedes)."},
-        {"path": "foundation.health.snapshot_interval_minutes", "type": "integer", "default": 5, "description": "How often foundation:health-snapshot runs."},
-        {"path": "foundation.health.per_probe_timeout_ms", "type": "integer", "default": 1000, "description": "Default probe timeout when a probe doesn't set its own."},
-        {"path": "foundation.health.consecutive_failure_alert_threshold", "type": "integer", "default": 3, "description": "Fire HealthProbeFailed event after N consecutive failures (avoid alert storms on transient blips)."}
-      ]
-    },
-    "search": {
-      "description": "Scout engine configuration.",
-      "keys": [
-        {"path": "foundation.search.engine", "type": "string", "default": "meilisearch", "enum": ["meilisearch", "elasticsearch", "typesense", "postgres-fts", "algolia"], "env": "FOUNDATION_SEARCH_ENGINE"},
-        {"path": "foundation.search.host", "type": "string", "env": "FOUNDATION_SEARCH_HOST", "example": "http://meilisearch:7700"},
-        {"path": "foundation.search.api_key", "type": "string", "env": "FOUNDATION_SEARCH_API_KEY", "secret": true},
-        {"path": "foundation.search.queue", "type": "string", "default": "search"},
-        {"path": "foundation.search.chunk_size", "type": "integer", "default": 500, "description": "Bulk-index batch size."},
-        {"path": "foundation.search.async_by_default", "type": "boolean", "default": true, "description": "Toggle for local dev where sync indexing is easier to reason about."}
+        {
+          "path": "foundation.health.aggregate_cache_seconds",
+          "type": "integer",
+          "default": 5,
+          "description": "TTL for /api/health cached response (prevents probe stampedes)."
+        },
+        {
+          "path": "foundation.health.snapshot_interval_minutes",
+          "type": "integer",
+          "default": 5,
+          "description": "How often foundation:health-snapshot runs."
+        },
+        {
+          "path": "foundation.health.per_probe_timeout_ms",
+          "type": "integer",
+          "default": 1000,
+          "description": "Default probe timeout when a probe doesn't set its own."
+        },
+        {
+          "path": "foundation.health.consecutive_failure_alert_threshold",
+          "type": "integer",
+          "default": 3,
+          "description": "Fire HealthProbeFailed event after N consecutive failures (avoid alert storms on transient blips)."
+        }
       ]
     },
     "throttle": {
       "description": "Base rate limits.",
       "keys": [
-        {"path": "foundation.throttle.authenticated_per_minute", "type": "integer", "default": 60, "env": "FOUNDATION_THROTTLE_AUTH_MIN"},
-        {"path": "foundation.throttle.unauthenticated_per_minute", "type": "integer", "default": 30, "env": "FOUNDATION_THROTTLE_ANON_MIN"},
-        {"path": "foundation.throttle.health_ping_per_minute", "type": "integer", "default": 300},
-        {"path": "foundation.throttle.health_aggregate_per_minute", "type": "integer", "default": 60}
+        {
+          "path": "foundation.throttle.authenticated_per_minute",
+          "type": "integer",
+          "default": 60,
+          "env": "FOUNDATION_THROTTLE_AUTH_MIN"
+        },
+        {
+          "path": "foundation.throttle.unauthenticated_per_minute",
+          "type": "integer",
+          "default": 30,
+          "env": "FOUNDATION_THROTTLE_ANON_MIN"
+        },
+        { "path": "foundation.throttle.health_ping_per_minute", "type": "integer", "default": 300 },
+        {
+          "path": "foundation.throttle.health_aggregate_per_minute",
+          "type": "integer",
+          "default": 60
+        }
       ]
     },
     "cors": {
-      "description": "CORS strict allow-list. Origins per Application are stored on Application.cors_origins (jsonb) — foundation reads them at request time via ResolveTenant.",
+      "description": "CORS strict allow-list. Origins per Application are stored on Application.cors_origins (jsonb) — foundation reads them at request time via ResolveWorkspace.",
       "keys": [
-        {"path": "foundation.cors.allowed_methods", "type": "array<string>", "default": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]},
-        {"path": "foundation.cors.allowed_headers", "type": "array<string>", "default": ["Content-Type", "Authorization", "Accept", "X-Request-ID", "X-Requested-With"]},
-        {"path": "foundation.cors.exposed_headers", "type": "array<string>", "default": ["X-Request-ID", "X-API-Version", "X-RateLimit-Limit", "X-RateLimit-Remaining", "Retry-After", "Sunset", "Deprecation"]},
-        {"path": "foundation.cors.max_age", "type": "integer", "default": 7200}
+        {
+          "path": "foundation.cors.allowed_methods",
+          "type": "array<string>",
+          "default": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+        },
+        {
+          "path": "foundation.cors.allowed_headers",
+          "type": "array<string>",
+          "default": ["Content-Type", "Authorization", "Accept", "X-Request-ID", "X-Requested-With"]
+        },
+        {
+          "path": "foundation.cors.exposed_headers",
+          "type": "array<string>",
+          "default": [
+            "X-Request-ID",
+            "X-API-Version",
+            "X-RateLimit-Limit",
+            "X-RateLimit-Remaining",
+            "Retry-After",
+            "Sunset",
+            "Deprecation"
+          ]
+        },
+        { "path": "foundation.cors.max_age", "type": "integer", "default": 7200 }
       ]
     },
     "audit": {
       "description": "HasAuditable defaults.",
       "keys": [
-        {"path": "foundation.audit.default_include_timestamps", "type": "boolean", "default": false, "description": "By default, timestamp changes are NOT audited (they produce noise). Downstream models override per column."},
-        {"path": "foundation.audit.async_write", "type": "boolean", "default": true, "description": "Write audit rows async via BaseJob."},
-        {"path": "foundation.audit.retention_hot_years", "type": "integer", "default": 1},
-        {"path": "foundation.audit.retention_cold_years", "type": "integer", "default": 7}
+        {
+          "path": "foundation.audit.default_include_timestamps",
+          "type": "boolean",
+          "default": false,
+          "description": "By default, timestamp changes are NOT audited (they produce noise). Downstream models override per column."
+        },
+        {
+          "path": "foundation.audit.async_write",
+          "type": "boolean",
+          "default": true,
+          "description": "Write audit rows async via BaseJob."
+        },
+        { "path": "foundation.audit.retention_hot_years", "type": "integer", "default": 1 },
+        { "path": "foundation.audit.retention_cold_years", "type": "integer", "default": 7 }
       ]
     },
     "logging": {
       "description": "Structured logging conventions.",
       "keys": [
-        {"path": "foundation.logging.default_context_keys", "type": "array<string>", "default": ["request_id", "user_id", "tenant_id", "application_id"], "description": "Bound onto every log line via Log::withContext()."},
-        {"path": "foundation.logging.redact_field_names", "type": "array<string>", "default": ["password", "token", "secret", "api_key", "authorization", "cookie", "credit_card"], "description": "Field names matching these substrings are auto-redacted in log output."}
+        {
+          "path": "foundation.logging.default_context_keys",
+          "type": "array<string>",
+          "default": ["request_id", "user_id", "workspace_id", "application_id"],
+          "description": "Bound onto every log line via Log::withContext()."
+        },
+        {
+          "path": "foundation.logging.redact_field_names",
+          "type": "array<string>",
+          "default": [
+            "password",
+            "token",
+            "secret",
+            "api_key",
+            "authorization",
+            "cookie",
+            "credit_card"
+          ],
+          "description": "Field names matching these substrings are auto-redacted in log output."
+        }
       ]
     }
   }

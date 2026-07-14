@@ -3,8 +3,8 @@
   "title": "Send invitation",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/invitations/new",
-  "host": "tenant",
+  "route": "/workspace/invitations/new",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "invitations", "entity": "invitation", "action": "create"},
   "requiresPermission": "invitations.send",
@@ -12,21 +12,21 @@
     {
       "name": "invitationTargets",
       "kind": "http.get",
-      "url": "/api/v1/tenant/invitations/target-types",
+      "url": "/api/v1/workspace/invitations/target-types",
       "unwrap": "data",
       "cache": {"ttlSeconds": 3600}
     },
     {
       "name": "roles",
       "kind": "http.get",
-      "url": "/api/v1/tenant/roles?sanctum=true",
+      "url": "/api/v1/workspace/roles?sanctum=true",
       "unwrap": "data",
       "cache": {"ttlSeconds": 300}
     },
     {
-      "name": "tenantSettings",
+      "name": "workspaceSettings",
       "kind": "http.get",
-      "url": "/api/v1/tenant/settings?filter[section]=invitations",
+      "url": "/api/v1/workspace/settings?filter[section]=invitations",
       "unwrap": "data",
       "cache": {"ttlSeconds": 300}
     }
@@ -42,7 +42,7 @@
           "kind": "View",
           "props": {"className": "flex flex-col gap-1"},
           "children": [
-            {"id": "back", "kind": "Link", "props": {"to": "/tenant/invitations", "className": "text-muted flex items-center gap-1 text-sm", "children": "← Back to invitations"}},
+            {"id": "back", "kind": "Link", "props": {"to": "/workspace/invitations", "className": "text-muted flex items-center gap-1 text-sm", "children": "← Back to invitations"}},
             {"id": "title", "kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Send invitation"}},
             {"id": "subtitle", "kind": "Text", "props": {"as": "p", "className": "text-muted text-sm", "children": "Invite someone to join this workspace. They'll receive an email with an accept link that stays valid for 14 days by default."}}
           ]
@@ -54,7 +54,7 @@
           "target": {
             "action": "create",
             "resource": "invitations",
-            "endpoint": "POST /api/v1/tenant/invitations",
+            "endpoint": "POST /api/v1/workspace/invitations",
             "authorize": "InvitationPolicy@create"
           },
           "sections": [
@@ -75,7 +75,7 @@
                     "maxLength": 320,
                     "async": {
                       "kind": "http.post",
-                      "url": "/api/v1/tenant/invitations/preflight",
+                      "url": "/api/v1/workspace/invitations/preflight",
                       "debounceMs": 500,
                       "payload": {"email": "$field.email"}
                     }
@@ -92,7 +92,7 @@
                       "value": "sms",
                       "label": "SMS",
                       "leadingIcon": "device-phone-mobile",
-                      "bindings": {"isDisabled": {"$expr": "!tenantSettings.channels.sms"}},
+                      "bindings": {"isDisabled": {"$expr": "!workspaceSettings.channels.sms"}},
                       "description": "SMS delivery requires the Enterprise plan or add-on."
                     },
                     {
@@ -114,7 +114,7 @@
                   "kind": "Select",
                   "label": "Invitation type",
                   "isRequired": true,
-                  "defaultValue": "tenant",
+                  "defaultValue": "workspace",
                   "optionsSource": {"$ref": "invitationTargets"},
                   "description": "Most invitations are for the whole workspace. Team + athlete invitations grant access to specific resources only."
                 },
@@ -124,7 +124,7 @@
                   "label": "Specific target",
                   "description": "Only shown when the target type requires a specific resource.",
                   "bindings": {
-                    "isHidden": {"$expr": "form.target_type === 'tenant'"},
+                    "isHidden": {"$expr": "form.target_type === 'workspace'"},
                     "pickerScreenRefFromExpr": "invitationTargets.find(t => t.key === form.target_type)?.target_picker_screen_ref"
                   }
                 },
@@ -165,7 +165,7 @@
                   "name": "expires_at",
                   "kind": "DateField",
                   "label": "Expires on",
-                  "defaultValueExpr": "addDays(now(), tenantSettings.expires_after_days || 14)",
+                  "defaultValueExpr": "addDays(now(), workspaceSettings.expires_after_days || 14)",
                   "min": "now",
                   "maxExpr": "addDays(now(), 90)",
                   "description": "How long the invitation stays valid. Default is set by workspace settings."
@@ -182,7 +182,7 @@
                 "kind": "sequence",
                 "steps": [
                   {"kind": "toast.success", "message": "Invitation sent"},
-                  {"kind": "navigate", "toExpr": "'/tenant/invitations/' + response.data.id"}
+                  {"kind": "navigate", "toExpr": "'/workspace/invitations/' + response.data.id"}
                 ]
               },
               "onError": {

@@ -1,0 +1,32 @@
+{
+  "id": "workspaces.resources.business-type.edit",
+  "title": "Edit business type",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/business-types/{key}/edit",
+  "host": "central_admin",
+  "audience": "authenticated",
+  "resource": {"module": "workspaces", "entity": "business-type", "action": "edit"},
+  "requiresPermission": "platform.business-types.update",
+  "params": [{"name": "key", "type": "string", "in": "path", "required": true}],
+  "dataSources": [
+    {"name": "businessType", "kind": "http.get", "urlExpr": "'/api/v1/business-types/' + params.key", "unwrap": "data"}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto"}, "children": [
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/platform/business-types/' + params.key"}}},
+      {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold"}, "bindings": {"children": {"$expr": "'Edit ' + businessType.display_name"}}},
+      {"kind": "Alert", "props": {"variant": "warning"}, "bindings": {"hidden": {"$expr": "!businessType.is_system"}, "children": "This is a platform-owned business type. Terminology + default_config changes propagate to every future workspace selecting this type."}},
+      {"kind": "Form", "props": {"submitUrlExpr": "'/api/v1/business-types/' + params.key", "submitMethod": "PATCH", "onSuccess": [{"kind": "toast.success", "message": "Saved"}, {"kind": "data.refresh", "source": "businessType"}]}, "bindings": {"initialValues": {"$ref": "businessType"}}, "children": [
+        {"kind": "TextField", "props": {"label": "Display name", "name": "display_name"}, "bindings": {"defaultValue": {"$ref": "businessType.display_name"}}},
+        {"kind": "TextArea", "props": {"label": "Description", "name": "description"}, "bindings": {"defaultValue": {"$ref": "businessType.description"}}},
+        {"kind": "Text", "props": {"as": "h2", "className": "text-sm font-semibold uppercase tracking-wide text-muted mt-4", "children": "Terminology"}},
+        {"kind": "TextField", "props": {"label": "Athletes label", "name": "terminology.athletes", "placeholder": "Athletes"}, "bindings": {"defaultValue": {"$expr": "businessType.terminology?.athletes"}}},
+        {"kind": "TextField", "props": {"label": "Coaches label", "name": "terminology.coaches", "placeholder": "Coaches"}, "bindings": {"defaultValue": {"$expr": "businessType.terminology?.coaches"}}},
+        {"kind": "TextField", "props": {"label": "Teams label", "name": "terminology.teams", "placeholder": "Teams"}, "bindings": {"defaultValue": {"$expr": "businessType.terminology?.teams"}}},
+        {"kind": "TextField", "props": {"label": "Branches label", "name": "terminology.branches", "placeholder": "Branches"}, "bindings": {"defaultValue": {"$expr": "businessType.terminology?.branches"}}},
+        {"kind": "Button", "props": {"variant": "primary", "size": "md", "type": "submit", "children": "Save"}}
+      ]}
+    ]}
+  ]
+}

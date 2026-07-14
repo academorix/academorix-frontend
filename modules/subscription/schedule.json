@@ -1,0 +1,10 @@
+{
+  "id": "academorix://modules/subscription/schedule",
+  "$version": 1,
+  "title": "subscription \u2014 scheduled tasks",
+  "entries": [
+    {"name": "subscription-advance-dunning", "command": "subscription:advance-dunning", "cron": "0 */6 * * *", "timezone": "UTC", "purpose": "Every 6 hours: progress past_due subscriptions through grace stages. Frequent enough to keep dunning responsive; not so frequent as to spam workspace owners."},
+    {"name": "subscription-expire-trials", "command": "subscription:expire-trials", "cron": "0 * * * *", "timezone": "UTC", "purpose": "Hourly: TrialEnding warnings + transition expired trials."},
+    {"name": "subscription-reconcile-cashier", "command": "subscription:sync-cashier --reconcile", "cron": "30 * * * *", "timezone": "UTC", "purpose": "Hourly at :30 \u2014 reconciliation check against Cashier for drift detection."}
+  ]
+}

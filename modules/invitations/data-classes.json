@@ -14,7 +14,7 @@
     "public": [
       "Invitation.id",
       "Invitation.application_id",
-      "Invitation.tenant_id",
+      "Invitation.workspace_id",
       "Invitation.target_type",
       "Invitation.target_id",
       "Invitation.channel",

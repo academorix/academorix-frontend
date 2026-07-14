@@ -16,7 +16,7 @@
       "applicable": true,
       "controls": [
         {"article": "Art. 6", "principle": "lawful basis", "evidence": "Consent for push notifications captured at OS-level (user granted app push permission) + at platform-level (marketing categories opt-in via preferences)."},
-        {"article": "Art. 8", "principle": "child's consent", "evidence": "Same COPPA VPC gate applies for EU minors under consent age (16 by default; per-tenant override for member states)."},
+        {"article": "Art. 8", "principle": "child's consent", "evidence": "Same COPPA VPC gate applies for EU minors under consent age (16 by default; per-workspace override for member states)."},
         {"article": "Art. 17", "principle": "right to erasure", "evidence": "PurgeSubscriptionsForErasedUser listener cascades on UserErased."},
         {"article": "Art. 28", "principle": "processor arrangement", "evidence": "subprocessors.json lists FCM (Google) + APNs (Apple) + Expo + OneSignal as processors."},
         {"article": "Art. 32", "principle": "security", "evidence": "device_token AES-256 encrypted via KMS. TLS 1.3 for provider requests. JWT/OAuth 2.0 for provider auth. Signature verification on inbound webhooks via webhook module."}

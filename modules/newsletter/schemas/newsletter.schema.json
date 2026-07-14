@@ -16,7 +16,7 @@
     "model": "Academorix\\Newsletter\\Models\\Newsletter",
     "interface": "Academorix\\Newsletter\\Contracts\\Data\\NewsletterInterface",
     "implements": ["Academorix\\Newsletter\\Contracts\\Data\\NewsletterInterface"],
-    "traits": ["HasFactory", "HasUlids", "HasSystemFlag", "BelongsToTenant", "HasMetadata", "HasUserstamps", "HasVersions", "HasAuditable", "HasActivityLog", "Filterable", "Searchable", "SoftDeletes"],
+    "traits": ["HasFactory", "HasUlids", "HasSystemFlag", "BelongsToWorkspace", "HasMetadata", "HasUserstamps", "HasVersions", "HasAuditable", "HasActivityLog", "Filterable", "Searchable", "SoftDeletes"],
     "casts": {"cadence": "NewsletterCadence", "state": "NewsletterState", "sender_config": "array", "brand": "array", "reputation_thresholds": "array", "is_system": "boolean", "archived_at": "datetime", "metadata": "array"},
     "appends": ["public_subscribe_url", "subscriber_count"],
     "observers": ["NewsletterObserver"],
@@ -27,14 +27,14 @@
     "engine": "postgres",
     "columns": {
       "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `nlp_<26 chars>`."},
-      "tenant_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "tenants", "column": "id", "onDelete": "cascade"}},
-      "slug": {"type": "string", "length": 100, "nullable": false, "description": "URL-safe unique identifier within tenant. Used in public subscribe URLs."},
+      "workspace_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "workspaces", "column": "id", "onDelete": "cascade"}},
+      "slug": {"type": "string", "length": 100, "nullable": false, "description": "URL-safe unique identifier within workspace. Used in public subscribe URLs."},
       "name": {"type": "string", "length": 200, "nullable": false},
       "description": {"type": "text", "nullable": true},
       "cadence": {"type": "string", "length": 24, "nullable": false, "default": "'weekly'", "description": "Enum: daily / weekly / biweekly / monthly / quarterly / adhoc."},
       "state": {"type": "string", "length": 24, "nullable": false, "default": "'draft'", "description": "Enum: draft / active / paused / throttled / archived."},
-      "sender_config": {"type": "jsonb", "nullable": false, "description": "{ from_email, from_name, reply_to, postal_address }. Overlays tenant sender_identity."},
-      "brand": {"type": "jsonb", "nullable": true, "description": "{ logo_url, primary_color, footer_html_override }. Overlays tenant brand."},
+      "sender_config": {"type": "jsonb", "nullable": false, "description": "{ from_email, from_name, reply_to, postal_address }. Overlays workspace sender_identity."},
+      "brand": {"type": "jsonb", "nullable": true, "description": "{ logo_url, primary_color, footer_html_override }. Overlays workspace brand."},
       "reputation_thresholds": {"type": "jsonb", "nullable": false, "description": "{ min_open_rate, min_click_rate, max_bounce_rate, max_complaint_rate }. Defaults from config."},
       "confirmation_required": {"type": "boolean", "nullable": false, "default": true, "description": "Double-opt-in when true."},
       "confirmation_ttl_hours": {"type": "integer", "nullable": false, "default": 720, "description": "30 days."},
@@ -49,14 +49,14 @@
       "updated_at": {"type": "timestamptz", "nullable": false}
     },
     "indexes": [
-      {"columns": ["tenant_id", "slug"], "unique": true, "name": "newsletters_tenant_slug_unique"},
-      {"columns": ["tenant_id", "state"], "unique": false, "name": "newsletters_tenant_state_idx"}
+      {"columns": ["workspace_id", "slug"], "unique": true, "name": "newsletters_workspace_slug_unique"},
+      {"columns": ["workspace_id", "state"], "unique": false, "name": "newsletters_workspace_state_idx"}
     ]
   },
-  "required": ["id", "tenant_id", "slug", "name", "cadence", "state", "sender_config", "reputation_thresholds", "confirmation_required", "confirmation_ttl_hours", "is_system", "created_at", "updated_at"],
+  "required": ["id", "workspace_id", "slug", "name", "cadence", "state", "sender_config", "reputation_thresholds", "confirmation_required", "confirmation_ttl_hours", "is_system", "created_at", "updated_at"],
   "properties": {
     "id": {"type": "string", "pattern": "^nlp_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "slug": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,99}$", "maxLength": 100},
     "name": {"type": "string", "maxLength": 200},
     "description": {"type": ["string", "null"]},

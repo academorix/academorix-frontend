@@ -7,9 +7,9 @@
     "can_spam": {
       "applicable": true,
       "controls": [
-        {"section": "\u00a77704(a)(1)", "principle": "clear + conspicuous identifier", "evidence": "MJML layout injects tenant sender identity in every email. From address matches tenant.sender_identity."},
+        {"section": "\u00a77704(a)(1)", "principle": "clear + conspicuous identifier", "evidence": "MJML layout injects workspace sender identity in every email. From address matches workspace.sender_identity."},
         {"section": "\u00a77704(a)(2)", "principle": "not misleading subject", "evidence": "Subject rendered from published template; template review workflow (versioning + HasVersions) provides trail."},
-        {"section": "\u00a77704(a)(3)", "principle": "postal address disclosure", "evidence": "MJML footer injects tenant.postal_address from settings.json. Marketing sends refused when strict_can_spam_footer flag on + address missing."},
+        {"section": "\u00a77704(a)(3)", "principle": "postal address disclosure", "evidence": "MJML footer injects workspace.postal_address from settings.json. Marketing sends refused when strict_can_spam_footer flag on + address missing."},
         {"section": "\u00a77704(a)(4)", "principle": "opt-out honoured 10 days", "evidence": "One-click unsubscribe via signed URL (List-Unsubscribe-Post header per RFC 8058). PreferenceUpdated event fires immediately \u2014 opt-out effective within seconds, far exceeding 10 days."}
       ]
     },

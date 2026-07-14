@@ -16,7 +16,7 @@
     "model": "Academorix\\Transfer\\Models\\XferArtifact",
     "interface": "Academorix\\Transfer\\Contracts\\Data\\XferArtifactInterface",
     "implements": ["Academorix\\Transfer\\Contracts\\Data\\XferArtifactInterface"],
-    "traits": ["HasUlids", "BelongsToTenant"],
+    "traits": ["HasUlids", "BelongsToWorkspace"],
     "casts": {
       "kind": "Academorix\\Transfer\\Enums\\XferArtifactKind",
       "format": "string",
@@ -26,14 +26,14 @@
       "purged_at": "immutable_datetime"
     },
     "hidden": ["checksum_sha256", "path"],
-    "guarded": ["id", "tenant_id"]
+    "guarded": ["id", "workspace_id"]
   },
   "x-database": {
     "engine": "postgres",
     "description": "Artifact ledger. `disk` + `path` locate the file on the configured filesystem; `checksum_sha256` supports tamper detection; `retention_expires_at` drives the purge scan. Rows persist past purge (with `purged_at` set + `path` retained as historical breadcrumb, then nulled on hard delete).",
     "columns": {
       "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `xart_<26 chars>`."},
-      "tenant_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "Tenant scope. Null for platform-admin operations."},
+      "workspace_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "workspaces", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "Workspace scope. Null for platform-admin operations."},
       "xfer_job_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "xfer_jobs", "column": "id", "onUpdate": "cascade", "onDelete": "set null"}, "description": "Owning job. Null for standalone templates."},
       "kind": {"type": "string", "length": 16, "nullable": false, "description": "Artifact kind. Enum: source / result / errors / template / workbook."},
       "format": {"type": "string", "length": 16, "nullable": false, "description": "File format. Enum: csv / xlsx / json / pdf / zip."},
@@ -54,7 +54,7 @@
     "indexes": [
       {"columns": ["xfer_job_id", "kind"], "unique": false, "name": "xfer_artifacts_job_kind_idx", "description": "Fast lookup for job-scoped artifact resolution."},
       {"columns": ["retention_expires_at"], "unique": false, "name": "xfer_artifacts_expiry_scan_idx", "predicate": "purged_at IS NULL AND retention_expires_at IS NOT NULL", "description": "PruneXferArtifactsJob file-scan predicate."},
-      {"columns": ["tenant_id", "created_at"], "unique": false, "name": "xfer_artifacts_tenant_time_idx"},
+      {"columns": ["workspace_id", "created_at"], "unique": false, "name": "xfer_artifacts_workspace_time_idx"},
       {"columns": ["checksum_sha256"], "unique": false, "name": "xfer_artifacts_checksum_idx", "predicate": "checksum_sha256 IS NOT NULL", "description": "Idempotent duplicate-upload detection for source artifacts."}
     ]
   },
@@ -64,7 +64,7 @@
   ],
   "properties": {
     "id": {"type": "string", "pattern": "^xart_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": ["string", "null"], "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "xfer_job_id": {"type": ["string", "null"], "pattern": "^xfer_[0-9A-HJKMNP-TV-Z]{26}$"},
     "kind": {"type": "string", "enum": ["source", "result", "errors", "template", "workbook"]},
     "format": {"type": "string", "enum": ["csv", "xlsx", "json", "pdf", "zip"]},

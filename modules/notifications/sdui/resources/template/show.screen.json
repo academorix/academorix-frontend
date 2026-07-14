@@ -3,14 +3,14 @@
   "title": "Template detail",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/notification-templates/{id}",
-  "host": "tenant",
+  "route": "/workspace/notification-templates/{id}",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "notifications", "entity": "template", "action": "show"},
   "requiresPermission": "notifications.templates.view",
   "params": [{"name": "id", "type": "string", "in": "path", "required": true}],
   "dataSources": [
-    {"name": "template", "kind": "http.get", "urlExpr": "'/api/v1/tenant/notification-templates/' + params.id", "unwrap": "data"}
+    {"name": "template", "kind": "http.get", "urlExpr": "'/api/v1/workspace/notification-templates/' + params.id", "unwrap": "data"}
   ],
   "nodes": [
     {
@@ -18,7 +18,7 @@
       "kind": "View",
       "props": {"className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto"},
       "children": [
-        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back to templates", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/notification-templates"}}},
+        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back to templates", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/notification-templates"}}},
         {
           "id": "header",
           "kind": "View",
@@ -36,8 +36,8 @@
               "kind": "View",
               "props": {"className": "flex items-center gap-2"},
               "children": [
-                {"kind": "Button", "props": {"variant": "outline", "size": "sm", "leadingIcon": "beaker", "children": "Send test"}, "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('notifications.templates.test')"}}, "actions": {"onPress": {"kind": "http.post", "urlExpr": "'/api/v1/tenant/notification-templates/' + params.id + '/test'", "confirm": {"title": "Send a test?", "description": "A rendered preview will be sent to your own email address."}, "onSuccess": {"kind": "toast.success", "message": "Test sent"}}}},
-                {"kind": "Button", "props": {"variant": "primary", "size": "sm", "leadingIcon": "pencil", "children": "Edit"}, "bindings": {"isDisabled": {"$expr": "template.is_system && !identity.roles.includes('super_admin')"}}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/notification-templates/' + params.id + '/edit'"}}}
+                {"kind": "Button", "props": {"variant": "outline", "size": "sm", "leadingIcon": "beaker", "children": "Send test"}, "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('notifications.templates.test')"}}, "actions": {"onPress": {"kind": "http.post", "urlExpr": "'/api/v1/workspace/notification-templates/' + params.id + '/test'", "confirm": {"title": "Send a test?", "description": "A rendered preview will be sent to your own email address."}, "onSuccess": {"kind": "toast.success", "message": "Test sent"}}}},
+                {"kind": "Button", "props": {"variant": "primary", "size": "sm", "leadingIcon": "pencil", "children": "Edit"}, "bindings": {"isDisabled": {"$expr": "template.is_system && !identity.roles.includes('super_admin')"}}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/workspace/notification-templates/' + params.id + '/edit'"}}}
               ]
             }
           ]

@@ -1,0 +1,15 @@
+{
+  "id": "academorix://modules/telemetry-otel/features",
+  "$version": 1,
+  "title": "telemetry-otel \u2014 feature keys",
+  "description": "Not workspace-facing \u2014 telemetry is a platform capability, always on. Features here gate which subsystems + exporters are active.",
+  "reference": {"publishedBy": "feature-flag"},
+  "features": [
+    {"key": "telemetry-otel.traces", "displayName": "Distributed tracing", "description": "OTel trace export to configured backend.", "defaultEnabled": true, "planTiers": ["*"]},
+    {"key": "telemetry-otel.metrics", "displayName": "Metrics export", "description": "OTel counter/histogram/gauge export via OTLP/HTTP metrics.", "defaultEnabled": true, "planTiers": ["*"]},
+    {"key": "telemetry-otel.auto_db", "displayName": "Auto DB tracing", "description": "keepsuit's Eloquent query tracer.", "defaultEnabled": true, "planTiers": ["*"]},
+    {"key": "telemetry-otel.auto_queue", "displayName": "Auto queue tracing", "description": "Producer + consumer spans linked via job payload.", "defaultEnabled": true, "planTiers": ["*"]},
+    {"key": "telemetry-otel.auto_cache", "displayName": "Auto cache tracing", "description": "High-volume; opt-in per environment.", "defaultEnabled": false, "planTiers": ["*"]},
+    {"key": "telemetry-otel.auto_view", "displayName": "Auto view rendering tracing", "description": "Only useful for template perf investigations.", "defaultEnabled": false, "planTiers": ["*"]}
+  ]
+}

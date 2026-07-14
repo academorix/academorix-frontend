@@ -1,0 +1,64 @@
+{
+  "id": "academorix://modules/workspaces/feature-flags",
+  "$version": 1,
+  "title": "workspaces — rollout flags",
+  "description": "Rollout / change-management flags for THIS module. DISTINCT from `features.json` (business features — 'does the workspace have athletes at all'). These are delivery controls per SOC 2 CC8.1: canary rollouts, kill switches, cohort gates. Every business change lands behind a flag here; the flag flips 100% on general availability and is removed once burned in.",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "workspaces.self-serve-provisioning",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Turns off self-serve workspace registration (`POST /api/v1/workspaces/register`) without redeploying. Use in incidents when provisioning is compromised."
+    },
+    {
+      "key": "workspaces.custom-domains",
+      "kind": "rollout",
+      "default": "on",
+      "cohorts": [
+        {"name": "growth-plan-only", "predicate": "workspace.subscription.plan IN ('growth', 'enterprise')", "state": "on"},
+        {"name": "everyone-else", "predicate": "*", "state": "on"}
+      ],
+      "description": "Feature-gates the whole Domain CRUD surface. Toggle off to hide the domain section from the SPA + reject writes."
+    },
+    {
+      "key": "workspaces.per-domain-branding",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [
+        {"name": "federation-only", "predicate": "workspace.business_type = 'federation'", "state": "on"}
+      ],
+      "description": "Multiple Branding profiles per workspace with a domain_id FK. Enabled for federations first (they need regional sub-brands); rolls out to everyone once battle-tested."
+    },
+    {
+      "key": "workspaces.integrations-v2",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [
+        {"name": "enterprise-design-partners", "predicate": "workspace.metadata.design_partner = true", "state": "on"}
+      ],
+      "description": "WorkspaceIntegration surface. In v1 the controllers return 501; flipping this ON per workspace enables the real controllers. When ON for 100% for 30d, controllers become the default and this flag retires."
+    },
+    {
+      "key": "workspaces.workspace-contacts.dpo-required",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [
+        {"name": "eu-workspaces", "predicate": "workspace.provisioning.country_code IN ('DE','FR','ES','IT','NL','PL','SE','FI','DK','IE','BE','AT','PT','GR','CZ','HU','RO','BG','SK','SI','LT','LV','EE','LU','MT','CY','HR')", "state": "on"},
+        {"name": "uk", "predicate": "workspace.provisioning.country_code = 'GB'", "state": "on"}
+      ],
+      "description": "When ON, a workspace cannot be marked `active` until it has at least one verified DPO contact. Rolled out to EU + UK first."
+    },
+    {
+      "key": "workspaces.branding.contrast-enforcement",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [],
+      "description": "Reject Branding saves where primary_color + background_color fail WCAG 2.2 AA contrast (SC 1.4.11). Off in v1 (dev-preview only), on in v2."
+    }
+  ],
+  "retirementPolicy": {
+    "description": "A flag lives at most 90 days after reaching 100% GA. After 90d, either the flag is deleted OR it converts to a `kill-switch` (with a documented recovery use case). Prevents flag-registry sprawl.",
+    "reviewCommand": "workspaces:review-flags"
+  }
+}

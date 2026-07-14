@@ -24,9 +24,9 @@
       "purpose": "Generate sample records for a #[SampleData]-annotated entity. Same queue / notify lifecycle as import + export. Development + testing utility \u2014 the SampleCommand refuses to run in production unless `--force` is provided (guardrail against accidental invocation)."
     },
     {
-      "signature": "transfer:jobs {--status=*} {--kind=*} {--entity=} {--tenant=} {--limit=50} {--json}",
+      "signature": "transfer:jobs {--status=*} {--kind=*} {--entity=} {--workspace=} {--limit=50} {--json}",
       "class": "Academorix\\Transfer\\Console\\Commands\\JobsCommand",
-      "purpose": "List xfer_jobs \u2014 platform-admin observability. Filter by status / kind / entity / tenant. `--json` for scripting."
+      "purpose": "List xfer_jobs \u2014 platform-admin observability. Filter by status / kind / entity / workspace. `--json` for scripting."
     },
     {
       "signature": "transfer:cancel {jobId} {--reason=} {--force}",
@@ -34,7 +34,7 @@
       "purpose": "Cancel a queued or running xfer_job. Sets status=cancelling; the next shard boundary bails out. `--force` cancels even a job in a terminal state (mutates status to cancelled and preserves cancel_reason \u2014 platform-admin only, audit-heavy)."
     },
     {
-      "signature": "transfer:prune {--dry-run} {--tenant=} {--stale-only} {--files-only} {--rows-only} {--profiles-only}",
+      "signature": "transfer:prune {--dry-run} {--workspace=} {--stale-only} {--files-only} {--rows-only} {--profiles-only}",
       "class": "Academorix\\Transfer\\Console\\Commands\\PruneCommand",
       "purpose": "Dispatch PruneXferArtifactsJob with the given scope. `--dry-run` reports counts without deleting. Individual pass flags (`--stale-only` etc.) let ops narrow the scope during incident response."
     },

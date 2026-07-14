@@ -2,13 +2,13 @@
   "id": "academorix://modules/invitations/middleware",
   "$version": 1,
   "title": "invitations — HTTP middleware",
-  "description": "Middleware this module contributes. Registered by `InvitationsServiceProvider::boot()` via `Router::aliasMiddleware()`. Only `throttle.invitations` is invitation-specific; the module also relies on framework + tenancy middleware composed on its route groups.",
+  "description": "Middleware this module contributes. Registered by `InvitationsServiceProvider::boot()` via `Router::aliasMiddleware()`. Only `throttle.invitations` is invitation-specific; the module also relies on framework + workspaces middleware composed on its route groups.",
   "middleware": [
     {
       "alias": "throttle.invitations",
       "class": "Academorix\\Invitations\\Middleware\\ThrottleInvitations",
       "priority": 50,
-      "description": "Per-inviter + per-tenant rate limits. Enforces four counters simultaneously: (1) per (inviter_user_id, day) — default 50; (2) per (inviter_service_account_id, day) — default 500; (3) per (tenant_id, day) — default 250; (4) per (invitee_email, week) — default 5 (anti-harassment). Each limit is configurable via `invitations.throttle.*` settings; a 429 response includes `Retry-After` and the specific limit that tripped in the `X-RateLimit-Trigger` header.",
+      "description": "Per-inviter + per-workspace rate limits. Enforces four counters simultaneously: (1) per (inviter_user_id, day) — default 50; (2) per (inviter_service_account_id, day) — default 500; (3) per (workspace_id, day) — default 250; (4) per (invitee_email, week) — default 5 (anti-harassment). Each limit is configurable via `invitations.throttle.*` settings; a 429 response includes `Retry-After` and the specific limit that tripped in the `X-RateLimit-Trigger` header.",
       "sideEffects": [
         "Bumps a Redis-backed counter per counter dimension using Laravel's `RateLimiter` facade with keys namespaced by `invitations:throttle:{dimension}:{id}`.",
         "Emits `InvitationRateLimitExceeded` (via metrics.json counter — not a domain event) so ops can alert on abuse patterns.",
@@ -30,9 +30,9 @@
   ],
   "priorityOrder": [
     "platform.domain",
-    "resolve.tenant",
+    "resolve.workspace",
     "auth:sanctum",
-    "tenant.user",
+    "workspace.user",
     "platform.user",
     "throttle.invitations",
     "throttle:invitations-central",

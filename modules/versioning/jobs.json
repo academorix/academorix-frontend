@@ -16,8 +16,8 @@
         "Guard: state MUST be deprecated. Guard: sunset_at IS NOT NULL AND sunset_at \u2264 now().",
         "Transition state = sunset. Set metadata.sunset_actor_id + sunset_actor_kind (system or user).",
         "Fire ApiVersionSunset event (afterCommit).",
-        "Webhook module's AutoUpgradePinnedSubscriptions listener handles the fanout: for each WebhookSubscription pinned to this slug, upgrade to migration_target_slug if set + emit WebhookSubscriptionUpgraded; if not set, pause the subscription + emit WebhookSubscriptionPaused + notify tenant admin.",
-        "Notifications module dispatches ApiSunsetNotification to every affected tenant's admin(s)."
+        "Webhook module's AutoUpgradePinnedSubscriptions listener handles the fanout: for each WebhookSubscription pinned to this slug, upgrade to migration_target_slug if set + emit WebhookSubscriptionUpgraded; if not set, pause the subscription + emit WebhookSubscriptionPaused + notify workspace admin.",
+        "Notifications module dispatches ApiSunsetNotification to every affected workspace's admin(s)."
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,
@@ -29,14 +29,14 @@
     {
       "class": "Academorix\\Versioning\\Jobs\\PublishDeprecationNoticeJob",
       "queue": "notifications",
-      "purpose": "When a DeprecationNotice publishes with notify_customers=true, fan out ApiDeprecationNotification (or ApiSunsetNotification when notice_type=sunset_final) to every tenant whose WebhookSubscription references the affected version.",
+      "purpose": "When a DeprecationNotice publishes with notify_customers=true, fan out ApiDeprecationNotification (or ApiSunsetNotification when notice_type=sunset_final) to every workspace whose WebhookSubscription references the affected version.",
       "steps": [
         "Load the DeprecationNotice + parent ApiVersion.",
-        "Resolve the affected tenants: query WebhookSubscription (via webhook module's read API) for subscriptions whose api_version = notice.api_version_slug.",
+        "Resolve the affected workspaces: query WebhookSubscription (via webhook module's read API) for subscriptions whose api_version = notice.api_version_slug.",
         "Filter: when notice.affected_events is non-empty, further filter to subscriptions with matching event names.",
         "Filter: when notice.affected_endpoints is non-empty, no filter (endpoints are API-consumer signals, not webhook subscriber signals).",
-        "For each unique tenant: dispatch the appropriate Notification class (Deprecation vs Sunset) via notifications core.",
-        "Update notice.notified_at + notice.metadata.notified_tenant_count."
+        "For each unique workspace: dispatch the appropriate Notification class (Deprecation vs Sunset) via notifications core.",
+        "Update notice.notified_at + notice.metadata.notified_workspace_count."
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,

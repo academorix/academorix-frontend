@@ -23,7 +23,7 @@
     {
       "slug": "system.announcement",
       "display_name": "Platform announcements",
-      "description": "Major product updates, feature launches, and platform-wide news. Opt-in for consumer tenants, on-by-default for enterprise tenants.",
+      "description": "Major product updates, feature launches, and platform-wide news. Opt-in for consumer workspaces, on-by-default for enterprise workspaces.",
       "default_channels": ["mail", "in_app"],
       "priority": "product",
       "consent_tier": "product_default",

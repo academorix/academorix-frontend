@@ -1,6 +1,6 @@
 # notifications-sms — SDUI blueprints
 
-Tenant admin surface for SMS opt-out list + cost visibility.
+Workspace admin surface for SMS opt-out list + cost visibility.
 
 ## Surfaces
 

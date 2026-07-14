@@ -3,17 +3,17 @@
   "title": "New newsletter",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/newsletters/new",
-  "host": "tenant",
+  "route": "/workspace/newsletters/new",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "newsletter", "entity": "newsletter", "action": "create"},
   "requiresPermission": "newsletters.create",
   "dataSources": [],
   "nodes": [
     {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto"}, "children": [
-      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/newsletters"}}},
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/newsletters"}}},
       {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "New newsletter"}},
-      {"kind": "Form", "props": {"submitUrl": "/api/v1/newsletters", "submitMethod": "POST", "onSuccess": [{"kind": "toast.success", "message": "Newsletter created"}, {"kind": "navigateExpr", "expr": "'/tenant/newsletters/' + response.data.id"}]}, "children": [
+      {"kind": "Form", "props": {"submitUrl": "/api/v1/newsletters", "submitMethod": "POST", "onSuccess": [{"kind": "toast.success", "message": "Newsletter created"}, {"kind": "navigateExpr", "expr": "'/workspace/newsletters/' + response.data.id"}]}, "children": [
         {"kind": "TextField", "props": {"label": "Name", "name": "name", "isRequired": true, "placeholder": "Weekly Digest"}},
         {"kind": "TextField", "props": {"label": "Slug", "name": "slug", "isRequired": true, "placeholder": "weekly-digest", "description": "URL-safe. Used in subscribe links."}},
         {"kind": "TextArea", "props": {"label": "Description", "name": "description", "rows": 3}},

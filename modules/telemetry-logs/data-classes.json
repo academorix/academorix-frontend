@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/telemetry-logs/data-classes",
+  "$version": 1,
+  "title": "telemetry-logs \u2014 field classification",
+  "description": "Every log record field classified. Redaction targets restricted + regulated tiers.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": ["timestamp", "level", "message", "channel", "service.name", "service.version", "deployment.environment", "source.module", "source.class", "source.line"],
+    "internal": ["academorix.request_id", "academorix.workspace_id", "academorix.workspace_id", "trace_id", "span_id"],
+    "confidential": ["academorix.causer_id", "academorix.user_id", "exception.message (may reference domain identifiers)", "exception.trace"],
+    "restricted": ["*.email (redacted unless log_pii_in_dev enabled)", "*.phone (redacted unless log_pii_in_dev)", "http.client_ip (redacted in production)", "http.user_agent (kept \u2014 not personal per se)"],
+    "regulated_minor": ["Any log record referencing a minor's user_id must be redacted per COPPA / GDPR Art. 8"],
+    "regulated_health": [],
+    "regulated_financial": ["Never logged: PAN, CVV, expiry, full card number \u2014 redactor patterns catch anything matching card-number regex."],
+    "audit_log": [],
+    "always_redacted": ["*.password", "*.password_confirmation", "*.secret", "*.token", "*.api_key", "*.credit_card", "*.card_number", "*.cvv", "*.ssn", "authorization", "cookie", "x-api-key", "*.private_key"]
+  },
+  "notes": [
+    "Redaction is fail-safe: unknown keys are kept, but if a rule flags a value, the field is replaced with `[REDACTED]`. Better to have too aggressive redaction than a leak.",
+    "In dev, config('telemetry-logs.redact.pii_in_dev')=false keeps emails + phones readable for debugging. Never set to false in production.",
+    "IP addresses: redacted in production (GDPR personal data), kept in dev + staging."
+  ]
+}

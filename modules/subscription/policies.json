@@ -1,0 +1,40 @@
+{
+  "id": "academorix://modules/subscription/policies",
+  "$version": 1,
+  "title": "subscription \u2014 authorization policies",
+  "policies": [
+    {
+      "model": "Plan",
+      "class": "Academorix\\Subscription\\Policies\\PlanPolicy",
+      "abilities": [
+        {"action": "viewAny", "permission": "plans.viewAny", "scope": "any workspace member sees public plans of own Application"},
+        {"action": "view", "permission": "plans.view"},
+        {"action": "platformViewAny", "permission": "platform.plans.viewAny", "scope": "platform admin cross-Application"},
+        {"action": "platformCreate", "permission": "platform.plans.create"},
+        {"action": "platformUpdate", "permission": "platform.plans.update"},
+        {"action": "platformArchive", "permission": "platform.plans.archive"}
+      ]
+    },
+    {
+      "model": "Subscription",
+      "class": "Academorix\\Subscription\\Policies\\SubscriptionPolicy",
+      "abilities": [
+        {"action": "view", "permission": "subscription.view", "scope": "workspace member sees own workspace's subscription"},
+        {"action": "viewInvoices", "permission": "subscription.view.invoices", "scope": "owner + billing role"},
+        {"action": "manage", "permission": "subscription.manage", "scope": "owner only"},
+        {"action": "platformViewAny", "permission": "platform.subscriptions.viewAny"},
+        {"action": "platformView", "permission": "platform.subscriptions.view"},
+        {"action": "platformEnterprise", "permission": "platform.subscriptions.enterprise", "scope": "sales + finance team \u2014 create offline PO subscriptions"},
+        {"action": "platformForceState", "permission": "platform.subscriptions.force-state", "scope": "super_admin only \u2014 every use audit-logged"}
+      ]
+    },
+    {
+      "model": "SubscriptionEvent",
+      "class": "Academorix\\Subscription\\Policies\\SubscriptionEventPolicy",
+      "abilities": [
+        {"action": "viewAny", "permission": "subscription.events.viewAny", "scope": "owner + billing role"},
+        {"action": "platformViewAny", "permission": "platform.subscription.events.viewAny", "scope": "billing team, SOX audit trail"}
+      ]
+    }
+  ]
+}

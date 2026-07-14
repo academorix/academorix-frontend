@@ -20,7 +20,7 @@
       "PushSubscription.updated_at"
     ],
     "internal": [
-      "PushSubscription.tenant_id",
+      "PushSubscription.workspace_id",
       "PushSubscription.application_id",
       "PushSubscription.device_token_fingerprint",
       "PushSubscription.timezone",

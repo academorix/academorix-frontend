@@ -6,7 +6,7 @@
   "description": "One row in a jobs list: kind + entity + status chip + counters + relative timestamp + row actions (view, cancel, download). Consumed by the jobs list screen and dashboard 'Recent transfers' panel.",
   "props": {
     "job":            {"type": "object", "description": "XferJob DTO."},
-    "showCauser":     {"type": "boolean", "default": false, "description": "Show initiator's display name. Enabled on tenant-wide + platform views."},
+    "showCauser":     {"type": "boolean", "default": false, "description": "Show initiator's display name. Enabled on workspace-wide + platform views."},
     "compact":        {"type": "boolean", "default": false}
   },
   "dataSources": [],
@@ -32,7 +32,7 @@
         {"kind": "View", "props": {"className": "flex items-center gap-2"}, "children": [
           {"kind": "Widget", "widget": "transfer.xfer-job-progress", "props": {"compact": true, "subscribeBroadcast": true}, "bindings": {"job": {"$ref": "props.job"}, "hidden": {"$expr": "['succeeded','partially_succeeded','failed','cancelled'].includes(props.job.status)"}}, "props_extra": {"className": "w-32"}},
           {"kind": "Menu", "props": {"trigger": {"kind": "IconButton", "props": {"icon": "ellipsis-vertical", "aria-label": "Row actions"}}}, "children": [
-            {"kind": "MenuItem", "props": {"children": {"$expr": "t('transfer.actions.view')"}}, "actions": {"onPress": {"kind": "navigateExpr", "expr": "'/tenant/transfer/jobs/' + props.job.id"}}},
+            {"kind": "MenuItem", "props": {"children": {"$expr": "t('transfer.actions.view')"}}, "actions": {"onPress": {"kind": "navigateExpr", "expr": "'/workspace/transfer/jobs/' + props.job.id"}}},
             {"kind": "MenuItem", "props": {"children": {"$expr": "t('transfer.actions.download')"}, "hidden": {"$expr": "!props.job.has_result_artifact"}}, "actions": {"onPress": {"kind": "http.get", "url": {"$expr": "'/api/v1/transfer/jobs/' + props.job.id + '/download'"}, "responseKind": "download"}}},
             {"kind": "MenuItem", "props": {"children": {"$expr": "t('transfer.actions.download_errors')"}, "hidden": {"$expr": "!props.job.has_errors_artifact"}, "className": "text-danger"}, "actions": {"onPress": {"kind": "http.get", "url": {"$expr": "'/api/v1/transfer/jobs/' + props.job.id + '/errors'"}, "responseKind": "download"}}},
             {"kind": "MenuItem", "props": {"children": {"$expr": "t('transfer.actions.cancel')"}, "hidden": {"$expr": "!['queued','running'].includes(props.job.status)"}}, "actions": {"onPress": {"kind": "http.post", "url": {"$expr": "'/api/v1/transfer/jobs/' + props.job.id + '/cancel'"}, "confirm": {"title": {"$expr": "t('transfer.confirm.cancel.title')"}, "message": {"$expr": "t('transfer.confirm.cancel.message')"}}}}}

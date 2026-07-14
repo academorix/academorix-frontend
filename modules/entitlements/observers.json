@@ -1,0 +1,27 @@
+{
+  "id": "academorix://modules/entitlements/observers",
+  "$version": 1,
+  "title": "entitlements \u2014 Eloquent observers",
+  "observers": [
+    {
+      "model": "Entitlement",
+      "observer": "Academorix\\Entitlements\\Observers\\EntitlementObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `ent_` + resolve resets_at from period at insert time",
+        "creating \u2192 refuse if kind=pool AND period IS NULL (invariant)",
+        "creating \u2192 fire EntitlementResolved",
+        "updating (value_cap changed by platform admin) \u2192 set is_platform_overridden=true + fire EntitlementOverridden",
+        "updating (value_used decreased to 0 via reset) \u2192 fire EntitlementReset",
+        "deleting \u2192 refuse when active EntitlementUsage rows in current period (soft delete only)"
+      ]
+    },
+    {
+      "model": "EntitlementUsage",
+      "observer": "Academorix\\Entitlements\\Observers\\EntitlementUsageObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `use_` + denormalise `key` from parent Entitlement",
+        "created \u2192 fire EntitlementConsumed (afterCommit)"
+      ]
+    }
+  ]
+}

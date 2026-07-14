@@ -1,0 +1,30 @@
+{
+  "id": "academorix://modules/telemetry-logs/compliance",
+  "$version": 1,
+  "title": "telemetry-logs \u2014 compliance evidence",
+  "description": "Logs carry more personal data than spans (message bodies, exception traces, HTTP payloads). Redaction is the primary compliance surface.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {"article": "Art. 5(1)(c)", "principle": "data minimisation", "evidence": "Redactor pipeline strips PII BEFORE records leave the process. Rules: global key patterns (password, token, cookie, authorization), regex value patterns (credit card, SSN, IBAN), class-level #[RedactedForLogs] for domain models."},
+        {"article": "Art. 17", "principle": "right to erasure", "evidence": "Log records may reference the erased subject via workspace_id + causer_id. GDPR Art. 17 does NOT require retroactive log erasure when logs are used for security / audit purposes. Sink retention naturally purges. Legal basis documented."},
+        {"article": "Art. 28", "principle": "processor obligations", "evidence": "Third-party log sinks (Loki cloud, DataDog Logs, etc) are subprocessors. See subprocessors.json."},
+        {"article": "Art. 32", "principle": "security of processing", "evidence": "TLS transport to remote sinks. Sink credentials rotated quarterly."}
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {"criterion": "CC6.8", "principle": "restricting unauthorized access", "evidence": "Read access to logs gated by platform.telemetry.view permission at UI level. Sink-level access controlled by sink IAM (Grafana Cloud team perms, DataDog user roles)."},
+        {"criterion": "CC7.3", "principle": "evaluate + communicate security events", "evidence": "logs are the primary source for incident forensics. Retention windows meet the 90-day minimum for security-event correlation."}
+      ]
+    },
+    "pci_dss": {
+      "applicable": true,
+      "controls": [
+        {"requirement": "Requirement 3", "principle": "never store cardholder data", "evidence": "Regex redactor patterns strip anything matching card-number regex before write. PAN / CVV / expiry never touched (they don't reach our code \u2014 payment provider tokenises client-side)."}
+      ]
+    }
+  }
+}

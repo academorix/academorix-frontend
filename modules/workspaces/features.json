@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/workspaces/features",
+  "$version": 1,
+  "title": "workspaces — feature keys",
+  "description": "Workspaces does not publish `features` itself — feature toggles live on the `feature-flag` module and the catalogue that decides which are ON per workspace lives on `BusinessType.default_config.features` (see `schemas/business-type.schema.json` + `data/business-types.json`). This file catalogues the SHAPE contract Workspaces owns so consumers can typecheck what a BusinessType entry may enable.",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features (string[])",
+    "seededFrom": "BusinessType.default_config.features",
+    "distinctFrom": "feature-flags.json — that file is ROLLOUT flags (canary, kill-switch); this reference is BUSINESS features (does the workspace have athletes at all)."
+  },
+  "features": []
+}

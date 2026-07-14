@@ -6,11 +6,11 @@
   "sink": "segment",
   "consentTiers": ["essential", "functional", "analytics", "marketing"],
   "events": [
-    {"name": "Mail Sent", "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "provider", "category_slug", "cost_micro_units"]},
-    {"name": "Mail Delivered", "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "provider", "category_slug"]},
-    {"name": "Mail Bounced", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "provider", "bounce_kind"], "description": "Functional \u2014 hard bounces produce a suppression which affects delivery."},
-    {"name": "Mail Complained", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "provider"], "description": "Functional \u2014 complaint = suppression + CAN-SPAM evidence."},
-    {"name": "Mail Address Suppressed", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "reason"]},
-    {"name": "Mail Address Suppression Revoked", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "reason"]}
+    {"name": "Mail Sent", "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "provider", "category_slug", "cost_micro_units"]},
+    {"name": "Mail Delivered", "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "provider", "category_slug"]},
+    {"name": "Mail Bounced", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "provider", "bounce_kind"], "description": "Functional \u2014 hard bounces produce a suppression which affects delivery."},
+    {"name": "Mail Complained", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "provider"], "description": "Functional \u2014 complaint = suppression + CAN-SPAM evidence."},
+    {"name": "Mail Address Suppressed", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "reason"]},
+    {"name": "Mail Address Suppression Revoked", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "reason"]}
   ]
 }

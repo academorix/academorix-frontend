@@ -20,17 +20,17 @@
       ]
     },
     {
-      "name": "tenant.{id}.notifications",
+      "name": "workspace.{id}.notifications",
       "kind": "private",
       "authorization": {
-        "class": "Academorix\\Notifications\\Broadcasting\\TenantNotificationsChannel",
-        "rule": "$user->can('platform.notifications.viewAny') OR ($user->tenant_id === (string) $id AND $user->can('notifications.admin.view'))"
+        "class": "Academorix\\Notifications\\Broadcasting\\WorkspaceNotificationsChannel",
+        "rule": "$user->can('platform.notifications.viewAny') OR ($user->workspace_id === (string) $id AND $user->can('notifications.admin.view'))"
       },
-      "purpose": "Tenant-admin realtime dashboard. Aggregate send counts, delivery-failure spikes, template publish events. Used by the admin sends dashboard SDUI screen.",
+      "purpose": "Workspace-admin realtime dashboard. Aggregate send counts, delivery-failure spikes, template publish events. Used by the admin sends dashboard SDUI screen.",
       "eventsPushed": [
-        "notifications.tenant.dispatched \u2014 aggregate send counter tick",
-        "notifications.tenant.failed \u2014 delivery failure signal for the dashboard alert widget",
-        "notifications.tenant.template_published \u2014 template moved to published"
+        "notifications.workspace.dispatched \u2014 aggregate send counter tick",
+        "notifications.workspace.failed \u2014 delivery failure signal for the dashboard alert widget",
+        "notifications.workspace.template_published \u2014 template moved to published"
       ]
     }
   ],

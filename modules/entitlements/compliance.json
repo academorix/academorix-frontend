@@ -1,0 +1,29 @@
+{
+  "id": "academorix://modules/entitlements/compliance",
+  "$version": 1,
+  "title": "entitlements \u2014 compliance evidence",
+  "description": "Enterprise-contract override history is the primary compliance surface. SOX 404 for metered-billing usage evidence. GDPR Art. 30 for records of processing where entitlements reflect contractual terms.",
+  "regimes": {
+    "sox_404": {
+      "applicable": true,
+      "controls": [
+        {"section": "Revenue recognition", "principle": "auditable usage for metered billing", "evidence": "EntitlementUsage rows for is_metered_billing=true entitlements retained 7y. UsageReportedToBilling events audit-logged with provider_usage_record_id for cross-check against Stripe/Paddle."}
+      ]
+    },
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {"article": "Art. 30", "principle": "records of processing", "evidence": "HasAudit on Entitlement captures every override event. Correlates to workspace's data-processing agreement."},
+        {"article": "Art. 5", "principle": "storage limitation", "evidence": "EntitlementUsage retention 30-365d per plan. Metered-billing rows exception (7y SOX)."},
+        {"article": "Art. 17", "principle": "right to erasure", "evidence": "Cascade delete on WorkspaceErased. Metered rows anonymise (workspace_id hashed) rather than delete for SOX continuity."}
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {"criterion": "CC6.1", "principle": "logical access", "evidence": "Platform-admin override permission gated + audit-logged. Every override produces a compliance audit row."},
+        {"criterion": "CC7.2", "principle": "system monitoring", "evidence": "Reconciliation job detects Redis-Postgres drift. Metrics dashboard alerts on drift > 100 per key."}
+      ]
+    }
+  }
+}

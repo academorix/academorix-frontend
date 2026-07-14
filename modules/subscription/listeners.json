@@ -1,0 +1,11 @@
+{
+  "id": "academorix://modules/subscription/listeners",
+  "$version": 1,
+  "title": "subscription \u2014 subscribed events",
+  "listeners": [
+    {"event": "webhook::InboundWebhookReceived", "listener": "Academorix\\Subscription\\Listeners\\IngestCashierWebhookListener", "queue": "notifications-critical", "filter": "event.namespace === 'subscription'", "purpose": "Dispatches SyncFromCashierWebhookJob. Handles stripe + paddle providers. Idempotent via provider_event_id."},
+    {"event": "workspaces::WorkspaceProvisioned", "listener": "Academorix\\Subscription\\Listeners\\SeedInitialSubscription", "queue": "notifications", "purpose": "On workspace creation, create a free-tier Subscription (or trial-tier if workspaces::event.metadata.trial=true)."},
+    {"event": "workspaces::WorkspaceErased", "listener": "Academorix\\Subscription\\Listeners\\CancelSubscriptionForErasedWorkspace", "queue": "notifications", "purpose": "GDPR Art. 17. Cancels subscription at Cashier (best-effort) + soft-deletes local rows. Retains SubscriptionEvent for SOX."},
+    {"event": "subscription::SubscriptionSuspended", "listener": "Academorix\\Subscription\\Listeners\\NotifyWorkspaceOwner", "queue": "notifications-critical", "purpose": "Sends escalation email to workspace owner + billing contact when workspace suspended for non-payment."}
+  ]
+}

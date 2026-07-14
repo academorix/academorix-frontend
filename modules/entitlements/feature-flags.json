@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/entitlements/feature-flags",
+  "$version": 1,
+  "title": "entitlements \u2014 kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {"key": "entitlements.enforcement", "kind": "kill-switch", "default": "on", "description": "Master enforcer switch. Off = allow every operation regardless of cap. NEVER OFF in production except during a billing incident."},
+    {"key": "entitlements.metered_billing", "kind": "kill-switch", "default": "on", "description": "ExportUsageForBillingJob execution. Off during Stripe outages to prevent duplicate usage records on retry."},
+    {"key": "entitlements.reset_periodic", "kind": "kill-switch", "default": "on", "description": "ResetPeriodicUsageJob execution."},
+    {"key": "entitlements.warn_notifications", "kind": "kill-switch", "default": "on", "description": "Dispatch of QuotaApproachingNotification. Off during notification-fatigue windows."},
+    {"key": "entitlements.redis_hot_path", "kind": "kill-switch", "default": "on", "description": "Off = every enforcement goes to Postgres. Emergency fallback if Redis has issues."}
+  ]
+}

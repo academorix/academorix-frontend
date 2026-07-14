@@ -16,7 +16,7 @@
     {"from": "NewsletterAudience", "kind": "belongsTo", "to": "Newsletter", "foreignKey": "newsletter_id", "onDelete": "cascade"}
   ],
   "outbound": [
-    {"from": "Newsletter", "kind": "belongsTo", "to": "tenancy::Tenant", "foreignKey": "tenant_id", "onDelete": "cascade"},
+    {"from": "Newsletter", "kind": "belongsTo", "to": "workspaces::Workspace", "foreignKey": "workspace_id", "onDelete": "cascade"},
     {"from": "NewsletterSubscription", "kind": "belongsTo", "to": "user::User", "foreignKey": "user_id", "nullable": true, "onDelete": "set null", "description": "Nullable \u2014 anonymous email-only subscribers are common."},
     {"from": "NewsletterCampaign", "kind": "hasMany", "to": "notifications::NotificationDelivery", "foreignKey": "meta->campaign_id", "morphed": true, "description": "Delivery rows created by notifications-mail during send. Look-up via metadata."}
   ],

@@ -5,7 +5,7 @@
   "reference": {"publishedBy": "entitlements", "resolvedBy": "GET /api/auth/me \u2192 data.quota_summary", "seededFrom": "BusinessType.default_config.entitlements"},
   "kinds": [{"kind": "slot"}, {"kind": "boolean"}],
   "entitlements": [
-    {"key": "transfer.max_concurrent_jobs",        "kind": "slot",    "unit": "jobs",  "defaultsByPlan": {"free": 3,       "team": 10,      "enterprise": 25},       "description": "Cap on xfer_jobs in `queued` or `running` per tenant. Additional job creation returns TRANSFER_CONCURRENCY_LIMIT_EXCEEDED (429)."},
+    {"key": "transfer.max_concurrent_jobs",        "kind": "slot",    "unit": "jobs",  "defaultsByPlan": {"free": 3,       "team": 10,      "enterprise": 25},       "description": "Cap on xfer_jobs in `queued` or `running` per workspace. Additional job creation returns TRANSFER_CONCURRENCY_LIMIT_EXCEEDED (429)."},
     {"key": "transfer.max_file_size_bytes",        "kind": "slot",    "unit": "bytes", "defaultsByPlan": {"free": 5242880, "team": 52428800, "enterprise": 524288000}, "description": "Cap on uploaded file size. Enforced at the ImportController before storage."},
     {"key": "transfer.max_rows_per_import",        "kind": "slot",    "unit": "rows",  "defaultsByPlan": {"free": 10000,   "team": 250000,  "enterprise": 5000000},  "description": "Cap on row count in a single import. Enforced at file-open time (Laravel Excel's header + limited scan)."},
     {"key": "transfer.max_rows_per_export",        "kind": "slot",    "unit": "rows",  "defaultsByPlan": {"free": 25000,   "team": 500000,  "enterprise": 10000000}, "description": "Cap on row count in a single export. Query.count() checked before dispatch."},

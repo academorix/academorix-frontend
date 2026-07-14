@@ -1,0 +1,24 @@
+{
+  "id": "academorix://modules/telemetry-otel/compliance",
+  "$version": 1,
+  "title": "telemetry-otel \u2014 compliance evidence",
+  "description": "Telemetry data leaves the application to third-party collectors (or self-hosted). Compliance surface centres on data minimisation before export + subprocessor management.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {"article": "Art. 5(1)(c)", "principle": "data minimisation", "evidence": "SpanAttributeRedactor pipeline strips PII from span attributes before export. Redacted keys config'd in telemetry-otel.redact.*. Common redactions: email, phone, IP (in prod), Authorization header, cookies."},
+        {"article": "Art. 28", "principle": "processor obligations", "evidence": "Third-party backends (DataDog, Grafana Cloud, Honeycomb) are subprocessors. See subprocessors.json. Self-hosted collectors are not subprocessors."},
+        {"article": "Art. 30", "principle": "records of processing", "evidence": "Span attributes include academorix.workspace_id + academorix.workspace_id \u2014 count as processing records. Documented per subprocessor."},
+        {"article": "Art. 32", "principle": "security of processing", "evidence": "OTLP transport is TLS 1.2+. Optional bearer-token auth via OTEL_EXPORTER_OTLP_HEADERS. Never carries CVV / PAN / passwords (redacted)."}
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {"criterion": "CC6.6", "principle": "logical + physical access", "evidence": "OTLP endpoint credentials rotated quarterly. Stored as secrets, not in code."},
+        {"criterion": "CC7.2", "principle": "system monitoring", "evidence": "Health probes on the pipeline itself \u2014 dropped-spans-ratio + exporter-reachable feed alerting."}
+      ]
+    }
+  }
+}

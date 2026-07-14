@@ -15,8 +15,8 @@ per-user notifications on completion.
 | `#[ImportableWorkbook]` / `#[ExportableWorkbook]` attributes | Multi-sheet composition \u2014 an aggregate class references per-sheet models. |
 | `XferJob` model + `xfer_jobs` table | The persisted operation record. Not a queue job \u2014 lives independently of the queue chain. |
 | `XferShard` / `XferArtifact` / `XferMappingProfile` models | Per-shard progress rows, generated files (result / errors), saved header-remap profiles. |
-| Tenant HTTP surface | `POST /api/v1/transfer/{imports,exports,samples}` + `GET /api/v1/transfer/jobs` + friends. |
-| Platform-admin HTTP surface | `GET /api/v1/platform/transfer/jobs` \u2014 cross-tenant read for support triage. |
+| Workspace HTTP surface | `POST /api/v1/transfer/{imports,exports,samples}` + `GET /api/v1/transfer/jobs` + friends. |
+| Platform-admin HTTP surface | `GET /api/v1/platform/transfer/jobs` \u2014 cross-workspace read for support triage. |
 | Queue chain integration | Dispatches Laravel Excel's own `->queue()` chain + `WithChunkReading`; we chain `MarkXferJobCompletedJob` + `SendXferJobNotificationJob` on top. |
 | Errors artifact writer | `WriteErrorsArtifactJob` composes an `errors.csv` (row + reason) linked from `xfer_job.errors_artifact_id`. |
 | Retention prune | `PruneXferArtifactsJob` \u2014 files expire per config; the DB row survives longer for history. |
@@ -28,15 +28,15 @@ Three adjacent but **distinct** modules that fire on overlapping signals:
 | Dimension | `transfer` | `activity` | `audit` |
 | --- | --- | --- | --- |
 | Concern | Data movement (in / out) | Product feed \u2014 "who did what today?" | Compliance evidence \u2014 "prove this change occurred" |
-| Audience | Tenant users initiating imports / exports | Tenant admins + end users | Compliance / DPO / regulators |
+| Audience | Workspace users initiating imports / exports | Workspace admins + end users | Compliance / DPO / regulators |
 | Persistence | `xfer_jobs` + `xfer_shards` + `xfer_artifacts` + `xfer_mapping_profiles` | `activity_log` (spatie's table + our columns) | `audits` (owen-it's table + our columns) |
 | Wrapped package | `maatwebsite/excel` | `spatie/laravel-activitylog` | `owen-it/laravel-auditing` |
 | Retention | Files 7\u201330d; DB rows 90\u2013365d per plan | Tier-based 30 / 90 / 365d | 365d hot + 7y cold |
-| HTTP surface | Tenant + platform-admin | Tenant + platform-admin | Platform-admin + tenant DPO |
+| HTTP surface | Workspace + platform-admin | Workspace + platform-admin | Platform-admin + workspace DPO |
 | Volume | Low frequency, high row count | High frequency, low row count | Medium frequency, low row count |
 
 They coexist without conflict. Every `xfer_job` transition also writes one
-`activity_log` row (tenant sees "Alice imported 1,245 athletes") **and** one
+`activity_log` row (workspace sees "Alice imported 1,245 athletes") **and** one
 `audits` row (DPO sees the immutable evidence). Row-level import errors do
 **not** land in either \u2014 they land in the transfer errors artifact only.
 
@@ -79,12 +79,12 @@ use Academorix\Transfer\Support\LookupBy;
 #[TransferField('birth_date', column: 'DOB',           order: 3, rules: 'required|date',            dateFormat: 'Y-m-d')]
 
 #[ImportField('team_id',      column: 'Team',          rules: 'nullable|string',
-              lookup: new LookupBy(Team::class, ['name'], scope: 'tenant', onMissing: 'error'))]
+              lookup: new LookupBy(Team::class, ['name'], scope: 'workspace', onMissing: 'error'))]
 #[ExportField('team_id',      header: 'Team',          order: 4, valueFrom: 'team.name')]
 
 final class Athlete extends Model
 {
-    use BelongsToTenant, HasUlids;
+    use BelongsToWorkspace, HasUlids;
     use HasImportable, HasExportable;
 }
 ```
@@ -170,7 +170,7 @@ Resolution order:
 1. `ImportRequestData.notifyChannels` / `ExportRequestData.notifyChannels`
    if the caller specified them.
 2. Otherwise per-user setting `transfer.notify_channels` (settings module).
-3. Otherwise tenant setting `transfer.default_notify_channels`.
+3. Otherwise workspace setting `transfer.default_notify_channels`.
 4. Otherwise config default `['database', 'broadcast']`.
 
 Three notification classes cover the exhaustive outcome space:

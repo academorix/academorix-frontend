@@ -2,7 +2,7 @@
   "id": "academorix://modules/transfer/settings",
   "$version": 1,
   "title": "transfer \u2014 settings",
-  "description": "Two settings groups: tenant-scoped defaults (`transfer`) and per-user preferences (`transfer_user`). Discovered by the settings module at boot via #[AsSetting] on the two classes.",
+  "description": "Two settings groups: workspace-scoped defaults (`transfer`) and per-user preferences (`transfer_user`). Discovered by the settings module at boot via #[AsSetting] on the two classes.",
   "storedIn": "settings",
   "reference": {"contract": "academorix://modules/settings/attributes"},
   "groups": [
@@ -10,9 +10,9 @@
       "key": "transfer",
       "class": "Academorix\\Transfer\\Settings\\TransferSettings",
       "label": "Data transfer",
-      "description": "Tenant-wide defaults for the import / export engine.",
+      "description": "Workspace-wide defaults for the import / export engine.",
       "icon": "arrow-path",
-      "scope": "tenant",
+      "scope": "workspace",
       "public": false,
       "sortOrder": 60,
       "permission": "settings.read",
@@ -61,7 +61,7 @@
       "key": "transfer_user",
       "class": "Academorix\\Transfer\\Settings\\TransferUserSettings",
       "label": "Data transfer \u2014 my preferences",
-      "description": "Per-user override of the tenant defaults.",
+      "description": "Per-user override of the workspace defaults.",
       "icon": "user-circle",
       "scope": "user",
       "public": false,
@@ -80,7 +80,7 @@
               "defaultValue": null,
               "options": {"mail": "Email", "broadcast": "Real-time (in-app toast)", "database": "In-app inbox", "push": "Mobile push", "sms": "SMS"},
               "validation": ["nullable", "array", "min:1"],
-              "helpText": "Empty = follow tenant default.",
+              "helpText": "Empty = follow workspace default.",
               "sortOrder": 1
             }
           ]

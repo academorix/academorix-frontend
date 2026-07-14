@@ -3,14 +3,14 @@
   "title": "SMS opt-out detail",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/sms-opt-outs/{id}",
-  "host": "tenant",
+  "route": "/workspace/sms-opt-outs/{id}",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "notifications-sms", "entity": "sms-opt-out", "action": "show"},
   "requiresPermission": "notifications.sms.opt-outs.view",
   "params": [{"name": "id", "type": "string", "in": "path", "required": true}],
   "dataSources": [
-    {"name": "optOut", "kind": "http.get", "urlExpr": "'/api/v1/tenant/sms-opt-outs/' + params.id", "unwrap": "data"}
+    {"name": "optOut", "kind": "http.get", "urlExpr": "'/api/v1/workspace/sms-opt-outs/' + params.id", "unwrap": "data"}
   ],
   "nodes": [
     {
@@ -18,13 +18,13 @@
       "kind": "View",
       "props": {"className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto"},
       "children": [
-        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back to opt-outs", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/sms-opt-outs"}}},
+        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back to opt-outs", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/sms-opt-outs"}}},
         {"kind": "View", "props": {"className": "flex items-start justify-between"}, "children": [
           {"kind": "View", "props": {"className": "flex flex-col gap-1"}, "children": [
             {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold font-mono"}, "bindings": {"children": {"$ref": "optOut.phone"}}},
             {"kind": "Chip", "props": {"size": "md"}, "bindings": {"variant": {"$expr": "['stop_keyword', 'complaint', 'spam_trap', 'do_not_call_registry'].includes(optOut.reason) ? 'danger' : (optOut.reason === 'invalid_number' ? 'warning' : 'info')"}, "children": {"$ref": "optOut.reason"}}}
           ]},
-          {"kind": "Button", "props": {"variant": "outline", "size": "sm", "leadingIcon": "arrow-uturn-left", "children": "Revoke"}, "bindings": {"isDisabled": {"$expr": "optOut.is_system || (optOut.reason === 'stop_keyword' && !identity.roles.includes('super_admin'))"}}, "actions": {"onPress": {"kind": "http.delete", "urlExpr": "'/api/v1/tenant/sms-opt-outs/' + params.id", "confirm": {"title": "Revoke this opt-out?"}, "onSuccess": [{"kind": "toast.success", "message": "Revoked"}, {"kind": "navigate", "to": "/tenant/sms-opt-outs"}]}}}
+          {"kind": "Button", "props": {"variant": "outline", "size": "sm", "leadingIcon": "arrow-uturn-left", "children": "Revoke"}, "bindings": {"isDisabled": {"$expr": "optOut.is_system || (optOut.reason === 'stop_keyword' && !identity.roles.includes('super_admin'))"}}, "actions": {"onPress": {"kind": "http.delete", "urlExpr": "'/api/v1/workspace/sms-opt-outs/' + params.id", "confirm": {"title": "Revoke this opt-out?"}, "onSuccess": [{"kind": "toast.success", "message": "Revoked"}, {"kind": "navigate", "to": "/workspace/sms-opt-outs"}]}}}
         ]},
         {"kind": "Card", "props": {"className": "p-6"}, "children": [
           {"kind": "Text", "props": {"as": "h2", "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3", "children": "Details"}},

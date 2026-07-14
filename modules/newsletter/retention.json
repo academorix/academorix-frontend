@@ -8,7 +8,7 @@
     "gdpr Art. 5 + 17 \u2014 storage limitation + erasure"
   ],
   "retention": [
-    {"entity": "Newsletter", "hot": {"days": "while tenant active"}, "purge": {"trigger": "tenant erased", "action": "hard delete via cascade"}},
+    {"entity": "Newsletter", "hot": {"days": "while workspace active"}, "purge": {"trigger": "workspace erased", "action": "hard delete via cascade"}},
     {"entity": "NewsletterIssue (state=sent)", "hot": {"days": "forever while newsletter active", "description": "Historical evidence of what was sent. Never editable after send."}, "purge": {"trigger": "newsletter archived + > 5y", "action": "anonymise-not-delete via audit"}},
     {"entity": "NewsletterSubscription (state=pending_confirmation)", "hot": {"days": "confirmation_ttl_hours"}, "purge": {"trigger": "confirmation_token_expires_at reached", "action": "soft delete via PruneUnengagedSubscribersJob"}},
     {"entity": "NewsletterSubscription (state=active)", "hot": {"days": "while active"}, "purge": {"trigger": "admin removal OR user::UserErased", "action": "soft delete + anonymise on erased"}},

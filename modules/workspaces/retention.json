@@ -1,0 +1,76 @@
+{
+  "id": "academorix://modules/workspaces/retention",
+  "$version": 1,
+  "title": "workspaces — data retention windows",
+  "description": "Data retention windows per model. Drives the retention jobs in `schedule.json` (workspaces:hard-delete-archived + the compliance module's retention orchestrator). All durations are ISO-8601 (`P30D` = 30 days). Compliance tier drives DSAR + erasure behaviour — see `data-classes.json` for the field-level classification and `compliance.json` for the regime × control mapping.",
+  "retention": [
+    {
+      "model": "Application",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": null,
+      "complianceTier": "regulated_configuration",
+      "description": "Applications are never auto-deleted. Manual archival requires super_admin + audit trail entry."
+    },
+    {
+      "model": "Workspace",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": "P30D",
+      "complianceTier": "customer_data",
+      "description": "Soft-delete is manual (WorkspacePolicy@archive). Hard-delete happens 30d after archival via HardDeleteArchivedWorkspaceJob. `is_system=true` rows are skipped. The 30d window matches the customer-facing 'undo archival' promise in the archived-notification email."
+    },
+    {
+      "model": "Domain",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": "P7D",
+      "complianceTier": "operational",
+      "description": "Cascade with Workspace on workspace archival. Independent 7d window on Domain@destroy so DNS operators can rollback within a week."
+    },
+    {
+      "model": "DomainRecord",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": null,
+      "complianceTier": "operational",
+      "description": "Cascade with Domain (ON DELETE CASCADE). No independent retention."
+    },
+    {
+      "model": "Branding",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": "P30D",
+      "complianceTier": "operational",
+      "description": "Cascade with Workspace. Independent 30d window on Branding@destroy allows a rollback if the wrong profile is deleted."
+    },
+    {
+      "model": "Identity",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": null,
+      "erasureOnRequest": "P0D",
+      "complianceTier": "pii",
+      "description": "GDPR Art. 17 right-to-erasure. On DSAR erasure request the row is anonymised in place (email → `erased-<id>@invalid.local`, name → null, avatar → null), cascaded to every User FK. Full hard-delete happens 30d after erasure via the compliance module's PurgeSubjectJob."
+    },
+    {
+      "model": "WorkspaceContact",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": "P30D",
+      "complianceHold": {
+        "kinds": ["dpo", "legal"],
+        "holdDuration": "P7Y",
+        "description": "DPO and legal contacts have a 7-year retention hold — GDPR Art. 30 requires the ROPA (Records of Processing) to preserve the DPO contact for 6 years after the processing ends; 7 years gives us safety margin."
+      },
+      "complianceTier": "pii"
+    },
+    {
+      "model": "WorkspaceIntegration",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": "P30D",
+      "complianceTier": "regulated_configuration",
+      "description": "Cascade with Workspace. The encrypted `config` blob is purged first — KMS key destruction takes precedence over row deletion (crypto-shredding)."
+    }
+  ],
+  "complianceTiers": {
+    "pii": "Personally identifiable information. Subject to DSAR / erasure. Encrypted at rest.",
+    "customer_data": "Customer-owned records (workspaces, athletes, teams). Retained for the customer's benefit until archival + retention window.",
+    "operational": "Platform infra records. No regulatory hold; retention is set for operational safety (rollback windows).",
+    "regulated_configuration": "Configuration or credential material with compliance implications. Requires audit trail + crypto-shredding on delete.",
+    "regulated_health": "Health / safeguarding data. Not present on workspaces models but declared here for downstream modules to reference the tier taxonomy."
+  }
+}

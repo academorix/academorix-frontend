@@ -12,7 +12,7 @@
       "label": "Email",
       "description": "Email channel routing + brand overlays.",
       "icon": "envelope",
-      "scope": "tenant",
+      "scope": "workspace",
       "public": false,
       "sortOrder": 12,
       "permission": "settings.read",
@@ -79,7 +79,7 @@
               "defaultValue": null,
               "validation": ["nullable", "string", "max:200"],
               "sortOrder": 1,
-              "helpText": "Overrides tenant.name in CAN-SPAM footer."
+              "helpText": "Overrides workspace.name in CAN-SPAM footer."
             },
             {
               "name": "footer_postal_address_override",
@@ -108,7 +108,7 @@
       "label": "Custom SMTP",
       "description": "Enterprise-only: bring-your-own SMTP endpoint. Overrides provider selection entirely.",
       "icon": "wrench-screwdriver",
-      "scope": "tenant",
+      "scope": "workspace",
       "public": false,
       "sortOrder": 13,
       "permission": "settings.read",

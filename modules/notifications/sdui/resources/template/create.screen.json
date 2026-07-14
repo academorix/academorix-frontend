@@ -3,13 +3,13 @@
   "title": "New template",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/notification-templates/new",
-  "host": "tenant",
+  "route": "/workspace/notification-templates/new",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "notifications", "entity": "template", "action": "create"},
   "requiresPermission": "notifications.templates.create",
   "dataSources": [
-    {"name": "notificationCategories", "kind": "http.get", "url": "/api/v1/tenant/notification-categories", "unwrap": "data", "cache": {"ttlSeconds": 3600}}
+    {"name": "notificationCategories", "kind": "http.get", "url": "/api/v1/workspace/notification-categories", "unwrap": "data", "cache": {"ttlSeconds": 3600}}
   ],
   "nodes": [
     {
@@ -17,12 +17,12 @@
       "kind": "View",
       "props": {"className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto"},
       "children": [
-        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/notification-templates"}}},
+        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/notification-templates"}}},
         {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Create template"}},
         {
           "id": "form",
           "kind": "Form",
-          "props": {"submitUrl": "/api/v1/tenant/notification-templates", "submitMethod": "POST", "onSuccess": [{"kind": "toast.success", "message": "Template created as draft"}, {"kind": "navigateExpr", "expr": "'/tenant/notification-templates/' + response.data.id"}]},
+          "props": {"submitUrl": "/api/v1/workspace/notification-templates", "submitMethod": "POST", "onSuccess": [{"kind": "toast.success", "message": "Template created as draft"}, {"kind": "navigateExpr", "expr": "'/workspace/notification-templates/' + response.data.id"}]},
           "children": [
             {"kind": "Select", "props": {"label": "Category", "name": "category_slug", "isRequired": true, "placeholder": "Pick a category"}, "optionsSource": {"$ref": "notificationCategories", "valueField": "slug", "labelField": "display_name"}},
             {"kind": "Select", "props": {"label": "Channel", "name": "channel", "isRequired": true, "placeholder": "Pick a channel"}, "options": [{"key": "mail", "label": "Email"}, {"key": "sms", "label": "SMS"}, {"key": "push", "label": "Push"}, {"key": "in_app", "label": "In-app"}]},

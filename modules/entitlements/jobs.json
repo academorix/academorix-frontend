@@ -1,0 +1,98 @@
+{
+  "id": "academorix://modules/entitlements/jobs",
+  "$version": 1,
+  "title": "entitlements \u2014 background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Entitlements\\Jobs\\ResetPeriodicUsageJob",
+      "queue": "notifications",
+      "purpose": "Scan Entitlement rows with kind=pool AND resets_at <= now(). Reset value_used=0 + compute next resets_at.",
+      "steps": [
+        "Query: WHERE kind='pool' AND resets_at <= now() AND deleted_at IS NULL LIMIT batch_size.",
+        "For each row: transaction { UPDATE value_used=0, resets_at=<next boundary> }.",
+        "Redis: DEL quota:{workspace_id}:{key}:* keys for the reset entitlement.",
+        "Fire EntitlementReset per row.",
+        "Loop until no rows returned."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 3,
+      "backoff": [30, 300, 1800],
+      "notes": "Runs from schedule every 15 minutes (frequent enough to catch month boundaries in every timezone)."
+    },
+    {
+      "class": "Academorix\\Entitlements\\Jobs\\ReconcileUsageJob",
+      "queue": "notifications",
+      "purpose": "Sync Redis counters back to Postgres. Detects drift + repairs.",
+      "steps": [
+        "For each active pool Entitlement:",
+        "  Read quota:{workspace}:{key}:{period_bucket} from Redis.",
+        "  Compare to Entitlement.value_used.",
+        "  If drift > tolerance: write meter=correction EntitlementUsage row + UPDATE Entitlement.value_used to Redis value.",
+        "  Emit metric: entitlements.reconcile.drift_total by workspace."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 2,
+      "notes": "Runs hourly. Catches Redis-Postgres divergence from queue backpressure or job failures."
+    },
+    {
+      "class": "Academorix\\Entitlements\\Jobs\\ExportUsageForBillingJob",
+      "queue": "notifications-critical",
+      "purpose": "Push metered-billing usage to Stripe/Paddle at period end. Called by subscription module.",
+      "steps": [
+        "Load Entitlement WHERE is_metered_billing=true AND workspace has active subscription.",
+        "Compute period usage from EntitlementUsage aggregate.",
+        "Cashier: $workspace->subscription()->reportUsage($stripe_price_id, $amount, $timestamp).",
+        "Fire UsageReportedToBilling.",
+        "Store provider_usage_record_id in metadata for idempotency."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 7200,
+      "uniqueVia": "(entitlement_id, period_start)",
+      "tries": 5,
+      "backoff": [60, 300, 1800, 3600, 21600]
+    },
+    {
+      "class": "Academorix\\Entitlements\\Jobs\\SyncEntitlementsFromPlanJob",
+      "queue": "notifications-critical",
+      "purpose": "Reconcile workspace's Entitlement rows against the current Plan's default_entitlements + workspace-level overrides.",
+      "steps": [
+        "Load workspace + current Plan + Plan.default_entitlements.",
+        "For each declared key in registry:",
+        "  Resolve target value_cap: workspace.entitlement_overrides[key] ?? plan.default_entitlements[key] ?? platform default.",
+        "  UPSERT Entitlement(workspace_id, key) SET value_cap = target, source_plan_id = plan.id.",
+        "  PRESERVE value_used + is_platform_overridden across UPSERT.",
+        "Fire EntitlementSyncCompleted."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "workspace_id",
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Entitlements\\Jobs\\ApplyEntitlementOverrideJob",
+      "queue": "notifications",
+      "purpose": "Async application of platform-admin overrides. Called by PATCH /platform/entitlements/{workspace}/{key} to keep the request path fast.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "(workspace_id, key)",
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Entitlements\\Jobs\\PruneUsageJob",
+      "queue": "notifications",
+      "purpose": "Drop old EntitlementUsage monthly partitions past retention. Uses DROP PARTITION rather than DELETE (instant + storage-reclaiming).",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2,
+      "notes": "Runs monthly. Retention configurable per plan (default 90 days hot; drop older partitions)."
+    }
+  ]
+}

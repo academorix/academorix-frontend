@@ -2,7 +2,7 @@
   "id": "academorix://modules/settings/middleware",
   "$version": 1,
   "title": "settings \u2014 HTTP middleware",
-  "description": "No owned middleware. Consumes foundation's + tenancy's stack.",
+  "description": "No owned middleware. Consumes foundation's + workspaces's stack.",
   "middleware": [],
   "consumed": [
     {"middleware": "foundation::request.id"},
@@ -10,7 +10,7 @@
     {"middleware": "foundation::auth:sanctum", "notes": "Bypassed for public-flagged groups on GET only."},
     {"middleware": "foundation::throttle"},
     {"middleware": "foundation::response.envelope"},
-    {"middleware": "tenancy::tenant.resolve"},
+    {"middleware": "workspaces::workspace.resolve"},
     {"middleware": "versioning::versioning.resolve"}
   ]
 }

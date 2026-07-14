@@ -2,13 +2,13 @@
   "id": "academorix://modules/webhook/listeners",
   "$version": 1,
   "title": "webhook \u2014 subscribed events",
-  "description": "Subscribes to foundation lifecycle + tenancy suspension + versioning sunset events.",
+  "description": "Subscribes to foundation lifecycle + workspaces suspension + versioning sunset events.",
   "listeners": [
     {"event": "foundation::ApplicationBooted", "listener": "Academorix\\Webhook\\Listeners\\WarmRegistries", "queue": null, "purpose": "Load WebhookRegistry + WebhookDestinationRegistry from compiled cache at boot. Cold-cache rebuild uses build-time compiler artefact."},
     {"event": "foundation::ConfigReloaded", "listener": "Academorix\\Webhook\\Listeners\\ReloadRegistries", "queue": null, "purpose": "Rebuild registries on config hot-reload."},
     {"event": "foundation::ModuleBooted", "listener": "Academorix\\Webhook\\Listeners\\ScanModuleWebhookEvents", "queue": null, "purpose": "When a module boots, walk its declared classes for #[AsWebhookEvent] + #[AsWebhookDestination] attributes and register with the respective registries. Complements build-time compiler for dev-mode hot module loading."},
-    {"event": "tenancy::TenantSuspended", "listener": "Academorix\\Webhook\\Listeners\\PauseSubscriptionsForTenant", "queue": "notifications", "purpose": "Transitions every active subscription for the tenant to state=disabled with reason=tenant_suspended. Resumes are manual on unsuspension \u2014 tenant admins must actively re-enable each subscription to prove they've reviewed integrations."},
-    {"event": "tenancy::TenantUnsuspended", "listener": "Academorix\\Webhook\\Listeners\\NotifyTenantSubscriptionsPaused", "queue": "notifications", "purpose": "On unsuspension, notify tenant admin that N subscriptions were auto-disabled during suspension + require manual re-enable. Does NOT auto-resume."},
+    {"event": "workspaces::WorkspaceSuspended", "listener": "Academorix\\Webhook\\Listeners\\PauseSubscriptionsForWorkspace", "queue": "notifications", "purpose": "Transitions every active subscription for the workspace to state=disabled with reason=workspace_suspended. Resumes are manual on unsuspension \u2014 workspace admins must actively re-enable each subscription to prove they've reviewed integrations."},
+    {"event": "workspaces::WorkspaceUnsuspended", "listener": "Academorix\\Webhook\\Listeners\\NotifyWorkspaceSubscriptionsPaused", "queue": "notifications", "purpose": "On unsuspension, notify workspace admin that N subscriptions were auto-disabled during suspension + require manual re-enable. Does NOT auto-resume."},
     {"event": "versioning::ApiVersionSunset", "listener": "Academorix\\Webhook\\Listeners\\AutoUpgradePinnedSubscriptions", "queue": "notifications-critical", "purpose": "Dispatches AutoUpgradePinnedSubscriptionsJob \u2014 for each subscription with api_version = sunset slug: if migration_target_slug set, upgrade + fire WebhookSubscriptionUpgraded; else, disable with reason=api_version_sunset + fire WebhookSubscriptionDisabled + notify admin."},
     {"event": "versioning::PayloadTransformerRegistered", "listener": "Academorix\\Webhook\\Listeners\\InvalidateSubscriptionCache", "queue": null, "purpose": "Registry change may unblock previously-failing chains. Invalidate the per-subscription transformer cache so next dispatch re-resolves."}
   ]

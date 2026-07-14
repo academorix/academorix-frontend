@@ -1,0 +1,14 @@
+{
+  "id": "academorix://modules/search/health",
+  "$version": 1,
+  "title": "search \u2014 health probes",
+  "probes": [
+    {"name": "search-registry-warm",       "class": "Academorix\\Search\\Health\\Probes\\RegistryWarmProbe",       "category": "startup",   "critical": true,  "description": "SearchIndex registry loaded on ApplicationBooted from #[Searchable] discovery.", "timeoutMs": 100},
+    {"name": "search-engines-reachable",   "class": "Academorix\\Search\\Health\\Probes\\EnginesReachableProbe",   "category": "readiness", "critical": false, "description": "Ping every configured engine (Meilisearch, PG FTS, pgvector when enabled). Non-critical \u2014 unreachable engines degrade gracefully but service stays up. Moved from foundation on Wave 6 inception.", "timeoutMs": 2000, "thresholds": {"warn_engines_down": 1, "fail_engines_down": 2}},
+    {"name": "search-sync-workers-fresh",  "class": "Academorix\\Search\\Health\\Probes\\SyncWorkersFreshProbe",   "category": "readiness", "critical": false, "description": "At least one SearchSyncJob reached terminal state within the last N hours. Warns when search-queue workers stalled fleet-wide.", "timeoutMs": 500, "thresholds": {"warn_hours": 6, "fail_hours": 24}},
+    {"name": "search-stalled-jobs",        "class": "Academorix\\Search\\Health\\Probes\\StalledJobsProbe",        "category": "readiness", "critical": false, "description": "No SyncJob in running with last_progress_at > stale threshold. Signals worker crash or stuck reindex.", "timeoutMs": 500, "thresholds": {"warn_count": 3, "fail_count": 20}},
+    {"name": "search-config-drift",        "class": "Academorix\\Search\\Health\\Probes\\ConfigDriftProbe",        "category": "readiness", "critical": false, "description": "Compares live SearchIndex.config_hash values against compiled hashes. Non-zero drift = deploy shipped #[SearchField] changes without a follow-up reindex.", "timeoutMs": 500, "thresholds": {"warn_count": 1, "fail_count": 5}},
+    {"name": "search-index-document-count-drift", "class": "Academorix\\Search\\Health\\Probes\\DocumentCountDriftProbe", "category": "readiness", "critical": false, "description": "Compares SearchIndex.document_count against source table row count. Divergence beyond threshold means indexing pipeline is losing writes.", "timeoutMs": 2000, "thresholds": {"warn_diff_percent": 5, "fail_diff_percent": 20}},
+    {"name": "search-alias-consistency",   "class": "Academorix\\Search\\Health\\Probes\\AliasConsistencyProbe",   "category": "readiness", "critical": false, "description": "Verifies every SearchIndex.live_alias points at an existing physical index at the engine. Catches drift from manual engine-side ops.", "timeoutMs": 2000}
+  ]
+}

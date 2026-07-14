@@ -9,8 +9,8 @@
       "purpose": "Send an SMS via the configured provider.",
       "steps": [
         "Load Notification + resolve template for (category, channel=sms, locale).",
-        "Check SmsOptOutRegistry::isOptedOut(phone, tenant_id). If opted out: state=permanently_failed, error=OPTED_OUT.",
-        "Check cost-cap: SmsCostCalculator::wouldExceedCap(tenant, phone_country_code). If yes: state=permanently_failed, error=COST_CAP_EXCEEDED.",
+        "Check SmsOptOutRegistry::isOptedOut(phone, workspace_id). If opted out: state=permanently_failed, error=OPTED_OUT.",
+        "Check cost-cap: SmsCostCalculator::wouldExceedCap(workspace, phone_country_code). If yes: state=permanently_failed, error=COST_CAP_EXCEEDED.",
         "Render body via Blade (SMS templates are plain-text; no MJML).",
         "Truncate to 160 GSM-7 chars OR 70 UCS-2 chars per segment. Warn if > 3 segments.",
         "Resolve provider driver via SmsTransportManager.",
@@ -49,17 +49,17 @@
       "shouldQueue": true,
       "shouldBeUnique": true,
       "uniqueFor": 60,
-      "uniqueVia": "(tenant_id, phone)",
+      "uniqueVia": "(workspace_id, phone)",
       "tries": 3
     },
     {
       "class": "Academorix\\Notifications\\Sms\\Jobs\\GenerateSmsCostReportJob",
       "queue": "notifications",
-      "purpose": "Monthly SMS cost report per tenant. Aggregates cost_micro_units by destination country + provider. Emailed to tenant admins on the 1st of each month.",
+      "purpose": "Monthly SMS cost report per workspace. Aggregates cost_micro_units by destination country + provider. Emailed to workspace admins on the 1st of each month.",
       "shouldQueue": true,
       "shouldBeUnique": true,
       "uniqueFor": 86400,
-      "uniqueVia": "(tenant_id, month)",
+      "uniqueVia": "(workspace_id, month)",
       "tries": 2
     }
   ]

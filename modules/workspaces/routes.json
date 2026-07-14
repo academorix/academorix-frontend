@@ -1,0 +1,145 @@
+{
+  "id": "academorix://modules/workspaces/routes",
+  "$version": 1,
+  "title": "workspaces — HTTP routes",
+  "description": "HTTP route contract grouped by host audience. The central `ModuleRouteLoader` (in foundation) reads this file and mounts each group under the correct middleware stack. Host discrimination is done by `resolve.workspace` middleware which reads the request Host header against the resolved Application row.",
+  "prefixes": {
+    "api": "/api",
+    "v1": "/api/v1",
+    "platform": "/api/v1/platform"
+  },
+  "groups": [
+    {
+      "id": "workspace-context",
+      "host": "workspace",
+      "middleware": ["api", "resolve.workspace"],
+      "description": "Public workspace context — no authentication required. Serves the branding preview so the sign-in form can theme itself before a session exists.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/current-workspace",
+          "name": "workspaces.current",
+          "action": "Academorix\\Workspaces\\Controllers\\Workspace\\CurrentWorkspaceController@show",
+          "returns": "WorkspaceData",
+          "description": "Resolves the workspace from the request host and returns its public preview (branding, name, slug, business type). Public — no auth."
+        }
+      ]
+    },
+    {
+      "id": "workspace-authenticated",
+      "host": "workspace",
+      "middleware": ["api", "resolve.workspace", "auth:sanctum", "workspace.user"],
+      "description": "Authenticated workspace reads + workspace-scoped self-service (domains, branding, contacts, integrations).",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/v1/me/workspaces",
+          "name": "workspaces.me.workspaces",
+          "action": "Academorix\\Workspaces\\Controllers\\Workspace\\MyWorkspacesController@index",
+          "returns": "DataCollection<MyWorkspaceEntryData>",
+          "description": "Every workspace the caller belongs to. Filtered by the caller's email (not by workspace_id) so cross-workspace members see the full list. Staff-only memberships are flagged and hidden from the family-facing switcher by default."
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/current-workspace",
+          "name": "workspaces.current.update",
+          "action": "Academorix\\Workspaces\\Controllers\\Workspace\\CurrentWorkspaceController@update",
+          "policy": "WorkspacePolicy@updateOwn",
+          "accepts": "UpdateOwnWorkspaceData",
+          "returns": "WorkspaceData"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/workspace/domains",
+          "name": "workspaces.workspace.domains.index",
+          "action": "Academorix\\Workspaces\\Controllers\\Workspace\\DomainController@index",
+          "policy": "DomainPolicy@viewAny",
+          "returns": "PaginatedResource<DomainData>"
+        },
+        {"method": "POST", "path": "/api/v1/workspace/domains", "name": "workspaces.workspace.domains.store", "action": "Academorix\\Workspaces\\Controllers\\Workspace\\DomainController@store", "policy": "DomainPolicy@create", "accepts": "CreateDomainData", "returns": "DomainData"},
+        {"method": "GET", "path": "/api/v1/workspace/domains/{domain}", "name": "workspaces.workspace.domains.show", "action": "Academorix\\Workspaces\\Controllers\\Workspace\\DomainController@show", "policy": "DomainPolicy@view", "returns": "DomainData"},
+        {"method": "PUT", "path": "/api/v1/workspace/domains/{domain}", "name": "workspaces.workspace.domains.update", "action": "Academorix\\Workspaces\\Controllers\\Workspace\\DomainController@update", "policy": "DomainPolicy@update", "accepts": "UpdateDomainData", "returns": "DomainData"},
+        {"method": "DELETE", "path": "/api/v1/workspace/domains/{domain}", "name": "workspaces.workspace.domains.destroy", "action": "Academorix\\Workspaces\\Controllers\\Workspace\\DomainController@destroy", "policy": "DomainPolicy@delete", "returns": "204"},
+        {"method": "POST", "path": "/api/v1/workspace/domains/{domain}/verify", "name": "workspaces.workspace.domains.verify", "action": "Academorix\\Workspaces\\Controllers\\Workspace\\DomainController@verify", "policy": "DomainPolicy@verify", "returns": "DomainData", "description": "Dispatches VerifyDomainDnsJob synchronously; response reflects the post-check state."},
+        {"method": "GET", "path": "/api/v1/workspace/brandings", "name": "workspaces.workspace.brandings.index", "action": "Academorix\\Workspaces\\Controllers\\Workspace\\BrandingController@index", "policy": "BrandingPolicy@viewAny", "returns": "PaginatedResource<BrandingData>"},
+        {"method": "POST", "path": "/api/v1/workspace/brandings", "name": "workspaces.workspace.brandings.store", "action": "Academorix\\Workspaces\\Controllers\\Workspace\\BrandingController@store", "policy": "BrandingPolicy@create", "accepts": "CreateBrandingData", "returns": "BrandingData"},
+        {"method": "GET", "path": "/api/v1/workspace/brandings/{branding}", "name": "workspaces.workspace.brandings.show", "action": "Academorix\\Workspaces\\Controllers\\Workspace\\BrandingController@show", "policy": "BrandingPolicy@view", "returns": "BrandingData"},
+        {"method": "PUT", "path": "/api/v1/workspace/brandings/{branding}", "name": "workspaces.workspace.brandings.update", "action": "Academorix\\Workspaces\\Controllers\\Workspace\\BrandingController@update", "policy": "BrandingPolicy@update", "accepts": "UpdateBrandingData", "returns": "BrandingData"},
+        {"method": "POST", "path": "/api/v1/workspace/brandings/{branding}/promote", "name": "workspaces.workspace.brandings.promote", "action": "Academorix\\Workspaces\\Controllers\\Workspace\\BrandingController@promote", "policy": "BrandingPolicy@promote", "returns": "BrandingData", "description": "Sets this Branding as the workspace's primary. Re-denormalises the Workspace.branding JSONB."},
+        {"method": "DELETE", "path": "/api/v1/workspace/brandings/{branding}", "name": "workspaces.workspace.brandings.destroy", "action": "Academorix\\Workspaces\\Controllers\\Workspace\\BrandingController@destroy", "policy": "BrandingPolicy@delete", "returns": "204"},
+        {"method": "GET", "path": "/api/v1/workspace/contacts", "name": "workspaces.workspace.contacts.index", "action": "Academorix\\Workspaces\\Controllers\\Workspace\\ContactController@index", "policy": "WorkspaceContactPolicy@viewAny", "returns": "PaginatedResource<WorkspaceContactData>"},
+        {"method": "POST", "path": "/api/v1/workspace/contacts", "name": "workspaces.workspace.contacts.store", "action": "Academorix\\Workspaces\\Controllers\\Workspace\\ContactController@store", "policy": "WorkspaceContactPolicy@create", "accepts": "CreateWorkspaceContactData", "returns": "WorkspaceContactData"},
+        {"method": "PUT", "path": "/api/v1/workspace/contacts/{contact}", "name": "workspaces.workspace.contacts.update", "action": "Academorix\\Workspaces\\Controllers\\Workspace\\ContactController@update", "policy": "WorkspaceContactPolicy@update", "accepts": "UpdateWorkspaceContactData", "returns": "WorkspaceContactData"},
+        {"method": "DELETE", "path": "/api/v1/workspace/contacts/{contact}", "name": "workspaces.workspace.contacts.destroy", "action": "Academorix\\Workspaces\\Controllers\\Workspace\\ContactController@destroy", "policy": "WorkspaceContactPolicy@delete", "returns": "204"},
+        {"method": "GET", "path": "/api/v1/workspace/integrations", "name": "workspaces.workspace.integrations.index", "action": "Academorix\\Workspaces\\Controllers\\Workspace\\IntegrationController@index", "policy": "WorkspaceIntegrationPolicy@viewAny", "returns": "PaginatedResource<WorkspaceIntegrationData>", "gatedBy": "workspaces.manage_integrations", "note": "v2 only. In v1 the controller returns 501 unless the caller carries the manage_integrations permission."}
+      ]
+    },
+    {
+      "id": "central-public",
+      "host": "central",
+      "middleware": ["api", "platform.domain", "throttle:global"],
+      "description": "Central host (workspace picker + self-serve). Hard-refuses workspace subdomains via `platform.domain`.",
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/workspaces/register",
+          "name": "workspaces.register",
+          "action": "Academorix\\Workspaces\\Controllers\\Central\\RegisterWorkspaceController@store",
+          "accepts": "RegisterWorkspaceData",
+          "returns": "{ workspace: WorkspaceData, owner: UserData }",
+          "description": "Self-serve workspace creation. Provisions Workspace + default Organization + default Branch + default Region + owner User inside one DB transaction, then dispatches WorkspaceProvisioned on commit."
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/find-workspaces",
+          "name": "workspaces.find_workspaces",
+          "action": "Academorix\\Workspaces\\Controllers\\Central\\FindWorkspacesController@store",
+          "accepts": "FindWorkspacesData",
+          "returns": "{ message: string }",
+          "description": "Email-your-workspace-list recovery. Always 200 (anti-enumeration). Delegates the mail to the user module."
+        }
+      ]
+    },
+    {
+      "id": "platform-admin",
+      "host": "platform-admin",
+      "middleware": ["api", "auth:sanctum", "platform.user", "api.version"],
+      "description": "Platform-admin CRUD over every entity in this module.",
+      "routes": [
+        {"method": "GET", "path": "/api/v1/applications", "name": "platform.applications.index", "action": "Academorix\\Workspaces\\Controllers\\Platform\\ApplicationController@index", "policy": "ApplicationPolicy@viewAny", "returns": "PaginatedResource<ApplicationData>"},
+        {"method": "POST", "path": "/api/v1/applications", "name": "platform.applications.store", "action": "Academorix\\Workspaces\\Controllers\\Platform\\ApplicationController@store", "policy": "ApplicationPolicy@create", "accepts": "CreateApplicationData", "returns": "ApplicationData"},
+        {"method": "GET", "path": "/api/v1/applications/{application}", "name": "platform.applications.show", "action": "Academorix\\Workspaces\\Controllers\\Platform\\ApplicationController@show", "policy": "ApplicationPolicy@view", "returns": "ApplicationData"},
+        {"method": "PUT", "path": "/api/v1/applications/{application}", "name": "platform.applications.update", "action": "Academorix\\Workspaces\\Controllers\\Platform\\ApplicationController@update", "policy": "ApplicationPolicy@update", "accepts": "UpdateApplicationData", "returns": "ApplicationData"},
+        {"method": "DELETE", "path": "/api/v1/applications/{application}", "name": "platform.applications.destroy", "action": "Academorix\\Workspaces\\Controllers\\Platform\\ApplicationController@destroy", "policy": "ApplicationPolicy@delete", "returns": "204"},
+
+        {"method": "GET", "path": "/api/v1/workspaces", "name": "platform.workspaces.index", "action": "Academorix\\Workspaces\\Controllers\\Platform\\WorkspaceController@index", "policy": "WorkspacePolicy@viewAny", "returns": "PaginatedResource<WorkspaceData>"},
+        {"method": "POST", "path": "/api/v1/workspaces", "name": "platform.workspaces.store", "action": "Academorix\\Workspaces\\Controllers\\Platform\\WorkspaceController@store", "policy": "WorkspacePolicy@create", "accepts": "CreateWorkspaceData", "returns": "WorkspaceData"},
+        {"method": "GET", "path": "/api/v1/workspaces/{workspace}", "name": "platform.workspaces.show", "action": "Academorix\\Workspaces\\Controllers\\Platform\\WorkspaceController@show", "policy": "WorkspacePolicy@view", "returns": "WorkspaceData"},
+        {"method": "PUT", "path": "/api/v1/workspaces/{workspace}", "name": "platform.workspaces.update", "action": "Academorix\\Workspaces\\Controllers\\Platform\\WorkspaceController@update", "policy": "WorkspacePolicy@update", "accepts": "UpdateWorkspaceData", "returns": "WorkspaceData"},
+        {"method": "DELETE", "path": "/api/v1/workspaces/{workspace}", "name": "platform.workspaces.destroy", "action": "Academorix\\Workspaces\\Controllers\\Platform\\WorkspaceController@destroy", "policy": "WorkspacePolicy@delete", "returns": "204"},
+        {"method": "POST", "path": "/api/v1/workspaces/{workspace}/suspend", "name": "platform.workspaces.suspend", "action": "Academorix\\Workspaces\\Controllers\\Platform\\WorkspaceController@suspend", "policy": "WorkspacePolicy@suspend", "accepts": "SuspendWorkspaceData", "returns": "WorkspaceData"},
+        {"method": "POST", "path": "/api/v1/workspaces/{workspace}/resume", "name": "platform.workspaces.resume", "action": "Academorix\\Workspaces\\Controllers\\Platform\\WorkspaceController@resume", "policy": "WorkspacePolicy@resume", "returns": "WorkspaceData"},
+        {"method": "POST", "path": "/api/v1/workspaces/{workspace}/archive", "name": "platform.workspaces.archive", "action": "Academorix\\Workspaces\\Controllers\\Platform\\WorkspaceController@archive", "policy": "WorkspacePolicy@archive", "returns": "WorkspaceData"},
+
+        {"method": "GET", "path": "/api/v1/business-types", "name": "platform.business_types.index", "action": "Academorix\\Workspaces\\Controllers\\Platform\\BusinessTypeController@index", "returns": "DataCollection<BusinessTypeData>", "description": "Read is public (not gated by policy) so the self-serve picker + workspace picker can use it. Mutations are policy-gated."},
+        {"method": "POST", "path": "/api/v1/business-types", "name": "platform.business_types.store", "action": "Academorix\\Workspaces\\Controllers\\Platform\\BusinessTypeController@store", "policy": "BusinessTypePolicy@create", "accepts": "CreateBusinessTypeData", "returns": "BusinessTypeData"},
+        {"method": "PUT", "path": "/api/v1/business-types/{key}", "name": "platform.business_types.update", "action": "Academorix\\Workspaces\\Controllers\\Platform\\BusinessTypeController@update", "policy": "BusinessTypePolicy@update", "accepts": "UpdateBusinessTypeData", "returns": "BusinessTypeData"},
+
+        {"method": "GET", "path": "/api/v1/domains", "name": "platform.domains.index", "action": "Academorix\\Workspaces\\Controllers\\Platform\\DomainController@index", "policy": "DomainPolicy@viewAny", "returns": "PaginatedResource<DomainData>"},
+        {"method": "GET", "path": "/api/v1/domains/{domain}", "name": "platform.domains.show", "action": "Academorix\\Workspaces\\Controllers\\Platform\\DomainController@show", "policy": "DomainPolicy@view", "returns": "DomainData"},
+        {"method": "PUT", "path": "/api/v1/domains/{domain}", "name": "platform.domains.update", "action": "Academorix\\Workspaces\\Controllers\\Platform\\DomainController@update", "policy": "DomainPolicy@update", "accepts": "UpdateDomainData", "returns": "DomainData"},
+        {"method": "DELETE", "path": "/api/v1/domains/{domain}", "name": "platform.domains.destroy", "action": "Academorix\\Workspaces\\Controllers\\Platform\\DomainController@destroy", "policy": "DomainPolicy@delete", "returns": "204"},
+
+        {"method": "GET", "path": "/api/v1/brandings", "name": "platform.brandings.index", "action": "Academorix\\Workspaces\\Controllers\\Platform\\BrandingController@index", "policy": "BrandingPolicy@viewAny", "returns": "PaginatedResource<BrandingData>"},
+
+        {"method": "GET", "path": "/api/v1/identities", "name": "platform.identities.index", "action": "Academorix\\Workspaces\\Controllers\\Platform\\IdentityController@index", "policy": "IdentityPolicy@viewAny", "returns": "PaginatedResource<IdentityData>", "description": "Read-only from the admin — Identity mutations happen via the user module."},
+        {"method": "GET", "path": "/api/v1/identities/{identity}", "name": "platform.identities.show", "action": "Academorix\\Workspaces\\Controllers\\Platform\\IdentityController@show", "policy": "IdentityPolicy@view", "returns": "IdentityData"},
+
+        {"method": "GET", "path": "/api/v1/workspace-contacts", "name": "platform.workspace_contacts.index", "action": "Academorix\\Workspaces\\Controllers\\Platform\\WorkspaceContactController@index", "policy": "WorkspaceContactPolicy@viewAny", "returns": "PaginatedResource<WorkspaceContactData>"},
+        {"method": "POST", "path": "/api/v1/workspace-contacts", "name": "platform.workspace_contacts.store", "action": "Academorix\\Workspaces\\Controllers\\Platform\\WorkspaceContactController@store", "policy": "WorkspaceContactPolicy@create", "accepts": "CreateWorkspaceContactData", "returns": "WorkspaceContactData"},
+
+        {"method": "GET", "path": "/api/v1/workspace-integrations", "name": "platform.workspace_integrations.index", "action": "Academorix\\Workspaces\\Controllers\\Platform\\WorkspaceIntegrationController@index", "policy": "WorkspaceIntegrationPolicy@viewAny", "returns": "PaginatedResource<WorkspaceIntegrationData>", "note": "v2 — read is stubbed in v1."}
+      ]
+    }
+  ]
+}

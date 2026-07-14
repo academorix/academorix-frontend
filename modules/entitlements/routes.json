@@ -1,0 +1,34 @@
+{
+  "id": "academorix://modules/entitlements/routes",
+  "$version": 1,
+  "title": "entitlements \u2014 HTTP routes",
+  "description": "Workspace-facing read surface (workspace sees own quotas) + platform-admin override + reset surface.",
+  "groups": [
+    {
+      "name": "workspace-entitlements",
+      "prefix": "/api/v1/entitlements",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "workspace.resolve", "throttle:foundation-base", "response.envelope"],
+      "hosts": ["workspace"],
+      "description": "Read-only. Workspace admins see their own quotas. Also embedded in /auth/me.data.quota_summary.",
+      "routes": [
+        {"method": "GET", "path": "/", "controller": "Academorix\\Entitlements\\Http\\Controllers\\Workspace\\EntitlementController@index", "permission": "entitlements.viewAny"},
+        {"method": "GET", "path": "/{key}", "controller": "Academorix\\Entitlements\\Http\\Controllers\\Workspace\\EntitlementController@show", "permission": "entitlements.view", "description": "Detail for one entitlement key including remaining + reset time."},
+        {"method": "GET", "path": "/{key}/usage", "controller": "Academorix\\Entitlements\\Http\\Controllers\\Workspace\\EntitlementController@usage", "permission": "entitlements.view", "description": "Aggregate usage over time. Powers usage-chart widget. filter[bucket]=day|hour|month."}
+      ]
+    },
+    {
+      "name": "platform-entitlements",
+      "prefix": "/api/v1/platform/entitlements",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:platform_admin", "throttle:foundation-platform", "response.envelope"],
+      "hosts": ["central_admin"],
+      "description": "Cross-workspace inspection + override management.",
+      "routes": [
+        {"method": "GET", "path": "/", "controller": "Academorix\\Entitlements\\Http\\Controllers\\Platform\\EntitlementController@index", "permission": "platform.entitlements.viewAny"},
+        {"method": "GET", "path": "/{workspace}/{key}", "controller": "Academorix\\Entitlements\\Http\\Controllers\\Platform\\EntitlementController@show", "permission": "platform.entitlements.view"},
+        {"method": "PATCH", "path": "/{workspace}/{key}", "controller": "Academorix\\Entitlements\\Http\\Controllers\\Platform\\EntitlementController@override", "permission": "platform.entitlements.override", "description": "Body: { value_cap, is_unlimited, notes }. Sets is_platform_overridden=true so it survives plan syncs."},
+        {"method": "POST", "path": "/{workspace}/reset/{key}", "controller": "Academorix\\Entitlements\\Http\\Controllers\\Platform\\EntitlementController@reset", "permission": "platform.entitlements.reset", "description": "Force reset value_used to 0 for a pool. Used for support credits."},
+        {"method": "POST", "path": "/{workspace}/sync-plan", "controller": "Academorix\\Entitlements\\Http\\Controllers\\Platform\\EntitlementController@syncPlan", "permission": "platform.entitlements.sync", "description": "Force re-sync from Plan.default_entitlements. Dispatches SyncEntitlementsFromPlanJob."}
+      ]
+    }
+  ]
+}

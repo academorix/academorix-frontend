@@ -1,0 +1,11 @@
+{
+  "id": "academorix://modules/entitlements/entitlements",
+  "$version": 1,
+  "title": "entitlements \u2014 meta entitlements about the entitlement platform itself",
+  "description": "Very small \u2014 the entitlements platform is infrastructure. Only meta-quotas around usage-history retention length.",
+  "reference": {"publishedBy": "entitlements", "seededFrom": "BusinessType.default_config.entitlements"},
+  "kinds": [{"kind": "slot"}],
+  "entitlements": [
+    {"key": "entitlements.usage_history.retention_days", "kind": "slot", "unit": "days", "defaultsByPlan": {"free": 30, "team": 90, "enterprise": 365}, "description": "How many days of EntitlementUsage history retained hot. Longer plans keep more audit + charting data."}
+  ]
+}

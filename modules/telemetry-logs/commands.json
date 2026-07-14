@@ -1,0 +1,10 @@
+{
+  "id": "academorix://modules/telemetry-logs/commands",
+  "$version": 1,
+  "title": "telemetry-logs \u2014 Artisan commands",
+  "commands": [
+    {"signature": "logs:describe {--module=} {--channel=}", "class": "Academorix\\TelemetryLogs\\Console\\Commands\\DescribeCommand", "purpose": "Print LogContextRegistry: every #[AsLogContext] enricher discovered, grouped by module + class. Also lists active channels."},
+    {"signature": "logs:tail {channel=default} {--level=debug}", "class": "Academorix\\TelemetryLogs\\Console\\Commands\\TailCommand", "purpose": "Tail structured logs from the local file sink with JSON pretty-printing. Dev-only."},
+    {"signature": "logs:test-emit {--channel=default} {--level=info}", "class": "Academorix\\TelemetryLogs\\Console\\Commands\\TestEmitCommand", "purpose": "Emit a synthetic log record. Verifies the pipeline end-to-end \u2014 including trace_id enrichment when telemetry-otel is active."}
+  ]
+}

@@ -6,7 +6,7 @@
   "reference": {
     "publishedBy": "entitlements",
     "resolvedBy": "GET /api/auth/me → data.quota_summary + GET /api/v1/entitlements",
-    "seededFrom": "BusinessType.default_config.entitlements (per tenancy)"
+    "seededFrom": "BusinessType.default_config.entitlements (per workspaces)"
   },
   "kinds": [
     {"kind": "slot", "description": "Countable slots (e.g. `athletes.max=100`). Consumed one-per-row. Refused with 402 when at cap."},

@@ -6,7 +6,7 @@
   "instrumentation": "open-telemetry/sdk",
   "namespace": "academorix.versioning",
   "labelConventions": {
-    "always": ["tenant_id"],
+    "always": ["workspace_id"],
     "commonlyAvailable": ["version_slug", "surface", "resolver", "state"],
     "forbiddenAsLabels": ["user_id", "email"]
   },

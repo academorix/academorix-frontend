@@ -47,7 +47,7 @@
       "WebhookDelivery.updated_at"
     ],
     "internal": [
-      "WebhookSubscription.tenant_id",
+      "WebhookSubscription.workspace_id",
       "WebhookSubscription.application_id",
       "WebhookSubscription.destination_config",
       "WebhookSubscription.backoff_config",
@@ -57,7 +57,7 @@
       "WebhookSubscription.metadata",
       "WebhookSubscription.secret_previous_expires_at",
       "WebhookDelivery.subscription_id",
-      "WebhookDelivery.tenant_id",
+      "WebhookDelivery.workspace_id",
       "WebhookDelivery.payload_bytes",
       "WebhookDelivery.request_url",
       "WebhookDelivery.request_headers",

@@ -3,7 +3,7 @@
   "$version": 1,
   "title": "notifications-sms \u2014 scheduled tasks",
   "entries": [
-    {"name": "sms-monthly-cost-report", "command": "notifications:sms:cost-report --month=previous", "cron": "0 8 1 * *", "timezone": "UTC", "purpose": "Monthly 1st @ 08 UTC: generate + email SMS cost report to tenant admins."},
+    {"name": "sms-monthly-cost-report", "command": "notifications:sms:cost-report --month=previous", "cron": "0 8 1 * *", "timezone": "UTC", "purpose": "Monthly 1st @ 08 UTC: generate + email SMS cost report to workspace admins."},
     {"name": "sms-opt-out-cleanup-expired", "command": "notifications:sms:opt-out-cleanup-expired", "cron": "30 3 * * *", "timezone": "UTC", "purpose": "Daily 03:30 UTC: soft-delete expired invalid_number opt-outs (30d recheck window)."}
   ]
 }

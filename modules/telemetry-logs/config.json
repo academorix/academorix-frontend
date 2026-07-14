@@ -1,0 +1,46 @@
+{
+  "id": "academorix://modules/telemetry-logs/config",
+  "$version": 1,
+  "title": "telemetry-logs \u2014 developer configuration",
+  "configFile": "config/telemetry-logs.php",
+  "envPrefix": "LOG_",
+  "sections": {
+    "default_channel": {"keys": [
+      {"path": "telemetry-logs.default_channel", "type": "string", "env": "LOG_CHANNEL", "default": "stack", "description": "Framework logging channel. Falls back when no #[AsLogChannel] attribute on the calling class."}
+    ]},
+    "sinks": {"keys": [
+      {"path": "telemetry-logs.sinks.stdout.enabled", "type": "bool", "env": "LOG_STDOUT_ENABLED", "default": true},
+      {"path": "telemetry-logs.sinks.file.enabled", "type": "bool", "env": "LOG_FILE_ENABLED", "default": true},
+      {"path": "telemetry-logs.sinks.file.path", "type": "string", "default": "storage/logs/academorix.log"},
+      {"path": "telemetry-logs.sinks.file.days", "type": "int", "default": 14},
+      {"path": "telemetry-logs.sinks.loki.enabled", "type": "bool", "env": "LOG_LOKI_ENABLED", "default": false},
+      {"path": "telemetry-logs.sinks.loki.endpoint", "type": "string", "env": "LOKI_ENDPOINT", "description": "http(s)://loki:3100"},
+      {"path": "telemetry-logs.sinks.loki.workspace_id", "type": "string", "env": "LOKI_WORKSPACE_ID", "description": "X-Scope-OrgID header for multi-workspace Loki."},
+      {"path": "telemetry-logs.sinks.datadog.enabled", "type": "bool", "env": "LOG_DATADOG_ENABLED", "default": false},
+      {"path": "telemetry-logs.sinks.datadog.api_key", "type": "string", "env": "DATADOG_API_KEY"},
+      {"path": "telemetry-logs.sinks.datadog.site", "type": "string", "env": "DATADOG_SITE", "default": "datadoghq.com"}
+    ]},
+    "redact": {"keys": [
+      {"path": "telemetry-logs.redact.keys", "type": "array", "default": ["password", "password_confirmation", "secret", "token", "api_key", "credit_card", "card_number", "cvv", "ssn", "authorization", "cookie", "x-api-key", "private_key"]},
+      {"path": "telemetry-logs.redact.patterns", "type": "array", "default": [
+        {"name": "credit_card", "regex": "\\b(?:\\d[ -]*?){13,19}\\b", "replacement": "[REDACTED_CARD]"},
+        {"name": "ssn_us", "regex": "\\b\\d{3}-\\d{2}-\\d{4}\\b", "replacement": "[REDACTED_SSN]"},
+        {"name": "iban", "regex": "[A-Z]{2}\\d{2}[A-Z0-9]{4,30}", "replacement": "[REDACTED_IBAN]"}
+      ]},
+      {"path": "telemetry-logs.redact.pii_in_dev", "type": "bool", "env": "LOG_REDACT_PII_IN_DEV", "default": false},
+      {"path": "telemetry-logs.redact.ip_in_production", "type": "bool", "env": "LOG_REDACT_IP_IN_PROD", "default": true}
+    ]},
+    "sampling": {"keys": [
+      {"path": "telemetry-logs.sampling.debug_ratio", "type": "float", "default": 0.1, "description": "Fraction of debug records kept when sampling enabled."},
+      {"path": "telemetry-logs.sampling.info_ratio", "type": "float", "default": 1.0, "description": "info+ never dropped by default."},
+      {"path": "telemetry-logs.sampling.warning_and_above", "type": "float", "default": 1.0, "description": "Locked at 1.0 \u2014 warnings + errors + criticals never sampled."}
+    ]},
+    "trace_correlation": {"keys": [
+      {"path": "telemetry-logs.trace_correlation.enabled", "type": "bool", "default": true},
+      {"path": "telemetry-logs.trace_correlation.keys", "type": "object", "default": {"trace_id": "trace_id", "span_id": "span_id"}, "description": "Field names in the emitted record. Different backends prefer different names \u2014 e.g. DataDog wants dd.trace_id."}
+    ]},
+    "emit_events": {"keys": [
+      {"path": "telemetry-logs.emit_events", "type": "bool", "env": "LOG_EMIT_EVENTS", "default": false, "description": "Fire LogRecordEmitted / LogPipelineErrored events. Debug builds only \u2014 adds overhead."}
+    ]}
+  }
+}

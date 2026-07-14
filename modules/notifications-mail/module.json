@@ -8,7 +8,7 @@
   "priority": 26,
   "providers": ["Academorix\\Notifications\\Mail\\Providers\\NotificationsMailServiceProvider"],
   "files": [],
-  "dependencies": ["foundation", "tenancy", "notifications"],
+  "dependencies": ["foundation", "workspaces", "notifications"],
   "extendedBy": [],
   "contributes": {
     "traits": [],
@@ -24,7 +24,7 @@
     "observers": ["MailSuppressionObserver"],
     "rules": ["valid_sender_identity", "supported_mail_provider"],
     "casts": [],
-    "views": ["notifications-mail::layouts.tenant-branded"],
+    "views": ["notifications-mail::layouts.workspace-branded"],
     "lang": ["notifications-mail"],
     "config": ["notifications-mail"],
     "macros": [],
@@ -47,13 +47,13 @@
       "description": "Public provider webhook receivers. Signature-verified per provider.",
       "routes": ["POST /webhooks/notifications/mail/{provider}"]
     },
-    "tenant": {
-      "description": "Tenant admin suppression list management.",
+    "workspace": {
+      "description": "Workspace admin suppression list management.",
       "routes": [
-        "GET /api/v1/tenant/mail-suppressions",
-        "GET /api/v1/tenant/mail-suppressions/{suppression}",
-        "POST /api/v1/tenant/mail-suppressions",
-        "DELETE /api/v1/tenant/mail-suppressions/{suppression}"
+        "GET /api/v1/workspace/mail-suppressions",
+        "GET /api/v1/workspace/mail-suppressions/{suppression}",
+        "POST /api/v1/workspace/mail-suppressions",
+        "DELETE /api/v1/workspace/mail-suppressions/{suppression}"
       ]
     }
   }

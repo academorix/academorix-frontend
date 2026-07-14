@@ -1,0 +1,271 @@
+{
+  "id": "search.resources.search-analytics.dashboard",
+  "title": "Search analytics",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/workspace/search/analytics",
+  "host": "workspace",
+  "audience": "authenticated",
+  "resource": { "module": "search", "entity": "search-analytics-event", "action": "list" },
+  "requiresPermission": "search.analytics.view",
+  "requiresFeature": "search.analytics",
+  "dataSources": [
+    {
+      "name": "summary",
+      "kind": "http.get",
+      "url": "/api/v1/search/analytics",
+      "unwrap": "data",
+      "queryParamsFromState": ["filter[from]", "filter[to]"]
+    },
+    {
+      "name": "topQueries",
+      "kind": "http.get",
+      "url": "/api/v1/search/analytics/top-queries",
+      "unwrap": "data",
+      "queryParamsFromState": ["filter[from]", "filter[to]", "filter[index]"],
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "noResults",
+      "kind": "http.get",
+      "url": "/api/v1/search/analytics/no-results",
+      "unwrap": "data",
+      "queryParamsFromState": ["filter[from]", "filter[to]", "filter[index]"],
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "indexes",
+      "kind": "http.get",
+      "url": "/api/v1/search/indexes",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-6xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Search analytics"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted" },
+                  "bindings": { "children": { "$expr": "t('search.analytics.description')" } }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "DateRange",
+                  "props": { "name": "filter", "defaultRange": "last_7_days" },
+                  "actions": {
+                    "onChange": {
+                      "kind": "data.refresh",
+                      "source": ["summary", "topQueries", "noResults"]
+                    }
+                  }
+                },
+                {
+                  "kind": "Select",
+                  "props": {
+                    "label": "Index",
+                    "name": "filter[index]",
+                    "placeholder": "All indexes"
+                  },
+                  "optionsSource": {
+                    "$ref": "indexes",
+                    "valueField": "index_name",
+                    "labelField": "index_name"
+                  },
+                  "actions": {
+                    "onChange": { "kind": "data.refresh", "source": ["topQueries", "noResults"] }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+
+        {
+          "kind": "Grid",
+          "props": { "cols": 4, "gap": 4 },
+          "children": [
+            {
+              "kind": "Card",
+              "children": [
+                {
+                  "kind": "Card.Header",
+                  "props": { "title": { "$expr": "t('search.analytics.kpi.queries')" } }
+                },
+                {
+                  "kind": "Card.Content",
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-3xl font-bold" },
+                      "bindings": { "children": { "$expr": "formatNumber(summary.query_count)" } }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "children": [
+                {
+                  "kind": "Card.Header",
+                  "props": { "title": { "$expr": "t('search.analytics.kpi.avg_latency')" } }
+                },
+                {
+                  "kind": "Card.Content",
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-3xl font-bold" },
+                      "bindings": { "children": { "$expr": "summary.avg_took_ms + ' ms'" } }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "children": [
+                {
+                  "kind": "Card.Header",
+                  "props": { "title": { "$expr": "t('search.analytics.kpi.no_results_rate')" } }
+                },
+                {
+                  "kind": "Card.Content",
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-3xl font-bold" },
+                      "bindings": {
+                        "children": { "$expr": "(summary.no_results_rate * 100).toFixed(1) + '%'" },
+                        "className": {
+                          "$expr": "summary.no_results_rate > 0.1 ? 'text-warning' : ''"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "children": [
+                {
+                  "kind": "Card.Header",
+                  "props": { "title": { "$expr": "t('search.analytics.kpi.click_through_rate')" } }
+                },
+                {
+                  "kind": "Card.Content",
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-3xl font-bold" },
+                      "bindings": {
+                        "children": {
+                          "$expr": "(summary.click_through_rate * 100).toFixed(1) + '%'"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+
+        {
+          "kind": "Grid",
+          "props": { "cols": 2, "gap": 4 },
+          "children": [
+            {
+              "kind": "Card",
+              "children": [
+                {
+                  "kind": "Card.Header",
+                  "props": {
+                    "title": { "$expr": "t('search.analytics.top_queries')" },
+                    "description": { "$expr": "t('search.analytics.top_queries_description')" }
+                  }
+                },
+                {
+                  "kind": "Card.Content",
+                  "children": [
+                    {
+                      "kind": "Table",
+                      "props": {
+                        "columns": [
+                          { "key": "sample", "label": "Query" },
+                          { "key": "count", "label": "Count", "valueFormatter": "formatNumber" },
+                          {
+                            "key": "click_through_rate",
+                            "label": "CTR",
+                            "valueFormatter": { "$expr": "(v) => (v * 100).toFixed(1) + '%'" }
+                          }
+                        ]
+                      },
+                      "bindings": { "rows": { "$ref": "topQueries" } }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "children": [
+                {
+                  "kind": "Card.Header",
+                  "props": {
+                    "title": { "$expr": "t('search.analytics.no_results')" },
+                    "description": { "$expr": "t('search.analytics.no_results_description')" }
+                  }
+                },
+                {
+                  "kind": "Card.Content",
+                  "children": [
+                    {
+                      "kind": "Table",
+                      "props": {
+                        "columns": [
+                          { "key": "sample", "label": "Query" },
+                          {
+                            "key": "count",
+                            "label": "Occurrences",
+                            "valueFormatter": "formatNumber"
+                          }
+                        ]
+                      },
+                      "bindings": { "rows": { "$ref": "noResults" } }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

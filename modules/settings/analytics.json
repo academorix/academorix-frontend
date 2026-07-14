@@ -5,9 +5,9 @@
   "sink": "segment",
   "consentTiers": ["essential", "functional", "analytics", "marketing"],
   "events": [
-    {"name": "Settings Group Viewed", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "group"]},
-    {"name": "Settings Group Updated", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "group", "field_count_changed"]},
-    {"name": "Settings Override Cleared", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "group", "field_name"]},
-    {"name": "Settings Exported", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "scope_type", "format"]}
+    {"name": "Settings Group Viewed", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "group"]},
+    {"name": "Settings Group Updated", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "group", "field_count_changed"]},
+    {"name": "Settings Override Cleared", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "group", "field_name"]},
+    {"name": "Settings Exported", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "scope_type", "format"]}
   ]
 }

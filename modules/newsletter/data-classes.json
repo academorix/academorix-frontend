@@ -11,9 +11,9 @@
       "NewsletterAudience.id", "NewsletterAudience.slug", "NewsletterAudience.name"
     ],
     "internal": [
-      "Newsletter.tenant_id", "Newsletter.sender_config", "Newsletter.brand", "Newsletter.reputation_thresholds",
+      "Newsletter.workspace_id", "Newsletter.sender_config", "Newsletter.brand", "Newsletter.reputation_thresholds",
       "NewsletterIssue.content_blocks", "NewsletterIssue.variables",
-      "NewsletterSubscription.id", "NewsletterSubscription.tenant_id", "NewsletterSubscription.newsletter_id", "NewsletterSubscription.state", "NewsletterSubscription.source", "NewsletterSubscription.tags", "NewsletterSubscription.engagement_score",
+      "NewsletterSubscription.id", "NewsletterSubscription.workspace_id", "NewsletterSubscription.newsletter_id", "NewsletterSubscription.state", "NewsletterSubscription.source", "NewsletterSubscription.tags", "NewsletterSubscription.engagement_score",
       "NewsletterAudience.expression"
     ],
     "confidential": [

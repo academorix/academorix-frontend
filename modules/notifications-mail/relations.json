@@ -2,14 +2,14 @@
   "id": "academorix://modules/notifications-mail/relations",
   "$version": 1,
   "title": "notifications-mail \u2014 model relationships",
-  "description": "One entity: MailSuppression. Relates outward to Tenant + optionally to the source NotificationDelivery that triggered the suppression.",
+  "description": "One entity: MailSuppression. Relates outward to Workspace + optionally to the source NotificationDelivery that triggered the suppression.",
   "internal": [],
   "outbound": [
     {
       "from": "MailSuppression",
       "kind": "belongsTo",
-      "to": "tenancy::Tenant",
-      "foreignKey": "tenant_id",
+      "to": "workspaces::Workspace",
+      "foreignKey": "workspace_id",
       "nullable": true,
       "description": "NULL = platform-wide suppression."
     },
@@ -23,7 +23,7 @@
     }
   ],
   "inbound": {
-    "description": "Consumers query MailSuppression via the MailSuppressionRegistry binding (`MailSuppressionRegistry::isSuppressed(email, tenant_id): bool`). No downstream FK.",
+    "description": "Consumers query MailSuppression via the MailSuppressionRegistry binding (`MailSuppressionRegistry::isSuppressed(email, workspace_id): bool`). No downstream FK.",
     "conventions": [
       "SendMailJob checks the registry before every send.",
       "The registry maintains a Redis-cached lookup (see caches.json) to avoid a DB hit per send."

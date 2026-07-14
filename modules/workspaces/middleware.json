@@ -1,0 +1,66 @@
+{
+  "id": "academorix://modules/workspaces/middleware",
+  "$version": 1,
+  "title": "workspaces — HTTP middleware",
+  "description": "HTTP middleware this module registers. Each middleware is aliased in `WorkspacesServiceProvider::boot()` via `Router::aliasMiddleware()` and composed on route groups declared in routes.json.",
+  "middleware": [
+    {
+      "alias": "resolve.workspace",
+      "class": "Academorix\\Workspaces\\Middleware\\ResolveWorkspace",
+      "priority": 40,
+      "description": "Resolves the current Application (from Host header) and, on workspace subdomains, the current Workspace. On central + platform-admin hosts it binds only the Application. On unknown hosts it 404s the request.",
+      "sideEffects": [
+        "Binds `Application` singleton into the request-scoped container (always).",
+        "Binds `Workspace` singleton (only on workspace hosts).",
+        "Fires `WorkspacesHookDispatcher::fireInit($workspace)` for every registered #[AsWorkspacesHook].",
+        "Registers a terminating hook that calls `fireEnd($workspace)` on response end for Octane symmetry."
+      ],
+      "aliases": ["workspace"]
+    },
+    {
+      "alias": "workspace.user",
+      "class": "Academorix\\Workspaces\\Middleware\\EnsureUserBelongsToWorkspace",
+      "priority": 60,
+      "description": "Refuses cross-workspace sessions. Runs AFTER `auth:sanctum` so the caller is resolved, then asserts `auth()->user()->workspace_id === resolvedWorkspace()->id`. Throws `WorkspaceException::crossWorkspaceAccess()` (400 + Alert severity) on mismatch.",
+      "requires": ["auth:sanctum", "resolve.workspace"]
+    },
+    {
+      "alias": "platform.domain",
+      "class": "Academorix\\Workspaces\\Middleware\\EnsureCentralOrPlatformDomain",
+      "priority": 20,
+      "description": "Rejects workspace subdomains on routes that must run on the central or platform-admin hosts. Prevents a self-serve register call from accidentally landing inside a workspace scope."
+    },
+    {
+      "alias": "resolve.workspace.optional",
+      "class": "Academorix\\Workspaces\\Middleware\\ResolveWorkspaceOptional",
+      "priority": 40,
+      "description": "Same as resolve.workspace but does NOT 404 when the host is unknown. Used on the public-workspace read endpoints (public branding preview, newsletter subscribe) where an anonymous request may hit a not-yet-verified custom domain.",
+      "aliases": []
+    }
+  ],
+  "delegated": {
+    "api.version": {
+      "movedTo": "modules/versioning",
+      "newAlias": "versioning.resolve",
+      "reason": "API versioning is a cross-cutting concern owned by the versioning module. This module used to ship EnforceApiVersion; now downstream routes middleware `versioning.resolve` instead. See modules/versioning/middleware.json."
+    }
+  },
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "foundation::auth:sanctum" },
+    { "middleware": "foundation::throttle" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "versioning::versioning.resolve" }
+  ],
+  "priorityOrder": [
+    "platform.domain",
+    "versioning.resolve",
+    "resolve.workspace",
+    "resolve.workspace.optional",
+    "auth:sanctum",
+    "workspace.user",
+    "platform.user",
+    "can:*"
+  ]
+}

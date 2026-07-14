@@ -1,0 +1,25 @@
+{
+  "id": "academorix://modules/telemetry-otel/traits",
+  "$version": 1,
+  "title": "telemetry-otel \u2014 trait composition",
+  "description": "Single trait \u2014 `Traceable` \u2014 for classes that expose a helper to start/stop a manual span without touching the OTel SDK. Attributes remain the primary API; the trait covers escape hatches.",
+  "owned": [
+    {
+      "trait": "Academorix\\TelemetryOtel\\Concerns\\Traceable",
+      "description": "Adds a `withSpan(string $name, callable $fn, array $attributes = [])` helper that starts a span, executes the callable, records exception on throw, and ends the span. Also exposes `currentSpan()` for reading the active span.",
+      "public": true,
+      "usedBy": [],
+      "conflicts_with": []
+    }
+  ],
+  "consumed": {
+    "keepsuit": [
+      {"trait": "Keepsuit\\LaravelOpenTelemetry\\Facades\\Tracer", "description": "Facade over the OTel Tracer. Used inside our attribute discoverers + span helpers."},
+      {"trait": "Keepsuit\\LaravelOpenTelemetry\\Facades\\Meter", "description": "Facade over the OTel Meter for counters, histograms, gauges."}
+    ],
+    "framework": []
+  },
+  "composition": {
+    "note": "This module owns no entities. Traits here are helpers for other modules opting into imperative instrumentation."
+  }
+}

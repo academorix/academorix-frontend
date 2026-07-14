@@ -2,7 +2,7 @@
   "id": "academorix://modules/foundation/jobs",
   "$version": 1,
   "title": "foundation — queued jobs",
-  "description": "One base infrastructure job. Extends `BaseJob` which auto-attaches Sentry tags + tenancy context + request_id from the dispatching request. Downstream modules use it directly (via the Searchable trait) — no per-module reimplementation. Import + export jobs previously listed here (ProcessImportBatchJob, GenerateExportJob) moved to `modules/transfer/` as of Wave 2 module inception \u2014 that module owns the full queue chain via `maatwebsite/excel`'s own `->queue()` mechanism and does not need foundation-level base jobs.",
+  "description": "One base infrastructure job. Extends `BaseJob` which auto-attaches Sentry tags + workspaces context + request_id from the dispatching request. Downstream modules use it directly (via the Searchable trait) — no per-module reimplementation. Import + export jobs previously listed here (ProcessImportBatchJob, GenerateExportJob) moved to `modules/transfer/` as of Wave 2 module inception \u2014 that module owns the full queue chain via `maatwebsite/excel`'s own `->queue()` mechanism and does not need foundation-level base jobs.",
   "defaultQueue": "default",
   "defaultConnection": "redis",
   "jobs": [

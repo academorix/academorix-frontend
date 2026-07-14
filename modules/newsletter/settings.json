@@ -12,7 +12,7 @@
       "label": "Newsletter",
       "description": "Platform defaults applied to new newsletters + reputation guardrails.",
       "icon": "newspaper",
-      "scope": "tenant",
+      "scope": "workspace",
       "public": false,
       "sortOrder": 30,
       "permission": "settings.read",

@@ -14,8 +14,8 @@
     {"entity": "SmsOptOut (reason=do_not_call_registry)", "hot": {"days": "forever"}, "purge": {"trigger": "removed from DNC upstream", "action": "soft delete + retain audit"}},
     {"entity": "SmsOptOut (reason=complaint)", "hot": {"days": 1825, "description": "5 years for TCPA evidence."}, "purge": {"trigger": "> 5 years", "action": "anonymise phone + retain row"}},
     {"entity": "SmsOptOut (reason=invalid_number)", "hot": {"days": 30, "description": "Recheck window \u2014 numbers may be reassigned by carrier."}, "purge": {"trigger": "expires_at reached", "action": "soft delete"}},
-    {"entity": "SmsOptOut (reason=manual)", "hot": {"days": "while tenant owns"}, "purge": {"trigger": "admin action", "action": "soft delete then 30d hard delete"}},
-    {"entity": "SmsOptOut (reason=spam_trap)", "hot": {"days": "forever", "description": "Platform-wide is_system=true. Not tenant-deletable."}, "purge": {"trigger": "super_admin manual", "action": "hard delete with mandatory audit"}},
+    {"entity": "SmsOptOut (reason=manual)", "hot": {"days": "while workspace owns"}, "purge": {"trigger": "admin action", "action": "soft delete then 30d hard delete"}},
+    {"entity": "SmsOptOut (reason=spam_trap)", "hot": {"days": "forever", "description": "Platform-wide is_system=true. Not workspace-deletable."}, "purge": {"trigger": "super_admin manual", "action": "hard delete with mandatory audit"}},
     {"entity": "audit_log (notifications-sms scoped)", "hot": {"days": 365}, "cold": {"days": 2555, "description": "7y for TCPA + SOC 2 evidence."}, "purge": {"trigger": "cold window exceeded", "action": "anonymise-not-delete"}}
   ]
 }

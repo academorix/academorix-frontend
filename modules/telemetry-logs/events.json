@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/telemetry-logs/events",
+  "$version": 1,
+  "title": "telemetry-logs \u2014 published events",
+  "namespace": "Academorix\\TelemetryLogs\\Events",
+  "dispatchMode": "sync",
+  "note": "For internal debugging only. The log records themselves are the primary output.",
+  "events": [
+    {"name": "LogRecordEmitted", "class": "Academorix\\TelemetryLogs\\Events\\LogRecordEmitted", "trigger": "Fired only when config('telemetry-logs.emit_events')=true (debug builds).", "queue": null, "payload": {"channel": "string", "level": "string", "message": "string"}},
+    {"name": "LogPipelineErrored", "class": "Academorix\\TelemetryLogs\\Events\\LogPipelineErrored", "trigger": "A processor or formatter threw during record processing. The offending record is dropped; error surfaces via metric.", "queue": null, "payload": {"processor": "string", "exception_class": "string", "exception_message": "string"}}
+  ]
+}

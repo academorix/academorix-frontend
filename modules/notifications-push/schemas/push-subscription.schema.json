@@ -16,7 +16,7 @@
     "model": "Academorix\\Notifications\\Push\\Models\\PushSubscription",
     "interface": "Academorix\\Notifications\\Push\\Contracts\\Data\\PushSubscriptionInterface",
     "implements": ["Academorix\\Notifications\\Push\\Contracts\\Data\\PushSubscriptionInterface"],
-    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "BelongsToApplication", "HasMetadata", "HasUserstamps", "HasAuditable", "Filterable", "SoftDeletes"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToWorkspace", "BelongsToApplication", "HasMetadata", "HasUserstamps", "HasAuditable", "Filterable", "SoftDeletes"],
     "casts": {"device_token": "DeviceTokenCast", "is_active": "boolean", "last_seen_at": "datetime", "expires_at": "datetime", "invalid_token_reported_at": "datetime", "metadata": "array"},
     "appends": ["is_stale", "is_expired"],
     "observers": ["PushSubscriptionObserver"],
@@ -28,7 +28,7 @@
     "engine": "postgres",
     "columns": {
       "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `psub_<26 chars>`."},
-      "tenant_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}},
+      "workspace_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "workspaces", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}},
       "application_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "applications", "column": "id", "onUpdate": "cascade", "onDelete": "restrict"}},
       "user_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}},
       "provider": {"type": "string", "length": 32, "nullable": false, "description": "Enum: fcm, apns, expo, onesignal."},
@@ -59,10 +59,10 @@
       {"columns": ["provider", "platform"], "unique": false, "name": "push_subscriptions_provider_index"}
     ]
   },
-  "required": ["id", "tenant_id", "application_id", "user_id", "provider", "platform", "device_token", "device_token_fingerprint", "is_active", "last_seen_at", "created_at", "updated_at"],
+  "required": ["id", "workspace_id", "application_id", "user_id", "provider", "platform", "device_token", "device_token_fingerprint", "is_active", "last_seen_at", "created_at", "updated_at"],
   "properties": {
     "id": {"type": "string", "pattern": "^psub_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "application_id": {"type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$"},
     "user_id": {"type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"},
     "provider": {"type": "string", "enum": ["fcm", "apns", "expo", "onesignal"]},

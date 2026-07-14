@@ -16,7 +16,7 @@
     "model": "Academorix\\Webhook\\Models\\WebhookSubscription",
     "interface": "Academorix\\Webhook\\Contracts\\Data\\WebhookSubscriptionInterface",
     "implements": ["Academorix\\Webhook\\Contracts\\Data\\WebhookSubscriptionInterface"],
-    "traits": ["HasFactory", "HasUlids", "HasStates", "HasSystemFlag", "BelongsToTenant", "BelongsToApplication", "HasMetadata", "HasUserstamps", "HasAuditable", "HasVersions", "Filterable", "Searchable", "SoftDeletes"],
+    "traits": ["HasFactory", "HasUlids", "HasStates", "HasSystemFlag", "BelongsToWorkspace", "BelongsToApplication", "HasMetadata", "HasUserstamps", "HasAuditable", "HasVersions", "Filterable", "Searchable", "SoftDeletes"],
     "casts": {
       "state": "WebhookSubscriptionState",
       "events": "array",
@@ -42,7 +42,7 @@
     "engine": "postgres",
     "columns": {
       "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `wsub_<26 chars>`."},
-      "tenant_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}},
+      "workspace_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "workspaces", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}},
       "application_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "applications", "column": "id", "onUpdate": "cascade", "onDelete": "restrict"}},
       "name": {"type": "string", "length": 200, "nullable": false, "description": "Human label. Powers admin listings + audit reports."},
       "description": {"type": "text", "nullable": true},
@@ -68,8 +68,8 @@
       "consecutive_failure_last_at": {"type": "timestamptz", "nullable": true, "description": "Last failure time. Used for auto-disable-threshold decision + admin diagnostics."},
       "consecutive_failure_threshold": {"type": "unsignedSmallInteger", "nullable": false, "default": 30, "description": "Auto-disable when consecutive_failure_count reaches this. Per-subscription override of global config."},
       "disabled_at": {"type": "timestamptz", "nullable": true},
-      "disabled_reason": {"type": "string", "length": 32, "nullable": true, "description": "Enum: gone_410, failure_threshold, manual, api_version_sunset, tenant_suspended."},
-      "is_system": {"type": "boolean", "nullable": false, "default": false, "description": "Platform-seeded subscriptions (e.g. audit-log receiver for compliance module). is_system=true blocks tenant-side edits."},
+      "disabled_reason": {"type": "string", "length": 32, "nullable": true, "description": "Enum: gone_410, failure_threshold, manual, api_version_sunset, workspace_suspended."},
+      "is_system": {"type": "boolean", "nullable": false, "default": false, "description": "Platform-seeded subscriptions (e.g. audit-log receiver for compliance module). is_system=true blocks workspace-side edits."},
       "metadata": {"type": "jsonb", "nullable": true},
       "created_by": {"type": "uuid", "nullable": true},
       "updated_by": {"type": "uuid", "nullable": true},
@@ -79,7 +79,7 @@
       "updated_at": {"type": "timestamptz", "nullable": false}
     },
     "indexes": [
-      {"columns": ["tenant_id", "state"], "unique": false, "name": "webhook_subscriptions_tenant_state_index", "description": "Primary read path: list active subscriptions for tenant on dispatch."},
+      {"columns": ["workspace_id", "state"], "unique": false, "name": "webhook_subscriptions_workspace_state_index", "description": "Primary read path: list active subscriptions for workspace on dispatch."},
       {"columns": ["state", "consecutive_failure_count"], "unique": false, "name": "webhook_subscriptions_failure_scan_index", "predicate": "state = 'active'", "description": "Scan for near-threshold subscriptions."},
       {"columns": ["api_version"], "unique": false, "name": "webhook_subscriptions_api_version_index"},
       {"columns": ["destination"], "unique": false, "name": "webhook_subscriptions_destination_index"},
@@ -87,10 +87,10 @@
       {"columns": ["events"], "unique": false, "name": "webhook_subscriptions_events_gin_index", "type": "GIN", "description": "GIN index on the jsonb events array. Powers WebhookEventDispatcher fanout: events @> ['invitation.sent']."}
     ]
   },
-  "required": ["id", "tenant_id", "name", "destination", "destination_config", "events", "http_verb", "state", "secret", "timeout_seconds", "max_attempts", "backoff_strategy", "verify_ssl", "compress_payload", "user_agent", "consecutive_failure_count", "consecutive_failure_threshold", "is_system", "created_at", "updated_at"],
+  "required": ["id", "workspace_id", "name", "destination", "destination_config", "events", "http_verb", "state", "secret", "timeout_seconds", "max_attempts", "backoff_strategy", "verify_ssl", "compress_payload", "user_agent", "consecutive_failure_count", "consecutive_failure_threshold", "is_system", "created_at", "updated_at"],
   "properties": {
     "id": {"type": "string", "pattern": "^wsub_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "application_id": {"type": ["string", "null"], "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$"},
     "name": {"type": "string", "maxLength": 200},
     "description": {"type": ["string", "null"]},
@@ -113,7 +113,7 @@
     "consecutive_failure_last_at": {"type": ["string", "null"], "format": "date-time"},
     "consecutive_failure_threshold": {"type": "integer", "minimum": 1, "maximum": 1000},
     "disabled_at": {"type": ["string", "null"], "format": "date-time"},
-    "disabled_reason": {"type": ["string", "null"], "enum": ["gone_410", "failure_threshold", "manual", "api_version_sunset", "tenant_suspended", null]},
+    "disabled_reason": {"type": ["string", "null"], "enum": ["gone_410", "failure_threshold", "manual", "api_version_sunset", "workspace_suspended", null]},
     "is_system": {"type": "boolean"},
     "is_active": {"type": "boolean", "description": "Computed. state === 'active'."},
     "is_paused": {"type": "boolean", "description": "Computed. state === 'paused'."},

@@ -2,19 +2,19 @@
   "id": "academorix://modules/notifications-sms/routes",
   "$version": 1,
   "title": "notifications-sms \u2014 HTTP routes",
-  "description": "Tenant admin opt-out list. Provider webhooks + STOP-keyword receiving delegated to webhook module.",
+  "description": "Workspace admin opt-out list. Provider webhooks + STOP-keyword receiving delegated to webhook module.",
   "groups": [
     {
-      "name": "tenant-opt-outs",
-      "prefix": "/api/v1/tenant/sms-opt-outs",
-      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "tenant.resolve", "throttle:foundation-base", "response.envelope"],
-      "hosts": ["tenant"],
+      "name": "workspace-opt-outs",
+      "prefix": "/api/v1/workspace/sms-opt-outs",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "workspace.resolve", "throttle:foundation-base", "response.envelope"],
+      "hosts": ["workspace"],
       "description": "Admin surface for viewing + managing SMS opt-out records.",
       "routes": [
-        {"method": "GET", "path": "/", "controller": "Academorix\\Notifications\\Sms\\Http\\Controllers\\Tenant\\SmsOptOutController@index", "permission": "notifications.sms.opt-outs.viewAny"},
-        {"method": "GET", "path": "/{opt_out}", "controller": "Academorix\\Notifications\\Sms\\Http\\Controllers\\Tenant\\SmsOptOutController@show", "permission": "notifications.sms.opt-outs.view"},
-        {"method": "POST", "path": "/", "controller": "Academorix\\Notifications\\Sms\\Http\\Controllers\\Tenant\\SmsOptOutController@store", "permission": "notifications.sms.opt-outs.create", "description": "Admin manually blocks a phone (reason=manual)."},
-        {"method": "DELETE", "path": "/{opt_out}", "controller": "Academorix\\Notifications\\Sms\\Http\\Controllers\\Tenant\\SmsOptOutController@destroy", "permission": "notifications.sms.opt-outs.delete", "description": "Revoke. Refused for stop_keyword unless super_admin + explicit re-consent evidence in body."}
+        {"method": "GET", "path": "/", "controller": "Academorix\\Notifications\\Sms\\Http\\Controllers\\Workspace\\SmsOptOutController@index", "permission": "notifications.sms.opt-outs.viewAny"},
+        {"method": "GET", "path": "/{opt_out}", "controller": "Academorix\\Notifications\\Sms\\Http\\Controllers\\Workspace\\SmsOptOutController@show", "permission": "notifications.sms.opt-outs.view"},
+        {"method": "POST", "path": "/", "controller": "Academorix\\Notifications\\Sms\\Http\\Controllers\\Workspace\\SmsOptOutController@store", "permission": "notifications.sms.opt-outs.create", "description": "Admin manually blocks a phone (reason=manual)."},
+        {"method": "DELETE", "path": "/{opt_out}", "controller": "Academorix\\Notifications\\Sms\\Http\\Controllers\\Workspace\\SmsOptOutController@destroy", "permission": "notifications.sms.opt-outs.delete", "description": "Revoke. Refused for stop_keyword unless super_admin + explicit re-consent evidence in body."}
       ]
     }
   ],

@@ -1,0 +1,14 @@
+{
+  "id": "academorix://modules/telemetry-logs/retention",
+  "$version": 1,
+  "title": "telemetry-logs \u2014 retention windows",
+  "description": "No data store owned. Retention lives with the sink (Loki, DataDog, file rotation, etc).",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5 (storage limitation \u2014 sink must comply)",
+    "gdpr Art. 30 (records of processing \u2014 workspace_id + workspace_id in log records count)"
+  ],
+  "retention": [
+    {"entity": "log records (sink-owned)", "hot": {"description": "sink-defined. Loki default 30d, DataDog default 15d free / 15 months paid, file rotation config'd via config('logging.channels.stack.days')"}},
+    {"entity": "log records (file sink, daily channel)", "hot": {"days": 14, "description": "Rotating file sink. Config: config('logging.channels.daily.days')."}, "purge": {"trigger": "> retention window", "action": "file unlink"}}
+  ]
+}

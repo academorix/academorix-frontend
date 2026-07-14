@@ -12,17 +12,17 @@
       {"trait": "Spatie\\ModelStates\\HasStates"}
     ],
     "foundation": [
-      {"trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag", "reason": "Some subscriptions are platform-seeded (e.g. audit-log receiver for compliance). is_system=true blocks tenant-side edits."},
+      {"trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag", "reason": "Some subscriptions are platform-seeded (e.g. audit-log receiver for compliance). is_system=true blocks workspace-side edits."},
       {"trait": "Academorix\\Foundation\\Concerns\\HasUserstamps"},
       {"trait": "Academorix\\Foundation\\Concerns\\HasAuditable", "reason": "Subscription creation/edit + secret rotation + state transitions audit-logged for compliance evidence."},
       {"trait": "Academorix\\Foundation\\Concerns\\HasVersions", "reason": "WebhookSubscription only \u2014 rollback for admin edits that break integrations. Delivery rows are append-only, never versioned."},
       {"trait": "Academorix\\Foundation\\Concerns\\HasMetadata"},
-      {"trait": "Academorix\\Foundation\\Concerns\\Filterable", "reason": "Admin listings filter by state, destination, event_name, tenant."},
+      {"trait": "Academorix\\Foundation\\Concerns\\Filterable", "reason": "Admin listings filter by state, destination, event_name, workspace."},
       {"trait": "Academorix\\Foundation\\Concerns\\Searchable", "reason": "Admin search by subscription name / URL."}
     ],
-    "tenancy": [
-      {"trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Subscriptions + deliveries are per-tenant. Auto-scoped queries."},
-      {"trait": "Academorix\\Tenancy\\Concerns\\BelongsToApplication", "reason": "WebhookSubscription only \u2014 per-app scoping when the subscription is app-specific."}
+    "workspaces": [
+      {"trait": "Academorix\\Workspaces\\Concerns\\BelongsToWorkspace", "reason": "Subscriptions + deliveries are per-workspace. Auto-scoped queries."},
+      {"trait": "Academorix\\Workspaces\\Concerns\\BelongsToApplication", "reason": "WebhookSubscription only \u2014 per-app scoping when the subscription is app-specific."}
     ]
   },
   "composition": {
@@ -32,7 +32,7 @@
         "HasUlids",
         "HasStates",
         "HasSystemFlag",
-        "BelongsToTenant",
+        "BelongsToWorkspace",
         "BelongsToApplication",
         "HasMetadata",
         "HasUserstamps",
@@ -49,7 +49,7 @@
         "HasFactory",
         "HasUlids",
         "HasStates",
-        "BelongsToTenant",
+        "BelongsToWorkspace",
         "HasMetadata",
         "HasUserstamps",
         "HasAuditable",

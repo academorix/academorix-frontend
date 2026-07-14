@@ -25,7 +25,7 @@ Auditor-friendly per-artefact changelog.
 - **channels** — email (mail transport), sms, slack, plain-link.
   Delivery + bounce webhooks inbound from SendGrid / SES / Postmark /
   Mailgun documented in `webhooks.json`.
-- **rate limits** — per (inviter, day) + per (tenant, day) hard caps,
+- **rate limits** — per (inviter, day) + per (workspace, day) hard caps,
   configurable via `settings.json` + enforced by
   `throttle.invitations` middleware.
 - **retention** — accepted + declined invitations retained P90D hot;

@@ -1,0 +1,122 @@
+{
+  "id": "academorix://modules/workspaces/schemas/business-type",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "BusinessType",
+  "description": "Catalogue entry that drives per-workspace defaults. NOT a database table — the `Workspace.business_type` column carries the enum key and Workspaces resolves the entry from `data/business-types.json` (seeded into `config/workspaces.php` on install). Feature toggles, terminology overrides, seeded roles, and starter entitlements all flow from this catalogue at workspace provisioning time.",
+  "type": "object",
+  "x-module": "workspaces",
+  "x-storage": {
+    "kind": "config",
+    "phpEnum": "Academorix\\Workspaces\\Enums\\BusinessType",
+    "phpEnumBacking": "string",
+    "configFile": "config/workspaces.php",
+    "configKey": "workspaces.business_types",
+    "seeder": "Academorix\\Workspaces\\Database\\Seeders\\BusinessTypeSeeder",
+    "syncCommand": "workspaces:sync-catalogue",
+    "note": "`php artisan workspaces:sync-catalogue` mirrors `data/business-types.json` into `config/workspaces.php` on every deploy so a Laravel dev never edits config directly."
+  },
+  "required": [
+    "key",
+    "label",
+    "description",
+    "default_config"
+  ],
+  "properties": {
+    "key": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "description": "Enum key. Also the value written to `workspaces.business_type`."
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human label shown on the workspace picker + admin."
+    },
+    "label_translations": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Per-locale label overrides. Keys are BCP-47 tags."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "icon": {
+      "type": "string",
+      "description": "Iconify token, e.g. `academic-cap`, `dumbbell`, `graduation-cap`, `flag`."
+    },
+    "hero_image_url": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "Optional hero shown on the self-serve `/sign-up` screen when this business type is selected."
+    },
+    "default_config": {
+      "type": "object",
+      "description": "Bag of workspace defaults applied at provisioning time.",
+      "additionalProperties": false,
+      "properties": {
+        "features": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string"},
+          "description": "Feature keys enabled by default. Consumed by the FeatureFlag module. e.g. `athletes`, `teams`, `attendance`, `scheduling`, `progress`, `competition`."
+        },
+        "terminology": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Resource-label overrides. Keys are canonical resource names (e.g. `athletes`); values are the display label for this business type (e.g. `Students` for schools, `Members` for gyms)."
+        },
+        "roles": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string"},
+          "description": "Role keys seeded on workspace provisioning. Consumed by Access. `owner` is always seeded (from Access) regardless of this list."
+        },
+        "entitlements": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "kind": {"type": "string", "enum": ["slot", "pool", "boolean", "unlimited"]},
+              "limit": {"type": ["integer", "null"], "minimum": 0},
+              "enabled": {"type": ["boolean", "null"]}
+            }
+          },
+          "description": "Starter entitlements applied at provisioning. Keyed by entitlement id (e.g. `athletes.max`, `branches.max`, `storage_gb.max`). The Subscription module overrides these once a plan is picked."
+        },
+        "onboarding_steps": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "IDs of onboarding steps surfaced to first-time owners. Consumed by the Overview dashboard's onboarding checklist widget."
+        },
+        "sports": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string"},
+          "description": "Sports (or programme) keys pre-enabled for this business type."
+        }
+      }
+    },
+    "priority": {
+      "type": "integer",
+      "default": 100,
+      "description": "Sort order on the self-serve business-type picker (ascending)."
+    },
+    "is_visible": {
+      "type": "boolean",
+      "default": true,
+      "description": "When false, the business type is hidden from the self-serve picker and can only be assigned by platform admins."
+    }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": []
+  }
+}

@@ -9,10 +9,10 @@
     {
       "name": "invitation_sent",
       "consent_tier": "essential",
-      "firesAt": "InvitationSent listener (Application-level, tenant + tenant admins)",
+      "firesAt": "InvitationSent listener (Application-level, workspace + workspace admins)",
       "properties": {
         "invitation_id": "string",
-        "tenant_id": "string|null",
+        "workspace_id": "string|null",
         "channel": "string",
         "target_type": "string",
         "role_key": "string|null",
@@ -37,7 +37,7 @@
       "firesAt": "InvitationAccepted listener",
       "properties": {
         "invitation_id": "string",
-        "tenant_id": "string|null",
+        "workspace_id": "string|null",
         "target_type": "string",
         "role_key": "string|null",
         "hours_since_sent": "number",

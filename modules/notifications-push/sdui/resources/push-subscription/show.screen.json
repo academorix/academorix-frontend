@@ -3,14 +3,14 @@
   "title": "Device detail",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/notification-subscriptions/{id}",
-  "host": "tenant",
+  "route": "/workspace/notification-subscriptions/{id}",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "notifications-push", "entity": "push-subscription", "action": "show"},
   "requiresPermission": "notifications.subscriptions.view",
   "params": [{"name": "id", "type": "string", "in": "path", "required": true}],
   "dataSources": [
-    {"name": "subscription", "kind": "http.get", "urlExpr": "'/api/v1/tenant/notification-subscriptions/' + params.id", "unwrap": "data"}
+    {"name": "subscription", "kind": "http.get", "urlExpr": "'/api/v1/workspace/notification-subscriptions/' + params.id", "unwrap": "data"}
   ],
   "nodes": [
     {
@@ -18,7 +18,7 @@
       "kind": "View",
       "props": {"className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto"},
       "children": [
-        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back to devices", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/notification-subscriptions"}}},
+        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back to devices", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/notification-subscriptions"}}},
         {"kind": "View", "props": {"className": "flex items-center gap-4"}, "children": [
           {"kind": "Widget", "widget": "notifications-push.push-platform-icon", "props": {"platform": {"$ref": "subscription.platform"}, "size": "lg"}},
           {"kind": "View", "props": {"className": "flex flex-col"}, "children": [
@@ -40,7 +40,7 @@
           ]}
         ]},
         {"kind": "Alert", "props": {"variant": "danger"}, "bindings": {"hidden": {"$expr": "subscription.is_active"}, "children": {"$expr": "'This device is expired. Reason: ' + (subscription.metadata?.expiration_reason || 'unknown')"}}},
-        {"kind": "Button", "props": {"variant": "danger", "size": "md", "leadingIcon": "trash", "children": "Revoke device"}, "actions": {"onPress": {"kind": "http.delete", "urlExpr": "'/api/v1/tenant/notification-subscriptions/' + params.id", "confirm": {"title": "Revoke this device?", "description": "Push notifications will stop on this device."}, "onSuccess": [{"kind": "toast.success", "message": "Revoked"}, {"kind": "navigate", "to": "/tenant/notification-subscriptions"}]}}}
+        {"kind": "Button", "props": {"variant": "danger", "size": "md", "leadingIcon": "trash", "children": "Revoke device"}, "actions": {"onPress": {"kind": "http.delete", "urlExpr": "'/api/v1/workspace/notification-subscriptions/' + params.id", "confirm": {"title": "Revoke this device?", "description": "Push notifications will stop on this device."}, "onSuccess": [{"kind": "toast.success", "message": "Revoked"}, {"kind": "navigate", "to": "/workspace/notification-subscriptions"}]}}}
       ]
     }
   ]

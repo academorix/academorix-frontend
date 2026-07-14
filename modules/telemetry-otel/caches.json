@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/telemetry-otel/caches",
+  "$version": 1,
+  "title": "telemetry-otel \u2014 cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["telemetry-otel"],
+  "keys": [
+    {"pattern": "otel:registry:spans", "description": "Compiled SpanRegistry map (class::method \u2192 SpanDescriptor). Warmed on boot; long-lived.", "ttlSeconds": 86400, "tags": ["telemetry-otel", "platform"], "invalidatedBy": ["foundation::ApplicationBooted", "ConfigReloaded"]},
+    {"pattern": "otel:registry:metrics", "description": "Compiled MetricRegistry map for #[AsCounter] / #[AsHistogram] / #[AsGauge] / #[AsUpDownCounter].", "ttlSeconds": 86400, "tags": ["telemetry-otel", "platform"]},
+    {"pattern": "otel:resource_attributes", "description": "Compiled Resource block sent with every export batch. Includes service.name, deployment.environment, k8s.*.", "ttlSeconds": 3600, "tags": ["telemetry-otel", "platform"]}
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "id": "subscription.resources.plan.edit",
+  "title": "Edit plan",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/plans/{plan}/edit",
+  "host": "central_admin",
+  "audience": "platform_admin",
+  "resource": {"module": "subscription", "entity": "plan", "action": "edit"},
+  "requiresPermission": "platform.plans.update",
+  "params": [{"name": "plan", "type": "string", "in": "path", "required": true}],
+  "dataSources": [
+    {"name": "plan", "kind": "http.get", "urlExpr": "'/api/v1/platform/plans/' + params.plan", "unwrap": "data"},
+    {"name": "entitlementRegistry", "kind": "http.get", "url": "/api/v1/platform/entitlements/registry", "unwrap": "data"}
+  ],
+  "form": {
+    "action": "PATCH /api/v1/platform/plans/{plan.id}",
+    "initialValuesFrom": "plan",
+    "successRedirect": "/platform/plans/{plan.id}",
+    "readOnlyFields": ["application_id", "key", "billing_mode", "provider_price_id"],
+    "fields": [
+      {"name": "name", "controlType": "text", "label": "Display name", "required": true},
+      {"name": "description", "controlType": "textarea", "label": "Description"},
+      {"name": "tier", "controlType": "select", "label": "Tier", "required": true, "options": [{"key": "free"}, {"key": "team"}, {"key": "business"}, {"key": "enterprise"}, {"key": "custom"}]},
+      {"name": "trial_days", "controlType": "number", "label": "Trial days", "min": 0, "max": 90},
+      {"name": "is_public", "controlType": "toggle", "label": "Public"},
+      {"name": "is_deprecated", "controlType": "toggle", "label": "Deprecated (no new signups)"},
+      {"name": "sort_order", "controlType": "number", "label": "Sort order"},
+      {"name": "included_features", "controlType": "tag-input", "label": "Included features"},
+      {"name": "default_entitlements", "controlType": "repeater", "label": "Default entitlements", "helpText": "Saving triggers SyncEntitlementsFromPlanJob for all subscribers.", "itemFields": [
+        {"name": "key", "controlType": "select", "bindings": {"options": {"$ref": "entitlementRegistry"}, "optionKey": "key", "optionLabel": "key"}},
+        {"name": "kind", "controlType": "select", "options": [{"key": "slot"}, {"key": "pool"}, {"key": "boolean"}, {"key": "unlimited"}]},
+        {"name": "value_cap", "controlType": "number"},
+        {"name": "period", "controlType": "select", "options": [{"key": "month"}, {"key": "year"}, {"key": "anniversary"}, {"key": "lifetime"}]}
+      ]}
+    ]
+  }
+}

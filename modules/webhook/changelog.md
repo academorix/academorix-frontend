@@ -18,7 +18,7 @@ Wave 1 shared infrastructure module. Reimplementing `stackra/laravel-webhook` sh
 
 ### Compatibility
 
-- Depends on `foundation` + `versioning` + `tenancy`.
+- Depends on `foundation` + `versioning` + `workspaces`.
 - Extended by every module that emits outbound events or receives inbound provider webhooks.
 - No breaking change surface \u2014 inception release.
 

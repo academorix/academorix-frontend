@@ -17,7 +17,7 @@
       ],
       "payload": {
         "xfer_job_id": "ULID (xfer_)",
-        "tenant_id": "ULID (ten_) | null",
+        "workspace_id": "ULID (wsp_) | null",
         "causer_type": "string",
         "causer_id": "string",
         "kind": "'import' | 'export' | 'sample'",

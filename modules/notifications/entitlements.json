@@ -23,7 +23,7 @@
       "unit": "notifications",
       "aggregatedFrom": "notifications-mail",
       "defaultsByPlan": {"free": 100, "team": 5000, "enterprise": "unlimited"},
-      "description": "Monthly outbound mail cap per tenant. Reset at UTC month boundary. Rolls forward to next month's send after 3 warning notifications when approaching cap."
+      "description": "Monthly outbound mail cap per workspace. Reset at UTC month boundary. Rolls forward to next month's send after 3 warning notifications when approaching cap."
     },
     {
       "key": "notifications.sms.month",
@@ -32,7 +32,7 @@
       "unit": "messages",
       "aggregatedFrom": "notifications-sms",
       "defaultsByPlan": {"free": 0, "team": 200, "enterprise": 5000},
-      "description": "Monthly outbound SMS cap per tenant. SMS incurs per-message cost so cap is tighter than mail."
+      "description": "Monthly outbound SMS cap per workspace. SMS incurs per-message cost so cap is tighter than mail."
     },
     {
       "key": "notifications.push.month",
@@ -49,14 +49,14 @@
       "unit": "templates",
       "aggregatedFrom": "notifications (this module)",
       "defaultsByPlan": {"free": 0, "team": 20, "enterprise": "unlimited"},
-      "description": "Max concurrent tenant-override templates. Platform defaults don't count. Reached cap \u2192 tenant must archive a template before creating another."
+      "description": "Max concurrent workspace-override templates. Platform defaults don't count. Reached cap \u2192 workspace must archive a template before creating another."
     },
     {
       "key": "notifications.digest.enabled",
       "kind": "boolean",
       "aggregatedFrom": "notifications (this module)",
       "defaultsByPlan": {"free": true, "team": true, "enterprise": true},
-      "description": "Whether digest batching is available to tenant users. Currently on for every plan; kept as an entitlement so future plans can toggle off if user-count grows unbounded on free plan."
+      "description": "Whether digest batching is available to workspace users. Currently on for every plan; kept as an entitlement so future plans can toggle off if user-count grows unbounded on free plan."
     },
     {
       "key": "notifications.retention_days",

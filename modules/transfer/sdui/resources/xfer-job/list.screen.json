@@ -3,8 +3,8 @@
   "title": "Data transfers",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/transfer/jobs",
-  "host": "tenant",
+  "route": "/workspace/transfer/jobs",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "transfer", "entity": "xfer-job", "action": "list"},
   "requiresPermission": "transfer.viewAny",
@@ -25,8 +25,8 @@
             {"kind": "Text", "props": {"className": "text-sm text-muted", "children": "Your import, export, and sample-data operations. Live-updating."}}
           ]},
           {"kind": "View", "props": {"className": "flex items-center gap-2"}, "children": [
-            {"kind": "Button", "props": {"variant": "secondary", "startIcon": "arrow-down-tray"}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/transfer/imports/new"}}, "bindings": {"children": {"$expr": "t('transfer.actions.new_import')"}, "hidden": {"$expr": "!can('transfer.imports.run')"}}},
-            {"kind": "Button", "props": {"variant": "primary",   "startIcon": "arrow-up-tray"},   "actions": {"onPress": {"kind": "navigate", "to": "/tenant/transfer/exports/new"}}, "bindings": {"children": {"$expr": "t('transfer.actions.new_export')"}, "hidden": {"$expr": "!can('transfer.exports.run')"}}}
+            {"kind": "Button", "props": {"variant": "secondary", "startIcon": "arrow-down-tray"}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/transfer/imports/new"}}, "bindings": {"children": {"$expr": "t('transfer.actions.new_import')"}, "hidden": {"$expr": "!can('transfer.imports.run')"}}},
+            {"kind": "Button", "props": {"variant": "primary",   "startIcon": "arrow-up-tray"},   "actions": {"onPress": {"kind": "navigate", "to": "/workspace/transfer/exports/new"}}, "bindings": {"children": {"$expr": "t('transfer.actions.new_export')"}, "hidden": {"$expr": "!can('transfer.exports.run')"}}}
           ]}
         ]},
         {"kind": "View", "props": {"className": "flex flex-wrap gap-3"}, "children": [

@@ -2,7 +2,7 @@
   "id": "academorix://modules/webhook/config",
   "$version": 1,
   "title": "webhook \u2014 developer configuration",
-  "description": "Deploy-static config. Mirrors `config/webhook.php`. Structure inspired by the stackra reference config with our namespace + tenant integration.",
+  "description": "Deploy-static config. Mirrors `config/webhook.php`. Structure inspired by the stackra reference config with our namespace + workspace integration.",
   "configFile": "config/webhook.php",
   "envPrefix": "WEBHOOK_",
   "sections": {

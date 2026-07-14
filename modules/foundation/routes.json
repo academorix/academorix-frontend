@@ -2,7 +2,7 @@
   "id": "academorix://modules/foundation/routes",
   "$version": 1,
   "title": "foundation — HTTP routes",
-  "description": "Three route groups. Central-public serves the platform-wide health + ping surface (no auth, minimal information disclosure). Platform-admin exposes module registry inspection + detailed health + search-index management. Tenant hosts get the same public ping/health so tenant-side load balancers can probe them.",
+  "description": "Three route groups. Central-public serves the platform-wide health + ping surface (no auth, minimal information disclosure). Platform-admin exposes module registry inspection + detailed health + search-index management. Workspace hosts get the same public ping/health so workspace-side load balancers can probe them.",
   "prefixes": {
     "api": "/api",
     "v1": "/api/v1",
@@ -11,7 +11,7 @@
   "groups": [
     {
       "id": "central-public",
-      "host": ["central", "platform-admin", "tenant"],
+      "host": ["central", "platform-admin", "workspace"],
       "middleware": ["api", "throttle:foundation-health"],
       "description": "Public health probes reachable on every host. Load balancers + Kubernetes liveness/readiness probes hit these. Never leak internal state — the /api/health endpoint returns aggregate status only; detailed probe output lives on platform-admin.",
       "routes": [

@@ -15,7 +15,7 @@
       "unwrap": "data"
     }
   ],
-  "themeFrom": "invitationPreview.tenant.branding",
+  "themeFrom": "invitationPreview.workspace.branding",
   "nodes": [
     {
       "id": "root",
@@ -33,7 +33,7 @@
               "id": "subtitle",
               "kind": "Text",
               "props": {"as": "p", "className": "text-muted text-center text-sm"},
-              "bindings": {"children": {"$expr": "'You were invited to join ' + invitationPreview.tenant.name + ' as ' + (invitationPreview.role_label || 'a member') + '. Declining is final — no further messages will be sent.'"}}
+              "bindings": {"children": {"$expr": "'You were invited to join ' + invitationPreview.workspace.name + ' as ' + (invitationPreview.role_label || 'a member') + '. Declining is final — no further messages will be sent.'"}}
             }
           ]
         },

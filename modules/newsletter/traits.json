@@ -17,21 +17,21 @@
       {"trait": "Academorix\\Foundation\\Concerns\\Filterable"},
       {"trait": "Academorix\\Foundation\\Concerns\\Searchable"}
     ],
-    "tenancy": [
-      {"trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant"}
+    "workspaces": [
+      {"trait": "Academorix\\Workspaces\\Concerns\\BelongsToWorkspace"}
     ],
     "activity": [
-      {"trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Every issue publish + campaign send surfaces in the tenant activity feed."}
+      {"trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Every issue publish + campaign send surfaces in the workspace activity feed."}
     ],
     "audit": [
       {"trait": "Academorix\\Audit\\Concerns\\HasAudit", "reason": "Subscription state changes + campaign sends carry CAN-SPAM + CASL evidence."}
     ]
   },
   "composition": {
-    "newsletter": {"traits": ["HasFactory", "HasUlids", "HasSystemFlag", "BelongsToTenant", "HasMetadata", "HasUserstamps", "HasVersions", "HasAuditable", "HasActivityLog", "Filterable", "Searchable", "SoftDeletes"]},
-    "newsletter_issue": {"traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "HasVersions", "HasActivityLog", "Filterable", "Searchable", "SoftDeletes"]},
-    "newsletter_subscription": {"traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "HasAuditable", "HasActivityLog", "Filterable", "Searchable", "SoftDeletes"], "notes": "HasAuditable critical for CAN-SPAM + CASL consent evidence."},
-    "newsletter_campaign": {"traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "HasActivityLog", "Filterable", "SoftDeletes"]},
-    "newsletter_audience": {"traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "HasVersions", "Filterable", "SoftDeletes"]}
+    "newsletter": {"traits": ["HasFactory", "HasUlids", "HasSystemFlag", "BelongsToWorkspace", "HasMetadata", "HasUserstamps", "HasVersions", "HasAuditable", "HasActivityLog", "Filterable", "Searchable", "SoftDeletes"]},
+    "newsletter_issue": {"traits": ["HasFactory", "HasUlids", "BelongsToWorkspace", "HasMetadata", "HasUserstamps", "HasVersions", "HasActivityLog", "Filterable", "Searchable", "SoftDeletes"]},
+    "newsletter_subscription": {"traits": ["HasFactory", "HasUlids", "BelongsToWorkspace", "HasMetadata", "HasUserstamps", "HasAuditable", "HasActivityLog", "Filterable", "Searchable", "SoftDeletes"], "notes": "HasAuditable critical for CAN-SPAM + CASL consent evidence."},
+    "newsletter_campaign": {"traits": ["HasFactory", "HasUlids", "BelongsToWorkspace", "HasMetadata", "HasUserstamps", "HasActivityLog", "Filterable", "SoftDeletes"]},
+    "newsletter_audience": {"traits": ["HasFactory", "HasUlids", "BelongsToWorkspace", "HasMetadata", "HasUserstamps", "HasVersions", "Filterable", "SoftDeletes"]}
   }
 }

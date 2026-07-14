@@ -1,0 +1,27 @@
+{
+  "id": "workspaces.resources.domain-record.list",
+  "title": "DNS records",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/domain-records",
+  "host": "central_admin",
+  "audience": "authenticated",
+  "resource": {"module": "workspaces", "entity": "domain-record", "action": "list"},
+  "requiresPermission": "platform.domain-records.viewAny",
+  "description": "Platform-admin cross-workspace DNS record inspection. Non-workspace surface. Records are auto-created by observers on Domain create; no manual create.",
+  "dataSources": [
+    {"name": "records", "kind": "http.get", "url": "/api/v1/domain-records", "unwrap": "data", "paginated": true, "queryParamsFromState": ["filter[domain_id]", "filter[kind]", "filter[observed]", "sort", "page"]}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-4 p-6"}, "children": [
+      {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "DNS records"}},
+      {"kind": "DataGrid", "bindings": {"items": {"$ref": "records"}}, "columns": [
+        {"id": "host", "header": "Domain", "cell": {"kind": "Text", "props": {"className": "font-mono text-sm"}, "bindings": {"children": {"$ref": "row.domain.host"}}}},
+        {"id": "kind", "header": "Type", "cell": {"kind": "Chip", "props": {"size": "xs"}, "bindings": {"children": {"$ref": "row.kind"}}}},
+        {"id": "name", "header": "Name", "cell": {"kind": "Text", "props": {"className": "font-mono text-sm"}, "bindings": {"children": {"$ref": "row.name"}}}},
+        {"id": "state", "header": "State", "cell": {"kind": "Chip", "props": {"size": "xs"}, "bindings": {"variant": {"$expr": "row.observed_at ? 'success' : 'warning'"}, "children": {"$expr": "row.observed_at ? 'observed' : 'expected'"}}}},
+        {"id": "actions", "header": "", "align": "end", "cell": {"kind": "Button", "props": {"variant": "ghost", "size": "sm", "children": "View"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/platform/domain-records/' + row.id"}}}}
+      ]}
+    ]}
+  ]
+}

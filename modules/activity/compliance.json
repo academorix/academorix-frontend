@@ -9,13 +9,13 @@
       "controls": [
         {"article": "Art. 5(e)", "principle": "storage limitation", "evidence": "Tier-based retention (30/90/365d) prunes rows past window. Free plan has shortest window."},
         {"article": "Art. 17", "principle": "right to erasure", "evidence": "AnonymiseActivityForErasedUser listener replaces causer references on user delete."},
-        {"article": "Art. 30", "principle": "records of processing (light)", "evidence": "The activity feed itself is a light records-of-processing surface for tenants. The heavy version is `audit`."}
+        {"article": "Art. 30", "principle": "records of processing (light)", "evidence": "The activity feed itself is a light records-of-processing surface for workspaces. The heavy version is `audit`."}
       ]
     },
     "soc2_type2": {
       "applicable": true,
       "controls": [
-        {"criterion": "CC7.3", "principle": "operations monitoring", "evidence": "Activity feed shows every user action \u2014 available to tenant admins for incident review."}
+        {"criterion": "CC7.3", "principle": "operations monitoring", "evidence": "Activity feed shows every user action \u2014 available to workspace admins for incident review."}
       ]
     }
   }

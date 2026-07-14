@@ -22,7 +22,7 @@
     },
     {
       "entity": "DeprecationNotice",
-      "hot": {"days": "while state IN (draft, published)", "description": "Published notices stay hot for tenant catalog + Link header emitter."},
+      "hot": {"days": "while state IN (draft, published)", "description": "Published notices stay hot for workspace catalog + Link header emitter."},
       "cold": {"days": "forever after archive", "description": "Archived notices retained forever \u2014 regulatory trail proving customers were notified before sunset."},
       "purge": {
         "trigger": "state=draft + soft-deleted for > 30 days",

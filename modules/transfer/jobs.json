@@ -68,7 +68,7 @@
     {
       "class": "Academorix\\Transfer\\Jobs\\GenerateSampleDataJob",
       "queue": "transfer",
-      "purpose": "Runs a #[SampleData(factory: ...)]-configured factory to insert fixture records for the target entity within the current tenant scope. Fires SampleDataGenerated on completion.",
+      "purpose": "Runs a #[SampleData(factory: ...)]-configured factory to insert fixture records for the target entity within the current workspace scope. Fires SampleDataGenerated on completion.",
       "shouldQueue": true,
       "shouldBeUnique": true,
       "uniqueVia": "xfer_job_id",

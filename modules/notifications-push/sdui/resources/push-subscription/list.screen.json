@@ -3,13 +3,13 @@
   "title": "Push devices",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/notification-subscriptions",
-  "host": "tenant",
+  "route": "/workspace/notification-subscriptions",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "notifications-push", "entity": "push-subscription", "action": "list"},
   "requiresPermission": "notifications.subscriptions.viewAny",
   "dataSources": [
-    {"name": "subscriptions", "kind": "http.get", "url": "/api/v1/tenant/notification-subscriptions", "unwrap": "data", "paginated": true, "queryParamsFromState": ["filter[platform]", "filter[provider]", "filter[is_active]", "sort", "page", "per_page"]}
+    {"name": "subscriptions", "kind": "http.get", "url": "/api/v1/workspace/notification-subscriptions", "unwrap": "data", "paginated": true, "queryParamsFromState": ["filter[platform]", "filter[provider]", "filter[is_active]", "sort", "page", "per_page"]}
   ],
   "nodes": [
     {
@@ -33,7 +33,7 @@
           {"id": "provider", "header": "Provider", "cell": {"kind": "Chip", "props": {"size": "xs", "variant": "neutral"}, "bindings": {"children": {"$ref": "row.provider"}}}},
           {"id": "state", "header": "State", "cell": {"kind": "Chip", "props": {"size": "sm"}, "bindings": {"variant": {"$expr": "row.is_active ? 'success' : 'neutral'"}, "children": {"$expr": "row.is_active ? 'Active' : 'Expired'"}}}},
           {"id": "last_seen", "header": "Last seen", "cell": {"kind": "Text", "props": {"className": "text-sm"}, "bindings": {"children": {"$expr": "formatRelative(row.last_seen_at)"}}}},
-          {"id": "actions", "header": "", "align": "end", "cell": {"kind": "Button", "props": {"variant": "ghost", "isIconOnly": true, "size": "sm", "leadingIcon": "trash", "ariaLabel": "Revoke"}, "actions": {"onPress": {"kind": "http.delete", "urlExpr": "'/api/v1/tenant/notification-subscriptions/' + row.id", "confirm": {"title": "Revoke this device?", "description": "Push notifications will stop on this device. The user can re-register by re-opening the app."}, "onSuccess": [{"kind": "toast.success", "message": "Revoked"}, {"kind": "data.refresh", "source": "subscriptions"}]}}}}
+          {"id": "actions", "header": "", "align": "end", "cell": {"kind": "Button", "props": {"variant": "ghost", "isIconOnly": true, "size": "sm", "leadingIcon": "trash", "ariaLabel": "Revoke"}, "actions": {"onPress": {"kind": "http.delete", "urlExpr": "'/api/v1/workspace/notification-subscriptions/' + row.id", "confirm": {"title": "Revoke this device?", "description": "Push notifications will stop on this device. The user can re-register by re-opening the app."}, "onSuccess": [{"kind": "toast.success", "message": "Revoked"}, {"kind": "data.refresh", "source": "subscriptions"}]}}}}
         ]}
       ]
     }

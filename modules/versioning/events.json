@@ -2,7 +2,7 @@
   "id": "academorix://modules/versioning/events",
   "$version": 1,
   "title": "versioning \u2014 published events",
-  "description": "5 events. All afterCommit \u2014 downstream listeners (webhook subscription auto-upgrade, notification dispatch, tenant admin dashboard broadcast) must see the committed row.",
+  "description": "5 events. All afterCommit \u2014 downstream listeners (webhook subscription auto-upgrade, notification dispatch, workspace admin dashboard broadcast) must see the committed row.",
   "namespace": "Academorix\\Versioning\\Events",
   "dispatchMode": "afterCommit",
   "events": [

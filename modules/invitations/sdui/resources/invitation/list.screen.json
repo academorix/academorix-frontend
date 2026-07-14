@@ -3,8 +3,8 @@
   "title": "Invitations",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/invitations",
-  "host": "tenant",
+  "route": "/workspace/invitations",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {
     "module": "invitations",
@@ -16,7 +16,7 @@
     {
       "name": "invitations",
       "kind": "http.get",
-      "url": "/api/v1/tenant/invitations",
+      "url": "/api/v1/workspace/invitations",
       "unwrap": "data",
       "paginated": true,
       "queryParamsFromState": ["filter[state]", "filter[target_type]", "filter[email]", "sort", "page", "per_page"],
@@ -29,7 +29,7 @@
     {
       "name": "invitationTargets",
       "kind": "http.get",
-      "url": "/api/v1/tenant/invitations/target-types",
+      "url": "/api/v1/workspace/invitations/target-types",
       "unwrap": "data",
       "cache": {"ttlSeconds": 3600},
       "transform": {"sort": {"by": "label", "direction": "asc"}}
@@ -37,7 +37,7 @@
   ],
   "subscriptions": [
     {
-      "channel": "tenant.{tenantId}.invitations",
+      "channel": "workspace.{workspaceId}.invitations",
       "kind": "private",
       "onEvent": {
         "kind": "data.mutateItem",
@@ -79,7 +79,7 @@
                   "kind": "Button",
                   "props": {"variant": "primary", "size": "sm", "children": "Send invitation", "leadingIcon": "paper-airplane"},
                   "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('invitations.send')"}},
-                  "actions": {"onPress": {"kind": "navigate", "to": "/tenant/invitations/new"}}
+                  "actions": {"onPress": {"kind": "navigate", "to": "/workspace/invitations/new"}}
                 }
               ]
             }
@@ -135,7 +135,7 @@
             "emptyState": {
               "title": "No invitations yet",
               "description": "Send your first invitation to add someone to this workspace.",
-              "action": {"label": "Send invitation", "route": "/tenant/invitations/new", "variant": "primary"}
+              "action": {"label": "Send invitation", "route": "/workspace/invitations/new", "variant": "primary"}
             }
           },
           "bindings": {
@@ -214,7 +214,7 @@
                     "id": "view",
                     "label": "View details",
                     "leadingIcon": "eye",
-                    "action": {"kind": "navigate", "toExpr": "'/tenant/invitations/' + row.id"}
+                    "action": {"kind": "navigate", "toExpr": "'/workspace/invitations/' + row.id"}
                   },
                   {
                     "id": "resend",
@@ -225,7 +225,7 @@
                     },
                     "action": {
                       "kind": "http.post",
-                      "urlExpr": "'/api/v1/tenant/invitations/' + row.id + '/resend'",
+                      "urlExpr": "'/api/v1/workspace/invitations/' + row.id + '/resend'",
                       "confirm": {
                         "title": "Resend invitation?",
                         "description": "A fresh email with a new link will be sent to the invitee."
@@ -250,7 +250,7 @@
                     },
                     "action": {
                       "kind": "http.post",
-                      "urlExpr": "'/api/v1/tenant/invitations/' + row.id + '/revoke'",
+                      "urlExpr": "'/api/v1/workspace/invitations/' + row.id + '/revoke'",
                       "confirm": {
                         "title": "Revoke invitation?",
                         "description": "The recipient will no longer be able to accept this invitation. This cannot be undone.",
@@ -271,7 +271,7 @@
               "bindings": {"isDisabled": {"$expr": "selectedItems.some(i => i.is_terminal || i.resend_count >= 3)"}},
               "action": {
                 "kind": "http.postMany",
-                "urlTemplate": "/api/v1/tenant/invitations/{id}/resend",
+                "urlTemplate": "/api/v1/workspace/invitations/{id}/resend",
                 "idFrom": "selectedItems",
                 "confirm": {"title": "Resend {count} invitations?", "description": "Each will receive a fresh email with a new link."},
                 "onSuccess": {"kind": "toast.success", "messageExpr": "'Resent ' + count + ' invitations'"}
@@ -285,7 +285,7 @@
               "bindings": {"isDisabled": {"$expr": "selectedItems.some(i => i.is_terminal)"}},
               "action": {
                 "kind": "http.postMany",
-                "urlTemplate": "/api/v1/tenant/invitations/{id}/revoke",
+                "urlTemplate": "/api/v1/workspace/invitations/{id}/revoke",
                 "idFrom": "selectedItems",
                 "confirm": {
                   "title": "Revoke {count} invitations?",

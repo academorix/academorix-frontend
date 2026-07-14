@@ -1,0 +1,252 @@
+{
+  "$version": 1,
+  "name": "search",
+  "alias": "search",
+  "namespace": "Academorix\\Search",
+  "description": "Enterprise search engine. Thin wrapper around `laravel/scout` with our conventions: attribute-driven registration (#[Searchable] / #[SearchField] / #[SearchFacet] / #[SearchSynonym] / #[SearchBoost]), pluggable engine adapters (Meilisearch default for user-facing, Postgres FTS for internal, pgvector for semantic, Elasticsearch stub for v2), a unified query API (`Search::query('term')->across(Model::class, ...)->boost(...)->filter(...)->get()`) with an engine-native escape hatch (`Search::engine('meilisearch')->raw($body)`), zero-downtime reindex via alias swap, per-workspace + per-language synonym registry, saved queries + smart lists, user-facing autocomplete (`GET /search/suggest`), and full analytics (query volume, no-results, click-through). Every long-running sync produces a persisted `search_sync_jobs` domain record with notifications on finish. Foundation's earlier `Searchable` trait + `->searchable()` blueprint macro + `IndexSearchableJob` + `search:reindex`/`search:flush` commands + `SearchEngineResolver` binding moved here on module inception; foundation retains no search mentions.",
+  "keywords": [
+    "search",
+    "scout",
+    "meilisearch",
+    "pgvector",
+    "postgres-fts",
+    "tsvector",
+    "elasticsearch",
+    "autocomplete",
+    "faceted-search",
+    "synonyms",
+    "analytics",
+    "multi-workspace",
+    "semantic-search"
+  ],
+  "priority": 24,
+  "providers": ["Academorix\\Search\\Providers\\SearchServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "workspaces", "audit", "activity", "notifications", "settings"],
+  "extendedBy": [],
+  "contributes": {
+    "traits": ["HasSearchable"],
+    "blueprints": [],
+    "middleware": ["search.rate-limit", "search.query-log"],
+    "events": [
+      "SearchIndexRegistered",
+      "SearchIndexUnregistered",
+      "SearchSyncJobQueued",
+      "SearchSyncJobStarted",
+      "SearchSyncJobProgress",
+      "SearchSyncJobShardCompleted",
+      "SearchSyncJobCompleted",
+      "SearchSyncJobFailed",
+      "SearchSyncJobCancelled",
+      "SearchIndexAliasSwapped",
+      "SearchSynonymCreated",
+      "SearchSynonymUpdated",
+      "SearchSynonymDeleted",
+      "SearchQueryRecorded",
+      "SearchNoResultsRecorded",
+      "SearchClickThroughRecorded",
+      "SearchSavedQueryCreated"
+    ],
+    "policies": [
+      "SearchIndexPolicy",
+      "SearchSyncJobPolicy",
+      "SearchSynonymPolicy",
+      "SearchSavedQueryPolicy",
+      "SearchAnalyticsEventPolicy"
+    ],
+    "hooks": [],
+    "commands": [
+      "search:describe",
+      "search:reindex",
+      "search:flush",
+      "search:synonyms",
+      "search:analytics",
+      "search:test-query",
+      "search:jobs",
+      "search:cancel",
+      "search:health"
+    ],
+    "jobs": [
+      "IndexModelJob",
+      "PurgeIndexModelJob",
+      "ReindexModelBatchJob",
+      "ReindexModelShardJob",
+      "ReindexCoordinatorJob",
+      "SwapIndexAliasJob",
+      "WarmSynonymCacheJob",
+      "PruneSearchAnalyticsJob",
+      "RecordSearchAnalyticsEventJob",
+      "SendSearchSyncNotificationJob"
+    ],
+    "notifications": [
+      "SearchSyncCompletedNotification",
+      "SearchSyncFailedNotification"
+    ],
+    "broadcasts": ["user.{userId}.search", "workspace.{workspaceId}.search"],
+    "observers": [
+      "SearchIndexObserver",
+      "SearchSyncJobObserver",
+      "SearchSynonymObserver"
+    ],
+    "attributes": [
+      "Searchable",
+      "SearchField",
+      "SearchFacet",
+      "SearchSynonym",
+      "SearchBoost"
+    ],
+    "rules": [
+      "valid_search_engine",
+      "supported_search_language",
+      "valid_index_name",
+      "search_query_length"
+    ],
+    "casts": [
+      "SearchEngineCast",
+      "SearchIndexStatusCast",
+      "SearchSyncJobStatusCast",
+      "SearchFieldSpecCast",
+      "SynonymSetCast"
+    ],
+    "views": [],
+    "lang": ["search"],
+    "config": ["search"],
+    "macros": [],
+    "bindings": [
+      "EngineRegistry",
+      "SearchService",
+      "IndexOrchestrator",
+      "SynonymRegistry",
+      "SavedQueryRepository",
+      "AnalyticsRecorder",
+      "QueryParser",
+      "ResultRanker",
+      "SuggestService"
+    ],
+    "resources": [
+      "search-index",
+      "search-sync-job",
+      "search-synonym",
+      "search-saved-query",
+      "search-analytics-event"
+    ]
+  },
+  "wraps": {
+    "package": "laravel/scout",
+    "version_constraint": "^10.0",
+    "rationale": "Scout is Laravel's canonical search abstraction with a mature driver ecosystem. We stand on top: `AbstractSearchableModel` wraps Scout's `Searchable` trait and layers attribute-driven registration (`#[Searchable]`, `#[SearchField]`, ...), our SearchIndex + SearchSyncJob + SearchSynonym + SearchSavedQuery + SearchAnalyticsEvent domain records, a unified `Search::query()` cross-model API with per-engine escape hatch, and per-workspace synonym / saved-query registries. Scout's `->searchable()` push, chunked backfill, `->makeAllSearchable()`, `Scout::searchUsing()`, and driver contract are used verbatim \u2014 we never re-implement queueing or driver-swap logic."
+  },
+  "engineAdapters": {
+    "description": "Concrete Scout drivers we wire in. Each is a Scout-native package we consume; our `EngineRegistry` catalogues them and matches per-model config against the adapter.",
+    "adapters": [
+      {
+        "key": "meilisearch",
+        "class": "Academorix\\Search\\Engines\\MeilisearchEngine",
+        "status": "full",
+        "role": "default for user-facing indexes",
+        "scoutDriver": "laravel/scout \u2014 built-in Meilisearch driver",
+        "package": "laravel/scout",
+        "supports": ["typo-tolerance", "prefix", "phrase", "boolean", "faceting", "sort", "boost", "synonyms", "stopwords", "highlight", "search-as-you-type"],
+        "referenceUrl": "https://laravel.com/docs/scout#meilisearch"
+      },
+      {
+        "key": "postgres-fts",
+        "class": "Academorix\\Search\\Engines\\PostgresFtsEngine",
+        "status": "full",
+        "role": "default for internal-only indexes (audit, activity, admin logs) \u2014 no new infrastructure",
+        "scoutDriver": "devnoiseconsulting/laravel-scout-postgres-tsvector",
+        "package": "devnoiseconsulting/laravel-scout-postgres-tsvector",
+        "supports": ["tsvector", "phrase", "boolean", "sort", "boost-via-ts_rank", "language-configs"],
+        "notes": "No typo tolerance (add pg_trgm for fuzzy). Prefer for internal search where results ship in-workspace to admins.",
+        "referenceUrl": "https://github.com/devNoiseConsulting/laravel-scout-postgres-tsvector"
+      },
+      {
+        "key": "pgvector",
+        "class": "Academorix\\Search\\Engines\\PgvectorEngine",
+        "status": "declared, disabled by default",
+        "role": "semantic similarity (v1 stub \u2014 activated when the first AI feature lands)",
+        "scoutDriver": "benbjurstrom/pgvector-scout",
+        "package": "benbjurstrom/pgvector-scout",
+        "supports": ["cosine-similarity", "nearest-neighbor", "hybrid-with-lexical"],
+        "notes": "Requires the pgvector Postgres extension. Same treatment as foundation's `HasVectorEmbeddings` \u2014 the code is here but the feature is gated by `search.pgvector` feature toggle + `search.can_use_pgvector` entitlement.",
+        "referenceUrl": "https://github.com/benbjurstrom/pgvector-scout"
+      },
+      {
+        "key": "elasticsearch",
+        "class": "Academorix\\Search\\Engines\\ElasticsearchEngine",
+        "status": "v2 stub",
+        "role": "future \u2014 for the 100M+ document tier or regulated markets that require ES specifically",
+        "scoutDriver": "not-yet-selected",
+        "package": null,
+        "supports": ["everything Meilisearch does + complex aggregations + arbitrary DSL"],
+        "notes": "The engine class is a no-op that throws SEARCH_ENGINE_NOT_ENABLED. Present so `EngineRegistry` documents the future path + so migration effort is a swap of the adapter, not a rewrite."
+      }
+    ]
+  },
+  "moved_from": {
+    "foundation": {
+      "traits": ["Searchable"],
+      "blueprints": ["searchable"],
+      "jobs": ["IndexSearchableJob"],
+      "bindings": ["SearchEngineResolver"],
+      "commands": ["search:reindex", "search:flush"],
+      "config_sections": ["foundation.search"],
+      "cache_keys": ["foundation:search:engine_health"],
+      "error_codes": ["FOUNDATION_SEARCH_ENGINE_UNAVAILABLE"],
+      "health_probes": ["search-engine-reachable"],
+      "schedule_entries": ["foundation:search-index-refresh"],
+      "feature_flags": ["foundation.search-indexing"],
+      "permissions": ["platform.search.manage"],
+      "routes": [
+        "POST /api/v1/platform/search/reindex",
+        "POST /api/v1/platform/search/flush"
+      ],
+      "reason": "Foundation is pure infrastructure with zero domain entities. Search is a data-domain in its own right \u2014 it owns entities (search_indexes, search_sync_jobs, search_synonyms, search_saved_queries, search_analytics_events), engine adapters, HTTP surface, notifications, retention policies, and third-party wrap semantics (`laravel/scout`). Same rationale as splitting `transfer` / `activity` / `audit` off from foundation instead of embedding them there."
+    }
+  },
+  "hosts": {
+    "workspace": {
+      "description": "Workspace surface: run queries + autocomplete + view analytics + manage synonyms + manage saved queries + inspect + cancel own sync jobs.",
+      "routes": [
+        "GET  /api/v1/search",
+        "GET  /api/v1/search/suggest",
+        "GET  /api/v1/search/analytics",
+        "GET  /api/v1/search/analytics/no-results",
+        "GET  /api/v1/search/analytics/top-queries",
+        "POST /api/v1/search/click",
+        "GET  /api/v1/search/indexes",
+        "GET  /api/v1/search/indexes/{index}",
+        "GET  /api/v1/search/sync-jobs",
+        "GET  /api/v1/search/sync-jobs/{jobId}",
+        "POST /api/v1/search/sync-jobs/{jobId}/cancel",
+        "GET  /api/v1/search/synonyms",
+        "POST /api/v1/search/synonyms",
+        "PATCH /api/v1/search/synonyms/{synonym}",
+        "DELETE /api/v1/search/synonyms/{synonym}",
+        "GET  /api/v1/search/saved-queries",
+        "POST /api/v1/search/saved-queries",
+        "PATCH /api/v1/search/saved-queries/{query}",
+        "DELETE /api/v1/search/saved-queries/{query}"
+      ]
+    },
+    "central_admin": {
+      "description": "Platform-admin cross-workspace view + operations: reindex any index, flush indexes, view engine health, cross-workspace analytics, cross-workspace synonym governance.",
+      "routes": [
+        "GET  /api/v1/platform/search/indexes",
+        "POST /api/v1/platform/search/indexes/{index}/reindex",
+        "POST /api/v1/platform/search/indexes/{index}/flush",
+        "GET  /api/v1/platform/search/sync-jobs",
+        "GET  /api/v1/platform/search/sync-jobs/{jobId}",
+        "POST /api/v1/platform/search/sync-jobs/{jobId}/cancel",
+        "GET  /api/v1/platform/search/analytics",
+        "GET  /api/v1/platform/search/engines/health"
+      ]
+    }
+  },
+  "reuses": {
+    "notifications": "Every long-running sync job completion / failure produces a Laravel Notification via the notifications module. Channels (mail / broadcast / database / push) resolved once at dispatch from search_sync_jobs.notify_channels \u2014 same pattern as transfer.",
+    "activity": "Every search_sync_jobs status transition + synonym mutation + saved query CRUD writes an activity row via HasActivityLog. Workspace admins see 'Alice reindexed the athletes index' + 'Bob added synonym flu \u2194 influenza' in the feed.",
+    "audit": "Every reindex / flush / synonym mutation writes an audit row via HasAudit. Compliance surface distinct from the product feed.",
+    "transfer": "Optional \u2014 the `search:reindex --from-export` mode consumes an xfer_artifact CSV / JSON as the source of truth instead of live DB, useful for cross-region migrations. Not required for normal operation."
+  }
+}

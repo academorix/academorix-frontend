@@ -3,15 +3,15 @@
   "title": "New webhook",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/webhooks/new",
-  "host": "tenant",
+  "route": "/workspace/webhooks/new",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "webhook", "entity": "webhook-subscription", "action": "create"},
   "requiresPermission": "webhook.subscriptions.create",
   "dataSources": [
-    {"name": "eventsCatalog", "kind": "http.get", "url": "/api/v1/tenant/webhook/events", "unwrap": "data", "cache": {"ttlSeconds": 300}},
-    {"name": "destinationsCatalog", "kind": "http.get", "url": "/api/v1/tenant/webhook/destinations", "unwrap": "data", "cache": {"ttlSeconds": 300}},
-    {"name": "apiVersions", "kind": "http.get", "url": "/api/v1/tenant/versioning/api-versions", "unwrap": "data", "cache": {"ttlSeconds": 300}}
+    {"name": "eventsCatalog", "kind": "http.get", "url": "/api/v1/workspace/webhook/events", "unwrap": "data", "cache": {"ttlSeconds": 300}},
+    {"name": "destinationsCatalog", "kind": "http.get", "url": "/api/v1/workspace/webhook/destinations", "unwrap": "data", "cache": {"ttlSeconds": 300}},
+    {"name": "apiVersions", "kind": "http.get", "url": "/api/v1/workspace/versioning/api-versions", "unwrap": "data", "cache": {"ttlSeconds": 300}}
   ],
   "nodes": [
     {
@@ -19,10 +19,10 @@
       "kind": "View",
       "props": {"className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto"},
       "children": [
-        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/webhooks"}}},
+        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/webhooks"}}},
         {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "New webhook"}},
         {"kind": "Alert", "props": {"variant": "info", "children": "The signing secret will be shown ONCE on creation. Save it \u2014 you won't see it again."}},
-        {"kind": "Form", "props": {"submitUrl": "/api/v1/tenant/webhook/subscriptions", "submitMethod": "POST", "onSuccess": [{"kind": "toast.success", "message": "Webhook created. Save the secret from the response body."}, {"kind": "navigateExpr", "expr": "'/tenant/webhooks/' + response.data.id"}]}, "children": [
+        {"kind": "Form", "props": {"submitUrl": "/api/v1/workspace/webhook/subscriptions", "submitMethod": "POST", "onSuccess": [{"kind": "toast.success", "message": "Webhook created. Save the secret from the response body."}, {"kind": "navigateExpr", "expr": "'/workspace/webhooks/' + response.data.id"}]}, "children": [
           {"kind": "TextField", "props": {"label": "Name", "name": "name", "isRequired": true, "placeholder": "Prod webhook \u2014 payment updates"}},
           {"kind": "TextArea", "props": {"label": "Description", "name": "description", "rows": 2, "placeholder": "Optional notes about this webhook."}},
           {"kind": "Select", "props": {"label": "Destination", "name": "destination", "isRequired": true, "defaultValue": "https"}, "optionsSource": {"$ref": "destinationsCatalog", "valueField": "name", "labelField": "display_name"}, "description": "EventBridge / PubSub / mTLS require the enterprise plan."},

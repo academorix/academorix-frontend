@@ -12,7 +12,7 @@
       "conflicts_with": [],
       "notes": [
         "Also registers a `resolveTransferFields()` static method the compiler calls to merge attribute discovery with the dynamic `transferSchema()` escape hatch.",
-        "Composes with domain traits \u2014 BelongsToTenant + HasUlids + HasActivityLog + HasAudit as needed by the model.",
+        "Composes with domain traits \u2014 BelongsToWorkspace + HasUlids + HasActivityLog + HasAudit as needed by the model.",
         "Does NOT force the model to implement any Laravel Excel concern \u2014 the AbstractDynamicImport handles that."
       ]
     },
@@ -36,8 +36,8 @@
     "foundation": [
       {"trait": "Academorix\\Foundation\\Concerns\\HasMetadata", "usedBy": ["XferJob"], "reason": "Free-form platform notes on the operation record."}
     ],
-    "tenancy": [
-      {"trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "usedBy": ["XferJob", "XferShard", "XferArtifact", "XferMappingProfile"], "reason": "Tenant scoping across the module."}
+    "workspaces": [
+      {"trait": "Academorix\\Workspaces\\Concerns\\BelongsToWorkspace", "usedBy": ["XferJob", "XferShard", "XferArtifact", "XferMappingProfile"], "reason": "Workspace scoping across the module."}
     ],
     "activity": [
       {"trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "usedBy": ["XferJob", "XferMappingProfile"], "reason": "Every XferJob status transition writes a product-feed row. Mapping-profile CRUD writes too."}
@@ -51,20 +51,20 @@
   },
   "composition": {
     "xfer_job": {
-      "traits": ["HasUlids", "BelongsToTenant", "HasMetadata", "HasActivityLog", "HasAudit", "SoftDeletes"],
+      "traits": ["HasUlids", "BelongsToWorkspace", "HasMetadata", "HasActivityLog", "HasAudit", "SoftDeletes"],
       "notes": "The full stack. HasActivityLog + HasAudit together write to both the product feed and the compliance trail on every transition."
     },
     "xfer_shard": {
-      "traits": ["HasUlids", "BelongsToTenant"],
+      "traits": ["HasUlids", "BelongsToWorkspace"],
       "notes": "Lightweight \u2014 no dual-write. Aggregate-level auditing on the parent XferJob covers it."
     },
     "xfer_artifact": {
-      "traits": ["HasUlids", "BelongsToTenant"],
+      "traits": ["HasUlids", "BelongsToWorkspace"],
       "notes": "Same rationale as XferShard."
     },
     "xfer_mapping_profile": {
-      "traits": ["HasUlids", "BelongsToTenant", "HasActivityLog", "SoftDeletes"],
-      "notes": "HasActivityLog covers CRUD (create / update / share / delete) so the tenant admin can see 'Alice created mapping profile Q3 HubSpot Import'. No HasAudit \u2014 mapping profiles aren't compliance material."
+      "traits": ["HasUlids", "BelongsToWorkspace", "HasActivityLog", "SoftDeletes"],
+      "notes": "HasActivityLog covers CRUD (create / update / share / delete) so the workspace admin can see 'Alice created mapping profile Q3 HubSpot Import'. No HasAudit \u2014 mapping profiles aren't compliance material."
     }
   }
 }

@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/entitlements/relations",
+  "$version": 1,
+  "title": "entitlements \u2014 model relationships",
+  "internal": [
+    {"from": "Entitlement", "kind": "hasMany", "to": "EntitlementUsage", "foreignKey": "entitlement_id"},
+    {"from": "EntitlementUsage", "kind": "belongsTo", "to": "Entitlement", "foreignKey": "entitlement_id", "onDelete": "cascade"}
+  ],
+  "outbound": [
+    {"from": "Entitlement", "kind": "belongsTo", "to": "workspaces::Workspace", "foreignKey": "workspace_id", "onDelete": "cascade"},
+    {"from": "Entitlement", "kind": "belongsTo", "to": "subscription::Plan", "foreignKey": "source_plan_id", "nullable": true, "onDelete": "set null", "description": "Which Plan this Entitlement's cap was resolved from. Null when the Entitlement was manually overridden by platform admin."},
+    {"from": "EntitlementUsage", "kind": "belongsTo", "to": "workspaces::Workspace", "foreignKey": "workspace_id", "onDelete": "cascade"}
+  ],
+  "inbound": {
+    "description": "Every metered feature module queries Entitlement via the Enforcer binding. No FK from consumer models to Entitlement rows \u2014 the (workspace_id, key) tuple is the logical join.",
+    "conventions": [
+      "Enforcer::enforce($key)  \u2014 throws QuotaExceeded on cap breach",
+      "Enforcer::consume($key, $amount)  \u2014 increments usage, throws on overflow",
+      "Enforcer::has($key)  \u2014 boolean check (for `boolean` kind)",
+      "Enforcer::check($key)  \u2014 returns (cap, used, remaining) tuple"
+    ]
+  }
+}

@@ -8,7 +8,7 @@
       "applicable": true,
       "controls": [
         {"article": "Art. 5(1)(f)", "principle": "integrity + confidentiality", "evidence": "Sensitive fields masked in reads + optional KMS encryption at rest. Every change dual-written to compliance audit."},
-        {"article": "Art. 17", "principle": "right to erasure", "evidence": "PurgeSettingsForErasedUser + PurgeSettingsForErasedTenant listeners cascade on erasure events."},
+        {"article": "Art. 17", "principle": "right to erasure", "evidence": "PurgeSettingsForErasedUser + PurgeSettingsForErasedWorkspace listeners cascade on erasure events."},
         {"article": "Art. 25", "principle": "data protection by design", "evidence": "SettingField.sensitive flag surfaces at attribute declaration time \u2014 module authors declare intent explicitly."},
         {"article": "Art. 30", "principle": "records of processing", "evidence": "audit_log rows produced by WriteSettingsChangeToAudit \u2014 who changed what, when."},
         {"article": "Art. 32", "principle": "security of processing", "evidence": "KMS envelope encryption for sensitive fields. Reveal permission requires meta-audit."}

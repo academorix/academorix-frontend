@@ -2,7 +2,7 @@
   "id": "academorix://modules/foundation/permissions",
   "$version": 1,
   "title": "foundation — permissions",
-  "description": "Platform-admin-only permissions gating foundation's diagnostic surface (module registry, health detail, search index management, config reload). No sanctum-guard permissions — foundation exposes no tenant-facing surface beyond public ping/health, which is unauthenticated. Seeded by `FoundationPermissionSeeder` with `is_system=true`.",
+  "description": "Platform-admin-only permissions gating foundation's diagnostic surface (module registry, health detail, search index management, config reload). No sanctum-guard permissions — foundation exposes no workspace-facing surface beyond public ping/health, which is unauthenticated. Seeded by `FoundationPermissionSeeder` with `is_system=true`.",
   "seeder": "Academorix\\Foundation\\Database\\Seeders\\FoundationPermissionSeeder",
   "isSystem": true,
   "permissions": [
@@ -37,6 +37,6 @@
   ],
   "notes": [
     "Public health endpoints (`GET /api/ping`, `GET /api/health`, `GET /up`) are UNAUTHENTICATED and thus not permission-gated. They intentionally leak the minimum information required for a load balancer probe.",
-    "There are no sanctum-guard permissions here. Foundation is invisible to tenant users."
+    "There are no sanctum-guard permissions here. Foundation is invisible to workspace users."
   ]
 }

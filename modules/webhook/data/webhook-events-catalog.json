@@ -15,7 +15,7 @@
         "test_id": "ULID",
         "subscription_id": "ULID",
         "dispatched_at": "ISO 8601",
-        "tenant": {"id": "ULID", "name": "string"},
+        "workspace": {"id": "ULID", "name": "string"},
         "note": "This is a synthetic test event. Safe to ignore or acknowledge."
       },
       "is_system": true

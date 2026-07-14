@@ -3,7 +3,7 @@
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "NotificationTemplate",
-  "description": "Versioned reusable template. `tenant_id NULL` = platform default (is_system=true); `tenant_id` set = tenant override. Resolver picks tenant override first, falls back to platform default. Body is pre-rendered HTML with Blade placeholders \u2014 the React Email JSX renders at CI build time via packages/notifications-emails-renderer. New version bump on every update; publish transitions the version to `state=published`. Older published versions are retained 7 years cold for SOC 2 CC8.1 change-management evidence.",
+  "description": "Versioned reusable template. `workspace_id NULL` = platform default (is_system=true); `workspace_id` set = workspace override. Resolver picks workspace override first, falls back to platform default. Body is pre-rendered HTML with Blade placeholders \u2014 the React Email JSX renders at CI build time via packages/notifications-emails-renderer. New version bump on every update; publish transitions the version to `state=published`. Older published versions are retained 7 years cold for SOC 2 CC8.1 change-management evidence.",
   "type": "object",
   "x-module": "notifications",
   "x-eloquent": {
@@ -20,7 +20,7 @@
       "HasFactory",
       "HasUlids",
       "HasSystemFlag",
-      "BelongsToTenantOptional",
+      "BelongsToWorkspaceOptional",
       "HasMetadata",
       "HasUserstamps",
       "HasAuditable",
@@ -39,7 +39,7 @@
       "metadata": "array",
       "published_at": "datetime"
     },
-    "appends": ["is_published", "is_draft", "has_tenant_override"],
+    "appends": ["is_published", "is_draft", "has_workspace_override"],
     "observers": ["NotificationTemplateObserver"],
     "hidden": ["metadata"],
     "guarded": []
@@ -48,12 +48,12 @@
     "engine": "postgres",
     "columns": {
       "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `tpl_<26 chars>`."},
-      "tenant_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "NULL = platform default. tenant_id set = tenant override for the same (key, channel, locale) triple."},
+      "workspace_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "workspaces", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "NULL = platform default. workspace_id set = workspace override for the same (key, channel, locale) triple."},
       "key": {"type": "string", "length": 128, "nullable": false, "description": "Module-namespaced template key. Typically matches the category slug (`invitations.invitation_sent`). Multiple versions per key exist \u2014 the resolver picks the highest `published` version."},
       "category_slug": {"type": "string", "length": 128, "nullable": false, "foreign": {"table": "notification_categories", "column": "slug", "onUpdate": "cascade", "onDelete": "restrict"}, "description": "Denormalised from key when it maps 1:1; kept explicit for filtering + admin UX."},
       "channel": {"type": "string", "length": 16, "nullable": false, "description": "Enum: `mail`, `sms`, `push`, `in_app`."},
       "locale": {"type": "string", "length": 8, "nullable": false, "default": "en", "description": "ISO 639-1 (`en`, `ar`, `fr`, `de`, `es`). Falls back to `en` when the recipient's locale is not available."},
-      "version": {"type": "integer", "nullable": false, "default": 1, "description": "Monotonic per (tenant_id, key, channel, locale). Bumped on every save; unique constraint enforces."},
+      "version": {"type": "integer", "nullable": false, "default": 1, "description": "Monotonic per (workspace_id, key, channel, locale). Bumped on every save; unique constraint enforces."},
       "state": {"type": "string", "length": 16, "nullable": false, "default": "draft", "description": "Enum: `draft`, `published`, `archived`."},
       "is_system": {"type": "boolean", "nullable": false, "default": false, "description": "True for platform-default templates seeded by SeedTemplatesCommand. HasSystemFlag refuses edit for non-super_admin."},
       "slug": {"type": "string", "length": 200, "nullable": false, "description": "Sluggable-generated. Composite: `{key}-{channel}-{locale}-v{version}` \u2014 human-readable for admin UI + import/export filenames."},
@@ -72,8 +72,8 @@
       "updated_at": {"type": "timestamptz", "nullable": false}
     },
     "indexes": [
-      {"columns": ["tenant_id", "key", "channel", "locale", "version"], "unique": true, "name": "notification_templates_version_unique", "description": "One row per (tenant_id, key, channel, locale, version) tuple. Version bumps on save."},
-      {"columns": ["tenant_id", "key", "channel", "locale"], "unique": false, "name": "notification_templates_resolver_index", "description": "Primary resolver read path. Combined with `WHERE state='published' ORDER BY version DESC LIMIT 1`."},
+      {"columns": ["workspace_id", "key", "channel", "locale", "version"], "unique": true, "name": "notification_templates_version_unique", "description": "One row per (workspace_id, key, channel, locale, version) tuple. Version bumps on save."},
+      {"columns": ["workspace_id", "key", "channel", "locale"], "unique": false, "name": "notification_templates_resolver_index", "description": "Primary resolver read path. Combined with `WHERE state='published' ORDER BY version DESC LIMIT 1`."},
       {"columns": ["category_slug"], "unique": false, "name": "notification_templates_category_index"},
       {"columns": ["state", "updated_at"], "unique": false, "name": "notification_templates_state_index"},
       {"columns": ["slug"], "unique": true, "name": "notification_templates_slug_unique", "description": "Sluggable global-unique constraint."}
@@ -82,7 +82,7 @@
   "required": ["id", "key", "category_slug", "channel", "locale", "version", "state", "slug", "body_rendered_html", "created_at", "updated_at"],
   "properties": {
     "id": {"type": "string", "pattern": "^tpl_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": ["string", "null"], "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "key": {"type": "string", "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$", "maxLength": 128},
     "category_slug": {"type": "string", "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$", "maxLength": 128},
     "channel": {"type": "string", "enum": ["mail", "sms", "push", "in_app"]},
@@ -99,7 +99,7 @@
     "sort_order": {"type": "integer", "minimum": 0},
     "is_published": {"type": "boolean", "description": "Computed. state=='published'."},
     "is_draft": {"type": "boolean", "description": "Computed. state=='draft'."},
-    "has_tenant_override": {"type": "boolean", "description": "Computed. tenant_id IS NOT NULL."},
+    "has_workspace_override": {"type": "boolean", "description": "Computed. workspace_id IS NOT NULL."},
     "metadata": {"type": ["object", "null"], "additionalProperties": true},
     "created_by": {"type": ["string", "null"], "format": "uuid"},
     "updated_by": {"type": ["string", "null"], "format": "uuid"},
@@ -114,6 +114,6 @@
     "wrap": "data",
     "mapper": "SnakeCaseMapper",
     "hidden": ["metadata", "created_by", "updated_by", "deleted_by"],
-    "computed": ["is_published", "is_draft", "has_tenant_override"]
+    "computed": ["is_published", "is_draft", "has_workspace_override"]
   }
 }

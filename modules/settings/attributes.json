@@ -17,7 +17,7 @@
         {"name": "description", "type": "string", "default": "''"},
         {"name": "icon", "type": "string", "default": "''", "description": "Semantic icon name (heroicons)."},
         {"name": "permission", "type": "string", "default": "'settings.read'", "description": "Permission gating GET; PUT always requires settings.update.{group}."},
-        {"name": "scope", "type": "enum<system,tenant,user>", "default": "'system'", "description": "Hierarchy scope for value storage."},
+        {"name": "scope", "type": "enum<system,workspace,user>", "default": "'system'", "description": "Hierarchy scope for value storage."},
         {"name": "public", "type": "bool", "default": "false", "description": "Whether GET skips auth. PUT still requires permission."},
         {"name": "sortOrder", "type": "int", "default": "0"}
       ]

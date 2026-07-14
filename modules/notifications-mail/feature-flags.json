@@ -12,6 +12,6 @@
     {"key": "notifications.mail.provider.postmark.enabled", "kind": "kill-switch", "default": "on"},
     {"key": "notifications.mail.provider.resend.enabled", "kind": "kill-switch", "default": "on"},
     {"key": "notifications.mail.webhook_ingestion.enabled", "kind": "kill-switch", "default": "on", "description": "Disable inbound provider webhook processing. Webhook receivers still respond 200 to prevent provider retries; ingestion is silently skipped. Used during ingestion incidents."},
-    {"key": "notifications.mail.strict_can_spam_footer", "kind": "rollout", "default": "on", "description": "Refuses marketing sends when the tenant has no postal_address configured. Off = warns instead. Should always be on in production."}
+    {"key": "notifications.mail.strict_can_spam_footer", "kind": "rollout", "default": "on", "description": "Refuses marketing sends when the workspace has no postal_address configured. Off = warns instead. Should always be on in production."}
   ]
 }

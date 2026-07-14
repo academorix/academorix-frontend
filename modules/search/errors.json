@@ -1,0 +1,265 @@
+{
+  "id": "academorix://modules/search/errors",
+  "$version": 1,
+  "title": "search \u2014 error codes",
+  "namespace": "search",
+  "errors": [
+    {
+      "code": "SEARCH_KILL_SWITCHED",
+      "http": 503,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "alert",
+      "i18n_key": "search.errors.kill_switched",
+      "description": "One of the search.* kill switches is off. Message names which."
+    },
+    {
+      "code": "SEARCH_QUEUE_DISABLED",
+      "http": 503,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "alert",
+      "i18n_key": "search.errors.queue_disabled",
+      "description": "search.queue kill switch is off. All reindex + sync-job dispatch rejected. Existing queries keep working."
+    },
+    {
+      "code": "SEARCH_ENGINE_UNAVAILABLE",
+      "http": 503,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "search.errors.engine_unavailable",
+      "description": "The configured engine (Meilisearch / PG-FTS / pgvector / ES) is unreachable. Callers may degrade gracefully to filtered DB queries. Moved from foundation on Wave 6 inception."
+    },
+    {
+      "code": "SEARCH_ENGINE_NOT_SUPPORTED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "search.errors.engine_not_supported",
+      "description": "Requested engine is not registered in EngineRegistry."
+    },
+    {
+      "code": "SEARCH_ENGINE_NOT_ENABLED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "notice",
+      "i18n_key": "search.errors.engine_not_enabled",
+      "description": "Engine adapter exists but feature toggle or entitlement disables it (e.g. pgvector without search.can_use_pgvector, elasticsearch stub)."
+    },
+    {
+      "code": "SEARCH_INDEX_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "search.errors.index_not_found"
+    },
+    {
+      "code": "SEARCH_INDEX_NOT_ACTIVE",
+      "http": 409,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "search.errors.index_not_active",
+      "description": "Index exists but is in reindexing / disabled / error state. Queries route to the old alias until active state resumes."
+    },
+    {
+      "code": "SEARCH_INDEX_LIMIT_EXCEEDED",
+      "http": 429,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "notice",
+      "i18n_key": "search.errors.index_limit_exceeded",
+      "description": "Workspace exceeds search.max_indexes entitlement. Cannot register more #[Searchable] models."
+    },
+    {
+      "code": "SEARCH_MODEL_NOT_SEARCHABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "search.errors.model_not_searchable",
+      "description": "Query referenced a model class that isn't registered in the SearchIndex catalogue."
+    },
+    {
+      "code": "SEARCH_QUERY_TOO_LONG",
+      "http": 413,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "search.errors.query_too_long",
+      "description": "Query exceeds config('search.query.max_length'). Prevents adversarial input."
+    },
+    {
+      "code": "SEARCH_QUERY_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "search.errors.query_invalid",
+      "description": "Filter grammar, sort spec, or facet request malformed."
+    },
+    {
+      "code": "SEARCH_RATE_LIMIT_EXCEEDED",
+      "http": 429,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "search.errors.rate_limit_exceeded",
+      "description": "Workspace or per-user cap from search.max_query_rate_per_minute exhausted. `Retry-After` header set."
+    },
+    {
+      "code": "SEARCH_JOB_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "search.errors.job_not_found"
+    },
+    {
+      "code": "SEARCH_JOB_NOT_CANCELLABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "search.errors.job_not_cancellable",
+      "description": "SyncJob is in a terminal state (succeeded / partially_succeeded / failed / cancelled)."
+    },
+    {
+      "code": "SEARCH_INVALID_STATE_TRANSITION",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "search.errors.invalid_state_transition",
+      "description": "State machine violation caught by SearchSyncJobObserver. Bug \u2014 pages ops."
+    },
+    {
+      "code": "SEARCH_ALIAS_SWAP_FAILED",
+      "http": 500,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "search.errors.alias_swap_failed",
+      "description": "Engine-native alias-swap operation failed. Old alias remains live \u2014 safe. Reindex marked failed. Pages ops."
+    },
+    {
+      "code": "SEARCH_SYNONYM_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "search.errors.synonym_not_found"
+    },
+    {
+      "code": "SEARCH_SYNONYM_SYSTEM_IMMUTABLE",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "search.errors.synonym_system_immutable",
+      "description": "Attempted to delete a platform-seeded synonym. System rows can only be disabled (is_active=false), never deleted, by workspaces."
+    },
+    {
+      "code": "SEARCH_SYNONYM_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "search.errors.synonym_invalid",
+      "description": "Terms array empty, one_way missing source, or duplicate entry conflict with an existing active synonym."
+    },
+    {
+      "code": "SEARCH_SAVED_QUERY_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "search.errors.saved_query_not_found"
+    },
+    {
+      "code": "SEARCH_SAVED_QUERY_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "search.errors.saved_query_invalid",
+      "description": "`across` empty, references unknown model class, or filter grammar malformed."
+    },
+    {
+      "code": "SEARCH_REINDEX_IN_PROGRESS",
+      "http": 409,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "search.errors.reindex_in_progress",
+      "description": "A reindex is already running for this index. Wait for it to complete or cancel + retry."
+    },
+    {
+      "code": "SEARCH_CONCURRENCY_LIMIT_EXCEEDED",
+      "http": 429,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "notice",
+      "i18n_key": "search.errors.concurrency_limit_exceeded",
+      "description": "Workspace already has search.max_reindex_concurrency SyncJobs in queued / running. Retry after one completes."
+    },
+    {
+      "code": "SEARCH_ARTIFACT_SOURCE_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "search.errors.artifact_source_invalid",
+      "description": "Reindex requested with source=xfer_artifact but the referenced artifact is missing / purged / wrong entity."
+    },
+    {
+      "code": "SEARCH_ARTIFACT_SOURCE_UNSUPPORTED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "search.errors.artifact_source_unsupported",
+      "description": "Reindex from transfer artifact disabled for this workspace (search.can_use_workbook_reindex entitlement = false)."
+    },
+    {
+      "code": "SEARCH_LANGUAGE_UNSUPPORTED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "search.errors.language_unsupported",
+      "description": "Language code is not in the engine's supported set (Meilisearch supports 40+ languages; ES / PG-FTS have narrower defaults)."
+    },
+    {
+      "code": "SEARCH_SCOUT_DRIVER_FAILURE",
+      "http": 500,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "search.errors.scout_driver_failure",
+      "description": "Underlying Scout driver threw. Wrapped so upstream doesn't see the vendor exception."
+    },
+    {
+      "code": "SEARCH_ENGINE_TIMEOUT",
+      "http": 504,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "search.errors.engine_timeout",
+      "description": "Engine did not respond within config('search.query.timeout_ms'). Falls through to a filtered DB query when configured to."
+    },
+    {
+      "code": "SEARCH_CONFIG_HASH_DRIFT",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "notice",
+      "i18n_key": "search.errors.config_hash_drift",
+      "description": "SearchIndex.config_hash doesn't match the compiled hash from #[Searchable] attributes. Query hits go through but results reflect the old schema. Admin dashboard surfaces this + suggests a reindex."
+    }
+  ]
+}

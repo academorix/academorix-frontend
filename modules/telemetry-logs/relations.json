@@ -1,0 +1,10 @@
+{
+  "id": "academorix://modules/telemetry-logs/relations",
+  "$version": 1,
+  "title": "telemetry-logs \u2014 model relationships",
+  "internal": [],
+  "outbound": [],
+  "inbound": {
+    "description": "This module owns no persisted entities. It's an instrumentation surface. Every other module logs through Laravel's Log facade; our processor pipeline runs before records leave."
+  }
+}

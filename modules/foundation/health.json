@@ -117,7 +117,7 @@
   "downstreamRegistration": {
     "howToRegister": "Every module's service provider registers its probes in `boot()` via `$this->app->make(HealthAggregator::class)->probe(new MyProbe())`. Probes are collected in dependency order + walked in registration order on aggregate calls.",
     "conventions": [
-      "Probe name is `<module>-<subject>-<verb>` (e.g. `tenancy-scope-resolvable`, `invitations-queue-depth-not-stalled`).",
+      "Probe name is `<module>-<subject>-<verb>` (e.g. `workspaces-scope-resolvable`, `invitations-queue-depth-not-stalled`).",
       "Probes MUST be idempotent and cheap. Anything > 1s should be moved to a background snapshot job + the probe reads the snapshot.",
       "Probes MUST NOT throw. Timeouts + errors are captured by the aggregator and reported as `failing` with the message."
     ]

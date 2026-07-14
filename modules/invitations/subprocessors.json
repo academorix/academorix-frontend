@@ -2,7 +2,7 @@
   "id": "academorix://modules/invitations/subprocessors",
   "$version": 1,
   "title": "invitations — third-party subprocessors",
-  "description": "Third-party services this module uses. Aggregated at repo root by the compliance module's registry (GDPR Art. 28). Each entry names the purpose, region, DPA link, and data classes touched. Only one is required in production — the mail transport — but this module supports the whole list so tenants can pick per region + preference.",
+  "description": "Third-party services this module uses. Aggregated at repo root by the compliance module's registry (GDPR Art. 28). Each entry names the purpose, region, DPA link, and data classes touched. Only one is required in production — the mail transport — but this module supports the whole list so workspaces can pick per region + preference.",
   "publicRegistryUrl": "https://academorix.app/subprocessors",
   "subprocessors": [
     {
@@ -32,7 +32,7 @@
     {
       "name": "Postmark",
       "vendor": "ActiveCampaign, Inc.",
-      "purpose": "Transactional email — enterprise-tier tenant option for the highest deliverability rate (Postmark's US IP reputation is exceptional). Used where a specific tenant opts in via the `mail_transport` tenant setting.",
+      "purpose": "Transactional email — enterprise-tier workspace option for the highest deliverability rate (Postmark's US IP reputation is exceptional). Used where a specific workspace opts in via the `mail_transport` workspace setting.",
       "region": "us (New York)",
       "data_classes": ["confidential (invitee email + name)", "public (invitation subject line)"],
       "dpa_url": "https://postmarkapp.com/dpa",
@@ -44,8 +44,8 @@
     {
       "name": "Mailgun",
       "vendor": "Sinch",
-      "purpose": "Transactional email — third-tier fallback + on-demand tenant option (EU + US IP pools).",
-      "region": "us + eu (auto-routed per tenant application_id)",
+      "purpose": "Transactional email — third-tier fallback + on-demand workspace option (EU + US IP pools).",
+      "region": "us + eu (auto-routed per workspace application_id)",
       "data_classes": ["confidential (invitee email + name)", "public (invitation subject line)"],
       "dpa_url": "https://www.mailgun.com/legal/dpa/",
       "iso27001": true,
@@ -56,7 +56,7 @@
     {
       "name": "Twilio",
       "vendor": "Twilio, Inc.",
-      "purpose": "SMS delivery for the `sms` channel. Optional per-tenant (channel gated by `invitations.channels.sms` entitlement).",
+      "purpose": "SMS delivery for the `sms` channel. Optional per-workspace (channel gated by `invitations.channels.sms` entitlement).",
       "region": "global — routes to the recipient's region automatically",
       "data_classes": ["confidential (invitee phone + inviter display name)", "public (short URL)"],
       "dpa_url": "https://www.twilio.com/en-us/legal/data-protection-addendum",
@@ -66,8 +66,8 @@
     {
       "name": "Slack",
       "vendor": "Slack Technologies (Salesforce)",
-      "purpose": "Slack delivery for the `slack` channel. Optional — tenants configure a bot user + webhook URL per workspace they want to invite into.",
-      "region": "us + eu (per tenant Slack workspace's data-residency setting)",
+      "purpose": "Slack delivery for the `slack` channel. Optional — workspaces configure a bot user + webhook URL per workspace they want to invite into.",
+      "region": "us + eu (per workspace Slack workspace's data-residency setting)",
       "data_classes": ["confidential (invitee email if provided, inviter display name)", "public (message body)"],
       "dpa_url": "https://slack.com/trust/data-processing-addendum",
       "iso27001": true,
@@ -76,7 +76,7 @@
   ],
   "operational_notes": [
     "Exactly ONE mail transport is active per Application at any time (from SendGrid / SES / Postmark / Mailgun). Twilio + Slack are additive channels, not replacements.",
-    "Removing a subprocessor requires 30-day advance notice to every tenant that has messages queued through it (SendGrid → SES migration path is documented in the compliance module's runbooks).",
+    "Removing a subprocessor requires 30-day advance notice to every workspace that has messages queued through it (SendGrid → SES migration path is documented in the compliance module's runbooks).",
     "Every transport's inbound webhook must pass signature verification before writing InvitationEvent rows. Signature failures are counted (invitations.webhook.signature_failed.total metric) and alert above threshold."
   ]
 }

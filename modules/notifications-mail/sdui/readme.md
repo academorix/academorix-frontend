@@ -6,7 +6,7 @@ Server-Driven UI for mail-suppression admin. One resource surface + one lifecycl
 
 ### `resources/mail-suppression/`
 
-Tenant admin surface for viewing + managing the mail suppression list. Read-heavy — most suppressions arrive via provider webhooks. Admin creates come rarely (manual blocks of known-bad addresses).
+Workspace admin surface for viewing + managing the mail suppression list. Read-heavy — most suppressions arrive via provider webhooks. Admin creates come rarely (manual blocks of known-bad addresses).
 
 - `list.screen.json` — filterable by reason + provider + email domain; Menu action per row (revoke, view source delivery).
 - `show.screen.json` — suppression detail with reason + bounce_reason + source delivery link + revoke action.

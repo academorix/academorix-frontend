@@ -25,11 +25,11 @@
     {
       "class": "Academorix\\Activity\\Jobs\\ReconcileRetentionTierJob",
       "queue": "notifications",
-      "purpose": "Recompute retention_tier for existing rows when a tenant's plan changes. Bulk UPDATE + emit an anonymised metric row.",
+      "purpose": "Recompute retention_tier for existing rows when a workspace's plan changes. Bulk UPDATE + emit an anonymised metric row.",
       "shouldQueue": true,
       "shouldBeUnique": true,
       "uniqueFor": 3600,
-      "uniqueVia": "tenant_id",
+      "uniqueVia": "workspace_id",
       "tries": 2,
       "notes": "Dispatched by subscription::SubscriptionUpgraded / SubscriptionDowngraded listeners."
     }

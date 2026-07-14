@@ -12,12 +12,12 @@
       {"trait": "Spatie\\ModelStates\\HasStates"}
     ],
     "foundation": [
-      {"trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag", "reason": "ApiVersion + DeprecationNotice are platform-managed. is_system=true prevents tenant-side edits."},
+      {"trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag", "reason": "ApiVersion + DeprecationNotice are platform-managed. is_system=true prevents workspace-side edits."},
       {"trait": "Academorix\\Foundation\\Concerns\\HasUserstamps"},
-      {"trait": "Academorix\\Foundation\\Concerns\\HasAuditable", "reason": "Version lifecycle transitions (release/deprecate/sunset) audit-logged for regulatory evidence + tenant DPO reports."},
+      {"trait": "Academorix\\Foundation\\Concerns\\HasAuditable", "reason": "Version lifecycle transitions (release/deprecate/sunset) audit-logged for regulatory evidence + workspace DPO reports."},
       {"trait": "Academorix\\Foundation\\Concerns\\HasVersions", "reason": "ApiVersion.description + migration_target_slug + notice fields may be edited over time. Row-level snapshots via mpociot/versionable let ops roll back a bad description edit or restore a corrected migration URL."},
       {"trait": "Academorix\\Foundation\\Concerns\\HasMetadata"},
-      {"trait": "Academorix\\Foundation\\Concerns\\Sortable", "reason": "ApiVersion display order in tenant catalog + admin UI. Newer versions first by default."},
+      {"trait": "Academorix\\Foundation\\Concerns\\Sortable", "reason": "ApiVersion display order in workspace catalog + admin UI. Newer versions first by default."},
       {"trait": "Academorix\\Foundation\\Concerns\\Filterable"},
       {"trait": "Academorix\\Foundation\\Concerns\\Sluggable", "reason": "ApiVersion.slug is the primary lookup key (v1, v2, 2024-10-15). Reserved slugs enforced globally."},
       {"trait": "Academorix\\Foundation\\Concerns\\Searchable", "reason": "Admin search across version names + notice text."}
@@ -40,7 +40,7 @@
         "Searchable",
         "SoftDeletes"
       ],
-      "notes": "Every ApiVersion is is_system=true \u2014 tenant admins cannot create versions. NOT BelongsToTenant \u2014 versions are platform-global (a v1 API means the same thing to every tenant). HasVersions on ApiVersion is meta \u2014 the version registry itself is versionable so ops can roll back a bad description edit."
+      "notes": "Every ApiVersion is is_system=true \u2014 workspace admins cannot create versions. NOT BelongsToWorkspace \u2014 versions are platform-global (a v1 API means the same thing to every workspace). HasVersions on ApiVersion is meta \u2014 the version registry itself is versionable so ops can roll back a bad description edit."
     },
     "deprecation_notice": {
       "traits": [

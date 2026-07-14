@@ -1,0 +1,87 @@
+{
+  "id": "academorix://modules/telemetry-otel/attributes",
+  "$version": 1,
+  "title": "telemetry-otel \u2014 PHP attribute contracts",
+  "description": "Every attribute is discovered at build time by the CompileInstrumentationRegistry listener. The compiler maps class::method \u2192 descriptor. Runtime instrumentation uses keepsuit facades under a decorator/aspect.",
+  "namespace": "Academorix\\TelemetryOtel\\Attributes",
+  "attributes": [
+    {
+      "name": "AsSpan",
+      "class": "Academorix\\TelemetryOtel\\Attributes\\AsSpan",
+      "targets": ["method"],
+      "params": [
+        {"name": "name", "type": "string", "required": true, "description": "Span name. Semantic convention: `<subject>.<verb>` \u2014 e.g. `webhook.dispatch`, `subscription.swap`."},
+        {"name": "kind", "type": "string", "default": "internal", "enum": ["server", "client", "internal", "producer", "consumer"]},
+        {"name": "attributes", "type": "array<string>", "default": [], "description": "Param names to lift onto the span attributes. E.g. ['workspace_id', 'subscription_id']. Uses the method's parameter names."},
+        {"name": "record_exceptions", "type": "bool", "default": true},
+        {"name": "sampling_priority", "type": "string", "default": "inherit", "enum": ["inherit", "always", "never"], "description": "Override the sampler for this span. `always` = force-sample the whole trace."}
+      ]
+    },
+    {
+      "name": "AsCounter",
+      "class": "Academorix\\TelemetryOtel\\Attributes\\AsCounter",
+      "targets": ["method"],
+      "params": [
+        {"name": "name", "type": "string", "required": true},
+        {"name": "unit", "type": "string", "default": "count", "description": "OTel unit code. E.g. 'requests', 'bytes', '1'."},
+        {"name": "amount", "type": "int", "default": 1, "description": "Fixed increment. Override via #[AsCounter(from: 'amount')] to lift from a method param."},
+        {"name": "from", "type": "string", "default": null, "description": "Method param name whose value is used as the increment amount."},
+        {"name": "labels", "type": "array<string>", "default": [], "description": "Param names lifted to metric labels. Must be low-cardinality."}
+      ]
+    },
+    {
+      "name": "AsHistogram",
+      "class": "Academorix\\TelemetryOtel\\Attributes\\AsHistogram",
+      "targets": ["method"],
+      "params": [
+        {"name": "name", "type": "string", "required": true},
+        {"name": "unit", "type": "string", "default": "ms"},
+        {"name": "buckets", "type": "array<number>", "default": [5, 25, 100, 500, 2000, 10000], "description": "Histogram bucket boundaries."},
+        {"name": "value", "type": "string", "default": "duration_ms", "enum": ["duration_ms", "return_value", "from_param"], "description": "What to record. duration_ms is the method duration; return_value records the numeric return; from_param lifts a numeric param."},
+        {"name": "from", "type": "string", "default": null, "description": "Param name when value='from_param'."},
+        {"name": "labels", "type": "array<string>", "default": []}
+      ]
+    },
+    {
+      "name": "AsGauge",
+      "class": "Academorix\\TelemetryOtel\\Attributes\\AsGauge",
+      "targets": ["method"],
+      "params": [
+        {"name": "name", "type": "string", "required": true},
+        {"name": "unit", "type": "string", "default": "1"},
+        {"name": "labels", "type": "array<string>", "default": []},
+        {"name": "callback_mode", "type": "bool", "default": true, "description": "True = decorated method is invoked at scrape time. Method must return a number."}
+      ]
+    },
+    {
+      "name": "AsUpDownCounter",
+      "class": "Academorix\\TelemetryOtel\\Attributes\\AsUpDownCounter",
+      "targets": ["method"],
+      "params": [
+        {"name": "name", "type": "string", "required": true},
+        {"name": "unit", "type": "string", "default": "1"},
+        {"name": "delta", "type": "int", "default": 1, "description": "Signed delta \u2014 use -1 to decrement."},
+        {"name": "from", "type": "string", "default": null},
+        {"name": "labels", "type": "array<string>", "default": []}
+      ]
+    },
+    {
+      "name": "AsContext",
+      "class": "Academorix\\TelemetryOtel\\Attributes\\AsContext",
+      "targets": ["parameter"],
+      "params": [
+        {"name": "key", "type": "string", "required": true, "description": "Span attribute key. Semantic convention: `<domain>.<field>` \u2014 e.g. `webhook.subscription_id`."},
+        {"name": "propagate_to_baggage", "type": "bool", "default": false, "description": "Also propagate this value via W3C Baggage \u2014 downstream services + async jobs see it."}
+      ]
+    },
+    {
+      "name": "AsBaggage",
+      "class": "Academorix\\TelemetryOtel\\Attributes\\AsBaggage",
+      "targets": ["parameter", "method"],
+      "params": [
+        {"name": "key", "type": "string", "required": true},
+        {"name": "cross_service", "type": "bool", "default": true, "description": "Propagate via HTTP header on outbound calls. Off for internal-only baggage."}
+      ]
+    }
+  ]
+}

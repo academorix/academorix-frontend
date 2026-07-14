@@ -7,7 +7,7 @@
   "namespace": "academorix.foundation",
   "labelConventions": {
     "always": ["application_id"],
-    "commonlyAvailable": ["tenant_id (nullable — omit on cross-tenant queries)", "module_name"],
+    "commonlyAvailable": ["workspace_id (nullable — omit on cross-workspace queries)", "module_name"],
     "forbiddenAsLabels": ["user_id", "email", "session_id", "any high-cardinality id"]
   },
   "metrics": [

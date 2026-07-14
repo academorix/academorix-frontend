@@ -22,8 +22,8 @@
     {"name": "transfer.mapping-profiles.create",     "guard": "sanctum", "seededOn": ["member", "admin", "owner", "coach"]},
     {"name": "transfer.mapping-profiles.update",     "guard": "sanctum", "seededOn": ["member", "admin", "owner", "coach"]},
     {"name": "transfer.mapping-profiles.delete",     "guard": "sanctum", "seededOn": ["member", "admin", "owner", "coach"]},
-    {"name": "transfer.mapping-profiles.share",      "guard": "sanctum", "description": "Mark a mapping profile as tenant-wide shared. Gated additionally by entitlement `transfer.can_share_mapping_profiles`.", "seededOn": ["admin", "owner"]},
-    {"name": "platform.transfer.viewAny",            "guard": "platform_admin", "description": "Cross-tenant xfer_jobs list for support triage.", "seededOn": ["super_admin", "support", "ops"]},
+    {"name": "transfer.mapping-profiles.share",      "guard": "sanctum", "description": "Mark a mapping profile as workspace-wide shared. Gated additionally by entitlement `transfer.can_share_mapping_profiles`.", "seededOn": ["admin", "owner"]},
+    {"name": "platform.transfer.viewAny",            "guard": "platform_admin", "description": "Cross-workspace xfer_jobs list for support triage.", "seededOn": ["super_admin", "support", "ops"]},
     {"name": "platform.transfer.view",               "guard": "platform_admin", "seededOn": ["super_admin", "support", "ops"]}
   ]
 }

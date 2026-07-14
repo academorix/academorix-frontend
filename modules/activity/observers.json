@@ -8,8 +8,8 @@
       "model": "Activity",
       "observer": "Academorix\\Activity\\Observers\\ActivityObserver",
       "handles": [
-        "creating \u2192 resolve tenant_id from TenancyResolver if not set + populate ULID prefix `act_`",
-        "creating \u2192 resolve retention_tier from #[LoggableActivity] on subject_type OR default from tenant plan",
+        "creating \u2192 resolve workspace_id from WorkspacesResolver if not set + populate ULID prefix `act_`",
+        "creating \u2192 resolve retention_tier from #[LoggableActivity] on subject_type OR default from workspace plan",
         "created \u2192 fire ActivityRecorded (afterCommit) so downstream feeds (in-app fan-out) receive it"
       ]
     }

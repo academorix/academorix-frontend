@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/telemetry-logs/caches",
+  "$version": 1,
+  "title": "telemetry-logs \u2014 cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["telemetry-logs"],
+  "keys": [
+    {"pattern": "logs:registry:context", "description": "Compiled LogContextRegistry (class \u2192 [enricher method, key]).", "ttlSeconds": 86400, "tags": ["telemetry-logs", "platform"], "invalidatedBy": ["foundation::ApplicationBooted", "ConfigReloaded"]},
+    {"pattern": "logs:registry:channels", "description": "class \u2192 channel from #[AsLogChannel].", "ttlSeconds": 86400, "tags": ["telemetry-logs", "platform"]},
+    {"pattern": "logs:redactor:rules", "description": "Compiled redaction rules (keys + patterns + class-level).", "ttlSeconds": 3600, "tags": ["telemetry-logs", "platform"]}
+  ]
+}

@@ -3,12 +3,12 @@
   "title": "Audit trail",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/audits",
-  "host": "tenant",
+  "route": "/workspace/audits",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "audit", "entity": "audit", "action": "list"},
   "requiresPermission": "audit.viewAny",
-  "requiresFeature": "audit.tenant_dpo_surface",
+  "requiresFeature": "audit.workspace_dpo_surface",
   "dataSources": [
     {"name": "audits", "kind": "http.get", "url": "/api/v1/audits", "unwrap": "data", "paginated": true, "queryParamsFromState": ["filter[auditable_type]", "filter[event]", "filter[user_id]", "filter[created_at]", "sort", "page", "per_page"]},
     {"name": "auditableTypes", "kind": "http.get", "url": "/api/v1/audits/auditable-types", "unwrap": "data", "cache": {"ttlSeconds": 600}}
@@ -41,7 +41,7 @@
             {"kind": "Text", "props": {"className": "text-xs font-mono text-muted"}, "bindings": {"children": {"$expr": "row.auditable_type + ' ' + row.auditable_id"}}}
           ]}},
           {"id": "encrypted", "header": "", "cell": {"kind": "Icon", "bindings": {"hidden": {"$expr": "!row.is_encrypted"}, "icon": "lock-closed", "className": "size-4 text-warning"}, "props": {"title": "Contains encrypted restricted-tier fields"}}},
-          {"id": "actions", "header": "", "align": "end", "cell": {"kind": "Button", "props": {"variant": "ghost", "size": "sm", "children": "Detail"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/audits/' + row.id"}}}}
+          {"id": "actions", "header": "", "align": "end", "cell": {"kind": "Button", "props": {"variant": "ghost", "size": "sm", "children": "Detail"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/workspace/audits/' + row.id"}}}}
         ]}
       ]
     }

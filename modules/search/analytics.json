@@ -1,0 +1,22 @@
+{
+  "id": "academorix://modules/search/analytics",
+  "$version": 1,
+  "title": "search \u2014 product analytics events",
+  "description": "Product-analytics events emitted from the workspace surface. Volume-level telemetry lives in metrics.json + search_analytics_events (row-level). This file is for behaviour signals sent to Segment / Amplitude (feature usage, drop-off, funnels).",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {"name": "Search Query Ran",            "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "engine", "indexes", "had_typo_correction", "result_count_bucket", "took_ms_bucket", "language"], "description": "GET /search returned successfully. Raw query text NOT emitted \u2014 use search_analytics_events row for that (retained short-term)."},
+    {"name": "Search No Results Returned",  "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "engine", "indexes", "language"]},
+    {"name": "Search Click-Through",        "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "engine", "clicked_result_type", "clicked_position"]},
+    {"name": "Search Suggest Used",         "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "engine", "index", "prefix_length"]},
+    {"name": "Saved Query Created",         "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "is_smart_list", "is_shared"]},
+    {"name": "Saved Query Executed",        "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "saved_query_id", "result_count_bucket"]},
+    {"name": "Synonym Created",             "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "language", "kind", "source"]},
+    {"name": "Synonym Disabled",            "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "language", "was_system"]},
+    {"name": "Reindex Started",             "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "engine", "index_name", "source", "row_count_bucket"]},
+    {"name": "Reindex Completed",           "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "engine", "index_name", "outcome", "duration_seconds_bucket"]},
+    {"name": "Command Palette Opened",      "kind": "track", "consent_required": "functional", "properties": ["workspace_id"], "description": "Every \u2318K open. Powers palette adoption + iterating on default suggestions."},
+    {"name": "Command Palette Result Selected", "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "selected_kind", "selected_position", "typed_length"]}
+  ]
+}

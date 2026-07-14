@@ -5,12 +5,12 @@
   "sink": "segment",
   "consentTiers": ["essential", "functional", "analytics", "marketing"],
   "events": [
-    {"name": "Newsletter Subscribed", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "newsletter_id", "source"]},
-    {"name": "Newsletter Confirmed", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "newsletter_id", "hours_to_confirm"]},
-    {"name": "Newsletter Unsubscribed", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "newsletter_id", "reason"]},
-    {"name": "Newsletter Issue Sent", "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "newsletter_id", "issue_id", "recipient_count"]},
-    {"name": "Newsletter Opened", "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "newsletter_id", "issue_id"]},
-    {"name": "Newsletter Clicked", "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "newsletter_id", "issue_id", "url_host"]},
-    {"name": "Newsletter Reputation Alerted", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "newsletter_id", "threshold", "value"]}
+    {"name": "Newsletter Subscribed", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "newsletter_id", "source"]},
+    {"name": "Newsletter Confirmed", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "newsletter_id", "hours_to_confirm"]},
+    {"name": "Newsletter Unsubscribed", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "newsletter_id", "reason"]},
+    {"name": "Newsletter Issue Sent", "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "newsletter_id", "issue_id", "recipient_count"]},
+    {"name": "Newsletter Opened", "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "newsletter_id", "issue_id"]},
+    {"name": "Newsletter Clicked", "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "newsletter_id", "issue_id", "url_host"]},
+    {"name": "Newsletter Reputation Alerted", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "newsletter_id", "threshold", "value"]}
   ]
 }

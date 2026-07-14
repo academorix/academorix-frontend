@@ -1,0 +1,15 @@
+{
+  "id": "academorix://modules/subscription/caches",
+  "$version": 1,
+  "title": "subscription \u2014 cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["subscription", "plans"],
+  "keys": [
+    {"pattern": "plans:app:{application_id}:public", "description": "Public plan catalogue (is_public=true) for an Application. Read on GET /api/v1/plans.", "ttlSeconds": 3600, "tags": ["plans", "application"], "invalidatedBy": ["PlanCreated", "PlanUpdated", "PlanArchived"]},
+    {"pattern": "plans:app:{application_id}:all", "description": "All plans (including private + archived). Platform-admin surface.", "ttlSeconds": 3600, "tags": ["plans", "application"]},
+    {"pattern": "plan:{plan_id}", "description": "Individual plan. Read on plan-swap validation + entitlement sync.", "ttlSeconds": 3600, "tags": ["plans"]},
+    {"pattern": "subscription:workspace:{workspace_id}:active", "description": "The workspace's active Subscription row. Read on every request going through subscription.active middleware.", "ttlSeconds": 60, "tags": ["subscription", "workspace"], "invalidatedBy": ["Any Subscription mutation"]},
+    {"pattern": "subscription:workspace:{workspace_id}:state", "description": "Compact state summary (state + plan_tier + grace_ends_at) \u2014 read on /auth/me.", "ttlSeconds": 30, "tags": ["subscription", "workspace"]},
+    {"pattern": "subscription:cashier:{provider}:api_key", "description": "Cached Cashier API key (may be per-Application in future).", "ttlSeconds": 3600, "tags": ["subscription", "cashier"]}
+  ]
+}

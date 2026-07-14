@@ -1,0 +1,33 @@
+{
+  "id": "subscription.plan-comparison-card",
+  "title": "Plan comparison card",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "A single plan card. Shows price, tier, key features, primary CTA. Highlights the current plan + suggested tier.",
+  "props": {
+    "plan": {"type": "object", "required": true, "description": "Plan resource."},
+    "isCurrent": {"type": "boolean", "default": false},
+    "isSuggested": {"type": "boolean", "default": false}
+  },
+  "nodes": [
+    {"id": "card", "kind": "Card", "props": {"className": "p-6 flex flex-col gap-4 h-full relative"}, "bindings": {"props": {"className": {"$expr": "'p-6 flex flex-col gap-4 h-full relative ' + (props.isSuggested ? 'border-accent border-2' : (props.isCurrent ? 'opacity-70' : ''))"}}}, "children": [
+      {"kind": "Chip", "props": {"size": "xs", "variant": "accent", "className": "absolute top-3 right-3"}, "bindings": {"hidden": {"$expr": "!props.isSuggested"}, "children": "Recommended"}},
+      {"kind": "Chip", "props": {"size": "xs", "variant": "success", "className": "absolute top-3 right-3"}, "bindings": {"hidden": {"$expr": "!props.isCurrent"}, "children": "Current plan"}},
+      {"kind": "View", "children": [
+        {"kind": "Text", "props": {"className": "text-sm text-muted uppercase tracking-wide"}, "bindings": {"children": {"$ref": "props.plan.tier"}}},
+        {"kind": "Text", "props": {"as": "h3", "className": "text-2xl font-semibold mt-1"}, "bindings": {"children": {"$ref": "props.plan.name"}}}
+      ]},
+      {"kind": "View", "props": {"className": "flex items-baseline gap-1"}, "children": [
+        {"kind": "Text", "props": {"className": "text-3xl font-semibold"}, "bindings": {"children": {"$ref": "props.plan.price_formatted"}}},
+        {"kind": "Text", "props": {"className": "text-sm text-muted"}, "bindings": {"children": {"$expr": "'/' + (props.plan.billing_cycle === 'annual' ? 'year' : 'month')"}}}
+      ]},
+      {"kind": "Text", "props": {"className": "text-sm text-muted"}, "bindings": {"children": {"$ref": "props.plan.description"}}},
+      {"kind": "Separator"},
+      {"kind": "List", "props": {"className": "flex flex-col gap-2 flex-1"}, "bindings": {"items": {"$ref": "props.plan.included_features"}}, "itemRenderer": {"kind": "View", "props": {"className": "flex items-center gap-2 text-sm"}, "children": [
+        {"kind": "Icon", "props": {"name": "check-circle", "className": "text-success size-4"}},
+        {"kind": "Text", "bindings": {"children": {"$ref": "row"}}}
+      ]}},
+      {"kind": "Button", "props": {"variant": "primary", "size": "lg", "className": "w-full"}, "bindings": {"props": {"children": {"$expr": "props.isCurrent ? 'Current plan' : 'Choose ' + props.plan.name"}, "disabled": {"$ref": "props.isCurrent"}}}, "actions": {"onPress": {"kind": "widget.emit", "event": "onSelect"}}}
+    ]}
+  ]
+}

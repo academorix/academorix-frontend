@@ -2,7 +2,7 @@
   "id": "academorix://modules/invitations/config",
   "$version": 1,
   "title": "invitations — developer configuration",
-  "description": "Developer / operator configuration. Mirrors `config/invitations.php`. Static per deploy; changing requires redeploy + `config:cache`. Distinct from settings.json (which is tenant-editable at runtime).",
+  "description": "Developer / operator configuration. Mirrors `config/invitations.php`. Static per deploy; changing requires redeploy + `config:cache`. Distinct from settings.json (which is workspace-editable at runtime).",
   "configFile": "config/invitations.php",
   "envPrefix": "INVITATIONS_",
   "sections": {
@@ -28,7 +28,7 @@
       "keys": [
         {"path": "invitations.throttle.inviter_user_per_day", "type": "integer", "default": 50, "env": "INVITATIONS_LIMIT_INVITER_USER"},
         {"path": "invitations.throttle.inviter_service_account_per_day", "type": "integer", "default": 500, "env": "INVITATIONS_LIMIT_INVITER_SA"},
-        {"path": "invitations.throttle.tenant_per_day", "type": "integer", "default": 250, "env": "INVITATIONS_LIMIT_TENANT_DAY"},
+        {"path": "invitations.throttle.workspace_per_day", "type": "integer", "default": 250, "env": "INVITATIONS_LIMIT_WORKSPACE_DAY"},
         {"path": "invitations.throttle.invitee_email_per_week", "type": "integer", "default": 5, "env": "INVITATIONS_LIMIT_INVITEE_WEEK"}
       ]
     },

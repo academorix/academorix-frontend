@@ -1,0 +1,10 @@
+{
+  "id": "academorix://modules/telemetry-logs/listeners",
+  "$version": 1,
+  "title": "telemetry-logs \u2014 subscribed events",
+  "listeners": [
+    {"event": "foundation::ApplicationBooted", "listener": "Academorix\\TelemetryLogs\\Listeners\\CompileLogContextRegistry", "queue": null, "purpose": "Discover every #[AsLogContext] / #[AsLogChannel] / #[RedactedForLogs] attribute across the codebase. Compile into LogContextRegistry indexed by declaring class."},
+    {"event": "workspaces::WorkspaceResolved", "listener": "Academorix\\TelemetryLogs\\Listeners\\SetWorkspaceRequestContext", "queue": null, "purpose": "Store workspace_id + workspace_id in RequestContext so AcademorixContextProcessor picks them up on subsequent Log:: calls."},
+    {"event": "queue::JobProcessing", "listener": "Academorix\\TelemetryLogs\\Listeners\\PropagateContextIntoJob", "queue": null, "purpose": "Restore RequestContext from job payload (populated on dispatch). Ensures logs inside async jobs carry the originating workspace_id + causer_id."}
+  ]
+}

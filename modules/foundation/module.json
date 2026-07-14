@@ -3,7 +3,7 @@
   "name": "foundation",
   "alias": "foundation",
   "namespace": "Academorix\\Foundation",
-  "description": "Pure-infrastructure base module. Owns the cross-cutting model traits (HasSystemFlag, HasUserstamps, HasAuditable, HasVersions, HasMetadata, Sortable, Filterable, Sluggable, Searchable, HasVectorEmbeddings), the paired migration macros, base HTTP + exception + job + repository primitives, the health aggregator + probe registry, module discovery + ModuleRouteLoader, cache tag namespaces, base error envelope, data-classification taxonomy, and the compliance regime taxonomy every downstream module inherits. Ships zero domain entities \u2014 the module is entity-less on purpose. API + payload versioning has moved to `modules/versioning/` (Wave 1). Import / export substrate has moved to `modules/transfer/` (Wave 2). Wave 0: every other module depends on this one.",
+  "description": "Pure-infrastructure base module. Owns the cross-cutting model traits (HasSystemFlag, HasUserstamps, HasAuditable, HasVersions, HasMetadata, Sortable, Filterable, Sluggable, HasVectorEmbeddings), the paired migration macros, base HTTP + exception + job + repository primitives, the health aggregator + probe registry, module discovery + ModuleRouteLoader, cache tag namespaces, base error envelope, data-classification taxonomy, and the compliance regime taxonomy every downstream module inherits. Ships zero domain entities \u2014 the module is entity-less on purpose. API + payload versioning has moved to `modules/versioning/` (Wave 1). Import / export substrate has moved to `modules/transfer/` (Wave 2). Search substrate (Searchable trait, SearchEngineResolver, IndexSearchableJob, search commands) has moved to `modules/search/` (Wave 6). Wave 0: every other module depends on this one.",
   "keywords": [
     "foundation",
     "infrastructure",
@@ -21,7 +21,7 @@
   "extendedBy": [
     "versioning",
     "scope",
-    "tenancy",
+    "workspaces",
     "access",
     "audit",
     "settings",
@@ -52,7 +52,6 @@
       "Sortable",
       "Filterable",
       "Sluggable",
-      "Searchable",
       "HasVectorEmbeddings"
     ],
     "blueprints": [
@@ -63,7 +62,6 @@
       "metadata",
       "sortable",
       "sluggable",
-      "searchable",
       "embeddings"
     ],
     "middleware": ["request.id", "response.envelope", "throttle.base", "cors.strict"],
@@ -76,16 +74,8 @@
     ],
     "policies": [],
     "hooks": [],
-    "commands": [
-      "module:list",
-      "module:sync",
-      "module:diagnose",
-      "health:check",
-      "cache:tags",
-      "search:reindex",
-      "search:flush"
-    ],
-    "jobs": ["IndexSearchableJob"],
+    "commands": ["module:list", "module:sync", "module:diagnose", "health:check", "cache:tags"],
+    "jobs": [],
     "notifications": [],
     "broadcasts": ["platform.health"],
     "observers": [],
@@ -119,8 +109,8 @@
         "POST /api/v1/platform/search/reindex"
       ]
     },
-    "tenant": {
-      "description": "Tenant-visible health only (no diagnostics leak).",
+    "workspace": {
+      "description": "Workspace-visible health only (no diagnostics leak).",
       "routes": ["GET /api/ping", "GET /api/health"]
     }
   }

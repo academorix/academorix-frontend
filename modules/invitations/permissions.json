@@ -2,14 +2,14 @@
   "id": "academorix://modules/invitations/permissions",
   "$version": 1,
   "title": "invitations — permissions",
-  "description": "Permission strings this module publishes. Split by guard: `sanctum` for tenant admins managing their workspace's invitations; `platform_admin` for Academorix ops with cross-tenant audit + revoke authority. Seeded by InvitationsPermissionSeeder with is_system=true.",
+  "description": "Permission strings this module publishes. Split by guard: `sanctum` for workspace admins managing their workspace's invitations; `platform_admin` for Academorix ops with cross-workspace audit + revoke authority. Seeded by InvitationsPermissionSeeder with is_system=true.",
   "seeder": "Academorix\\Invitations\\Database\\Seeders\\InvitationsPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {
       "name": "invitations.viewAny",
       "guard": "sanctum",
-      "description": "List + show invitations in the caller's tenant.",
+      "description": "List + show invitations in the caller's workspace.",
       "grantsPolicies": ["InvitationPolicy@viewAny", "InvitationPolicy@view"],
       "seededOn": ["owner", "admin"]
     },
@@ -37,7 +37,7 @@
     {
       "name": "invitations.manage_any",
       "guard": "platform_admin",
-      "description": "Cross-tenant read + audit-revoke for Academorix ops. Scoped to a small platform-admin role tier.",
+      "description": "Cross-workspace read + audit-revoke for Academorix ops. Scoped to a small platform-admin role tier.",
       "grantsPolicies": [
         "InvitationPolicy@viewAnyPlatform",
         "InvitationPolicy@viewPlatform",
@@ -48,6 +48,6 @@
   ],
   "notes": [
     "No `invitations.accept` / `invitations.decline` permissions — those routes are public (token-based) and unauthenticated. The token IS the authorization.",
-    "Consumer modules may extend with target-specific permissions layered on top of `invitations.send` — e.g. `teams.manage_roster` gates whether a user can invite people to specific teams within a tenant, on top of the base `invitations.send` grant."
+    "Consumer modules may extend with target-specific permissions layered on top of `invitations.send` — e.g. `teams.manage_roster` gates whether a user can invite people to specific teams within a workspace, on top of the base `invitations.send` grant."
   ]
 }

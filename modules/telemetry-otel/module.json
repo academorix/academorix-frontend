@@ -1,0 +1,61 @@
+{
+  "$version": 1,
+  "name": "telemetry-otel",
+  "alias": "telemetry-otel",
+  "namespace": "Academorix\\TelemetryOtel",
+  "description": "OpenTelemetry instrumentation surface. Wraps `keepsuit/laravel-opentelemetry` under the hood \u2014 gains framework-native auto-instrumentation of HTTP, DB queries, queue jobs, cache operations, view rendering, and Guzzle out-calls with zero application changes. Adds attribute-driven manual instrumentation: `#[AsSpan]`, `#[AsCounter]`, `#[AsHistogram]`, `#[AsGauge]`, `#[AsContext]`, `#[AsBaggage]`. Attributes discovered at build-time and registered with the SDK; runtime uses vanilla method calls. Exports OTLP to any collector (Grafana Tempo/Mimir, DataDog Agent, Honeycomb, Signoz, self-hosted). Not a data store \u2014 fires and forgets.",
+  "keywords": ["telemetry", "otel", "opentelemetry", "tracing", "spans", "metrics", "observability", "keepsuit", "otlp", "attributes"],
+  "priority": 12,
+  "providers": ["Academorix\\TelemetryOtel\\Providers\\TelemetryOtelServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation"],
+  "wraps": {
+    "package": "keepsuit/laravel-opentelemetry",
+    "version_constraint": "^0.10",
+    "rationale": "Laravel-native OTel package with turn-key auto-instrumentation. Alternative (`open-telemetry/sdk` + `open-telemetry/exporter-otlp` directly) requires ~500 lines of provider glue we would have to maintain. keepsuit is a thin composition layer over the official SDK \u2014 no lock-in.",
+    "underlying_stack": ["open-telemetry/sdk", "open-telemetry/exporter-otlp", "open-telemetry/api"]
+  },
+  "extendedBy": ["telemetry-logs"],
+  "contributes": {
+    "traits": ["Traceable"],
+    "attributes": ["AsSpan", "AsCounter", "AsHistogram", "AsGauge", "AsUpDownCounter", "AsContext", "AsBaggage"],
+    "blueprints": [],
+    "middleware": ["otel.trace", "otel.baggage"],
+    "events": ["SpanStarted", "SpanEnded", "SpanErrored", "TracerInitialized"],
+    "policies": [],
+    "hooks": [],
+    "commands": ["otel:describe", "otel:test-export", "otel:sample-traces"],
+    "jobs": ["FlushBufferedSpansJob"],
+    "notifications": [],
+    "broadcasts": [],
+    "observers": [],
+    "rules": [],
+    "casts": [],
+    "views": [],
+    "lang": [],
+    "config": ["telemetry-otel"],
+    "macros": [],
+    "bindings": ["TracerProvider", "MeterProvider", "SpanRegistry", "MetricRegistry", "ResourceBuilder", "PropagatorRegistry", "ContextEnricherPipeline"],
+    "resources": []
+  },
+  "auto_instrumentation": {
+    "http_server": {"description": "Every inbound HTTP request \u2192 root span. Method, route, status, duration, request_id (from foundation).", "package": "keepsuit/laravel-opentelemetry", "enabled_by_default": true},
+    "http_client": {"description": "Every Guzzle / HTTP facade outcall \u2192 client span with URL, method, response status, duration.", "package": "keepsuit/laravel-opentelemetry", "enabled_by_default": true},
+    "database": {"description": "Every Eloquent / DB query \u2192 db span with statement (redacted PII), rows_affected, duration.", "package": "keepsuit/laravel-opentelemetry", "enabled_by_default": true},
+    "queue": {"description": "Every dispatched job \u2192 producer span; every executed job \u2192 consumer span linked via trace context. Cross-queue propagation via job middleware.", "package": "keepsuit/laravel-opentelemetry", "enabled_by_default": true},
+    "cache": {"description": "Every cache read/write \u2192 span with key, hit/miss, duration.", "package": "keepsuit/laravel-opentelemetry", "enabled_by_default": false, "reason": "High volume + noisy \u2014 opt-in per env."},
+    "view": {"description": "Every Blade render \u2192 span with view name, duration.", "package": "keepsuit/laravel-opentelemetry", "enabled_by_default": false, "reason": "Only enable when investigating template render latency."}
+  },
+  "attribute_driven": {
+    "description": "Modules opt in via attributes to add custom spans, counters, histograms without importing the SDK. Discovery pass registers them at boot; runtime instrumentation is vanilla method calls.",
+    "attributes": {
+      "AsSpan": "Wraps a method with a manual span. Recorded automatically before/after the method body. Params: name, kind, attributes[].",
+      "AsCounter": "Emits +1 counter increment on method entry (or param-controlled amount). Params: name, unit, labels[].",
+      "AsHistogram": "Records method duration_ms in a histogram. Params: name, buckets, unit.",
+      "AsGauge": "Read-only observable gauge; the method's return value is the current gauge reading. Called on scrape.",
+      "AsUpDownCounter": "Emits an integer delta. Useful for concurrent-count tracking (in-flight requests, cache entries).",
+      "AsContext": "Adds the method's return value to the current OpenTelemetry Baggage / span attributes for the duration of the call.",
+      "AsBaggage": "Propagates a key/value across service / queue boundaries in the W3C Baggage header."
+    }
+  }
+}

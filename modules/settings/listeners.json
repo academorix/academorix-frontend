@@ -5,7 +5,7 @@
   "listeners": [
     {"event": "foundation::ApplicationBooted", "listener": "Academorix\\Settings\\Listeners\\HydrateSettingsRegistry", "queue": null, "purpose": "Load compiled #[AsSetting] catalogue via foundation's DiscoversAttributes. First-touch cost paid at boot."},
     {"event": "foundation::ConfigReloaded", "listener": "Academorix\\Settings\\Listeners\\RehydrateSettingsRegistry", "queue": null, "purpose": "Rebuild on hot-reload."},
-    {"event": "tenancy::TenantErased", "listener": "Academorix\\Settings\\Listeners\\PurgeSettingsForErasedTenant", "queue": "notifications", "purpose": "Cascade-delete tenant-scope SettingValue rows. FK handles the delete; this listener records the compliance-side audit entry."},
+    {"event": "workspaces::WorkspaceErased", "listener": "Academorix\\Settings\\Listeners\\PurgeSettingsForErasedWorkspace", "queue": "notifications", "purpose": "Cascade-delete workspace-scope SettingValue rows. FK handles the delete; this listener records the compliance-side audit entry."},
     {"event": "user::UserErased", "listener": "Academorix\\Settings\\Listeners\\PurgeSettingsForErasedUser", "queue": "notifications", "purpose": "GDPR Art. 17 \u2014 delete user-scope overrides."},
     {"event": "settings::SettingsChangeEvent", "listener": "Academorix\\Settings\\Listeners\\InvalidateResolvedCache", "queue": null, "purpose": "Bust the resolved-value cache for the affected (scope, group) so next read re-resolves."}
   ]

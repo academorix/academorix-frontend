@@ -4,9 +4,9 @@
 
 ### `resources/audit/`
 
-Platform admin surface + minimal tenant DPO surface.
+Platform admin surface + minimal workspace DPO surface.
 
-- `list.screen.json` — filterable by tenant + auditable_type + event + date range. Restricted-tier field values masked for non-privileged callers.
+- `list.screen.json` — filterable by workspace + auditable_type + event + date range. Restricted-tier field values masked for non-privileged callers.
 - `show.screen.json` — audit detail with side-by-side old/new value diff via the AuditDiffViewer widget.
 
 ### `widgets/`

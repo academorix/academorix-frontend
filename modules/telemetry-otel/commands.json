@@ -1,0 +1,10 @@
+{
+  "id": "academorix://modules/telemetry-otel/commands",
+  "$version": 1,
+  "title": "telemetry-otel \u2014 Artisan commands",
+  "commands": [
+    {"signature": "otel:describe {--attribute=} {--module=}", "class": "Academorix\\TelemetryOtel\\Console\\Commands\\DescribeCommand", "purpose": "Print SpanRegistry + MetricRegistry: every discovered #[AsSpan] / #[AsCounter] / etc across the codebase, grouped by module + class."},
+    {"signature": "otel:test-export {--traces} {--metrics}", "class": "Academorix\\TelemetryOtel\\Console\\Commands\\TestExportCommand", "purpose": "Fires a synthetic trace + metric to the configured OTLP endpoint. Reports round-trip time + response. Useful for smoke-testing exporter config."},
+    {"signature": "otel:sample-traces {--service=} {--limit=100}", "class": "Academorix\\TelemetryOtel\\Console\\Commands\\SampleTracesCommand", "purpose": "Prints a summary of the last N sampled traces from local buffer (when SDK debug processor active). Dev-only."}
+  ]
+}

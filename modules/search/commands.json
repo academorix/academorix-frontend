@@ -1,0 +1,52 @@
+{
+  "id": "academorix://modules/search/commands",
+  "$version": 1,
+  "title": "search \u2014 Artisan commands",
+  "commands": [
+    {
+      "signature": "search:describe {model?} {--engine=} {--refresh-cache} {--json}",
+      "class": "Academorix\\Search\\Console\\Commands\\DescribeCommand",
+      "purpose": "Dump the SearchIndex registry. Without arguments \u2014 lists every registered (model, engine, index_name) with status + document_count + config_hash + needs-reindex flag. With `model` \u2014 full detail for one model including every #[SearchField] / #[SearchFacet] / #[SearchBoost] / #[SearchSynonym]. `--refresh-cache` rebuilds the cache from source. `--engine` filters by adapter. `--json` emits machine-parseable output."
+    },
+    {
+      "signature": "search:reindex {model?} {--engine=} {--from-artifact=} {--async} {--sync-source=live} {--as=} {--no-notify}",
+      "class": "Academorix\\Search\\Console\\Commands\\ReindexCommand",
+      "purpose": "Trigger a zero-downtime reindex. Without arguments \u2014 reindexes every registered model. With `model` \u2014 reindexes one. `--from-artifact` reads rows from a transfer XferArtifact (cross-region migration flow) instead of live DB. `--async` dispatches ReindexModelBatchJob (default); without \u2014 runs the coordinator inline (dev only). `--as` impersonates a target user (initiator = that user). `--no-notify` suppresses the completion notification. Creates a SearchSyncJob and returns its id."
+    },
+    {
+      "signature": "search:flush {model : FQCN or table name} {--engine=} {--yes : Skip confirmation}",
+      "class": "Academorix\\Search\\Console\\Commands\\FlushCommand",
+      "purpose": "Drop a model's search index (all versions). Rare \u2014 usually only during schema migrations that make the current index incompatible. Prompts for confirmation unless `--yes`. Records a SearchSyncJob with kind=flush + audit trail. `--engine` targets one engine if the model is indexed on multiple."
+    },
+    {
+      "signature": "search:synonyms {action : list|add|update|delete|warm-cache|import|export} {--workspace=} {--language=en} {--terms=*} {--kind=equivalent} {--file=} {--id=} {--as=}",
+      "class": "Academorix\\Search\\Console\\Commands\\SynonymsCommand",
+      "purpose": "CRUD + bulk operations on search_synonyms. `--action=list` prints active synonyms. `add` creates one (`--terms=flu --terms=influenza --terms=grippe`). `update` modifies one by `--id`. `delete` soft-deletes. `warm-cache` re-pushes to engine adapters. `import`/`export` for JSON/CSV bulk workflows."
+    },
+    {
+      "signature": "search:analytics {action : summary|top|no-results|prune} {--workspace=} {--from=} {--to=} {--limit=50} {--stale-only} {--json}",
+      "class": "Academorix\\Search\\Console\\Commands\\AnalyticsCommand",
+      "purpose": "Search analytics inspection + retention. `--action=summary` prints query volume + avg took_ms + no-results rate + click-through rate. `top` prints the top queries by count (uses query_hash). `no-results` prints the no-result queries admins should watch. `prune` dispatches PruneSearchAnalyticsJob \u2014 combined with `--stale-only` for the 15-min sweep from schedule.json."
+    },
+    {
+      "signature": "search:test-query {query} {--model=*} {--engine=} {--limit=10} {--filter=*} {--facets=*} {--boost=*} {--no-record : Do not write an analytics event} {--json}",
+      "class": "Academorix\\Search\\Console\\Commands\\TestQueryCommand",
+      "purpose": "Run a query from the CLI and print the result set + timings + facets. Useful for admin diagnostics + relevance tuning without polluting analytics (`--no-record`)."
+    },
+    {
+      "signature": "search:jobs {--status=*} {--kind=*} {--workspace=} {--limit=50} {--json}",
+      "class": "Academorix\\Search\\Console\\Commands\\JobsCommand",
+      "purpose": "List search_sync_jobs \u2014 platform-admin observability. Filter by status / kind / workspace."
+    },
+    {
+      "signature": "search:cancel {jobId} {--reason=} {--force}",
+      "class": "Academorix\\Search\\Console\\Commands\\CancelCommand",
+      "purpose": "Cancel a queued or running SearchSyncJob. Sets status=cancelling; the next shard boundary bails out and any in-flight target index is left un-swapped. `--force` cancels even in terminal state (platform-admin only, audit-heavy)."
+    },
+    {
+      "signature": "search:health {--engine=*} {--check-drift} {--json}",
+      "class": "Academorix\\Search\\Console\\Commands\\HealthCommand",
+      "purpose": "Probe every configured engine. Reports reachability, index count, sync lag, drift-vs-config, worker freshness. `--check-drift` triggers the config_hash comparison surfaced by the hourly `search-drift-check` schedule."
+    }
+  ]
+}

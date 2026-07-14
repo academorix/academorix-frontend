@@ -28,7 +28,7 @@ use Spatie\LaravelSettings\Settings;
     label: 'Notifications',
     description: 'Notification channel and delivery preferences.',
     icon: 'bell',
-    scope: 'tenant',
+    scope: 'workspace',
     sortOrder: 3,
 )]
 class NotificationSettings extends Settings
@@ -51,11 +51,11 @@ Build-time discovery via foundation's `DiscoversAttributes` seam hydrates the `S
 
 ## 3. Scope hierarchy
 
-Reads cascade: `user override → tenant override → system default → property default`.
+Reads cascade: `user override → workspace override → system default → property default`.
 
-Writes target a specific scope: `system` writes require super-admin; `tenant` writes require tenant admin; `user` writes require the owner.
+Writes target a specific scope: `system` writes require super-admin; `workspace` writes require workspace admin; `user` writes require the owner.
 
-Scope is declared per class via `AsSetting(scope: 'system' | 'tenant' | 'user')`. A `tenant`-scoped class allows tenant overrides but NOT user overrides — that's an intentional guardrail against per-user drift on tenant-wide policy.
+Scope is declared per class via `AsSetting(scope: 'system' | 'workspace' | 'user')`. A `workspace`-scoped class allows workspace overrides but NOT user overrides — that's an intentional guardrail against per-user drift on workspace-wide policy.
 
 Org / branch scopes are deferred until the `scope` module lands. When it ships, the resolver picks up the extra levels automatically without changes to consuming code.
 
@@ -63,7 +63,7 @@ Org / branch scopes are deferred until the `scope` module lands. When it ships, 
 
 On every `PUT /api/v1/settings/{group}`, one `SettingsChangeEvent` fires per changed field. Two listeners consume:
 
-- `activity::WriteSettingsChangeToActivity` — writes to `activity_log` via `HasActivityLog`. Tenant-facing product feed, tier retention.
+- `activity::WriteSettingsChangeToActivity` — writes to `activity_log` via `HasActivityLog`. Workspace-facing product feed, tier retention.
 - `audit::WriteSettingsChangeToAudit` — writes to `audits` via `HasAudit`. Compliance trail, 7y cold. KMS-encrypted for sensitive fields.
 
 Both listeners are registered by this module's service provider. Neither is optional in production — dual-write is the audit contract.
@@ -95,4 +95,4 @@ Standard blueprint plus:
 
 - **Doesn't own domain-specific settings classes.** Each module contributes its own (`NotificationSettings` in `notifications`, `MailSettings` in `notifications-mail`, etc.). This module owns the platform + attribute surface + resolver + storage + HTTP.
 - **Doesn't own theme-specific concerns.** Design tokens + theme presets live in a future `theme` module.
-- **Doesn't broadcast on WebSockets.** Settings changes are cache-invalidated on the next request; real-time UI updates require the tenant to add their own SSE / websocket bridge on top of `SettingsChangeEvent`.
+- **Doesn't broadcast on WebSockets.** Settings changes are cache-invalidated on the next request; real-time UI updates require the workspace to add their own SSE / websocket bridge on top of `SettingsChangeEvent`.

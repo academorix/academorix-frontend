@@ -12,7 +12,7 @@
       "label": "Sender identity",
       "description": "Default sender identity + brand overlay for outbound notifications across channels.",
       "icon": "identification",
-      "scope": "tenant",
+      "scope": "workspace",
       "public": false,
       "sortOrder": 10,
       "permission": "settings.read",
@@ -63,7 +63,7 @@
         },
         {
           "label": "Notification branding",
-          "description": "Tenant branding used in the shared React Email Layout + in-app notification card. Overlays tenancy::Branding.",
+          "description": "Workspace branding used in the shared React Email Layout + in-app notification card. Overlays workspaces::Branding.",
           "icon": "swatch",
           "sortOrder": 2,
           "fields": [
@@ -74,7 +74,7 @@
               "defaultValue": null,
               "validation": ["nullable", "url", "max:500"],
               "sortOrder": 1,
-              "helpText": "Empty = use tenancy default."
+              "helpText": "Empty = use workspaces default."
             },
             {
               "name": "brand_primary_color",
@@ -83,7 +83,7 @@
               "defaultValue": null,
               "validation": ["nullable", "regex:/^#[0-9a-fA-F]{6}$/"],
               "sortOrder": 2,
-              "helpText": "Empty = use tenancy default."
+              "helpText": "Empty = use workspaces default."
             },
             {
               "name": "brand_footer_text",
@@ -104,7 +104,7 @@
       "label": "Notification behaviour",
       "description": "Digest defaults + consent defaults + quiet hours defaults.",
       "icon": "bell",
-      "scope": "tenant",
+      "scope": "workspace",
       "public": false,
       "sortOrder": 11,
       "permission": "settings.read",
@@ -158,7 +158,7 @@
         },
         {
           "label": "Consent defaults",
-          "description": "Per-tenant marketing consent defaults governed by tenant's jurisdiction.",
+          "description": "Per-workspace marketing consent defaults governed by workspace's jurisdiction.",
           "icon": "shield-check",
           "sortOrder": 2,
           "fields": [
@@ -181,7 +181,7 @@
               "defaultValue": false,
               "validation": ["boolean"],
               "sortOrder": 2,
-              "helpText": "Require confirmation email before marketing consent is captured. Required for EU/UK tenants."
+              "helpText": "Require confirmation email before marketing consent is captured. Required for EU/UK workspaces."
             },
             {
               "name": "consent_age_gate_enabled",
@@ -190,13 +190,13 @@
               "defaultValue": true,
               "validation": ["boolean"],
               "sortOrder": 3,
-              "helpText": "Block marketing to minors. Recommended on for every tenant."
+              "helpText": "Block marketing to minors. Recommended on for every workspace."
             }
           ]
         },
         {
           "label": "Quiet hours defaults",
-          "description": "Tenant-wide quiet-hours defaults. Users can override per-user.",
+          "description": "Workspace-wide quiet-hours defaults. Users can override per-user.",
           "icon": "moon",
           "sortOrder": 3,
           "fields": [

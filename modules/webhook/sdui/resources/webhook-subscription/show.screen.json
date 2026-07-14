@@ -3,15 +3,15 @@
   "title": "Webhook detail",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/webhooks/{id}",
-  "host": "tenant",
+  "route": "/workspace/webhooks/{id}",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "webhook", "entity": "webhook-subscription", "action": "show"},
   "requiresPermission": "webhook.subscriptions.view",
   "params": [{"name": "id", "type": "string", "in": "path", "required": true}],
   "dataSources": [
-    {"name": "subscription", "kind": "http.get", "urlExpr": "'/api/v1/tenant/webhook/subscriptions/' + params.id", "unwrap": "data"},
-    {"name": "recentDeliveries", "kind": "http.get", "urlExpr": "'/api/v1/tenant/webhook/deliveries?filter[subscription_id]=' + params.id + '&sort=-created_at&per_page=20'", "unwrap": "data"}
+    {"name": "subscription", "kind": "http.get", "urlExpr": "'/api/v1/workspace/webhook/subscriptions/' + params.id", "unwrap": "data"},
+    {"name": "recentDeliveries", "kind": "http.get", "urlExpr": "'/api/v1/workspace/webhook/deliveries?filter[subscription_id]=' + params.id + '&sort=-created_at&per_page=20'", "unwrap": "data"}
   ],
   "nodes": [
     {
@@ -19,7 +19,7 @@
       "kind": "View",
       "props": {"className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto"},
       "children": [
-        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/webhooks"}}},
+        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/webhooks"}}},
         {"kind": "View", "props": {"className": "flex items-start justify-between gap-4"}, "children": [
           {"kind": "View", "props": {"className": "flex flex-col gap-1"}, "children": [
             {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold"}, "bindings": {"children": {"$ref": "subscription.name"}}},
@@ -31,12 +31,12 @@
             ]}
           ]},
           {"kind": "View", "props": {"className": "flex items-center gap-2"}, "children": [
-            {"kind": "Button", "props": {"variant": "outline", "size": "sm", "leadingIcon": "beaker", "children": "Send test"}, "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('webhook.subscriptions.test')"}}, "actions": {"onPress": {"kind": "http.post", "urlExpr": "'/api/v1/tenant/webhook/subscriptions/' + params.id + '/test'", "onSuccess": {"kind": "toast.success", "message": "Test dispatched \u2014 check deliveries below."}}}},
-            {"kind": "Button", "props": {"variant": "primary", "size": "sm", "leadingIcon": "pencil", "children": "Edit"}, "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('webhook.subscriptions.update') || subscription.is_system"}}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/webhooks/' + params.id + '/edit'"}}}
+            {"kind": "Button", "props": {"variant": "outline", "size": "sm", "leadingIcon": "beaker", "children": "Send test"}, "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('webhook.subscriptions.test')"}}, "actions": {"onPress": {"kind": "http.post", "urlExpr": "'/api/v1/workspace/webhook/subscriptions/' + params.id + '/test'", "onSuccess": {"kind": "toast.success", "message": "Test dispatched \u2014 check deliveries below."}}}},
+            {"kind": "Button", "props": {"variant": "primary", "size": "sm", "leadingIcon": "pencil", "children": "Edit"}, "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('webhook.subscriptions.update') || subscription.is_system"}}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/workspace/webhooks/' + params.id + '/edit'"}}}
           ]}
         ]},
         {"kind": "Alert", "props": {"variant": "danger"}, "bindings": {"hidden": {"$expr": "!subscription.is_disabled"}, "children": {"$expr": "'This subscription was disabled: ' + subscription.disabled_reason + '. Fix the receiver and click Resume when ready.'"}}, "children": [
-          {"kind": "Button", "props": {"variant": "primary", "size": "sm", "children": "Resume", "className": "mt-2"}, "actions": {"onPress": {"kind": "http.post", "urlExpr": "'/api/v1/tenant/webhook/subscriptions/' + params.id + '/resume'", "onSuccess": [{"kind": "toast.success", "message": "Resumed"}, {"kind": "data.refresh", "source": "subscription"}]}}}
+          {"kind": "Button", "props": {"variant": "primary", "size": "sm", "children": "Resume", "className": "mt-2"}, "actions": {"onPress": {"kind": "http.post", "urlExpr": "'/api/v1/workspace/webhook/subscriptions/' + params.id + '/resume'", "onSuccess": [{"kind": "toast.success", "message": "Resumed"}, {"kind": "data.refresh", "source": "subscription"}]}}}
         ]},
         {"kind": "Card", "props": {"className": "p-6"}, "children": [
           {"kind": "Text", "props": {"as": "h2", "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3", "children": "Configuration"}},
@@ -60,7 +60,7 @@
                 {"kind": "Text", "props": {"className": "text-xs text-muted"}, "bindings": {"children": {"$expr": "formatRelative(row.created_at) + (row.response_status ? ' \u00b7 ' + row.response_status : '') + (row.duration_ms ? ' \u00b7 ' + row.duration_ms + 'ms' : '')"}}}
               ]}
             ]},
-            {"kind": "Link", "props": {"size": "sm", "children": "Detail"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/webhooks/deliveries/' + row.id"}}}
+            {"kind": "Link", "props": {"size": "sm", "children": "Detail"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/workspace/webhooks/deliveries/' + row.id"}}}
           ]}}
         ]}
       ]

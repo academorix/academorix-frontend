@@ -9,11 +9,11 @@ resolves to an `ISduiScreen` at runtime — the frontend renders them via
 
 ### Resource CRUD (`resources/invitation/`)
 
-Admin-facing invitation management, rendered inside the tenant dashboard.
+Admin-facing invitation management, rendered inside the workspace dashboard.
 
 | File | Role |
 |---|---|
-| `list.screen.json` | Paginated invitations table with filters (state, target_type, email), bulk actions (revoke, resend), and inline actions per row. Subscribes to the `tenant.{id}.invitations` broadcast channel for live status updates. |
+| `list.screen.json` | Paginated invitations table with filters (state, target_type, email), bulk actions (revoke, resend), and inline actions per row. Subscribes to the `workspace.{id}.invitations` broadcast channel for live status updates. |
 | `create.screen.json` | Send-invitation form. Fields: email, target picker, role selector, channel, custom message, expiry override. Consumer-supplied target types render dynamically from `InvitationTargetRegistry`. |
 | `show.screen.json` | Invitation detail. Header with status chip + lifecycle actions. Timeline component streaming from `invitation.events`. Sidebar with metadata + resend / revoke buttons. |
 
@@ -23,7 +23,7 @@ Public-facing surfaces served on the central host with no authentication.
 
 | File | Role |
 |---|---|
-| `accept-invitation.screen.json` | Token-based acceptance flow. Tenant-branded, includes inviter identity, target label, consent capture, password / SSO / passkey option per provider registry. |
+| `accept-invitation.screen.json` | Token-based acceptance flow. Workspace-branded, includes inviter identity, target label, consent capture, password / SSO / passkey option per provider registry. |
 | `decline-invitation.screen.json` | One-page decline. Optional reason. Terminal state, no follow-up. |
 
 ### Widgets (`widgets/`)
@@ -43,16 +43,16 @@ build a `nodes[]` tree with `kind` / `props` / `bindings` / `actions` /
 
 ## Data sources this module publishes
 
-- `invitation` — single-record fetch (`GET /api/v1/tenant/invitations/{id}?include=events,target,inviter,acceptedBy`).
-- `invitations` — paginated list (`GET /api/v1/tenant/invitations`) with filter / sort / include support.
-- `invitationTargets` — list of registered target types + their labels (`GET /api/v1/tenant/invitations/target-types` — provided by `InvitationTargetRegistry`).
-- `tenantBrandingPreview` — public tenant preview for the accept + decline screens (`GET /api/current-tenant` via host resolution).
+- `invitation` — single-record fetch (`GET /api/v1/workspace/invitations/{id}?include=events,target,inviter,acceptedBy`).
+- `invitations` — paginated list (`GET /api/v1/workspace/invitations`) with filter / sort / include support.
+- `invitationTargets` — list of registered target types + their labels (`GET /api/v1/workspace/invitations/target-types` — provided by `InvitationTargetRegistry`).
+- `workspaceBrandingPreview` — public workspace preview for the accept + decline screens (`GET /api/current-workspace` via host resolution).
 - `invitationPreview` — public invitation preview for the accept + decline screens (`GET /api/invitations/{token}`).
 
 ## Broadcast subscriptions
 
 The `list.screen.json` + `show.screen.json` subscribe to
-`tenant.{tenantId}.invitations` (see `broadcasts.json`) to update rows
+`workspace.{workspaceId}.invitations` (see `broadcasts.json`) to update rows
 live without polling.
 
 ## Consumer-supplied targets

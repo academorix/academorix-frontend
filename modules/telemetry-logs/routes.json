@@ -1,0 +1,19 @@
+{
+  "id": "academorix://modules/telemetry-logs/routes",
+  "$version": 1,
+  "title": "telemetry-logs \u2014 HTTP routes",
+  "description": "No public routes. Same as telemetry-otel \u2014 SRE debug surface only.",
+  "groups": [
+    {
+      "name": "platform-logs-internal",
+      "prefix": "/api/v1/platform/telemetry-logs",
+      "middleware": ["request.id", "cors.strict", "auth:platform_admin", "throttle:foundation-platform", "response.envelope"],
+      "hosts": ["central_admin"],
+      "routes": [
+        {"method": "GET", "path": "/status", "controller": "Academorix\\TelemetryLogs\\Http\\Controllers\\StatusController@show", "permission": "platform.telemetry.view", "description": "Pipeline status: active channels, active processors, sink health, redaction rules loaded."},
+        {"method": "GET", "path": "/registry", "controller": "Academorix\\TelemetryLogs\\Http\\Controllers\\RegistryController@index", "permission": "platform.telemetry.view", "description": "Compiled LogContextRegistry from #[AsLogContext] discovery."},
+        {"method": "POST", "path": "/test-emit", "controller": "Academorix\\TelemetryLogs\\Http\\Controllers\\TestEmitController@run", "permission": "platform.telemetry.manage", "description": "Emits a synthetic log record at each level to the configured sink for smoke testing."}
+      ]
+    }
+  ]
+}

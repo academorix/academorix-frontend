@@ -1,0 +1,16 @@
+{
+  "id": "academorix://modules/telemetry-otel/listeners",
+  "$version": 1,
+  "title": "telemetry-otel \u2014 subscribed events",
+  "listeners": [
+    {"event": "foundation::ApplicationBooted", "listener": "Academorix\\TelemetryOtel\\Listeners\\CompileInstrumentationRegistry", "queue": null, "purpose": "Discover every #[AsSpan] / #[AsCounter] / #[AsHistogram] / #[AsGauge] / #[AsUpDownCounter] / #[AsContext] / #[AsBaggage] attribute across the codebase. Compile into SpanRegistry + MetricRegistry. Register each instrument with the OTel Meter."},
+    {"event": "foundation::RequestFinished", "listener": "Academorix\\TelemetryOtel\\Listeners\\FlushCurrentTrace", "queue": null, "purpose": "Ensures the root span is closed + flushed even if the request short-circuited (e.g. auth failure)."},
+    {"event": "workspaces::WorkspaceResolved", "listener": "Academorix\\TelemetryOtel\\Listeners\\SetWorkspaceBaggage", "queue": null, "purpose": "Once WorkspaceResolver identifies the workspace, adds academorix.workspace_id + academorix.workspace_id to current-span attributes + baggage."},
+    {"event": "queue::JobProcessing", "listener": "Academorix\\TelemetryOtel\\Listeners\\ResumeQueueTrace", "queue": null, "purpose": "Extracts the trace context from the job payload (put there by TracePropagatingBusMiddleware on dispatch) + starts a consumer span linked to the producer."},
+    {"event": "queue::JobProcessed", "listener": "Academorix\\TelemetryOtel\\Listeners\\CloseQueueTrace", "queue": null, "purpose": "Closes the consumer span + records success/failure status."},
+    {"event": "queue::JobFailed", "listener": "Academorix\\TelemetryOtel\\Listeners\\RecordQueueException", "queue": null, "purpose": "Records the exception on the consumer span, sets status=ERROR."}
+  ],
+  "bus_middleware": [
+    {"middleware": "Academorix\\TelemetryOtel\\Bus\\TracePropagatingBusMiddleware", "purpose": "On job dispatch, serialises the current trace context + baggage into the job payload. Registered globally via config('queue.middleware')."}
+  ]
+}

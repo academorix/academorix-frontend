@@ -7,10 +7,10 @@
       "model": "PushSubscription",
       "class": "Academorix\\Notifications\\Push\\Policies\\PushSubscriptionPolicy",
       "abilities": [
-        {"action": "viewAny", "permission": "notifications.subscriptions.viewAny", "scope": "regular user sees own; tenant admin sees any in tenant"},
-        {"action": "view", "permission": "notifications.subscriptions.view", "scope": "subscription.user_id === auth OR tenant admin"},
+        {"action": "viewAny", "permission": "notifications.subscriptions.viewAny", "scope": "regular user sees own; workspace admin sees any in workspace"},
+        {"action": "view", "permission": "notifications.subscriptions.view", "scope": "subscription.user_id === auth OR workspace admin"},
         {"action": "create", "permission": "notifications.subscriptions.create", "scope": "user creates own only \u2014 user_id enforced === auth.id"},
-        {"action": "delete", "permission": "notifications.subscriptions.delete", "scope": "user revokes own OR tenant admin OR super_admin"}
+        {"action": "delete", "permission": "notifications.subscriptions.delete", "scope": "user revokes own OR workspace admin OR super_admin"}
       ]
     }
   ]

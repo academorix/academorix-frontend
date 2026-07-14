@@ -6,7 +6,7 @@
   "sink": "segment",
   "consentTiers": ["essential", "functional", "analytics", "marketing"],
   "events": [
-    {"name": "Activity Feed Viewed", "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "filter_used", "result_count"], "description": "User loaded the /activities screen."},
-    {"name": "Activity Feed Filtered", "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "filter_field", "filter_value_kind"]}
+    {"name": "Activity Feed Viewed", "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "filter_used", "result_count"], "description": "User loaded the /activities screen."},
+    {"name": "Activity Feed Filtered", "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "filter_field", "filter_value_kind"]}
   ]
 }

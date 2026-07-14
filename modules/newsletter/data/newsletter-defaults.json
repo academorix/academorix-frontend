@@ -2,9 +2,9 @@
   "id": "academorix://modules/newsletter/data/newsletter-defaults",
   "$version": 1,
   "title": "newsletter \u2014 default newsletters per business_type",
-  "description": "Bootstrap seed for tenant creation. Each business_type gets sensible starter newsletters. Tenant admins may delete + create as needed.",
+  "description": "Bootstrap seed for workspace creation. Each business_type gets sensible starter newsletters. Workspace admins may delete + create as needed.",
   "seeder": "Academorix\\Newsletter\\Database\\Seeders\\BootstrapNewslettersSeeder",
-  "note": "Only seeded when tenant.default_config.newsletter.seed_defaults=true (default true).",
+  "note": "Only seeded when workspace.default_config.newsletter.seed_defaults=true (default true).",
   "byBusinessType": {
     "academy": [
       {"slug": "weekly-digest", "name": "Weekly Digest", "description": "Weekly roundup of upcoming courses + coach spotlights + student achievements.", "cadence": "weekly", "state": "draft", "is_system": false},

@@ -1,0 +1,31 @@
+{
+  "id": "academorix://modules/telemetry-otel/middleware",
+  "$version": 1,
+  "title": "telemetry-otel \u2014 HTTP middleware",
+  "description": "keepsuit handles the HTTP-server auto-instrumentation. We add two thin middleware for baggage propagation + span-attribute enrichment.",
+  "middleware": [
+    {
+      "alias": "otel.trace",
+      "class": "Academorix\\TelemetryOtel\\Http\\Middleware\\StartOrJoinTrace",
+      "priority": 8,
+      "description": "Extracts W3C Trace Context / B3 from inbound headers via keepsuit's propagator; joins existing trace if present, else starts a new root span. Adds academorix.request_id + academorix.workspace_id + academorix.workspace_id as span attributes.",
+      "auto_applied": true,
+      "auto_applied_to": ["api", "web"]
+    },
+    {
+      "alias": "otel.baggage",
+      "class": "Academorix\\TelemetryOtel\\Http\\Middleware\\PropagateBaggage",
+      "priority": 9,
+      "description": "Extracts W3C Baggage header + populates our RequestContext with (workspace_id, workspace_id, causer_id, org_id, branch_id). Used by downstream modules to correlate cross-service work.",
+      "auto_applied": true,
+      "auto_applied_to": ["api"]
+    }
+  ],
+  "consumed": [
+    {"middleware": "foundation::request.id"}
+  ],
+  "notes": [
+    "keepsuit's own middleware (Keepsuit\\LaravelOpenTelemetry\\Http\\Middleware\\TraceRequest) handles the raw span lifecycle. Our StartOrJoinTrace runs AFTER it, only to add academorix-specific attributes.",
+    "The bus middleware for queue propagation is registered via config \u2014 not exposed as an HTTP middleware alias."
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "id": "subscription.resources.subscription.list",
+  "title": "Subscriptions",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/subscriptions",
+  "host": "central_admin",
+  "audience": "platform_admin",
+  "resource": {"module": "subscription", "entity": "subscription", "action": "list"},
+  "requiresPermission": "platform.subscriptions.viewAny",
+  "dataSources": [
+    {"name": "subscriptions", "kind": "http.get", "url": "/api/v1/platform/subscriptions", "unwrap": "data"},
+    {"name": "applications", "kind": "http.get", "url": "/api/v1/platform/applications", "unwrap": "data"}
+  ],
+  "state": [{"name": "filters", "default": {"state": null, "tier": null, "application_id": null}}],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-4 p-6"}, "children": [
+      {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Subscriptions"}},
+      {"kind": "Toolbar", "children": [
+        {"kind": "SearchField", "props": {"placeholder": "Workspace, plan, provider ID", "name": "q"}},
+        {"kind": "Select", "props": {"name": "state", "placeholder": "All states", "clearable": true}, "options": [{"key": "trialing"}, {"key": "active"}, {"key": "at_risk"}, {"key": "grace"}, {"key": "past_due"}, {"key": "unpaid"}, {"key": "suspended"}, {"key": "cancelled"}, {"key": "expired"}]},
+        {"kind": "Select", "props": {"name": "tier", "placeholder": "All tiers", "clearable": true}, "options": [{"key": "free"}, {"key": "team"}, {"key": "business"}, {"key": "enterprise"}]},
+        {"kind": "Select", "props": {"name": "application_id", "placeholder": "All Applications", "clearable": true}, "bindings": {"options": {"$ref": "applications"}, "optionKey": "id", "optionLabel": "name"}}
+      ]},
+      {"kind": "Table", "columns": [
+        {"key": "workspace", "header": "Workspace", "cell": {"kind": "Link", "propsExpr": "{ to: '/platform/subscriptions/' + row.id, children: row.workspace?.name || row.workspace_id }"}},
+        {"key": "plan", "header": "Plan", "bindings": {"childrenExpr": "row.plan?.name || row.plan_id"}},
+        {"key": "tier", "header": "Tier", "cell": {"kind": "Chip", "props": {"size": "xs"}, "bindings": {"childrenExpr": "row.plan?.tier"}}},
+        {"key": "state", "header": "State", "cell": {"kind": "Widget", "widget": "subscription.subscription-state-chip", "propsExpr": "{ state: row.state, size: 'xs' }"}},
+        {"key": "provider", "header": "Provider", "cell": {"kind": "Text", "props": {"className": "capitalize"}, "bindings": {"children": {"$ref": "row.provider"}}}},
+        {"key": "billing_cycle", "header": "Cycle"},
+        {"key": "current_period_end", "header": "Next renewal", "cell": {"kind": "Text", "props": {"className": "text-sm"}, "bindings": {"childrenExpr": "row.current_period_end ? formatDate(row.current_period_end) : '\u2014'"}}},
+        {"key": "days_past_due", "header": "Days past due", "cell": {"kind": "Text", "props": {"className": "font-mono text-right"}, "bindings": {"childrenExpr": "row.days_past_due ?? '\u2014'"}}}
+      ], "bindings": {"rows": {"$ref": "subscriptions"}}}
+    ]}
+  ]
+}

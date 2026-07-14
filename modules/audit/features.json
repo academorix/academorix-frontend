@@ -5,6 +5,6 @@
   "features": [
     {"key": "audit.trail", "displayName": "Compliance audit trail", "description": "Immutable record of every material change. Always on \u2014 regulatory requirement.", "defaultEnabled": true, "planTiers": ["free", "team", "enterprise"]},
     {"key": "audit.tamper_evident_chain", "displayName": "Tamper-evident hash chain", "description": "Per-row cryptographic hash chain. Verified weekly. Enterprise only.", "defaultEnabled": false, "planTiers": ["enterprise"]},
-    {"key": "audit.tenant_dpo_surface", "displayName": "Tenant DPO audit surface", "description": "Tenant DPOs can browse their own audit trail via /api/v1/audits.", "defaultEnabled": true, "planTiers": ["team", "enterprise"]}
+    {"key": "audit.workspace_dpo_surface", "displayName": "Workspace DPO audit surface", "description": "Workspace DPOs can browse their own audit trail via /api/v1/audits.", "defaultEnabled": true, "planTiers": ["team", "enterprise"]}
   ]
 }

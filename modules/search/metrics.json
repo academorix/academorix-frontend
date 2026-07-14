@@ -1,0 +1,37 @@
+{
+  "id": "academorix://modules/search/metrics",
+  "$version": 1,
+  "title": "search \u2014 OpenTelemetry metrics",
+  "instrumentation": "open-telemetry/sdk",
+  "namespace": "academorix.search",
+  "labelConventions": {
+    "always": ["workspace_id"],
+    "commonlyAvailable": ["engine", "index_name", "language", "kind", "outcome"],
+    "forbiddenAsLabels": ["query", "query_hash", "user_id", "search_index_id", "search_sync_job_id", "clicked_result_id"]
+  },
+  "metrics": [
+    {"name": "academorix.search.query.count",                "kind": "counter",   "unit": "queries", "labels": ["workspace_id", "engine", "index_name", "language", "had_typo_correction"], "description": "GET /search queries served."},
+    {"name": "academorix.search.query.latency_ms",           "kind": "histogram", "unit": "ms", "buckets": [5, 10, 25, 50, 100, 250, 500, 1000, 5000], "labels": ["workspace_id", "engine", "index_name"], "description": "Server-side query latency."},
+    {"name": "academorix.search.query.no_results.count",     "kind": "counter",   "unit": "queries", "labels": ["workspace_id", "engine", "index_name"], "description": "Zero-result queries. Rate signals index gaps or synonym gaps."},
+    {"name": "academorix.search.query.click_through.count",  "kind": "counter",   "unit": "clicks", "labels": ["workspace_id", "engine", "clicked_result_type"]},
+    {"name": "academorix.search.query.click_through_position", "kind": "histogram", "unit": "position", "buckets": [1, 2, 3, 5, 10, 20, 50, 100], "labels": ["workspace_id", "engine"], "description": "Distribution of clicked positions. High tail = weak ranking."},
+    {"name": "academorix.search.suggest.count",              "kind": "counter",   "unit": "suggests", "labels": ["workspace_id", "engine", "index_name"]},
+    {"name": "academorix.search.suggest.latency_ms",         "kind": "histogram", "unit": "ms", "buckets": [1, 5, 10, 25, 50, 100, 250], "labels": ["workspace_id", "engine"]},
+    {"name": "academorix.search.suggest.cache_hit_ratio",    "kind": "gauge",     "unit": "ratio", "labels": ["workspace_id"]},
+    {"name": "academorix.search.sync_jobs.created.count",    "kind": "counter",   "unit": "jobs", "labels": ["workspace_id", "kind", "engine", "source"], "description": "SearchSyncJobs entered queued state."},
+    {"name": "academorix.search.sync_jobs.terminal.count",   "kind": "counter",   "unit": "jobs", "labels": ["workspace_id", "kind", "engine", "outcome"], "description": "SyncJobs entered any terminal state. outcome = succeeded / partially_succeeded / failed / cancelled."},
+    {"name": "academorix.search.sync_jobs.duration_seconds", "kind": "histogram", "unit": "seconds", "buckets": [10, 60, 300, 900, 3600, 21600], "labels": ["workspace_id", "kind", "engine", "outcome"]},
+    {"name": "academorix.search.sync_jobs.shard_duration_seconds", "kind": "histogram", "unit": "seconds", "buckets": [5, 30, 120, 600, 3600], "labels": ["workspace_id", "engine"]},
+    {"name": "academorix.search.sync_jobs.queue_wait_seconds","kind": "histogram", "unit": "seconds", "buckets": [1, 5, 30, 120, 600, 3600], "labels": ["workspace_id"]},
+    {"name": "academorix.search.index.document_count",       "kind": "gauge",     "unit": "documents", "labels": ["workspace_id", "engine", "index_name"], "description": "Sampled every 5 min. Live index doc count."},
+    {"name": "academorix.search.index.size_bytes",           "kind": "gauge",     "unit": "bytes", "labels": ["workspace_id", "engine", "index_name"]},
+    {"name": "academorix.search.engines.reachable",          "kind": "gauge",     "unit": "boolean_0_or_1", "labels": ["engine"], "description": "0 = unreachable. Sampled every 30s."},
+    {"name": "academorix.search.engines.ping_ms",            "kind": "histogram", "unit": "ms", "buckets": [1, 5, 25, 100, 500, 2000], "labels": ["engine"]},
+    {"name": "academorix.search.concurrent_jobs",            "kind": "gauge",     "unit": "jobs", "labels": ["workspace_id"], "description": "Sampled every 30s. In-flight sync jobs per workspace. Feeds concurrency-limit health probe."},
+    {"name": "academorix.search.stalled_jobs",               "kind": "gauge",     "unit": "jobs", "labels": ["workspace_id"], "description": "Sampled every 15min. SyncJobs in running with last_progress_at > stale threshold."},
+    {"name": "academorix.search.alias_swaps.count",          "kind": "counter",   "unit": "swaps", "labels": ["workspace_id", "engine", "outcome"], "description": "Alias swaps performed. outcome = success / failed."},
+    {"name": "academorix.search.synonyms.count",             "kind": "gauge",     "unit": "rows", "labels": ["workspace_id", "language"], "description": "Sampled hourly. Active synonym rows per (workspace, language)."},
+    {"name": "academorix.search.notifications_sent.count",   "kind": "counter",   "unit": "notifications", "labels": ["workspace_id", "category", "channel", "outcome"]},
+    {"name": "academorix.search.config_drift.detected.count","kind": "counter",   "unit": "indexes", "labels": ["workspace_id"], "description": "Incremented every time drift-check detects a SearchIndex.config_hash mismatch."}
+  ]
+}

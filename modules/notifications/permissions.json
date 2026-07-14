@@ -2,20 +2,20 @@
   "id": "academorix://modules/notifications/permissions",
   "$version": 1,
   "title": "notifications core \u2014 permissions",
-  "description": "Two guards. Sanctum-guard permissions are user-facing (inbox, preferences, tenant admin template management). Platform-admin-guard permissions gate cross-tenant search + delivery retry. Every permission is seeded by `NotificationsPermissionSeeder` with is_system=true.",
+  "description": "Two guards. Sanctum-guard permissions are user-facing (inbox, preferences, workspace admin template management). Platform-admin-guard permissions gate cross-workspace search + delivery retry. Every permission is seeded by `NotificationsPermissionSeeder` with is_system=true.",
   "seeder": "Academorix\\Notifications\\Database\\Seeders\\NotificationsPermissionSeeder",
   "isSystem": true,
   "permissions": [
     {
       "name": "notifications.viewAny",
       "guard": "sanctum",
-      "description": "List own inbox (`GET /api/v1/tenant/notifications`). Every authenticated user has this by default \u2014 seeded on the base user role.",
+      "description": "List own inbox (`GET /api/v1/workspace/notifications`). Every authenticated user has this by default \u2014 seeded on the base user role.",
       "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
     },
     {
       "name": "notifications.view",
       "guard": "sanctum",
-      "description": "Read a single Notification (`GET /api/v1/tenant/notifications/{id}`). Same default as viewAny.",
+      "description": "Read a single Notification (`GET /api/v1/workspace/notifications/{id}`). Same default as viewAny.",
       "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
     },
     {
@@ -51,13 +51,13 @@
     {
       "name": "notifications.preferences.adminView",
       "guard": "sanctum",
-      "description": "View ANY user's preferences within tenant \u2014 for support + DPO Art. 30 records-of-processing.",
+      "description": "View ANY user's preferences within workspace \u2014 for support + DPO Art. 30 records-of-processing.",
       "seededOn": ["admin", "owner"]
     },
     {
       "name": "notifications.templates.viewAny",
       "guard": "sanctum",
-      "description": "List templates \u2014 platform defaults + tenant overrides. Admin surface.",
+      "description": "List templates \u2014 platform defaults + workspace overrides. Admin surface.",
       "seededOn": ["admin", "owner"]
     },
     {
@@ -69,7 +69,7 @@
     {
       "name": "notifications.templates.create",
       "guard": "sanctum",
-      "description": "Create a new tenant-override template.",
+      "description": "Create a new workspace-override template.",
       "seededOn": ["admin", "owner"]
     },
     {
@@ -99,19 +99,19 @@
     {
       "name": "notifications.admin.view",
       "guard": "sanctum",
-      "description": "Access the tenant admin sends dashboard + subscribe to tenant.{id}.notifications broadcast channel.",
+      "description": "Access the workspace admin sends dashboard + subscribe to workspace.{id}.notifications broadcast channel.",
       "seededOn": ["admin", "owner"]
     },
     {
       "name": "platform.notifications.viewAny",
       "guard": "platform_admin",
-      "description": "Cross-tenant search of Notification rows for support / abuse investigation.",
+      "description": "Cross-workspace search of Notification rows for support / abuse investigation.",
       "seededOn": ["super_admin", "support", "ops"]
     },
     {
       "name": "platform.notifications.view",
       "guard": "platform_admin",
-      "description": "View a single Notification cross-tenant. Includes anonymous-addressee notifications.",
+      "description": "View a single Notification cross-workspace. Includes anonymous-addressee notifications.",
       "seededOn": ["super_admin", "support", "ops"]
     },
     {
@@ -123,13 +123,13 @@
     {
       "name": "platform.notifications.templates.viewAny",
       "guard": "platform_admin",
-      "description": "List every template across tenants for platform ops.",
+      "description": "List every template across workspaces for platform ops.",
       "seededOn": ["super_admin", "support", "ops"]
     },
     {
       "name": "platform.notifications.categories.viewAny",
       "guard": "platform_admin",
-      "description": "List the category registry across tenants.",
+      "description": "List the category registry across workspaces.",
       "seededOn": ["super_admin", "support", "ops"]
     }
   ]

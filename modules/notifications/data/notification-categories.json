@@ -2,10 +2,10 @@
   "id": "academorix://modules/notifications/data/notification-categories",
   "$version": 1,
   "title": "notifications core \u2014 system-owned category seed",
-  "description": "Platform-default categories seeded by `notifications:seed-categories`. Each row upserts to `notification_categories` with tenant_id=NULL, is_system=true. Downstream modules (invitations, auth, billing, ...) contribute their own categories via their notifications.json; the seeder walks every module + aggregates. Only the 5 core `system.*` categories live in this file.",
+  "description": "Platform-default categories seeded by `notifications:seed-categories`. Each row upserts to `notification_categories` with workspace_id=NULL, is_system=true. Downstream modules (invitations, auth, billing, ...) contribute their own categories via their notifications.json; the seeder walks every module + aggregates. Only the 5 core `system.*` categories live in this file.",
   "seeder": "Academorix\\Notifications\\Database\\Seeders\\SystemCategoriesSeeder",
   "target_table": "notification_categories",
-  "upsertKey": ["tenant_id", "slug"],
+  "upsertKey": ["workspace_id", "slug"],
   "categories": [
     {
       "slug": "system.digest",
@@ -23,7 +23,7 @@
       "slug": "system.announcement",
       "owning_module": "notifications",
       "display_name": "Platform announcements",
-      "description": "Major product updates, feature launches, and platform-wide news. Opt-in for consumer tenants, on-by-default for enterprise tenants.",
+      "description": "Major product updates, feature launches, and platform-wide news. Opt-in for consumer workspaces, on-by-default for enterprise workspaces.",
       "default_channels": ["mail", "in_app"],
       "priority": "product",
       "consent_tier": "product_default",

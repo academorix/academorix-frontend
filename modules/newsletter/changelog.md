@@ -12,5 +12,5 @@
 
 ### Compatibility
 
-- Depends on `foundation`, `tenancy`, `notifications`, `notifications-mail`, `activity`, `audit`, `settings`.
+- Depends on `foundation`, `workspaces`, `notifications`, `notifications-mail`, `activity`, `audit`, `settings`.
 - No breaking change surface — inception release.

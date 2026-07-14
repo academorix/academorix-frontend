@@ -3,14 +3,14 @@
   "title": "Delivery detail",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/webhooks/deliveries/{id}",
-  "host": "tenant",
+  "route": "/workspace/webhooks/deliveries/{id}",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "webhook", "entity": "webhook-delivery", "action": "show"},
   "requiresPermission": "webhook.deliveries.view",
   "params": [{"name": "id", "type": "string", "in": "path", "required": true}],
   "dataSources": [
-    {"name": "delivery", "kind": "http.get", "urlExpr": "'/api/v1/tenant/webhook/deliveries/' + params.id + '?include=subscription'", "unwrap": "data"}
+    {"name": "delivery", "kind": "http.get", "urlExpr": "'/api/v1/workspace/webhook/deliveries/' + params.id + '?include=subscription'", "unwrap": "data"}
   ],
   "nodes": [
     {
@@ -18,7 +18,7 @@
       "kind": "View",
       "props": {"className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto"},
       "children": [
-        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/webhooks/deliveries"}}},
+        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/webhooks/deliveries"}}},
         {"kind": "View", "props": {"className": "flex items-start justify-between gap-4"}, "children": [
           {"kind": "View", "props": {"className": "flex flex-col gap-1"}, "children": [
             {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold font-mono"}, "bindings": {"children": {"$ref": "delivery.event_name"}}},
@@ -27,7 +27,7 @@
               {"kind": "Widget", "widget": "webhook.webhook-delivery-status-chip", "props": {"state": {"$ref": "delivery.state"}, "size": "md"}}
             ]}
           ]},
-          {"kind": "Button", "props": {"variant": "primary", "size": "sm", "leadingIcon": "arrow-path", "children": "Retry"}, "bindings": {"isDisabled": {"$expr": "delivery.state !== 'failedPermanent' || !identity.permissions.includes('webhook.deliveries.retry')"}}, "actions": {"onPress": {"kind": "http.post", "urlExpr": "'/api/v1/tenant/webhook/deliveries/' + params.id + '/retry'", "confirm": {"title": "Retry this delivery?"}, "onSuccess": [{"kind": "toast.success", "message": "Retry dispatched"}, {"kind": "data.refresh", "source": "delivery"}]}}}
+          {"kind": "Button", "props": {"variant": "primary", "size": "sm", "leadingIcon": "arrow-path", "children": "Retry"}, "bindings": {"isDisabled": {"$expr": "delivery.state !== 'failedPermanent' || !identity.permissions.includes('webhook.deliveries.retry')"}}, "actions": {"onPress": {"kind": "http.post", "urlExpr": "'/api/v1/workspace/webhook/deliveries/' + params.id + '/retry'", "confirm": {"title": "Retry this delivery?"}, "onSuccess": [{"kind": "toast.success", "message": "Retry dispatched"}, {"kind": "data.refresh", "source": "delivery"}]}}}
         ]},
         {"kind": "Card", "props": {"className": "p-6"}, "children": [
           {"kind": "Text", "props": {"as": "h2", "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3", "children": "Request"}},

@@ -3,8 +3,8 @@
   "title": "Issue detail",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/newsletters/{newsletter}/issues/{id}",
-  "host": "tenant",
+  "route": "/workspace/newsletters/{newsletter}/issues/{id}",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "newsletter", "entity": "newsletter-issue", "action": "show"},
   "requiresPermission": "newsletter-issues.view",
@@ -15,7 +15,7 @@
   ],
   "nodes": [
     {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto"}, "children": [
-      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back to issues"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/newsletters/' + params.newsletter + '/issues'"}}},
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back to issues"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/workspace/newsletters/' + params.newsletter + '/issues'"}}},
       {"kind": "View", "props": {"className": "flex items-start justify-between"}, "children": [
         {"kind": "View", "children": [
           {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold"}, "bindings": {"children": {"$ref": "issue.subject"}}},

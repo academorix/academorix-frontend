@@ -30,7 +30,7 @@
       "cache": {"ttlSeconds": 3600}
     }
   ],
-  "themeFrom": "invitationPreview.tenant.branding",
+  "themeFrom": "invitationPreview.workspace.branding",
   "nodes": [
     {
       "id": "root",
@@ -47,20 +47,20 @@
               "kind": "Image",
               "props": {"className": "size-16 rounded-lg object-contain"},
               "bindings": {
-                "src": {"$ref": "invitationPreview.tenant.branding.logo_url"},
-                "alt": {"$ref": "invitationPreview.tenant.name"},
+                "src": {"$ref": "invitationPreview.workspace.branding.logo_url"},
+                "alt": {"$ref": "invitationPreview.workspace.name"},
                 "fallback": {
                   "kind": "Avatar",
                   "props": {"size": "lg"},
-                  "bindings": {"fallbackText": {"$expr": "invitationPreview.tenant.name.slice(0,1)"}}
+                  "bindings": {"fallbackText": {"$expr": "invitationPreview.workspace.name.slice(0,1)"}}
                 }
               }
             },
             {
-              "id": "tenant-name",
+              "id": "workspace-name",
               "kind": "Text",
               "props": {"as": "h1", "className": "text-2xl font-semibold text-center"},
-              "bindings": {"children": {"$ref": "invitationPreview.tenant.name"}}
+              "bindings": {"children": {"$ref": "invitationPreview.workspace.name"}}
             }
           ]
         },
@@ -107,9 +107,9 @@
                 "kind": "Text",
                 "children": [
                   "I agree to the ",
-                  {"kind": "Link", "props": {"toExpr": "'/legal/tos?tenant=' + invitationPreview.tenant.slug", "target": "_blank", "children": "Terms of Service"}},
+                  {"kind": "Link", "props": {"toExpr": "'/legal/tos?workspace=' + invitationPreview.workspace.slug", "target": "_blank", "children": "Terms of Service"}},
                   " and ",
-                  {"kind": "Link", "props": {"toExpr": "'/legal/privacy?tenant=' + invitationPreview.tenant.slug", "target": "_blank", "children": "Privacy Policy"}},
+                  {"kind": "Link", "props": {"toExpr": "'/legal/privacy?workspace=' + invitationPreview.workspace.slug", "target": "_blank", "children": "Privacy Policy"}},
                   "."
                 ]
               }
@@ -187,7 +187,7 @@
               ],
               "footer": {
                 "primaryAction": {
-                  "label": {"$expr": "'Accept invitation to ' + invitationPreview.tenant.name"},
+                  "label": {"$expr": "'Accept invitation to ' + invitationPreview.workspace.name"},
                   "kind": "form.submit",
                   "variant": "primary",
                   "size": "lg",

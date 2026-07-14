@@ -20,7 +20,7 @@
     {
       "key": "notifications.template_renderer",
       "displayName": "Custom template renderer",
-      "description": "Enables tenant-specific template overrides. Without this feature, tenants use platform defaults only. Enterprise-tier.",
+      "description": "Enables workspace-specific template overrides. Without this feature, workspaces use platform defaults only. Enterprise-tier.",
       "defaultEnabled": false,
       "planTiers": ["enterprise"]
     },
@@ -34,7 +34,7 @@
     {
       "key": "notifications.marketing_consent_capture",
       "displayName": "Marketing consent capture",
-      "description": "Enables consent capture flows for marketing categories (double opt-in for EU/UK, single opt-in with CASL express-consent for CA, opt-out for US). Required for tenants that operate in regulated jurisdictions.",
+      "description": "Enables consent capture flows for marketing categories (double opt-in for EU/UK, single opt-in with CASL express-consent for CA, opt-out for US). Required for workspaces that operate in regulated jurisdictions.",
       "defaultEnabled": true,
       "planTiers": ["free", "team", "enterprise"]
     },
@@ -48,7 +48,7 @@
     {
       "key": "notifications.admin_sends_dashboard",
       "displayName": "Admin sends dashboard",
-      "description": "Enables the tenant admin dashboard showing send volumes, delivery failure spikes, template publish activity.",
+      "description": "Enables the workspace admin dashboard showing send volumes, delivery failure spikes, template publish activity.",
       "defaultEnabled": false,
       "planTiers": ["team", "enterprise"]
     }

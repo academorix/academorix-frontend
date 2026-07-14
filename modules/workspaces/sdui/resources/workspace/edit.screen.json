@@ -1,0 +1,28 @@
+{
+  "id": "workspaces.resources.workspace.edit",
+  "title": "Edit workspace",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/workspaces/{id}/edit",
+  "host": "central_admin",
+  "audience": "authenticated",
+  "resource": {"module": "workspaces", "entity": "workspace", "action": "edit"},
+  "requiresPermission": "platform.workspaces.update",
+  "params": [{"name": "id", "type": "string", "in": "path", "required": true}],
+  "dataSources": [
+    {"name": "workspace", "kind": "http.get", "urlExpr": "'/api/v1/workspaces/' + params.id", "unwrap": "data"}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto"}, "children": [
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/platform/workspaces/' + params.id"}}},
+      {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold"}, "bindings": {"children": {"$expr": "'Edit ' + workspace.name"}}},
+      {"kind": "Form", "props": {"submitUrlExpr": "'/api/v1/workspaces/' + params.id", "submitMethod": "PATCH", "onSuccess": [{"kind": "toast.success", "message": "Saved"}, {"kind": "data.refresh", "source": "workspace"}]}, "bindings": {"initialValues": {"$ref": "workspace"}}, "children": [
+        {"kind": "TextField", "props": {"label": "Workspace name", "name": "name"}, "bindings": {"defaultValue": {"$ref": "workspace.name"}}},
+        {"kind": "Widget", "widget": "workspaces.widgets.business-type-select", "props": {"name": "business_type", "label": "Business type", "defaultValue": {"$ref": "workspace.business_type"}}},
+        {"kind": "Select", "props": {"label": "Plan", "name": "plan"}, "options": [{"key": "free", "label": "Free"}, {"key": "team", "label": "Team"}, {"key": "enterprise", "label": "Enterprise"}], "bindings": {"defaultValue": {"$ref": "workspace.plan"}}},
+        {"kind": "Alert", "props": {"variant": "info", "children": "Slug + application_id are immutable. Plan change fires SubscriptionUpgraded/Downgraded and re-syncs entitlements."}},
+        {"kind": "Button", "props": {"variant": "primary", "size": "md", "type": "submit", "children": "Save"}}
+      ]}
+    ]}
+  ]
+}

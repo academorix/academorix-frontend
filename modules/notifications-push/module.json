@@ -8,7 +8,7 @@
   "priority": 27,
   "providers": ["Academorix\\Notifications\\Push\\Providers\\NotificationsPushServiceProvider"],
   "files": [],
-  "dependencies": ["foundation", "tenancy", "notifications", "webhook"],
+  "dependencies": ["foundation", "workspaces", "notifications", "webhook"],
   "extendedBy": [],
   "contributes": {
     "traits": [],
@@ -43,12 +43,12 @@
     "registration": "Service provider registers `push` with core's NotificationChannelRegistry + registers PushSubscription CRUD routes."
   },
   "hosts": {
-    "tenant": {
+    "workspace": {
       "description": "Per-user push subscription (device token) management.",
       "routes": [
-        "GET /api/v1/tenant/notification-subscriptions",
-        "POST /api/v1/tenant/notification-subscriptions",
-        "DELETE /api/v1/tenant/notification-subscriptions/{subscription}"
+        "GET /api/v1/workspace/notification-subscriptions",
+        "POST /api/v1/workspace/notification-subscriptions",
+        "DELETE /api/v1/workspace/notification-subscriptions/{subscription}"
       ]
     }
   },

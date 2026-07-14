@@ -2,12 +2,12 @@
   "id": "academorix://modules/transfer/middleware",
   "$version": 1,
   "title": "transfer \u2014 HTTP middleware",
-  "description": "Two owned middleware for job-scoped authorization and artifact-signed downloads. Everything else composes from foundation + tenancy + versioning + throttle stacks.",
+  "description": "Two owned middleware for job-scoped authorization and artifact-signed downloads. Everything else composes from foundation + workspaces + versioning + throttle stacks.",
   "middleware": [
     {
       "alias": "transfer.owned-job",
       "class": "Academorix\\Transfer\\Http\\Middleware\\ResolveOwnedJob",
-      "role": "Resolves the {jobId} route parameter to an XferJob record. Refuses (404 with TRANSFER_JOB_NOT_FOUND) when the caller is not the initiator AND does not hold `platform.transfer.viewAny`. Runs after tenant.resolve so tenant scoping applies."
+      "role": "Resolves the {jobId} route parameter to an XferJob record. Refuses (404 with TRANSFER_JOB_NOT_FOUND) when the caller is not the initiator AND does not hold `platform.transfer.viewAny`. Runs after workspace.resolve so workspace scoping applies."
     },
     {
       "alias": "transfer.signed-artifact",
@@ -22,13 +22,13 @@
     {"middleware": "foundation::auth:platform_admin"},
     {"middleware": "foundation::throttle"},
     {"middleware": "foundation::response.envelope"},
-    {"middleware": "tenancy::tenant.resolve"},
+    {"middleware": "workspaces::workspace.resolve"},
     {"middleware": "versioning::versioning.resolve"}
   ],
   "throttle_pools": [
-    {"name": "transfer-ingest",    "limit": "10 per minute per user + 30 per minute per tenant", "description": "File uploads. Aggressive to protect worker capacity."},
-    {"name": "transfer-egress",    "limit": "20 per minute per user + 60 per minute per tenant", "description": "Export creation."},
+    {"name": "transfer-ingest",    "limit": "10 per minute per user + 30 per minute per workspace", "description": "File uploads. Aggressive to protect worker capacity."},
+    {"name": "transfer-egress",    "limit": "20 per minute per user + 60 per minute per workspace", "description": "Export creation."},
     {"name": "transfer-read",      "limit": "120 per minute per user", "description": "Job list + entities + templates + mapping profiles."},
-    {"name": "transfer-platform",  "limit": "300 per minute per platform admin", "description": "Cross-tenant reads."}
+    {"name": "transfer-platform",  "limit": "300 per minute per platform admin", "description": "Cross-workspace reads."}
   ]
 }

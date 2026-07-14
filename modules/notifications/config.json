@@ -46,7 +46,7 @@
       "description": "Dispatch API surface.",
       "keys": [
         {"path": "notifications.dispatch.async_by_default", "type": "bool", "default": true, "description": "Every ->notify() queues. Sync via ->notifyNow() only \u2014 no `sync` config."},
-        {"path": "notifications.dispatch.per_tenant_rate_limit", "type": "int|null", "default": null, "description": "Per-tenant dispatches/min. Null = no limit. Gated by notifications.dispatch-per-tenant-rate-limit Pennant flag."},
+        {"path": "notifications.dispatch.per_workspace_rate_limit", "type": "int|null", "default": null, "description": "Per-workspace dispatches/min. Null = no limit. Gated by notifications.dispatch-per-workspace-rate-limit Pennant flag."},
         {"path": "notifications.dispatch.critical_channels", "type": "array<string>", "default": ["mail", "in_app", "push"], "description": "Channels used for priority=critical when preferences don't override. SMS excluded from default critical channels (cost)."}
       ]
     },
@@ -68,7 +68,7 @@
     "resolvers": {
       "description": "Resolver defaults.",
       "keys": [
-        {"path": "notifications.resolvers.preference_fallback_order", "type": "array<string>", "default": ["user", "tenant", "platform"], "description": "Order: user preference \u2192 tenant default (settings.json) \u2192 platform default (category)."},
+        {"path": "notifications.resolvers.preference_fallback_order", "type": "array<string>", "default": ["user", "workspace", "platform"], "description": "Order: user preference \u2192 workspace default (settings.json) \u2192 platform default (category)."},
         {"path": "notifications.resolvers.quiet_hours_bypass_for_critical", "type": "bool", "default": true, "description": "Priority=critical bypasses quiet hours."}
       ]
     }

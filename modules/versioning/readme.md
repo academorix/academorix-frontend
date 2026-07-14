@@ -84,7 +84,7 @@ Two adapters ship. New adapters register via `VersionSchemeRegistry::register()`
 - **SemVer** (default) — `v1.2.3`. Wildcards: `^1.0` (any 1.x), `~1.2` (any 1.2.x). Major bump = breaking.
 - **CalVer** — `2024.10.15` or `2024-10-15`. Every release potentially breaking. Preferred for consumer-facing APIs where release cadence matches the calendar.
 
-Selected per-`ApiVersion` row via the `scheme` column. A tenant using SemVer + a tenant using CalVer coexist.
+Selected per-`ApiVersion` row via the `scheme` column. A workspace using SemVer + a workspace using CalVer coexist.
 
 ## 5. Deprecation + sunset workflow
 
@@ -100,10 +100,10 @@ draft ──release──▶ released ──deprecate──▶ deprecated ──
 ```
 
 - `released` — normal serving. `X-API-Version: v1` header on every response.
-- `deprecated` — still serves + `Sunset: <RFC 7231 date>` header per RFC 8594 + `Deprecation: true` header. `DeprecationNotice` records published, tenants notified via `ApiDeprecationNotification` (mail + in-app).
+- `deprecated` — still serves + `Sunset: <RFC 7231 date>` header per RFC 8594 + `Deprecation: true` header. `DeprecationNotice` records published, workspaces notified via `ApiDeprecationNotification` (mail + in-app).
 - `sunset` — refuses requests with 410 Gone + `Link: <migration-guide-url>; rel="successor-version"`. `Sunset` header still present for archaeology.
 
-Lifecycle events: `ApiVersionReleased`, `ApiVersionDeprecated`, `ApiVersionSunset`. Downstream modules (compliance, tenancy admin dashboard) subscribe to track migration progress.
+Lifecycle events: `ApiVersionReleased`, `ApiVersionDeprecated`, `ApiVersionSunset`. Downstream modules (compliance, workspaces admin dashboard) subscribe to track migration progress.
 
 ## 6. Payload transformer chains
 

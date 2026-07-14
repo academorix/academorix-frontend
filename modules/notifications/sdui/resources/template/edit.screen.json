@@ -3,14 +3,14 @@
   "title": "Edit template",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/notification-templates/{id}/edit",
-  "host": "tenant",
+  "route": "/workspace/notification-templates/{id}/edit",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "notifications", "entity": "template", "action": "edit"},
   "requiresPermission": "notifications.templates.update",
   "params": [{"name": "id", "type": "string", "in": "path", "required": true}],
   "dataSources": [
-    {"name": "template", "kind": "http.get", "urlExpr": "'/api/v1/tenant/notification-templates/' + params.id", "unwrap": "data"}
+    {"name": "template", "kind": "http.get", "urlExpr": "'/api/v1/workspace/notification-templates/' + params.id", "unwrap": "data"}
   ],
   "nodes": [
     {
@@ -18,17 +18,17 @@
       "kind": "View",
       "props": {"className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto"},
       "children": [
-        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/notification-templates/' + params.id"}}},
+        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/workspace/notification-templates/' + params.id"}}},
         {
           "kind": "Alert",
           "props": {"variant": "warning", "className": "mb-2"},
-          "bindings": {"hidden": {"$expr": "!template.is_system"}, "children": {"$expr": "'This is a platform default. Editing will create a tenant override that resolves first for your sends.'"}}
+          "bindings": {"hidden": {"$expr": "!template.is_system"}, "children": {"$expr": "'This is a platform default. Editing will create a workspace override that resolves first for your sends.'"}}
         },
         {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold"}, "bindings": {"children": {"$expr": "'Edit ' + template.key"}}},
         {
           "id": "form",
           "kind": "Form",
-          "props": {"submitUrlExpr": "'/api/v1/tenant/notification-templates/' + params.id", "submitMethod": "PATCH", "onSuccess": [{"kind": "toast.success", "message": "Draft saved"}, {"kind": "data.refresh", "source": "template"}]},
+          "props": {"submitUrlExpr": "'/api/v1/workspace/notification-templates/' + params.id", "submitMethod": "PATCH", "onSuccess": [{"kind": "toast.success", "message": "Draft saved"}, {"kind": "data.refresh", "source": "template"}]},
           "bindings": {"initialValues": {"$ref": "template"}},
           "children": [
             {"kind": "TextField", "props": {"label": "Subject template", "name": "subject_template", "description": "Blade template."}, "bindings": {"defaultValue": {"$ref": "template.subject_template"}}},
@@ -45,9 +45,9 @@
                   "actions": {
                     "onPress": {
                       "kind": "http.post",
-                      "urlExpr": "'/api/v1/tenant/notification-templates/' + params.id + '/publish'",
+                      "urlExpr": "'/api/v1/workspace/notification-templates/' + params.id + '/publish'",
                       "confirm": {"title": "Publish this draft?", "description": "Future sends will use this version. Older published versions retain their history."},
-                      "onSuccess": [{"kind": "toast.success", "message": "Published"}, {"kind": "navigate", "toExpr": "'/tenant/notification-templates/' + params.id"}]
+                      "onSuccess": [{"kind": "toast.success", "message": "Published"}, {"kind": "navigate", "toExpr": "'/workspace/notification-templates/' + params.id"}]
                     }
                   }
                 }

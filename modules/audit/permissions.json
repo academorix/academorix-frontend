@@ -5,7 +5,7 @@
   "seeder": "Academorix\\Audit\\Database\\Seeders\\AuditPermissionSeeder",
   "isSystem": true,
   "permissions": [
-    {"name": "audit.viewAny", "guard": "sanctum", "description": "Tenant DPO can list audit rows for own tenant.", "seededOn": ["owner", "dpo"]},
+    {"name": "audit.viewAny", "guard": "sanctum", "description": "Workspace DPO can list audit rows for own workspace.", "seededOn": ["owner", "dpo"]},
     {"name": "audit.view", "guard": "sanctum", "seededOn": ["owner", "dpo"]},
     {"name": "audit.view-restricted", "guard": "sanctum", "description": "See un-masked restricted-tier field values in audit rows. Every use logged as a new audit row (meta-audit).", "seededOn": ["dpo"]},
     {"name": "platform.audit.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "dpo", "compliance"]},

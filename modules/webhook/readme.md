@@ -2,7 +2,7 @@
 
 Webhook substrate. Wave 1 shared infrastructure. Reimplementing the `stackra/laravel-webhook` shape under our namespace (Path B).
 
-> **Position in the wave.** Depends on `foundation` + `versioning` + `tenancy`. Extended BY every module that publishes outbound events (notifications-*, subscription, invitations, ...) OR receives inbound provider webhooks (notifications-mail from Mailgun, notifications-sms from Twilio, subscription from Stripe, tenancy from DNS providers).
+> **Position in the wave.** Depends on `foundation` + `versioning` + `workspaces`. Extended BY every module that publishes outbound events (notifications-*, subscription, invitations, ...) OR receives inbound provider webhooks (notifications-mail from Mailgun, notifications-sms from Twilio, subscription from Stripe, workspaces from DNS providers).
 
 ## 1. What this module owns
 
@@ -87,7 +87,7 @@ final readonly class InvitationSent
     public function __construct(
         public string $invitationId,
         public string $email,
-        public string $tenantId,
+        public string $workspaceId,
     ) {}
 }
 ```
@@ -104,7 +104,7 @@ final class EventBridgeDestination implements DestinationInterface
 
 Every outbound request carries 7 headers. Signature is `hex(hmac_sha256(timestamp . '.' . event . '.' . payload, secret))`.
 
-**Rotation grace**: when the tenant rotates a signing secret, the previous secret is retained for `signing.rotation_grace_seconds` (default 24h). During grace, both `X-Webhook-Signature` (new secret) and `X-Webhook-Signature-Previous` (old secret) are emitted. Receivers can flip-cut without coordinating timing with the sender.
+**Rotation grace**: when the workspace rotates a signing secret, the previous secret is retained for `signing.rotation_grace_seconds` (default 24h). During grace, both `X-Webhook-Signature` (new secret) and `X-Webhook-Signature-Previous` (old secret) are emitted. Receivers can flip-cut without coordinating timing with the sender.
 
 ## 6. Auto-disable
 
@@ -201,4 +201,4 @@ webhook/
 - **Doesn't own subscriber authentication.** Signing secrets belong to subscribers; this module signs outbound + verifies inbound.
 - **Doesn't own payload versioning.** `versioning` module owns the ApiVersion registry + transformer chain resolver.
 - **Doesn't own provider-specific normalisation.** Channel modules (notifications-mail, etc.) subscribe to `InboundWebhookReceived` events + normalise their provider's payload shape.
-- **Doesn't own consumer analytics.** `compliance` module aggregates subscription-affects-tenant-data reports for DPO surfacing.
+- **Doesn't own consumer analytics.** `compliance` module aggregates subscription-affects-workspace-data reports for DPO surfacing.

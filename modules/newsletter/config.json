@@ -10,9 +10,9 @@
       {"path": "newsletter.tokens.confirmation_ttl_hours", "type": "int", "env": "NEWSLETTER_CONFIRMATION_TTL_HOURS", "default": 720}
     ]},
     "public_urls": {"keys": [
-      {"path": "newsletter.public_urls.subscribe_pattern", "type": "string", "default": "https://{tenant_slug}.academorix.app/newsletters/{newsletter_slug}/subscribe"},
-      {"path": "newsletter.public_urls.confirm_pattern", "type": "string", "default": "https://{tenant_slug}.academorix.app/newsletters/{newsletter_slug}/confirm/{token}"},
-      {"path": "newsletter.public_urls.unsubscribe_pattern", "type": "string", "default": "https://{tenant_slug}.academorix.app/newsletters/{newsletter_slug}/unsubscribe/{token}"}
+      {"path": "newsletter.public_urls.subscribe_pattern", "type": "string", "default": "https://{workspace_slug}.academorix.app/newsletters/{newsletter_slug}/subscribe"},
+      {"path": "newsletter.public_urls.confirm_pattern", "type": "string", "default": "https://{workspace_slug}.academorix.app/newsletters/{newsletter_slug}/confirm/{token}"},
+      {"path": "newsletter.public_urls.unsubscribe_pattern", "type": "string", "default": "https://{workspace_slug}.academorix.app/newsletters/{newsletter_slug}/unsubscribe/{token}"}
     ]},
     "reputation": {"keys": [
       {"path": "newsletter.reputation.evaluation_window_days", "type": "int", "default": 30},

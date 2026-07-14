@@ -16,7 +16,7 @@
     "model": "Academorix\\Webhook\\Models\\WebhookDelivery",
     "interface": "Academorix\\Webhook\\Contracts\\Data\\WebhookDeliveryInterface",
     "implements": ["Academorix\\Webhook\\Contracts\\Data\\WebhookDeliveryInterface"],
-    "traits": ["HasFactory", "HasUlids", "HasStates", "BelongsToTenant", "HasMetadata", "HasUserstamps", "HasAuditable", "Filterable"],
+    "traits": ["HasFactory", "HasUlids", "HasStates", "BelongsToWorkspace", "HasMetadata", "HasUserstamps", "HasAuditable", "Filterable"],
     "casts": {
       "state": "WebhookDeliveryState",
       "payload": "WebhookPayloadCast",
@@ -39,7 +39,7 @@
     "columns": {
       "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `wdlv_<26 chars>`."},
       "subscription_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "webhook_subscriptions", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}},
-      "tenant_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "Denormalised from parent subscription for query filter efficiency."},
+      "workspace_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "workspaces", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "Denormalised from parent subscription for query filter efficiency."},
       "event_name": {"type": "string", "length": 128, "nullable": false, "description": "The event this delivery is for (e.g. 'invitation.sent')."},
       "event_version": {"type": "string", "length": 32, "nullable": false, "description": "Resolved payload version at dispatch time (via subscription.api_version + versioning module's transformer chain)."},
       "payload": {"type": "jsonb", "nullable": false, "description": "Final serialised payload after transformer chain. Confidential tier \u2014 may contain PII."},
@@ -76,18 +76,18 @@
     },
     "indexes": [
       {"columns": ["subscription_id", "created_at"], "unique": false, "name": "webhook_deliveries_subscription_index", "description": "Per-subscription audit query."},
-      {"columns": ["tenant_id", "state", "created_at"], "unique": false, "name": "webhook_deliveries_tenant_state_index", "description": "Admin dashboard filtering."},
+      {"columns": ["workspace_id", "state", "created_at"], "unique": false, "name": "webhook_deliveries_workspace_state_index", "description": "Admin dashboard filtering."},
       {"columns": ["state", "next_attempt_at"], "unique": false, "name": "webhook_deliveries_retry_scan_index", "predicate": "state = 'failedRetryable' AND next_attempt_at IS NOT NULL", "description": "Retry scan."},
       {"columns": ["event_name", "created_at"], "unique": false, "name": "webhook_deliveries_event_index"},
       {"columns": ["batch_id"], "unique": false, "name": "webhook_deliveries_batch_index", "predicate": "batch_id IS NOT NULL"},
       {"columns": ["created_at"], "unique": false, "name": "webhook_deliveries_created_at_index", "type": "BRIN", "description": "BRIN for the retention prune scan (large-table sequential-ish scan)."}
     ]
   },
-  "required": ["id", "subscription_id", "tenant_id", "event_name", "event_version", "payload", "payload_bytes", "state", "attempt_number", "max_attempts", "http_verb", "request_url", "request_headers", "request_body_bytes", "retryable", "signed_at", "signature_algorithm", "signature", "created_at", "updated_at"],
+  "required": ["id", "subscription_id", "workspace_id", "event_name", "event_version", "payload", "payload_bytes", "state", "attempt_number", "max_attempts", "http_verb", "request_url", "request_headers", "request_body_bytes", "retryable", "signed_at", "signature_algorithm", "signature", "created_at", "updated_at"],
   "properties": {
     "id": {"type": "string", "pattern": "^wdlv_[0-9A-HJKMNP-TV-Z]{26}$"},
     "subscription_id": {"type": "string", "pattern": "^wsub_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "event_name": {"type": "string", "maxLength": 128},
     "event_version": {"type": "string", "maxLength": 32},
     "payload": {"type": "object", "additionalProperties": true},

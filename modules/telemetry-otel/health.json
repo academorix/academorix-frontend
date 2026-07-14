@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/telemetry-otel/health",
+  "$version": 1,
+  "title": "telemetry-otel \u2014 health probes",
+  "probes": [
+    {"name": "otel-sdk-initialized", "class": "Academorix\\TelemetryOtel\\Health\\Probes\\SdkInitializedProbe", "category": "startup", "critical": true, "description": "TracerProvider + MeterProvider bound. keepsuit's IsRecording() returns true.", "timeoutMs": 100},
+    {"name": "otel-registry-hydrated", "class": "Academorix\\TelemetryOtel\\Health\\Probes\\RegistryHydratedProbe", "category": "startup", "critical": true, "description": "SpanRegistry + MetricRegistry compiled from #[AsSpan] / #[AsCounter] / etc discovery.", "timeoutMs": 200},
+    {"name": "otel-exporter-reachable", "class": "Academorix\\TelemetryOtel\\Health\\Probes\\ExporterReachableProbe", "category": "readiness", "critical": false, "description": "OTLP endpoint reachable (TCP + first-byte). Non-critical because we drop-on-backpressure \u2014 unreachable exporter doesn't fail requests.", "timeoutMs": 2000},
+    {"name": "otel-dropped-spans-ratio", "class": "Academorix\\TelemetryOtel\\Health\\Probes\\DroppedSpansRatioProbe", "category": "readiness", "critical": false, "description": "Ratio of dropped spans over last 5 minutes. Warns at 5%, fails at 25%.", "timeoutMs": 200, "thresholds": {"warn_ratio": 0.05, "fail_ratio": 0.25}},
+    {"name": "otel-batch-processor-buffer", "class": "Academorix\\TelemetryOtel\\Health\\Probes\\BatchProcessorBufferProbe", "category": "readiness", "critical": false, "description": "In-process BatchSpanProcessor queue depth. Alerts when > 80% of maxQueueSize.", "timeoutMs": 100}
+  ]
+}

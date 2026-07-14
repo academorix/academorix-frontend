@@ -1,0 +1,25 @@
+{
+  "id": "workspaces.resources.workspace-integration.create",
+  "title": "Add integration",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/workspace/integrations/new",
+  "host": "workspace",
+  "audience": "authenticated",
+  "resource": {"module": "workspaces", "entity": "workspace-integration", "action": "create"},
+  "requiresPermission": "workspaces.manage_integrations",
+  "requiresFeature": "workspaces.integrations-v2",
+  "dataSources": [],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-6 p-6 max-w-2xl mx-auto"}, "children": [
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel"}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/integrations"}}},
+      {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Add integration"}},
+      {"kind": "Form", "props": {"submitUrl": "/api/v1/workspace/integrations", "submitMethod": "POST", "onSuccess": [{"kind": "toast.success", "message": "Integration created \u2014 finish configuration"}, {"kind": "navigateExpr", "expr": "'/workspace/integrations/' + response.data.id + '/edit'"}]}, "children": [
+        {"kind": "TextField", "props": {"label": "Name", "name": "name", "isRequired": true, "placeholder": "Corporate Okta"}},
+        {"kind": "Select", "props": {"label": "Kind", "name": "kind", "isRequired": true}, "options": [{"key": "saml", "label": "SSO \u2014 SAML"}, {"key": "oidc", "label": "SSO \u2014 OIDC"}, {"key": "scim", "label": "SCIM 2.0 (user provisioning)"}, {"key": "hris", "label": "HRIS (Workday, BambooHR, Rippling)"}, {"key": "lms", "label": "LMS (Canvas, Moodle, Blackboard)"}]},
+        {"kind": "Select", "props": {"label": "Provider", "name": "provider"}, "options": [{"key": "okta", "label": "Okta"}, {"key": "azure_ad", "label": "Microsoft Entra ID"}, {"key": "google_workspace", "label": "Google Workspace"}, {"key": "onelogin", "label": "OneLogin"}, {"key": "auth0", "label": "Auth0"}, {"key": "custom", "label": "Custom / other"}]},
+        {"kind": "Button", "props": {"variant": "primary", "size": "md", "type": "submit", "children": "Create"}}
+      ]}
+    ]}
+  ]
+}

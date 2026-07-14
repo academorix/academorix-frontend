@@ -11,5 +11,5 @@
 
 ### Compatibility
 
-- Depends on `notifications` (core) + `foundation` + `tenancy`. No downstream extensions.
+- Depends on `notifications` (core) + `foundation` + `workspaces`. No downstream extensions.
 - No breaking change surface \u2014 inception release.

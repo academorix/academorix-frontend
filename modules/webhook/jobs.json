@@ -62,7 +62,7 @@
         "Query: SELECT id FROM webhook_deliveries WHERE created_at < now() - prune_after_days LIMIT chunk_size.",
         "Delete in transactional batches.",
         "Loop until no rows returned.",
-        "Emit metric: webhook_deliveries_pruned_total by tenant + increment counter."
+        "Emit metric: webhook_deliveries_pruned_total by workspace + increment counter."
       ],
       "shouldQueue": true,
       "shouldBeUnique": true,

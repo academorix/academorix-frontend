@@ -4,8 +4,8 @@
   "title": "audit \u2014 Artisan commands",
   "commands": [
     {"signature": "audit:describe", "class": "Academorix\\Audit\\Console\\Commands\\DescribeCommand", "purpose": "Print AuditRegistry contents: every #[Auditable] model + configured $auditEncrypted + $auditExclude."},
-    {"signature": "audit:verify-chain {--tenant=} {--sample-tenants=1}", "class": "Academorix\\Audit\\Console\\Commands\\VerifyChainCommand", "purpose": "Run VerifyAuditChainJob synchronously (small tenants) or dispatch (large). --tenant scopes to one; --sample-tenants picks N random tenants for spot-check."},
+    {"signature": "audit:verify-chain {--workspace=} {--sample-workspaces=1}", "class": "Academorix\\Audit\\Console\\Commands\\VerifyChainCommand", "purpose": "Run VerifyAuditChainJob synchronously (small workspaces) or dispatch (large). --workspace scopes to one; --sample-workspaces picks N random workspaces for spot-check."},
     {"signature": "audit:export-dsar {user_id} {--format=json}", "class": "Academorix\\Audit\\Console\\Commands\\ExportDsarCommand", "purpose": "CLI trigger for ExportAuditForDsarJob. --format json (structured) or csv (Excel-friendly). Refused unless super_admin or dpo role."},
-    {"signature": "audit:cold-rotate {--dry-run} {--tenant=}", "class": "Academorix\\Audit\\Console\\Commands\\ColdRotateCommand", "purpose": "Trigger RotateAuditColdStorageJob. --dry-run reports counts without rotating."}
+    {"signature": "audit:cold-rotate {--dry-run} {--workspace=}", "class": "Academorix\\Audit\\Console\\Commands\\ColdRotateCommand", "purpose": "Trigger RotateAuditColdStorageJob. --dry-run reports counts without rotating."}
   ]
 }

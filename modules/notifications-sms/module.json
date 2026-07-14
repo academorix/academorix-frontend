@@ -8,7 +8,7 @@
   "priority": 28,
   "providers": ["Academorix\\Notifications\\Sms\\Providers\\NotificationsSmsServiceProvider"],
   "files": [],
-  "dependencies": ["foundation", "tenancy", "notifications", "webhook"],
+  "dependencies": ["foundation", "workspaces", "notifications", "webhook"],
   "extendedBy": [],
   "contributes": {
     "traits": [],
@@ -42,13 +42,13 @@
     "supports_delivery_tracking": true
   },
   "hosts": {
-    "tenant": {
-      "description": "Tenant admin opt-out list management.",
+    "workspace": {
+      "description": "Workspace admin opt-out list management.",
       "routes": [
-        "GET /api/v1/tenant/sms-opt-outs",
-        "GET /api/v1/tenant/sms-opt-outs/{opt_out}",
-        "POST /api/v1/tenant/sms-opt-outs",
-        "DELETE /api/v1/tenant/sms-opt-outs/{opt_out}"
+        "GET /api/v1/workspace/sms-opt-outs",
+        "GET /api/v1/workspace/sms-opt-outs/{opt_out}",
+        "POST /api/v1/workspace/sms-opt-outs",
+        "DELETE /api/v1/workspace/sms-opt-outs/{opt_out}"
       ]
     }
   },

@@ -16,7 +16,7 @@
     "model": "Academorix\\Newsletter\\Models\\NewsletterCampaign",
     "interface": "Academorix\\Newsletter\\Contracts\\Data\\NewsletterCampaignInterface",
     "implements": ["Academorix\\Newsletter\\Contracts\\Data\\NewsletterCampaignInterface"],
-    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "HasActivityLog", "Filterable", "SoftDeletes"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToWorkspace", "HasMetadata", "HasUserstamps", "HasActivityLog", "Filterable", "SoftDeletes"],
     "casts": {"state": "NewsletterCampaignState", "counters": "array", "scheduled_at": "datetime", "started_at": "datetime", "completed_at": "datetime", "metadata": "array"},
     "appends": ["progress_pct", "open_rate", "click_rate", "bounce_rate", "complaint_rate"],
     "observers": ["NewsletterCampaignObserver"],
@@ -27,7 +27,7 @@
     "engine": "postgres",
     "columns": {
       "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `nlc_<26 chars>`."},
-      "tenant_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "tenants", "column": "id", "onDelete": "cascade"}},
+      "workspace_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "workspaces", "column": "id", "onDelete": "cascade"}},
       "newsletter_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "newsletters", "column": "id", "onDelete": "cascade"}},
       "issue_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "newsletter_issues", "column": "id", "onDelete": "restrict"}},
       "audience_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "newsletter_audiences", "column": "id", "onDelete": "restrict"}},
@@ -54,10 +54,10 @@
       {"columns": ["audience_id"], "unique": false, "name": "newsletter_campaigns_audience_idx"}
     ]
   },
-  "required": ["id", "tenant_id", "newsletter_id", "issue_id", "audience_id", "name", "state", "counters", "send_batch_size", "created_at", "updated_at"],
+  "required": ["id", "workspace_id", "newsletter_id", "issue_id", "audience_id", "name", "state", "counters", "send_batch_size", "created_at", "updated_at"],
   "properties": {
     "id": {"type": "string", "pattern": "^nlc_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "newsletter_id": {"type": "string", "pattern": "^nlp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "issue_id": {"type": "string", "pattern": "^nli_[0-9A-HJKMNP-TV-Z]{26}$"},
     "audience_id": {"type": "string", "pattern": "^nla_[0-9A-HJKMNP-TV-Z]{26}$"},

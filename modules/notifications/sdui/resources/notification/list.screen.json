@@ -3,8 +3,8 @@
   "title": "Inbox",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/notifications",
-  "host": "tenant",
+  "route": "/workspace/notifications",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "notifications", "entity": "notification", "action": "list"},
   "requiresPermission": "notifications.viewAny",
@@ -12,7 +12,7 @@
     {
       "name": "notifications",
       "kind": "http.get",
-      "url": "/api/v1/tenant/notifications",
+      "url": "/api/v1/workspace/notifications",
       "unwrap": "data",
       "paginated": true,
       "queryParamsFromState": ["filter[category_slug]", "filter[channel]", "filter[state]", "filter[seen]", "sort", "page", "per_page"],
@@ -21,7 +21,7 @@
     {
       "name": "notificationCategories",
       "kind": "http.get",
-      "url": "/api/v1/tenant/notification-categories",
+      "url": "/api/v1/workspace/notification-categories",
       "unwrap": "data",
       "cache": {"ttlSeconds": 3600}
     }
@@ -58,7 +58,7 @@
                   "actions": {
                     "onPress": {
                       "kind": "http.post",
-                      "url": "/api/v1/tenant/notifications/mark-all-seen",
+                      "url": "/api/v1/workspace/notifications/mark-all-seen",
                       "onSuccess": [
                         {"kind": "data.refresh", "source": "notifications"},
                         {"kind": "toast.success", "message": "Inbox marked as seen"}
@@ -70,7 +70,7 @@
                   "id": "preferences",
                   "kind": "Button",
                   "props": {"variant": "outline", "size": "sm", "children": "Preferences", "leadingIcon": "cog-6-tooth"},
-                  "actions": {"onPress": {"kind": "navigate", "to": "/tenant/notification-preferences"}}
+                  "actions": {"onPress": {"kind": "navigate", "to": "/workspace/notification-preferences"}}
                 }
               ]
             }
@@ -120,9 +120,9 @@
             "widget": "notifications.notification-card",
             "props": {
               "notification": {"$ref": "row"},
-              "onPressUrl": {"$expr": "'/tenant/notifications/' + row.id"},
-              "onMarkSeenAction": {"kind": "http.post", "urlExpr": "'/api/v1/tenant/notifications/' + row.id + '/seen'"},
-              "onArchiveAction": {"kind": "http.post", "urlExpr": "'/api/v1/tenant/notifications/' + row.id + '/archive'"}
+              "onPressUrl": {"$expr": "'/workspace/notifications/' + row.id"},
+              "onMarkSeenAction": {"kind": "http.post", "urlExpr": "'/api/v1/workspace/notifications/' + row.id + '/seen'"},
+              "onArchiveAction": {"kind": "http.post", "urlExpr": "'/api/v1/workspace/notifications/' + row.id + '/archive'"}
             }
           },
           "pagination": {"kind": "cursor", "bindTo": "notifications"}

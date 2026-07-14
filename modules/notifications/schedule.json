@@ -23,7 +23,7 @@
       "command": "notifications:expunge-archived --batch=1000",
       "cron": "15 2 * * *",
       "timezone": "UTC",
-      "purpose": "Hard-delete Notification rows past retention window. Batched by tenant to spread load. 02:15 UTC to avoid US + EU business hours."
+      "purpose": "Hard-delete Notification rows past retention window. Batched by workspace to spread load. 02:15 UTC to avoid US + EU business hours."
     },
     {
       "name": "reconcile-deliveries",

@@ -54,7 +54,7 @@
     {
       "entity": "NotificationCategory",
       "hot": {"days": "forever", "description": "Categories are configuration \u2014 not retention-scoped."},
-      "cold": {"days": null, "description": "No retention. is_system=true categories cannot be deleted; tenant-override rows can be deleted by tenant admin if no live Notification references them within the last 90d."}
+      "cold": {"days": null, "description": "No retention. is_system=true categories cannot be deleted; workspace-override rows can be deleted by workspace admin if no live Notification references them within the last 90d."}
     },
     {
       "entity": "NotificationDigest",

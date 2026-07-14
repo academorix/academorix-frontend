@@ -16,7 +16,7 @@
     "model": "Academorix\\Notifications\\Sms\\Models\\SmsOptOut",
     "interface": "Academorix\\Notifications\\Sms\\Contracts\\Data\\SmsOptOutInterface",
     "implements": ["Academorix\\Notifications\\Sms\\Contracts\\Data\\SmsOptOutInterface"],
-    "traits": ["HasFactory", "HasUlids", "HasSystemFlag", "BelongsToTenantOptional", "HasMetadata", "HasUserstamps", "HasAuditable", "Filterable", "Searchable", "SoftDeletes"],
+    "traits": ["HasFactory", "HasUlids", "HasSystemFlag", "BelongsToWorkspaceOptional", "HasMetadata", "HasUserstamps", "HasAuditable", "Filterable", "Searchable", "SoftDeletes"],
     "casts": {"reason": "SmsOptOutReason", "phone": "PhoneNumberCast", "is_system": "boolean", "metadata": "array", "expires_at": "datetime", "opted_out_at": "datetime"},
     "appends": ["is_permanent", "country_code"],
     "observers": ["SmsOptOutObserver"],
@@ -27,7 +27,7 @@
     "engine": "postgres",
     "columns": {
       "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `sopt_<26 chars>`."},
-      "tenant_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "NULL = platform-wide."},
+      "workspace_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "workspaces", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "NULL = platform-wide."},
       "phone": {"type": "string", "length": 20, "nullable": false, "description": "E.164 format (+15551234567). Confidential tier."},
       "phone_country_code": {"type": "string", "length": 3, "nullable": false, "description": "Country dial code (denormalised). Powers per-country DNC queries."},
       "reason": {"type": "string", "length": 24, "nullable": false, "description": "Enum: stop_keyword, manual, do_not_call_registry, invalid_number, spam_trap, complaint."},
@@ -46,8 +46,8 @@
       "updated_at": {"type": "timestamptz", "nullable": false}
     },
     "indexes": [
-      {"columns": ["tenant_id", "phone"], "unique": true, "name": "sms_opt_outs_tenant_phone_unique", "description": "Primary lookup on every send."},
-      {"columns": ["phone"], "unique": false, "name": "sms_opt_outs_phone_index", "description": "Cross-tenant lookup for platform-wide DNC (tenant_id IS NULL)."},
+      {"columns": ["workspace_id", "phone"], "unique": true, "name": "sms_opt_outs_workspace_phone_unique", "description": "Primary lookup on every send."},
+      {"columns": ["phone"], "unique": false, "name": "sms_opt_outs_phone_index", "description": "Cross-workspace lookup for platform-wide DNC (workspace_id IS NULL)."},
       {"columns": ["phone_country_code"], "unique": false, "name": "sms_opt_outs_country_index"},
       {"columns": ["reason", "created_at"], "unique": false, "name": "sms_opt_outs_reason_index"}
     ]
@@ -55,7 +55,7 @@
   "required": ["id", "phone", "phone_country_code", "reason", "opted_out_at", "is_system", "created_at", "updated_at"],
   "properties": {
     "id": {"type": "string", "pattern": "^sopt_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": ["string", "null"], "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "phone": {"type": "string", "pattern": "^\\+[1-9][0-9]{1,14}$", "maxLength": 20},
     "phone_country_code": {"type": "string", "pattern": "^[1-9][0-9]{0,2}$", "maxLength": 3},
     "reason": {"type": "string", "enum": ["stop_keyword", "manual", "do_not_call_registry", "invalid_number", "spam_trap", "complaint"]},

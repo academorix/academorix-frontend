@@ -10,7 +10,7 @@
         {"article": "Art. 5(1)(a)", "principle": "lawful + transparent processing", "evidence": "Every operation on personal data audit-logged with actor + timestamp + old/new values."},
         {"article": "Art. 5(1)(f)", "principle": "integrity + confidentiality", "evidence": "KMS envelope encryption of restricted-tier field values. Optional tamper-evident chain (enterprise)."},
         {"article": "Art. 17", "principle": "right to erasure", "evidence": "AnonymiseAuditForErasedUser listener \u2014 PII fields replaced with hash placeholders; row retained for audit continuity."},
-        {"article": "Art. 30", "principle": "records of processing", "evidence": "audits table IS the records of processing. Filterable by tenant + actor + auditable_type + date."},
+        {"article": "Art. 30", "principle": "records of processing", "evidence": "audits table IS the records of processing. Filterable by workspace + actor + auditable_type + date."},
         {"article": "Art. 32", "principle": "security of processing", "evidence": "KMS encryption + IP truncation + hash chain + Object Lock immutable retention."},
         {"article": "Art. 33", "principle": "breach notification", "evidence": "AuditChainBroken event fires immediately on chain break \u2014 tamper detection within 24h of write."}
       ]
@@ -18,7 +18,7 @@
     "soc2_type2": {
       "applicable": true,
       "controls": [
-        {"criterion": "CC6.1", "principle": "logical access", "evidence": "Access to audit rows itself audit-logged. Tenant DPO sees masked view; platform DPO sees full view."},
+        {"criterion": "CC6.1", "principle": "logical access", "evidence": "Access to audit rows itself audit-logged. Workspace DPO sees masked view; platform DPO sees full view."},
         {"criterion": "CC6.7", "principle": "encryption at rest", "evidence": "KMS envelope encryption of restricted values. S3 Glacier Object Lock immutable cold."},
         {"criterion": "CC7.2", "principle": "system monitoring", "evidence": "Every material change on every #[Auditable] model recorded."},
         {"criterion": "CC7.3", "principle": "incident response", "evidence": "AuditChainBroken alerts within 24h. Kill switches for KMS incidents \u2014 recording continues in degraded mode."},

@@ -3,8 +3,8 @@
   "title": "Edit newsletter",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/newsletters/{id}/edit",
-  "host": "tenant",
+  "route": "/workspace/newsletters/{id}/edit",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "newsletter", "entity": "newsletter", "action": "edit"},
   "requiresPermission": "newsletters.update",
@@ -14,7 +14,7 @@
   ],
   "nodes": [
     {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto"}, "children": [
-      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/newsletters/' + params.id"}}},
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/workspace/newsletters/' + params.id"}}},
       {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold"}, "bindings": {"children": {"$expr": "'Edit ' + newsletter.name"}}},
       {"kind": "Form", "props": {"submitUrlExpr": "'/api/v1/newsletters/' + params.id", "submitMethod": "PATCH", "onSuccess": [{"kind": "toast.success", "message": "Saved"}, {"kind": "data.refresh", "source": "newsletter"}]}, "bindings": {"initialValues": {"$ref": "newsletter"}}, "children": [
         {"kind": "TextField", "props": {"label": "Name", "name": "name"}, "bindings": {"defaultValue": {"$ref": "newsletter.name"}}},

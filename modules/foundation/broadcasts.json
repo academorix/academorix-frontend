@@ -18,7 +18,7 @@
     }
   ],
   "notes": [
-    "This is the ONLY broadcast channel foundation owns. Downstream modules own their own tenant-scoped channels (tenant.{id}.invitations, tenant.{id}.notifications, etc.).",
+    "This is the ONLY broadcast channel foundation owns. Downstream modules own their own workspace-scoped channels (workspace.{id}.invitations, workspace.{id}.notifications, etc.).",
     "The `HealthSnapshotUpdated` event is broadcast-only — no listeners subscribe on the server side; the payload is a snapshot of `HealthAggregator::current()`."
   ]
 }

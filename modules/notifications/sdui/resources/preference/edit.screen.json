@@ -3,14 +3,14 @@
   "title": "Notification preferences",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/notification-preferences",
-  "host": "tenant",
+  "route": "/workspace/notification-preferences",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "notifications", "entity": "preference", "action": "edit"},
   "requiresPermission": "notifications.preferences.view",
   "dataSources": [
-    {"name": "preferences", "kind": "http.get", "url": "/api/v1/tenant/notification-preferences", "unwrap": "data"},
-    {"name": "notificationCategories", "kind": "http.get", "url": "/api/v1/tenant/notification-categories", "unwrap": "data", "cache": {"ttlSeconds": 3600}}
+    {"name": "preferences", "kind": "http.get", "url": "/api/v1/workspace/notification-preferences", "unwrap": "data"},
+    {"name": "notificationCategories", "kind": "http.get", "url": "/api/v1/workspace/notification-categories", "unwrap": "data", "cache": {"ttlSeconds": 3600}}
   ],
   "nodes": [
     {
@@ -36,7 +36,7 @@
             {
               "id": "quiet-form",
               "kind": "Form",
-              "props": {"submitUrl": "/api/v1/tenant/notification-preferences", "submitMethod": "PATCH", "onSuccess": {"kind": "toast.success", "message": "Quiet hours updated"}},
+              "props": {"submitUrl": "/api/v1/workspace/notification-preferences", "submitMethod": "PATCH", "onSuccess": {"kind": "toast.success", "message": "Quiet hours updated"}},
               "children": [
                 {"kind": "View", "props": {"className": "flex items-center gap-3"}, "children": [
                   {"kind": "TimeField", "props": {"label": "From", "name": "quiet_hours_start", "defaultValue": "22:00"}},
@@ -67,7 +67,7 @@
                 {"id": "in_app", "header": "In-app", "align": "center", "cell": {"kind": "Widget", "widget": "notifications.channel-preference-toggle", "props": {"category_slug": {"$ref": "row.slug"}, "channel": "in_app", "disabled": {"$expr": "!row.opt_out_allowed || !row.default_channels.includes('in_app')"}}}},
                 {"id": "push", "header": "Push", "align": "center", "cell": {"kind": "Widget", "widget": "notifications.channel-preference-toggle", "props": {"category_slug": {"$ref": "row.slug"}, "channel": "push", "disabled": {"$expr": "!row.opt_out_allowed || !row.default_channels.includes('push')"}}}},
                 {"id": "sms", "header": "SMS", "align": "center", "cell": {"kind": "Widget", "widget": "notifications.channel-preference-toggle", "props": {"category_slug": {"$ref": "row.slug"}, "channel": "sms", "disabled": {"$expr": "!row.opt_out_allowed || !row.default_channels.includes('sms')"}}}},
-                {"id": "digest", "header": "Digest", "cell": {"kind": "Select", "props": {"size": "sm", "name": "digest_mode"}, "options": [{"key": "immediate", "label": "Immediate"}, {"key": "daily", "label": "Daily"}, {"key": "weekly", "label": "Weekly"}, {"key": "off", "label": "Off"}], "bindings": {"defaultValue": {"$expr": "preferences.find(p => p.category_slug === row.slug && p.channel === 'mail')?.digest_mode || 'immediate'"}}, "actions": {"onChange": {"kind": "http.patch", "url": "/api/v1/tenant/notification-preferences", "bodyExpr": "{ upsert: [{ category_slug: row.slug, channel: 'mail', digest_mode: value }] }"}}}}
+                {"id": "digest", "header": "Digest", "cell": {"kind": "Select", "props": {"size": "sm", "name": "digest_mode"}, "options": [{"key": "immediate", "label": "Immediate"}, {"key": "daily", "label": "Daily"}, {"key": "weekly", "label": "Weekly"}, {"key": "off", "label": "Off"}], "bindings": {"defaultValue": {"$expr": "preferences.find(p => p.category_slug === row.slug && p.channel === 'mail')?.digest_mode || 'immediate'"}}, "actions": {"onChange": {"kind": "http.patch", "url": "/api/v1/workspace/notification-preferences", "bodyExpr": "{ upsert: [{ category_slug: row.slug, channel: 'mail', digest_mode: value }] }"}}}}
               ]
             }
           ]

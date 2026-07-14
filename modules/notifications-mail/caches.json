@@ -6,9 +6,9 @@
   "driver": "redis",
   "ownedTags": ["notifications-mail"],
   "keys": [
-    {"pattern": "notifications-mail:suppressions:{tenant_id}:bloom", "description": "Bloom filter of suppressed email hashes for tenant. Read on every send (hot path). Bloom miss = definitely not suppressed; hit = fall through to DB check.", "ttlSeconds": 300, "tags": ["notifications-mail", "suppression", "tenant"], "invalidatedBy": ["MailSuppressed event", "MailSuppressionRevoked event"]},
-    {"pattern": "notifications-mail:suppressions:{tenant_id}:list:{page}", "description": "Paginated suppression list for admin UI. Warmed on admin page load.", "ttlSeconds": 60, "tags": ["notifications-mail", "suppression", "tenant"]},
+    {"pattern": "notifications-mail:suppressions:{workspace_id}:bloom", "description": "Bloom filter of suppressed email hashes for workspace. Read on every send (hot path). Bloom miss = definitely not suppressed; hit = fall through to DB check.", "ttlSeconds": 300, "tags": ["notifications-mail", "suppression", "workspace"], "invalidatedBy": ["MailSuppressed event", "MailSuppressionRevoked event"]},
+    {"pattern": "notifications-mail:suppressions:{workspace_id}:list:{page}", "description": "Paginated suppression list for admin UI. Warmed on admin page load.", "ttlSeconds": 60, "tags": ["notifications-mail", "suppression", "workspace"]},
     {"pattern": "notifications-mail:providers:{provider}:reachable", "description": "Provider reachability cache (result of health probe). Reused by SendMailJob for pre-flight abort when provider is known-down.", "ttlSeconds": 60, "tags": ["notifications-mail", "provider"]},
-    {"pattern": "notifications-mail:tenant_defaults:{tenant_id}", "description": "Tenant-level defaults (sender identity, postal address, footer text) from settings.json. Read on every send.", "ttlSeconds": 600, "tags": ["notifications-mail", "tenant"], "invalidatedBy": ["tenancy::TenantSettingsUpdated event"]}
+    {"pattern": "notifications-mail:workspace_defaults:{workspace_id}", "description": "Workspace-level defaults (sender identity, postal address, footer text) from settings.json. Read on every send.", "ttlSeconds": 600, "tags": ["notifications-mail", "workspace"], "invalidatedBy": ["workspaces::WorkspaceSettingsUpdated event"]}
   ]
 }

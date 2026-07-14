@@ -29,9 +29,9 @@ STOP-keyword processing: when an inbound webhook arrives with body matching STOP
 
 ## 3. Cost tracking
 
-Every send captures `cost_micro_units` from provider (Twilio: `price`, MessageBird: `mccmnc.price`, etc.). Aggregated per tenant per destination country + surfaced on the admin dashboard. Cost-cap entitlement (`notifications.sms.cost-cap.monthly_micro_units`) refuses sends when tenant would exceed.
+Every send captures `cost_micro_units` from provider (Twilio: `price`, MessageBird: `mccmnc.price`, etc.). Aggregated per workspace per destination country + surfaced on the admin dashboard. Cost-cap entitlement (`notifications.sms.cost-cap.monthly_micro_units`) refuses sends when workspace would exceed.
 
-Destination-country pricing varies drastically (US $0.0079, UK £0.04, India ₹0.20). Tenant admins configure per-country allow-list to prevent accidental international spend.
+Destination-country pricing varies drastically (US $0.0079, UK £0.04, India ₹0.20). Workspace admins configure per-country allow-list to prevent accidental international spend.
 
 ## 4. Files
 

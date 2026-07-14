@@ -2,7 +2,7 @@
   "id": "academorix://modules/notifications/caches",
   "$version": 1,
   "title": "notifications core \u2014 cache keys + tags",
-  "description": "Every cache key is tagged with `notifications`. Composite tags used for tenant-scoped or user-scoped invalidation. Follows foundation's cache namespacing convention (each module owns its module-name tag + composite tags for scoped invalidation).",
+  "description": "Every cache key is tagged with `notifications`. Composite tags used for workspace-scoped or user-scoped invalidation. Follows foundation's cache namespacing convention (each module owns its module-name tag + composite tags for scoped invalidation).",
   "driver": "redis",
   "ownedTags": ["notifications"],
   "keys": [
@@ -14,10 +14,10 @@
       "invalidatedBy": ["ConfigReloaded event", "CategoryRegistered event", "notifications:warm-registries command"]
     },
     {
-      "pattern": "notifications:templates:registry:{tenant_id}",
-      "description": "Per-tenant template registry \u2014 platform defaults + tenant overrides, keyed by tenant. Invalidated on TemplatePublished for the tenant or when a platform default changes.",
+      "pattern": "notifications:templates:registry:{workspace_id}",
+      "description": "Per-workspace template registry \u2014 platform defaults + workspace overrides, keyed by workspace. Invalidated on TemplatePublished for the workspace or when a platform default changes.",
       "ttlSeconds": 900,
-      "tags": ["notifications", "tenant"],
+      "tags": ["notifications", "workspace"],
       "invalidatedBy": ["TemplatePublished event", "TemplateArchived event"]
     },
     {
@@ -49,11 +49,11 @@
       "invalidatedBy": ["ProcessDigestJob completion"]
     },
     {
-      "pattern": "notifications:tenant_branding:{tenant_id}",
-      "description": "Cached tenant branding block (logo_url, primary_color, sender_identity, postal_address) used in every event-carried-state payload. Refreshed on tenant Branding update events.",
+      "pattern": "notifications:workspace_branding:{workspace_id}",
+      "description": "Cached workspace branding block (logo_url, primary_color, sender_identity, postal_address) used in every event-carried-state payload. Refreshed on workspace Branding update events.",
       "ttlSeconds": 3600,
-      "tags": ["notifications", "tenant"],
-      "invalidatedBy": ["tenancy::BrandingUpdated event"]
+      "tags": ["notifications", "workspace"],
+      "invalidatedBy": ["workspaces::BrandingUpdated event"]
     }
   ]
 }

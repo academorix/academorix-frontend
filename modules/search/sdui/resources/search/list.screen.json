@@ -1,0 +1,45 @@
+{
+  "id": "search.resources.search.list",
+  "title": "Search",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/workspace/search",
+  "host": "workspace",
+  "audience": "authenticated",
+  "resource": {"module": "search", "entity": "search", "action": "list"},
+  "requiresPermission": "search.query",
+  "requiresFeature": "search.enabled",
+  "dataSources": [
+    {"name": "sessionId", "kind": "clientState", "initial": "generateUuid()"},
+    {"name": "entities",  "kind": "http.get", "url": "/api/v1/transfer/entities", "unwrap": "data", "cache": {"ttlSeconds": 300}, "description": "Reuses transfer's entities endpoint since domain modules register their labels there."},
+    {"name": "indexes",   "kind": "http.get", "url": "/api/v1/search/indexes",     "unwrap": "data"},
+    {"name": "hits",      "kind": "http.get", "url": "/api/v1/search",             "unwrap": "data", "paginated": true, "queryParamsFromState": ["q", "index", "filter[branch_id]", "filter[season_id]", "sort", "page", "per_page"], "when": {"$expr": "state.q.length >= 2"}}
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": {"className": "flex flex-col gap-4 p-6 max-w-6xl mx-auto"},
+      "children": [
+        {"kind": "View", "props": {"className": "flex flex-col gap-1"}, "children": [
+          {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Search"}},
+          {"kind": "Text", "props": {"className": "text-sm text-muted"}, "bindings": {"children": {"$expr": "t('search.list.description')"}}}
+        ]},
+
+        {"kind": "View", "props": {"className": "flex flex-wrap gap-3 items-end"}, "children": [
+          {"kind": "TextField", "props": {"label": {"$expr": "t('search.list.query_label')"}, "name": "q", "placeholder": {"$expr": "t('search.palette.placeholder')"}, "autoFocus": true, "className": "flex-1 min-w-64"}, "bindings": {"value": {"$ref": "state.q"}}, "actions": {"onChange": {"kind": "state.set", "path": "q", "debounceMs": 200}}},
+          {"kind": "MultiSelect", "props": {"label": {"$expr": "t('search.list.scope_label')"}, "name": "index", "placeholder": {"$expr": "t('search.list.scope_placeholder')"}}, "optionsSource": {"$ref": "indexes", "valueField": "model_class", "labelField": "index_name"}, "actions": {"onChange": {"kind": "data.applyFilter", "source": "hits"}}}
+        ]},
+
+        {"kind": "View", "props": {"className": "flex items-center gap-2 text-sm text-muted"}, "bindings": {"hidden": {"$expr": "state.q.length < 2"}}, "children": [
+          {"kind": "Text", "bindings": {"children": {"$expr": "t('search.list.result_count', {n: hits.meta.total, ms: hits.meta.took_ms})"}}},
+          {"kind": "Text", "props": {"className": "ml-auto text-xs"}, "bindings": {"children": {"$expr": "t('search.list.engine_used', {engine: hits.meta.engine})"}}}
+        ]},
+
+        {"kind": "List", "bindings": {"items": {"$ref": "hits"}, "isLoading": {"$ref": "hits.isLoading"}, "hidden": {"$expr": "state.q.length < 2"}}, "itemRenderer": {"kind": "Widget", "widget": "search.search-result-row", "bindings": {"hit": {"$ref": "row"}, "sessionId": {"$ref": "sessionId"}}}, "props": {"emptyState": {"title": {"$expr": "t('search.list.empty.title')"}, "description": {"$expr": "t('search.list.empty.description', {q: state.q})"}}}},
+
+        {"kind": "Pagination", "bindings": {"pagination": {"$ref": "hits.meta"}, "hidden": {"$expr": "state.q.length < 2 || hits.meta.total <= hits.meta.per_page"}}}
+      ]
+    }
+  ]
+}

@@ -47,13 +47,13 @@
     ],
     "internal": [
       "Notification.template_id",
-      "Notification.tenant_id",
+      "Notification.workspace_id",
       "Notification.application_id",
       "Notification.actor_type",
       "Notification.actor_id",
       "Notification.metadata",
       "Notification.priority_channels_requested",
-      "NotificationDelivery.tenant_id",
+      "NotificationDelivery.workspace_id",
       "NotificationDelivery.provider_message_id",
       "NotificationDelivery.attempted_at",
       "NotificationDelivery.delivered_at",
@@ -63,14 +63,14 @@
       "NotificationDelivery.next_retry_at",
       "NotificationDelivery.cost_micro_units",
       "NotificationDelivery.metadata",
-      "NotificationTemplate.tenant_id",
+      "NotificationTemplate.workspace_id",
       "NotificationTemplate.category_slug",
       "NotificationTemplate.subject_template",
       "NotificationTemplate.body_rendered_html",
       "NotificationTemplate.provider_template_id",
       "NotificationTemplate.metadata",
       "NotificationPreference.id",
-      "NotificationPreference.tenant_id",
+      "NotificationPreference.workspace_id",
       "NotificationPreference.category_slug",
       "NotificationPreference.channel",
       "NotificationPreference.enabled",
@@ -78,10 +78,10 @@
       "NotificationPreference.metadata",
       "NotificationPreference.created_at",
       "NotificationPreference.updated_at",
-      "NotificationCategory.tenant_id",
+      "NotificationCategory.workspace_id",
       "NotificationCategory.default_channels",
       "NotificationCategory.metadata",
-      "NotificationDigest.tenant_id",
+      "NotificationDigest.workspace_id",
       "NotificationDigest.metadata"
     ],
     "confidential": [
@@ -119,7 +119,7 @@
   "notes": [
     "Notification.addressee_email + addressee_phone are DENORMALIZED from the User row into the Notification row at dispatch time \u2014 event-carried state. GDPR Art. 17 erasure anonymises them (`erased-<hash>@invalid.local`) but retains the row for aggregate compliance reporting.",
     "NotificationTemplate.body_rendered_html is `internal` because it's the compiled template with Blade placeholders (not final rendered output). Final rendered output is transient (never persisted).",
-    "No `restricted` tier fields in core \u2014 credential-adjacent material (device tokens, provider API keys, SSO secrets) lives in channel modules or in tenancy's integrations.",
+    "No `restricted` tier fields in core \u2014 credential-adjacent material (device tokens, provider API keys, SSO secrets) lives in channel modules or in workspaces's integrations.",
     "NotificationDelivery.opened_ip is masked at rest (last octet zeroed) per foundation's audit_log convention."
   ]
 }

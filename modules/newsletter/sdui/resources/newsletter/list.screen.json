@@ -3,8 +3,8 @@
   "title": "Newsletters",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/newsletters",
-  "host": "tenant",
+  "route": "/workspace/newsletters",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "newsletter", "entity": "newsletter", "action": "list"},
   "requiresPermission": "newsletters.viewAny",
@@ -16,7 +16,7 @@
     {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-4 p-6"}, "children": [
       {"kind": "View", "props": {"className": "flex items-center justify-between"}, "children": [
         {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Newsletters"}},
-        {"kind": "Button", "props": {"variant": "primary", "size": "sm", "leadingIcon": "plus", "children": "New newsletter"}, "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('newsletters.create')"}}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/newsletters/new"}}}
+        {"kind": "Button", "props": {"variant": "primary", "size": "sm", "leadingIcon": "plus", "children": "New newsletter"}, "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('newsletters.create')"}}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/newsletters/new"}}}
       ]},
       {"kind": "View", "props": {"className": "flex flex-wrap gap-3"}, "children": [
         {"kind": "Select", "props": {"label": "Cadence", "name": "filter[cadence]", "placeholder": "All"}, "options": [{"key": "daily", "label": "Daily"}, {"key": "weekly", "label": "Weekly"}, {"key": "biweekly", "label": "Biweekly"}, {"key": "monthly", "label": "Monthly"}, {"key": "quarterly", "label": "Quarterly"}, {"key": "adhoc", "label": "Ad-hoc"}], "actions": {"onChange": {"kind": "data.applyFilter", "source": "newsletters"}}},
@@ -30,7 +30,7 @@
         {"id": "cadence", "header": "Cadence", "cell": {"kind": "Chip", "props": {"size": "xs", "variant": "neutral"}, "bindings": {"children": {"$ref": "row.cadence"}}}},
         {"id": "subscribers", "header": "Subscribers", "cell": {"kind": "Widget", "widget": "newsletter.newsletter-stat-card", "props": {"kind": "subscribers", "value": {"$ref": "row.subscriber_count"}, "compact": true}}},
         {"id": "state", "header": "State", "cell": {"kind": "Chip", "props": {"size": "sm"}, "bindings": {"variant": {"$expr": "row.state === 'active' ? 'success' : (row.state === 'throttled' ? 'danger' : (row.state === 'paused' ? 'warning' : 'neutral'))"}, "children": {"$ref": "row.state"}}}},
-        {"id": "actions", "header": "", "align": "end", "cell": {"kind": "Button", "props": {"variant": "ghost", "size": "sm", "children": "Open"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/newsletters/' + row.id"}}}}
+        {"id": "actions", "header": "", "align": "end", "cell": {"kind": "Button", "props": {"variant": "ghost", "size": "sm", "children": "Open"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/workspace/newsletters/' + row.id"}}}}
       ]}
     ]}
   ]

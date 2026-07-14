@@ -21,14 +21,14 @@ Wave 1 shared infrastructure module authored per the module architecture bluepri
 - Payload transformer chains (interface + registry + build-time compiler).
 - GraphQL schema versioning (feature-flag guarded via `versioning.graphql_support`).
 - CalVer scheme (alongside SemVer).
-- Deprecation + sunset workflow with RFC 8594 headers + tenant notifications.
+- Deprecation + sunset workflow with RFC 8594 headers + workspace notifications.
 - Auto-upgrade of webhook subscriptions when their pinned version sunsets.
 
 ### Compatibility
 
 - **Foundation:** `api.version` middleware moved from foundation to this module as `versioning.resolve`. Foundation retains base HTTP pipeline (request.id, response.envelope, throttle.base, cors.strict). Foundation still owns model versioning via `HasVersions` trait (wraps mpociot/versionable).
 - Depends on `foundation` only.
-- Extended by `webhook`, `notifications`, `notifications-{mail,push,sms}`, `tenancy`, `subscription`, `entitlements`, `auth`.
+- Extended by `webhook`, `notifications`, `notifications-{mail,push,sms}`, `workspaces`, `subscription`, `entitlements`, `auth`.
 
 ### Migration notes
 

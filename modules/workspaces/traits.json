@@ -1,0 +1,246 @@
+{
+  "id": "academorix://modules/workspaces/traits",
+  "$version": 1,
+  "title": "workspaces — model traits",
+  "description": "Trait contract this module contributes (owned) and consumes (from foundation + framework). Traits are the composition unit Laravel modules use to add cross-cutting behaviour without inheritance: a model composes several traits and picks up the columns, scopes, casts, and event hooks each one adds.",
+  "owned": [
+    {
+      "trait": "BelongsToWorkspace",
+      "class": "Academorix\\Workspaces\\Concerns\\BelongsToWorkspace",
+      "schemaRef": "academorix://modules/workspaces/schemas/workspace",
+      "description": "Every domain row below Workspace on the hierarchy uses this. Adds a `workspace_id` column contract, an auto-fill saving hook, and a global scope that filters reads to the resolved workspace.",
+      "pairedBlueprint": "workspaceable",
+      "adds": {
+        "columns": [
+          {
+            "name": "workspace_id",
+            "type": "string",
+            "length": 64,
+            "nullable": false,
+            "indexed": true,
+            "foreign": {
+              "table": "workspaces",
+              "column": "id",
+              "onUpdate": "cascade",
+              "onDelete": "restrict"
+            }
+          }
+        ],
+        "compositeIndexes": [
+          {
+            "columns": ["workspace_id", "created_at"],
+            "description": "Covers the scan-by-workspace read pattern every workspace repo issues. Leftmost prefix also covers plain `WHERE workspace_id = ?`."
+          }
+        ],
+        "scopes": {
+          "global": [
+            {
+              "name": "WorkspaceScope",
+              "class": "Academorix\\Workspaces\\Scopes\\WorkspaceScope",
+              "description": "Applied at boot. Filters every read to the workspace resolved by the `resolve.workspace` middleware. Bypass via `Model::withoutGlobalScope(WorkspaceScope::class)` — permitted only inside platform-admin contexts."
+            }
+          ]
+        },
+        "eventHooks": [
+          {
+            "event": "saving",
+            "description": "Auto-fills `workspace_id` on new rows from the resolved workspace. Refuses cross-workspace writes with `WorkspaceException::crossWorkspaceAccess()` (400)."
+          }
+        ],
+        "relations": [
+          {
+            "name": "workspace",
+            "type": "BelongsTo",
+            "target": "Academorix\\Workspaces\\Models\\Workspace"
+          }
+        ]
+      },
+      "appliedBy": [
+        "user",
+        "access",
+        "auth",
+        "organization",
+        "region",
+        "branch",
+        "facilities",
+        "teams",
+        "sports",
+        "subscription",
+        "entitlements",
+        "settings",
+        "notifications",
+        "feature-flag",
+        "audit",
+        "activity",
+        "compliance"
+      ],
+      "notAppliedBy": [
+        "Application",
+        "Identity",
+        "BusinessType",
+        "PlatformUser",
+        "PlatformRole",
+        "PlatformPermission"
+      ]
+    },
+    {
+      "trait": "BelongsToWorkspaceOptional",
+      "class": "Academorix\\Workspaces\\Concerns\\BelongsToWorkspaceOptional",
+      "schemaRef": "academorix://modules/workspaces/schemas/workspace",
+      "description": "Sibling of BelongsToWorkspace for rows where workspace_id may legitimately be NULL. Two use cases: (1) platform-wide catalogue rows (system SmsOptOut, spam-trap MailSuppression, system-level Audit rows for deploys / cron); (2) cross-workspace boundary rows carrying context from the platform side. Adds the `workspace_id` column contract (nullable), the same auto-fill saving hook (from the resolved workspace when present, null otherwise), and an OPTIONAL global scope that filters rows where workspace_id matches the resolved workspace OR workspace_id IS NULL (platform-wide rows visible to every workspace).",
+      "pairedBlueprint": "workspaceable_optional",
+      "adds": {
+        "columns": [
+          {
+            "name": "workspace_id",
+            "type": "string",
+            "length": 64,
+            "nullable": true,
+            "indexed": true,
+            "foreign": {
+              "table": "workspaces",
+              "column": "id",
+              "onUpdate": "cascade",
+              "onDelete": "cascade"
+            }
+          }
+        ],
+        "compositeIndexes": [
+          {
+            "columns": ["workspace_id", "created_at"],
+            "description": "Covers per-workspace scans AND platform-wide (workspace_id IS NULL) scans via leftmost-prefix."
+          }
+        ],
+        "scopes": {
+          "global": [
+            {
+              "name": "WorkspaceOptionalScope",
+              "class": "Academorix\\Workspaces\\Scopes\\WorkspaceOptionalScope",
+              "description": "Applied at boot. `WHERE workspace_id = ? OR workspace_id IS NULL`. Platform-wide rows are visible to every workspace. Bypass via `Model::withoutGlobalScope(WorkspaceOptionalScope::class)` in platform-admin contexts."
+            }
+          ]
+        },
+        "eventHooks": [
+          {
+            "event": "saving",
+            "description": "Auto-fills `workspace_id` from the resolved workspace when a workspace IS resolved AND the caller has not explicitly set workspace_id=null. When the caller sets workspace_id=null and holds the platform.settings.write-system permission, the null is accepted (platform-wide write)."
+          }
+        ]
+      },
+      "appliedBy": [
+        "audit::Audit (system-level audits for deploys / cron)",
+        "notifications-mail::MailSuppression (spam-trap platform-wide entries)",
+        "notifications-sms::SmsOptOut (DNC + spam-trap platform-wide entries)",
+        "settings::SettingValue (system scope)"
+      ]
+    },
+    {
+      "trait": "BelongsToApplication",
+      "class": "Academorix\\Workspaces\\Concerns\\BelongsToApplication",
+      "schemaRef": "academorix://modules/workspaces/schemas/application",
+      "description": "Applied to rows at the workspaces boundary (Workspace, Identity, Domain). Adds `application_id` column contract + auto-fill hook + BelongsTo relation. Does NOT add a global scope — application resolution is host-based and lives in the resolve.workspace middleware.",
+      "pairedBlueprint": "applicable",
+      "adds": {
+        "columns": [
+          {
+            "name": "application_id",
+            "type": "string",
+            "length": 64,
+            "nullable": false,
+            "indexed": true,
+            "foreign": {
+              "table": "applications",
+              "column": "id",
+              "onUpdate": "cascade",
+              "onDelete": "restrict"
+            }
+          }
+        ],
+        "compositeIndexes": [],
+        "scopes": { "global": [] },
+        "eventHooks": [
+          {
+            "event": "saving",
+            "description": "Auto-fills `application_id` on new rows from the resolved application (bound by host resolution)."
+          }
+        ],
+        "relations": [
+          {
+            "name": "application",
+            "type": "BelongsTo",
+            "target": "Academorix\\Workspaces\\Models\\Application"
+          }
+        ]
+      },
+      "appliedBy": ["Workspace", "Identity", "Domain"],
+      "notAppliedBy": [
+        "Every model that composes BelongsToWorkspace — the workspace_id already implies the application through the FK graph."
+      ]
+    }
+  ],
+  "consumed": [
+    {
+      "trait": "HasFactory",
+      "class": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory",
+      "source": "framework",
+      "description": "Standard Laravel factory support. Applied to every model this module owns."
+    },
+    {
+      "trait": "HasUlids",
+      "class": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids",
+      "source": "framework",
+      "description": "String primary keys backed by ULID. Applied to every model this module owns (with the prefix layered on top via HasSystemFlag's boot hook or the model's own $keyPrefix)."
+    },
+    {
+      "trait": "HasSystemFlag",
+      "class": "Academorix\\Foundation\\Concerns\\HasSystemFlag",
+      "source": "foundation",
+      "description": "Adds an `is_system` boolean column plus `system()` / `custom()` query scopes and `isSystem()` / `isCustom()` accessors. Rows the platform seeds are marked `is_system=true` and refused on `Policy@update` / `@delete`."
+    },
+    {
+      "trait": "HasMetadata",
+      "class": "Academorix\\Foundation\\Concerns\\HasMetadata",
+      "source": "foundation",
+      "description": "Adds a `metadata` JSONB column + `array` cast + fluent accessors (`getMetadata($key, $default)`, `setMetadata($key, $value)`, `mergeMetadata(array $bag)`, `forgetMetadata($key)`). Applied to every persistent model in this module for a uniform free-form attribute bag. NEVER queried, always internal / platform-facing (data-classes.json tier `restricted`). Hidden from the wire by default.",
+      "adds": {
+        "columns": [{ "name": "metadata", "type": "jsonb", "nullable": true }]
+      }
+    },
+    {
+      "trait": "HasUserstamps",
+      "class": "Academorix\\Foundation\\Concerns\\HasUserstamps",
+      "source": "foundation",
+      "description": "Adds the userstamp trio (`created_by`, `updated_by`, `deleted_by`) and auto-fills them from the resolved caller on save / update / soft-delete.",
+      "adds": {
+        "columns": [
+          { "name": "created_by", "type": "uuid", "nullable": true },
+          { "name": "updated_by", "type": "uuid", "nullable": true },
+          { "name": "deleted_by", "type": "uuid", "nullable": true }
+        ]
+      }
+    },
+    {
+      "trait": "HasAuditable",
+      "class": "Academorix\\Foundation\\Concerns\\HasAuditable",
+      "source": "foundation",
+      "description": "Wraps `owen-it/laravel-auditing`. Writes an audit row for every mutation. Applied to every model this module owns so lifecycle changes always emit an audit trail.",
+      "note": "Depends on the `audit` module having `workspace_id` on its `audits` table — see the workspaces-columns.md living gap register."
+    },
+    {
+      "trait": "SoftDeletes",
+      "class": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+      "source": "framework",
+      "description": "Applied to every model except DomainRecord (which is diff-state, not lifecycle-tracked)."
+    }
+  ],
+  "compositionExample": {
+    "language": "php",
+    "note": "Every workspace-scoped domain model composes traits in this order — framework first (HasFactory, HasUlids), then workspaces boundary traits (BelongsToApplication / BelongsToWorkspace), then foundation traits (HasSystemFlag / HasUserstamps / HasAuditable), then framework tail (SoftDeletes), then any module-specific traits.",
+    "code": "final class Branch extends Model implements BranchInterface\n{\n    use HasFactory;\n    use HasUlids;\n\n    use BelongsToWorkspace;         // Workspaces — adds workspace_id + global scope\n\n    use HasSystemFlag;           // Foundation — is_system flag\n    use HasUserstamps;           // Foundation — created_by / updated_by / deleted_by\n    use HasAuditable;            // Foundation — audit trail\n    use SoftDeletes;             // Framework\n\n    use BelongsToOrganization;   // Organization\n    use BelongsToRegion;         // Region\n}"
+  },
+  "blueprintExample": {
+    "language": "php",
+    "note": "Migrations compose the paired schema macros in the same order the model composes traits. `->workspaceable()` adds workspace_id + FK + composite index in one call.",
+    "code": "Schema::create('branches', function (Blueprint $t) {\n    $t->string('id', 64)->primary();  // brn_<ulid>\n    $t->workspaceable();                  // Workspaces — workspace_id + FK + (workspace_id, created_at) index\n    $t->organizable();                 // Organization — organization_id + FK\n    $t->regionable();                  // Region — region_id + FK\n    $t->string('name');\n    $t->string('slug');\n    $t->boolean('is_system')->default(false);\n    $t->userstampable();               // Foundation — created_by / updated_by / deleted_by\n    $t->softDeletes();\n    $t->timestamps();\n});\n\n// Boundary rows use ->applicable() instead of ->workspaceable():\nSchema::create('workspaces', function (Blueprint $t) {\n    $t->string('id', 64)->primary();  // wsp_<ulid>\n    $t->applicable();                  // Workspaces — application_id + FK\n    $t->string('slug', 63);\n    $t->string('name', 200);\n    // ...\n});"
+  }
+}

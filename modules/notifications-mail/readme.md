@@ -2,12 +2,12 @@
 
 The mail channel. Wraps Laravel Mail (MailManager) + adds the notification-specific concerns Laravel doesn't ship.
 
-> **Position in the wave.** Wave 1 channel module. Depends on `foundation`, `tenancy`, `notifications` (core).
+> **Position in the wave.** Wave 1 channel module. Depends on `foundation`, `workspaces`, `notifications` (core).
 
 ## 1. What this channel adds on top of Laravel Mail
 
 - **Template resolution** — reads `NotificationTemplate.body_rendered_html` (pre-rendered React Email + Blade placeholders) + interpolates at send with `Blade::render()`. No Node in the runtime.
-- **CAN-SPAM footer** — auto-injects the tenant's postal address into every mail (from `settings.json`'s `sender.postal_address`).
+- **CAN-SPAM footer** — auto-injects the workspace's postal address into every mail (from `settings.json`'s `sender.postal_address`).
 - **RFC 8058 `List-Unsubscribe-Post` header** — one-click unsubscribe honoured by every mainstream inbox (Gmail, Apple Mail, Outlook).
 - **Provider webhook ingestion** — Mailgun HMAC-SHA256, SendGrid Ed25519, SES SNS, Postmark Basic, Resend Bearer. Normalises into `NotificationDelivery` state transitions.
 - **Hard-bounce suppression** — `MailSuppression` entity records permanently-invalid addresses. `SendMailJob` refuses to send to a suppressed address.
@@ -25,7 +25,7 @@ That's it. One entity. Everything else is core.
 
 Delegates to Laravel Mail's `MailManager`. Built-in Laravel drivers cover Mailgun, SendGrid, SES, Postmark, Resend, SMTP, log, array, failover, and roundrobin. Add a custom driver by extending `MailManager::extend()` in a service provider.
 
-Per-tenant provider selection via `config('notifications-mail.categories.{category_slug}.mailer')` — e.g. transactional via SES, marketing via SendGrid, all within the same tenant.
+Per-workspace provider selection via `config('notifications-mail.categories.{category_slug}.mailer')` — e.g. transactional via SES, marketing via SendGrid, all within the same workspace.
 
 ## 4. Delivery pipeline
 
@@ -68,7 +68,7 @@ NotificationDispatched (channel=mail)
 
 ## 6. CAN-SPAM + CASL compliance
 
-- Footer contains tenant's postal address (mandatory under §7704(a)(4)).
+- Footer contains workspace's postal address (mandatory under §7704(a)(4)).
 - `List-Unsubscribe-Post: One-Click` header on every mail (RFC 8058).
 - One-click unsubscribe link routes to core's `/api/notifications/unsubscribe/{token}` (signed URL).
 - Marketing-priority sends refused to Canadian recipients without express consent (CASL s. 6).

@@ -1,0 +1,26 @@
+{
+  "id": "workspaces.resources.domain.edit",
+  "title": "Edit domain",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/workspace/domains/{id}/edit",
+  "host": "workspace",
+  "audience": "authenticated",
+  "resource": {"module": "workspaces", "entity": "domain", "action": "edit"},
+  "requiresPermission": "workspaces.manage_domains",
+  "params": [{"name": "id", "type": "string", "in": "path", "required": true}],
+  "dataSources": [
+    {"name": "domain", "kind": "http.get", "urlExpr": "'/api/v1/workspace/domains/' + params.id", "unwrap": "data"}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-6 p-6 max-w-2xl mx-auto"}, "children": [
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/workspace/domains/' + params.id"}}},
+      {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold"}, "bindings": {"children": {"$expr": "'Edit ' + domain.host"}}},
+      {"kind": "Alert", "props": {"variant": "warning", "children": "The host itself is immutable after DNS records are generated. Remove + re-add if you need to change it."}},
+      {"kind": "Form", "props": {"submitUrlExpr": "'/api/v1/workspace/domains/' + params.id", "submitMethod": "PATCH", "onSuccess": [{"kind": "toast.success", "message": "Saved"}, {"kind": "data.refresh", "source": "domain"}]}, "bindings": {"initialValues": {"$ref": "domain"}}, "children": [
+        {"kind": "Select", "props": {"label": "Kind", "name": "kind"}, "options": [{"key": "custom", "label": "Custom domain (primary)"}, {"key": "alias", "label": "Alias (redirects to primary)"}], "bindings": {"defaultValue": {"$ref": "domain.kind"}}},
+        {"kind": "Button", "props": {"variant": "primary", "size": "md", "type": "submit", "children": "Save"}}
+      ]}
+    ]}
+  ]
+}

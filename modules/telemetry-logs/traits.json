@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/telemetry-logs/traits",
+  "$version": 1,
+  "title": "telemetry-logs \u2014 trait composition",
+  "description": "Single owned trait \u2014 `StructuredLog` \u2014 for classes that want an ergonomic `$this->log()` helper that routes through this module's configured channel + enrichers.",
+  "owned": [
+    {
+      "trait": "Academorix\\TelemetryLogs\\Concerns\\StructuredLog",
+      "description": "Adds `log(): LoggerInterface`, `logInfo(string $msg, array $context = [])`, `logWarning(...)`, `logError(...)`, `logException(\\Throwable $e, array $context = [])`. Resolves the correct channel via #[AsLogChannel] class attribute or falls back to config('telemetry-logs.default_channel').",
+      "public": true,
+      "usedBy": [],
+      "conflicts_with": []
+    }
+  ],
+  "consumed": {
+    "framework": [
+      {"trait": "Illuminate\\Support\\Facades\\Log"}
+    ]
+  },
+  "composition": {
+    "note": "This module owns no entities. Traits here are helpers for modules that opt into ergonomic logging."
+  }
+}

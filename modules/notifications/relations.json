@@ -2,7 +2,7 @@
   "id": "academorix://modules/notifications/relations",
   "$version": 1,
   "title": "notifications core \u2014 model relationships",
-  "description": "The 6 notifications core entities + their relationships to each other + to foreign models (User in `user`, Tenant / Application in `tenancy`). Channel-specific side state (push subscriptions, mail suppressions, sms opt-outs) belongs to the respective channel module and does not appear here. CI verifies every named relation resolves to a defined model or an inbound target from another module.",
+  "description": "The 6 notifications core entities + their relationships to each other + to foreign models (User in `user`, Workspace / Application in `workspaces`). Channel-specific side state (push subscriptions, mail suppressions, sms opt-outs) belongs to the respective channel module and does not appear here. CI verifies every named relation resolves to a defined model or an inbound target from another module.",
   "internal": [
     {
       "from": "Notification",
@@ -85,13 +85,13 @@
     {
       "from": "Notification",
       "kind": "belongsTo",
-      "to": "tenancy::Tenant",
-      "foreignKey": "tenant_id"
+      "to": "workspaces::Workspace",
+      "foreignKey": "workspace_id"
     },
     {
       "from": "Notification",
       "kind": "belongsTo",
-      "to": "tenancy::Application",
+      "to": "workspaces::Application",
       "foreignKey": "application_id"
     },
     {
@@ -112,10 +112,10 @@
     {
       "from": "NotificationTemplate",
       "kind": "belongsTo",
-      "to": "tenancy::Tenant",
-      "foreignKey": "tenant_id",
+      "to": "workspaces::Workspace",
+      "foreignKey": "workspace_id",
       "nullable": true,
-      "description": "NULL = platform default template; tenant_id set = tenant override."
+      "description": "NULL = platform default template; workspace_id set = workspace override."
     }
   ],
   "inbound": {

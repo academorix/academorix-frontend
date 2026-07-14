@@ -2,7 +2,7 @@
   "id": "academorix://modules/invitations/routes",
   "$version": 1,
   "title": "invitations — HTTP routes",
-  "description": "Three route groups. Central-public serves the invitee-facing token flow + inbound mail-transport webhooks. Tenant serves the admin CRUD. Platform-admin serves cross-tenant search + audit for support / abuse investigation.",
+  "description": "Three route groups. Central-public serves the invitee-facing token flow + inbound mail-transport webhooks. Workspace serves the admin CRUD. Platform-admin serves cross-workspace search + audit for support / abuse investigation.",
   "prefixes": {
     "api": "/api",
     "v1": "/api/v1",
@@ -21,7 +21,7 @@
           "name": "invitations.preview",
           "action": "Academorix\\Invitations\\Controllers\\Central\\InvitationPreviewController@show",
           "returns": "InvitationPreviewData",
-          "description": "Public invitation preview. Returns tenant branding, inviter display name, target label, expiry, whether the invitation is still valid. Marks `opened_at` on first successful hit. Rate-limited per (IP, token_prefix)."
+          "description": "Public invitation preview. Returns workspace branding, inviter display name, target label, expiry, whether the invitation is still valid. Marks `opened_at` on first successful hit. Rate-limited per (IP, token_prefix)."
         },
         {
           "method": "POST",
@@ -29,7 +29,7 @@
           "name": "invitations.accept",
           "action": "Academorix\\Invitations\\Controllers\\Central\\AcceptInvitationController@store",
           "accepts": "AcceptInvitationData",
-          "returns": "{ user: UserData, tenant: TenantData, token: AuthTokenData, redirect_url: string }",
+          "returns": "{ user: UserData, workspace: WorkspaceData, token: AuthTokenData, redirect_url: string }",
           "description": "Complete the accept flow. Body may carry the invitee's chosen password (if provider=emailpass), MFA setup token, consent acknowledgments. Delegates to the target-registered accept handler. Returns a session PAT on success. Idempotent per token — a second call on the same token returns the original outcome."
         },
         {
@@ -53,16 +53,16 @@
       ]
     },
     {
-      "id": "tenant-authenticated",
-      "host": "tenant",
-      "middleware": ["api", "resolve.tenant", "auth:sanctum", "tenant.user", "throttle.invitations"],
-      "description": "Tenant admin CRUD. Composed with the `throttle.invitations` middleware for per-(inviter, tenant, day) rate limits.",
+      "id": "workspace-authenticated",
+      "host": "workspace",
+      "middleware": ["api", "resolve.workspace", "auth:sanctum", "workspace.user", "throttle.invitations"],
+      "description": "Workspace admin CRUD. Composed with the `throttle.invitations` middleware for per-(inviter, workspace, day) rate limits.",
       "routes": [
         {
           "method": "GET",
-          "path": "/api/v1/tenant/invitations",
-          "name": "tenant.invitations.index",
-          "action": "Academorix\\Invitations\\Controllers\\Tenant\\InvitationController@index",
+          "path": "/api/v1/workspace/invitations",
+          "name": "workspace.invitations.index",
+          "action": "Academorix\\Invitations\\Controllers\\Workspace\\InvitationController@index",
           "policy": "InvitationPolicy@viewAny",
           "returns": "PaginatedResource<InvitationData>",
           "queryParams": [
@@ -75,37 +75,37 @@
         },
         {
           "method": "POST",
-          "path": "/api/v1/tenant/invitations",
-          "name": "tenant.invitations.store",
-          "action": "Academorix\\Invitations\\Controllers\\Tenant\\InvitationController@store",
+          "path": "/api/v1/workspace/invitations",
+          "name": "workspace.invitations.store",
+          "action": "Academorix\\Invitations\\Controllers\\Workspace\\InvitationController@store",
           "policy": "InvitationPolicy@create",
           "accepts": "CreateInvitationData",
           "returns": "InvitationData",
-          "description": "Body: `target_type, target_id, email, role_key?, channel?, grants?, message?, expires_at?`. Enforces `unique_pending_invitation` rule + per-tenant rate limits (429 on breach). Dispatches SendInvitationJob."
+          "description": "Body: `target_type, target_id, email, role_key?, channel?, grants?, message?, expires_at?`. Enforces `unique_pending_invitation` rule + per-workspace rate limits (429 on breach). Dispatches SendInvitationJob."
         },
         {
           "method": "GET",
-          "path": "/api/v1/tenant/invitations/{invitation}",
-          "name": "tenant.invitations.show",
-          "action": "Academorix\\Invitations\\Controllers\\Tenant\\InvitationController@show",
+          "path": "/api/v1/workspace/invitations/{invitation}",
+          "name": "workspace.invitations.show",
+          "action": "Academorix\\Invitations\\Controllers\\Workspace\\InvitationController@show",
           "policy": "InvitationPolicy@view",
           "returns": "InvitationData",
           "includes": ["events", "target", "inviter", "acceptedBy"]
         },
         {
           "method": "POST",
-          "path": "/api/v1/tenant/invitations/{invitation}/resend",
-          "name": "tenant.invitations.resend",
-          "action": "Academorix\\Invitations\\Controllers\\Tenant\\InvitationController@resend",
+          "path": "/api/v1/workspace/invitations/{invitation}/resend",
+          "name": "workspace.invitations.resend",
+          "action": "Academorix\\Invitations\\Controllers\\Workspace\\InvitationController@resend",
           "policy": "InvitationPolicy@resend",
           "returns": "InvitationData",
           "description": "Regenerate token + dispatch a fresh SendInvitationJob. Bumps resend_count. Refused when resend_count >= max (default 3) or on terminal states."
         },
         {
           "method": "POST",
-          "path": "/api/v1/tenant/invitations/{invitation}/revoke",
-          "name": "tenant.invitations.revoke",
-          "action": "Academorix\\Invitations\\Controllers\\Tenant\\InvitationController@revoke",
+          "path": "/api/v1/workspace/invitations/{invitation}/revoke",
+          "name": "workspace.invitations.revoke",
+          "action": "Academorix\\Invitations\\Controllers\\Workspace\\InvitationController@revoke",
           "policy": "InvitationPolicy@revoke",
           "accepts": "RevokeInvitationData",
           "returns": "InvitationData",
@@ -117,7 +117,7 @@
       "id": "platform-admin",
       "host": "platform-admin",
       "middleware": ["api", "auth:sanctum", "platform.user", "api.version"],
-      "description": "Cross-tenant read + audit + revoke for Academorix ops (abuse investigation, support tickets).",
+      "description": "Cross-workspace read + audit + revoke for Academorix ops (abuse investigation, support tickets).",
       "routes": [
         {
           "method": "GET",
@@ -127,7 +127,7 @@
           "policy": "InvitationPolicy@viewAnyPlatform",
           "returns": "PaginatedResource<InvitationData>",
           "queryParams": [
-            {"name": "filter[tenant_id]", "type": "string"},
+            {"name": "filter[workspace_id]", "type": "string"},
             {"name": "filter[application_id]", "type": "string"},
             {"name": "filter[email]", "type": "string"},
             {"name": "filter[state]", "type": "string|string[]"},
@@ -141,7 +141,7 @@
           "action": "Academorix\\Invitations\\Controllers\\Platform\\InvitationController@show",
           "policy": "InvitationPolicy@viewPlatform",
           "returns": "InvitationData",
-          "includes": ["events", "target", "inviter", "tenant", "acceptedBy", "revokedBy"]
+          "includes": ["events", "target", "inviter", "workspace", "acceptedBy", "revokedBy"]
         },
         {
           "method": "POST",
@@ -151,7 +151,7 @@
           "policy": "InvitationPolicy@revokePlatform",
           "accepts": "PlatformRevokeInvitationData",
           "returns": "InvitationData",
-          "description": "Abuse-response revoke. Requires an audit reason. Fires TenantSecurityBreachNotification when reason contains category=abuse."
+          "description": "Abuse-response revoke. Requires an audit reason. Fires WorkspaceSecurityBreachNotification when reason contains category=abuse."
         }
       ]
     }

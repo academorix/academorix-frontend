@@ -14,12 +14,12 @@ shape every other module bends to, not any business data of its own. No
 
 `foundation` is the root of the dependency graph. Every module depends on it. It
 cannot depend on any other module. This constrains what lives here to truly
-universal concerns — anything domain-flavoured, tenant-flavoured, or opinionated
+universal concerns — anything domain-flavoured, workspace-flavoured, or opinionated
 about a specific business context belongs elsewhere.
 
 Specifically NOT in foundation:
 
-- `Application` and `Tenant` — owned by `tenancy` (the multi-tenant substrate).
+- `Application` and `Workspace` — owned by `workspaces` (the multi-workspace substrate).
 - `User` and `PlatformUser` — owned by `user` (the identity substrate).
 - `Role` and `Permission` — owned by `access` (the RBAC substrate).
 - `ScopeNode` and hierarchy resolution — owned by `scope` (the hierarchical
@@ -36,7 +36,7 @@ Every persistent model in every downstream module composes some subset:
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
 | `HasSystemFlag`       | Adds `is_system` boolean + `system() / custom()` scopes + `isSystem()` / `isCustom()` accessors. Refused on Policy@update / @delete when true.                                      | `->systemFlag()`          |
 | `HasUserstamps`       | Adds `created_by / updated_by / deleted_by` UUID trio + auto-fills from the resolved caller.                                                                                        | `->userstampable()`       |
-| `HasAuditable`        | Wraps `owen-it/laravel-auditing`. Writes an audit row on every mutation with tenant + user + payload diff.                                                                          | `->auditable()` (marker)  |
+| `HasAuditable`        | Wraps `owen-it/laravel-auditing`. Writes an audit row on every mutation with workspace + user + payload diff.                                                                          | `->auditable()` (marker)  |
 | `HasMetadata`         | Adds a `metadata` JSONB column + `array` cast + fluent accessors (`getMetadata`, `setMetadata`, `mergeMetadata`, `forgetMetadata`). Free-form platform notes; never queried.        | `->metadata()`            |
 | `Sortable`            | Adds `sort_order` unsigned-int + `sortable()` scope + `reorder([...])` bulk-move helper. Backing: `spatie/eloquent-sortable`.                                                       | `->sortable()`            |
 | `Filterable`          | Integration with `spatie/laravel-query-builder`. Reads `allowedFilters()` static method on the model + wires the base repository.                                                   | `->filterable()` (marker) |
@@ -59,7 +59,7 @@ final class Branch extends Model
     use HasFactory;
     use HasUlids;
 
-    use BelongsToTenant;           // tenancy
+    use BelongsToWorkspace;           // workspaces
     use BelongsToOrganization;     // organization
     use BelongsToRegion;           // region
 
@@ -87,7 +87,7 @@ Every trait ships a `Blueprint` macro so the migration reads like the model. See
 ```php
 Schema::create('branches', function (Blueprint $t) {
     $t->string('id', 64)->primary();
-    $t->tenantable();              // tenancy
+    $t->workspaceable();              // workspaces
     $t->organizable();             // organization
     $t->regionable();              // region
     $t->string('name');
@@ -118,7 +118,7 @@ Schema::create('branches', function (Blueprint $t) {
 | Base exception         | `Academorix\Foundation\Exceptions\ApiException`     | Structured error code + HTTP status + i18n key + audit severity. Base of every custom exception.                                    |
 | Base repository        | `Academorix\Foundation\Repositories\BaseRepository` | Query builder + eager-load defaults + spatie/query-builder integration + cache invalidation hooks.                                  |
 | Base service           | `Academorix\Foundation\Services\BaseService`        | Repository binding + event dispatch + audit trail integration.                                                                      |
-| Base job               | `Academorix\Foundation\Jobs\BaseJob`                | Automatic Sentry tags + tenancy context capture + retry backoff defaults.                                                           |
+| Base job               | `Academorix\Foundation\Jobs\BaseJob`                | Automatic Sentry tags + workspaces context capture + retry backoff defaults.                                                           |
 | Response envelope      | `Academorix\Foundation\Http\ResponseEnvelope`       | Wraps every controller response into `{ data, meta, links }` per the API contract.                                                  |
 | Health aggregator      | `Academorix\Foundation\Health\HealthAggregator`     | Discovers registered probes from every module + reports readiness + liveness on `/api/health`.                                      |
 | Module registry        | `Academorix\Foundation\Modules\ModuleRegistry`      | Discovers every `modules/*/module.json` at boot + resolves dependency graph.                                                        |
@@ -158,7 +158,7 @@ Foundation is where the module system lives:
   dependency order, provides `Module::all()` / `Module::get(name)`.
 - `ModuleRouteLoader` — reads every module's `routes.json` and mounts each group
   with the correct middleware stack. **Replaces per-module Route Service
-  Providers** — this is why tenancy dropped its `TenancyRouteServiceProvider`
+  Providers** — this is why workspaces dropped its `WorkspacesRouteServiceProvider`
   (PLAN.md §5.2 correction 2).
 - `ModuleServiceProviderDispatcher` — boots the modules' service providers in
   dependency order.
@@ -211,11 +211,11 @@ default:
 - **UK-GDPR** — mirrors GDPR post-Brexit.
 - **CCPA/CPRA** — California residents.
 - **COPPA** — US minors under 13.
-- **FERPA** — US school tenants.
+- **FERPA** — US school workspaces.
 - **PCI-DSS v4.0** — payment card data (out of scope for most modules; we stay
   SAQ-A by keeping card data in Stripe).
 - **WCAG 2.2 AA** — accessibility (all SDUI + Refine UI kit).
-- **SOC 2 Type II** — over $50k ACV tenants.
+- **SOC 2 Type II** — over $50k ACV workspaces.
 - **ISO/IEC 27001:2022** — international enterprise buyers.
 
 Each downstream `compliance.json` cites the specific articles / criteria it
@@ -230,7 +230,7 @@ namespaces so no two modules collide:
 - `platform` — cross-module platform state (module registry, health status).
 - `foundation` — base caches (search indices ready, engine health).
 
-Downstream modules use their own module-name tags (`tenancy`, `invitations`,
+Downstream modules use their own module-name tags (`workspaces`, `invitations`,
 `notifications`, ...).
 
 ### 11. Analytics + metrics conventions
@@ -258,7 +258,7 @@ so every module's counters aggregate consistently. See `metrics.json`.
   ModuleRouteLoader, SearchEngineResolver). `ImportContractRegistry` /
   `ExportContractRegistry` moved to `modules/transfer/` as `EntityRegistry` /
   `WorkbookRegistry` on Wave 2 inception.
-- **Broadcast channels** — 1 (`platform.health`, cross-tenant liveness feed for
+- **Broadcast channels** — 1 (`platform.health`, cross-workspace liveness feed for
   platform-admin ops).
 - **No entities.** No policies. No permissions. No features. No entitlements. No
   SDUI resources.
@@ -307,5 +307,5 @@ modules/foundation/
 ├── webhooks.json           empty (foundation ships no webhook contract of its own)
 ├── feature-flags.json      foundation-level kill switches (module-loader kill, health-probe-skip)
 ├── config.json             module discovery + health + api version + search engine
-└── settings.json           empty (no tenant-facing settings)
+└── settings.json           empty (no workspace-facing settings)
 ```

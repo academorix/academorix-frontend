@@ -23,16 +23,16 @@
     {
       "from": "WebhookSubscription",
       "kind": "belongsTo",
-      "to": "tenancy::Tenant",
-      "foreignKey": "tenant_id"
+      "to": "workspaces::Workspace",
+      "foreignKey": "workspace_id"
     },
     {
       "from": "WebhookSubscription",
       "kind": "belongsTo",
-      "to": "tenancy::Application",
+      "to": "workspaces::Application",
       "foreignKey": "application_id",
       "nullable": true,
-      "description": "Null = subscription applies platform-wide (rare; typically tenant-app scoped)."
+      "description": "Null = subscription applies platform-wide (rare; typically workspace-app scoped)."
     },
     {
       "from": "WebhookSubscription",
@@ -54,8 +54,8 @@
     {
       "from": "WebhookDelivery",
       "kind": "belongsTo",
-      "to": "tenancy::Tenant",
-      "foreignKey": "tenant_id",
+      "to": "workspaces::Workspace",
+      "foreignKey": "workspace_id",
       "description": "Denormalised from parent subscription for query filter efficiency."
     }
   ],

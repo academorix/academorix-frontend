@@ -12,7 +12,7 @@
       "label": "Audit trail",
       "description": "Compliance-grade audit trail configuration.",
       "icon": "shield-check",
-      "scope": "tenant",
+      "scope": "workspace",
       "public": false,
       "sortOrder": 21,
       "permission": "settings.read",
@@ -44,7 +44,7 @@
           ]
         },
         {
-          "label": "Tenant DPO surface",
+          "label": "Workspace DPO surface",
           "description": "Give your DPO read-only access to audit rows via /api/v1/audits.",
           "icon": "identification",
           "sortOrder": 2,

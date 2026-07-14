@@ -13,7 +13,7 @@
         {"action": "retryShard",      "permission": "transfer.retryShard",      "scope": "row.causer_id === auth AND row.status IN ('failed','partially_succeeded') AND target shard is failed."},
         {"action": "download",        "permission": "transfer.download",        "scope": "row.causer_id === auth. Signed URL check happens in transfer.signed-artifact middleware."},
         {"action": "downloadErrors",  "permission": "transfer.download",        "scope": "Same as download but errors_artifact_id must be non-null."},
-        {"action": "platformViewAny", "permission": "platform.transfer.viewAny", "scope": "Platform admin cross-tenant."},
+        {"action": "platformViewAny", "permission": "platform.transfer.viewAny", "scope": "Platform admin cross-workspace."},
         {"action": "platformView",    "permission": "platform.transfer.view"}
       ]
     },
@@ -21,8 +21,8 @@
       "model": "XferMappingProfile",
       "class": "Academorix\\Transfer\\Policies\\XferMappingProfilePolicy",
       "abilities": [
-        {"action": "viewAny", "permission": "transfer.mapping-profiles.viewAny", "scope": "Caller sees own profiles + any is_shared=true in the tenant."},
-        {"action": "view",    "permission": "transfer.mapping-profiles.view",    "scope": "row.owner_id === auth OR (row.is_shared AND same tenant)."},
+        {"action": "viewAny", "permission": "transfer.mapping-profiles.viewAny", "scope": "Caller sees own profiles + any is_shared=true in the workspace."},
+        {"action": "view",    "permission": "transfer.mapping-profiles.view",    "scope": "row.owner_id === auth OR (row.is_shared AND same workspace)."},
         {"action": "create",  "permission": "transfer.mapping-profiles.create"},
         {"action": "update",  "permission": "transfer.mapping-profiles.update",  "scope": "row.owner_id === auth."},
         {"action": "share",   "permission": "transfer.mapping-profiles.share",   "scope": "row.owner_id === auth AND entitlement `transfer.can_share_mapping_profiles`. Sets is_shared=true."},

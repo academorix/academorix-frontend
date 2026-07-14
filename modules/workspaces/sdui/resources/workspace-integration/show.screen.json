@@ -1,0 +1,39 @@
+{
+  "id": "workspaces.resources.workspace-integration.show",
+  "title": "Integration detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/workspace/integrations/{id}",
+  "host": "workspace",
+  "audience": "authenticated",
+  "resource": {"module": "workspaces", "entity": "workspace-integration", "action": "show"},
+  "requiresPermission": "workspaces.manage_integrations",
+  "params": [{"name": "id", "type": "string", "in": "path", "required": true}],
+  "dataSources": [
+    {"name": "integration", "kind": "http.get", "urlExpr": "'/api/v1/workspace/integrations/' + params.id", "unwrap": "data"}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto"}, "children": [
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back to integrations"}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/integrations"}}},
+      {"kind": "View", "props": {"className": "flex items-start justify-between"}, "children": [
+        {"kind": "View", "children": [
+          {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold"}, "bindings": {"children": {"$ref": "integration.name"}}},
+          {"kind": "View", "props": {"className": "flex items-center gap-2 mt-1"}, "children": [
+            {"kind": "Chip", "props": {"size": "sm"}, "bindings": {"children": {"$ref": "integration.kind"}}},
+            {"kind": "Chip", "props": {"size": "xs", "variant": "neutral"}, "bindings": {"children": {"$ref": "integration.provider"}}}
+          ]}
+        ]},
+        {"kind": "Button", "props": {"variant": "outline", "size": "sm", "leadingIcon": "pencil", "children": "Configure"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/workspace/integrations/' + params.id + '/edit'"}}}
+      ]},
+      {"kind": "Alert", "props": {"variant": "danger"}, "bindings": {"hidden": {"$expr": "integration.last_sync_status !== 'failed'"}, "children": {"$expr": "'Last sync failed: ' + (integration.last_sync_error || 'unknown error')"}}},
+      {"kind": "Card", "props": {"className": "p-6"}, "children": [
+        {"kind": "DescriptionList", "children": [
+          {"kind": "DescriptionListItem", "props": {"label": "Active"}, "bindings": {"value": {"$expr": "integration.is_active ? 'Yes' : 'No'"}}},
+          {"kind": "DescriptionListItem", "props": {"label": "Last sync"}, "bindings": {"value": {"$expr": "integration.last_sync_at ? formatRelative(integration.last_sync_at) : 'Never'"}}},
+          {"kind": "DescriptionListItem", "props": {"label": "Last sync status"}, "bindings": {"value": {"$expr": "integration.last_sync_status || 'not synced'"}}},
+          {"kind": "DescriptionListItem", "props": {"label": "Users synced"}, "bindings": {"value": {"$expr": "integration.users_synced_count || 0"}}}
+        ]}
+      ]}
+    ]}
+  ]
+}

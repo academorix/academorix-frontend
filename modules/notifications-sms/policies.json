@@ -7,9 +7,9 @@
       "model": "SmsOptOut",
       "class": "Academorix\\Notifications\\Sms\\Policies\\SmsOptOutPolicy",
       "abilities": [
-        {"action": "viewAny", "permission": "notifications.sms.opt-outs.viewAny", "scope": "tenant admin"},
+        {"action": "viewAny", "permission": "notifications.sms.opt-outs.viewAny", "scope": "workspace admin"},
         {"action": "view", "permission": "notifications.sms.opt-outs.view"},
-        {"action": "create", "permission": "notifications.sms.opt-outs.create", "scope": "tenant admin (reason=manual)"},
+        {"action": "create", "permission": "notifications.sms.opt-outs.create", "scope": "workspace admin (reason=manual)"},
         {"action": "delete", "permission": "notifications.sms.opt-outs.delete", "scope": "REFUSED when reason=stop_keyword unless super_admin AND re-consent evidence in body. REFUSED when is_system=true unless super_admin."}
       ]
     }

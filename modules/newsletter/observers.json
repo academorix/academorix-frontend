@@ -32,7 +32,7 @@
       "handles": [
         "creating \u2192 ULID prefix `nls_` + normalise email (lowercase, trim)",
         "creating \u2192 generate confirmation_token + unsubscribe_token (signed HMAC)",
-        "creating \u2192 refuse if MailSuppression exists for (email, tenant_id) \u2014 hard block per notifications-mail contract",
+        "creating \u2192 refuse if MailSuppression exists for (email, workspace_id) \u2014 hard block per notifications-mail contract",
         "creating \u2192 refuse if NotificationPreference for marketing.newsletter is enabled=false for the resolved user (respect existing preference)",
         "creating \u2192 truncate ip_address to /24 (GDPR)",
         "created \u2192 fire NewsletterSubscriptionAdded",

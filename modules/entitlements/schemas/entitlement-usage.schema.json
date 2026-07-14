@@ -1,0 +1,65 @@
+{
+  "id": "academorix://modules/entitlements/schemas/entitlement-usage",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "EntitlementUsage",
+  "description": "Append-only audit row for one consume() call. High volume \u2014 partitioned by month on Postgres 15+. Hard-purged past retention.",
+  "type": "object",
+  "x-module": "entitlements",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "entitlement_usage",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "use_",
+    "incrementing": false,
+    "model": "Academorix\\Entitlements\\Models\\EntitlementUsage",
+    "interface": "Academorix\\Entitlements\\Contracts\\Data\\EntitlementUsageInterface",
+    "implements": ["Academorix\\Entitlements\\Contracts\\Data\\EntitlementUsageInterface"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToWorkspace", "HasMetadata", "Filterable"],
+    "casts": {"amount": "integer", "meter": "UsageMeter", "consumed_at": "datetime", "metadata": "array"},
+    "observers": ["EntitlementUsageObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "partitioning": {"strategy": "range", "column": "consumed_at", "interval": "month", "note": "Native Postgres 15+ partitioning. Retention drop by DROP PARTITION rather than DELETE."},
+    "columns": {
+      "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `use_<26 chars>`."},
+      "workspace_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "workspaces", "column": "id", "onDelete": "cascade"}},
+      "entitlement_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "entitlements", "column": "id", "onDelete": "cascade"}},
+      "key": {"type": "string", "length": 128, "nullable": false, "description": "Denormalised from Entitlement. Speeds up per-key aggregations without a join."},
+      "amount": {"type": "bigint", "nullable": false, "default": 1, "description": "How much was consumed. Usually 1; can be > 1 for bulk operations."},
+      "meter": {"type": "string", "length": 16, "nullable": false, "default": "'exact'", "description": "Enum: exact / estimate / correction. Correction rows are reconciliation writebacks."},
+      "consumed_at": {"type": "timestamptz", "nullable": false, "description": "When the consume() call ran. Partition key."},
+      "correlation_id": {"type": "string", "length": 128, "nullable": true, "description": "Traces back to the causing entity (delivery ID, notification ID, etc). Powers per-entity debug."},
+      "reason": {"type": "string", "length": 128, "nullable": true, "description": "Human-readable reason. E.g. 'webhook_delivery' or 'admin_manual_credit'."},
+      "metadata": {"type": "jsonb", "nullable": true},
+      "created_at": {"type": "timestamptz", "nullable": false},
+      "updated_at": {"type": "timestamptz", "nullable": false}
+    },
+    "indexes": [
+      {"columns": ["workspace_id", "key", "consumed_at"], "unique": false, "name": "entitlement_usage_scan_idx", "description": "Primary per-workspace-per-key aggregation path."},
+      {"columns": ["entitlement_id", "consumed_at"], "unique": false, "name": "entitlement_usage_by_entitlement_idx"},
+      {"columns": ["correlation_id"], "unique": false, "name": "entitlement_usage_correlation_idx", "predicate": "correlation_id IS NOT NULL"}
+    ]
+  },
+  "required": ["id", "workspace_id", "entitlement_id", "key", "amount", "meter", "consumed_at", "created_at", "updated_at"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^use_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "entitlement_id": {"type": "string", "pattern": "^ent_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "key": {"type": "string", "maxLength": 128},
+    "amount": {"type": "integer", "minimum": 1},
+    "meter": {"type": "string", "enum": ["exact", "estimate", "correction"]},
+    "consumed_at": {"type": "string", "format": "date-time"},
+    "correlation_id": {"type": ["string", "null"]},
+    "reason": {"type": ["string", "null"]},
+    "metadata": {"type": ["object", "null"]},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false,
+  "x-wire": {"envelope": "spatie-data", "wrap": "data", "mapper": "SnakeCaseMapper"}
+}

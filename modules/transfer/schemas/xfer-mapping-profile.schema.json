@@ -3,7 +3,7 @@
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "XferMappingProfile",
-  "description": "Saved header-remap profile. When a user imports CSVs whose column headers differ from the entity's `#[ImportField]` defaults, they map the file's headers to attributes once and reuse the profile on subsequent uploads. Profiles are per-user by default; a tenant admin may share one to the whole tenant.",
+  "description": "Saved header-remap profile. When a user imports CSVs whose column headers differ from the entity's `#[ImportField]` defaults, they map the file's headers to attributes once and reuse the profile on subsequent uploads. Profiles are per-user by default; a workspace admin may share one to the whole workspace.",
   "type": "object",
   "x-module": "transfer",
   "x-eloquent": {
@@ -16,7 +16,7 @@
     "model": "Academorix\\Transfer\\Models\\XferMappingProfile",
     "interface": "Academorix\\Transfer\\Contracts\\Data\\XferMappingProfileInterface",
     "implements": ["Academorix\\Transfer\\Contracts\\Data\\XferMappingProfileInterface"],
-    "traits": ["HasUlids", "BelongsToTenant", "HasActivityLog", "SoftDeletes"],
+    "traits": ["HasUlids", "BelongsToWorkspace", "HasActivityLog", "SoftDeletes"],
     "casts": {
       "header_map": "array",
       "csv_settings": "array",
@@ -28,14 +28,14 @@
       "last_used_at": "immutable_datetime"
     },
     "hidden": [],
-    "guarded": ["id", "tenant_id", "owner_id", "used_count", "last_used_at"]
+    "guarded": ["id", "workspace_id", "owner_id", "used_count", "last_used_at"]
   },
   "x-database": {
     "engine": "postgres",
-    "description": "Owner-scoped or tenant-shared header remap records. Composite uniqueness on (tenant_id, owner_id, entity, name) prevents duplicate profile names for the same owner + entity.",
+    "description": "Owner-scoped or workspace-shared header remap records. Composite uniqueness on (workspace_id, owner_id, entity, name) prevents duplicate profile names for the same owner + entity.",
     "columns": {
       "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `xmap_<26 chars>`."},
-      "tenant_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "Tenant scope."},
+      "workspace_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "workspaces", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "Workspace scope."},
       "owner_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "User who created + owns the profile."},
       "entity": {"type": "string", "length": 128, "nullable": false, "description": "Entity key this profile applies to (e.g. `athletes`, `subscribers`)."},
       "name": {"type": "string", "length": 128, "nullable": false, "description": "User-provided profile name (e.g. 'Q3 HubSpot export')."},
@@ -45,7 +45,7 @@
       "start_row": {"type": "integer", "nullable": false, "default": "2", "description": "First data row (1-indexed). Header row typically 1, data begins 2."},
       "heading_row": {"type": "integer", "nullable": false, "default": "1", "description": "Row index containing column headers."},
       "is_default": {"type": "boolean", "nullable": false, "default": "false", "description": "Sticky default per (owner_id, entity). Auto-selected when the user opens the import screen for this entity."},
-      "is_shared": {"type": "boolean", "nullable": false, "default": "false", "description": "When true, visible to every user in the tenant. Requires `transfer.mapping-profiles.share` permission."},
+      "is_shared": {"type": "boolean", "nullable": false, "default": "false", "description": "When true, visible to every user in the workspace. Requires `transfer.mapping-profiles.share` permission."},
       "used_count": {"type": "integer", "nullable": false, "default": "0", "description": "Incremented on every import that references this profile. Powers analytics + UI ordering."},
       "last_used_at": {"type": "timestamptz", "nullable": true},
       "created_at": {"type": "timestamptz", "nullable": false},
@@ -53,20 +53,20 @@
       "deleted_at": {"type": "timestamptz", "nullable": true, "description": "Soft delete. Profiles referenced by historical xfer_jobs are soft-deleted so the FK stays valid; hard-deleted only past retention."}
     },
     "indexes": [
-      {"columns": ["tenant_id", "owner_id", "entity", "name"], "unique": true, "name": "xfer_mapping_profiles_uniq_idx", "description": "Prevents duplicate profile names per owner + entity."},
-      {"columns": ["tenant_id", "entity"], "unique": false, "name": "xfer_mapping_profiles_tenant_entity_idx", "predicate": "is_shared = true AND deleted_at IS NULL", "description": "Fast scan for tenant-wide shared profiles per entity (partial index)."},
+      {"columns": ["workspace_id", "owner_id", "entity", "name"], "unique": true, "name": "xfer_mapping_profiles_uniq_idx", "description": "Prevents duplicate profile names per owner + entity."},
+      {"columns": ["workspace_id", "entity"], "unique": false, "name": "xfer_mapping_profiles_workspace_entity_idx", "predicate": "is_shared = true AND deleted_at IS NULL", "description": "Fast scan for workspace-wide shared profiles per entity (partial index)."},
       {"columns": ["owner_id", "entity", "is_default"], "unique": false, "name": "xfer_mapping_profiles_default_scan_idx", "predicate": "is_default = true AND deleted_at IS NULL"},
       {"columns": ["last_used_at"], "unique": false, "name": "xfer_mapping_profiles_recency_idx"}
     ]
   },
   "required": [
-    "id", "tenant_id", "owner_id", "entity", "name", "header_map",
+    "id", "workspace_id", "owner_id", "entity", "name", "header_map",
     "start_row", "heading_row", "is_default", "is_shared", "used_count",
     "created_at", "updated_at"
   ],
   "properties": {
     "id": {"type": "string", "pattern": "^xmap_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "owner_id": {"type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"},
     "entity": {"type": "string", "maxLength": 128},
     "name": {"type": "string", "maxLength": 128},

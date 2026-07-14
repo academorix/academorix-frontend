@@ -67,7 +67,7 @@
       "timestamp_tolerance_seconds": 300
     },
     "envelope": {
-      "shape": "{ event: string, version: integer, delivered_at: ISO-8601, tenant_id: string|null, application_id: string, data: <event-specific payload> }",
+      "shape": "{ event: string, version: integer, delivered_at: ISO-8601, workspace_id: string|null, application_id: string, data: <event-specific payload> }",
       "version_key": "version"
     },
     "retry": {

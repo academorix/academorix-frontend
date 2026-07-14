@@ -3,7 +3,7 @@
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "NotificationPreference",
-  "description": "Per-user opt-in per (category, channel) triple. Also carries per-user quiet hours + digest mode. Never soft-deleted \u2014 GDPR Art. 17 mandates hard-delete on user erasure (cascade via FK). Absence of a row means the resolver falls back to tenant default (settings.json) then platform default (NotificationCategory).",
+  "description": "Per-user opt-in per (category, channel) triple. Also carries per-user quiet hours + digest mode. Never soft-deleted \u2014 GDPR Art. 17 mandates hard-delete on user erasure (cascade via FK). Absence of a row means the resolver falls back to workspace default (settings.json) then platform default (NotificationCategory).",
   "type": "object",
   "x-module": "notifications",
   "x-eloquent": {
@@ -19,7 +19,7 @@
     "traits": [
       "HasFactory",
       "HasUlids",
-      "BelongsToTenant",
+      "BelongsToWorkspace",
       "HasMetadata",
       "HasUserstamps",
       "HasAuditable",
@@ -43,7 +43,7 @@
     "engine": "postgres",
     "columns": {
       "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `pref_<26 chars>`."},
-      "tenant_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}},
+      "workspace_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "workspaces", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}},
       "user_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "Hard cascade on user delete (GDPR Art. 17)."},
       "category_slug": {"type": "string", "length": 128, "nullable": false, "foreign": {"table": "notification_categories", "column": "slug", "onUpdate": "cascade", "onDelete": "cascade"}},
       "channel": {"type": "string", "length": 16, "nullable": false, "description": "Enum: `mail`, `sms`, `push`, `in_app`."},
@@ -60,15 +60,15 @@
     },
     "indexes": [
       {"columns": ["user_id", "category_slug", "channel"], "unique": true, "name": "notification_preferences_user_cat_chan_unique", "description": "One row per (user, category, channel). Primary read path for PreferenceResolver."},
-      {"columns": ["tenant_id", "user_id"], "unique": false, "name": "notification_preferences_tenant_user_index", "description": "DPO Art. 30 records-of-processing scan."},
+      {"columns": ["workspace_id", "user_id"], "unique": false, "name": "notification_preferences_workspace_user_index", "description": "DPO Art. 30 records-of-processing scan."},
       {"columns": ["category_slug"], "unique": false, "name": "notification_preferences_category_index", "description": "Category-wide opt-out counting for analytics."},
       {"columns": ["updated_at"], "unique": false, "name": "notification_preferences_updated_at_index"}
     ]
   },
-  "required": ["id", "tenant_id", "user_id", "category_slug", "channel", "enabled", "digest_mode", "created_at", "updated_at"],
+  "required": ["id", "workspace_id", "user_id", "category_slug", "channel", "enabled", "digest_mode", "created_at", "updated_at"],
   "properties": {
     "id": {"type": "string", "pattern": "^pref_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "user_id": {"type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"},
     "category_slug": {"type": "string", "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$", "maxLength": 128},
     "channel": {"type": "string", "enum": ["mail", "sms", "push", "in_app"]},

@@ -3,7 +3,7 @@
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Activity",
-  "description": "Extends `Spatie\\Activitylog\\Models\\Activity`. We layer our ULID prefix + tenant_id FK + BelongsToTenant global scope. Spatie's schema is unchanged; we add columns via migration.",
+  "description": "Extends `Spatie\\Activitylog\\Models\\Activity`. We layer our ULID prefix + workspace_id FK + BelongsToWorkspace global scope. Spatie's schema is unchanged; we add columns via migration.",
   "type": "object",
   "x-module": "activity",
   "x-eloquent": {
@@ -16,17 +16,17 @@
     "model": "Academorix\\Activity\\Models\\Activity",
     "interface": "Academorix\\Activity\\Contracts\\Data\\ActivityInterface",
     "implements": ["Academorix\\Activity\\Contracts\\Data\\ActivityInterface"],
-    "traits": ["HasUlids", "BelongsToTenant"],
+    "traits": ["HasUlids", "BelongsToWorkspace"],
     "casts": {"properties": "collection", "batch_uuid": "string"},
     "hidden": [],
     "guarded": []
   },
   "x-database": {
     "engine": "postgres",
-    "description": "Migration extends spatie's default. Spatie's migration remains authoritative; we add tenant_id + retention_tier via an ALTER migration published by this module.",
+    "description": "Migration extends spatie's default. Spatie's migration remains authoritative; we add workspace_id + retention_tier via an ALTER migration published by this module.",
     "columns": {
       "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `act_<26 chars>`. Overrides spatie's bigint id via our HasUlids."},
-      "tenant_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "Tenant scope. Null for system-level actions (deploys, seeds)."},
+      "workspace_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "workspaces", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "Workspace scope. Null for system-level actions (deploys, seeds)."},
       "log_name": {"type": "string", "length": 64, "nullable": true, "description": "Spatie: groups activities. Defaults to the model's kebab class name via HasActivityLog."},
       "description": {"type": "text", "nullable": false, "description": "Spatie: human-readable summary."},
       "subject_type": {"type": "string", "length": 128, "nullable": true, "description": "Polymorphic subject."},
@@ -36,12 +36,12 @@
       "event": {"type": "string", "length": 32, "nullable": true, "description": "Spatie: created / updated / deleted / restored / custom."},
       "properties": {"type": "jsonb", "nullable": true, "description": "Spatie's arbitrary payload: `old` / `attributes` + custom."},
       "batch_uuid": {"type": "uuid", "nullable": true, "description": "Spatie: groups related activities within a batch via LogBatch::startBatch()."},
-      "retention_tier": {"type": "string", "length": 16, "nullable": false, "default": "'short'", "description": "Our addition. Enum: short (30d) / medium (90d) / long (365d). Set by HasActivityLog from the model's #[LoggableActivity] attribute or the tenant's plan."},
+      "retention_tier": {"type": "string", "length": 16, "nullable": false, "default": "'short'", "description": "Our addition. Enum: short (30d) / medium (90d) / long (365d). Set by HasActivityLog from the model's #[LoggableActivity] attribute or the workspace's plan."},
       "created_at": {"type": "timestamptz", "nullable": false},
       "updated_at": {"type": "timestamptz", "nullable": false}
     },
     "indexes": [
-      {"columns": ["tenant_id", "created_at"], "unique": false, "name": "activity_log_tenant_time_idx", "description": "Primary read path: feed pagination."},
+      {"columns": ["workspace_id", "created_at"], "unique": false, "name": "activity_log_workspace_time_idx", "description": "Primary read path: feed pagination."},
       {"columns": ["subject_type", "subject_id"], "unique": false, "name": "activity_log_subject_idx", "description": "Spatie default \u2014 per-model feed."},
       {"columns": ["causer_type", "causer_id"], "unique": false, "name": "activity_log_causer_idx", "description": "Spatie default \u2014 per-user feed."},
       {"columns": ["batch_uuid"], "unique": false, "name": "activity_log_batch_idx"},
@@ -52,7 +52,7 @@
   "required": ["id", "description", "retention_tier", "created_at", "updated_at"],
   "properties": {
     "id": {"type": "string", "pattern": "^act_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": ["string", "null"], "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "log_name": {"type": ["string", "null"], "maxLength": 64},
     "description": {"type": "string"},
     "subject_type": {"type": ["string", "null"]},

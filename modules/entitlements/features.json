@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/entitlements/features",
+  "$version": 1,
+  "title": "entitlements \u2014 feature keys",
+  "reference": {"publishedBy": "feature-flag", "resolvedBy": "GET /api/auth/me \u2192 data.features", "seededFrom": "BusinessType.default_config.features"},
+  "features": [
+    {"key": "entitlements.enforcement", "displayName": "Quota enforcement", "description": "Master toggle. Always on \u2014 platform infrastructure.", "defaultEnabled": true, "planTiers": ["free", "team", "enterprise"]},
+    {"key": "entitlements.usage_visible", "displayName": "Usage visible to workspace", "description": "Expose usage counters on /auth/me + workspace dashboard.", "defaultEnabled": true, "planTiers": ["free", "team", "enterprise"]},
+    {"key": "entitlements.metered_billing", "displayName": "Metered billing export", "description": "Push usage to Stripe/Paddle for usage-based invoicing.", "defaultEnabled": false, "planTiers": ["team", "enterprise"]},
+    {"key": "entitlements.platform_overrides", "displayName": "Platform-admin overrides", "description": "Ops team can override caps per workspace (enterprise contracts).", "defaultEnabled": true, "planTiers": ["free", "team", "enterprise"], "gated_by_role": "platform_admin"}
+  ]
+}

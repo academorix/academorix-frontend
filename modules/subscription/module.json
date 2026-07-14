@@ -1,0 +1,119 @@
+{
+  "$version": 1,
+  "name": "subscription",
+  "alias": "subscription",
+  "namespace": "Academorix\\Subscription",
+  "description": "Workspace subscription lifecycle. Wraps Laravel Cashier for payment-provider-agnostic billing (Stripe + Paddle). Owns Plan (per-Application plan catalogue), Subscription (workspace's active plan with Cashier's Billable trait mixed onto Workspace), and SubscriptionEvent (audit-material lifecycle transitions retained 7 years for SOX). Consumes payment-provider webhooks via Cashier and translates to our own SubscriptionUpgraded/Downgraded/Cancelled events, which the entitlements module consumes to refresh Entitlement rows. Handles trials, grace periods beyond provider default, metered-billing usage export, and enterprise-contract offline billing.",
+  "keywords": ["subscription", "billing", "cashier", "stripe", "paddle", "plans", "trial", "usage-billing", "workspace", "sox"],
+  "priority": 18,
+  "providers": ["Academorix\\Subscription\\Providers\\SubscriptionServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "workspaces", "entitlements", "activity", "audit", "notifications", "notifications-mail"],
+  "extendedBy": [],
+  "contributes": {
+    "traits": ["HasSubscription", "IsBillable"],
+    "attributes": ["AsPlanTier"],
+    "blueprints": [],
+    "middleware": ["subscription.active", "subscription.state"],
+    "events": [
+      "PlanCreated",
+      "PlanUpdated",
+      "PlanArchived",
+      "SubscriptionStarted",
+      "SubscriptionActivated",
+      "SubscriptionUpgraded",
+      "SubscriptionDowngraded",
+      "SubscriptionSwitched",
+      "SubscriptionCancelled",
+      "SubscriptionReinstated",
+      "SubscriptionRenewed",
+      "SubscriptionPastDue",
+      "SubscriptionUnpaid",
+      "SubscriptionSuspended",
+      "TrialStarted",
+      "TrialEnding",
+      "TrialEnded",
+      "PaymentSucceeded",
+      "PaymentFailed",
+      "UsageReported"
+    ],
+    "policies": ["PlanPolicy", "SubscriptionPolicy", "SubscriptionEventPolicy"],
+    "hooks": [],
+    "commands": [
+      "subscription:seed-plans",
+      "subscription:describe",
+      "subscription:sync-cashier",
+      "subscription:advance-dunning",
+      "subscription:expire-trials",
+      "subscription:report-usage"
+    ],
+    "jobs": [
+      "SyncFromCashierWebhookJob",
+      "AdvanceDunningStageJob",
+      "ExpireTrialsJob",
+      "ReconcileSubscriptionStateJob",
+      "ReportMeteredUsageJob",
+      "CancelPastDueSubscriptionJob"
+    ],
+    "notifications": [
+      "SubscriptionStartedNotification",
+      "TrialEndingNotification",
+      "TrialEndedNotification",
+      "SubscriptionUpgradedNotification",
+      "SubscriptionDowngradedNotification",
+      "SubscriptionCancelledNotification",
+      "PaymentFailedNotification",
+      "PaymentSucceededNotification",
+      "SubscriptionSuspendedNotification"
+    ],
+    "broadcasts": ["workspace.{id}.subscription"],
+    "observers": ["PlanObserver", "SubscriptionObserver", "SubscriptionEventObserver"],
+    "rules": ["valid_plan_tier", "valid_billing_cycle"],
+    "casts": ["PlanTier", "SubscriptionState", "BillingCycle"],
+    "views": [],
+    "lang": ["subscription"],
+    "config": ["subscription"],
+    "macros": [],
+    "bindings": ["PlanRegistry", "BillingService", "CashierAdapter", "DunningOrchestrator", "GracePeriodResolver"],
+    "resources": ["plan", "subscription", "subscription-event"]
+  },
+  "wraps": {
+    "package": "laravel/cashier",
+    "version_constraint": "^15.0",
+    "variants": ["laravel/cashier-stripe (^15)", "laravel/cashier-paddle (^2)"],
+    "rationale": "Provider-agnostic subscription orchestration. Cashier handles payment methods, subscription lifecycle, invoice generation, and provider webhook plumbing. We add: per-Application plan catalogue, plan\u2192entitlement sync, grace period beyond provider defaults, enterprise contract offline billing."
+  },
+  "hosts": {
+    "workspace": {
+      "description": "Workspace owner self-serve.",
+      "routes": [
+        "GET /api/v1/subscription",
+        "GET /api/v1/subscription/invoices",
+        "GET /api/v1/subscription/upcoming-invoice",
+        "POST /api/v1/subscription/checkout",
+        "POST /api/v1/subscription/swap",
+        "POST /api/v1/subscription/cancel",
+        "POST /api/v1/subscription/resume",
+        "GET /api/v1/plans",
+        "GET /api/v1/plans/{plan}"
+      ]
+    },
+    "central_admin": {
+      "description": "Platform-admin catalogue + cross-workspace subscription visibility.",
+      "routes": [
+        "GET/POST/PATCH/DELETE /api/v1/platform/plans[/{plan}]",
+        "GET /api/v1/platform/subscriptions",
+        "GET /api/v1/platform/subscriptions/{subscription}",
+        "POST /api/v1/platform/subscriptions/{workspace}/enterprise-invoice",
+        "POST /api/v1/platform/subscriptions/{workspace}/force-state"
+      ]
+    },
+    "central": {
+      "description": "Cashier webhook receivers (via webhook module).",
+      "routes": [
+        "POST /webhooks/inbound/subscription/stripe",
+        "POST /webhooks/inbound/subscription/paddle"
+      ]
+    }
+  }
+}

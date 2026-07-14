@@ -4,7 +4,7 @@
   "title": "audit \u2014 model relationships",
   "internal": [],
   "outbound": [
-    {"from": "Audit", "kind": "belongsTo", "to": "tenancy::Tenant", "foreignKey": "tenant_id", "nullable": true, "description": "Null for system-level audits (deploys, cron). Otherwise required."},
+    {"from": "Audit", "kind": "belongsTo", "to": "workspaces::Workspace", "foreignKey": "workspace_id", "nullable": true, "description": "Null for system-level audits (deploys, cron). Otherwise required."},
     {"from": "Audit", "kind": "morphTo", "to": "*", "morphName": "auditable", "description": "owen-it contract: the model being audited."},
     {"from": "Audit", "kind": "morphTo", "to": "*", "morphName": "user", "description": "owen-it contract: the actor. Resolved from Sanctum by default."}
   ],

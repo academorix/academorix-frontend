@@ -1,0 +1,14 @@
+{
+  "id": "academorix://modules/entitlements/caches",
+  "$version": 1,
+  "title": "entitlements \u2014 cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["entitlements"],
+  "keys": [
+    {"pattern": "quota:{workspace_id}:{key}:{period_bucket}", "description": "The hot-path counter. Atomic INCR on every consume(). Period bucket encodes the reset window (e.g. `2026-07` for monthly, `2026` for yearly).", "ttlSeconds": null, "notes": "No TTL \u2014 reset via explicit DEL on period boundary. Redis persistence enabled.", "tags": ["entitlements", "workspace"]},
+    {"pattern": "quota:{workspace_id}:{key}:cap", "description": "Cached value_cap for a workspace + key. Read on every enforce().", "ttlSeconds": 300, "tags": ["entitlements", "workspace"], "invalidatedBy": ["EntitlementResolved / EntitlementOverridden / EntitlementReset events"]},
+    {"pattern": "entitlements:registry", "description": "Compiled EntitlementRegistry \u2014 discovered #[Entitlement] declarations across every module.", "ttlSeconds": 86400, "tags": ["entitlements", "platform"], "invalidatedBy": ["foundation::ApplicationBooted", "ConfigReloaded"]},
+    {"pattern": "entitlements:workspace:{workspace_id}:map", "description": "Complete key\u2192value_cap map for a workspace. Read on GET /api/auth/me for quota_summary.", "ttlSeconds": 60, "tags": ["entitlements", "workspace"], "invalidatedBy": ["Any Entitlement mutation for this workspace"]},
+    {"pattern": "entitlements:plan:{plan_id}:defaults", "description": "Plan.default_entitlements map. Read during SyncEntitlementsFromPlanJob.", "ttlSeconds": 3600, "tags": ["entitlements", "plan"], "invalidatedBy": ["subscription::PlanUpdated"]}
+  ]
+}

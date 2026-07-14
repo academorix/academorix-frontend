@@ -16,7 +16,7 @@
     "model": "Academorix\\Transfer\\Models\\XferJob",
     "interface": "Academorix\\Transfer\\Contracts\\Data\\XferJobInterface",
     "implements": ["Academorix\\Transfer\\Contracts\\Data\\XferJobInterface"],
-    "traits": ["HasUlids", "BelongsToTenant", "HasActivityLog", "HasAudit", "SoftDeletes"],
+    "traits": ["HasUlids", "BelongsToWorkspace", "HasActivityLog", "HasAudit", "SoftDeletes"],
     "casts": {
       "kind": "Academorix\\Transfer\\Enums\\XferJobKind",
       "mode": "Academorix\\Transfer\\Enums\\ImportMode",
@@ -37,14 +37,14 @@
       "artifact_purged_at": "immutable_datetime"
     },
     "hidden": ["source_file_hash"],
-    "guarded": ["id", "tenant_id", "status", "counters", "shards_total", "shards_completed", "progress_percent", "started_at", "finished_at"]
+    "guarded": ["id", "workspace_id", "status", "counters", "shards_total", "shards_completed", "progress_percent", "started_at", "finished_at"]
   },
   "x-database": {
     "engine": "postgres",
     "description": "Owning table for the transfer domain record. One row per initiated operation. Survives beyond the Laravel queue chain lifetime \u2014 the queue completes, the record persists (up to retention tier).",
     "columns": {
       "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `xfer_<26 chars>`."},
-      "tenant_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "Tenant scope. Null for platform-admin-initiated system-level operations (rare)."},
+      "workspace_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "workspaces", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "Workspace scope. Null for platform-admin-initiated system-level operations (rare)."},
       "causer_type": {"type": "string", "length": 128, "nullable": false, "description": "Polymorphic initiator type. Typically the User model; may be ServiceAccount for API-driven jobs."},
       "causer_id": {"type": "string", "length": 64, "nullable": false, "description": "Polymorphic initiator id."},
       "kind": {"type": "string", "length": 16, "nullable": false, "description": "Operation kind. Enum: import / export / sample."},
@@ -64,7 +64,7 @@
       "errors_artifact_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "xfer_artifacts", "column": "id", "onUpdate": "cascade", "onDelete": "set null"}, "description": "Pointer to the `errors.csv` artifact for `partially_succeeded` imports."},
       "notify_channels": {"type": "jsonb", "nullable": false, "default": "'[\"database\",\"broadcast\"]'", "description": "Resolved-at-dispatch notification channels. Frozen \u2014 preference changes mid-run do not affect delivery. Order matters (delivery attempted in listed order)."},
       "notify_locale": {"type": "string", "length": 8, "nullable": false, "default": "'en'", "description": "Locale for the notification copy. Passed to `HasLocalePreference::preferredLocale()` on our Laravel Excel wrappers."},
-      "retention_tier": {"type": "string", "length": 16, "nullable": false, "default": "'short'", "description": "Row retention. Enum: short (90d) / medium (180d) / long (365d). Set at insert from tenant plan + entitlement. Distinct from artifact retention (see xfer-artifact)."},
+      "retention_tier": {"type": "string", "length": 16, "nullable": false, "default": "'short'", "description": "Row retention. Enum: short (90d) / medium (180d) / long (365d). Set at insert from workspace plan + entitlement. Distinct from artifact retention (see xfer-artifact)."},
       "queue_connection": {"type": "string", "length": 64, "nullable": true, "description": "Queue connection override. Null = default from config."},
       "queue_name": {"type": "string", "length": 64, "nullable": false, "default": "'transfer'", "description": "Queue name Laravel Excel's chain runs on."},
       "laravel_queue_batch_id": {"type": "uuid", "nullable": true, "description": "Pointer to Laravel's `job_batches` row when we use `Bus::batch()` for shard fan-out. Enables `job_batches.progress()` introspection alongside our counters."},
@@ -85,7 +85,7 @@
       "deleted_at": {"type": "timestamptz", "nullable": true, "description": "Soft delete. Used only for platform-admin operational cleanup; regular purge is hard delete via retention scan."}
     },
     "indexes": [
-      {"columns": ["tenant_id", "created_at"], "unique": false, "name": "xfer_jobs_tenant_time_idx", "description": "Primary read path: `GET /api/v1/transfer/jobs`."},
+      {"columns": ["workspace_id", "created_at"], "unique": false, "name": "xfer_jobs_workspace_time_idx", "description": "Primary read path: `GET /api/v1/transfer/jobs`."},
       {"columns": ["causer_type", "causer_id", "created_at"], "unique": false, "name": "xfer_jobs_causer_time_idx", "description": "Per-user history."},
       {"columns": ["status", "created_at"], "unique": false, "name": "xfer_jobs_status_time_idx", "description": "Filter + stalled-detection scans."},
       {"columns": ["kind", "entity", "created_at"], "unique": false, "name": "xfer_jobs_kind_entity_time_idx", "description": "Per-entity operational stats."},
@@ -101,7 +101,7 @@
   ],
   "properties": {
     "id": {"type": "string", "pattern": "^xfer_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": ["string", "null"], "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "causer_type": {"type": "string"},
     "causer_id": {"type": "string"},
     "kind": {"type": "string", "enum": ["import", "export", "sample"]},

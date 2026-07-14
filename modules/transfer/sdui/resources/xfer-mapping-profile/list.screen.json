@@ -3,8 +3,8 @@
   "title": "Mapping profiles",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/transfer/mapping-profiles",
-  "host": "tenant",
+  "route": "/workspace/transfer/mapping-profiles",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "transfer", "entity": "xfer-mapping-profile", "action": "list"},
   "requiresPermission": "transfer.mapping-profiles.viewAny",
@@ -28,7 +28,7 @@
         {"kind": "View", "props": {"className": "flex flex-wrap gap-3"}, "children": [
           {"kind": "Select", "props": {"label": "Entity", "name": "filter[entity]", "placeholder": "All entities"}, "optionsSource": {"$ref": "entities", "valueField": "key", "labelField": "label"}, "actions": {"onChange": {"kind": "data.applyFilter", "source": "profiles"}}},
           {"kind": "Select", "props": {"label": "Visibility", "name": "filter[is_shared]", "placeholder": "All"}, "options": [
-            {"key": "true",  "label": "Shared with tenant"},
+            {"key": "true",  "label": "Shared with workspace"},
             {"key": "false", "label": "Private (mine)"}
           ], "actions": {"onChange": {"kind": "data.applyFilter", "source": "profiles"}}}
         ]},
@@ -39,7 +39,7 @@
           {"key": "used_count",   "label": "Uses"},
           {"key": "last_used_at", "label": "Last used", "valueFormatter": "formatRelativeOrDash"},
           {"key": "actions",      "label": "", "cellRenderer": {"kind": "Menu", "props": {"trigger": {"kind": "IconButton", "props": {"icon": "ellipsis-vertical", "aria-label": "Row actions"}}}, "children": [
-            {"kind": "MenuItem", "props": {"children": {"$expr": "t('transfer.actions.edit')"}},   "actions": {"onPress": {"kind": "navigateExpr", "expr": "'/tenant/transfer/mapping-profiles/' + row.id + '/edit'"}}},
+            {"kind": "MenuItem", "props": {"children": {"$expr": "t('transfer.actions.edit')"}},   "actions": {"onPress": {"kind": "navigateExpr", "expr": "'/workspace/transfer/mapping-profiles/' + row.id + '/edit'"}}},
             {"kind": "MenuItem", "props": {"children": {"$expr": "t('transfer.actions.share')"}, "hidden": {"$expr": "row.is_shared || !can('transfer.mapping-profiles.share')"}}, "actions": {"onPress": {"kind": "http.patch", "url": {"$expr": "'/api/v1/transfer/mapping-profiles/' + row.id"}, "body": {"is_shared": true}, "onSuccess": {"kind": "data.refresh", "source": "profiles"}}}},
             {"kind": "MenuItem", "props": {"children": {"$expr": "t('transfer.actions.delete')"}, "className": "text-danger"}, "actions": {"onPress": {"kind": "http.delete", "url": {"$expr": "'/api/v1/transfer/mapping-profiles/' + row.id"}, "confirm": {"title": {"$expr": "t('transfer.confirm.delete_profile.title')"}, "message": {"$expr": "t('transfer.confirm.delete_profile.message')"}}, "onSuccess": {"kind": "data.refresh", "source": "profiles"}}}}
           ]}}

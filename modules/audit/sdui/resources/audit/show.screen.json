@@ -3,8 +3,8 @@
   "title": "Audit detail",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/audits/{id}",
-  "host": "tenant",
+  "route": "/workspace/audits/{id}",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "audit", "entity": "audit", "action": "show"},
   "requiresPermission": "audit.view",
@@ -18,7 +18,7 @@
       "kind": "View",
       "props": {"className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto"},
       "children": [
-        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back to audit trail", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/audits"}}},
+        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back to audit trail", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/audits"}}},
         {"kind": "View", "props": {"className": "flex items-start justify-between gap-4"}, "children": [
           {"kind": "View", "props": {"className": "flex flex-col gap-1"}, "children": [
             {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold font-mono"}, "bindings": {"children": {"$expr": "audit.event + ' \u00b7 ' + audit.auditable_type"}}},

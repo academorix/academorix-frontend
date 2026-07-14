@@ -1,0 +1,61 @@
+{
+  "id": "search.resources.search-synonym.list",
+  "title": "Search synonyms",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/workspace/search/synonyms",
+  "host": "workspace",
+  "audience": "authenticated",
+  "resource": {"module": "search", "entity": "search-synonym", "action": "list"},
+  "requiresPermission": "search.synonyms.viewAny",
+  "requiresFeature": "search.synonyms",
+  "dataSources": [
+    {"name": "synonyms", "kind": "http.get", "url": "/api/v1/search/synonyms", "unwrap": "data", "paginated": true, "queryParamsFromState": ["filter[language]", "filter[kind]", "filter[is_active]", "sort"]}
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": {"className": "flex flex-col gap-4 p-6 max-w-5xl mx-auto"},
+      "children": [
+        {"kind": "View", "props": {"className": "flex items-start justify-between gap-4"}, "children": [
+          {"kind": "View", "children": [
+            {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Synonyms"}},
+            {"kind": "Text", "props": {"className": "text-sm text-muted"}, "bindings": {"children": {"$expr": "t('search.synonyms.description')"}}}
+          ]},
+          {"kind": "Button", "props": {"variant": "primary", "startIcon": "plus"}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/search/synonyms/new"}}, "bindings": {"children": {"$expr": "t('search.actions.new_synonym')"}, "hidden": {"$expr": "!can('search.synonyms.create')"}}}
+        ]},
+
+        {"kind": "View", "props": {"className": "flex flex-wrap gap-3"}, "children": [
+          {"kind": "Select", "props": {"label": "Language", "name": "filter[language]", "placeholder": "All"}, "options": [
+            {"key": "en", "label": "English"},
+            {"key": "ar", "label": "Arabic"},
+            {"key": "fr", "label": "French"},
+            {"key": "es", "label": "Spanish"}
+          ], "actions": {"onChange": {"kind": "data.applyFilter", "source": "synonyms"}}},
+          {"kind": "Select", "props": {"label": "Kind", "name": "filter[kind]", "placeholder": "All"}, "options": [
+            {"key": "equivalent", "label": "Equivalent (bidirectional)"},
+            {"key": "one_way",    "label": "One-way"},
+            {"key": "expansion",  "label": "Expansion"}
+          ], "actions": {"onChange": {"kind": "data.applyFilter", "source": "synonyms"}}},
+          {"kind": "Select", "props": {"label": "Active", "name": "filter[is_active]", "placeholder": "Both"}, "options": [
+            {"key": "true",  "label": "Active"},
+            {"key": "false", "label": "Disabled"}
+          ], "actions": {"onChange": {"kind": "data.applyFilter", "source": "synonyms"}}}
+        ]},
+
+        {"kind": "Table", "props": {"columns": [
+          {"key": "terms",     "label": "Terms",     "cellRenderer": {"kind": "View", "props": {"className": "flex flex-wrap gap-1"}, "children": [{"kind": "List", "bindings": {"items": {"$ref": "row.terms"}}, "itemRenderer": {"kind": "Chip", "props": {"size": "xs", "variant": "neutral"}, "bindings": {"children": {"$ref": "row"}}}}]}},
+          {"key": "language",  "label": "Language"},
+          {"key": "kind",      "label": "Kind"},
+          {"key": "is_system", "label": "Origin",     "cellRenderer": {"kind": "Chip", "bindings": {"variant": {"$expr": "row.is_system ? 'info' : 'neutral'"}, "children": {"$expr": "row.is_system ? t('search.synonyms.system') : t('search.synonyms.workspace')"}, "size": "xs"}}},
+          {"key": "is_active", "label": "Active",     "cellRenderer": {"kind": "Switch", "bindings": {"value": {"$ref": "row.is_active"}}, "actions": {"onChange": {"kind": "http.patch", "url": {"$expr": "'/api/v1/search/synonyms/' + row.id"}, "body": {"is_active": {"$expr": "!row.is_active"}}, "onSuccess": {"kind": "data.refresh", "source": "synonyms"}}}}},
+          {"key": "actions",   "label": "",           "cellRenderer": {"kind": "Menu", "props": {"trigger": {"kind": "IconButton", "props": {"icon": "ellipsis-vertical", "aria-label": "Row actions"}}}, "children": [
+            {"kind": "MenuItem", "props": {"children": {"$expr": "t('search.actions.edit')"}, "hidden": {"$expr": "row.is_system"}}, "actions": {"onPress": {"kind": "navigateExpr", "expr": "'/workspace/search/synonyms/' + row.id + '/edit'"}}},
+            {"kind": "MenuItem", "props": {"children": {"$expr": "t('search.actions.delete')"}, "hidden": {"$expr": "row.is_system"}, "className": "text-danger"}, "actions": {"onPress": {"kind": "http.delete", "url": {"$expr": "'/api/v1/search/synonyms/' + row.id"}, "confirm": {"title": {"$expr": "t('search.confirm.delete_synonym.title')"}, "message": {"$expr": "t('search.confirm.delete_synonym.message')"}}, "onSuccess": {"kind": "data.refresh", "source": "synonyms"}}}}
+          ]}}
+        ]}, "bindings": {"rows": {"$ref": "synonyms"}, "isLoading": {"$ref": "synonyms.isLoading"}}}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+{
+  "$version": 1,
+  "name": "workspaces",
+  "alias": "workspaces",
+  "namespace": "Academorix\\Workspaces",
+  "description": "Multi-workspace substrate. Owns the Application (product container), Workspace (workspace), BusinessType (config catalogue), Domain, DomainRecord, Branding, Identity (cross-workspace person), WorkspaceContact (billing / legal / technical / DPO / security), and WorkspaceIntegration (SSO / SCIM stub for v2). Publishes the BelongsToWorkspace + BelongsToWorkspaceOptional + BelongsToApplication traits, the ->workspaceable() / ->applicable() migration macros, workspaces hooks, and the resolve.workspace + workspace.user middleware every downstream module composes. NO third-party workspaces dependency \u2014 we ship our own WorkspaceResolver + HostResolver + Domain contract (dropped stancl/workspaces at v0.2).",
+  "keywords": [
+    "workspaces",
+    "workspace",
+    "multi-workspace",
+    "workspace",
+    "application",
+    "business_type",
+    "domain",
+    "branding",
+    "identity",
+    "membership",
+    "sso",
+    "scim",
+    "hierarchy"
+  ],
+  "priority": 10,
+  "providers": ["Academorix\\Workspaces\\Providers\\WorkspacesServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation"],
+  "extendedBy": [
+    "access",
+    "audit",
+    "settings",
+    "feature-flag",
+    "compliance",
+    "user",
+    "auth",
+    "activity",
+    "notifications",
+    "organization",
+    "region",
+    "branch",
+    "facilities",
+    "teams",
+    "subscription",
+    "entitlements",
+    "sports"
+  ],
+  "contributes": {
+    "traits": ["BelongsToWorkspace", "BelongsToWorkspaceOptional", "BelongsToApplication"],
+    "blueprints": ["workspaceable", "applicable"],
+    "middleware": ["resolve.workspace", "workspace.user", "platform.domain"],
+    "events": [
+      "WorkspaceProvisioning",
+      "WorkspaceProvisioned",
+      "WorkspaceSuspended",
+      "WorkspaceUnsuspended",
+      "WorkspaceResumed",
+      "WorkspaceArchived",
+      "WorkspaceErased",
+      "WorkspaceBrandingUpdated",
+      "WorkspaceSettingsUpdated",
+      "DomainAdded",
+      "DomainVerified",
+      "DomainVerificationFailed",
+      "DomainRemoved",
+      "WorkspaceContactAdded",
+      "WorkspaceContactUpdated",
+      "WorkspaceContactRemoved",
+      "WorkspaceIntegrationConfigured",
+      "WorkspaceIntegrationSyncFailed",
+      "IdentityCreated",
+      "IdentityErased"
+    ],
+    "policies": [
+      "WorkspacePolicy",
+      "ApplicationPolicy",
+      "BusinessTypePolicy",
+      "DomainPolicy",
+      "DomainRecordPolicy",
+      "BrandingPolicy",
+      "IdentityPolicy",
+      "WorkspaceContactPolicy",
+      "WorkspaceIntegrationPolicy"
+    ],
+    "hooks": ["LogContextWorkspaceHook", "CachePrefixWorkspaceHook"],
+    "commands": [
+      "workspaces:sync-catalogue",
+      "workspaces:reverify-domains",
+      "workspaces:archive",
+      "workspaces:hard-delete-archived",
+      "workspaces:seed-defaults"
+    ],
+    "jobs": [
+      "VerifyDomainDnsJob",
+      "ProvisionWorkspaceJob",
+      "HardDeleteArchivedWorkspaceJob",
+      "SyncWorkspaceBrandingJob",
+      "SyncWorkspaceIntegrationJob"
+    ],
+    "notifications": [
+      "WelcomeNotification",
+      "WorkspaceSuspendedNotification",
+      "WorkspaceResumedNotification",
+      "WorkspaceArchivedNotification",
+      "DomainVerifiedNotification",
+      "DomainVerificationFailedNotification",
+      "BrandingUpdatedNotification",
+      "IntegrationSyncFailedNotification"
+    ],
+    "broadcasts": [
+      "workspace.{id}.lifecycle",
+      "workspace.{id}.domain",
+      "workspace.{id}.branding",
+      "workspace.{id}.integration"
+    ],
+    "observers": [
+      "WorkspaceObserver",
+      "DomainObserver",
+      "BrandingObserver",
+      "WorkspaceContactObserver",
+      "WorkspaceIntegrationObserver"
+    ],
+    "rules": [
+      "dns_safe_slug",
+      "reserved_slug",
+      "valid_business_type",
+      "valid_domain_host",
+      "valid_hex_color"
+    ],
+    "casts": ["BrandingPayload", "ProvisioningPayload", "IntegrationConfig"],
+    "views": [],
+    "lang": ["workspaces"],
+    "config": ["workspaces"],
+    "macros": [],
+    "bindings": [],
+    "resources": [
+      "application",
+      "workspace",
+      "business-type",
+      "domain",
+      "domain-record",
+      "branding",
+      "identity",
+      "workspace-contact",
+      "workspace-integration"
+    ]
+  },
+  "hosts": {
+    "central": {
+      "description": "Central workspace picker + self-serve workspace registration. Rejects workspace subdomains via platform.domain middleware.",
+      "routes": [
+        "GET /api/current-workspace",
+        "POST /api/v1/workspaces/register",
+        "POST /api/v1/auth/find-workspaces"
+      ]
+    },
+    "platform-admin": {
+      "description": "Academorix staff surface. Full CRUD over Application, Workspace, BusinessType, Domain, Branding, Identity, Contact, Integration.",
+      "routes": [
+        "* /api/v1/applications*",
+        "* /api/v1/workspaces*",
+        "* /api/v1/business-types*",
+        "* /api/v1/domains*",
+        "* /api/v1/brandings*",
+        "* /api/v1/identities*",
+        "* /api/v1/workspace-contacts*",
+        "* /api/v1/workspace-integrations*"
+      ]
+    },
+    "workspace": {
+      "description": "Workspace-scoped SPA. Reads the caller's active workspace + workspace list, and manages the workspace's own settings, domains, branding profiles, contacts, and integrations.",
+      "routes": [
+        "GET /api/current-workspace",
+        "GET /api/v1/me/workspaces",
+        "PATCH /api/current-workspace",
+        "* /api/v1/workspace/domains*",
+        "* /api/v1/workspace/brandings*",
+        "* /api/v1/workspace/contacts*",
+        "* /api/v1/workspace/integrations*"
+      ]
+    }
+  }
+}

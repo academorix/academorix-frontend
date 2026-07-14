@@ -1,0 +1,53 @@
+{
+  "id": "search.resources.search-index.list",
+  "title": "Search indexes",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/workspace/search/indexes",
+  "host": "workspace",
+  "audience": "authenticated",
+  "resource": {"module": "search", "entity": "search-index", "action": "list"},
+  "requiresPermission": "search.indexes.viewAny",
+  "requiresFeature": "search.enabled",
+  "dataSources": [
+    {"name": "indexes", "kind": "http.get", "url": "/api/v1/search/indexes", "unwrap": "data", "paginated": true, "queryParamsFromState": ["filter[engine]", "filter[status]", "sort"]}
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": {"className": "flex flex-col gap-4 p-6 max-w-6xl mx-auto"},
+      "children": [
+        {"kind": "View", "props": {"className": "flex flex-col gap-1"}, "children": [
+          {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Search indexes"}},
+          {"kind": "Text", "props": {"className": "text-sm text-muted"}, "bindings": {"children": {"$expr": "t('search.indexes.description')"}}}
+        ]},
+
+        {"kind": "View", "props": {"className": "flex flex-wrap gap-3"}, "children": [
+          {"kind": "Select", "props": {"label": "Engine", "name": "filter[engine]", "placeholder": "All engines"}, "options": [
+            {"key": "meilisearch",  "label": "Meilisearch"},
+            {"key": "postgres-fts", "label": "Postgres FTS"},
+            {"key": "pgvector",     "label": "pgvector"},
+            {"key": "elasticsearch","label": "Elasticsearch"}
+          ], "actions": {"onChange": {"kind": "data.applyFilter", "source": "indexes"}}},
+          {"kind": "Select", "props": {"label": "Status", "name": "filter[status]", "placeholder": "All statuses"}, "options": [
+            {"key": "active",     "label": "Active"},
+            {"key": "reindexing", "label": "Reindexing"},
+            {"key": "disabled",   "label": "Disabled"},
+            {"key": "error",      "label": "Error"}
+          ], "actions": {"onChange": {"kind": "data.applyFilter", "source": "indexes"}}}
+        ]},
+
+        {"kind": "Table", "props": {"columns": [
+          {"key": "model_class",    "label": "Model"},
+          {"key": "index_name",     "label": "Index"},
+          {"key": "engine",         "label": "Engine",   "cellRenderer": {"kind": "Chip", "props": {"size": "xs", "variant": "neutral"}, "bindings": {"children": {"$ref": "row.engine"}}}},
+          {"key": "language",       "label": "Language"},
+          {"key": "document_count", "label": "Documents","valueFormatter": "formatNumber"},
+          {"key": "status",         "label": "Status", "cellRenderer": {"kind": "Widget", "widget": "search.search-index-status-chip", "bindings": {"status": {"$ref": "row.status"}, "needsReindex": {"$expr": "row.metadata?.needs_reindex === true"}}}},
+          {"key": "last_swap_at",   "label": "Last reindex", "valueFormatter": "formatRelativeOrDash"}
+        ]}, "bindings": {"rows": {"$ref": "indexes"}, "isLoading": {"$ref": "indexes.isLoading"}}}
+      ]
+    }
+  ]
+}

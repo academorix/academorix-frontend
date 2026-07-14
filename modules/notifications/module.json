@@ -19,7 +19,7 @@
   "priority": 20,
   "providers": ["Academorix\\Notifications\\Providers\\NotificationsServiceProvider"],
   "files": [],
-  "dependencies": ["foundation", "tenancy"],
+  "dependencies": ["foundation", "workspaces"],
   "extendedBy": [
     "notifications-in-app",
     "notifications-mail",
@@ -81,7 +81,7 @@
       "RefreshUserCacheJob"
     ],
     "notifications": [],
-    "broadcasts": ["user.{id}.notifications", "tenant.{id}.notifications"],
+    "broadcasts": ["user.{id}.notifications", "workspace.{id}.notifications"],
     "observers": [
       "NotificationObserver",
       "NotificationDeliveryObserver",
@@ -121,7 +121,7 @@
     "description": "This core is designed so a future extraction to a NestJS microservice is a port, not a rewrite. Five disciplines every consumer honours.",
     "disciplines": [
       "Single dispatch entry point (`Notifications::dispatch()`) \u2014 no module imports from notifications-mail/-sms/-push/-in-app directly.",
-      "Event-carried state \u2014 every dispatch payload includes recipient (id, email, phone, name, locale, timezone) + tenant branding (logo, sender, postal_address). No recipient lookups by the receiver.",
+      "Event-carried state \u2014 every dispatch payload includes recipient (id, email, phone, name, locale, timezone) + workspace branding (logo, sender, postal_address). No recipient lookups by the receiver.",
       "No cross-module DB reads \u2014 consumers subscribe to NotificationDelivered/Failed events + write their own state.",
       "Channel modules are event-driven \u2014 respond to NotificationDispatched, emit channel-scoped completion events. Never invoked directly.",
       "OpenAPI spec for every HTTP surface \u2014 inbox, preferences, templates, subscriptions. Same spec becomes the NestJS contract on extraction."
@@ -143,7 +143,7 @@
       ]
     },
     "platform-admin": {
-      "description": "Cross-tenant notification search + delivery diagnostics for support / abuse investigation.",
+      "description": "Cross-workspace notification search + delivery diagnostics for support / abuse investigation.",
       "routes": [
         "GET /api/v1/platform/notifications",
         "GET /api/v1/platform/notifications/{notification}",
@@ -153,22 +153,22 @@
         "GET /api/v1/platform/notification-categories"
       ]
     },
-    "tenant": {
-      "description": "Tenant-scoped inbox + preferences + template admin. Push device management lives in notifications-push. Provider webhooks live in the respective channel module.",
+    "workspace": {
+      "description": "Workspace-scoped inbox + preferences + template admin. Push device management lives in notifications-push. Provider webhooks live in the respective channel module.",
       "routes": [
-        "GET /api/v1/tenant/notifications",
-        "GET /api/v1/tenant/notifications/{notification}",
-        "POST /api/v1/tenant/notifications/{notification}/seen",
-        "POST /api/v1/tenant/notifications/mark-all-seen",
-        "POST /api/v1/tenant/notifications/{notification}/archive",
-        "GET /api/v1/tenant/notification-preferences",
-        "PATCH /api/v1/tenant/notification-preferences",
-        "GET /api/v1/tenant/notification-templates",
-        "POST /api/v1/tenant/notification-templates",
-        "GET /api/v1/tenant/notification-templates/{template}",
-        "PATCH /api/v1/tenant/notification-templates/{template}",
-        "POST /api/v1/tenant/notification-templates/{template}/publish",
-        "POST /api/v1/tenant/notification-templates/{template}/test"
+        "GET /api/v1/workspace/notifications",
+        "GET /api/v1/workspace/notifications/{notification}",
+        "POST /api/v1/workspace/notifications/{notification}/seen",
+        "POST /api/v1/workspace/notifications/mark-all-seen",
+        "POST /api/v1/workspace/notifications/{notification}/archive",
+        "GET /api/v1/workspace/notification-preferences",
+        "PATCH /api/v1/workspace/notification-preferences",
+        "GET /api/v1/workspace/notification-templates",
+        "POST /api/v1/workspace/notification-templates",
+        "GET /api/v1/workspace/notification-templates/{template}",
+        "PATCH /api/v1/workspace/notification-templates/{template}",
+        "POST /api/v1/workspace/notification-templates/{template}/publish",
+        "POST /api/v1/workspace/notification-templates/{template}/test"
       ]
     }
   }

@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/workspaces/listeners",
+  "$version": 1,
+  "title": "workspaces \u2014 subscribed events",
+  "description": "Event \u2192 listener bindings this module owns. Workspaces is primarily a publisher module but subscribes to boot + user erasure signals now that we've dropped stancl (which used to wire these). Cascade cleanup of workspaces-boundary rows on user + workspace erasure lives here.",
+  "listeners": [
+    {
+      "event": "foundation::ApplicationBooted",
+      "listener": "Academorix\\Workspaces\\Listeners\\WarmHostResolver",
+      "queue": null,
+      "purpose": "Load compiled Host \u2192 Workspace + Host \u2192 Application map at boot into the request-scoped HostResolver binding. Replaces stancl's runtime domain resolution."
+    },
+    {
+      "event": "foundation::ConfigReloaded",
+      "listener": "Academorix\\Workspaces\\Listeners\\RewarmHostResolver",
+      "queue": null,
+      "purpose": "Rebuild host map on hot reload."
+    },
+    {
+      "event": "user::UserErased",
+      "listener": "Academorix\\Workspaces\\Listeners\\MaybeEraseIdentity",
+      "queue": "notifications",
+      "purpose": "When the erased User was the last one referencing an Identity for a given Application, anonymise the Identity + fire IdentityErased. Otherwise no-op \u2014 Identity is retained for the surviving User rows."
+    },
+    {
+      "event": "user::UserErased",
+      "listener": "Academorix\\Workspaces\\Listeners\\PurgeWorkspaceContactsForErasedUser",
+      "queue": "notifications",
+      "purpose": "When the erased User had a WorkspaceContact entry (DPO, billing, technical), clear the person fields but retain the workspace\u2013role linkage so the workspace admin surface can prompt for a replacement."
+    }
+  ],
+  "publishes_only": {
+    "note": "This module also publishes ~19 events consumed elsewhere \u2014 see events.json. Each event carries its expected consumers list."
+  }
+}

@@ -3,8 +3,8 @@
   "title": "Notification detail",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/notifications/{id}",
-  "host": "tenant",
+  "route": "/workspace/notifications/{id}",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "notifications", "entity": "notification", "action": "show"},
   "requiresPermission": "notifications.view",
@@ -13,7 +13,7 @@
     {
       "name": "notification",
       "kind": "http.get",
-      "urlExpr": "'/api/v1/tenant/notifications/' + params.id + '?include=deliveries,category,template'",
+      "urlExpr": "'/api/v1/workspace/notifications/' + params.id + '?include=deliveries,category,template'",
       "unwrap": "data",
       "cache": {"ttlSeconds": 30}
     }
@@ -28,7 +28,7 @@
           "id": "back",
           "kind": "Link",
           "props": {"leadingIcon": "arrow-left", "children": "Back to inbox", "className": "text-sm text-muted"},
-          "actions": {"onPress": {"kind": "navigate", "to": "/tenant/notifications"}}
+          "actions": {"onPress": {"kind": "navigate", "to": "/workspace/notifications"}}
         },
         {
           "id": "header",
@@ -60,7 +60,7 @@
                   "kind": "Button",
                   "props": {"variant": "ghost", "size": "sm", "leadingIcon": "check-circle", "children": "Mark seen"},
                   "bindings": {"isDisabled": {"$ref": "notification.is_seen"}},
-                  "actions": {"onPress": {"kind": "http.post", "urlExpr": "'/api/v1/tenant/notifications/' + params.id + '/seen'", "onSuccess": {"kind": "data.refresh", "source": "notification"}}}
+                  "actions": {"onPress": {"kind": "http.post", "urlExpr": "'/api/v1/workspace/notifications/' + params.id + '/seen'", "onSuccess": {"kind": "data.refresh", "source": "notification"}}}
                 },
                 {
                   "id": "archive",
@@ -70,11 +70,11 @@
                   "actions": {
                     "onPress": {
                       "kind": "http.post",
-                      "urlExpr": "'/api/v1/tenant/notifications/' + params.id + '/archive'",
+                      "urlExpr": "'/api/v1/workspace/notifications/' + params.id + '/archive'",
                       "confirm": {"title": "Archive this notification?", "description": "It will move out of your active inbox."},
                       "onSuccess": [
                         {"kind": "toast.success", "message": "Archived"},
-                        {"kind": "navigate", "to": "/tenant/notifications"}
+                        {"kind": "navigate", "to": "/workspace/notifications"}
                       ]
                     }
                   }

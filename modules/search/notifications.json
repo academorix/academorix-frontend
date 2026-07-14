@@ -1,0 +1,33 @@
+{
+  "id": "academorix://modules/search/notifications",
+  "$version": 1,
+  "title": "search \u2014 notification classes + categories",
+  "namespace": "Academorix\\Search\\Notifications",
+  "description": "Two notifications covering sync-job completion + failure outcomes. Channels resolved once at dispatch from search_sync_jobs.notify_channels and delivered through the notifications module. Query volume + analytics events do NOT notify \u2014 that's dashboard territory.",
+  "notifications": [
+    "SearchSyncCompletedNotification",
+    "SearchSyncFailedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "search.sync_completed",
+      "display_name": "Search reindex completed",
+      "description": "Sent when a search reindex / backfill job succeeds (including partially_succeeded outcomes). Copy includes counters + reindexed index name + duration.",
+      "default_channels": ["database", "broadcast"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": true,
+      "is_system": true
+    },
+    {
+      "slug": "search.sync_failed",
+      "display_name": "Search reindex failed",
+      "description": "Sent when a reindex / backfill could not complete. Copy includes error code + short human message + 'View details' call-to-action. Alerts operations without opt-out.",
+      "default_channels": ["mail", "broadcast", "database"],
+      "priority": "critical",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

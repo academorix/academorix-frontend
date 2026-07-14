@@ -16,7 +16,7 @@
     "model": "Academorix\\Newsletter\\Models\\NewsletterSubscription",
     "interface": "Academorix\\Newsletter\\Contracts\\Data\\NewsletterSubscriptionInterface",
     "implements": ["Academorix\\Newsletter\\Contracts\\Data\\NewsletterSubscriptionInterface"],
-    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "HasAuditable", "HasActivityLog", "Filterable", "Searchable", "SoftDeletes"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToWorkspace", "HasMetadata", "HasUserstamps", "HasAuditable", "HasActivityLog", "Filterable", "Searchable", "SoftDeletes"],
     "casts": {"state": "NewsletterSubscriptionState", "source": "NewsletterSubscriptionSource", "tags": "array", "confirmed_at": "datetime", "unsubscribed_at": "datetime", "engagement_score": "integer", "last_opened_at": "datetime", "last_clicked_at": "datetime", "metadata": "array"},
     "appends": ["is_engaged"],
     "observers": ["NewsletterSubscriptionObserver"],
@@ -27,7 +27,7 @@
     "engine": "postgres",
     "columns": {
       "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `nls_<26 chars>`."},
-      "tenant_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "tenants", "column": "id", "onDelete": "cascade"}},
+      "workspace_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "workspaces", "column": "id", "onDelete": "cascade"}},
       "newsletter_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "newsletters", "column": "id", "onDelete": "cascade"}},
       "user_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "users", "column": "id", "onDelete": "set null"}, "description": "Null when the subscriber is an email-only external contact."},
       "email": {"type": "string", "length": 254, "nullable": false, "description": "Normalised lowercase. Confidential tier."},
@@ -65,10 +65,10 @@
       {"columns": ["unsubscribe_token"], "unique": false, "name": "newsletter_subscriptions_unsubscribe_idx"}
     ]
   },
-  "required": ["id", "tenant_id", "newsletter_id", "email", "state", "source", "unsubscribe_token", "engagement_score", "created_at", "updated_at"],
+  "required": ["id", "workspace_id", "newsletter_id", "email", "state", "source", "unsubscribe_token", "engagement_score", "created_at", "updated_at"],
   "properties": {
     "id": {"type": "string", "pattern": "^nls_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "newsletter_id": {"type": "string", "pattern": "^nlp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "user_id": {"type": ["string", "null"]},
     "email": {"type": "string", "format": "email", "maxLength": 254},

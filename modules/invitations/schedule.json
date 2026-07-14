@@ -37,7 +37,7 @@
       "kind": "command",
       "cron": "0 8 * * 1",
       "timezone": "UTC",
-      "description": "Weekly Monday 08:00 UTC. Aggregates the previous week's funnel + bounce stats per tenant, emits a report to platform ops (via notifications), and snapshots the counts into the compliance store for SOC 2 CC7.2 evidence.",
+      "description": "Weekly Monday 08:00 UTC. Aggregates the previous week's funnel + bounce stats per workspace, emits a report to platform ops (via notifications), and snapshots the counts into the compliance store for SOC 2 CC7.2 evidence.",
       "runOnOneServer": true
     }
   ]

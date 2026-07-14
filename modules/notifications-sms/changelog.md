@@ -10,5 +10,5 @@
 
 ### Compatibility
 
-- Depends on `foundation`, `tenancy`, `notifications` (core), `webhook`.
+- Depends on `foundation`, `workspaces`, `notifications` (core), `webhook`.
 - No breaking change surface — inception release.

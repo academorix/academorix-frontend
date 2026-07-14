@@ -2,7 +2,7 @@
   "id": "academorix://modules/transfer/relations",
   "$version": 1,
   "title": "transfer \u2014 model relationships",
-  "description": "Four owned models with a hub-and-spoke shape: XferJob is the aggregate root; XferShard, XferArtifact, XferMappingProfile hang off it. Every model belongs to a tenant. No other module holds an FK to transfer tables \u2014 inbound integration happens via #[Importable] / #[Exportable] attribute-driven registration + HasActivityLog / HasAudit dual-write on transitions.",
+  "description": "Four owned models with a hub-and-spoke shape: XferJob is the aggregate root; XferShard, XferArtifact, XferMappingProfile hang off it. Every model belongs to a workspace. No other module holds an FK to transfer tables \u2014 inbound integration happens via #[Importable] / #[Exportable] attribute-driven registration + HasActivityLog / HasAudit dual-write on transitions.",
   "internal": [
     {
       "from": "XferJob",
@@ -69,10 +69,10 @@
     {
       "from": "XferJob",
       "kind": "belongsTo",
-      "to": "tenancy::Tenant",
-      "foreignKey": "tenant_id",
+      "to": "workspaces::Workspace",
+      "foreignKey": "workspace_id",
       "onDelete": "cascade",
-      "description": "Nullable when a platform-admin runs a system-level operation (rare). Cascade so tenant deletion removes the audit trail too."
+      "description": "Nullable when a platform-admin runs a system-level operation (rare). Cascade so workspace deletion removes the audit trail too."
     },
     {
       "from": "XferJob",
@@ -93,16 +93,16 @@
     {
       "from": "XferShard",
       "kind": "belongsTo",
-      "to": "tenancy::Tenant",
-      "foreignKey": "tenant_id",
+      "to": "workspaces::Workspace",
+      "foreignKey": "workspace_id",
       "onDelete": "cascade",
       "description": "Denormalised from parent for scan predicates."
     },
     {
       "from": "XferArtifact",
       "kind": "belongsTo",
-      "to": "tenancy::Tenant",
-      "foreignKey": "tenant_id",
+      "to": "workspaces::Workspace",
+      "foreignKey": "workspace_id",
       "onDelete": "cascade"
     },
     {
@@ -116,8 +116,8 @@
     {
       "from": "XferMappingProfile",
       "kind": "belongsTo",
-      "to": "tenancy::Tenant",
-      "foreignKey": "tenant_id",
+      "to": "workspaces::Workspace",
+      "foreignKey": "workspace_id",
       "onDelete": "cascade"
     },
     {
@@ -126,14 +126,14 @@
       "to": "user::User",
       "foreignKey": "owner_id",
       "onDelete": "cascade",
-      "description": "Profile ownership. Cascade so removing a user drops their private profiles. Shared profiles (`is_shared=true`) transfer ownership to a tenant admin before the delete (handled by user::UserErased listener)."
+      "description": "Profile ownership. Cascade so removing a user drops their private profiles. Shared profiles (`is_shared=true`) transfer ownership to a workspace admin before the delete (handled by user::UserErased listener)."
     }
   ],
   "inbound": {
     "description": "No other module holds an FK to transfer tables. Inbound integration is attribute-driven: any model in any module carrying #[Importable] / #[Exportable] / #[SampleData] is discovered by the compiler at boot and registered in EntityRegistry. HasActivityLog on XferJob writes a row into activity_log (activity module) on every status transition; HasAudit on XferJob writes a row into audits (audit module) on the same signal \u2014 both are morphMany from the perspective of activity + audit, not FKs on our side.",
     "consumed_traits": [
       "foundation::HasUlids",
-      "tenancy::BelongsToTenant",
+      "workspaces::BelongsToWorkspace",
       "activity::HasActivityLog",
       "audit::HasAudit"
     ]

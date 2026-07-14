@@ -12,14 +12,14 @@
       "label": "Push notifications",
       "description": "Provider routing + rich notification features + quiet-hours interaction.",
       "icon": "device-phone-mobile",
-      "scope": "tenant",
+      "scope": "workspace",
       "public": false,
       "sortOrder": 14,
       "permission": "settings.read",
       "sections": [
         {
           "label": "Provider selection",
-          "description": "Tenant-level provider preferences per platform. Platform-specific defaults apply otherwise (iOS \u2192 APNs, Android/Web \u2192 FCM).",
+          "description": "Workspace-level provider preferences per platform. Platform-specific defaults apply otherwise (iOS \u2192 APNs, Android/Web \u2192 FCM).",
           "icon": "arrows-right-left",
           "sortOrder": 1,
           "fields": [

@@ -1,0 +1,32 @@
+{
+  "id": "academorix://modules/telemetry-logs/subprocessors",
+  "$version": 1,
+  "title": "telemetry-logs \u2014 subprocessors",
+  "description": "Where log records ship to third-party sinks, that vendor is a subprocessor. Self-hosted Loki / OTel Collector on our own K8s is NOT a subprocessor.",
+  "subprocessors": [
+    {
+      "name": "Grafana Cloud Loki",
+      "role": "log_sink",
+      "purpose": "Log storage + query.",
+      "data_processed": ["log records (redacted per data-classes.json)", "record labels (workspace_id, workspace_id, level, channel, service.name)"],
+      "location": "US / EU / AU (customer-selected)",
+      "legal_basis": "contract",
+      "dpa_url": "https://grafana.com/legal/dpa",
+      "when_engaged": "telemetry-logs.sinks.loki.enabled=true AND endpoint points at grafana.net"
+    },
+    {
+      "name": "DataDog Logs",
+      "role": "log_sink",
+      "purpose": "Log ingestion + search + APM correlation.",
+      "data_processed": ["log records", "log tags"],
+      "location": "US / EU / Japan (customer-selected)",
+      "legal_basis": "contract",
+      "dpa_url": "https://www.datadoghq.com/legal/dpa/",
+      "when_engaged": "telemetry-logs.sinks.datadog.enabled=true"
+    }
+  ],
+  "notes": [
+    "Grafana Alloy / Grafana Agent / DataDog Agent running as sidecars on our own K8s are NOT subprocessors \u2014 they're transport, not processing.",
+    "The choice of sink is deployment-specific. Modules never bind to a sink directly \u2014 always through the ChannelResolver."
+  ]
+}

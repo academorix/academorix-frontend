@@ -1,0 +1,18 @@
+{
+  "id": "academorix://modules/subscription/notifications",
+  "$version": 1,
+  "title": "subscription \u2014 notification classes + categories",
+  "namespace": "Academorix\\Subscription\\Notifications",
+  "notifications": ["SubscriptionStartedNotification", "TrialEndingNotification", "TrialEndedNotification", "SubscriptionUpgradedNotification", "SubscriptionDowngradedNotification", "SubscriptionCancelledNotification", "PaymentFailedNotification", "PaymentSucceededNotification", "SubscriptionSuspendedNotification"],
+  "categories": [
+    {"slug": "subscription.started", "display_name": "Subscription started", "description": "First subscription for a workspace.", "default_channels": ["mail", "in_app"], "priority": "transactional", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true},
+    {"slug": "subscription.trial_ending", "display_name": "Trial ending soon", "description": "3 days before trial ends. Includes upgrade CTA.", "default_channels": ["mail", "in_app"], "priority": "transactional", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true},
+    {"slug": "subscription.trial_ended", "display_name": "Trial ended", "description": "Trial ended without conversion (workspace moved to free) or with conversion (moved to paid).", "default_channels": ["mail", "in_app"], "priority": "transactional", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true},
+    {"slug": "subscription.upgraded", "display_name": "Plan upgraded", "description": "Successful plan upgrade. Includes new caps + first invoice.", "default_channels": ["mail", "in_app"], "priority": "transactional", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true},
+    {"slug": "subscription.downgraded", "display_name": "Plan downgraded", "description": "Plan downgraded. Warns about caps that may be exceeded on new plan.", "default_channels": ["mail", "in_app"], "priority": "transactional", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true},
+    {"slug": "subscription.cancelled", "display_name": "Subscription cancelled", "description": "Cancellation confirmed. Includes reactivation link if within grace.", "default_channels": ["mail", "in_app"], "priority": "critical", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true},
+    {"slug": "subscription.payment_failed", "display_name": "Payment failed", "description": "Cashier retries; we escalate with dunning email at each stage.", "default_channels": ["mail", "in_app"], "priority": "critical", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true},
+    {"slug": "subscription.payment_succeeded", "display_name": "Payment receipt", "description": "Renewal / plan-swap receipt. Attaches PDF invoice.", "default_channels": ["mail"], "priority": "transactional", "consent_tier": "transactional_required", "opt_out_allowed": true, "is_system": true, "default_opt_in": true},
+    {"slug": "subscription.suspended", "display_name": "Workspace suspended", "description": "Grace exhausted; workspace features restricted until payment resolved.", "default_channels": ["mail", "in_app"], "priority": "critical", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true}
+  ]
+}

@@ -12,9 +12,9 @@
   ],
   "retention": [
     {"entity": "Audit (hot phase)", "hot": {"days": 365}, "purge": {"trigger": "created_at < now() - 365d AND cold_key IS NULL", "action": "rotate to cold: KMS-envelope-encrypt + S3 Glacier + Object Lock immutable retention. Row updated with cold_key; old_values/new_values NULLed in Postgres. row_hash + previous_hash retained.", "job": "RotateAuditColdStorageJob"}},
-    {"entity": "Audit (cold phase)", "hot": {"days": 0}, "cold": {"days": 2555, "description": "7 years in S3 Glacier with Object Lock. Non-mutable during window."}, "purge": {"trigger": "created_at < now() - 2555d", "action": "anonymise-not-delete: replace tenant_id / user_id / auditable_id with anonymised placeholders. row_hash retained for chain continuity. cold_key retained but S3 object may be lifecycle-expired."}},
-    {"entity": "Audit (TenantErased cascade)", "purge": {"trigger": "tenancy::TenantErased event", "action": "anonymise tenant_id to hash + retain rows for cross-tenant compliance evidence"}},
-    {"entity": "Audit (UserErased anonymisation)", "purge": {"trigger": "user::UserErased event", "action": "anonymise user_id / user_type / PII in old_values / new_values \u2014 row retained for tenant audit continuity"}}
+    {"entity": "Audit (cold phase)", "hot": {"days": 0}, "cold": {"days": 2555, "description": "7 years in S3 Glacier with Object Lock. Non-mutable during window."}, "purge": {"trigger": "created_at < now() - 2555d", "action": "anonymise-not-delete: replace workspace_id / user_id / auditable_id with anonymised placeholders. row_hash retained for chain continuity. cold_key retained but S3 object may be lifecycle-expired."}},
+    {"entity": "Audit (WorkspaceErased cascade)", "purge": {"trigger": "workspaces::WorkspaceErased event", "action": "anonymise workspace_id to hash + retain rows for cross-workspace compliance evidence"}},
+    {"entity": "Audit (UserErased anonymisation)", "purge": {"trigger": "user::UserErased event", "action": "anonymise user_id / user_type / PII in old_values / new_values \u2014 row retained for workspace audit continuity"}}
   ],
   "chain_integrity": {
     "note": "row_hash + previous_hash NEVER anonymised. Chain must remain verifiable regardless of PII anonymisation. Post-anonymisation, hash still validates against canonical serialisation because PII fields are replaced with deterministic anonymised placeholders (hash of original)."

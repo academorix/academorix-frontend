@@ -1,0 +1,104 @@
+{
+  "$version": 1,
+  "name": "entitlements",
+  "alias": "entitlements",
+  "namespace": "Academorix\\Entitlements",
+  "description": "Per-workspace quota + usage tracking substrate consumed by every metered feature (webhook, notifications, storage, newsletter, search, etc). Owns two entities \u2014 Entitlement (the resolved cap for a (workspace, key) tuple) and EntitlementUsage (audit rows for consumption events). Ships four entitlement kinds: `slot` (hard cap on concurrent count), `pool` (periodic quota with reset), `boolean` (feature toggle), `unlimited` (enterprise). Redis-backed hot-path consume() with Postgres source-of-truth. Monthly + anniversary + lifetime reset windows. Manual per-workspace overrides for enterprise negotiations. Publishes `HasEntitlements` (mixed into Workspace) + `MetersUsage` trait for models that consume metered features. Exports usage to Stripe/Paddle at billing period end for usage-based tiers.",
+  "keywords": ["entitlements", "quotas", "usage", "metering", "slot", "pool", "boolean", "enforcement", "billing", "workspace", "feature-flags"],
+  "priority": 15,
+  "providers": ["Academorix\\Entitlements\\Providers\\EntitlementsServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "workspaces", "activity", "audit"],
+  "extendedBy": [
+    "subscription",
+    "webhook",
+    "notifications",
+    "notifications-mail",
+    "notifications-push",
+    "notifications-sms",
+    "newsletter",
+    "storage",
+    "search",
+    "activity",
+    "audit",
+    "settings"
+  ],
+  "contributes": {
+    "traits": ["HasEntitlements", "MetersUsage"],
+    "attributes": ["ConsumesEntitlement", "EnforcesEntitlement"],
+    "blueprints": [],
+    "middleware": ["entitlement.enforce"],
+    "events": [
+      "EntitlementResolved",
+      "EntitlementConsumed",
+      "EntitlementExceeded",
+      "EntitlementReset",
+      "EntitlementOverridden",
+      "EntitlementSyncStarted",
+      "EntitlementSyncCompleted",
+      "UsageReportedToBilling"
+    ],
+    "policies": ["EntitlementPolicy", "EntitlementUsagePolicy"],
+    "hooks": [],
+    "commands": [
+      "entitlements:seed",
+      "entitlements:describe",
+      "entitlements:reset",
+      "entitlements:report-usage",
+      "entitlements:reconcile",
+      "entitlements:sync-plan"
+    ],
+    "jobs": [
+      "ResetPeriodicUsageJob",
+      "ReconcileUsageJob",
+      "ExportUsageForBillingJob",
+      "SyncEntitlementsFromPlanJob",
+      "ApplyEntitlementOverrideJob"
+    ],
+    "notifications": [
+      "QuotaApproachingNotification",
+      "QuotaExceededNotification",
+      "EntitlementResetNotification"
+    ],
+    "broadcasts": [],
+    "observers": ["EntitlementObserver", "EntitlementUsageObserver"],
+    "rules": ["valid_entitlement_key", "valid_entitlement_kind"],
+    "casts": ["EntitlementValue", "EntitlementKind", "EntitlementPeriod"],
+    "views": [],
+    "lang": ["entitlements"],
+    "config": ["entitlements"],
+    "macros": [],
+    "bindings": [
+      "EntitlementResolver",
+      "EntitlementRegistry",
+      "UsageRecorder",
+      "Enforcer",
+      "PlanEntitlementSyncer",
+      "UsageAggregator"
+    ],
+    "resources": ["entitlement", "entitlement-usage"]
+  },
+  "hosts": {
+    "workspace": {
+      "description": "Workspace-facing quota + usage read surface. No writes \u2014 entitlement values are derived from plan defaults + platform-admin overrides.",
+      "routes": [
+        "GET /api/v1/entitlements",
+        "GET /api/v1/entitlements/{key}",
+        "GET /api/v1/entitlements/{key}/usage"
+      ]
+    },
+    "central_admin": {
+      "description": "Platform-admin override surface + cross-workspace inspection.",
+      "routes": [
+        "GET /api/v1/platform/entitlements",
+        "GET /api/v1/platform/entitlements/{workspace}/{key}",
+        "PATCH /api/v1/platform/entitlements/{workspace}/{key}",
+        "POST /api/v1/platform/entitlements/{workspace}/reset/{key}",
+        "POST /api/v1/platform/entitlements/{workspace}/sync-plan"
+      ]
+    }
+  },
+  "consumed_by": {
+    "note": "Every metered feature module calls Entitlement::consume() before performing the operation. See individual modules' `entitlements.json` blueprints for their declared keys."
+  }
+}

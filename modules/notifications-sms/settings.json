@@ -12,7 +12,7 @@
       "label": "SMS",
       "description": "SMS provider + sender identity + geographic scope + STOP/START/HELP auto-replies.",
       "icon": "chat-bubble-bottom-center-text",
-      "scope": "tenant",
+      "scope": "workspace",
       "public": false,
       "sortOrder": 15,
       "permission": "settings.read",

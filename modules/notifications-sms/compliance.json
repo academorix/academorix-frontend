@@ -9,7 +9,7 @@
       "controls": [
         {"section": "47 CFR \u00a7 64.1200(a)(3)", "principle": "express written consent for autodialed marketing SMS", "evidence": "Marketing categories require consent captured by compliance module. NotificationPreference.enabled + audit trail."},
         {"section": "47 CFR \u00a7 64.1200(d)(4)", "principle": "immediate honour of stop request", "evidence": "STOP-keyword \u2192 SmsOptedOut event within seconds. Cross-channel propagation to preferences."},
-        {"section": "CTIA short code guidelines", "principle": "STOP + HELP keyword responses", "evidence": "Automated SendOptOutConfirmation on STOP; HELP handler returns tenant-configured help text."}
+        {"section": "CTIA short code guidelines", "principle": "STOP + HELP keyword responses", "evidence": "Automated SendOptOutConfirmation on STOP; HELP handler returns workspace-configured help text."}
       ]
     },
     "casl": {

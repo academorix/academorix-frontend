@@ -17,7 +17,7 @@
       {"path": "audit.kms.async_threshold_bytes", "type": "int", "default": 32768, "description": "Payloads larger than this defer to KmsEncryptAuditFieldsJob to avoid blocking the write path."}
     ]},
     "chain": {"keys": [
-      {"path": "audit.chain.enabled_default", "type": "bool", "default": false, "description": "Fallback for entitlement resolution. Enterprise tenants override to true via entitlement."},
+      {"path": "audit.chain.enabled_default", "type": "bool", "default": false, "description": "Fallback for entitlement resolution. Enterprise workspaces override to true via entitlement."},
       {"path": "audit.chain.algorithm", "type": "string", "default": "sha256"},
       {"path": "audit.chain.verify_sample_per_run", "type": "int", "default": 10000, "description": "Max rows verified per VerifyAuditChainJob invocation. Larger = more thorough; smaller = less DB load."}
     ]},

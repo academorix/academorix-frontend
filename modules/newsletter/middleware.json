@@ -2,7 +2,7 @@
   "id": "academorix://modules/newsletter/middleware",
   "$version": 1,
   "title": "newsletter \u2014 HTTP middleware",
-  "description": "Owns one middleware: `newsletter.token.verify` for signed subscribe / confirm / unsubscribe tokens. Consumes foundation + tenancy stack otherwise.",
+  "description": "Owns one middleware: `newsletter.token.verify` for signed subscribe / confirm / unsubscribe tokens. Consumes foundation + workspaces stack otherwise.",
   "middleware": [
     {
       "name": "newsletter.token.verify",
@@ -17,7 +17,7 @@
     {"middleware": "foundation::auth:sanctum"},
     {"middleware": "foundation::throttle", "notes": "newsletter-public bucket rate-limits public subscribe endpoint to prevent audience-list attacks."},
     {"middleware": "foundation::response.envelope"},
-    {"middleware": "tenancy::tenant.resolve"},
+    {"middleware": "workspaces::workspace.resolve"},
     {"middleware": "versioning::versioning.resolve"}
   ]
 }

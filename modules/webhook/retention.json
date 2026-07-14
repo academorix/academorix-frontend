@@ -22,7 +22,7 @@
     },
     {
       "entity": "WebhookSubscription",
-      "hot": {"days": "while state IN (active, paused, disabled)", "description": "Kept forever while the tenant might re-enable."},
+      "hot": {"days": "while state IN (active, paused, disabled)", "description": "Kept forever while the workspace might re-enable."},
       "cold": {"days": 90, "description": "Soft-deleted subscriptions retained 90d in case of accidental delete + admin recovery."},
       "purge": {
         "trigger": "deleted_at < now() - 90 days",

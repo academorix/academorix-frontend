@@ -1,0 +1,17 @@
+{
+  "id": "academorix://modules/entitlements/retention",
+  "$version": 1,
+  "title": "entitlements \u2014 retention windows",
+  "description": "Entitlement rows retained while workspace active. EntitlementUsage partitioned by month + dropped past retention per plan.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5 (storage limitation)",
+    "gdpr Art. 30 (records of processing)",
+    "sox 404 (usage evidence for revenue recognition on metered billing)"
+  ],
+  "retention": [
+    {"entity": "Entitlement", "hot": {"days": "while workspace active"}, "purge": {"trigger": "workspaces::WorkspaceErased", "action": "hard delete via FK cascade"}},
+    {"entity": "EntitlementUsage (partitioned)", "hot": {"days": "entitlements.usage_history.retention_days entitlement (30/90/365 per plan)"}, "purge": {"trigger": "monthly partition past retention", "action": "DROP PARTITION (instant + storage-reclaiming)", "job": "PruneUsageJob"}},
+    {"entity": "EntitlementUsage (metered_billing rows)", "hot": {"days": 2555, "description": "7-year SOX evidence for usage-based revenue. Applies to rows where entitlement.is_metered_billing=true regardless of plan retention."}, "purge": {"trigger": "> 7 years", "action": "anonymise workspace_id + retain aggregate"}},
+    {"entity": "audit_log (entitlements-scoped)", "hot": {"days": 365}, "cold": {"days": 2555, "description": "7y for enterprise-contract override history."}, "purge": {"trigger": "cold window exceeded", "action": "anonymise-not-delete"}}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "academorix://modules/telemetry-logs/feature-flags",
+  "$version": 1,
+  "title": "telemetry-logs \u2014 kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {"key": "telemetry-logs.pipeline", "kind": "kill-switch", "default": "on", "description": "Master processor pipeline switch. Off = plain Monolog output (no enrichment / redaction). Emergency-only \u2014 turning off in production means unredacted PII may leak to logs."},
+    {"key": "telemetry-logs.sink_stdout", "kind": "kill-switch", "default": "on"},
+    {"key": "telemetry-logs.sink_loki", "kind": "kill-switch", "default": "on"},
+    {"key": "telemetry-logs.sink_datadog", "kind": "kill-switch", "default": "on"},
+    {"key": "telemetry-logs.sink_file", "kind": "kill-switch", "default": "on"},
+    {"key": "telemetry-logs.trace_correlation", "kind": "kill-switch", "default": "on"},
+    {"key": "telemetry-logs.redaction_enforcement", "kind": "kill-switch", "default": "on", "description": "NEVER turn off in production. Off = redactor bypassed and PII leaks."},
+    {"key": "telemetry-logs.sampling", "kind": "kill-switch", "default": "off", "description": "Volume-based sampling for debug + info levels. On = drop fraction of records per config('telemetry-logs.sampling.debug_ratio')."}
+  ]
+}

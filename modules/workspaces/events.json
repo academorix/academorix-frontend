@@ -1,0 +1,231 @@
+{
+  "id": "academorix://modules/workspaces/events",
+  "$version": 1,
+  "title": "workspaces — domain events",
+  "description": "Domain events THIS module publishes. Payload contract only — no listeners. Subscriber ownership lives in each subscribing module's `listeners.json` so a listener change never mutates the publisher's file. Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write.",
+  "contract": "ShouldDispatchAfterCommit",
+  "events": [
+    {
+      "name": "WorkspaceProvisioning",
+      "class": "Academorix\\Workspaces\\Events\\WorkspaceProvisioning",
+      "when": "Fired inside the DB transaction that creates a new Workspace, BEFORE the transaction commits. Used by same-transaction sub-provisioners (default Organization, default Branch, default Region, owner User) so they land in the same commit as the Workspace row.",
+      "afterCommit": false,
+      "payload": {
+        "workspace": "Workspace",
+        "provisioning": "WorkspaceProvisioningPayloadData"
+      }
+    },
+    {
+      "name": "WorkspaceProvisioned",
+      "class": "Academorix\\Workspaces\\Events\\WorkspaceProvisioned",
+      "when": "Fired AFTER the provisioning transaction commits. Safe surface for side effects that hit external systems (send-welcome-email, provision-dns, index-search).",
+      "afterCommit": true,
+      "payload": {
+        "workspace": "Workspace",
+        "owner": "User"
+      }
+    },
+    {
+      "name": "WorkspaceSuspended",
+      "class": "Academorix\\Workspaces\\Events\\WorkspaceSuspended",
+      "when": "Set `status=suspended` + `suspended_at=now`. Fired by the billing suspension pipeline or a platform-admin action.",
+      "afterCommit": true,
+      "payload": {
+        "workspace": "Workspace",
+        "reason": "string",
+        "suspendedBy": "PlatformUser|null"
+      },
+      "consumers": ["webhook::PauseSubscriptionsForWorkspace"]
+    },
+    {
+      "name": "WorkspaceUnsuspended",
+      "class": "Academorix\\Workspaces\\Events\\WorkspaceUnsuspended",
+      "when": "Reverse of WorkspaceSuspended. Platform-admin manually unsuspends a workspace. Distinct from WorkspaceResumed \u2014 unsuspension is a platform-admin action that requires re-enabling of integrations (webhook / SSO / SCIM); resume is the general lifecycle transition.",
+      "afterCommit": true,
+      "payload": {
+        "workspace": "Workspace",
+        "unsuspendedBy": "PlatformUser|null"
+      },
+      "consumers": ["webhook::NotifyWorkspaceSubscriptionsPaused"]
+    },
+    {
+      "name": "WorkspaceResumed",
+      "class": "Academorix\\Workspaces\\Events\\WorkspaceResumed",
+      "when": "Reverse of WorkspaceSuspended. Set `status=active`, clear `suspended_at` + `grace_ends_at`.",
+      "afterCommit": true,
+      "payload": {
+        "workspace": "Workspace",
+        "resumedBy": "PlatformUser|null"
+      }
+    },
+    {
+      "name": "WorkspaceArchived",
+      "class": "Academorix\\Workspaces\\Events\\WorkspaceArchived",
+      "when": "Soft-delete the Workspace. Retention job picks it up after 30d for hard-delete.",
+      "afterCommit": true,
+      "payload": {
+        "workspace": "Workspace",
+        "archivedBy": "PlatformUser|null"
+      }
+    },
+    {
+      "name": "WorkspaceErased",
+      "class": "Academorix\\Workspaces\\Events\\WorkspaceErased",
+      "when": "Hard-delete the Workspace after the 30d grace window. GDPR Art. 17 cascade signal \u2014 every dependent row must be removed or anonymised. Fired by HardDeleteArchivedWorkspaceJob BEFORE the actual DELETE runs so downstream listeners can produce their compliance-anonymisation entries first.",
+      "afterCommit": true,
+      "payload": {
+        "workspaceId": "string",
+        "applicationId": "string",
+        "erasedBy": "PlatformUser|null"
+      },
+      "consumers": [
+        "activity::PurgeActivityForErasedWorkspace",
+        "audit::AnonymiseAuditForErasedWorkspace",
+        "settings::PurgeSettingsForErasedWorkspace",
+        "webhook::PauseSubscriptionsForWorkspace",
+        "any module with workspace-scoped rows"
+      ]
+    },
+    {
+      "name": "WorkspaceSettingsUpdated",
+      "class": "Academorix\\Workspaces\\Events\\WorkspaceSettingsUpdated",
+      "when": "Fires when a Workspace's own settings (branding, sender_config, feature toggles) are updated via PATCH /api/current-workspace. Distinct from settings::SettingsChangeEvent \u2014 that's per-field, this is per-workspace summary.",
+      "afterCommit": true,
+      "payload": {
+        "workspace": "Workspace",
+        "changedFields": "array"
+      },
+      "consumers": [
+        "notifications-mail::InvalidateWorkspaceDefaultsCache",
+        "notifications-sms::InvalidateWorkspaceSettingsCache"
+      ]
+    },
+    {
+      "name": "WorkspaceBrandingUpdated",
+      "class": "Academorix\\Workspaces\\Events\\WorkspaceBrandingUpdated",
+      "when": "Fires when the primary Branding row is updated OR promoted. `before` / `after` reference the full Branding snapshot.",
+      "afterCommit": true,
+      "payload": {
+        "workspace": "Workspace",
+        "branding": "Branding",
+        "before": "array|null",
+        "after": "array"
+      }
+    },
+    {
+      "name": "DomainAdded",
+      "class": "Academorix\\Workspaces\\Events\\DomainAdded",
+      "when": "A Domain row is created (customer added a custom domain). DomainObserver generates the verification token BEFORE this event fires.",
+      "afterCommit": true,
+      "payload": {
+        "workspace": "Workspace",
+        "domain": "Domain"
+      }
+    },
+    {
+      "name": "DomainVerified",
+      "class": "Academorix\\Workspaces\\Events\\DomainVerified",
+      "when": "VerifyDomainDnsJob observes every expected DomainRecord matches. Sets `verified_at`.",
+      "afterCommit": true,
+      "payload": {
+        "workspace": "Workspace",
+        "domain": "Domain"
+      }
+    },
+    {
+      "name": "DomainVerificationFailed",
+      "class": "Academorix\\Workspaces\\Events\\DomainVerificationFailed",
+      "when": "VerifyDomainDnsJob hit `verification_attempts >= 100` without success. Fires once (not per attempt).",
+      "afterCommit": true,
+      "payload": {
+        "workspace": "Workspace",
+        "domain": "Domain",
+        "lastError": "string"
+      }
+    },
+    {
+      "name": "DomainRemoved",
+      "class": "Academorix\\Workspaces\\Events\\DomainRemoved",
+      "when": "Domain soft-deleted.",
+      "afterCommit": true,
+      "payload": {
+        "workspace": "Workspace",
+        "domainId": "string",
+        "host": "string"
+      }
+    },
+    {
+      "name": "WorkspaceContactAdded",
+      "class": "Academorix\\Workspaces\\Events\\WorkspaceContactAdded",
+      "when": "WorkspaceContact created.",
+      "afterCommit": true,
+      "payload": {
+        "workspace": "Workspace",
+        "contact": "WorkspaceContact"
+      }
+    },
+    {
+      "name": "WorkspaceContactUpdated",
+      "class": "Academorix\\Workspaces\\Events\\WorkspaceContactUpdated",
+      "when": "WorkspaceContact fields changed. Fires whenever `verified_at` transitions from null → not-null too.",
+      "afterCommit": true,
+      "payload": {
+        "workspace": "Workspace",
+        "contact": "WorkspaceContact",
+        "dirty": "array"
+      }
+    },
+    {
+      "name": "WorkspaceContactRemoved",
+      "class": "Academorix\\Workspaces\\Events\\WorkspaceContactRemoved",
+      "when": "WorkspaceContact soft-deleted.",
+      "afterCommit": true,
+      "payload": {
+        "workspace": "Workspace",
+        "contactId": "string",
+        "kind": "string"
+      }
+    },
+    {
+      "name": "WorkspaceIntegrationConfigured",
+      "class": "Academorix\\Workspaces\\Events\\WorkspaceIntegrationConfigured",
+      "when": "WorkspaceIntegration created or `is_active` transitions to true.",
+      "afterCommit": true,
+      "payload": {
+        "workspace": "Workspace",
+        "integration": "WorkspaceIntegration"
+      }
+    },
+    {
+      "name": "WorkspaceIntegrationSyncFailed",
+      "class": "Academorix\\Workspaces\\Events\\WorkspaceIntegrationSyncFailed",
+      "when": "SyncWorkspaceIntegrationJob left `last_sync_status=failed`. Fires on the first failure; subsequent consecutive failures are collapsed until a success.",
+      "afterCommit": true,
+      "payload": {
+        "workspace": "Workspace",
+        "integration": "WorkspaceIntegration",
+        "error": "string"
+      }
+    },
+    {
+      "name": "IdentityCreated",
+      "class": "Academorix\\Workspaces\\Events\\IdentityCreated",
+      "when": "First-ever Identity row for an email under an Application. Subsequent User rows under the same email reuse the Identity, no event.",
+      "afterCommit": true,
+      "payload": {
+        "application": "Application",
+        "identity": "Identity"
+      }
+    },
+    {
+      "name": "IdentityErased",
+      "class": "Academorix\\Workspaces\\Events\\IdentityErased",
+      "when": "Cross-workspace Identity row anonymised. Cascades from user::UserErased when the erased User was the last one referencing the Identity for a given Application. Compliance-anonymises the Identity (email hashed, name cleared).",
+      "afterCommit": true,
+      "payload": {
+        "identityId": "string",
+        "applicationId": "string"
+      }
+    }
+  ]
+}

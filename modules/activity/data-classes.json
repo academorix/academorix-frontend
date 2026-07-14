@@ -6,7 +6,7 @@
   "reference": "foundation::data-classes.json.tiers",
   "classes": {
     "public": ["Activity.id", "Activity.log_name", "Activity.event", "Activity.subject_type", "Activity.causer_type", "Activity.batch_uuid", "Activity.retention_tier", "Activity.created_at", "Activity.updated_at"],
-    "internal": ["Activity.tenant_id", "Activity.subject_id", "Activity.causer_id"],
+    "internal": ["Activity.workspace_id", "Activity.subject_id", "Activity.causer_id"],
     "confidential": ["Activity.description", "Activity.properties"],
     "restricted": [],
     "regulated_minor": [],

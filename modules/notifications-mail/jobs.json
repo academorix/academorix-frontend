@@ -10,11 +10,11 @@
       "purpose": "Sends a single Notification via Laravel Mail.",
       "steps": [
         "Load Notification + resolve NotificationTemplate for (category, channel=mail, locale).",
-        "Check MailSuppressionRegistry::isSuppressed(email, tenant_id). If suppressed: create NotificationDelivery(state=permanently_failed, error_code=NOTIFICATIONS_MAIL_SUPPRESSED_ADDRESS). Fire NotificationFailed.",
+        "Check MailSuppressionRegistry::isSuppressed(email, workspace_id). If suppressed: create NotificationDelivery(state=permanently_failed, error_code=NOTIFICATIONS_MAIL_SUPPRESSED_ADDRESS). Fire NotificationFailed.",
         "Blade::render(template.body_rendered_html, variables) + Blade::render(subject_template, variables).",
-        "Inject CAN-SPAM footer with tenant.postal_address.",
+        "Inject CAN-SPAM footer with workspace.postal_address.",
         "Inject List-Unsubscribe-Post + List-Unsubscribe headers (RFC 8058).",
-        "Inject X-Academorix-Category + X-Academorix-Notification-Id + X-Academorix-Tenant-Id headers.",
+        "Inject X-Academorix-Category + X-Academorix-Notification-Id + X-Academorix-Workspace-Id headers.",
         "Mail::mailer(driver_for_category)->send(rendered).",
         "Create NotificationDelivery(state=sent, provider=driver, provider_message_id=Mail::lastMessageId()).",
         "Fire MailSent."

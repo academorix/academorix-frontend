@@ -22,7 +22,7 @@
       "HasFactory",
       "HasUlids",
       "BelongsToApplication",
-      "BelongsToTenantOptional",
+      "BelongsToWorkspaceOptional",
       "BelongsToInvitation",
       "HasMetadata"
     ],
@@ -68,13 +68,13 @@
           "onDelete": "restrict"
         }
       },
-      "tenant_id": {
+      "workspace_id": {
         "type": "string",
         "length": 64,
         "nullable": true,
-        "description": "Denormalised from the parent Invitation for scan-by-tenant queries. Matches parent at write time and never changes.",
+        "description": "Denormalised from the parent Invitation for scan-by-workspace queries. Matches parent at write time and never changes.",
         "foreign": {
-          "table": "tenants",
+          "table": "workspaces",
           "column": "id",
           "onUpdate": "cascade",
           "onDelete": "cascade"
@@ -172,16 +172,16 @@
         "description": "Idempotency guard — a mail-transport webhook may deliver the same signal_id twice; we ignore duplicates."
       },
       {
-        "columns": ["tenant_id", "event", "occurred_at"],
+        "columns": ["workspace_id", "event", "occurred_at"],
         "unique": false,
-        "name": "invitation_events_tenant_event_occurred_index",
-        "description": "Funnel-analytics queries — 'count of `opened` in this tenant in the last 30 days'."
+        "name": "invitation_events_workspace_event_occurred_index",
+        "description": "Funnel-analytics queries — 'count of `opened` in this workspace in the last 30 days'."
       },
       {
         "columns": ["event", "occurred_at"],
         "unique": false,
         "name": "invitation_events_event_occurred_index",
-        "description": "Cross-tenant funnel / deliverability queries for the platform-admin dashboard."
+        "description": "Cross-workspace funnel / deliverability queries for the platform-admin dashboard."
       }
     ]
   },
@@ -197,7 +197,7 @@
     "id": {"type": "string", "pattern": "^invevt_[0-9A-HJKMNP-TV-Z]{26}$"},
     "invitation_id": {"type": "string", "pattern": "^invite_[0-9A-HJKMNP-TV-Z]{26}$"},
     "application_id": {"type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": ["string", "null"], "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "event": {
       "type": "string",
       "enum": [

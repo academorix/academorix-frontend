@@ -2,7 +2,7 @@
   "id": "academorix://modules/notifications/feature-flags",
   "$version": 1,
   "title": "notifications core \u2014 kill switches + rollout controls",
-  "description": "Runtime toggles resolved via Laravel Pennant. Kill switches default ON \u2014 flipping OFF is an incident-response action. Rollout flags default OFF and progress via a Pennant scope function (percentage / cohort / tenant).",
+  "description": "Runtime toggles resolved via Laravel Pennant. Kill switches default ON \u2014 flipping OFF is an incident-response action. Rollout flags default OFF and progress via a Pennant scope function (percentage / cohort / workspace).",
   "engine": "laravel/pennant",
   "flags": [
     {
@@ -21,13 +21,13 @@
       "key": "notifications.template-renderer",
       "kind": "kill-switch",
       "default": "on",
-      "description": "Disables tenant-override template resolution. All sends fall back to the platform-default template. Used when a tenant template is malformed + causing a delivery-failure spike."
+      "description": "Disables workspace-override template resolution. All sends fall back to the platform-default template. Used when a workspace template is malformed + causing a delivery-failure spike."
     },
     {
       "key": "notifications.in-app-broadcast",
       "kind": "kill-switch",
       "default": "on",
-      "description": "Disables the Reverb broadcast on user.{id}.notifications + tenant.{id}.notifications. The database write for in-app notifications still happens \u2014 the bell just doesn't live-update. Used during Reverb incidents; UX degrades to poll-on-refresh."
+      "description": "Disables the Reverb broadcast on user.{id}.notifications + workspace.{id}.notifications. The database write for in-app notifications still happens \u2014 the bell just doesn't live-update. Used during Reverb incidents; UX degrades to poll-on-refresh."
     },
     {
       "key": "notifications.preference-cache",
@@ -36,11 +36,11 @@
       "description": "Disables the preference cache. Every PreferenceResolver::resolve() call hits the DB directly. Emergency toggle for cache corruption."
     },
     {
-      "key": "notifications.dispatch-per-tenant-rate-limit",
+      "key": "notifications.dispatch-per-workspace-rate-limit",
       "kind": "rollout",
       "default": "off",
-      "description": "Enables a per-tenant dispatch rate limit (default 1000/min) to prevent a runaway loop in one tenant from starving others. Rolled out per-tenant via a Pennant scope function.",
-      "scope": "tenant"
+      "description": "Enables a per-workspace dispatch rate limit (default 1000/min) to prevent a runaway loop in one workspace from starving others. Rolled out per-workspace via a Pennant scope function.",
+      "scope": "workspace"
     }
   ]
 }

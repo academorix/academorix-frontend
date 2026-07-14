@@ -39,7 +39,7 @@
   ],
   "notes": [
     "Both limiters register in foundation's `RateLimiter::for()` bindings via NotificationsServiceProvider.",
-    "Channel modules ship their OWN limiters for provider-facing routes (mail provider webhooks, sms STOP handlers, push register). Core's limiters cover only the tenant-facing inbox + preferences surface.",
+    "Channel modules ship their OWN limiters for provider-facing routes (mail provider webhooks, sms STOP handlers, push register). Core's limiters cover only the workspace-facing inbox + preferences surface.",
     "The `signed` middleware on the unsubscribe route is Laravel's built-in \u2014 not declared here."
   ]
 }

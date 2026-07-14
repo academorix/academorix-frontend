@@ -1,0 +1,95 @@
+{
+  "id": "academorix://modules/search/settings",
+  "$version": 1,
+  "title": "search \u2014 settings",
+  "description": "Two settings groups: workspace-scoped defaults (`search`) and per-user preferences (`search_user`). Discovered by the settings module at boot via #[AsSetting] on the two classes.",
+  "storedIn": "settings",
+  "reference": {"contract": "academorix://modules/settings/attributes"},
+  "groups": [
+    {
+      "key": "search",
+      "class": "Academorix\\Search\\Settings\\WorkspaceSearchSettings",
+      "label": "Search",
+      "description": "Workspace-wide defaults for the search engine.",
+      "icon": "magnifying-glass",
+      "scope": "workspace",
+      "public": false,
+      "sortOrder": 70,
+      "permission": "settings.read",
+      "sections": [
+        {
+          "label": "Engine defaults",
+          "icon": "server",
+          "sortOrder": 1,
+          "fields": [
+            {"name": "default_engine", "controlType": "select", "label": "Default engine", "defaultValue": "meilisearch", "options": {"meilisearch": "Meilisearch (user-facing)", "postgres-fts": "Postgres FTS (internal)", "pgvector": "pgvector (semantic \u2014 enterprise)"}, "validation": ["required", "in:meilisearch,postgres-fts,pgvector"], "sortOrder": 1},
+            {"name": "default_language", "controlType": "select", "label": "Default language", "defaultValue": "auto", "options": {"auto": "Auto-detect", "en": "English", "ar": "Arabic", "fr": "French", "es": "Spanish"}, "validation": ["required"], "sortOrder": 2}
+          ]
+        },
+        {
+          "label": "Analytics",
+          "icon": "chart-bar",
+          "sortOrder": 2,
+          "fields": [
+            {"name": "analytics_enabled",      "controlType": "switch", "label": "Record search analytics",   "defaultValue": true, "sortOrder": 1},
+            {"name": "click_tracking_enabled", "controlType": "switch", "label": "Track click-throughs",       "defaultValue": true, "helpText": "Records which result was clicked \u2014 powers relevance tuning.", "sortOrder": 2},
+            {"name": "analytics_retention_override_days", "controlType": "number", "label": "Retention override (days)", "defaultValue": null, "validation": ["nullable", "integer", "min:7", "max:365"], "sortOrder": 3, "helpText": "Empty = follow plan default. Cannot exceed the plan cap."}
+          ]
+        },
+        {
+          "label": "Suggest / autocomplete",
+          "icon": "sparkles",
+          "sortOrder": 3,
+          "fields": [
+            {"name": "suggest_enabled",         "controlType": "switch", "label": "Enable autocomplete",       "defaultValue": true, "sortOrder": 1},
+            {"name": "suggest_min_prefix",      "controlType": "number", "label": "Minimum prefix length",     "defaultValue": 2,    "validation": ["integer", "min:1", "max:5"], "sortOrder": 2}
+          ]
+        },
+        {
+          "label": "Notifications (defaults)",
+          "icon": "bell",
+          "sortOrder": 4,
+          "fields": [
+            {"name": "default_notify_channels", "controlType": "checkbox-group", "label": "Default channels for sync-job notifications",
+             "defaultValue": ["database", "broadcast"],
+             "options": {"mail": "Email", "broadcast": "Real-time (in-app toast)", "database": "In-app inbox", "push": "Mobile push", "sms": "SMS"},
+             "validation": ["required", "array", "min:1"], "sortOrder": 1}
+          ]
+        }
+      ]
+    },
+    {
+      "key": "search_user",
+      "class": "Academorix\\Search\\Settings\\UserSearchSettings",
+      "label": "Search \u2014 my preferences",
+      "description": "Per-user override of the workspace defaults.",
+      "icon": "user-circle",
+      "scope": "user",
+      "public": false,
+      "sortOrder": 25,
+      "permission": "settings.read",
+      "sections": [
+        {
+          "label": "Query defaults",
+          "icon": "adjustments-horizontal",
+          "sortOrder": 1,
+          "fields": [
+            {"name": "default_result_count", "controlType": "select", "label": "Results per page", "defaultValue": 20, "options": {"10": "10", "20": "20", "50": "50", "100": "100"}, "validation": ["required", "in:10,20,50,100"], "sortOrder": 1},
+            {"name": "preferred_engine",     "controlType": "select", "label": "Preferred engine (override)", "defaultValue": null, "options": {"meilisearch": "Meilisearch", "postgres-fts": "Postgres FTS", "pgvector": "pgvector"}, "validation": ["nullable"], "helpText": "Empty = follow workspace default. Only applies to models where more than one engine is available.", "sortOrder": 2}
+          ]
+        },
+        {
+          "label": "Notifications",
+          "icon": "bell",
+          "sortOrder": 2,
+          "fields": [
+            {"name": "notify_channels", "controlType": "checkbox-group", "label": "How I want to be notified about my search sync jobs",
+             "defaultValue": null,
+             "options": {"mail": "Email", "broadcast": "Real-time (in-app toast)", "database": "In-app inbox", "push": "Mobile push", "sms": "SMS"},
+             "validation": ["nullable", "array", "min:1"], "helpText": "Empty = follow workspace default.", "sortOrder": 1}
+          ]
+        }
+      ]
+    }
+  ]
+}

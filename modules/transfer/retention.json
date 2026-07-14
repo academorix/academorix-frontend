@@ -90,8 +90,8 @@
       "purge": {"trigger": "deleted_at < now() - 365d", "action": "hard delete", "job": "PruneXferArtifactsJob"}
     },
     {
-      "entity": "* (TenantErased cascade)",
-      "purge": {"trigger": "tenancy::TenantErased event", "action": "immediate hard delete via FK cascade + file purge orchestrated by PruneXferArtifactsJob(force=true) for the tenant scope"}
+      "entity": "* (WorkspaceErased cascade)",
+      "purge": {"trigger": "workspaces::WorkspaceErased event", "action": "immediate hard delete via FK cascade + file purge orchestrated by PruneXferArtifactsJob(force=true) for the workspace scope"}
     },
     {
       "entity": "* (UserErased anonymisation)",
@@ -102,7 +102,7 @@
     }
   ],
   "tier_assignment": {
-    "description": "XferJob.retention_tier column value set at row creation. Precedence: explicit request override (only allowed for platform-admin) > tenant plan default > global config default.",
+    "description": "XferJob.retention_tier column value set at row creation. Precedence: explicit request override (only allowed for platform-admin) > workspace plan default > global config default.",
     "defaults": {"free": "short", "team": "medium", "enterprise": "long"}
   },
   "artifact_ttl_config": {

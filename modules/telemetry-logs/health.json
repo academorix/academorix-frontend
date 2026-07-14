@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/telemetry-logs/health",
+  "$version": 1,
+  "title": "telemetry-logs \u2014 health probes",
+  "probes": [
+    {"name": "logs-pipeline-initialized", "class": "Academorix\\TelemetryLogs\\Health\\Probes\\PipelineInitializedProbe", "category": "startup", "critical": true, "description": "ProcessorPipeline + ChannelResolver bound. Redactor rules loaded.", "timeoutMs": 100},
+    {"name": "logs-registry-hydrated", "class": "Academorix\\TelemetryLogs\\Health\\Probes\\RegistryHydratedProbe", "category": "startup", "critical": true, "description": "LogContextRegistry compiled from #[AsLogContext] discovery.", "timeoutMs": 200},
+    {"name": "logs-sink-reachable", "class": "Academorix\\TelemetryLogs\\Health\\Probes\\SinkReachableProbe", "category": "readiness", "critical": false, "description": "Active sink (Loki / DataDog / file / stdout) is writeable. Non-critical because failures just buffer.", "timeoutMs": 2000},
+    {"name": "logs-dropped-records-ratio", "class": "Academorix\\TelemetryLogs\\Health\\Probes\\DroppedRecordsRatioProbe", "category": "readiness", "critical": false, "description": "Ratio of dropped records over last 5 minutes. Warns at 1%, fails at 10%.", "timeoutMs": 200, "thresholds": {"warn_ratio": 0.01, "fail_ratio": 0.10}},
+    {"name": "logs-redaction-enabled", "class": "Academorix\\TelemetryLogs\\Health\\Probes\\RedactionEnabledProbe", "category": "readiness", "critical": true, "description": "PRODUCTION-critical. Verifies telemetry-logs.redaction_enforcement kill switch is on. Off = PII leak risk.", "timeoutMs": 50, "environments": ["production", "staging"]}
+  ]
+}

@@ -16,7 +16,7 @@
     "model": "Academorix\\Transfer\\Models\\XferShard",
     "interface": "Academorix\\Transfer\\Contracts\\Data\\XferShardInterface",
     "implements": ["Academorix\\Transfer\\Contracts\\Data\\XferShardInterface"],
-    "traits": ["HasUlids", "BelongsToTenant"],
+    "traits": ["HasUlids", "BelongsToWorkspace"],
     "casts": {
       "status": "Academorix\\Transfer\\Enums\\XferShardStatus",
       "counters": "Academorix\\Transfer\\Casts\\XferJobCountersCast",
@@ -28,7 +28,7 @@
       "finished_at": "immutable_datetime"
     },
     "hidden": [],
-    "guarded": ["id", "xfer_job_id", "tenant_id"]
+    "guarded": ["id", "xfer_job_id", "workspace_id"]
   },
   "x-database": {
     "engine": "postgres",
@@ -36,7 +36,7 @@
     "columns": {
       "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `xshd_<26 chars>`."},
       "xfer_job_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "xfer_jobs", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "Parent job."},
-      "tenant_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "Denormalised for scan predicates and tenant-scope enforcement."},
+      "workspace_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "workspaces", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "Denormalised for scan predicates and workspace-scope enforcement."},
       "index": {"type": "integer", "nullable": false, "description": "1-based shard index within the job."},
       "sheet_name": {"type": "string", "length": 128, "nullable": true, "description": "Non-null for workbook shards. The sheet name inside the Excel file this shard represents."},
       "offset": {"type": "integer", "nullable": true, "description": "Row offset within the source file. Null for exports (shards partition the query, not the file)."},
@@ -63,7 +63,7 @@
   "properties": {
     "id": {"type": "string", "pattern": "^xshd_[0-9A-HJKMNP-TV-Z]{26}$"},
     "xfer_job_id": {"type": "string", "pattern": "^xfer_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": ["string", "null"], "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "index": {"type": "integer", "minimum": 1},
     "sheet_name": {"type": ["string", "null"], "maxLength": 128},
     "offset": {"type": ["integer", "null"], "minimum": 0},

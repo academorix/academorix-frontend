@@ -2,7 +2,7 @@
   "id": "academorix://modules/webhook/permissions",
   "$version": 1,
   "title": "webhook \u2014 permissions",
-  "description": "Two guards. Sanctum permissions are tenant-facing (subscription + delivery admin). platform_admin permissions gate cross-tenant inspection + emergency pause.",
+  "description": "Two guards. Sanctum permissions are workspace-facing (subscription + delivery admin). platform_admin permissions gate cross-workspace inspection + emergency pause.",
   "seeder": "Academorix\\Webhook\\Database\\Seeders\\WebhookPermissionSeeder",
   "isSystem": true,
   "permissions": [
@@ -21,7 +21,7 @@
     {"name": "webhook.destinations.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner"]},
     {"name": "platform.webhook.subscriptions.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "support", "ops"]},
     {"name": "platform.webhook.subscriptions.view", "guard": "platform_admin", "seededOn": ["super_admin", "support", "ops"]},
-    {"name": "platform.webhook.subscriptions.manage", "guard": "platform_admin", "description": "Emergency cross-tenant pause/resume.", "seededOn": ["super_admin", "ops"]},
+    {"name": "platform.webhook.subscriptions.manage", "guard": "platform_admin", "description": "Emergency cross-workspace pause/resume.", "seededOn": ["super_admin", "ops"]},
     {"name": "platform.webhook.deliveries.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "support", "ops"]},
     {"name": "platform.webhook.deliveries.view", "guard": "platform_admin", "seededOn": ["super_admin", "support", "ops"]},
     {"name": "platform.webhook.deliveries.retry", "guard": "platform_admin", "seededOn": ["super_admin", "ops"]}

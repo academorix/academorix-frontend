@@ -12,7 +12,7 @@
     {
       "slug": "versioning.api_deprecation",
       "display_name": "API deprecation notices",
-      "description": "Notifies tenant admins when an API version they use is scheduled for sunset. Includes migration guide URL + affected endpoints/events. Cannot be opted out (transactional).",
+      "description": "Notifies workspace admins when an API version they use is scheduled for sunset. Includes migration guide URL + affected endpoints/events. Cannot be opted out (transactional).",
       "default_channels": ["mail", "in_app"],
       "priority": "transactional",
       "consent_tier": "transactional_required",

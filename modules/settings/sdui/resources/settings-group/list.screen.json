@@ -3,8 +3,8 @@
   "title": "Settings",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/settings",
-  "host": "tenant",
+  "route": "/workspace/settings",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "settings", "entity": "settings-group", "action": "list"},
   "requiresPermission": "settings.read",
@@ -23,7 +23,7 @@
           "props": {"className": "w-64 border-r border-content2 p-4 overflow-auto"},
           "children": [
             {"kind": "Text", "props": {"as": "h1", "className": "text-lg font-semibold mb-4", "children": "Settings"}},
-            {"kind": "List", "bindings": {"items": {"$ref": "schema.groups"}}, "itemRenderer": {"kind": "Link", "props": {"className": "flex items-center gap-2 p-2 rounded hover:bg-content2 no-underline"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/settings/' + row.key"}}, "children": [
+            {"kind": "List", "bindings": {"items": {"$ref": "schema.groups"}}, "itemRenderer": {"kind": "Link", "props": {"className": "flex items-center gap-2 p-2 rounded hover:bg-content2 no-underline"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/workspace/settings/' + row.key"}}, "children": [
               {"kind": "Icon", "props": {"className": "size-4"}, "bindings": {"icon": {"$ref": "row.icon"}}},
               {"kind": "Text", "props": {"className": "text-sm"}, "bindings": {"children": {"$ref": "row.label"}}}
             ]}}

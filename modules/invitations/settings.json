@@ -13,7 +13,7 @@
       "label": "Invitations",
       "description": "Expiry + resends + delivery channels + rate limits + sender identity + acceptance flow.",
       "icon": "envelope-open",
-      "scope": "tenant",
+      "scope": "workspace",
       "public": false,
       "sortOrder": 25,
       "permission": "invitations.send",
@@ -103,7 +103,7 @@
         },
         {
           "label": "Sending limits",
-          "description": "Per-inviter and per-tenant guardrails to prevent accidental over-sending. Enterprise plans can lift them via ops.",
+          "description": "Per-inviter and per-workspace guardrails to prevent accidental over-sending. Enterprise plans can lift them via ops.",
           "icon": "chart-bar",
           "sortOrder": 4,
           "fields": [
@@ -119,9 +119,9 @@
               "gates": { "requires_entitlement": "invitations.throttle.overrides" }
             },
             {
-              "name": "throttle_per_tenant_per_day",
+              "name": "throttle_per_workspace_per_day",
               "controlType": "number",
-              "label": "Max per tenant per day",
+              "label": "Max per workspace per day",
               "defaultValue": 250,
               "validation": ["required", "integer", "min:1", "max:10000"],
               "min": 1,
@@ -144,7 +144,7 @@
               "defaultValue": null,
               "validation": ["nullable", "string", "max:200"],
               "sortOrder": 1,
-              "helpText": "Empty = tenant name."
+              "helpText": "Empty = workspace name."
             },
             {
               "name": "sender_reply_to",
@@ -153,7 +153,7 @@
               "defaultValue": null,
               "validation": ["nullable", "email", "max:254"],
               "sortOrder": 2,
-              "helpText": "Empty = tenant's billing contact email."
+              "helpText": "Empty = workspace's billing contact email."
             }
           ]
         },
@@ -174,11 +174,11 @@
             {
               "name": "acceptance_require_sso",
               "controlType": "toggle",
-              "label": "Force SSO when tenant has SSO",
+              "label": "Force SSO when workspace has SSO",
               "defaultValue": true,
               "validation": ["boolean"],
               "sortOrder": 2,
-              "helpText": "Invitations sent to a domain matching the tenant's SSO IdP route through SSO instead of password creation."
+              "helpText": "Invitations sent to a domain matching the workspace's SSO IdP route through SSO instead of password creation."
             }
           ]
         }

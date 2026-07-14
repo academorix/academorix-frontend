@@ -1,0 +1,9 @@
+{
+  "id": "academorix://modules/telemetry-otel/analytics",
+  "$version": 1,
+  "title": "telemetry-otel \u2014 product analytics",
+  "description": "None. Telemetry is developer infrastructure; there is no product-analytics surface tied to it.",
+  "sink": null,
+  "consentTiers": [],
+  "events": []
+}

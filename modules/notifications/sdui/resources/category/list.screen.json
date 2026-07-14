@@ -3,13 +3,13 @@
   "title": "Notification categories",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/notification-categories",
-  "host": "tenant",
+  "route": "/workspace/notification-categories",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "notifications", "entity": "category", "action": "list"},
   "requiresPermission": "notifications.templates.viewAny",
   "dataSources": [
-    {"name": "categories", "kind": "http.get", "url": "/api/v1/tenant/notification-categories", "unwrap": "data", "cache": {"ttlSeconds": 3600}}
+    {"name": "categories", "kind": "http.get", "url": "/api/v1/workspace/notification-categories", "unwrap": "data", "cache": {"ttlSeconds": 3600}}
   ],
   "nodes": [
     {
@@ -22,7 +22,7 @@
           "props": {"className": "flex flex-col gap-1"},
           "children": [
             {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Notification categories"}},
-            {"kind": "Text", "props": {"className": "text-sm text-muted", "children": "Read-only registry. Every category is contributed by a module. Tenants may override display_name + default_channels but not priority + consent_tier."}}
+            {"kind": "Text", "props": {"className": "text-sm text-muted", "children": "Read-only registry. Every category is contributed by a module. Workspaces may override display_name + default_channels but not priority + consent_tier."}}
           ]
         },
         {

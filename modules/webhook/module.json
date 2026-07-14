@@ -28,7 +28,7 @@
   "dependencies": [
     "foundation",
     "versioning",
-    "tenancy"
+    "workspaces"
   ],
   "extendedBy": [
     "notifications",
@@ -189,7 +189,7 @@
       ]
     },
     "platform-admin": {
-      "description": "Cross-tenant subscription + delivery inspection.",
+      "description": "Cross-workspace subscription + delivery inspection.",
       "routes": [
         "GET /api/v1/platform/webhook/subscriptions",
         "GET /api/v1/platform/webhook/subscriptions/{id}",
@@ -198,23 +198,23 @@
         "GET /api/v1/platform/webhook/deliveries"
       ]
     },
-    "tenant": {
-      "description": "Tenant admin surface \u2014 subscription CRUD + delivery audit + test / retry / rotate.",
+    "workspace": {
+      "description": "Workspace admin surface \u2014 subscription CRUD + delivery audit + test / retry / rotate.",
       "routes": [
-        "GET /api/v1/tenant/webhook/subscriptions",
-        "POST /api/v1/tenant/webhook/subscriptions",
-        "GET /api/v1/tenant/webhook/subscriptions/{id}",
-        "PATCH /api/v1/tenant/webhook/subscriptions/{id}",
-        "DELETE /api/v1/tenant/webhook/subscriptions/{id}",
-        "POST /api/v1/tenant/webhook/subscriptions/{id}/test",
-        "POST /api/v1/tenant/webhook/subscriptions/{id}/rotate-secret",
-        "POST /api/v1/tenant/webhook/subscriptions/{id}/pause",
-        "POST /api/v1/tenant/webhook/subscriptions/{id}/resume",
-        "GET /api/v1/tenant/webhook/deliveries",
-        "GET /api/v1/tenant/webhook/deliveries/{id}",
-        "POST /api/v1/tenant/webhook/deliveries/{id}/retry",
-        "GET /api/v1/tenant/webhook/events",
-        "GET /api/v1/tenant/webhook/destinations"
+        "GET /api/v1/workspace/webhook/subscriptions",
+        "POST /api/v1/workspace/webhook/subscriptions",
+        "GET /api/v1/workspace/webhook/subscriptions/{id}",
+        "PATCH /api/v1/workspace/webhook/subscriptions/{id}",
+        "DELETE /api/v1/workspace/webhook/subscriptions/{id}",
+        "POST /api/v1/workspace/webhook/subscriptions/{id}/test",
+        "POST /api/v1/workspace/webhook/subscriptions/{id}/rotate-secret",
+        "POST /api/v1/workspace/webhook/subscriptions/{id}/pause",
+        "POST /api/v1/workspace/webhook/subscriptions/{id}/resume",
+        "GET /api/v1/workspace/webhook/deliveries",
+        "GET /api/v1/workspace/webhook/deliveries/{id}",
+        "POST /api/v1/workspace/webhook/deliveries/{id}/retry",
+        "GET /api/v1/workspace/webhook/events",
+        "GET /api/v1/workspace/webhook/destinations"
       ]
     }
   }

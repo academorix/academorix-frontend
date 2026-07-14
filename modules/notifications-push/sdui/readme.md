@@ -4,9 +4,9 @@
 
 ### `resources/push-subscription/`
 
-Per-user device management + tenant admin visibility.
+Per-user device management + workspace admin visibility.
 
-- `list.screen.json` — user sees own devices; tenant admin sees all in tenant. Revoke action on each row. Device tokens NEVER displayed.
+- `list.screen.json` — user sees own devices; workspace admin sees all in workspace. Revoke action on each row. Device tokens NEVER displayed.
 - `show.screen.json` — device detail with fingerprint + last seen + platform + app version.
 
 ### `widgets/`

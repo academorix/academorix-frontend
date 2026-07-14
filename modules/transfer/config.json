@@ -71,7 +71,7 @@
     },
     "notifications": {
       "keys": [
-        {"path": "transfer.notifications.default_channels", "type": "array<string>", "default": ["database", "broadcast"], "description": "Channels used when nothing else resolved. Overridden per-tenant, per-user, per-request in that precedence."},
+        {"path": "transfer.notifications.default_channels", "type": "array<string>", "default": ["database", "broadcast"], "description": "Channels used when nothing else resolved. Overridden per-workspace, per-user, per-request in that precedence."},
         {"path": "transfer.notifications.completed_channels_max", "type": "int", "default": 5, "description": "Cap on channel array length."},
         {"path": "transfer.notifications.async", "type": "bool", "default": true, "description": "SendXferJobNotificationJob is queued. False = sync (only for tests)."}
       ]
@@ -118,7 +118,7 @@
     },
     "concurrency": {
       "keys": [
-        {"path": "transfer.concurrency.enforced_at_dispatch", "type": "bool", "default": true, "description": "Refuse dispatch when tenant already has max_concurrent_jobs in flight. False = queue-and-wait behind Laravel queue (worse UX; may cause head-of-line blocking)."}
+        {"path": "transfer.concurrency.enforced_at_dispatch", "type": "bool", "default": true, "description": "Refuse dispatch when workspace already has max_concurrent_jobs in flight. False = queue-and-wait behind Laravel queue (worse UX; may cause head-of-line blocking)."}
       ]
     }
   }

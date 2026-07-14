@@ -12,11 +12,11 @@
         {"article": "Art. 6(1)(a)", "control": "consent-basis-for-processing-invitee-email", "evidence": "InvitationEvent.event=`clicked` with actor_type=`invitee` = the invitee affirmatively acknowledged the invitation link. Absence of that event before accept = manual admin abuse (auditable)."},
         {"article": "Art. 6(1)(f)", "control": "legitimate-interest-workspace-onboarding", "evidence": "Invitation.inviter_type + inviter_id + role_key establish the workspace-onboarding context. Rate limits per-invitee (5/week) prevent abuse."},
         {"article": "Art. 7(3)", "control": "right-to-withdraw", "evidence": "POST /api/invitations/{token}/decline is always available before accept + writes InvitationEvent event=`declined`."},
-        {"article": "Art. 8", "control": "minor-parental-consent-when-invitee-under-16", "evidence": "Consumer accept handlers can enforce this — TenantInvitationAcceptHandler (owned by user module) checks the invitee's stated date-of-birth on the accept form and gates through the safeguarding module's guardian-consent flow when age < 16."},
+        {"article": "Art. 8", "control": "minor-parental-consent-when-invitee-under-16", "evidence": "Consumer accept handlers can enforce this — WorkspaceInvitationAcceptHandler (owned by user module) checks the invitee's stated date-of-birth on the accept form and gates through the safeguarding module's guardian-consent flow when age < 16."},
         {"article": "Art. 15", "control": "dsar-export", "evidence": "Invitation + InvitationEvent rows for a given email are exportable via the compliance module's DSAR orchestrator. Includes bounce_reason, delivered_at timestamps, and every event ip_address."},
         {"article": "Art. 17", "control": "right-to-erasure", "evidence": "retention.json → erasureOnRequest P0D. On subject request, email is replaced with `erased-<hash>@invalid.local`, message + metadata purged, InvitationEvent rows anonymised (ip/user_agent zeroed but event + occurred_at preserved for aggregate deliverability)."},
         {"article": "Art. 32", "control": "encryption-in-transit-for-invitation-mail", "evidence": "Mail transports (SendGrid/SES/Postmark/Mailgun) require TLS for outbound SMTP. Enforced by transport config."},
-        {"article": "Art. 33", "control": "breach-notification-72h", "evidence": "invitations.rate_limit_exceeded.total metric + webhook.signature_failed.total metric alerts route to on-call for abuse investigation. TenantSecurityBreachNotification fires when platform-admin revoke is flagged isAbuseResponse=true."}
+        {"article": "Art. 33", "control": "breach-notification-72h", "evidence": "invitations.rate_limit_exceeded.total metric + webhook.signature_failed.total metric alerts route to on-call for abuse investigation. WorkspaceSecurityBreachNotification fires when platform-admin revoke is flagged isAbuseResponse=true."}
       ]
     },
     "uk_gdpr": {
@@ -28,7 +28,7 @@
       "applicable": true,
       "regulation": "16 CFR Part 312",
       "controls": [
-        {"article": "§312.5", "control": "verifiable-parental-consent-when-inviting-minor", "evidence": "Guardian invitations for athletes under 13 (in US school + academy tenants) route through the safeguarding module's VPC flow — the invitations module surfaces the flag `requires_vpc=true` on the accept preflight when the target invitation's role_key implies a minor-adjacent relationship."},
+        {"article": "§312.5", "control": "verifiable-parental-consent-when-inviting-minor", "evidence": "Guardian invitations for athletes under 13 (in US school + academy workspaces) route through the safeguarding module's VPC flow — the invitations module surfaces the flag `requires_vpc=true` on the accept preflight when the target invitation's role_key implies a minor-adjacent relationship."},
         {"article": "§312.4", "control": "direct-notice-to-parents", "evidence": "InvitationNotification body includes a COPPA-mandated direct-notice section for guardian-of-minor invitations."}
       ]
     },
@@ -36,7 +36,7 @@
       "applicable": true,
       "regulation": "Cal. Civ. Code §1798.100",
       "controls": [
-        {"article": "§1798.100", "control": "notice-at-collection-for-invitee-email", "evidence": "Preview page (GET /api/invitations/{token}) displays the Academorix privacy notice + tenant-specific processing purposes."}
+        {"article": "§1798.100", "control": "notice-at-collection-for-invitee-email", "evidence": "Preview page (GET /api/invitations/{token}) displays the Academorix privacy notice + workspace-specific processing purposes."}
       ]
     },
     "can_spam": {
@@ -44,15 +44,15 @@
       "regulation": "15 U.S.C. §7701 (CAN-SPAM Act)",
       "description": "Applies to any commercial e-mail messages under US law. Invitations are transactional, not commercial — CAN-SPAM exempts transactional messages from the primary requirements, but we still comply with §7704 (a)(1) (accurate header info) + §7704 (a)(2) (accurate subject line) + §7704 (a)(3) (functional return address).",
       "controls": [
-        {"article": "§7704(a)(1)", "control": "accurate-headers", "evidence": "InvitationNotification uses the tenant's brand + address as From, with `academorix.app` sending-domain visible in Return-Path."},
-        {"article": "§7704(a)(3)", "control": "physical-postal-address", "evidence": "InvitationNotification footer contains the tenant's postal address (from TenantContact where kind=billing OR the Academorix corporate address as fallback)."}
+        {"article": "§7704(a)(1)", "control": "accurate-headers", "evidence": "InvitationNotification uses the workspace's brand + address as From, with `academorix.app` sending-domain visible in Return-Path."},
+        {"article": "§7704(a)(3)", "control": "physical-postal-address", "evidence": "InvitationNotification footer contains the workspace's postal address (from WorkspaceContact where kind=billing OR the Academorix corporate address as fallback)."}
       ]
     },
     "casl": {
       "applicable": true,
       "regulation": "Canadian Anti-Spam Legislation 2014",
       "controls": [
-        {"article": "s. 6(6)(f)", "control": "existing-business-relationship-implied-consent", "evidence": "An invitation-to-join is implied consent under CASL where the invitee has an existing relationship with the tenant. Rate limits (5/week per invitee) + easy decline flow satisfy the additional CASL requirements."}
+        {"article": "s. 6(6)(f)", "control": "existing-business-relationship-implied-consent", "evidence": "An invitation-to-join is implied consent under CASL where the invitee has an existing relationship with the workspace. Rate limits (5/week per invitee) + easy decline flow satisfy the additional CASL requirements."}
       ]
     },
     "wcag_2_2_aa": {

@@ -39,7 +39,7 @@
             {"kind": "TagInput", "props": {"label": "Affected endpoints", "name": "affected_endpoints", "placeholder": "/api/v1/legacy-invitations", "description": "Leave empty to indicate the entire version is affected."}},
             {"kind": "TagInput", "props": {"label": "Affected webhook events", "name": "affected_events", "placeholder": "invitation.sent", "description": "Leave empty to indicate all webhook events on the version are affected."}},
             {"kind": "TextField", "props": {"label": "Migration guide URL", "name": "migration_guide_url", "type": "url", "placeholder": "https://docs.academorix.com/migration/v1-to-v2", "description": "Optional. Falls back to parent version's sunset_notice_url."}},
-            {"kind": "Switch", "props": {"label": "Notify affected customers on publish", "name": "notify_customers", "defaultValue": true, "description": "When on, publishing fires ApiDeprecationNotification (or ApiSunsetNotification) via mail + in-app to every affected tenant admin."}},
+            {"kind": "Switch", "props": {"label": "Notify affected customers on publish", "name": "notify_customers", "defaultValue": true, "description": "When on, publishing fires ApiDeprecationNotification (or ApiSunsetNotification) via mail + in-app to every affected workspace admin."}},
             {"kind": "Button", "props": {"variant": "primary", "size": "md", "type": "submit", "children": "Create draft"}}
           ]
         }

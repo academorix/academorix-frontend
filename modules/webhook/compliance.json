@@ -7,7 +7,7 @@
     "gdpr": {
       "applicable": true,
       "controls": [
-        {"article": "Art. 28", "principle": "processor arrangement", "evidence": "Customer webhook receivers ARE subprocessors from the tenant's perspective (they receive tenant data). The subprocessors.json entry documents the mechanism; the customer's receiver is not itself listed \u2014 that's the tenant's own contractual concern with their receiver."},
+        {"article": "Art. 28", "principle": "processor arrangement", "evidence": "Customer webhook receivers ARE subprocessors from the workspace's perspective (they receive workspace data). The subprocessors.json entry documents the mechanism; the customer's receiver is not itself listed \u2014 that's the workspace's own contractual concern with their receiver."},
         {"article": "Art. 30", "principle": "records of processing", "evidence": "audit_log rows for every subscription lifecycle transition + secret rotation + admin action, retained 7y cold. HasVersions on WebhookSubscription captures the exact configuration at every point in time."},
         {"article": "Art. 32", "principle": "security of processing", "evidence": "HMAC-SHA256 signing on every outbound. Rotation grace window prevents downtime during key rotation. Signing secrets encrypted at rest via AWS KMS. TLS 1.3 for all HTTPS destinations. mTLS destination available for high-security receivers."},
         {"article": "Art. 33", "principle": "breach notification", "evidence": "WebhookSecretRotated event fires immediately on rotation. Rotations spike during incident response \u2014 audit trail correlates to breach timeline."}
@@ -16,7 +16,7 @@
     "soc2_type2": {
       "applicable": true,
       "controls": [
-        {"criterion": "CC6.1", "principle": "logical access", "evidence": "policies.json restricts subscription CRUD to tenant admins + rotate-secret to owners. Signing secrets never returned by API except once at creation/rotation."},
+        {"criterion": "CC6.1", "principle": "logical access", "evidence": "policies.json restricts subscription CRUD to workspace admins + rotate-secret to owners. Signing secrets never returned by API except once at creation/rotation."},
         {"criterion": "CC6.6", "principle": "encryption in transit", "evidence": "TLS 1.3 on HTTPS destinations; mTLS available. verify_ssl column allows only dev-mode bypass."},
         {"criterion": "CC7.2", "principle": "system monitoring", "evidence": "health.json + metrics.json + WebhookProbeJob + WebhookProbeFailed event. Deliveries-oldest-pending probe detects worker starvation."},
         {"criterion": "CC7.3", "principle": "incident response", "evidence": "feature-flags.json ships 12 kill switches. Emergency pause via platform-admin endpoint. All ops actions audit-logged."},
@@ -34,7 +34,7 @@
     },
     "pci_dss": {
       "applicable": true,
-      "note": "When a tenant integration processes cardholder data, webhook is in scope for PCI-DSS Req 10 (logging + monitoring). Retention of at least 1 year (config default 30d + enterprise entitlement extends).",
+      "note": "When a workspace integration processes cardholder data, webhook is in scope for PCI-DSS Req 10 (logging + monitoring). Retention of at least 1 year (config default 30d + enterprise entitlement extends).",
       "controls": [
         {"requirement": "Req 4.1", "principle": "encrypt transmission", "evidence": "TLS 1.3 mandatory; verify_ssl=false refused in production (config guard)."},
         {"requirement": "Req 8.2", "principle": "auth strength", "evidence": "HMAC-SHA256 with 32-byte random secret. Rotation grace supports proper key rotation."},

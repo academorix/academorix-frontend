@@ -17,7 +17,7 @@
         "slack": "invitations::slack.invitation"
       },
       "queue": "invitations",
-      "description": "The invitation itself. Body: greeting, inviter name, target label, custom message, big CTA button linking to `https://{application.central_host}/invitations/{raw_token}`, expiry note, decline link, unsubscribe-if-not-you link. Localised to the invitee's preferred locale when known; falls back to the tenant's default locale otherwise. Channel selection driven by the invitation's `channel` field."
+      "description": "The invitation itself. Body: greeting, inviter name, target label, custom message, big CTA button linking to `https://{application.central_host}/invitations/{raw_token}`, expiry note, decline link, unsubscribe-if-not-you link. Localised to the invitee's preferred locale when known; falls back to the workspace's default locale otherwise. Channel selection driven by the invitation's `channel` field."
     },
     {
       "class": "Academorix\\Invitations\\Notifications\\InvitationReminderNotification",
@@ -41,10 +41,10 @@
       "class": "Academorix\\Invitations\\Notifications\\InvitationBouncedNotification",
       "channels": ["mail", "database", "slack"],
       "consentTier": "transactional",
-      "targets": ["User (invitations admins in the tenant, matched by `invitations.manage_any` permission)"],
+      "targets": ["User (invitations admins in the workspace, matched by `invitations.manage_any` permission)"],
       "template": {"mail": "invitations::email.bounced", "markdown": true},
       "queue": "notifications",
-      "description": "Sent to tenant admins when a hard bounce or complaint is recorded. Body includes the invitee email, bounce_reason, and a CTA to correct + resend. Slack channel available for tenants with a wired-in webhook."
+      "description": "Sent to workspace admins when a hard bounce or complaint is recorded. Body includes the invitee email, bounce_reason, and a CTA to correct + resend. Slack channel available for workspaces with a wired-in webhook."
     }
   ],
   "consentTierNotes": {

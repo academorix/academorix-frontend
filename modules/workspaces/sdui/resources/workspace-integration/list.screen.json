@@ -1,0 +1,42 @@
+{
+  "id": "workspaces.resources.workspace-integration.list",
+  "title": "Integrations",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/workspace/integrations",
+  "host": "workspace",
+  "audience": "authenticated",
+  "resource": {"module": "workspaces", "entity": "workspace-integration", "action": "list"},
+  "requiresPermission": "workspaces.manage_integrations",
+  "requiresFeature": "workspaces.integrations-v2",
+  "dataSources": [
+    {"name": "integrations", "kind": "http.get", "url": "/api/v1/workspace/integrations", "unwrap": "data", "paginated": true}
+  ],
+  "broadcasts": [
+    {"channel": "workspace.{id}.integration", "on": ["WorkspaceIntegrationSyncFailed"], "action": {"kind": "data.refresh", "source": "integrations"}}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-4 p-6"}, "children": [
+      {"kind": "View", "props": {"className": "flex items-center justify-between"}, "children": [
+        {"kind": "View", "children": [
+          {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Integrations"}},
+          {"kind": "Text", "props": {"className": "text-sm text-muted", "children": "SSO (SAML / OIDC), SCIM, HRIS, LMS \u2014 v2."}}
+        ]},
+        {"kind": "Button", "props": {"variant": "primary", "size": "sm", "leadingIcon": "plus", "children": "Add integration"}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/integrations/new"}}}
+      ]},
+      {"kind": "List", "props": {"className": "flex flex-col gap-3", "emptyState": {"title": "No integrations configured", "description": "Add an SSO provider or HRIS to sync users automatically.", "icon": "puzzle-piece"}}, "bindings": {"items": {"$ref": "integrations"}}, "itemRenderer": {"kind": "Card", "props": {"className": "p-4 flex items-center justify-between"}, "children": [
+        {"kind": "View", "props": {"className": "flex items-center gap-3"}, "children": [
+          {"kind": "Icon", "props": {"className": "size-6 text-muted"}, "bindings": {"icon": {"$expr": "row.kind === 'saml' || row.kind === 'oidc' ? 'key' : (row.kind === 'scim' ? 'arrow-path' : 'puzzle-piece')"}}},
+          {"kind": "View", "children": [
+            {"kind": "Text", "props": {"className": "font-medium"}, "bindings": {"children": {"$ref": "row.name"}}},
+            {"kind": "Text", "props": {"className": "text-xs text-muted"}, "bindings": {"children": {"$expr": "row.kind + ' \u00b7 ' + (row.provider || 'custom')"}}}
+          ]}
+        ]},
+        {"kind": "View", "props": {"className": "flex items-center gap-2"}, "children": [
+          {"kind": "Chip", "props": {"size": "sm"}, "bindings": {"variant": {"$expr": "row.is_active && row.last_sync_status === 'success' ? 'success' : (row.last_sync_status === 'failed' ? 'danger' : 'warning')"}, "children": {"$expr": "row.is_active ? (row.last_sync_status || 'not synced') : 'inactive'"}}},
+          {"kind": "Link", "props": {"size": "sm", "children": "Configure"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/workspace/integrations/' + row.id + '/edit'"}}}
+        ]}
+      ]}}
+    ]}
+  ]
+}

@@ -29,7 +29,7 @@ NotificationDispatched (channel=push)
        ▼
   SendPushJob (queue=notifications)
        │
-       ├── Query PushSubscription rows: where user_id + is_active + tenant_id + application_id
+       ├── Query PushSubscription rows: where user_id + is_active + workspace_id + application_id
        ├── For each subscription:
        │     - Resolve provider driver (fcm/apns/expo/onesignal)
        │     - Build payload: alert + badge + sound + custom data

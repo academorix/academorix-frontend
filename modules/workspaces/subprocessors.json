@@ -1,0 +1,74 @@
+{
+  "id": "academorix://modules/workspaces/subprocessors",
+  "$version": 1,
+  "title": "workspaces — third-party subprocessors",
+  "description": "Third-party services this module uses. Aggregated at repo root by `workspaces:snapshot-subprocessors` into a public subprocessor registry (GDPR Art. 28 requirement — every enterprise DPA lists our subprocessors). Every entry names the purpose, region, DPA link, and data classes touched. Removing a subprocessor requires 30d advance notice to workspaces per most DPA templates.",
+  "publicRegistryUrl": "https://academorix.app/subprocessors",
+  "subprocessors": [
+    {
+      "name": "AWS Route53",
+      "vendor": "Amazon Web Services",
+      "purpose": "DNS lookups for custom domain verification (VerifyDomainDnsJob). We resolve customer DNS through Route53 recursive resolvers.",
+      "region": "us-east-1 (recursive) + provider anycast",
+      "data_classes": ["public (domain host)"],
+      "dpa_url": "https://aws.amazon.com/service-terms/",
+      "vendor_dpa_url": "https://aws.amazon.com/compliance/gdpr-center/",
+      "iso27001": true,
+      "soc2": true
+    },
+    {
+      "name": "AWS KMS",
+      "vendor": "Amazon Web Services",
+      "purpose": "Encrypts WorkspaceIntegration.config at rest. Crypto-shredding on right-to-erasure = destroy the KMS key.",
+      "region": "per Application default_region (default us-east-1)",
+      "data_classes": ["restricted (integration secrets)"],
+      "dpa_url": "https://aws.amazon.com/service-terms/",
+      "iso27001": true,
+      "soc2": true,
+      "fips_140_2": "level 2 (default) / level 3 (Custom Key Store)"
+    },
+    {
+      "name": "Cloudflare",
+      "vendor": "Cloudflare, Inc.",
+      "purpose": "SSL/TLS termination for custom domains + edge caching for the workspace picker central host.",
+      "region": "global anycast",
+      "data_classes": ["public (host header, path)", "confidential (TLS session)"],
+      "dpa_url": "https://www.cloudflare.com/cloudflare-customer-dpa/",
+      "iso27001": true,
+      "soc2": true,
+      "note": "TLS terminates at Cloudflare. Origin-to-Cloudflare is re-encrypted end-to-end (full-strict mode)."
+    },
+    {
+      "name": "SendGrid",
+      "vendor": "Twilio, Inc.",
+      "purpose": "Transactional email delivery for workspaces notifications (welcome, suspension, domain-verified).",
+      "region": "us + eu (data residency configurable per Application)",
+      "data_classes": ["confidential (recipient email + name)"],
+      "dpa_url": "https://www.twilio.com/en-us/legal/data-protection-addendum",
+      "iso27001": true,
+      "soc2": true
+    },
+    {
+      "name": "Sentry",
+      "vendor": "Functional Software, Inc.",
+      "purpose": "Error monitoring + release tracking. Errors from this module route here.",
+      "region": "eu (frankfurt) for EU-Application deployments; us (san-francisco) otherwise",
+      "data_classes": ["internal (error context)"],
+      "dpa_url": "https://sentry.io/legal/dpa/",
+      "iso27001": true,
+      "soc2": true,
+      "scrubbing": "PII scrubbing enabled at the SDK level — data-classes.json restricted fields never enter Sentry payloads."
+    },
+    {
+      "name": "Segment",
+      "vendor": "Twilio, Inc.",
+      "purpose": "Analytics pipeline sink. analytics.json events land here first, then fan out to downstream tools.",
+      "region": "us (dublin egress mirror available for EU workspaces)",
+      "data_classes": ["public (event names)", "internal (event properties)"],
+      "dpa_url": "https://www.twilio.com/en-us/legal/data-protection-addendum",
+      "iso27001": true,
+      "soc2": true,
+      "note": "Marketing-tier events only fire with `consent_tier=marketing` consent captured (analytics.json). Essential events fire unconditionally per ePrivacy Directive."
+    }
+  ]
+}

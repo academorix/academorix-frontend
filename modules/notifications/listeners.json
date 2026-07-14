@@ -2,19 +2,19 @@
   "id": "academorix://modules/notifications/listeners",
   "$version": 1,
   "title": "notifications core \u2014 subscribed events",
-  "description": "Core subscribes to a small set of upstream events \u2014 tenancy suspension (pause deliveries), user erasure (cascade purge preferences), user updates (refresh cache). Channel modules have their own listeners.json subscribing to NotificationDispatched.",
+  "description": "Core subscribes to a small set of upstream events \u2014 workspaces suspension (pause deliveries), user erasure (cascade purge preferences), user updates (refresh cache). Channel modules have their own listeners.json subscribing to NotificationDispatched.",
   "listeners": [
     {
-      "event": "tenancy::TenantSuspended",
-      "listener": "Academorix\\Notifications\\Listeners\\PauseDeliveriesForTenant",
+      "event": "workspaces::WorkspaceSuspended",
+      "listener": "Academorix\\Notifications\\Listeners\\PauseDeliveriesForWorkspace",
       "queue": "notifications",
-      "purpose": "Tenant enters `suspended` state \u2014 pause every queued Notification for the tenant + mark future dispatches as `suppressed` until unsuspend. Suspension is a soft freeze; no data is deleted."
+      "purpose": "Workspace enters `suspended` state \u2014 pause every queued Notification for the workspace + mark future dispatches as `suppressed` until unsuspend. Suspension is a soft freeze; no data is deleted."
     },
     {
-      "event": "tenancy::TenantUnsuspended",
-      "listener": "Academorix\\Notifications\\Listeners\\ResumeDeliveriesForTenant",
+      "event": "workspaces::WorkspaceUnsuspended",
+      "listener": "Academorix\\Notifications\\Listeners\\ResumeDeliveriesForWorkspace",
       "queue": "notifications",
-      "purpose": "Tenant reactivated \u2014 re-queue every suppressed Notification for delivery. Deliveries older than 24h are dropped (stale)."
+      "purpose": "Workspace reactivated \u2014 re-queue every suppressed Notification for delivery. Deliveries older than 24h are dropped (stale)."
     },
     {
       "event": "user::UserErased",

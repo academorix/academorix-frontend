@@ -1,0 +1,17 @@
+{
+  "id": "academorix://modules/telemetry-otel/feature-flags",
+  "$version": 1,
+  "title": "telemetry-otel \u2014 kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {"key": "telemetry-otel.exporter_traces", "kind": "kill-switch", "default": "on", "description": "OTLP trace exporter. Off = spans buffered + dropped when queue full. Emergency-only during collector outages to prevent app slowdown."},
+    {"key": "telemetry-otel.exporter_metrics", "kind": "kill-switch", "default": "on", "description": "OTLP metrics exporter."},
+    {"key": "telemetry-otel.auto_http_server", "kind": "kill-switch", "default": "on"},
+    {"key": "telemetry-otel.auto_http_client", "kind": "kill-switch", "default": "on"},
+    {"key": "telemetry-otel.auto_db", "kind": "kill-switch", "default": "on"},
+    {"key": "telemetry-otel.auto_queue", "kind": "kill-switch", "default": "on"},
+    {"key": "telemetry-otel.auto_cache", "kind": "kill-switch", "default": "off"},
+    {"key": "telemetry-otel.auto_view", "kind": "kill-switch", "default": "off"},
+    {"key": "telemetry-otel.sampling_override", "kind": "kill-switch", "default": "off", "description": "When on, override sampler to AlwaysOn. Use during incident debugging."}
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/subscription/health",
+  "$version": 1,
+  "title": "subscription \u2014 health probes",
+  "probes": [
+    {"name": "subscription-plan-catalogue-seeded", "class": "Academorix\\Subscription\\Health\\Probes\\PlanCatalogueSeededProbe", "category": "startup", "critical": true, "description": "At least one non-archived Plan exists per configured Application.", "timeoutMs": 200},
+    {"name": "subscription-cashier-configured", "class": "Academorix\\Subscription\\Health\\Probes\\CashierConfiguredProbe", "category": "startup", "critical": true, "description": "Cashier variant (Stripe / Paddle) configured for each Application.payment_provider.", "timeoutMs": 100},
+    {"name": "subscription-cashier-provider-reachable", "class": "Academorix\\Subscription\\Health\\Probes\\CashierReachableProbe", "category": "readiness", "critical": true, "description": "Stripe / Paddle API reachable. Uses Cashier's HTTP client with 2s timeout.", "timeoutMs": 3000},
+    {"name": "subscription-webhook-recent", "class": "Academorix\\Subscription\\Health\\Probes\\WebhookRecentProbe", "category": "readiness", "critical": false, "description": "Cashier webhook consumed within the last 24h. Alerts on webhook-delivery issues.", "timeoutMs": 200},
+    {"name": "subscription-dunning-recent", "class": "Academorix\\Subscription\\Health\\Probes\\DunningRecentProbe", "category": "readiness", "critical": false, "description": "AdvanceDunningStageJob ran in the last 8 hours (schedule is every 6).", "timeoutMs": 200}
+  ]
+}

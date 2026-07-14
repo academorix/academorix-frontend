@@ -9,7 +9,7 @@ All notable changes to this module.
 - Ships 5 channels: mail (Mailgun / SendGrid / AWS SES), sms (Twilio / MessageBird), push (FCM / APNs), in_app (database + broadcast), broadcast (Pusher / Ably).
 - Consumes categories from every downstream module's `notifications.json` — no hardcoded category list here.
 - Delivery state machine with exponential retry backoff + bounce classification (soft / hard).
-- Preference resolver: user → tenant default → platform default; quiet hours; digest windows; VPC gate for minors.
+- Preference resolver: user → workspace default → platform default; quiet hours; digest windows; VPC gate for minors.
 - Digest batching per (user, category, channel, window).
 - Templates: versioned + locale-scoped + per-channel; MJML for mail with WCAG 2.2 AA layout.
 - Provider webhook ingestion with signature verification per provider.
@@ -19,5 +19,5 @@ All notable changes to this module.
 ### Compatibility
 
 - Depends on `foundation` (traits, health substrate, error envelope, cache namespaces, retention tiers, data-class taxonomy).
-- Depends on `tenancy` (BelongsToTenant, BelongsToApplication, host resolution, TenantContact for billing footer).
+- Depends on `workspaces` (BelongsToWorkspace, BelongsToApplication, host resolution, WorkspaceContact for billing footer).
 - No breaking-change surface — inception release. Every category slug + template key + preference row is greenfield.

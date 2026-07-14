@@ -2,87 +2,87 @@
   "id": "academorix://modules/newsletter/routes",
   "$version": 1,
   "title": "newsletter \u2014 HTTP routes",
-  "description": "Tenant admin CRUD across five entities + public subscribe / confirm / unsubscribe surface.",
+  "description": "Workspace admin CRUD across five entities + public subscribe / confirm / unsubscribe surface.",
   "groups": [
     {
-      "name": "tenant-newsletters",
+      "name": "workspace-newsletters",
       "prefix": "/api/v1/newsletters",
-      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "tenant.resolve", "throttle:foundation-base", "response.envelope"],
-      "hosts": ["tenant"],
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "workspace.resolve", "throttle:foundation-base", "response.envelope"],
+      "hosts": ["workspace"],
       "description": "Publication CRUD.",
       "routes": [
-        {"method": "GET", "path": "/", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@index", "permission": "newsletters.viewAny"},
-        {"method": "POST", "path": "/", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@store", "permission": "newsletters.create"},
-        {"method": "GET", "path": "/{newsletter}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@show", "permission": "newsletters.view"},
-        {"method": "PATCH", "path": "/{newsletter}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@update", "permission": "newsletters.update"},
-        {"method": "DELETE", "path": "/{newsletter}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@destroy", "permission": "newsletters.delete", "description": "Soft-deletes + cascades to issues / subscriptions / campaigns / audiences."},
-        {"method": "POST", "path": "/{newsletter}/pause", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@pause", "permission": "newsletters.manage"},
-        {"method": "POST", "path": "/{newsletter}/resume", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@resume", "permission": "newsletters.manage"},
-        {"method": "POST", "path": "/{newsletter}/archive", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterController@archive", "permission": "newsletters.manage"}
+        {"method": "GET", "path": "/", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterController@index", "permission": "newsletters.viewAny"},
+        {"method": "POST", "path": "/", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterController@store", "permission": "newsletters.create"},
+        {"method": "GET", "path": "/{newsletter}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterController@show", "permission": "newsletters.view"},
+        {"method": "PATCH", "path": "/{newsletter}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterController@update", "permission": "newsletters.update"},
+        {"method": "DELETE", "path": "/{newsletter}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterController@destroy", "permission": "newsletters.delete", "description": "Soft-deletes + cascades to issues / subscriptions / campaigns / audiences."},
+        {"method": "POST", "path": "/{newsletter}/pause", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterController@pause", "permission": "newsletters.manage"},
+        {"method": "POST", "path": "/{newsletter}/resume", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterController@resume", "permission": "newsletters.manage"},
+        {"method": "POST", "path": "/{newsletter}/archive", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterController@archive", "permission": "newsletters.manage"}
       ]
     },
     {
-      "name": "tenant-newsletter-issues",
+      "name": "workspace-newsletter-issues",
       "prefix": "/api/v1/newsletters/{newsletter}/issues",
-      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "tenant.resolve", "throttle:foundation-base", "response.envelope"],
-      "hosts": ["tenant"],
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "workspace.resolve", "throttle:foundation-base", "response.envelope"],
+      "hosts": ["workspace"],
       "routes": [
-        {"method": "GET", "path": "/", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@index", "permission": "newsletter-issues.viewAny"},
-        {"method": "POST", "path": "/", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@store", "permission": "newsletter-issues.create"},
-        {"method": "GET", "path": "/{issue}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@show", "permission": "newsletter-issues.view"},
-        {"method": "PATCH", "path": "/{issue}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@update", "permission": "newsletter-issues.update"},
-        {"method": "DELETE", "path": "/{issue}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@destroy", "permission": "newsletter-issues.delete"},
-        {"method": "POST", "path": "/{issue}/schedule", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@schedule", "permission": "newsletter-issues.publish", "description": "Body: { scheduled_at, audience_id }. Creates NewsletterCampaign + transitions issue state to scheduled."},
-        {"method": "POST", "path": "/{issue}/send-now", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@sendNow", "permission": "newsletter-issues.publish"},
-        {"method": "POST", "path": "/{issue}/cancel", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@cancel", "permission": "newsletter-issues.publish"},
-        {"method": "POST", "path": "/{issue}/preview", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterIssueController@preview", "permission": "newsletter-issues.view", "description": "Render preview (HTML) without sending."}
+        {"method": "GET", "path": "/", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterIssueController@index", "permission": "newsletter-issues.viewAny"},
+        {"method": "POST", "path": "/", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterIssueController@store", "permission": "newsletter-issues.create"},
+        {"method": "GET", "path": "/{issue}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterIssueController@show", "permission": "newsletter-issues.view"},
+        {"method": "PATCH", "path": "/{issue}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterIssueController@update", "permission": "newsletter-issues.update"},
+        {"method": "DELETE", "path": "/{issue}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterIssueController@destroy", "permission": "newsletter-issues.delete"},
+        {"method": "POST", "path": "/{issue}/schedule", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterIssueController@schedule", "permission": "newsletter-issues.publish", "description": "Body: { scheduled_at, audience_id }. Creates NewsletterCampaign + transitions issue state to scheduled."},
+        {"method": "POST", "path": "/{issue}/send-now", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterIssueController@sendNow", "permission": "newsletter-issues.publish"},
+        {"method": "POST", "path": "/{issue}/cancel", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterIssueController@cancel", "permission": "newsletter-issues.publish"},
+        {"method": "POST", "path": "/{issue}/preview", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterIssueController@preview", "permission": "newsletter-issues.view", "description": "Render preview (HTML) without sending."}
       ]
     },
     {
-      "name": "tenant-newsletter-subscriptions",
+      "name": "workspace-newsletter-subscriptions",
       "prefix": "/api/v1/newsletters/{newsletter}/subscriptions",
-      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "tenant.resolve", "throttle:foundation-base", "response.envelope"],
-      "hosts": ["tenant"],
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "workspace.resolve", "throttle:foundation-base", "response.envelope"],
+      "hosts": ["workspace"],
       "routes": [
-        {"method": "GET", "path": "/", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@index", "permission": "newsletter-subscriptions.viewAny"},
-        {"method": "POST", "path": "/", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@store", "permission": "newsletter-subscriptions.create", "description": "Admin add (source=admin_added). Skips double-opt-in if newsletter.confirmation_required=false."},
-        {"method": "GET", "path": "/{subscription}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@show", "permission": "newsletter-subscriptions.view"},
-        {"method": "PATCH", "path": "/{subscription}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@update", "permission": "newsletter-subscriptions.update", "description": "Admin edit tags + metadata. Cannot edit email (that would defeat consent)."},
-        {"method": "DELETE", "path": "/{subscription}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@destroy", "permission": "newsletter-subscriptions.delete"},
-        {"method": "POST", "path": "/import", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@import", "permission": "newsletter-subscriptions.import", "description": "CSV import. Dispatches ImportSubscribersJob. Requires consent evidence in the CSV."},
-        {"method": "POST", "path": "/export", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterSubscriptionController@export", "permission": "newsletter-subscriptions.export"}
+        {"method": "GET", "path": "/", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterSubscriptionController@index", "permission": "newsletter-subscriptions.viewAny"},
+        {"method": "POST", "path": "/", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterSubscriptionController@store", "permission": "newsletter-subscriptions.create", "description": "Admin add (source=admin_added). Skips double-opt-in if newsletter.confirmation_required=false."},
+        {"method": "GET", "path": "/{subscription}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterSubscriptionController@show", "permission": "newsletter-subscriptions.view"},
+        {"method": "PATCH", "path": "/{subscription}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterSubscriptionController@update", "permission": "newsletter-subscriptions.update", "description": "Admin edit tags + metadata. Cannot edit email (that would defeat consent)."},
+        {"method": "DELETE", "path": "/{subscription}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterSubscriptionController@destroy", "permission": "newsletter-subscriptions.delete"},
+        {"method": "POST", "path": "/import", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterSubscriptionController@import", "permission": "newsletter-subscriptions.import", "description": "CSV import. Dispatches ImportSubscribersJob. Requires consent evidence in the CSV."},
+        {"method": "POST", "path": "/export", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterSubscriptionController@export", "permission": "newsletter-subscriptions.export"}
       ]
     },
     {
-      "name": "tenant-newsletter-campaigns",
+      "name": "workspace-newsletter-campaigns",
       "prefix": "/api/v1/newsletters/{newsletter}/campaigns",
-      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "tenant.resolve", "throttle:foundation-base", "response.envelope"],
-      "hosts": ["tenant"],
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "workspace.resolve", "throttle:foundation-base", "response.envelope"],
+      "hosts": ["workspace"],
       "routes": [
-        {"method": "GET", "path": "/", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterCampaignController@index", "permission": "newsletter-campaigns.viewAny"},
-        {"method": "GET", "path": "/{campaign}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterCampaignController@show", "permission": "newsletter-campaigns.view"},
-        {"method": "POST", "path": "/{campaign}/cancel", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterCampaignController@cancel", "permission": "newsletter-campaigns.manage", "description": "Cancellable while pending or in_progress."}
+        {"method": "GET", "path": "/", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterCampaignController@index", "permission": "newsletter-campaigns.viewAny"},
+        {"method": "GET", "path": "/{campaign}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterCampaignController@show", "permission": "newsletter-campaigns.view"},
+        {"method": "POST", "path": "/{campaign}/cancel", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterCampaignController@cancel", "permission": "newsletter-campaigns.manage", "description": "Cancellable while pending or in_progress."}
       ]
     },
     {
-      "name": "tenant-newsletter-audiences",
+      "name": "workspace-newsletter-audiences",
       "prefix": "/api/v1/newsletters/{newsletter}/audiences",
-      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "tenant.resolve", "throttle:foundation-base", "response.envelope"],
-      "hosts": ["tenant"],
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "workspace.resolve", "throttle:foundation-base", "response.envelope"],
+      "hosts": ["workspace"],
       "routes": [
-        {"method": "GET", "path": "/", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterAudienceController@index", "permission": "newsletter-audiences.viewAny"},
-        {"method": "POST", "path": "/", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterAudienceController@store", "permission": "newsletter-audiences.create"},
-        {"method": "GET", "path": "/{audience}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterAudienceController@show", "permission": "newsletter-audiences.view"},
-        {"method": "PATCH", "path": "/{audience}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterAudienceController@update", "permission": "newsletter-audiences.update"},
-        {"method": "DELETE", "path": "/{audience}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterAudienceController@destroy", "permission": "newsletter-audiences.delete", "description": "Refused for is_default=true."},
-        {"method": "POST", "path": "/{audience}/refresh", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Tenant\\NewsletterAudienceController@refresh", "permission": "newsletter-audiences.update", "description": "Force re-evaluate the audience expression + refresh cached_subscriber_ids."}
+        {"method": "GET", "path": "/", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterAudienceController@index", "permission": "newsletter-audiences.viewAny"},
+        {"method": "POST", "path": "/", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterAudienceController@store", "permission": "newsletter-audiences.create"},
+        {"method": "GET", "path": "/{audience}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterAudienceController@show", "permission": "newsletter-audiences.view"},
+        {"method": "PATCH", "path": "/{audience}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterAudienceController@update", "permission": "newsletter-audiences.update"},
+        {"method": "DELETE", "path": "/{audience}", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterAudienceController@destroy", "permission": "newsletter-audiences.delete", "description": "Refused for is_default=true."},
+        {"method": "POST", "path": "/{audience}/refresh", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Workspace\\NewsletterAudienceController@refresh", "permission": "newsletter-audiences.update", "description": "Force re-evaluate the audience expression + refresh cached_subscriber_ids."}
       ]
     },
     {
       "name": "public-subscribe",
       "prefix": "/newsletters/{newsletter}",
       "middleware": ["request.id", "cors.strict", "throttle:newsletter-public", "response.envelope"],
-      "hosts": ["central", "tenant"],
+      "hosts": ["central", "workspace"],
       "description": "Public subscribe / confirm / unsubscribe. No auth. Rate-limited.",
       "routes": [
         {"method": "POST", "path": "/subscribe", "controller": "Academorix\\Newsletter\\Http\\Controllers\\Public\\SubscribeController@store", "description": "Body: { email, first_name?, last_name?, locale?, tags? }. Creates pending_confirmation NewsletterSubscription + dispatches confirmation email."},

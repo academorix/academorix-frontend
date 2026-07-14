@@ -3,14 +3,14 @@
   "title": "Webhook deliveries",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/webhooks/deliveries",
-  "host": "tenant",
+  "route": "/workspace/webhooks/deliveries",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "webhook", "entity": "webhook-delivery", "action": "list"},
   "requiresPermission": "webhook.deliveries.viewAny",
   "dataSources": [
-    {"name": "deliveries", "kind": "http.get", "url": "/api/v1/tenant/webhook/deliveries", "unwrap": "data", "paginated": true, "queryParamsFromState": ["filter[subscription_id]", "filter[state]", "filter[event_name]", "sort", "page", "per_page"]},
-    {"name": "subscriptions", "kind": "http.get", "url": "/api/v1/tenant/webhook/subscriptions?per_page=100", "unwrap": "data", "cache": {"ttlSeconds": 300}}
+    {"name": "deliveries", "kind": "http.get", "url": "/api/v1/workspace/webhook/deliveries", "unwrap": "data", "paginated": true, "queryParamsFromState": ["filter[subscription_id]", "filter[state]", "filter[event_name]", "sort", "page", "per_page"]},
+    {"name": "subscriptions", "kind": "http.get", "url": "/api/v1/workspace/webhook/subscriptions?per_page=100", "unwrap": "data", "cache": {"ttlSeconds": 300}}
   ],
   "nodes": [
     {
@@ -34,8 +34,8 @@
             {"kind": "Text", "props": {"className": "text-xs text-muted"}, "bindings": {"children": {"$expr": "(row.duration_ms || 0) + 'ms \u00b7 attempt ' + row.attempt_number + '/' + row.max_attempts"}}}
           ]}},
           {"id": "actions", "header": "", "align": "end", "cell": {"kind": "View", "props": {"className": "flex items-center gap-1"}, "children": [
-            {"kind": "Button", "props": {"variant": "ghost", "isIconOnly": true, "size": "sm", "leadingIcon": "eye", "ariaLabel": "View"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/webhooks/deliveries/' + row.id"}}},
-            {"kind": "Button", "props": {"variant": "ghost", "isIconOnly": true, "size": "sm", "leadingIcon": "arrow-path", "ariaLabel": "Retry"}, "bindings": {"isDisabled": {"$expr": "row.state !== 'failedPermanent' || !identity.permissions.includes('webhook.deliveries.retry')"}}, "actions": {"onPress": {"kind": "http.post", "urlExpr": "'/api/v1/tenant/webhook/deliveries/' + row.id + '/retry'", "confirm": {"title": "Retry this delivery?", "description": "Dispatches immediately. Counts as a new attempt."}, "onSuccess": [{"kind": "toast.success", "message": "Retry dispatched"}, {"kind": "data.refresh", "source": "deliveries"}]}}}
+            {"kind": "Button", "props": {"variant": "ghost", "isIconOnly": true, "size": "sm", "leadingIcon": "eye", "ariaLabel": "View"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/workspace/webhooks/deliveries/' + row.id"}}},
+            {"kind": "Button", "props": {"variant": "ghost", "isIconOnly": true, "size": "sm", "leadingIcon": "arrow-path", "ariaLabel": "Retry"}, "bindings": {"isDisabled": {"$expr": "row.state !== 'failedPermanent' || !identity.permissions.includes('webhook.deliveries.retry')"}}, "actions": {"onPress": {"kind": "http.post", "urlExpr": "'/api/v1/workspace/webhook/deliveries/' + row.id + '/retry'", "confirm": {"title": "Retry this delivery?", "description": "Dispatches immediately. Counts as a new attempt."}, "onSuccess": [{"kind": "toast.success", "message": "Retry dispatched"}, {"kind": "data.refresh", "source": "deliveries"}]}}}
           ]}}
         ]}
       ]

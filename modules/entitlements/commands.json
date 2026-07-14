@@ -1,0 +1,14 @@
+{
+  "id": "academorix://modules/entitlements/commands",
+  "$version": 1,
+  "title": "entitlements \u2014 Artisan commands",
+  "commands": [
+    {"signature": "entitlements:seed {workspace_id} {--plan=}", "class": "Academorix\\Entitlements\\Console\\Commands\\SeedCommand", "purpose": "Create Entitlement rows for every declared key. Values from --plan or workspace's current plan."},
+    {"signature": "entitlements:describe {--key=} {--kind=}", "class": "Academorix\\Entitlements\\Console\\Commands\\DescribeCommand", "purpose": "Print EntitlementRegistry contents: all declared keys with their kind + declaring module + plan defaults."},
+    {"signature": "entitlements:reset {--workspace=} {--key=} {--force}", "class": "Academorix\\Entitlements\\Console\\Commands\\ResetCommand", "purpose": "Force reset value_used for pool entitlements. --force skips the resets_at check."},
+    {"signature": "entitlements:report-usage {--workspace=} {--key=} {--period=current}", "class": "Academorix\\Entitlements\\Console\\Commands\\ReportUsageCommand", "purpose": "Manually trigger ExportUsageForBillingJob for a specific entitlement + period."},
+    {"signature": "entitlements:reconcile {--workspace=} {--dry-run}", "class": "Academorix\\Entitlements\\Console\\Commands\\ReconcileCommand", "purpose": "Run reconciliation now. --dry-run reports drift without correcting."},
+    {"signature": "entitlements:sync-plan {workspace_id}", "class": "Academorix\\Entitlements\\Console\\Commands\\SyncPlanCommand", "purpose": "Force plan-sync for a workspace. Useful after direct DB overrides or drift."},
+    {"signature": "entitlements:prune-usage {--dry-run}", "class": "Academorix\\Entitlements\\Console\\Commands\\PruneUsageCommand", "purpose": "Drop old EntitlementUsage partitions past retention."}
+  ]
+}

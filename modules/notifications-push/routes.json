@@ -2,18 +2,18 @@
   "id": "academorix://modules/notifications-push/routes",
   "$version": 1,
   "title": "notifications-push \u2014 HTTP routes",
-  "description": "Tenant per-user push subscription management. Provider webhooks handled by webhook module at POST /webhooks/inbound/notifications-push/{provider}.",
+  "description": "Workspace per-user push subscription management. Provider webhooks handled by webhook module at POST /webhooks/inbound/notifications-push/{provider}.",
   "groups": [
     {
-      "name": "tenant-subscriptions",
-      "prefix": "/api/v1/tenant/notification-subscriptions",
-      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "tenant.resolve", "throttle:notifications-push-subscriptions", "response.envelope"],
-      "hosts": ["tenant"],
+      "name": "workspace-subscriptions",
+      "prefix": "/api/v1/workspace/notification-subscriptions",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "workspace.resolve", "throttle:notifications-push-subscriptions", "response.envelope"],
+      "hosts": ["workspace"],
       "description": "Per-user push subscription CRUD. Users register their own devices; admins can view all subs but not the device_token itself.",
       "routes": [
-        {"method": "GET", "path": "/", "controller": "Academorix\\Notifications\\Push\\Http\\Controllers\\Tenant\\PushSubscriptionController@index", "permission": "notifications.subscriptions.viewAny", "description": "Regular users see their own subscriptions; tenant admins see all subs in tenant (device_token still hidden)."},
-        {"method": "POST", "path": "/", "controller": "Academorix\\Notifications\\Push\\Http\\Controllers\\Tenant\\PushSubscriptionController@store", "permission": "notifications.subscriptions.create", "description": "Register a push device token. Validates against provider (dry-run) before persisting. Body: {provider, platform, device_token, device_name?, app_version?, os_version?, locale?, timezone?}."},
-        {"method": "DELETE", "path": "/{subscription}", "controller": "Academorix\\Notifications\\Push\\Http\\Controllers\\Tenant\\PushSubscriptionController@destroy", "permission": "notifications.subscriptions.delete", "description": "Revoke a subscription. User can revoke own; tenant admin can revoke any."}
+        {"method": "GET", "path": "/", "controller": "Academorix\\Notifications\\Push\\Http\\Controllers\\Workspace\\PushSubscriptionController@index", "permission": "notifications.subscriptions.viewAny", "description": "Regular users see their own subscriptions; workspace admins see all subs in workspace (device_token still hidden)."},
+        {"method": "POST", "path": "/", "controller": "Academorix\\Notifications\\Push\\Http\\Controllers\\Workspace\\PushSubscriptionController@store", "permission": "notifications.subscriptions.create", "description": "Register a push device token. Validates against provider (dry-run) before persisting. Body: {provider, platform, device_token, device_name?, app_version?, os_version?, locale?, timezone?}."},
+        {"method": "DELETE", "path": "/{subscription}", "controller": "Academorix\\Notifications\\Push\\Http\\Controllers\\Workspace\\PushSubscriptionController@destroy", "permission": "notifications.subscriptions.delete", "description": "Revoke a subscription. User can revoke own; workspace admin can revoke any."}
       ]
     }
   ],

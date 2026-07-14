@@ -3,8 +3,8 @@
   "title": "Campaign detail",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/newsletters/{newsletter}/campaigns/{id}",
-  "host": "tenant",
+  "route": "/workspace/newsletters/{newsletter}/campaigns/{id}",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "newsletter", "entity": "newsletter-campaign", "action": "show"},
   "requiresPermission": "newsletter-campaigns.view",
@@ -14,7 +14,7 @@
   ],
   "nodes": [
     {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto"}, "children": [
-      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/newsletters/' + params.newsletter + '/campaigns'"}}},
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/workspace/newsletters/' + params.newsletter + '/campaigns'"}}},
       {"kind": "View", "props": {"className": "flex items-start justify-between"}, "children": [
         {"kind": "View", "children": [
           {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold"}, "bindings": {"children": {"$ref": "campaign.name"}}},

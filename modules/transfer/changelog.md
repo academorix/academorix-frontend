@@ -17,9 +17,9 @@
 - Notifications on finish through the `notifications` module. Channels
   (`mail` / `broadcast` / `database` / `push`) resolved once at dispatch and
   frozen on the row.
-- Tenant HTTP surface at `/api/v1/transfer/*` (imports, exports, samples,
+- Workspace HTTP surface at `/api/v1/transfer/*` (imports, exports, samples,
   jobs, mapping profiles, templates, entities, downloads).
-- Platform-admin HTTP surface at `/api/v1/platform/transfer/*` for cross-tenant
+- Platform-admin HTTP surface at `/api/v1/platform/transfer/*` for cross-workspace
   support triage.
 - Sharded imports + shard-level retry (`POST /jobs/{id}/retry-shard`).
 - Errors artifact writer produces a downloadable `errors.csv` for
@@ -31,7 +31,7 @@
 
 ### Compatibility
 
-- Depends on `foundation`, `tenancy`, `audit`, `activity`, `notifications`,
+- Depends on `foundation`, `workspaces`, `audit`, `activity`, `notifications`,
   `settings`.
 - **Breaking rename against foundation.** Foundation's earlier
   `Importable` / `Exportable` traits + `importable` / `exportable` blueprint

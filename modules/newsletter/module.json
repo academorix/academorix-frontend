@@ -8,7 +8,7 @@
   "priority": 30,
   "providers": ["Academorix\\Newsletter\\Providers\\NewsletterServiceProvider"],
   "files": [],
-  "dependencies": ["foundation", "tenancy", "notifications", "notifications-mail", "activity", "audit", "settings"],
+  "dependencies": ["foundation", "workspaces", "notifications", "notifications-mail", "activity", "audit", "settings"],
   "extendedBy": [],
   "contributes": {
     "traits": [],
@@ -44,8 +44,8 @@
     "resources": ["newsletter", "newsletter-issue", "newsletter-subscription", "newsletter-campaign", "newsletter-audience"]
   },
   "hosts": {
-    "tenant": {
-      "description": "Tenant admin newsletter management.",
+    "workspace": {
+      "description": "Workspace admin newsletter management.",
       "routes": [
         "GET/POST/PATCH/DELETE /api/v1/newsletters",
         "GET/POST/PATCH/DELETE /api/v1/newsletters/{newsletter}/issues",

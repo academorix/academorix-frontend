@@ -23,7 +23,7 @@
     {"case": "Time", "value": "time", "widget": "TimeField", "notes": "HH:MM format."},
     {"case": "DateTime", "value": "datetime", "widget": "DatePicker", "notes": "Full timestamp."},
     {"case": "Timezone", "value": "timezone", "widget": "Select", "notes": "Options from IANA timezone list."},
-    {"case": "Locale", "value": "locale", "widget": "Select", "notes": "Options from tenant.supported_locales."},
+    {"case": "Locale", "value": "locale", "widget": "Select", "notes": "Options from workspace.supported_locales."},
     {"case": "Country", "value": "country", "widget": "Select", "notes": "ISO 3166-1 alpha-2."},
     {"case": "Currency", "value": "currency", "widget": "Select", "notes": "ISO 4217."},
     {"case": "KeyValue", "value": "keyvalue", "widget": "KeyValueEditor", "notes": "Free-form object; validation constrains shape."},

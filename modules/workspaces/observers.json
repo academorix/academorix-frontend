@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/workspaces/observers",
+  "$version": 1,
+  "title": "workspaces — Eloquent observers",
+  "description": "Eloquent observers this module registers. Each observer's `hooks[]` lists the Eloquent events it acts on plus a description of the side effect. Registered by `WorkspacesServiceProvider::boot()` via `Model::observe(Observer::class)`.",
+  "observers": [
+    {
+      "class": "Academorix\\Workspaces\\Observers\\WorkspaceObserver",
+      "target": "Academorix\\Workspaces\\Models\\Workspace",
+      "hooks": [
+        {"event": "creating", "description": "Auto-generate the ULID+prefix id if not set. Set `status=trialing` and `trial_ends_at=now+14d` when null."},
+        {"event": "created", "description": "Fires within the same transaction as WorkspaceProvisioning. Does NOT dispatch outbound side effects here (see WorkspaceProvisioned instead)."},
+        {"event": "saving", "description": "When `primary_branding_id` is dirty and non-null: eager-load the target Branding and denormalise its logo/color/font fields into the `branding` JSONB. Ensures the workspace picker sees the new brand without a join."},
+        {"event": "updated", "description": "If `status` transitioned to `active` from `trialing` / `grace`, clear `trial_ends_at` / `grace_ends_at`."}
+      ]
+    },
+    {
+      "class": "Academorix\\Workspaces\\Observers\\DomainObserver",
+      "target": "Academorix\\Workspaces\\Models\\Domain",
+      "hooks": [
+        {"event": "creating", "description": "Generate `verification_token` (128-char random). Set `ssl_status=pending`. Set `verification_method=dns_txt` if null."},
+        {"event": "created", "description": "Persist the expected DomainRecord rows (one TXT for verification, plus CNAME/A per `kind`). Dispatch `VerifyDomainDnsJob::dispatch($domain)->delay(30)` so DNS has a chance to propagate."},
+        {"event": "updating", "description": "If `is_primary` transitions to true, clear `is_primary` on all other Domains in the same workspace (only one primary allowed — the partial unique index catches slip-throughs)."},
+        {"event": "deleted", "description": "Cascade the DomainRecord rows via ON DELETE CASCADE; no observer work needed."}
+      ]
+    },
+    {
+      "class": "Academorix\\Workspaces\\Observers\\BrandingObserver",
+      "target": "Academorix\\Workspaces\\Models\\Branding",
+      "hooks": [
+        {"event": "creating", "description": "First Branding row per workspace is auto-marked `is_default=true`."},
+        {"event": "updating", "description": "If `is_default` transitions to true, clear `is_default` on all other Brandings in the same workspace."},
+        {"event": "updated", "description": "If this row IS the workspace's `primary_branding_id`, re-fire the Workspace save hook so `workspaces.branding` JSONB stays in sync."},
+        {"event": "saved", "description": "Invalidate the `workspace:{id}:branding` cache key. Dispatch `WorkspaceBrandingUpdated` after commit."}
+      ]
+    },
+    {
+      "class": "Academorix\\Workspaces\\Observers\\WorkspaceContactObserver",
+      "target": "Academorix\\Workspaces\\Models\\WorkspaceContact",
+      "hooks": [
+        {"event": "creating", "description": "First contact per (workspace_id, kind) tuple is auto-marked `is_primary=true`."},
+        {"event": "updating", "description": "If `is_primary` transitions to true, clear it on all other same-kind contacts in the workspace."},
+        {"event": "saving", "description": "For `kind=dpo` and `kind=legal`, require `verified_at` before allowing `is_primary=true`. Refuses with `WorkspaceContactException::verificationRequired()` (422)."}
+      ]
+    },
+    {
+      "class": "Academorix\\Workspaces\\Observers\\WorkspaceIntegrationObserver",
+      "target": "Academorix\\Workspaces\\Models\\WorkspaceIntegration",
+      "hooks": [
+        {"event": "saving", "description": "Encrypt the raw config bag via the IntegrationConfig cast + KMS pointer. Never persist plaintext secrets."},
+        {"event": "created", "description": "If `is_active=true`, schedule the first `SyncWorkspaceIntegrationJob` and set `next_sync_at`."},
+        {"event": "updated", "description": "If `is_active` transitions to true → schedule the sync job. If it transitions to false → clear `next_sync_at` and null the sync_cursor."}
+      ]
+    }
+  ]
+}

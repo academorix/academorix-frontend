@@ -7,7 +7,7 @@
     "can_spam": {
       "applicable": true,
       "controls": [
-        {"section": "\u00a77704(a)(1)", "principle": "clear sender identification", "evidence": "sender_config.from_email + from_name enforced per newsletter. Overlays tenant identity."},
+        {"section": "\u00a77704(a)(1)", "principle": "clear sender identification", "evidence": "sender_config.from_email + from_name enforced per newsletter. Overlays workspace identity."},
         {"section": "\u00a77704(a)(3)", "principle": "postal address disclosure", "evidence": "sender_config.postal_address required. Injected into every issue footer by notifications-mail."},
         {"section": "\u00a77704(a)(4)", "principle": "opt-out honoured 10 days", "evidence": "One-click unsubscribe via signed URL. Processed in seconds; audit-logged. NotificationPreference also updated cross-channel."},
         {"section": "\u00a77704(a)(5)(A)(iii)", "principle": "double-opt-in best practice", "evidence": "confirmation_required flag on Newsletter. All new public subscriptions start pending_confirmation. Enforced by observer."}

@@ -3,8 +3,8 @@
   "title": "Edit settings group",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/settings/{group}",
-  "host": "tenant",
+  "route": "/workspace/settings/{group}",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "settings", "entity": "settings-group", "action": "edit"},
   "requiresPermission": "settings.read",
@@ -19,7 +19,7 @@
       "kind": "View",
       "props": {"className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto"},
       "children": [
-        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "All settings", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/settings"}}},
+        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "All settings", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/settings"}}},
         {"kind": "View", "props": {"className": "flex items-center gap-3"}, "children": [
           {"kind": "Icon", "props": {"className": "size-6"}, "bindings": {"icon": {"$ref": "schema.icon"}}},
           {"kind": "View", "props": {"className": "flex flex-col"}, "children": [

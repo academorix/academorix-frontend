@@ -16,9 +16,9 @@
       {"trait": "Academorix\\Foundation\\Concerns\\HasMetadata"},
       {"trait": "Academorix\\Foundation\\Concerns\\Filterable"}
     ],
-    "tenancy": [
-      {"trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant"},
-      {"trait": "Academorix\\Tenancy\\Concerns\\BelongsToApplication", "reason": "Push tokens are per-application (a coach's iOS token for the coach app is distinct from their same-device token for the parent app)."}
+    "workspaces": [
+      {"trait": "Academorix\\Workspaces\\Concerns\\BelongsToWorkspace"},
+      {"trait": "Academorix\\Workspaces\\Concerns\\BelongsToApplication", "reason": "Push tokens are per-application (a coach's iOS token for the coach app is distinct from their same-device token for the parent app)."}
     ]
   },
   "composition": {
@@ -26,7 +26,7 @@
       "traits": [
         "HasFactory",
         "HasUlids",
-        "BelongsToTenant",
+        "BelongsToWorkspace",
         "BelongsToApplication",
         "HasMetadata",
         "HasUserstamps",

@@ -8,7 +8,7 @@ preference resolver + category registry + digest scheduler.
 
 > **Position in the wave.** Wave 1. Depends on `foundation` (traits, health
 > substrate, error envelope, cache namespaces, retention tiers, data-class
-> taxonomy) + `tenancy` (BelongsToTenant, BelongsToApplication, host
+> taxonomy) + `workspaces` (BelongsToWorkspace, BelongsToApplication, host
 > resolution). Extended BY the 4 channel modules + every domain module that
 > dispatches a notification.
 
@@ -100,10 +100,10 @@ callbacks, no denormalized reads.
         "timezone": "America/Chicago",
         "consent_age_gate": "adult"
     },
-    "tenant": {
+    "workspace": {
         "id": "01JC0...",
         "name": "Elite Football Academy",
-        "logo_url": "https://cdn.academorix.com/tenants/01JC0.../logo.png",
+        "logo_url": "https://cdn.academorix.com/workspaces/01JC0.../logo.png",
         "primary_color": "#f97316",
         "sender_identity": "Elite FC <no-reply@elite.example>",
         "postal_address": "123 Stadium Way, Chicago, IL 60601 USA"
@@ -145,7 +145,7 @@ invalidated on `ConfigReloaded`).
 
 - **transactional** — cannot be opted out (CAN-SPAM §7702(17) exemption).
   Security alerts, invitations, receipts.
-- **product** — opt-in for enterprise tenants, opt-out for consumer tenants.
+- **product** — opt-in for enterprise workspaces, opt-out for consumer workspaces.
 - **marketing** — always opt-in. Never on by default.
 
 ## 6. Templates — per-module `.tsx` files
@@ -209,7 +209,7 @@ invalid device token) don't retry.
 
 ## 9. Preference resolver
 
-Resolution order: user preference → tenant default (`settings.json`) → platform
+Resolution order: user preference → workspace default (`settings.json`) → platform
 default (`NotificationCategory.default_channels`).
 
 - **quiet hours** — per-user timezone-aware window; deliveries held until window
@@ -278,13 +278,13 @@ Contract-level — evidence gathered in the channel modules (CAN-SPAM footer in
 ```tsx
 import { Layout, Button, Footer } from '@academorix/notifications-emails-shared';
 
-export default function InvoicePaid({ variables, tenant, recipient, locale }) {
+export default function InvoicePaid({ variables, workspace, recipient, locale }) {
   return (
-    <Layout locale={locale} tenant={tenant}>
+    <Layout locale={locale} workspace={workspace}>
       <h1>Payment received</h1>
       <p>Hi {'{{ $recipient["name"] }}'} — your invoice is paid.</p>
       <Button href="{{ $variables['portal_url'] }}">View receipt</Button>
-      <Footer tenant={tenant} category="billing.invoice_paid" />
+      <Footer workspace={workspace} category="billing.invoice_paid" />
     </Layout>
   );
 }
@@ -313,7 +313,7 @@ The code is Laravel today; the design translates to NestJS + BullMQ + Redis
 Streams later. Five rules:
 
 1. Single dispatch entry point — `Notifications::dispatch()`.
-2. Event-carried state — every payload includes recipient + tenant branding.
+2. Event-carried state — every payload includes recipient + workspace branding.
 3. No cross-module DB reads — consumers subscribe to events + write their own
    state.
 4. Channel modules are event-driven — no direct calls.
@@ -331,7 +331,7 @@ TypeScript.
 - **Doesn't own push subscriptions.** `notifications-push` owns them.
 - **Doesn't own mail suppression.** `notifications-mail` owns it.
 - **Doesn't own sms opt-outs.** `notifications-sms` owns them.
-- **Doesn't own tenant branding.** `tenancy` (Branding + TenantContact) owns it;
+- **Doesn't own workspace branding.** `workspaces` (Branding + WorkspaceContact) owns it;
   core reads it into the event payload at dispatch time.
 - **Doesn't own consent capture.** `compliance` module captures; core reads via
   `PreferenceResolver`.

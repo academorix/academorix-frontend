@@ -3,7 +3,7 @@
   "title": "Version lifecycle chip",
   "version": 1,
   "kind": "SduiWidget",
-  "description": "Colour-coded chip for ApiVersion.state. Semantic mapping: draft = neutral, released = success, deprecated = warning, sunset = danger. Consumed by versioning's own listings + downstream modules (webhook subscription rows, tenant admin dashboard). Optionally shows a tooltip with days_until_sunset when state = deprecated.",
+  "description": "Colour-coded chip for ApiVersion.state. Semantic mapping: draft = neutral, released = success, deprecated = warning, sunset = danger. Consumed by versioning's own listings + downstream modules (webhook subscription rows, workspace admin dashboard). Optionally shows a tooltip with days_until_sunset when state = deprecated.",
   "props": {
     "state": {"type": "string", "description": "The ApiVersion.state enum value."},
     "size": {"type": "string", "default": "sm", "enum": ["xs", "sm", "md"]},

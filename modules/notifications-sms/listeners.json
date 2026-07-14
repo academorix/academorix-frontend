@@ -10,7 +10,7 @@
     {"event": "notifications-sms::SmsOptedOut", "listener": "Academorix\\Notifications\\Sms\\Listeners\\SendOptOutConfirmation", "queue": "notifications", "purpose": "CTIA-required: send auto-reply confirming unsubscribe."},
     {"event": "notifications-sms::SmsSubscribedIn", "listener": "Academorix\\Notifications\\Sms\\Listeners\\RevokeOptOutListener", "queue": "notifications", "purpose": "Soft-deletes existing SmsOptOut when user replied START."},
     {"event": "notifications-sms::SmsSubscribedIn", "listener": "Academorix\\Notifications\\Sms\\Listeners\\SendSubscribeConfirmation", "queue": "notifications", "purpose": "Confirms re-subscription per CTIA."},
-    {"event": "notifications-sms::SmsCostRecorded", "listener": "Academorix\\Notifications\\Sms\\Listeners\\UpdateCostAggregation", "queue": "notifications", "purpose": "Updates the per-tenant per-country cost aggregation (cached for dashboard)."},
+    {"event": "notifications-sms::SmsCostRecorded", "listener": "Academorix\\Notifications\\Sms\\Listeners\\UpdateCostAggregation", "queue": "notifications", "purpose": "Updates the per-workspace per-country cost aggregation (cached for dashboard)."},
     {"event": "user::UserErased", "listener": "Academorix\\Notifications\\Sms\\Listeners\\AnonymiseOptOutsForErasedUser", "queue": "notifications", "purpose": "GDPR Art. 17 \u2014 phone number replaced with SHA-256 hash; opt-out row retained for TCPA evidence."}
   ]
 }

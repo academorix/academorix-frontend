@@ -36,7 +36,7 @@
   ],
   "priorityContext": {
     "runsAfter": ["request.id", "cors.strict", "throttle:foundation-health"],
-    "runsBefore": ["throttle.base", "auth:sanctum", "auth:platform_admin", "resolve.tenant", "response.envelope"],
+    "runsBefore": ["throttle.base", "auth:sanctum", "auth:platform_admin", "resolve.workspace", "response.envelope"],
     "note": "Priority 30 was foundation's former api.version slot. Placed BEFORE auth so unauthenticated requests still emit the correct version headers on 401 responses."
   }
 }

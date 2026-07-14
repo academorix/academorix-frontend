@@ -7,7 +7,7 @@
     {
       "signature": "notifications:seed-categories {--dry-run}",
       "class": "Academorix\\Notifications\\Console\\Commands\\SeedCategoriesCommand",
-      "purpose": "Walk every module's notifications.json + upsert NotificationCategory rows for the platform-default (tenant_id=null) set. Skips categories already present + logs deltas. --dry-run prints what would change.",
+      "purpose": "Walk every module's notifications.json + upsert NotificationCategory rows for the platform-default (workspace_id=null) set. Skips categories already present + logs deltas. --dry-run prints what would change.",
       "invokedOn": ["deploy migrations post-step", "manual after adding a new module's categories"]
     },
     {
@@ -23,7 +23,7 @@
       "safetyNote": "Refuses to run in production unless --allow-production is passed. Even in production, sends only to the operator's own email domain (checked against user.email suffix)."
     },
     {
-      "signature": "notifications:expunge-archived {--batch=1000} {--tenant=} {--dry-run}",
+      "signature": "notifications:expunge-archived {--batch=1000} {--workspace=} {--dry-run}",
       "class": "Academorix\\Notifications\\Console\\Commands\\ExpungeArchivedCommand",
       "purpose": "Hard-delete Notification rows past retention window. Emits audit rows before delete. Runs from schedule daily but can be invoked manually.",
       "safetyNote": "Non-destructive by default (soft-delete-only mode). --hard-delete required to actually purge."

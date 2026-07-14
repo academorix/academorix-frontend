@@ -8,6 +8,6 @@
     {"name": "notifications-sms-vonage-reachable", "class": "Academorix\\Notifications\\Sms\\Health\\Probes\\VonageReachableProbe", "category": "readiness", "critical": false, "timeoutMs": 5000, "featureFlag": "notifications.sms.provider.vonage.enabled"},
     {"name": "notifications-sms-plivo-reachable", "class": "Academorix\\Notifications\\Sms\\Health\\Probes\\PlivoReachableProbe", "category": "readiness", "critical": false, "timeoutMs": 5000, "featureFlag": "notifications.sms.provider.plivo.enabled"},
     {"name": "notifications-sms-aws-sns-reachable", "class": "Academorix\\Notifications\\Sms\\Health\\Probes\\AwsSnsReachableProbe", "category": "readiness", "critical": false, "timeoutMs": 5000, "featureFlag": "notifications.sms.provider.aws-sns.enabled"},
-    {"name": "notifications-sms-cost-cap-approaching", "class": "Academorix\\Notifications\\Sms\\Health\\Probes\\CostCapApproachingProbe", "category": "readiness", "critical": false, "description": "Warns when any tenant is > 80% of monthly cost cap. Alerts admins before refuse threshold.", "timeoutMs": 500, "thresholds": {"warn_ratio": 0.8, "fail_ratio": 0.95}}
+    {"name": "notifications-sms-cost-cap-approaching", "class": "Academorix\\Notifications\\Sms\\Health\\Probes\\CostCapApproachingProbe", "category": "readiness", "critical": false, "description": "Warns when any workspace is > 80% of monthly cost cap. Alerts admins before refuse threshold.", "timeoutMs": 500, "thresholds": {"warn_ratio": 0.8, "fail_ratio": 0.95}}
   ]
 }

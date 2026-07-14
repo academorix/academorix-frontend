@@ -3,20 +3,20 @@
   "title": "Notifications dashboard",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/notifications-admin",
-  "host": "tenant",
+  "route": "/workspace/notifications-admin",
+  "host": "workspace",
   "audience": "authenticated",
   "requiresPermission": "notifications.admin.view",
   "requiresFeature": "notifications.admin_sends_dashboard",
   "dataSources": [
-    {"name": "tenantSendStats", "kind": "http.get", "url": "/api/v1/tenant/notifications/stats?window=7d", "unwrap": "data", "cache": {"ttlSeconds": 60}},
-    {"name": "recentFailures", "kind": "http.get", "url": "/api/v1/tenant/notifications?filter[state]=failed&sort=-created_at&per_page=20", "unwrap": "data"}
+    {"name": "workspaceSendStats", "kind": "http.get", "url": "/api/v1/workspace/notifications/stats?window=7d", "unwrap": "data", "cache": {"ttlSeconds": 60}},
+    {"name": "recentFailures", "kind": "http.get", "url": "/api/v1/workspace/notifications?filter[state]=failed&sort=-created_at&per_page=20", "unwrap": "data"}
   ],
   "subscriptions": [
     {
-      "channel": "tenant.{tenantId}.notifications",
+      "channel": "workspace.{workspaceId}.notifications",
       "kind": "private",
-      "onEvent": [{"kind": "data.refresh", "source": "tenantSendStats"}, {"kind": "data.refresh", "source": "recentFailures"}]
+      "onEvent": [{"kind": "data.refresh", "source": "workspaceSendStats"}, {"kind": "data.refresh", "source": "recentFailures"}]
     }
   ],
   "nodes": [
@@ -40,20 +40,20 @@
           "children": [
             {"kind": "Card", "props": {"className": "p-4"}, "children": [
               {"kind": "Text", "props": {"className": "text-xs uppercase tracking-wide text-muted", "children": "Dispatched"}},
-              {"kind": "Text", "props": {"className": "text-3xl font-semibold mt-1"}, "bindings": {"children": {"$ref": "tenantSendStats.dispatched_total"}}}
+              {"kind": "Text", "props": {"className": "text-3xl font-semibold mt-1"}, "bindings": {"children": {"$ref": "workspaceSendStats.dispatched_total"}}}
             ]},
             {"kind": "Card", "props": {"className": "p-4"}, "children": [
               {"kind": "Text", "props": {"className": "text-xs uppercase tracking-wide text-muted", "children": "Delivered"}},
-              {"kind": "Text", "props": {"className": "text-3xl font-semibold mt-1"}, "bindings": {"children": {"$ref": "tenantSendStats.delivered_total"}}},
-              {"kind": "Text", "props": {"className": "text-xs text-muted mt-1"}, "bindings": {"children": {"$expr": "(tenantSendStats.delivery_rate * 100).toFixed(1) + '% delivery rate'"}}}
+              {"kind": "Text", "props": {"className": "text-3xl font-semibold mt-1"}, "bindings": {"children": {"$ref": "workspaceSendStats.delivered_total"}}},
+              {"kind": "Text", "props": {"className": "text-xs text-muted mt-1"}, "bindings": {"children": {"$expr": "(workspaceSendStats.delivery_rate * 100).toFixed(1) + '% delivery rate'"}}}
             ]},
             {"kind": "Card", "props": {"className": "p-4"}, "children": [
               {"kind": "Text", "props": {"className": "text-xs uppercase tracking-wide text-muted", "children": "Failed"}},
-              {"kind": "Text", "props": {"className": "text-3xl font-semibold mt-1 text-danger"}, "bindings": {"children": {"$ref": "tenantSendStats.failed_total"}}}
+              {"kind": "Text", "props": {"className": "text-3xl font-semibold mt-1 text-danger"}, "bindings": {"children": {"$ref": "workspaceSendStats.failed_total"}}}
             ]},
             {"kind": "Card", "props": {"className": "p-4"}, "children": [
               {"kind": "Text", "props": {"className": "text-xs uppercase tracking-wide text-muted", "children": "Unsubscribes"}},
-              {"kind": "Text", "props": {"className": "text-3xl font-semibold mt-1"}, "bindings": {"children": {"$ref": "tenantSendStats.unsubscribes_total"}}}
+              {"kind": "Text", "props": {"className": "text-3xl font-semibold mt-1"}, "bindings": {"children": {"$ref": "workspaceSendStats.unsubscribes_total"}}}
             ]}
           ]
         },
@@ -63,7 +63,7 @@
           "props": {"className": "p-6"},
           "children": [
             {"kind": "Text", "props": {"as": "h2", "className": "text-lg font-semibold mb-3", "children": "By channel"}},
-            {"kind": "BarChart", "props": {"height": 200}, "bindings": {"data": {"$ref": "tenantSendStats.by_channel"}, "xKey": "channel", "yKeys": ["delivered", "failed"]}}
+            {"kind": "BarChart", "props": {"height": 200}, "bindings": {"data": {"$ref": "workspaceSendStats.by_channel"}, "xKey": "channel", "yKeys": ["delivered", "failed"]}}
           ]
         },
         {
@@ -76,7 +76,7 @@
               "kind": "List",
               "props": {"emptyState": {"title": "No failures in the last window", "icon": "check-circle"}},
               "bindings": {"items": {"$ref": "recentFailures"}},
-              "itemRenderer": {"kind": "Widget", "widget": "notifications.notification-card", "props": {"notification": {"$ref": "row"}, "onPressUrl": {"$expr": "'/tenant/notifications/' + row.id"}}}
+              "itemRenderer": {"kind": "Widget", "widget": "notifications.notification-card", "props": {"notification": {"$ref": "row"}, "onPressUrl": {"$expr": "'/workspace/notifications/' + row.id"}}}
             }
           ]
         }

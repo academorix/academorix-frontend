@@ -1,0 +1,24 @@
+{
+  "id": "academorix://modules/subscription/errors",
+  "$version": 1,
+  "title": "subscription \u2014 error codes",
+  "namespace": "subscription",
+  "errors": [
+    {"code": "SUBSCRIPTION_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "subscription.errors.not_found"},
+    {"code": "SUBSCRIPTION_ACTIVE_REQUIRED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "subscription.errors.active_required", "description": "subscription.active middleware refused. Response includes state + upgrade path."},
+    {"code": "SUBSCRIPTION_STATE_NOT_ALLOWED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "subscription.errors.state_not_allowed"},
+    {"code": "SUBSCRIPTION_ALREADY_EXISTS", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "subscription.errors.already_exists", "description": "Workspace already has a non-terminal Subscription."},
+    {"code": "PLAN_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "subscription.errors.plan_not_found"},
+    {"code": "PLAN_NOT_AVAILABLE_FOR_APPLICATION", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "subscription.errors.plan_not_available", "description": "Plan belongs to a different Application than the workspace's."},
+    {"code": "PLAN_DEPRECATED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "subscription.errors.plan_deprecated", "description": "Plan flagged is_deprecated=true. Existing subscriptions grandfathered; new signups refused."},
+    {"code": "PLAN_ARCHIVED", "http": 410, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "subscription.errors.plan_archived"},
+    {"code": "PLAN_IN_USE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "subscription.errors.plan_in_use", "description": "Platform admin tried to delete a plan with active subscriptions."},
+    {"code": "CHECKOUT_PROVIDER_ERROR", "http": 502, "retryable": true, "user_facing": false, "audit_severity": "critical", "i18n_key": "subscription.errors.checkout_provider_error", "description": "Stripe / Paddle checkout session creation failed. Retry with exponential backoff."},
+    {"code": "PAYMENT_METHOD_REQUIRED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "subscription.errors.payment_method_required", "description": "Trial subscription attempted paid action without a payment method on file."},
+    {"code": "WEBHOOK_SIGNATURE_INVALID", "http": 401, "retryable": false, "user_facing": false, "audit_severity": "alert", "i18n_key": "subscription.errors.webhook_signature_invalid", "description": "Cashier webhook signature verification failed. Possible replay / fraud attempt."},
+    {"code": "WEBHOOK_DUPLICATE", "http": 200, "retryable": false, "user_facing": false, "audit_severity": "debug", "i18n_key": "subscription.errors.webhook_duplicate", "description": "Idempotent skip \u2014 provider_event_id already processed. Return 200 to prevent provider retries."},
+    {"code": "USAGE_REPORT_FAILED", "http": 500, "retryable": true, "user_facing": false, "audit_severity": "critical", "i18n_key": "subscription.errors.usage_report_failed", "description": "reportUsage() failed against Stripe / Paddle. Financial-material \u2014 requires ops attention."},
+    {"code": "SWAP_INVALID_TRANSITION", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "subscription.errors.swap_invalid_transition", "description": "E.g. attempting to swap from enterprise to free \u2014 must go through cancel + reinstate."},
+    {"code": "ENTERPRISE_INVOICE_INVALID", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "subscription.errors.enterprise_invoice_invalid"}
+  ]
+}

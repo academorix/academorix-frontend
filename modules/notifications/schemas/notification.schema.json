@@ -20,7 +20,7 @@
       "HasFactory",
       "HasUlids",
       "HasStates",
-      "BelongsToTenant",
+      "BelongsToWorkspace",
       "BelongsToApplication",
       "HasMetadata",
       "HasUserstamps",
@@ -48,8 +48,8 @@
     "engine": "postgres",
     "columns": {
       "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `notif_<26 chars>`."},
-      "tenant_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}},
-      "application_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "applications", "column": "id", "onUpdate": "cascade", "onDelete": "restrict"}, "description": "Null when the notification is tenant-global (not tied to a specific Application). Rare \u2014 typically set."},
+      "workspace_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "workspaces", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}},
+      "application_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "applications", "column": "id", "onUpdate": "cascade", "onDelete": "restrict"}, "description": "Null when the notification is workspace-global (not tied to a specific Application). Rare \u2014 typically set."},
       "category_slug": {"type": "string", "length": 128, "nullable": false, "description": "Module-namespaced (`invitations.invitation_sent`). References notification_categories.slug.", "foreign": {"table": "notification_categories", "column": "slug", "onUpdate": "cascade", "onDelete": "restrict"}},
       "template_id": {"type": "string", "length": 64, "nullable": true, "description": "Resolved template at dispatch time. Null on template-resolution failure (fallback used).", "foreign": {"table": "notification_templates", "column": "id", "onUpdate": "cascade", "onDelete": "set null"}},
       "priority": {"type": "string", "length": 16, "nullable": false, "default": "transactional", "description": "Enum: `critical`, `transactional`, `product`, `marketing`."},
@@ -63,7 +63,7 @@
       "actor_type": {"type": "string", "length": 16, "nullable": true, "description": "Polymorphic. Enum: `user`, `platform_user`, `system`."},
       "actor_id": {"type": "string", "length": 64, "nullable": true},
       "subject": {"type": "string", "length": 300, "nullable": true, "description": "Rendered subject (mail + in-app). Snapshotted after template render."},
-      "payload": {"type": "jsonb", "nullable": false, "default": "{}", "description": "Template variables + tenant branding block + recipient block. Event-carried state \u2014 self-contained. Confidential tier (may contain PII)."},
+      "payload": {"type": "jsonb", "nullable": false, "default": "{}", "description": "Template variables + workspace branding block + recipient block. Event-carried state \u2014 self-contained. Confidential tier (may contain PII)."},
       "seen_at": {"type": "timestamptz", "nullable": true, "description": "First time the user marked seen (explicit or auto-on-view)."},
       "archived_at": {"type": "timestamptz", "nullable": true, "description": "When archived by user OR by retention job."},
       "metadata": {"type": "jsonb", "nullable": true},
@@ -75,19 +75,19 @@
       "updated_at": {"type": "timestamptz", "nullable": false}
     },
     "indexes": [
-      {"columns": ["tenant_id", "addressee_type", "addressee_id", "state", "created_at"], "unique": false, "name": "notifications_inbox_index", "description": "Powers the per-user inbox query: `SELECT ... WHERE tenant_id=? AND addressee_id=? AND state\u2260archived ORDER BY created_at DESC`. Composite index tuned for this specific access."},
-      {"columns": ["tenant_id", "category_slug", "created_at"], "unique": false, "name": "notifications_category_index", "description": "Admin sends dashboard: aggregate by category over time."},
-      {"columns": ["tenant_id", "state", "created_at"], "unique": false, "name": "notifications_state_index", "description": "Retention scan + failure-spike diagnostics."},
+      {"columns": ["workspace_id", "addressee_type", "addressee_id", "state", "created_at"], "unique": false, "name": "notifications_inbox_index", "description": "Powers the per-user inbox query: `SELECT ... WHERE workspace_id=? AND addressee_id=? AND state\u2260archived ORDER BY created_at DESC`. Composite index tuned for this specific access."},
+      {"columns": ["workspace_id", "category_slug", "created_at"], "unique": false, "name": "notifications_category_index", "description": "Admin sends dashboard: aggregate by category over time."},
+      {"columns": ["workspace_id", "state", "created_at"], "unique": false, "name": "notifications_state_index", "description": "Retention scan + failure-spike diagnostics."},
       {"columns": ["template_id"], "unique": false, "name": "notifications_template_id_index", "description": "Refuse-delete-when-live-sends-reference query."},
       {"columns": ["addressee_email"], "unique": false, "name": "notifications_addressee_email_index", "predicate": "addressee_email IS NOT NULL", "description": "DSAR aggregation queries by email."},
       {"columns": ["addressee_phone"], "unique": false, "name": "notifications_addressee_phone_index", "predicate": "addressee_phone IS NOT NULL"},
       {"columns": ["created_at"], "unique": false, "name": "notifications_created_at_index", "description": "Retention scan (BRIN when at scale)."}
     ]
   },
-  "required": ["id", "tenant_id", "category_slug", "priority", "priority_channels_requested", "state", "addressee_type", "addressee_name", "payload", "created_at", "updated_at"],
+  "required": ["id", "workspace_id", "category_slug", "priority", "priority_channels_requested", "state", "addressee_type", "addressee_name", "payload", "created_at", "updated_at"],
   "properties": {
     "id": {"type": "string", "pattern": "^notif_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "application_id": {"type": ["string", "null"], "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$"},
     "category_slug": {"type": "string", "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$", "maxLength": 128},
     "template_id": {"type": ["string", "null"], "maxLength": 64},

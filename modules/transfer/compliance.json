@@ -2,7 +2,7 @@
   "id": "academorix://modules/transfer/compliance",
   "$version": 1,
   "title": "transfer \u2014 compliance evidence",
-  "description": "Transfer moves data across tenant boundaries at user request \u2014 imports carry data in, exports carry data out. Compliance surface is dominated by data-portability + retention + right-to-erasure. Every job transition also writes an audit row via HasAudit \u2014 the primary regulator-facing evidence is on `audits`, not here. This file documents what transfer contributes.",
+  "description": "Transfer moves data across workspace boundaries at user request \u2014 imports carry data in, exports carry data out. Compliance surface is dominated by data-portability + retention + right-to-erasure. Every job transition also writes an audit row via HasAudit \u2014 the primary regulator-facing evidence is on `audits`, not here. This file documents what transfer contributes.",
   "regimes": {
     "gdpr": {
       "applicable": true,
@@ -10,8 +10,8 @@
         {"article": "Art. 5(e)", "principle": "storage limitation",       "evidence": "Retention tier on xfer_jobs (90 / 180 / 365d per plan) + independent artifact TTL (7 / 14 / 30d). PruneXferArtifactsJob enforces daily. Documented in retention.json."},
         {"article": "Art. 17",   "principle": "right to erasure",         "evidence": "user::UserErased listener (AnonymiseTransferForErasedUser) rewrites causer / owner references. xfer_jobs rows retained as operational evidence with anonymised initiator. Shared mapping profiles transfer ownership."},
         {"article": "Art. 20",   "principle": "right to data portability", "evidence": "Every domain module's #[Exportable] entity is exportable by the subject via GET /api/v1/transfer/exports \u2014 machine-readable CSV / XLSX / JSON. Signed URL delivery covers off-session download."},
-        {"article": "Art. 25",   "principle": "data protection by design", "evidence": "tenant_id in rows is always resolved from server-side context, never trusted from an uploaded file (see TRANSFER_TENANT_MISMATCH). Per-attribute #[ImportField(lookup:)] scopes FK resolution to the caller's tenant."},
-        {"article": "Art. 30",   "principle": "records of processing",    "evidence": "xfer_jobs is a light records-of-processing surface for tenants (who exported what, when). The heavy version is in `audit`."},
+        {"article": "Art. 25",   "principle": "data protection by design", "evidence": "workspace_id in rows is always resolved from server-side context, never trusted from an uploaded file (see TRANSFER_WORKSPACE_MISMATCH). Per-attribute #[ImportField(lookup:)] scopes FK resolution to the caller's workspace."},
+        {"article": "Art. 30",   "principle": "records of processing",    "evidence": "xfer_jobs is a light records-of-processing surface for workspaces (who exported what, when). The heavy version is in `audit`."},
         {"article": "Art. 32",   "principle": "security of processing",   "evidence": "Artifacts stored on config-selectable disks (typically S3 SSE-KMS). Signed URLs default 24h TTL. Checksums (SHA-256) recorded for tamper detection. Restricted-tier fields never emitted on the wire (see data-classes.json + x-wire.hidden)."}
       ]
     },
@@ -27,14 +27,14 @@
       "controls": [
         {"criterion": "CC6.1",  "principle": "logical access controls",     "evidence": "Per-entity `<entity>.import` / `<entity>.export` permission composed with transfer.imports.run / transfer.exports.run. Policy enforced at both HTTP + policy layer."},
         {"criterion": "CC7.2",  "principle": "system monitoring",           "evidence": "Metrics in metrics.json. Health probes for storage / workers / stalled jobs. Stalled-job auto-cancel prevents silent stuck workflows."},
-        {"criterion": "CC7.3",  "principle": "operations monitoring feed",  "evidence": "Every xfer_job transition writes an activity row (activity module). Tenant admins see 'Alice imported 1,245 athletes' + errors count in the feed."},
+        {"criterion": "CC7.3",  "principle": "operations monitoring feed",  "evidence": "Every xfer_job transition writes an activity row (activity module). Workspace admins see 'Alice imported 1,245 athletes' + errors count in the feed."},
         {"criterion": "CC8.1",  "principle": "change management",           "evidence": "Import mode replace / delete require explicit entitlement + feature toggle. Not on by default."}
       ]
     },
     "iso27001_2022": {
       "applicable": true,
       "controls": [
-        {"control": "A.5.34", "principle": "privacy protection in the processing of PII", "evidence": "tenant_id never trusted from file; per-tenant scope on lookup; restricted-tier fields never in wire payloads; artifacts on config-selectable encrypted disks."},
+        {"control": "A.5.34", "principle": "privacy protection in the processing of PII", "evidence": "workspace_id never trusted from file; per-workspace scope on lookup; restricted-tier fields never in wire payloads; artifacts on config-selectable encrypted disks."},
         {"control": "A.8.10", "principle": "information deletion",                        "evidence": "Retention scan (PruneXferArtifactsJob) hard-deletes artifact files past TTL, hard-deletes xfer_jobs rows past retention tier, anonymises on user erasure."}
       ]
     }

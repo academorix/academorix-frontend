@@ -1,0 +1,30 @@
+{
+  "id": "academorix://modules/entitlements/config",
+  "$version": 1,
+  "title": "entitlements \u2014 developer configuration",
+  "configFile": "config/entitlements.php",
+  "envPrefix": "ENTITLEMENTS_",
+  "sections": {
+    "enforcer": {"keys": [
+      {"path": "entitlements.enforcer.warn_threshold", "type": "float", "env": "ENTITLEMENTS_WARN_THRESHOLD", "default": 0.80, "description": "Fraction of value_cap that fires EntitlementApproachingCap. Default 80%."},
+      {"path": "entitlements.enforcer.strict_mode", "type": "bool", "default": true, "description": "true = throw on missing key registration. false = allow (dev only)."}
+    ]},
+    "redis": {"keys": [
+      {"path": "entitlements.redis.connection", "type": "string", "env": "ENTITLEMENTS_REDIS_CONNECTION", "default": "default"},
+      {"path": "entitlements.redis.key_prefix", "type": "string", "default": "quota:", "description": "Prefix for all entitlement counter keys."},
+      {"path": "entitlements.redis.tolerance", "type": "int", "default": 100, "description": "Max Redis-Postgres drift accepted before ReconcileUsageJob writes a correction."}
+    ]},
+    "reset": {"keys": [
+      {"path": "entitlements.reset.scan_batch_size", "type": "int", "default": 500, "description": "Rows per ResetPeriodicUsageJob invocation."},
+      {"path": "entitlements.reset.month_boundary_timezone", "type": "string", "default": "UTC", "description": "Timezone for monthly resets. UTC by default; enterprise contracts may negotiate per-workspace."}
+    ]},
+    "billing_export": {"keys": [
+      {"path": "entitlements.billing_export.provider_timeout_seconds", "type": "int", "default": 30},
+      {"path": "entitlements.billing_export.idempotency_window_hours", "type": "int", "default": 168, "description": "1 week. Provider usage records within this window are dedup'd via correlation ID."}
+    ]},
+    "usage_partitioning": {"keys": [
+      {"path": "entitlements.usage_partitioning.pre_create_months", "type": "int", "default": 3, "description": "Number of future monthly partitions pre-created by CreatePartitionsJob (unshipped in v1)."},
+      {"path": "entitlements.usage_partitioning.retention_days_default", "type": "int", "default": 90, "description": "Fallback retention when entitlement.usage_history.retention_days resolution fails."}
+    ]}
+  }
+}

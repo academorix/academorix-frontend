@@ -15,7 +15,7 @@
       "MailSuppression.updated_at"
     ],
     "internal": [
-      "MailSuppression.tenant_id",
+      "MailSuppression.workspace_id",
       "MailSuppression.source_delivery_id",
       "MailSuppression.metadata"
     ],

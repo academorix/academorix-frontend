@@ -2,7 +2,7 @@
 
 The in-app notification channel. Thin wrapper around Laravel Reverb (self-hosted WebSocket server, Pusher/Ably as pluggable alternatives).
 
-> **Position in the wave.** Wave 1 channel module. Depends on `foundation`, `tenancy`, `notifications` (core). Zero downstream `extendedBy` \u2014 channels are terminal.
+> **Position in the wave.** Wave 1 channel module. Depends on `foundation`, `workspaces`, `notifications` (core). Zero downstream `extendedBy` \u2014 channels are terminal.
 
 ## 1. What this channel does
 

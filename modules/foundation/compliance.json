@@ -10,7 +10,7 @@
       "name": "General Data Protection Regulation",
       "regulation": "Regulation (EU) 2016/679",
       "jurisdiction": "EU + EEA",
-      "applicableWhen": "Any EU/EEA data subject in the tenant's user base OR any processing that targets EU residents.",
+      "applicableWhen": "Any EU/EEA data subject in the workspace's user base OR any processing that targets EU residents.",
       "commonArticles": [
         {"article": "Art. 5", "principle": "storage limitation — data kept no longer than necessary"},
         {"article": "Art. 6", "principle": "lawful basis — one of consent / contract / legal obligation / vital interest / public task / legitimate interest"},
@@ -35,7 +35,7 @@
         "Compliance module's DSAR orchestrator aggregating across modules → Art. 15",
         "retention.json + Compliance.PurgeSubjectJob → Art. 17",
         "subprocessors.json aggregation + weekly snapshot → Art. 28",
-        "TenantContact where kind=dpo + P7Y retention hold → Art. 30",
+        "WorkspaceContact where kind=dpo + P7Y retention hold → Art. 30",
         "data-classes.json restricted tier + KMS encryption → Art. 32",
         "notifications.SecurityBreachNotification runbook → Art. 33"
       ]
@@ -52,7 +52,7 @@
       "name": "Children's Online Privacy Protection Act",
       "regulation": "16 CFR Part 312",
       "jurisdiction": "United States",
-      "applicableWhen": "Any child under 13 processed as a tenant user.",
+      "applicableWhen": "Any child under 13 processed as a workspace user.",
       "commonArticles": [
         {"article": "§312.4", "principle": "notice to parents"},
         {"article": "§312.4(c)", "principle": "storage limitation for children's data"},
@@ -71,7 +71,7 @@
       "name": "Family Educational Rights and Privacy Act",
       "regulation": "34 CFR Part 99",
       "jurisdiction": "United States (schools receiving federal education funds)",
-      "applicableWhen": "Tenant is a school or higher-ed institution + processes student records.",
+      "applicableWhen": "Workspace is a school or higher-ed institution + processes student records.",
       "commonArticles": [
         {"article": "§99.10", "principle": "parent inspection right — 45 days"},
         {"article": "§99.30", "principle": "written consent before disclosure"},
@@ -81,14 +81,14 @@
       "commonEvidencePatterns": [
         "DPA template establishing Academorix as a school official under direct control",
         "Disclosure log per athlete → parent inspection view",
-        "Written parental consent flow for cross-tenant disclosures (rare)"
+        "Written parental consent flow for cross-workspace disclosures (rare)"
       ]
     },
     "ccpa_cpra": {
       "name": "California Consumer Privacy Act + California Privacy Rights Act",
       "regulation": "Cal. Civ. Code §1798.100 et seq.",
       "jurisdiction": "California residents",
-      "applicableWhen": "Business collecting personal information of California residents (nearly all tenants have some Californians).",
+      "applicableWhen": "Business collecting personal information of California residents (nearly all workspaces have some Californians).",
       "commonArticles": [
         {"article": "§1798.100", "principle": "notice at collection"},
         {"article": "§1798.105", "principle": "right to delete"},
@@ -114,7 +114,7 @@
       "name": "Health Insurance Portability and Accountability Act — adjacent controls",
       "regulation": "45 CFR Parts 160, 162, 164",
       "jurisdiction": "United States (covered entities + business associates)",
-      "applicableWhen": "Currently NOT applicable — Academorix is not a HIPAA covered entity + no BAA is signed with any tenant. `regulated_health` data-class tier reserved for future v2 when a physical-therapy or sports-medicine vertical lands.",
+      "applicableWhen": "Currently NOT applicable — Academorix is not a HIPAA covered entity + no BAA is signed with any workspace. `regulated_health` data-class tier reserved for future v2 when a physical-therapy or sports-medicine vertical lands.",
       "strategicPosition": "Deliberately avoid covered-entity status in v1. Model safeguarding health fields as `regulated_health` data class → encrypted at rest, restricted access, mandatory audit trail, NEVER exported to marketing analytics."
     },
     "wcag_2_2_aa": {

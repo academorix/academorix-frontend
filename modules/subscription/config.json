@@ -1,0 +1,39 @@
+{
+  "id": "academorix://modules/subscription/config",
+  "$version": 1,
+  "title": "subscription \u2014 developer configuration",
+  "configFile": "config/subscription.php",
+  "envPrefix": "SUBSCRIPTION_",
+  "sections": {
+    "cashier": {"keys": [
+      {"path": "subscription.cashier.default_provider", "type": "string", "env": "CASHIER_DEFAULT_PROVIDER", "default": "stripe", "enum": ["stripe", "paddle"], "description": "Fallback provider when Application.payment_provider is null."},
+      {"path": "subscription.cashier.stripe.key", "type": "string", "env": "STRIPE_KEY", "description": "Stripe publishable key."},
+      {"path": "subscription.cashier.stripe.secret", "type": "string", "env": "STRIPE_SECRET", "description": "Stripe secret key. NEVER exposed to clients."},
+      {"path": "subscription.cashier.stripe.webhook_secret", "type": "string", "env": "STRIPE_WEBHOOK_SECRET"},
+      {"path": "subscription.cashier.paddle.seller_id", "type": "string", "env": "PADDLE_SELLER_ID"},
+      {"path": "subscription.cashier.paddle.auth_code", "type": "string", "env": "PADDLE_AUTH_CODE"},
+      {"path": "subscription.cashier.paddle.webhook_secret", "type": "string", "env": "PADDLE_WEBHOOK_SECRET"}
+    ]},
+    "trial": {"keys": [
+      {"path": "subscription.trial.default_days", "type": "int", "default": 14, "description": "Trial length when Plan.trial_days = 0 but subscription.trial feature is on."},
+      {"path": "subscription.trial.warning_days_before", "type": "int", "default": 3, "description": "Fire TrialEnding N days before trial_ends_at."}
+    ]},
+    "dunning": {"keys": [
+      {"path": "subscription.dunning.stages", "type": "array", "default": [
+        {"stage": "at_risk", "days_from_past_due": 1, "duration_days": 7, "restrictions": []},
+        {"stage": "grace", "days_from_past_due": 8, "duration_days": 7, "restrictions": ["readonly_non_critical"]},
+        {"stage": "suspended", "days_from_past_due": 15, "duration_days": 7, "restrictions": ["full_suspension_except_billing_pages"]},
+        {"stage": "cancelled", "days_from_past_due": 22, "duration_days": null, "restrictions": ["full_cancellation"]}
+      ], "description": "Grace-period progression. Modify to change dunning UX."},
+      {"path": "subscription.dunning.max_recovery_attempts", "type": "int", "default": 4, "description": "Cashier retry attempts before we consider it past_due. Aligns with Stripe Smart Retries."}
+    ]},
+    "swap": {"keys": [
+      {"path": "subscription.swap.prorate_on_upgrade", "type": "bool", "default": true, "description": "Prorate mid-period upgrades."},
+      {"path": "subscription.swap.effective_at_period_end_on_downgrade", "type": "bool", "default": true, "description": "Downgrades take effect at period end (fair-usage \u2014 customer already paid for this period)."}
+    ]},
+    "reconciliation": {"keys": [
+      {"path": "subscription.reconciliation.sample_size", "type": "int", "default": 100},
+      {"path": "subscription.reconciliation.high_value_weight", "type": "float", "default": 3.0, "description": "Weight for enterprise / annual subscriptions in reconciliation sampling."}
+    ]}
+  }
+}

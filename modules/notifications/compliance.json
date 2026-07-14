@@ -60,7 +60,7 @@
     "iso_27001": {
       "applicable": true,
       "controls": [
-        {"annex": "A.5.15", "principle": "access control policy", "evidence": "policies.json enforces per-model per-action authorization. platform_admin surface strictly separated from tenant surface."},
+        {"annex": "A.5.15", "principle": "access control policy", "evidence": "policies.json enforces per-model per-action authorization. platform_admin surface strictly separated from workspace surface."},
         {"annex": "A.8.24", "principle": "use of cryptography", "evidence": "confidential-tier fields encrypted at rest via foundation's HasAuditable KMS integration."}
       ]
     }

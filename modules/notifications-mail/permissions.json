@@ -6,7 +6,7 @@
   "seeder": "Academorix\\Notifications\\Mail\\Database\\Seeders\\NotificationsMailPermissionSeeder",
   "isSystem": true,
   "permissions": [
-    {"name": "notifications.mail.suppressions.viewAny", "guard": "sanctum", "description": "List mail suppressions in tenant.", "seededOn": ["admin", "owner"]},
+    {"name": "notifications.mail.suppressions.viewAny", "guard": "sanctum", "description": "List mail suppressions in workspace.", "seededOn": ["admin", "owner"]},
     {"name": "notifications.mail.suppressions.view", "guard": "sanctum", "description": "View a single suppression row.", "seededOn": ["admin", "owner"]},
     {"name": "notifications.mail.suppressions.create", "guard": "sanctum", "description": "Manually block an email address (reason=manual).", "seededOn": ["admin", "owner"]},
     {"name": "notifications.mail.suppressions.delete", "guard": "sanctum", "description": "Revoke a suppression. Refused for hard_bounce/complaint entries in the policy.", "seededOn": ["owner"]}

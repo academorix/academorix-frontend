@@ -18,13 +18,13 @@
       {"trait": "Academorix\\Foundation\\Concerns\\Filterable"},
       {"trait": "Academorix\\Foundation\\Concerns\\Searchable"}
     ],
-    "tenancy": [
-      {"trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenantOptional", "reason": "tenant_id NULL = platform-wide opt-out (known bad numbers, spam-trap short codes). tenant_id set = tenant-specific."}
+    "workspaces": [
+      {"trait": "Academorix\\Workspaces\\Concerns\\BelongsToWorkspaceOptional", "reason": "workspace_id NULL = platform-wide opt-out (known bad numbers, spam-trap short codes). workspace_id set = workspace-specific."}
     ]
   },
   "composition": {
     "sms_opt_out": {
-      "traits": ["HasFactory", "HasUlids", "HasSystemFlag", "BelongsToTenantOptional", "HasMetadata", "HasUserstamps", "HasAuditable", "Filterable", "Searchable", "SoftDeletes"],
+      "traits": ["HasFactory", "HasUlids", "HasSystemFlag", "BelongsToWorkspaceOptional", "HasMetadata", "HasUserstamps", "HasAuditable", "Filterable", "Searchable", "SoftDeletes"],
       "notes": "Same shape as MailSuppression. NEVER Importable/Exportable \u2014 regulatory evidence must stay on-platform."
     }
   }

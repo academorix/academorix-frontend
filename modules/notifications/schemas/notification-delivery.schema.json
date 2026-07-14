@@ -20,7 +20,7 @@
       "HasFactory",
       "HasUlids",
       "HasStates",
-      "BelongsToTenant",
+      "BelongsToWorkspace",
       "HasMetadata",
       "HasUserstamps",
       "HasAuditable",
@@ -47,7 +47,7 @@
     "columns": {
       "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `delv_<26 chars>`."},
       "notification_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "notifications", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}},
-      "tenant_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "Denormalised from parent Notification for query filter efficiency."},
+      "workspace_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "workspaces", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "Denormalised from parent Notification for query filter efficiency."},
       "channel": {"type": "string", "length": 16, "nullable": false, "description": "Enum: `mail`, `sms`, `push`, `in_app`."},
       "provider": {"type": "string", "length": 32, "nullable": true, "description": "Provider slug (`mailgun`, `sendgrid`, `aws-ses`, `twilio`, `messagebird`, `fcm`, `apns`, `reverb`). Null until provider selected."},
       "provider_message_id": {"type": "string", "length": 255, "nullable": true, "description": "Provider-assigned message id. Captured on send-accept. Used to correlate inbound provider webhooks."},
@@ -75,17 +75,17 @@
     "indexes": [
       {"columns": ["notification_id", "channel"], "unique": true, "name": "notification_deliveries_notif_channel_unique", "description": "Prevents duplicate delivery rows for the same (Notification, channel) tuple. Enforced by the SendNotificationJob orchestrator."},
       {"columns": ["provider", "provider_message_id"], "unique": true, "name": "notification_deliveries_provider_message_id_unique", "predicate": "provider_message_id IS NOT NULL", "description": "Provider webhook lookup path: `WHERE provider=? AND provider_message_id=?`."},
-      {"columns": ["tenant_id", "channel", "state", "created_at"], "unique": false, "name": "notification_deliveries_tenant_channel_state_index", "description": "Admin dashboard: per-tenant delivery health by channel over time."},
+      {"columns": ["workspace_id", "channel", "state", "created_at"], "unique": false, "name": "notification_deliveries_workspace_channel_state_index", "description": "Admin dashboard: per-workspace delivery health by channel over time."},
       {"columns": ["state", "next_retry_at"], "unique": false, "name": "notification_deliveries_retry_scan_index", "predicate": "state IN ('failed') AND next_retry_at IS NOT NULL", "description": "RetryDeliveryJob scan."},
       {"columns": ["state", "attempted_at"], "unique": false, "name": "notification_deliveries_oldest_pending_index", "predicate": "state IN ('queued', 'sending')", "description": "OldestPendingDeliveryProbe query."},
       {"columns": ["created_at"], "unique": false, "name": "notification_deliveries_created_at_index"}
     ]
   },
-  "required": ["id", "notification_id", "tenant_id", "channel", "state", "retry_count", "created_at", "updated_at"],
+  "required": ["id", "notification_id", "workspace_id", "channel", "state", "retry_count", "created_at", "updated_at"],
   "properties": {
     "id": {"type": "string", "pattern": "^delv_[0-9A-HJKMNP-TV-Z]{26}$"},
     "notification_id": {"type": "string", "pattern": "^notif_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "channel": {"type": "string", "enum": ["mail", "sms", "push", "in_app"]},
     "provider": {"type": ["string", "null"], "maxLength": 32},
     "provider_message_id": {"type": ["string", "null"], "maxLength": 255},

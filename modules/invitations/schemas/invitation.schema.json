@@ -3,7 +3,7 @@
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "Invitation",
-  "description": "One invitation. Polymorphic `target` (what the invitation grants access to — Tenant, Team, Athlete, Federation, ...) and polymorphic `inviter` (who sent it — User, ServiceAccount, System). Token is hashed at rest — the raw token is only ever known to the invitee, delivered through the chosen channel. State machine advances via the send / delivery / interaction / acceptance jobs and the inbound mail-transport webhook; every transition emits a row on `invitation_events`.",
+  "description": "One invitation. Polymorphic `target` (what the invitation grants access to — Workspace, Team, Athlete, Federation, ...) and polymorphic `inviter` (who sent it — User, ServiceAccount, System). Token is hashed at rest — the raw token is only ever known to the invitee, delivered through the chosen channel. State machine advances via the send / delivery / interaction / acceptance jobs and the inbound mail-transport webhook; every transition emits a row on `invitation_events`.",
   "type": "object",
   "x-module": "invitations",
   "x-eloquent": {
@@ -22,7 +22,7 @@
       "HasFactory",
       "HasUlids",
       "BelongsToApplication",
-      "BelongsToTenantOptional",
+      "BelongsToWorkspaceOptional",
       "HasMetadata",
       "HasStates",
       "HasUserstamps",
@@ -78,13 +78,13 @@
           "onDelete": "restrict"
         }
       },
-      "tenant_id": {
+      "workspace_id": {
         "type": "string",
         "length": 64,
         "nullable": true,
-        "description": "Owning tenant. NULL for platform-scope invites (Academorix staff onboarding). Filtered by BelongsToTenantOptional global scope when a tenant context is present; unfiltered on the central + platform-admin hosts.",
+        "description": "Owning workspace. NULL for platform-scope invites (Academorix staff onboarding). Filtered by BelongsToWorkspaceOptional global scope when a workspace context is present; unfiltered on the central + platform-admin hosts.",
         "foreign": {
-          "table": "tenants",
+          "table": "workspaces",
           "column": "id",
           "onUpdate": "cascade",
           "onDelete": "cascade"
@@ -94,7 +94,7 @@
         "type": "string",
         "length": 64,
         "nullable": false,
-        "description": "Polymorphic target key registered via InvitationTargetRegistry (e.g. `tenant`, `team`, `athlete`, `federation`, `trial_session`). Enforced by the `invitation_target_registered` validation rule."
+        "description": "Polymorphic target key registered via InvitationTargetRegistry (e.g. `workspace`, `team`, `athlete`, `federation`, `trial_session`). Enforced by the `invitation_target_registered` validation rule."
       },
       "target_id": {
         "type": "string",
@@ -158,7 +158,7 @@
       "expires_at": {
         "type": "timestamptz",
         "nullable": false,
-        "description": "Hard expiry. Default `now() + 14 days`, configurable per tenant via settings."
+        "description": "Hard expiry. Default `now() + 14 days`, configurable per workspace via settings."
       },
       "state": {
         "type": "string",
@@ -252,11 +252,11 @@
         "description": "Primary read path — the /api/invitations/{token} endpoint hashes the incoming token and looks up here."
       },
       {
-        "columns": ["application_id", "tenant_id", "email", "state"],
+        "columns": ["application_id", "workspace_id", "email", "state"],
         "unique": true,
         "name": "invitations_pending_unique",
         "predicate": "state = 'pending' AND deleted_at IS NULL",
-        "description": "Prevents duplicate pending invites for the same (tenant, email) tuple. Enforced by the `unique_pending_invitation` validation rule."
+        "description": "Prevents duplicate pending invites for the same (workspace, email) tuple. Enforced by the `unique_pending_invitation` validation rule."
       },
       {
         "columns": ["target_type", "target_id"],
@@ -269,9 +269,9 @@
         "name": "invitations_inviter_index"
       },
       {
-        "columns": ["tenant_id", "state", "created_at"],
+        "columns": ["workspace_id", "state", "created_at"],
         "unique": false,
-        "name": "invitations_tenant_state_created_index"
+        "name": "invitations_workspace_state_created_index"
       },
       {
         "columns": ["expires_at"],
@@ -306,7 +306,7 @@
   "properties": {
     "id": {"type": "string", "pattern": "^invite_[0-9A-HJKMNP-TV-Z]{26}$"},
     "application_id": {"type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": ["string", "null"], "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "target_type": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$", "maxLength": 64},
     "target_id": {"type": "string", "maxLength": 64},
     "inviter_type": {"type": "string", "enum": ["user", "service_account", "system"]},

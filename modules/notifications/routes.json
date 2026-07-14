@@ -2,7 +2,7 @@
   "id": "academorix://modules/notifications/routes",
   "$version": 1,
   "title": "notifications core \u2014 HTTP routes",
-  "description": "Core routes only. Grouped by host tier: central (unsubscribe), platform-admin (cross-tenant search), tenant (inbox + preferences + templates). Provider webhooks + push subscription registration live in the respective channel modules \u2014 notifications-mail, notifications-sms, notifications-push. Every route lists its middleware pipeline in foundation's canonical priority order + its permission gate.",
+  "description": "Core routes only. Grouped by host tier: central (unsubscribe), platform-admin (cross-workspace search), workspace (inbox + preferences + templates). Provider webhooks + push subscription registration live in the respective channel modules \u2014 notifications-mail, notifications-sms, notifications-push. Every route lists its middleware pipeline in foundation's canonical priority order + its permission gate.",
   "groups": [
     {
       "name": "central-unsubscribe",
@@ -14,7 +14,7 @@
         "throttle:foundation-base",
         "response.envelope"
       ],
-      "hosts": ["central", "tenant"],
+      "hosts": ["central", "workspace"],
       "description": "Public one-click unsubscribe. Token-based signed URL from mail footer. RFC 8058 List-Unsubscribe-Post compliant. Sets NotificationPreference.enabled=false + fires PreferenceUpdated \u2014 the mail module's suppression list picks up the change asynchronously.",
       "routes": [
         {
@@ -46,7 +46,7 @@
         "response.envelope"
       ],
       "hosts": ["central-admin"],
-      "description": "Cross-tenant notification search + delivery diagnostics for support / abuse investigation.",
+      "description": "Cross-workspace notification search + delivery diagnostics for support / abuse investigation.",
       "routes": [
         {
           "method": "GET",
@@ -88,135 +88,135 @@
       ]
     },
     {
-      "name": "tenant-inbox",
-      "prefix": "/api/v1/tenant/notifications",
+      "name": "workspace-inbox",
+      "prefix": "/api/v1/workspace/notifications",
       "middleware": [
         "request.id",
         "cors.strict",
         "api.version",
         "auth:sanctum",
-        "tenant.resolve",
+        "workspace.resolve",
         "throttle:foundation-base",
         "response.envelope"
       ],
-      "hosts": ["tenant"],
-      "description": "User-facing inbox. Per-user Notification queries scoped by addressee_id = auth user + tenant.",
+      "hosts": ["workspace"],
+      "description": "User-facing inbox. Per-user Notification queries scoped by addressee_id = auth user + workspace.",
       "routes": [
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\InboxController@index",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Workspace\\InboxController@index",
           "permission": "notifications.viewAny",
           "description": "Auth user's inbox with filters (category, channel, state, seen)."
         },
         {
           "method": "GET",
           "path": "/{notification}",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\InboxController@show",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Workspace\\InboxController@show",
           "permission": "notifications.view"
         },
         {
           "method": "POST",
           "path": "/{notification}/seen",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\InboxController@markSeen",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Workspace\\InboxController@markSeen",
           "middleware": ["throttle.mark-seen"],
           "permission": "notifications.markSeen"
         },
         {
           "method": "POST",
           "path": "/mark-all-seen",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\InboxController@markAllSeen",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Workspace\\InboxController@markAllSeen",
           "middleware": ["throttle.mark-seen"],
           "permission": "notifications.markSeen"
         },
         {
           "method": "POST",
           "path": "/{notification}/archive",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\InboxController@archive",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Workspace\\InboxController@archive",
           "permission": "notifications.archive"
         }
       ]
     },
     {
-      "name": "tenant-preferences",
-      "prefix": "/api/v1/tenant/notification-preferences",
+      "name": "workspace-preferences",
+      "prefix": "/api/v1/workspace/notification-preferences",
       "middleware": [
         "request.id",
         "cors.strict",
         "api.version",
         "auth:sanctum",
-        "tenant.resolve",
+        "workspace.resolve",
         "throttle.preferences",
         "response.envelope"
       ],
-      "hosts": ["tenant"],
+      "hosts": ["workspace"],
       "description": "Per-user opt-in per category per channel + quiet hours + digest mode.",
       "routes": [
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\PreferenceController@index",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Workspace\\PreferenceController@index",
           "permission": "notifications.preferences.view",
           "description": "Grid of (category, channel) toggles for the auth user."
         },
         {
           "method": "PATCH",
           "path": "/",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\PreferenceController@update",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Workspace\\PreferenceController@update",
           "permission": "notifications.preferences.update",
           "description": "Bulk upsert (category, channel, enabled, digest_mode, quiet_hours_*)."
         }
       ]
     },
     {
-      "name": "tenant-templates",
-      "prefix": "/api/v1/tenant/notification-templates",
+      "name": "workspace-templates",
+      "prefix": "/api/v1/workspace/notification-templates",
       "middleware": [
         "request.id",
         "cors.strict",
         "api.version",
         "auth:sanctum",
-        "tenant.resolve",
+        "workspace.resolve",
         "throttle:foundation-base",
         "response.envelope"
       ],
-      "hosts": ["tenant"],
-      "description": "Tenant admin surface for overriding platform templates + creating tenant-specific ones. Publish workflow (draft \u2192 published). Body is pre-rendered HTML with Blade placeholders (produced by the emails renderer at CI build time).",
+      "hosts": ["workspace"],
+      "description": "Workspace admin surface for overriding platform templates + creating workspace-specific ones. Publish workflow (draft \u2192 published). Body is pre-rendered HTML with Blade placeholders (produced by the emails renderer at CI build time).",
       "routes": [
         {
           "method": "GET",
           "path": "/",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@index",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Workspace\\TemplateController@index",
           "permission": "notifications.templates.viewAny"
         },
         {
           "method": "POST",
           "path": "/",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@store",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Workspace\\TemplateController@store",
           "permission": "notifications.templates.create"
         },
         {
           "method": "GET",
           "path": "/{template}",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@show",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Workspace\\TemplateController@show",
           "permission": "notifications.templates.view"
         },
         {
           "method": "PATCH",
           "path": "/{template}",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@update",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Workspace\\TemplateController@update",
           "permission": "notifications.templates.update"
         },
         {
           "method": "POST",
           "path": "/{template}/publish",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@publish",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Workspace\\TemplateController@publish",
           "permission": "notifications.templates.publish"
         },
         {
           "method": "POST",
           "path": "/{template}/test",
-          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@test",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Workspace\\TemplateController@test",
           "permission": "notifications.templates.test",
           "description": "Send a rendered template to a test recipient via the appropriate channel module. Rate-limited to 10/day per template."
         }
@@ -224,9 +224,9 @@
     }
   ],
   "notes": [
-    "All tenant routes go through `tenant.resolve` (from tenancy module) which sets the tenant context + rejects cross-tenant access.",
+    "All workspace routes go through `workspace.resolve` (from workspaces module) which sets the workspace context + rejects cross-workspace access.",
     "Provider webhooks (mail/sms/push provider callbacks) + push subscription CRUD do NOT live here. They live in the respective channel modules.",
     "The unsubscribe route is signed-URL protected \u2014 token embeds (user, category, channel) triple + expires in 30 days. Once unsubscribed, stays unsubscribed even if token expires.",
-    "Push subscription management (POST /api/v1/tenant/notification-subscriptions) is owned by notifications-push, not this core."
+    "Push subscription management (POST /api/v1/workspace/notification-subscriptions) is owned by notifications-push, not this core."
   ]
 }

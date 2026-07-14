@@ -2,7 +2,7 @@
   "id": "academorix://modules/notifications/traits",
   "$version": 1,
   "title": "notifications core \u2014 trait composition per model",
-  "description": "Notifications core owns zero new traits \u2014 it consumes foundation's cross-cutting traits + tenancy's boundary traits. This file documents (a) the framework + foundation + tenancy traits every core model composes, and (b) the canonical compose-order per model so CI's trait-order linter can verify. Push subscriptions live in `notifications-push` (not this module); mail suppression in `notifications-mail`; SMS opt-outs in `notifications-sms`.",
+  "description": "Notifications core owns zero new traits \u2014 it consumes foundation's cross-cutting traits + workspaces's boundary traits. This file documents (a) the framework + foundation + workspaces traits every core model composes, and (b) the canonical compose-order per model so CI's trait-order linter can verify. Push subscriptions live in `notifications-push` (not this module); mail suppression in `notifications-mail`; SMS opt-outs in `notifications-sms`.",
   "owned": [],
   "consumed": {
     "framework": [
@@ -12,7 +12,7 @@
       },
       {
         "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids",
-        "reason": "ULID primary keys \u2014 time-ordered, URL-safe, tenant-neutral."
+        "reason": "ULID primary keys \u2014 time-ordered, URL-safe, workspace-neutral."
       },
       {
         "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
@@ -58,25 +58,25 @@
       },
       {
         "trait": "Academorix\\Foundation\\Concerns\\Importable",
-        "reason": "NotificationTemplate + NotificationPreference importable via CSV/JSON for tenant onboarding + backup restore."
+        "reason": "NotificationTemplate + NotificationPreference importable via CSV/JSON for workspace onboarding + backup restore."
       },
       {
         "trait": "Academorix\\Foundation\\Concerns\\Exportable",
         "reason": "Notification exportable for DSAR (Art. 15); NotificationPreference exportable for user-driven backup."
       }
     ],
-    "tenancy": [
+    "workspaces": [
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
-        "reason": "Every model except NotificationCategory carries tenant_id; auto-scope on read queries."
+        "trait": "Academorix\\Workspaces\\Concerns\\BelongsToWorkspace",
+        "reason": "Every model except NotificationCategory carries workspace_id; auto-scope on read queries."
       },
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToApplication",
+        "trait": "Academorix\\Workspaces\\Concerns\\BelongsToApplication",
         "reason": "Notification carries application_id (a coach's inbox is per-app)."
       },
       {
-        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenantOptional",
-        "reason": "NotificationTemplate + NotificationCategory: tenant_id NULLABLE. NULL = platform default; row with tenant_id set = tenant override."
+        "trait": "Academorix\\Workspaces\\Concerns\\BelongsToWorkspaceOptional",
+        "reason": "NotificationTemplate + NotificationCategory: workspace_id NULLABLE. NULL = platform default; row with workspace_id set = workspace override."
       }
     ]
   },
@@ -86,7 +86,7 @@
         "HasFactory",
         "HasUlids",
         "HasStates",
-        "BelongsToTenant",
+        "BelongsToWorkspace",
         "BelongsToApplication",
         "HasMetadata",
         "HasUserstamps",
@@ -103,21 +103,21 @@
         "HasFactory",
         "HasUlids",
         "HasStates",
-        "BelongsToTenant",
+        "BelongsToWorkspace",
         "HasMetadata",
         "HasUserstamps",
         "HasAuditable",
         "Filterable",
         "SoftDeletes"
       ],
-      "notes": "Per-channel attempt. Belongs to a Notification (which carries tenant+application). Not Searchable (aggregate metrics preferred over full-text)."
+      "notes": "Per-channel attempt. Belongs to a Notification (which carries workspace+application). Not Searchable (aggregate metrics preferred over full-text)."
     },
     "notification_template": {
       "traits": [
         "HasFactory",
         "HasUlids",
         "HasSystemFlag",
-        "BelongsToTenantOptional",
+        "BelongsToWorkspaceOptional",
         "HasMetadata",
         "HasUserstamps",
         "HasAuditable",
@@ -129,13 +129,13 @@
         "Exportable",
         "SoftDeletes"
       ],
-      "notes": "Full monty. is_system distinguishes platform defaults from tenant overrides. Sortable by (key, locale, channel, version DESC). Importable / Exportable for tenant onboarding backup + change management (SOC 2 CC8.1 evidence). Body cached as pre-rendered HTML with Blade placeholders \u2014 rendering happens at CI build time via the emails renderer package, not runtime."
+      "notes": "Full monty. is_system distinguishes platform defaults from workspace overrides. Sortable by (key, locale, channel, version DESC). Importable / Exportable for workspace onboarding backup + change management (SOC 2 CC8.1 evidence). Body cached as pre-rendered HTML with Blade placeholders \u2014 rendering happens at CI build time via the emails renderer package, not runtime."
     },
     "notification_preference": {
       "traits": [
         "HasFactory",
         "HasUlids",
-        "BelongsToTenant",
+        "BelongsToWorkspace",
         "HasMetadata",
         "HasUserstamps",
         "HasAuditable",
@@ -143,14 +143,14 @@
         "Importable",
         "Exportable"
       ],
-      "notes": "User opt-in per (category, channel). NOT SoftDeletes \u2014 preferences are hard-deleted on user erasure per GDPR Art. 17. Importable / Exportable for tenant-driven preference backup + user-driven preference export."
+      "notes": "User opt-in per (category, channel). NOT SoftDeletes \u2014 preferences are hard-deleted on user erasure per GDPR Art. 17. Importable / Exportable for workspace-driven preference backup + user-driven preference export."
     },
     "notification_digest": {
       "traits": [
         "HasFactory",
         "HasUlids",
         "HasStates",
-        "BelongsToTenant",
+        "BelongsToWorkspace",
         "HasMetadata",
         "HasUserstamps",
         "Filterable"
@@ -162,7 +162,7 @@
         "HasFactory",
         "HasUlids",
         "HasSystemFlag",
-        "BelongsToTenantOptional",
+        "BelongsToWorkspaceOptional",
         "HasMetadata",
         "HasUserstamps",
         "HasAuditable",
@@ -171,7 +171,7 @@
         "Sluggable",
         "Searchable"
       ],
-      "notes": "Registry seeded from every module's notifications.json. Sluggable with module-namespaced slugs; is_system=true on platform-owned categories. tenant_id NULL for platform categories; tenants can override display_name + default_channels via same-slug row with their tenant_id."
+      "notes": "Registry seeded from every module's notifications.json. Sluggable with module-namespaced slugs; is_system=true on platform-owned categories. workspace_id NULL for platform categories; workspaces can override display_name + default_channels via same-slug row with their workspace_id."
     }
   },
   "traitOrderContract": {
@@ -180,7 +180,7 @@
       "framework/factories/casts (HasFactory)",
       "framework/keys (HasUlids)",
       "framework/state-machines (HasStates)",
-      "boundary (BelongsToTenant \u2192 BelongsToApplication \u2192 BelongsToTenantOptional)",
+      "boundary (BelongsToWorkspace \u2192 BelongsToApplication \u2192 BelongsToWorkspaceOptional)",
       "foundation/lifecycle (HasSystemFlag \u2192 HasMetadata \u2192 HasUserstamps \u2192 HasAuditable)",
       "foundation/indexers (Sortable, Filterable, Sluggable, Searchable)",
       "foundation/extraction (Importable, Exportable)",

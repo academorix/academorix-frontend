@@ -10,16 +10,16 @@
       "key": "activity",
       "class": "Academorix\\Activity\\Settings\\ActivitySettings",
       "label": "Activity feed",
-      "description": "Retention + visibility of the tenant activity feed.",
+      "description": "Retention + visibility of the workspace activity feed.",
       "icon": "clock",
-      "scope": "tenant",
+      "scope": "workspace",
       "public": false,
       "sortOrder": 20,
       "permission": "settings.read",
       "sections": [
         {
           "label": "Retention",
-          "description": "Fine-tune retention window if tenant needs different than plan default. Cannot exceed the plan cap.",
+          "description": "Fine-tune retention window if workspace needs different than plan default. Cannot exceed the plan cap.",
           "icon": "archive-box",
           "sortOrder": 1,
           "fields": [
@@ -49,10 +49,10 @@
               "defaultValue": "self_only",
               "options": {
                 "self_only": "Only my own actions",
-                "tenant_admins": "Tenant admins see all",
-                "anyone_in_tenant": "Everyone in the tenant"
+                "workspace_admins": "Workspace admins see all",
+                "anyone_in_workspace": "Everyone in the workspace"
               },
-              "validation": ["required", "string", "in:self_only,tenant_admins,anyone_in_tenant"],
+              "validation": ["required", "string", "in:self_only,workspace_admins,anyone_in_workspace"],
               "sortOrder": 1,
               "helpText": "How much of another user's causer feed a regular user may see."
             }

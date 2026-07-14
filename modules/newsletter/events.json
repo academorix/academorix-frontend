@@ -5,7 +5,7 @@
   "namespace": "Academorix\\Newsletter\\Events",
   "dispatchMode": "afterCommit",
   "events": [
-    {"name": "NewsletterCreated", "class": "Academorix\\Newsletter\\Events\\NewsletterCreated", "trigger": "New Newsletter persisted.", "queue": "notifications", "consumers": ["compliance::AuditListener", "newsletter::CreateDefaultAudience"], "payload": {"newsletter_id": "ULID", "tenant_id": "ULID", "slug": "string", "cadence": "string"}},
+    {"name": "NewsletterCreated", "class": "Academorix\\Newsletter\\Events\\NewsletterCreated", "trigger": "New Newsletter persisted.", "queue": "notifications", "consumers": ["compliance::AuditListener", "newsletter::CreateDefaultAudience"], "payload": {"newsletter_id": "ULID", "workspace_id": "ULID", "slug": "string", "cadence": "string"}},
     {"name": "NewsletterUpdated", "class": "Academorix\\Newsletter\\Events\\NewsletterUpdated", "trigger": "Newsletter attributes changed.", "queue": "notifications", "consumers": ["compliance::AuditListener"], "payload": {"newsletter_id": "ULID", "changed_fields": "string[]"}},
     {"name": "NewsletterArchived", "class": "Academorix\\Newsletter\\Events\\NewsletterArchived", "trigger": "state \u2192 archived.", "queue": "notifications", "consumers": ["newsletter::PausePendingCampaigns", "compliance::AuditListener"], "payload": {"newsletter_id": "ULID", "actor_id": "ULID | null"}},
 

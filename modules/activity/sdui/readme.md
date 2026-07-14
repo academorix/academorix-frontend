@@ -4,9 +4,9 @@
 
 ### `resources/activity/`
 
-Tenant-facing activity feed.
+Workspace-facing activity feed.
 
-- `list.screen.json` — filterable by log_name + subject_type + event + created_at. Regular users see own causer feed via a preset filter; admins see full tenant feed.
+- `list.screen.json` — filterable by log_name + subject_type + event + created_at. Regular users see own causer feed via a preset filter; admins see full workspace feed.
 
 ### `widgets/`
 

@@ -20,7 +20,7 @@
       "HasFactory",
       "HasUlids",
       "HasStates",
-      "BelongsToTenant",
+      "BelongsToWorkspace",
       "HasMetadata",
       "HasUserstamps",
       "Filterable"
@@ -40,7 +40,7 @@
     "engine": "postgres",
     "columns": {
       "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `dgst_<26 chars>`."},
-      "tenant_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}},
+      "workspace_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "workspaces", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}},
       "user_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}},
       "category_slug": {"type": "string", "length": 128, "nullable": false, "foreign": {"table": "notification_categories", "column": "slug", "onUpdate": "cascade", "onDelete": "restrict"}},
       "channel": {"type": "string", "length": 16, "nullable": false, "description": "Enum: `mail`, `sms`, `push`, `in_app`. Rare for anything but mail."},
@@ -59,14 +59,14 @@
     "indexes": [
       {"columns": ["user_id", "category_slug", "channel", "scheduled_for"], "unique": true, "name": "notification_digests_window_unique", "description": "One row per (user, category, channel, window) tuple. Enforces the ProcessDigestJob uniqueness contract."},
       {"columns": ["state", "scheduled_for"], "unique": false, "name": "notification_digests_pending_scan_index", "predicate": "state = 'pending'", "description": "ProcessDigestsCommand scan for pending digests approaching their boundary."},
-      {"columns": ["tenant_id", "state", "created_at"], "unique": false, "name": "notification_digests_tenant_state_index"},
+      {"columns": ["workspace_id", "state", "created_at"], "unique": false, "name": "notification_digests_workspace_state_index"},
       {"columns": ["delivered_at"], "unique": false, "name": "notification_digests_delivered_at_index", "description": "Retention scan for the 30-day hard purge."}
     ]
   },
-  "required": ["id", "tenant_id", "user_id", "category_slug", "channel", "window", "scheduled_for", "state", "created_at", "updated_at"],
+  "required": ["id", "workspace_id", "user_id", "category_slug", "channel", "window", "scheduled_for", "state", "created_at", "updated_at"],
   "properties": {
     "id": {"type": "string", "pattern": "^dgst_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "user_id": {"type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"},
     "category_slug": {"type": "string", "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$", "maxLength": 128},
     "channel": {"type": "string", "enum": ["mail", "sms", "push", "in_app"]},

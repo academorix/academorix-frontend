@@ -16,7 +16,7 @@
     "model": "Academorix\\Newsletter\\Models\\NewsletterAudience",
     "interface": "Academorix\\Newsletter\\Contracts\\Data\\NewsletterAudienceInterface",
     "implements": ["Academorix\\Newsletter\\Contracts\\Data\\NewsletterAudienceInterface"],
-    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "HasVersions", "Filterable", "SoftDeletes"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToWorkspace", "HasMetadata", "HasUserstamps", "HasVersions", "Filterable", "SoftDeletes"],
     "casts": {"expression": "AudienceExpressionCast", "cached_subscriber_ids": "array", "cache_refreshed_at": "datetime", "metadata": "array"},
     "appends": ["subscriber_count"],
     "observers": ["NewsletterAudienceObserver"],
@@ -27,7 +27,7 @@
     "engine": "postgres",
     "columns": {
       "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `nla_<26 chars>`."},
-      "tenant_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "tenants", "column": "id", "onDelete": "cascade"}},
+      "workspace_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "workspaces", "column": "id", "onDelete": "cascade"}},
       "newsletter_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "newsletters", "column": "id", "onDelete": "cascade"}},
       "name": {"type": "string", "length": 200, "nullable": false},
       "slug": {"type": "string", "length": 100, "nullable": false},
@@ -49,10 +49,10 @@
       {"columns": ["newsletter_id", "is_default"], "unique": true, "name": "newsletter_audiences_default_unique", "predicate": "is_default = true AND deleted_at IS NULL"}
     ]
   },
-  "required": ["id", "tenant_id", "newsletter_id", "name", "slug", "expression", "is_default", "created_at", "updated_at"],
+  "required": ["id", "workspace_id", "newsletter_id", "name", "slug", "expression", "is_default", "created_at", "updated_at"],
   "properties": {
     "id": {"type": "string", "pattern": "^nla_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "tenant_id": {"type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "newsletter_id": {"type": "string", "pattern": "^nlp_[0-9A-HJKMNP-TV-Z]{26}$"},
     "name": {"type": "string", "maxLength": 200},
     "slug": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,99}$"},

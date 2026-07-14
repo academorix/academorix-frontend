@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/telemetry-otel/subprocessors",
+  "$version": 1,
+  "title": "telemetry-otel \u2014 subprocessors",
+  "description": "Telemetry data (span attributes, metric labels) leaves the application via OTLP. Where the collector is third-party-hosted, that vendor is a subprocessor. Self-hosted collectors on our infra are NOT subprocessors.",
+  "subprocessors": [
+    {
+      "name": "Grafana Cloud (Tempo + Mimir)",
+      "role": "observability_backend",
+      "purpose": "Trace + metric storage + query UI.",
+      "data_processed": ["span attributes (redacted per data-classes.json)", "metric labels", "resource attributes (service.name, deployment.environment, k8s.*)"],
+      "location": "US / EU / AU (customer-selected)",
+      "legal_basis": "contract",
+      "dpa_url": "https://grafana.com/legal/dpa",
+      "when_engaged": "OTEL_EXPORTER_OTLP_ENDPOINT points at grafana.net"
+    },
+    {
+      "name": "DataDog",
+      "role": "observability_backend",
+      "purpose": "Same. APM + metrics + dashboards.",
+      "data_processed": ["span attributes", "metric labels", "resource attributes"],
+      "location": "US / EU / Japan (customer-selected)",
+      "legal_basis": "contract",
+      "dpa_url": "https://www.datadoghq.com/legal/dpa/",
+      "when_engaged": "OTEL_EXPORTER_OTLP_ENDPOINT points at datadoghq.com or a local dd-agent forwarder"
+    },
+    {
+      "name": "Honeycomb",
+      "role": "observability_backend",
+      "purpose": "Trace analysis + high-cardinality querying.",
+      "data_processed": ["span attributes", "metric labels"],
+      "location": "US",
+      "legal_basis": "contract",
+      "dpa_url": "https://www.honeycomb.io/dpa/",
+      "when_engaged": "OTEL_EXPORTER_OTLP_ENDPOINT points at api.honeycomb.io"
+    }
+  ],
+  "notes": [
+    "The choice of subprocessor is deployment-specific. Multiple can be configured via a fan-out collector (OTel Collector `otlp` receiver \u2192 multiple `otlp` exporters).",
+    "SelfHosted collectors (Grafana Alloy, OTel Collector on our own K8s) are NOT subprocessors per GDPR Art. 28 because we control them."
+  ]
+}

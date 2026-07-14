@@ -31,7 +31,7 @@
     "notifications-mail",
     "notifications-push",
     "notifications-sms",
-    "tenancy",
+    "workspaces",
     "subscription",
     "entitlements",
     "auth"
@@ -159,7 +159,7 @@
       ]
     },
     "platform-admin": {
-      "description": "Cross-tenant version management + release / deprecate / sunset workflow.",
+      "description": "Cross-workspace version management + release / deprecate / sunset workflow.",
       "routes": [
         "GET /api/v1/platform/versioning/api-versions",
         "POST /api/v1/platform/versioning/api-versions",
@@ -171,11 +171,11 @@
         "POST /api/v1/platform/versioning/deprecation-notices"
       ]
     },
-    "tenant": {
-      "description": "Tenant-facing read-only catalog of API versions + active deprecation notices affecting them.",
+    "workspace": {
+      "description": "Workspace-facing read-only catalog of API versions + active deprecation notices affecting them.",
       "routes": [
-        "GET /api/v1/tenant/versioning/api-versions",
-        "GET /api/v1/tenant/versioning/deprecation-notices"
+        "GET /api/v1/workspace/versioning/api-versions",
+        "GET /api/v1/workspace/versioning/deprecation-notices"
       ]
     }
   }

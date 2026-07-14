@@ -1,0 +1,42 @@
+{
+  "id": "subscription.resources.plan.list",
+  "title": "Plans",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/plans",
+  "host": "central_admin",
+  "audience": "platform_admin",
+  "resource": {"module": "subscription", "entity": "plan", "action": "list"},
+  "requiresPermission": "platform.plans.viewAny",
+  "dataSources": [
+    {"name": "plans", "kind": "http.get", "url": "/api/v1/platform/plans", "unwrap": "data"},
+    {"name": "applications", "kind": "http.get", "url": "/api/v1/platform/applications", "unwrap": "data"}
+  ],
+  "state": [{"name": "filters", "default": {}}],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-4 p-6"}, "children": [
+      {"kind": "View", "props": {"className": "flex items-center justify-between"}, "children": [
+        {"kind": "View", "children": [
+          {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Plans"}},
+          {"kind": "Text", "props": {"className": "text-sm text-muted", "children": "Per-Application plan catalogue. Editing default_entitlements triggers plan-sync for all subscribers on next dispatch."}}
+        ]},
+        {"kind": "Button", "props": {"variant": "primary", "leadingIcon": "plus", "children": "New plan"}, "actions": {"onPress": {"kind": "navigate", "to": "/platform/plans/create"}}}
+      ]},
+      {"kind": "Toolbar", "children": [
+        {"kind": "Select", "props": {"name": "application_id", "placeholder": "All Applications", "clearable": true}, "bindings": {"options": {"$ref": "applications"}, "optionKey": "id", "optionLabel": "name"}, "actions": {"onChange": {"kind": "data.refresh", "source": "plans"}}},
+        {"kind": "Select", "props": {"name": "tier", "placeholder": "All tiers", "clearable": true}, "options": [{"key": "free"}, {"key": "team"}, {"key": "business"}, {"key": "enterprise"}, {"key": "custom"}]},
+        {"kind": "Toggle", "props": {"name": "include_archived", "label": "Show archived"}}
+      ]},
+      {"kind": "Table", "columns": [
+        {"key": "name", "header": "Name", "cell": {"kind": "Link", "propsExpr": "{ to: '/platform/plans/' + row.id, children: row.name }"}},
+        {"key": "key", "header": "Key", "cell": {"kind": "Text", "props": {"className": "font-mono text-xs"}, "bindings": {"children": {"$ref": "row.key"}}}},
+        {"key": "application", "header": "Application", "bindings": {"childrenExpr": "applications.find(a => a.id === row.application_id)?.name"}},
+        {"key": "tier", "header": "Tier", "cell": {"kind": "Chip", "props": {"size": "xs"}, "bindings": {"children": {"$ref": "row.tier"}}}},
+        {"key": "billing_cycle", "header": "Cycle"},
+        {"key": "price", "header": "Price", "bindings": {"childrenExpr": "row.price_formatted"}},
+        {"key": "active_subscription_count", "header": "Subs", "cell": {"kind": "Text", "props": {"className": "font-mono text-right"}, "bindings": {"children": {"$ref": "row.active_subscription_count"}}}},
+        {"key": "state", "header": "State", "cell": {"kind": "Chip", "propsExpr": "{ size: 'xs', variant: row.is_deprecated ? 'warning' : (row.archived_at ? 'neutral' : 'success'), children: row.archived_at ? 'Archived' : (row.is_deprecated ? 'Deprecated' : 'Active') }"}}
+      ], "bindings": {"rows": {"$ref": "plans"}}}
+    ]}
+  ]
+}

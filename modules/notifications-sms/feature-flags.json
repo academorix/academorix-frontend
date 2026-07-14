@@ -10,8 +10,8 @@
     {"key": "notifications.sms.provider.vonage.enabled", "kind": "kill-switch", "default": "on"},
     {"key": "notifications.sms.provider.plivo.enabled", "kind": "kill-switch", "default": "on"},
     {"key": "notifications.sms.provider.aws-sns.enabled", "kind": "kill-switch", "default": "on"},
-    {"key": "notifications.sms.cost_cap_enforcement", "kind": "kill-switch", "default": "on", "description": "Refuse sends when tenant would exceed monthly cost cap. NEVER turn off in production."},
+    {"key": "notifications.sms.cost_cap_enforcement", "kind": "kill-switch", "default": "on", "description": "Refuse sends when workspace would exceed monthly cost cap. NEVER turn off in production."},
     {"key": "notifications.sms.stop_keyword_processing", "kind": "kill-switch", "default": "on", "description": "Process STOP-family inbound keywords. NEVER turn off \u2014 required by CTIA / TCPA."},
-    {"key": "notifications.sms.international_sends", "kind": "rollout", "default": "off", "description": "Enable sends to numbers outside tenant.allowed_country_codes. Off = domestic only. Prevents accidental international spend."}
+    {"key": "notifications.sms.international_sends", "kind": "rollout", "default": "off", "description": "Enable sends to numbers outside workspace.allowed_country_codes. Off = domestic only. Prevents accidental international spend."}
   ]
 }

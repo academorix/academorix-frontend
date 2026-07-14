@@ -34,7 +34,7 @@
     "cost": {"keys": [
       {"path": "notifications-sms.cost.currency", "type": "string", "default": "USD"},
       {"path": "notifications-sms.cost.per_country_cache_ttl_seconds", "type": "int", "default": 3600},
-      {"path": "notifications-sms.cost.cap_warning_threshold_ratio", "type": "float", "default": 0.8, "description": "Warn tenant admin at 80% of monthly cap."}
+      {"path": "notifications-sms.cost.cap_warning_threshold_ratio", "type": "float", "default": 0.8, "description": "Warn workspace admin at 80% of monthly cap."}
     ]},
     "segments": {"keys": [
       {"path": "notifications-sms.segments.gsm7_chars_per_segment", "type": "int", "default": 160},
@@ -45,8 +45,8 @@
     ]},
     "auto_replies": {"keys": [
       {"path": "notifications-sms.auto_reply.opt_out_confirmation", "type": "string", "default": "You have been unsubscribed. No more messages will be sent. Reply START to re-subscribe."},
-      {"path": "notifications-sms.auto_reply.subscribe_confirmation", "type": "string", "default": "You are re-subscribed to messages from {{ tenant_name }}."},
-      {"path": "notifications-sms.auto_reply.help", "type": "string", "default": "Reply STOP to unsubscribe. Msg + data rates may apply. Visit {{ tenant_url }} for support."}
+      {"path": "notifications-sms.auto_reply.subscribe_confirmation", "type": "string", "default": "You are re-subscribed to messages from {{ workspace_name }}."},
+      {"path": "notifications-sms.auto_reply.help", "type": "string", "default": "Reply STOP to unsubscribe. Msg + data rates may apply. Visit {{ workspace_url }} for support."}
     ]}
   }
 }

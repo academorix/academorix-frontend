@@ -7,10 +7,10 @@ Compliance-grade audit trail. Wave 2 infrastructure. Wraps `owen-it/laravel-audi
 | Concern | Owned artefact |
 | --- | --- |
 | `HasAudit` trait (opt-in) | aliases owen-it's `Auditable` interface + `Auditable` trait bundle |
-| `Audit` model extending owen-it's | adds `BelongsToTenantOptional`, `HasUlids` prefix `aud_`, KMS-encrypted values, optional hash-chain columns |
+| `Audit` model extending owen-it's | adds `BelongsToWorkspaceOptional`, `HasUlids` prefix `aud_`, KMS-encrypted values, optional hash-chain columns |
 | `#[Auditable]` attribute | build-time discovery of opting-in models |
 | Platform-admin HTTP surface | `GET /api/v1/platform/audits` — support incident review + DSAR |
-| Tenant DPO HTTP surface | `GET /api/v1/audits` — filtered to tenant + sensitive fields masked |
+| Workspace DPO HTTP surface | `GET /api/v1/audits` — filtered to workspace + sensitive fields masked |
 | Tamper-evident chain (enterprise) | Optional per-row `previous_hash` + `row_hash` columns for chain integrity |
 | KMS encryption of restricted-tier values | `EncryptedAuditValueCast` on old_values / new_values |
 
@@ -19,7 +19,7 @@ Compliance-grade audit trail. Wave 2 infrastructure. Wraps `owen-it/laravel-audi
 Two adjacent but **distinct** modules — see the comparison table in `modules/activity/readme.md`.
 
 Quick differentiator:
-- **Activity** = "what happened today?" (product feed, tenant admins + users, tier-based retention 30/90/365d, hard delete past window).
+- **Activity** = "what happened today?" (product feed, workspace admins + users, tier-based retention 30/90/365d, hard delete past window).
 - **Audit** = "prove what happened + who caused it" (compliance evidence, platform admins + regulators, 365d hot + 7y cold, anonymise-not-delete).
 
 A single model can be both `#[LoggableActivity]` AND `#[Auditable]`. Fine — they serve different audiences and don't conflict.
@@ -74,4 +74,4 @@ Standard blueprint. No custom entity schema beyond extending owen-it's `audits` 
 
 - **Not a Postgres CDC / WAL surface.** Read our audit rows, not the DB write-ahead log.
 - **Not a real-time stream.** Audits are batched afterCommit; ~seconds of latency to visibility.
-- **Not exposed to end users.** Tenant DPO surface exists but is masked + rate-limited.
+- **Not exposed to end users.** Workspace DPO surface exists but is masked + rate-limited.

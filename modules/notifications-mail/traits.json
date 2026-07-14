@@ -18,8 +18,8 @@
       {"trait": "Academorix\\Foundation\\Concerns\\Filterable", "reason": "Admin surface filters by reason / provider / added_at."},
       {"trait": "Academorix\\Foundation\\Concerns\\Searchable", "reason": "Admin lookup by email address."}
     ],
-    "tenancy": [
-      {"trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenantOptional", "reason": "tenant_id NULL = platform-wide suppression (known invalid addresses, spam-trap domains). tenant_id set = tenant-specific suppression."}
+    "workspaces": [
+      {"trait": "Academorix\\Workspaces\\Concerns\\BelongsToWorkspaceOptional", "reason": "workspace_id NULL = platform-wide suppression (known invalid addresses, spam-trap domains). workspace_id set = workspace-specific suppression."}
     ]
   },
   "composition": {
@@ -28,7 +28,7 @@
         "HasFactory",
         "HasUlids",
         "HasSystemFlag",
-        "BelongsToTenantOptional",
+        "BelongsToWorkspaceOptional",
         "HasMetadata",
         "HasUserstamps",
         "HasAuditable",

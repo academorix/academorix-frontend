@@ -22,7 +22,7 @@
       ],
       "payload": {
         "notification_id": "ULID",
-        "tenant_id": "ULID",
+        "workspace_id": "ULID",
         "application_id": "ULID | null",
         "category_slug": "string \u2014 module-namespaced e.g. invitations.invitation_sent",
         "template_key": "string \u2014 typically matches category_slug",
@@ -38,7 +38,7 @@
           "timezone": "string (IANA)",
           "consent_age_gate": "'adult' | 'minor_over_consent_age' | 'minor_under_consent_age'"
         },
-        "tenant": {
+        "workspace": {
           "id": "ULID",
           "name": "string",
           "slug": "string",
@@ -233,7 +233,7 @@
     {
       "name": "TemplatePublished",
       "class": "Academorix\\Notifications\\Events\\TemplatePublished",
-      "trigger": "Tenant admin (or platform seeder) transitioned a template from draft \u2192 published. Emitted for cache invalidation + audit.",
+      "trigger": "Workspace admin (or platform seeder) transitioned a template from draft \u2192 published. Emitted for cache invalidation + audit.",
       "queue": "notifications",
       "priority": "normal",
       "consumers": [
@@ -242,7 +242,7 @@
       ],
       "payload": {
         "template_id": "ULID",
-        "tenant_id": "ULID | null",
+        "workspace_id": "ULID | null",
         "template_key": "string",
         "channel": "string",
         "locale": "string",
@@ -264,7 +264,7 @@
       ],
       "payload": {
         "user_id": "ULID",
-        "tenant_id": "ULID",
+        "workspace_id": "ULID",
         "category_slug": "string",
         "channel": "string",
         "enabled": "boolean",

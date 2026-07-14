@@ -3,8 +3,8 @@
   "title": "Newsletter detail",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/newsletters/{id}",
-  "host": "tenant",
+  "route": "/workspace/newsletters/{id}",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "newsletter", "entity": "newsletter", "action": "show"},
   "requiresPermission": "newsletters.view",
@@ -16,15 +16,15 @@
   ],
   "nodes": [
     {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto"}, "children": [
-      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/newsletters"}}},
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/newsletters"}}},
       {"kind": "View", "props": {"className": "flex items-start justify-between"}, "children": [
         {"kind": "View", "props": {"className": "flex flex-col gap-1"}, "children": [
           {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold"}, "bindings": {"children": {"$ref": "newsletter.name"}}},
           {"kind": "Text", "props": {"className": "text-sm text-muted"}, "bindings": {"children": {"$ref": "newsletter.description"}}}
         ]},
         {"kind": "View", "props": {"className": "flex items-center gap-2"}, "children": [
-          {"kind": "Button", "props": {"variant": "outline", "size": "sm", "leadingIcon": "pencil", "children": "Edit"}, "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('newsletters.update')"}}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/newsletters/' + params.id + '/edit'"}}},
-          {"kind": "Button", "props": {"variant": "primary", "size": "sm", "leadingIcon": "plus", "children": "New issue"}, "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('newsletter-issues.create')"}}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/newsletters/' + params.id + '/issues/new'"}}}
+          {"kind": "Button", "props": {"variant": "outline", "size": "sm", "leadingIcon": "pencil", "children": "Edit"}, "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('newsletters.update')"}}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/workspace/newsletters/' + params.id + '/edit'"}}},
+          {"kind": "Button", "props": {"variant": "primary", "size": "sm", "leadingIcon": "plus", "children": "New issue"}, "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('newsletter-issues.create')"}}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/workspace/newsletters/' + params.id + '/issues/new'"}}}
         ]}
       ]},
       {"kind": "View", "props": {"className": "grid grid-cols-4 gap-4"}, "children": [
@@ -40,7 +40,7 @@
             {"kind": "Text", "props": {"className": "font-medium"}, "bindings": {"children": {"$ref": "row.subject"}}},
             {"kind": "Text", "props": {"className": "text-xs text-muted"}, "bindings": {"children": {"$expr": "row.state + ' \u00b7 ' + (row.sent_at ? formatRelative(row.sent_at) : formatRelative(row.created_at))"}}}
           ]},
-          {"kind": "Link", "props": {"size": "sm", "children": "Open"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/newsletters/' + params.id + '/issues/' + row.id"}}}
+          {"kind": "Link", "props": {"size": "sm", "children": "Open"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/workspace/newsletters/' + params.id + '/issues/' + row.id"}}}
         ]}}
       ]}
     ]}

@@ -1,0 +1,14 @@
+{
+  "id": "academorix://modules/telemetry-logs/features",
+  "$version": 1,
+  "title": "telemetry-logs \u2014 feature keys",
+  "description": "Platform infrastructure. Features here gate which pipeline stages + sinks are active.",
+  "reference": {"publishedBy": "feature-flag"},
+  "features": [
+    {"key": "telemetry-logs.pipeline", "displayName": "Structured logging pipeline", "description": "Master toggle. Off = pass through raw Monolog with no enrichment.", "defaultEnabled": true, "planTiers": ["*"]},
+    {"key": "telemetry-logs.trace_correlation", "displayName": "Trace-to-logs correlation", "description": "Add trace_id + span_id from telemetry-otel context.", "defaultEnabled": true, "planTiers": ["*"]},
+    {"key": "telemetry-logs.module_context", "displayName": "Module context enrichment", "description": "Evaluate #[AsLogContext] enrichers per class.", "defaultEnabled": true, "planTiers": ["*"]},
+    {"key": "telemetry-logs.redaction", "displayName": "Redaction pipeline", "description": "Strip PII + secrets before records leave. Never turn off in production.", "defaultEnabled": true, "planTiers": ["*"]},
+    {"key": "telemetry-logs.sampling", "displayName": "Volume-based sampling", "description": "Drop a fraction of debug + info records at high volume.", "defaultEnabled": false, "planTiers": ["*"]}
+  ]
+}

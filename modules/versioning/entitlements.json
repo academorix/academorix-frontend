@@ -2,7 +2,7 @@
   "id": "academorix://modules/versioning/entitlements",
   "$version": 1,
   "title": "versioning \u2014 entitlements",
-  "description": "Empty. Versioning is a platform capability; per-tenant metered entitlements don't apply. The relevant entitlements (custom-templates.count, webhooks.subscriptions.count) live in the modules that own the metered resource. Reference kinds block retained for consistency with the module contract.",
+  "description": "Empty. Versioning is a platform capability; per-workspace metered entitlements don't apply. The relevant entitlements (custom-templates.count, webhooks.subscriptions.count) live in the modules that own the metered resource. Reference kinds block retained for consistency with the module contract.",
   "reference": {
     "publishedBy": "entitlements",
     "resolvedBy": "GET /api/auth/me \u2192 data.quota_summary",

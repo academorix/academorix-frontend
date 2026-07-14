@@ -28,7 +28,7 @@
     },
     {
       "entity": "MailSuppression (reason=manual)",
-      "hot": {"days": "while tenant owns", "description": "Tenant-managed. Deletable by tenant admin at any time."},
+      "hot": {"days": "while workspace owns", "description": "Workspace-managed. Deletable by workspace admin at any time."},
       "purge": {"trigger": "admin action", "action": "soft delete then hard delete after 30d"}
     },
     {

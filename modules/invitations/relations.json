@@ -2,7 +2,7 @@
   "id": "academorix://modules/invitations/relations",
   "$version": 1,
   "title": "invitations — cross-module relations",
-  "description": "Eloquent relations rooted at this module's models. Target + inviter are polymorphic — this module never name-drops a concrete consumer. Every downstream module registers its `target_type` string via the InvitationTargetRegistry container binding at boot; the morph resolver reads the registry to hydrate the concrete model. Cross-tenant FKs remain forbidden — tenant_id is nullable ONLY to accommodate platform-scope invitations (Academorix staff onboarding).",
+  "description": "Eloquent relations rooted at this module's models. Target + inviter are polymorphic — this module never name-drops a concrete consumer. Every downstream module registers its `target_type` string via the InvitationTargetRegistry container binding at boot; the morph resolver reads the registry to hydrate the concrete model. Cross-workspace FKs remain forbidden — workspace_id is nullable ONLY to accommodate platform-scope invitations (Academorix staff onboarding).",
   "anchors": [
     {
       "model": {
@@ -15,25 +15,25 @@
           "name": "application",
           "type": "BelongsTo",
           "target": {
-            "module": "tenancy",
+            "module": "workspaces",
             "model": "Application",
-            "class": "Academorix\\Tenancy\\Models\\Application"
+            "class": "Academorix\\Workspaces\\Models\\Application"
           },
           "foreignKey": "application_id",
           "ownerKey": "id"
         },
         {
-          "name": "tenant",
+          "name": "workspace",
           "type": "BelongsTo",
           "target": {
-            "module": "tenancy",
-            "model": "Tenant",
-            "class": "Academorix\\Tenancy\\Models\\Tenant"
+            "module": "workspaces",
+            "model": "Workspace",
+            "class": "Academorix\\Workspaces\\Models\\Workspace"
           },
-          "foreignKey": "tenant_id",
+          "foreignKey": "workspace_id",
           "ownerKey": "id",
           "nullable": true,
-          "description": "NULL for platform-scope invitations. BelongsToTenantOptional trait skips the global scope when tenant_id is null."
+          "description": "NULL for platform-scope invitations. BelongsToWorkspaceOptional trait skips the global scope when workspace_id is null."
         },
         {
           "name": "acceptedBy",
@@ -82,10 +82,10 @@
           "type": "MorphTo",
           "morphType": "target_type",
           "morphId": "target_id",
-          "description": "The invitable resource — Tenant, Team, Athlete, Federation, TrialSession, ... Concrete class resolved by InvitationTargetRegistry at hydrate time.",
+          "description": "The invitable resource — Workspace, Team, Athlete, Federation, TrialSession, ... Concrete class resolved by InvitationTargetRegistry at hydrate time.",
           "registeredBy": "InvitationTargetRegistry (container binding)",
           "expectedTargets": [
-            {"module": "tenancy", "model": "Tenant", "targetTypeKey": "tenant"},
+            {"module": "workspaces", "model": "Workspace", "targetTypeKey": "workspace"},
             {"module": "teams", "model": "Team", "targetTypeKey": "team"},
             {"module": "sports", "model": "Athlete", "targetTypeKey": "athlete"},
             {"module": "sports", "model": "TrialSession", "targetTypeKey": "trial_session"},
@@ -122,14 +122,14 @@
         {
           "name": "application",
           "type": "BelongsTo",
-          "target": {"module": "tenancy", "model": "Application", "class": "Academorix\\Tenancy\\Models\\Application"},
+          "target": {"module": "workspaces", "model": "Application", "class": "Academorix\\Workspaces\\Models\\Application"},
           "foreignKey": "application_id"
         },
         {
-          "name": "tenant",
+          "name": "workspace",
           "type": "BelongsTo",
-          "target": {"module": "tenancy", "model": "Tenant", "class": "Academorix\\Tenancy\\Models\\Tenant"},
-          "foreignKey": "tenant_id",
+          "target": {"module": "workspaces", "model": "Workspace", "class": "Academorix\\Workspaces\\Models\\Workspace"},
+          "foreignKey": "workspace_id",
           "nullable": true
         }
       ],
@@ -146,8 +146,8 @@
     }
   ],
   "notes": [
-    "Polymorphic target/inviter/actor are the extension seams. The invitations module does NOT know that `tenant` means Tenancy's Tenant — it just knows a string key + registration hooked at boot.",
+    "Polymorphic target/inviter/actor are the extension seams. The invitations module does NOT know that `workspace` means Workspaces's Workspace — it just knows a string key + registration hooked at boot.",
     "InvitationTargetRegistry is a container binding published by this module. Downstream modules register their target_type + accept handler at boot. Adding a new invitable resource = one class + one register() call. Zero schema change.",
-    "Tenant + Application are hard FKs — polymorphism ends at the tenancy boundary; the tenancy substrate is universal."
+    "Workspace + Application are hard FKs — polymorphism ends at the workspaces boundary; the workspaces substrate is universal."
   ]
 }

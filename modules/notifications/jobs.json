@@ -15,7 +15,7 @@
       "purpose": "The orchestrator. Called once per dispatch. Resolves preferences + digest mode + creates NotificationDelivery rows + fires NotificationDispatched per resolved channel. Channel modules pick up the event + send.",
       "steps": [
         "Load Notification (created synchronously in the caller's transaction).",
-        "Resolve channels via PreferenceResolver: user preference \u2192 tenant default \u2192 category default.",
+        "Resolve channels via PreferenceResolver: user preference \u2192 workspace default \u2192 category default.",
         "For each channel: if digest_mode\u2260immediate + priority\u2260critical, delegate to DigestScheduler + fire DigestQueued. Else create NotificationDelivery row + fire NotificationDispatched with channel.",
         "Notification.state transitions queued \u2192 sending as the first delivery flips."
       ],
@@ -44,7 +44,7 @@
       "shouldBeUnique": true,
       "uniqueFor": 86400,
       "tries": 2,
-      "notes": "Batched by tenant to spread load; scheduled daily 02:15 UTC."
+      "notes": "Batched by workspace to spread load; scheduled daily 02:15 UTC."
     },
     {
       "class": "Academorix\\Notifications\\Jobs\\ReconcileDeliveriesJob",

@@ -2,7 +2,7 @@
   "id": "academorix://modules/notifications-in-app/broadcasts",
   "$version": 1,
   "title": "notifications-in-app \u2014 broadcast channel bindings",
-  "description": "This module WRITES to channels declared by core (user.{id}.notifications + tenant.{id}.notifications). It does not declare new channels. The channel authorization rules live in core's broadcasts.json. This file documents the broadcast events fired by this module.",
+  "description": "This module WRITES to channels declared by core (user.{id}.notifications + workspace.{id}.notifications). It does not declare new channels. The channel authorization rules live in core's broadcasts.json. This file documents the broadcast events fired by this module.",
   "driver": "reverb",
   "broadcastsInto": [
     {

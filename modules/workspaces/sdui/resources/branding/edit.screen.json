@@ -1,0 +1,20 @@
+{
+  "id": "workspaces.resources.branding.edit",
+  "title": "Edit branding",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/workspace/brandings/{id}/edit",
+  "host": "workspace",
+  "audience": "authenticated",
+  "resource": {"module": "workspaces", "entity": "branding", "action": "edit"},
+  "requiresPermission": "workspaces.manage_branding",
+  "params": [{"name": "id", "type": "string", "in": "path", "required": true}],
+  "dataSources": [],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto"}, "children": [
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back to profiles"}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/brandings"}}},
+      {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Edit branding profile"}},
+      {"kind": "Widget", "widget": "workspaces.forms.workspace-branding", "props": {"brandingIdExpr": "params.id", "submitUrlExpr": "'/api/v1/workspace/brandings/' + params.id", "submitMethod": "PATCH", "onSuccess": [{"kind": "toast.success", "message": "Branding saved"}, {"kind": "navigate", "to": "/workspace/brandings"}]}}
+    ]}
+  ]
+}

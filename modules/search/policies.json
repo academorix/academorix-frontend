@@ -1,0 +1,64 @@
+{
+  "id": "academorix://modules/search/policies",
+  "$version": 1,
+  "title": "search \u2014 authorization policies",
+  "policies": [
+    {
+      "model": "SearchIndex",
+      "class": "Academorix\\Search\\Policies\\SearchIndexPolicy",
+      "abilities": [
+        {"action": "viewAny",       "permission": "search.indexes.viewAny",        "scope": "Authenticated user \u2014 sees own workspace's indexes via query scope."},
+        {"action": "view",          "permission": "search.indexes.view",           "scope": "row.workspace_id === auth.workspace OR platform admin."},
+        {"action": "platformViewAny","permission": "platform.search.indexes.viewAny", "scope": "Platform admin cross-workspace."},
+        {"action": "platformView",  "permission": "platform.search.indexes.view"},
+        {"action": "platformReindex","permission": "platform.search.indexes.reindex", "scope": "Trigger a reindex. Creates a SearchSyncJob \u2014 audited."},
+        {"action": "platformFlush", "permission": "platform.search.indexes.flush",  "scope": "Drop an index. Destructive. Requires confirmation payload."}
+      ]
+    },
+    {
+      "model": "SearchSyncJob",
+      "class": "Academorix\\Search\\Policies\\SearchSyncJobPolicy",
+      "abilities": [
+        {"action": "viewAny",         "permission": "search.sync-jobs.viewAny",       "scope": "Own jobs via query scope."},
+        {"action": "view",            "permission": "search.sync-jobs.view",          "scope": "row.causer_id === auth OR platform admin."},
+        {"action": "cancel",          "permission": "search.sync-jobs.cancel",        "scope": "row.causer_id === auth AND row.status IN ('queued','running')."},
+        {"action": "platformViewAny", "permission": "platform.search.sync-jobs.viewAny"},
+        {"action": "platformView",    "permission": "platform.search.sync-jobs.view"},
+        {"action": "platformCancel",  "permission": "platform.search.sync-jobs.cancel", "scope": "Platform admin may cancel any state with --force."}
+      ]
+    },
+    {
+      "model": "SearchSynonym",
+      "class": "Academorix\\Search\\Policies\\SearchSynonymPolicy",
+      "abilities": [
+        {"action": "viewAny", "permission": "search.synonyms.viewAny"},
+        {"action": "view",    "permission": "search.synonyms.view",    "scope": "row.workspace_id === auth.workspace OR row.workspace_id === NULL (system)."},
+        {"action": "create",  "permission": "search.synonyms.create"},
+        {"action": "update",  "permission": "search.synonyms.update",  "scope": "row.is_system = false AND row.workspace_id === auth.workspace."},
+        {"action": "delete",  "permission": "search.synonyms.delete",  "scope": "row.is_system = false AND row.workspace_id === auth.workspace. System rows can be disabled (is_active=false) but not deleted."},
+        {"action": "disable", "permission": "search.synonyms.update",  "scope": "Any row visible to the workspace \u2014 sets is_active=false. Used to override platform-seeded synonyms per-workspace."}
+      ]
+    },
+    {
+      "model": "SearchSavedQuery",
+      "class": "Academorix\\Search\\Policies\\SearchSavedQueryPolicy",
+      "abilities": [
+        {"action": "viewAny", "permission": "search.saved-queries.viewAny", "scope": "Own queries + workspace-shared."},
+        {"action": "view",    "permission": "search.saved-queries.view",    "scope": "row.owner_id === auth OR (row.is_shared AND same workspace)."},
+        {"action": "create",  "permission": "search.saved-queries.create"},
+        {"action": "update",  "permission": "search.saved-queries.update",  "scope": "row.owner_id === auth."},
+        {"action": "share",   "permission": "search.saved-queries.share",   "scope": "row.owner_id === auth AND entitlement `search.can_share_saved_queries`."},
+        {"action": "delete",  "permission": "search.saved-queries.delete",  "scope": "row.owner_id === auth. Historical SearchAnalyticsEvent rows referencing this query soft-delete (FK becomes null)."},
+        {"action": "run",     "permission": "search.saved-queries.view",    "scope": "Anyone who can view can execute."}
+      ]
+    },
+    {
+      "model": "SearchAnalyticsEvent",
+      "class": "Academorix\\Search\\Policies\\SearchAnalyticsEventPolicy",
+      "abilities": [
+        {"action": "viewAny",        "permission": "search.analytics.view",         "scope": "Aggregated queries only \u2014 raw query text never emitted on the wire (hidden field). Row-level access not exposed."},
+        {"action": "platformViewAny","permission": "platform.search.analytics.view", "scope": "Cross-workspace analytics for support triage. Same aggregation-only rule."}
+      ]
+    }
+  ]
+}

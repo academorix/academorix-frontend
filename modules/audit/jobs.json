@@ -26,7 +26,7 @@
       "queue": "notifications",
       "purpose": "Scan audit rows for chain integrity. Recompute each row_hash + compare against stored value. Fire AuditChainBroken on mismatch.",
       "steps": [
-        "For each tenant with audit.tamper_evident_chain feature on:",
+        "For each workspace with audit.tamper_evident_chain feature on:",
         "  Iterate audits ORDER BY created_at ASC (up to N most recent per config).",
         "  For each: recompute row_hash from canonical serialisation. Compare to stored.",
         "  Check previous_hash matches previous row's row_hash.",
@@ -36,7 +36,7 @@
       "shouldQueue": true,
       "shouldBeUnique": true,
       "uniqueFor": 3600,
-      "uniqueVia": "tenant_id",
+      "uniqueVia": "workspace_id",
       "tries": 2,
       "notes": "Runs weekly + on demand via audit:verify-chain command."
     },

@@ -15,7 +15,7 @@
       "loggable": "Yes.",
       "cacheable": "Yes.",
       "examples": [
-        "id, slug, name (of non-personal entities like Tenant, BusinessType, Team)",
+        "id, slug, name (of non-personal entities like Workspace, BusinessType, Team)",
         "state / status enum values",
         "created_at, updated_at (rarely PII by themselves)",
         "public settings"
@@ -44,12 +44,12 @@
       "dsar": "Fully included in DSAR exports.",
       "erasure": "Purge-with-audit-record — value replaced with `erased-<hash>@invalid.local` or NULL; audit trail entry retains the original for legal-hold period.",
       "searchable": "Yes, but the search index MUST be pruned on erasure.",
-      "loggable": "No — never in application logs. Structured audit logs (via HasAuditable) are allowed with per-tenant retention.",
+      "loggable": "No — never in application logs. Structured audit logs (via HasAuditable) are allowed with per-workspace retention.",
       "cacheable": "Yes, but cache invalidation triggers on erasure.",
       "examples": [
         "User.email, User.first_name, User.last_name, User.phone",
         "Identity.email, Identity.given_name, Identity.family_name, Identity.avatar_url",
-        "TenantContact.email, TenantContact.phone, TenantContact.address",
+        "WorkspaceContact.email, WorkspaceContact.phone, WorkspaceContact.address",
         "Invitation.email, Invitation.message",
         "AuthenticationEvent.ip_address, .user_agent",
         "InvitationEvent.ip_address, .user_agent"
@@ -69,7 +69,7 @@
         "User.password (via ProviderIdentity.provider_metadata.hashed_password)",
         "MFAFactor.secret (encrypted TOTP secret)",
         "ProviderIdentity.provider_metadata (encrypted OAuth refresh tokens, SAML assertions)",
-        "TenantIntegration.config (encrypted SSO/SCIM config)",
+        "WorkspaceIntegration.config (encrypted SSO/SCIM config)",
         "Invitation.token_hash (not encrypted — it's already a one-way hash, but never surfaced)",
         "PersonalAccessToken.token (Sanctum PATs are stored hashed)"
       ]
@@ -112,7 +112,7 @@
       "strategicPosition": "Stay SAQ-A. Never accept raw card data.",
       "examples": [
         "Subscription.stripe_customer_id, .stripe_subscription_id",
-        "TenantContact.address for billing purposes (but this is confidential, not regulated_financial — addresses aren't in PCI scope)"
+        "WorkspaceContact.address for billing purposes (but this is confidential, not regulated_financial — addresses aren't in PCI scope)"
       ]
     },
     "audit_log": {

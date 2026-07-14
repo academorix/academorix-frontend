@@ -8,9 +8,9 @@
       "model": "MailSuppression",
       "class": "Academorix\\Notifications\\Mail\\Policies\\MailSuppressionPolicy",
       "abilities": [
-        {"action": "viewAny", "permission": "notifications.mail.suppressions.viewAny", "scope": "tenant admin OR platform_admin"},
-        {"action": "view", "permission": "notifications.mail.suppressions.view", "scope": "suppression.tenant_id === auth.tenant_id OR platform_admin"},
-        {"action": "create", "permission": "notifications.mail.suppressions.create", "scope": "tenant admin (creates tenant-scoped) OR super_admin (creates platform-wide with --platform-wide)"},
+        {"action": "viewAny", "permission": "notifications.mail.suppressions.viewAny", "scope": "workspace admin OR platform_admin"},
+        {"action": "view", "permission": "notifications.mail.suppressions.view", "scope": "suppression.workspace_id === auth.workspace_id OR platform_admin"},
+        {"action": "create", "permission": "notifications.mail.suppressions.create", "scope": "workspace admin (creates workspace-scoped) OR super_admin (creates platform-wide with --platform-wide)"},
         {"action": "delete", "permission": "notifications.mail.suppressions.delete", "scope": "REFUSED when is_system=true (unless super_admin) OR reason IN hard_bounce/complaint (unless super_admin + explicit --force)"}
       ]
     }

@@ -5,7 +5,7 @@
   "reference": "foundation::data-classes.json.tiers",
   "classes": {
     "public": ["SmsOptOut.id", "SmsOptOut.reason", "SmsOptOut.provider", "SmsOptOut.is_system", "SmsOptOut.opted_out_at", "SmsOptOut.expires_at", "SmsOptOut.created_at", "SmsOptOut.updated_at"],
-    "internal": ["SmsOptOut.tenant_id", "SmsOptOut.phone_country_code", "SmsOptOut.source_delivery_id", "SmsOptOut.metadata"],
+    "internal": ["SmsOptOut.workspace_id", "SmsOptOut.phone_country_code", "SmsOptOut.source_delivery_id", "SmsOptOut.metadata"],
     "confidential": ["SmsOptOut.phone", "SmsOptOut.inbound_message_body"],
     "restricted": [],
     "regulated_minor": [],

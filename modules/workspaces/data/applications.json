@@ -1,0 +1,71 @@
+[
+  {
+    "id": "app_01J5R7V3A4N7D6Q8K5B2C9E001",
+    "slug": "academorix",
+    "name": "Academorix",
+    "description": "Multi-vertical sports and education platform. Production application.",
+    "default_business_type": "academy",
+    "default_locale": "en",
+    "default_timezone": "UTC",
+    "default_currency": "USD",
+    "central_host": "academorix.app",
+    "platform_admin_host": "admin.academorix.app",
+    "config": {
+      "branding_defaults": {
+        "primary_color": "#7C3AED",
+        "accent_color": "#22C55E",
+        "font_stack": "Inter, system-ui, sans-serif"
+      },
+      "rollout_bucket": "prod"
+    },
+    "metadata": {
+      "deployment_notes": "prod-us-east-1",
+      "sla_tier": "enterprise",
+      "cost_center": "platform-engineering",
+      "seed_source": "workspaces:seed-defaults@2019-01-01"
+    },
+    "is_default": true,
+    "is_system": true,
+    "central_url": "https://academorix.app",
+    "platform_admin_url": "https://admin.academorix.app",
+    "created_by": null,
+    "updated_by": null,
+    "deleted_by": null,
+    "created_at": "2019-01-01T09:00:00Z",
+    "updated_at": "2019-01-01T09:00:00Z",
+    "deleted_at": null
+  },
+  {
+    "id": "app_01J5R7V3A4N7D6Q8K5B2C9E002",
+    "slug": "academorix-eu",
+    "name": "Academorix EU",
+    "description": "EU data-residency deployment. Hosts EU / EEA / UK workspaces.",
+    "default_business_type": "academy",
+    "default_locale": "en",
+    "default_timezone": "Europe/Dublin",
+    "default_currency": "EUR",
+    "central_host": "academorix.eu",
+    "platform_admin_host": "admin.academorix.eu",
+    "config": {
+      "rollout_bucket": "eu-prod",
+      "data_residency": "eu"
+    },
+    "metadata": {
+      "deployment_notes": "prod-eu-west-1",
+      "sla_tier": "enterprise",
+      "cost_center": "platform-engineering-eu",
+      "gdpr_lead_dpa": "IE",
+      "seed_source": "manual@2023-05-15"
+    },
+    "is_default": false,
+    "is_system": true,
+    "central_url": "https://academorix.eu",
+    "platform_admin_url": "https://admin.academorix.eu",
+    "created_by": null,
+    "updated_by": null,
+    "deleted_by": null,
+    "created_at": "2023-05-15T09:00:00Z",
+    "updated_at": "2023-05-15T09:00:00Z",
+    "deleted_at": null
+  }
+]

@@ -6,7 +6,7 @@ Server-Driven UI for the webhook module. Two resource surfaces + one lifecycle w
 
 ### `resources/webhook-subscription/`
 
-Tenant admin CRUD for webhook subscriptions.
+Workspace admin CRUD for webhook subscriptions.
 
 - `list.screen.json` — filterable by state + destination + event; Menu actions per row (pause/resume/test/rotate-secret/delete).
 - `show.screen.json` — subscription detail with recent deliveries timeline + rotation grace indicator + auto-disable reason (when disabled).
@@ -30,8 +30,8 @@ Read-only + retry surface for delivery audit.
 - `webhookSubscription` — single with `include=deliveries` (last 20 for the timeline).
 - `webhookDeliveries` — paginated list.
 - `webhookDelivery` — single with full request/response headers.
-- `webhookEventsCatalog` — publishable events from `GET /api/v1/tenant/webhook/events`.
-- `webhookDestinationsCatalog` — available destination drivers from `GET /api/v1/tenant/webhook/destinations` (feature-flag filtered).
+- `webhookEventsCatalog` — publishable events from `GET /api/v1/workspace/webhook/events`.
+- `webhookDestinationsCatalog` — available destination drivers from `GET /api/v1/workspace/webhook/destinations` (feature-flag filtered).
 - `apiVersions` — released + deprecated ApiVersion rows for the api_version picker.
 
 ## Broadcast subscriptions

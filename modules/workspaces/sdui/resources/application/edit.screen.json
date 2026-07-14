@@ -1,0 +1,27 @@
+{
+  "id": "workspaces.resources.application.edit",
+  "title": "Edit application",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/applications/{id}/edit",
+  "host": "central_admin",
+  "audience": "authenticated",
+  "resource": {"module": "workspaces", "entity": "application", "action": "edit"},
+  "requiresPermission": "platform.applications.update",
+  "params": [{"name": "id", "type": "string", "in": "path", "required": true}],
+  "dataSources": [
+    {"name": "application", "kind": "http.get", "urlExpr": "'/api/v1/applications/' + params.id", "unwrap": "data"}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto"}, "children": [
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/platform/applications/' + params.id"}}},
+      {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold"}, "bindings": {"children": {"$expr": "'Edit ' + application.name"}}},
+      {"kind": "Form", "props": {"submitUrlExpr": "'/api/v1/applications/' + params.id", "submitMethod": "PATCH", "onSuccess": [{"kind": "toast.success", "message": "Saved"}, {"kind": "data.refresh", "source": "application"}]}, "bindings": {"initialValues": {"$ref": "application"}}, "children": [
+        {"kind": "TextField", "props": {"label": "Name", "name": "name"}, "bindings": {"defaultValue": {"$ref": "application.name"}}},
+        {"kind": "TextArea", "props": {"label": "Description", "name": "description"}, "bindings": {"defaultValue": {"$ref": "application.description"}}},
+        {"kind": "Alert", "props": {"variant": "info", "children": "Slug + data residency region + payment provider are immutable after creation. Contact ops for changes."}},
+        {"kind": "Button", "props": {"variant": "primary", "size": "md", "type": "submit", "children": "Save"}}
+      ]}
+    ]}
+  ]
+}

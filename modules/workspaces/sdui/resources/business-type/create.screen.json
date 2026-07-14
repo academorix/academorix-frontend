@@ -1,0 +1,27 @@
+{
+  "id": "workspaces.resources.business-type.create",
+  "title": "New business type",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/business-types/new",
+  "host": "central_admin",
+  "audience": "authenticated",
+  "resource": {"module": "workspaces", "entity": "business-type", "action": "create"},
+  "requiresPermission": "platform.business-types.create",
+  "dataSources": [],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto"}, "children": [
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel"}, "actions": {"onPress": {"kind": "navigate", "to": "/platform/business-types"}}},
+      {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "New business type"}},
+      {"kind": "Alert", "props": {"variant": "info", "children": "Business types drive workspace defaults. Once created, workspaces can select this type at registration; changes propagate to future workspaces via default_config."}},
+      {"kind": "Form", "props": {"submitUrl": "/api/v1/business-types", "submitMethod": "POST", "onSuccess": [{"kind": "toast.success", "message": "Business type created"}, {"kind": "navigateExpr", "expr": "'/platform/business-types/' + response.data.key"}]}, "children": [
+        {"kind": "TextField", "props": {"label": "Display name", "name": "display_name", "isRequired": true, "placeholder": "Sports Center"}},
+        {"kind": "TextField", "props": {"label": "Key", "name": "key", "isRequired": true, "placeholder": "sportscenter", "description": "Lowercase, alphanumeric. Referenced by Workspace.business_type."}},
+        {"kind": "TextField", "props": {"label": "Icon", "name": "icon", "placeholder": "trophy"}},
+        {"kind": "TextArea", "props": {"label": "Description", "name": "description", "rows": 2}},
+        {"kind": "Alert", "props": {"variant": "info", "children": "Terminology + default_config (features, entitlements, default_roles) are edited on the detail screen after creation."}},
+        {"kind": "Button", "props": {"variant": "primary", "size": "md", "type": "submit", "children": "Create business type"}}
+      ]}
+    ]}
+  ]
+}

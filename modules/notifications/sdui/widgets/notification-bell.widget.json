@@ -3,13 +3,13 @@
   "title": "Notification bell",
   "version": 1,
   "kind": "SduiWidget",
-  "description": "Navbar bell with unseen-count badge + dropdown preview of the most recent 5 notifications. Subscribes to `user.{id}.notifications` for live updates. Composes into the app shell of every authenticated tenant surface.",
+  "description": "Navbar bell with unseen-count badge + dropdown preview of the most recent 5 notifications. Subscribes to `user.{id}.notifications` for live updates. Composes into the app shell of every authenticated workspace surface.",
   "props": {
     "size": {"type": "string", "default": "md", "enum": ["sm", "md", "lg"]}
   },
   "dataSources": [
-    {"name": "unseenCount", "kind": "http.get", "url": "/api/v1/tenant/notifications?filter[seen]=unseen&per_page=1", "unwrap": "meta.total", "cache": {"ttlSeconds": 30}},
-    {"name": "recent", "kind": "http.get", "url": "/api/v1/tenant/notifications?sort=-created_at&per_page=5", "unwrap": "data", "cache": {"ttlSeconds": 30}, "lazy": true, "lazyTrigger": "dropdown-open"}
+    {"name": "unseenCount", "kind": "http.get", "url": "/api/v1/workspace/notifications?filter[seen]=unseen&per_page=1", "unwrap": "meta.total", "cache": {"ttlSeconds": 30}},
+    {"name": "recent", "kind": "http.get", "url": "/api/v1/workspace/notifications?sort=-created_at&per_page=5", "unwrap": "data", "cache": {"ttlSeconds": 30}, "lazy": true, "lazyTrigger": "dropdown-open"}
   ],
   "subscriptions": [
     {
@@ -51,13 +51,13 @@
         "children": [
           {"kind": "View", "props": {"className": "flex items-center justify-between p-3 border-b"}, "children": [
             {"kind": "Text", "props": {"className": "font-semibold", "children": "Notifications"}},
-            {"kind": "Link", "props": {"size": "sm", "children": "See all"}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/notifications"}}}
+            {"kind": "Link", "props": {"size": "sm", "children": "See all"}, "actions": {"onPress": {"kind": "navigate", "to": "/workspace/notifications"}}}
           ]},
           {
             "kind": "List",
             "props": {"className": "flex-1 overflow-auto", "emptyState": {"title": "No notifications", "icon": "envelope-open"}},
             "bindings": {"items": {"$ref": "recent"}},
-            "itemRenderer": {"kind": "Widget", "widget": "notifications.notification-card", "props": {"notification": {"$ref": "row"}, "compact": true, "onPressUrl": {"$expr": "'/tenant/notifications/' + row.id"}}}
+            "itemRenderer": {"kind": "Widget", "widget": "notifications.notification-card", "props": {"notification": {"$ref": "row"}, "compact": true, "onPressUrl": {"$expr": "'/workspace/notifications/' + row.id"}}}
           }
         ]
       }

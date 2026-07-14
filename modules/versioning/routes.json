@@ -2,13 +2,13 @@
   "id": "academorix://modules/versioning/routes",
   "$version": 1,
   "title": "versioning \u2014 HTTP routes",
-  "description": "Three groups: public catalog for docs + integration (central), platform-admin CRUD + lifecycle actions, tenant read-only catalog.",
+  "description": "Three groups: public catalog for docs + integration (central), platform-admin CRUD + lifecycle actions, workspace read-only catalog.",
   "groups": [
     {
       "name": "central-public",
       "prefix": "/api/versions",
       "middleware": ["request.id", "cors.strict", "throttle:foundation-base", "response.envelope"],
-      "hosts": ["central", "tenant"],
+      "hosts": ["central", "workspace"],
       "description": "Public catalog. Unauthenticated. Powers docs.academorix.com + integration testing.",
       "routes": [
         {"method": "GET", "path": "/", "controller": "Academorix\\Versioning\\Http\\Controllers\\Public\\ApiVersionController@index", "description": "List released + deprecated versions. Draft + sunset are hidden."},
@@ -40,15 +40,15 @@
       ]
     },
     {
-      "name": "tenant-read-only",
-      "prefix": "/api/v1/tenant/versioning",
-      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "tenant.resolve", "throttle:foundation-base", "response.envelope"],
-      "hosts": ["tenant"],
-      "description": "Read-only tenant surface. Powers the 'active integrations affected by upcoming deprecations' notice on the tenant admin dashboard.",
+      "name": "workspace-read-only",
+      "prefix": "/api/v1/workspace/versioning",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "workspace.resolve", "throttle:foundation-base", "response.envelope"],
+      "hosts": ["workspace"],
+      "description": "Read-only workspace surface. Powers the 'active integrations affected by upcoming deprecations' notice on the workspace admin dashboard.",
       "routes": [
-        {"method": "GET", "path": "/api-versions", "controller": "Academorix\\Versioning\\Http\\Controllers\\Tenant\\ApiVersionController@index", "permission": "versioning.viewAny", "description": "Released + deprecated. Excludes drafts. Filterable by state + scheme."},
-        {"method": "GET", "path": "/api-versions/{slug}", "controller": "Academorix\\Versioning\\Http\\Controllers\\Tenant\\ApiVersionController@show", "permission": "versioning.view"},
-        {"method": "GET", "path": "/deprecation-notices", "controller": "Academorix\\Versioning\\Http\\Controllers\\Tenant\\DeprecationNoticeController@indexAffecting", "permission": "versioning.notices.view", "description": "Published notices affecting THIS tenant \u2014 filtered by webhook subscriptions the tenant has on the affected version(s)."}
+        {"method": "GET", "path": "/api-versions", "controller": "Academorix\\Versioning\\Http\\Controllers\\Workspace\\ApiVersionController@index", "permission": "versioning.viewAny", "description": "Released + deprecated. Excludes drafts. Filterable by state + scheme."},
+        {"method": "GET", "path": "/api-versions/{slug}", "controller": "Academorix\\Versioning\\Http\\Controllers\\Workspace\\ApiVersionController@show", "permission": "versioning.view"},
+        {"method": "GET", "path": "/deprecation-notices", "controller": "Academorix\\Versioning\\Http\\Controllers\\Workspace\\DeprecationNoticeController@indexAffecting", "permission": "versioning.notices.view", "description": "Published notices affecting THIS workspace \u2014 filtered by webhook subscriptions the workspace has on the affected version(s)."}
       ]
     }
   ]

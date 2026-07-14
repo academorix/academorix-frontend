@@ -6,7 +6,7 @@ Substantial admin surface across five resources. Public subscribe surface is thi
 
 ### `resources/newsletter/`
 
-Publication CRUD for tenant admins.
+Publication CRUD for workspace admins.
 
 - `list.screen.json` — filterable by cadence + state. Shows subscriber_count + last-issue metrics per newsletter.
 - `show.screen.json` — publication detail with recent issues, subscriber growth chart, reputation summary.

@@ -15,7 +15,7 @@
     ]},
     "resolver": {"keys": [
       {"path": "settings.resolver.cache_ttl_seconds", "type": "int", "env": "SETTINGS_RESOLVER_CACHE_TTL", "default": 600},
-      {"path": "settings.resolver.max_cascade_depth", "type": "int", "default": 3, "description": "system \u2192 tenant \u2192 user. Increases when scope module lands (org, branch)."}
+      {"path": "settings.resolver.max_cascade_depth", "type": "int", "default": 3, "description": "system \u2192 workspace \u2192 user. Increases when scope module lands (org, branch)."}
     ]},
     "encryption": {"keys": [
       {"path": "settings.encrypt_sensitive_at_rest", "type": "bool", "env": "SETTINGS_ENCRYPT_SENSITIVE", "default": false, "description": "Enterprise-only; also gated by the entitlement."},

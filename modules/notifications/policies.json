@@ -20,13 +20,13 @@
       "model": "NotificationTemplate",
       "class": "Academorix\\Notifications\\Policies\\NotificationTemplatePolicy",
       "abilities": [
-        {"action": "viewAny", "permission": "notifications.templates.viewAny", "scope": "tenant admin OR platform admin"},
-        {"action": "view", "permission": "notifications.templates.view", "scope": "template tenant_id === auth tenant OR is_system=true OR platform admin"},
-        {"action": "create", "permission": "notifications.templates.create", "scope": "tenant admin (creates a tenant-override of a platform template)"},
-        {"action": "update", "permission": "notifications.templates.update", "scope": "tenant admin AND (template.tenant_id === auth tenant OR is_system=false). PLATFORM templates (tenant_id=null, is_system=true) are edit-refused for non-super_admin per HasSystemFlag."},
+        {"action": "viewAny", "permission": "notifications.templates.viewAny", "scope": "workspace admin OR platform admin"},
+        {"action": "view", "permission": "notifications.templates.view", "scope": "template workspace_id === auth workspace OR is_system=true OR platform admin"},
+        {"action": "create", "permission": "notifications.templates.create", "scope": "workspace admin (creates a workspace-override of a platform template)"},
+        {"action": "update", "permission": "notifications.templates.update", "scope": "workspace admin AND (template.workspace_id === auth workspace OR is_system=false). PLATFORM templates (workspace_id=null, is_system=true) are edit-refused for non-super_admin per HasSystemFlag."},
         {"action": "delete", "permission": "notifications.templates.delete", "scope": "REFUSED when live sends reference the row (see NotificationTemplateObserver@deleting)"},
-        {"action": "publish", "permission": "notifications.templates.publish", "scope": "tenant admin AND draft-\u2192published transition requires QA-signed metadata (SOC 2 CC8.1 change management)"},
-        {"action": "test", "permission": "notifications.templates.test", "scope": "author of the draft OR tenant admin. Rate-limited to 10/day per template."}
+        {"action": "publish", "permission": "notifications.templates.publish", "scope": "workspace admin AND draft-\u2192published transition requires QA-signed metadata (SOC 2 CC8.1 change management)"},
+        {"action": "test", "permission": "notifications.templates.test", "scope": "author of the draft OR workspace admin. Rate-limited to 10/day per template."}
       ]
     },
     {
@@ -37,7 +37,7 @@
         {"action": "view", "permission": "notifications.preferences.view", "scope": "preference.user_id === auth user"},
         {"action": "update", "permission": "notifications.preferences.update", "scope": "preference.user_id === auth user. Bulk update: every row must belong to auth user."},
         {"action": "delete", "permission": "notifications.preferences.delete", "scope": "auth user OR cascade-purge listener on UserErased. Manual delete rare \u2014 preferences update in place."},
-        {"action": "adminView", "permission": "notifications.preferences.adminView", "scope": "tenant admin views ANY user's preferences in tenant. Used for support diagnostics + DPO Art. 30 records-of-processing."}
+        {"action": "adminView", "permission": "notifications.preferences.adminView", "scope": "workspace admin views ANY user's preferences in workspace. Used for support diagnostics + DPO Art. 30 records-of-processing."}
       ]
     }
   ],

@@ -8,11 +8,11 @@
     {"entity": "Activity (retention_tier = 'short')", "hot": {"days": 30}, "purge": {"trigger": "created_at < now() - 30d", "action": "hard delete", "job": "PruneActivityLogJob"}},
     {"entity": "Activity (retention_tier = 'medium')", "hot": {"days": 90}, "purge": {"trigger": "created_at < now() - 90d", "action": "hard delete", "job": "PruneActivityLogJob"}},
     {"entity": "Activity (retention_tier = 'long')", "hot": {"days": 365}, "purge": {"trigger": "created_at < now() - 365d", "action": "hard delete", "job": "PruneActivityLogJob"}},
-    {"entity": "Activity (TenantErased cascade)", "purge": {"trigger": "tenancy::TenantErased event", "action": "immediate hard delete via FK cascade"}},
-    {"entity": "Activity (UserErased anonymisation)", "purge": {"trigger": "user::UserErased event", "action": "replace causer_id + description with anonymised placeholders. Row retained for tenant audit trail continuity."}}
+    {"entity": "Activity (WorkspaceErased cascade)", "purge": {"trigger": "workspaces::WorkspaceErased event", "action": "immediate hard delete via FK cascade"}},
+    {"entity": "Activity (UserErased anonymisation)", "purge": {"trigger": "user::UserErased event", "action": "replace causer_id + description with anonymised placeholders. Row retained for workspace audit trail continuity."}}
   ],
   "tier_assignment": {
-    "description": "retention_tier column value set at row creation by HasActivityLog. Precedence: #[LoggableActivity(retention=...)] on the model overrides tenant plan default.",
+    "description": "retention_tier column value set at row creation by HasActivityLog. Precedence: #[LoggableActivity(retention=...)] on the model overrides workspace plan default.",
     "defaults": {"free": "short", "team": "medium", "enterprise": "long"}
   }
 }

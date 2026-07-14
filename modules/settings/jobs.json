@@ -6,7 +6,7 @@
     {
       "class": "Academorix\\Settings\\Jobs\\ExportSettingsJob",
       "queue": "notifications",
-      "purpose": "Produce a scoped settings snapshot as JSON (or YAML). Uploaded to storage module + returned via signed URL. Useful for tenant admin config backups + support incident reproduction.",
+      "purpose": "Produce a scoped settings snapshot as JSON (or YAML). Uploaded to storage module + returned via signed URL. Useful for workspace admin config backups + support incident reproduction.",
       "steps": [
         "Query SettingValue rows for the target scope.",
         "Apply masking: sensitive fields render as `***` unless --reveal super_admin.",

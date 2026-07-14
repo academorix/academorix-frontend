@@ -1,0 +1,125 @@
+{
+  "id": "academorix://modules/search/retention",
+  "$version": 1,
+  "title": "search \u2014 retention windows",
+  "description": "Four independent retention concerns. Sync jobs + analytics events are tier-based per plan. Indexes + synonyms + saved queries are workspace-managed \u2014 no auto-purge (they represent live configuration, not history). Analytics events are high-cardinality + hot-purged aggressively. Physical index versions retained for a grace window after alias swap.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5 (storage limitation)",
+    "gdpr Art. 17 (right to erasure)",
+    "gdpr Art. 25 (data protection by design \u2014 hashing over raw retention)",
+    "soc2 CC7.3 (operations monitoring feed)"
+  ],
+  "retention": [
+    {
+      "entity": "SearchSyncJob (retention_tier = 'short')",
+      "hot": {"days": 90},
+      "purge": {"trigger": "created_at < now() - 90d AND status IN ('succeeded','partially_succeeded','failed','cancelled')", "action": "hard delete", "job": "PruneSearchAnalyticsJob"}
+    },
+    {
+      "entity": "SearchSyncJob (retention_tier = 'medium')",
+      "hot": {"days": 180},
+      "purge": {"trigger": "created_at < now() - 180d AND terminal status", "action": "hard delete", "job": "PruneSearchAnalyticsJob"}
+    },
+    {
+      "entity": "SearchSyncJob (retention_tier = 'long')",
+      "hot": {"days": 365},
+      "purge": {"trigger": "created_at < now() - 365d AND terminal status", "action": "hard delete", "job": "PruneSearchAnalyticsJob"}
+    },
+    {
+      "entity": "SearchSyncJob (stale queued / running)",
+      "hot": {"hours": 24},
+      "purge": {
+        "trigger": "status IN ('queued','running') AND last_progress_at < now() - 24h",
+        "action": "auto-transition to cancelled with cancel_reason = 'stalled', emit SearchSyncJobCancelled",
+        "job": "PruneSearchAnalyticsJob (stale sweep pass)"
+      }
+    },
+    {
+      "entity": "SearchAnalyticsEvent (retention_tier = 'short')",
+      "hot": {"days": 30},
+      "purge": {
+        "trigger": "created_at < now() - 30d",
+        "action": "hard delete",
+        "job": "PruneSearchAnalyticsJob",
+        "notes": "High-cardinality \u2014 short plan gets aggressive 30d purge. `query_hash` aggregate rollups (top_queries table \u2014 v2) survive longer via daily materialisation."
+      }
+    },
+    {
+      "entity": "SearchAnalyticsEvent (retention_tier = 'medium')",
+      "hot": {"days": 90},
+      "purge": {"trigger": "created_at < now() - 90d", "action": "hard delete", "job": "PruneSearchAnalyticsJob"}
+    },
+    {
+      "entity": "SearchAnalyticsEvent (retention_tier = 'long')",
+      "hot": {"days": 365},
+      "purge": {"trigger": "created_at < now() - 365d", "action": "hard delete", "job": "PruneSearchAnalyticsJob"}
+    },
+    {
+      "entity": "SearchAnalyticsEvent (query text early-purge for GDPR)",
+      "hot": {"days": 7},
+      "purge": {
+        "trigger": "created_at < now() - 7d",
+        "action": "NULL out the `query` column (preserves query_hash for aggregation). Independent of the row-level retention above.",
+        "job": "PruneSearchAnalyticsJob (query-text scrub pass)",
+        "notes": "Raw query text is confidential PII. Even when the row is retained for aggregate analytics, the raw text is nulled after 7d. Aggregation continues to work via query_hash."
+      }
+    },
+    {
+      "entity": "SearchIndex",
+      "purge": {
+        "trigger": "workspace admin removes searchable attribute + reindex to remove OR WorkspaceErased event",
+        "action": "soft delete via SoftDeletes trait; deleted_at set. Physical engine index dropped by PurgeIndexModelJob (see below). Ledger row hard-deleted 30d after soft-delete."
+      }
+    },
+    {
+      "entity": "Physical engine index (Meilisearch / PG-FTS / pgvector)",
+      "hot": {"days": 7},
+      "purge": {
+        "trigger": "SearchIndex.deleted_at IS NOT NULL AND deleted_at < now() - 7d OR post-alias-swap old version (older than swap_grace_days)",
+        "action": "engine-native DROP + reclaim disk",
+        "job": "PurgeIndexModelJob",
+        "notes": "7d grace after alias swap so a rollback is always possible. WorkspaceErased skips the grace \u2014 immediate drop."
+      }
+    },
+    {
+      "entity": "SearchSynonym",
+      "purge": {
+        "trigger": "workspace admin deletes OR WorkspaceErased event",
+        "action": "soft delete; hard delete 365d after soft-delete via PruneSearchAnalyticsJob. Platform-seeded rows (is_system=true) can only be disabled \u2014 not deleted \u2014 by workspace admins."
+      }
+    },
+    {
+      "entity": "SearchSavedQuery",
+      "purge": {
+        "trigger": "user deletes OR UserErased event OR WorkspaceErased event",
+        "action": "soft delete; hard delete 365d after soft-delete. Shared queries owned by an erased user transfer ownership to a workspace admin before the soft-delete."
+      }
+    },
+    {
+      "entity": "* (WorkspaceErased cascade)",
+      "purge": {
+        "trigger": "workspaces::WorkspaceErased event",
+        "action": "immediate hard delete of every search_* row for the workspace via FK cascade. PurgeIndexModelJob dispatched with workspaceScope + force=true to drop physical engine indexes without the 7d grace."
+      }
+    },
+    {
+      "entity": "* (UserErased anonymisation)",
+      "purge": {
+        "trigger": "user::UserErased event",
+        "action": "Null SearchAnalyticsEvent.user_id. Cascade SearchSavedQuery owner_id: shared queries transferred to a workspace admin, private queries soft-deleted. SearchSyncJob.causer_id anonymised (row retained as operational evidence)."
+      }
+    }
+  ],
+  "tier_assignment": {
+    "description": "retention_tier column on both SearchSyncJob and SearchAnalyticsEvent set at row creation. Precedence: explicit config override > workspace plan default > global config default.",
+    "defaults": {"free": "short", "team": "medium", "enterprise": "long"}
+  },
+  "swap_grace": {
+    "description": "After a successful alias swap, the previous physical index is retained for `config('search.retention.swap_grace_days')` (default 7d) before PurgeIndexModelJob drops it. Enables one-click rollback of a failed reindex.",
+    "days": 7
+  },
+  "query_text_scrub": {
+    "description": "SearchAnalyticsEvent.query is nulled after `config('search.retention.query_text_days')` (default 7d) even if the row is retained longer for aggregation. Independent GDPR guardrail.",
+    "days": 7
+  }
+}

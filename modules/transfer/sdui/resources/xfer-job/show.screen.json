@@ -3,8 +3,8 @@
   "title": "Transfer job",
   "version": 1,
   "kind": "SduiScreen",
-  "route": "/tenant/transfer/jobs/{jobId}",
-  "host": "tenant",
+  "route": "/workspace/transfer/jobs/{jobId}",
+  "host": "workspace",
   "audience": "authenticated",
   "resource": {"module": "transfer", "entity": "xfer-job", "action": "show"},
   "requiresPermission": "transfer.view",
@@ -20,7 +20,7 @@
       "props": {"className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto"},
       "children": [
         {"kind": "Breadcrumbs", "props": {"items": [
-          {"label": {"$expr": "t('transfer.breadcrumbs.transfers')"}, "to": "/tenant/transfer/jobs"},
+          {"label": {"$expr": "t('transfer.breadcrumbs.transfers')"}, "to": "/workspace/transfer/jobs"},
           {"label": {"$ref": "job.id"}}
         ]}},
         {"kind": "View", "props": {"className": "flex items-start justify-between gap-4"}, "children": [
