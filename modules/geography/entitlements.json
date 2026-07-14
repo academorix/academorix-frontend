@@ -1,0 +1,11 @@
+{
+  "id": "academorix://modules/geography/entitlements",
+  "$version": 1,
+  "title": "geography \u2014 declared entitlements",
+  "description": "One pool for /geolocate usage \u2014 free tier gets a small monthly allowance because each miss triggers outbound ip-api.com traffic.",
+  "reference": {"publishedBy": "entitlements"},
+  "kinds": [{"kind": "pool"}],
+  "entitlements": [
+    {"key": "geography.geolocate.month", "kind": "pool", "period": "month", "unit": "resolutions", "defaultsByPlan": {"free": 500, "team": 10000, "business": 100000, "enterprise": null}, "description": "Per-month cap on /geolocate calls per workspace. Cache hits do not count. Free tier is intentionally low because misses hit ip-api.com."}
+  ]
+}

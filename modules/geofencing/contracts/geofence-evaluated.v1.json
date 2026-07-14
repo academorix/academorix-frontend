@@ -1,0 +1,91 @@
+{
+    "title": "GeofenceEvaluated",
+    "description": "Public wire shape of the Academorix\\Geofencing\\Events\\GeofenceEvaluated domain event. Fired synchronously by GeofenceService::evaluate() after the geofence_checks row is persisted. Consumed by audit / metric listeners inside the Geofencing module and by feature listeners in staff-clock-in-out, athlete-self-check-in, visitor-auto-log, attendance. Breaking changes require a v2 bump + parallel dispatch during migration.",
+    "version": "1.0.0",
+    "type": "object",
+    "required": ["check", "input"],
+    "additionalProperties": false,
+    "properties": {
+        "check": {
+            "type": "object",
+            "description": "The persisted geofence_checks row. Immutable in application code.",
+            "required": [
+                "id",
+                "workspace_id",
+                "branch_id",
+                "result",
+                "mode",
+                "distance_to_fence_m",
+                "accuracy_m",
+                "subject_type",
+                "subject_id"
+            ],
+            "additionalProperties": true,
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "Application-generated gfc_* primary key.",
+                    "pattern": "^gfc_"
+                },
+                "workspace_id": {
+                    "type": "string",
+                    "description": "Owning workspace identifier. Always set by workspace scoping."
+                },
+                "branch_id": {
+                    "type": ["string", "null"],
+                    "description": "Owning branch identifier. Nullable for future workspace-scoped evaluations."
+                },
+                "result": {
+                    "type": "string",
+                    "enum": ["INSIDE", "OUTSIDE", "SKIPPED", "ERROR"],
+                    "description": "Evaluator verdict."
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["polygon", "radius"],
+                    "description": "Enforcement mode that produced the verdict."
+                },
+                "distance_to_fence_m": {
+                    "type": ["integer", "null"],
+                    "description": "Signed meters to the fence boundary; 0 or negative when inside. Null on SKIPPED / ERROR."
+                },
+                "accuracy_m": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Reported horizontal accuracy in meters (from the client)."
+                },
+                "subject_type": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9_]+$",
+                    "description": "Polymorphic morph alias \u2014 snake_case identifier registered by the caller's module."
+                },
+                "subject_id": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "description": "Application-generated identifier of the subject entity."
+                }
+            }
+        },
+        "input": {
+            "type": "object",
+            "description": "The originating request DTO. Carried so listeners can log caller-supplied fields without re-parsing the raw HTTP body.",
+            "required": [
+                "branch_id",
+                "lat",
+                "lng",
+                "accuracy_m",
+                "subject_type",
+                "subject_id"
+            ],
+            "additionalProperties": true,
+            "properties": {
+                "branch_id": {"type": "string"},
+                "lat": {"type": "number", "minimum": -90, "maximum": 90},
+                "lng": {"type": "number", "minimum": -180, "maximum": 180},
+                "accuracy_m": {"type": "integer", "minimum": 0},
+                "subject_type": {"type": "string", "pattern": "^[a-z][a-z0-9_]+$"},
+                "subject_id": {"type": "string", "maxLength": 64}
+            }
+        }
+    }
+}

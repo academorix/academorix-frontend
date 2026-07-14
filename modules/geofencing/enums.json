@@ -1,0 +1,49 @@
+{
+  "id": "academorix://modules/geofencing/enums",
+  "$version": 1,
+  "title": "geofencing \u2014 enums",
+  "description": "Backed string enums. Uppercase for GeofenceResult (matches wire contract R3), lowercase for GeofenceMode (matches observability labels R9).",
+  "enums": [
+    {
+      "name": "GeofenceResult",
+      "class": "Academorix\\Geofencing\\Enums\\GeofenceResult",
+      "backing": "string",
+      "cases": [
+        {"name": "INSIDE", "value": "INSIDE", "meaning": "Reported location falls inside the fence (polygon) or within the radius. Consumer proceeds without blocking."},
+        {"name": "OUTSIDE", "value": "OUTSIDE", "meaning": "Reported location is outside. Consumer blocks unless override applied."},
+        {"name": "SKIPPED", "value": "SKIPPED", "meaning": "Reported accuracy exceeds branch tolerance. Evaluator refused to give a verdict."},
+        {"name": "ERROR", "value": "ERROR", "meaning": "Evaluation could not run to completion (cross-workspace, missing geometry, unexpected exception). Fail-closed."}
+      ],
+      "methods": [
+        {"name": "isBlocking(): bool", "description": "Returns true for OUTSIDE + ERROR (fail-closed for enforcement contexts). False for INSIDE + SKIPPED."},
+        {"name": "values(): list<string>", "description": "All backing values."}
+      ]
+    },
+    {
+      "name": "GeofenceMode",
+      "class": "Academorix\\Geofencing\\Enums\\GeofenceMode",
+      "backing": "string",
+      "cases": [
+        {"name": "Polygon", "value": "polygon", "meaning": "Branch has a `geofence_polygon`; evaluator ran point-in-polygon + distance-to-polygon."},
+        {"name": "Radius", "value": "radius", "meaning": "Branch has no polygon; evaluator fell back to haversine against `location_point` compared to `geofence_radius_m`."}
+      ],
+      "methods": [
+        {"name": "values(): list<string>", "description": "All backing values."}
+      ]
+    },
+    {
+      "name": "PolygonValidationReason",
+      "class": "Academorix\\Geofencing\\Enums\\PolygonValidationReason",
+      "backing": "string",
+      "cases": [
+        {"name": "NotClosed", "value": "not_closed", "meaning": "First and last vertex must be identical."},
+        {"name": "TooFewVertices", "value": "too_few_vertices", "meaning": "Polygon must have at least 4 points (3 unique + repeat)."},
+        {"name": "SelfIntersecting", "value": "self_intersecting", "meaning": "Simple polygon required \u2014 no self-crossing edges."},
+        {"name": "TooLarge", "value": "too_large", "meaning": "Polygon spans > 10km diameter. Beyond the tangent-plane approximation's validity zone."},
+        {"name": "InvalidCoordinates", "value": "invalid_coordinates", "meaning": "At least one vertex has lat outside [-90, 90] or lng outside [-180, 180]."},
+        {"name": "InvalidWkt", "value": "invalid_wkt", "meaning": "WKT parse failed."},
+        {"name": "InvalidGeoJson", "value": "invalid_geojson", "meaning": "GeoJSON schema violation."}
+      ]
+    }
+  ]
+}

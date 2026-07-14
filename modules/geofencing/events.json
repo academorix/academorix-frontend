@@ -1,0 +1,37 @@
+{
+  "id": "academorix://modules/geofencing/events",
+  "$version": 1,
+  "title": "geofencing \u2014 published events",
+  "namespace": "Academorix\\Geofencing\\Events",
+  "dispatchMode": "afterCommit",
+  "public_wire_contract": "contracts/geofence-evaluated.v1.json",
+  "events": [
+    {
+      "name": "GeofenceEvaluated",
+      "class": "Academorix\\Geofencing\\Events\\GeofenceEvaluated",
+      "queue": null,
+      "dispatch_mode": "sync (fires immediately after INSERT, before evaluate() returns)",
+      "wire_contract_version": "1.0.0",
+      "wire_contract_file": "contracts/geofence-evaluated.v1.json",
+      "trigger": "GeofenceService::evaluate() persisted a row (any leaf: INSIDE / OUTSIDE / SKIPPED / ERROR).",
+      "consumers": [
+        "geofencing::LogGeofenceEvaluationForAudit (internal audit trail)",
+        "geofencing::GeofenceMetricsRecorder (metric emission)",
+        "staff-clock-in-out::StampGeofenceCheckOnClockIn (subject_type='staff_clockin')",
+        "athlete-self-check-in::StampGeofenceCheckOnCheckIn (subject_type='attendance_submission')",
+        "visitor-auto-log::StampGeofenceCheckOnVisit (subject_type='reception_visit')"
+      ],
+      "payload": {
+        "check": "GeofenceCheck (persisted model instance)",
+        "input": "EvaluateGeofenceData (originating DTO)"
+      },
+      "consumer_filter_pattern": "Filter by $event->input->subjectType matching your module's registered morph alias."
+    },
+    {"name": "GeofenceOverrideRequested", "class": "Academorix\\Geofencing\\Events\\GeofenceOverrideRequested", "trigger": "GeofenceOverrideService::requestOverride() created an approval_tasks row.", "queue": "notifications", "consumers": ["notifications::DispatchGeofenceOverrideRequestedNotification"], "payload": {"original_check_id": "gfc_*", "requester_user_id": "uuid", "reason": "string (>= 10 chars)", "approval_task_id": "string"}},
+    {"name": "GeofenceOverrideApplied", "class": "Academorix\\Geofencing\\Events\\GeofenceOverrideApplied", "trigger": "ApplyGeofenceOverrideOnApproval listener minted a new INSIDE row with supersedes_check_id set.", "queue": "notifications", "consumers": ["notifications::DispatchGeofenceOverrideAppliedNotification", "audit::AuditListener"], "payload": {"new_check_id": "gfc_*", "supersedes_check_id": "gfc_*", "overridden_by_user_id": "uuid", "override_reason": "string"}},
+    {"name": "GeofenceOverrideRejected", "class": "Academorix\\Geofencing\\Events\\GeofenceOverrideRejected", "trigger": "Approval task closed with reject decision.", "queue": "notifications", "consumers": ["notifications::DispatchGeofenceOverrideRejectedNotification"], "payload": {"original_check_id": "gfc_*", "requester_user_id": "uuid", "rejected_by_user_id": "uuid", "reject_reason": "string | null"}},
+    {"name": "GeofenceCheckCreated", "class": "Academorix\\Geofencing\\Events\\Domain\\GeofenceCheckCreated", "trigger": "Eloquent created event on GeofenceCheck. Coarser signal than GeofenceEvaluated \u2014 fires for override rows too. Used for cache invalidation.", "queue": "notifications", "payload": {"check_id": "gfc_*", "workspace_id": "wsp_*", "result": "GeofenceResult"}},
+    {"name": "GeofenceCheckUpdated", "class": "Academorix\\Geofencing\\Events\\Domain\\GeofenceCheckUpdated", "trigger": "Never dispatched under normal operation (immutability guard). Reserved for platform admin retention-purge edits.", "queue": "notifications", "payload": {"check_id": "gfc_*", "changed_fields": "string[]"}},
+    {"name": "GeofenceCheckDeleted", "class": "Academorix\\Geofencing\\Events\\Domain\\GeofenceCheckDeleted", "trigger": "Soft-delete via SoftDeletes trait \u2014 GDPR retention path.", "queue": "notifications", "payload": {"check_id": "gfc_*", "workspace_id": "wsp_*"}}
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/geography/errors",
+  "$version": 1,
+  "title": "geography \u2014 error codes",
+  "namespace": "geography",
+  "errors": [
+    {"code": "GEOGRAPHY_COUNTRY_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "geography.errors.country_not_found"},
+    {"code": "GEOGRAPHY_STATE_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "geography.errors.state_not_found"},
+    {"code": "GEOGRAPHY_CITY_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "geography.errors.city_not_found"},
+    {"code": "GEOGRAPHY_CURRENCY_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "geography.errors.currency_not_found"},
+    {"code": "GEOGRAPHY_LANGUAGE_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "geography.errors.language_not_found"},
+    {"code": "GEOGRAPHY_TIMEZONE_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "geography.errors.timezone_not_found"},
+    {"code": "GEOGRAPHY_CITIES_INDEX_UNSCOPED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "geography.errors.cities_index_unscoped", "description": "Repository refuses index() without ?filter[country_id]= OR ?filter[state_id]=."},
+    {"code": "GEOGRAPHY_STATES_INDEX_UNSCOPED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "geography.errors.states_index_unscoped", "description": "Similar guard on states \u2014 requires country scope."},
+    {"code": "GEOGRAPHY_GEOLOCATE_INVALID_IP", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "geography.errors.geolocate_invalid_ip", "description": "Submitted IP is not a valid IPv4 / IPv6 address."},
+    {"code": "GEOGRAPHY_GEOLOCATE_PRIVATE_IP", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "geography.errors.geolocate_private_ip", "description": "Submitted IP is private / loopback / reserved; MaxMind + ip-api.com both refuse these."},
+    {"code": "GEOGRAPHY_GEOLOCATE_UNRESOLVABLE", "http": 200, "retryable": true, "user_facing": true, "audit_severity": "info", "i18n_key": "geography.errors.geolocate_unresolvable", "description": "Both MaxMind AND ip-api.com failed. Returns HTTP 200 with data:null so caller can gracefully continue \u2014 not an error state per se."},
+    {"code": "GEOGRAPHY_GEOLOCATE_QUOTA_EXCEEDED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "geography.errors.geolocate_quota_exceeded", "description": "geography.geolocate.month entitlement quota exhausted."},
+    {"code": "GEOGRAPHY_WORLD_NOT_SEEDED", "http": 500, "retryable": false, "user_facing": false, "audit_severity": "critical", "i18n_key": "geography.errors.world_not_seeded", "description": "Health probe caught missing seeder. `php artisan world:install` required."},
+    {"code": "GEOGRAPHY_MAXMIND_MISSING", "http": 200, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "geography.errors.maxmind_missing", "description": "GeoLite2-City.mmdb not found. Non-fatal \u2014 evaluator falls back to ip-api.com."},
+    {"code": "GEOGRAPHY_MAXMIND_STALE", "http": 200, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "geography.errors.maxmind_stale", "description": "GeoLite2-City.mmdb > 14 days old. Refresh triggered."}
+  ]
+}

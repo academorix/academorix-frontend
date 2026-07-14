@@ -1,0 +1,31 @@
+{
+  "id": "geography.currency-picker",
+  "title": "Currency picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Searchable combobox for ISO-4217 currencies with symbol + precision hint. Renders a live sample price so users can spot precision (JPY = 0 decimals) at a glance.",
+  "props": {
+    "name": {"type": "string", "required": true},
+    "value": {"type": ["string", "null"]},
+    "filterCountryCode": {"type": ["string", "null"]},
+    "sampleAmount": {"type": "number", "default": 29},
+    "placeholder": {"type": "string", "default": "Select currency..."}
+  },
+  "dataSources": [
+    {"name": "currencies", "kind": "http.get", "urlExpr": "'/api/v1/geography/currencies' + (props.filterCountryCode ? '?filter[country_code]=' + props.filterCountryCode : '')", "unwrap": "data", "cache": {"ttlSeconds": 3600}}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "Combobox", "props": {"name": "$name", "placeholder": "$placeholder"}, "bindings": {"options": {"$ref": "currencies"}, "optionKey": "code", "optionLabel": "code", "value": {"$ref": "props.value"}}, "children": [
+      {"kind": "ComboboxOptionRenderer", "children": [
+        {"kind": "View", "props": {"className": "flex items-center gap-2"}, "children": [
+          {"kind": "Text", "props": {"className": "text-lg font-semibold"}, "bindings": {"children": {"$ref": "row.symbol_native"}}},
+          {"kind": "View", "props": {"className": "flex flex-col flex-1"}, "children": [
+            {"kind": "Text", "props": {"className": "font-medium"}, "bindings": {"children": {"$ref": "row.code"}}},
+            {"kind": "Text", "props": {"className": "text-xs text-muted"}, "bindings": {"childrenExpr": "row.name + ' \u00b7 ' + row.precision + ' dp'"}}
+          ]},
+          {"kind": "Text", "props": {"className": "text-sm text-muted font-mono"}, "bindings": {"childrenExpr": "(row.symbol || row.code) + ' ' + props.sampleAmount.toFixed(row.precision)"}}
+        ]}
+      ]}
+    ]}
+  ]
+}

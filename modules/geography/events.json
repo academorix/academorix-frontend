@@ -1,0 +1,32 @@
+{
+  "id": "academorix://modules/geography/events",
+  "$version": 1,
+  "title": "geography \u2014 published events",
+  "namespace": "Academorix\\Geography\\Events\\Domain",
+  "dispatchMode": "afterCommit",
+  "description": "Per-entity CRUD events for cache invalidation + downstream sync. Plus GeolocationResolved / GeolocationFailed / MaxMind refresh events at the module root namespace.",
+  "events": [
+    {"name": "CountryCreated", "class": "Academorix\\Geography\\Events\\Domain\\CountryCreated", "queue": "notifications", "consumers": ["geography::OnCountryCreated (invalidates geography.cache tags)"], "payload": {"country_id": "integer", "iso2": "string"}},
+    {"name": "CountryUpdated", "class": "Academorix\\Geography\\Events\\Domain\\CountryUpdated", "queue": "notifications", "payload": {"country_id": "integer", "iso2": "string", "changed_fields": "string[]"}},
+    {"name": "CountryDeleted", "class": "Academorix\\Geography\\Events\\Domain\\CountryDeleted", "queue": "notifications", "payload": {"country_id": "integer", "iso2": "string"}},
+    {"name": "StateCreated", "class": "Academorix\\Geography\\Events\\Domain\\StateCreated", "queue": "notifications", "payload": {"state_id": "integer", "country_id": "integer"}},
+    {"name": "StateUpdated", "class": "Academorix\\Geography\\Events\\Domain\\StateUpdated", "queue": "notifications", "payload": {"state_id": "integer", "country_id": "integer", "changed_fields": "string[]"}},
+    {"name": "StateDeleted", "class": "Academorix\\Geography\\Events\\Domain\\StateDeleted", "queue": "notifications", "payload": {"state_id": "integer", "country_id": "integer"}},
+    {"name": "CityCreated", "class": "Academorix\\Geography\\Events\\Domain\\CityCreated", "queue": "notifications", "payload": {"city_id": "integer", "state_id": "integer", "country_id": "integer"}},
+    {"name": "CityUpdated", "class": "Academorix\\Geography\\Events\\Domain\\CityUpdated", "queue": "notifications", "payload": {"city_id": "integer", "changed_fields": "string[]"}},
+    {"name": "CityDeleted", "class": "Academorix\\Geography\\Events\\Domain\\CityDeleted", "queue": "notifications", "payload": {"city_id": "integer"}},
+    {"name": "CurrencyCreated", "class": "Academorix\\Geography\\Events\\Domain\\CurrencyCreated", "queue": "notifications", "payload": {"currency_id": "integer", "code": "string"}},
+    {"name": "CurrencyUpdated", "class": "Academorix\\Geography\\Events\\Domain\\CurrencyUpdated", "queue": "notifications", "payload": {"currency_id": "integer", "code": "string", "changed_fields": "string[]"}},
+    {"name": "CurrencyDeleted", "class": "Academorix\\Geography\\Events\\Domain\\CurrencyDeleted", "queue": "notifications", "payload": {"currency_id": "integer", "code": "string"}},
+    {"name": "LanguageCreated", "class": "Academorix\\Geography\\Events\\Domain\\LanguageCreated", "queue": "notifications", "payload": {"language_id": "integer", "code": "string"}},
+    {"name": "LanguageUpdated", "class": "Academorix\\Geography\\Events\\Domain\\LanguageUpdated", "queue": "notifications", "payload": {"language_id": "integer", "code": "string", "changed_fields": "string[]"}},
+    {"name": "LanguageDeleted", "class": "Academorix\\Geography\\Events\\Domain\\LanguageDeleted", "queue": "notifications", "payload": {"language_id": "integer", "code": "string"}},
+    {"name": "TimezoneCreated", "class": "Academorix\\Geography\\Events\\Domain\\TimezoneCreated", "queue": "notifications", "payload": {"timezone_id": "integer", "name": "string"}},
+    {"name": "TimezoneUpdated", "class": "Academorix\\Geography\\Events\\Domain\\TimezoneUpdated", "queue": "notifications", "payload": {"timezone_id": "integer", "name": "string", "changed_fields": "string[]"}},
+    {"name": "TimezoneDeleted", "class": "Academorix\\Geography\\Events\\Domain\\TimezoneDeleted", "queue": "notifications", "payload": {"timezone_id": "integer", "name": "string"}},
+    {"name": "GeolocationResolved", "class": "Academorix\\Geography\\Events\\GeolocationResolved", "queue": null, "trigger": "GeolocateService succeeded. Consumed by localization module (optional) for region-default heuristics.", "consumers": ["localization::HandleGeolocationForLocaleHint (optional)", "telemetry-otel::MetricsCollector"], "payload": {"ip": "string", "country_code": "string | null", "state_code": "string | null", "city_name": "string | null", "timezone": "string | null", "source": "'maxmind' | 'ip_api' | 'cache'", "duration_ms": "integer"}},
+    {"name": "GeolocationFailed", "class": "Academorix\\Geography\\Events\\GeolocationFailed", "queue": null, "trigger": "Vendor returned typed exception (invalid / private / reserved IP, DB missing, ip-api.com failure).", "payload": {"ip": "string", "reason": "string", "exception_class": "string | null"}},
+    {"name": "MaxMindDatabaseRefreshed", "class": "Academorix\\Geography\\Events\\MaxMindDatabaseRefreshed", "queue": "notifications", "payload": {"path": "string", "downloaded_bytes": "integer", "database_version": "string", "duration_ms": "integer"}},
+    {"name": "MaxMindDatabaseStale", "class": "Academorix\\Geography\\Events\\MaxMindDatabaseStale", "queue": "notifications-critical", "trigger": "Health probe detected the MaxMind DB is > 14 days old.", "consumers": ["notifications::DispatchMaxMindRefreshFailedNotification"], "payload": {"path": "string", "age_days": "integer", "last_refreshed_at": "ISO 8601"}}
+  ]
+}

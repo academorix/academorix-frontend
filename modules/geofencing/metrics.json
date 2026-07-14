@@ -1,0 +1,20 @@
+{
+  "id": "academorix://modules/geofencing/metrics",
+  "$version": 1,
+  "title": "geofencing \u2014 OpenTelemetry metrics",
+  "instrumentation": "self via telemetry-otel",
+  "namespace": "academorix.geofence",
+  "labelConventions": {"always": [], "commonlyAvailable": ["result", "mode", "branch_id_bucket", "subject_type"], "forbiddenAsLabels": ["workspace_id (would explode cardinality)", "subject_id", "actual branch_id", "captured_location"]},
+  "metrics": [
+    {"name": "academorix.geofence.evaluations.total", "kind": "counter", "unit": "evaluations", "labels": ["result", "mode", "subject_type"], "description": "Every GeofenceService::evaluate() call increments. Broken down by verdict + mode + which feature module called."},
+    {"name": "academorix.geofence.preflight.total", "kind": "counter", "unit": "requests", "labels": ["result", "outcome"], "description": "outcome: served / rate_limited / kill_switched / errored. Preflight traffic distinct from real evaluations."},
+    {"name": "academorix.geofence.evaluation.duration_ms", "kind": "histogram", "unit": "ms", "buckets": [1, 5, 25, 100, 500, 2000], "labels": ["mode"], "description": "Wall-clock time inside GeofenceService::evaluate()."},
+    {"name": "academorix.geofence.distance_to_fence_m", "kind": "histogram", "unit": "m", "buckets": [0, 10, 50, 250, 1000, 5000, 50000], "labels": ["result"], "description": "Distance distribution. Right-tail is 'user was very far outside the fence'."},
+    {"name": "academorix.geofence.accuracy_m", "kind": "histogram", "unit": "m", "buckets": [5, 15, 30, 50, 100, 500], "labels": ["result"], "description": "Reported GPS accuracy distribution. SKIPPED verdicts should concentrate in the right tail."},
+    {"name": "academorix.geofence.overrides.requested_total", "kind": "counter", "unit": "requests", "labels": ["subject_type"]},
+    {"name": "academorix.geofence.overrides.applied_total", "kind": "counter", "unit": "overrides", "labels": ["subject_type"]},
+    {"name": "academorix.geofence.overrides.rejected_total", "kind": "counter", "unit": "rejections", "labels": ["subject_type"]},
+    {"name": "academorix.geofence.polygon_evaluator.fallback_total", "kind": "counter", "unit": "fallbacks", "labels": ["reason"], "description": "reason: geoPHP not loaded / geoPHP returned null / geoPHP threw. Feeds decision on whether to require the geoPHP classmap in production."},
+    {"name": "academorix.geofence.immutability_violations_total", "kind": "counter", "unit": "violations", "labels": [], "description": "MUST be 0 in production. Any non-zero value = code attempted to mutate a persisted row. Fires alerting."}
+  ]
+}

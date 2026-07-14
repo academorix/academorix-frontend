@@ -1,0 +1,21 @@
+{
+  "id": "academorix://modules/geofencing/observers",
+  "$version": 1,
+  "title": "geofencing \u2014 Eloquent observers",
+  "observers": [
+    {
+      "model": "GeofenceCheck",
+      "observer": "Academorix\\Geofencing\\Observers\\GeofenceCheckObserver",
+      "handles": [
+        "creating \u2192 delegate ULID minting to HasPrefixedUlid trait (prefix `gfc_`)",
+        "creating \u2192 default metadata={} when null (jsonb column has default but PHP-side we ensure it never lands as null)",
+        "creating \u2192 refuse when subject_type is not a snake_case identifier (defensive; PolygonValidator+form request also enforce)",
+        "creating \u2192 refuse when supersedes_check_id references a row in a different workspace (cross-workspace defence)",
+        "created \u2192 fire GeofenceCheckCreated (domain event; distinct from GeofenceEvaluated which is fired by the SERVICE)",
+        "updating \u2192 refuse via RuntimeException from the model's saving hook (immutability guard). Observer never receives an update event.",
+        "deleting \u2192 accept only when the actor is a platform_admin (retention path) OR the caller is the SoftDeletes internal flow"
+      ],
+      "immutability_note": "The immutability guard is on the MODEL's booted() `saving` hook \u2014 not this observer. The observer's `updating` never fires because the exception aborts before it."
+    }
+  ]
+}

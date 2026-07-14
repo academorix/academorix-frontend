@@ -1,0 +1,49 @@
+{
+  "id": "academorix://modules/geography/schemas/language",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Language",
+  "description": "ISO-639 language reference row. Vendor-owned schema. Distinct from `localization::Language` which tracks BCP 47 tags enabled per-workspace \u2014 see module.json.naming_note. Route binding accepts numeric PK OR ISO-639-1 code (lowercase).",
+  "type": "object",
+  "x-module": "geography",
+  "x-vendor": {"package": "nnjeim/world", "vendor_model": "Nnjeim\\World\\Models\\Language", "we_own_migration": false, "we_own_seeder": false},
+  "x-eloquent": {
+    "baseClass": "Nnjeim\\World\\Models\\Language",
+    "table": "languages",
+    "primaryKey": "id",
+    "keyType": "int",
+    "incrementing": true,
+    "timestamps": false,
+    "model": "Academorix\\Geography\\Models\\Language",
+    "interface": "Academorix\\Geography\\Contracts\\Data\\LanguageInterface",
+    "implements": ["Academorix\\Geography\\Contracts\\Data\\LanguageInterface"],
+    "traits": ["HasFactory", "Filterable"],
+    "observers": ["LanguageObserver"]
+  },
+  "x-database": {
+    "engine": "any (vendor-supported)",
+    "vendor_owned": true,
+    "columns_summary": {
+      "id": {"type": "integer", "primary": true},
+      "country_id": {"type": "integer", "nullable": true, "description": "Primary country association (nullable \u2014 many languages span multiple countries)."},
+      "code": {"type": "string", "length": 2, "description": "ISO-639-1 alpha-2 (lowercase). E.g. `en`, `fr`, `ar`."},
+      "name": {"type": "string", "description": "English name (e.g. 'French')."},
+      "native": {"type": "string", "nullable": true, "description": "Native-script name (`Fran\u00e7ais`, `\u65e5\u672c\u8a9e`, `\u0627\u0644\u0639\u0631\u0628\u064a\u0629`)."},
+      "dir": {"type": "string", "length": 3, "nullable": true, "description": "Text direction: ltr / rtl."},
+      "is_rtl": {"type": "boolean", "description": "Denormalised RTL flag."}
+    }
+  },
+  "required": ["id", "code", "name"],
+  "properties": {
+    "id": {"type": "integer"},
+    "country_id": {"type": ["integer", "null"]},
+    "code": {"type": "string", "pattern": "^[a-z]{2}$"},
+    "name": {"type": "string"},
+    "native": {"type": ["string", "null"]},
+    "dir": {"type": ["string", "null"], "enum": ["ltr", "rtl", null]},
+    "is_rtl": {"type": "boolean"}
+  },
+  "additionalProperties": true,
+  "x-wire": {"envelope": "spatie-data", "wrap": "data", "mapper": "SnakeCaseMapper", "resource_class": "Academorix\\Geography\\Data\\Resources\\LanguageResourceData"},
+  "x-route-binding": {"strategy": "resolveRouteBinding", "accepts": ["numeric PK", "ISO-639-1 alpha-2 (case-insensitive)"]}
+}

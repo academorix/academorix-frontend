@@ -1,0 +1,17 @@
+{
+  "id": "academorix://modules/geofencing/retention",
+  "$version": 1,
+  "title": "geofencing \u2014 retention windows",
+  "description": "GeofenceCheck is an immutable audit log. Retention drives soft-delete after 7 years (default) + hard-delete after 10 years with anonymisation. Longer retention on override rows because they carry disputed-clock-in evidence.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(e) (storage limitation)",
+    "gdpr Art. 17 (right to erasure)",
+    "employment law (varies by jurisdiction \u2014 US FLSA 3y for wage/hour records)",
+    "sox 404 (financial controls \u2014 relevant if attendance data drives payroll)"
+  ],
+  "retention": [
+    {"entity": "GeofenceCheck (non-override rows)", "hot": {"years": 7, "description": "Default retention. Workspace-configurable via `geofencing.retention_years` setting."}, "cold": {"years": 3, "description": "Soft-deleted + anonymised (subject_id nullified). Preserves aggregate stats."}, "purge": {"trigger": "created_at + hot + cold windows exceeded", "action": "hard delete", "job": "PurgeStaleGeofenceChecksJob"}},
+    {"entity": "GeofenceCheck (override rows)", "hot": {"years": 10, "description": "Longer retention because these carry disputed-clock-in evidence. Non-configurable floor."}, "purge": {"trigger": "10 years", "action": "anonymise-not-delete (retain aggregate for compliance)"}},
+    {"entity": "audit_log (geofence-scoped)", "hot": {"years": 7}, "cold": {"years": 3}, "purge": {"trigger": "retention window exceeded", "action": "anonymise-not-delete"}}
+  ]
+}

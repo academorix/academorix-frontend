@@ -1,0 +1,25 @@
+{
+  "id": "geofencing.geofence-status-chip",
+  "title": "Geofence status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for the 4 GeofenceResult values. Consistent across every audit log + check-in feature surface.",
+  "props": {
+    "result": {"type": "string", "required": true, "enum": ["INSIDE", "OUTSIDE", "SKIPPED", "ERROR"]},
+    "mode": {"type": ["string", "null"], "enum": ["polygon", "radius", null]},
+    "size": {"type": "string", "default": "sm", "enum": ["xs", "sm", "md"]}
+  },
+  "nodes": [
+    {
+      "id": "chip",
+      "kind": "Chip",
+      "props": {"size": "sm", "variant": "neutral"},
+      "bindings": {"props": {
+        "size": {"$ref": "props.size"},
+        "variant": {"$expr": "({ INSIDE: 'success', OUTSIDE: 'danger', SKIPPED: 'warning', ERROR: 'danger' }[props.result] || 'neutral')"},
+        "leadingIcon": {"$expr": "({ INSIDE: 'check-circle', OUTSIDE: 'x-circle', SKIPPED: 'exclamation-triangle', ERROR: 'exclamation-circle' }[props.result])"},
+        "children": {"$expr": "({ INSIDE: 'Inside', OUTSIDE: 'Outside', SKIPPED: 'Skipped', ERROR: 'Error' }[props.result] || props.result) + (props.mode ? ' \u00b7 ' + props.mode : '')"}
+      }}
+    }
+  ]
+}

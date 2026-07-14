@@ -1,0 +1,14 @@
+{
+  "id": "academorix://modules/geofencing/analytics",
+  "$version": 1,
+  "title": "geofencing \u2014 product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {"name": "Geofence Evaluated", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "user_id", "subject_type", "result", "mode"], "description": "Fired from LogGeofenceEvaluationForAudit listener. Never carries precise coordinates."},
+    {"name": "Geofence Override Requested", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "user_id", "subject_type", "reason_length"]},
+    {"name": "Geofence Override Applied", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "approver_user_id", "subject_type"]},
+    {"name": "Geofence Override Rejected", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "approver_user_id", "subject_type"]},
+    {"name": "Geofence Preflight Called", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "user_id", "subject_type", "result"], "description": "Rate-limited-friendly \u2014 sampled to 10% to avoid polluting the analytics warehouse."}
+  ]
+}

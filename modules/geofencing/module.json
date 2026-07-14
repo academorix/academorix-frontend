@@ -1,0 +1,96 @@
+{
+  "$version": 1,
+  "name": "geofencing",
+  "alias": "geofencing",
+  "namespace": "Academorix\\Geofencing",
+  "description": "Shared point-in-polygon primitive every check-in / clock-in feature depends on. Owns the audited `geofence_checks` log (immutable, insert-only, `gfc_` prefix), the polygon + radius evaluator, the override flow, the mobile pre-flight endpoint (no persistence), and the geometry columns on `branches` + `facilities` (from the future facilities module). Consuming modules never run their own point-in-polygon math \u2014 they call `GeofenceService::evaluate($branchId, $lat, $lng, $accuracyM, $subject)` and stamp the returned check id on their own entity. Fires `GeofenceEvaluated` events that consuming modules subscribe to via a `subject_type` filter. Depends on PostGIS (enabled by our own migration `enable_postgis_extension`) + `clickbar/laravel-magellan` for spatial column types + `spinen/laravel-geometry` for runtime geometry math (with a hand-rolled ray-cast + haversine fallback so the module works without the geoPHP classmap in tests).",
+  "keywords": ["geofencing", "geofence", "point-in-polygon", "polygon", "radius", "haversine", "postgis", "magellan", "spinen-geometry", "geolocation", "attendance", "clock-in", "check-in", "spatial", "audit-log"],
+  "priority": 70,
+  "providers": ["Academorix\\Geofencing\\Providers\\GeofencingServiceProvider", "Academorix\\Geofencing\\Providers\\GeofencingHealthProvider", "Academorix\\Geofencing\\Providers\\RouteServiceProvider", "Academorix\\Geofencing\\Providers\\EventServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "workspaces", "activity", "audit", "entitlements"],
+  "optional_dependencies": ["facilities", "geography", "notifications"],
+  "optional_dependencies_note": "Facilities module (when available) owns the `branches` + `facilities` tables that carry the geometry columns this module reads. Until Facilities lands, the branch_id column on geofence_checks has NO FK constraint (documented in the migration). Geography (when available) provides the geolocate service used by the mobile preflight controller. Notifications propagates the override-requested + override-applied notification categories.",
+  "extendedBy": ["staff-clock-in-out (future)", "athlete-self-check-in (future)", "visitor-auto-log (future)", "attendance (future)"],
+  "wraps": {
+    "spatial_types": {"package": "clickbar/laravel-magellan", "version_constraint": "^0.7", "rationale": "PostGIS spatial column types (POINT, POLYGON, GEOGRAPHY) on Eloquent models."},
+    "geometry_math": {"package": "spinen/laravel-geometry", "version_constraint": "^3.0", "rationale": "Runtime geometry primitives (point-in-polygon, distance) wrapping geoPHP. Our PolygonEvaluator delegates to it in production + falls back to hand-rolled math when the geoPHP classmap is not loaded (tests)."},
+    "reference_data": {"package": "nnjeim/laravel-world", "version_constraint": "^1.1", "rationale": "Countries / cities / timezones for address normalisation \u2014 NEVER used for geofence math, only for surface metadata around evaluations."}
+  },
+  "contributes": {
+    "traits": [],
+    "attributes": ["GeofenceSubjectAlias"],
+    "blueprints": [],
+    "middleware": ["geofence.preflight.throttle"],
+    "events": [
+      "GeofenceEvaluated",
+      "GeofenceOverrideRequested",
+      "GeofenceOverrideApplied",
+      "GeofenceOverrideRejected",
+      "GeofenceCheckCreated",
+      "GeofenceCheckUpdated",
+      "GeofenceCheckDeleted"
+    ],
+    "policies": ["GeofenceCheckPolicy"],
+    "hooks": [],
+    "commands": [
+      "geofencing:describe",
+      "geofencing:test-eval",
+      "geofencing:list-subject-aliases",
+      "geofencing:reconcile-immutability"
+    ],
+    "jobs": [
+      "PurgeStaleGeofenceChecksJob",
+      "ReconcileGeofenceCheckImmutabilityJob"
+    ],
+    "notifications": [
+      "GeofenceOverrideRequestedNotification",
+      "GeofenceOverrideAppliedNotification",
+      "GeofenceOverrideRejectedNotification"
+    ],
+    "broadcasts": ["workspace.{id}.geofence"],
+    "observers": ["GeofenceCheckObserver"],
+    "rules": ["valid_polygon_geojson", "valid_wkt_polygon", "valid_lat_lng"],
+    "casts": ["GeofenceResult", "GeofenceMode", "PolygonValidationReason"],
+    "views": [],
+    "lang": ["geofencing"],
+    "config": ["geofencing"],
+    "macros": [],
+    "bindings": [
+      "GeofenceService",
+      "GeofenceOverrideService",
+      "GeofenceCheckService",
+      "PolygonEvaluator",
+      "PolygonValidator",
+      "GeofenceMetricsRecorder",
+      "GeofenceCheckRepository",
+      "BranchGeofenceRepository",
+      "ApprovalTaskRepository"
+    ],
+    "resources": ["geofence-check"],
+    "value_objects": ["LatLngAccuracy", "BranchGeofence", "GeofenceSubject", "ApprovalTask"],
+    "public_contracts": ["geofence-evaluated.v1"]
+  },
+  "hosts": {
+    "workspace": {
+      "description": "Workspace-facing preflight + override request + check log read.",
+      "routes": [
+        "POST /api/v1/geofence/preflight (throttle:60,1)",
+        "POST /api/v1/geofence/overrides",
+        "GET /api/v1/geofence/checks[/{check}]",
+        "GET /api/v1/branches/{branch}/geofence (deferred to facilities)",
+        "PATCH /api/v1/branches/{branch}/geofence (deferred to facilities)"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-workspace observability + override log.",
+      "routes": [
+        "GET /api/v1/platform/geofence/checks",
+        "GET /api/v1/platform/geofence/overrides",
+        "POST /api/v1/platform/geofence/checks/{check}/purge (compliance retention path)"
+      ]
+    }
+  },
+  "requires_postgis": true,
+  "requires_postgis_note": "The `enable_postgis_extension` migration runs on the central Postgres DB (single-database row-level workspaces \u2014 no per-workspace hook needed). Non-Postgres drivers (SQLite in unit tests) short-circuit the extension migration so the module continues to boot; spatial columns fall back to plain `geometry` column type which SQLite tolerates syntactically."
+}

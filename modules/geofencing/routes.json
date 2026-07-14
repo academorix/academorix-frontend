@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/geofencing/routes",
+  "$version": 1,
+  "title": "geofencing \u2014 HTTP routes",
+  "description": "Three groups. Preflight is authed + rate-limited to 60/min. Override submissions run through the standard sanctum + workspace pipeline. Platform admin gets a cross-workspace observability surface.",
+  "groups": [
+    {
+      "name": "workspace-preflight",
+      "prefix": "/api/v1/geofence",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "workspace.resolve", "geofence.preflight.throttle", "response.envelope"],
+      "hosts": ["workspace"],
+      "description": "Mobile pre-flight probe. NO persistence. Structured `geofence.health_check` log emitted per call for observability.",
+      "routes": [
+        {"method": "POST", "path": "/preflight", "controller": "Academorix\\Geofencing\\Http\\Controllers\\GeofencePreflightController@__invoke", "permission": "geofence.preflight", "description": "Body: EvaluateGeofenceData. Returns GeofenceCheckResultData with checkId=null.", "rate_limit": "60,1"}
+      ]
+    },
+    {
+      "name": "workspace-overrides",
+      "prefix": "/api/v1/geofence/overrides",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "workspace.resolve", "throttle:foundation-base", "response.envelope"],
+      "hosts": ["workspace"],
+      "description": "Request an admin override on a rejected check. Creates an approval_tasks row + fires GeofenceOverrideRequested.",
+      "routes": [
+        {"method": "POST", "path": "/", "controller": "Academorix\\Geofencing\\Http\\Controllers\\GeofenceOverrideController@store", "permission": "geofence.overrides.request", "description": "Body: { original_check_id, reason (>= 10 chars) }. Returns { approval_task_id }."}
+      ]
+    },
+    {
+      "name": "workspace-checks-read",
+      "prefix": "/api/v1/geofence/checks",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "workspace.resolve", "throttle:foundation-base", "response.envelope"],
+      "hosts": ["workspace"],
+      "description": "Read-only audit log for the current workspace.",
+      "routes": [
+        {"method": "GET", "path": "/", "controller": "Academorix\\Geofencing\\Http\\Controllers\\GeofenceCheckController@index", "permission": "geofence.checks.viewAny", "description": "filter[result], filter[mode], filter[branch_id], filter[subject_type], filter[subject_id], filter[evaluated_at]"},
+        {"method": "GET", "path": "/{check}", "controller": "Academorix\\Geofencing\\Http\\Controllers\\GeofenceCheckController@show", "permission": "geofence.checks.view"}
+      ]
+    },
+    {
+      "name": "platform-checks-observability",
+      "prefix": "/api/v1/platform/geofence",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:platform_admin", "throttle:foundation-platform", "response.envelope"],
+      "hosts": ["platform-admin"],
+      "description": "Cross-workspace read + retention-purge endpoint.",
+      "routes": [
+        {"method": "GET", "path": "/checks", "controller": "Academorix\\Geofencing\\Http\\Controllers\\Platform\\GeofenceCheckController@index", "permission": "platform.geofence.checks.viewAny"},
+        {"method": "GET", "path": "/checks/{check}", "controller": "Academorix\\Geofencing\\Http\\Controllers\\Platform\\GeofenceCheckController@show", "permission": "platform.geofence.checks.view"},
+        {"method": "GET", "path": "/overrides", "controller": "Academorix\\Geofencing\\Http\\Controllers\\Platform\\GeofenceOverrideController@index", "permission": "platform.geofence.overrides.viewAny", "description": "Every override applied across all workspaces \u2014 compliance surface."},
+        {"method": "POST", "path": "/checks/{check}/purge", "controller": "Academorix\\Geofencing\\Http\\Controllers\\Platform\\GeofenceCheckController@purge", "permission": "platform.geofence.checks.purge", "description": "GDPR retention path. Soft-deletes. Every use audit-logged with reason."}
+      ]
+    }
+  ],
+  "deferred_until_facilities": [
+    "GET /api/v1/branches/{branch}/geofence",
+    "PATCH /api/v1/branches/{branch}/geofence",
+    "POST /api/v1/branches/geofences/import",
+    "GET /api/v1/branches/geofences/export"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/geography/analytics",
+  "$version": 1,
+  "title": "geography \u2014 product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {"name": "Geolocation Resolved", "kind": "track", "consent_required": "analytics", "properties": ["workspace_id", "user_id", "country_code", "source"], "description": "Anonymised: never records precise IP. Feeds signup-country demographics."},
+    {"name": "Country Selected", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "user_id", "country_code", "context"], "description": "User picked a country from a dropdown. context: signup / billing / profile."},
+    {"name": "Currency Selected", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "user_id", "currency_code", "context"]},
+    {"name": "Timezone Selected", "kind": "track", "consent_required": "functional", "properties": ["workspace_id", "user_id", "timezone", "context"]}
+  ]
+}

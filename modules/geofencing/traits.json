@@ -1,0 +1,30 @@
+{
+  "id": "academorix://modules/geofencing/traits",
+  "$version": 1,
+  "title": "geofencing \u2014 trait composition",
+  "description": "No owned traits. GeofenceCheck composes the standard foundation + workspaces + audit trait stack; consuming modules do NOT compose a geofencing trait \u2014 they call the service + stamp the returned check_id.",
+  "owned": [],
+  "consumed": {
+    "framework": [
+      {"trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory"},
+      {"trait": "Illuminate\\Database\\Eloquent\\SoftDeletes", "reason": "GDPR / retention path only. Application code cannot update (immutability guard); soft-delete flows through runSoftDelete() bypassing the saving hook."}
+    ],
+    "foundation": [
+      {"trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid", "prefix": "gfc_"},
+      {"trait": "Academorix\\Foundation\\Concerns\\HasUserstamps"}
+    ],
+    "workspaces": [{"trait": "Academorix\\Workspaces\\Concerns\\BelongsToWorkspace"}],
+    "facilities": [{"trait": "Academorix\\Facilities\\Concerns\\BelongsToBranch", "note": "From the future facilities module. Column + index in place today; FK constraint added when facilities lands."}],
+    "audit": [{"trait": "OwenIt\\Auditing\\Auditable", "reason": "Only `created` events audited (rows are insert-only). auditInclude pins the fields that carry disputable meaning: result, mode, distance_to_fence_m, overridden_by_user_id, supersedes_check_id."}]
+  },
+  "composition": {
+    "geofence_check": {
+      "traits": ["HasFactory", "HasPrefixedUlid", "BelongsToWorkspace", "BelongsToBranch", "HasUserstamps", "Auditable", "SoftDeletes"],
+      "notes": "NO HasActivityLog \u2014 the Audit trait is the compliance-grade audit surface. NO custom Filterable \u2014 read queries go through GeofenceCheckRepository."
+    }
+  },
+  "immutability_guard": {
+    "description": "GeofenceCheck::booted() registers a `saving` hook that throws RuntimeException when `$model->exists` is already true (i.e., an update on a persisted row). First-time INSERT is allowed because `exists` flips to true only after insert. Soft-delete flows through runSoftDelete() which does not fire the saving event, so retention still works.",
+    "override_pattern": "Overrides = new row with supersedes_check_id pointing at the original."
+  }
+}

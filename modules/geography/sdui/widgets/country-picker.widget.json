@@ -1,0 +1,33 @@
+{
+  "id": "geography.country-picker",
+  "title": "Country picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Searchable combobox listing countries in the current locale with flag emoji + phone code hint. Debounced client-side filter over cached catalog.",
+  "props": {
+    "name": {"type": "string", "required": true, "description": "Form field name."},
+    "value": {"type": ["string", "null"], "description": "Selected ISO2 code."},
+    "filterRegion": {"type": ["string", "null"], "description": "Optional. E.g. 'Europe' to limit to EU/EEA."},
+    "geolocateEnabled": {"type": "boolean", "default": true, "description": "Show 'Detect from IP' button."},
+    "placeholder": {"type": "string", "default": "Select country..."}
+  },
+  "dataSources": [
+    {"name": "countries", "kind": "http.get", "urlExpr": "'/api/v1/geography/countries' + (props.filterRegion ? '?filter[region]=' + props.filterRegion : '')", "unwrap": "data", "cache": {"ttlSeconds": 3600}}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "Combobox", "props": {"name": "$name", "placeholder": "$placeholder"}, "bindings": {"options": {"$ref": "countries"}, "optionKey": "iso2", "optionLabel": "localized_name", "value": {"$ref": "props.value"}}, "children": [
+      {"kind": "ComboboxOptionRenderer", "children": [
+        {"kind": "View", "props": {"className": "flex items-center gap-2"}, "children": [
+          {"kind": "Text", "props": {"className": "text-xl"}, "bindings": {"children": {"$ref": "row.emoji"}}},
+          {"kind": "View", "props": {"className": "flex flex-col flex-1"}, "children": [
+            {"kind": "Text", "props": {"className": "font-medium"}, "bindings": {"children": {"$ref": "row.localized_name"}}},
+            {"kind": "Text", "props": {"className": "text-xs text-muted"}, "bindings": {"childrenExpr": "'+' + (row.phone_code || '') + ' \u00b7 ' + row.iso2"}}
+          ]}
+        ]}
+      ]},
+      {"kind": "ComboboxTrailingAction", "bindings": {"hidden": {"$expr": "!props.geolocateEnabled"}}, "children": [
+        {"kind": "Button", "props": {"variant": "ghost", "size": "sm", "leadingIcon": "map-pin"}, "actions": {"onPress": {"kind": "http.get", "url": "/api/v1/geography/geolocate", "onSuccess": {"kind": "form.setField", "fieldExpr": "props.name", "valueExpr": "response.data.country_code"}}}}
+      ]}
+    ]}
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/geography/feature-flags",
+  "$version": 1,
+  "title": "geography \u2014 kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {"key": "geography.cache_enabled", "kind": "kill-switch", "default": "on", "description": "Response cache middleware active. Off = every request hits DB \u2014 emergency only."},
+    {"key": "geography.geolocate_enabled", "kind": "kill-switch", "default": "on", "description": "Off = /geolocate returns HTTP 503. Used during vendor outages."},
+    {"key": "geography.maxmind_refresh", "kind": "kill-switch", "default": "on"},
+    {"key": "geography.warm_cache", "kind": "kill-switch", "default": "on"},
+    {"key": "geography.reconcile_vendor", "kind": "kill-switch", "default": "on"}
+  ]
+}

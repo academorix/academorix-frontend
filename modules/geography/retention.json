@@ -1,0 +1,15 @@
+{
+  "id": "academorix://modules/geography/retention",
+  "$version": 1,
+  "title": "geography \u2014 retention windows",
+  "description": "Reference-catalog rows never age out. Geolocation cache respects vendor TTL. No user-scoped data outside the geolocation cache.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(c) (storage limitation \u2014 geolocation results are ephemerally cached)",
+    "gdpr Art. 4(1) (definition of personal data \u2014 IP addresses are PII)"
+  ],
+  "retention": [
+    {"entity": "Country / State / City / Currency / Language / Timezone (vendor tables)", "hot": {"description": "permanent \u2014 reference data. Rows may be updated by vendor seeder + platform-admin overrides. Deletions only via `world:install --force` or platform-admin action."}},
+    {"entity": "geolocation cache", "hot": {"description": "vendor TTL (default 3600s). Keys expire naturally; no scan job. IP is the cache key but is never persisted to durable storage."}},
+    {"entity": "activity_log (geography-scoped)", "hot": {"days": 365, "description": "platform-admin catalog edits audit trail."}, "purge": {"trigger": "> 1 year", "action": "anonymise-not-delete"}}
+  ]
+}

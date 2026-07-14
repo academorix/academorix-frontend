@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/geography/commands",
+  "$version": 1,
+  "title": "geography \u2014 Artisan commands",
+  "commands": [
+    {"signature": "geography:describe {--entity=} {--code=}", "class": "Academorix\\Geography\\Console\\Commands\\DescribeCommand", "purpose": "Print catalog stats: row counts per entity, latest vendor-package version, locale coverage for country translations, MaxMind DB age. --entity=Country --code=FR prints the resolved row."},
+    {"signature": "geography:install {--force}", "class": "Academorix\\Geography\\Console\\Commands\\InstallCommand", "purpose": "Convenience wrapper for `php artisan world:install`. Ensures the six tables are seeded. --force truncates + re-seeds (destructive)."},
+    {"signature": "geography:refresh-maxmind {--force}", "class": "Academorix\\Geography\\Console\\Commands\\RefreshMaxMindCommand", "purpose": "Dispatch RefreshMaxMindDatabaseJob synchronously. --force bypasses the freshness check + always re-downloads."},
+    {"signature": "geography:geolocate {ip} {--locale=en}", "class": "Academorix\\Geography\\Console\\Commands\\GeolocateCommand", "purpose": "Resolve one IP + print the localized GeolocationData. Useful for debugging MaxMind vs ip-api.com discrepancies."},
+    {"signature": "geography:warm-cache {--top=200} {--locale=*}", "class": "Academorix\\Geography\\Console\\Commands\\WarmCacheCommand", "purpose": "Populate top-N cache entries per locale. Dispatched by scheduler."},
+    {"signature": "geography:reconcile-vendor {--dry-run} {--fix}", "class": "Academorix\\Geography\\Console\\Commands\\ReconcileVendorCommand", "purpose": "Compare our DB against the vendor seeder. --fix applies missing rows (never overwrites platform-admin overrides). --dry-run reports."}
+  ]
+}

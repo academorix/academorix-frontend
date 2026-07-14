@@ -1,0 +1,43 @@
+{
+  "id": "academorix://modules/geography/schemas/timezone",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Timezone",
+  "description": "IANA timezone row. Vendor-owned schema. Route binding accepts numeric PK OR the URL-encoded IANA name (e.g. `Europe%2FParis`).",
+  "type": "object",
+  "x-module": "geography",
+  "x-vendor": {"package": "nnjeim/world", "vendor_model": "Nnjeim\\World\\Models\\Timezone", "we_own_migration": false, "we_own_seeder": false},
+  "x-eloquent": {
+    "baseClass": "Nnjeim\\World\\Models\\Timezone",
+    "table": "timezones",
+    "primaryKey": "id",
+    "keyType": "int",
+    "incrementing": true,
+    "timestamps": false,
+    "model": "Academorix\\Geography\\Models\\Timezone",
+    "interface": "Academorix\\Geography\\Contracts\\Data\\TimezoneInterface",
+    "implements": ["Academorix\\Geography\\Contracts\\Data\\TimezoneInterface"],
+    "traits": ["HasFactory", "Filterable"],
+    "observers": ["TimezoneObserver"]
+  },
+  "x-database": {
+    "engine": "any (vendor-supported)",
+    "vendor_owned": true,
+    "columns_summary": {
+      "id": {"type": "integer", "primary": true},
+      "country_id": {"type": "integer"},
+      "name": {"type": "string", "description": "IANA name. E.g. `Europe/Paris`, `America/New_York`, `Asia/Tokyo`."},
+      "country_code": {"type": "string", "length": 2}
+    }
+  },
+  "required": ["id", "country_id", "name", "country_code"],
+  "properties": {
+    "id": {"type": "integer"},
+    "country_id": {"type": "integer"},
+    "name": {"type": "string", "pattern": "^[A-Za-z]+(/[A-Za-z_\\-]+)*$"},
+    "country_code": {"type": "string", "pattern": "^[A-Z]{2}$"}
+  },
+  "additionalProperties": true,
+  "x-wire": {"envelope": "spatie-data", "wrap": "data", "mapper": "SnakeCaseMapper", "resource_class": "Academorix\\Geography\\Data\\Resources\\TimezoneResourceData", "computed": ["current_utc_offset_minutes", "current_utc_offset_iso"]},
+  "x-route-binding": {"strategy": "resolveRouteBinding", "accepts": ["numeric PK", "IANA name (URL-encoded)"]}
+}

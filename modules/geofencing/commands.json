@@ -1,0 +1,11 @@
+{
+  "id": "academorix://modules/geofencing/commands",
+  "$version": 1,
+  "title": "geofencing \u2014 Artisan commands",
+  "commands": [
+    {"signature": "geofencing:describe {--workspace=}", "class": "Academorix\\Geofencing\\Console\\Commands\\DescribeCommand", "purpose": "Print workspace stats: number of branches with fences drawn, active enforcement toggles, recent evaluations (last 24h), pending override tasks, health probe status."},
+    {"signature": "geofencing:test-eval {branch_id} {lat} {lng} {accuracy_m=25} {--subject-type=test} {--dry-run}", "class": "Academorix\\Geofencing\\Console\\Commands\\TestEvalCommand", "purpose": "Run one evaluation through GeofenceService for smoke testing. --dry-run calls healthCheck() instead of evaluate() (no persistence)."},
+    {"signature": "geofencing:list-subject-aliases", "class": "Academorix\\Geofencing\\Console\\Commands\\ListSubjectAliasesCommand", "purpose": "Print every registered morph alias with its target class. Useful for debugging cross-module wiring."},
+    {"signature": "geofencing:reconcile-immutability {--dry-run}", "class": "Academorix\\Geofencing\\Console\\Commands\\ReconcileImmutabilityCommand", "purpose": "Manually run ReconcileGeofenceCheckImmutabilityJob. Reports any check with > 1 audit event (evidence of attempted mutation)."}
+  ]
+}

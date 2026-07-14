@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/geography/traits",
+  "$version": 1,
+  "title": "geography \u2014 trait composition",
+  "description": "One owned trait: HasWorldLocalizedName for models that have a `name` + `iso2` column and a corresponding translation key at `world::country.<ISO2>`. Applied to Country today; the vendor does not ship translations for the other five entities so applying the trait there would be a no-op.",
+  "owned": [
+    {
+      "trait": "Academorix\\Geography\\Concerns\\HasWorldLocalizedName",
+      "description": "Adds `resolveLocalizedName(?string $locale = null): string` + `getLocalizedNameAttribute(): string` (so `$country->localized_name` works). Resolves against `world::country.<ISO2>` translation catalog with English DB fallback via `Lang::has()` guard.",
+      "public": true,
+      "usedBy": ["geography::Country"],
+      "conflicts_with": []
+    }
+  ],
+  "consumed": {
+    "framework": [
+      {"trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory"}
+    ],
+    "vendor": [
+      {"trait": "Nnjeim\\World\\Models\\Country (base class)", "reason": "Our Country model extends this. Same for the other five entities."}
+    ],
+    "foundation": [
+      {"trait": "Academorix\\Foundation\\Concerns\\Filterable", "reason": "Query builder integration for standard filter/sort/include envelope."}
+    ]
+  },
+  "composition": {
+    "country": {
+      "extends": "Nnjeim\\World\\Models\\Country",
+      "traits": ["HasFactory", "HasWorldLocalizedName", "Filterable"],
+      "notes": "Vendor uses integer PK + `$timestamps = false`. We do not override either. NO BelongsToWorkspace (reference-catalog data is global). NO SoftDeletes (vendor seeder truncates on world:install --force)."
+    },
+    "state": {
+      "extends": "Nnjeim\\World\\Models\\State",
+      "traits": ["HasFactory", "Filterable"],
+      "notes": "No HasWorldLocalizedName \u2014 vendor ships no state translations."
+    },
+    "city": {
+      "extends": "Nnjeim\\World\\Models\\City",
+      "traits": ["HasFactory", "Filterable"],
+      "notes": "150k+ rows; index-heavy reads via repository."
+    },
+    "currency": {
+      "extends": "Nnjeim\\World\\Models\\Currency",
+      "traits": ["HasFactory", "Filterable"]
+    },
+    "language": {
+      "extends": "Nnjeim\\World\\Models\\Language",
+      "traits": ["HasFactory", "Filterable"],
+      "notes": "ISO-639 catalog. Distinct from localization::Language (BCP 47 per-workspace enablement)."
+    },
+    "timezone": {
+      "extends": "Nnjeim\\World\\Models\\Timezone",
+      "traits": ["HasFactory", "Filterable"]
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "id": "geography.timezone-picker",
+  "title": "Timezone picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Searchable combobox for IANA timezone names, filtered by an optional country hint. Shows the current UTC offset alongside each IANA name so users pick the right offset without needing to know the geography.",
+  "props": {
+    "name": {"type": "string", "required": true},
+    "value": {"type": ["string", "null"]},
+    "filterCountryCode": {"type": ["string", "null"], "description": "ISO2 to narrow the list."},
+    "placeholder": {"type": "string", "default": "Select timezone..."}
+  },
+  "dataSources": [
+    {"name": "timezones", "kind": "http.get", "urlExpr": "'/api/v1/geography/timezones' + (props.filterCountryCode ? '?filter[country_code]=' + props.filterCountryCode : '')", "unwrap": "data", "cache": {"ttlSeconds": 3600}}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "Combobox", "props": {"name": "$name", "placeholder": "$placeholder"}, "bindings": {"options": {"$ref": "timezones"}, "optionKey": "name", "optionLabel": "name", "value": {"$ref": "props.value"}}, "children": [
+      {"kind": "ComboboxOptionRenderer", "children": [
+        {"kind": "View", "props": {"className": "flex items-center justify-between gap-2"}, "children": [
+          {"kind": "Text", "props": {"className": "font-mono text-sm"}, "bindings": {"children": {"$ref": "row.name"}}},
+          {"kind": "Chip", "props": {"size": "xs", "variant": "neutral"}, "bindings": {"childrenExpr": "row.current_utc_offset_iso || ''"}}
+        ]}
+      ]}
+    ]}
+  ]
+}

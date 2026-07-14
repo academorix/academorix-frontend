@@ -1,0 +1,22 @@
+{
+  "id": "academorix://modules/geofencing/data-classes",
+  "$version": 1,
+  "title": "geofencing \u2014 field classification",
+  "description": "Location coordinates + accuracy are PERSONAL DATA. Subject id + override reason are internal. Every override reason may reference a specific worker's absence, so keep restricted.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [],
+    "internal": ["GeofenceCheck.id", "GeofenceCheck.workspace_id", "GeofenceCheck.branch_id", "GeofenceCheck.result", "GeofenceCheck.mode", "GeofenceCheck.distance_to_fence_m", "GeofenceCheck.evaluated_at", "GeofenceCheck.accuracy_m", "GeofenceCheck.subject_type", "GeofenceCheck.created_at", "GeofenceCheck.updated_at"],
+    "confidential": ["GeofenceCheck.subject_id", "GeofenceCheck.override_task_id", "GeofenceCheck.overridden_by_user_id", "GeofenceCheck.supersedes_check_id", "GeofenceCheck.metadata"],
+    "restricted": ["GeofenceCheck.captured_location \u2014 precise WGS84 coordinates. Personal data under GDPR.", "GeofenceCheck.override_reason \u2014 may reference specific worker conduct or excused absences (e.g., 'I was inside the building but my phone GPS drifted')."],
+    "regulated_minor": ["ANY GeofenceCheck row for a subject_type='attendance' or 'attendance_submission' when the linked athlete is a minor \u2014 the entire row inherits regulated_minor classification, enforced by the consumer module's attendance policy."],
+    "regulated_health": [],
+    "regulated_financial": ["GeofenceCheck rows where subject_type='staff_clockin' \u2014 constitute wage-and-hour records under FLSA."],
+    "audit_log": ["audit_log.geofence.* rows for override applied + retention purge actions"]
+  },
+  "notes": [
+    "captured_location is stored as a Magellan Point at SRID 4326 (WGS84). Precision is bit-for-bit what the client submitted; we do NOT round or bucket coordinates.",
+    "The workspace admin surface truncates coordinates to 3 decimal places (~110 m) in list views. Precise coords available only in the single-check detail view + gated to compliance role.",
+    "For minor-subject rows, the frontend renders 'Location captured' rather than the map \u2014 the coordinates are still queryable server-side by audit-reviewers."
+  ]
+}

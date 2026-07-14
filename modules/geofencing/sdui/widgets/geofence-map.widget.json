@@ -1,0 +1,33 @@
+{
+  "id": "geofencing.geofence-map",
+  "title": "Geofence map",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Read-only Leaflet map. Renders: (a) the branch fence polygon (blue outline), (b) the captured location point (red pin), (c) an accuracy ring (translucent red circle centred on the point, radius = accuracy_m). Used inside the check-detail modal + audit log expand row.",
+  "props": {
+    "check": {"type": "object", "required": true, "description": "GeofenceCheck resource with captured_location + accuracy_m."},
+    "branchFence": {"type": ["object", "null"], "description": "BranchGeofence resource. When null, only the point + ring are drawn."},
+    "height": {"type": "string", "default": "400px"}
+  },
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-2"}, "children": [
+      {"kind": "Widget", "widget": "geofencing.geofence-status-chip", "props": {"result": {"$ref": "props.check.result"}, "mode": {"$ref": "props.check.mode"}, "size": "sm"}},
+      {"kind": "Map", "props": {"provider": "leaflet", "tileLayer": "openstreetmap-standard", "style": {"height": "$height"}}, "bindings": {"center": {"$expr": "[props.check.captured_location.coordinates[1], props.check.captured_location.coordinates[0]]"}, "zoom": {"$expr": "props.branchFence?.geofencePolygon ? 17 : 15"}}, "children": [
+        {"kind": "MapPolygon", "props": {"color": "#3b82f6", "weight": 2, "fillOpacity": 0.1}, "bindings": {"hidden": {"$expr": "!props.branchFence?.geofencePolygon"}, "positionsExpr": "props.branchFence.geofencePolygon.coordinates[0].map(c => [c[1], c[0]])"}},
+        {"kind": "MapCircle", "props": {"color": "#ef4444", "fillOpacity": 0.15, "weight": 1}, "bindings": {"centerExpr": "[props.check.captured_location.coordinates[1], props.check.captured_location.coordinates[0]]", "radius": {"$ref": "props.check.accuracy_m"}}},
+        {"kind": "MapMarker", "bindings": {"positionExpr": "[props.check.captured_location.coordinates[1], props.check.captured_location.coordinates[0]]"}, "children": [
+          {"kind": "MapPopup", "children": [
+            {"kind": "View", "props": {"className": "text-xs"}, "children": [
+              {"kind": "Text", "props": {"className": "font-medium"}, "bindings": {"childrenExpr": "'Accuracy: \u00b1' + props.check.accuracy_m + ' m'"}},
+              {"kind": "Text", "props": {"className": "text-muted"}, "bindings": {"childrenExpr": "props.check.distance_to_fence_m !== null ? 'Distance to fence: ' + props.check.distance_to_fence_m + ' m' : 'Distance unknown'"}}
+            ]}
+          ]}
+        ]}
+      ]},
+      {"kind": "View", "props": {"className": "text-xs text-muted flex justify-between"}, "children": [
+        {"kind": "Text", "bindings": {"childrenExpr": "'Evaluated ' + formatRelative(props.check.evaluated_at)"}},
+        {"kind": "Text", "props": {"className": "font-mono"}, "bindings": {"childrenExpr": "props.check.captured_location.coordinates[1].toFixed(6) + ', ' + props.check.captured_location.coordinates[0].toFixed(6)"}}
+      ]}
+    ]}
+  ]
+}

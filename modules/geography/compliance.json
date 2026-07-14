@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/geography/compliance",
+  "$version": 1,
+  "title": "geography \u2014 compliance evidence",
+  "description": "IP-to-location is personal data (GDPR Art. 4(1)). The vendor's ip-api.com fallback is a subprocessor. MaxMind GeoLite2 is a locally-executing binary DB (no data leaves the app) so not a subprocessor.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {"article": "Art. 4(1)", "principle": "IPs are personal data", "evidence": "IP is only used as a cache key for the geolocate cache. Never persisted to durable storage in the same row as user_id or workspace_id."},
+        {"article": "Art. 5(1)(c)", "principle": "data minimisation", "evidence": "GeolocationData only carries country_code / state_code / city_name / coarse latitude+longitude \u2014 no fine coordinates. accuracy_radius (meters) surfaces the precision floor from the vendor."},
+        {"article": "Art. 28", "principle": "processor obligations", "evidence": "ip-api.com is engaged only on MaxMind cache miss. Workspaces on EU-hosted plans can force MaxMind-only mode via config."},
+        {"article": "Art. 44", "principle": "cross-border transfers", "evidence": "MaxMind DB runs locally (no transfer). ip-api.com traffic is HTTPS + no personal data beyond the IP itself; DPA on file."}
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {"criterion": "CC7.2", "principle": "system monitoring", "evidence": "MaxMind DB freshness health probe + weekly auto-refresh."}
+      ]
+    }
+  }
+}

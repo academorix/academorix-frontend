@@ -1,0 +1,53 @@
+{
+  "id": "academorix://modules/geofencing/settings",
+  "$version": 1,
+  "title": "geofencing \u2014 settings",
+  "description": "Workspace-facing geofence preferences. Branch-level fence config (polygon, radius, tolerance, enforcement toggle) is EDITED VIA THE FACILITIES MODULE'S BRANCH CRUD \u2014 not here. This surface covers workspace-wide defaults + retention.",
+  "storedIn": "settings",
+  "reference": {"contract": "academorix://modules/settings/attributes"},
+  "groups": [
+    {
+      "key": "geofencing",
+      "class": "Academorix\\Geofencing\\Settings\\GeofencingSettings",
+      "label": "Geofencing",
+      "description": "Workspace-wide defaults for point-in-polygon evaluation + retention.",
+      "icon": "map-pin",
+      "scope": "workspace",
+      "public": false,
+      "sortOrder": 24,
+      "permission": "workspace_locales.viewAny",
+      "sections": [
+        {
+          "label": "Defaults",
+          "description": "Values used when a branch row doesn't specify its own.",
+          "icon": "adjustments-horizontal",
+          "sortOrder": 1,
+          "fields": [
+            {"name": "default_accuracy_tolerance_m", "controlType": "number", "label": "Default accuracy tolerance (m)", "defaultValue": 50, "min": 1, "max": 5000, "helpText": "Reject GPS readings noisier than this. Consumer sees SKIPPED.", "sortOrder": 1},
+            {"name": "default_radius_m", "controlType": "number", "label": "Default radius (m)", "defaultValue": 100, "min": 1, "max": 100000, "helpText": "Used when a branch has no polygon.", "sortOrder": 2}
+          ]
+        },
+        {
+          "label": "Retention",
+          "description": "How long evaluation audit rows persist. Non-override rows configurable; override rows fixed to 10 years.",
+          "icon": "clock",
+          "sortOrder": 2,
+          "fields": [
+            {"name": "retention_years", "controlType": "number", "label": "Retention (years)", "defaultValue": 7, "min": 3, "max": 25, "helpText": "Minimum 3 years to meet US FLSA. Maximum 25 to cap storage costs.", "sortOrder": 1}
+          ]
+        },
+        {
+          "label": "Enforcement",
+          "description": "Master toggle for the enforcement UX. When off, evaluations still record on the audit log but consumers ignore the OUTSIDE verdict \u2014 useful for shadow-mode deployments.",
+          "icon": "shield-check",
+          "sortOrder": 3,
+          "requiresEntitlement": "feature_geofence_enforcement",
+          "fields": [
+            {"name": "enforcement_enabled", "controlType": "toggle", "label": "Enforce geofence verdicts", "defaultValue": false, "sortOrder": 1},
+            {"name": "notify_admins_on_override_request", "controlType": "toggle", "label": "Email workspace admins when an override is requested", "defaultValue": true, "sortOrder": 2}
+          ]
+        }
+      ]
+    }
+  ]
+}

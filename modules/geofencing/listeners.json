@@ -1,0 +1,15 @@
+{
+  "id": "academorix://modules/geofencing/listeners",
+  "$version": 1,
+  "title": "geofencing \u2014 subscribed events",
+  "listeners": [
+    {"event": "geofencing::GeofenceEvaluated", "listener": "Academorix\\Geofencing\\Listeners\\LogGeofenceEvaluationForAudit", "queue": null, "purpose": "Emit a structured `geofence.evaluated` log line via the app logger (workspace_id, branch_id, result, mode, distance_m, accuracy_m, subject_type, subject_id). Sync so the log lands in the same request context. Sampled to 100% by default \u2014 volumes are moderate."},
+    {"event": "geofencing::GeofenceEvaluated", "listener": "Academorix\\Geofencing\\Metrics\\GeofenceMetricsRecorder", "queue": null, "purpose": "Emit metrics: increment academorix.geofence.evaluations.total by (result, mode), observe academorix.geofence.evaluation.duration_ms + academorix.geofence.distance_to_fence_m."},
+    {"event": "approvals::ApprovalTaskApproved", "listener": "Academorix\\Geofencing\\Listeners\\ApplyGeofenceOverrideOnApproval", "queue": "notifications", "filter": "$event->task->type === 'geofence_override'", "purpose": "Mint a new INSIDE GeofenceCheck row with supersedes_check_id set + fire GeofenceOverrideApplied."},
+    {"event": "approvals::ApprovalTaskRejected", "listener": "Academorix\\Geofencing\\Listeners\\HandleGeofenceOverrideRejection", "queue": "notifications", "filter": "$event->task->type === 'geofence_override'", "purpose": "Fire GeofenceOverrideRejected."},
+    {"event": "geofencing::GeofenceOverrideApplied", "listener": "Academorix\\Geofencing\\Listeners\\LogGeofenceOverrideApplied", "queue": null, "purpose": "Structured `geofence.override_applied` log line for compliance-grade audit trail. Persisted to audit_log by the audit module's AuditListener."},
+    {"event": "geofencing::GeofenceCheckCreated", "listener": "Academorix\\Geofencing\\Listeners\\Domain\\OnGeofenceCheckCreated", "queue": "notifications", "purpose": "Invalidate the workspace + branch caches. Update the 'last activity' timestamp used by the RecentGeofenceActivityCheck health probe."},
+    {"event": "geofencing::GeofenceCheckUpdated", "listener": "Academorix\\Geofencing\\Listeners\\Domain\\OnGeofenceCheckUpdated", "queue": "notifications"},
+    {"event": "geofencing::GeofenceCheckDeleted", "listener": "Academorix\\Geofencing\\Listeners\\Domain\\OnGeofenceCheckDeleted", "queue": "notifications"}
+  ]
+}

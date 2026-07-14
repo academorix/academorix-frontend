@@ -1,0 +1,19 @@
+{
+  "id": "academorix://modules/geofencing/attributes",
+  "$version": 1,
+  "title": "geofencing \u2014 PHP attribute contracts",
+  "description": "One attribute: `#[GeofenceSubjectAlias]` for consumer models. Declares the snake_case morph alias that the model registers with the morph map + validates at boot that the alias is unique across the codebase.",
+  "namespace": "Academorix\\Geofencing\\Attributes",
+  "attributes": [
+    {
+      "name": "GeofenceSubjectAlias",
+      "class": "Academorix\\Geofencing\\Attributes\\GeofenceSubjectAlias",
+      "targets": ["class"],
+      "params": [
+        {"name": "alias", "type": "string", "required": true, "pattern": "^[a-z][a-z0-9_]+$", "description": "The snake_case identifier used as `subject_type` on geofence_checks."}
+      ],
+      "example": "#[GeofenceSubjectAlias(alias: 'staff_clockin')]\nfinal class StaffClockIn extends Model { ... }",
+      "runtime_behaviour": "GeofencingServiceProvider::boot() scans classes for #[GeofenceSubjectAlias]. Registers each alias in the morph map via Relation::enforceMorphMap(). At boot, refuses duplicate aliases across the codebase (raises ModuleBootException). Also validates the alias is snake_case."
+    }
+  ]
+}
