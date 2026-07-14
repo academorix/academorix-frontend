@@ -4,12 +4,15 @@
   "title": "localization \u2014 Eloquent observers",
   "observers": [
     {
-      "model": "Language",
-      "observer": "Academorix\\Localization\\Observers\\LanguageObserver",
+      "model": "PlatformLanguage",
+      "observer": "Academorix\\Localization\\Observers\\PlatformLanguageObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `lng_`",
-        "creating \u2192 derive iso_639_1 + iso_639_3 from code when not explicitly set",
-        "deleting \u2192 refuse when any WorkspaceLocale references this language (soft delete only via archive)"
+        "creating \u2192 validate geography_language_id resolves to a real geography::Language row (integrity guard beyond the FK)",
+        "creating \u2192 when geography_country_id is set, verify the bcp47_code region subtag matches geography::Country.iso2 (e.g. bcp47_code='fr-CA' must pair with a country row iso2='CA')",
+        "creating \u2192 derive bcp47_code default when not explicit: `{geographyLanguage.code}{-script_code?}{-geographyCountry.iso2?}`",
+        "creating \u2192 refuse when the (geography_language_id, geography_country_id, script_code) triple already exists (defends against the composite unique index race)",
+        "deleting \u2192 refuse when any WorkspaceLocale references this row (soft delete only via archive)"
       ]
     },
     {
@@ -30,7 +33,7 @@
       "observer": "Academorix\\Localization\\Observers\\TranslationObserver",
       "handles": [
         "creating \u2192 populate ULID prefix `trn_`",
-        "creating \u2192 denormalise locale_code from Language.code",
+        "creating \u2192 denormalise locale_code from PlatformLanguage.bcp47_code",
         "creating \u2192 refuse when quality_score < workspace_locale.min_quality_score (returns null; caller records failure)",
         "created \u2192 invalidate in-memory LRU cache for (workspace_id, locale_code, namespace, key)",
         "updating (source='human' + verified_at=now()) \u2192 fire TranslationOverridden",

@@ -3,12 +3,25 @@
   "name": "localization",
   "alias": "localization",
   "namespace": "Academorix\\Localization",
-  "description": "Multilingual substrate on top of Laravel's built-in localization. Owns four entities \u2014 Language (platform catalogue with ISO 639 code + native name + direction + script), WorkspaceLocale (per-workspace enabled languages with default + fallback), Translation (persistent cache of resolved key\u2192value bindings per workspace + locale, indexed for fast lookup), TranslationJob (async bulk-translation audit). Resolves the caller's active locale from user preference \u2192 workspace setting \u2192 Accept-Language header \u2192 subdomain \u2192 app default. Publishes override helpers (`t()`, `__()`, `trans()`, `trans_choice()`) that pass through to Laravel's translator but consult our DB cache first + optionally auto-translate via configured driver (OpenAI, Google Cloud Translation, DeepL, AWS Translate, Azure Translator). Ships #[Translatable] attribute for Eloquent property translation. RTL-aware.",
-  "keywords": ["localization", "i18n", "translation", "locale", "language", "iso639", "rtl", "openai", "google-translate", "deepl", "aws-translate", "azure-translator"],
-  "priority": 14,
+  "description": "Multilingual substrate on top of Laravel's built-in localization. Owns four entities \u2014 PlatformLanguage (platform catalogue of BCP 47 locale tags with script + platform state; REFERENCES `geography::Language` for ISO-639 base metadata + optionally `geography::Country` for regional variants), WorkspaceLocale (per-workspace enabled locales with default + fallback), Translation (persistent cache of resolved key\u2192value bindings per workspace + locale, indexed for fast lookup), TranslationJob (async bulk-translation audit). Resolves the caller's active locale from user preference \u2192 workspace setting \u2192 Accept-Language header \u2192 subdomain \u2192 app default. Publishes override helpers (`t()`, `__()`, `trans()`, `trans_choice()`) that pass through to Laravel's translator but consult our DB cache first + optionally auto-translate via configured driver (OpenAI, Google Cloud Translation, DeepL, AWS Translate, Azure Translator). Ships #[Translatable] attribute for Eloquent property translation. RTL-aware. Wave 5 refactor: `Language` renamed \u2192 `PlatformLanguage`; table renamed `languages` \u2192 `platform_languages` to end the collision with the vendor-owned `languages` table (`nnjeim/world`, geography module); ISO-639 + ISO-3166 fields dropped and replaced with FKs to geography.",
+  "keywords": [
+    "localization",
+    "i18n",
+    "translation",
+    "locale",
+    "language",
+    "iso639",
+    "rtl",
+    "openai",
+    "google-translate",
+    "deepl",
+    "aws-translate",
+    "azure-translator"
+  ],
+  "priority": 66,
   "providers": ["Academorix\\Localization\\Providers\\LocalizationServiceProvider"],
   "files": [],
-  "dependencies": ["foundation", "workspaces", "activity", "entitlements"],
+  "dependencies": ["foundation", "workspaces", "activity", "entitlements", "geography"],
   "extendedBy": [],
   "contributes": {
     "traits": ["HasTranslations", "IsLocaleAware"],
@@ -29,7 +42,12 @@
       "LanguageEnabledForWorkspace",
       "LanguageDisabledForWorkspace"
     ],
-    "policies": ["LanguagePolicy", "WorkspaceLocalePolicy", "TranslationPolicy", "TranslationJobPolicy"],
+    "policies": [
+      "PlatformLanguagePolicy",
+      "WorkspaceLocalePolicy",
+      "TranslationPolicy",
+      "TranslationJobPolicy"
+    ],
     "hooks": [],
     "commands": [
       "localization:list-locales",
@@ -37,7 +55,7 @@
       "localization:translate",
       "localization:warm-cache",
       "localization:bulk-translate",
-      "localization:seed-languages",
+      "localization:seed-platform-languages",
       "localization:reconcile-cache"
     ],
     "jobs": [
@@ -53,15 +71,32 @@
       "MachineTranslationQuotaApproachingNotification"
     ],
     "broadcasts": ["workspace.{id}.translations"],
-    "observers": ["LanguageObserver", "WorkspaceLocaleObserver", "TranslationObserver", "TranslationJobObserver"],
+    "observers": [
+      "PlatformLanguageObserver",
+      "WorkspaceLocaleObserver",
+      "TranslationObserver",
+      "TranslationJobObserver"
+    ],
     "rules": ["valid_iso639_code", "valid_bcp47_tag"],
     "casts": ["LocaleCode", "TextDirection", "TranslationSource"],
     "views": [],
     "lang": ["localization"],
     "config": ["localization"],
     "macros": ["str_localize"],
-    "bindings": ["LocaleResolver", "TranslationRepository", "TranslatorDriverManager", "OpenAITranslatorDriver", "GoogleTranslatorDriver", "DeepLTranslatorDriver", "AwsTranslateDriver", "AzureTranslatorDriver", "NullTranslatorDriver", "PluralizationEngine", "InterpolationEngine"],
-    "resources": ["language", "workspace-locale", "translation", "translation-job"]
+    "bindings": [
+      "LocaleResolver",
+      "TranslationRepository",
+      "TranslatorDriverManager",
+      "OpenAITranslatorDriver",
+      "GoogleTranslatorDriver",
+      "DeepLTranslatorDriver",
+      "AwsTranslateDriver",
+      "AzureTranslatorDriver",
+      "NullTranslatorDriver",
+      "PluralizationEngine",
+      "InterpolationEngine"
+    ],
+    "resources": ["platform-language", "workspace-locale", "translation", "translation-job"]
   },
   "wraps": {
     "package": "illuminate/translation",

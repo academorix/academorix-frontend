@@ -2,13 +2,55 @@
   "id": "academorix://modules/localization/data-classes",
   "$version": 1,
   "title": "localization \u2014 field classification",
-  "description": "Language + WorkspaceLocale are metadata. Translation values may contain workspace-specific copy which could inadvertently include PII \u2014 responsibility on workspace admins.",
+  "description": "PlatformLanguage + WorkspaceLocale are metadata. Translation values may contain workspace-specific copy which could inadvertently include PII \u2014 responsibility on workspace admins. Wave 5 refactor: `Language` classifications retired \u2014 duplicated ISO-639 / ISO-3166 fields (`code`, `name`, `native_name`, `direction`, `country_code`, `flag_emoji`) are now READ from geography via accessor and are NOT classified here (their source-of-truth classification lives in `geography::data-classes`).",
   "reference": "foundation::data-classes.json.tiers",
   "classes": {
-    "public": ["Language.code", "Language.name", "Language.native_name", "Language.direction", "Language.script_code", "Language.country_code", "Language.flag_emoji", "Language.is_system", "Language.is_active_on_platform", "WorkspaceLocale.is_default", "WorkspaceLocale.is_fallback", "WorkspaceLocale.is_enabled", "WorkspaceLocale.auto_translate", "WorkspaceLocale.auto_translate_driver", "Translation.namespace", "Translation.group", "Translation.locale_code", "Translation.source", "Translation.provider", "Translation.quality_score"],
-    "internal": ["Language.id", "WorkspaceLocale.id", "WorkspaceLocale.workspace_id", "WorkspaceLocale.language_id", "WorkspaceLocale.min_quality_score", "Translation.id", "Translation.workspace_id", "Translation.language_id", "Translation.translation_job_id", "Translation.source_hash", "TranslationJob.id", "TranslationJob.workspace_id", "TranslationJob.driver", "TranslationJob.driver_model"],
-    "confidential": ["Translation.key (may reference internal domain concepts)", "Translation.value (workspace-authored copy; may reference internal-only terminology)"],
-    "restricted": ["Translation.value when key namespace = 'content' (user-generated content translations)"],
+    "public": [
+      "PlatformLanguage.bcp47_code",
+      "PlatformLanguage.script_code",
+      "PlatformLanguage.is_active_on_platform",
+      "PlatformLanguage.is_beta",
+      "PlatformLanguage.is_system",
+      "PlatformLanguage.sort_order",
+      "WorkspaceLocale.is_default",
+      "WorkspaceLocale.is_fallback",
+      "WorkspaceLocale.is_enabled",
+      "WorkspaceLocale.auto_translate",
+      "WorkspaceLocale.auto_translate_driver",
+      "Translation.namespace",
+      "Translation.group",
+      "Translation.locale_code",
+      "Translation.source",
+      "Translation.provider",
+      "Translation.quality_score"
+    ],
+    "internal": [
+      "PlatformLanguage.id",
+      "PlatformLanguage.geography_language_id",
+      "PlatformLanguage.geography_country_id",
+      "PlatformLanguage.notes",
+      "PlatformLanguage.metadata",
+      "WorkspaceLocale.id",
+      "WorkspaceLocale.workspace_id",
+      "WorkspaceLocale.language_id",
+      "WorkspaceLocale.min_quality_score",
+      "Translation.id",
+      "Translation.workspace_id",
+      "Translation.language_id",
+      "Translation.translation_job_id",
+      "Translation.source_hash",
+      "TranslationJob.id",
+      "TranslationJob.workspace_id",
+      "TranslationJob.driver",
+      "TranslationJob.driver_model"
+    ],
+    "confidential": [
+      "Translation.key (may reference internal domain concepts)",
+      "Translation.value (workspace-authored copy; may reference internal-only terminology)"
+    ],
+    "restricted": [
+      "Translation.value when key namespace = 'content' (user-generated content translations)"
+    ],
     "regulated_minor": [],
     "regulated_health": [],
     "regulated_financial": [],
@@ -17,6 +59,7 @@
   "notes": [
     "Workspace admins are responsible for ensuring no PII passes through auto-translate. The RedactorProcessor (from telemetry-logs) is reused before dispatching to drivers; regex patterns strip credit-card / SSN / IBAN + configurable phone / email masking.",
     "The 'content' namespace is a convention for user-generated content translations \u2014 UI translations (namespaces 'validation', 'auth', 'users', etc.) are safe.",
-    "GDPR Art. 44 (cross-border transfers): all drivers offer EU-region processing; workspaces in EU should configure eu-region drivers."
+    "GDPR Art. 44 (cross-border transfers): all drivers offer EU-region processing; workspaces in EU should configure eu-region drivers.",
+    "PlatformLanguage.metadata is an opaque JSON dictionary the platform-ops team uses for tooling hints (e.g. `translator_default_driver`, `preview_string`). Never stores workspace or user data \u2014 internal-tier only."
   ]
 }

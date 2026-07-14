@@ -13,14 +13,18 @@
     }
   ],
   "consumed": {
-    "framework": [
-      {"trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory"}
-    ],
+    "framework": [{ "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" }],
     "vendor": [
-      {"trait": "Nnjeim\\World\\Models\\Country (base class)", "reason": "Our Country model extends this. Same for the other five entities."}
+      {
+        "trait": "Nnjeim\\World\\Models\\Country (base class)",
+        "reason": "Our Country model extends this. Same for the other five entities."
+      }
     ],
     "foundation": [
-      {"trait": "Academorix\\Foundation\\Concerns\\Filterable", "reason": "Query builder integration for standard filter/sort/include envelope."}
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\Filterable",
+        "reason": "Query builder integration for standard filter/sort/include envelope."
+      }
     ]
   },
   "composition": {
@@ -46,7 +50,7 @@
     "language": {
       "extends": "Nnjeim\\World\\Models\\Language",
       "traits": ["HasFactory", "Filterable"],
-      "notes": "ISO-639 catalog. Distinct from localization::Language (BCP 47 per-workspace enablement)."
+      "notes": "ISO-639 catalog. Referenced (NOT duplicated) by `localization::PlatformLanguage` via `platform_languages.geography_language_id` since Wave 5 \u2014 see module.json.naming_note + module.json.referenced_by."
     },
     "timezone": {
       "extends": "Nnjeim\\World\\Models\\Timezone",

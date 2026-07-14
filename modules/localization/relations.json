@@ -2,20 +2,114 @@
   "id": "academorix://modules/localization/relations",
   "$version": 1,
   "title": "localization \u2014 model relationships",
+  "description": "PlatformLanguage is the aggregate root for the locale catalogue. It references geography for ISO-639 + ISO-3166 truth (replacing the previous field duplication). WorkspaceLocale + Translation FK to PlatformLanguage via `language_id` (concept-name column; target table is `platform_languages`).",
   "internal": [
-    {"from": "Language", "kind": "hasMany", "to": "WorkspaceLocale", "foreignKey": "language_id"},
-    {"from": "WorkspaceLocale", "kind": "belongsTo", "to": "Language", "foreignKey": "language_id", "onDelete": "restrict", "description": "Languages cannot be deleted while any workspace has them enabled."},
-    {"from": "Language", "kind": "hasMany", "to": "Translation", "foreignKey": "language_id", "onDelete": "cascade"},
-    {"from": "Translation", "kind": "belongsTo", "to": "Language", "foreignKey": "language_id"},
-    {"from": "TranslationJob", "kind": "hasMany", "to": "Translation", "foreignKey": "translation_job_id", "onDelete": "set null", "description": "The job that produced each row (null when hand-authored or file-imported)."},
-    {"from": "Translation", "kind": "belongsTo", "to": "TranslationJob", "foreignKey": "translation_job_id", "nullable": true}
+    {
+      "from": "PlatformLanguage",
+      "kind": "hasMany",
+      "to": "WorkspaceLocale",
+      "foreignKey": "language_id",
+      "description": "Language enablement per workspace. Refuses hard delete while any WorkspaceLocale references this row."
+    },
+    {
+      "from": "WorkspaceLocale",
+      "kind": "belongsTo",
+      "to": "PlatformLanguage",
+      "foreignKey": "language_id",
+      "onDelete": "restrict",
+      "description": "PlatformLanguages cannot be deleted while any workspace has them enabled."
+    },
+    {
+      "from": "PlatformLanguage",
+      "kind": "hasMany",
+      "to": "Translation",
+      "foreignKey": "language_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "Translation",
+      "kind": "belongsTo",
+      "to": "PlatformLanguage",
+      "foreignKey": "language_id"
+    },
+    {
+      "from": "TranslationJob",
+      "kind": "hasMany",
+      "to": "Translation",
+      "foreignKey": "translation_job_id",
+      "onDelete": "set null",
+      "description": "The job that produced each row (null when hand-authored or file-imported)."
+    },
+    {
+      "from": "Translation",
+      "kind": "belongsTo",
+      "to": "TranslationJob",
+      "foreignKey": "translation_job_id",
+      "nullable": true
+    }
   ],
   "outbound": [
-    {"from": "WorkspaceLocale", "kind": "belongsTo", "to": "workspaces::Workspace", "foreignKey": "workspace_id", "onDelete": "cascade"},
-    {"from": "Translation", "kind": "belongsTo", "to": "workspaces::Workspace", "foreignKey": "workspace_id", "nullable": true, "onDelete": "cascade", "description": "Null = platform-level default translation (Academorix-shipped). Non-null = workspace override."},
-    {"from": "TranslationJob", "kind": "belongsTo", "to": "workspaces::Workspace", "foreignKey": "workspace_id", "onDelete": "cascade"}
+    {
+      "from": "PlatformLanguage",
+      "kind": "belongsTo",
+      "to": "geography::Language",
+      "foreignKey": "geography_language_id",
+      "targetTable": "languages",
+      "targetKey": "id",
+      "onDelete": "restrict",
+      "description": "Wave 5 addition. Source of truth for ISO-639-1 code, English name, native name, direction / is_rtl. Every PlatformLanguage row MUST reference a canonical geography::Language row \u2014 the FK is NOT NULL. Restrict on delete so vendor row purges can't orphan our platform-language rows."
+    },
+    {
+      "from": "PlatformLanguage",
+      "kind": "belongsTo",
+      "to": "geography::Country",
+      "foreignKey": "geography_country_id",
+      "targetTable": "countries",
+      "targetKey": "id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Wave 5 addition. Populated ONLY for regional variants (`fr-CA` \u2192 Canada, `en-GB` \u2192 United Kingdom, `pt-BR` \u2192 Brazil). NULL for base languages that span many countries (English, French, Spanish base rows). Source of truth for flag_emoji + native country name for the variant."
+    },
+    {
+      "from": "WorkspaceLocale",
+      "kind": "belongsTo",
+      "to": "workspaces::Workspace",
+      "foreignKey": "workspace_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "Translation",
+      "kind": "belongsTo",
+      "to": "workspaces::Workspace",
+      "foreignKey": "workspace_id",
+      "nullable": true,
+      "onDelete": "cascade",
+      "description": "Null = platform-level default translation (Academorix-shipped). Non-null = workspace override."
+    },
+    {
+      "from": "TranslationJob",
+      "kind": "belongsTo",
+      "to": "workspaces::Workspace",
+      "foreignKey": "workspace_id",
+      "onDelete": "cascade"
+    }
   ],
   "inbound": {
     "description": "Domain models with translated columns compose HasTranslations. No FK inbound \u2014 they store translations in their own JSONB `translations` column rather than joining to our Translation table (that's for translation keys + Laravel-style i18n, not per-row content)."
+  },
+  "accessor_chain": {
+    "description": "Callers rarely touch geography directly \u2014 the PlatformLanguage model surfaces the joined fields via accessors so the API keeps the same shape it had before the refactor.",
+    "PlatformLanguage": {
+      "name": "geographyLanguage->name",
+      "native_name": "geographyLanguage->native",
+      "direction": "geographyLanguage->is_rtl ? 'rtl' : (geographyLanguage->dir ?? 'ltr')",
+      "iso_639_1": "geographyLanguage->code",
+      "flag_emoji": "geographyCountry?->emoji \u2014 null for base languages"
+    },
+    "WorkspaceLocale": {
+      "language_code": "platformLanguage->bcp47_code",
+      "language_native_name": "platformLanguage->native_name (chains through geography)",
+      "language_direction": "platformLanguage->direction (chains through geography)"
+    }
   }
 }

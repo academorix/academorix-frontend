@@ -167,16 +167,23 @@ policies.
 
 `geography::Language` is the global ISO-639 catalog wrapping `nnjeim/world`'s
 languages table (200+ rows with fields like `native`, `is_rtl`, `country_id`,
-`dir`). This is distinct from `localization::Language`, which tracks BCP 47 tags
-enabled per-workspace for the translation subsystem. Both coexist:
+`dir`). It is the single source of truth for ISO-639 language metadata across
+the whole platform. Since Wave 5, the localization module no longer duplicates
+this catalog: `localization::PlatformLanguage` (previously
+`localization::Language`, table `platform_languages`) now REFERENCES it via a
+NOT-NULL FK on `geography_language_id`, plus an optional FK on
+`geography_country_id` for regional variants (`fr-CA`, `en-GB`, `pt-BR`).
 
-| Namespace                | Purpose                       | Rows          | Route                             |
-| ------------------------ | ----------------------------- | ------------- | --------------------------------- |
-| `geography::Language`    | ISO-639 reference             | 200+ (seeded) | `GET /api/v1/geography/languages` |
-| `localization::Language` | Platform-approved BCP 47 tags | ~50 (curated) | `GET /api/v1/languages`           |
+| Namespace                        | Purpose                                                                      | Rows          | Route                             |
+| -------------------------------- | ---------------------------------------------------------------------------- | ------------- | --------------------------------- |
+| `geography::Language`            | ISO-639 reference (name / native / direction / is_rtl); vendor-seeded        | 200+ (seeded) | `GET /api/v1/geography/languages` |
+| `localization::PlatformLanguage` | Platform-approved BCP 47 tags + script + beta flags; FK-references geography | ~40 (curated) | `GET /api/v1/languages`           |
 
-Rule of thumb: signup/profile dropdown → `geography::Language`. Workspace locale
-enablement → `localization::Language`.
+Rule of thumb: reference lookups (signup / profile dropdown, "author writes in
+which language?", "content language of this document") → `geography::Language`.
+Workspace locale enablement + translation subsystem + platform activation flags
+→ `localization::PlatformLanguage` (which chains through to
+`geography::Language` via accessors so display fields stay identical).
 
 ## 10. Files
 

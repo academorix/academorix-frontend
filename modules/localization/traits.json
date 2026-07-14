@@ -8,7 +8,9 @@
       "trait": "Academorix\\Localization\\Concerns\\HasTranslations",
       "description": "Mixed into Eloquent models with translated columns. Adds ->translate($locale) scope + magic accessors that return the active-locale value for #[Translatable] properties. Storage strategy: JSONB column `translations` on the model with shape `{ locale: { field: value } }` so the model row remains one physical row.",
       "public": true,
-      "usedBy": ["future domain modules with translated content (Announcement, EventName, ProgrammeDescription, etc)"],
+      "usedBy": [
+        "future domain modules with translated content (Announcement, EventName, ProgrammeDescription, etc)"
+      ],
       "conflicts_with": []
     },
     {
@@ -21,36 +23,64 @@
   ],
   "consumed": {
     "framework": [
-      {"trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory"},
-      {"trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids"},
-      {"trait": "Illuminate\\Database\\Eloquent\\SoftDeletes", "reason": "Language + WorkspaceLocale. NOT Translation (high volume; hard-purged on retention) or TranslationJob (append-only)."}
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "PlatformLanguage + WorkspaceLocale. NOT Translation (high volume; hard-purged on retention) or TranslationJob (append-only)."
+      }
     ],
     "foundation": [
-      {"trait": "Academorix\\Foundation\\Concerns\\HasUlids"},
-      {"trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag"},
-      {"trait": "Academorix\\Foundation\\Concerns\\HasUserstamps"},
-      {"trait": "Academorix\\Foundation\\Concerns\\HasMetadata"},
-      {"trait": "Academorix\\Foundation\\Concerns\\Filterable"},
-      {"trait": "Academorix\\Foundation\\Concerns\\Searchable"}
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
     ],
-    "workspaces": [{"trait": "Academorix\\Workspaces\\Concerns\\BelongsToWorkspace"}],
-    "activity": [{"trait": "Academorix\\Activity\\Concerns\\HasActivityLog"}]
+    "workspaces": [{ "trait": "Academorix\\Workspaces\\Concerns\\BelongsToWorkspace" }],
+    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
   },
   "composition": {
-    "language": {
-      "traits": ["HasFactory", "HasUlids", "HasSystemFlag", "HasMetadata", "HasUserstamps", "Filterable", "Searchable", "SoftDeletes"],
-      "notes": "NO BelongsToWorkspace \u2014 Languages are platform-scoped catalogue."
+    "platform_language": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasSystemFlag",
+        "HasMetadata",
+        "HasUserstamps",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "NO BelongsToWorkspace \u2014 PlatformLanguages are platform-scoped catalogue (renamed from `Language` in the Wave 5 dedupe against geography::Language)."
     },
     "workspace_locale": {
-      "traits": ["HasFactory", "HasUlids", "BelongsToWorkspace", "HasMetadata", "HasUserstamps", "HasActivityLog", "Filterable", "SoftDeletes"],
-      "notes": "Per-workspace association of Language + preferences."
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToWorkspace",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "Per-workspace association of PlatformLanguage + preferences. FK column stays `language_id` (Laravel FK-column vs target-table decoupled); wire shape exposes the nested resource under the key `language` for backward-compatible client consumption."
     },
     "translation": {
       "traits": ["HasFactory", "HasUlids", "HasMetadata", "Filterable"],
       "notes": "workspace_id nullable (null = platform default). NO BelongsToWorkspace enforcement \u2014 the trait presumes non-null. High-volume table; NO SoftDeletes / HasUserstamps / HasActivityLog to keep row writes cheap."
     },
     "translation_job": {
-      "traits": ["HasFactory", "HasUlids", "BelongsToWorkspace", "HasMetadata", "HasUserstamps", "Filterable"],
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToWorkspace",
+        "HasMetadata",
+        "HasUserstamps",
+        "Filterable"
+      ],
       "notes": "Append-only job audit rows. NO SoftDeletes; retention by hard purge."
     }
   }
