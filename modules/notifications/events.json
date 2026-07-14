@@ -13,6 +13,9 @@
       "trigger": "Caller invokes `$user->notify(...)` OR `Notifications::dispatch(...)`. Fires after the Notification row commits + before channel-module handoff.",
       "queue": "notifications",
       "priority": "high",
+      "wire_contract_file": "contracts/notification-dispatched.v1.json",
+      "wire_contract_version": "v1",
+      "wire_event_name": "notifications.notification.dispatched",
       "consumers": [
         "notifications-mail::SendMailListener",
         "notifications-sms::SendSmsListener",
@@ -156,10 +159,7 @@
       "trigger": "User clicked a tracked link. Recorded per-link with the target URL.",
       "queue": "notifications",
       "priority": "low",
-      "consumers": [
-        "invitations::MarkInvitationClickedListener",
-        "analytics::TrackClickListener"
-      ],
+      "consumers": ["invitations::MarkInvitationClickedListener", "analytics::TrackClickListener"],
       "payload": {
         "notification_id": "ULID",
         "delivery_id": "ULID",

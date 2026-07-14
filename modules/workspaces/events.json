@@ -20,6 +20,9 @@
       "class": "Academorix\\Workspaces\\Events\\WorkspaceProvisioned",
       "when": "Fired AFTER the provisioning transaction commits. Safe surface for side effects that hit external systems (send-welcome-email, provision-dns, index-search).",
       "afterCommit": true,
+      "wire_contract_file": "contracts/workspace-provisioned.v1.json",
+      "wire_contract_version": "v1",
+      "wire_event_name": "workspaces.workspace.provisioned",
       "payload": {
         "workspace": "Workspace",
         "owner": "User"

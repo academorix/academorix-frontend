@@ -4,10 +4,47 @@
   "title": "entitlements \u2014 kill switches",
   "engine": "laravel/pennant",
   "flags": [
-    {"key": "entitlements.enforcement", "kind": "kill-switch", "default": "on", "description": "Master enforcer switch. Off = allow every operation regardless of cap. NEVER OFF in production except during a billing incident."},
-    {"key": "entitlements.metered_billing", "kind": "kill-switch", "default": "on", "description": "ExportUsageForBillingJob execution. Off during Stripe outages to prevent duplicate usage records on retry."},
-    {"key": "entitlements.reset_periodic", "kind": "kill-switch", "default": "on", "description": "ResetPeriodicUsageJob execution."},
-    {"key": "entitlements.warn_notifications", "kind": "kill-switch", "default": "on", "description": "Dispatch of QuotaApproachingNotification. Off during notification-fatigue windows."},
-    {"key": "entitlements.redis_hot_path", "kind": "kill-switch", "default": "on", "description": "Off = every enforcement goes to Postgres. Emergency fallback if Redis has issues."}
+    {
+      "key": "entitlements.enforcement",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master enforcer switch. Off = allow every operation regardless of cap. NEVER OFF in production except during a billing incident."
+    },
+    {
+      "key": "entitlements.metered_billing",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "ExportUsageForBillingJob execution. Off during Stripe outages to prevent duplicate usage records on retry."
+    },
+    {
+      "key": "entitlements.reset_periodic",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "ResetPeriodicUsageJob execution."
+    },
+    {
+      "key": "entitlements.warn_notifications",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Dispatch of QuotaApproachingNotification. Off during notification-fatigue windows."
+    },
+    {
+      "key": "entitlements.redis_hot_path",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = every enforcement goes to Postgres. Emergency fallback if Redis has issues."
+    },
+    {
+      "key": "entitlements.graceful_degradation_mode",
+      "kind": "operational-mode",
+      "default": "off",
+      "description": "Fail-open policy when Redis is unreachable OR the hot-path returns an error. Off (default) = fail closed \u2014 refuse the metered operation with EntitlementCheckFailed. On = fail open \u2014 allow the operation, emit `academorix.entitlement.fail_open_total{key,reason}` metric, log a WARN record. Turn on during incident triage when refusing operations is more costly than temporarily over-serving. NEVER leave on outside a declared incident \u2014 documented fail-open windows must be logged in the incident retro.",
+      "modes": {
+        "off": "Fail closed. Redis outage \u2192 EntitlementCheckFailed (retryable). Every consumer catches + surfaces `503 Service Unavailable` to callers. Correctness > availability.",
+        "on": "Fail open. Redis outage \u2192 operation permitted + academorix.entitlement.fail_open_total increments. Availability > correctness for the outage window."
+      },
+      "escalation": "Alert routed to on-call SRE when metric exceeds 100 events/minute; auto-page above 1000 events/minute. Auto-disable after 60 minutes to prevent accidental extended fail-open state.",
+      "related_metric": "academorix.entitlement.fail_open_total"
+    }
   ]
 }
