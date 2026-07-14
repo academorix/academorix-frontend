@@ -11,7 +11,7 @@
     "table": "domain_records",
     "primaryKey": "id",
     "keyType": "string",
-    "keyPrefix": "dnsr_",
+    "keyPrefix": "drc_",
     "incrementing": false,
     "model": "Academorix\\Workspaces\\Models\\DomainRecord",
     "interface": "Academorix\\Workspaces\\Contracts\\Data\\DomainRecordInterface",
@@ -42,7 +42,7 @@
         "type": "string",
         "length": 64,
         "primary": true,
-        "description": "Prefixed ULID: `dnsr_<26 chars>`."
+        "description": "Prefixed ULID: `drc_<26 chars>`."
       },
       "workspace_id": {
         "type": "string",
@@ -149,7 +149,7 @@
     "updated_at"
   ],
   "properties": {
-    "id": { "type": "string", "pattern": "^dnsr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "id": { "type": "string", "pattern": "^drc_[0-9A-HJKMNP-TV-Z]{26}$" },
     "workspace_id": { "type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$" },
     "domain_id": { "type": "string", "pattern": "^dom_[0-9A-HJKMNP-TV-Z]{26}$" },
     "kind": { "type": "string", "enum": ["A", "AAAA", "CNAME", "TXT", "MX", "CAA"] },

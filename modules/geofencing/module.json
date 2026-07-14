@@ -34,11 +34,12 @@
   "dependencies": ["foundation", "workspaces", "activity", "audit", "entitlements"],
   "optional_dependencies": ["geography", "notifications"],
   "optional_dependencies_note": "Geography (when available) provides the geolocate service used by the mobile preflight controller. Notifications propagates the override-requested + override-applied notification categories. NO hard dependency on any specific 'fenceable' host module \u2014 the module is completely model-agnostic. Any Eloquent model in any downstream module can opt in by using the HasGeofence trait.",
-  "extendedBy": [
-    "staff-clock-in-out (future)",
-    "athlete-self-check-in (future)",
-    "visitor-auto-log (future)",
-    "attendance (future)"
+  "extendedBy": [],
+  "planned_consumers": [
+    "staff-clock-in-out",
+    "athlete-self-check-in",
+    "visitor-auto-log",
+    "attendance"
   ],
   "wraps": {
     "spatial_types": {

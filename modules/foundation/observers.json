@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/foundation/observers",
+  "$version": 1,
+  "title": "foundation \u2014 Eloquent observers",
+  "description": "Empty by design. Foundation ships zero domain entities (see module.json: `Ships zero domain entities \u2014 the module is entity-less on purpose`). No entities \u2192 no observers. The foundation-owned trait bindings (HasUserstamps, HasVersions, HasAudit, etc) hook Eloquent lifecycle events at the TRAIT level via boot() callbacks, not via observer classes; that's a deliberate design choice to keep the observer surface reserved for domain modules. Marker file preserved to keep the blueprint layout consistent.",
+  "observers": []
+}

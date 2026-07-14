@@ -3,7 +3,7 @@
   "name": "versioning",
   "alias": "versioning",
   "namespace": "Academorix\\Versioning",
-  "description": "Public interface versioning substrate. Owns the ApiVersion entity + DeprecationNotice entity + resolver chain (URL, header, query, webhook subscription, GraphQL) + payload transformer registry + version scheme adapters (SemVer, CalVer) + RFC 8594 Sunset workflow. Covers four surfaces: (1) REST endpoints (`/api/v1/...`), (2) content-negotiated payloads (`Accept: application/vnd.academorix.v2+json`), (3) webhook subscribers pinned to specific versions (`WebhookSubscription.api_version`), and (4) GraphQL schema versioning (feature-flag guarded, ships with #[VersionedField] + @deprecated support). Distinct from foundation's `HasVersions` trait, which handles ROW-LEVEL model history (snapshots + rollback for Eloquent models) \u2014 this module handles SURFACE-LEVEL version lifecycle. Both concerns coexist via the same word 'version' but tackle different problems.",
+  "description": "Public interface versioning substrate. Owns the ApiVersion entity + DeprecationNotice entity + resolver chain (URL, header, query, webhook subscription, GraphQL) + payload transformer registry + version scheme adapters (SemVer, CalVer) + RFC 8594 Sunset workflow. Covers four surfaces: (1) REST endpoints (`/api/v1/...`), (2) content-negotiated payloads (`Accept: application/vnd.academorix.v2+json`), (3) webhook subscribers pinned to specific versions (`WebhookSubscription.api_version`), and (4) GraphQL schema versioning (feature-flag guarded, ships with #[VersionedField] + @deprecated support). Distinct from foundation's `HasVersions` trait, which handles ROW-LEVEL model history (snapshots + rollback for Eloquent models) — this module handles SURFACE-LEVEL version lifecycle. Both concerns coexist via the same word 'version' but tackle different problems.",
   "keywords": [
     "versioning",
     "api-versioning",
@@ -18,13 +18,9 @@
     "payload-transformers"
   ],
   "priority": 12,
-  "providers": [
-    "Academorix\\Versioning\\Providers\\VersioningServiceProvider"
-  ],
+  "providers": ["Academorix\\Versioning\\Providers\\VersioningServiceProvider"],
   "files": [],
-  "dependencies": [
-    "foundation"
-  ],
+  "dependencies": ["foundation"],
   "extendedBy": [
     "webhook",
     "notifications",
@@ -33,17 +29,13 @@
     "notifications-sms",
     "workspaces",
     "subscription",
-    "entitlements",
-    "auth"
+    "entitlements"
   ],
+  "planned_consumers": ["auth"],
   "contributes": {
     "traits": [],
-    "blueprints": [
-      "apiVersionable"
-    ],
-    "middleware": [
-      "versioning.resolve"
-    ],
+    "blueprints": ["apiVersionable"],
+    "middleware": ["versioning.resolve"],
     "events": [
       "ApiVersionReleased",
       "ApiVersionDeprecated",
@@ -51,10 +43,7 @@
       "DeprecationNoticePublished",
       "PayloadTransformerRegistered"
     ],
-    "policies": [
-      "ApiVersionPolicy",
-      "DeprecationNoticePolicy"
-    ],
+    "policies": ["ApiVersionPolicy", "DeprecationNoticePolicy"],
     "hooks": [],
     "commands": [
       "versioning:list",
@@ -63,37 +52,16 @@
       "versioning:sunset",
       "versioning:transformers"
     ],
-    "jobs": [
-      "SunsetApiVersionJob",
-      "PublishDeprecationNoticeJob"
-    ],
-    "notifications": [
-      "ApiDeprecationNotification",
-      "ApiSunsetNotification"
-    ],
+    "jobs": ["SunsetApiVersionJob", "PublishDeprecationNoticeJob"],
+    "notifications": ["ApiDeprecationNotification", "ApiSunsetNotification"],
     "broadcasts": [],
-    "observers": [
-      "ApiVersionObserver",
-      "DeprecationNoticeObserver"
-    ],
-    "rules": [
-      "valid_version_slug",
-      "valid_version_scheme",
-      "valid_transformer_signature"
-    ],
-    "casts": [
-      "VersionSchemeCast"
-    ],
+    "observers": ["ApiVersionObserver", "DeprecationNoticeObserver"],
+    "rules": ["valid_version_slug", "valid_version_scheme", "valid_transformer_signature"],
+    "casts": ["VersionSchemeCast"],
     "views": [],
-    "lang": [
-      "versioning"
-    ],
-    "config": [
-      "versioning"
-    ],
-    "macros": [
-      "Blueprint::apiVersionable"
-    ],
+    "lang": ["versioning"],
+    "config": ["versioning"],
+    "macros": ["Blueprint::apiVersionable"],
     "bindings": [
       "ApiVersionRegistry",
       "VersionResolverChain",
@@ -102,10 +70,7 @@
       "DeprecationNoticeService",
       "SunsetHeaderEmitter"
     ],
-    "resources": [
-      "api-version",
-      "deprecation-notice"
-    ]
+    "resources": ["api-version", "deprecation-notice"]
   },
   "attributes": {
     "declaredBy": "versioning",
@@ -134,18 +99,55 @@
     "description": "Ordered list of version resolvers. First to yield a non-null result wins. Config in `versioning.resolvers.order`.",
     "default_order": ["url", "header", "webhook", "graphql", "query"],
     "resolvers": [
-      {"name": "url", "class": "Academorix\\Versioning\\Resolvers\\UrlPathResolver", "matches": "/api/{version}/... e.g. /api/v1/", "confidence": "high"},
-      {"name": "header", "class": "Academorix\\Versioning\\Resolvers\\ContentNegotiationResolver", "matches": "Accept: application/vnd.academorix.{version}+json", "confidence": "highest"},
-      {"name": "query", "class": "Academorix\\Versioning\\Resolvers\\QueryParamResolver", "matches": "?version={version}", "confidence": "low", "note": "Enabled only in non-production by default \u2014 for public docs + integration testing."},
-      {"name": "webhook", "class": "Academorix\\Versioning\\Resolvers\\WebhookSubscriptionResolver", "matches": "WebhookSubscription.api_version at dispatch time", "confidence": "high"},
-      {"name": "graphql", "class": "Academorix\\Versioning\\Resolvers\\GraphQlContextResolver", "matches": "@api(version: v2) directive on the operation OR schema-inferred", "confidence": "high", "note": "Feature-flag guarded via versioning.graphql_support."}
+      {
+        "name": "url",
+        "class": "Academorix\\Versioning\\Resolvers\\UrlPathResolver",
+        "matches": "/api/{version}/... e.g. /api/v1/",
+        "confidence": "high"
+      },
+      {
+        "name": "header",
+        "class": "Academorix\\Versioning\\Resolvers\\ContentNegotiationResolver",
+        "matches": "Accept: application/vnd.academorix.{version}+json",
+        "confidence": "highest"
+      },
+      {
+        "name": "query",
+        "class": "Academorix\\Versioning\\Resolvers\\QueryParamResolver",
+        "matches": "?version={version}",
+        "confidence": "low",
+        "note": "Enabled only in non-production by default — for public docs + integration testing."
+      },
+      {
+        "name": "webhook",
+        "class": "Academorix\\Versioning\\Resolvers\\WebhookSubscriptionResolver",
+        "matches": "WebhookSubscription.api_version at dispatch time",
+        "confidence": "high"
+      },
+      {
+        "name": "graphql",
+        "class": "Academorix\\Versioning\\Resolvers\\GraphQlContextResolver",
+        "matches": "@api(version: v2) directive on the operation OR schema-inferred",
+        "confidence": "high",
+        "note": "Feature-flag guarded via versioning.graphql_support."
+      }
     ]
   },
   "schemes": {
     "description": "Version scheme adapters. Selected per-ApiVersion via the `scheme` column. Determines how versions are compared for order + range queries + wildcard matches.",
     "supported": [
-      {"name": "semver", "class": "Academorix\\Versioning\\Schemes\\SemVerScheme", "example": "v1.2.3", "description": "Standard SemVer. Major bump = breaking. Wildcards: ^1.0 (any 1.x), ~1.2 (any 1.2.x)."},
-      {"name": "calver", "class": "Academorix\\Versioning\\Schemes\\CalVerScheme", "example": "2024.10.15 or 2024-10-15", "description": "CalVer. Preferred for consumer-facing APIs where release cadence matches calendar. Every release is potentially breaking."}
+      {
+        "name": "semver",
+        "class": "Academorix\\Versioning\\Schemes\\SemVerScheme",
+        "example": "v1.2.3",
+        "description": "Standard SemVer. Major bump = breaking. Wildcards: ^1.0 (any 1.x), ~1.2 (any 1.2.x)."
+      },
+      {
+        "name": "calver",
+        "class": "Academorix\\Versioning\\Schemes\\CalVerScheme",
+        "example": "2024.10.15 or 2024-10-15",
+        "description": "CalVer. Preferred for consumer-facing APIs where release cadence matches calendar. Every release is potentially breaking."
+      }
     ],
     "default": "semver"
   },

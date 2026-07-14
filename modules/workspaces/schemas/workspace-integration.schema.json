@@ -11,7 +11,7 @@
     "table": "workspace_integrations",
     "primaryKey": "id",
     "keyType": "string",
-    "keyPrefix": "intg_",
+    "keyPrefix": "wit_",
     "incrementing": false,
     "model": "Academorix\\Workspaces\\Models\\WorkspaceIntegration",
     "interface": "Academorix\\Workspaces\\Contracts\\Data\\WorkspaceIntegrationInterface",
@@ -140,7 +140,7 @@
     "updated_at"
   ],
   "properties": {
-    "id": { "type": "string", "pattern": "^intg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "id": { "type": "string", "pattern": "^wit_[0-9A-HJKMNP-TV-Z]{26}$" },
     "workspace_id": { "type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$" },
     "kind": {
       "type": "string",

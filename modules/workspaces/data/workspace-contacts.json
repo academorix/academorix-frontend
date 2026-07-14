@@ -1,6 +1,6 @@
 [
   {
-    "id": "contact_01J5R7V3A4N7D6Q8K5B2C9C0X00",
+    "id": "wct_01J5R7V3A4N7D6Q8K5B2C9C0X00",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X0",
     "kind": "owner",
     "name": "Aisha Rahman",
@@ -13,7 +13,7 @@
     "verified_at": "2019-01-01T09:00:00Z",
     "full_address": null,
     "metadata": {
-      "linked_identity_id": "ident_01J5R7V3A4N7D6Q8K5B2C9I0X00",
+      "linked_identity_id": "ide_01J5R7V3A4N7D6Q8K5B2C9I0X00",
       "review_frequency": "annual",
       "last_reviewed_at": "2026-01-15T00:00:00Z"
     },
@@ -22,7 +22,7 @@
     "deleted_at": null
   },
   {
-    "id": "contact_01J5R7V3A4N7D6Q8K5B2C9C0X01",
+    "id": "wct_01J5R7V3A4N7D6Q8K5B2C9C0X01",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X0",
     "kind": "billing",
     "name": "Finance Team",
@@ -51,7 +51,7 @@
     "deleted_at": null
   },
   {
-    "id": "contact_01J5R7V3A4N7D6Q8K5B2C9C0X02",
+    "id": "wct_01J5R7V3A4N7D6Q8K5B2C9C0X02",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X2",
     "kind": "dpo",
     "name": "Northgate DPO Office",
@@ -82,7 +82,7 @@
     "deleted_at": null
   },
   {
-    "id": "contact_01J5R7V3A4N7D6Q8K5B2C9C0X03",
+    "id": "wct_01J5R7V3A4N7D6Q8K5B2C9C0X03",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X2",
     "kind": "legal",
     "name": "Northgate Legal Counsel",
@@ -105,7 +105,7 @@
     "deleted_at": null
   },
   {
-    "id": "contact_01J5R7V3A4N7D6Q8K5B2C9C0X04",
+    "id": "wct_01J5R7V3A4N7D6Q8K5B2C9C0X04",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X2",
     "kind": "technical",
     "name": "IT Team",

@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/foundation/policies",
+  "$version": 1,
+  "title": "foundation \u2014 authorization policies",
+  "description": "Empty by design. Foundation ships zero domain entities \u2192 no gates to declare. The health + module-discovery endpoints exposed by this module (see routes.json) are gated by the `platform.foundation.*` permissions (see permissions.json) applied on route middleware, not by Eloquent policies. Marker file preserved to keep the blueprint layout consistent.",
+  "policies": []
+}

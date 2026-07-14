@@ -11,13 +11,11 @@
     "table": "invitations",
     "primaryKey": "id",
     "keyType": "string",
-    "keyPrefix": "invite_",
+    "keyPrefix": "inv_",
     "incrementing": false,
     "model": "Academorix\\Invitations\\Models\\Invitation",
     "interface": "Academorix\\Invitations\\Contracts\\Data\\InvitationInterface",
-    "implements": [
-      "Academorix\\Invitations\\Contracts\\Data\\InvitationInterface"
-    ],
+    "implements": ["Academorix\\Invitations\\Contracts\\Data\\InvitationInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -44,18 +42,9 @@
       "revoked_at": "datetime",
       "last_resent_at": "datetime"
     },
-    "appends": [
-      "is_pending",
-      "is_terminal",
-      "public_accept_url"
-    ],
-    "observers": [
-      "InvitationObserver"
-    ],
-    "hidden": [
-      "token_hash",
-      "metadata"
-    ],
+    "appends": ["is_pending", "is_terminal", "public_accept_url"],
+    "observers": ["InvitationObserver"],
+    "hidden": ["token_hash", "metadata"],
     "guarded": []
   },
   "x-database": {
@@ -65,7 +54,7 @@
         "type": "string",
         "length": 64,
         "primary": true,
-        "description": "Prefixed ULID: `invite_<26 chars>`."
+        "description": "Prefixed ULID: `inv_<26 chars>`."
       },
       "application_id": {
         "type": "string",
@@ -202,10 +191,14 @@
           "onDelete": "set null"
         }
       },
-      "declined_at": {"type": "timestamptz", "nullable": true},
-      "declined_reason": {"type": "string", "length": 200, "nullable": true},
-      "expired_at": {"type": "timestamptz", "nullable": true, "description": "Set by ExpireInvitationsJob when it observes `now > expires_at`. Distinct from `expires_at` itself (the wall-clock cutoff)."},
-      "revoked_at": {"type": "timestamptz", "nullable": true},
+      "declined_at": { "type": "timestamptz", "nullable": true },
+      "declined_reason": { "type": "string", "length": 200, "nullable": true },
+      "expired_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set by ExpireInvitationsJob when it observes `now > expires_at`. Distinct from `expires_at` itself (the wall-clock cutoff)."
+      },
+      "revoked_at": { "type": "timestamptz", "nullable": true },
       "revoked_by_user_id": {
         "type": "string",
         "length": 64,
@@ -217,8 +210,12 @@
           "onDelete": "set null"
         }
       },
-      "revoked_reason": {"type": "string", "length": 200, "nullable": true},
-      "bounce_reason": {"type": "text", "nullable": true, "description": "Mail-transport reason string (deliverability failure). Populated on transitions into `bounced`."},
+      "revoked_reason": { "type": "string", "length": 200, "nullable": true },
+      "bounce_reason": {
+        "type": "text",
+        "nullable": true,
+        "description": "Mail-transport reason string (deliverability failure). Populated on transitions into `bounced`."
+      },
       "bounce_kind": {
         "type": "string",
         "length": 16,
@@ -231,18 +228,18 @@
         "default": 0,
         "description": "How many times the invitation has been resent (via `POST .../resend`). Hard cap enforced per settings (default 3)."
       },
-      "last_resent_at": {"type": "timestamptz", "nullable": true},
+      "last_resent_at": { "type": "timestamptz", "nullable": true },
       "metadata": {
         "type": "jsonb",
         "nullable": true,
         "description": "From HasMetadata. Free-form platform notes."
       },
-      "created_by": {"type": "uuid", "nullable": true},
-      "updated_by": {"type": "uuid", "nullable": true},
-      "deleted_by": {"type": "uuid", "nullable": true},
-      "deleted_at": {"type": "timestamptz", "nullable": true},
-      "created_at": {"type": "timestamptz", "nullable": false},
-      "updated_at": {"type": "timestamptz", "nullable": false}
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
       {
@@ -304,21 +301,21 @@
     "updated_at"
   ],
   "properties": {
-    "id": {"type": "string", "pattern": "^invite_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "application_id": {"type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "workspace_id": {"type": ["string", "null"], "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "target_type": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$", "maxLength": 64},
-    "target_id": {"type": "string", "maxLength": 64},
-    "inviter_type": {"type": "string", "enum": ["user", "service_account", "system"]},
-    "inviter_id": {"type": ["string", "null"], "maxLength": 64},
-    "email": {"type": "string", "format": "email", "maxLength": 320},
-    "channel": {"type": "string", "enum": ["email", "sms", "slack", "link"]},
-    "role_key": {"type": ["string", "null"], "pattern": "^[a-z][a-z0-9_.]*$", "maxLength": 64},
-    "grants": {"type": ["object", "null"], "additionalProperties": true},
-    "message": {"type": ["string", "null"], "maxLength": 2000},
-    "token_hash": {"type": "string", "minLength": 64, "maxLength": 128},
-    "token_prefix": {"type": "string", "minLength": 8, "maxLength": 12},
-    "expires_at": {"type": "string", "format": "date-time"},
+    "id": { "type": "string", "pattern": "^inv_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "application_id": { "type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "workspace_id": { "type": ["string", "null"], "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "target_type": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$", "maxLength": 64 },
+    "target_id": { "type": "string", "maxLength": 64 },
+    "inviter_type": { "type": "string", "enum": ["user", "service_account", "system"] },
+    "inviter_id": { "type": ["string", "null"], "maxLength": 64 },
+    "email": { "type": "string", "format": "email", "maxLength": 320 },
+    "channel": { "type": "string", "enum": ["email", "sms", "slack", "link"] },
+    "role_key": { "type": ["string", "null"], "pattern": "^[a-z][a-z0-9_.]*$", "maxLength": 64 },
+    "grants": { "type": ["object", "null"], "additionalProperties": true },
+    "message": { "type": ["string", "null"], "maxLength": 2000 },
+    "token_hash": { "type": "string", "minLength": 64, "maxLength": 128 },
+    "token_prefix": { "type": "string", "minLength": 8, "maxLength": 12 },
+    "expires_at": { "type": "string", "format": "date-time" },
     "state": {
       "type": "string",
       "enum": [
@@ -333,49 +330,49 @@
         "bounced"
       ]
     },
-    "sent_at": {"type": ["string", "null"], "format": "date-time"},
-    "delivered_at": {"type": ["string", "null"], "format": "date-time"},
-    "opened_at": {"type": ["string", "null"], "format": "date-time"},
-    "clicked_at": {"type": ["string", "null"], "format": "date-time"},
-    "accepted_at": {"type": ["string", "null"], "format": "date-time"},
-    "accepted_by_user_id": {"type": ["string", "null"], "maxLength": 64},
-    "declined_at": {"type": ["string", "null"], "format": "date-time"},
-    "declined_reason": {"type": ["string", "null"], "maxLength": 200},
-    "expired_at": {"type": ["string", "null"], "format": "date-time"},
-    "revoked_at": {"type": ["string", "null"], "format": "date-time"},
-    "revoked_by_user_id": {"type": ["string", "null"], "maxLength": 64},
-    "revoked_reason": {"type": ["string", "null"], "maxLength": 200},
-    "bounce_reason": {"type": ["string", "null"]},
-    "bounce_kind": {"type": ["string", "null"], "enum": ["hard", "soft", "complaint", null]},
-    "resend_count": {"type": "integer", "minimum": 0},
-    "last_resent_at": {"type": ["string", "null"], "format": "date-time"},
-    "is_pending": {"type": "boolean", "description": "Computed. state IN pending/delivered/opened/clicked/bounced."},
-    "is_terminal": {"type": "boolean", "description": "Computed. state IN accepted/declined/expired/revoked."},
-    "public_accept_url": {"type": ["string", "null"], "format": "uri", "description": "Computed. `https://{application.central_host}/invitations/{token}` — only present at issue time when the raw token is known."},
-    "metadata": {"type": ["object", "null"], "additionalProperties": true},
-    "created_by": {"type": ["string", "null"], "format": "uuid"},
-    "updated_by": {"type": ["string", "null"], "format": "uuid"},
-    "deleted_by": {"type": ["string", "null"], "format": "uuid"},
-    "created_at": {"type": "string", "format": "date-time"},
-    "updated_at": {"type": "string", "format": "date-time"},
-    "deleted_at": {"type": ["string", "null"], "format": "date-time"}
+    "sent_at": { "type": ["string", "null"], "format": "date-time" },
+    "delivered_at": { "type": ["string", "null"], "format": "date-time" },
+    "opened_at": { "type": ["string", "null"], "format": "date-time" },
+    "clicked_at": { "type": ["string", "null"], "format": "date-time" },
+    "accepted_at": { "type": ["string", "null"], "format": "date-time" },
+    "accepted_by_user_id": { "type": ["string", "null"], "maxLength": 64 },
+    "declined_at": { "type": ["string", "null"], "format": "date-time" },
+    "declined_reason": { "type": ["string", "null"], "maxLength": 200 },
+    "expired_at": { "type": ["string", "null"], "format": "date-time" },
+    "revoked_at": { "type": ["string", "null"], "format": "date-time" },
+    "revoked_by_user_id": { "type": ["string", "null"], "maxLength": 64 },
+    "revoked_reason": { "type": ["string", "null"], "maxLength": 200 },
+    "bounce_reason": { "type": ["string", "null"] },
+    "bounce_kind": { "type": ["string", "null"], "enum": ["hard", "soft", "complaint", null] },
+    "resend_count": { "type": "integer", "minimum": 0 },
+    "last_resent_at": { "type": ["string", "null"], "format": "date-time" },
+    "is_pending": {
+      "type": "boolean",
+      "description": "Computed. state IN pending/delivered/opened/clicked/bounced."
+    },
+    "is_terminal": {
+      "type": "boolean",
+      "description": "Computed. state IN accepted/declined/expired/revoked."
+    },
+    "public_accept_url": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "Computed. `https://{application.central_host}/invitations/{token}` — only present at issue time when the raw token is known."
+    },
+    "metadata": { "type": ["object", "null"], "additionalProperties": true },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
   },
   "additionalProperties": false,
   "x-wire": {
     "envelope": "spatie-data",
     "wrap": "data",
     "mapper": "SnakeCaseMapper",
-    "hidden": [
-      "token_hash",
-      "metadata",
-      "created_by",
-      "updated_by",
-      "deleted_by"
-    ],
-    "computed": [
-      "is_pending",
-      "is_terminal",
-      "public_accept_url"
-    ]
+    "hidden": ["token_hash", "metadata", "created_by", "updated_by", "deleted_by"],
+    "computed": ["is_pending", "is_terminal", "public_accept_url"]
   }
 }

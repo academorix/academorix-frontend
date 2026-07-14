@@ -15,15 +15,11 @@
     "multi-channel"
   ],
   "priority": 25,
-  "providers": [
-    "Academorix\\Invitations\\Providers\\InvitationsServiceProvider"
-  ],
+  "providers": ["Academorix\\Invitations\\Providers\\InvitationsServiceProvider"],
   "files": [],
-  "dependencies": [
-    "foundation",
-    "workspaces"
-  ],
-  "extendedBy": [
+  "dependencies": ["foundation", "workspaces"],
+  "extendedBy": [],
+  "planned_consumers": [
     "user",
     "auth",
     "organization",
@@ -35,16 +31,9 @@
     "compliance"
   ],
   "contributes": {
-    "traits": [
-      "HasInvitations",
-      "BelongsToInvitation"
-    ],
-    "blueprints": [
-      "invitable"
-    ],
-    "middleware": [
-      "throttle.invitations"
-    ],
+    "traits": ["HasInvitations", "BelongsToInvitation"],
+    "blueprints": ["invitable"],
+    "middleware": ["throttle.invitations"],
     "events": [
       "InvitationSent",
       "InvitationDelivered",
@@ -57,9 +46,7 @@
       "InvitationBounced",
       "InvitationResent"
     ],
-    "policies": [
-      "InvitationPolicy"
-    ],
+    "policies": ["InvitationPolicy"],
     "hooks": [],
     "commands": [
       "invitations:expire-stale",
@@ -80,37 +67,20 @@
       "InvitationAcceptedNotification",
       "InvitationBouncedNotification"
     ],
-    "broadcasts": [
-      "workspace.{id}.invitations"
-    ],
-    "observers": [
-      "InvitationObserver"
-    ],
+    "broadcasts": ["workspace.{id}.invitations"],
+    "observers": ["InvitationObserver"],
     "rules": [
       "unique_pending_invitation",
       "invitation_target_registered",
       "invitation_token_format"
     ],
-    "casts": [
-      "InvitationTargetCast",
-      "InvitationInviterCast"
-    ],
-    "views": [
-      "invitations::email.invitation"
-    ],
-    "lang": [
-      "invitations"
-    ],
-    "config": [
-      "invitations"
-    ],
+    "casts": ["InvitationTargetCast", "InvitationInviterCast"],
+    "views": ["invitations::email.invitation"],
+    "lang": ["invitations"],
+    "config": ["invitations"],
     "macros": [],
-    "bindings": [
-      "InvitationTargetRegistry"
-    ],
-    "resources": [
-      "invitation"
-    ]
+    "bindings": ["InvitationTargetRegistry"],
+    "resources": ["invitation"]
   },
   "hosts": {
     "central": {

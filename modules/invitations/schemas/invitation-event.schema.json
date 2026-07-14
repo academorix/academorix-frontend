@@ -11,13 +11,11 @@
     "table": "invitation_events",
     "primaryKey": "id",
     "keyType": "string",
-    "keyPrefix": "invevt_",
+    "keyPrefix": "ive_",
     "incrementing": false,
     "model": "Academorix\\Invitations\\Models\\InvitationEvent",
     "interface": "Academorix\\Invitations\\Contracts\\Data\\InvitationEventInterface",
-    "implements": [
-      "Academorix\\Invitations\\Contracts\\Data\\InvitationEventInterface"
-    ],
+    "implements": ["Academorix\\Invitations\\Contracts\\Data\\InvitationEventInterface"],
     "traits": [
       "HasFactory",
       "HasUlids",
@@ -32,9 +30,7 @@
     },
     "appends": [],
     "observers": [],
-    "hidden": [
-      "metadata"
-    ],
+    "hidden": ["metadata"],
     "guarded": []
   },
   "x-database": {
@@ -44,7 +40,7 @@
         "type": "string",
         "length": 64,
         "primary": true,
-        "description": "Prefixed ULID: `invevt_<26 chars>`."
+        "description": "Prefixed ULID: `ive_<26 chars>`."
       },
       "invitation_id": {
         "type": "string",
@@ -185,19 +181,12 @@
       }
     ]
   },
-  "required": [
-    "id",
-    "invitation_id",
-    "application_id",
-    "event",
-    "occurred_at",
-    "created_at"
-  ],
+  "required": ["id", "invitation_id", "application_id", "event", "occurred_at", "created_at"],
   "properties": {
-    "id": {"type": "string", "pattern": "^invevt_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "invitation_id": {"type": "string", "pattern": "^invite_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "application_id": {"type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "workspace_id": {"type": ["string", "null"], "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "id": { "type": "string", "pattern": "^ive_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "invitation_id": { "type": "string", "pattern": "^inv_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "application_id": { "type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "workspace_id": { "type": ["string", "null"], "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$" },
     "event": {
       "type": "string",
       "enum": [
@@ -215,19 +204,25 @@
         "send_failed"
       ]
     },
-    "occurred_at": {"type": "string", "format": "date-time"},
-    "actor_type": {"type": ["string", "null"], "enum": ["user", "service_account", "system", "invitee", "mail_transport", "webhook", null]},
-    "actor_id": {"type": ["string", "null"], "maxLength": 64},
-    "ip_address": {"type": ["string", "null"], "description": "IPv4 or IPv6."},
-    "user_agent": {"type": ["string", "null"], "maxLength": 500},
-    "country_code": {"type": ["string", "null"], "pattern": "^[A-Z]{2}$"},
-    "city": {"type": ["string", "null"], "maxLength": 100},
-    "transport": {"type": ["string", "null"], "enum": ["sendgrid", "ses", "postmark", "mailgun", "twilio", "slack", null]},
-    "signal_id": {"type": ["string", "null"], "maxLength": 200},
-    "error_code": {"type": ["string", "null"], "maxLength": 64},
-    "error_message": {"type": ["string", "null"]},
-    "metadata": {"type": ["object", "null"], "additionalProperties": true},
-    "created_at": {"type": "string", "format": "date-time"}
+    "occurred_at": { "type": "string", "format": "date-time" },
+    "actor_type": {
+      "type": ["string", "null"],
+      "enum": ["user", "service_account", "system", "invitee", "mail_transport", "webhook", null]
+    },
+    "actor_id": { "type": ["string", "null"], "maxLength": 64 },
+    "ip_address": { "type": ["string", "null"], "description": "IPv4 or IPv6." },
+    "user_agent": { "type": ["string", "null"], "maxLength": 500 },
+    "country_code": { "type": ["string", "null"], "pattern": "^[A-Z]{2}$" },
+    "city": { "type": ["string", "null"], "maxLength": 100 },
+    "transport": {
+      "type": ["string", "null"],
+      "enum": ["sendgrid", "ses", "postmark", "mailgun", "twilio", "slack", null]
+    },
+    "signal_id": { "type": ["string", "null"], "maxLength": 200 },
+    "error_code": { "type": ["string", "null"], "maxLength": 64 },
+    "error_message": { "type": ["string", "null"] },
+    "metadata": { "type": ["object", "null"], "additionalProperties": true },
+    "created_at": { "type": "string", "format": "date-time" }
   },
   "additionalProperties": false,
   "x-wire": {

@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/notifications-in-app/schedule",
+  "$version": 1,
+  "title": "notifications-in-app \u2014 scheduled tasks",
+  "description": "No transport-specific scheduled tasks. Row retention + housekeeping is owned by the parent `notifications` module which schedules PurgeExpiredDeliveriesJob nightly. Marker file with an explanation.",
+  "schedule": []
+}

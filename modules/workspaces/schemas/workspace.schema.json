@@ -216,7 +216,7 @@
     },
     "primary_branding_id": {
       "type": ["string", "null"],
-      "pattern": "^brand_[0-9A-HJKMNP-TV-Z]{26}$"
+      "pattern": "^brd_[0-9A-HJKMNP-TV-Z]{26}$"
     },
     "slug": {
       "type": "string",

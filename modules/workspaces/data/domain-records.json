@@ -1,6 +1,6 @@
 [
   {
-    "id": "dnsr_01J5R7V3A4N7D6Q8K5B2C9DR010",
+    "id": "drc_01J5R7V3A4N7D6Q8K5B2C9DR010",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X2",
     "domain_id": "dom_01J5R7V3A4N7D6Q8K5B2C9D00X3",
     "kind": "CNAME",
@@ -22,7 +22,7 @@
     "updated_at": "2026-07-14T05:00:00Z"
   },
   {
-    "id": "dnsr_01J5R7V3A4N7D6Q8K5B2C9DR011",
+    "id": "drc_01J5R7V3A4N7D6Q8K5B2C9DR011",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X2",
     "domain_id": "dom_01J5R7V3A4N7D6Q8K5B2C9D00X3",
     "kind": "CNAME",
@@ -44,7 +44,7 @@
     "updated_at": "2026-07-14T05:00:00Z"
   },
   {
-    "id": "dnsr_01J5R7V3A4N7D6Q8K5B2C9DR012",
+    "id": "drc_01J5R7V3A4N7D6Q8K5B2C9DR012",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X2",
     "domain_id": "dom_01J5R7V3A4N7D6Q8K5B2C9D00X3",
     "kind": "TXT",
@@ -67,7 +67,7 @@
     "updated_at": "2026-07-14T05:00:00Z"
   },
   {
-    "id": "dnsr_01J5R7V3A4N7D6Q8K5B2C9DR013",
+    "id": "drc_01J5R7V3A4N7D6Q8K5B2C9DR013",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X2",
     "domain_id": "dom_01J5R7V3A4N7D6Q8K5B2C9D00X3",
     "kind": "CAA",

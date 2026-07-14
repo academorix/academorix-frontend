@@ -1,0 +1,46 @@
+{
+  "id": "academorix://modules/notifications-in-app/compliance",
+  "$version": 1,
+  "title": "notifications-in-app \u2014 compliance evidence",
+  "description": "In-app notifications carry the same content categories as the mail transport but travel over authenticated WebSocket / REST rather than SMTP. Compliance surface is (a) consent tier respected (marketing categories require opt-in), (b) auditability of delivery + read state, (c) tenant isolation on the broadcast channel.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 6(1)(a)",
+          "principle": "consent",
+          "evidence": "Marketing-category deliveries respect the same NotificationPreference row as mail/push/sms \u2014 no separate opt-in for in-app because the user is already inside the authenticated session. When category.consent_tier=marketing_opt_in, the resolver still checks the preference before writing the delivery row."
+        },
+        {
+          "article": "Art. 6(1)(b)",
+          "principle": "contract",
+          "evidence": "Transactional in-app deliveries (billing invoices, security alerts) fire regardless of preference \u2014 legal basis is the workspace contract."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security of processing",
+          "evidence": "Broadcast auth middleware (see middleware.json) verifies the authenticated Sanctum session against the channel name. A user cannot subscribe to another user's private channel."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.8",
+          "principle": "restricting unauthorized access",
+          "evidence": "Every REST endpoint requires notifications.viewOwn + workspace-scope resolution. Delivery rows are indexed on (workspace_id, user_id) to make cross-workspace leaks impossible."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "Health probe on broadcast connectivity + WebSocket delivery lag feeds alerting."
+        }
+      ]
+    }
+  },
+  "notes": [
+    "The delivery + read state audit trail is co-owned with the base notifications module \u2014 there is no separate audit-log surface for the in-app transport."
+  ]
+}

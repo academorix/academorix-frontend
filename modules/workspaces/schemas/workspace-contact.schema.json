@@ -11,7 +11,7 @@
     "table": "workspace_contacts",
     "primaryKey": "id",
     "keyType": "string",
-    "keyPrefix": "contact_",
+    "keyPrefix": "wct_",
     "incrementing": false,
     "model": "Academorix\\Workspaces\\Models\\WorkspaceContact",
     "interface": "Academorix\\Workspaces\\Contracts\\Data\\WorkspaceContactInterface",
@@ -116,7 +116,7 @@
   },
   "required": ["id", "workspace_id", "kind", "name", "email", "created_at", "updated_at"],
   "properties": {
-    "id": { "type": "string", "pattern": "^contact_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "id": { "type": "string", "pattern": "^wct_[0-9A-HJKMNP-TV-Z]{26}$" },
     "workspace_id": { "type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$" },
     "kind": {
       "type": "string",

@@ -1,0 +1,39 @@
+{
+  "id": "academorix://modules/notifications-sms/middleware",
+  "$version": 1,
+  "title": "notifications-sms \u2014 HTTP middleware",
+  "description": "Middleware for the SMS-related HTTP surface (opt-out webhooks, opt-in confirmation endpoint, phone-number verification). The transport itself (SMS delivery to Twilio / MessageBird / etc) is server-to-provider outbound and does not need middleware; the callback endpoints do.",
+  "middleware": [
+    {
+      "alias": "notifications-sms.verify_provider_webhook",
+      "class": "Academorix\\NotificationsSms\\Http\\Middleware\\VerifyProviderWebhookSignature",
+      "priority": 55,
+      "description": "Applied to POST /api/v1/notifications/sms/callbacks/{provider}. Verifies the provider-specific HMAC / X-Signature header (Twilio: X-Twilio-Signature; MessageBird: MessageBird-Signature). Rejects with 401 on signature mismatch \u2014 prevents forged status callbacks.",
+      "auto_applied": false,
+      "auto_applied_to": []
+    },
+    {
+      "alias": "notifications-sms.throttle_opt_in_verification",
+      "class": "Academorix\\NotificationsSms\\Http\\Middleware\\ThrottleOptInVerification",
+      "priority": 60,
+      "description": "Per-phone-number rate limit on opt-in code verification (5/hour, 20/day). Prevents brute-forcing the 6-digit verification code. Uses Laravel's RateLimiter facade keyed by hashed phone number.",
+      "auto_applied": true,
+      "auto_applied_to": ["notifications-sms-verify"]
+    },
+    {
+      "alias": "notifications-sms.enforce_stop_keyword",
+      "class": "Academorix\\NotificationsSms\\Http\\Middleware\\EnforceStopKeywordCompliance",
+      "priority": 65,
+      "description": "TCPA / GDPR compliance middleware. Applied at the ChannelResolver level (not HTTP). Checks the incoming SMS body for STOP / UNSTOP / HELP keywords BEFORE delivery + short-circuits with the required auto-reply. Required by US TCPA + EU e-Privacy directive.",
+      "auto_applied": true,
+      "auto_applied_to": ["notifications-sms-inbound"]
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::response.envelope" }
+  ],
+  "notes": [
+    "The inbound-SMS surface (STOP handling) does NOT sit on HTTP middleware \u2014 it hooks into the ChannelResolver's dispatch pipeline. Listed here for discoverability so ops can find every SMS-related gate in one place."
+  ]
+}

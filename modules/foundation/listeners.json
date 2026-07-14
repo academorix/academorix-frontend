@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/foundation/listeners",
+  "$version": 1,
+  "title": "foundation \u2014 subscribed events",
+  "description": "Empty by design. Foundation is Wave 0 infrastructure \u2014 it publishes the primitive events (ApplicationBooted, ModuleDiscovered, ModuleBooted, HealthProbeFailed, ConfigReloaded) that every downstream module listens to. It does not itself subscribe to any events because the events it might subscribe to would come from modules that boot AFTER it. Marker file preserved so the blueprint layout stays consistent and downstream tooling (module inspector, dependency graph) can rely on the file's presence.",
+  "listeners": []
+}

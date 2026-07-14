@@ -1,6 +1,6 @@
 [
   {
-    "id": "invite_01K3R7V3A4N7D6Q8K5B2C9INV01",
+    "id": "inv_01K3R7V3A4N7D6Q8K5B2C9INV01",
     "application_id": "app_01J5R7V3A4N7D6Q8K5B2C9E001",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X1",
     "target_type": "workspace",
@@ -49,7 +49,7 @@
     "deleted_at": null
   },
   {
-    "id": "invite_01K3R7V3A4N7D6Q8K5B2C9INV02",
+    "id": "inv_01K3R7V3A4N7D6Q8K5B2C9INV02",
     "application_id": "app_01J5R7V3A4N7D6Q8K5B2C9E002",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X2",
     "target_type": "workspace",
@@ -99,7 +99,7 @@
     "deleted_at": null
   },
   {
-    "id": "invite_01K3R7V3A4N7D6Q8K5B2C9INV03",
+    "id": "inv_01K3R7V3A4N7D6Q8K5B2C9INV03",
     "application_id": "app_01J5R7V3A4N7D6Q8K5B2C9E001",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X0",
     "target_type": "workspace",
@@ -143,7 +143,7 @@
     "deleted_at": null
   },
   {
-    "id": "invite_01K3R7V3A4N7D6Q8K5B2C9INV04",
+    "id": "inv_01K3R7V3A4N7D6Q8K5B2C9INV04",
     "application_id": "app_01J5R7V3A4N7D6Q8K5B2C9E002",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X2",
     "target_type": "workspace",
@@ -193,7 +193,7 @@
     "deleted_at": null
   },
   {
-    "id": "invite_01K3R7V3A4N7D6Q8K5B2C9INV05",
+    "id": "inv_01K3R7V3A4N7D6Q8K5B2C9INV05",
     "application_id": "app_01J5R7V3A4N7D6Q8K5B2C9E001",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X0",
     "target_type": "workspace",
@@ -240,7 +240,7 @@
     "deleted_at": null
   },
   {
-    "id": "invite_01K3R7V3A4N7D6Q8K5B2C9INV06",
+    "id": "inv_01K3R7V3A4N7D6Q8K5B2C9INV06",
     "application_id": "app_01J5R7V3A4N7D6Q8K5B2C9E001",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X3",
     "target_type": "workspace",
@@ -286,7 +286,7 @@
     "deleted_at": null
   },
   {
-    "id": "invite_01K3R7V3A4N7D6Q8K5B2C9INV07",
+    "id": "inv_01K3R7V3A4N7D6Q8K5B2C9INV07",
     "application_id": "app_01J5R7V3A4N7D6Q8K5B2C9E001",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X1",
     "target_type": "workspace",
@@ -330,7 +330,7 @@
     "deleted_at": null
   },
   {
-    "id": "invite_01K3R7V3A4N7D6Q8K5B2C9INV08",
+    "id": "inv_01K3R7V3A4N7D6Q8K5B2C9INV08",
     "application_id": "app_01J5R7V3A4N7D6Q8K5B2C9E001",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X3",
     "target_type": "workspace",

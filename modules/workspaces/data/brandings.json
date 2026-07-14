@@ -1,6 +1,6 @@
 [
   {
-    "id": "brand_01J5R7V3A4N7D6Q8K5B2C9BX00",
+    "id": "brd_01J5R7V3A4N7D6Q8K5B2C9BX00",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X0",
     "domain_id": null,
     "name": "Default",
@@ -28,7 +28,7 @@
     "deleted_at": null
   },
   {
-    "id": "brand_01J5R7V3A4N7D6Q8K5B2C9BX01",
+    "id": "brd_01J5R7V3A4N7D6Q8K5B2C9BX01",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X1",
     "domain_id": null,
     "name": "Default",
@@ -56,7 +56,7 @@
     "deleted_at": null
   },
   {
-    "id": "brand_01J5R7V3A4N7D6Q8K5B2C9BX02",
+    "id": "brd_01J5R7V3A4N7D6Q8K5B2C9BX02",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X2",
     "domain_id": "dom_01J5R7V3A4N7D6Q8K5B2C9D00X3",
     "name": "Northgate Public",
@@ -88,7 +88,7 @@
     "deleted_at": null
   },
   {
-    "id": "brand_01J5R7V3A4N7D6Q8K5B2C9BX03",
+    "id": "brd_01J5R7V3A4N7D6Q8K5B2C9BX03",
     "workspace_id": "wsp_01J5R7V3A4N7D6Q8K5B2C9E1X3",
     "domain_id": null,
     "name": "Default",

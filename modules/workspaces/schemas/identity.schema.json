@@ -11,7 +11,7 @@
     "table": "identities",
     "primaryKey": "id",
     "keyType": "string",
-    "keyPrefix": "ident_",
+    "keyPrefix": "ide_",
     "incrementing": false,
     "model": "Academorix\\Workspaces\\Models\\Identity",
     "interface": "Academorix\\Workspaces\\Contracts\\Data\\IdentityInterface",
@@ -42,7 +42,7 @@
         "type": "string",
         "length": 64,
         "primary": true,
-        "description": "Prefixed ULID: `ident_<26 chars>`."
+        "description": "Prefixed ULID: `ide_<26 chars>`."
       },
       "application_id": {
         "type": "string",
@@ -128,7 +128,7 @@
   },
   "required": ["id", "application_id", "email", "created_at", "updated_at"],
   "properties": {
-    "id": { "type": "string", "pattern": "^ident_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "id": { "type": "string", "pattern": "^ide_[0-9A-HJKMNP-TV-Z]{26}$" },
     "application_id": { "type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
     "email": { "type": "string", "format": "email", "maxLength": 320 },
     "email_verified_at": { "type": ["string", "null"], "format": "date-time" },

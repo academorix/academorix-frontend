@@ -1,0 +1,15 @@
+{
+  "id": "academorix://modules/notifications-in-app/policies",
+  "$version": 1,
+  "title": "notifications-in-app \u2014 authorization policies",
+  "description": "The transport reuses `notifications::NotificationDeliveryPolicy` for gating access to individual delivery rows \u2014 view/mark-read/dismiss all defer to the parent policy since the row is co-owned. This file declares transport-specific policies ONLY: nothing today.",
+  "policies": [],
+  "reused_from_parent": [
+    {
+      "model": "notifications::NotificationDelivery",
+      "policy": "notifications::NotificationDeliveryPolicy",
+      "abilities_used": ["view", "markRead", "dismiss"],
+      "notes": "The abilities are declared in the parent policy so that mail / push / sms transports get consistent gating. This module invokes them from its own controllers via $this->authorize(...) rather than duplicating the policy class."
+    }
+  ]
+}

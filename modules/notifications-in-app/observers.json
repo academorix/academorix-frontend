@@ -1,0 +1,21 @@
+{
+  "id": "academorix://modules/notifications-in-app/observers",
+  "$version": 1,
+  "title": "notifications-in-app \u2014 Eloquent observers",
+  "description": "Observers hooking the shared `notifications::NotificationDelivery` table. This module does not own its own model \u2014 the base `notifications` module owns NotificationDelivery, and this transport reacts to lifecycle changes on rows where `channel='in_app'`.",
+  "observers": [
+    {
+      "model": "notifications::NotificationDelivery",
+      "class": "Academorix\\NotificationsInApp\\Observers\\InAppDeliveryObserver",
+      "guard": "channel = 'in_app'",
+      "hooks": {
+        "created": "When a NotificationDelivery with channel=in_app is created, queue the WebSocket broadcast for its recipient + increment the per-user unread-count cache.",
+        "updated": "When read_at transitions from null \u2192 non-null: fire InAppDeliveryRead + decrement the unread-count cache. When dismissed_at transitions: fire InAppDeliveryDismissed."
+      },
+      "notes": [
+        "Only ONE observer instance runs per row change (Laravel's built-in event dispatch). The guard `channel = 'in_app'` is enforced inside the observer body (early return on non-in-app channels) so the base notifications module still owns unified state transitions.",
+        "The observer NEVER writes back to the model \u2014 all writes go through service methods to keep audit-trail attribution consistent."
+      ]
+    }
+  ]
+}

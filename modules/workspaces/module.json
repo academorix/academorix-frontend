@@ -3,7 +3,7 @@
   "name": "workspaces",
   "alias": "workspaces",
   "namespace": "Academorix\\Workspaces",
-  "description": "Multi-workspace substrate. Owns the Application (product container), Workspace (workspace), BusinessType (config catalogue), Domain, DomainRecord, Branding, Identity (cross-workspace person), WorkspaceContact (billing / legal / technical / DPO / security), and WorkspaceIntegration (SSO / SCIM stub for v2). Publishes the BelongsToWorkspace + BelongsToWorkspaceOptional + BelongsToApplication traits, the ->workspaceable() / ->applicable() migration macros, workspaces hooks, and the resolve.workspace + workspace.user middleware every downstream module composes. NO third-party workspaces dependency \u2014 we ship our own WorkspaceResolver + HostResolver + Domain contract (dropped stancl/workspaces at v0.2).",
+  "description": "Multi-workspace substrate. Owns the Application (product container), Workspace (workspace), BusinessType (config catalogue), Domain, DomainRecord, Branding, Identity (cross-workspace person), WorkspaceContact (billing / legal / technical / DPO / security), and WorkspaceIntegration (SSO / SCIM stub for v2). Publishes the BelongsToWorkspace + BelongsToWorkspaceOptional + BelongsToApplication traits, the ->workspaceable() / ->applicable() migration macros, workspaces hooks, and the resolve.workspace + workspace.user middleware every downstream module composes. NO third-party workspaces dependency — we ship our own WorkspaceResolver + HostResolver + Domain contract (dropped stancl/workspaces at v0.2).",
   "keywords": [
     "workspaces",
     "workspace",
@@ -23,23 +23,18 @@
   "providers": ["Academorix\\Workspaces\\Providers\\WorkspacesServiceProvider"],
   "files": [],
   "dependencies": ["foundation"],
-  "extendedBy": [
+  "extendedBy": ["audit", "settings", "activity", "notifications", "subscription", "entitlements"],
+  "planned_consumers": [
     "access",
-    "audit",
-    "settings",
     "feature-flag",
     "compliance",
     "user",
     "auth",
-    "activity",
-    "notifications",
     "organization",
     "region",
     "branch",
     "facilities",
     "teams",
-    "subscription",
-    "entitlements",
     "sports"
   ],
   "contributes": {

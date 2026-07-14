@@ -1,0 +1,29 @@
+{
+  "id": "academorix://modules/notifications-push/middleware",
+  "$version": 1,
+  "title": "notifications-push \u2014 HTTP middleware",
+  "description": "Middleware for the mobile-device registration surface. The transport ITSELF (push delivery to FCM / APNs) is server-to-provider outbound and does not need middleware; only the endpoints that manage device tokens do.",
+  "middleware": [
+    {
+      "alias": "notifications-push.verify_device_token",
+      "class": "Academorix\\NotificationsPush\\Http\\Middleware\\VerifyDeviceTokenSignature",
+      "priority": 55,
+      "description": "Applied to POST /api/v1/notifications/push/devices. Verifies the platform-attested signature (Apple DeviceCheck / Android SafetyNet) on the incoming device token so a hostile client cannot register arbitrary tokens against another user. Rejects with 401 on signature mismatch.",
+      "auto_applied": false,
+      "auto_applied_to": []
+    },
+    {
+      "alias": "notifications-push.throttle_registration",
+      "class": "Academorix\\NotificationsPush\\Http\\Middleware\\ThrottlePushRegistration",
+      "priority": 60,
+      "description": "Per-user rate limit on device-token registration (10/hour, 30/day). Prevents token-registration flood attacks. Uses Laravel's RateLimiter facade.",
+      "auto_applied": true,
+      "auto_applied_to": ["notifications-push-api"]
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "auth::sanctum" }
+  ]
+}

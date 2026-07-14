@@ -3,7 +3,7 @@
   "name": "notifications",
   "alias": "notifications",
   "namespace": "Academorix\\Notifications",
-  "description": "Notification substrate core. Owns the universal delivery record (Notification, NotificationDelivery), the versioned template registry (NotificationTemplate), the per-user preference resolver (NotificationPreference), the module-fed category registry (NotificationCategory), and the digest scheduler (NotificationDigest). Channel-agnostic \u2014 provider transports live in sibling modules (notifications-in-app, notifications-mail, notifications-push, notifications-sms). Callers ALWAYS go through the single dispatch entry point (`$user->notify(...)` or `Notifications::dispatch(...)`) which emits an event-carried-state payload to the send queue; channel modules subscribe to that event and translate to their transport. That discipline keeps the door open to extract to a Node microservice later without a rewrite \u2014 the same event schema would just point at Redis Streams instead of the local queue.",
+  "description": "Notification substrate core. Owns the universal delivery record (Notification, NotificationDelivery), the versioned template registry (NotificationTemplate), the per-user preference resolver (NotificationPreference), the module-fed category registry (NotificationCategory), and the digest scheduler (NotificationDigest). Channel-agnostic — provider transports live in sibling modules (notifications-in-app, notifications-mail, notifications-push, notifications-sms). Callers ALWAYS go through the single dispatch entry point (`$user->notify(...)` or `Notifications::dispatch(...)`) which emits an event-carried-state payload to the send queue; channel modules subscribe to that event and translate to their transport. That discipline keeps the door open to extract to a Node microservice later without a rewrite — the same event schema would just point at Redis Streams instead of the local queue.",
   "keywords": [
     "notifications",
     "delivery-log",
@@ -26,6 +26,10 @@
     "notifications-push",
     "notifications-sms",
     "invitations",
+    "subscription",
+    "entitlements"
+  ],
+  "planned_consumers": [
     "auth",
     "user",
     "access",
@@ -35,8 +39,6 @@
     "facilities",
     "teams",
     "sports",
-    "subscription",
-    "entitlements",
     "compliance",
     "safeguarding"
   ],
@@ -120,11 +122,11 @@
   "microserviceReadiness": {
     "description": "This core is designed so a future extraction to a NestJS microservice is a port, not a rewrite. Five disciplines every consumer honours.",
     "disciplines": [
-      "Single dispatch entry point (`Notifications::dispatch()`) \u2014 no module imports from notifications-mail/-sms/-push/-in-app directly.",
-      "Event-carried state \u2014 every dispatch payload includes recipient (id, email, phone, name, locale, timezone) + workspace branding (logo, sender, postal_address). No recipient lookups by the receiver.",
-      "No cross-module DB reads \u2014 consumers subscribe to NotificationDelivered/Failed events + write their own state.",
-      "Channel modules are event-driven \u2014 respond to NotificationDispatched, emit channel-scoped completion events. Never invoked directly.",
-      "OpenAPI spec for every HTTP surface \u2014 inbox, preferences, templates, subscriptions. Same spec becomes the NestJS contract on extraction."
+      "Single dispatch entry point (`Notifications::dispatch()`) — no module imports from notifications-mail/-sms/-push/-in-app directly.",
+      "Event-carried state — every dispatch payload includes recipient (id, email, phone, name, locale, timezone) + workspace branding (logo, sender, postal_address). No recipient lookups by the receiver.",
+      "No cross-module DB reads — consumers subscribe to NotificationDelivered/Failed events + write their own state.",
+      "Channel modules are event-driven — respond to NotificationDispatched, emit channel-scoped completion events. Never invoked directly.",
+      "OpenAPI spec for every HTTP surface — inbox, preferences, templates, subscriptions. Same spec becomes the NestJS contract on extraction."
     ],
     "triggerConditions": [
       "Notification volume exceeds ~100k/day",
