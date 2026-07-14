@@ -1,0 +1,43 @@
+{
+  "id": "academorix://modules/localization/macros",
+  "$version": 1,
+  "title": "localization \u2014 published macros",
+  "description": "Blueprint macro paired with the `HasTranslations` trait for content-translation storage. Registered by LocalizationServiceProvider::boot() during the framework boot phase so every migration can call `$table->translations()` regardless of module priority.",
+  "namespace_note": "Blueprint macros extend `Illuminate\\Database\\Schema\\Blueprint`. The macro is registered on the framework blueprint class \u2014 no localization dependency is added to consumers because Blueprint is a Laravel core class.",
+  "macros": [
+    {
+      "name": "Blueprint::translations",
+      "signature": "Blueprint::translations(string $column = 'translations'): ColumnDefinition",
+      "adds": {
+        "columns": [
+          {
+            "name": "translations",
+            "type": "jsonb",
+            "default": "'{}'::jsonb",
+            "nullable": false,
+            "description": "Content-translation JSONB blob. Shape: `{ locale: { field: value } }`. Read + written by the `HasTranslations` trait's accessors, which wrap `spatie/laravel-translatable` under the hood + layer on our attribute-driven metadata (#[Translatable]) + WorkspaceLocale-aware fallback."
+          }
+        ],
+        "indexes": []
+      },
+      "description": "Adds the single JSONB column that carries per-locale translations of content fields on any model composing `Academorix\\Localization\\Concerns\\HasTranslations`. The macro is IDEMPOTENT and safe to call in either `create` or `table` migrations.",
+      "boot_order_note": "Registered by `LocalizationServiceProvider::boot()`. Because Laravel loads every ServiceProvider's `boot()` before running any migration, the macro is available to every migration regardless of the localization module's priority (66). Foundation-priority migrations (Wave 0-2) don't use this macro today, so the ordering is safe by construction.",
+      "usage_example": "Schema::create('plans', function (Blueprint $t) {\n    $t->string('id', 64)->primary();\n    $t->workspaceable();\n    $t->string('name_slug');\n    $t->translations();          // \u2190 adds the `translations` JSONB column\n    $t->timestamps();\n});",
+      "read_shape": "Trait accessors return the value for the active locale. Direct DB shape (never exposed on the wire by default): {\n  \"en\": {\"name\": \"Team\", \"description\": \"For growing organisations\"},\n  \"fr\": {\"name\": \"\u00c9quipe\", \"description\": \"Pour les organisations en croissance\"},\n  \"ar\": {\"name\": \"\u0627\u0644\u0641\u0631\u064a\u0642\", \"description\": \"...\"}\n}",
+      "wire_shape": "Standard: `data.name = 'Team'` (active-locale flat scalar). Admin editors request `?include=translations` to get the full `data.translations` blob for round-tripping.",
+      "gin_index_note": "For workspaces that query translations by locale (rare), consumers may add a GIN index on the JSONB column via a follow-up migration:\n`$t->index([DB::raw(\"(translations->'$locale')\")], 'plans_translations_locale_gin', 'gin');`\nDefault behaviour is no index \u2014 reads always target the active locale via in-process accessor, no query planner participation needed.",
+      "companion": {
+        "trait": "Academorix\\Localization\\Concerns\\HasTranslations",
+        "attribute": "Academorix\\Localization\\Attributes\\Translatable",
+        "underlying_package": "spatie/laravel-translatable ^6.0"
+      }
+    }
+  ],
+  "registered_by": "Academorix\\Localization\\Providers\\LocalizationServiceProvider::boot()",
+  "registration_order": "Runs during the standard Laravel boot phase, BEFORE any migration is invoked. Priority ordering between modules only affects boot() invocation order, not macro availability to migrations \u2014 all providers finish booting before `php artisan migrate` runs the first CREATE TABLE.",
+  "migrated_from": {
+    "was_in": "foundation",
+    "date": "2026-07-15",
+    "reason": "Trait + paired macro co-location convention. Foundation owns cross-cutting infrastructure traits (HasSystemFlag, HasUserstamps, HasAudit, etc) + their paired macros. `HasTranslations` is a domain-specific trait (content translation), so its paired macro belongs alongside the trait in localization."
+  }
+}

@@ -121,52 +121,12 @@ Schema::create('branches', function (Blueprint $t) {
 });
 ```
 
-#### `Blueprint::translations()` — content-translation JSONB column
-
-Models with per-row translated content (see the `localization` module) compose
-the `Localization\Concerns\HasTranslations` trait + declare `#[Translatable]` on
-each translated property. The paired migration macro adds the single JSONB
-column that carries every locale's value:
-
-```php
-Schema::create('plans', function (Blueprint $t) {
-    $t->string('id', 64)->primary();
-    $t->workspaceable();
-    $t->string('slug')->unique();
-    $t->translations();          // → adds `translations JSONB DEFAULT '{}'`
-    $t->timestamps();
-});
-```
-
-The DB shape is `{ locale_code: { field_name: value } }` — one row per model
-regardless of locale count. The trait wraps `spatie/laravel-translatable ^6.0`
-so accessor / mutator / fallback semantics are the vetted implementation; our
-subclass adds attribute-based property discovery + `TranslationWritten` event +
-workspace-aware fallback chain.
-
-**API convention.** By default, `GET /api/v1/plans/{id}` projects the
-active-locale scalar onto the field name (`data.name = 'Team'`). Admin editors
-that need round-trip access to every locale pass `?include=translations`:
-
-```
-GET /api/v1/plans/01HZ...?include=translations
-
-{
-  "data": {
-    "id": "01HZ...",
-    "name": "Team",            // active-locale projection (unchanged)
-    "translations": {           // ← full JSONB blob added
-      "en": { "name": "Team", "description": "For growing organisations" },
-      "fr": { "name": "Équipe", "description": "..." },
-      "ar": { "name": "الفريق", "description": "..." }
-    }
-  }
-}
-```
-
-The include key is `translations` by default; a model with multiple
-`#[Translatable]` containers can override per-attribute via
-`#[Translatable(wire_include_key: '...')]`.
+Note: the content-translation macro `Blueprint::translations()` lives in
+`modules/localization/` alongside its paired `HasTranslations` trait —
+foundation owns cross-cutting infrastructure macros, and per-row content
+translation is a localization concern. See `modules/localization/macros.json`
+and `modules/localization/readme.md` for the macro definition + the
+`?include=translations` API convention it enables.
 
 ### 3. Base HTTP + exception + job + repository primitives
 

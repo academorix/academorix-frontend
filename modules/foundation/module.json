@@ -64,8 +64,7 @@
       "metadata",
       "sortable",
       "sluggable",
-      "embeddings",
-      "translations"
+      "embeddings"
     ],
     "middleware": ["request.id", "response.envelope", "throttle.base", "cors.strict"],
     "events": [
@@ -87,12 +86,7 @@
     "views": [],
     "lang": ["foundation"],
     "config": ["foundation"],
-    "macros": [
-      "Str::slugify",
-      "Collection::orderBySortable",
-      "Blueprint::foundationConventions",
-      "Blueprint::translations"
-    ],
+    "macros": ["Str::slugify", "Collection::orderBySortable", "Blueprint::foundationConventions"],
     "bindings": ["HealthAggregator", "ModuleRegistry", "ModuleRouteLoader"],
     "resources": []
   },

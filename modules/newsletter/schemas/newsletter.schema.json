@@ -141,7 +141,7 @@
         "type": "jsonb",
         "nullable": false,
         "default": "'{}'::jsonb",
-        "description": "Per-locale content-translation blob. Shape: `{ locale_code: { field: value } }`. Managed by the `HasTranslations` trait (wraps `spatie/laravel-translatable`). Column added via `foundation::Blueprint::translations()`."
+        "description": "Per-locale content-translation blob. Shape: `{ locale_code: { field: value } }`. Managed by the `HasTranslations` trait (wraps `spatie/laravel-translatable`). Column added via `localization::Blueprint::translations()`."
       },
       "created_by": {
         "type": "uuid",
@@ -202,7 +202,7 @@
     "column": "translations",
     "fields": ["name", "description"],
     "underlying_package": "spatie/laravel-translatable ^6.0",
-    "migration_macro": "foundation::Blueprint::translations()",
+    "migration_macro": "localization::Blueprint::translations()",
     "wire_convention": "Active-locale projection onto the field name by default. Full JSONB blob under `data.translations` when the request carries `?include=translations`.",
     "auto_translate": "opt-in via WorkspaceLocale.auto_translate=true per target locale"
   },

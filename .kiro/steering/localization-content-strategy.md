@@ -30,8 +30,8 @@ a `NotificationTemplate.subject`, a `Newsletter.description`.
 
 **Storage.** JSONB `translations` column on the model itself, shape
 `{ locale_code: { field_name: value } }`. Added via
-`foundation::Blueprint::translations()` migration macro. Read + written via the
-`Localization\Concerns\HasTranslations` trait (which wraps
+`localization::Blueprint::translations()` migration macro. Read + written via
+the `Localization\Concerns\HasTranslations` trait (which wraps
 `spatie/laravel-translatable ^6.0`).
 
 **Where declared.** `#[Translatable]` attribute on each translated property in

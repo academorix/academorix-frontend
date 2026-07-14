@@ -86,8 +86,9 @@ The module handles **two distinct translation problems** — do not conflate the
   `lang/**/*.php|json` files. Chain described in §3.1 below.
 - **Content fields** (`$plan->name`, `$notificationTemplate->body`) — per-row
   content translated on the model via the `HasTranslations` trait. Storage: a
-  JSONB `translations` column on the row itself (see
-  `foundation::Blueprint::translations()` macro). Chain described in §3.2.
+  JSONB `translations` column on the row itself (see the
+  `Blueprint::translations()` macro shipped by this module — see `macros.json`).
+  Chain described in §3.2.
 
 Both chains reuse the same **fallback locale** semantics so callers get
 consistent behaviour regardless of which surface they hit.
@@ -264,8 +265,8 @@ opt in with `?include=translations`.
 | workspaces    | `Branding`             | `name`                                   | JSONB blob       |
 
 **Default storage** — JSONB `translations` column via
-`foundation::Blueprint::translations()`. Composed with the `HasTranslations`
-trait + `#[Translatable]` per field.
+`localization::Blueprint::translations()` (see `macros.json`). Composed with the
+`HasTranslations` trait + `#[Translatable]` per field.
 
 † **NotificationTemplate — row-per-locale exception.** Each locale is its own
 row with independent `state` (draft/published/archived) + `version` +

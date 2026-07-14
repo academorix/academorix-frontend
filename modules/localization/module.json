@@ -26,7 +26,7 @@
   "contributes": {
     "traits": ["HasTranslations", "IsLocaleAware"],
     "attributes": ["Translatable", "AsTranslation"],
-    "blueprints": [],
+    "blueprints": ["translations"],
     "middleware": ["locale.resolve", "locale.persist"],
     "events": [
       "LocaleResolved",
@@ -82,7 +82,7 @@
     "views": [],
     "lang": ["localization"],
     "config": ["localization"],
-    "macros": ["str_localize"],
+    "macros": ["str_localize", "Blueprint::translations"],
     "bindings": [
       "LocaleResolver",
       "TranslationRepository",
