@@ -42,10 +42,11 @@ digraph AcademorixModules {
   activity [label="activity\n(20)", fillcolor="#FFF8E1"];
   settings [label="settings\n(22)", fillcolor="#FFF8E1"];
 
-  // ---- WAVE 3 (entitlements + subscription primitives) ------------------
+  // ---- WAVE 3 (entitlements + subscription primitives + storage) --------
   entitlements  [label="entitlements\n(22)",  fillcolor="#FCE4EC"];
   webhook       [label="webhook\n(22)",       fillcolor="#FCE4EC"];
   transfer      [label="transfer\n(23)",      fillcolor="#FCE4EC"];
+  storage       [label="storage\n(24)",       fillcolor="#FCE4EC"];
   invitations   [label="invitations\n(25)",   fillcolor="#FCE4EC"];
   subscription  [label="subscription\n(29)",  fillcolor="#FCE4EC"];
 
@@ -79,6 +80,7 @@ digraph AcademorixModules {
   entitlements        -> foundation;
   webhook             -> foundation;
   transfer            -> foundation;
+  storage             -> foundation;
   invitations         -> foundation;
   subscription        -> foundation;
   notifications       -> foundation;
@@ -98,6 +100,10 @@ digraph AcademorixModules {
   entitlements   -> audit;
   webhook        -> workspaces;
   webhook        -> versioning;
+  storage        -> workspaces;
+  storage        -> entitlements;
+  storage        -> activity;
+  storage        -> audit;
   subscription   -> workspaces;
   subscription   -> entitlements;
   subscription   -> "notifications-mail";

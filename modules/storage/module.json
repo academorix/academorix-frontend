@@ -1,0 +1,203 @@
+{
+  "$version": 1,
+  "name": "storage",
+  "alias": "storage",
+  "namespace": "Academorix\\Storage",
+  "description": "File upload + attachment substrate. Wraps `spatie/laravel-medialibrary ^11` under the hood + adds our workspace scoping + entitlement enforcement + antivirus pipeline + audited signed-URL orchestrator + chunked-upload state machine. Owns four entities: File (the domain unit, polymorphic via `fileable_type`/`fileable_id`), FileVariant (image + document derivatives generated async on upload), SignedUrlAudit (every signed URL issued, with TTL / IP lock / user lock / hit count for revocation), ChunkedUpload (in-flight multipart / tus.io state). Ships the `HasFiles` trait for consumer models + the `#[Attachable]` + `#[FileKind]` attributes so downstream modules opt in without importing the SDK. Not just a Laravel Storage wrapper \u2014 Laravel Storage is a filesystem abstraction; this module is a domain layer on top: tenant-scoped file records, entitlement-metered uploads, content-addressable dedup via SHA-256, driver-agnostic signed URLs, and a variant pipeline that fans out to the image processor. Every read + write goes through this module; NO downstream module talks to `Storage::disk()` directly.",
+  "keywords": [
+    "storage",
+    "files",
+    "attachments",
+    "uploads",
+    "signed-urls",
+    "image-variants",
+    "chunked-upload",
+    "tus",
+    "s3",
+    "antivirus",
+    "clamav",
+    "dedup",
+    "sha256",
+    "cdn",
+    "medialibrary"
+  ],
+  "priority": 24,
+  "providers": ["Academorix\\Storage\\Providers\\StorageServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "workspaces", "entitlements", "activity", "audit"],
+  "wraps": {
+    "package": "spatie/laravel-medialibrary",
+    "version_constraint": "^11.0",
+    "underlying_stack": [
+      "league/flysystem",
+      "spatie/image (conversions)",
+      "intervention/image (image manipulation)"
+    ],
+    "rationale": "Battle-tested (60M+ downloads). Ships HasMedia trait + conversions pipeline + MIME sniffing + path management. Reimplementing would cost ~2-3k LOC. Our subclass adds workspace scoping (path prefix + query scope), entitlement enforcement (bytes + count quotas), antivirus state machine, audited signed URLs, chunked-upload state, and dedup via SHA-256. Their DB shape (media table) stays; we add companion tables (file_variants, signed_url_audits, chunked_uploads) + rename the trait to HasFiles for domain clarity."
+  },
+  "extendedBy": [],
+  "planned_consumers": [
+    "user",
+    "workspaces",
+    "subscription",
+    "invitations",
+    "notifications",
+    "notifications-mail",
+    "transfer",
+    "compliance",
+    "sports",
+    "teams",
+    "facilities",
+    "newsletter"
+  ],
+  "contributes": {
+    "traits": ["HasFiles", "IsFile"],
+    "attributes": ["Attachable", "FileKind", "GeneratesVariants", "RequiresVirusScan"],
+    "blueprints": [],
+    "middleware": [
+      "storage.mime.validate",
+      "storage.size.validate",
+      "storage.quota.enforce",
+      "storage.antivirus.gate",
+      "storage.workspace.scope"
+    ],
+    "events": [
+      "FileUploading",
+      "FileUploaded",
+      "FileScanned",
+      "FileVirusFound",
+      "FileVariantGenerated",
+      "FileVariantsCompleted",
+      "FileArchived",
+      "FileErased",
+      "SignedUrlIssued",
+      "SignedUrlRevoked",
+      "ChunkedUploadInitiated",
+      "ChunkedUploadCompleted",
+      "ChunkedUploadAborted",
+      "StorageQuotaApproaching",
+      "StorageQuotaExceeded"
+    ],
+    "policies": ["FilePolicy", "FileVariantPolicy", "ChunkedUploadPolicy"],
+    "hooks": [],
+    "commands": [
+      "storage:describe",
+      "storage:reprocess-variants",
+      "storage:rescan-virus",
+      "storage:purge-orphans",
+      "storage:reconcile-quota",
+      "storage:dedup-audit",
+      "storage:signed-url-revoke-all"
+    ],
+    "jobs": [
+      "ProcessUploadedFileJob",
+      "GenerateFileVariantsJob",
+      "ScanFileForVirusesJob",
+      "PurgeExpiredFilesJob",
+      "PurgeAbortedChunkedUploadsJob",
+      "DedupOrphanBlobsJob",
+      "RevokeExpiredSignedUrlsJob",
+      "SyncStorageEntitlementUsageJob"
+    ],
+    "notifications": [
+      "FileQuarantinedNotification",
+      "StorageQuotaApproachingNotification",
+      "StorageQuotaExceededNotification"
+    ],
+    "broadcasts": ["workspace.{id}.storage.uploads"],
+    "observers": ["FileObserver", "FileVariantObserver", "ChunkedUploadObserver"],
+    "rules": [
+      "valid_mime_for_kind",
+      "max_size_for_kind",
+      "valid_file_kind",
+      "unique_sha256_within_workspace"
+    ],
+    "casts": ["VirusScanState", "FileVisibility", "ChunkedUploadState", "FileKindCast"],
+    "views": [],
+    "lang": ["storage"],
+    "config": ["storage"],
+    "macros": [],
+    "bindings": [
+      "FileRepository",
+      "SignedUrlIssuer",
+      "SignedUrlAuditor",
+      "VariantGenerator",
+      "AntivirusScanner",
+      "ChunkedUploadCoordinator",
+      "ContentAddressableStore",
+      "MimeTypeAllowlist",
+      "FileKindRegistry",
+      "CdnUrlRewriter"
+    ],
+    "resources": ["file", "file-variant", "signed-url-audit", "chunked-upload"]
+  },
+  "attribute_driven": {
+    "description": "Modules opt in to file attachments via attributes. Discovery pass at boot compiles the registries; runtime is vanilla method calls.",
+    "attributes": {
+      "Attachable": "Marks a model property or class as attachable. `#[Attachable(kind: 'avatar')]` on a User property declares 'this model has an avatar' \u2014 the trait exposes `$user->avatar()` returning the resolved File. Params: kind (required), max, mime, generates_variants, requires_virus_scan.",
+      "FileKind": "Marks a class as a file-kind definition. `#[FileKind(key: 'avatar', max_size_mb: 5, allowed_mimes: ['image/jpeg','image/png','image/webp'], generates_variants: ['thumbnail','medium'])]`. The compiler registers with FileKindRegistry so the API layer validates on upload without per-controller code.",
+      "GeneratesVariants": "Marks a class or property to request async variant generation on upload. `#[GeneratesVariants(['thumbnail', 'medium', 'hero'])]`. Discovers registered variant recipes.",
+      "RequiresVirusScan": "Marks a class or property to require virus scanning before the file is marked `available`. Default is `true` for all uploads; this attribute pins it explicitly."
+    }
+  },
+  "signed_urls": {
+    "description": "Every file access happens through a signed URL. Our SignedUrlIssuer wraps the driver's temporary URL support (S3 pre-signed, GCS signed, local via our HMAC signature) so every driver looks the same on the wire.",
+    "audit_trail": "Every signed URL is written to `signed_url_audits` with issuer, TTL, IP/user locks, reason. Hits update `hit_count` + `last_hit_at` via a middleware. Revocation writes `revoked_at` + `revoked_reason`.",
+    "ttl_policy": {
+      "download": "3600s (1h) default; workspaces can override per plan tier",
+      "preview": "300s (5m) \u2014 short-lived, meant to be renewed on view",
+      "share": "604800s (7d) \u2014 external sharing links; require explicit workspace admin permission",
+      "admin_action": "300s (5m) \u2014 one-time-use, IP-locked to the platform admin session"
+    }
+  },
+  "chunked_uploads": {
+    "description": "Large file uploads (> 100MB by default) go through a tus.io / S3 multipart flow to survive network drops. The client requests a ChunkedUpload row, uploads chunks to the returned URL, and finalises. Our coordinator tracks state + reconciles with the driver's own multipart state.",
+    "protocol_support": ["tus.io v1.0.0", "s3 multipart"],
+    "resumability": "Chunks are addressed by index + SHA-256 so a client resuming after crash re-uploads only missing chunks. State machine: initiating \u2192 uploading \u2192 finalizing \u2192 completed | aborted | expired.",
+    "expiry_default_hours": 24
+  },
+  "content_addressable_dedup": {
+    "description": "Every upload is hashed (SHA-256) before commit. Two workspaces uploading the same PDF share the underlying blob on disk, but each gets its own File row. Bytes consumed against the entitlement are counted per-row (each workspace pays for the reference), but disk storage is shared. Deletion refcounts the blob: the physical bytes go only when the last referring File row is hard-deleted.",
+    "hash_algorithm": "sha256",
+    "refcount_column": "reference_count on the shared blob store (managed by ContentAddressableStore binding)",
+    "opt_out": "Configurable per file kind via `#[FileKind(dedupable: false)]` \u2014 required for cryptographically sensitive files where two workspaces MUST NOT share physical bytes even if content matches."
+  },
+  "hosts": {
+    "workspace": {
+      "description": "Workspace-facing upload + download surface.",
+      "routes": [
+        "POST /api/v1/files",
+        "POST /api/v1/files/chunked",
+        "PATCH /api/v1/files/chunked/{upload}",
+        "POST /api/v1/files/chunked/{upload}/finalize",
+        "DELETE /api/v1/files/chunked/{upload}",
+        "GET /api/v1/files",
+        "GET /api/v1/files/{file}",
+        "PATCH /api/v1/files/{file}",
+        "DELETE /api/v1/files/{file}",
+        "POST /api/v1/files/{file}/signed-url",
+        "DELETE /api/v1/files/{file}/signed-urls",
+        "POST /api/v1/files/{file}/reprocess-variants",
+        "GET /api/v1/files/{file}/variants",
+        "GET /api/v1/files/{file}/download"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-workspace file inspection + antivirus dashboard + quota override.",
+      "routes": [
+        "GET /api/v1/platform/files",
+        "GET /api/v1/platform/files/{file}",
+        "GET /api/v1/platform/files/quarantined",
+        "POST /api/v1/platform/files/{file}/rescan",
+        "POST /api/v1/platform/files/{file}/quarantine",
+        "DELETE /api/v1/platform/files/{file}",
+        "GET /api/v1/platform/storage/health",
+        "GET /api/v1/platform/storage/signed-url-audits"
+      ]
+    },
+    "central": {
+      "description": "Public signed-URL redemption surface. Not authenticated \u2014 the URL signature itself is the credential.",
+      "routes": ["GET /files/{signature}", "GET /files/{signature}/{variant}"]
+    }
+  }
+}

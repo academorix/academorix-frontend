@@ -1,0 +1,193 @@
+{
+  "id": "academorix://modules/storage/metrics",
+  "$version": 1,
+  "title": "storage \u2014 metrics",
+  "description": "OpenTelemetry-compatible metrics emitted via the telemetry module (Academorix\\Telemetry\\Otel). Every metric is namespaced `academorix.storage.*` and carries workspace_id as a low-cardinality label wherever attributable.",
+  "instrumentation": "self via telemetry",
+  "namespace": "academorix.storage",
+  "labelConventions": {
+    "always": [],
+    "commonlyAvailable": ["workspace_id", "kind", "mime_type", "disk", "reason", "outcome"]
+  },
+  "metrics": [
+    {
+      "name": "academorix.storage.uploads.started_total",
+      "kind": "counter",
+      "unit": "uploads",
+      "labels": ["workspace_id", "kind", "protocol"],
+      "description": "Every upload initiation. protocol = single | tus | s3_multipart."
+    },
+    {
+      "name": "academorix.storage.uploads.completed_total",
+      "kind": "counter",
+      "unit": "uploads",
+      "labels": ["workspace_id", "kind", "outcome"],
+      "description": "outcome = success | quota_exceeded | mime_rejected | size_rejected | virus_found | aborted | expired."
+    },
+    {
+      "name": "academorix.storage.uploads.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [50, 200, 1000, 5000, 30000, 180000, 900000],
+      "labels": ["workspace_id", "kind", "protocol"],
+      "description": "Wall-clock upload duration from initiate to available. Chunked uploads measured from initiate to finalize."
+    },
+    {
+      "name": "academorix.storage.uploads.bytes_total",
+      "kind": "counter",
+      "unit": "bytes",
+      "labels": ["workspace_id", "kind"],
+      "description": "Total bytes uploaded across all files. Sum-of-histogram companion; used for cost attribution + capacity planning."
+    },
+    {
+      "name": "academorix.storage.bytes.stored",
+      "kind": "gauge",
+      "unit": "bytes",
+      "labels": ["workspace_id"],
+      "description": "Observable gauge polled at scrape. Reports the current storage.bytes.consumed usage per workspace (from the SyncStorageEntitlementUsageJob reconciled value, not per-request stale reads)."
+    },
+    {
+      "name": "academorix.storage.files.count",
+      "kind": "gauge",
+      "unit": "files",
+      "labels": ["workspace_id", "kind"],
+      "description": "Observable gauge \u2014 File row count per (workspace, kind). Sum across kinds = storage.files.max_per_workspace usage."
+    },
+    {
+      "name": "academorix.storage.dedup.hits_total",
+      "kind": "counter",
+      "unit": "hits",
+      "labels": ["workspace_id", "kind"],
+      "description": "How many uploads matched an existing sha256 within the workspace. Measures per-workspace dedup effectiveness."
+    },
+    {
+      "name": "academorix.storage.dedup.cross_workspace_hits_total",
+      "kind": "counter",
+      "unit": "hits",
+      "labels": ["kind"],
+      "description": "How many uploads matched an existing sha256 in ANOTHER workspace (cross-workspace physical byte sharing). Platform-side capacity signal."
+    },
+    {
+      "name": "academorix.storage.variants.generated_total",
+      "kind": "counter",
+      "unit": "variants",
+      "labels": ["workspace_id", "variant_key", "outcome"],
+      "description": "GenerateFileVariantsJob outcomes. outcome = success | failed | skipped_already_exists."
+    },
+    {
+      "name": "academorix.storage.variants.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [50, 200, 1000, 5000, 30000],
+      "labels": ["variant_key"],
+      "description": "Variant generation duration. Alerts when P95 > 5s (image processing degradation)."
+    },
+    {
+      "name": "academorix.storage.virus.scans_total",
+      "kind": "counter",
+      "unit": "scans",
+      "labels": ["outcome", "driver"],
+      "description": "ScanFileForVirusesJob outcomes. outcome = clean | infected | scan_failed. driver = clamav | s3-antivirus | cloudmersive | null."
+    },
+    {
+      "name": "academorix.storage.virus.scan_duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [100, 500, 2000, 10000, 30000],
+      "labels": ["driver"],
+      "description": "AV scan wall-clock duration. Alerts when P95 > 10s."
+    },
+    {
+      "name": "academorix.storage.virus.quarantined_total",
+      "kind": "counter",
+      "unit": "files",
+      "labels": ["workspace_id", "driver"],
+      "description": "Files moved to quarantine. Security signal \u2014 spikes indicate attack traffic."
+    },
+    {
+      "name": "academorix.storage.signed_urls.issued_total",
+      "kind": "counter",
+      "unit": "urls",
+      "labels": ["workspace_id", "reason"],
+      "description": "Signed URL issuance rate. reason = download | preview | share | admin_action | export | notification_attachment."
+    },
+    {
+      "name": "academorix.storage.signed_urls.hits_total",
+      "kind": "counter",
+      "unit": "hits",
+      "labels": ["reason"],
+      "description": "Redemption hits. Ratio to issued gives redemption effectiveness."
+    },
+    {
+      "name": "academorix.storage.signed_urls.rejected_total",
+      "kind": "counter",
+      "unit": "rejections",
+      "labels": ["reason", "cause"],
+      "description": "cause = expired | revoked | ip_lock_mismatch | user_lock_mismatch | one_time_used | signature_invalid."
+    },
+    {
+      "name": "academorix.storage.signed_urls.active_count",
+      "kind": "gauge",
+      "unit": "urls",
+      "labels": [],
+      "description": "Observable gauge. Rolling count of non-revoked, non-expired signed URLs. Capacity signal \u2014 sustained growth indicates missed sweep runs."
+    },
+    {
+      "name": "academorix.storage.chunked_uploads.in_flight",
+      "kind": "gauge",
+      "unit": "uploads",
+      "labels": ["state"],
+      "description": "Observable gauge. Rolling count of ChunkedUpload rows per state (initiating / uploading / finalizing). Alerts when finalizing > 10 (stuck finalisations)."
+    },
+    {
+      "name": "academorix.storage.chunked_uploads.reservation_bytes",
+      "kind": "gauge",
+      "unit": "bytes",
+      "labels": [],
+      "description": "Observable gauge. Total bytes RESERVED by in-flight ChunkedUploads (uncommitted). Compare with actual + reservations to detect leaks."
+    },
+    {
+      "name": "academorix.storage.driver.errors_total",
+      "kind": "counter",
+      "unit": "errors",
+      "labels": ["disk", "operation", "error_class"],
+      "description": "Underlying storage driver errors (S3 4xx/5xx, GCS errors, ClamAV socket errors). operation = put | get | delete | copy | temporaryUrl."
+    },
+    {
+      "name": "academorix.storage.driver.latency_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [10, 50, 200, 1000, 5000, 30000],
+      "labels": ["disk", "operation"],
+      "description": "Underlying driver operation latency. Alerts when S3 put P99 > 5s."
+    },
+    {
+      "name": "academorix.storage.retention.purged_files_total",
+      "kind": "counter",
+      "unit": "files",
+      "labels": ["kind", "erasure_reason"],
+      "description": "PurgeExpiredFilesJob output. Used to reconcile disk cost forecasts."
+    },
+    {
+      "name": "academorix.storage.retention.freed_bytes_total",
+      "kind": "counter",
+      "unit": "bytes",
+      "labels": ["kind"],
+      "description": "Bytes actually freed after refcount decremented to zero. Distinct from purged_files_total when dedup keeps blobs alive across workspaces."
+    },
+    {
+      "name": "academorix.storage.quota.rejections_total",
+      "kind": "counter",
+      "unit": "rejections",
+      "labels": ["workspace_id", "entitlement_key"],
+      "description": "Uploads rejected by storage.quota.enforce middleware. entitlement_key = storage.bytes.consumed | storage.files.max_per_workspace | storage.uploads.month."
+    },
+    {
+      "name": "academorix.storage.entitlement.fail_open_total",
+      "kind": "counter",
+      "unit": "events",
+      "labels": ["workspace_id", "reason"],
+      "description": "How many uploads sailed through fail-open mode (entitlements.graceful_degradation_mode=on). Emitted only during declared incidents. reason = redis_timeout | redis_unreachable | redis_evicted."
+    }
+  ]
+}

@@ -1,0 +1,176 @@
+{
+  "id": "academorix://modules/storage/schemas/file-variant",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "FileVariant",
+  "description": "A derived rendition of a File. Generated async on upload by GenerateFileVariantsJob per the recipe declared in #[GeneratesVariants]. Image derivatives (thumbnail / medium / hero) are the primary case; PDF thumbnails + video keyframes follow the same pattern. Never stands alone \u2014 always references a parent File. Regeneratable at any time from the parent, so retention is loose (deleted when the parent is hard-deleted OR when a re-process is triggered).",
+  "type": "object",
+  "x-module": "storage",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "file_variants",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "fvr_",
+    "incrementing": false,
+    "model": "Academorix\\Storage\\Models\\FileVariant",
+    "interface": "Academorix\\Storage\\Contracts\\Data\\FileVariantInterface",
+    "implements": ["Academorix\\Storage\\Contracts\\Data\\FileVariantInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToWorkspace",
+      "HasMetadata",
+      "HasUserstamps",
+      "Filterable"
+    ],
+    "casts": {
+      "width": "integer",
+      "height": "integer",
+      "size_bytes": "integer",
+      "generated_at": "datetime"
+    },
+    "appends": ["url"],
+    "observers": ["FileVariantObserver"],
+    "hidden": ["path", "disk"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `fvr_<26 chars>`."
+      },
+      "file_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "files", "column": "id", "onDelete": "cascade" }
+      },
+      "workspace_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "workspaces", "column": "id", "onDelete": "cascade" },
+        "description": "Denormalised for scope queries."
+      },
+      "variant_key": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Recipe key. e.g. `thumbnail`, `medium`, `hero`, `webp-optimized`, `pdf-thumbnail`."
+      },
+      "generated_by_conversion": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Fully-qualified recipe class name. e.g. `Academorix\\Storage\\Variants\\ThumbnailRecipe`."
+      },
+      "mime_type": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Variant may differ from parent (e.g. `image/webp` variant of a `image/jpeg` parent)."
+      },
+      "width": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Pixel width (images/videos). Null for non-visual variants."
+      },
+      "height": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Pixel height (images/videos)."
+      },
+      "size_bytes": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "Physical byte count of the variant."
+      },
+      "disk": { "type": "string", "length": 32, "nullable": false },
+      "path": {
+        "type": "string",
+        "length": 1024,
+        "nullable": false,
+        "description": "Convention: `workspaces/{workspace_id}/{kind}/variants/{variant_key}/{parent_sha256}.{ext}`."
+      },
+      "generated_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "When the variant was produced. Distinct from created_at (row insertion moment) for jobs that retry."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Recipe-specific detail (e.g. compression quality, colour profile)."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["file_id", "variant_key"],
+        "unique": true,
+        "name": "file_variants_key_unique",
+        "description": "One row per (file, variant_key). Re-generation UPDATEs in place."
+      },
+      {
+        "columns": ["workspace_id", "variant_key"],
+        "unique": false,
+        "name": "file_variants_workspace_key_idx"
+      },
+      { "columns": ["file_id"], "unique": false, "name": "file_variants_file_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "file_id",
+    "workspace_id",
+    "variant_key",
+    "generated_by_conversion",
+    "mime_type",
+    "size_bytes",
+    "disk",
+    "path",
+    "generated_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^fvr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "file_id": { "type": "string", "pattern": "^fil_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "workspace_id": { "type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "variant_key": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{0,62}$" },
+    "generated_by_conversion": { "type": "string", "maxLength": 128 },
+    "mime_type": { "type": "string", "pattern": "^[a-z-]+/[a-z0-9.+-]+$" },
+    "width": { "type": ["integer", "null"], "minimum": 1 },
+    "height": { "type": ["integer", "null"], "minimum": 1 },
+    "size_bytes": { "type": "integer", "minimum": 0 },
+    "disk": { "type": "string" },
+    "path": { "type": "string", "maxLength": 1024 },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Computed. Freshly-signed URL. Same TTL policy as parent File."
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_by": { "type": ["string", "null"] },
+    "updated_by": { "type": ["string", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["path", "disk", "created_by", "updated_by"],
+    "computed": ["url"]
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "id": "academorix://modules/storage/policies",
+  "$version": 1,
+  "title": "storage \u2014 authorization policies",
+  "description": "Three policies. FilePolicy is the primary gate \u2014 every workspace-facing route defers to it. FileVariantPolicy inherits from FilePolicy (variants inherit their parent's ability). ChunkedUploadPolicy governs the in-flight upload lifecycle.",
+  "policies": [
+    {
+      "model": "storage::File",
+      "class": "Academorix\\Storage\\Policies\\FilePolicy",
+      "abilities": {
+        "viewAny": {
+          "description": "List files in the workspace. Every workspace member with `files.viewAny` permission passes.",
+          "permission": "files.viewAny",
+          "restrictions": []
+        },
+        "view": {
+          "description": "Read a single file. Additional gates: (a) workspace scope match, (b) visibility check \u2014 `restricted` files require the caller to be the owner OR a workspace admin OR to hold `files.admin`, (c) virus_scan_state must be `clean` unless caller holds `files.admin`.",
+          "permission": "files.view",
+          "restrictions": [
+            "workspace_scope_match",
+            "visibility_gate",
+            "virus_scan_state_clean_or_admin"
+          ]
+        },
+        "upload": {
+          "description": "Create a new file. Additional gates: (a) storage.bytes.consumed entitlement has capacity, (b) storage.files.max_per_workspace slot available, (c) kind is registered + caller is allowed to upload this kind (checked against the FileKindRegistry's per-kind permission override).",
+          "permission": "files.upload",
+          "restrictions": [
+            "entitlement_bytes_capacity",
+            "entitlement_files_slot_available",
+            "kind_permitted"
+          ]
+        },
+        "update": {
+          "description": "Update mutable fields (name, visibility, metadata). Cannot change kind / size / mime. Caller must be the owner OR a workspace admin OR hold `files.admin`.",
+          "permission": "files.update",
+          "restrictions": ["owner_or_admin"]
+        },
+        "delete": {
+          "description": "Soft-delete a file. Same restrictions as update.",
+          "permission": "files.delete",
+          "restrictions": ["owner_or_admin"]
+        },
+        "issueSignedUrl": {
+          "description": "Explicitly issue a signed URL with custom TTL / IP-lock / user-lock / one-time-use. Restricted to `files.admin` when the reason is `share` OR the TTL exceeds the plan's default ceiling.",
+          "permission": "files.view",
+          "restrictions": [
+            "ttl_within_plan_cap",
+            "reason_permitted",
+            "ip_lock_requires_admin (when set)"
+          ]
+        },
+        "revokeSignedUrls": {
+          "description": "Bulk revoke every active signed URL for a file. Admin-only \u2014 protects against legitimate ongoing downloads being killed by a workspace member.",
+          "permission": "files.admin",
+          "restrictions": ["workspace_admin_only"]
+        },
+        "reprocessVariants": {
+          "description": "Force regeneration of every variant. Admin-only.",
+          "permission": "files.admin",
+          "restrictions": ["workspace_admin_only"]
+        }
+      }
+    },
+    {
+      "model": "storage::FileVariant",
+      "class": "Academorix\\Storage\\Policies\\FileVariantPolicy",
+      "abilities": {
+        "view": {
+          "description": "Variants inherit the parent File's `view` gate. This policy is a thin delegate to FilePolicy::view($caller, $variant->file).",
+          "permission": "files.view",
+          "delegates_to": "FilePolicy::view"
+        }
+      },
+      "note": "No standalone lifecycle for variants \u2014 they are always managed via the parent File's actions (reprocessVariants + parent hard-delete cascade)."
+    },
+    {
+      "model": "storage::ChunkedUpload",
+      "class": "Academorix\\Storage\\Policies\\ChunkedUploadPolicy",
+      "abilities": {
+        "view": {
+          "description": "Read a ChunkedUpload's state during upload / resume. Restricted to the owner (the user who initiated).",
+          "permission": "files.upload",
+          "restrictions": ["owner_only"]
+        },
+        "update": {
+          "description": "Patch a chunk. Restricted to the owner. Also enforces state machine (state != completed / aborted / expired).",
+          "permission": "files.upload",
+          "restrictions": ["owner_only", "state_active"]
+        },
+        "finalize": {
+          "description": "Transition state to finalizing/completed. Restricted to the owner. Enforces uploaded_bytes == total_size_bytes.",
+          "permission": "files.upload",
+          "restrictions": ["owner_only", "state_active", "bytes_complete"]
+        },
+        "abort": {
+          "description": "Transition state to aborted. Restricted to the owner OR workspace admin.",
+          "permission": "files.upload",
+          "restrictions": ["owner_or_admin"]
+        }
+      }
+    }
+  ],
+  "note": "SignedUrlAudit has NO policy \u2014 the audit trail is admin-view-only, gated by the `platform.storage.view` permission on the platform-admin route directly. Workspace members cannot enumerate their own signed URLs; they can only revoke via the parent File."
+}

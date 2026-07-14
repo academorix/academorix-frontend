@@ -1,0 +1,69 @@
+{
+  "id": "academorix://modules/storage/feature-flags",
+  "$version": 1,
+  "title": "storage \u2014 kill switches",
+  "engine": "laravel/pennant",
+  "description": "Emergency operational switches. Flipping is instantaneous (no deploy). Turning off any of these is a runbook step logged in the incident retro.",
+  "flags": [
+    {
+      "key": "storage.uploads_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master switch for the upload surface. Off = every POST to /files or /files/chunked returns HTTP 503 STORAGE_UPLOADS_DISABLED. Use during S3 backend outage or bucket-key rotation."
+    },
+    {
+      "key": "storage.downloads_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master switch for the redemption surface. Off = /files/{signature} returns HTTP 503. Downstream: images and attachments fail to render across every SDUI screen. Emergency-only."
+    },
+    {
+      "key": "storage.variants_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "GenerateFileVariantsJob execution. Off = variants queued but not run (uploads still succeed; existing variants still serve)."
+    },
+    {
+      "key": "storage.antivirus_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "ScanFileForVirusesJob execution. Off = files skip scan and land as virus_scan_state=`scan_skipped`. NEVER turn off in production without a compliance approval + retro."
+    },
+    {
+      "key": "storage.chunked_uploads_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Chunked upload surface. Off = clients must fall back to single-request uploads for files under the direct-upload ceiling; larger files fail."
+    },
+    {
+      "key": "storage.dedup_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Content-addressable dedup. Off = every upload creates a fresh blob even for matching SHA-256. Emergency-only for cases where refcount drift is suspected."
+    },
+    {
+      "key": "storage.signed_urls_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Signed URL issuance. Off = every read fails. Even more emergency-critical than downloads_enabled."
+    },
+    {
+      "key": "storage.audit_hits_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "SignedUrlAudit hit_count increment. Off = downloads still serve but audit trail loses per-hit fidelity. Recovery mode during audit-table lock contention."
+    },
+    {
+      "key": "storage.retention_purge_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "PurgeExpiredFilesJob execution. Off = expired files linger. Emergency-only during regulatory investigations that pause purges."
+    },
+    {
+      "key": "storage.quota_enforcement",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "storage.quota.enforce middleware. Off = uploads bypass quota check (fail-open on overquota). Aligns with entitlements.graceful_degradation_mode; auto-disable after 60 minutes."
+    }
+  ]
+}

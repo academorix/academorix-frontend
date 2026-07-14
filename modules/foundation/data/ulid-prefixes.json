@@ -45,6 +45,11 @@
       "entity": "NotificationCategory",
       "description": "Module-fed category registry row (platform default when workspace_id=null, workspace override otherwise)."
     },
+    "cup_": {
+      "module": "storage",
+      "entity": "ChunkedUpload",
+      "description": "In-flight multipart / tus.io state row. State machine: initiating \u2192 uploading \u2192 finalizing \u2192 completed | aborted | expired."
+    },
     "delv_": {
       "module": "notifications",
       "entity": "NotificationDelivery",
@@ -76,6 +81,16 @@
       "module": "entitlements",
       "entity": "Entitlement",
       "description": "Resolved (workspace, key) quota row."
+    },
+    "fil_": {
+      "module": "storage",
+      "entity": "File",
+      "description": "Uploaded file record. Polymorphic via fileable_type/fileable_id. Content-addressable dedup via sha256 with per-blob refcount."
+    },
+    "fvr_": {
+      "module": "storage",
+      "entity": "FileVariant",
+      "description": "Derived rendition of a File (thumbnail / medium / hero / pdf-thumbnail). One row per (file, variant_key)."
     },
     "gfc_": {
       "module": "geofencing",
@@ -190,6 +205,11 @@
       "description": "Per-index sync state (last full index, incremental cursor).",
       "grandfathered": true,
       "note": "5 chars \u2014 breaks the max-4 rule; grandfathered until refactor. Rename target: `sst_` (SearchSyncState) once the schema is v2."
+    },
+    "sua_": {
+      "module": "storage",
+      "entity": "SignedUrlAudit",
+      "description": "Per-issuance signed-URL audit row. High-volume; 90-day hard-purge retention. signature_hash unique for redemption lookup."
     },
     "sub_": {
       "module": "subscription",

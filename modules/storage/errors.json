@@ -1,0 +1,197 @@
+{
+  "id": "academorix://modules/storage/errors",
+  "$version": 1,
+  "title": "storage \u2014 error codes",
+  "namespace": "storage",
+  "errors": [
+    {
+      "code": "STORAGE_UNSUPPORTED_MIME",
+      "http": 415,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "storage.errors.unsupported_mime",
+      "description": "Uploaded file's sniffed MIME is not in the kind's allowed_mimes list."
+    },
+    {
+      "code": "STORAGE_FILE_TOO_LARGE",
+      "http": 413,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "storage.errors.file_too_large",
+      "description": "File exceeds the kind's max_size_mb."
+    },
+    {
+      "code": "STORAGE_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "storage.errors.quota_exceeded",
+      "description": "Upload would exceed the workspace's storage.bytes.consumed or storage.files.max_per_workspace or storage.uploads.month cap. Error envelope includes plan_upgrade_url."
+    },
+    {
+      "code": "STORAGE_INVALID_KIND",
+      "http": 400,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "storage.errors.invalid_kind",
+      "description": "Requested kind is not registered in FileKindRegistry."
+    },
+    {
+      "code": "STORAGE_KIND_NOT_PERMITTED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "storage.errors.kind_not_permitted",
+      "description": "Caller lacks permission to upload this kind (per-kind permission override)."
+    },
+    {
+      "code": "STORAGE_FILE_NOT_AVAILABLE",
+      "http": 423,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "storage.errors.file_not_available",
+      "description": "File exists but virus_scan_state != 'clean'. Retryable \u2014 caller may re-request after AV scan completes."
+    },
+    {
+      "code": "STORAGE_FILE_QUARANTINED",
+      "http": 451,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "storage.errors.file_quarantined",
+      "description": "File was moved to quarantine (infected or manual quarantine). Distinct from FILE_NOT_AVAILABLE \u2014 no retry will help; caller must contact workspace admin."
+    },
+    {
+      "code": "STORAGE_URL_EXPIRED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "storage.errors.url_expired",
+      "description": "Signed URL past its expires_at."
+    },
+    {
+      "code": "STORAGE_URL_REVOKED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "storage.errors.url_revoked",
+      "description": "Signed URL revoked (admin bulk-revoke, or file erasure)."
+    },
+    {
+      "code": "STORAGE_URL_INVALID",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "storage.errors.url_invalid",
+      "description": "Signature verification failed. Fires an audit warning (may indicate credential-stuffing)."
+    },
+    {
+      "code": "STORAGE_URL_IP_LOCK_MISMATCH",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "storage.errors.url_ip_lock_mismatch",
+      "description": "Signed URL was IP-locked and the caller's IP doesn't match the CIDR."
+    },
+    {
+      "code": "STORAGE_URL_USER_LOCK_MISMATCH",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "storage.errors.url_user_lock_mismatch",
+      "description": "Signed URL was user-locked and the caller's session user doesn't match."
+    },
+    {
+      "code": "STORAGE_URL_ONE_TIME_USED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "storage.errors.url_one_time_used",
+      "description": "Signed URL had one_time_use=true and hit_count is already 1."
+    },
+    {
+      "code": "STORAGE_CHUNK_OUT_OF_ORDER",
+      "http": 400,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "storage.errors.chunk_out_of_order",
+      "description": "Chunk index is not sequential with expected. Client should retry with the correct index."
+    },
+    {
+      "code": "STORAGE_CHUNK_SHA_MISMATCH",
+      "http": 400,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "storage.errors.chunk_sha_mismatch",
+      "description": "Chunk-SHA256 header doesn't match the received chunk bytes."
+    },
+    {
+      "code": "STORAGE_FINALIZE_SIZE_MISMATCH",
+      "http": 400,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "storage.errors.finalize_size_mismatch",
+      "description": "Reconstructed byte count != declared total_size_bytes on finalize. ChunkedUpload aborted with abort_reason=size_mismatch."
+    },
+    {
+      "code": "STORAGE_FINALIZE_SHA_MISMATCH",
+      "http": 400,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "storage.errors.finalize_sha_mismatch",
+      "description": "Reconstructed SHA-256 != declared_sha256. ChunkedUpload aborted with abort_reason=sha256_mismatch."
+    },
+    {
+      "code": "STORAGE_UPLOAD_EXPIRED",
+      "http": 410,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "storage.errors.upload_expired",
+      "description": "ChunkedUpload past its expires_at; the resource is gone."
+    },
+    {
+      "code": "STORAGE_DRIVER_ERROR",
+      "http": 502,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "storage.errors.driver_error",
+      "description": "Underlying storage driver returned an error (S3 5xx, network timeout). Retryable via job backoff."
+    },
+    {
+      "code": "STORAGE_AV_UNREACHABLE",
+      "http": 503,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "storage.errors.av_unreachable",
+      "description": "Antivirus scanner is not reachable. Scan queued for retry. Downstream: uploads succeed but stay in `pending` state longer."
+    },
+    {
+      "code": "STORAGE_UPLOAD_FORBIDDEN",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "storage.errors.upload_forbidden",
+      "description": "Caller lacks files.upload permission OR the target fileable is not owned by the caller's workspace."
+    }
+  ]
+}

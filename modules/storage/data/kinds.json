@@ -1,0 +1,168 @@
+{
+  "id": "academorix://modules/storage/data/kinds",
+  "$version": 1,
+  "title": "storage \u2014 default file kinds catalogue",
+  "description": "Reference catalogue of platform-default file kinds. Every kind here is a suggested #[FileKind] declaration. Modules extending the catalogue with domain-specific kinds (e.g. sports::medical_certificate) add their own #[FileKind] classes; the runtime FileKindRegistry aggregates both.",
+  "kinds": [
+    {
+      "key": "avatar",
+      "declared_by": "user (planned)",
+      "max_size_mb": 5,
+      "allowed_mimes": ["image/jpeg", "image/png", "image/webp"],
+      "generates_variants": ["thumbnail", "medium"],
+      "requires_virus_scan": true,
+      "visibility": "workspace",
+      "dedupable": true,
+      "retention_days": 30,
+      "description": "User profile picture. Old avatars archived on replace."
+    },
+    {
+      "key": "workspace_logo",
+      "declared_by": "workspaces",
+      "max_size_mb": 5,
+      "allowed_mimes": ["image/jpeg", "image/png", "image/webp", "image/svg+xml"],
+      "generates_variants": ["thumbnail", "medium", "hero"],
+      "requires_virus_scan": true,
+      "visibility": "public",
+      "dedupable": true,
+      "retention_days": null,
+      "description": "Workspace branding logo. Visibility public so unauthenticated sign-in pages can render it."
+    },
+    {
+      "key": "document",
+      "declared_by": "storage (default)",
+      "max_size_mb": 50,
+      "allowed_mimes": [
+        "application/pdf",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "text/plain",
+        "text/csv",
+        "text/markdown"
+      ],
+      "generates_variants": ["pdf-thumbnail"],
+      "requires_virus_scan": true,
+      "visibility": "workspace",
+      "dedupable": true,
+      "retention_days": null,
+      "description": "Generic document upload. PDF thumbnails generated automatically."
+    },
+    {
+      "key": "image",
+      "declared_by": "storage (default)",
+      "max_size_mb": 20,
+      "allowed_mimes": ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"],
+      "generates_variants": ["thumbnail", "medium", "hero"],
+      "requires_virus_scan": true,
+      "visibility": "workspace",
+      "dedupable": true,
+      "retention_days": null,
+      "description": "General-purpose image upload for content bodies."
+    },
+    {
+      "key": "video",
+      "declared_by": "storage (default)",
+      "max_size_mb": 500,
+      "allowed_mimes": ["video/mp4", "video/quicktime", "video/webm"],
+      "generates_variants": [],
+      "requires_virus_scan": true,
+      "visibility": "workspace",
+      "dedupable": true,
+      "retention_days": null,
+      "description": "Video upload. No variant pipeline in v1; transcoding is a separate future module. Chunked-upload strongly recommended given size."
+    },
+    {
+      "key": "newsletter_hero",
+      "declared_by": "newsletter",
+      "max_size_mb": 10,
+      "allowed_mimes": ["image/jpeg", "image/png", "image/webp"],
+      "generates_variants": ["thumbnail", "medium", "hero"],
+      "requires_virus_scan": true,
+      "visibility": "workspace",
+      "dedupable": true,
+      "retention_days": 365,
+      "description": "Newsletter issue header image. Retained one year for issue-history preservation."
+    },
+    {
+      "key": "invitation_attachment",
+      "declared_by": "invitations",
+      "max_size_mb": 25,
+      "allowed_mimes": [
+        "application/pdf",
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      ],
+      "generates_variants": ["pdf-thumbnail"],
+      "requires_virus_scan": true,
+      "visibility": "restricted",
+      "dedupable": true,
+      "retention_days": 90,
+      "description": "Extra documents attached to an invitation email. Visibility=restricted so only the invitee (via signed URL user-lock) can access."
+    },
+    {
+      "key": "plan_cover",
+      "declared_by": "subscription",
+      "max_size_mb": 5,
+      "allowed_mimes": ["image/jpeg", "image/png", "image/webp"],
+      "generates_variants": ["thumbnail", "medium"],
+      "requires_virus_scan": true,
+      "visibility": "public",
+      "dedupable": true,
+      "retention_days": null,
+      "description": "Plan card image on the public pricing page."
+    },
+    {
+      "key": "notification_attachment",
+      "declared_by": "notifications",
+      "max_size_mb": 25,
+      "allowed_mimes": ["application/pdf", "image/jpeg", "image/png"],
+      "generates_variants": [],
+      "requires_virus_scan": true,
+      "visibility": "restricted",
+      "dedupable": true,
+      "retention_days": 30,
+      "description": "Attachment on an outbound notification (e.g. billing receipt PDF)."
+    },
+    {
+      "key": "export_artifact",
+      "declared_by": "transfer + compliance (planned)",
+      "max_size_mb": 1024,
+      "allowed_mimes": ["application/zip", "application/json", "text/csv"],
+      "generates_variants": [],
+      "requires_virus_scan": false,
+      "visibility": "restricted",
+      "dedupable": false,
+      "retention_days": 30,
+      "description": "DSAR export ZIPs + transfer artifacts. dedupable=false because each export is per-request + shouldn't share bytes. Skip AV \u2014 we generated the file server-side."
+    },
+    {
+      "key": "receipt",
+      "declared_by": "subscription (planned)",
+      "max_size_mb": 5,
+      "allowed_mimes": ["application/pdf"],
+      "generates_variants": [],
+      "requires_virus_scan": true,
+      "visibility": "restricted",
+      "dedupable": true,
+      "retention_days": 2555,
+      "description": "Billing receipts. 7-year retention for tax compliance."
+    },
+    {
+      "key": "backup",
+      "declared_by": "foundation (planned)",
+      "max_size_mb": 10240,
+      "allowed_mimes": ["application/octet-stream", "application/gzip"],
+      "generates_variants": [],
+      "requires_virus_scan": false,
+      "visibility": "restricted",
+      "dedupable": false,
+      "retention_days": 90,
+      "description": "Platform-level workspace snapshot backups. Skip AV \u2014 encrypted archives. dedupable=false for tenant isolation."
+    }
+  ],
+  "kind_key_convention": "lowercase snake_case. Module-owned kinds prefixed with module name where the term would otherwise be too generic (e.g. `newsletter_hero`, not `hero`). Storage-owned generics (avatar, document, image, video) do not carry a namespace prefix.",
+  "editor_note": "This file is the seed catalogue \u2014 platform-default kinds shipped in-repo. Actual runtime registration happens via #[FileKind] classes discovered at boot. The runtime registry is authoritative; this file documents the reference set."
+}
