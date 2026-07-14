@@ -21,7 +21,7 @@
     "sharded",
     "upsert"
   ],
-  "priority": 22,
+  "priority": 23,
   "providers": ["Academorix\\Transfer\\Providers\\TransferServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "workspaces", "audit", "activity", "notifications", "settings"],

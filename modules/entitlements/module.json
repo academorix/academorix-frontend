@@ -3,9 +3,21 @@
   "name": "entitlements",
   "alias": "entitlements",
   "namespace": "Academorix\\Entitlements",
-  "description": "Per-workspace quota + usage tracking substrate consumed by every metered feature (webhook, notifications, storage, newsletter, search, etc). Owns two entities \u2014 Entitlement (the resolved cap for a (workspace, key) tuple) and EntitlementUsage (audit rows for consumption events). Ships four entitlement kinds: `slot` (hard cap on concurrent count), `pool` (periodic quota with reset), `boolean` (feature toggle), `unlimited` (enterprise). Redis-backed hot-path consume() with Postgres source-of-truth. Monthly + anniversary + lifetime reset windows. Manual per-workspace overrides for enterprise negotiations. Publishes `HasEntitlements` (mixed into Workspace) + `MetersUsage` trait for models that consume metered features. Exports usage to Stripe/Paddle at billing period end for usage-based tiers.",
-  "keywords": ["entitlements", "quotas", "usage", "metering", "slot", "pool", "boolean", "enforcement", "billing", "workspace", "feature-flags"],
-  "priority": 15,
+  "description": "Per-workspace quota + usage tracking substrate consumed by every metered feature (webhook, notifications, storage, newsletter, search, etc). Owns two entities — Entitlement (the resolved cap for a (workspace, key) tuple) and EntitlementUsage (audit rows for consumption events). Ships four entitlement kinds: `slot` (hard cap on concurrent count), `pool` (periodic quota with reset), `boolean` (feature toggle), `unlimited` (enterprise). Redis-backed hot-path consume() with Postgres source-of-truth. Monthly + anniversary + lifetime reset windows. Manual per-workspace overrides for enterprise negotiations. Publishes `HasEntitlements` (mixed into Workspace) + `MetersUsage` trait for models that consume metered features. Exports usage to Stripe/Paddle at billing period end for usage-based tiers.",
+  "keywords": [
+    "entitlements",
+    "quotas",
+    "usage",
+    "metering",
+    "slot",
+    "pool",
+    "boolean",
+    "enforcement",
+    "billing",
+    "workspace",
+    "feature-flags"
+  ],
+  "priority": 22,
   "providers": ["Academorix\\Entitlements\\Providers\\EntitlementsServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "workspaces", "activity", "audit"],
@@ -17,12 +29,12 @@
     "notifications-push",
     "notifications-sms",
     "newsletter",
-    "storage",
     "search",
     "activity",
     "audit",
     "settings"
   ],
+  "planned_consumers": ["storage"],
   "contributes": {
     "traits": ["HasEntitlements", "MetersUsage"],
     "attributes": ["ConsumesEntitlement", "EnforcesEntitlement"],
@@ -80,7 +92,7 @@
   },
   "hosts": {
     "workspace": {
-      "description": "Workspace-facing quota + usage read surface. No writes \u2014 entitlement values are derived from plan defaults + platform-admin overrides.",
+      "description": "Workspace-facing quota + usage read surface. No writes — entitlement values are derived from plan defaults + platform-admin overrides.",
       "routes": [
         "GET /api/v1/entitlements",
         "GET /api/v1/entitlements/{key}",
