@@ -79,6 +79,21 @@ Result is set via `App::setLocale($code)` for Laravel's translator + cached on
 
 ## 3. Translation resolution order
 
+The module handles **two distinct translation problems** — do not conflate them:
+
+- **UI strings** (`t('users.title')`) — namespaced translation KEYS resolved
+  through Laravel's `Translator`. Storage: `translations` table +
+  `lang/**/*.php|json` files. Chain described in §3.1 below.
+- **Content fields** (`$plan->name`, `$notificationTemplate->body`) — per-row
+  content translated on the model via the `HasTranslations` trait. Storage: a
+  JSONB `translations` column on the row itself (see
+  `foundation::Blueprint::translations()` macro). Chain described in §3.2.
+
+Both chains reuse the same **fallback locale** semantics so callers get
+consistent behaviour regardless of which surface they hit.
+
+### 3.1 UI-string resolution chain
+
 When code calls `t('users.title')`, our decorated Translator runs this chain
 (first hit wins):
 
@@ -97,6 +112,35 @@ When code calls `t('users.title')`, our decorated Translator runs this chain
 
 Every hit fires `TranslationCacheHit` or `TranslationCacheMiss` events so
 metrics can graph hit ratios per workspace + locale.
+
+### 3.2 Content-field resolution chain
+
+When code reads a `#[Translatable]` property (e.g. `$plan->name`), the
+`HasTranslations` accessor runs a shorter, purely in-process chain (no DB
+round-trip — the JSONB blob was already hydrated with the row):
+
+1. **Active locale value** — `translations[$activeLocale][$field]` when
+   non-empty
+2. **Workspace fallback** — `translations[$workspaceFallback][$field]` where
+   `WorkspaceLocale.is_fallback = true`
+3. **Attribute-declared fallback** — `translations[$attributeFallback][$field]`
+   from `#[Translatable(fallback: 'fr-CA')]` (BCP-47 form) OR
+   `translations[$workspaceFallback]` (when the sentinel is `workspace_default`)
+   OR `translations[$appDefault]` (when `app_default`)
+4. **App default** —
+   `translations[config('localization.fallback_locale')] [$field]`
+5. **Null** — when `#[Translatable(fallback: 'none')]` OR every step returned
+   empty
+
+Writing a value fires `TranslationWritten` (see `events.json`); if
+`WorkspaceLocale.auto_translate = true` on any _other_ enabled locale, the
+listener queues a `TranslateJob` to backfill the missing locales.
+
+The **wire projection** is active-locale scalar by default — a
+`GET /api/v1/plans/{id}` returns `data.name = 'Team'` (or the fallback-resolved
+value). Admin editors that need round-trip access to every locale pass
+`?include=translations` to receive the full JSONB blob under
+`data.translations`.
 
 ## 4. Helper overrides
 
@@ -194,3 +238,67 @@ logical properties.
   workflow.
 - **Doesn't own currency / date-format localization.** Those are locale-derived
   but read from `intl` extension, not our tables.
+
+## 9. Translatable Content Governance
+
+Content that is stored per-row (Plan names, template subjects, category
+descriptions, business-type labels) is classified into three tiers. The tier
+governs the storage strategy + the wire contract + the auto-translate defaults.
+
+### Tier A — high-value, workspace-visible content
+
+Every workspace member reads this. Auto-translate is on by default (workspaces
+can disable per-locale). Wire projection is active-locale scalar; admin editors
+opt in with `?include=translations`.
+
+| Module        | Model                  | Translated fields                        | Strategy         |
+| ------------- | ---------------------- | ---------------------------------------- | ---------------- |
+| subscription  | `Plan`                 | `name`, `description`                    | JSONB blob       |
+| notifications | `NotificationCategory` | `display_name`, `description`            | JSONB blob       |
+| notifications | `NotificationTemplate` | `subject_template`, `body_rendered_html` | Row-per-locale † |
+| newsletter    | `Newsletter`           | `name`, `description`                    | JSONB blob       |
+| newsletter    | `NewsletterCampaign`   | `name`                                   | JSONB blob       |
+| newsletter    | `NewsletterAudience`   | `name`, `description`                    | JSONB blob       |
+| newsletter    | `NewsletterIssue`      | `subject`                                | JSONB blob       |
+| workspaces    | `BusinessType`         | `label`, `description`                   | Config-backed ‡  |
+| workspaces    | `Branding`             | `name`                                   | JSONB blob       |
+
+**Default storage** — JSONB `translations` column via
+`foundation::Blueprint::translations()`. Composed with the `HasTranslations`
+trait + `#[Translatable]` per field.
+
+† **NotificationTemplate — row-per-locale exception.** Each locale is its own
+row with independent `state` (draft/published/archived) + `version` +
+`body_rendered_html`. Templates are large + CI-rendered per locale, so JSONB
+storage would (a) balloon a single row with every locale's full HTML, (b) lose
+the per-locale version history. Resolver order: (workspace, key, channel,
+locale) → (workspace=null, key, channel, locale) → (workspace, key, channel,
+'en') → (workspace=null, key, channel, 'en').
+
+‡ **BusinessType — config-backed exception.** BusinessType is a catalogue loaded
+from `config/workspaces.php` (mirrored from `data/business-types.json`) — no
+Eloquent model, no DB table. Localised copies live inline in the same config
+entry under a `translations` map that mirrors the JSONB shape used by Eloquent
+tier-A models, so the wire contract remains identical for callers.
+
+### Tier B — user-authored, workspace-visible content
+
+The workspace owns the content and chooses when to localise (opt-in per row).
+Auto-translate is off by default (workspaces enable per model). Same storage
+strategy as Tier A. **Not yet applied** — modules on the roadmap:
+`sports::events::EventName`, `sports::coaching::ProgrammeDescription`, future
+`announcements::Announcement`.
+
+### Tier C — administrative labels
+
+Short internal labels (organization names, branch names) that ship in the
+workspace's default locale and are not routinely re-translated. Storage stays as
+plain columns; workspaces that need multilingual labels opt in via a future
+migration. **No `HasTranslations` composition today.**
+
+### Non-translated by design
+
+- **Slugs, keys, codes** (`plan.slug`, `template.key`) — machine identifiers
+- **IDs, timestamps, foreign keys** — infrastructure
+- **User-generated bulk content** (registrations, transactions) — belongs to the
+  workspace's active locale at creation time; historical records stay untouched

@@ -3,7 +3,7 @@
   "name": "foundation",
   "alias": "foundation",
   "namespace": "Academorix\\Foundation",
-  "description": "Pure-infrastructure base module. Owns the cross-cutting model traits (HasSystemFlag, HasUserstamps, HasAuditable, HasVersions, HasMetadata, Sortable, Filterable, Sluggable, HasVectorEmbeddings), the paired migration macros, base HTTP + exception + job + repository primitives, the health aggregator + probe registry, module discovery + ModuleRouteLoader, cache tag namespaces, base error envelope, data-classification taxonomy, and the compliance regime taxonomy every downstream module inherits. Ships zero domain entities \u2014 the module is entity-less on purpose. API + payload versioning has moved to `modules/versioning/` (Wave 1). Import / export substrate has moved to `modules/transfer/` (Wave 2). Search substrate (Searchable trait, SearchEngineResolver, IndexSearchableJob, search commands) has moved to `modules/search/` (Wave 6). Wave 0: every other module depends on this one.",
+  "description": "Pure-infrastructure base module. Owns the cross-cutting model traits (HasSystemFlag, HasUserstamps, HasAuditable, HasVersions, HasMetadata, Sortable, Filterable, Sluggable, HasVectorEmbeddings), the paired migration macros, base HTTP + exception + job + repository primitives, the health aggregator + probe registry, module discovery + ModuleRouteLoader, cache tag namespaces, base error envelope, data-classification taxonomy, and the compliance regime taxonomy every downstream module inherits. Ships zero domain entities — the module is entity-less on purpose. API + payload versioning has moved to `modules/versioning/` (Wave 1). Import / export substrate has moved to `modules/transfer/` (Wave 2). Search substrate (Searchable trait, SearchEngineResolver, IndexSearchableJob, search commands) has moved to `modules/search/` (Wave 6). Wave 0: every other module depends on this one.",
   "keywords": [
     "foundation",
     "infrastructure",
@@ -20,27 +20,29 @@
   "dependencies": [],
   "extendedBy": [
     "versioning",
-    "scope",
     "workspaces",
-    "access",
     "audit",
     "settings",
-    "feature-flag",
-    "compliance",
     "invitations",
     "notifications",
+    "activity",
+    "subscription",
+    "entitlements",
+    "webhook"
+  ],
+  "planned_consumers": [
+    "scope",
+    "access",
+    "feature-flag",
+    "compliance",
     "user",
     "auth",
-    "activity",
     "organization",
     "region",
     "branch",
     "facilities",
     "teams",
-    "subscription",
-    "entitlements",
-    "sports",
-    "webhook"
+    "sports"
   ],
   "contributes": {
     "traits": [
@@ -62,7 +64,8 @@
       "metadata",
       "sortable",
       "sluggable",
-      "embeddings"
+      "embeddings",
+      "translations"
     ],
     "middleware": ["request.id", "response.envelope", "throttle.base", "cors.strict"],
     "events": [
@@ -84,14 +87,19 @@
     "views": [],
     "lang": ["foundation"],
     "config": ["foundation"],
-    "macros": ["Str::slugify", "Collection::orderBySortable", "Blueprint::foundationConventions"],
-    "bindings": ["HealthAggregator", "ModuleRegistry", "ModuleRouteLoader", "SearchEngineResolver"],
+    "macros": [
+      "Str::slugify",
+      "Collection::orderBySortable",
+      "Blueprint::foundationConventions",
+      "Blueprint::translations"
+    ],
+    "bindings": ["HealthAggregator", "ModuleRegistry", "ModuleRouteLoader"],
     "resources": []
   },
   "delegated": {
     "api.version.middleware": {
       "movedTo": "modules/versioning",
-      "reason": "API + payload + webhook versioning are all instances of surface-level version lifecycle \u2014 same concern. Versioning module owns the ApiVersion entity + resolver chain + deprecation workflow + payload transformer registry. Foundation retains the base HTTP pipeline (request.id, response.envelope, throttle.base, cors.strict); versioning slots in at priority 30 between cors and throttle.",
+      "reason": "API + payload + webhook versioning are all instances of surface-level version lifecycle — same concern. Versioning module owns the ApiVersion entity + resolver chain + deprecation workflow + payload transformer registry. Foundation retains the base HTTP pipeline (request.id, response.envelope, throttle.base, cors.strict); versioning slots in at priority 30 between cors and throttle.",
       "since": "0.1.0"
     }
   },
@@ -105,8 +113,7 @@
       "routes": [
         "GET /api/v1/platform/modules",
         "GET /api/v1/platform/modules/{module}",
-        "GET /api/v1/platform/health/detail",
-        "POST /api/v1/platform/search/reindex"
+        "GET /api/v1/platform/health/detail"
       ]
     },
     "workspace": {

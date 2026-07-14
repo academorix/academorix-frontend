@@ -16,7 +16,18 @@
     "model": "Academorix\\Subscription\\Models\\Plan",
     "interface": "Academorix\\Subscription\\Contracts\\Data\\PlanInterface",
     "implements": ["Academorix\\Subscription\\Contracts\\Data\\PlanInterface"],
-    "traits": ["HasFactory", "HasUlids", "HasSystemFlag", "HasMetadata", "HasUserstamps", "HasAudit", "Filterable", "Searchable", "SoftDeletes"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "HasSystemFlag",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAudit",
+      "HasTranslations",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
     "casts": {
       "tier": "PlanTier",
       "billing_cycle": "BillingCycle",
@@ -29,7 +40,8 @@
       "is_public": "boolean",
       "is_deprecated": "boolean",
       "archived_at": "datetime",
-      "metadata": "array"
+      "metadata": "array",
+      "translations": "array"
     },
     "appends": ["price_formatted", "active_subscription_count"],
     "observers": ["PlanObserver"],
@@ -39,66 +51,225 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `pln_<26 chars>`."},
-      "application_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "applications", "column": "id", "onDelete": "restrict"}},
-      "key": {"type": "string", "length": 100, "nullable": false, "description": "Stable slug. e.g. `academy_team_monthly`. Referenced by config + code."},
-      "name": {"type": "string", "length": 200, "nullable": false, "description": "Display name. e.g. 'Team (monthly)'."},
-      "description": {"type": "text", "nullable": true},
-      "tier": {"type": "string", "length": 24, "nullable": false, "description": "Enum: free / team / business / enterprise / custom."},
-      "billing_cycle": {"type": "string", "length": 16, "nullable": false, "description": "Enum: monthly / annual / lifetime."},
-      "billing_mode": {"type": "string", "length": 16, "nullable": false, "default": "'cashier'", "description": "Enum: cashier / invoice. `invoice` = offline PO billing, bypasses Cashier."},
-      "price_micro_units": {"type": "bigint", "nullable": false, "description": "Amount in micro-currency (1 unit = 1 micro-cent). Redundant with Stripe/Paddle price but useful for display without provider round-trip."},
-      "currency": {"type": "string", "length": 3, "nullable": false, "default": "'USD'"},
-      "provider_price_id": {"type": "string", "length": 128, "nullable": true, "description": "Stripe Price ID (e.g. price_xxx) or Paddle Product ID. Null when billing_mode=invoice."},
-      "trial_days": {"type": "integer", "nullable": false, "default": 0, "description": "Days of free trial before first charge. 0 = no trial."},
-      "default_entitlements": {"type": "jsonb", "nullable": false, "default": "'{}'::jsonb", "description": "Map of entitlement_key \u2192 { kind, value_cap, period }. Loaded by entitlements module on Subscription creation + plan swap."},
-      "included_features": {"type": "jsonb", "nullable": false, "default": "'[]'::jsonb", "description": "Array of feature keys enabled by this plan. Displayed on plan-comparison card."},
-      "is_system": {"type": "boolean", "nullable": false, "default": false},
-      "is_public": {"type": "boolean", "nullable": false, "default": true, "description": "True = shown on public pricing page. False = enterprise/private."},
-      "is_deprecated": {"type": "boolean", "nullable": false, "default": false, "description": "True = existing subscriptions grandfathered, new signups blocked."},
-      "sort_order": {"type": "integer", "nullable": false, "default": 0},
-      "archived_at": {"type": "timestamptz", "nullable": true},
-      "metadata": {"type": "jsonb", "nullable": true},
-      "created_by": {"type": "uuid", "nullable": true},
-      "updated_by": {"type": "uuid", "nullable": true},
-      "deleted_by": {"type": "uuid", "nullable": true},
-      "deleted_at": {"type": "timestamptz", "nullable": true},
-      "created_at": {"type": "timestamptz", "nullable": false},
-      "updated_at": {"type": "timestamptz", "nullable": false}
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `pln_<26 chars>`."
+      },
+      "application_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "applications", "column": "id", "onDelete": "restrict" }
+      },
+      "key": {
+        "type": "string",
+        "length": 100,
+        "nullable": false,
+        "description": "Stable slug. e.g. `academy_team_monthly`. Referenced by config + code."
+      },
+      "name": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "description": "Display name. e.g. 'Team (monthly)'. Translated via `HasTranslations` \u2014 the physical column stores the workspace-default-locale value; the `translations` JSONB blob carries every locale."
+      },
+      "description": {
+        "type": "text",
+        "nullable": true,
+        "description": "Marketing description shown on the pricing page. Translated via `HasTranslations`."
+      },
+      "translations": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Per-locale content-translation blob. Shape: `{ locale_code: { field: value } }`. Managed by the `HasTranslations` trait (wraps `spatie/laravel-translatable`). Column added via `foundation::Blueprint::translations()`."
+      },
+      "tier": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "description": "Enum: free / team / business / enterprise / custom."
+      },
+      "billing_cycle": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: monthly / annual / lifetime."
+      },
+      "billing_mode": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'cashier'",
+        "description": "Enum: cashier / invoice. `invoice` = offline PO billing, bypasses Cashier."
+      },
+      "price_micro_units": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "Amount in micro-currency (1 unit = 1 micro-cent). Redundant with Stripe/Paddle price but useful for display without provider round-trip."
+      },
+      "currency": { "type": "string", "length": 3, "nullable": false, "default": "'USD'" },
+      "provider_price_id": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Stripe Price ID (e.g. price_xxx) or Paddle Product ID. Null when billing_mode=invoice."
+      },
+      "trial_days": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Days of free trial before first charge. 0 = no trial."
+      },
+      "default_entitlements": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Map of entitlement_key \u2192 { kind, value_cap, period }. Loaded by entitlements module on Subscription creation + plan swap."
+      },
+      "included_features": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Array of feature keys enabled by this plan. Displayed on plan-comparison card."
+      },
+      "is_system": { "type": "boolean", "nullable": false, "default": false },
+      "is_public": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "True = shown on public pricing page. False = enterprise/private."
+      },
+      "is_deprecated": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "True = existing subscriptions grandfathered, new signups blocked."
+      },
+      "sort_order": { "type": "integer", "nullable": false, "default": 0 },
+      "archived_at": { "type": "timestamptz", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      {"columns": ["application_id", "key"], "unique": true, "name": "plans_application_key_unique", "predicate": "deleted_at IS NULL"},
-      {"columns": ["application_id", "tier", "is_public"], "unique": false, "name": "plans_public_catalogue_idx"},
-      {"columns": ["provider_price_id"], "unique": false, "name": "plans_provider_price_idx", "predicate": "provider_price_id IS NOT NULL"}
+      {
+        "columns": ["application_id", "key"],
+        "unique": true,
+        "name": "plans_application_key_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["application_id", "tier", "is_public"],
+        "unique": false,
+        "name": "plans_public_catalogue_idx"
+      },
+      {
+        "columns": ["provider_price_id"],
+        "unique": false,
+        "name": "plans_provider_price_idx",
+        "predicate": "provider_price_id IS NOT NULL"
+      }
     ]
   },
-  "required": ["id", "application_id", "key", "name", "tier", "billing_cycle", "billing_mode", "price_micro_units", "currency", "trial_days", "default_entitlements", "included_features", "is_system", "is_public", "is_deprecated", "sort_order", "created_at", "updated_at"],
+  "x-translatable": {
+    "trait": "Academorix\\Localization\\Concerns\\HasTranslations",
+    "column": "translations",
+    "fields": ["name", "description"],
+    "underlying_package": "spatie/laravel-translatable ^6.0",
+    "migration_macro": "foundation::Blueprint::translations()",
+    "wire_convention": "Active-locale projection onto the field name by default. Full JSONB blob under `data.translations` when the request carries `?include=translations`.",
+    "auto_translate": "opt-in via WorkspaceLocale.auto_translate=true per target locale"
+  },
+  "required": [
+    "id",
+    "application_id",
+    "key",
+    "name",
+    "tier",
+    "billing_cycle",
+    "billing_mode",
+    "price_micro_units",
+    "currency",
+    "trial_days",
+    "default_entitlements",
+    "included_features",
+    "is_system",
+    "is_public",
+    "is_deprecated",
+    "sort_order",
+    "translations",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
-    "id": {"type": "string", "pattern": "^pln_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "application_id": {"type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "key": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,99}$"},
-    "name": {"type": "string", "maxLength": 200},
-    "description": {"type": ["string", "null"]},
-    "tier": {"type": "string", "enum": ["free", "team", "business", "enterprise", "custom"]},
-    "billing_cycle": {"type": "string", "enum": ["monthly", "annual", "lifetime"]},
-    "billing_mode": {"type": "string", "enum": ["cashier", "invoice"]},
-    "price_micro_units": {"type": "integer", "minimum": 0},
-    "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
-    "provider_price_id": {"type": ["string", "null"], "maxLength": 128},
-    "trial_days": {"type": "integer", "minimum": 0, "maximum": 90},
-    "default_entitlements": {"type": "object", "additionalProperties": {"type": "object", "required": ["kind"], "properties": {"kind": {"enum": ["slot", "pool", "boolean", "unlimited"]}, "value_cap": {"type": ["integer", "null"]}, "period": {"type": ["string", "null"]}}}},
-    "included_features": {"type": "array", "items": {"type": "string"}},
-    "is_system": {"type": "boolean"},
-    "is_public": {"type": "boolean"},
-    "is_deprecated": {"type": "boolean"},
-    "sort_order": {"type": "integer"},
-    "archived_at": {"type": ["string", "null"], "format": "date-time"},
-    "price_formatted": {"type": "string", "description": "Computed. E.g. '$29.00/month'."},
-    "active_subscription_count": {"type": "integer", "description": "Computed. Number of active subscriptions on this plan."},
-    "metadata": {"type": ["object", "null"]},
-    "created_at": {"type": "string", "format": "date-time"},
-    "updated_at": {"type": "string", "format": "date-time"}
+    "id": { "type": "string", "pattern": "^pln_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "application_id": { "type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "key": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,99}$" },
+    "name": {
+      "type": "string",
+      "maxLength": 200,
+      "x-translatable": true,
+      "description": "Active-locale projection. Full blob available via `?include=translations`."
+    },
+    "description": {
+      "type": ["string", "null"],
+      "x-translatable": true,
+      "description": "Active-locale projection. Full blob available via `?include=translations`."
+    },
+    "translations": {
+      "type": "object",
+      "description": "Per-locale content translations. Wire-included only when `?include=translations`. Shape: `{ locale_code: { field: value } }`.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": { "type": ["string", "null"] }
+      }
+    },
+    "tier": { "type": "string", "enum": ["free", "team", "business", "enterprise", "custom"] },
+    "billing_cycle": { "type": "string", "enum": ["monthly", "annual", "lifetime"] },
+    "billing_mode": { "type": "string", "enum": ["cashier", "invoice"] },
+    "price_micro_units": { "type": "integer", "minimum": 0 },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "provider_price_id": { "type": ["string", "null"], "maxLength": 128 },
+    "trial_days": { "type": "integer", "minimum": 0, "maximum": 90 },
+    "default_entitlements": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["kind"],
+        "properties": {
+          "kind": { "enum": ["slot", "pool", "boolean", "unlimited"] },
+          "value_cap": { "type": ["integer", "null"] },
+          "period": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "included_features": { "type": "array", "items": { "type": "string" } },
+    "is_system": { "type": "boolean" },
+    "is_public": { "type": "boolean" },
+    "is_deprecated": { "type": "boolean" },
+    "sort_order": { "type": "integer" },
+    "archived_at": { "type": ["string", "null"], "format": "date-time" },
+    "price_formatted": { "type": "string", "description": "Computed. E.g. '$29.00/month'." },
+    "active_subscription_count": {
+      "type": "integer",
+      "description": "Computed. Number of active subscriptions on this plan."
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
   },
   "additionalProperties": false,
-  "x-wire": {"envelope": "spatie-data", "wrap": "data", "mapper": "SnakeCaseMapper", "computed": ["price_formatted", "active_subscription_count"]}
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["price_formatted", "active_subscription_count"]
+  }
 }

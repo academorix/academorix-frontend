@@ -3,7 +3,7 @@
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "NotificationCategory",
-  "description": "Registry entry seeded from every module's notifications.json. `workspace_id NULL` + is_system=true = platform default. `workspace_id` set = workspace override that only touches display_name + default_channels (never priority + consent_tier + opt_out_allowed \u2014 those are compliance concerns). SeedCategoriesCommand upserts on deploy; runtime writes only from workspace admin UI.",
+  "description": "Registry entry seeded from every module's notifications.json. `workspace_id NULL` + is_system=true = platform default. `workspace_id` set = workspace override that only touches display_name + default_channels (never priority + consent_tier + opt_out_allowed — those are compliance concerns). SeedCategoriesCommand upserts on deploy; runtime writes only from workspace admin UI.",
   "type": "object",
   "x-module": "notifications",
   "x-eloquent": {
@@ -24,6 +24,7 @@
       "HasMetadata",
       "HasUserstamps",
       "HasAuditable",
+      "HasTranslations",
       "Sortable",
       "Filterable",
       "Sluggable",
@@ -33,7 +34,8 @@
       "is_system": "boolean",
       "opt_out_allowed": "boolean",
       "default_channels": "array",
-      "metadata": "array"
+      "metadata": "array",
+      "translations": "array"
     },
     "appends": ["is_transactional"],
     "observers": ["NotificationCategoryObserver"],
@@ -43,51 +45,256 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `cat_<26 chars>`."},
-      "workspace_id": {"type": "string", "length": 64, "nullable": true, "foreign": {"table": "workspaces", "column": "id", "onUpdate": "cascade", "onDelete": "cascade"}, "description": "NULL = platform default; workspace_id set = workspace override."},
-      "slug": {"type": "string", "length": 128, "nullable": false, "description": "Module-namespaced (module.category). Sluggable-generated with reserved-slug enforcement."},
-      "owning_module": {"type": "string", "length": 64, "nullable": false, "description": "Module that registered this category (`invitations`, `auth`, `billing`, ...). Enforced by the seeder \u2014 workspace overrides inherit from the platform row."},
-      "display_name": {"type": "string", "length": 200, "nullable": false, "description": "Human-readable label rendered in the preferences UI. Workspace may override."},
-      "description": {"type": "text", "nullable": true, "description": "Short description shown as help text in the preferences UI."},
-      "default_channels": {"type": "jsonb", "nullable": false, "default": "[]", "description": "Array of channel slugs. The fallback when no user preference exists. Workspace may override."},
-      "priority": {"type": "string", "length": 16, "nullable": false, "default": "transactional", "description": "Enum: `critical`, `transactional`, `product`, `marketing`. NEVER overridden by workspaces \u2014 platform default only (compliance concern)."},
-      "consent_tier": {"type": "string", "length": 32, "nullable": false, "default": "transactional_required", "description": "Enum: `transactional_required` (Art. 6(1)(b) contract), `product_default` (Art. 6(1)(f) legitimate interest), `marketing_opt_in` (Art. 6(1)(a) consent), `marketing_double_opt_in` (Art. 6(1)(a) with confirmation)."},
-      "opt_out_allowed": {"type": "boolean", "nullable": false, "default": true, "description": "False for transactional_required (security alerts, receipts, invitations). True for everything else. NEVER overridden by workspaces."},
-      "is_system": {"type": "boolean", "nullable": false, "default": false, "description": "True for platform-owned rows. HasSystemFlag refuses edit for non-super_admin \u2014 workspace overrides use different rows."},
-      "sort_order": {"type": "integer", "nullable": false, "default": 0, "description": "From Sortable. Ordering in the preferences UI."},
-      "metadata": {"type": "jsonb", "nullable": true},
-      "created_by": {"type": "uuid", "nullable": true},
-      "updated_by": {"type": "uuid", "nullable": true},
-      "created_at": {"type": "timestamptz", "nullable": false},
-      "updated_at": {"type": "timestamptz", "nullable": false}
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `cat_<26 chars>`."
+      },
+      "workspace_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": {
+          "table": "workspaces",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "NULL = platform default; workspace_id set = workspace override."
+      },
+      "slug": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Module-namespaced (module.category). Sluggable-generated with reserved-slug enforcement."
+      },
+      "owning_module": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Module that registered this category (`invitations`, `auth`, `billing`, ...). Enforced by the seeder — workspace overrides inherit from the platform row."
+      },
+      "display_name": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "description": "Human-readable label rendered in the preferences UI. Workspace may override. Translated via `HasTranslations`."
+      },
+      "description": {
+        "type": "text",
+        "nullable": true,
+        "description": "Short description shown as help text in the preferences UI. Translated via `HasTranslations`."
+      },
+      "default_channels": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "[]",
+        "description": "Array of channel slugs. The fallback when no user preference exists. Workspace may override."
+      },
+      "priority": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "transactional",
+        "description": "Enum: `critical`, `transactional`, `product`, `marketing`. NEVER overridden by workspaces — platform default only (compliance concern)."
+      },
+      "consent_tier": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "transactional_required",
+        "description": "Enum: `transactional_required` (Art. 6(1)(b) contract), `product_default` (Art. 6(1)(f) legitimate interest), `marketing_opt_in` (Art. 6(1)(a) consent), `marketing_double_opt_in` (Art. 6(1)(a) with confirmation)."
+      },
+      "opt_out_allowed": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "False for transactional_required (security alerts, receipts, invitations). True for everything else. NEVER overridden by workspaces."
+      },
+      "is_system": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "True for platform-owned rows. HasSystemFlag refuses edit for non-super_admin — workspace overrides use different rows."
+      },
+      "sort_order": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "From Sortable. Ordering in the preferences UI."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true
+      },
+      "translations": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Per-locale content-translation blob. Shape: `{ locale_code: { field: value } }`. Managed by the `HasTranslations` trait (wraps `spatie/laravel-translatable`). Column added via `foundation::Blueprint::translations()`."
+      },
+      "created_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "updated_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "created_at": {
+        "type": "timestamptz",
+        "nullable": false
+      },
+      "updated_at": {
+        "type": "timestamptz",
+        "nullable": false
+      }
     },
     "indexes": [
-      {"columns": ["workspace_id", "slug"], "unique": true, "name": "notification_categories_workspace_slug_unique", "description": "One row per (workspace_id, slug) tuple. NULL workspace_id is a distinct key (platform default). The resolver looks up (workspace, slug) first, falls back to (NULL, slug)."},
-      {"columns": ["owning_module"], "unique": false, "name": "notification_categories_owning_module_index"},
-      {"columns": ["priority", "consent_tier"], "unique": false, "name": "notification_categories_priority_index", "description": "Compliance reporting query: 'how many marketing_opt_in categories does workspace X have?'"},
-      {"columns": ["is_system", "slug"], "unique": false, "name": "notification_categories_is_system_index"}
+      {
+        "columns": ["workspace_id", "slug"],
+        "unique": true,
+        "name": "notification_categories_workspace_slug_unique",
+        "description": "One row per (workspace_id, slug) tuple. NULL workspace_id is a distinct key (platform default). The resolver looks up (workspace, slug) first, falls back to (NULL, slug)."
+      },
+      {
+        "columns": ["owning_module"],
+        "unique": false,
+        "name": "notification_categories_owning_module_index"
+      },
+      {
+        "columns": ["priority", "consent_tier"],
+        "unique": false,
+        "name": "notification_categories_priority_index",
+        "description": "Compliance reporting query: 'how many marketing_opt_in categories does workspace X have?'"
+      },
+      {
+        "columns": ["is_system", "slug"],
+        "unique": false,
+        "name": "notification_categories_is_system_index"
+      }
     ]
   },
-  "required": ["id", "slug", "owning_module", "display_name", "default_channels", "priority", "consent_tier", "opt_out_allowed", "is_system", "sort_order", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "slug",
+    "owning_module",
+    "display_name",
+    "default_channels",
+    "priority",
+    "consent_tier",
+    "opt_out_allowed",
+    "is_system",
+    "sort_order",
+    "translations",
+    "created_at",
+    "updated_at"
+  ],
+  "x-translatable": {
+    "trait": "Academorix\\Localization\\Concerns\\HasTranslations",
+    "column": "translations",
+    "fields": ["display_name", "description"],
+    "underlying_package": "spatie/laravel-translatable ^6.0",
+    "migration_macro": "foundation::Blueprint::translations()",
+    "wire_convention": "Active-locale projection onto the field name by default. Full JSONB blob under `data.translations` when the request carries `?include=translations`.",
+    "auto_translate": "opt-in via WorkspaceLocale.auto_translate=true per target locale"
+  },
   "properties": {
-    "id": {"type": "string", "pattern": "^cat_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "workspace_id": {"type": ["string", "null"], "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
-    "slug": {"type": "string", "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$", "maxLength": 128},
-    "owning_module": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$", "maxLength": 64},
-    "display_name": {"type": "string", "maxLength": 200},
-    "description": {"type": ["string", "null"]},
-    "default_channels": {"type": "array", "items": {"type": "string", "enum": ["mail", "sms", "push", "in_app"]}, "minItems": 1},
-    "priority": {"type": "string", "enum": ["critical", "transactional", "product", "marketing"]},
-    "consent_tier": {"type": "string", "enum": ["transactional_required", "product_default", "marketing_opt_in", "marketing_double_opt_in"]},
-    "opt_out_allowed": {"type": "boolean"},
-    "is_system": {"type": "boolean"},
-    "sort_order": {"type": "integer", "minimum": 0},
-    "is_transactional": {"type": "boolean", "description": "Computed. priority IN critical/transactional."},
-    "metadata": {"type": ["object", "null"], "additionalProperties": true},
-    "created_by": {"type": ["string", "null"], "format": "uuid"},
-    "updated_by": {"type": ["string", "null"], "format": "uuid"},
-    "created_at": {"type": "string", "format": "date-time"},
-    "updated_at": {"type": "string", "format": "date-time"}
+    "id": {
+      "type": "string",
+      "pattern": "^cat_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "workspace_id": {
+      "type": ["string", "null"],
+      "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$",
+      "maxLength": 128
+    },
+    "owning_module": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "maxLength": 64
+    },
+    "display_name": {
+      "type": "string",
+      "maxLength": 200,
+      "x-translatable": true,
+      "description": "Active-locale projection. Full blob available via `?include=translations`."
+    },
+    "description": {
+      "type": ["string", "null"],
+      "x-translatable": true,
+      "description": "Active-locale projection. Full blob available via `?include=translations`."
+    },
+    "translations": {
+      "type": "object",
+      "description": "Per-locale content translations. Wire-included only when `?include=translations`. Shape: `{ locale_code: { field: value } }`.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "default_channels": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["mail", "sms", "push", "in_app"]
+      },
+      "minItems": 1
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["critical", "transactional", "product", "marketing"]
+    },
+    "consent_tier": {
+      "type": "string",
+      "enum": [
+        "transactional_required",
+        "product_default",
+        "marketing_opt_in",
+        "marketing_double_opt_in"
+      ]
+    },
+    "opt_out_allowed": {
+      "type": "boolean"
+    },
+    "is_system": {
+      "type": "boolean"
+    },
+    "sort_order": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "is_transactional": {
+      "type": "boolean",
+      "description": "Computed. priority IN critical/transactional."
+    },
+    "metadata": {
+      "type": ["object", "null"],
+      "additionalProperties": true
+    },
+    "created_by": {
+      "type": ["string", "null"],
+      "format": "uuid"
+    },
+    "updated_by": {
+      "type": ["string", "null"],
+      "format": "uuid"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
   },
   "additionalProperties": false,
   "x-wire": {

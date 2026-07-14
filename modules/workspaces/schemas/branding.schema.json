@@ -11,7 +11,7 @@
     "table": "brandings",
     "primaryKey": "id",
     "keyType": "string",
-    "keyPrefix": "brand_",
+    "keyPrefix": "brd_",
     "incrementing": false,
     "model": "Academorix\\Workspaces\\Models\\Branding",
     "interface": "Academorix\\Workspaces\\Contracts\\Data\\BrandingInterface",
@@ -23,12 +23,14 @@
       "HasMetadata",
       "HasUserstamps",
       "HasAuditable",
+      "HasTranslations",
       "SoftDeletes"
     ],
     "casts": {
       "css_variables": "array",
       "is_default": "boolean",
-      "metadata": "array"
+      "metadata": "array",
+      "translations": "array"
     },
     "appends": [],
     "observers": ["BrandingObserver"],
@@ -42,7 +44,7 @@
         "type": "string",
         "length": 64,
         "primary": true,
-        "description": "Prefixed ULID: `brand_<26 chars>`."
+        "description": "Prefixed ULID: `brd_<26 chars>`."
       },
       "workspace_id": {
         "type": "string",
@@ -71,7 +73,7 @@
         "type": "string",
         "length": 100,
         "nullable": false,
-        "description": "Display name for the profile (e.g. 'Default', 'Dark Mode', 'Championship 2026')."
+        "description": "Display name for the profile (e.g. 'Default', 'Dark Mode', 'Championship 2026'). Translated via `HasTranslations`."
       },
       "is_default": {
         "type": "boolean",
@@ -86,21 +88,57 @@
         "default": "auto",
         "description": "Enum: `light`, `dark`, `auto`. Controls the base HeroUI theme applied under this profile."
       },
-      "logo_url": { "type": "string", "length": 2048, "nullable": true },
+      "logo_url": {
+        "type": "string",
+        "length": 2048,
+        "nullable": true
+      },
       "logo_dark_url": {
         "type": "string",
         "length": 2048,
         "nullable": true,
         "description": "Alternate logo used when the OS-level colour scheme is dark and theme=`auto`."
       },
-      "favicon_url": { "type": "string", "length": 2048, "nullable": true },
-      "primary_color": { "type": "string", "length": 7, "nullable": true },
-      "secondary_color": { "type": "string", "length": 7, "nullable": true },
-      "accent_color": { "type": "string", "length": 7, "nullable": true },
-      "background_color": { "type": "string", "length": 7, "nullable": true },
-      "surface_color": { "type": "string", "length": 7, "nullable": true },
-      "text_color": { "type": "string", "length": 7, "nullable": true },
-      "font_stack": { "type": "string", "length": 500, "nullable": true },
+      "favicon_url": {
+        "type": "string",
+        "length": 2048,
+        "nullable": true
+      },
+      "primary_color": {
+        "type": "string",
+        "length": 7,
+        "nullable": true
+      },
+      "secondary_color": {
+        "type": "string",
+        "length": 7,
+        "nullable": true
+      },
+      "accent_color": {
+        "type": "string",
+        "length": 7,
+        "nullable": true
+      },
+      "background_color": {
+        "type": "string",
+        "length": 7,
+        "nullable": true
+      },
+      "surface_color": {
+        "type": "string",
+        "length": 7,
+        "nullable": true
+      },
+      "text_color": {
+        "type": "string",
+        "length": 7,
+        "nullable": true
+      },
+      "font_stack": {
+        "type": "string",
+        "length": 500,
+        "nullable": true
+      },
       "custom_font_url": {
         "type": "string",
         "length": 2048,
@@ -117,12 +155,36 @@
         "nullable": true,
         "description": "Free-form platform notes on this branding profile — designer refs, Figma links, migration source. From HasMetadata."
       },
-      "created_by": { "type": "uuid", "nullable": true },
-      "updated_by": { "type": "uuid", "nullable": true },
-      "deleted_by": { "type": "uuid", "nullable": true },
-      "deleted_at": { "type": "timestamptz", "nullable": true },
-      "created_at": { "type": "timestamptz", "nullable": false },
-      "updated_at": { "type": "timestamptz", "nullable": false }
+      "translations": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Per-locale content-translation blob. Shape: `{ locale_code: { field: value } }`. Managed by the `HasTranslations` trait (wraps `spatie/laravel-translatable`). Column added via `foundation::Blueprint::translations()`."
+      },
+      "created_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "updated_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "deleted_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "deleted_at": {
+        "type": "timestamptz",
+        "nullable": true
+      },
+      "created_at": {
+        "type": "timestamptz",
+        "nullable": false
+      },
+      "updated_at": {
+        "type": "timestamptz",
+        "nullable": false
+      }
     },
     "indexes": [
       {
@@ -144,36 +206,132 @@
       }
     ]
   },
-  "required": ["id", "workspace_id", "name", "theme", "created_at", "updated_at"],
+  "required": ["id", "workspace_id", "name", "theme", "translations", "created_at", "updated_at"],
+  "x-translatable": {
+    "trait": "Academorix\\Localization\\Concerns\\HasTranslations",
+    "column": "translations",
+    "fields": ["name"],
+    "underlying_package": "spatie/laravel-translatable ^6.0",
+    "migration_macro": "foundation::Blueprint::translations()",
+    "wire_convention": "Active-locale projection onto the field name by default. Full JSONB blob under `data.translations` when the request carries `?include=translations`.",
+    "auto_translate": "opt-in via WorkspaceLocale.auto_translate=true per target locale"
+  },
   "properties": {
-    "id": { "type": "string", "pattern": "^brand_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "workspace_id": { "type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "domain_id": { "type": ["string", "null"], "pattern": "^dom_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "name": { "type": "string", "minLength": 1, "maxLength": 100 },
-    "is_default": { "type": "boolean", "default": false },
-    "theme": { "type": "string", "enum": ["light", "dark", "auto"] },
-    "logo_url": { "type": ["string", "null"], "format": "uri" },
-    "logo_dark_url": { "type": ["string", "null"], "format": "uri" },
-    "favicon_url": { "type": ["string", "null"], "format": "uri" },
-    "primary_color": { "type": ["string", "null"], "pattern": "^#[0-9a-fA-F]{6}$" },
-    "secondary_color": { "type": ["string", "null"], "pattern": "^#[0-9a-fA-F]{6}$" },
-    "accent_color": { "type": ["string", "null"], "pattern": "^#[0-9a-fA-F]{6}$" },
-    "background_color": { "type": ["string", "null"], "pattern": "^#[0-9a-fA-F]{6}$" },
-    "surface_color": { "type": ["string", "null"], "pattern": "^#[0-9a-fA-F]{6}$" },
-    "text_color": { "type": ["string", "null"], "pattern": "^#[0-9a-fA-F]{6}$" },
-    "font_stack": { "type": ["string", "null"], "maxLength": 500 },
-    "custom_font_url": { "type": ["string", "null"], "format": "uri" },
+    "id": {
+      "type": "string",
+      "pattern": "^brd_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "workspace_id": {
+      "type": "string",
+      "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "domain_id": {
+      "type": ["string", "null"],
+      "pattern": "^dom_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "x-translatable": true,
+      "description": "Active-locale projection. Full blob available via `?include=translations`."
+    },
+    "translations": {
+      "type": "object",
+      "description": "Per-locale content translations. Wire-included only when `?include=translations`. Shape: `{ locale_code: { field: value } }`.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "is_default": {
+      "type": "boolean",
+      "default": false
+    },
+    "theme": {
+      "type": "string",
+      "enum": ["light", "dark", "auto"]
+    },
+    "logo_url": {
+      "type": ["string", "null"],
+      "format": "uri"
+    },
+    "logo_dark_url": {
+      "type": ["string", "null"],
+      "format": "uri"
+    },
+    "favicon_url": {
+      "type": ["string", "null"],
+      "format": "uri"
+    },
+    "primary_color": {
+      "type": ["string", "null"],
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "secondary_color": {
+      "type": ["string", "null"],
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "accent_color": {
+      "type": ["string", "null"],
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "background_color": {
+      "type": ["string", "null"],
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "surface_color": {
+      "type": ["string", "null"],
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "text_color": {
+      "type": ["string", "null"],
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "font_stack": {
+      "type": ["string", "null"],
+      "maxLength": 500
+    },
+    "custom_font_url": {
+      "type": ["string", "null"],
+      "format": "uri"
+    },
     "css_variables": {
       "type": ["object", "null"],
-      "additionalProperties": { "type": "string" }
+      "additionalProperties": {
+        "type": "string"
+      }
     },
-    "metadata": { "type": ["object", "null"], "additionalProperties": true },
-    "created_by": { "type": ["string", "null"], "format": "uuid" },
-    "updated_by": { "type": ["string", "null"], "format": "uuid" },
-    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
-    "created_at": { "type": "string", "format": "date-time" },
-    "updated_at": { "type": "string", "format": "date-time" },
-    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+    "metadata": {
+      "type": ["object", "null"],
+      "additionalProperties": true
+    },
+    "created_by": {
+      "type": ["string", "null"],
+      "format": "uuid"
+    },
+    "updated_by": {
+      "type": ["string", "null"],
+      "format": "uuid"
+    },
+    "deleted_by": {
+      "type": ["string", "null"],
+      "format": "uuid"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "deleted_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    }
   },
   "additionalProperties": false,
   "x-wire": {

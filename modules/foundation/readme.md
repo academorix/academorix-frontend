@@ -14,12 +14,13 @@ shape every other module bends to, not any business data of its own. No
 
 `foundation` is the root of the dependency graph. Every module depends on it. It
 cannot depend on any other module. This constrains what lives here to truly
-universal concerns — anything domain-flavoured, workspace-flavoured, or opinionated
-about a specific business context belongs elsewhere.
+universal concerns — anything domain-flavoured, workspace-flavoured, or
+opinionated about a specific business context belongs elsewhere.
 
 Specifically NOT in foundation:
 
-- `Application` and `Workspace` — owned by `workspaces` (the multi-workspace substrate).
+- `Application` and `Workspace` — owned by `workspaces` (the multi-workspace
+  substrate).
 - `User` and `PlatformUser` — owned by `user` (the identity substrate).
 - `Role` and `Permission` — owned by `access` (the RBAC substrate).
 - `ScopeNode` and hierarchy resolution — owned by `scope` (the hierarchical
@@ -32,17 +33,28 @@ Specifically NOT in foundation:
 
 Every persistent model in every downstream module composes some subset:
 
-| Trait                 | Purpose                                                                                                                                                                             | Paired macro              |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
-| `HasSystemFlag`       | Adds `is_system` boolean + `system() / custom()` scopes + `isSystem()` / `isCustom()` accessors. Refused on Policy@update / @delete when true.                                      | `->systemFlag()`          |
-| `HasUserstamps`       | Adds `created_by / updated_by / deleted_by` UUID trio + auto-fills from the resolved caller.                                                                                        | `->userstampable()`       |
-| `HasAuditable`        | Wraps `owen-it/laravel-auditing`. Writes an audit row on every mutation with workspace + user + payload diff.                                                                          | `->auditable()` (marker)  |
-| `HasMetadata`         | Adds a `metadata` JSONB column + `array` cast + fluent accessors (`getMetadata`, `setMetadata`, `mergeMetadata`, `forgetMetadata`). Free-form platform notes; never queried.        | `->metadata()`            |
-| `Sortable`            | Adds `sort_order` unsigned-int + `sortable()` scope + `reorder([...])` bulk-move helper. Backing: `spatie/eloquent-sortable`.                                                       | `->sortable()`            |
-| `Filterable`          | Integration with `spatie/laravel-query-builder`. Reads `allowedFilters()` static method on the model + wires the base repository.                                                   | `->filterable()` (marker) |
-| `Sluggable`           | Adds a `slug` string column + unique index + auto-fill on `saving` from a `sluggableSource()` method. Backing: `cviebrock/eloquent-sluggable`.                                      | `->sluggable()`           |
-| `Searchable`          | Wraps `laravel/scout`. Adds `toSearchableArray()` + `searchable()` scope. Engine chosen per boot config (Meilisearch default; Elasticsearch + Postgres FTS + Typesense supported).  | `->searchable()` (marker) |
-| `HasVectorEmbeddings` | **v2 stub.** Adds a pgvector `embeddings` column + `nearest()` scope for similarity queries. Semantic search — distinct from lexical `Searchable`. Deferred until AI features land. | `->embeddings($dim)`      |
+| Trait                 | Purpose                                                                                                                                                                                                                                      | Paired macro              |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| `HasSystemFlag`       | Adds `is_system` boolean + `system() / custom()` scopes + `isSystem()` / `isCustom()` accessors. Refused on Policy@update / @delete when true.                                                                                               | `->systemFlag()`          |
+| `HasUserstamps`       | Adds `created_by / updated_by / deleted_by` UUID trio + auto-fills from the resolved caller.                                                                                                                                                 | `->userstampable()`       |
+| `HasAuditable`        | Wraps `owen-it/laravel-auditing`. Writes an audit row on every mutation with workspace + user + payload diff.                                                                                                                                | `->auditable()` (marker)  |
+| `HasMetadata`         | Adds a `metadata` JSONB column + `array` cast + fluent accessors (`getMetadata`, `setMetadata`, `mergeMetadata`, `forgetMetadata`). Free-form platform notes; never queried.                                                                 | `->metadata()`            |
+| `Sortable`            | Adds `sort_order` unsigned-int + `sortable()` scope + `reorder([...])` bulk-move helper. Backing: `spatie/eloquent-sortable`.                                                                                                                | `->sortable()`            |
+| `Filterable`          | Integration with `spatie/laravel-query-builder`. Reads `allowedFilters()` static method on the model + wires the base repository.                                                                                                            | `->filterable()` (marker) |
+| `Sluggable`           | Adds a `slug` string column + unique index + auto-fill on `saving` from a `sluggableSource()` method. Backing: `cviebrock/eloquent-sluggable`.                                                                                               | `->sluggable()`           |
+| `HasVectorEmbeddings` | **v2 stub.** Adds a pgvector `embeddings` column + `nearest()` scope for similarity queries. Semantic search primitive \u2014 the operational surface lives in `modules/search/` (pgvector engine adapter). Deferred until AI features land. | `->embeddings($dim)`      |
+
+> **Search moved out.** `Searchable` trait \u2014 along with its
+> `->searchable()` blueprint macro, `SearchEngineResolver` binding,
+> `IndexSearchableJob`, the `search:reindex` / `search:flush` commands,
+> `foundation.search` config section, `foundation:search:engine_health` cache
+> key, `FOUNDATION_SEARCH_ENGINE_UNAVAILABLE` error, `search-engine-reachable`
+> health probe, `foundation:search-index-refresh` schedule entry,
+> `foundation.search-indexing` kill switch, `platform.search.manage` permission,
+> and `POST /api/v1/platform/search/*` routes \u2014 moved to `modules/search/`
+> on Wave 6 module inception. Consumer models now use
+> `Academorix\Search\Concerns\HasSearchable` alongside the `#[Searchable]` PHP
+> attribute. See `modules/search/readme.md` \u00a7 10 for the full rename map.
 
 > **Import / export moved out.** `Importable` and `Exportable` traits — along
 > with their `->importable()` / `->exportable()` blueprint macros — moved to
@@ -69,11 +81,11 @@ final class Branch extends Model
     use HasAuditable;              // foundation
     use Sluggable;                 // foundation
     use Filterable;                // foundation
-    use Searchable;                // foundation
     use Sortable;                  // foundation
 
     use HasImportable;             // transfer  (optional)
     use HasExportable;             // transfer  (optional)
+    use HasSearchable;             // search    (optional)
 
     use SoftDeletes;               // framework
 }
@@ -82,7 +94,8 @@ final class Branch extends Model
 ### 2. Paired migration macros
 
 Every trait ships a `Blueprint` macro so the migration reads like the model. See
-`traits.json` for the mapping. Composition example (matches the model above):
+`traits.json` + `macros.json` for the mapping. Composition example (matches the
+model above):
 
 ```php
 Schema::create('branches', function (Blueprint $t) {
@@ -97,8 +110,9 @@ Schema::create('branches', function (Blueprint $t) {
     $t->auditable();               // foundation (marker)
     $t->sluggable('name');         // foundation
     $t->filterable();              // foundation (marker)
-    $t->searchable();              // foundation (marker)
     $t->sortable();                // foundation
+    // Search markers moved to modules/search/ — search discovers via PHP
+    // attributes (#[Searchable]), not migration macros.
     // import / export markers no longer live in the schema — the transfer
     // module discovers importable / exportable models via attribute-driven
     // registration (#[Importable] / #[Exportable]), not migration macros.
@@ -107,23 +121,69 @@ Schema::create('branches', function (Blueprint $t) {
 });
 ```
 
+#### `Blueprint::translations()` — content-translation JSONB column
+
+Models with per-row translated content (see the `localization` module) compose
+the `Localization\Concerns\HasTranslations` trait + declare `#[Translatable]` on
+each translated property. The paired migration macro adds the single JSONB
+column that carries every locale's value:
+
+```php
+Schema::create('plans', function (Blueprint $t) {
+    $t->string('id', 64)->primary();
+    $t->workspaceable();
+    $t->string('slug')->unique();
+    $t->translations();          // → adds `translations JSONB DEFAULT '{}'`
+    $t->timestamps();
+});
+```
+
+The DB shape is `{ locale_code: { field_name: value } }` — one row per model
+regardless of locale count. The trait wraps `spatie/laravel-translatable ^6.0`
+so accessor / mutator / fallback semantics are the vetted implementation; our
+subclass adds attribute-based property discovery + `TranslationWritten` event +
+workspace-aware fallback chain.
+
+**API convention.** By default, `GET /api/v1/plans/{id}` projects the
+active-locale scalar onto the field name (`data.name = 'Team'`). Admin editors
+that need round-trip access to every locale pass `?include=translations`:
+
+```
+GET /api/v1/plans/01HZ...?include=translations
+
+{
+  "data": {
+    "id": "01HZ...",
+    "name": "Team",            // active-locale projection (unchanged)
+    "translations": {           // ← full JSONB blob added
+      "en": { "name": "Team", "description": "For growing organisations" },
+      "fr": { "name": "Équipe", "description": "..." },
+      "ar": { "name": "الفريق", "description": "..." }
+    }
+  }
+}
+```
+
+The include key is `translations` by default; a model with multiple
+`#[Translatable]` containers can override per-attribute via
+`#[Translatable(wire_include_key: '...')]`.
+
 ### 3. Base HTTP + exception + job + repository primitives
 
-| Primitive              | Class                                               | Role                                                                                                                                |
-| ---------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Base data DTO          | `Academorix\Foundation\Data\BaseData`               | Extends `spatie/laravel-data` with `SnakeCaseMapper` + wire envelope defaults.                                                      |
-| Base request           | `Academorix\Foundation\Http\BaseFormRequest`        | Standardises validation error envelope + error code mapping.                                                                        |
-| Base controller        | `Academorix\Foundation\Http\BaseController`         | Response envelope helpers + policy binding + `include=` param parsing.                                                              |
-| Base CRUD controller   | `Academorix\Foundation\Http\CrudController`         | RESTful defaults built on spatie/laravel-query-builder. Every entity-resource controller extends this.                              |
-| Base exception         | `Academorix\Foundation\Exceptions\ApiException`     | Structured error code + HTTP status + i18n key + audit severity. Base of every custom exception.                                    |
-| Base repository        | `Academorix\Foundation\Repositories\BaseRepository` | Query builder + eager-load defaults + spatie/query-builder integration + cache invalidation hooks.                                  |
-| Base service           | `Academorix\Foundation\Services\BaseService`        | Repository binding + event dispatch + audit trail integration.                                                                      |
-| Base job               | `Academorix\Foundation\Jobs\BaseJob`                | Automatic Sentry tags + workspaces context capture + retry backoff defaults.                                                           |
-| Response envelope      | `Academorix\Foundation\Http\ResponseEnvelope`       | Wraps every controller response into `{ data, meta, links }` per the API contract.                                                  |
-| Health aggregator      | `Academorix\Foundation\Health\HealthAggregator`     | Discovers registered probes from every module + reports readiness + liveness on `/api/health`.                                      |
-| Module registry        | `Academorix\Foundation\Modules\ModuleRegistry`      | Discovers every `modules/*/module.json` at boot + resolves dependency graph.                                                        |
-| Module route loader    | `Academorix\Foundation\Modules\ModuleRouteLoader`   | Reads every module's `routes.json` and mounts route groups under the correct middleware stack. No per-module route provider needed. |
-| Search engine resolver | `Academorix\Foundation\Search\SearchEngineResolver` | Container binding that picks the Scout engine per environment (Meilisearch default).                                                |
+| Primitive            | Class                                               | Role                                                                                                                                |
+| -------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Base data DTO        | `Academorix\Foundation\Data\BaseData`               | Extends `spatie/laravel-data` with `SnakeCaseMapper` + wire envelope defaults.                                                      |
+| Base request         | `Academorix\Foundation\Http\BaseFormRequest`        | Standardises validation error envelope + error code mapping.                                                                        |
+| Base controller      | `Academorix\Foundation\Http\BaseController`         | Response envelope helpers + policy binding + `include=` param parsing.                                                              |
+| Base CRUD controller | `Academorix\Foundation\Http\CrudController`         | RESTful defaults built on spatie/laravel-query-builder. Every entity-resource controller extends this.                              |
+| Base exception       | `Academorix\Foundation\Exceptions\ApiException`     | Structured error code + HTTP status + i18n key + audit severity. Base of every custom exception.                                    |
+| Base repository      | `Academorix\Foundation\Repositories\BaseRepository` | Query builder + eager-load defaults + spatie/query-builder integration + cache invalidation hooks.                                  |
+| Base service         | `Academorix\Foundation\Services\BaseService`        | Repository binding + event dispatch + audit trail integration.                                                                      |
+| Base job             | `Academorix\Foundation\Jobs\BaseJob`                | Automatic Sentry tags + workspaces context capture + retry backoff defaults.                                                        |
+| Response envelope    | `Academorix\Foundation\Http\ResponseEnvelope`       | Wraps every controller response into `{ data, meta, links }` per the API contract.                                                  |
+| Health aggregator    | `Academorix\Foundation\Health\HealthAggregator`     | Discovers registered probes from every module + reports readiness + liveness on `/api/health`.                                      |
+| Module registry      | `Academorix\Foundation\Modules\ModuleRegistry`      | Discovers every `modules/*/module.json` at boot + resolves dependency graph.                                                        |
+| Module route loader  | `Academorix\Foundation\Modules\ModuleRouteLoader`   | Reads every module's `routes.json` and mounts route groups under the correct middleware stack. No per-module route provider needed. |
 
 ### 4. Middleware (see `middleware.json`)
 
@@ -158,8 +218,8 @@ Foundation is where the module system lives:
   dependency order, provides `Module::all()` / `Module::get(name)`.
 - `ModuleRouteLoader` — reads every module's `routes.json` and mounts each group
   with the correct middleware stack. **Replaces per-module Route Service
-  Providers** — this is why workspaces dropped its `WorkspacesRouteServiceProvider`
-  (PLAN.md §5.2 correction 2).
+  Providers** — this is why workspaces dropped its
+  `WorkspacesRouteServiceProvider` (PLAN.md §5.2 correction 2).
 - `ModuleServiceProviderDispatcher` — boots the modules' service providers in
   dependency order.
 
@@ -228,7 +288,7 @@ Every module reads / writes cache with tags. Foundation reserves the tag
 namespaces so no two modules collide:
 
 - `platform` — cross-module platform state (module registry, health status).
-- `foundation` — base caches (search indices ready, engine health).
+- `foundation` — base caches (permissions checksum + trait-related metadata).
 
 Downstream modules use their own module-name tags (`workspaces`, `invitations`,
 `notifications`, ...).
@@ -240,10 +300,12 @@ so every module's counters aggregate consistently. See `metrics.json`.
 
 ## Contributions
 
-- **Traits** — 10 owned (see §1 above). `Importable` / `Exportable` moved to
-  `modules/transfer/` on Wave 2 inception.
-- **Blueprints** — 9 owned migration macros (paired with traits). `importable` /
-  `exportable` markers retired \u2014 transfer discovers via PHP attributes.
+- **Traits** — 9 owned (see §1 above). `Importable` / `Exportable` moved to
+  `modules/transfer/` on Wave 2 inception; `Searchable` moved to
+  `modules/search/` on Wave 6 inception.
+- **Blueprints** — 8 owned migration macros (paired with traits). `importable` /
+  `exportable` / `searchable` markers retired \u2014 transfer + search discover
+  via PHP attributes.
 - **Middleware** — 5 owned (api.version, request.id, response.envelope,
   throttle.base, cors.strict).
 - **Events** — 5 owned (ApplicationBooted, ModuleDiscovered, ModuleBooted,
@@ -252,14 +314,16 @@ so every module's counters aggregate consistently. See `metrics.json`.
   hex_color).
 - **Casts** — 3 owned Eloquent casts (MetadataCast, SluggableCast,
   EmbeddingsCast).
-- **Commands** — 7 owned (module:list, module:sync, module:diagnose,
-  health:check, cache:tags, search:reindex, search:flush).
-- **Container bindings** — 4 primary bindings (HealthAggregator, ModuleRegistry,
-  ModuleRouteLoader, SearchEngineResolver). `ImportContractRegistry` /
-  `ExportContractRegistry` moved to `modules/transfer/` as `EntityRegistry` /
-  `WorkbookRegistry` on Wave 2 inception.
-- **Broadcast channels** — 1 (`platform.health`, cross-workspace liveness feed for
-  platform-admin ops).
+- **Commands** — 5 owned (module:list, module:sync, module:diagnose,
+  health:check, cache:tags). `search:reindex` / `search:flush` moved to
+  `modules/search/` on Wave 6 inception.
+- **Container bindings** — 3 primary bindings (HealthAggregator, ModuleRegistry,
+  ModuleRouteLoader). `ImportContractRegistry` / `ExportContractRegistry` moved
+  to `modules/transfer/` as `EntityRegistry` / `WorkbookRegistry` on Wave 2
+  inception; `SearchEngineResolver` moved to `modules/search/` as
+  `EngineRegistry` on Wave 6 inception.
+- **Broadcast channels** — 1 (`platform.health`, cross-workspace liveness feed
+  for platform-admin ops).
 - **No entities.** No policies. No permissions. No features. No entitlements. No
   SDUI resources.
 
@@ -279,7 +343,7 @@ Standard module blueprint shape. Note the intentionally missing folders
 ```
 modules/foundation/
 ├── module.json / readme.md / changelog.md
-├── traits.json             THE headline artefact: 10 owned traits + all consumed framework traits
+├── traits.json             THE headline artefact: 9 owned traits + all consumed framework traits
 ├── routes.json             health + ping + version + module discovery
 ├── middleware.json         5 owned middleware
 ├── events.json             5 lifecycle events
@@ -309,3 +373,80 @@ modules/foundation/
 ├── config.json             module discovery + health + api version + search engine
 └── settings.json           empty (no workspace-facing settings)
 ```
+
+## 12. Event contract versioning policy
+
+Every domain event that leaves the process (webhook fan-out, EventBridge /
+PubSub export, cross-service consumption) has a **frozen JSON Schema wire
+contract** under `modules/<owner>/contracts/<event>.v<N>.json`. The owning
+module's `events.json` references the contract via `wire_contract_file` +
+`wire_contract_version`
+
+- `wire_event_name`. See:
+
+* `modules/workspaces/contracts/workspace-provisioned.v1.json`
+* `modules/subscription/contracts/subscription-upgraded.v1.json`
+* `modules/notifications/contracts/notification-dispatched.v1.json`
+* `modules/entitlements/contracts/entitlement-consumed.v1.json`
+
+### Additive changes (SAFE — no version bump)
+
+New OPTIONAL property, expanded enum value, relaxed `format`, wider integer
+`maximum`. These stay in the current `v<N>.json` file. No parallel dispatch
+required.
+
+### Breaking changes (REQUIRE v2)
+
+Every one of the following is breaking:
+
+- Removed property
+- Renamed property
+- Tightened type (e.g. `["string", "null"] → "string"`)
+- Tightened pattern
+- New `required` entry (adds a mandatory field consumers didn't handle before)
+- Removed enum value
+- Changed semantics (same shape, different meaning)
+
+The migration path is not `v1 → v2`; it's `v1` and `v2` dispatch **in parallel**
+for at least one deprecation cycle (six months by default). This gives every
+webhook subscriber, downstream service, and integration partner time to migrate.
+The exact checklist lives inside each `.v1.json` file under
+`x-versioning.breaking_change_checklist`.
+
+### v2 publishing checklist
+
+1. Publish `contracts/<event>.v2.json` alongside the v1 file.
+2. Add a second `wire_contract_file` entry in the owning `events.json`.
+3. Update the event dispatcher to emit BOTH v1 + v2 payloads to every transport
+   that reads a contract file.
+4. Publish a `versioning::DeprecationNotice` targeting the v1 contract with a
+   `sunset_at` at least six months out.
+5. Wait the deprecation window. Cross-reference `WebhookDelivery.attempts`
+   telemetry to confirm no active subscriber still receives v1.
+6. In the next MAJOR release, delete v1 dispatch + move the v1 file to
+   `contracts/deprecated/`.
+
+### Contract fields (convention)
+
+Every contract file carries these top-level meta fields regardless of the
+event's payload:
+
+| Field                                            | Purpose                                                                         |
+| ------------------------------------------------ | ------------------------------------------------------------------------------- |
+| `id`                                             | `academorix://modules/<owner>/contracts/<event>.v<N>`                           |
+| `draft`                                          | Points at JSON Schema draft-2020-12                                             |
+| `x-emitter`                                      | Fully-qualified PHP class of the dispatching event                              |
+| `x-owning-module`                                | Module slug (matches folder name)                                               |
+| `x-event-name`                                   | Wire-canonical dotted name: `<owner>.<entity>.<action>`                         |
+| `x-version`                                      | `v1`, `v2`, etc.                                                                |
+| `x-frozen`                                       | Boolean — always `true` for published contracts                                 |
+| `x-frozen-since`                                 | ISO-8601 date the contract was frozen                                           |
+| `x-transport`                                    | Array of transports that carry this event (in-process, webhook, EventBridge, …) |
+| `x-consumers`                                    | Documented consumers                                                            |
+| `x-versioning`                                   | Policy + breaking-change checklist specific to this event                       |
+| `type: "object"` + `additionalProperties: false` | Enforces exact shape at the JSON Schema layer                                   |
+| `required` + `properties`                        | The wire contract itself                                                        |
+
+Consumers that unmarshal into typed data classes (Laravel Data DTOs, Node/TS
+types, Rust structs) should generate code from the contract file — never
+handwrite the schema.
