@@ -1,0 +1,34 @@
+{
+  "id": "tenancy.resources.domain.list",
+  "title": "Domains",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/domains",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {"module": "tenancy", "entity": "domain", "action": "list"},
+  "requiresPermission": "tenants.manage_domains",
+  "dataSources": [
+    {"name": "domains", "kind": "http.get", "url": "/api/v1/tenant/domains", "unwrap": "data", "paginated": true}
+  ],
+  "broadcasts": [
+    {"channel": "tenant.{id}.domain", "on": ["DomainVerified", "DomainVerificationFailed"], "action": {"kind": "data.refresh", "source": "domains"}}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-4 p-6"}, "children": [
+      {"kind": "View", "props": {"className": "flex items-center justify-between"}, "children": [
+        {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Custom domains"}},
+        {"kind": "Button", "props": {"variant": "primary", "size": "sm", "leadingIcon": "plus", "children": "Add domain"}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/domains/new"}}}
+      ]},
+      {"kind": "DataGrid", "props": {"emptyState": {"title": "No custom domains yet", "description": "Your workspace responds on your assigned subdomain by default. Add a custom domain to use your own.", "icon": "globe-alt"}}, "bindings": {"items": {"$ref": "domains"}}, "columns": [
+        {"id": "host", "header": "Host", "cell": {"kind": "View", "children": [
+          {"kind": "Text", "props": {"className": "font-mono"}, "bindings": {"children": {"$ref": "row.host"}}},
+          {"kind": "Text", "props": {"className": "text-xs text-muted"}, "bindings": {"children": {"$ref": "row.kind"}}}
+        ]}},
+        {"id": "state", "header": "State", "cell": {"kind": "Chip", "props": {"size": "sm"}, "bindings": {"variant": {"$expr": "row.verified_at ? 'success' : (row.verification_attempts >= 100 ? 'danger' : 'warning')"}, "children": {"$expr": "row.verified_at ? 'verified' : (row.verification_attempts >= 100 ? 'failed' : 'pending')"}}}},
+        {"id": "verified_at", "header": "Verified", "cell": {"kind": "Text", "props": {"className": "text-sm"}, "bindings": {"children": {"$expr": "row.verified_at ? formatRelative(row.verified_at) : '\u2014'"}}}},
+        {"id": "actions", "header": "", "align": "end", "cell": {"kind": "Button", "props": {"variant": "ghost", "size": "sm", "children": "Records"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/domains/' + row.id"}}}}
+      ]}
+    ]}
+  ]
+}

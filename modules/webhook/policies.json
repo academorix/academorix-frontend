@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/webhook/policies",
+  "$version": 1,
+  "title": "webhook \u2014 authorization policies",
+  "description": "Two policies. Tenant admins manage their own subscriptions + deliveries. Platform admins have cross-tenant visibility + emergency-pause powers. Signing secrets never exposed in any policy \u2014 rotation surfaces + one-time reveal only.",
+  "policies": [
+    {
+      "model": "WebhookSubscription",
+      "class": "Academorix\\Webhook\\Policies\\WebhookSubscriptionPolicy",
+      "abilities": [
+        {"action": "viewAny", "permission": "webhook.subscriptions.viewAny", "scope": "tenant admin or platform admin. Tenant scope enforced by BelongsToTenant global scope."},
+        {"action": "view", "permission": "webhook.subscriptions.view", "scope": "tenant admin sees own; platform admin sees any"},
+        {"action": "create", "permission": "webhook.subscriptions.create", "scope": "tenant admin; entitlement webhook.subscriptions.count.remaining > 0"},
+        {"action": "update", "permission": "webhook.subscriptions.update", "scope": "tenant admin. Refused for is_system=true rows unless super_admin."},
+        {"action": "delete", "permission": "webhook.subscriptions.delete", "scope": "tenant admin. Refused for is_system=true rows unless super_admin."},
+        {"action": "manage", "permission": "webhook.subscriptions.manage", "scope": "pause/resume. Same guards as update."},
+        {"action": "test", "permission": "webhook.subscriptions.test"},
+        {"action": "rotate-secret", "permission": "webhook.subscriptions.rotate-secret"},
+        {"action": "platformManage", "permission": "platform.webhook.subscriptions.manage", "scope": "platform admin. Cross-tenant emergency pause/resume."}
+      ]
+    },
+    {
+      "model": "WebhookDelivery",
+      "class": "Academorix\\Webhook\\Policies\\WebhookDeliveryPolicy",
+      "abilities": [
+        {"action": "viewAny", "permission": "webhook.deliveries.viewAny", "scope": "tenant admin sees own via BelongsToTenant scope"},
+        {"action": "view", "permission": "webhook.deliveries.view"},
+        {"action": "retry", "permission": "webhook.deliveries.retry", "scope": "tenant admin. Only allowed on state=failedPermanent \u2014 retryable state is scheduled automatically."},
+        {"action": "platformViewAny", "permission": "platform.webhook.deliveries.viewAny", "scope": "platform admin cross-tenant search"},
+        {"action": "platformView", "permission": "platform.webhook.deliveries.view"},
+        {"action": "platformRetry", "permission": "platform.webhook.deliveries.retry", "scope": "platform admin. Cross-tenant retry for support."}
+      ]
+    }
+  ]
+}

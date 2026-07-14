@@ -1,0 +1,204 @@
+{
+  "id": "invitations.resources.invitation.create",
+  "title": "Send invitation",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/invitations/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {"module": "invitations", "entity": "invitation", "action": "create"},
+  "requiresPermission": "invitations.send",
+  "dataSources": [
+    {
+      "name": "invitationTargets",
+      "kind": "http.get",
+      "url": "/api/v1/tenant/invitations/target-types",
+      "unwrap": "data",
+      "cache": {"ttlSeconds": 3600}
+    },
+    {
+      "name": "roles",
+      "kind": "http.get",
+      "url": "/api/v1/tenant/roles?sanctum=true",
+      "unwrap": "data",
+      "cache": {"ttlSeconds": 300}
+    },
+    {
+      "name": "tenantSettings",
+      "kind": "http.get",
+      "url": "/api/v1/tenant/settings?filter[section]=invitations",
+      "unwrap": "data",
+      "cache": {"ttlSeconds": 300}
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": {"className": "mx-auto flex max-w-2xl flex-col gap-6 p-6"},
+      "children": [
+        {
+          "id": "header",
+          "kind": "View",
+          "props": {"className": "flex flex-col gap-1"},
+          "children": [
+            {"id": "back", "kind": "Link", "props": {"to": "/tenant/invitations", "className": "text-muted flex items-center gap-1 text-sm", "children": "← Back to invitations"}},
+            {"id": "title", "kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Send invitation"}},
+            {"id": "subtitle", "kind": "Text", "props": {"as": "p", "className": "text-muted text-sm", "children": "Invite someone to join this workspace. They'll receive an email with an accept link that stays valid for 14 days by default."}}
+          ]
+        },
+        {
+          "id": "form",
+          "kind": "Form",
+          "props": {"className": "flex flex-col gap-4"},
+          "target": {
+            "action": "create",
+            "resource": "invitations",
+            "endpoint": "POST /api/v1/tenant/invitations",
+            "authorize": "InvitationPolicy@create"
+          },
+          "sections": [
+            {
+              "id": "recipient",
+              "title": "Recipient",
+              "fields": [
+                {
+                  "name": "email",
+                  "kind": "TextField",
+                  "label": "Invitee email",
+                  "isRequired": true,
+                  "type": "email",
+                  "autoComplete": "off",
+                  "placeholder": "coach@example.com",
+                  "description": "The email address the invitation will be sent to. Case-insensitive.",
+                  "validation": {
+                    "maxLength": 320,
+                    "async": {
+                      "kind": "http.post",
+                      "url": "/api/v1/tenant/invitations/preflight",
+                      "debounceMs": 500,
+                      "payload": {"email": "$field.email"}
+                    }
+                  }
+                },
+                {
+                  "name": "channel",
+                  "kind": "RadioGroup",
+                  "label": "Delivery",
+                  "defaultValue": "email",
+                  "options": [
+                    {"value": "email", "label": "Email", "leadingIcon": "envelope"},
+                    {
+                      "value": "sms",
+                      "label": "SMS",
+                      "leadingIcon": "device-phone-mobile",
+                      "bindings": {"isDisabled": {"$expr": "!tenantSettings.channels.sms"}},
+                      "description": "SMS delivery requires the Enterprise plan or add-on."
+                    },
+                    {
+                      "value": "link",
+                      "label": "Copy link (no email sent)",
+                      "leadingIcon": "link",
+                      "description": "Admin copies the accept URL manually. Useful when the invitee prefers a specific channel."
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "target",
+              "title": "Where they're joining",
+              "fields": [
+                {
+                  "name": "target_type",
+                  "kind": "Select",
+                  "label": "Invitation type",
+                  "isRequired": true,
+                  "defaultValue": "tenant",
+                  "optionsSource": {"$ref": "invitationTargets"},
+                  "description": "Most invitations are for the whole workspace. Team + athlete invitations grant access to specific resources only."
+                },
+                {
+                  "name": "target_id",
+                  "kind": "DynamicPicker",
+                  "label": "Specific target",
+                  "description": "Only shown when the target type requires a specific resource.",
+                  "bindings": {
+                    "isHidden": {"$expr": "form.target_type === 'tenant'"},
+                    "pickerScreenRefFromExpr": "invitationTargets.find(t => t.key === form.target_type)?.target_picker_screen_ref"
+                  }
+                },
+                {
+                  "name": "role_key",
+                  "kind": "Select",
+                  "label": "Role on accept",
+                  "isRequired": true,
+                  "optionsSource": {"$ref": "roles"},
+                  "description": "Determines what the invitee can do once they accept."
+                }
+              ]
+            },
+            {
+              "id": "message",
+              "title": "Personal note (optional)",
+              "collapsible": true,
+              "defaultOpen": false,
+              "fields": [
+                {
+                  "name": "message",
+                  "kind": "TextArea",
+                  "label": "Message",
+                  "rows": 4,
+                  "maxLength": 2000,
+                  "placeholder": "Anything you want to add to the invitation email — a warm welcome, context, next steps.",
+                  "counter": true
+                }
+              ]
+            },
+            {
+              "id": "advanced",
+              "title": "Advanced",
+              "collapsible": true,
+              "defaultOpen": false,
+              "fields": [
+                {
+                  "name": "expires_at",
+                  "kind": "DateField",
+                  "label": "Expires on",
+                  "defaultValueExpr": "addDays(now(), tenantSettings.expires_after_days || 14)",
+                  "min": "now",
+                  "maxExpr": "addDays(now(), 90)",
+                  "description": "How long the invitation stays valid. Default is set by workspace settings."
+                }
+              ]
+            }
+          ],
+          "footer": {
+            "primaryAction": {
+              "label": "Send invitation",
+              "kind": "form.submit",
+              "leadingIcon": "paper-airplane",
+              "onSuccess": {
+                "kind": "sequence",
+                "steps": [
+                  {"kind": "toast.success", "message": "Invitation sent"},
+                  {"kind": "navigate", "toExpr": "'/tenant/invitations/' + response.data.id"}
+                ]
+              },
+              "onError": {
+                "byCode": {
+                  "INVITATIONS_EMAIL_ALREADY_INVITED": {"kind": "toast.warning", "message": "This email already has a pending invitation."},
+                  "INVITATIONS_EMAIL_ALREADY_MEMBER": {"kind": "toast.warning", "message": "This email is already a member of this workspace."},
+                  "INVITATIONS_RATE_LIMIT_EXCEEDED": {"kind": "toast.error", "message": "You've hit the invitation rate limit. Please try again later."},
+                  "INVITATIONS_ENTITLEMENT_EXCEEDED": {"kind": "modal.upsell", "feature": "invitations.max_per_month", "message": "You've reached your monthly invitation limit."}
+                },
+                "default": {"kind": "toast.error", "messageExpr": "error.message || 'Failed to send invitation.'"}
+              }
+            },
+            "secondaryAction": {"label": "Cancel", "kind": "navigate.back"}
+          }
+        }
+      ]
+    }
+  ]
+}

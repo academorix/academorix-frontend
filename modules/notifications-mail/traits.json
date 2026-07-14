@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/notifications-mail/traits",
+  "$version": 1,
+  "title": "notifications-mail \u2014 trait composition",
+  "description": "One owned entity: MailSuppression. Composition follows foundation's canonical trait-order contract.",
+  "owned": [],
+  "consumed": {
+    "framework": [
+      {"trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory", "reason": "seeder + test factories."},
+      {"trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids", "reason": "ULID primary key."},
+      {"trait": "Illuminate\\Database\\Eloquent\\SoftDeletes", "reason": "Suppression may be revoked \u2014 soft-delete preserves audit trail."}
+    ],
+    "foundation": [
+      {"trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag", "reason": "Platform-blocklist entries (known bounce farms) carry is_system=true."},
+      {"trait": "Academorix\\Foundation\\Concerns\\HasUserstamps", "reason": "created_by / updated_by / deleted_by."},
+      {"trait": "Academorix\\Foundation\\Concerns\\HasAuditable", "reason": "Every suppression addition + removal audit-logged for compliance evidence."},
+      {"trait": "Academorix\\Foundation\\Concerns\\HasMetadata", "reason": "Provider-specific bounce metadata (bounce_reason, bounce_kind) captured on ingest."},
+      {"trait": "Academorix\\Foundation\\Concerns\\Filterable", "reason": "Admin surface filters by reason / provider / added_at."},
+      {"trait": "Academorix\\Foundation\\Concerns\\Searchable", "reason": "Admin lookup by email address."}
+    ],
+    "tenancy": [
+      {"trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenantOptional", "reason": "tenant_id NULL = platform-wide suppression (known invalid addresses, spam-trap domains). tenant_id set = tenant-specific suppression."}
+    ]
+  },
+  "composition": {
+    "mail_suppression": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasSystemFlag",
+        "BelongsToTenantOptional",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAuditable",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "is_system=true reserved for platform-wide blocks (known bounce farms). Never Importable/Exportable \u2014 the suppression list is regulatory evidence that must not be moved off-platform."
+    }
+  }
+}

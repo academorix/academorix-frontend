@@ -1,0 +1,92 @@
+{
+  "id": "academorix://modules/tenancy/permissions",
+  "$version": 1,
+  "title": "tenancy — permissions",
+  "description": "Permission strings this module publishes. Split by guard: platform_admin (Academorix staff surface) vs sanctum (tenant users self-serving their own workspace). Seeded by `TenancyPermissionSeeder` with `is_system=true` on `firstOrCreate` (idempotent).",
+  "seeder": "Academorix\\Tenancy\\Database\\Seeders\\TenancyPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "manage_tenants",
+      "guard": "platform_admin",
+      "description": "Full CRUD over every tenant on the platform. Required for the platform-admin tenant catalogue surface. Also gates suspend / resume / archive lifecycle actions and impersonation.",
+      "grantsPolicies": [
+        "TenantPolicy@*",
+        "DomainPolicy@viewAny (platform side)",
+        "BrandingPolicy@viewAny (platform side)",
+        "TenantContactPolicy@* (platform side)"
+      ],
+      "seededOn": ["super_admin", "support"]
+    },
+    {
+      "name": "view_tenants",
+      "guard": "platform_admin",
+      "description": "Read-only access to the platform-admin tenant list + detail. Handed to ops-tier staff who need to answer support tickets without mutating tenant state.",
+      "grantsPolicies": ["TenantPolicy@viewAny", "TenantPolicy@view"],
+      "seededOn": ["ops"]
+    },
+    {
+      "name": "manage_applications",
+      "guard": "platform_admin",
+      "description": "Full CRUD over the Application catalogue. Applications rarely change — this permission is scoped to a very small platform-engineering group.",
+      "grantsPolicies": ["ApplicationPolicy@*"],
+      "seededOn": ["super_admin"]
+    },
+    {
+      "name": "view_applications",
+      "guard": "platform_admin",
+      "description": "Read-only Application access.",
+      "grantsPolicies": ["ApplicationPolicy@viewAny", "ApplicationPolicy@view"],
+      "seededOn": ["support", "ops"]
+    },
+    {
+      "name": "manage_business_types",
+      "guard": "platform_admin",
+      "description": "Create / edit the BusinessType catalogue. Read is public.",
+      "grantsPolicies": ["BusinessTypePolicy@*"],
+      "seededOn": ["super_admin"]
+    },
+    {
+      "name": "manage_identities",
+      "guard": "platform_admin",
+      "description": "Read the Identity list + issue right-to-erasure. Required for GDPR Art. 17 fulfilment. Handed to the DPO + super admin only.",
+      "grantsPolicies": ["IdentityPolicy@*"],
+      "seededOn": ["super_admin", "dpo"]
+    },
+    {
+      "name": "tenants.manage_own_settings",
+      "guard": "sanctum",
+      "description": "Edit the caller's own tenant via PATCH /api/current-tenant. Name, business_type, provisioning bag, default branding fields.",
+      "grantsPolicies": ["TenantSelfPolicy@updateOwn"],
+      "seededOn": ["owner", "admin"]
+    },
+    {
+      "name": "tenants.manage_domains",
+      "guard": "sanctum",
+      "description": "CRUD over the caller's own Domain rows + verify.",
+      "grantsPolicies": ["DomainPolicy@*"],
+      "seededOn": ["owner", "admin"]
+    },
+    {
+      "name": "tenants.manage_branding",
+      "guard": "sanctum",
+      "description": "CRUD over Branding profiles + promote (set primary).",
+      "grantsPolicies": ["BrandingPolicy@*"],
+      "seededOn": ["owner", "admin"]
+    },
+    {
+      "name": "tenants.manage_contacts",
+      "guard": "sanctum",
+      "description": "CRUD over TenantContact rows.",
+      "grantsPolicies": ["TenantContactPolicy@*"],
+      "seededOn": ["owner", "admin"]
+    },
+    {
+      "name": "tenants.manage_integrations",
+      "guard": "sanctum",
+      "description": "CRUD over TenantIntegration rows. Sensitive — restricted to owner + admin. v2.",
+      "grantsPolicies": ["TenantIntegrationPolicy@*"],
+      "seededOn": ["owner", "admin"]
+    }
+  ]
+}

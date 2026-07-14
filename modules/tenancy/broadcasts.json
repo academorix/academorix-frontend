@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/tenancy/broadcasts",
+  "$version": 1,
+  "title": "tenancy — broadcast channels",
+  "description": "Real-time broadcast channels this module owns. Registered by `TenancyServiceProvider::registerBroadcastChannels()`. Authorization callbacks live on the Broadcast facade and are declared here so a channel change stays discoverable. Uses Laravel Reverb / Pusher over Sanctum-authenticated WebSockets.",
+  "driver": "reverb",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.lifecycle",
+      "kind": "private",
+      "description": "Fires on every tenant lifecycle event (suspended, resumed, archived, branding-updated). SPA subscribes on session boot; the shell toasts the change.",
+      "authorize": "User belongs to the tenant AND has the `tenants.view` permission",
+      "authCallback": "fn (User $user, string $tenantId) => $user->tenant_id === $tenantId && $user->can('tenants.view')",
+      "events": [
+        "TenantSuspended",
+        "TenantResumed",
+        "TenantArchived",
+        "TenantBrandingUpdated"
+      ]
+    },
+    {
+      "name": "tenant.{tenantId}.domain",
+      "kind": "private",
+      "description": "Domain-verification progress. SPA subscribes on the Domain show screen; watches for verified / failed transitions to switch the state without polling.",
+      "authorize": "User belongs to the tenant AND has `tenants.manage_domains`",
+      "authCallback": "fn (User $user, string $tenantId) => $user->tenant_id === $tenantId && $user->can('tenants.manage_domains')",
+      "events": [
+        "DomainAdded",
+        "DomainVerified",
+        "DomainVerificationFailed",
+        "DomainRemoved"
+      ]
+    },
+    {
+      "name": "tenant.{tenantId}.branding",
+      "kind": "private",
+      "description": "Branding profile changes. Powers the branding editor's live preview + auto-refresh of the workspace shell theme.",
+      "authorize": "User belongs to the tenant",
+      "authCallback": "fn (User $user, string $tenantId) => $user->tenant_id === $tenantId",
+      "events": [
+        "TenantBrandingUpdated"
+      ]
+    },
+    {
+      "name": "tenant.{tenantId}.integration",
+      "kind": "private",
+      "description": "SSO / SCIM / HRIS sync events. Powers the integration status screen (v2).",
+      "authorize": "User belongs to the tenant AND has `tenants.manage_integrations`",
+      "authCallback": "fn (User $user, string $tenantId) => $user->tenant_id === $tenantId && $user->can('tenants.manage_integrations')",
+      "events": [
+        "TenantIntegrationConfigured",
+        "TenantIntegrationSyncFailed"
+      ]
+    }
+  ]
+}

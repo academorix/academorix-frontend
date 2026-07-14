@@ -1,0 +1,22 @@
+{
+  "id": "academorix://modules/notifications-mail/features",
+  "$version": 1,
+  "title": "notifications-mail \u2014 feature keys",
+  "description": "Per-provider availability + mail-channel capabilities. Resolved at /auth/me. Downstream: `notifications-mail.enabled` gates channel visibility; per-provider keys let tenants pick their delivery lane.",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me \u2192 data.features (string[])",
+    "seededFrom": "BusinessType.default_config.features",
+    "distinctFrom": "feature-flags.json (kill switches)"
+  },
+  "features": [
+    {"key": "notifications.mail.enabled", "displayName": "Email channel", "description": "Master enable for mail delivery. Off = mail dispatches suppressed.", "defaultEnabled": true, "planTiers": ["free", "team", "enterprise"]},
+    {"key": "notifications.mail.provider.mailgun", "displayName": "Mailgun provider", "description": "Enables Mailgun as a selectable mailer.", "defaultEnabled": true, "planTiers": ["free", "team", "enterprise"]},
+    {"key": "notifications.mail.provider.ses", "displayName": "AWS SES provider", "description": "Enables AWS SES as a selectable mailer. Preferred for EU-hosted tenants (SES eu-central-1).", "defaultEnabled": true, "planTiers": ["free", "team", "enterprise"]},
+    {"key": "notifications.mail.provider.sendgrid", "displayName": "SendGrid provider", "description": "Enables SendGrid as a selectable mailer.", "defaultEnabled": false, "planTiers": ["team", "enterprise"]},
+    {"key": "notifications.mail.provider.postmark", "displayName": "Postmark provider", "description": "Enables Postmark as a selectable mailer. Transactional-only.", "defaultEnabled": false, "planTiers": ["team", "enterprise"]},
+    {"key": "notifications.mail.provider.resend", "displayName": "Resend provider", "description": "Enables Resend as a selectable mailer.", "defaultEnabled": false, "planTiers": ["team", "enterprise"]},
+    {"key": "notifications.mail.custom_smtp", "displayName": "Custom SMTP", "description": "Tenant may configure their own SMTP endpoint (enterprise). Overrides provider selection.", "defaultEnabled": false, "planTiers": ["enterprise"]},
+    {"key": "notifications.mail.dedicated_ip", "displayName": "Dedicated IP", "description": "Sends from a dedicated IP (SendGrid / SES). Improves deliverability reputation. Enterprise add-on.", "defaultEnabled": false, "planTiers": ["enterprise"]}
+  ]
+}

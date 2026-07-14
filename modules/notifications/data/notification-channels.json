@@ -1,0 +1,69 @@
+{
+  "id": "academorix://modules/notifications/data/notification-channels",
+  "$version": 1,
+  "title": "notifications core \u2014 channel enum reference",
+  "description": "The canonical list of channel slugs used across the notifications wave. NOT a seeded table \u2014 channels are compile-time enum values (referenced by NotificationDelivery.channel, NotificationTemplate.channel, NotificationPreference.channel, NotificationCategory.default_channels, NotificationDigest.channel). This file is the single source of truth; each channel module registers its NotificationChannelInterface implementation into `NotificationChannelRegistry` at boot referencing its slug here.",
+  "channels": [
+    {
+      "slug": "in_app",
+      "display_name": "In-app inbox",
+      "description": "Persisted in the Notification table with channel=in_app + broadcast to `user.{id}.notifications` via Reverb for live inbox updates. No external provider dependency.",
+      "kind": "internal",
+      "provider_kind": "self-hosted",
+      "owning_module": "notifications-in-app",
+      "requires_recipient_field": null,
+      "cost_per_send_kind": "free",
+      "supports_open_tracking": true,
+      "supports_click_tracking": true,
+      "supports_delivery_tracking": true,
+      "default_priority_order": 1
+    },
+    {
+      "slug": "mail",
+      "display_name": "Email",
+      "description": "Wraps Laravel Mail (MailManager) with MJML \u2192 HTML pre-rendering via React Email at CI build time. Providers: Mailgun, SendGrid, AWS SES.",
+      "kind": "external",
+      "provider_kind": "provider-mediated",
+      "owning_module": "notifications-mail",
+      "requires_recipient_field": "email",
+      "cost_per_send_kind": "per-provider (typically free for volume, priced at higher tiers)",
+      "supports_open_tracking": true,
+      "supports_click_tracking": true,
+      "supports_delivery_tracking": true,
+      "default_priority_order": 2
+    },
+    {
+      "slug": "push",
+      "display_name": "Push notification",
+      "description": "Mobile + web push. Own MultipleInstanceManager wrapping FCM (Android + Web), APNs (iOS), Expo (React Native), OneSignal (enterprise). Requires a registered PushSubscription device token.",
+      "kind": "external",
+      "provider_kind": "provider-mediated",
+      "owning_module": "notifications-push",
+      "requires_recipient_field": "device_token (via PushSubscription)",
+      "cost_per_send_kind": "free (FCM + APNs) / metered (OneSignal + Expo enterprise)",
+      "supports_open_tracking": true,
+      "supports_click_tracking": true,
+      "supports_delivery_tracking": true,
+      "default_priority_order": 3
+    },
+    {
+      "slug": "sms",
+      "display_name": "SMS",
+      "description": "Own MultipleInstanceManager wrapping Twilio, MessageBird, Vonage, Plivo, AWS SNS. Cost per message tracked in NotificationDelivery.cost_micro_units. STOP-keyword handling in the SMS module.",
+      "kind": "external",
+      "provider_kind": "provider-mediated",
+      "owning_module": "notifications-sms",
+      "requires_recipient_field": "phone (E.164)",
+      "cost_per_send_kind": "always-priced (per-destination-country + per-segment)",
+      "supports_open_tracking": false,
+      "supports_click_tracking": true,
+      "supports_delivery_tracking": true,
+      "default_priority_order": 4
+    }
+  ],
+  "notes": [
+    "`default_priority_order` is only a HINT to the resolver when multiple channels are equally preferred \u2014 it defaults to in-app first (cheapest), mail second (broadest reach), push third, sms last (most expensive).",
+    "Channels can be added by publishing a new channel module + adding an entry here + rebuilding. Feature-flag `notifications.<channel>` gates the channel until GA. No hard-coded enum in PHP \u2014 CI generates the PHP enum from this file at build time.",
+    "For future channels (slack, teams, webhook, etc.), extend this file and ship a matching channel module."
+  ]
+}

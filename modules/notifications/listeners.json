@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/notifications/listeners",
+  "$version": 1,
+  "title": "notifications core \u2014 subscribed events",
+  "description": "Core subscribes to a small set of upstream events \u2014 tenancy suspension (pause deliveries), user erasure (cascade purge preferences), user updates (refresh cache). Channel modules have their own listeners.json subscribing to NotificationDispatched.",
+  "listeners": [
+    {
+      "event": "tenancy::TenantSuspended",
+      "listener": "Academorix\\Notifications\\Listeners\\PauseDeliveriesForTenant",
+      "queue": "notifications",
+      "purpose": "Tenant enters `suspended` state \u2014 pause every queued Notification for the tenant + mark future dispatches as `suppressed` until unsuspend. Suspension is a soft freeze; no data is deleted."
+    },
+    {
+      "event": "tenancy::TenantUnsuspended",
+      "listener": "Academorix\\Notifications\\Listeners\\ResumeDeliveriesForTenant",
+      "queue": "notifications",
+      "purpose": "Tenant reactivated \u2014 re-queue every suppressed Notification for delivery. Deliveries older than 24h are dropped (stale)."
+    },
+    {
+      "event": "user::UserErased",
+      "listener": "Academorix\\Notifications\\Listeners\\PurgePreferencesForErasedUser",
+      "queue": "notifications",
+      "purpose": "GDPR Art. 17 erasure \u2014 hard-delete NotificationPreference rows for the user (they're PII-adjacent + user is gone). Notification rows anonymise the addressee via HasAuditable's anonymise-not-delete rule."
+    },
+    {
+      "event": "user::UserUpdated",
+      "listener": "Academorix\\Notifications\\Listeners\\RefreshUserCache",
+      "queue": "notifications",
+      "purpose": "User's email / phone / locale / timezone changed \u2014 refresh the cached recipient payload used in future dispatches. The change does NOT retroactively rewrite in-flight event payloads (event-carried state is immutable once emitted)."
+    },
+    {
+      "event": "foundation::ConfigReloaded",
+      "listener": "Academorix\\Notifications\\Listeners\\ReloadRegistries",
+      "queue": null,
+      "purpose": "Category + template + preference resolver registries reload from disk when config hot-reloads. Runs synchronously \u2014 the config reload contract requires downstream registries to be fresh before the reload signal returns."
+    },
+    {
+      "event": "foundation::ApplicationBooted",
+      "listener": "Academorix\\Notifications\\Listeners\\WarmRegistries",
+      "queue": null,
+      "purpose": "Warm the category + template registry caches at boot. Runs synchronously in the boot phase so the first dispatch after boot never faces a cold cache."
+    }
+  ]
+}

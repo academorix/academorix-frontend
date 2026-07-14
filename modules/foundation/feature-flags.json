@@ -1,0 +1,51 @@
+{
+  "id": "academorix://modules/foundation/feature-flags",
+  "$version": 1,
+  "title": "foundation — kill-switch flags",
+  "description": "Kill-switches for foundation's infrastructure. All default ON — flipping to OFF is an incident-response action. Every change to these flags emits an audit event + a PagerDuty alert.",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "foundation.module-loader",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Disables the ModuleRouteLoader — every module's routes stop responding. Used only during boot-time module-registration incidents. Effectively takes the app offline; use with care."
+    },
+    {
+      "key": "foundation.health-endpoint",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Disables GET /api/health aggregate probe walking. /api/ping + /up remain up. Used when an aggregate probe cascade is causing load spikes on downstream services."
+    },
+    {
+      "key": "foundation.search-indexing",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Disables IndexSearchableJob dispatch on model saves. Used during search-engine incidents; search index goes stale until reindex is run. Existing queries keep working (stale results)."
+    },
+    {
+      "key": "foundation.audit-writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Disables HasAuditable's audit-row writes. Used only during audit-table incidents (corrupt schema, deadlock storm). Data mutation continues; audit trail is suspended. Every use recorded in the platform incident log."
+    },
+    {
+      "key": "foundation.api.deprecation-headers",
+      "kind": "rollout",
+      "default": "on",
+      "cohorts": [],
+      "description": "Emits RFC 8594 Sunset + Deprecation headers on responses from deprecated /api/v* prefixes. Off in local dev to reduce log noise; on everywhere else."
+    },
+    {
+      "key": "foundation.response-envelope-strict",
+      "kind": "rollout",
+      "default": "on",
+      "cohorts": [],
+      "description": "Enforces the response envelope contract strictly — controllers returning raw arrays (not enveloped) cause a 500 in strict mode. Useful in test/staging to catch regressions; usually on in prod."
+    }
+  ],
+  "retirementPolicy": {
+    "description": "Kill-switches never retire — they exist for incident response. Rollout flags retire 90 days after reaching 100% GA per foundation's change management contract (SOC 2 CC8.1).",
+    "reviewCommand": "foundation:review-flags"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/notifications/health",
+  "$version": 1,
+  "title": "notifications core \u2014 health probes",
+  "description": "Probes registered with foundation's HealthAggregator at boot. Core probes are aggregate-substrate checks; per-provider reachability probes live in the respective channel module (notifications-mail, notifications-sms, notifications-push, notifications-in-app).",
+  "probes": [
+    {
+      "name": "notifications-category-registry-loaded",
+      "class": "Academorix\\Notifications\\Health\\Probes\\CategoryRegistryLoadedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "The category registry loaded on ApplicationBooted \u2014 every module's notifications.json was scanned + cached. Fails at boot only. Critical because a missing category = failed dispatch.",
+      "timeoutMs": 100
+    },
+    {
+      "name": "notifications-template-registry-loaded",
+      "class": "Academorix\\Notifications\\Health\\Probes\\TemplateRegistryLoadedProbe",
+      "category": "readiness",
+      "critical": true,
+      "description": "The template registry cache is warm + non-empty. Fails when the seed hasn't run or when the cache was invalidated + not yet refreshed. Critical because template lookup is on the hot path.",
+      "timeoutMs": 100
+    },
+    {
+      "name": "notifications-deliveries-oldest-pending-age",
+      "class": "Academorix\\Notifications\\Health\\Probes\\OldestPendingDeliveryProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Age of the oldest NotificationDelivery in state=queued or state=sending. Warns > 5m; fails > 30m. Non-critical \u2014 backlog doesn't stop new dispatches, but sustained backlog indicates worker starvation.",
+      "timeoutMs": 500,
+      "thresholds": {"warn_seconds": 300, "fail_seconds": 1800}
+    },
+    {
+      "name": "notifications-digest-worker-running",
+      "class": "Academorix\\Notifications\\Health\\Probes\\DigestWorkerRunningProbe",
+      "category": "liveness",
+      "critical": false,
+      "description": "The notifications-digests Horizon queue has at least one active supervisor. Fails when digests aren't being processed. Non-critical \u2014 digests can catch up on the next scheduled run.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "notifications-preference-cache-fresh",
+      "class": "Academorix\\Notifications\\Health\\Probes\\PreferenceCacheFreshProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Preference cache hit ratio (rolling 5m). Warns < 90%; fails < 50%. Non-critical \u2014 low hit ratio degrades performance but not correctness.",
+      "timeoutMs": 200,
+      "thresholds": {"warn_ratio": 0.9, "fail_ratio": 0.5}
+    },
+    {
+      "name": "notifications-dispatch-kill-switch",
+      "class": "Academorix\\Notifications\\Health\\Probes\\DispatchKillSwitchProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Reports whether the master dispatch kill switch is OFF (i.e. dispatches suppressed). Non-critical: it's an ops signal, not a fault. Fails-open so operators can page during a dispatch-off incident.",
+      "timeoutMs": 30
+    }
+  ]
+}

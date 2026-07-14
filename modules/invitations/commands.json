@@ -1,0 +1,38 @@
+{
+  "id": "academorix://modules/invitations/commands",
+  "$version": 1,
+  "title": "invitations — artisan commands",
+  "description": "Artisan commands this module ships. Registered by `InvitationsServiceProvider::registerCommands()`. Audience is `ops` (called by cron + on-call runbooks) or `dev` (local-only).",
+  "commands": [
+    {
+      "class": "Academorix\\Invitations\\Console\\Commands\\ExpireStaleCommand",
+      "signature": "invitations:expire-stale {--batch-size=500} {--dry-run}",
+      "audience": "ops",
+      "description": "Dispatches ExpireInvitationsJob with the given batch size. Called every 15m via schedule.json + on-demand during backfills. `--dry-run` prints how many would be affected without dispatching."
+    },
+    {
+      "class": "Academorix\\Invitations\\Console\\Commands\\CleanupAcceptedCommand",
+      "signature": "invitations:cleanup-accepted {--older-than=P90D} {--dry-run}",
+      "audience": "ops",
+      "description": "Soft-deletes accepted + declined invitations older than the given ISO-8601 duration. Called daily via schedule.json."
+    },
+    {
+      "class": "Academorix\\Invitations\\Console\\Commands\\ResendFailedCommand",
+      "signature": "invitations:resend-failed {--transport=} {--limit=100} {--dry-run}",
+      "audience": "ops",
+      "description": "Dispatches RetryBounceJob for soft-bounced invitations. `--transport` limits to a specific mail transport (useful during incident response for a single provider outage)."
+    },
+    {
+      "class": "Academorix\\Invitations\\Console\\Commands\\AuditReportCommand",
+      "signature": "invitations:audit-report {--since=P7D} {--until=} {--format=summary}",
+      "audience": "ops",
+      "description": "Compiles the funnel + bounce + acceptance-rate + risk-score-distribution report over the given window. Formats: `summary` (human-readable), `json`, `csv`. Called weekly via schedule.json + on-demand for support tickets."
+    },
+    {
+      "class": "Academorix\\Invitations\\Console\\Commands\\SeedDemoCommand",
+      "signature": "invitations:seed-demo",
+      "audience": "dev",
+      "description": "Seeds demo invitations for local dev / integration tests. Guarded by `app()->isProduction()` — refuses to run in production."
+    }
+  ]
+}

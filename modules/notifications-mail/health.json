@@ -1,0 +1,14 @@
+{
+  "id": "academorix://modules/notifications-mail/health",
+  "$version": 1,
+  "title": "notifications-mail \u2014 health probes",
+  "description": "Per-provider reachability probes + suppression cache health.",
+  "probes": [
+    {"name": "notifications-mail-mailgun-reachable", "class": "Academorix\\Notifications\\Mail\\Health\\Probes\\MailgunReachableProbe", "category": "readiness", "critical": false, "description": "GET https://api.mailgun.net/v3/domains \u2014 checks credentials + reachability. Only when mailgun driver is configured active.", "timeoutMs": 3000, "featureFlag": "notifications.mail.provider.mailgun.enabled"},
+    {"name": "notifications-mail-sendgrid-reachable", "class": "Academorix\\Notifications\\Mail\\Health\\Probes\\SendgridReachableProbe", "category": "readiness", "critical": false, "timeoutMs": 3000, "featureFlag": "notifications.mail.provider.sendgrid.enabled"},
+    {"name": "notifications-mail-ses-reachable", "class": "Academorix\\Notifications\\Mail\\Health\\Probes\\SesReachableProbe", "category": "readiness", "critical": false, "description": "GetSendQuota API call. Reveals daily quota + sending rate.", "timeoutMs": 3000, "featureFlag": "notifications.mail.provider.ses.enabled"},
+    {"name": "notifications-mail-postmark-reachable", "class": "Academorix\\Notifications\\Mail\\Health\\Probes\\PostmarkReachableProbe", "category": "readiness", "critical": false, "timeoutMs": 3000, "featureFlag": "notifications.mail.provider.postmark.enabled"},
+    {"name": "notifications-mail-resend-reachable", "class": "Academorix\\Notifications\\Mail\\Health\\Probes\\ResendReachableProbe", "category": "readiness", "critical": false, "timeoutMs": 3000, "featureFlag": "notifications.mail.provider.resend.enabled"},
+    {"name": "notifications-mail-suppression-cache-fresh", "class": "Academorix\\Notifications\\Mail\\Health\\Probes\\SuppressionCacheFreshProbe", "category": "readiness", "critical": false, "description": "Verifies MailSuppressionRegistry cache TTL not stale (updated within last 5min).", "timeoutMs": 200, "thresholds": {"warn_stale_seconds": 300, "fail_stale_seconds": 1800}}
+  ]
+}

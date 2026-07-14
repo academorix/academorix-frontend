@@ -1,0 +1,50 @@
+{
+  "id": "academorix://modules/notifications-push/data-classes",
+  "$version": 1,
+  "title": "notifications-push \u2014 field classification",
+  "description": "device_token is RESTRICTED (encrypted, never returned). Every other field is public or internal. Push notification content itself is CONFIDENTIAL (may include recipient name / activity details).",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "PushSubscription.id",
+      "PushSubscription.provider",
+      "PushSubscription.platform",
+      "PushSubscription.device_name",
+      "PushSubscription.app_version",
+      "PushSubscription.os_version",
+      "PushSubscription.locale",
+      "PushSubscription.is_active",
+      "PushSubscription.last_seen_at",
+      "PushSubscription.expires_at",
+      "PushSubscription.created_at",
+      "PushSubscription.updated_at"
+    ],
+    "internal": [
+      "PushSubscription.tenant_id",
+      "PushSubscription.application_id",
+      "PushSubscription.device_token_fingerprint",
+      "PushSubscription.timezone",
+      "PushSubscription.invalid_token_reported_at",
+      "PushSubscription.metadata"
+    ],
+    "confidential": [
+      "PushSubscription.user_id"
+    ],
+    "restricted": [
+      "PushSubscription.device_token"
+    ],
+    "regulated_minor": [
+      "note: When PushSubscription.user_id refers to a minor recipient (consent_age_gate=minor_under_consent_age on the User model), the entire row inherits regulated_minor tier \u2014 reduced retention window (30d vs 90d), tighter COPPA gates, cascade-delete on VPC withdrawal."
+    ],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "audit_log": [
+      "audits.notifications-push.* rows for subscription create + revoke + expire events. device_token NEVER audit-logged \u2014 fingerprint only."
+    ]
+  },
+  "notes": [
+    "device_token is the highest-sensitivity field in this module. AES-256 encrypted at rest via AWS KMS. Never returned in any API response (hidden array + explicit exclusion). Only decrypted server-side during SendPushJob for the provider call.",
+    "device_token_fingerprint is SHA-256(device_token). Non-secret \u2014 used for admin listings + support diagnostics + duplicate-detection on register.",
+    "The push notification payload (alert.title + alert.body + custom_data) is CONFIDENTIAL because it may include recipient's own name, activity summaries, etc. Delivered to OS-owned notification storage which we cannot audit."
+  ]
+}

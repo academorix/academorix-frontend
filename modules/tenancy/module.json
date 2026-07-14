@@ -1,0 +1,180 @@
+{
+  "$version": 1,
+  "name": "tenancy",
+  "alias": "tenancy",
+  "namespace": "Academorix\\Tenancy",
+  "description": "Multi-tenant substrate. Owns the Application (product container), Tenant (workspace), BusinessType (config catalogue), Domain, DomainRecord, Branding, Identity (cross-tenant person), TenantContact (billing / legal / technical / DPO / security), and TenantIntegration (SSO / SCIM stub for v2). Publishes the BelongsToTenant + BelongsToTenantOptional + BelongsToApplication traits, the ->tenantable() / ->applicable() migration macros, tenancy hooks, and the resolve.tenant + tenant.user middleware every downstream module composes. NO third-party tenancy dependency \u2014 we ship our own TenantResolver + HostResolver + Domain contract (dropped stancl/tenancy at v0.2).",
+  "keywords": [
+    "tenancy",
+    "tenant",
+    "multi-tenant",
+    "workspace",
+    "application",
+    "business_type",
+    "domain",
+    "branding",
+    "identity",
+    "membership",
+    "sso",
+    "scim",
+    "hierarchy"
+  ],
+  "priority": 10,
+  "providers": ["Academorix\\Tenancy\\Providers\\TenancyServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation"],
+  "extendedBy": [
+    "access",
+    "audit",
+    "settings",
+    "feature-flag",
+    "compliance",
+    "user",
+    "auth",
+    "activity",
+    "notifications",
+    "organization",
+    "region",
+    "branch",
+    "facilities",
+    "teams",
+    "subscription",
+    "entitlements",
+    "sports"
+  ],
+  "contributes": {
+    "traits": ["BelongsToTenant", "BelongsToTenantOptional", "BelongsToApplication"],
+    "blueprints": ["tenantable", "applicable"],
+    "middleware": ["resolve.tenant", "tenant.user", "platform.domain"],
+    "events": [
+      "TenantProvisioning",
+      "TenantProvisioned",
+      "TenantSuspended",
+      "TenantUnsuspended",
+      "TenantResumed",
+      "TenantArchived",
+      "TenantErased",
+      "TenantBrandingUpdated",
+      "TenantSettingsUpdated",
+      "DomainAdded",
+      "DomainVerified",
+      "DomainVerificationFailed",
+      "DomainRemoved",
+      "TenantContactAdded",
+      "TenantContactUpdated",
+      "TenantContactRemoved",
+      "TenantIntegrationConfigured",
+      "TenantIntegrationSyncFailed",
+      "IdentityCreated",
+      "IdentityErased"
+    ],
+    "policies": [
+      "TenantPolicy",
+      "ApplicationPolicy",
+      "BusinessTypePolicy",
+      "DomainPolicy",
+      "DomainRecordPolicy",
+      "BrandingPolicy",
+      "IdentityPolicy",
+      "TenantContactPolicy",
+      "TenantIntegrationPolicy"
+    ],
+    "hooks": ["LogContextTenantHook", "CachePrefixTenantHook"],
+    "commands": [
+      "tenancy:sync-catalogue",
+      "tenancy:reverify-domains",
+      "tenancy:archive",
+      "tenancy:hard-delete-archived",
+      "tenancy:seed-defaults"
+    ],
+    "jobs": [
+      "VerifyDomainDnsJob",
+      "ProvisionTenantJob",
+      "HardDeleteArchivedTenantJob",
+      "SyncTenantBrandingJob",
+      "SyncTenantIntegrationJob"
+    ],
+    "notifications": [
+      "WelcomeNotification",
+      "TenantSuspendedNotification",
+      "TenantResumedNotification",
+      "TenantArchivedNotification",
+      "DomainVerifiedNotification",
+      "DomainVerificationFailedNotification",
+      "BrandingUpdatedNotification",
+      "IntegrationSyncFailedNotification"
+    ],
+    "broadcasts": [
+      "tenant.{id}.lifecycle",
+      "tenant.{id}.domain",
+      "tenant.{id}.branding",
+      "tenant.{id}.integration"
+    ],
+    "observers": [
+      "TenantObserver",
+      "DomainObserver",
+      "BrandingObserver",
+      "TenantContactObserver",
+      "TenantIntegrationObserver"
+    ],
+    "rules": [
+      "dns_safe_slug",
+      "reserved_slug",
+      "valid_business_type",
+      "valid_domain_host",
+      "valid_hex_color"
+    ],
+    "casts": ["BrandingPayload", "ProvisioningPayload", "IntegrationConfig"],
+    "views": [],
+    "lang": ["tenancy"],
+    "config": ["tenancy"],
+    "macros": [],
+    "bindings": [],
+    "resources": [
+      "application",
+      "tenant",
+      "business-type",
+      "domain",
+      "domain-record",
+      "branding",
+      "identity",
+      "tenant-contact",
+      "tenant-integration"
+    ]
+  },
+  "hosts": {
+    "central": {
+      "description": "Central workspace picker + self-serve tenant registration. Rejects tenant subdomains via platform.domain middleware.",
+      "routes": [
+        "GET /api/current-tenant",
+        "POST /api/v1/tenants/register",
+        "POST /api/v1/auth/find-workspaces"
+      ]
+    },
+    "platform-admin": {
+      "description": "Academorix staff surface. Full CRUD over Application, Tenant, BusinessType, Domain, Branding, Identity, Contact, Integration.",
+      "routes": [
+        "* /api/v1/applications*",
+        "* /api/v1/tenants*",
+        "* /api/v1/business-types*",
+        "* /api/v1/domains*",
+        "* /api/v1/brandings*",
+        "* /api/v1/identities*",
+        "* /api/v1/tenant-contacts*",
+        "* /api/v1/tenant-integrations*"
+      ]
+    },
+    "tenant": {
+      "description": "Tenant-scoped SPA. Reads the caller's active tenant + workspace list, and manages the tenant's own settings, domains, branding profiles, contacts, and integrations.",
+      "routes": [
+        "GET /api/current-tenant",
+        "GET /api/v1/me/workspaces",
+        "PATCH /api/current-tenant",
+        "* /api/v1/tenant/domains*",
+        "* /api/v1/tenant/brandings*",
+        "* /api/v1/tenant/contacts*",
+        "* /api/v1/tenant/integrations*"
+      ]
+    }
+  }
+}

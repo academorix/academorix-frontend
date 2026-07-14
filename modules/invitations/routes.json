@@ -1,0 +1,159 @@
+{
+  "id": "academorix://modules/invitations/routes",
+  "$version": 1,
+  "title": "invitations — HTTP routes",
+  "description": "Three route groups. Central-public serves the invitee-facing token flow + inbound mail-transport webhooks. Tenant serves the admin CRUD. Platform-admin serves cross-tenant search + audit for support / abuse investigation.",
+  "prefixes": {
+    "api": "/api",
+    "v1": "/api/v1",
+    "platform": "/api/v1/platform"
+  },
+  "groups": [
+    {
+      "id": "central-invitee",
+      "host": "central",
+      "middleware": ["api", "platform.domain", "throttle:invitations-central"],
+      "description": "Invitee-facing token flow. Public — no auth required at first hit. The token is single-use for the state transitions it triggers.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/invitations/{token}",
+          "name": "invitations.preview",
+          "action": "Academorix\\Invitations\\Controllers\\Central\\InvitationPreviewController@show",
+          "returns": "InvitationPreviewData",
+          "description": "Public invitation preview. Returns tenant branding, inviter display name, target label, expiry, whether the invitation is still valid. Marks `opened_at` on first successful hit. Rate-limited per (IP, token_prefix)."
+        },
+        {
+          "method": "POST",
+          "path": "/api/invitations/{token}/accept",
+          "name": "invitations.accept",
+          "action": "Academorix\\Invitations\\Controllers\\Central\\AcceptInvitationController@store",
+          "accepts": "AcceptInvitationData",
+          "returns": "{ user: UserData, tenant: TenantData, token: AuthTokenData, redirect_url: string }",
+          "description": "Complete the accept flow. Body may carry the invitee's chosen password (if provider=emailpass), MFA setup token, consent acknowledgments. Delegates to the target-registered accept handler. Returns a session PAT on success. Idempotent per token — a second call on the same token returns the original outcome."
+        },
+        {
+          "method": "POST",
+          "path": "/api/invitations/{token}/decline",
+          "name": "invitations.decline",
+          "action": "Academorix\\Invitations\\Controllers\\Central\\DeclineInvitationController@store",
+          "accepts": "DeclineInvitationData",
+          "returns": "{ message: string }",
+          "description": "Terminal decline. Records optional reason. No further emails."
+        },
+        {
+          "method": "POST",
+          "path": "/webhooks/invitations/mail/{transport}",
+          "name": "invitations.webhook.mail",
+          "action": "Academorix\\Invitations\\Controllers\\Central\\MailTransportWebhookController@store",
+          "returns": "{ received: integer }",
+          "description": "Inbound webhook from the mail transport (SendGrid / SES / Postmark / Mailgun). Signature verified per transport via transport-specific validators. Records `delivered`, `opened`, `clicked`, `bounced`, `complaint` events. Idempotent on (signal_id, transport). Rate-limited per transport-IP.",
+          "signing": "transport-specific (X-Twilio-Email-Event-Webhook-Signature for SendGrid, SES SNS signature verification, X-Postmark-Signature for Postmark, X-Mailgun-Signature for Mailgun)"
+        }
+      ]
+    },
+    {
+      "id": "tenant-authenticated",
+      "host": "tenant",
+      "middleware": ["api", "resolve.tenant", "auth:sanctum", "tenant.user", "throttle.invitations"],
+      "description": "Tenant admin CRUD. Composed with the `throttle.invitations` middleware for per-(inviter, tenant, day) rate limits.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/v1/tenant/invitations",
+          "name": "tenant.invitations.index",
+          "action": "Academorix\\Invitations\\Controllers\\Tenant\\InvitationController@index",
+          "policy": "InvitationPolicy@viewAny",
+          "returns": "PaginatedResource<InvitationData>",
+          "queryParams": [
+            {"name": "filter[state]", "type": "string|string[]", "description": "One or many state enum values."},
+            {"name": "filter[target_type]", "type": "string", "description": "Filter by target kind."},
+            {"name": "filter[email]", "type": "string", "description": "Case-insensitive partial match."},
+            {"name": "sort", "type": "string", "example": "-created_at"},
+            {"name": "per_page", "type": "integer", "default": 25}
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/tenant/invitations",
+          "name": "tenant.invitations.store",
+          "action": "Academorix\\Invitations\\Controllers\\Tenant\\InvitationController@store",
+          "policy": "InvitationPolicy@create",
+          "accepts": "CreateInvitationData",
+          "returns": "InvitationData",
+          "description": "Body: `target_type, target_id, email, role_key?, channel?, grants?, message?, expires_at?`. Enforces `unique_pending_invitation` rule + per-tenant rate limits (429 on breach). Dispatches SendInvitationJob."
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/tenant/invitations/{invitation}",
+          "name": "tenant.invitations.show",
+          "action": "Academorix\\Invitations\\Controllers\\Tenant\\InvitationController@show",
+          "policy": "InvitationPolicy@view",
+          "returns": "InvitationData",
+          "includes": ["events", "target", "inviter", "acceptedBy"]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/tenant/invitations/{invitation}/resend",
+          "name": "tenant.invitations.resend",
+          "action": "Academorix\\Invitations\\Controllers\\Tenant\\InvitationController@resend",
+          "policy": "InvitationPolicy@resend",
+          "returns": "InvitationData",
+          "description": "Regenerate token + dispatch a fresh SendInvitationJob. Bumps resend_count. Refused when resend_count >= max (default 3) or on terminal states."
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/tenant/invitations/{invitation}/revoke",
+          "name": "tenant.invitations.revoke",
+          "action": "Academorix\\Invitations\\Controllers\\Tenant\\InvitationController@revoke",
+          "policy": "InvitationPolicy@revoke",
+          "accepts": "RevokeInvitationData",
+          "returns": "InvitationData",
+          "description": "Body: optional `reason` (max 200 chars). Refused on terminal states other than bounced."
+        }
+      ]
+    },
+    {
+      "id": "platform-admin",
+      "host": "platform-admin",
+      "middleware": ["api", "auth:sanctum", "platform.user", "api.version"],
+      "description": "Cross-tenant read + audit + revoke for Academorix ops (abuse investigation, support tickets).",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/v1/invitations",
+          "name": "platform.invitations.index",
+          "action": "Academorix\\Invitations\\Controllers\\Platform\\InvitationController@index",
+          "policy": "InvitationPolicy@viewAnyPlatform",
+          "returns": "PaginatedResource<InvitationData>",
+          "queryParams": [
+            {"name": "filter[tenant_id]", "type": "string"},
+            {"name": "filter[application_id]", "type": "string"},
+            {"name": "filter[email]", "type": "string"},
+            {"name": "filter[state]", "type": "string|string[]"},
+            {"name": "filter[token_prefix]", "type": "string", "description": "Match by the visible token prefix (8 hex chars)."}
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/invitations/{invitation}",
+          "name": "platform.invitations.show",
+          "action": "Academorix\\Invitations\\Controllers\\Platform\\InvitationController@show",
+          "policy": "InvitationPolicy@viewPlatform",
+          "returns": "InvitationData",
+          "includes": ["events", "target", "inviter", "tenant", "acceptedBy", "revokedBy"]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/invitations/{invitation}/revoke",
+          "name": "platform.invitations.revoke",
+          "action": "Academorix\\Invitations\\Controllers\\Platform\\InvitationController@revoke",
+          "policy": "InvitationPolicy@revokePlatform",
+          "accepts": "PlatformRevokeInvitationData",
+          "returns": "InvitationData",
+          "description": "Abuse-response revoke. Requires an audit reason. Fires TenantSecurityBreachNotification when reason contains category=abuse."
+        }
+      ]
+    }
+  ]
+}

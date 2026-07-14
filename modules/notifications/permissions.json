@@ -1,0 +1,136 @@
+{
+  "id": "academorix://modules/notifications/permissions",
+  "$version": 1,
+  "title": "notifications core \u2014 permissions",
+  "description": "Two guards. Sanctum-guard permissions are user-facing (inbox, preferences, tenant admin template management). Platform-admin-guard permissions gate cross-tenant search + delivery retry. Every permission is seeded by `NotificationsPermissionSeeder` with is_system=true.",
+  "seeder": "Academorix\\Notifications\\Database\\Seeders\\NotificationsPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "notifications.viewAny",
+      "guard": "sanctum",
+      "description": "List own inbox (`GET /api/v1/tenant/notifications`). Every authenticated user has this by default \u2014 seeded on the base user role.",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "notifications.view",
+      "guard": "sanctum",
+      "description": "Read a single Notification (`GET /api/v1/tenant/notifications/{id}`). Same default as viewAny.",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "notifications.markSeen",
+      "guard": "sanctum",
+      "description": "Mark notification(s) as seen. Default for every authenticated user.",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "notifications.archive",
+      "guard": "sanctum",
+      "description": "Archive a notification from own inbox. Default for every authenticated user.",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "notifications.delete",
+      "guard": "sanctum",
+      "description": "Hard-delete a notification. NOT normally granted \u2014 users archive, retention purges. Reserved for support tooling.",
+      "seededOn": []
+    },
+    {
+      "name": "notifications.preferences.view",
+      "guard": "sanctum",
+      "description": "View own notification preferences.",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "notifications.preferences.update",
+      "guard": "sanctum",
+      "description": "Update own notification preferences.",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "notifications.preferences.adminView",
+      "guard": "sanctum",
+      "description": "View ANY user's preferences within tenant \u2014 for support + DPO Art. 30 records-of-processing.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "notifications.templates.viewAny",
+      "guard": "sanctum",
+      "description": "List templates \u2014 platform defaults + tenant overrides. Admin surface.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "notifications.templates.view",
+      "guard": "sanctum",
+      "description": "View a single template + its rendered body.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "notifications.templates.create",
+      "guard": "sanctum",
+      "description": "Create a new tenant-override template.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "notifications.templates.update",
+      "guard": "sanctum",
+      "description": "Update a draft template.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "notifications.templates.delete",
+      "guard": "sanctum",
+      "description": "Delete a template. Refused for is_system=true rows and rows with live sends.",
+      "seededOn": ["owner"]
+    },
+    {
+      "name": "notifications.templates.publish",
+      "guard": "sanctum",
+      "description": "Publish a draft template \u2014 SOC 2 CC8.1 change management gate.",
+      "seededOn": ["owner"]
+    },
+    {
+      "name": "notifications.templates.test",
+      "guard": "sanctum",
+      "description": "Send a test render to a real recipient. Rate-limited.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "notifications.admin.view",
+      "guard": "sanctum",
+      "description": "Access the tenant admin sends dashboard + subscribe to tenant.{id}.notifications broadcast channel.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "platform.notifications.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant search of Notification rows for support / abuse investigation.",
+      "seededOn": ["super_admin", "support", "ops"]
+    },
+    {
+      "name": "platform.notifications.view",
+      "guard": "platform_admin",
+      "description": "View a single Notification cross-tenant. Includes anonymous-addressee notifications.",
+      "seededOn": ["super_admin", "support", "ops"]
+    },
+    {
+      "name": "platform.notifications.retry",
+      "guard": "platform_admin",
+      "description": "Retry a failed delivery. Rate-limited to prevent replay abuse.",
+      "seededOn": ["super_admin", "ops"]
+    },
+    {
+      "name": "platform.notifications.templates.viewAny",
+      "guard": "platform_admin",
+      "description": "List every template across tenants for platform ops.",
+      "seededOn": ["super_admin", "support", "ops"]
+    },
+    {
+      "name": "platform.notifications.categories.viewAny",
+      "guard": "platform_admin",
+      "description": "List the category registry across tenants.",
+      "seededOn": ["super_admin", "support", "ops"]
+    }
+  ]
+}

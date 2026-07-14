@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/versioning/middleware",
+  "$version": 1,
+  "title": "versioning \u2014 HTTP middleware",
+  "description": "One middleware: `versioning.resolve`. Runs the resolver chain, populates request state, emits response headers (X-API-Version, Deprecation, Sunset, Link: rel=successor-version). Registered at priority 30 in foundation's canonical order \u2014 was foundation's `api.version` slot.",
+  "middleware": [
+    {
+      "alias": "versioning.resolve",
+      "class": "Academorix\\Versioning\\Http\\Middleware\\ResolveVersion",
+      "priority": 30,
+      "description": "Runs the VersionResolverChain in configured order (default: url, header, query, webhook, graphql). First resolver returning a non-null result wins. Populates request-scoped bindings so controllers + Data classes can vary payload shape by version. Emits response headers per RFC 8594 for deprecated/sunset versions.",
+      "sideEffects": [
+        "Sets Request::attributes->set('api_version', ApiVersion $version)",
+        "Sets Request::attributes->set('api_version_slug', string $slug)",
+        "Emits X-API-Version: <slug> header on every response.",
+        "For state=deprecated: emits Deprecation: true + Sunset: <RFC 7231 date> headers.",
+        "For deprecated versions with migration_guide_url set: emits Link: <url>; rel=\"successor-version\" header.",
+        "For state=sunset: refuses request with 410 Gone + emits sunset + Link headers for archaeology."
+      ],
+      "config": {
+        "resolver_chain_config_key": "versioning.resolvers.order",
+        "default_version_config_key": "versioning.default",
+        "sunset_response_status": 410,
+        "deprecated_response_status": 200,
+        "query_resolver_enabled_in": ["local", "testing", "staging"]
+      },
+      "returnsOn406": {
+        "code": "VERSIONING_VERSION_NOT_FOUND",
+        "reason": "The version resolved by the chain doesn't exist in api_versions table. Almost always a mis-authored Accept header or URL path segment."
+      },
+      "returnsOn410": {
+        "code": "VERSIONING_VERSION_SUNSET",
+        "reason": "The requested version is in state=sunset. Response body includes migration_guide_url when available."
+      }
+    }
+  ],
+  "priorityContext": {
+    "runsAfter": ["request.id", "cors.strict", "throttle:foundation-health"],
+    "runsBefore": ["throttle.base", "auth:sanctum", "auth:platform_admin", "resolve.tenant", "response.envelope"],
+    "note": "Priority 30 was foundation's former api.version slot. Placed BEFORE auth so unauthenticated requests still emit the correct version headers on 401 responses."
+  }
+}

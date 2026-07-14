@@ -1,0 +1,31 @@
+{
+  "id": "tenancy.resources.branding.list",
+  "title": "Branding profiles",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/brandings",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {"module": "tenancy", "entity": "branding", "action": "list"},
+  "requiresPermission": "tenants.manage_branding",
+  "dataSources": [
+    {"name": "brandings", "kind": "http.get", "url": "/api/v1/tenant/brandings", "unwrap": "data", "paginated": true}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-4 p-6"}, "children": [
+      {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Branding profiles"}},
+      {"kind": "Text", "props": {"className": "text-sm text-muted", "children": "One primary profile is applied to the workspace. Additional profiles reserved for per-domain branding (v2)."}},
+      {"kind": "List", "props": {"className": "flex flex-col gap-3"}, "bindings": {"items": {"$ref": "brandings"}}, "itemRenderer": {"kind": "Card", "props": {"className": "p-4 flex items-center justify-between"}, "children": [
+        {"kind": "View", "props": {"className": "flex items-center gap-3"}, "children": [
+          {"kind": "View", "props": {"className": "size-10 rounded"}, "bindings": {"style": {"$expr": "{ backgroundColor: row.primary_color }"}}},
+          {"kind": "View", "children": [
+            {"kind": "Text", "props": {"className": "font-medium"}, "bindings": {"children": {"$ref": "row.name"}}},
+            {"kind": "Text", "props": {"className": "text-xs text-muted font-mono"}, "bindings": {"children": {"$expr": "row.primary_color + ' \u00b7 ' + (row.accent_color || 'no accent')"}}}
+          ]},
+          {"kind": "Chip", "props": {"size": "xs", "variant": "info"}, "bindings": {"hidden": {"$expr": "!row.is_primary"}, "children": "Primary"}}
+        ]},
+        {"kind": "Link", "props": {"size": "sm", "children": "Edit"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/brandings/' + row.id + '/edit'"}}}
+      ]}}
+    ]}
+  ]
+}

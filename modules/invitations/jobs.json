@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/invitations/jobs",
+  "$version": 1,
+  "title": "invitations — queued jobs",
+  "description": "Five queued jobs. All models re-hydrated from DB on handle (no stale-payload risk). ShouldBeUnique guards on jobs whose duplicate execution would over-send.",
+  "defaultQueue": "default",
+  "defaultConnection": "redis",
+  "jobs": [
+    {
+      "class": "Academorix\\Invitations\\Jobs\\SendInvitationJob",
+      "description": "Renders the outbound message + hands off to the configured mail transport. Requires access to the raw token (stashed on the Invitation model at create-time; if lost — e.g. job re-hydrates from a stale queue — the job refuses to run and marks the invitation `state=send_failed` with error_code=`token_unavailable`).",
+      "queue": "invitations",
+      "tries": 5,
+      "timeoutSeconds": 60,
+      "backoffSeconds": [30, 120, 600, 1800, 7200],
+      "uniqueFor": 300,
+      "uniqueKeyExpr": "'invitation:send:' + invitation.id",
+      "implements": ["ShouldQueue", "ShouldBeUnique"],
+      "input": {"invitation_id": "string", "raw_token": "string (encrypted at queue level via Sanctum PAT-style crypto)"}
+    },
+    {
+      "class": "Academorix\\Invitations\\Jobs\\ExpireInvitationsJob",
+      "description": "Sweeps invitations whose `expires_at < now()` and are still in a non-terminal state. Transitions them to `expired`, dispatches InvitationExpired. Batched — max 500 per run to avoid blocking the queue.",
+      "queue": "retention",
+      "tries": 3,
+      "timeoutSeconds": 300,
+      "backoffSeconds": [3600, 7200, 21600],
+      "input": {"batch_size": "integer (default 500)"}
+    },
+    {
+      "class": "Academorix\\Invitations\\Jobs\\CleanupAcceptedInvitationsJob",
+      "description": "After the accepted-retention window (default P90D), soft-deletes accepted + declined invitations. InvitationEvent rows are retained separately per their own retention window.",
+      "queue": "retention",
+      "tries": 3,
+      "timeoutSeconds": 300,
+      "input": {"older_than": "ISO-8601 duration"}
+    },
+    {
+      "class": "Academorix\\Invitations\\Jobs\\RetryBounceJob",
+      "description": "For soft-bounced invitations (transient email failures), waits for the transport-recommended retry delay + resends. Refused for hard bounces + complaints (terminal). Tracks attempt count on the InvitationEvent metadata to avoid infinite retry.",
+      "queue": "invitations",
+      "tries": 3,
+      "timeoutSeconds": 60,
+      "backoffSeconds": [1800, 7200, 21600],
+      "input": {"invitation_id": "string"}
+    },
+    {
+      "class": "Academorix\\Invitations\\Jobs\\RecordInboundEventJob",
+      "description": "Handles the queued portion of mail-transport webhook processing. The webhook controller validates signature synchronously then enqueues this job to write InvitationEvent rows + trigger state transitions. Idempotent on (signal_id, transport) — the DB unique index catches duplicates.",
+      "queue": "webhooks",
+      "tries": 5,
+      "timeoutSeconds": 30,
+      "backoffSeconds": [10, 60, 300, 900, 3600],
+      "input": {"transport": "string", "payload": "array (verified webhook body)"}
+    }
+  ],
+  "queues": {
+    "invitations": {"description": "Outbound message dispatch + retry. Isolated because mail transport slowness must not stall other work."},
+    "retention": {"description": "Batched cleanup jobs. Runs off-hours per schedule.json."},
+    "webhooks": {"description": "Inbound webhook processing. Isolated because mail-transport delivery signal spikes (bulk resends) must not stall admin-triggered sends."}
+  }
+}

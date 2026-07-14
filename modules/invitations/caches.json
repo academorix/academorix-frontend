@@ -1,0 +1,55 @@
+{
+  "id": "academorix://modules/invitations/caches",
+  "$version": 1,
+  "title": "invitations — cache keys",
+  "description": "Cache keys this module owns. Namespaced per tenant by CachePrefixTenantHook for tenant-scoped keys; un-prefixed keys called out explicitly.",
+  "driver": "redis",
+  "keys": [
+    {
+      "pattern": "invitations:token:{token_prefix}",
+      "description": "Reverse index: token_prefix (first 8 hex of token_hash) → { invitation_id, tenant_id }. Speeds up the GET /api/invitations/{token} lookup without hitting the DB unique index. Prefix-only lookup is safe because the caller must present the full raw token; the DB is still checked for state + expiry + hash match.",
+      "ttlSeconds": 900,
+      "tags": ["invitations"],
+      "invalidatedBy": ["InvitationObserver@created", "InvitationObserver@deleted"],
+      "note": "Un-prefixed key — the /invitations/{token} endpoint is public and runs before tenant resolution."
+    },
+    {
+      "pattern": "invitations:throttle:inviter_user:{user_id}:day:{yyyy-mm-dd}",
+      "description": "Per-inviter-user daily counter. Enforced by throttle.invitations middleware.",
+      "ttlSeconds": 86400,
+      "tags": ["throttle", "invitations"]
+    },
+    {
+      "pattern": "invitations:throttle:inviter_sa:{service_account_id}:day:{yyyy-mm-dd}",
+      "description": "Per-service-account daily counter.",
+      "ttlSeconds": 86400,
+      "tags": ["throttle", "invitations"]
+    },
+    {
+      "pattern": "invitations:throttle:tenant:{tenant_id}:day:{yyyy-mm-dd}",
+      "description": "Per-tenant daily counter.",
+      "ttlSeconds": 86400,
+      "tags": ["throttle", "invitations"]
+    },
+    {
+      "pattern": "invitations:throttle:invitee_email:{email_lower}:week:{yyyy-ww}",
+      "description": "Per-invitee weekly counter — anti-harassment guard.",
+      "ttlSeconds": 604800,
+      "tags": ["throttle", "invitations"]
+    },
+    {
+      "pattern": "tenant:{tenant_id}:invitations:pending_count",
+      "description": "Cached count of non-terminal invitations for the admin dashboard header. Updated on state transitions via InvitationObserver.",
+      "ttlSeconds": 60,
+      "tags": ["tenant", "invitations"],
+      "invalidatedBy": ["InvitationObserver@updated (state dirty)"]
+    },
+    {
+      "pattern": "invitations:target-registry",
+      "description": "Cached copy of the InvitationTargetRegistry map (target_type → { class, accept_handler }). Warmed at boot; refreshed on config-cache clear.",
+      "ttlSeconds": 3600,
+      "tags": ["invitations"],
+      "note": "Un-prefixed — application-wide registry, not tenant-scoped."
+    }
+  ]
+}

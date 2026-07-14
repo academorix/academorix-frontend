@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/audit/entitlements",
+  "$version": 1,
+  "title": "audit \u2014 entitlements",
+  "reference": {"publishedBy": "entitlements", "seededFrom": "BusinessType.default_config.entitlements"},
+  "kinds": [{"kind": "slot"}, {"kind": "boolean"}],
+  "entitlements": [
+    {"key": "audit.retention.hot_days", "kind": "slot", "unit": "days", "defaultsByPlan": {"free": 365, "team": 365, "enterprise": 365}, "description": "Days audit rows retained in Postgres hot storage. Same across plans \u2014 regulatory floor. Enterprise may extend via contract."},
+    {"key": "audit.retention.cold_days", "kind": "slot", "unit": "days", "defaultsByPlan": {"free": 2555, "team": 2555, "enterprise": 2555}, "description": "Days audit rows retained in S3 Glacier cold storage (7 years). Enterprise may extend via contract."},
+    {"key": "audit.tamper_evident_chain", "kind": "boolean", "defaultsByPlan": {"free": false, "team": false, "enterprise": true}, "description": "Enable per-row hash chain for tamper evidence."},
+    {"key": "audit.dpo_surface", "kind": "boolean", "defaultsByPlan": {"free": false, "team": true, "enterprise": true}}
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "academorix://modules/versioning/observers",
+  "$version": 1,
+  "title": "versioning \u2014 Eloquent observers",
+  "description": "Two observers on the two entities. Enforce state machine transitions + registry cache invalidation + deletion refusal on system rows.",
+  "observers": [
+    {
+      "model": "ApiVersion",
+      "observer": "Academorix\\Versioning\\Observers\\ApiVersionObserver",
+      "handles": [
+        "created \u2192 invalidate ApiVersionRegistry cache",
+        "updated (state=released) \u2192 fire ApiVersionReleased",
+        "updated (state=deprecated) \u2192 fire ApiVersionDeprecated + emit affected_subscription_count via webhook module query",
+        "updated (state=sunset) \u2192 fire ApiVersionSunset + trigger AutoUpgradePinnedSubscriptions listener on webhook",
+        "updated (is_default) \u2192 unset is_default on the previous default row (single-default invariant)",
+        "updating (migration_target_slug set) \u2192 refuse when migration_target references self OR references a version in state=sunset",
+        "deleting \u2192 refuse when is_system=true unless super_admin",
+        "deleting \u2192 refuse when state \u2260 draft (only draft versions can be deleted; released+ are archived via sunset workflow)",
+        "deleting \u2192 refuse when any WebhookSubscription references this slug"
+      ]
+    },
+    {
+      "model": "DeprecationNotice",
+      "observer": "Academorix\\Versioning\\Observers\\DeprecationNoticeObserver",
+      "handles": [
+        "updated (state=published) \u2192 fire DeprecationNoticePublished + dispatch PublishDeprecationNoticeJob when notify_customers=true",
+        "updating (published notice) \u2192 refuse text edits unless super_admin \u2014 published notices are append-only; text corrections require new draft \u2192 publish workflow. Text edits captured via HasVersions do not fire an update event (versionable is transparent)",
+        "deleting \u2192 refuse when is_system=true unless super_admin",
+        "deleting \u2192 refuse when state=published unless super_admin (archive first)"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/webhook/health",
+  "$version": 1,
+  "title": "webhook \u2014 health probes",
+  "description": "Four probes registered with foundation's HealthAggregator.",
+  "probes": [
+    {"name": "webhook-registry-loaded", "class": "Academorix\\Webhook\\Health\\Probes\\RegistryLoadedProbe", "category": "startup", "critical": true, "description": "WebhookRegistry + WebhookDestinationRegistry loaded on ApplicationBooted.", "timeoutMs": 100},
+    {"name": "webhook-deliveries-oldest-pending", "class": "Academorix\\Webhook\\Health\\Probes\\OldestPendingDeliveryProbe", "category": "readiness", "critical": false, "description": "Age of the oldest WebhookDelivery in state=pending or state=inFlight. Warns > 5m, fails > 30m.", "timeoutMs": 500, "thresholds": {"warn_seconds": 300, "fail_seconds": 1800}},
+    {"name": "webhook-subscriptions-reachable", "class": "Academorix\\Webhook\\Health\\Probes\\SubscriptionsReachableProbe", "category": "readiness", "critical": false, "description": "Aggregate probe status: % of active subscriptions with consecutive_probe_failures = 0. Warns < 95%, fails < 70%.", "timeoutMs": 500, "thresholds": {"warn_ratio": 0.95, "fail_ratio": 0.70}},
+    {"name": "webhook-batch-dispatcher-alive", "class": "Academorix\\Webhook\\Health\\Probes\\BatchDispatcherAliveProbe", "category": "liveness", "critical": false, "description": "The notifications queue has at least one worker processing Bus::batch webhook jobs. Fails when the queue starves.", "timeoutMs": 300}
+  ]
+}

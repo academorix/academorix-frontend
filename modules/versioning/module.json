@@ -1,0 +1,182 @@
+{
+  "$version": 1,
+  "name": "versioning",
+  "alias": "versioning",
+  "namespace": "Academorix\\Versioning",
+  "description": "Public interface versioning substrate. Owns the ApiVersion entity + DeprecationNotice entity + resolver chain (URL, header, query, webhook subscription, GraphQL) + payload transformer registry + version scheme adapters (SemVer, CalVer) + RFC 8594 Sunset workflow. Covers four surfaces: (1) REST endpoints (`/api/v1/...`), (2) content-negotiated payloads (`Accept: application/vnd.academorix.v2+json`), (3) webhook subscribers pinned to specific versions (`WebhookSubscription.api_version`), and (4) GraphQL schema versioning (feature-flag guarded, ships with #[VersionedField] + @deprecated support). Distinct from foundation's `HasVersions` trait, which handles ROW-LEVEL model history (snapshots + rollback for Eloquent models) \u2014 this module handles SURFACE-LEVEL version lifecycle. Both concerns coexist via the same word 'version' but tackle different problems.",
+  "keywords": [
+    "versioning",
+    "api-versioning",
+    "payload-versioning",
+    "webhook-versioning",
+    "graphql-versioning",
+    "deprecation",
+    "sunset",
+    "rfc-8594",
+    "semver",
+    "calver",
+    "payload-transformers"
+  ],
+  "priority": 12,
+  "providers": [
+    "Academorix\\Versioning\\Providers\\VersioningServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation"
+  ],
+  "extendedBy": [
+    "webhook",
+    "notifications",
+    "notifications-mail",
+    "notifications-push",
+    "notifications-sms",
+    "tenancy",
+    "subscription",
+    "entitlements",
+    "auth"
+  ],
+  "contributes": {
+    "traits": [],
+    "blueprints": [
+      "apiVersionable"
+    ],
+    "middleware": [
+      "versioning.resolve"
+    ],
+    "events": [
+      "ApiVersionReleased",
+      "ApiVersionDeprecated",
+      "ApiVersionSunset",
+      "DeprecationNoticePublished",
+      "PayloadTransformerRegistered"
+    ],
+    "policies": [
+      "ApiVersionPolicy",
+      "DeprecationNoticePolicy"
+    ],
+    "hooks": [],
+    "commands": [
+      "versioning:list",
+      "versioning:release",
+      "versioning:deprecate",
+      "versioning:sunset",
+      "versioning:transformers"
+    ],
+    "jobs": [
+      "SunsetApiVersionJob",
+      "PublishDeprecationNoticeJob"
+    ],
+    "notifications": [
+      "ApiDeprecationNotification",
+      "ApiSunsetNotification"
+    ],
+    "broadcasts": [],
+    "observers": [
+      "ApiVersionObserver",
+      "DeprecationNoticeObserver"
+    ],
+    "rules": [
+      "valid_version_slug",
+      "valid_version_scheme",
+      "valid_transformer_signature"
+    ],
+    "casts": [
+      "VersionSchemeCast"
+    ],
+    "views": [],
+    "lang": [
+      "versioning"
+    ],
+    "config": [
+      "versioning"
+    ],
+    "macros": [
+      "Blueprint::apiVersionable"
+    ],
+    "bindings": [
+      "ApiVersionRegistry",
+      "VersionResolverChain",
+      "PayloadTransformerRegistry",
+      "VersionSchemeRegistry",
+      "DeprecationNoticeService",
+      "SunsetHeaderEmitter"
+    ],
+    "resources": [
+      "api-version",
+      "deprecation-notice"
+    ]
+  },
+  "attributes": {
+    "declaredBy": "versioning",
+    "list": [
+      {
+        "name": "AsPayloadTransformer",
+        "class": "Academorix\\Versioning\\Attributes\\AsPayloadTransformer",
+        "usage": "#[AsPayloadTransformer(surface: 'webhook', event: 'invitation.sent', from: 'v1', to: 'v2')]",
+        "description": "Auto-registers a payload transformer class with the PayloadTransformerRegistry. Build-time compiler discovers + validates the transformer signature. Transformers are pure functions: `transform(array $payload): array`."
+      },
+      {
+        "name": "VersionedField",
+        "class": "Academorix\\Versioning\\Attributes\\VersionedField",
+        "usage": "#[VersionedField(introducedIn: 'v2', deprecatedIn: 'v3', removedIn: 'v4')]",
+        "description": "Marks a field on a data class (Spatie Data / GraphQL type) with its version lifecycle. Renderers strip fields based on the resolved request version. Feature-flag guarded via `versioning.graphql_support`."
+      },
+      {
+        "name": "AsApiSurface",
+        "class": "Academorix\\Versioning\\Attributes\\AsApiSurface",
+        "usage": "#[AsApiSurface(name: 'invitations', versions: ['v1', 'v2'])]",
+        "description": "Marks a controller or GraphQL resolver as versioned. Build-time compiler ensures every declared version has a resolver present."
+      }
+    ]
+  },
+  "resolverChain": {
+    "description": "Ordered list of version resolvers. First to yield a non-null result wins. Config in `versioning.resolvers.order`.",
+    "default_order": ["url", "header", "webhook", "graphql", "query"],
+    "resolvers": [
+      {"name": "url", "class": "Academorix\\Versioning\\Resolvers\\UrlPathResolver", "matches": "/api/{version}/... e.g. /api/v1/", "confidence": "high"},
+      {"name": "header", "class": "Academorix\\Versioning\\Resolvers\\ContentNegotiationResolver", "matches": "Accept: application/vnd.academorix.{version}+json", "confidence": "highest"},
+      {"name": "query", "class": "Academorix\\Versioning\\Resolvers\\QueryParamResolver", "matches": "?version={version}", "confidence": "low", "note": "Enabled only in non-production by default \u2014 for public docs + integration testing."},
+      {"name": "webhook", "class": "Academorix\\Versioning\\Resolvers\\WebhookSubscriptionResolver", "matches": "WebhookSubscription.api_version at dispatch time", "confidence": "high"},
+      {"name": "graphql", "class": "Academorix\\Versioning\\Resolvers\\GraphQlContextResolver", "matches": "@api(version: v2) directive on the operation OR schema-inferred", "confidence": "high", "note": "Feature-flag guarded via versioning.graphql_support."}
+    ]
+  },
+  "schemes": {
+    "description": "Version scheme adapters. Selected per-ApiVersion via the `scheme` column. Determines how versions are compared for order + range queries + wildcard matches.",
+    "supported": [
+      {"name": "semver", "class": "Academorix\\Versioning\\Schemes\\SemVerScheme", "example": "v1.2.3", "description": "Standard SemVer. Major bump = breaking. Wildcards: ^1.0 (any 1.x), ~1.2 (any 1.2.x)."},
+      {"name": "calver", "class": "Academorix\\Versioning\\Schemes\\CalVerScheme", "example": "2024.10.15 or 2024-10-15", "description": "CalVer. Preferred for consumer-facing APIs where release cadence matches calendar. Every release is potentially breaking."}
+    ],
+    "default": "semver"
+  },
+  "hosts": {
+    "central": {
+      "description": "Public deprecation surface + version catalog for docs + integration.",
+      "routes": [
+        "GET /api/versions",
+        "GET /api/versions/{slug}",
+        "GET /api/versions/{slug}/deprecation-notices"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant version management + release / deprecate / sunset workflow.",
+      "routes": [
+        "GET /api/v1/platform/versioning/api-versions",
+        "POST /api/v1/platform/versioning/api-versions",
+        "PATCH /api/v1/platform/versioning/api-versions/{slug}",
+        "POST /api/v1/platform/versioning/api-versions/{slug}/release",
+        "POST /api/v1/platform/versioning/api-versions/{slug}/deprecate",
+        "POST /api/v1/platform/versioning/api-versions/{slug}/sunset",
+        "GET /api/v1/platform/versioning/deprecation-notices",
+        "POST /api/v1/platform/versioning/deprecation-notices"
+      ]
+    },
+    "tenant": {
+      "description": "Tenant-facing read-only catalog of API versions + active deprecation notices affecting them.",
+      "routes": [
+        "GET /api/v1/tenant/versioning/api-versions",
+        "GET /api/v1/tenant/versioning/deprecation-notices"
+      ]
+    }
+  }
+}

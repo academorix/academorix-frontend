@@ -1,0 +1,27 @@
+{
+  "id": "academorix://modules/webhook/entitlements",
+  "$version": 1,
+  "title": "webhook \u2014 entitlements",
+  "description": "Per-tenant metered entitlements. Subscription count (slot) + deliveries per month (pool) + rate limit cap (slot).",
+  "reference": {
+    "publishedBy": "entitlements",
+    "resolvedBy": "GET /api/auth/me \u2192 data.quota_summary",
+    "seededFrom": "BusinessType.default_config.entitlements"
+  },
+  "kinds": [
+    {"kind": "slot"},
+    {"kind": "pool"},
+    {"kind": "boolean"},
+    {"kind": "unlimited"}
+  ],
+  "entitlements": [
+    {"key": "webhook.subscriptions.count", "kind": "slot", "unit": "subscriptions", "defaultsByPlan": {"free": 3, "team": 25, "enterprise": "unlimited"}, "description": "Max concurrent WebhookSubscription rows per tenant. Reaching cap refuses new creations."},
+    {"key": "webhook.deliveries.month", "kind": "pool", "period": "month", "unit": "deliveries", "defaultsByPlan": {"free": 10000, "team": 500000, "enterprise": "unlimited"}, "description": "Monthly outbound deliveries per tenant. Approaching cap warns admin; exceeding = deliveries deferred + admin notified."},
+    {"key": "webhook.rate_limit_per_minute.max", "kind": "slot", "unit": "requests_per_minute", "defaultsByPlan": {"free": 60, "team": 600, "enterprise": 6000}, "description": "Maximum value the tenant can set on subscription.rate_limit_per_minute. Higher plans allow bursts to larger receivers."},
+    {"key": "webhook.retention_days", "kind": "slot", "unit": "days", "defaultsByPlan": {"free": 30, "team": 90, "enterprise": 365}, "description": "WebhookDelivery retention window. Higher plans keep audit trail longer."},
+    {"key": "webhook.payload_max_bytes", "kind": "slot", "unit": "bytes", "defaultsByPlan": {"free": 262144, "team": 1048576, "enterprise": 10485760}, "description": "Max payload size (default 256KB free / 1MB team / 10MB enterprise). Exceeding refuses dispatch."},
+    {"key": "webhook.destinations.eventbridge", "kind": "boolean", "defaultsByPlan": {"free": false, "team": false, "enterprise": true}},
+    {"key": "webhook.destinations.pubsub", "kind": "boolean", "defaultsByPlan": {"free": false, "team": false, "enterprise": true}},
+    {"key": "webhook.destinations.mtls", "kind": "boolean", "defaultsByPlan": {"free": false, "team": false, "enterprise": true}}
+  ]
+}

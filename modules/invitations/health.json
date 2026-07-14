@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/invitations/health",
+  "$version": 1,
+  "title": "invitations — health probes",
+  "description": "Health probes registered with Foundation's health aggregator (surfaced via `GET /api/health`). Detects downstream mail-transport availability + inbound webhook liveness.",
+  "endpoint": "GET /api/health",
+  "aggregator": "Academorix\\Foundation\\Health\\HealthAggregator",
+  "probes": [
+    {
+      "name": "invitations-mail-transport-reachable",
+      "class": "Academorix\\Invitations\\Health\\MailTransportReachableProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Pings each configured mail transport's API health endpoint (SendGrid /v3/user/profile, SES ListVerifiedEmailAddresses, Postmark /server, Mailgun /domains). Non-critical because a single transport outage is handled by RetryBounceJob backoff — the platform degrades to a queue, not a fail.",
+      "timeoutMs": 3000
+    },
+    {
+      "name": "invitations-webhook-recent-signal",
+      "class": "Academorix\\Invitations\\Health\\WebhookRecentSignalProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Checks that at least one InvitationEvent from a mail-transport webhook has arrived in the last 6 hours. Zero recent signals with active invitations pending → probable transport-webhook misconfiguration. Non-critical (informational).",
+      "timeoutMs": 500
+    },
+    {
+      "name": "invitations-queue-depth-not-stalled",
+      "class": "Academorix\\Invitations\\Health\\QueueDepthNotStalledProbe",
+      "category": "liveness",
+      "critical": true,
+      "description": "Reads the depth of `invitations` + `webhooks` queues. Fails when depth > 10000 pending jobs OR oldest job > 15 minutes. Indicates a stuck worker or an abusive burst.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "invitations-schedule-registered",
+      "class": "Academorix\\Invitations\\Health\\ScheduleRegisteredProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Boot-time. Verifies the four scheduled entries (expire-stale, cleanup-accepted, resend-failed, audit-report) registered on the scheduler. Detects a bad service-provider boot.",
+      "timeoutMs": 100
+    }
+  ]
+}

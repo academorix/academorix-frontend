@@ -1,0 +1,28 @@
+{
+  "id": "academorix://modules/settings/config",
+  "$version": 1,
+  "title": "settings \u2014 developer configuration",
+  "configFile": "config/settings.php",
+  "envPrefix": "SETTINGS_",
+  "sections": {
+    "spatie_bridge": {"description": "Overrides on top of spatie's config/settings.php.", "keys": [
+      {"path": "settings.database.connection", "type": "string", "env": "SETTINGS_DB_CONNECTION", "default": null},
+      {"path": "settings.repository", "type": "string", "default": "database", "description": "spatie repository."}
+    ]},
+    "discovery": {"keys": [
+      {"path": "settings.discovery.cache_path", "type": "string", "default": "bootstrap/cache/settings-registry.php", "description": "Compiled registry artefact from foundation's DiscoversAttributes pass."},
+      {"path": "settings.discovery.fail_on_duplicate_group", "type": "bool", "default": true, "description": "Two settings classes declaring the same #[AsSetting(group: ...)] fail the discovery pass."}
+    ]},
+    "resolver": {"keys": [
+      {"path": "settings.resolver.cache_ttl_seconds", "type": "int", "env": "SETTINGS_RESOLVER_CACHE_TTL", "default": 600},
+      {"path": "settings.resolver.max_cascade_depth", "type": "int", "default": 3, "description": "system \u2192 tenant \u2192 user. Increases when scope module lands (org, branch)."}
+    ]},
+    "encryption": {"keys": [
+      {"path": "settings.encrypt_sensitive_at_rest", "type": "bool", "env": "SETTINGS_ENCRYPT_SENSITIVE", "default": false, "description": "Enterprise-only; also gated by the entitlement."},
+      {"path": "settings.kms.key_alias", "type": "string", "default": "alias/academorix-settings"}
+    ]},
+    "sensitive_reveal": {"keys": [
+      {"path": "settings.sensitive_reveal.log_every_use", "type": "bool", "default": true, "description": "Every ?reveal=true write a fresh audit row. Off = only meta-analytics tracked (weaker)."}
+    ]}
+  }
+}

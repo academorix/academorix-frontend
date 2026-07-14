@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/audit/compliance",
+  "$version": 1,
+  "title": "audit \u2014 compliance evidence",
+  "description": "PRIMARY compliance evidence surface. GDPR Art. 30 + SOC 2 CC8.1 change management + PCI-DSS Req 10 + HIPAA 45 CFR \u00a7164.312(b) audit controls.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {"article": "Art. 5(1)(a)", "principle": "lawful + transparent processing", "evidence": "Every operation on personal data audit-logged with actor + timestamp + old/new values."},
+        {"article": "Art. 5(1)(f)", "principle": "integrity + confidentiality", "evidence": "KMS envelope encryption of restricted-tier field values. Optional tamper-evident chain (enterprise)."},
+        {"article": "Art. 17", "principle": "right to erasure", "evidence": "AnonymiseAuditForErasedUser listener \u2014 PII fields replaced with hash placeholders; row retained for audit continuity."},
+        {"article": "Art. 30", "principle": "records of processing", "evidence": "audits table IS the records of processing. Filterable by tenant + actor + auditable_type + date."},
+        {"article": "Art. 32", "principle": "security of processing", "evidence": "KMS encryption + IP truncation + hash chain + Object Lock immutable retention."},
+        {"article": "Art. 33", "principle": "breach notification", "evidence": "AuditChainBroken event fires immediately on chain break \u2014 tamper detection within 24h of write."}
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {"criterion": "CC6.1", "principle": "logical access", "evidence": "Access to audit rows itself audit-logged. Tenant DPO sees masked view; platform DPO sees full view."},
+        {"criterion": "CC6.7", "principle": "encryption at rest", "evidence": "KMS envelope encryption of restricted values. S3 Glacier Object Lock immutable cold."},
+        {"criterion": "CC7.2", "principle": "system monitoring", "evidence": "Every material change on every #[Auditable] model recorded."},
+        {"criterion": "CC7.3", "principle": "incident response", "evidence": "AuditChainBroken alerts within 24h. Kill switches for KMS incidents \u2014 recording continues in degraded mode."},
+        {"criterion": "CC8.1", "principle": "change management", "evidence": "7y retention of change records. Rollback via HasVersions (foundation trait); root-cause via audit rows."}
+      ]
+    },
+    "iso_27001": {"applicable": true, "controls": [
+      {"annex": "A.5.15", "principle": "access control", "evidence": "policies.json + permissions.json + audit-of-audit for restricted field views"},
+      {"annex": "A.8.24", "principle": "cryptography use", "evidence": "KMS envelope encryption + optional hash chain"},
+      {"annex": "A.12.4", "principle": "logging + monitoring", "evidence": "This entire module is the A.12.4 control implementation"}
+    ]},
+    "pci_dss": {"applicable": true, "controls": [
+      {"requirement": "Req 10.2", "principle": "log all access + changes", "evidence": "HasAudit on payment-related models captures every mutation"},
+      {"requirement": "Req 10.7", "principle": "retain \u2265 1 year", "evidence": "365d hot + 2555d cold satisfies + exceeds"}
+    ]},
+    "hipaa": {"applicable": true, "controls": [
+      {"section": "45 CFR \u00a7164.312(b)", "principle": "audit controls", "evidence": "HasAudit + KMS + immutable cold storage"},
+      {"section": "45 CFR \u00a7164.316(b)(2)(i)", "principle": "6y retention", "evidence": "2555d = 7y satisfies + exceeds"}
+    ]}
+  }
+}

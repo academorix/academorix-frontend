@@ -1,0 +1,232 @@
+{
+  "id": "invitations.screens.accept",
+  "title": "Accept invitation",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/invitations/:token",
+  "host": "central",
+  "audience": "public",
+  "dataSources": [
+    {
+      "name": "invitationPreview",
+      "kind": "http.get",
+      "url": "/api/invitations/{token}",
+      "params": {"token": "$route.params.token"},
+      "unwrap": "data",
+      "onError": {
+        "byCode": {
+          "INVITATIONS_TOKEN_NOT_FOUND": {"kind": "navigate", "to": "/invitations/not-found"},
+          "INVITATIONS_TOKEN_EXPIRED": {"kind": "navigate", "to": "/invitations/expired"},
+          "INVITATIONS_INVITATION_REVOKED": {"kind": "navigate", "to": "/invitations/revoked"},
+          "INVITATIONS_TOKEN_ALREADY_USED": {"kind": "navigate", "to": "/invitations/already-used"}
+        }
+      }
+    },
+    {
+      "name": "authProviders",
+      "kind": "http.get",
+      "url": "/api/auth/providers",
+      "unwrap": "data",
+      "cache": {"ttlSeconds": 3600}
+    }
+  ],
+  "themeFrom": "invitationPreview.tenant.branding",
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": {"className": "mx-auto flex min-h-screen max-w-md flex-col justify-center gap-6 p-8"},
+      "children": [
+        {
+          "id": "brand-header",
+          "kind": "View",
+          "props": {"className": "flex flex-col items-center gap-3"},
+          "children": [
+            {
+              "id": "logo",
+              "kind": "Image",
+              "props": {"className": "size-16 rounded-lg object-contain"},
+              "bindings": {
+                "src": {"$ref": "invitationPreview.tenant.branding.logo_url"},
+                "alt": {"$ref": "invitationPreview.tenant.name"},
+                "fallback": {
+                  "kind": "Avatar",
+                  "props": {"size": "lg"},
+                  "bindings": {"fallbackText": {"$expr": "invitationPreview.tenant.name.slice(0,1)"}}
+                }
+              }
+            },
+            {
+              "id": "tenant-name",
+              "kind": "Text",
+              "props": {"as": "h1", "className": "text-2xl font-semibold text-center"},
+              "bindings": {"children": {"$ref": "invitationPreview.tenant.name"}}
+            }
+          ]
+        },
+        {
+          "id": "invite-summary",
+          "kind": "Card",
+          "props": {"className": "flex flex-col gap-3 p-6"},
+          "children": [
+            {
+              "id": "invited-by",
+              "kind": "Text",
+              "props": {"className": "text-center"},
+              "bindings": {
+                "children": {"$expr": "invitationPreview.inviter.display_name + ' invited you to join as ' + (invitationPreview.role_label || 'a member')"}
+              }
+            },
+            {
+              "id": "message",
+              "kind": "View",
+              "props": {"className": "border-border rounded-md border p-3"},
+              "bindings": {"hidden": {"$expr": "!invitationPreview.message"}},
+              "children": [
+                {"kind": "Text", "props": {"as": "p", "className": "text-sm italic"}, "bindings": {"children": {"$expr": "'\"' + invitationPreview.message + '\"'"}}}
+              ]
+            },
+            {
+              "id": "expiry-hint",
+              "kind": "Text",
+              "props": {"as": "p", "className": "text-muted text-center text-xs"},
+              "bindings": {"children": {"$expr": "'This invitation expires ' + formatRelative(invitationPreview.expires_at)"}}
+            }
+          ]
+        },
+        {
+          "id": "consent",
+          "kind": "CheckboxGroup",
+          "props": {"className": "flex flex-col gap-2"},
+          "fields": [
+            {
+              "name": "tos_accepted",
+              "kind": "Checkbox",
+              "isRequired": true,
+              "label": {
+                "kind": "Text",
+                "children": [
+                  "I agree to the ",
+                  {"kind": "Link", "props": {"toExpr": "'/legal/tos?tenant=' + invitationPreview.tenant.slug", "target": "_blank", "children": "Terms of Service"}},
+                  " and ",
+                  {"kind": "Link", "props": {"toExpr": "'/legal/privacy?tenant=' + invitationPreview.tenant.slug", "target": "_blank", "children": "Privacy Policy"}},
+                  "."
+                ]
+              }
+            },
+            {
+              "name": "guardian_consent",
+              "kind": "Checkbox",
+              "label": "I confirm I am a guardian responsible for the minor named in this invitation.",
+              "bindings": {"isHidden": {"$expr": "!invitationPreview.requires_guardian_consent"}, "isRequired": {"$expr": "invitationPreview.requires_guardian_consent"}}
+            }
+          ]
+        },
+        {
+          "id": "auth-choice",
+          "kind": "View",
+          "props": {"className": "flex flex-col gap-2"},
+          "children": [
+            {
+              "id": "sso-button",
+              "kind": "Button",
+              "props": {"variant": "primary", "size": "lg", "className": "w-full", "leadingIcon": "shield-check"},
+              "bindings": {
+                "isHidden": {"$expr": "!invitationPreview.sso_provider_key"},
+                "children": {"$expr": "'Continue with ' + (invitationPreview.sso_provider_label || 'SSO')"}
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate.external",
+                  "urlExpr": "'/api/auth/providers/' + invitationPreview.sso_provider_key + '/authorize?invitation_token=' + $route.params.token"
+                }
+              }
+            },
+            {
+              "id": "passkey-button",
+              "kind": "Button",
+              "props": {"variant": "secondary", "size": "lg", "className": "w-full", "leadingIcon": "finger-print", "children": "Continue with passkey"},
+              "bindings": {"isHidden": {"$expr": "!authProviders.find(p => p.key === 'passkey')"}},
+              "actions": {"onPress": {"kind": "auth.passkey.register", "invitationTokenExpr": "$route.params.token"}}
+            },
+            {
+              "id": "password-form",
+              "kind": "Form",
+              "props": {"className": "flex flex-col gap-2"},
+              "target": {
+                "action": "accept",
+                "resource": "invitations",
+                "endpoint": "POST /api/invitations/{token}/accept",
+                "params": {"token": "$route.params.token"}
+              },
+              "bindings": {"isHidden": {"$expr": "invitationPreview.sso_provider_key !== null"}},
+              "sections": [
+                {
+                  "id": "password-section",
+                  "fields": [
+                    {
+                      "name": "password",
+                      "kind": "TextField",
+                      "label": "Choose a password",
+                      "type": "password",
+                      "autoComplete": "new-password",
+                      "isRequired": true,
+                      "validation": {"minLength": 12, "policy": "auth::password"}
+                    },
+                    {
+                      "name": "password_confirmation",
+                      "kind": "TextField",
+                      "label": "Confirm password",
+                      "type": "password",
+                      "autoComplete": "new-password",
+                      "isRequired": true,
+                      "matches": "password"
+                    }
+                  ]
+                }
+              ],
+              "footer": {
+                "primaryAction": {
+                  "label": {"$expr": "'Accept invitation to ' + invitationPreview.tenant.name"},
+                  "kind": "form.submit",
+                  "variant": "primary",
+                  "size": "lg",
+                  "className": "w-full",
+                  "bindings": {"isDisabled": {"$expr": "!form.tos_accepted"}},
+                  "onSuccess": {
+                    "kind": "sequence",
+                    "steps": [
+                      {"kind": "auth.setSession", "tokenExpr": "response.data.token"},
+                      {"kind": "navigate.external", "urlExpr": "response.data.redirect_url"}
+                    ]
+                  },
+                  "onError": {
+                    "byCode": {
+                      "INVITATIONS_MINOR_CONSENT_REQUIRED": {"kind": "modal.info", "titleKey": "invitations.errors.minor_consent_required", "messageKey": "invitations.minor_consent.instructions"},
+                      "INVITATIONS_ACCEPT_PREFLIGHT_FAILED": {"kind": "toast.error", "messageExpr": "error.message"},
+                      "INVITATIONS_TOKEN_EXPIRED": {"kind": "navigate", "to": "/invitations/expired"},
+                      "INVITATIONS_INVITATION_REVOKED": {"kind": "navigate", "to": "/invitations/revoked"}
+                    },
+                    "default": {"kind": "toast.error", "messageExpr": "error.message || 'Failed to accept.'"}
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "decline-footer",
+          "kind": "View",
+          "props": {"className": "flex items-center justify-center"},
+          "children": [
+            {
+              "id": "decline-link",
+              "kind": "Link",
+              "props": {"toExpr": "'/invitations/' + $route.params.token + '/decline'", "className": "text-muted text-sm underline", "children": "Not you? Decline this invitation"}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

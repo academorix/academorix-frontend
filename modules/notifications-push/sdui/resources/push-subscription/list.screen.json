@@ -1,0 +1,41 @@
+{
+  "id": "notifications-push.resources.push-subscription.list",
+  "title": "Push devices",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/notification-subscriptions",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {"module": "notifications-push", "entity": "push-subscription", "action": "list"},
+  "requiresPermission": "notifications.subscriptions.viewAny",
+  "dataSources": [
+    {"name": "subscriptions", "kind": "http.get", "url": "/api/v1/tenant/notification-subscriptions", "unwrap": "data", "paginated": true, "queryParamsFromState": ["filter[platform]", "filter[provider]", "filter[is_active]", "sort", "page", "per_page"]}
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": {"className": "flex flex-col gap-4 p-6 max-w-4xl mx-auto"},
+      "children": [
+        {"kind": "View", "props": {"className": "flex flex-col gap-1"}, "children": [
+          {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Push devices"}},
+          {"kind": "Text", "props": {"className": "text-sm text-muted", "children": "Devices registered to receive push notifications. Revoke a device to stop notifications on that device only."}}
+        ]},
+        {"kind": "DataGrid", "props": {"emptyState": {"title": "No devices registered", "description": "Install the Academorix mobile app to register a device.", "icon": "device-phone-mobile"}}, "bindings": {"items": {"$ref": "subscriptions"}, "isLoading": {"$ref": "subscriptions.isLoading"}}, "columns": [
+          {"id": "device", "header": "Device", "cell": {"kind": "View", "props": {"className": "flex items-center gap-3"}, "children": [
+            {"kind": "Widget", "widget": "notifications-push.push-platform-icon", "props": {"platform": {"$ref": "row.platform"}, "size": "md"}},
+            {"kind": "View", "props": {"className": "flex flex-col"}, "children": [
+              {"kind": "Text", "props": {"className": "font-medium"}, "bindings": {"children": {"$expr": "row.device_name || (row.platform + ' device')"}}},
+              {"kind": "Text", "props": {"className": "text-xs text-muted"}, "bindings": {"children": {"$expr": "row.os_version ? (row.platform + ' ' + row.os_version) : row.platform"}}}
+            ]}
+          ]}},
+          {"id": "app_version", "header": "App version", "cell": {"kind": "Text", "props": {"className": "text-sm font-mono"}, "bindings": {"children": {"$expr": "row.app_version || '\u2014'"}}}},
+          {"id": "provider", "header": "Provider", "cell": {"kind": "Chip", "props": {"size": "xs", "variant": "neutral"}, "bindings": {"children": {"$ref": "row.provider"}}}},
+          {"id": "state", "header": "State", "cell": {"kind": "Chip", "props": {"size": "sm"}, "bindings": {"variant": {"$expr": "row.is_active ? 'success' : 'neutral'"}, "children": {"$expr": "row.is_active ? 'Active' : 'Expired'"}}}},
+          {"id": "last_seen", "header": "Last seen", "cell": {"kind": "Text", "props": {"className": "text-sm"}, "bindings": {"children": {"$expr": "formatRelative(row.last_seen_at)"}}}},
+          {"id": "actions", "header": "", "align": "end", "cell": {"kind": "Button", "props": {"variant": "ghost", "isIconOnly": true, "size": "sm", "leadingIcon": "trash", "ariaLabel": "Revoke"}, "actions": {"onPress": {"kind": "http.delete", "urlExpr": "'/api/v1/tenant/notification-subscriptions/' + row.id", "confirm": {"title": "Revoke this device?", "description": "Push notifications will stop on this device. The user can re-register by re-opening the app."}, "onSuccess": [{"kind": "toast.success", "message": "Revoked"}, {"kind": "data.refresh", "source": "subscriptions"}]}}}}
+        ]}
+      ]
+    }
+  ]
+}

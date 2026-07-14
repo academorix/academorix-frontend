@@ -1,0 +1,55 @@
+{
+  "id": "academorix://modules/versioning/routes",
+  "$version": 1,
+  "title": "versioning \u2014 HTTP routes",
+  "description": "Three groups: public catalog for docs + integration (central), platform-admin CRUD + lifecycle actions, tenant read-only catalog.",
+  "groups": [
+    {
+      "name": "central-public",
+      "prefix": "/api/versions",
+      "middleware": ["request.id", "cors.strict", "throttle:foundation-base", "response.envelope"],
+      "hosts": ["central", "tenant"],
+      "description": "Public catalog. Unauthenticated. Powers docs.academorix.com + integration testing.",
+      "routes": [
+        {"method": "GET", "path": "/", "controller": "Academorix\\Versioning\\Http\\Controllers\\Public\\ApiVersionController@index", "description": "List released + deprecated versions. Draft + sunset are hidden."},
+        {"method": "GET", "path": "/{slug}", "controller": "Academorix\\Versioning\\Http\\Controllers\\Public\\ApiVersionController@show"},
+        {"method": "GET", "path": "/{slug}/deprecation-notices", "controller": "Academorix\\Versioning\\Http\\Controllers\\Public\\DeprecationNoticeController@indexForVersion", "description": "Published notices for this version."}
+      ]
+    },
+    {
+      "name": "platform-admin",
+      "prefix": "/api/v1/platform/versioning",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:platform_admin", "platform.user", "throttle:foundation-base", "response.envelope"],
+      "hosts": ["central-admin"],
+      "description": "Full CRUD + lifecycle. Only super_admin can transition draft \u2192 released; other admin roles can create drafts + publish notices.",
+      "routes": [
+        {"method": "GET", "path": "/api-versions", "controller": "Academorix\\Versioning\\Http\\Controllers\\Platform\\ApiVersionController@index", "permission": "platform.versioning.viewAny"},
+        {"method": "POST", "path": "/api-versions", "controller": "Academorix\\Versioning\\Http\\Controllers\\Platform\\ApiVersionController@store", "permission": "platform.versioning.create"},
+        {"method": "GET", "path": "/api-versions/{slug}", "controller": "Academorix\\Versioning\\Http\\Controllers\\Platform\\ApiVersionController@show", "permission": "platform.versioning.view"},
+        {"method": "PATCH", "path": "/api-versions/{slug}", "controller": "Academorix\\Versioning\\Http\\Controllers\\Platform\\ApiVersionController@update", "permission": "platform.versioning.update"},
+        {"method": "DELETE", "path": "/api-versions/{slug}", "controller": "Academorix\\Versioning\\Http\\Controllers\\Platform\\ApiVersionController@destroy", "permission": "platform.versioning.delete", "description": "Refused when state \u2260 draft OR when any WebhookSubscription references this slug."},
+        {"method": "POST", "path": "/api-versions/{slug}/release", "controller": "Academorix\\Versioning\\Http\\Controllers\\Platform\\ApiVersionController@release", "permission": "platform.versioning.release", "description": "draft \u2192 released. Sets released_at. Only super_admin."},
+        {"method": "POST", "path": "/api-versions/{slug}/deprecate", "controller": "Academorix\\Versioning\\Http\\Controllers\\Platform\\ApiVersionController@deprecate", "permission": "platform.versioning.deprecate", "description": "released \u2192 deprecated. Body: {sunset_at, migration_target_slug?, migration_guide_url?}."},
+        {"method": "POST", "path": "/api-versions/{slug}/sunset", "controller": "Academorix\\Versioning\\Http\\Controllers\\Platform\\ApiVersionController@sunset", "permission": "platform.versioning.sunset", "description": "deprecated \u2192 sunset. Auto-triggered by SunsetApiVersionJob when sunset_at reached; manual endpoint here for emergency + testing."},
+        {"method": "GET", "path": "/deprecation-notices", "controller": "Academorix\\Versioning\\Http\\Controllers\\Platform\\DeprecationNoticeController@index", "permission": "platform.versioning.notices.viewAny"},
+        {"method": "POST", "path": "/deprecation-notices", "controller": "Academorix\\Versioning\\Http\\Controllers\\Platform\\DeprecationNoticeController@store", "permission": "platform.versioning.notices.create"},
+        {"method": "GET", "path": "/deprecation-notices/{notice}", "controller": "Academorix\\Versioning\\Http\\Controllers\\Platform\\DeprecationNoticeController@show", "permission": "platform.versioning.notices.view"},
+        {"method": "PATCH", "path": "/deprecation-notices/{notice}", "controller": "Academorix\\Versioning\\Http\\Controllers\\Platform\\DeprecationNoticeController@update", "permission": "platform.versioning.notices.update", "description": "Refused on published rows unless super_admin \u2014 published notices are append-only."},
+        {"method": "POST", "path": "/deprecation-notices/{notice}/publish", "controller": "Academorix\\Versioning\\Http\\Controllers\\Platform\\DeprecationNoticeController@publish", "permission": "platform.versioning.notices.publish", "description": "draft \u2192 published. Fires DeprecationNoticePublished event + dispatches customer notification fanout when notify_customers=true."},
+        {"method": "GET", "path": "/transformers", "controller": "Academorix\\Versioning\\Http\\Controllers\\Platform\\TransformerController@index", "permission": "platform.versioning.viewAny", "description": "Read-only introspection of the payload transformer registry. Powers the admin dashboard chain visualiser."}
+      ]
+    },
+    {
+      "name": "tenant-read-only",
+      "prefix": "/api/v1/tenant/versioning",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "tenant.resolve", "throttle:foundation-base", "response.envelope"],
+      "hosts": ["tenant"],
+      "description": "Read-only tenant surface. Powers the 'active integrations affected by upcoming deprecations' notice on the tenant admin dashboard.",
+      "routes": [
+        {"method": "GET", "path": "/api-versions", "controller": "Academorix\\Versioning\\Http\\Controllers\\Tenant\\ApiVersionController@index", "permission": "versioning.viewAny", "description": "Released + deprecated. Excludes drafts. Filterable by state + scheme."},
+        {"method": "GET", "path": "/api-versions/{slug}", "controller": "Academorix\\Versioning\\Http\\Controllers\\Tenant\\ApiVersionController@show", "permission": "versioning.view"},
+        {"method": "GET", "path": "/deprecation-notices", "controller": "Academorix\\Versioning\\Http\\Controllers\\Tenant\\DeprecationNoticeController@indexAffecting", "permission": "versioning.notices.view", "description": "Published notices affecting THIS tenant \u2014 filtered by webhook subscriptions the tenant has on the affected version(s)."}
+      ]
+    }
+  ]
+}

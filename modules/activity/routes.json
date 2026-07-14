@@ -1,0 +1,30 @@
+{
+  "id": "academorix://modules/activity/routes",
+  "$version": 1,
+  "title": "activity \u2014 HTTP routes",
+  "description": "Read-only tenant + platform surfaces. No POST/PUT/DELETE \u2014 activity rows are created only via HasActivityLog observers.",
+  "groups": [
+    {
+      "name": "tenant-activities",
+      "prefix": "/api/v1/activities",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "tenant.resolve", "throttle:foundation-base", "response.envelope"],
+      "hosts": ["tenant"],
+      "description": "Tenant-facing activity feed. Filterable via spatie query builder.",
+      "routes": [
+        {"method": "GET", "path": "/", "controller": "Academorix\\Activity\\Http\\Controllers\\Tenant\\ActivityController@index", "permission": "activity.viewAny", "description": "Filter[log_name] + filter[subject_type] + filter[causer_id] + filter[event] + filter[created_at]. Regular users see their own causer feed; admins see the tenant-wide feed."},
+        {"method": "GET", "path": "/{activity}", "controller": "Academorix\\Activity\\Http\\Controllers\\Tenant\\ActivityController@show", "permission": "activity.view"}
+      ]
+    },
+    {
+      "name": "platform-activities",
+      "prefix": "/api/v1/platform/activities",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:platform_admin", "throttle:foundation-platform", "response.envelope"],
+      "hosts": ["central_admin"],
+      "description": "Platform-admin cross-tenant activity search for incident triage.",
+      "routes": [
+        {"method": "GET", "path": "/", "controller": "Academorix\\Activity\\Http\\Controllers\\Platform\\ActivityController@index", "permission": "platform.activity.viewAny", "description": "Cross-tenant. Filter[tenant_id] + all tenant filters."},
+        {"method": "GET", "path": "/{activity}", "controller": "Academorix\\Activity\\Http\\Controllers\\Platform\\ActivityController@show", "permission": "platform.activity.view"}
+      ]
+    }
+  ]
+}

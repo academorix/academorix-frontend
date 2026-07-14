@@ -1,0 +1,54 @@
+{
+  "id": "academorix://modules/notifications-mail/listeners",
+  "$version": 1,
+  "title": "notifications-mail \u2014 subscribed events",
+  "description": "Subscribes to core NotificationDispatched (channel=mail) + webhook::InboundWebhookReceived (namespace=notifications-mail) for provider callback ingestion + own bounce/complaint events for suppression + preference unsubscribes for cross-channel suppression sync.",
+  "listeners": [
+    {
+      "event": "notifications::NotificationDispatched",
+      "listener": "Academorix\\Notifications\\Mail\\Listeners\\HandleMailDispatch",
+      "queue": "notifications",
+      "filter": "event.channels_requested contains 'mail'",
+      "purpose": "Dispatches SendMailJob. Filter ensures we don't fire for non-mail channels."
+    },
+    {
+      "event": "webhook::InboundWebhookReceived",
+      "listener": "Academorix\\Notifications\\Mail\\Listeners\\IngestMailProviderWebhookListener",
+      "queue": "notifications-webhooks",
+      "filter": "event.namespace === 'notifications-mail'",
+      "purpose": "Dispatches IngestMailProviderWebhookJob. Filter scopes to this module's provider callbacks. Provider (mailgun/sendgrid/aws-ses/postmark/resend) determined via event.provider."
+    },
+    {
+      "event": "notifications-mail::MailBounced",
+      "listener": "Academorix\\Notifications\\Mail\\Listeners\\SuppressAddressListener",
+      "queue": "notifications",
+      "filter": "event.bounce_kind === 'hard'",
+      "purpose": "Adds hard-bounced address to MailSuppression. Soft bounces retried instead."
+    },
+    {
+      "event": "notifications-mail::MailComplaint",
+      "listener": "Academorix\\Notifications\\Mail\\Listeners\\SuppressAddressListener",
+      "queue": "notifications",
+      "purpose": "Adds complained-about address to MailSuppression with reason=complaint. Retained P5Y for CAN-SPAM evidence."
+    },
+    {
+      "event": "notifications::PreferenceUpdated",
+      "listener": "Academorix\\Notifications\\Mail\\Listeners\\HandleUnsubscribeSuppression",
+      "queue": "notifications",
+      "filter": "event.channel === 'mail' AND event.enabled === false AND event.source === 'unsubscribe_link'",
+      "purpose": "When a user unsubscribes via a mail footer link, add their email to MailSuppression with reason=unsubscribed. Ensures the address is filtered at provider level too, not just at preference level."
+    },
+    {
+      "event": "notifications-mail::MailSuppressed",
+      "listener": "Academorix\\Notifications\\Mail\\Listeners\\SuppressionCacheInvalidator",
+      "queue": null,
+      "purpose": "Synchronous cache invalidation \u2014 next send attempt sees the fresh suppression state."
+    },
+    {
+      "event": "notifications-mail::MailSuppressionRevoked",
+      "listener": "Academorix\\Notifications\\Mail\\Listeners\\SuppressionCacheInvalidator",
+      "queue": null,
+      "purpose": "Synchronous cache invalidation on revocation."
+    }
+  ]
+}

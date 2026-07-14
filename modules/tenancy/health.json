@@ -1,0 +1,50 @@
+{
+  "id": "academorix://modules/tenancy/health",
+  "$version": 1,
+  "title": "tenancy — health probes",
+  "description": "Health probes registered with Foundation's health aggregator (surfaced by `GET /api/health` and `/up` on every host). Each probe is bucketed as `liveness` (process is alive), `readiness` (process is ready to serve traffic), or `startup` (one-time boot check). `critical=true` probes fail the aggregate health status when they fail.",
+  "endpoint": "GET /api/health",
+  "aggregator": "Academorix\\Foundation\\Health\\HealthAggregator",
+  "probes": [
+    {
+      "name": "tenant-scope-resolvable",
+      "class": "Academorix\\Tenancy\\Health\\TenantScopeResolvableProbe",
+      "category": "readiness",
+      "critical": true,
+      "description": "Attempts to resolve a canary Tenant row via the `resolve.tenant` middleware pipeline. Verifies the resolver, the global scope, and the tenant cache are all wired.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "application-resolvable",
+      "class": "Academorix\\Tenancy\\Health\\ApplicationResolvableProbe",
+      "category": "readiness",
+      "critical": true,
+      "description": "Verifies at least one Application row exists and the default Application resolver returns it. Fails on a fresh install before tenancy:seed-defaults runs.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "domain-dns-reachable",
+      "class": "Academorix\\Tenancy\\Health\\DomainDnsReachableProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Performs a DNS TXT lookup against a canary hostname owned by the platform. Detects egress DNS failures that would break VerifyDomainDnsJob. Non-critical because the platform can degrade to 'domain verification queued' without failing all traffic.",
+      "timeoutMs": 2000
+    },
+    {
+      "name": "tenants-not-orphaned",
+      "class": "Academorix\\Tenancy\\Health\\TenantsNotOrphanedProbe",
+      "category": "liveness",
+      "critical": true,
+      "description": "Counts Tenants whose `application_id` no longer resolves to an Application row (indicative of a partial delete or corrupted seed). Emits `tenants.orphaned.count` metric. Fails if > 0.",
+      "timeoutMs": 1000
+    },
+    {
+      "name": "tenancy-hook-registry-populated",
+      "class": "Academorix\\Tenancy\\Health\\TenancyHookRegistryPopulatedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Boot-time only. Verifies LogContextTenantHook + CachePrefixTenantHook registered on the TenancyHookDispatcher. Detects a bad #[AsTenancyHook] discovery pass.",
+      "timeoutMs": 100
+    }
+  ]
+}

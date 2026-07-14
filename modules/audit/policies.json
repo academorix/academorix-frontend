@@ -1,0 +1,20 @@
+{
+  "id": "academorix://modules/audit/policies",
+  "$version": 1,
+  "title": "audit \u2014 authorization policies",
+  "policies": [
+    {
+      "model": "Audit",
+      "class": "Academorix\\Audit\\Policies\\AuditPolicy",
+      "abilities": [
+        {"action": "viewAny", "permission": "audit.viewAny", "scope": "tenant DPO / owner. Restricted fields auto-masked at controller level."},
+        {"action": "view", "permission": "audit.view", "scope": "tenant DPO. Same masking."},
+        {"action": "viewRestricted", "permission": "audit.view-restricted", "scope": "tenant DPO can see un-masked restricted-tier fields with explicit reason logged."},
+        {"action": "platformViewAny", "permission": "platform.audit.viewAny", "scope": "platform admin cross-tenant. Full field visibility."},
+        {"action": "platformView", "permission": "platform.audit.view"},
+        {"action": "platformVerifyChain", "permission": "platform.audit.verify-chain"},
+        {"action": "platformExportDsar", "permission": "platform.audit.export-dsar", "scope": "platform DPO only. Every export logged as a new audit row."}
+      ]
+    }
+  ]
+}

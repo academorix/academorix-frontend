@@ -1,0 +1,46 @@
+{
+  "id": "academorix://modules/notifications/feature-flags",
+  "$version": 1,
+  "title": "notifications core \u2014 kill switches + rollout controls",
+  "description": "Runtime toggles resolved via Laravel Pennant. Kill switches default ON \u2014 flipping OFF is an incident-response action. Rollout flags default OFF and progress via a Pennant scope function (percentage / cohort / tenant).",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "notifications.dispatch",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master kill switch \u2014 disables SendNotificationJob dispatch. Every dispatch call is short-circuited into a suppressed NotificationDelivery. Used only during a total-notifications outage. Every drop is audit-logged with reason `dispatch_kill_switch`."
+    },
+    {
+      "key": "notifications.digest-engine",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Disables digest batching. In-flight digests deliver; new digest-mode notifications route to immediate dispatch instead. Used when the digest scheduler misbehaves."
+    },
+    {
+      "key": "notifications.template-renderer",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Disables tenant-override template resolution. All sends fall back to the platform-default template. Used when a tenant template is malformed + causing a delivery-failure spike."
+    },
+    {
+      "key": "notifications.in-app-broadcast",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Disables the Reverb broadcast on user.{id}.notifications + tenant.{id}.notifications. The database write for in-app notifications still happens \u2014 the bell just doesn't live-update. Used during Reverb incidents; UX degrades to poll-on-refresh."
+    },
+    {
+      "key": "notifications.preference-cache",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Disables the preference cache. Every PreferenceResolver::resolve() call hits the DB directly. Emergency toggle for cache corruption."
+    },
+    {
+      "key": "notifications.dispatch-per-tenant-rate-limit",
+      "kind": "rollout",
+      "default": "off",
+      "description": "Enables a per-tenant dispatch rate limit (default 1000/min) to prevent a runaway loop in one tenant from starving others. Rolled out per-tenant via a Pennant scope function.",
+      "scope": "tenant"
+    }
+  ]
+}

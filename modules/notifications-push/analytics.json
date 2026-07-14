@@ -1,0 +1,15 @@
+{
+  "id": "academorix://modules/notifications-push/analytics",
+  "$version": 1,
+  "title": "notifications-push \u2014 product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {"name": "Push Subscription Registered", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "provider", "platform", "app_version"]},
+    {"name": "Push Sent", "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "provider", "platform", "category_slug"]},
+    {"name": "Push Delivered", "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "provider", "platform"]},
+    {"name": "Push Opened", "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "provider", "platform", "action_id"], "description": "Client-reported \u2014 user tapped the notification."},
+    {"name": "Push Invalid Token", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "provider", "platform", "reason"]},
+    {"name": "Push Subscription Revoked", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "provider", "platform"]}
+  ]
+}

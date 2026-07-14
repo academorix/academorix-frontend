@@ -1,0 +1,26 @@
+{
+  "id": "academorix://modules/notifications-in-app/jobs",
+  "$version": 1,
+  "title": "notifications-in-app \u2014 background jobs",
+  "description": "One job. Thin because in-app delivery is a synchronous DB write + a fire-and-forget broadcast.",
+  "jobs": [
+    {
+      "class": "Academorix\\Notifications\\InApp\\Jobs\\BroadcastInAppNotificationJob",
+      "queue": "notifications",
+      "purpose": "Consumes NotificationDispatched (channel=in_app). Creates the NotificationDelivery row via core's DispatchGateway with state=delivered. Emits `notifications.created` broadcast on user.{id}.notifications. Broadcast failure is logged but does NOT retry \u2014 the DB write is the ground truth, socket updates are best-effort.",
+      "steps": [
+        "Load Notification by id from event payload.",
+        "Call DispatchGateway::acceptDelivery(notification_id, channel='in_app', state='delivered', provider='reverb').",
+        "broadcast(new NotificationCreatedBroadcast($notification)) \u2014 fire-and-forget.",
+        "On broadcast failure: log NOTIFICATIONS_INAPP_BROADCAST_FAILED, emit metric increment, no retry."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 60,
+      "uniqueVia": "(notification_id, channel)",
+      "tries": 2,
+      "backoff": [30, 60],
+      "notes": "uniqueFor 60s prevents duplicate broadcast if a worker restarts mid-job. tries=2 covers DB flakes; broadcast failures are non-retryable."
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "academorix://modules/notifications-push/metrics",
+  "$version": 1,
+  "title": "notifications-push \u2014 OpenTelemetry metrics",
+  "instrumentation": "open-telemetry/sdk",
+  "namespace": "academorix.notifications.push",
+  "labelConventions": {"always": ["tenant_id"], "commonlyAvailable": ["provider", "platform", "outcome"], "forbiddenAsLabels": ["device_token", "user_id", "device_token_fingerprint"]},
+  "metrics": [
+    {"name": "academorix.notifications.push.sends.total", "kind": "counter", "unit": "sends", "labels": ["tenant_id", "provider", "platform", "outcome"], "description": "outcome: sent / invalid_token / provider_error / quota_exceeded / coppa_blocked / kill_switched."},
+    {"name": "academorix.notifications.push.send.duration_ms", "kind": "histogram", "unit": "ms", "buckets": [50, 200, 1000, 5000, 30000], "labels": ["provider"]},
+    {"name": "academorix.notifications.push.subscriptions.active_gauge", "kind": "gauge", "unit": "subscriptions", "labels": ["tenant_id", "provider", "platform"], "description": "Active subscription count. Sampled hourly."},
+    {"name": "academorix.notifications.push.subscriptions.registered_total", "kind": "counter", "unit": "registrations", "labels": ["tenant_id", "provider", "platform"]},
+    {"name": "academorix.notifications.push.subscriptions.expired_total", "kind": "counter", "unit": "expirations", "labels": ["tenant_id", "provider", "reason"], "description": "reason: invalid_token / idle_prune / permission_revoked / user_revoke."},
+    {"name": "academorix.notifications.push.invalid_tokens.total", "kind": "counter", "unit": "invalid_tokens", "labels": ["provider", "reason"], "description": "Growing = client-side token rotation issue OR mass uninstall event."},
+    {"name": "academorix.notifications.push.token_validation.duration_ms", "kind": "histogram", "unit": "ms", "buckets": [10, 50, 200, 1000, 5000], "labels": ["provider"], "description": "Dry-run validation time on register."},
+    {"name": "academorix.notifications.push.coppa_gates.total", "kind": "counter", "unit": "gates", "labels": ["tenant_id", "gate_result"], "description": "gate_result: allowed / blocked_minor / blocked_vpc_missing. Regulatory metric."}
+  ]
+}

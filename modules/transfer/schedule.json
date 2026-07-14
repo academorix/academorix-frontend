@@ -1,0 +1,28 @@
+{
+  "id": "academorix://modules/transfer/schedule",
+  "$version": 1,
+  "title": "transfer \u2014 scheduled tasks",
+  "entries": [
+    {
+      "name": "transfer-prune",
+      "command": "transfer:prune",
+      "cron": "30 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 03:30 UTC \u2014 dispatch PruneXferArtifactsJob. Four passes: expired artifact files, xfer_jobs rows past retention tier, stale queued/running jobs (>24h no progress \u2192 auto-cancel), mapping profiles past soft-delete grace."
+    },
+    {
+      "name": "transfer-stalled-sweep",
+      "command": "transfer:prune --stale-only",
+      "cron": "*/15 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 15 minutes \u2014 cheap sweep just for stalled queued/running jobs. Keeps user-facing state fresh so a crashed worker doesn't leave 'running' rows visible for up to 24h."
+    },
+    {
+      "name": "transfer-registry-refresh",
+      "command": "transfer:describe --refresh-cache",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly \u2014 rebuild the EntityRegistry cache from disk. Guards against attribute cache drift during rolling deploys. Cheap: reflection over ~50 model classes."
+    }
+  ]
+}

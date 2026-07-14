@@ -1,0 +1,10 @@
+{
+  "id": "academorix://modules/notifications-push/commands",
+  "$version": 1,
+  "title": "notifications-push \u2014 Artisan commands",
+  "commands": [
+    {"signature": "notifications:push:test {recipient_user_id} {--provider=} {--platform=}", "class": "Academorix\\Notifications\\Push\\Console\\Commands\\TestCommand", "purpose": "Send a synthetic push to a user's registered subscriptions. Rate-limited to 10/day per operator."},
+    {"signature": "notifications:push:prune-expired {--dry-run}", "class": "Academorix\\Notifications\\Push\\Console\\Commands\\PruneExpiredCommand", "purpose": "Prune idle subscriptions. Runs from schedule."},
+    {"signature": "notifications:push:validate-tokens {--stale-days=30} {--sample-rate=0.05}", "class": "Academorix\\Notifications\\Push\\Console\\Commands\\ValidateTokensCommand", "purpose": "Batch-validate a sample of stale subscriptions. Dispatches ValidatePushTokenJob per sampled row."}
+  ]
+}

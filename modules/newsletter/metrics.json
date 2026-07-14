@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/newsletter/metrics",
+  "$version": 1,
+  "title": "newsletter \u2014 OpenTelemetry metrics",
+  "instrumentation": "open-telemetry/sdk",
+  "namespace": "academorix.newsletter",
+  "labelConventions": {"always": ["tenant_id"], "commonlyAvailable": ["newsletter_id", "campaign_id", "outcome"], "forbiddenAsLabels": ["email", "subscription_id", "user_id"]},
+  "metrics": [
+    {"name": "academorix.newsletter.subscriptions.gauge", "kind": "gauge", "unit": "subscriptions", "labels": ["tenant_id", "newsletter_id", "state"]},
+    {"name": "academorix.newsletter.subscriptions.added_total", "kind": "counter", "unit": "subscriptions", "labels": ["tenant_id", "newsletter_id", "source"]},
+    {"name": "academorix.newsletter.subscriptions.removed_total", "kind": "counter", "unit": "subscriptions", "labels": ["tenant_id", "newsletter_id", "reason"]},
+    {"name": "academorix.newsletter.confirmation_rate_ratio", "kind": "gauge", "unit": "ratio", "labels": ["tenant_id", "newsletter_id"], "description": "confirmed / added over rolling 30d."},
+    {"name": "academorix.newsletter.campaigns.sent_total", "kind": "counter", "unit": "campaigns", "labels": ["tenant_id", "newsletter_id"]},
+    {"name": "academorix.newsletter.campaigns.completion_duration_ms", "kind": "histogram", "unit": "ms", "buckets": [10000, 60000, 300000, 1800000, 3600000, 7200000], "labels": ["tenant_id"]},
+    {"name": "academorix.newsletter.campaigns.open_rate_ratio", "kind": "gauge", "unit": "ratio", "labels": ["tenant_id", "newsletter_id"]},
+    {"name": "academorix.newsletter.campaigns.click_rate_ratio", "kind": "gauge", "unit": "ratio", "labels": ["tenant_id", "newsletter_id"]},
+    {"name": "academorix.newsletter.campaigns.bounce_rate_ratio", "kind": "gauge", "unit": "ratio", "labels": ["tenant_id", "newsletter_id"]},
+    {"name": "academorix.newsletter.campaigns.complaint_rate_ratio", "kind": "gauge", "unit": "ratio", "labels": ["tenant_id", "newsletter_id"]},
+    {"name": "academorix.newsletter.reputation_alerts_total", "kind": "counter", "unit": "alerts", "labels": ["tenant_id", "newsletter_id", "threshold"]},
+    {"name": "academorix.newsletter.audience_evaluations_total", "kind": "counter", "unit": "evaluations", "labels": ["outcome"], "description": "outcome: refreshed / cached / failed."},
+    {"name": "academorix.newsletter.audience_evaluation_duration_ms", "kind": "histogram", "unit": "ms", "buckets": [10, 100, 1000, 10000, 60000], "labels": []}
+  ]
+}

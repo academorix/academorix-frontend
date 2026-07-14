@@ -1,0 +1,144 @@
+{
+  "$version": 1,
+  "name": "invitations",
+  "alias": "invitations",
+  "namespace": "Academorix\\Invitations",
+  "description": "Agnostic invitation substrate. Owns the Invitation model, InvitationEvent audit log, the HasInvitations trait, and the token / delivery / acceptance state machine. Consumers (user, teams, federation, sports, ...) register their `target_type` string at boot; the invitation module handles delivery, bounce tracking, expiry, rate limits, and acceptance orchestration. Not coupled to any specific target or credential provider.",
+  "keywords": [
+    "invitations",
+    "invite",
+    "onboarding",
+    "acceptance",
+    "polymorphic",
+    "audit-funnel",
+    "bounce-tracking",
+    "multi-channel"
+  ],
+  "priority": 25,
+  "providers": [
+    "Academorix\\Invitations\\Providers\\InvitationsServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy"
+  ],
+  "extendedBy": [
+    "user",
+    "auth",
+    "organization",
+    "region",
+    "branch",
+    "facilities",
+    "teams",
+    "sports",
+    "compliance"
+  ],
+  "contributes": {
+    "traits": [
+      "HasInvitations",
+      "BelongsToInvitation"
+    ],
+    "blueprints": [
+      "invitable"
+    ],
+    "middleware": [
+      "throttle.invitations"
+    ],
+    "events": [
+      "InvitationSent",
+      "InvitationDelivered",
+      "InvitationOpened",
+      "InvitationClicked",
+      "InvitationAccepted",
+      "InvitationDeclined",
+      "InvitationExpired",
+      "InvitationRevoked",
+      "InvitationBounced",
+      "InvitationResent"
+    ],
+    "policies": [
+      "InvitationPolicy"
+    ],
+    "hooks": [],
+    "commands": [
+      "invitations:expire-stale",
+      "invitations:cleanup-accepted",
+      "invitations:resend-failed",
+      "invitations:audit-report"
+    ],
+    "jobs": [
+      "SendInvitationJob",
+      "ExpireInvitationsJob",
+      "CleanupAcceptedInvitationsJob",
+      "RetryBounceJob",
+      "RecordInboundEventJob"
+    ],
+    "notifications": [
+      "InvitationNotification",
+      "InvitationReminderNotification",
+      "InvitationAcceptedNotification",
+      "InvitationBouncedNotification"
+    ],
+    "broadcasts": [
+      "tenant.{id}.invitations"
+    ],
+    "observers": [
+      "InvitationObserver"
+    ],
+    "rules": [
+      "unique_pending_invitation",
+      "invitation_target_registered",
+      "invitation_token_format"
+    ],
+    "casts": [
+      "InvitationTargetCast",
+      "InvitationInviterCast"
+    ],
+    "views": [
+      "invitations::email.invitation"
+    ],
+    "lang": [
+      "invitations"
+    ],
+    "config": [
+      "invitations"
+    ],
+    "macros": [],
+    "bindings": [
+      "InvitationTargetRegistry"
+    ],
+    "resources": [
+      "invitation"
+    ]
+  },
+  "hosts": {
+    "central": {
+      "description": "Public invitation acceptance surface. Token-based, no auth required at first hit. On accept, redirects to the target's sign-up / SSO flow.",
+      "routes": [
+        "GET /api/invitations/{token}",
+        "POST /api/invitations/{token}/accept",
+        "POST /api/invitations/{token}/decline",
+        "POST /webhooks/invitations/mail/{transport}"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant invitation search + audit for support / abuse investigation.",
+      "routes": [
+        "GET /api/v1/invitations",
+        "GET /api/v1/invitations/{invitation}",
+        "POST /api/v1/invitations/{invitation}/revoke"
+      ]
+    },
+    "tenant": {
+      "description": "Tenant-scoped invitation CRUD for admins. Send, list, revoke, resend.",
+      "routes": [
+        "GET /api/v1/tenant/invitations",
+        "POST /api/v1/tenant/invitations",
+        "GET /api/v1/tenant/invitations/{invitation}",
+        "POST /api/v1/tenant/invitations/{invitation}/resend",
+        "POST /api/v1/tenant/invitations/{invitation}/revoke"
+      ]
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "id": "notifications.notification-bell",
+  "title": "Notification bell",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Navbar bell with unseen-count badge + dropdown preview of the most recent 5 notifications. Subscribes to `user.{id}.notifications` for live updates. Composes into the app shell of every authenticated tenant surface.",
+  "props": {
+    "size": {"type": "string", "default": "md", "enum": ["sm", "md", "lg"]}
+  },
+  "dataSources": [
+    {"name": "unseenCount", "kind": "http.get", "url": "/api/v1/tenant/notifications?filter[seen]=unseen&per_page=1", "unwrap": "meta.total", "cache": {"ttlSeconds": 30}},
+    {"name": "recent", "kind": "http.get", "url": "/api/v1/tenant/notifications?sort=-created_at&per_page=5", "unwrap": "data", "cache": {"ttlSeconds": 30}, "lazy": true, "lazyTrigger": "dropdown-open"}
+  ],
+  "subscriptions": [
+    {
+      "channel": "user.{userId}.notifications",
+      "kind": "private",
+      "onEvent": [{"kind": "data.refresh", "source": "unseenCount"}, {"kind": "data.refresh", "source": "recent"}]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "trigger",
+      "kind": "Popover",
+      "props": {"placement": "bottom-end"},
+      "trigger": {
+        "kind": "Button",
+        "props": {"variant": "ghost", "isIconOnly": true, "ariaLabel": "Notifications"},
+        "bindings": {"size": {"$ref": "props.size"}},
+        "children": [
+          {
+            "kind": "View",
+            "props": {"className": "relative"},
+            "children": [
+              {"kind": "Icon", "props": {"icon": "bell", "className": "size-5"}},
+              {
+                "kind": "Chip",
+                "props": {"size": "xs", "variant": "danger", "className": "absolute -top-1 -right-1"},
+                "bindings": {
+                  "hidden": {"$expr": "unseenCount === 0"},
+                  "children": {"$expr": "unseenCount > 99 ? '99+' : unseenCount"}
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "content": {
+        "kind": "View",
+        "props": {"className": "w-80 max-h-96 flex flex-col"},
+        "children": [
+          {"kind": "View", "props": {"className": "flex items-center justify-between p-3 border-b"}, "children": [
+            {"kind": "Text", "props": {"className": "font-semibold", "children": "Notifications"}},
+            {"kind": "Link", "props": {"size": "sm", "children": "See all"}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/notifications"}}}
+          ]},
+          {
+            "kind": "List",
+            "props": {"className": "flex-1 overflow-auto", "emptyState": {"title": "No notifications", "icon": "envelope-open"}},
+            "bindings": {"items": {"$ref": "recent"}},
+            "itemRenderer": {"kind": "Widget", "widget": "notifications.notification-card", "props": {"notification": {"$ref": "row"}, "compact": true, "onPressUrl": {"$expr": "'/tenant/notifications/' + row.id"}}}
+          }
+        ]
+      }
+    }
+  ]
+}

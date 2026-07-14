@@ -1,0 +1,86 @@
+{
+  "id": "academorix://modules/notifications/data/notification-templates",
+  "$version": 1,
+  "title": "notifications core \u2014 bootstrap NotificationTemplate seed",
+  "description": "Platform-default templates for the 5 core system.* categories \u00d7 channels \u00d7 locales (en + ar). Rows point at React Email source paths under this module's emails/ folder. At deploy time, `notifications:seed-templates` reads the render manifest from packages/notifications-emails-renderer's dist/manifest.json and hydrates body_rendered_html. Missing artefact fallback: minimal Blade template with `{{ $subject }}` + `{{ $body }}` + CAN-SPAM footer so system stays degraded-but-working.",
+  "seeder": "Academorix\\Notifications\\Database\\Seeders\\BootstrapSystemTemplatesSeeder",
+  "target_table": "notification_templates",
+  "upsertKey": ["tenant_id", "key", "channel", "locale", "version"],
+  "rendererManifestPath": "packages/notifications-emails-renderer/dist/manifest.json",
+  "fallbackTemplate": {
+    "description": "Loaded when the CI render manifest is missing (fresh install, emergency deploy without emails build).",
+    "body_rendered_html": "<!DOCTYPE html><html lang=\"{{ $recipient['locale'] }}\"><body><h1>{{ $subject }}</h1><div>{{ $body }}</div><hr><p style=\"font-size:12px;color:#666\">Sent by {{ $tenant['name'] }} \u00b7 {{ $tenant['postal_address'] }}<br><a href=\"{{ $unsubscribe_url }}\">Unsubscribe</a></p></body></html>",
+    "subject_template": "{{ $subject }}"
+  },
+  "templates": [
+    {
+      "key": "system.digest",
+      "category_slug": "system.digest",
+      "channel": "mail",
+      "locale": "en",
+      "version": 1,
+      "state": "published",
+      "is_system": true,
+      "tsx_source_path": "modules/notifications/emails/system/digest.tsx",
+      "subject_template": "Your {{ $window }} Academorix digest",
+      "variables_schema": {"type": "object", "required": ["items", "window", "recipient", "tenant"], "properties": {"window": {"enum": ["daily", "weekly"]}, "items": {"type": "array"}}}
+    },
+    {"key": "system.digest", "category_slug": "system.digest", "channel": "mail", "locale": "ar", "version": 1, "state": "published", "is_system": true, "tsx_source_path": "modules/notifications/emails/system/digest.tsx", "subject_template": "\u0645\u0644\u062e\u0635 {{ $window }} \u0645\u0646 Academorix"},
+    {
+      "key": "system.announcement",
+      "category_slug": "system.announcement",
+      "channel": "mail",
+      "locale": "en",
+      "version": 1,
+      "state": "published",
+      "is_system": true,
+      "tsx_source_path": "modules/notifications/emails/system/announcement.tsx",
+      "subject_template": "{{ $title }}",
+      "variables_schema": {"type": "object", "required": ["title", "body_markdown", "recipient", "tenant"]}
+    },
+    {"key": "system.announcement", "category_slug": "system.announcement", "channel": "in_app", "locale": "en", "version": 1, "state": "published", "is_system": true, "tsx_source_path": null, "subject_template": "{{ $title }}", "note": "in_app channel uses no React Email template; body rendered from markdown at send time by notifications-in-app."},
+    {"key": "system.announcement", "category_slug": "system.announcement", "channel": "mail", "locale": "ar", "version": 1, "state": "published", "is_system": true, "tsx_source_path": "modules/notifications/emails/system/announcement.tsx", "subject_template": "{{ $title }}"},
+    {
+      "key": "system.maintenance",
+      "category_slug": "system.maintenance",
+      "channel": "mail",
+      "locale": "en",
+      "version": 1,
+      "state": "published",
+      "is_system": true,
+      "tsx_source_path": "modules/notifications/emails/system/maintenance.tsx",
+      "subject_template": "Scheduled maintenance: {{ $window_start }}",
+      "variables_schema": {"type": "object", "required": ["window_start", "window_end", "affected_services", "recipient", "tenant"]}
+    },
+    {"key": "system.maintenance", "category_slug": "system.maintenance", "channel": "mail", "locale": "ar", "version": 1, "state": "published", "is_system": true, "tsx_source_path": "modules/notifications/emails/system/maintenance.tsx", "subject_template": "\u0635\u064a\u0627\u0646\u0629 \u0645\u062c\u062f\u0648\u0644\u0629: {{ $window_start }}"},
+    {"key": "system.maintenance", "category_slug": "system.maintenance", "channel": "in_app", "locale": "en", "version": 1, "state": "published", "is_system": true, "tsx_source_path": null, "subject_template": "Scheduled maintenance"},
+    {
+      "key": "system.security_alert",
+      "category_slug": "system.security_alert",
+      "channel": "mail",
+      "locale": "en",
+      "version": 1,
+      "state": "published",
+      "is_system": true,
+      "tsx_source_path": "modules/notifications/emails/system/security-alert.tsx",
+      "subject_template": "\ud83d\udea8 Security alert: {{ $alert_type }}",
+      "variables_schema": {"type": "object", "required": ["alert_type", "detail", "action_url", "recipient", "tenant"]}
+    },
+    {"key": "system.security_alert", "category_slug": "system.security_alert", "channel": "mail", "locale": "ar", "version": 1, "state": "published", "is_system": true, "tsx_source_path": "modules/notifications/emails/system/security-alert.tsx", "subject_template": "\ud83d\udea8 \u062a\u0646\u0628\u064a\u0647 \u0623\u0645\u0646\u064a: {{ $alert_type }}"},
+    {"key": "system.security_alert", "category_slug": "system.security_alert", "channel": "in_app", "locale": "en", "version": 1, "state": "published", "is_system": true, "tsx_source_path": null, "subject_template": "Security alert"},
+    {"key": "system.security_alert", "category_slug": "system.security_alert", "channel": "push", "locale": "en", "version": 1, "state": "published", "is_system": true, "tsx_source_path": null, "subject_template": "Security alert", "note": "Push notifications use plain-text templates via notifications-push channel."},
+    {
+      "key": "system.data_export_ready",
+      "category_slug": "system.data_export_ready",
+      "channel": "mail",
+      "locale": "en",
+      "version": 1,
+      "state": "published",
+      "is_system": true,
+      "tsx_source_path": "modules/notifications/emails/system/data-export-ready.tsx",
+      "subject_template": "Your data export is ready",
+      "variables_schema": {"type": "object", "required": ["download_url", "expires_at", "recipient", "tenant"]}
+    },
+    {"key": "system.data_export_ready", "category_slug": "system.data_export_ready", "channel": "mail", "locale": "ar", "version": 1, "state": "published", "is_system": true, "tsx_source_path": "modules/notifications/emails/system/data-export-ready.tsx", "subject_template": "\u062a\u0635\u062f\u064a\u0631 \u0628\u064a\u0627\u0646\u0627\u062a\u0643 \u062c\u0627\u0647\u0632"}
+  ]
+}

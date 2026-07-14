@@ -1,0 +1,232 @@
+{
+  "id": "academorix://modules/notifications/routes",
+  "$version": 1,
+  "title": "notifications core \u2014 HTTP routes",
+  "description": "Core routes only. Grouped by host tier: central (unsubscribe), platform-admin (cross-tenant search), tenant (inbox + preferences + templates). Provider webhooks + push subscription registration live in the respective channel modules \u2014 notifications-mail, notifications-sms, notifications-push. Every route lists its middleware pipeline in foundation's canonical priority order + its permission gate.",
+  "groups": [
+    {
+      "name": "central-unsubscribe",
+      "prefix": "/api/notifications",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "api.version",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["central", "tenant"],
+      "description": "Public one-click unsubscribe. Token-based signed URL from mail footer. RFC 8058 List-Unsubscribe-Post compliant. Sets NotificationPreference.enabled=false + fires PreferenceUpdated \u2014 the mail module's suppression list picks up the change asynchronously.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/unsubscribe/{token}",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\UnsubscribeController@show",
+          "middleware": ["signed"],
+          "description": "Render the confirmation page. The token is a signed URL with the (user_id, category_slug, channel) claim triple."
+        },
+        {
+          "method": "POST",
+          "path": "/unsubscribe/{token}",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\UnsubscribeController@store",
+          "middleware": ["signed"],
+          "description": "One-click unsubscribe per RFC 8058 List-Unsubscribe-Post. Sets NotificationPreference.enabled=false + fires PreferenceUpdated. Honoured immediately."
+        }
+      ]
+    },
+    {
+      "name": "platform-admin",
+      "prefix": "/api/v1/platform",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "api.version",
+        "auth:platform_admin",
+        "platform.user",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["central-admin"],
+      "description": "Cross-tenant notification search + delivery diagnostics for support / abuse investigation.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/notifications",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Platform\\NotificationController@index",
+          "permission": "platform.notifications.viewAny"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/{notification}",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Platform\\NotificationController@show",
+          "permission": "platform.notifications.view"
+        },
+        {
+          "method": "GET",
+          "path": "/notifications/{notification}/deliveries",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Platform\\NotificationDeliveryController@index",
+          "permission": "platform.notifications.view"
+        },
+        {
+          "method": "POST",
+          "path": "/notifications/{notification}/deliveries/{delivery}/retry",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Platform\\NotificationDeliveryController@retry",
+          "permission": "platform.notifications.retry",
+          "description": "Enqueue a retry via the delivery's channel module. Rate-limited to prevent replay abuse."
+        },
+        {
+          "method": "GET",
+          "path": "/notification-templates",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Platform\\NotificationTemplateController@index",
+          "permission": "platform.notifications.templates.viewAny"
+        },
+        {
+          "method": "GET",
+          "path": "/notification-categories",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Platform\\NotificationCategoryController@index",
+          "permission": "platform.notifications.categories.viewAny"
+        }
+      ]
+    },
+    {
+      "name": "tenant-inbox",
+      "prefix": "/api/v1/tenant/notifications",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "api.version",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "User-facing inbox. Per-user Notification queries scoped by addressee_id = auth user + tenant.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\InboxController@index",
+          "permission": "notifications.viewAny",
+          "description": "Auth user's inbox with filters (category, channel, state, seen)."
+        },
+        {
+          "method": "GET",
+          "path": "/{notification}",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\InboxController@show",
+          "permission": "notifications.view"
+        },
+        {
+          "method": "POST",
+          "path": "/{notification}/seen",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\InboxController@markSeen",
+          "middleware": ["throttle.mark-seen"],
+          "permission": "notifications.markSeen"
+        },
+        {
+          "method": "POST",
+          "path": "/mark-all-seen",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\InboxController@markAllSeen",
+          "middleware": ["throttle.mark-seen"],
+          "permission": "notifications.markSeen"
+        },
+        {
+          "method": "POST",
+          "path": "/{notification}/archive",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\InboxController@archive",
+          "permission": "notifications.archive"
+        }
+      ]
+    },
+    {
+      "name": "tenant-preferences",
+      "prefix": "/api/v1/tenant/notification-preferences",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "api.version",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle.preferences",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Per-user opt-in per category per channel + quiet hours + digest mode.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\PreferenceController@index",
+          "permission": "notifications.preferences.view",
+          "description": "Grid of (category, channel) toggles for the auth user."
+        },
+        {
+          "method": "PATCH",
+          "path": "/",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\PreferenceController@update",
+          "permission": "notifications.preferences.update",
+          "description": "Bulk upsert (category, channel, enabled, digest_mode, quiet_hours_*)."
+        }
+      ]
+    },
+    {
+      "name": "tenant-templates",
+      "prefix": "/api/v1/tenant/notification-templates",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "api.version",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Tenant admin surface for overriding platform templates + creating tenant-specific ones. Publish workflow (draft \u2192 published). Body is pre-rendered HTML with Blade placeholders (produced by the emails renderer at CI build time).",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@index",
+          "permission": "notifications.templates.viewAny"
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@store",
+          "permission": "notifications.templates.create"
+        },
+        {
+          "method": "GET",
+          "path": "/{template}",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@show",
+          "permission": "notifications.templates.view"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{template}",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@update",
+          "permission": "notifications.templates.update"
+        },
+        {
+          "method": "POST",
+          "path": "/{template}/publish",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@publish",
+          "permission": "notifications.templates.publish"
+        },
+        {
+          "method": "POST",
+          "path": "/{template}/test",
+          "controller": "Academorix\\Notifications\\Http\\Controllers\\Tenant\\TemplateController@test",
+          "permission": "notifications.templates.test",
+          "description": "Send a rendered template to a test recipient via the appropriate channel module. Rate-limited to 10/day per template."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "All tenant routes go through `tenant.resolve` (from tenancy module) which sets the tenant context + rejects cross-tenant access.",
+    "Provider webhooks (mail/sms/push provider callbacks) + push subscription CRUD do NOT live here. They live in the respective channel modules.",
+    "The unsubscribe route is signed-URL protected \u2014 token embeds (user, category, channel) triple + expires in 30 days. Once unsubscribed, stays unsubscribed even if token expires.",
+    "Push subscription management (POST /api/v1/tenant/notification-subscriptions) is owned by notifications-push, not this core."
+  ]
+}

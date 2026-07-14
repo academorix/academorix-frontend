@@ -1,0 +1,49 @@
+{
+  "id": "audit.resources.audit.list",
+  "title": "Audit trail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/audits",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {"module": "audit", "entity": "audit", "action": "list"},
+  "requiresPermission": "audit.viewAny",
+  "requiresFeature": "audit.tenant_dpo_surface",
+  "dataSources": [
+    {"name": "audits", "kind": "http.get", "url": "/api/v1/audits", "unwrap": "data", "paginated": true, "queryParamsFromState": ["filter[auditable_type]", "filter[event]", "filter[user_id]", "filter[created_at]", "sort", "page", "per_page"]},
+    {"name": "auditableTypes", "kind": "http.get", "url": "/api/v1/audits/auditable-types", "unwrap": "data", "cache": {"ttlSeconds": 600}}
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": {"className": "flex flex-col gap-4 p-6 max-w-6xl mx-auto"},
+      "children": [
+        {"kind": "View", "props": {"className": "flex flex-col gap-1"}, "children": [
+          {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Audit trail"}},
+          {"kind": "Text", "props": {"className": "text-sm text-muted", "children": "Immutable record of every material change in your workspace. Restricted-tier field values are masked unless your role grants full access."}}
+        ]},
+        {"kind": "View", "props": {"className": "flex flex-wrap gap-3"}, "children": [
+          {"kind": "Select", "props": {"label": "Model", "name": "filter[auditable_type]", "placeholder": "All models"}, "optionsSource": {"$ref": "auditableTypes", "valueField": "type", "labelField": "label"}, "actions": {"onChange": {"kind": "data.applyFilter", "source": "audits"}}},
+          {"kind": "Select", "props": {"label": "Event", "name": "filter[event]", "placeholder": "All events"}, "options": [{"key": "created", "label": "Created"}, {"key": "updated", "label": "Updated"}, {"key": "deleted", "label": "Deleted"}, {"key": "restored", "label": "Restored"}], "actions": {"onChange": {"kind": "data.applyFilter", "source": "audits"}}}
+        ]},
+        {"kind": "DataGrid", "props": {"emptyState": {"title": "No audit rows match", "description": "Adjust your filters or expand the date range."}}, "bindings": {"items": {"$ref": "audits"}, "isLoading": {"$ref": "audits.isLoading"}}, "columns": [
+          {"id": "when", "header": "When", "cell": {"kind": "View", "children": [
+            {"kind": "Text", "props": {"className": "text-sm"}, "bindings": {"children": {"$expr": "formatRelative(row.created_at)"}}},
+            {"kind": "Text", "props": {"className": "text-xs text-muted"}, "bindings": {"children": {"$expr": "formatDate(row.created_at)"}}}
+          ]}},
+          {"id": "who", "header": "Actor", "cell": {"kind": "View", "props": {"className": "flex items-center gap-2"}, "children": [
+            {"kind": "Avatar", "props": {"size": "xs"}, "bindings": {"src": {"$expr": "row.user?.avatar_url"}, "fallback": {"$expr": "(row.user?.display_name || 'S')[0]"}}},
+            {"kind": "Text", "props": {"className": "text-sm"}, "bindings": {"children": {"$expr": "row.user?.display_name || 'System'"}}}
+          ]}},
+          {"id": "what", "header": "What", "cell": {"kind": "View", "children": [
+            {"kind": "Chip", "props": {"size": "xs"}, "bindings": {"variant": {"$expr": "row.event === 'created' ? 'success' : (row.event === 'deleted' ? 'danger' : (row.event === 'restored' ? 'info' : 'warning'))"}, "children": {"$ref": "row.event"}}},
+            {"kind": "Text", "props": {"className": "text-xs font-mono text-muted"}, "bindings": {"children": {"$expr": "row.auditable_type + ' ' + row.auditable_id"}}}
+          ]}},
+          {"id": "encrypted", "header": "", "cell": {"kind": "Icon", "bindings": {"hidden": {"$expr": "!row.is_encrypted"}, "icon": "lock-closed", "className": "size-4 text-warning"}, "props": {"title": "Contains encrypted restricted-tier fields"}}},
+          {"id": "actions", "header": "", "align": "end", "cell": {"kind": "Button", "props": {"variant": "ghost", "size": "sm", "children": "Detail"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/audits/' + row.id"}}}}
+        ]}
+      ]
+    }
+  ]
+}

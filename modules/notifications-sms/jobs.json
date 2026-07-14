@@ -1,0 +1,66 @@
+{
+  "id": "academorix://modules/notifications-sms/jobs",
+  "$version": 1,
+  "title": "notifications-sms \u2014 background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Notifications\\Sms\\Jobs\\SendSmsJob",
+      "queue": "notifications",
+      "purpose": "Send an SMS via the configured provider.",
+      "steps": [
+        "Load Notification + resolve template for (category, channel=sms, locale).",
+        "Check SmsOptOutRegistry::isOptedOut(phone, tenant_id). If opted out: state=permanently_failed, error=OPTED_OUT.",
+        "Check cost-cap: SmsCostCalculator::wouldExceedCap(tenant, phone_country_code). If yes: state=permanently_failed, error=COST_CAP_EXCEEDED.",
+        "Render body via Blade (SMS templates are plain-text; no MJML).",
+        "Truncate to 160 GSM-7 chars OR 70 UCS-2 chars per segment. Warn if > 3 segments.",
+        "Resolve provider driver via SmsTransportManager.",
+        "provider.send(phone, body, sender_id) \u2192 capture SID + estimated cost.",
+        "Create NotificationDelivery(state=sent, provider_message_id=SID, cost_micro_units=estimated).",
+        "Fire SmsSent. Actual cost updates on provider delivery webhook via SmsCostRecorded."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "(notification_id, channel)",
+      "tries": 3,
+      "backoff": [60, 300, 1800],
+      "notes": "SMS retries are more conservative than mail \u2014 duplicate SMS is worse than duplicate email (user notices)."
+    },
+    {
+      "class": "Academorix\\Notifications\\Sms\\Jobs\\IngestSmsProviderWebhookJob",
+      "queue": "notifications-webhooks",
+      "purpose": "Normalise provider webhook payload. Handles delivery receipts AND inbound SMS messages (for STOP-keyword processing).",
+      "steps": [
+        "Parse webhook payload per provider convention (Twilio TwiML-style / MessageBird / Vonage / Plivo).",
+        "Branch: if inbound message: check body for STOP-family / START-family keywords \u2192 fire SmsOptedOut or SmsSubscribedIn.",
+        "Branch: if delivery receipt: look up NotificationDelivery by provider_message_id \u2192 fire SmsDelivered / SmsFailed / SmsUndeliverable per event type.",
+        "Branch: if cost update: fire SmsCostRecorded."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 60,
+      "uniqueVia": "(provider, provider_event_id)",
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Notifications\\Sms\\Jobs\\RecordSmsOptOutJob",
+      "queue": "notifications",
+      "purpose": "Create SmsOptOut row. Called by IngestSmsProviderWebhookJob when STOP keyword detected.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 60,
+      "uniqueVia": "(tenant_id, phone)",
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Notifications\\Sms\\Jobs\\GenerateSmsCostReportJob",
+      "queue": "notifications",
+      "purpose": "Monthly SMS cost report per tenant. Aggregates cost_micro_units by destination country + provider. Emailed to tenant admins on the 1st of each month.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "(tenant_id, month)",
+      "tries": 2
+    }
+  ]
+}

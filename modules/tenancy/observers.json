@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/tenancy/observers",
+  "$version": 1,
+  "title": "tenancy — Eloquent observers",
+  "description": "Eloquent observers this module registers. Each observer's `hooks[]` lists the Eloquent events it acts on plus a description of the side effect. Registered by `TenancyServiceProvider::boot()` via `Model::observe(Observer::class)`.",
+  "observers": [
+    {
+      "class": "Academorix\\Tenancy\\Observers\\TenantObserver",
+      "target": "Academorix\\Tenancy\\Models\\Tenant",
+      "hooks": [
+        {"event": "creating", "description": "Auto-generate the ULID+prefix id if not set. Set `status=trialing` and `trial_ends_at=now+14d` when null."},
+        {"event": "created", "description": "Fires within the same transaction as TenantProvisioning. Does NOT dispatch outbound side effects here (see TenantProvisioned instead)."},
+        {"event": "saving", "description": "When `primary_branding_id` is dirty and non-null: eager-load the target Branding and denormalise its logo/color/font fields into the `branding` JSONB. Ensures the workspace picker sees the new brand without a join."},
+        {"event": "updated", "description": "If `status` transitioned to `active` from `trialing` / `grace`, clear `trial_ends_at` / `grace_ends_at`."}
+      ]
+    },
+    {
+      "class": "Academorix\\Tenancy\\Observers\\DomainObserver",
+      "target": "Academorix\\Tenancy\\Models\\Domain",
+      "hooks": [
+        {"event": "creating", "description": "Generate `verification_token` (128-char random). Set `ssl_status=pending`. Set `verification_method=dns_txt` if null."},
+        {"event": "created", "description": "Persist the expected DomainRecord rows (one TXT for verification, plus CNAME/A per `kind`). Dispatch `VerifyDomainDnsJob::dispatch($domain)->delay(30)` so DNS has a chance to propagate."},
+        {"event": "updating", "description": "If `is_primary` transitions to true, clear `is_primary` on all other Domains in the same tenant (only one primary allowed — the partial unique index catches slip-throughs)."},
+        {"event": "deleted", "description": "Cascade the DomainRecord rows via ON DELETE CASCADE; no observer work needed."}
+      ]
+    },
+    {
+      "class": "Academorix\\Tenancy\\Observers\\BrandingObserver",
+      "target": "Academorix\\Tenancy\\Models\\Branding",
+      "hooks": [
+        {"event": "creating", "description": "First Branding row per tenant is auto-marked `is_default=true`."},
+        {"event": "updating", "description": "If `is_default` transitions to true, clear `is_default` on all other Brandings in the same tenant."},
+        {"event": "updated", "description": "If this row IS the tenant's `primary_branding_id`, re-fire the Tenant save hook so `tenants.branding` JSONB stays in sync."},
+        {"event": "saved", "description": "Invalidate the `tenant:{id}:branding` cache key. Dispatch `TenantBrandingUpdated` after commit."}
+      ]
+    },
+    {
+      "class": "Academorix\\Tenancy\\Observers\\TenantContactObserver",
+      "target": "Academorix\\Tenancy\\Models\\TenantContact",
+      "hooks": [
+        {"event": "creating", "description": "First contact per (tenant_id, kind) tuple is auto-marked `is_primary=true`."},
+        {"event": "updating", "description": "If `is_primary` transitions to true, clear it on all other same-kind contacts in the tenant."},
+        {"event": "saving", "description": "For `kind=dpo` and `kind=legal`, require `verified_at` before allowing `is_primary=true`. Refuses with `TenantContactException::verificationRequired()` (422)."}
+      ]
+    },
+    {
+      "class": "Academorix\\Tenancy\\Observers\\TenantIntegrationObserver",
+      "target": "Academorix\\Tenancy\\Models\\TenantIntegration",
+      "hooks": [
+        {"event": "saving", "description": "Encrypt the raw config bag via the IntegrationConfig cast + KMS pointer. Never persist plaintext secrets."},
+        {"event": "created", "description": "If `is_active=true`, schedule the first `SyncTenantIntegrationJob` and set `next_sync_at`."},
+        {"event": "updated", "description": "If `is_active` transitions to true → schedule the sync job. If it transitions to false → clear `next_sync_at` and null the sync_cursor."}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,164 @@
+{
+  "id": "academorix://modules/invitations/traits",
+  "$version": 1,
+  "title": "invitations — model traits",
+  "description": "Trait contract this module owns (HasInvitations, BelongsToInvitation) and consumes from foundation / tenancy / framework. HasInvitations is the primary extension point — every module with an invitable resource composes it on the target model.",
+  "owned": [
+    {
+      "trait": "HasInvitations",
+      "class": "Academorix\\Invitations\\Concerns\\HasInvitations",
+      "schemaRef": "academorix://modules/invitations/schemas/invitation",
+      "description": "Composed on any target model that can receive invitations (Tenant, Team, Athlete, Federation, TrialSession, ...). Adds a polymorphic `invitations()` MorphMany relation + fluent helpers to send / list / revoke. Requires the composing model to register its `target_type` key with InvitationTargetRegistry in the owner module's service provider boot.",
+      "pairedBlueprint": "invitable",
+      "adds": {
+        "columns": [],
+        "compositeIndexes": [],
+        "scopes": {"global": []},
+        "eventHooks": [],
+        "relations": [
+          {
+            "name": "invitations",
+            "type": "MorphMany",
+            "target": "Academorix\\Invitations\\Models\\Invitation",
+            "morphType": "target_type",
+            "morphId": "target_id",
+            "description": "All invitations targeting this row, regardless of state."
+          },
+          {
+            "name": "pendingInvitations",
+            "type": "MorphMany",
+            "target": "Academorix\\Invitations\\Models\\Invitation",
+            "morphType": "target_type",
+            "morphId": "target_id",
+            "scopes": ["pending"],
+            "description": "Non-terminal invitations (state IN pending / delivered / opened / clicked / bounced)."
+          }
+        ],
+        "methods": [
+          {
+            "name": "invite",
+            "signature": "invite(string $email, array $params = []): Invitation",
+            "description": "Create + persist an Invitation for this target. Params: `role_key`, `inviter` (User|ServiceAccount|null=system), `expires_at`, `channel`, `grants`, `message`. Enforces the `unique_pending_invitation` validation rule + per-tenant rate limits. Dispatches `SendInvitationJob` on success."
+          },
+          {
+            "name": "revokeInvitation",
+            "signature": "revokeInvitation(string $invitationId, ?string $reason = null): Invitation",
+            "description": "Transition a pending invitation to `revoked`. Refuses on terminal states."
+          }
+        ]
+      },
+      "appliedBy": [
+        "Tenant (tenancy)",
+        "Team (teams)",
+        "Athlete (sports)",
+        "TrialSession (sports)",
+        "Federation (sports)"
+      ],
+      "notAppliedBy": [
+        "Application (tenancy) — applications don't issue invitations; their tenants do",
+        "Domain / DomainRecord / Branding — infrastructure resources, no invitees"
+      ]
+    },
+    {
+      "trait": "BelongsToInvitation",
+      "class": "Academorix\\Invitations\\Concerns\\BelongsToInvitation",
+      "description": "Composed on models CREATED from an invitation. Adds a nullable `invitation_id` FK + BelongsTo relation for provenance / traceability. Primary consumer: the User row that results from `acceptInvitation()` gets its origin invitation stamped for audit ('this user was invited by X on Y date via role Z'). Optional — most modules don't need it; useful for user, teams, guardians.",
+      "adds": {
+        "columns": [
+          {
+            "name": "invitation_id",
+            "type": "string",
+            "length": 64,
+            "nullable": true,
+            "indexed": true,
+            "foreign": {
+              "table": "invitations",
+              "column": "id",
+              "onUpdate": "cascade",
+              "onDelete": "set null"
+            }
+          }
+        ],
+        "compositeIndexes": [],
+        "scopes": {"global": []},
+        "eventHooks": [],
+        "relations": [
+          {
+            "name": "originInvitation",
+            "type": "BelongsTo",
+            "target": "Academorix\\Invitations\\Models\\Invitation"
+          }
+        ]
+      },
+      "appliedBy": [
+        "User (user) — traceability from invitation to created user row",
+        "TeamMember (teams) — invited player provenance",
+        "AthleteGuardian (sports) — guardian relation origin"
+      ]
+    }
+  ],
+  "consumed": [
+    {
+      "trait": "HasFactory",
+      "class": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory",
+      "source": "framework"
+    },
+    {
+      "trait": "HasUlids",
+      "class": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids",
+      "source": "framework"
+    },
+    {
+      "trait": "BelongsToApplication",
+      "class": "Academorix\\Tenancy\\Concerns\\BelongsToApplication",
+      "source": "tenancy",
+      "description": "Adds application_id + auto-fill + BelongsTo relation."
+    },
+    {
+      "trait": "BelongsToTenantOptional",
+      "class": "Academorix\\Tenancy\\Concerns\\BelongsToTenantOptional",
+      "source": "tenancy",
+      "description": "Variant of BelongsToTenant that allows tenant_id to be NULL. Global scope is applied only when a tenant context is present in the request (i.e. filters out NULL tenant_id on tenant hosts but leaves everything visible on central + platform-admin hosts). Owned by tenancy; this module is the first consumer. Needs to be added to tenancy/traits.json when authored."
+    },
+    {
+      "trait": "HasMetadata",
+      "class": "Academorix\\Foundation\\Concerns\\HasMetadata",
+      "source": "foundation",
+      "description": "Free-form metadata JSONB column + fluent accessors."
+    },
+    {
+      "trait": "HasStates",
+      "class": "Spatie\\ModelStates\\HasStates",
+      "source": "spatie/laravel-model-states",
+      "description": "Powers the Invitation state machine. State classes: PendingState, DeliveredState, OpenedState, ClickedState, AcceptedState, DeclinedState, ExpiredState, RevokedState, BouncedState. Transitions registered in `InvitationState::config()`."
+    },
+    {
+      "trait": "HasUserstamps",
+      "class": "Academorix\\Foundation\\Concerns\\HasUserstamps",
+      "source": "foundation",
+      "description": "created_by / updated_by / deleted_by. NOT applied to InvitationEvent (immutable log)."
+    },
+    {
+      "trait": "HasAuditable",
+      "class": "Academorix\\Foundation\\Concerns\\HasAuditable",
+      "source": "foundation",
+      "description": "Audit-trail integration. Invitation logs every state transition here in addition to writing an InvitationEvent row (double-write is deliberate — audits live per-tenant retention, events live per-analytics retention)."
+    },
+    {
+      "trait": "SoftDeletes",
+      "class": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+      "source": "framework",
+      "description": "Only on Invitation. InvitationEvent is append-only; deletion happens via retention purge only."
+    }
+  ],
+  "compositionExample": {
+    "language": "php",
+    "note": "A target model composing HasInvitations. Tenant is the canonical example.",
+    "code": "final class Tenant extends Model implements TenantInterface\n{\n    use HasFactory;\n    use HasUlids;\n    use BelongsToApplication;\n    use HasSystemFlag;\n    use HasMetadata;\n    use HasUserstamps;\n    use HasAuditable;\n    use SoftDeletes;\n\n    use HasInvitations;   // ← Invitations module — polymorphic MorphMany + invite() / revokeInvitation()\n\n    // Usage:\n    // $tenant->invite('coach@example.com', [\n    //     'role_key' => 'coach',\n    //     'inviter'  => $currentUser,\n    //     'grants'   => ['branch_id' => $branch->id],\n    //     'expires_at' => now()->addDays(14),\n    // ]);\n}"
+  },
+  "blueprintExample": {
+    "language": "php",
+    "note": "Migrations compose the paired `->invitable()` macro. It's register-only — no columns are added to the target's table (polymorphism lives on the invitations table itself).",
+    "code": "Schema::create('trial_sessions', function (Blueprint $t) {\n    $t->string('id', 64)->primary();\n    $t->tenantable();\n    $t->invitable();       // register-only; also serves as a doc anchor for what invites this row supports\n    $t->string('name');\n    $t->timestamps();\n});\n\n// The `invitable()` macro simply annotates the migration for the CI cross-check; it does not add columns.\n// The invitations table already handles the polymorphic (target_type, target_id) tuple.\n\n// Registration in the consumer module's service provider:\npublic function boot(InvitationTargetRegistry $registry): void\n{\n    $registry->registerTargetType(\n        key: 'trial_session',\n        class: TrialSession::class,\n        acceptHandler: TrialSessionInvitationAcceptHandler::class,\n    );\n}"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "id": "webhook.resources.webhook-subscription.list",
+  "title": "Webhooks",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/webhooks",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {"module": "webhook", "entity": "webhook-subscription", "action": "list"},
+  "requiresPermission": "webhook.subscriptions.viewAny",
+  "requiresFeature": "webhook.enabled",
+  "dataSources": [
+    {"name": "webhookSubscriptions", "kind": "http.get", "url": "/api/v1/tenant/webhook/subscriptions", "unwrap": "data", "paginated": true, "queryParamsFromState": ["filter[state]", "filter[destination]", "filter[event]", "sort", "page", "per_page"]}
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": {"className": "flex flex-col gap-4 p-6"},
+      "children": [
+        {"id": "header", "kind": "View", "props": {"className": "flex items-center justify-between"}, "children": [
+          {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Webhooks"}},
+          {"kind": "Button", "props": {"variant": "primary", "size": "sm", "leadingIcon": "plus", "children": "New webhook"}, "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('webhook.subscriptions.create')"}}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/webhooks/new"}}}
+        ]},
+        {"id": "filters", "kind": "View", "props": {"className": "flex flex-wrap gap-3"}, "children": [
+          {"kind": "Select", "props": {"label": "State", "name": "filter[state]", "placeholder": "All"}, "options": [{"key": "active", "label": "Active"}, {"key": "paused", "label": "Paused"}, {"key": "disabled", "label": "Disabled"}], "actions": {"onChange": {"kind": "data.applyFilter", "source": "webhookSubscriptions"}}},
+          {"kind": "Select", "props": {"label": "Destination", "name": "filter[destination]", "placeholder": "All"}, "options": [{"key": "https", "label": "HTTPS"}, {"key": "eventbridge", "label": "AWS EventBridge"}, {"key": "pubsub", "label": "GCP Pub/Sub"}, {"key": "mtls-https", "label": "mTLS HTTPS"}], "actions": {"onChange": {"kind": "data.applyFilter", "source": "webhookSubscriptions"}}}
+        ]},
+        {"id": "table", "kind": "DataGrid", "props": {"emptyState": {"title": "No webhook subscriptions", "description": "Create a webhook to receive real-time events at your endpoint.", "icon": "signal"}}, "bindings": {"items": {"$ref": "webhookSubscriptions"}, "isLoading": {"$ref": "webhookSubscriptions.isLoading"}}, "columns": [
+          {"id": "name", "header": "Name", "sortable": true, "cell": {"kind": "View", "children": [
+            {"kind": "Text", "props": {"className": "font-medium"}, "bindings": {"children": {"$ref": "row.name"}}},
+            {"kind": "Text", "props": {"className": "text-xs text-muted font-mono"}, "bindings": {"children": {"$ref": "row.id"}}}
+          ]}},
+          {"id": "destination", "header": "Destination", "cell": {"kind": "View", "props": {"className": "flex items-center gap-1"}, "children": [
+            {"kind": "Icon", "props": {"className": "size-4"}, "bindings": {"icon": {"$expr": "row.destination === 'eventbridge' ? 'cloud' : (row.destination === 'pubsub' ? 'cloud' : (row.destination === 'mtls-https' ? 'lock-closed' : 'globe-alt'))"}}},
+            {"kind": "Text", "props": {"className": "text-sm"}, "bindings": {"children": {"$ref": "row.destination"}}}
+          ]}},
+          {"id": "events", "header": "Events", "cell": {"kind": "Text", "props": {"className": "text-sm text-muted"}, "bindings": {"children": {"$expr": "row.events.length + (row.events.length === 1 ? ' event' : ' events')"}}}},
+          {"id": "api_version", "header": "API version", "cell": {"kind": "Chip", "props": {"size": "xs", "variant": "neutral"}, "bindings": {"hidden": {"$expr": "!row.api_version"}, "children": {"$expr": "row.api_version || 'current'"}}}},
+          {"id": "state", "header": "State", "cell": {"kind": "Chip", "props": {"size": "sm"}, "bindings": {"variant": {"$expr": "row.state === 'active' ? 'success' : (row.state === 'paused' ? 'warning' : 'danger')"}, "children": {"$ref": "row.state"}}}},
+          {"id": "failure_count", "header": "Failures", "cell": {"kind": "Text", "props": {"className": "text-sm"}, "bindings": {"className": {"$expr": "row.consecutive_failure_count > 5 ? 'text-danger font-medium' : 'text-muted'"}, "children": {"$expr": "row.consecutive_failure_count > 0 ? row.consecutive_failure_count + ' consecutive' : '\u2014'"}}}},
+          {"id": "actions", "header": "", "align": "end", "cell": {"kind": "Menu", "props": {"trigger": {"kind": "Button", "props": {"variant": "ghost", "isIconOnly": true, "leadingIcon": "ellipsis-horizontal", "ariaLabel": "Actions"}}}, "items": [
+            {"id": "view", "label": "View", "leadingIcon": "eye", "action": {"kind": "navigate", "toExpr": "'/tenant/webhooks/' + row.id"}},
+            {"id": "edit", "label": "Edit", "leadingIcon": "pencil", "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('webhook.subscriptions.update') || row.is_system"}}, "action": {"kind": "navigate", "toExpr": "'/tenant/webhooks/' + row.id + '/edit'"}},
+            {"id": "test", "label": "Send test", "leadingIcon": "beaker", "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('webhook.subscriptions.test')"}}, "action": {"kind": "http.post", "urlExpr": "'/api/v1/tenant/webhook/subscriptions/' + row.id + '/test'", "onSuccess": {"kind": "toast.success", "message": "Test dispatched"}}},
+            {"id": "rotate", "label": "Rotate secret", "leadingIcon": "key", "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('webhook.subscriptions.rotate-secret')"}}, "action": {"kind": "http.post", "urlExpr": "'/api/v1/tenant/webhook/subscriptions/' + row.id + '/rotate-secret'", "confirm": {"title": "Rotate signing secret?", "description": "The new secret will be shown once. Previous secret stays valid during the grace window (24h by default)."}, "onSuccess": {"kind": "toast.success", "message": "Rotated. Save the new secret from the response."}}},
+            {"id": "pause", "label": "Pause", "leadingIcon": "pause", "bindings": {"isDisabled": {"$expr": "row.state !== 'active' || !identity.permissions.includes('webhook.subscriptions.manage')"}}, "action": {"kind": "http.post", "urlExpr": "'/api/v1/tenant/webhook/subscriptions/' + row.id + '/pause'", "onSuccess": [{"kind": "toast.success", "message": "Paused"}, {"kind": "data.refresh", "source": "webhookSubscriptions"}]}},
+            {"id": "resume", "label": "Resume", "leadingIcon": "play", "bindings": {"isDisabled": {"$expr": "row.state === 'active' || !identity.permissions.includes('webhook.subscriptions.manage')"}}, "action": {"kind": "http.post", "urlExpr": "'/api/v1/tenant/webhook/subscriptions/' + row.id + '/resume'", "onSuccess": [{"kind": "toast.success", "message": "Resumed"}, {"kind": "data.refresh", "source": "webhookSubscriptions"}]}}
+          ]}}
+        ]}
+      ]
+    }
+  ]
+}

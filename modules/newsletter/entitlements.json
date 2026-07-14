@@ -1,0 +1,14 @@
+{
+  "id": "academorix://modules/newsletter/entitlements",
+  "$version": 1,
+  "title": "newsletter \u2014 entitlements",
+  "reference": {"publishedBy": "entitlements", "seededFrom": "BusinessType.default_config.entitlements"},
+  "kinds": [{"kind": "slot"}, {"kind": "pool"}, {"kind": "boolean"}],
+  "entitlements": [
+    {"key": "newsletter.publications.max", "kind": "slot", "unit": "publications", "defaultsByPlan": {"free": 0, "team": 3, "enterprise": 25}, "description": "Max concurrent Newsletter rows per tenant."},
+    {"key": "newsletter.subscribers.max", "kind": "slot", "unit": "subscribers", "defaultsByPlan": {"free": 0, "team": 5000, "enterprise": 100000}, "description": "Max active subscribers across all newsletters. Approaching cap warns admin."},
+    {"key": "newsletter.campaigns.month", "kind": "pool", "period": "month", "unit": "campaigns", "defaultsByPlan": {"free": 0, "team": 20, "enterprise": 500}, "description": "Monthly campaign send count. Reset at UTC month boundary."},
+    {"key": "newsletter.audience_segments.max", "kind": "slot", "unit": "segments", "defaultsByPlan": {"free": 0, "team": 10, "enterprise": 100}},
+    {"key": "newsletter.import_export", "kind": "boolean", "defaultsByPlan": {"free": false, "team": false, "enterprise": true}}
+  ]
+}

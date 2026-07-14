@@ -1,0 +1,18 @@
+{
+  "id": "academorix://modules/webhook/analytics",
+  "$version": 1,
+  "title": "webhook \u2014 product analytics events",
+  "description": "Analytics for the product team tracking webhook adoption + reliability. Functional consent \u2014 webhook infrastructure is service functionality, not marketing insight.",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {"name": "Webhook Subscription Created", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "destination", "event_count", "api_version"]},
+    {"name": "Webhook Subscription Disabled", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "destination", "reason", "consecutive_failure_count"]},
+    {"name": "Webhook Subscription Upgraded", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "from_version", "to_version", "reason"]},
+    {"name": "Webhook Secret Rotated", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "grace_seconds"]},
+    {"name": "Webhook Delivery Succeeded", "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "destination", "event_name", "attempt_number", "duration_ms"], "description": "Sampled 1% by default (config.webhook.analytics.delivery_sample_rate)."},
+    {"name": "Webhook Delivery Failed Permanent", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "destination", "event_name", "reason", "response_status"]},
+    {"name": "Webhook Test Sent", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "destination", "outcome"]},
+    {"name": "Webhook Probe Failed", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "destination", "consecutive_probe_failures"]}
+  ]
+}

@@ -1,0 +1,145 @@
+{
+  "id": "academorix://modules/tenancy/routes",
+  "$version": 1,
+  "title": "tenancy — HTTP routes",
+  "description": "HTTP route contract grouped by host audience. The central `ModuleRouteLoader` (in foundation) reads this file and mounts each group under the correct middleware stack. Host discrimination is done by `resolve.tenant` middleware which reads the request Host header against the resolved Application row.",
+  "prefixes": {
+    "api": "/api",
+    "v1": "/api/v1",
+    "platform": "/api/v1/platform"
+  },
+  "groups": [
+    {
+      "id": "tenant-context",
+      "host": "tenant",
+      "middleware": ["api", "resolve.tenant"],
+      "description": "Public tenant context — no authentication required. Serves the branding preview so the sign-in form can theme itself before a session exists.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/current-tenant",
+          "name": "tenancy.current",
+          "action": "Academorix\\Tenancy\\Controllers\\Tenant\\CurrentTenantController@show",
+          "returns": "TenantData",
+          "description": "Resolves the tenant from the request host and returns its public preview (branding, name, slug, business type). Public — no auth."
+        }
+      ]
+    },
+    {
+      "id": "tenant-authenticated",
+      "host": "tenant",
+      "middleware": ["api", "resolve.tenant", "auth:sanctum", "tenant.user"],
+      "description": "Authenticated tenant reads + tenant-scoped self-service (domains, branding, contacts, integrations).",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/v1/me/workspaces",
+          "name": "tenancy.me.workspaces",
+          "action": "Academorix\\Tenancy\\Controllers\\Tenant\\MyWorkspacesController@index",
+          "returns": "DataCollection<MyWorkspaceEntryData>",
+          "description": "Every workspace the caller belongs to. Filtered by the caller's email (not by tenant_id) so cross-workspace members see the full list. Staff-only memberships are flagged and hidden from the family-facing switcher by default."
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/current-tenant",
+          "name": "tenancy.current.update",
+          "action": "Academorix\\Tenancy\\Controllers\\Tenant\\CurrentTenantController@update",
+          "policy": "TenantPolicy@updateOwn",
+          "accepts": "UpdateOwnTenantData",
+          "returns": "TenantData"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/tenant/domains",
+          "name": "tenancy.tenant.domains.index",
+          "action": "Academorix\\Tenancy\\Controllers\\Tenant\\DomainController@index",
+          "policy": "DomainPolicy@viewAny",
+          "returns": "PaginatedResource<DomainData>"
+        },
+        {"method": "POST", "path": "/api/v1/tenant/domains", "name": "tenancy.tenant.domains.store", "action": "Academorix\\Tenancy\\Controllers\\Tenant\\DomainController@store", "policy": "DomainPolicy@create", "accepts": "CreateDomainData", "returns": "DomainData"},
+        {"method": "GET", "path": "/api/v1/tenant/domains/{domain}", "name": "tenancy.tenant.domains.show", "action": "Academorix\\Tenancy\\Controllers\\Tenant\\DomainController@show", "policy": "DomainPolicy@view", "returns": "DomainData"},
+        {"method": "PUT", "path": "/api/v1/tenant/domains/{domain}", "name": "tenancy.tenant.domains.update", "action": "Academorix\\Tenancy\\Controllers\\Tenant\\DomainController@update", "policy": "DomainPolicy@update", "accepts": "UpdateDomainData", "returns": "DomainData"},
+        {"method": "DELETE", "path": "/api/v1/tenant/domains/{domain}", "name": "tenancy.tenant.domains.destroy", "action": "Academorix\\Tenancy\\Controllers\\Tenant\\DomainController@destroy", "policy": "DomainPolicy@delete", "returns": "204"},
+        {"method": "POST", "path": "/api/v1/tenant/domains/{domain}/verify", "name": "tenancy.tenant.domains.verify", "action": "Academorix\\Tenancy\\Controllers\\Tenant\\DomainController@verify", "policy": "DomainPolicy@verify", "returns": "DomainData", "description": "Dispatches VerifyDomainDnsJob synchronously; response reflects the post-check state."},
+        {"method": "GET", "path": "/api/v1/tenant/brandings", "name": "tenancy.tenant.brandings.index", "action": "Academorix\\Tenancy\\Controllers\\Tenant\\BrandingController@index", "policy": "BrandingPolicy@viewAny", "returns": "PaginatedResource<BrandingData>"},
+        {"method": "POST", "path": "/api/v1/tenant/brandings", "name": "tenancy.tenant.brandings.store", "action": "Academorix\\Tenancy\\Controllers\\Tenant\\BrandingController@store", "policy": "BrandingPolicy@create", "accepts": "CreateBrandingData", "returns": "BrandingData"},
+        {"method": "GET", "path": "/api/v1/tenant/brandings/{branding}", "name": "tenancy.tenant.brandings.show", "action": "Academorix\\Tenancy\\Controllers\\Tenant\\BrandingController@show", "policy": "BrandingPolicy@view", "returns": "BrandingData"},
+        {"method": "PUT", "path": "/api/v1/tenant/brandings/{branding}", "name": "tenancy.tenant.brandings.update", "action": "Academorix\\Tenancy\\Controllers\\Tenant\\BrandingController@update", "policy": "BrandingPolicy@update", "accepts": "UpdateBrandingData", "returns": "BrandingData"},
+        {"method": "POST", "path": "/api/v1/tenant/brandings/{branding}/promote", "name": "tenancy.tenant.brandings.promote", "action": "Academorix\\Tenancy\\Controllers\\Tenant\\BrandingController@promote", "policy": "BrandingPolicy@promote", "returns": "BrandingData", "description": "Sets this Branding as the tenant's primary. Re-denormalises the Tenant.branding JSONB."},
+        {"method": "DELETE", "path": "/api/v1/tenant/brandings/{branding}", "name": "tenancy.tenant.brandings.destroy", "action": "Academorix\\Tenancy\\Controllers\\Tenant\\BrandingController@destroy", "policy": "BrandingPolicy@delete", "returns": "204"},
+        {"method": "GET", "path": "/api/v1/tenant/contacts", "name": "tenancy.tenant.contacts.index", "action": "Academorix\\Tenancy\\Controllers\\Tenant\\ContactController@index", "policy": "TenantContactPolicy@viewAny", "returns": "PaginatedResource<TenantContactData>"},
+        {"method": "POST", "path": "/api/v1/tenant/contacts", "name": "tenancy.tenant.contacts.store", "action": "Academorix\\Tenancy\\Controllers\\Tenant\\ContactController@store", "policy": "TenantContactPolicy@create", "accepts": "CreateTenantContactData", "returns": "TenantContactData"},
+        {"method": "PUT", "path": "/api/v1/tenant/contacts/{contact}", "name": "tenancy.tenant.contacts.update", "action": "Academorix\\Tenancy\\Controllers\\Tenant\\ContactController@update", "policy": "TenantContactPolicy@update", "accepts": "UpdateTenantContactData", "returns": "TenantContactData"},
+        {"method": "DELETE", "path": "/api/v1/tenant/contacts/{contact}", "name": "tenancy.tenant.contacts.destroy", "action": "Academorix\\Tenancy\\Controllers\\Tenant\\ContactController@destroy", "policy": "TenantContactPolicy@delete", "returns": "204"},
+        {"method": "GET", "path": "/api/v1/tenant/integrations", "name": "tenancy.tenant.integrations.index", "action": "Academorix\\Tenancy\\Controllers\\Tenant\\IntegrationController@index", "policy": "TenantIntegrationPolicy@viewAny", "returns": "PaginatedResource<TenantIntegrationData>", "gatedBy": "tenants.manage_integrations", "note": "v2 only. In v1 the controller returns 501 unless the caller carries the manage_integrations permission."}
+      ]
+    },
+    {
+      "id": "central-public",
+      "host": "central",
+      "middleware": ["api", "platform.domain", "throttle:global"],
+      "description": "Central host (workspace picker + self-serve). Hard-refuses tenant subdomains via `platform.domain`.",
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/tenants/register",
+          "name": "tenancy.register",
+          "action": "Academorix\\Tenancy\\Controllers\\Central\\RegisterTenantController@store",
+          "accepts": "RegisterTenantData",
+          "returns": "{ tenant: TenantData, owner: UserData }",
+          "description": "Self-serve workspace creation. Provisions Tenant + default Organization + default Branch + default Region + owner User inside one DB transaction, then dispatches TenantProvisioned on commit."
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/auth/find-workspaces",
+          "name": "tenancy.find_workspaces",
+          "action": "Academorix\\Tenancy\\Controllers\\Central\\FindWorkspacesController@store",
+          "accepts": "FindWorkspacesData",
+          "returns": "{ message: string }",
+          "description": "Email-your-workspace-list recovery. Always 200 (anti-enumeration). Delegates the mail to the user module."
+        }
+      ]
+    },
+    {
+      "id": "platform-admin",
+      "host": "platform-admin",
+      "middleware": ["api", "auth:sanctum", "platform.user", "api.version"],
+      "description": "Platform-admin CRUD over every entity in this module.",
+      "routes": [
+        {"method": "GET", "path": "/api/v1/applications", "name": "platform.applications.index", "action": "Academorix\\Tenancy\\Controllers\\Platform\\ApplicationController@index", "policy": "ApplicationPolicy@viewAny", "returns": "PaginatedResource<ApplicationData>"},
+        {"method": "POST", "path": "/api/v1/applications", "name": "platform.applications.store", "action": "Academorix\\Tenancy\\Controllers\\Platform\\ApplicationController@store", "policy": "ApplicationPolicy@create", "accepts": "CreateApplicationData", "returns": "ApplicationData"},
+        {"method": "GET", "path": "/api/v1/applications/{application}", "name": "platform.applications.show", "action": "Academorix\\Tenancy\\Controllers\\Platform\\ApplicationController@show", "policy": "ApplicationPolicy@view", "returns": "ApplicationData"},
+        {"method": "PUT", "path": "/api/v1/applications/{application}", "name": "platform.applications.update", "action": "Academorix\\Tenancy\\Controllers\\Platform\\ApplicationController@update", "policy": "ApplicationPolicy@update", "accepts": "UpdateApplicationData", "returns": "ApplicationData"},
+        {"method": "DELETE", "path": "/api/v1/applications/{application}", "name": "platform.applications.destroy", "action": "Academorix\\Tenancy\\Controllers\\Platform\\ApplicationController@destroy", "policy": "ApplicationPolicy@delete", "returns": "204"},
+
+        {"method": "GET", "path": "/api/v1/tenants", "name": "platform.tenants.index", "action": "Academorix\\Tenancy\\Controllers\\Platform\\TenantController@index", "policy": "TenantPolicy@viewAny", "returns": "PaginatedResource<TenantData>"},
+        {"method": "POST", "path": "/api/v1/tenants", "name": "platform.tenants.store", "action": "Academorix\\Tenancy\\Controllers\\Platform\\TenantController@store", "policy": "TenantPolicy@create", "accepts": "CreateTenantData", "returns": "TenantData"},
+        {"method": "GET", "path": "/api/v1/tenants/{tenant}", "name": "platform.tenants.show", "action": "Academorix\\Tenancy\\Controllers\\Platform\\TenantController@show", "policy": "TenantPolicy@view", "returns": "TenantData"},
+        {"method": "PUT", "path": "/api/v1/tenants/{tenant}", "name": "platform.tenants.update", "action": "Academorix\\Tenancy\\Controllers\\Platform\\TenantController@update", "policy": "TenantPolicy@update", "accepts": "UpdateTenantData", "returns": "TenantData"},
+        {"method": "DELETE", "path": "/api/v1/tenants/{tenant}", "name": "platform.tenants.destroy", "action": "Academorix\\Tenancy\\Controllers\\Platform\\TenantController@destroy", "policy": "TenantPolicy@delete", "returns": "204"},
+        {"method": "POST", "path": "/api/v1/tenants/{tenant}/suspend", "name": "platform.tenants.suspend", "action": "Academorix\\Tenancy\\Controllers\\Platform\\TenantController@suspend", "policy": "TenantPolicy@suspend", "accepts": "SuspendTenantData", "returns": "TenantData"},
+        {"method": "POST", "path": "/api/v1/tenants/{tenant}/resume", "name": "platform.tenants.resume", "action": "Academorix\\Tenancy\\Controllers\\Platform\\TenantController@resume", "policy": "TenantPolicy@resume", "returns": "TenantData"},
+        {"method": "POST", "path": "/api/v1/tenants/{tenant}/archive", "name": "platform.tenants.archive", "action": "Academorix\\Tenancy\\Controllers\\Platform\\TenantController@archive", "policy": "TenantPolicy@archive", "returns": "TenantData"},
+
+        {"method": "GET", "path": "/api/v1/business-types", "name": "platform.business_types.index", "action": "Academorix\\Tenancy\\Controllers\\Platform\\BusinessTypeController@index", "returns": "DataCollection<BusinessTypeData>", "description": "Read is public (not gated by policy) so the self-serve picker + workspace picker can use it. Mutations are policy-gated."},
+        {"method": "POST", "path": "/api/v1/business-types", "name": "platform.business_types.store", "action": "Academorix\\Tenancy\\Controllers\\Platform\\BusinessTypeController@store", "policy": "BusinessTypePolicy@create", "accepts": "CreateBusinessTypeData", "returns": "BusinessTypeData"},
+        {"method": "PUT", "path": "/api/v1/business-types/{key}", "name": "platform.business_types.update", "action": "Academorix\\Tenancy\\Controllers\\Platform\\BusinessTypeController@update", "policy": "BusinessTypePolicy@update", "accepts": "UpdateBusinessTypeData", "returns": "BusinessTypeData"},
+
+        {"method": "GET", "path": "/api/v1/domains", "name": "platform.domains.index", "action": "Academorix\\Tenancy\\Controllers\\Platform\\DomainController@index", "policy": "DomainPolicy@viewAny", "returns": "PaginatedResource<DomainData>"},
+        {"method": "GET", "path": "/api/v1/domains/{domain}", "name": "platform.domains.show", "action": "Academorix\\Tenancy\\Controllers\\Platform\\DomainController@show", "policy": "DomainPolicy@view", "returns": "DomainData"},
+        {"method": "PUT", "path": "/api/v1/domains/{domain}", "name": "platform.domains.update", "action": "Academorix\\Tenancy\\Controllers\\Platform\\DomainController@update", "policy": "DomainPolicy@update", "accepts": "UpdateDomainData", "returns": "DomainData"},
+        {"method": "DELETE", "path": "/api/v1/domains/{domain}", "name": "platform.domains.destroy", "action": "Academorix\\Tenancy\\Controllers\\Platform\\DomainController@destroy", "policy": "DomainPolicy@delete", "returns": "204"},
+
+        {"method": "GET", "path": "/api/v1/brandings", "name": "platform.brandings.index", "action": "Academorix\\Tenancy\\Controllers\\Platform\\BrandingController@index", "policy": "BrandingPolicy@viewAny", "returns": "PaginatedResource<BrandingData>"},
+
+        {"method": "GET", "path": "/api/v1/identities", "name": "platform.identities.index", "action": "Academorix\\Tenancy\\Controllers\\Platform\\IdentityController@index", "policy": "IdentityPolicy@viewAny", "returns": "PaginatedResource<IdentityData>", "description": "Read-only from the admin — Identity mutations happen via the user module."},
+        {"method": "GET", "path": "/api/v1/identities/{identity}", "name": "platform.identities.show", "action": "Academorix\\Tenancy\\Controllers\\Platform\\IdentityController@show", "policy": "IdentityPolicy@view", "returns": "IdentityData"},
+
+        {"method": "GET", "path": "/api/v1/tenant-contacts", "name": "platform.tenant_contacts.index", "action": "Academorix\\Tenancy\\Controllers\\Platform\\TenantContactController@index", "policy": "TenantContactPolicy@viewAny", "returns": "PaginatedResource<TenantContactData>"},
+        {"method": "POST", "path": "/api/v1/tenant-contacts", "name": "platform.tenant_contacts.store", "action": "Academorix\\Tenancy\\Controllers\\Platform\\TenantContactController@store", "policy": "TenantContactPolicy@create", "accepts": "CreateTenantContactData", "returns": "TenantContactData"},
+
+        {"method": "GET", "path": "/api/v1/tenant-integrations", "name": "platform.tenant_integrations.index", "action": "Academorix\\Tenancy\\Controllers\\Platform\\TenantIntegrationController@index", "policy": "TenantIntegrationPolicy@viewAny", "returns": "PaginatedResource<TenantIntegrationData>", "note": "v2 — read is stubbed in v1."}
+      ]
+    }
+  ]
+}

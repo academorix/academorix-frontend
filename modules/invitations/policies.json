@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/invitations/policies",
+  "$version": 1,
+  "title": "invitations — authorization policies",
+  "description": "One policy class with abilities that answer on both `sanctum` (tenant admins managing their own workspace invitations) and `platform_admin` (Academorix ops doing cross-tenant search + audit-revoke) guards. Registered by InvitationsServiceProvider::registerPolicies(). Guard-aware — each ability checks the caller's guard and gates accordingly.",
+  "policies": [
+    {
+      "class": "Academorix\\Invitations\\Policies\\InvitationPolicy",
+      "target": "Academorix\\Invitations\\Models\\Invitation",
+      "guard": ["sanctum", "platform_admin"],
+      "abilities": [
+        {
+          "name": "viewAny",
+          "requires": ["invitations.viewAny (sanctum, scoped to caller's tenant)"],
+          "description": "List invitations in the caller's tenant. sanctum-only — platform admins use viewAnyPlatform."
+        },
+        {
+          "name": "view",
+          "requires": ["invitations.viewAny AND invitation.tenant_id === auth()->user().tenant_id"],
+          "description": "Show a specific invitation. Tenant-scoped."
+        },
+        {
+          "name": "create",
+          "requires": ["invitations.send AND target permission (invitee target must accept the caller as an inviter)"],
+          "description": "Send a new invitation. Calls preflight validators registered per target_type by consumer modules (e.g. TenantInvitationTargetPreflight may refuse if the invitee is already a workspace member)."
+        },
+        {
+          "name": "resend",
+          "requires": ["invitations.resend AND invitation.tenant_id === auth()->user().tenant_id AND resend_count < settings.max_resends"],
+          "description": "Regenerate token + re-dispatch send. Refused on terminal states + when the hard cap is hit."
+        },
+        {
+          "name": "revoke",
+          "requires": ["invitations.revoke AND invitation.tenant_id === auth()->user().tenant_id"],
+          "description": "Revoke a pending invitation. Refused on terminal states other than `bounced` (bounced is not truly terminal — a revoke pre-empts a retry)."
+        },
+        {
+          "name": "viewAnyPlatform",
+          "guard": "platform_admin",
+          "requires": ["invitations.manage_any"],
+          "description": "Cross-tenant list. Filters + audit context capture on every list read (SOC 2 CC6.1)."
+        },
+        {
+          "name": "viewPlatform",
+          "guard": "platform_admin",
+          "requires": ["invitations.manage_any"],
+          "description": "Cross-tenant detail."
+        },
+        {
+          "name": "revokePlatform",
+          "guard": "platform_admin",
+          "requires": ["invitations.manage_any"],
+          "description": "Abuse-response revoke. Requires an audit `reason`. Sets InvitationRevoked payload `isAbuseResponse=true` when reason matches an abuse pattern; that flag routes to security-team notification instead of standard tenant notification."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Every ability that mutates an Invitation records an audit trail entry (via HasAuditable + a matching InvitationEvent row). Refusal (Gate::denies) is also audited under the `preflight_failed` event.",
+    "Preflight validators are consumer-supplied. Example: TenantInvitationPreflight registered by the tenancy module refuses `create` when the invitee is already a User of the target tenant. This prevents double-invitation and duplicates."
+  ]
+}

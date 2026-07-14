@@ -1,0 +1,48 @@
+{
+  "id": "newsletter.resources.newsletter.show",
+  "title": "Newsletter detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/newsletters/{id}",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {"module": "newsletter", "entity": "newsletter", "action": "show"},
+  "requiresPermission": "newsletters.view",
+  "params": [{"name": "id", "type": "string", "in": "path", "required": true}],
+  "dataSources": [
+    {"name": "newsletter", "kind": "http.get", "urlExpr": "'/api/v1/newsletters/' + params.id", "unwrap": "data"},
+    {"name": "recentIssues", "kind": "http.get", "urlExpr": "'/api/v1/newsletters/' + params.id + '/issues?sort=-created_at&per_page=10'", "unwrap": "data"},
+    {"name": "recentCampaigns", "kind": "http.get", "urlExpr": "'/api/v1/newsletters/' + params.id + '/campaigns?sort=-created_at&per_page=5'", "unwrap": "data"}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto"}, "children": [
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/newsletters"}}},
+      {"kind": "View", "props": {"className": "flex items-start justify-between"}, "children": [
+        {"kind": "View", "props": {"className": "flex flex-col gap-1"}, "children": [
+          {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold"}, "bindings": {"children": {"$ref": "newsletter.name"}}},
+          {"kind": "Text", "props": {"className": "text-sm text-muted"}, "bindings": {"children": {"$ref": "newsletter.description"}}}
+        ]},
+        {"kind": "View", "props": {"className": "flex items-center gap-2"}, "children": [
+          {"kind": "Button", "props": {"variant": "outline", "size": "sm", "leadingIcon": "pencil", "children": "Edit"}, "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('newsletters.update')"}}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/newsletters/' + params.id + '/edit'"}}},
+          {"kind": "Button", "props": {"variant": "primary", "size": "sm", "leadingIcon": "plus", "children": "New issue"}, "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('newsletter-issues.create')"}}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/newsletters/' + params.id + '/issues/new'"}}}
+        ]}
+      ]},
+      {"kind": "View", "props": {"className": "grid grid-cols-4 gap-4"}, "children": [
+        {"kind": "Widget", "widget": "newsletter.newsletter-stat-card", "props": {"kind": "subscribers", "value": {"$ref": "newsletter.subscriber_count"}}},
+        {"kind": "Widget", "widget": "newsletter.newsletter-stat-card", "props": {"kind": "open_rate", "valueExpr": "recentCampaigns[0]?.open_rate ?? 0"}},
+        {"kind": "Widget", "widget": "newsletter.newsletter-stat-card", "props": {"kind": "click_rate", "valueExpr": "recentCampaigns[0]?.click_rate ?? 0"}},
+        {"kind": "Widget", "widget": "newsletter.newsletter-stat-card", "props": {"kind": "bounce_rate", "valueExpr": "recentCampaigns[0]?.bounce_rate ?? 0"}}
+      ]},
+      {"kind": "Card", "props": {"className": "p-6"}, "children": [
+        {"kind": "Text", "props": {"as": "h2", "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3", "children": "Recent issues"}},
+        {"kind": "List", "bindings": {"items": {"$ref": "recentIssues"}}, "itemRenderer": {"kind": "View", "props": {"className": "flex items-center justify-between py-2 border-b last:border-b-0"}, "children": [
+          {"kind": "View", "children": [
+            {"kind": "Text", "props": {"className": "font-medium"}, "bindings": {"children": {"$ref": "row.subject"}}},
+            {"kind": "Text", "props": {"className": "text-xs text-muted"}, "bindings": {"children": {"$expr": "row.state + ' \u00b7 ' + (row.sent_at ? formatRelative(row.sent_at) : formatRelative(row.created_at))"}}}
+          ]},
+          {"kind": "Link", "props": {"size": "sm", "children": "Open"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/newsletters/' + params.id + '/issues/' + row.id"}}}
+        ]}}
+      ]}
+    ]}
+  ]
+}

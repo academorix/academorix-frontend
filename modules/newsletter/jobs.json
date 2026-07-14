@@ -1,0 +1,138 @@
+{
+  "id": "academorix://modules/newsletter/jobs",
+  "$version": 1,
+  "title": "newsletter \u2014 background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Newsletter\\Jobs\\SendNewsletterCampaignJob",
+      "queue": "notifications",
+      "purpose": "Orchestrates a campaign send. Loads the audience, batches subscribers, dispatches per-batch send jobs.",
+      "steps": [
+        "Load campaign + issue + audience.",
+        "Refuse if newsletter.state IN (paused, throttled, archived).",
+        "Load cached_subscriber_ids from audience; if stale (> 1h), dispatch synchronous BuildAudienceSegmentJob first.",
+        "Filter subscribers: state=active only.",
+        "Update campaign counters.targeted = len(subscribers) + state=in_progress.",
+        "Chunk into batches of campaign.send_batch_size.",
+        "For each batch: dispatch SendNewsletterIssueBatchJob with throttle_per_second respected via job delay.",
+        "Await batch chain via Bus::chain \u2014 on last batch complete, transition campaign state=completed."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "campaign_id",
+      "tries": 2,
+      "notes": "Failure at orchestration level transitions campaign to failed; the batch-level jobs continue independently (per-recipient failure is expected + non-fatal)."
+    },
+    {
+      "class": "Academorix\\Newsletter\\Jobs\\SendNewsletterIssueBatchJob",
+      "queue": "notifications",
+      "purpose": "Send an issue to one batch of subscribers via notifications-mail.",
+      "steps": [
+        "For each subscription_id in batch:",
+        "  Check MailSuppression via notifications-mail::MailSuppressionRegistry \u2014 skip + count as suppressed if hit.",
+        "  Check NotificationPreference for marketing.newsletter \u2014 skip + count as opted_out if disabled.",
+        "  Render issue body via notifications-mail template renderer + inject issue.variables + issue.content_blocks.",
+        "  Inject List-Unsubscribe headers with subscription.unsubscribe_token URL.",
+        "  Dispatch notifications-mail::SendMailJob with metadata { newsletter_id, campaign_id, subscription_id, issue_id }.",
+        "  Update campaign.counters.sent atomic increment."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 600,
+      "uniqueVia": "(campaign_id, batch_number)",
+      "tries": 3,
+      "backoff": [60, 300, 1800]
+    },
+    {
+      "class": "Academorix\\Newsletter\\Jobs\\BuildAudienceSegmentJob",
+      "queue": "notifications",
+      "purpose": "Evaluate audience.expression against NewsletterSubscription + refresh cached_subscriber_ids.",
+      "steps": [
+        "Load audience + expression.",
+        "Query NewsletterSubscription filtered by expression + newsletter_id + state=active.",
+        "Order deterministically (id asc).",
+        "Update audience.cached_subscriber_ids + cache_refreshed_at.",
+        "Fire NewsletterAudienceRefreshed."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "audience_id",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Newsletter\\Jobs\\ImportSubscribersJob",
+      "queue": "notifications",
+      "purpose": "Import subscribers from a CSV upload. Requires consent evidence column.",
+      "steps": [
+        "Stream CSV rows.",
+        "For each row: validate email + consent_evidence + tags.",
+        "Skip rows where email is already subscribed (idempotent).",
+        "Skip rows where email is on MailSuppression list.",
+        "Create NewsletterSubscription with source=imported + skip double-opt-in (assumption: import list is already consented; the consent_evidence column proves it).",
+        "Report per-row outcome to storage as import_report.csv."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "(newsletter_id, file_hash)",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Newsletter\\Jobs\\ExportSubscribersJob",
+      "queue": "notifications",
+      "purpose": "Export subscribers to CSV. Uploaded to storage module + signed URL returned.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "(newsletter_id, filter_hash)",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Newsletter\\Jobs\\TrackNewsletterEngagementJob",
+      "queue": "notifications",
+      "purpose": "Recompute engagement_score for a subscription. Called from open/click listeners.",
+      "steps": [
+        "Load subscription.",
+        "engagement_score = min(100, floor(recent_opens * 1 + recent_clicks * 5 + weeks_active * 0.5))",
+        "Weight recent activity higher via exponential decay over 90 days."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 60,
+      "uniqueVia": "subscription_id",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Newsletter\\Jobs\\GenerateReputationReportJob",
+      "queue": "notifications",
+      "purpose": "Monthly reputation report per newsletter. Aggregates campaign-level counters into rolling averages + surfaces thresholds proximity. Emailed to newsletter owner.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "(newsletter_id, month)",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Newsletter\\Jobs\\PruneUnengagedSubscribersJob",
+      "queue": "notifications",
+      "purpose": "Two prunes: pending_confirmation older than confirmation_ttl_hours \u2192 soft delete; active-but-unengaged for > 365d \u2192 flag for admin review (never auto-delete).",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "newsletter_id",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Newsletter\\Jobs\\ConfirmSubscriptionJob",
+      "queue": "notifications",
+      "purpose": "Async confirmation processing when caller hits GET /confirm/{token}. Validates token + transitions state.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "subscription_id",
+      "tries": 3
+    }
+  ]
+}

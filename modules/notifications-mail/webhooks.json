@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/notifications-mail/webhooks",
+  "$version": 1,
+  "title": "notifications-mail \u2014 webhook namespaces",
+  "description": "This module does NOT own outbound customer-facing webhooks. Delivery lifecycle webhooks (mail.delivered / opened / clicked / bounced / complained) are published via the notifications CORE module (namespace=notifications) so customers subscribe once to `notification.*` events regardless of channel. This file documents the INBOUND webhook namespace + provider strategies consumed via the webhook module.",
+  "inboundNamespace": {
+    "namespace": "notifications-mail",
+    "endpoint": "POST /webhooks/inbound/notifications-mail/{provider}",
+    "handledBy": "webhook module's InboundWebhookController@ingest",
+    "signature_verification": "webhook::VerifyWebhookSignature parameterised via provider-specific signature strategies registered by this module",
+    "downstream_handler": "IngestMailProviderWebhookListener \u2192 IngestMailProviderWebhookJob \u2192 normalises to MailDelivered/Opened/Clicked/Bounced/Complaint events"
+  },
+  "supportedProviders": [
+    {"provider": "mailgun", "config_key": "notifications-mail.webhook_secrets.mailgun", "config_key_previous": "notifications-mail.webhook_secrets.mailgun_previous", "signature_strategy": "Academorix\\Notifications\\Mail\\Signatures\\MailgunSignatureStrategy", "expected_events": ["delivered", "opened", "clicked", "unsubscribed", "complained", "failed"]},
+    {"provider": "sendgrid", "config_key": "notifications-mail.webhook_secrets.sendgrid", "config_key_previous": "notifications-mail.webhook_secrets.sendgrid_previous", "signature_strategy": "Academorix\\Notifications\\Mail\\Signatures\\SendgridSignatureStrategy", "expected_events": ["processed", "deferred", "delivered", "open", "click", "bounce", "dropped", "spamreport", "unsubscribe", "group_unsubscribe"]},
+    {"provider": "aws-ses", "config_key": "notifications-mail.webhook_secrets.aws-ses", "signature_strategy": "Academorix\\Notifications\\Mail\\Signatures\\SesSignatureStrategy", "expected_events": ["Delivery", "Bounce", "Complaint", "Open", "Click"], "note": "Received via SNS; signature verified against x509 cert on SNS envelope."},
+    {"provider": "postmark", "config_key": "notifications-mail.webhook_secrets.postmark", "signature_strategy": "Academorix\\Notifications\\Mail\\Signatures\\PostmarkSignatureStrategy", "expected_events": ["Delivery", "Bounce", "SpamComplaint", "Open", "Click", "SubscriptionChange"]},
+    {"provider": "resend", "config_key": "notifications-mail.webhook_secrets.resend", "signature_strategy": "Academorix\\Notifications\\Mail\\Signatures\\ResendSignatureStrategy", "expected_events": ["email.sent", "email.delivered", "email.opened", "email.clicked", "email.bounced", "email.complained"], "note": "Uses Svix for signatures + delivery guarantees."}
+  ],
+  "outbound": {
+    "note": "Mail-channel outbound webhooks (mail.delivered/opened/clicked/bounced/complained) are aggregated + published by notifications CORE. Customers subscribe via webhook module to `notification.delivered`, `notification.failed`, etc. \u2014 channel-neutral event names."
+  }
+}

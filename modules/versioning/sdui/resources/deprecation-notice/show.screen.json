@@ -1,0 +1,64 @@
+{
+  "id": "versioning.resources.deprecation-notice.show",
+  "title": "Deprecation notice",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/versioning/deprecation-notices/{id}",
+  "host": "central-admin",
+  "audience": "authenticated",
+  "resource": {"module": "versioning", "entity": "deprecation-notice", "action": "show"},
+  "requiresPermission": "platform.versioning.notices.view",
+  "params": [{"name": "id", "type": "string", "in": "path", "required": true}],
+  "dataSources": [
+    {"name": "notice", "kind": "http.get", "urlExpr": "'/api/v1/platform/versioning/deprecation-notices/' + params.id", "unwrap": "data"}
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": {"className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto"},
+      "children": [
+        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/platform/versioning/deprecation-notices"}}},
+        {
+          "kind": "View",
+          "props": {"className": "flex items-start justify-between"},
+          "children": [
+            {"kind": "View", "props": {"className": "flex flex-col gap-1"}, "children": [
+              {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold"}, "bindings": {"children": {"$ref": "notice.title"}}},
+              {"kind": "Text", "props": {"className": "text-sm text-muted"}, "bindings": {"children": {"$expr": "notice.notice_type + ' \u00b7 version ' + notice.api_version_slug"}}}
+            ]},
+            {"kind": "Chip", "props": {"size": "md"}, "bindings": {"variant": {"$expr": "notice.state === 'published' ? 'success' : (notice.state === 'draft' ? 'neutral' : 'warning')"}, "children": {"$ref": "notice.state"}}}
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": {"className": "p-6"},
+          "children": [
+            {"kind": "Text", "props": {"as": "h2", "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3", "children": "Notice body"}},
+            {"kind": "Markdown", "props": {"className": "prose max-w-none"}, "bindings": {"content": {"$ref": "notice.notice_markdown"}}}
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": {"className": "p-6"},
+          "children": [
+            {"kind": "Text", "props": {"as": "h2", "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3", "children": "Scope"}},
+            {"kind": "DescriptionList", "children": [
+              {"kind": "DescriptionListItem", "props": {"label": "Affected endpoints"}, "bindings": {"value": {"$expr": "notice.affected_endpoints.length === 0 ? 'Entire version' : notice.affected_endpoints.join(', ')"}}},
+              {"kind": "DescriptionListItem", "props": {"label": "Affected events"}, "bindings": {"value": {"$expr": "notice.affected_events.length === 0 ? 'None' : notice.affected_events.join(', ')"}}},
+              {"kind": "DescriptionListItem", "props": {"label": "Migration guide"}, "bindings": {"value": {"$expr": "notice.migration_guide_url || 'Falls back to parent version guide'"}}},
+              {"kind": "DescriptionListItem", "props": {"label": "Customer notifications"}, "bindings": {"value": {"$expr": "notice.notify_customers ? (notice.notified_at ? 'Delivered ' + formatDate(notice.notified_at) : 'Pending on publish') : 'Disabled'"}}}
+            ]}
+          ]
+        },
+        {
+          "kind": "View",
+          "props": {"className": "flex items-center gap-2"},
+          "children": [
+            {"kind": "Button", "props": {"variant": "primary", "size": "md", "leadingIcon": "arrow-up-tray", "children": "Publish"}, "bindings": {"isDisabled": {"$expr": "notice.state !== 'draft' || !identity.permissions.includes('platform.versioning.notices.publish')"}}, "actions": {"onPress": {"kind": "http.post", "urlExpr": "'/api/v1/platform/versioning/deprecation-notices/' + params.id + '/publish'", "confirm": {"title": "Publish this notice?", "description": "Fires customer notifications (mail + in-app) when notify_customers is on."}, "onSuccess": [{"kind": "toast.success", "message": "Published"}, {"kind": "data.refresh", "source": "notice"}]}}}
+          ]
+        }
+      ]
+    }
+  ]
+}

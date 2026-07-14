@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/versioning/data-classes",
+  "$version": 1,
+  "title": "versioning \u2014 field classification",
+  "description": "All versioning fields are public or internal \u2014 versioning is a platform-transparent concern. No PII, no PCI, no PHI. Version catalog IS PUBLIC information (docs.academorix.com surfaces it). Audit rows capture the actor for lifecycle transitions but no restricted material.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "ApiVersion.id",
+      "ApiVersion.slug",
+      "ApiVersion.name",
+      "ApiVersion.description",
+      "ApiVersion.scheme",
+      "ApiVersion.state",
+      "ApiVersion.released_at",
+      "ApiVersion.deprecated_at",
+      "ApiVersion.sunset_at",
+      "ApiVersion.sunset_notice_url",
+      "ApiVersion.migration_target_slug",
+      "ApiVersion.is_default",
+      "ApiVersion.is_system",
+      "ApiVersion.sort_order",
+      "ApiVersion.created_at",
+      "ApiVersion.updated_at",
+      "DeprecationNotice.id",
+      "DeprecationNotice.api_version_id",
+      "DeprecationNotice.notice_type",
+      "DeprecationNotice.title",
+      "DeprecationNotice.notice_markdown",
+      "DeprecationNotice.affected_endpoints",
+      "DeprecationNotice.affected_events",
+      "DeprecationNotice.migration_guide_url",
+      "DeprecationNotice.state",
+      "DeprecationNotice.published_at",
+      "DeprecationNotice.is_system",
+      "DeprecationNotice.created_at",
+      "DeprecationNotice.updated_at"
+    ],
+    "internal": [
+      "ApiVersion.metadata",
+      "DeprecationNotice.metadata",
+      "DeprecationNotice.notify_customers",
+      "DeprecationNotice.notified_at"
+    ],
+    "confidential": [],
+    "restricted": [],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "audit_log": [
+      "audits.versioning.* rows produced on state transitions (release/deprecate/sunset) + notice publish + version metadata edits. Retained per foundation's audit_log tier rule."
+    ]
+  },
+  "notes": [
+    "ApiVersion.created_by / updated_by / deleted_by are UUID FKs to users.id \u2014 they're `internal` tier by association with the user row, not `confidential`. The user's own identity is confidential; the fact that user X made lifecycle transition Y is internal audit data.",
+    "DeprecationNotice.notify_customers + notified_at are `internal` because they're operational orchestration state, not customer-facing content."
+  ]
+}

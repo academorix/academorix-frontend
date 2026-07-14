@@ -1,0 +1,11 @@
+{
+  "id": "academorix://modules/foundation/relations",
+  "$version": 1,
+  "title": "foundation — cross-module relations",
+  "description": "Foundation ships zero domain entities. There are no Eloquent relations rooted here. This file exists for uniform module shape so CI's cross-module validator + graph builder doesn't special-case foundation. Any downstream module's `relations.json` referencing `foundation` as a target module is a bug — foundation has no models to relate to.",
+  "anchors": [],
+  "notes": [
+    "Foundation contributes TRAITS and BLUEPRINTS, not entities. Downstream modules compose the traits on their own models. Relations induced BY those traits (createdBy/updatedBy/deletedBy from HasUserstamps, audits from HasAuditable) are documented in each composing model's schema — foundation's `traits.json` describes the shape, but the relations physically root on the consuming model.",
+    "Cross-module validator rule: if a `relations.json` in any module declares `target.module = 'foundation'`, CI fails the build."
+  ]
+}

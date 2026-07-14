@@ -1,0 +1,54 @@
+{
+  "id": "notifications-mail.resources.mail-suppression.show",
+  "title": "Mail suppression detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/mail-suppressions/{id}",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {"module": "notifications-mail", "entity": "mail-suppression", "action": "show"},
+  "requiresPermission": "notifications.mail.suppressions.view",
+  "params": [{"name": "id", "type": "string", "in": "path", "required": true}],
+  "dataSources": [
+    {"name": "suppression", "kind": "http.get", "urlExpr": "'/api/v1/tenant/mail-suppressions/' + params.id", "unwrap": "data"}
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": {"className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto"},
+      "children": [
+        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back to suppressions", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/mail-suppressions"}}},
+        {"kind": "View", "props": {"className": "flex items-start justify-between gap-4"}, "children": [
+          {"kind": "View", "props": {"className": "flex flex-col gap-1"}, "children": [
+            {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold font-mono"}, "bindings": {"children": {"$ref": "suppression.email"}}},
+            {"kind": "View", "props": {"className": "flex items-center gap-2 mt-1"}, "children": [
+              {"kind": "Widget", "widget": "notifications-mail.mail-suppression-reason-chip", "props": {"reason": {"$ref": "suppression.reason"}, "size": "md"}},
+              {"kind": "Chip", "props": {"size": "sm", "variant": "info"}, "bindings": {"hidden": {"$expr": "!suppression.is_system"}, "children": "Platform-wide"}}
+            ]}
+          ]},
+          {"kind": "Button", "props": {"variant": "outline", "size": "sm", "leadingIcon": "arrow-uturn-left", "children": "Revoke"}, "bindings": {"isDisabled": {"$expr": "suppression.is_system || (['hard_bounce', 'complaint'].includes(suppression.reason) && !identity.roles.includes('super_admin'))"}}, "actions": {"onPress": {"kind": "http.delete", "urlExpr": "'/api/v1/tenant/mail-suppressions/' + params.id", "confirm": {"title": "Revoke this suppression?", "description": "The address will be eligible to receive mail again."}, "onSuccess": [{"kind": "toast.success", "message": "Revoked"}, {"kind": "navigate", "to": "/tenant/mail-suppressions"}]}}}
+        ]},
+        {"kind": "Card", "props": {"className": "p-6"}, "children": [
+          {"kind": "Text", "props": {"as": "h2", "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3", "children": "Details"}},
+          {"kind": "DescriptionList", "children": [
+            {"kind": "DescriptionListItem", "props": {"label": "Email"}, "bindings": {"value": {"$ref": "suppression.email"}}},
+            {"kind": "DescriptionListItem", "props": {"label": "Domain"}, "bindings": {"value": {"$ref": "suppression.email_domain"}}},
+            {"kind": "DescriptionListItem", "props": {"label": "Reason"}, "bindings": {"value": {"$ref": "suppression.reason"}}},
+            {"kind": "DescriptionListItem", "props": {"label": "Provider"}, "bindings": {"value": {"$expr": "suppression.provider || 'Manual entry'"}}},
+            {"kind": "DescriptionListItem", "props": {"label": "Bounce reason"}, "bindings": {"hidden": {"$expr": "!suppression.bounce_reason"}, "value": {"$ref": "suppression.bounce_reason"}}},
+            {"kind": "DescriptionListItem", "props": {"label": "Added"}, "bindings": {"value": {"$expr": "formatDate(suppression.created_at)"}}},
+            {"kind": "DescriptionListItem", "props": {"label": "Expires"}, "bindings": {"value": {"$expr": "suppression.expires_at ? formatDate(suppression.expires_at) : 'Never (permanent)'"}}}
+          ]}
+        ]},
+        {"kind": "Card", "props": {"className": "p-6"}, "children": [
+          {"kind": "Text", "props": {"as": "h2", "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3", "children": "Source delivery"}},
+          {"kind": "View", "children": [
+            {"kind": "Alert", "props": {"variant": "info", "children": "This suppression was added manually \u2014 no source delivery."}, "bindings": {"hidden": {"$expr": "!!suppression.source_delivery_id"}}},
+            {"kind": "Link", "props": {"leadingIcon": "arrow-top-right-on-square", "children": "View source delivery in notifications core"}, "bindings": {"hidden": {"$expr": "!suppression.source_delivery_id"}, "children": {"$expr": "'View source delivery ' + suppression.source_delivery_id"}}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/notifications/deliveries/' + suppression.source_delivery_id"}}}
+          ]}
+        ]}
+      ]
+    }
+  ]
+}

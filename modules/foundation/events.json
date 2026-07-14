@@ -1,0 +1,69 @@
+{
+  "id": "academorix://modules/foundation/events",
+  "$version": 1,
+  "title": "foundation — domain events",
+  "description": "Five framework-level events. All fire synchronously (NOT ShouldDispatchAfterCommit) because they carry the boot + module + config + health signals that downstream listeners MUST observe in order. Listeners subscribe via each module's own listeners.json.",
+  "contract": "synchronous — no ShouldDispatchAfterCommit",
+  "events": [
+    {
+      "name": "ApplicationBooted",
+      "class": "Academorix\\Foundation\\Events\\ApplicationBooted",
+      "when": "Fires after Laravel's service-provider chain completes + every ModuleServiceProvider has booted + the ModuleRegistry is fully resolved. Signal to downstream listeners that the platform is ready to serve traffic.",
+      "afterCommit": false,
+      "payload": {
+        "bootedAt": "datetime",
+        "moduleCount": "integer",
+        "environment": "string (production|staging|dev|test)",
+        "applicationId": "string|null (resolved from host, null for CLI + queue workers)"
+      }
+    },
+    {
+      "name": "ModuleDiscovered",
+      "class": "Academorix\\Foundation\\Events\\ModuleDiscovered",
+      "when": "Fires per-module during ModuleRegistry's discovery pass, BEFORE the module's service provider boots. Used by observability + audit modules to record which modules loaded in which order.",
+      "afterCommit": false,
+      "payload": {
+        "moduleName": "string",
+        "modulePath": "string",
+        "priority": "integer",
+        "dependencies": "array<string>"
+      }
+    },
+    {
+      "name": "ModuleBooted",
+      "class": "Academorix\\Foundation\\Events\\ModuleBooted",
+      "when": "Fires per-module AFTER the module's service provider register + boot phases complete + all contributions (traits, middleware, events, hooks, ...) are registered. Downstream modules can subscribe to know when a dependency finished booting (rare — usually the DI container handles this).",
+      "afterCommit": false,
+      "payload": {
+        "moduleName": "string",
+        "bootedAt": "datetime",
+        "contributions": "array (traits: n, middleware: n, events: n, hooks: n, jobs: n, ...)"
+      }
+    },
+    {
+      "name": "HealthProbeFailed",
+      "class": "Academorix\\Foundation\\Events\\HealthProbeFailed",
+      "when": "Fires when a health probe returns a failure status. Downstream observability + alerting modules subscribe to route these to the correct channels (PagerDuty for critical failures, Slack for non-critical).",
+      "afterCommit": false,
+      "payload": {
+        "probeName": "string",
+        "moduleName": "string",
+        "category": "string (liveness|readiness|startup)",
+        "critical": "boolean",
+        "message": "string",
+        "durationMs": "integer",
+        "consecutiveFailures": "integer"
+      }
+    },
+    {
+      "name": "ConfigReloaded",
+      "class": "Academorix\\Foundation\\Events\\ConfigReloaded",
+      "when": "Fires when config is hot-reloaded via `POST /api/v1/platform/config/reload` OR when the config cache is regenerated on deploy. Modules with cached config drop their caches on receipt.",
+      "afterCommit": false,
+      "payload": {
+        "keys": "array<string> — which config keys changed (empty = full reload)",
+        "source": "string (deploy|api|command)"
+      }
+    }
+  ]
+}

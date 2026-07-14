@@ -1,0 +1,11 @@
+{
+  "id": "academorix://modules/webhook/schedule",
+  "$version": 1,
+  "title": "webhook \u2014 scheduled tasks",
+  "description": "Three entries: daily probe, daily prune, hourly rotation-grace cleanup.",
+  "entries": [
+    {"name": "webhook-probe", "command": "webhook:probe", "cron": "0 6 * * *", "timezone": "UTC", "purpose": "Daily 06:00 UTC health probe of every active subscription. Detects broken integrations before they cause real delivery failures."},
+    {"name": "webhook-prune", "command": "webhook:prune", "cron": "0 3 * * *", "timezone": "UTC", "purpose": "Daily 03:00 UTC retention prune of WebhookDelivery rows past prune_after_days. Off-peak window minimises DB load."},
+    {"name": "webhook-rotation-grace-cleanup", "command": "webhook:rotation-grace-cleanup", "cron": "15 * * * *", "timezone": "UTC", "purpose": "Every hour at :15: clear secret_previous + secret_previous_expires_at on subscriptions where the grace window has passed. Reduces attack surface + audit noise."}
+  ]
+}

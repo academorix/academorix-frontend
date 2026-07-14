@@ -1,0 +1,29 @@
+{
+  "id": "academorix://modules/notifications-in-app/data-classes",
+  "$version": 1,
+  "title": "notifications-in-app \u2014 field classification",
+  "description": "Zero owned persistent columns. The broadcast payloads carry transient copies of fields from core's Notification model \u2014 those fields' classifications are declared in core's data-classes.json. This file exists for uniform module shape + to document the ephemeral socket-borne data.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [],
+    "internal": [
+      "broadcast_payload.notification_id",
+      "broadcast_payload.category_slug",
+      "broadcast_payload.created_at",
+      "broadcast_payload.seen"
+    ],
+    "confidential": [
+      "broadcast_payload.subject",
+      "note: subject may contain PII (e.g. 'Welcome, Jane Smith'). Broadcast channels are private (authorised per user_id) so PII exposure is limited to the addressed user's connected clients."
+    ],
+    "restricted": [],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "audit_log": []
+  },
+  "notes": [
+    "Broadcast payloads are ephemeral \u2014 they exist only in transit + optionally in a short-lived Reverb queue.",
+    "Full notification content (payload, body_rendered_html) is NOT sent over broadcast \u2014 the client fetches on-demand from the inbox API. Only the summary fields above are broadcast."
+  ]
+}

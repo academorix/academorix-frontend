@@ -1,0 +1,39 @@
+{
+  "id": "academorix://modules/tenancy/hooks",
+  "$version": 1,
+  "title": "tenancy — tenancy hooks",
+  "description": "Per-tenant lifecycle callbacks (#[AsTenancyHook]) that this module registers. Fires on every tenant init and every tenant end for every request. Each hook is symmetric: whatever `onTenantInitialized` mutates, `onTenantEnded` restores — mandatory for Octane safety. See .kiro/steering/tenancy-hooks.md.",
+  "contract": "Academorix\\ServiceProvider\\Contracts\\TenancyHookInterface",
+  "dispatcher": "Academorix\\ServiceProvider\\Dispatchers\\TenancyHookDispatcher",
+  "registry": "Academorix\\ServiceProvider\\Registry\\TenancyHookRegistry",
+  "hooks": [
+    {
+      "class": "Academorix\\Tenancy\\TenancyHooks\\LogContextTenantHook",
+      "priority": 10,
+      "range": "framework-level (0..99)",
+      "onInit": "Push `tenant_id`, `tenant_slug`, `application_id` into the current PSR-3 log context. Every log line emitted in the request now carries the tenant + application identifiers.",
+      "onEnd": "Restore the previous log context snapshot. Never assume empty — a nested Tenancy::runInTenant() may have already stacked context.",
+      "idempotent": true,
+      "octaneSafe": true
+    },
+    {
+      "class": "Academorix\\Tenancy\\TenancyHooks\\CachePrefixTenantHook",
+      "priority": 20,
+      "range": "framework-level (0..99)",
+      "onInit": "Set the cache repository prefix to `tenant:{tenant_id}:` so every cache read/write is namespaced. Prevents accidental cross-tenant cache reads.",
+      "onEnd": "Restore the previous prefix (either the application-level prefix or the parent-tenant prefix under nested runInTenant).",
+      "idempotent": true,
+      "octaneSafe": true
+    }
+  ],
+  "priorityBands": {
+    "0..99": "framework-level — this module (log, cache).",
+    "100..199": "ancillary infra — owned by the `telemetry` module (sentry tag, correlation-id enrichment).",
+    "200..299": "permission / auth wiring — owned by the `access` module (spatie team scope, guard mapping).",
+    "300..399": "compliance — owned by the `compliance` module (retention snapshot, consent context).",
+    "400+": "domain-specific per-tenant warming — owned by feature modules that need it (e.g. `feature-flag` warming a per-tenant cache)."
+  },
+  "notes": [
+    "Tenancy OWNS the dispatch but does NOT own the priority list — it publishes the framework-level hooks (LogContext, CachePrefix). Every downstream module contributes its own hooks in its own service provider via #[AsTenancyHook]."
+  ]
+}

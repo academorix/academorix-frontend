@@ -1,0 +1,143 @@
+{
+  "id": "academorix://modules/notifications/relations",
+  "$version": 1,
+  "title": "notifications core \u2014 model relationships",
+  "description": "The 6 notifications core entities + their relationships to each other + to foreign models (User in `user`, Tenant / Application in `tenancy`). Channel-specific side state (push subscriptions, mail suppressions, sms opt-outs) belongs to the respective channel module and does not appear here. CI verifies every named relation resolves to a defined model or an inbound target from another module.",
+  "internal": [
+    {
+      "from": "Notification",
+      "kind": "hasMany",
+      "to": "NotificationDelivery",
+      "foreignKey": "notification_id",
+      "onDelete": "cascade",
+      "description": "A notification fans out to N per-channel deliveries. Cascade delete on hard-purge."
+    },
+    {
+      "from": "Notification",
+      "kind": "belongsTo",
+      "to": "NotificationCategory",
+      "foreignKey": "category_slug",
+      "ownerKey": "slug",
+      "description": "Categorises the notification for preference resolution + analytics."
+    },
+    {
+      "from": "Notification",
+      "kind": "belongsTo",
+      "to": "NotificationTemplate",
+      "foreignKey": "template_id",
+      "nullable": true,
+      "description": "The resolved template at send time. Null on failed template-resolution (renders a fallback + fires NOTIFICATIONS_TEMPLATE_NOT_FOUND)."
+    },
+    {
+      "from": "NotificationDelivery",
+      "kind": "belongsTo",
+      "to": "Notification",
+      "foreignKey": "notification_id"
+    },
+    {
+      "from": "NotificationTemplate",
+      "kind": "belongsTo",
+      "to": "NotificationCategory",
+      "foreignKey": "category_slug",
+      "ownerKey": "slug"
+    },
+    {
+      "from": "NotificationPreference",
+      "kind": "belongsTo",
+      "to": "NotificationCategory",
+      "foreignKey": "category_slug",
+      "ownerKey": "slug"
+    },
+    {
+      "from": "NotificationDigest",
+      "kind": "belongsTo",
+      "to": "NotificationCategory",
+      "foreignKey": "category_slug",
+      "ownerKey": "slug"
+    },
+    {
+      "from": "NotificationDigest",
+      "kind": "belongsToMany",
+      "to": "Notification",
+      "table": "notification_digest_items",
+      "foreignPivotKey": "digest_id",
+      "relatedPivotKey": "notification_id",
+      "description": "Pivot table snapshotting which notifications composed a delivered digest. Retained for audit."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Notification",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "addressee_id",
+      "nullable": true,
+      "description": "Addressee. Null when addressee_type = anonymous (guest invitations, invite-by-email before user creation)."
+    },
+    {
+      "from": "Notification",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "actor_id",
+      "nullable": true,
+      "description": "The user who caused the notification to be sent. Null when system-triggered (scheduled digests, maintenance alerts)."
+    },
+    {
+      "from": "Notification",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id"
+    },
+    {
+      "from": "Notification",
+      "kind": "belongsTo",
+      "to": "tenancy::Application",
+      "foreignKey": "application_id"
+    },
+    {
+      "from": "NotificationPreference",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "user_id",
+      "onDelete": "cascade",
+      "description": "Hard-cascade on user delete (GDPR Art. 17 erasure)."
+    },
+    {
+      "from": "NotificationDigest",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "user_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "NotificationTemplate",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "nullable": true,
+      "description": "NULL = platform default template; tenant_id set = tenant override."
+    }
+  ],
+  "inbound": {
+    "description": "Downstream modules relate INTO notifications by category_slug (which the module publishes via notifications.json) OR by dispatching a BaseNotification subclass. No downstream module holds a foreign key to a Notification row \u2014 notifications is a fire-and-forget append-only log.",
+    "conventions": [
+      "Modules that reference a specific delivery (rare; typically audit / support use-cases) do so via notification_id + notification_delivery_id as ULIDs \u2014 no cross-module FK constraints.",
+      "Channel-specific side state (push subscriptions, mail suppressions, sms opt-outs) belongs to the respective channel module.",
+      "Downstream consumers subscribe to core events (NotificationDelivered, NotificationFailed) + write their own state \u2014 never SELECT from notification_deliveries directly."
+    ]
+  },
+  "morphs": [
+    {
+      "column": "Notification.addressee",
+      "kind": "morphTo",
+      "targets": ["user::User", "user::PlatformUser", "invitations::Invitation"],
+      "description": "Anonymous-addressee case where the notification pre-dates a User row (invite-by-email). addressee_type/addressee_id polymorphic; NULL both when the email is truly external (rare)."
+    },
+    {
+      "column": "Notification.actor",
+      "kind": "morphTo",
+      "targets": ["user::User", "user::PlatformUser", "system"],
+      "description": "The trigger. `system` sentinel for scheduled / automated notifications."
+    }
+  ]
+}

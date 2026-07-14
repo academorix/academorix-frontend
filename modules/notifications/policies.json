@@ -1,0 +1,49 @@
+{
+  "id": "academorix://modules/notifications/policies",
+  "$version": 1,
+  "title": "notifications core \u2014 authorization policies",
+  "description": "Three Eloquent policies wire abilities onto the core models. Every policy inherits foundation's `HasSystemFlag` refusal rule for is_system=true rows. Channel modules ship their own policies for their side-state models (MailSuppression, PushSubscription, SmsOptOut).",
+  "policies": [
+    {
+      "model": "Notification",
+      "class": "Academorix\\Notifications\\Policies\\NotificationPolicy",
+      "abilities": [
+        {"action": "viewAny", "permission": "notifications.viewAny", "scope": "auth user is the addressee OR has platform.notifications.viewAny"},
+        {"action": "view", "permission": "notifications.view", "scope": "auth user is the addressee OR has platform.notifications.view. Anonymous notifications (addressee_type=anonymous) require platform.notifications.view."},
+        {"action": "markSeen", "permission": "notifications.markSeen", "scope": "auth user is the addressee"},
+        {"action": "archive", "permission": "notifications.archive", "scope": "auth user is the addressee"},
+        {"action": "delete", "permission": "notifications.delete", "scope": "REFUSED for regular users. Only platform admins can hard-delete (typically only via ExpungeArchivedNotificationsJob after retention)."},
+        {"action": "retry", "permission": "platform.notifications.retry", "scope": "platform admins only. Requires an existing failed delivery. Rate-limited to prevent replay abuse."}
+      ]
+    },
+    {
+      "model": "NotificationTemplate",
+      "class": "Academorix\\Notifications\\Policies\\NotificationTemplatePolicy",
+      "abilities": [
+        {"action": "viewAny", "permission": "notifications.templates.viewAny", "scope": "tenant admin OR platform admin"},
+        {"action": "view", "permission": "notifications.templates.view", "scope": "template tenant_id === auth tenant OR is_system=true OR platform admin"},
+        {"action": "create", "permission": "notifications.templates.create", "scope": "tenant admin (creates a tenant-override of a platform template)"},
+        {"action": "update", "permission": "notifications.templates.update", "scope": "tenant admin AND (template.tenant_id === auth tenant OR is_system=false). PLATFORM templates (tenant_id=null, is_system=true) are edit-refused for non-super_admin per HasSystemFlag."},
+        {"action": "delete", "permission": "notifications.templates.delete", "scope": "REFUSED when live sends reference the row (see NotificationTemplateObserver@deleting)"},
+        {"action": "publish", "permission": "notifications.templates.publish", "scope": "tenant admin AND draft-\u2192published transition requires QA-signed metadata (SOC 2 CC8.1 change management)"},
+        {"action": "test", "permission": "notifications.templates.test", "scope": "author of the draft OR tenant admin. Rate-limited to 10/day per template."}
+      ]
+    },
+    {
+      "model": "NotificationPreference",
+      "class": "Academorix\\Notifications\\Policies\\NotificationPreferencePolicy",
+      "abilities": [
+        {"action": "viewAny", "permission": "notifications.preferences.view", "scope": "auth user views only own preferences"},
+        {"action": "view", "permission": "notifications.preferences.view", "scope": "preference.user_id === auth user"},
+        {"action": "update", "permission": "notifications.preferences.update", "scope": "preference.user_id === auth user. Bulk update: every row must belong to auth user."},
+        {"action": "delete", "permission": "notifications.preferences.delete", "scope": "auth user OR cascade-purge listener on UserErased. Manual delete rare \u2014 preferences update in place."},
+        {"action": "adminView", "permission": "notifications.preferences.adminView", "scope": "tenant admin views ANY user's preferences in tenant. Used for support diagnostics + DPO Art. 30 records-of-processing."}
+      ]
+    }
+  ],
+  "notes": [
+    "NotificationCategory has NO policy \u2014 it's a system registry, seeded, read-only for regular users. Platform admins manage via seeder + `notifications:seed-categories` command.",
+    "NotificationDelivery has NO policy \u2014 it's a subordinate to Notification. Access derives from parent Notification's viewability.",
+    "NotificationDigest has NO policy \u2014 it's transient batching state, not user-facing directly (users see the resulting digest as a Notification row)."
+  ]
+}

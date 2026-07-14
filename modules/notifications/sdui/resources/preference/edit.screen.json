@@ -1,0 +1,78 @@
+{
+  "id": "notifications.resources.preference.edit",
+  "title": "Notification preferences",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/notification-preferences",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {"module": "notifications", "entity": "preference", "action": "edit"},
+  "requiresPermission": "notifications.preferences.view",
+  "dataSources": [
+    {"name": "preferences", "kind": "http.get", "url": "/api/v1/tenant/notification-preferences", "unwrap": "data"},
+    {"name": "notificationCategories", "kind": "http.get", "url": "/api/v1/tenant/notification-categories", "unwrap": "data", "cache": {"ttlSeconds": 3600}}
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": {"className": "flex flex-col gap-6 p-6 max-w-4xl mx-auto"},
+      "children": [
+        {
+          "id": "header",
+          "kind": "View",
+          "children": [
+            {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Notification preferences"}},
+            {"kind": "Text", "props": {"className": "text-sm text-muted mt-1", "children": "Control which notifications you receive and where. Critical security alerts cannot be disabled."}}
+          ]
+        },
+        {
+          "id": "quiet-hours-card",
+          "kind": "Card",
+          "props": {"className": "p-6"},
+          "children": [
+            {"kind": "Text", "props": {"as": "h2", "className": "text-lg font-semibold mb-3", "children": "Quiet hours"}},
+            {"kind": "Text", "props": {"className": "text-sm text-muted mb-4", "children": "Non-critical notifications are held during your quiet window and delivered at the next open time."}},
+            {
+              "id": "quiet-form",
+              "kind": "Form",
+              "props": {"submitUrl": "/api/v1/tenant/notification-preferences", "submitMethod": "PATCH", "onSuccess": {"kind": "toast.success", "message": "Quiet hours updated"}},
+              "children": [
+                {"kind": "View", "props": {"className": "flex items-center gap-3"}, "children": [
+                  {"kind": "TimeField", "props": {"label": "From", "name": "quiet_hours_start", "defaultValue": "22:00"}},
+                  {"kind": "TimeField", "props": {"label": "To", "name": "quiet_hours_end", "defaultValue": "07:00"}},
+                  {"kind": "Button", "props": {"variant": "primary", "size": "sm", "type": "submit", "children": "Save"}}
+                ]}
+              ]
+            }
+          ]
+        },
+        {
+          "id": "grid-card",
+          "kind": "Card",
+          "props": {"className": "p-6"},
+          "children": [
+            {"kind": "Text", "props": {"as": "h2", "className": "text-lg font-semibold mb-3", "children": "Categories"}},
+            {
+              "id": "preferences-table",
+              "kind": "DataGrid",
+              "props": {"selection": "none"},
+              "bindings": {"items": {"$ref": "notificationCategories"}},
+              "columns": [
+                {"id": "category", "header": "Category", "cell": {"kind": "View", "children": [
+                  {"kind": "Text", "props": {"className": "font-medium"}, "bindings": {"children": {"$ref": "row.display_name"}}},
+                  {"kind": "Text", "props": {"className": "text-xs text-muted"}, "bindings": {"children": {"$ref": "row.description"}}}
+                ]}},
+                {"id": "mail", "header": "Email", "align": "center", "cell": {"kind": "Widget", "widget": "notifications.channel-preference-toggle", "props": {"category_slug": {"$ref": "row.slug"}, "channel": "mail", "disabled": {"$expr": "!row.opt_out_allowed || !row.default_channels.includes('mail')"}}}},
+                {"id": "in_app", "header": "In-app", "align": "center", "cell": {"kind": "Widget", "widget": "notifications.channel-preference-toggle", "props": {"category_slug": {"$ref": "row.slug"}, "channel": "in_app", "disabled": {"$expr": "!row.opt_out_allowed || !row.default_channels.includes('in_app')"}}}},
+                {"id": "push", "header": "Push", "align": "center", "cell": {"kind": "Widget", "widget": "notifications.channel-preference-toggle", "props": {"category_slug": {"$ref": "row.slug"}, "channel": "push", "disabled": {"$expr": "!row.opt_out_allowed || !row.default_channels.includes('push')"}}}},
+                {"id": "sms", "header": "SMS", "align": "center", "cell": {"kind": "Widget", "widget": "notifications.channel-preference-toggle", "props": {"category_slug": {"$ref": "row.slug"}, "channel": "sms", "disabled": {"$expr": "!row.opt_out_allowed || !row.default_channels.includes('sms')"}}}},
+                {"id": "digest", "header": "Digest", "cell": {"kind": "Select", "props": {"size": "sm", "name": "digest_mode"}, "options": [{"key": "immediate", "label": "Immediate"}, {"key": "daily", "label": "Daily"}, {"key": "weekly", "label": "Weekly"}, {"key": "off", "label": "Off"}], "bindings": {"defaultValue": {"$expr": "preferences.find(p => p.category_slug === row.slug && p.channel === 'mail')?.digest_mode || 'immediate'"}}, "actions": {"onChange": {"kind": "http.patch", "url": "/api/v1/tenant/notification-preferences", "bodyExpr": "{ upsert: [{ category_slug: row.slug, channel: 'mail', digest_mode: value }] }"}}}}
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

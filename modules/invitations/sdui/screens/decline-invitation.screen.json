@@ -1,0 +1,96 @@
+{
+  "id": "invitations.screens.decline",
+  "title": "Decline invitation",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/invitations/:token/decline",
+  "host": "central",
+  "audience": "public",
+  "dataSources": [
+    {
+      "name": "invitationPreview",
+      "kind": "http.get",
+      "url": "/api/invitations/{token}",
+      "params": {"token": "$route.params.token"},
+      "unwrap": "data"
+    }
+  ],
+  "themeFrom": "invitationPreview.tenant.branding",
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": {"className": "mx-auto flex min-h-screen max-w-md flex-col justify-center gap-6 p-8"},
+      "children": [
+        {
+          "id": "header",
+          "kind": "View",
+          "props": {"className": "flex flex-col items-center gap-3"},
+          "children": [
+            {"id": "icon", "kind": "Icon", "props": {"icon": "x-circle", "className": "text-muted size-16"}},
+            {"id": "title", "kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold text-center", "children": "Decline invitation?"}},
+            {
+              "id": "subtitle",
+              "kind": "Text",
+              "props": {"as": "p", "className": "text-muted text-center text-sm"},
+              "bindings": {"children": {"$expr": "'You were invited to join ' + invitationPreview.tenant.name + ' as ' + (invitationPreview.role_label || 'a member') + '. Declining is final — no further messages will be sent.'"}}
+            }
+          ]
+        },
+        {
+          "id": "form",
+          "kind": "Form",
+          "target": {
+            "action": "decline",
+            "resource": "invitations",
+            "endpoint": "POST /api/invitations/{token}/decline",
+            "params": {"token": "$route.params.token"}
+          },
+          "sections": [
+            {
+              "id": "reason-section",
+              "fields": [
+                {
+                  "name": "reason",
+                  "kind": "Select",
+                  "label": "Reason (optional)",
+                  "options": [
+                    {"value": "not_available", "label": "Not available right now"},
+                    {"value": "wrong_person", "label": "This isn't me"},
+                    {"value": "no_interest", "label": "I'm not interested"},
+                    {"value": "other", "label": "Something else"}
+                  ]
+                },
+                {
+                  "name": "reason_note",
+                  "kind": "TextArea",
+                  "label": "Note",
+                  "rows": 3,
+                  "maxLength": 200,
+                  "bindings": {"isHidden": {"$expr": "form.reason !== 'other'"}}
+                }
+              ]
+            }
+          ],
+          "footer": {
+            "primaryAction": {
+              "label": "Decline invitation",
+              "kind": "form.submit",
+              "variant": "danger",
+              "size": "lg",
+              "className": "w-full",
+              "onSuccess": {"kind": "navigate", "to": "/invitations/declined"}
+            },
+            "secondaryAction": {
+              "label": "Never mind, take me back",
+              "kind": "navigate.back",
+              "variant": "ghost",
+              "size": "lg",
+              "className": "w-full"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

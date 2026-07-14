@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/invitations/entitlements",
+  "$version": 1,
+  "title": "invitations — entitlements",
+  "description": "Two entitlement KEYS this module reads at send time. Values are seeded per Tenant by the entitlements module (from Subscription plan + BusinessType.default_config.entitlements) and cached per tenant. Enforcement lives in the `throttle.invitations` middleware — a 402 is returned when the tenant is at cap, distinct from the 429 rate-limit response.",
+  "reference": {
+    "publishedBy": "entitlements",
+    "resolvedBy": "GET /api/auth/me → data.quota_summary + GET /api/v1/entitlements",
+    "seededFrom": "BusinessType.default_config.entitlements[invitations.max_per_month]"
+  },
+  "kinds": [
+    {
+      "kind": "pool",
+      "description": "Consumable pool decremented on each send. Resets on period roll."
+    },
+    {
+      "kind": "unlimited",
+      "description": "No cap. `remaining` is null on the wire."
+    }
+  ],
+  "entitlements": [
+    {
+      "key": "invitations.max_per_month",
+      "kind": "pool",
+      "description": "Max invitations a tenant can send in a calendar month. Consumed on transition into `sent`. Rejected sends do NOT consume the pool. Default: 1000 for Growth plan tenants; unlimited for Enterprise.",
+      "consumedOn": "InvitationSent event",
+      "refusedResponse": {"http": 402, "code": "INVITATIONS_ENTITLEMENT_EXCEEDED"}
+    },
+    {
+      "key": "invitations.channels",
+      "kind": "boolean",
+      "description": "Per-channel enablement. E.g. `invitations.channels.sms=true` on a plan that includes SMS delivery. Fallback: only `email` and `link` channels available if the tenant does not have the boolean grant."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "id": "webhook.resources.webhook-delivery.list",
+  "title": "Webhook deliveries",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/webhooks/deliveries",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {"module": "webhook", "entity": "webhook-delivery", "action": "list"},
+  "requiresPermission": "webhook.deliveries.viewAny",
+  "dataSources": [
+    {"name": "deliveries", "kind": "http.get", "url": "/api/v1/tenant/webhook/deliveries", "unwrap": "data", "paginated": true, "queryParamsFromState": ["filter[subscription_id]", "filter[state]", "filter[event_name]", "sort", "page", "per_page"]},
+    {"name": "subscriptions", "kind": "http.get", "url": "/api/v1/tenant/webhook/subscriptions?per_page=100", "unwrap": "data", "cache": {"ttlSeconds": 300}}
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": {"className": "flex flex-col gap-4 p-6"},
+      "children": [
+        {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Deliveries"}},
+        {"kind": "View", "props": {"className": "flex flex-wrap gap-3"}, "children": [
+          {"kind": "Select", "props": {"label": "Subscription", "name": "filter[subscription_id]", "placeholder": "All"}, "optionsSource": {"$ref": "subscriptions", "valueField": "id", "labelField": "name"}, "actions": {"onChange": {"kind": "data.applyFilter", "source": "deliveries"}}},
+          {"kind": "Select", "props": {"label": "State", "name": "filter[state]", "placeholder": "All"}, "options": [{"key": "pending", "label": "Pending"}, {"key": "inFlight", "label": "In flight"}, {"key": "delivered", "label": "Delivered"}, {"key": "failedRetryable", "label": "Retrying"}, {"key": "failedPermanent", "label": "Failed"}, {"key": "cancelled", "label": "Cancelled"}], "actions": {"onChange": {"kind": "data.applyFilter", "source": "deliveries"}}}
+        ]},
+        {"kind": "DataGrid", "props": {"emptyState": {"title": "No deliveries", "description": "Deliveries appear as events fire."}}, "bindings": {"items": {"$ref": "deliveries"}, "isLoading": {"$ref": "deliveries.isLoading"}}, "columns": [
+          {"id": "state", "header": "", "cell": {"kind": "Widget", "widget": "webhook.webhook-delivery-status-chip", "props": {"state": {"$ref": "row.state"}, "size": "sm", "showLabel": false}}},
+          {"id": "event", "header": "Event", "cell": {"kind": "View", "children": [
+            {"kind": "Text", "props": {"className": "font-mono text-sm"}, "bindings": {"children": {"$ref": "row.event_name"}}},
+            {"kind": "Text", "props": {"className": "text-xs text-muted"}, "bindings": {"children": {"$expr": "row.event_version + ' \u00b7 ' + formatRelative(row.created_at)"}}}
+          ]}},
+          {"id": "response", "header": "Response", "cell": {"kind": "View", "children": [
+            {"kind": "Text", "props": {"className": "text-sm font-medium"}, "bindings": {"className": {"$expr": "row.response_status >= 200 && row.response_status < 300 ? 'text-success text-sm font-medium' : 'text-danger text-sm font-medium'"}, "children": {"$expr": "row.response_status || '\u2014'"}}},
+            {"kind": "Text", "props": {"className": "text-xs text-muted"}, "bindings": {"children": {"$expr": "(row.duration_ms || 0) + 'ms \u00b7 attempt ' + row.attempt_number + '/' + row.max_attempts"}}}
+          ]}},
+          {"id": "actions", "header": "", "align": "end", "cell": {"kind": "View", "props": {"className": "flex items-center gap-1"}, "children": [
+            {"kind": "Button", "props": {"variant": "ghost", "isIconOnly": true, "size": "sm", "leadingIcon": "eye", "ariaLabel": "View"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/webhooks/deliveries/' + row.id"}}},
+            {"kind": "Button", "props": {"variant": "ghost", "isIconOnly": true, "size": "sm", "leadingIcon": "arrow-path", "ariaLabel": "Retry"}, "bindings": {"isDisabled": {"$expr": "row.state !== 'failedPermanent' || !identity.permissions.includes('webhook.deliveries.retry')"}}, "actions": {"onPress": {"kind": "http.post", "urlExpr": "'/api/v1/tenant/webhook/deliveries/' + row.id + '/retry'", "confirm": {"title": "Retry this delivery?", "description": "Dispatches immediately. Counts as a new attempt."}, "onSuccess": [{"kind": "toast.success", "message": "Retry dispatched"}, {"kind": "data.refresh", "source": "deliveries"}]}}}
+          ]}}
+        ]}
+      ]
+    }
+  ]
+}

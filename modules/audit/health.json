@@ -1,0 +1,11 @@
+{
+  "id": "academorix://modules/audit/health",
+  "$version": 1,
+  "title": "audit \u2014 health probes",
+  "probes": [
+    {"name": "audit-registry-warm", "class": "Academorix\\Audit\\Health\\Probes\\RegistryWarmProbe", "category": "startup", "critical": true, "description": "AuditRegistry hydrated on boot.", "timeoutMs": 100},
+    {"name": "audit-kms-reachable", "class": "Academorix\\Audit\\Health\\Probes\\KmsReachableProbe", "category": "readiness", "critical": true, "description": "KMS Describe key on the audit-encryption key. Fails if KMS unreachable \u2014 restricted-field writes will queue for KmsEncryptAuditFieldsJob but read paths refuse decryption.", "timeoutMs": 3000},
+    {"name": "audit-chain-verified-recently", "class": "Academorix\\Audit\\Health\\Probes\\ChainVerifiedRecentlyProbe", "category": "readiness", "critical": false, "description": "For enterprise tenants: chain verification ran within last 8 days (weekly + 24h grace).", "timeoutMs": 500, "thresholds": {"warn_days": 8, "fail_days": 14}},
+    {"name": "audit-cold-rotation-lagging", "class": "Academorix\\Audit\\Health\\Probes\\ColdRotationLaggingProbe", "category": "readiness", "critical": false, "description": "No rows past 400d hot window remain unrotated (365d + 35d grace).", "timeoutMs": 500}
+  ]
+}

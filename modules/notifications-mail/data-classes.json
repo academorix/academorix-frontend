@@ -1,0 +1,40 @@
+{
+  "id": "academorix://modules/notifications-mail/data-classes",
+  "$version": 1,
+  "title": "notifications-mail \u2014 field classification",
+  "description": "MailSuppression entity fields classified. Email + bounce_reason are confidential (PII / near-PII); provider metadata + system flags are internal.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "MailSuppression.id",
+      "MailSuppression.reason",
+      "MailSuppression.provider",
+      "MailSuppression.is_system",
+      "MailSuppression.expires_at",
+      "MailSuppression.created_at",
+      "MailSuppression.updated_at"
+    ],
+    "internal": [
+      "MailSuppression.tenant_id",
+      "MailSuppression.source_delivery_id",
+      "MailSuppression.metadata"
+    ],
+    "confidential": [
+      "MailSuppression.email",
+      "MailSuppression.email_domain",
+      "MailSuppression.bounce_reason"
+    ],
+    "restricted": [],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "audit_log": [
+      "audits.notifications-mail.* rows produced by MailSuppressionObserver + HasAuditable. Retained per foundation's audit_log tier rule."
+    ]
+  },
+  "notes": [
+    "MailSuppression.email + email_domain are `confidential` (PII \u2014 email address). SHA-256 hash retained after 5y as anonymised evidence per retention.json.",
+    "bounce_reason may include recipient email fragments from provider responses. Sanitised before persistence (SanitiseBounceReasonCast).",
+    "No `restricted` fields \u2014 provider API keys live in Doppler, not in this table."
+  ]
+}

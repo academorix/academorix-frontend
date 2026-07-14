@@ -1,0 +1,30 @@
+{
+  "id": "audit.audit-diff-viewer",
+  "title": "Audit diff viewer",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Side-by-side JSON diff of old_values vs new_values. Restricted fields render as `[REDACTED]` when canViewRestricted=false. Highlights added / changed / removed keys with a colour band on the left.",
+  "props": {
+    "oldValues": {"type": "object", "description": "old_values JSONB from the Audit row. Null for created events."},
+    "newValues": {"type": "object", "description": "new_values JSONB. Null for deleted events."},
+    "canViewRestricted": {"type": "boolean", "default": false, "description": "Whether to unmask restricted-tier field values."}
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "container",
+      "kind": "View",
+      "props": {"className": "grid grid-cols-2 gap-4"},
+      "children": [
+        {"kind": "View", "props": {"className": "flex flex-col gap-1"}, "children": [
+          {"kind": "Text", "props": {"as": "h3", "className": "text-xs font-semibold text-muted uppercase tracking-wide", "children": "Before"}},
+          {"kind": "View", "props": {"className": "font-mono text-xs bg-content2 p-3 rounded border-l-4 border-danger overflow-auto"}, "bindings": {"children": {"$expr": "formatJson(props.oldValues, {redactRestricted: !props.canViewRestricted}) || '(no prior value)'"}}}
+        ]},
+        {"kind": "View", "props": {"className": "flex flex-col gap-1"}, "children": [
+          {"kind": "Text", "props": {"as": "h3", "className": "text-xs font-semibold text-muted uppercase tracking-wide", "children": "After"}},
+          {"kind": "View", "props": {"className": "font-mono text-xs bg-content2 p-3 rounded border-l-4 border-success overflow-auto"}, "bindings": {"children": {"$expr": "formatJson(props.newValues, {redactRestricted: !props.canViewRestricted}) || '(deleted)'"}}}
+        ]}
+      ]
+    }
+  ]
+}

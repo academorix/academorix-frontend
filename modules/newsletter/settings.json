@@ -1,0 +1,117 @@
+{
+  "id": "academorix://modules/newsletter/settings",
+  "$version": 1,
+  "title": "newsletter \u2014 settings",
+  "description": "Newsletter platform defaults. Canonical group/section/field taxonomy. One #[AsSetting] class \u2014 `NewsletterSettings` \u2014 group key `newsletter`.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "newsletter",
+      "class": "Academorix\\Newsletter\\Settings\\NewsletterSettings",
+      "label": "Newsletter",
+      "description": "Platform defaults applied to new newsletters + reputation guardrails.",
+      "icon": "newspaper",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 30,
+      "permission": "settings.read",
+      "sections": [
+        {
+          "label": "Default newsletter behaviour",
+          "description": "Applied to new Newsletter rows at create time. Individual newsletters can override.",
+          "icon": "cog-6-tooth",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "defaults_confirmation_required",
+              "controlType": "toggle",
+              "label": "Require double opt-in",
+              "defaultValue": true,
+              "validation": ["boolean"],
+              "sortOrder": 1,
+              "helpText": "Best practice \u2014 improves deliverability + satisfies CAN-SPAM \u00a77704(a)(5)(A)(iii)."
+            },
+            {
+              "name": "defaults_confirmation_ttl_hours",
+              "controlType": "number",
+              "label": "Confirmation TTL (hours)",
+              "defaultValue": 720,
+              "validation": ["required", "integer", "min:1", "max:8760"],
+              "min": 1,
+              "max": 8760,
+              "sortOrder": 2,
+              "helpText": "Default 720 (30 days). Unconfirmed subscribers pruned past this window."
+            },
+            {
+              "name": "defaults_send_batch_size",
+              "controlType": "number",
+              "label": "Send batch size",
+              "defaultValue": 500,
+              "validation": ["required", "integer", "min:1", "max:10000"],
+              "min": 1,
+              "max": 10000,
+              "sortOrder": 3,
+              "helpText": "Recipients per send batch. Higher = faster campaigns; lower = kinder to providers."
+            }
+          ]
+        },
+        {
+          "label": "Reputation guardrails",
+          "description": "Platform-default thresholds applied to new newsletters. Auto-throttle on breach.",
+          "icon": "chart-bar",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "reputation_min_open_rate",
+              "controlType": "slider",
+              "label": "Minimum open rate",
+              "defaultValue": 0.1,
+              "validation": ["required", "numeric", "min:0", "max:1"],
+              "min": 0,
+              "max": 1,
+              "step": 0.01,
+              "sortOrder": 1,
+              "helpText": "Alert when campaign open rate falls below this."
+            },
+            {
+              "name": "reputation_min_click_rate",
+              "controlType": "slider",
+              "label": "Minimum click rate",
+              "defaultValue": 0.01,
+              "validation": ["required", "numeric", "min:0", "max:1"],
+              "min": 0,
+              "max": 1,
+              "step": 0.005,
+              "sortOrder": 2
+            },
+            {
+              "name": "reputation_max_bounce_rate",
+              "controlType": "slider",
+              "label": "Maximum bounce rate",
+              "defaultValue": 0.05,
+              "validation": ["required", "numeric", "min:0", "max:1"],
+              "min": 0,
+              "max": 1,
+              "step": 0.01,
+              "sortOrder": 3,
+              "helpText": "Auto-throttle newsletter when campaign bounce rate exceeds this."
+            },
+            {
+              "name": "reputation_max_complaint_rate",
+              "controlType": "slider",
+              "label": "Maximum complaint rate",
+              "defaultValue": 0.003,
+              "validation": ["required", "numeric", "min:0", "max:0.1"],
+              "min": 0,
+              "max": 0.1,
+              "step": 0.001,
+              "sortOrder": 4,
+              "helpText": "Industry gold standard: < 0.3%."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

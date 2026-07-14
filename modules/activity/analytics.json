@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/activity/analytics",
+  "$version": 1,
+  "title": "activity \u2014 product analytics events",
+  "description": "Activity module produces the raw signal; downstream analytics (product feed engagement) is measured elsewhere. This file publishes only meta-events about the activity infrastructure itself.",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {"name": "Activity Feed Viewed", "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "filter_used", "result_count"], "description": "User loaded the /activities screen."},
+    {"name": "Activity Feed Filtered", "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "filter_field", "filter_value_kind"]}
+  ]
+}

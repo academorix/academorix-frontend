@@ -1,0 +1,89 @@
+{
+  "id": "academorix://modules/tenancy/notifications",
+  "$version": 1,
+  "title": "tenancy — Laravel notifications",
+  "description": "Laravel notifications this module owns. Each carries the channels it delivers to, the template refs (Markdown Mailable or Blade view), the notifiable model(s) it targets, and the localisation namespace. Consent tier is per-notification: transactional (essential) notifications ignore marketing opt-out; marketing notifications respect it.",
+  "namespace": "Academorix\\Tenancy\\Notifications",
+  "notifications": [
+    {
+      "class": "Academorix\\Tenancy\\Notifications\\WelcomeNotification",
+      "channels": ["mail", "database"],
+      "consentTier": "transactional",
+      "targets": ["User"],
+      "template": {
+        "mail": "tenancy::mail.welcome",
+        "markdown": true
+      },
+      "queue": "notifications",
+      "description": "Sent to the newly-created owner User after TenantProvisioned. Includes verification link + first-steps checklist keyed by BusinessType.default_config.onboarding_steps."
+    },
+    {
+      "class": "Academorix\\Tenancy\\Notifications\\TenantSuspendedNotification",
+      "channels": ["mail", "database"],
+      "consentTier": "transactional",
+      "targets": ["User"],
+      "template": {"mail": "tenancy::mail.tenant-suspended"},
+      "queue": "notifications",
+      "description": "Sent to every User with the `owner` or `admin` role in a suspended Tenant. Includes reason + support contact + grace window if applicable."
+    },
+    {
+      "class": "Academorix\\Tenancy\\Notifications\\TenantResumedNotification",
+      "channels": ["mail", "database"],
+      "consentTier": "transactional",
+      "targets": ["User"],
+      "template": {"mail": "tenancy::mail.tenant-resumed"},
+      "queue": "notifications",
+      "description": "Sent to owners + admins when a Tenant returns to active status."
+    },
+    {
+      "class": "Academorix\\Tenancy\\Notifications\\TenantArchivedNotification",
+      "channels": ["mail", "database"],
+      "consentTier": "transactional",
+      "targets": ["User"],
+      "template": {"mail": "tenancy::mail.tenant-archived"},
+      "queue": "notifications",
+      "description": "Sent to owners on archive. Includes data export link (valid 30d — matches retention window) and undo-instructions."
+    },
+    {
+      "class": "Academorix\\Tenancy\\Notifications\\DomainVerifiedNotification",
+      "channels": ["mail", "database", "broadcast"],
+      "consentTier": "transactional",
+      "targets": ["User"],
+      "template": {"mail": "tenancy::mail.domain-verified"},
+      "queue": "notifications",
+      "description": "Sent to Users with `tenants.manage_domains` permission when a Domain's verification succeeds."
+    },
+    {
+      "class": "Academorix\\Tenancy\\Notifications\\DomainVerificationFailedNotification",
+      "channels": ["mail", "database"],
+      "consentTier": "transactional",
+      "targets": ["User"],
+      "template": {"mail": "tenancy::mail.domain-verification-failed"},
+      "queue": "notifications",
+      "description": "Sent after `verification_attempts >= 100`. Includes the last error + a manual retry link."
+    },
+    {
+      "class": "Academorix\\Tenancy\\Notifications\\BrandingUpdatedNotification",
+      "channels": ["database"],
+      "consentTier": "functional",
+      "targets": ["User"],
+      "template": null,
+      "queue": "notifications",
+      "description": "In-app-only. Sent to owners + admins when the primary Branding profile changes."
+    },
+    {
+      "class": "Academorix\\Tenancy\\Notifications\\IntegrationSyncFailedNotification",
+      "channels": ["mail", "database", "slack"],
+      "consentTier": "transactional",
+      "targets": ["User"],
+      "template": {"mail": "tenancy::mail.integration-sync-failed"},
+      "queue": "notifications",
+      "description": "Sent to Users with `tenants.manage_integrations` after an integration sync fails. Slack channel per tenant is optional and configured via TenantIntegration `webhook`."
+    }
+  ],
+  "consentTiers": {
+    "transactional": "Always sent — required to operate the service. Ignores marketing opt-out.",
+    "functional": "In-app + email only; email respects marketing opt-out.",
+    "marketing": "Fully respects opt-out per user preference + tenant-wide setting."
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "id": "academorix://modules/transfer/broadcasts",
+  "$version": 1,
+  "title": "transfer \u2014 broadcast channels",
+  "description": "One private per-user channel carrying the lifecycle events of that user's xfer_jobs. SPA subscribes when the user opens the transfer screen (or the dashboard's 'Recent jobs' panel) and toasts progress + completion without polling.",
+  "driver": "reverb",
+  "channels": [
+    {
+      "name": "user.{userId}.transfer",
+      "kind": "private",
+      "description": "Lifecycle stream for xfer_jobs where causer_id = userId.",
+      "authorize": "User is the addressed user (auth()->id() === userId).",
+      "authCallback": "fn (User $user, string $userId) => $user->getKey() === $userId",
+      "events": [
+        "XferJobQueued",
+        "XferJobStarted",
+        "XferJobProgress",
+        "XferJobShardCompleted",
+        "XferJobCompleted",
+        "XferJobPartiallySucceeded",
+        "XferJobFailed",
+        "XferJobCancelled",
+        "SampleDataGenerated"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": "notifications-sms.sms-cost-chip",
+  "title": "SMS cost chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip showing per-message cost. Severity: < $0.01 neutral, < $0.10 info, < $0.50 warning, >= $0.50 danger. Used on cost report screens + admin dashboards.",
+  "props": {
+    "cost_micro_units": {"type": "integer", "description": "Cost in micro-currency units (1 unit = 1 currency micro-cent)."},
+    "currency": {"type": "string", "default": "USD"},
+    "size": {"type": "string", "default": "sm", "enum": ["xs", "sm", "md"]}
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "chip",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {"$expr": "props.cost_micro_units < 10000 ? 'neutral' : (props.cost_micro_units < 100000 ? 'info' : (props.cost_micro_units < 500000 ? 'warning' : 'danger'))"},
+        "size": {"$ref": "props.size"}
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "props": {"as": "span"},
+          "bindings": {
+            "children": {"$expr": "formatCurrency(props.cost_micro_units / 1000000, props.currency)"}
+          }
+        }
+      ]
+    }
+  ]
+}

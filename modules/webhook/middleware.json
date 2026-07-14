@@ -1,0 +1,39 @@
+{
+  "id": "academorix://modules/webhook/middleware",
+  "$version": 1,
+  "title": "webhook \u2014 HTTP middleware",
+  "description": "One middleware: `webhooks.verify` \u2014 parameterised signature verification for inbound webhooks. Loads two secret config keys for rotation grace on the inbound side (primary + previous). Refuses with 401 on mismatch.",
+  "middleware": [
+    {
+      "alias": "webhooks.verify",
+      "class": "Academorix\\Webhook\\Http\\Middleware\\VerifyWebhookSignature",
+      "priority": 15,
+      "description": "Parameterised: `webhooks.verify:cfg.key.primary,cfg.key.previous`. Reads inbound signature per provider convention (HMAC-SHA256 via X-Webhook-Signature by default; strategies pluggable per provider). Verifies against config('cfg.key.primary') OR config('cfg.key.previous') to allow rotation grace. Refuses with 401 on mismatch \u2014 no auth ticket, no controller.",
+      "sideEffects": [
+        "Sets Request::attributes->set('webhook_secret_key_used', 'primary' | 'previous')",
+        "Sets Request::attributes->set('webhook_namespace', $namespace)",
+        "Sets Request::attributes->set('webhook_provider', $provider)"
+      ],
+      "config": {
+        "signature_header": "X-Webhook-Signature",
+        "signature_previous_header": "X-Webhook-Signature-Previous",
+        "timestamp_header": "X-Webhook-Timestamp",
+        "algorithm": "sha256",
+        "replay_window_seconds": 300
+      },
+      "returnsOn401": {
+        "code": "WEBHOOK_SIGNATURE_INVALID",
+        "reason": "Signature failed verification against both primary and previous secrets. Logged with the invalid signature fragment for support diagnostics."
+      },
+      "usage_examples": [
+        "webhooks.verify:notifications-mail.webhook_secrets.mailgun,notifications-mail.webhook_secrets.mailgun_previous",
+        "webhooks.verify:subscription.webhook_secrets.stripe,subscription.webhook_secrets.stripe_previous"
+      ]
+    }
+  ],
+  "priorityContext": {
+    "runsAfter": ["request.id"],
+    "runsBefore": ["throttle:webhook-inbound", "response.envelope"],
+    "note": "Priority 15 places verification BEFORE rate limiting so invalid signatures never consume the rate limiter budget."
+  }
+}

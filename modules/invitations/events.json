@@ -1,0 +1,126 @@
+{
+  "id": "academorix://modules/invitations/events",
+  "$version": 1,
+  "title": "invitations — domain events",
+  "description": "Ten lifecycle events. Every event carries the Invitation model (fresh from the DB, not stale from cache) and mirrors the state machine transitions. All implement ShouldDispatchAfterCommit so listeners never fire against a rolled-back transaction. Consumers subscribe to these to react to acceptance / decline / bounce (user module creates User rows on Accepted, teams module adds TeamMember, notifications module sends inviter-facing confirmations, ...).",
+  "contract": "ShouldDispatchAfterCommit",
+  "events": [
+    {
+      "name": "InvitationSent",
+      "class": "Academorix\\Invitations\\Events\\InvitationSent",
+      "when": "SendInvitationJob completes: mail transport accepted the message for delivery. Sets `sent_at` on the Invitation + writes an `event=sent` row on InvitationEvent.",
+      "afterCommit": true,
+      "payload": {
+        "invitation": "Invitation",
+        "channel": "string",
+        "transport": "string"
+      }
+    },
+    {
+      "name": "InvitationDelivered",
+      "class": "Academorix\\Invitations\\Events\\InvitationDelivered",
+      "when": "Mail transport reports `delivered` via inbound webhook. First occurrence per invitation — subsequent deliveries (e.g. redundant delivery signals) are logged as events but do not re-fire this domain event.",
+      "afterCommit": true,
+      "payload": {
+        "invitation": "Invitation",
+        "transport": "string",
+        "occurredAt": "datetime"
+      }
+    },
+    {
+      "name": "InvitationOpened",
+      "class": "Academorix\\Invitations\\Events\\InvitationOpened",
+      "when": "First `opened` webhook signal (tracking pixel loaded) OR first click on the accept link — whichever comes first. Fires once per invitation.",
+      "afterCommit": true,
+      "payload": {
+        "invitation": "Invitation",
+        "occurredAt": "datetime",
+        "ipAddress": "string|null",
+        "userAgent": "string|null"
+      }
+    },
+    {
+      "name": "InvitationClicked",
+      "class": "Academorix\\Invitations\\Events\\InvitationClicked",
+      "when": "Invitee hits GET /api/invitations/{token} (the preview endpoint). Fires on every hit, unlike Opened which fires only on first click. Used by risk-scoring + funnel analytics.",
+      "afterCommit": true,
+      "payload": {
+        "invitation": "Invitation",
+        "occurredAt": "datetime",
+        "ipAddress": "string|null",
+        "userAgent": "string|null"
+      }
+    },
+    {
+      "name": "InvitationAccepted",
+      "class": "Academorix\\Invitations\\Events\\InvitationAccepted",
+      "when": "Terminal success. Accept flow completed — the target-registered accept handler created/promoted the User row, assigned the role, applied any grants. `accepted_by_user_id` is set atomically with `state=accepted`.",
+      "afterCommit": true,
+      "payload": {
+        "invitation": "Invitation",
+        "acceptedBy": "User",
+        "target": "Model",
+        "grantsApplied": "array"
+      }
+    },
+    {
+      "name": "InvitationDeclined",
+      "class": "Academorix\\Invitations\\Events\\InvitationDeclined",
+      "when": "Terminal decline. Invitee explicitly declined via POST /api/invitations/{token}/decline.",
+      "afterCommit": true,
+      "payload": {
+        "invitation": "Invitation",
+        "reason": "string|null"
+      }
+    },
+    {
+      "name": "InvitationExpired",
+      "class": "Academorix\\Invitations\\Events\\InvitationExpired",
+      "when": "ExpireInvitationsJob observes `now > expires_at` on a non-terminal invitation. Terminal — no listener can reverse.",
+      "afterCommit": true,
+      "payload": {
+        "invitation": "Invitation"
+      }
+    },
+    {
+      "name": "InvitationRevoked",
+      "class": "Academorix\\Invitations\\Events\\InvitationRevoked",
+      "when": "Inviter (or platform admin) manually revoked. Terminal.",
+      "afterCommit": true,
+      "payload": {
+        "invitation": "Invitation",
+        "revokedBy": "User|ServiceAccount|null",
+        "reason": "string|null",
+        "isAbuseResponse": "boolean"
+      }
+    },
+    {
+      "name": "InvitationBounced",
+      "class": "Academorix\\Invitations\\Events\\InvitationBounced",
+      "when": "Mail transport reports `bounce` (hard/soft) or `complaint` (spam-flagged by recipient). Non-terminal for soft bounces — a RetryBounceJob may re-attempt. Hard bounces + complaints are terminal.",
+      "afterCommit": true,
+      "payload": {
+        "invitation": "Invitation",
+        "bounceKind": "string",
+        "bounceReason": "string",
+        "transport": "string",
+        "isTerminal": "boolean"
+      }
+    },
+    {
+      "name": "InvitationResent",
+      "class": "Academorix\\Invitations\\Events\\InvitationResent",
+      "when": "Inviter triggered POST .../resend. New token generated (previous invalidated), fresh SendInvitationJob dispatched, `resend_count` incremented.",
+      "afterCommit": true,
+      "payload": {
+        "invitation": "Invitation",
+        "triggeredBy": "User|ServiceAccount",
+        "resendCount": "integer"
+      }
+    }
+  ],
+  "notes": [
+    "Domain events (this file) are for internal Laravel event bus consumption. Customer-consumable webhooks are declared separately in `webhooks.json` — a subset of these events map through to outbound webhooks with HMAC-SHA256 signing.",
+    "Every listener that reacts to InvitationAccepted MUST be idempotent — the accept endpoint is idempotent by design (a second call on the same token returns the original outcome), but a subscriber that runs a side effect (creating a User, sending a welcome email) must guard against double-execution."
+  ]
+}

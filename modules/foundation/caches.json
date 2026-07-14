@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/foundation/caches",
+  "$version": 1,
+  "title": "foundation — cache tag namespaces + base keys",
+  "description": "Foundation reserves two cache tag namespaces (`platform`, `foundation`) so no two modules collide. Downstream modules use their own module-name tags (`tenancy`, `invitations`, ...). Every cache entry in every module MUST be tagged; untagged writes are refused by the base repository.",
+  "driver": "redis",
+  "reservedTags": [
+    {"tag": "platform", "description": "Cross-module platform state — module registry, health snapshot, config-reload signal. Owned by foundation."},
+    {"tag": "foundation", "description": "Foundation-internal state — search engine health, import/export contract registry cache, permission seeding checksum. Owned by foundation."}
+  ],
+  "downstreamConvention": {
+    "rule": "Every downstream module uses its module name as a tag: `tenancy`, `invitations`, `notifications`, `user`, etc. Composite tags allowed (`invitations`, `tenant`) for tenant-scoped tenant-owned data.",
+    "enforcement": "BaseRepository refuses `cache()->put()` calls without a tag list. Tags array is inspected against a checksum of every module's caches.json at boot — unknown tags fail the build."
+  },
+  "keys": [
+    {
+      "pattern": "platform:modules:registry",
+      "description": "Materialised ModuleRegistry state — sorted by dependency + probe registrations. Warmed at boot, invalidated on ConfigReloaded.",
+      "ttlSeconds": 3600,
+      "tags": ["platform"],
+      "invalidatedBy": ["ConfigReloaded event", "module:sync command"]
+    },
+    {
+      "pattern": "platform:health:snapshot",
+      "description": "Aggregate health status. Written every 5m by foundation:health-snapshot + read by every /api/health call. Cached for 5s at the read side to smooth request bursts.",
+      "ttlSeconds": 30,
+      "tags": ["platform"],
+      "invalidatedBy": ["health:check command", "HealthProbeFailed event"]
+    },
+    {
+      "pattern": "foundation:search:engine_health",
+      "description": "Search engine reachable ping result. Prevents every Searchable-model save from re-pinging the engine.",
+      "ttlSeconds": 10,
+      "tags": ["foundation"]
+    },
+    {
+      "pattern": "foundation:import:contracts",
+      "description": "Cached ImportContractRegistry map (model_class → ImportContract). Built at boot from every module's Importable models.",
+      "ttlSeconds": 3600,
+      "tags": ["foundation"],
+      "invalidatedBy": ["ApplicationBooted event"]
+    },
+    {
+      "pattern": "foundation:export:contracts",
+      "description": "Cached ExportContractRegistry map. Same shape as import contracts.",
+      "ttlSeconds": 3600,
+      "tags": ["foundation"]
+    },
+    {
+      "pattern": "foundation:permissions:checksum",
+      "description": "Hash of every module's permissions.json — used to detect seed drift between deploys.",
+      "ttlSeconds": 86400,
+      "tags": ["foundation"]
+    }
+  ]
+}

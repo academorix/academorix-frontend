@@ -1,0 +1,21 @@
+{
+  "id": "academorix://modules/notifications-sms/data-classes",
+  "$version": 1,
+  "title": "notifications-sms \u2014 field classification",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": ["SmsOptOut.id", "SmsOptOut.reason", "SmsOptOut.provider", "SmsOptOut.is_system", "SmsOptOut.opted_out_at", "SmsOptOut.expires_at", "SmsOptOut.created_at", "SmsOptOut.updated_at"],
+    "internal": ["SmsOptOut.tenant_id", "SmsOptOut.phone_country_code", "SmsOptOut.source_delivery_id", "SmsOptOut.metadata"],
+    "confidential": ["SmsOptOut.phone", "SmsOptOut.inbound_message_body"],
+    "restricted": [],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "audit_log": ["audits.notifications-sms.* rows for opt-out create + revoke + cost events."]
+  },
+  "notes": [
+    "SmsOptOut.phone is `confidential` (PII \u2014 phone number). On GDPR Art. 17 erasure: replaced with SHA-256 hash + row retained for TCPA evidence.",
+    "SmsOptOut.inbound_message_body may contain PII (user typed a comment with STOP). Sanitised via InboundMessageSanitiseCast \u2014 keeps first 100 chars, redacts anything looking like an email address / URL / other phone number.",
+    "SMS message BODY (in NotificationDelivery.payload) is confidential per notifications core."
+  ]
+}

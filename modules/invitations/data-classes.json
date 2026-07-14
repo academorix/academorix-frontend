@@ -1,0 +1,84 @@
+{
+  "id": "academorix://modules/invitations/data-classes",
+  "$version": 1,
+  "title": "invitations — field-level data classification",
+  "description": "Every column on both schemas classified by sensitivity tier. Drives DSAR export scope, right-to-erasure behaviour, encryption-at-rest policy. Field paths: `Model.field` — dotted paths reference JSONB inner properties.",
+  "tiers": {
+    "public": "Non-identifying, safe to expose in logs / URLs.",
+    "internal": "Platform-internal state. Never surfaced to end users. Not personally identifiable.",
+    "confidential": "PII that is exportable on DSAR and erasable on request. Encrypted in transit + AES-256 at rest.",
+    "restricted": "Credential-adjacent secrets. Encrypted with KMS key destruction on erasure (crypto-shredding). Access logged.",
+    "regulated_minor": "PII of a subject under the age of consent — triggers additional COPPA + GDPR Art. 8 controls."
+  },
+  "classes": {
+    "public": [
+      "Invitation.id",
+      "Invitation.application_id",
+      "Invitation.tenant_id",
+      "Invitation.target_type",
+      "Invitation.target_id",
+      "Invitation.channel",
+      "Invitation.role_key",
+      "Invitation.state",
+      "Invitation.expires_at",
+      "Invitation.resend_count",
+      "Invitation.created_at",
+      "Invitation.updated_at",
+      "Invitation.token_prefix",
+      "InvitationEvent.id",
+      "InvitationEvent.invitation_id",
+      "InvitationEvent.event",
+      "InvitationEvent.occurred_at",
+      "InvitationEvent.transport",
+      "InvitationEvent.signal_id"
+    ],
+    "internal": [
+      "Invitation.grants",
+      "Invitation.metadata",
+      "Invitation.inviter_type",
+      "Invitation.inviter_id",
+      "Invitation.declined_reason",
+      "Invitation.revoked_reason",
+      "Invitation.bounce_kind",
+      "Invitation.bounce_reason",
+      "Invitation.last_resent_at",
+      "Invitation.sent_at",
+      "Invitation.delivered_at",
+      "Invitation.opened_at",
+      "Invitation.clicked_at",
+      "Invitation.accepted_at",
+      "Invitation.declined_at",
+      "Invitation.expired_at",
+      "Invitation.revoked_at",
+      "InvitationEvent.actor_type",
+      "InvitationEvent.actor_id",
+      "InvitationEvent.error_code",
+      "InvitationEvent.error_message",
+      "InvitationEvent.metadata"
+    ],
+    "confidential": [
+      "Invitation.email",
+      "Invitation.message",
+      "InvitationEvent.ip_address",
+      "InvitationEvent.user_agent",
+      "InvitationEvent.country_code",
+      "InvitationEvent.city"
+    ],
+    "restricted": [
+      "Invitation.token_hash"
+    ],
+    "regulated_minor": [
+      "Not applicable to Invitation directly. When Invitation.role_key implies a guardian-of-minor relationship (owned by future safeguarding module), the target row (Athlete) carries the minor's PII and gets the regulated_minor tier — invitations themselves stay `confidential`."
+    ]
+  },
+  "dsar": {
+    "exportableTiers": ["public", "internal", "confidential"],
+    "exportExclusions": [
+      "Invitation.token_hash (restricted secret — never included)"
+    ],
+    "erasureBehaviour": {
+      "confidential": "purge-with-audit-record — Invitation.email → `erased-<hash>@invalid.local`, message → NULL, InvitationEvent ip_address / user_agent / city → NULL. Country_code retained (aggregate deliverability, no individual identification).",
+      "restricted": "crypto-shred — token_hash cannot be reversed (SHA-256), and the raw token was never persisted; effectively a no-op. State flipped to `revoked` if not terminal."
+    }
+  }
+}

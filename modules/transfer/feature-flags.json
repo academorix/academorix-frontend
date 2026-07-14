@@ -1,0 +1,15 @@
+{
+  "id": "academorix://modules/transfer/feature-flags",
+  "$version": 1,
+  "title": "transfer \u2014 kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {"key": "transfer.queue",              "kind": "kill-switch", "default": "on",  "description": "Master queue kill switch. Off \u2014 all import / export / sample dispatches short-circuit to TRANSFER_QUEUE_DISABLED with 503. Emergency ops during worker fleet incidents."},
+    {"key": "transfer.notifications",      "kind": "kill-switch", "default": "on",  "description": "SendXferJobNotificationJob execution. Off \u2014 jobs complete silently; users must poll `GET /jobs/{id}`. Used when a notifications transport is down."},
+    {"key": "transfer.prune",              "kind": "kill-switch", "default": "on",  "description": "PruneXferArtifactsJob execution. Off \u2014 nothing purges. Emergency during retention policy audits."},
+    {"key": "transfer.stalled_sweep",      "kind": "kill-switch", "default": "on",  "description": "The 15-minute + login-time stalled sweep. Off \u2014 stuck jobs sit until daily prune. Rarely useful; here for completeness."},
+    {"key": "transfer.dual_write.activity","kind": "kill-switch", "default": "on",  "description": "HasActivityLog on XferJob dual-write to activity_log. Off decouples XferJob transitions from the tenant feed (won't affect the transfer job itself). Emergency during activity ingest storms."},
+    {"key": "transfer.dual_write.audit",   "kind": "kill-switch", "default": "on",  "description": "HasAudit on XferJob dual-write to audits. Off decouples XferJob transitions from the audit trail. Very rare \u2014 disable only if the audit substrate is quarantined."},
+    {"key": "transfer.registry.compiled",  "kind": "kill-switch", "default": "on",  "description": "Use the compiled EntityRegistry cache. Off \u2014 registry is scanned from reflection on every request (slow, useful during registry debugging)."}
+  ]
+}

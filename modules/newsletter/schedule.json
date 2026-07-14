@@ -1,0 +1,11 @@
+{
+  "id": "academorix://modules/newsletter/schedule",
+  "$version": 1,
+  "title": "newsletter \u2014 scheduled tasks",
+  "entries": [
+    {"name": "newsletter-send-scheduled", "command": "newsletter:send-scheduled", "cron": "* * * * *", "timezone": "UTC", "purpose": "Every minute: scan NewsletterCampaign rows where state=pending AND scheduled_at <= now(). Dispatch SendNewsletterCampaignJob for each."},
+    {"name": "newsletter-refresh-audiences", "command": "newsletter:refresh-audiences", "cron": "0 * * * *", "timezone": "UTC", "purpose": "Hourly: refresh audiences with cache_refreshed_at older than 6h. Keeps segments current."},
+    {"name": "newsletter-reputation-monthly", "command": "newsletter:reputation-report --month=previous", "cron": "0 9 1 * *", "timezone": "UTC", "purpose": "Monthly 1st @ 09 UTC: email reputation report to each newsletter's owner."},
+    {"name": "newsletter-prune-unengaged", "command": "newsletter:prune-unengaged", "cron": "0 4 * * *", "timezone": "UTC", "purpose": "Daily 04 UTC: soft-delete pending_confirmation past TTL; flag long-unengaged actives for admin review."}
+  ]
+}

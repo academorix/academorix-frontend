@@ -1,0 +1,128 @@
+{
+  "id": "academorix://modules/transfer/jobs",
+  "$version": 1,
+  "title": "transfer \u2014 background jobs",
+  "description": "Every user-initiated operation dispatches ImportEntityJob / ExportEntityJob / GenerateSampleDataJob. Those in turn ride Laravel Excel's ->queue() chain (chunk-per-queue-job + Bus::chain) plus our housekeeping jobs (Coordinator, WriteErrorsArtifact, MarkXferJobCompleted, SendXferJobNotification). PruneXferArtifactsJob runs on a schedule.",
+  "jobs": [
+    {
+      "class": "Academorix\\Transfer\\Jobs\\ImportEntityJob",
+      "queue": "transfer",
+      "purpose": "Top-level orchestrator for a single import. Constructs a DynamicEntityImport (extends AbstractDynamicImport implementing ShouldQueue + WithChunkReading + ToModel + WithValidation + WithUpserts + WithHeadingRow + WithEvents + HasLocalePreference), dispatches Laravel Excel's ->queue() chain with the following tail chain: ImportCoordinatorJob \u2192 MarkXferJobCompletedJob \u2192 SendXferJobNotificationJob. Reads xfer_jobs.mode to select append / upsert / replace / delete strategy.",
+      "shouldQueue": true,
+      "shouldBeUnique": false,
+      "tries": 1,
+      "backoff": null,
+      "notes": "tries=1 \u2014 chunk-level retries are handled by Laravel Excel + the shard job's own retry contract. Retrying the orchestrator would double-process."
+    },
+    {
+      "class": "Academorix\\Transfer\\Jobs\\ExportEntityJob",
+      "queue": "transfer",
+      "purpose": "Top-level orchestrator for a single export. Constructs a DynamicEntityExport (extends AbstractDynamicExport implementing FromQuery|FromView|FromGenerator|FromCollection + WithHeadings + WithMapping + WithCustomChunkSize + WithCustomCsvSettings + WithColumnWidths + WithColumnFormatting + WithMultipleSheets? + HasLocalePreference), dispatches Laravel Excel's ->queue() chain with the tail chain: ExportCoordinatorJob \u2192 MarkXferJobCompletedJob \u2192 SendXferJobNotificationJob.",
+      "shouldQueue": true,
+      "shouldBeUnique": false,
+      "tries": 1,
+      "backoff": null
+    },
+    {
+      "class": "Academorix\\Transfer\\Jobs\\ImportShardJob",
+      "queue": "transfer",
+      "purpose": "Runs one shard of a sharded import. Wraps a range-limited DynamicEntityImport (rows [offset, offset+limit) or one sheet). Only used when the import request or the entity's #[Importable] configuration marks the run as sharded (large files or #[ImportableWorkbook] with multiple sheets).",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueVia": "xfer_shard_id",
+      "uniqueFor": 3600,
+      "tries": 3,
+      "backoff": [60, 300, 900]
+    },
+    {
+      "class": "Academorix\\Transfer\\Jobs\\ExportShardJob",
+      "queue": "transfer",
+      "purpose": "Runs one shard of a sharded export. Wraps a range-limited DynamicEntityExport (query rows [offset, offset+limit) or one sheet).",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueVia": "xfer_shard_id",
+      "uniqueFor": 3600,
+      "tries": 3,
+      "backoff": [60, 300, 900]
+    },
+    {
+      "class": "Academorix\\Transfer\\Jobs\\ImportCoordinatorJob",
+      "queue": "transfer",
+      "purpose": "Coordinator sitting at the end of the shard chain. Verifies every shard reached a terminal state, aggregates counters into the parent XferJob, decides succeeded vs partially_succeeded vs failed based on failed-row count + stopOnError policy, and hands off to WriteErrorsArtifactJob when errors were collected.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueVia": "xfer_job_id",
+      "uniqueFor": 3600,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Transfer\\Jobs\\ExportCoordinatorJob",
+      "queue": "transfer",
+      "purpose": "Coordinator for sharded exports. Merges per-shard files into a single result artifact when the entity is configured for merging (single-file XLSX with N sheets), or produces a zip artifact when merging is not requested. Computes checksum + row_count on the final artifact.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueVia": "xfer_job_id",
+      "uniqueFor": 3600,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Transfer\\Jobs\\GenerateSampleDataJob",
+      "queue": "transfer",
+      "purpose": "Runs a #[SampleData(factory: ...)]-configured factory to insert fixture records for the target entity within the current tenant scope. Fires SampleDataGenerated on completion.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueVia": "xfer_job_id",
+      "uniqueFor": 1800,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Transfer\\Jobs\\WriteErrorsArtifactJob",
+      "queue": "transfer",
+      "purpose": "Composes an errors.csv artifact from SkipsFailures data collected by AbstractDynamicImport. Columns: row_number, sheet_name, source_row (JSON), field, rule, message. Uploads to the artifact disk; links xfer_jobs.errors_artifact_id.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueVia": "xfer_job_id",
+      "uniqueFor": 1800,
+      "tries": 3,
+      "backoff": [30, 120, 600]
+    },
+    {
+      "class": "Academorix\\Transfer\\Jobs\\MarkXferJobCompletedJob",
+      "queue": "transfer",
+      "purpose": "Final housekeeping. Transitions XferJob to succeeded / partially_succeeded based on counters. Sets finished_at + progress_percent=100. The observer wired to `updating` fires the appropriate XferJobCompleted / XferJobPartiallySucceeded event automatically.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueVia": "xfer_job_id",
+      "uniqueFor": 1800,
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Transfer\\Jobs\\SendXferJobNotificationJob",
+      "queue": "notifications",
+      "purpose": "Fan out the completion / partial success / failure notification through the notifications module using xfer_jobs.notify_channels (mail / broadcast / database / push). Uses xfer_jobs.notify_locale for the copy.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueVia": "xfer_job_id:${status}",
+      "uniqueFor": 3600,
+      "tries": 5,
+      "backoff": [10, 60, 300, 1800, 3600],
+      "notes": "Runs on the `notifications` queue \u2014 same as every other notification dispatcher. Failure to notify does not un-complete the XferJob."
+    },
+    {
+      "class": "Academorix\\Transfer\\Jobs\\PruneXferArtifactsJob",
+      "queue": "notifications",
+      "purpose": "Retention scan. Three passes per run.",
+      "steps": [
+        "PASS 1 (artifact files): SELECT * FROM xfer_artifacts WHERE purged_at IS NULL AND retention_expires_at < now() LIMIT prune_chunk_size. Delete file from disk, set purged_at, null path, emit XferArtifactPruned.",
+        "PASS 2 (xfer_jobs rows): For each retention tier (short/medium/long): SELECT id FROM xfer_jobs WHERE retention_tier = tier AND created_at < now() - tier_days AND status IN ('succeeded','partially_succeeded','failed','cancelled'). Cascade-delete (xfer_shards + xfer_artifacts drop via FK).",
+        "PASS 3 (stale queued/running sweep): SELECT id FROM xfer_jobs WHERE status IN ('queued','running') AND last_progress_at < now() - stale_hours. Transition to cancelled with cancel_reason='stalled'. This is the 24h auto-cancel guarantee.",
+        "PASS 4 (mapping profile hard delete): SELECT id FROM xfer_mapping_profiles WHERE deleted_at < now() - mapping_profile_grace_days. Hard-delete."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2,
+      "notes": "Runs daily 03:30 UTC. Idempotent \u2014 no-op when caught up."
+    }
+  ]
+}

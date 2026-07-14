@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/invitations/analytics",
+  "$version": 1,
+  "title": "invitations — product analytics events",
+  "description": "Product analytics events (Segment / Mixpanel / PostHog). Distinct from `events.json` (server-side pub/sub) and `metrics.json` (ops telemetry). Every event carries a `consent_tier` that gates delivery through the analytics pipeline against the caller's consent state. Invitations are transactional communications; the analytics events themselves are tagged `essential` (for funnel tracking necessary to operate the platform) or `functional` (for optimisation), never `marketing`.",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "invitation_sent",
+      "consent_tier": "essential",
+      "firesAt": "InvitationSent listener (Application-level, tenant + tenant admins)",
+      "properties": {
+        "invitation_id": "string",
+        "tenant_id": "string|null",
+        "channel": "string",
+        "target_type": "string",
+        "role_key": "string|null",
+        "inviter_type": "string"
+      }
+    },
+    {
+      "name": "invitation_opened",
+      "consent_tier": "functional",
+      "firesAt": "InvitationOpened listener",
+      "properties": {"invitation_id": "string", "hours_since_sent": "number"}
+    },
+    {
+      "name": "invitation_clicked",
+      "consent_tier": "functional",
+      "firesAt": "InvitationClicked listener",
+      "properties": {"invitation_id": "string", "hours_since_sent": "number", "click_index": "integer"}
+    },
+    {
+      "name": "invitation_accepted",
+      "consent_tier": "essential",
+      "firesAt": "InvitationAccepted listener",
+      "properties": {
+        "invitation_id": "string",
+        "tenant_id": "string|null",
+        "target_type": "string",
+        "role_key": "string|null",
+        "hours_since_sent": "number",
+        "was_reminded": "boolean"
+      },
+      "description": "Primary conversion event. Feeds funnel + acquisition analysis."
+    },
+    {
+      "name": "invitation_declined",
+      "consent_tier": "functional",
+      "firesAt": "InvitationDeclined listener",
+      "properties": {"invitation_id": "string", "reason_category": "string|null", "hours_since_sent": "number"}
+    },
+    {
+      "name": "invitation_expired",
+      "consent_tier": "functional",
+      "firesAt": "InvitationExpired listener",
+      "properties": {"invitation_id": "string", "reached_state": "string", "hours_alive": "number"}
+    },
+    {
+      "name": "invitation_revoked",
+      "consent_tier": "functional",
+      "firesAt": "InvitationRevoked listener",
+      "properties": {"invitation_id": "string", "reason_category": "string|null", "is_abuse_response": "boolean"}
+    },
+    {
+      "name": "invitation_bounced",
+      "consent_tier": "essential",
+      "firesAt": "InvitationBounced listener",
+      "properties": {"invitation_id": "string", "bounce_kind": "string", "transport": "string"},
+      "description": "Essential for deliverability funnel — cannot operate without knowing bounce rates."
+    },
+    {
+      "name": "invitation_resent",
+      "consent_tier": "functional",
+      "firesAt": "InvitationResent listener",
+      "properties": {"invitation_id": "string", "resend_count": "integer", "hours_since_last_send": "number"}
+    }
+  ]
+}

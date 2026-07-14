@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/transfer/analytics",
+  "$version": 1,
+  "title": "transfer \u2014 product analytics events",
+  "description": "Product-analytics events emitted from the tenant surface. Volume-level telemetry lives in metrics.json; this file is for behaviour signals (features used, funnels, drop-off).",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {"name": "Transfer Import Initiated",       "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "entity", "mode", "file_size_bucket", "mapping_profile_used"], "description": "POST /transfer/imports returned 202."},
+    {"name": "Transfer Import Preview Viewed",  "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "entity", "detected_headers_count", "suggested_mapping_coverage"]},
+    {"name": "Transfer Import Dry-Run Ran",     "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "entity", "total_rows", "errors_count"]},
+    {"name": "Transfer Export Initiated",       "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "entity", "format", "row_count_bucket", "filter_used"]},
+    {"name": "Transfer Export Stream Ran",      "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "entity", "format", "row_count"]},
+    {"name": "Transfer Sample Data Generated",  "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "entity", "count"]},
+    {"name": "Transfer Job Completed Viewed",   "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "job_id", "kind", "outcome"]},
+    {"name": "Transfer Job Cancelled",          "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "job_id", "kind", "reason"]},
+    {"name": "Transfer Errors Report Downloaded", "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "job_id", "errors_count"]},
+    {"name": "Transfer Result Downloaded",      "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "job_id", "format"]},
+    {"name": "Transfer Template Downloaded",    "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "entity", "format"]},
+    {"name": "Transfer Mapping Profile Created",  "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "entity", "is_shared"]},
+    {"name": "Transfer Mapping Profile Applied", "kind": "track", "consent_required": "analytics", "properties": ["tenant_id", "entity", "profile_id"]}
+  ]
+}

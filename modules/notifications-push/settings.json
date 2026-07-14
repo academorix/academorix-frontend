@@ -1,0 +1,116 @@
+{
+  "id": "academorix://modules/notifications-push/settings",
+  "$version": 1,
+  "title": "notifications-push \u2014 settings",
+  "description": "Push channel settings. Canonical group/section/field taxonomy. One #[AsSetting] class \u2014 `PushSettings` \u2014 group key `push`.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "push",
+      "class": "Academorix\\Notifications\\Push\\Settings\\PushSettings",
+      "label": "Push notifications",
+      "description": "Provider routing + rich notification features + quiet-hours interaction.",
+      "icon": "device-phone-mobile",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 14,
+      "permission": "settings.read",
+      "sections": [
+        {
+          "label": "Provider selection",
+          "description": "Tenant-level provider preferences per platform. Platform-specific defaults apply otherwise (iOS \u2192 APNs, Android/Web \u2192 FCM).",
+          "icon": "arrows-right-left",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "provider_ios",
+              "controlType": "select",
+              "label": "iOS provider",
+              "defaultValue": "apns",
+              "options": { "apns": "Apple APNs", "onesignal": "OneSignal" },
+              "validation": ["required", "string", "in:apns,onesignal"],
+              "sortOrder": 1
+            },
+            {
+              "name": "provider_android",
+              "controlType": "select",
+              "label": "Android provider",
+              "defaultValue": "fcm",
+              "options": { "fcm": "Firebase FCM", "onesignal": "OneSignal" },
+              "validation": ["required", "string", "in:fcm,onesignal"],
+              "sortOrder": 2
+            },
+            {
+              "name": "provider_web",
+              "controlType": "select",
+              "label": "Web provider",
+              "defaultValue": "fcm",
+              "options": { "fcm": "Firebase FCM", "onesignal": "OneSignal" },
+              "validation": ["required", "string", "in:fcm,onesignal"],
+              "sortOrder": 3
+            },
+            {
+              "name": "provider_react_native",
+              "controlType": "select",
+              "label": "React Native provider",
+              "defaultValue": "expo",
+              "options": { "expo": "Expo", "fcm": "FCM", "apns": "APNs", "onesignal": "OneSignal" },
+              "validation": ["required", "string", "in:expo,fcm,apns,onesignal"],
+              "sortOrder": 4
+            }
+          ]
+        },
+        {
+          "label": "Rich notifications",
+          "description": "Enable rich notification features per platform. Requires notifications.push.rich_notifications entitlement.",
+          "icon": "photo",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "rich_images_enabled",
+              "controlType": "toggle",
+              "label": "Images",
+              "defaultValue": false,
+              "validation": ["boolean"],
+              "sortOrder": 1
+            },
+            {
+              "name": "rich_action_buttons_enabled",
+              "controlType": "toggle",
+              "label": "Action buttons",
+              "defaultValue": false,
+              "validation": ["boolean"],
+              "sortOrder": 2
+            },
+            {
+              "name": "rich_custom_sounds_enabled",
+              "controlType": "toggle",
+              "label": "Custom sounds",
+              "defaultValue": false,
+              "validation": ["boolean"],
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Quiet hours",
+          "description": "Push-specific override on top of notifications core's quiet_hours settings.",
+          "icon": "moon",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "quiet_hours_honor_user_setting",
+              "controlType": "toggle",
+              "label": "Honour user's quiet hours",
+              "defaultValue": true,
+              "validation": ["boolean"],
+              "sortOrder": 1,
+              "helpText": "When on, defer non-critical pushes during user's quiet-hours window. Off = always deliver."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

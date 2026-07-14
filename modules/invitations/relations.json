@@ -1,0 +1,153 @@
+{
+  "id": "academorix://modules/invitations/relations",
+  "$version": 1,
+  "title": "invitations — cross-module relations",
+  "description": "Eloquent relations rooted at this module's models. Target + inviter are polymorphic — this module never name-drops a concrete consumer. Every downstream module registers its `target_type` string via the InvitationTargetRegistry container binding at boot; the morph resolver reads the registry to hydrate the concrete model. Cross-tenant FKs remain forbidden — tenant_id is nullable ONLY to accommodate platform-scope invitations (Academorix staff onboarding).",
+  "anchors": [
+    {
+      "model": {
+        "name": "Invitation",
+        "class": "Academorix\\Invitations\\Models\\Invitation",
+        "schemaRef": "academorix://modules/invitations/schemas/invitation"
+      },
+      "relations": [
+        {
+          "name": "application",
+          "type": "BelongsTo",
+          "target": {
+            "module": "tenancy",
+            "model": "Application",
+            "class": "Academorix\\Tenancy\\Models\\Application"
+          },
+          "foreignKey": "application_id",
+          "ownerKey": "id"
+        },
+        {
+          "name": "tenant",
+          "type": "BelongsTo",
+          "target": {
+            "module": "tenancy",
+            "model": "Tenant",
+            "class": "Academorix\\Tenancy\\Models\\Tenant"
+          },
+          "foreignKey": "tenant_id",
+          "ownerKey": "id",
+          "nullable": true,
+          "description": "NULL for platform-scope invitations. BelongsToTenantOptional trait skips the global scope when tenant_id is null."
+        },
+        {
+          "name": "acceptedBy",
+          "type": "BelongsTo",
+          "target": {
+            "module": "user",
+            "model": "User",
+            "class": "Academorix\\User\\Models\\User"
+          },
+          "foreignKey": "accepted_by_user_id",
+          "ownerKey": "id",
+          "nullable": true,
+          "description": "The User row that resulted from the accept flow. NULL until state=accepted."
+        },
+        {
+          "name": "revokedBy",
+          "type": "BelongsTo",
+          "target": {
+            "module": "user",
+            "model": "User",
+            "class": "Academorix\\User\\Models\\User"
+          },
+          "foreignKey": "revoked_by_user_id",
+          "ownerKey": "id",
+          "nullable": true,
+          "description": "The User who revoked. NULL until state=revoked."
+        },
+        {
+          "name": "events",
+          "type": "HasMany",
+          "target": {
+            "module": "invitations",
+            "model": "InvitationEvent",
+            "class": "Academorix\\Invitations\\Models\\InvitationEvent"
+          },
+          "foreignKey": "invitation_id",
+          "cascade": {
+            "onDelete": "cascade",
+            "description": "Hard-delete cascades to events. Retention purge respects it."
+          }
+        }
+      ],
+      "morphs": [
+        {
+          "name": "target",
+          "type": "MorphTo",
+          "morphType": "target_type",
+          "morphId": "target_id",
+          "description": "The invitable resource — Tenant, Team, Athlete, Federation, TrialSession, ... Concrete class resolved by InvitationTargetRegistry at hydrate time.",
+          "registeredBy": "InvitationTargetRegistry (container binding)",
+          "expectedTargets": [
+            {"module": "tenancy", "model": "Tenant", "targetTypeKey": "tenant"},
+            {"module": "teams", "model": "Team", "targetTypeKey": "team"},
+            {"module": "sports", "model": "Athlete", "targetTypeKey": "athlete"},
+            {"module": "sports", "model": "TrialSession", "targetTypeKey": "trial_session"},
+            {"module": "sports", "model": "Federation", "targetTypeKey": "federation"}
+          ]
+        },
+        {
+          "name": "inviter",
+          "type": "MorphTo",
+          "morphType": "inviter_type",
+          "morphId": "inviter_id",
+          "description": "The actor that sent the invitation. Registered inviter kinds: `user`, `service_account`, `system` (NULL inviter_id for system).",
+          "expectedInviters": [
+            {"module": "user", "model": "User", "inviterTypeKey": "user"},
+            {"module": "user", "model": "ServiceAccount", "inviterTypeKey": "service_account"},
+            {"module": null, "model": null, "inviterTypeKey": "system", "note": "Platform-initiated invitations (Academorix ops, automated flows). inviter_id is NULL."}
+          ]
+        }
+      ]
+    },
+    {
+      "model": {
+        "name": "InvitationEvent",
+        "class": "Academorix\\Invitations\\Models\\InvitationEvent",
+        "schemaRef": "academorix://modules/invitations/schemas/invitation-event"
+      },
+      "relations": [
+        {
+          "name": "invitation",
+          "type": "BelongsTo",
+          "target": {"module": "invitations", "model": "Invitation", "class": "Academorix\\Invitations\\Models\\Invitation"},
+          "foreignKey": "invitation_id"
+        },
+        {
+          "name": "application",
+          "type": "BelongsTo",
+          "target": {"module": "tenancy", "model": "Application", "class": "Academorix\\Tenancy\\Models\\Application"},
+          "foreignKey": "application_id"
+        },
+        {
+          "name": "tenant",
+          "type": "BelongsTo",
+          "target": {"module": "tenancy", "model": "Tenant", "class": "Academorix\\Tenancy\\Models\\Tenant"},
+          "foreignKey": "tenant_id",
+          "nullable": true
+        }
+      ],
+      "morphs": [
+        {
+          "name": "actor",
+          "type": "MorphTo",
+          "morphType": "actor_type",
+          "morphId": "actor_id",
+          "nullable": true,
+          "description": "Who triggered this event. NULL for transport-reported events (`delivered`, `bounced`) where the acting party is an external system. Registered actor kinds: `user`, `service_account`, `system`, `invitee` (email recipient), `mail_transport`, `webhook`."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Polymorphic target/inviter/actor are the extension seams. The invitations module does NOT know that `tenant` means Tenancy's Tenant — it just knows a string key + registration hooked at boot.",
+    "InvitationTargetRegistry is a container binding published by this module. Downstream modules register their target_type + accept handler at boot. Adding a new invitable resource = one class + one register() call. Zero schema change.",
+    "Tenant + Application are hard FKs — polymorphism ends at the tenancy boundary; the tenancy substrate is universal."
+  ]
+}

@@ -1,0 +1,494 @@
+{
+  "id": "academorix://modules/foundation/traits",
+  "$version": 1,
+  "title": "foundation — model traits",
+  "description": "The trait contract every downstream module composes on top of. Foundation owns 10 traits and 9 paired migration macros. Each trait describes: the columns it adds, the query scopes it introduces, the event hooks it registers, the relations it opens, the backing package (when third-party), and the models it's typically applied to. The `compositionExample` at the bottom shows the canonical trait order every persistent model uses. NOTE: `Importable` / `Exportable` (previously listed here) moved to `modules/transfer/` \u2014 the CSV/Excel/PDF/JSON import + export substrate now owns its own attribute-driven registration + queue chain + notification lifecycle. Consumer modules that opted into imports/exports switch to `Academorix\\Transfer\\Concerns\\HasImportable` / `HasExportable`.",
+  "owned": [
+    {
+      "trait": "HasSystemFlag",
+      "class": "Academorix\\Foundation\\Concerns\\HasSystemFlag",
+      "description": "Marks rows the platform seeded (as opposed to rows the customer created). `is_system=true` rows are refused on Policy@update / @delete. Prevents tenant admins from accidentally editing or deleting platform-owned records (default business types, seeded permissions, system integrations).",
+      "pairedBlueprint": "systemFlag",
+      "adds": {
+        "columns": [
+          {
+            "name": "is_system",
+            "type": "boolean",
+            "nullable": false,
+            "default": false,
+            "indexed": true
+          }
+        ],
+        "compositeIndexes": [],
+        "scopes": {
+          "local": [
+            { "name": "system", "description": "Where is_system = true" },
+            { "name": "custom", "description": "Where is_system = false" }
+          ],
+          "global": []
+        },
+        "eventHooks": [],
+        "accessors": [
+          { "name": "isSystem", "returns": "bool" },
+          { "name": "isCustom", "returns": "bool" }
+        ],
+        "relations": []
+      },
+      "appliedBy": [
+        "Application (tenancy)",
+        "Tenant (tenancy)",
+        "BusinessType (tenancy)",
+        "Role (access)",
+        "Permission (access)",
+        "ServiceAccount (user)",
+        "NotificationCategory (notifications)",
+        "ApiVersion (versioning)",
+        "any model with platform-seeded rows"
+      ],
+      "notAppliedBy": [
+        "Domain / DomainRecord / Branding — no platform-seeded rows",
+        "Invitation / InvitationEvent — never platform-seeded"
+      ]
+    },
+    {
+      "trait": "HasUserstamps",
+      "class": "Academorix\\Foundation\\Concerns\\HasUserstamps",
+      "description": "Adds the userstamp trio (created_by / updated_by / deleted_by). Values auto-filled from the resolved caller on save / update / soft-delete. UUID FK to `users.id` (nullable for platform-initiated writes and seeded rows).",
+      "pairedBlueprint": "userstampable",
+      "adds": {
+        "columns": [
+          {
+            "name": "created_by",
+            "type": "uuid",
+            "nullable": true,
+            "description": "FK to users.id"
+          },
+          { "name": "updated_by", "type": "uuid", "nullable": true },
+          {
+            "name": "deleted_by",
+            "type": "uuid",
+            "nullable": true,
+            "description": "Set only when SoftDeletes is also composed"
+          }
+        ],
+        "compositeIndexes": [],
+        "scopes": { "local": [], "global": [] },
+        "eventHooks": [
+          {
+            "event": "saving",
+            "description": "If created_at is null, set created_by = auth()->id(). Always set updated_by = auth()->id()."
+          },
+          {
+            "event": "deleting",
+            "description": "When SoftDeletes is composed, set deleted_by = auth()->id() before the delete cascade."
+          }
+        ],
+        "relations": [
+          { "name": "createdBy", "type": "BelongsTo", "target": "user.User" },
+          { "name": "updatedBy", "type": "BelongsTo", "target": "user.User" },
+          { "name": "deletedBy", "type": "BelongsTo", "target": "user.User" }
+        ]
+      },
+      "appliedBy": ["essentially every persistent model in every module"],
+      "notAppliedBy": [
+        "InvitationEvent (dropped in refactor — was immutable log)",
+        "InvitationEvent-style append-only audit rows in other modules"
+      ]
+    },
+    {
+      "trait": "HasAuditable",
+      "class": "Academorix\\Foundation\\Concerns\\HasAuditable",
+      "description": "Wraps `owen-it/laravel-auditing`. Writes an audit row to the `audits` table on every mutation with tenant_id + user_id + attribute diff. The audit table itself lives in the `audit` module; this trait writes to it via the wrapper.",
+      "backingPackage": "owen-it/laravel-auditing",
+      "pairedBlueprint": "auditable",
+      "adds": {
+        "columns": [],
+        "compositeIndexes": [],
+        "scopes": { "local": [], "global": [] },
+        "eventHooks": [
+          {
+            "event": "created / updated / deleted / restored",
+            "description": "Writes an audit row via the auditing package's default listener."
+          }
+        ],
+        "relations": [{ "name": "audits", "type": "MorphMany", "target": "audit.Audit" }],
+        "configuration": {
+          "auditInclude": "Allowlist of attributes on the model (opt-in over opt-out for security).",
+          "auditExclude": "Denylist for models where an allowlist is impractical (secrets always excluded automatically).",
+          "auditTimestamps": "false by default — timestamps produce audit noise."
+        }
+      },
+      "appliedBy": [
+        "Application / Tenant / Domain / Branding / TenantContact / TenantIntegration (tenancy)",
+        "Invitation (invitations)",
+        "Role / Permission (access)",
+        "User / PlatformUser / ServiceAccount / Profile (user)",
+        "any model touching PII or entitlement-affecting state"
+      ]
+    },
+    {
+      "trait": "HasVersions",
+      "class": "Academorix\\Foundation\\Concerns\\HasVersions",
+      "description": "Row-level version history \u2014 full state snapshots on every save with rollback + structured diffing. Wraps `mpociot/versionable`. Every mutation writes a snapshot of the model state (JSON blob) to the polymorphic `versions` table + provides `revertToVersion(n)`, `previousVersion()`, `currentVersion()`, `getVersions()`, `diffVersions(from, to)`. Distinct from HasAuditable: auditable stores diffs + actor for compliance evidence, HasVersions stores FULL SNAPSHOTS for rollback UX. Both traits coexist because they answer different questions \u2014 auditable answers 'who changed what', HasVersions answers 'restore to how it looked at 3pm yesterday'.",
+      "backingPackage": "mpociot/versionable",
+      "pairedBlueprint": "versionable",
+      "adds": {
+        "columns": [],
+        "compositeIndexes": [],
+        "scopes": { "local": [], "global": [] },
+        "eventHooks": [
+          {
+            "event": "saved",
+            "description": "Writes a Version row snapshot of the model state into the polymorphic `versions` table (owned by `mpociot/versionable`). Excludes fields listed in $dontVersionFields."
+          },
+          {
+            "event": "restoring",
+            "description": "When revertToVersion(n) is called, hydrates the model from the snapshot's `model_data` JSON and saves (which itself creates a new version)."
+          }
+        ],
+        "relations": [
+          { "name": "versions", "type": "MorphMany", "target": "Mpociot\\Versionable\\Version" }
+        ],
+        "methods": [
+          {
+            "name": "getVersions",
+            "signature": "getVersions(): Collection",
+            "description": "All snapshots, latest first."
+          },
+          { "name": "getVersion", "signature": "getVersion(int $number): Version|null" },
+          { "name": "previousVersion", "signature": "previousVersion(): Version|null" },
+          { "name": "currentVersion", "signature": "currentVersion(): Version" },
+          {
+            "name": "revertToVersion",
+            "signature": "revertToVersion(int $number): bool",
+            "description": "Restore + emit ModelRestoredFromVersion event."
+          },
+          {
+            "name": "diffVersions",
+            "signature": "diffVersions(int $from, int $to): array",
+            "description": "Returns ['changed' => [...], 'added' => [...], 'removed' => [...]]"
+          },
+          {
+            "name": "pruneVersions",
+            "signature": "pruneVersions(): int",
+            "description": "Removes versions beyond $keepOldVersions."
+          }
+        ],
+        "configuration": {
+          "dontVersionFields": "Array property on the model: fields to exclude from snapshots (passwords, remember_token, updated_at). Foundation's default excludes: password, remember_token, api_token, cache_column.",
+          "keepOldVersions": "int property on the model: max versions to retain (0 = unlimited). Foundation's convention: 50 for tenant-authored content, 200 for template-like models, unlimited for audit-critical models.",
+          "versioningEnabled": "bool property (or static override). Set false to disable snapshotting for a specific model (rare \u2014 typically transient data)."
+        }
+      },
+      "appliedBy": [
+        "NotificationTemplate (notifications) \u2014 template rollback UX",
+        "ApiVersion (versioning) \u2014 track lifecycle metadata changes",
+        "AttributeSet (sports) \u2014 sport-variable schema versioning",
+        "Branding (tenancy) \u2014 revert to prior visual identity",
+        "Policy / TermsOfService (compliance) \u2014 legal-copy history"
+      ],
+      "notAppliedBy": [
+        "Notification / NotificationDelivery (notifications) \u2014 append-only, snapshots redundant",
+        "NotificationPreference \u2014 preferences change frequently; snapshot noise",
+        "User (user) \u2014 profile changes tracked via HasAuditable; full snapshot leaks PII"
+      ]
+    },
+    {
+      "trait": "HasMetadata",
+      "class": "Academorix\\Foundation\\Concerns\\HasMetadata",
+      "description": "Adds a free-form `metadata` JSONB column + `array` cast + fluent accessors. NEVER queried against \u2014 metadata is opaque to the database engine. Use it for platform notes, integration references, ticket IDs, migration source tags, provisioner tags, canary bucket assignments \u2014 anything that doesn't earn a first-class column.",
+      "pairedBlueprint": "metadata",
+      "adds": {
+        "columns": [{ "name": "metadata", "type": "jsonb", "nullable": true }],
+        "compositeIndexes": [],
+        "scopes": { "local": [], "global": [] },
+        "eventHooks": [],
+        "accessors": [
+          {
+            "name": "getMetadata",
+            "signature": "getMetadata(string $key, mixed $default = null): mixed"
+          },
+          { "name": "setMetadata", "signature": "setMetadata(string $key, mixed $value): $this" },
+          { "name": "mergeMetadata", "signature": "mergeMetadata(array $bag): $this" },
+          { "name": "forgetMetadata", "signature": "forgetMetadata(string $key): $this" }
+        ],
+        "relations": []
+      },
+      "appliedBy": [
+        "every persistent model in every module \u2014 this is the universal escape hatch for platform-flavoured data that shouldn't earn a schema column"
+      ]
+    },
+    {
+      "trait": "Sortable",
+      "class": "Academorix\\Foundation\\Concerns\\Sortable",
+      "description": "Adds a `sort_order` unsigned int column + sortable query scope + drag-and-drop reorder helpers.",
+      "backingPackage": "spatie/eloquent-sortable",
+      "pairedBlueprint": "sortable",
+      "adds": {
+        "columns": [
+          {
+            "name": "sort_order",
+            "type": "unsignedInteger",
+            "nullable": false,
+            "default": 0,
+            "indexed": true
+          }
+        ],
+        "compositeIndexes": [
+          {
+            "columns": ["scope_column", "sort_order"],
+            "description": "When Sortable is applied to a scoped list, the composite index is generated."
+          }
+        ],
+        "scopes": {
+          "local": [{ "name": "sorted", "description": "Order by sort_order ASC" }],
+          "global": []
+        },
+        "eventHooks": [
+          {
+            "event": "creating",
+            "description": "Assign sort_order = max(sort_order) + 1 within the sort group when not explicitly set."
+          }
+        ],
+        "methods": [
+          { "name": "reorder", "signature": "reorder(array $ids): void" },
+          { "name": "moveOrderUp", "signature": "moveOrderUp(): $this" },
+          { "name": "moveOrderDown", "signature": "moveOrderDown(): $this" },
+          { "name": "moveToStart", "signature": "moveToStart(): $this" },
+          { "name": "moveToEnd", "signature": "moveToEnd(): $this" }
+        ]
+      },
+      "appliedBy": [
+        "BusinessType (tenancy)",
+        "Branding (tenancy)",
+        "TenantContact (tenancy)",
+        "NotificationCategory (notifications)"
+      ]
+    },
+    {
+      "trait": "Filterable",
+      "class": "Academorix\\Foundation\\Concerns\\Filterable",
+      "description": "Integration with `spatie/laravel-query-builder`. Reads a static `filterable(): array` method on the model.",
+      "backingPackage": "spatie/laravel-query-builder",
+      "pairedBlueprint": "filterable",
+      "adds": {
+        "columns": [],
+        "compositeIndexes": [],
+        "scopes": { "local": [], "global": [] },
+        "eventHooks": [],
+        "methods": [
+          { "name": "filterable", "signature": "public static function filterable(): array" }
+        ]
+      },
+      "appliedBy": ["every model with a listing endpoint"],
+      "usageExample": "public static function filterable(): array { return [ 'allowedFilters' => [AllowedFilter::exact('state'), AllowedFilter::partial('email')], 'allowedSorts' => ['created_at', 'expires_at'], 'defaultSort' => '-created_at' ]; }"
+    },
+    {
+      "trait": "Sluggable",
+      "class": "Academorix\\Foundation\\Concerns\\Sluggable",
+      "description": "Adds a `slug` string column with a unique index + auto-fills on save.",
+      "backingPackage": "cviebrock/eloquent-sluggable",
+      "pairedBlueprint": "sluggable",
+      "adds": {
+        "columns": [
+          {
+            "name": "slug",
+            "type": "string",
+            "length": 63,
+            "nullable": false,
+            "indexed": true,
+            "unique": "context-dependent"
+          }
+        ],
+        "compositeIndexes": [
+          { "columns": ["scope_column", "slug"], "description": "For scoped uniqueness." }
+        ],
+        "scopes": { "local": [], "global": [] },
+        "eventHooks": [
+          { "event": "saving", "description": "If slug is empty, generate from sluggableSource()." }
+        ],
+        "methods": [
+          { "name": "sluggableSource", "signature": "public function sluggableSource(): string" },
+          { "name": "sluggableScope", "signature": "public function sluggableScope(): array" },
+          { "name": "getRouteKeyName", "signature": "public function getRouteKeyName(): string" }
+        ]
+      },
+      "appliedBy": [
+        "Application (tenancy)",
+        "Tenant (tenancy)",
+        "BusinessType (tenancy)",
+        "Team (teams)",
+        "ApiVersion (versioning)"
+      ],
+      "reservedSlugs": [
+        "www",
+        "api",
+        "admin",
+        "mail",
+        "blog",
+        "platform",
+        "app",
+        "static",
+        "cdn",
+        "help",
+        "support",
+        "status",
+        "docs"
+      ]
+    },
+    {
+      "trait": "Searchable",
+      "class": "Academorix\\Foundation\\Concerns\\Searchable",
+      "description": "Wraps `laravel/scout`. Registers the model with the Scout engine + adds `search()` scope + a default `toSearchableArray()`.",
+      "backingPackage": "laravel/scout + meilisearch-php",
+      "pairedBlueprint": "searchable",
+      "adds": {
+        "columns": [],
+        "compositeIndexes": [],
+        "scopes": { "local": [], "global": [] },
+        "eventHooks": [
+          {
+            "event": "saved",
+            "description": "Push the model to the search index (async via IndexSearchableJob)."
+          },
+          { "event": "deleted", "description": "Remove the model from the search index." }
+        ],
+        "methods": [
+          {
+            "name": "toSearchableArray",
+            "signature": "public function toSearchableArray(): array"
+          },
+          { "name": "searchableAs", "signature": "public function searchableAs(): string" },
+          {
+            "name": "shouldBeSearchable",
+            "signature": "public function shouldBeSearchable(): bool"
+          }
+        ]
+      },
+      "supportedEngines": ["meilisearch", "elasticsearch", "typesense", "postgres-fts", "algolia"],
+      "defaultEngine": "meilisearch",
+      "appliedBy": [
+        "Tenant (tenancy)",
+        "Domain (tenancy)",
+        "Team (teams)",
+        "Athlete (sports)",
+        "Notification (notifications)"
+      ]
+    },
+    {
+      "trait": "HasVectorEmbeddings",
+      "class": "Academorix\\Foundation\\Concerns\\HasVectorEmbeddings",
+      "description": "v2 STUB. Adds a pgvector `embeddings` column of configurable dimension + a `nearest($vector, $count)` scope for cosine-similarity queries. Deferred until AI features land.",
+      "backingPackage": "pgvector-php + configurable embedder",
+      "pairedBlueprint": "embeddings",
+      "adds": {
+        "columns": [
+          {
+            "name": "embeddings",
+            "type": "vector",
+            "dimension": "configurable (default 1536)",
+            "nullable": true,
+            "index": "IVFFlat or HNSW at scale"
+          },
+          { "name": "embeddings_refreshed_at", "type": "timestamptz", "nullable": true }
+        ],
+        "compositeIndexes": [
+          {
+            "columns": ["embeddings"],
+            "type": "IVFFlat",
+            "description": "pgvector similarity index"
+          }
+        ],
+        "scopes": {
+          "local": [
+            { "name": "nearest", "signature": "nearest(array $vector, int $count = 10): Builder" }
+          ],
+          "global": []
+        },
+        "eventHooks": [
+          {
+            "event": "saved",
+            "description": "If any of the embed-source fields changed, dispatch RefreshEmbeddingJob."
+          }
+        ],
+        "methods": [
+          { "name": "embedSource", "signature": "public function embedSource(): string" },
+          { "name": "refreshEmbedding", "signature": "public function refreshEmbedding(): void" }
+        ]
+      },
+      "v1Status": "SCHEMA-ONLY. Trait defined, macro reserves the column shape, but no active use in v1.",
+      "reservedFor": ["Athlete (sports)", "TrialSession (sports)", "Notification (notifications)"]
+    }
+  ],
+  "consumed": [
+    {
+      "trait": "HasFactory",
+      "class": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory",
+      "source": "framework",
+      "description": "Standard Laravel factory support."
+    },
+    {
+      "trait": "HasUlids",
+      "class": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids",
+      "source": "framework",
+      "description": "String primary keys backed by ULID."
+    },
+    {
+      "trait": "HasStates",
+      "class": "Spatie\\ModelStates\\HasStates",
+      "source": "spatie/laravel-model-states",
+      "description": "State machine implementation."
+    },
+    {
+      "trait": "SoftDeletes",
+      "class": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+      "source": "framework",
+      "description": "Standard Laravel soft-delete."
+    },
+    {
+      "trait": "Notifiable",
+      "class": "Illuminate\\Notifications\\Notifiable",
+      "source": "framework",
+      "description": "Enables Laravel's default notification pipeline on the model."
+    },
+    {
+      "trait": "HasApiTokens",
+      "class": "Laravel\\Sanctum\\HasApiTokens",
+      "source": "laravel/sanctum",
+      "description": "Personal Access Token support."
+    },
+    {
+      "trait": "Auditable",
+      "class": "OwenIt\\Auditing\\Auditable",
+      "source": "owen-it/laravel-auditing",
+      "description": "The raw auditing trait wrapped by foundation's HasAuditable."
+    },
+    {
+      "trait": "VersionableTrait",
+      "class": "Mpociot\\Versionable\\VersionableTrait",
+      "source": "mpociot/versionable",
+      "description": "The raw versioning trait wrapped by foundation's HasVersions."
+    }
+  ],
+  "compositionExample": {
+    "language": "php",
+    "note": "The canonical trait order every persistent model uses. Framework first, then tenancy boundary, then foundation, then domain-specific. Order matters \u2014 HasAuditable must land after HasUserstamps, and HasVersions must land after HasAuditable so the audit row references the userstamp and the version snapshot includes the audit.",
+    "code": "final class Branch extends Model implements BranchInterface, AuditableContract\n{\n    use HasFactory;             // framework\n    use HasUlids;               // framework\n\n    use BelongsToTenant;        // tenancy \u2014 adds tenant_id + global scope\n    use BelongsToApplication;   // tenancy \u2014 adds application_id (when a boundary row)\n\n    use HasSystemFlag;          // foundation\n    use HasMetadata;            // foundation\n    use HasUserstamps;          // foundation \u2014 MUST come before HasAuditable\n    use HasAuditable;           // foundation \u2014 wraps owen-it/laravel-auditing\n    use HasVersions;            // foundation \u2014 wraps mpociot/versionable; MUST come after HasAuditable\n    use Sluggable;              // foundation \u2014 auto-fills slug on saving\n    use Filterable;             // foundation \u2014 filterable() static contract\n    use Sortable;               // foundation \u2014 sort_order + reorder helpers\n    use Searchable;             // foundation \u2014 Scout integration\n\n    use HasImportable;          // transfer \u2014 opt into the import pipeline (optional)\n    use HasExportable;          // transfer \u2014 opt into the export pipeline (optional)\n\n    use SoftDeletes;            // framework \u2014 always last\n}"
+  },
+  "blueprintExample": {
+    "language": "php",
+    "note": "Migrations compose paired macros in the SAME order the model composes traits. Auditable, versionable, filterable, searchable, importable, exportable are marker macros (no column changes) \u2014 they annotate intent for the CI cross-check + serve as anchoring documentation.",
+    "code": "Schema::create('branches', function (Blueprint $t) {\n    $t->string('id', 64)->primary();  // brn_<ulid>\n\n    $t->tenantable();              // Tenancy \u2014 tenant_id + FK + composite index\n    $t->applicable();              // Tenancy \u2014 application_id + FK (boundary rows only)\n\n    $t->string('name');\n    $t->text('description')->nullable();\n\n    $t->systemFlag();              // Foundation\n    $t->metadata();                // Foundation\n    $t->userstampable();           // Foundation\n    $t->auditable();               // Foundation (marker \u2014 no column)\n    $t->versionable();             // Foundation (marker \u2014 versions table owned by mpociot/versionable)\n    $t->sluggable('name');         // Foundation \u2014 slug + unique index scoped to (tenant_id, slug)\n    $t->filterable();              // Foundation (marker)\n    $t->sortable();                // Foundation \u2014 sort_order + composite index\n    $t->searchable();              // Foundation (marker \u2014 model registers with Scout at boot)\n\n    // Import / export markers no longer live in the schema \u2014 the transfer module\n    // discovers importable / exportable models via attribute-driven registration\n    // (#[Importable] / #[Exportable] on the model class), not via migration macros.\n\n    $t->softDeletes();\n    $t->timestamps();\n});"
+  },
+  "traitOrderContract": {
+    "rule": "Framework first (HasFactory, HasUlids), then boundary traits (BelongsToApplication, BelongsToTenant), then foundation lifecycle traits in this exact order: HasSystemFlag, HasMetadata, HasUserstamps, HasAuditable, HasVersions, then indexer traits (Sluggable, Filterable, Sortable, Searchable), then optional cross-module traits (transfer::HasImportable, transfer::HasExportable, activity::HasActivityLog, audit::HasAudit), then SoftDeletes last.",
+    "why": [
+      "HasUserstamps MUST come before HasAuditable so the userstamps are set before the audit row snapshots them.",
+      "HasAuditable MUST come before HasVersions so the audit row is written BEFORE the version snapshot captures the model state (otherwise the snapshot would miss the concurrent audit).",
+      "HasVersions MUST come after HasAuditable so a `revertToVersion` writes both a new audit row (the revert IS an audit-worthy mutation) and a new version snapshot (the new state).",
+      "Boundary traits come before lifecycle traits so BelongsToTenant's global scope is registered before HasAuditable tries to read the current tenant.",
+      "SoftDeletes goes last so its `deleting` hook doesn't shadow HasUserstamps' `deleting` hook."
+    ],
+    "enforcedBy": "CI lint rule reads the composition order from the model AST and matches against this contract. Violations fail the build."
+  }
+}

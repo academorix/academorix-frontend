@@ -1,0 +1,10 @@
+{
+  "id": "academorix://modules/versioning/schedule",
+  "$version": 1,
+  "title": "versioning \u2014 scheduled tasks",
+  "description": "Two entries: hourly sunset scan + daily reminder-notice dispatcher.",
+  "entries": [
+    {"name": "process-sunsets", "command": "versioning:process-sunsets", "cron": "5 * * * *", "timezone": "UTC", "purpose": "Every hour at :05: scan for deprecated versions where sunset_at \u2264 now() + dispatch SunsetApiVersionJob for each. Idempotent via job uniqueFor."},
+    {"name": "sunset-reminders", "command": "versioning:dispatch-sunset-reminders", "cron": "0 12 * * *", "timezone": "UTC", "purpose": "Daily 12:00 UTC: for deprecated versions with sunset_at in 30d / 7d / 3d / 1d windows, auto-create + publish sunset_reminder DeprecationNotices (idempotent via notice_type + api_version_id + notify_window unique constraint on metadata)."}
+  ]
+}

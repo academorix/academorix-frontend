@@ -1,0 +1,36 @@
+{
+  "id": "academorix://modules/foundation/schedule",
+  "$version": 1,
+  "title": "foundation — scheduled tasks",
+  "description": "Two base scheduled tasks. Every entry runs `runOnOneServer` (multi-node worker pools do not duplicate work) + `withoutOverlapping` where windows may exceed the interval.",
+  "entries": [
+    {
+      "signature": "foundation:health-snapshot",
+      "kind": "command",
+      "cron": "*/5 * * * *",
+      "timezone": "UTC",
+      "description": "Every 5 minutes. Runs the aggregate health probe walk + snapshots the result to Redis for the platform.health broadcast channel. Downstream ops dashboards subscribe.",
+      "runOnOneServer": true,
+      "withoutOverlapping": true,
+      "withoutOverlappingExpiresAfterMinutes": 10
+    },
+    {
+      "signature": "foundation:search-index-refresh",
+      "kind": "command",
+      "cron": "0 3 * * 0",
+      "timezone": "UTC",
+      "description": "Weekly Sunday 03:00 UTC. Rebuilds every Searchable model's index from scratch. Guards against index-drift bugs where a model change was missed. Idempotent — runs after replication window so read replicas see fresh data first.",
+      "runOnOneServer": true,
+      "withoutOverlapping": true,
+      "withoutOverlappingExpiresAfterMinutes": 360
+    },
+    {
+      "signature": "foundation:cleanup-stale-jobs",
+      "kind": "command",
+      "cron": "0 2 * * *",
+      "timezone": "UTC",
+      "description": "Daily 02:00 UTC. Prunes failed job records older than 30 days and dead-letter queue entries older than 90 days. Keeps horizon dashboards responsive.",
+      "runOnOneServer": true
+    }
+  ]
+}

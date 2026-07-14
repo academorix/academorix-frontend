@@ -1,0 +1,61 @@
+{
+  "id": "notifications.resources.template.edit",
+  "title": "Edit template",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/notification-templates/{id}/edit",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {"module": "notifications", "entity": "template", "action": "edit"},
+  "requiresPermission": "notifications.templates.update",
+  "params": [{"name": "id", "type": "string", "in": "path", "required": true}],
+  "dataSources": [
+    {"name": "template", "kind": "http.get", "urlExpr": "'/api/v1/tenant/notification-templates/' + params.id", "unwrap": "data"}
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": {"className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto"},
+      "children": [
+        {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/notification-templates/' + params.id"}}},
+        {
+          "kind": "Alert",
+          "props": {"variant": "warning", "className": "mb-2"},
+          "bindings": {"hidden": {"$expr": "!template.is_system"}, "children": {"$expr": "'This is a platform default. Editing will create a tenant override that resolves first for your sends.'"}}
+        },
+        {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold"}, "bindings": {"children": {"$expr": "'Edit ' + template.key"}}},
+        {
+          "id": "form",
+          "kind": "Form",
+          "props": {"submitUrlExpr": "'/api/v1/tenant/notification-templates/' + params.id", "submitMethod": "PATCH", "onSuccess": [{"kind": "toast.success", "message": "Draft saved"}, {"kind": "data.refresh", "source": "template"}]},
+          "bindings": {"initialValues": {"$ref": "template"}},
+          "children": [
+            {"kind": "TextField", "props": {"label": "Subject template", "name": "subject_template", "description": "Blade template."}, "bindings": {"defaultValue": {"$ref": "template.subject_template"}}},
+            {"kind": "TextArea", "props": {"label": "Body (React Email .tsx path)", "name": "body_tsx_ref", "rows": 3, "description": "Path to the React Email .tsx source. Rendered at CI build time."}, "bindings": {"defaultValue": {"$ref": "template.body_tsx_ref"}}},
+            {
+              "kind": "View",
+              "props": {"className": "flex items-center gap-2 pt-4"},
+              "children": [
+                {"kind": "Button", "props": {"variant": "outline", "size": "md", "children": "Save draft", "type": "submit"}},
+                {
+                  "kind": "Button",
+                  "props": {"variant": "primary", "size": "md", "leadingIcon": "arrow-up-tray", "children": "Publish"},
+                  "bindings": {"isDisabled": {"$expr": "!identity.permissions.includes('notifications.templates.publish')"}},
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.post",
+                      "urlExpr": "'/api/v1/tenant/notification-templates/' + params.id + '/publish'",
+                      "confirm": {"title": "Publish this draft?", "description": "Future sends will use this version. Older published versions retain their history."},
+                      "onSuccess": [{"kind": "toast.success", "message": "Published"}, {"kind": "navigate", "toExpr": "'/tenant/notification-templates/' + params.id"}]
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

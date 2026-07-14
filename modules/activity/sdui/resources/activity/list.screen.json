@@ -1,0 +1,35 @@
+{
+  "id": "activity.resources.activity.list",
+  "title": "Activity",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/activities",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {"module": "activity", "entity": "activity", "action": "list"},
+  "requiresPermission": "activity.viewAny",
+  "requiresFeature": "activity.feed",
+  "dataSources": [
+    {"name": "activities", "kind": "http.get", "url": "/api/v1/activities", "unwrap": "data", "paginated": true, "queryParamsFromState": ["filter[log_name]", "filter[event]", "filter[subject_type]", "filter[causer_id]", "sort", "page", "per_page"]},
+    {"name": "logNames", "kind": "http.get", "url": "/api/v1/activities/log-names", "unwrap": "data", "cache": {"ttlSeconds": 600}}
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": {"className": "flex flex-col gap-4 p-6 max-w-5xl mx-auto"},
+      "children": [
+        {"kind": "View", "props": {"className": "flex flex-col gap-1"}, "children": [
+          {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Activity"}},
+          {"kind": "Text", "props": {"className": "text-sm text-muted", "children": "Recent actions across your workspace. Regular users see their own actions; admins see everyone."}}
+        ]},
+        {"kind": "View", "props": {"className": "flex flex-wrap gap-3"}, "children": [
+          {"kind": "Select", "props": {"label": "Domain", "name": "filter[log_name]", "placeholder": "All domains"}, "optionsSource": {"$ref": "logNames", "valueField": "name", "labelField": "label"}, "actions": {"onChange": {"kind": "data.applyFilter", "source": "activities"}}},
+          {"kind": "Select", "props": {"label": "Event", "name": "filter[event]", "placeholder": "All events"}, "options": [{"key": "created", "label": "Created"}, {"key": "updated", "label": "Updated"}, {"key": "deleted", "label": "Deleted"}, {"key": "restored", "label": "Restored"}], "actions": {"onChange": {"kind": "data.applyFilter", "source": "activities"}}},
+          {"kind": "TextField", "props": {"label": "Search description", "name": "filter[description]", "placeholder": "invitation, permission, ..."}, "actions": {"onChange": {"kind": "data.applyFilter", "source": "activities"}}}
+        ]},
+        {"kind": "List", "props": {"emptyState": {"title": "No activity yet", "description": "Your workspace history will appear here as actions are taken."}}, "bindings": {"items": {"$ref": "activities"}, "isLoading": {"$ref": "activities.isLoading"}}, "itemRenderer": {"kind": "Widget", "widget": "activity.activity-log-entry", "props": {"activity": {"$ref": "row"}, "showSubjectLink": true}}}
+      ]
+    }
+  ]
+}

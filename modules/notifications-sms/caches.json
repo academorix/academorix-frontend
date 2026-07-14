@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/notifications-sms/caches",
+  "$version": 1,
+  "title": "notifications-sms \u2014 cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["notifications-sms"],
+  "keys": [
+    {"pattern": "notifications-sms:opt-outs:{tenant_id}:bloom", "description": "Bloom filter of opted-out phone hashes for tenant. Read on every send.", "ttlSeconds": 300, "tags": ["notifications-sms", "opt-out", "tenant"], "invalidatedBy": ["SmsOptedOut event", "SmsOptOutRevoked event"]},
+    {"pattern": "notifications-sms:cost_aggregation:{tenant_id}:{month}", "description": "Running monthly cost aggregation per tenant. Read on every send for cost-cap check.", "ttlSeconds": 300, "tags": ["notifications-sms", "cost", "tenant"], "invalidatedBy": ["SmsCostRecorded event", "monthly reset"]},
+    {"pattern": "notifications-sms:cost_per_country:{provider}:{country_code}", "description": "Latest cost-per-message per (provider, country). Refreshed from provider webhook cost updates. Powers cost estimation before send.", "ttlSeconds": 3600, "tags": ["notifications-sms", "cost", "provider"]},
+    {"pattern": "notifications-sms:allowed_countries:{tenant_id}", "description": "Tenant's configured allowed destination country codes. Read on every send.", "ttlSeconds": 600, "tags": ["notifications-sms", "tenant"], "invalidatedBy": ["tenancy::TenantSettingsUpdated event"]}
+  ]
+}

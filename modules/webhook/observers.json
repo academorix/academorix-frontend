@@ -1,0 +1,34 @@
+{
+  "id": "academorix://modules/webhook/observers",
+  "$version": 1,
+  "title": "webhook \u2014 Eloquent observers",
+  "description": "Two observers on the two entities. Enforce state machine + auto-disable + rotation grace window cleanup.",
+  "observers": [
+    {
+      "model": "WebhookSubscription",
+      "observer": "Academorix\\Webhook\\Observers\\WebhookSubscriptionObserver",
+      "handles": [
+        "creating \u2192 generate signing secret if not provided (server-side 32-byte random)",
+        "creating \u2192 validate destination_config against destination driver's schema",
+        "creating \u2192 fire WebhookSubscriptionCreated",
+        "updating (state=paused) \u2192 fire WebhookSubscriptionPaused",
+        "updating (state=active from previous state) \u2192 fire WebhookSubscriptionResumed",
+        "updating (state=disabled) \u2192 fire WebhookSubscriptionDisabled + dispatch admin notification",
+        "updating (secret changed with rotation intent) \u2192 fire WebhookSecretRotated + move current secret to secret_previous + set secret_previous_expires_at = now() + rotation_grace_seconds",
+        "updating (api_version changed) \u2192 validate new version exists + is released/deprecated (not sunset)",
+        "saving \u2192 refuse changes to is_system=true rows unless super_admin",
+        "deleting \u2192 refuse hard-delete when active deliveries in-flight; queue for cleanup after in-flight settle"
+      ]
+    },
+    {
+      "model": "WebhookDelivery",
+      "observer": "Academorix\\Webhook\\Observers\\WebhookDeliveryObserver",
+      "handles": [
+        "created \u2192 fire WebhookDeliveryDispatched when state=inFlight",
+        "updated (state=delivered) \u2192 fire WebhookDelivered + reset parent subscription.consecutive_failure_count to 0",
+        "updated (state=failedRetryable) \u2192 fire WebhookDeliveryFailed + increment parent subscription.consecutive_failure_count",
+        "updated (state=failedPermanent) \u2192 fire WebhookDeliveryFailedPermanent + increment consecutive_failure_count + check threshold + auto-disable subscription if reached OR if response_status=410 (immediate disable regardless of threshold)"
+      ]
+    }
+  ]
+}

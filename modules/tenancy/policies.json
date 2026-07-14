@@ -1,0 +1,125 @@
+{
+  "id": "academorix://modules/tenancy/policies",
+  "$version": 1,
+  "title": "tenancy — authorization policies",
+  "description": "Policy classes and the abilities they gate. Most policies target the `platform_admin` guard (the tenant catalogue is a platform-plane concern). Tenant-scoped self-service abilities (a tenant admin editing their own workspace) target the `sanctum` guard and are marked `guard: sanctum`. Policies registered by `TenancyServiceProvider::registerPolicies()`.",
+  "policies": [
+    {
+      "class": "Academorix\\Tenancy\\Policies\\ApplicationPolicy",
+      "target": "Academorix\\Tenancy\\Models\\Application",
+      "guard": "platform_admin",
+      "abilities": [
+        {"name": "viewAny", "requires": ["view_applications OR manage_applications"]},
+        {"name": "view", "requires": ["view_applications OR manage_applications"]},
+        {"name": "create", "requires": ["manage_applications"]},
+        {"name": "update", "requires": ["manage_applications"], "refusedOnSystemRow": true},
+        {"name": "delete", "requires": ["manage_applications"], "refusedOnSystemRow": true}
+      ]
+    },
+    {
+      "class": "Academorix\\Tenancy\\Policies\\TenantPolicy",
+      "target": "Academorix\\Tenancy\\Models\\Tenant",
+      "guard": "platform_admin",
+      "abilities": [
+        {"name": "viewAny", "requires": ["view_tenants OR manage_tenants"]},
+        {"name": "view", "requires": ["view_tenants OR manage_tenants"]},
+        {"name": "create", "requires": ["manage_tenants"], "description": "Distinct from self-serve `POST /api/v1/tenants/register` (public route, no policy)."},
+        {"name": "update", "requires": ["manage_tenants"], "refusedOnSystemRow": true},
+        {"name": "delete", "requires": ["manage_tenants"], "refusedOnSystemRow": true, "description": "Archive (soft-delete). Hard-delete happens via HardDeleteArchivedTenantJob after retention."},
+        {"name": "suspend", "requires": ["manage_tenants"], "refusedOnSystemRow": true},
+        {"name": "resume", "requires": ["manage_tenants"]},
+        {"name": "archive", "requires": ["manage_tenants"], "refusedOnSystemRow": true}
+      ]
+    },
+    {
+      "class": "Academorix\\Tenancy\\Policies\\TenantSelfPolicy",
+      "target": "Academorix\\Tenancy\\Models\\Tenant",
+      "guard": "sanctum",
+      "abilities": [
+        {"name": "updateOwn", "requires": ["tenants.manage_own_settings"], "description": "Tenant admin editing their own workspace via PATCH /api/current-tenant. Refuses if `auth()->user()->tenant_id !== tenant->id`."}
+      ]
+    },
+    {
+      "class": "Academorix\\Tenancy\\Policies\\BusinessTypePolicy",
+      "target": "Academorix\\Tenancy\\Models\\BusinessType",
+      "guard": "platform_admin",
+      "abilities": [
+        {"name": "create", "requires": ["manage_business_types"]},
+        {"name": "update", "requires": ["manage_business_types"]},
+        {"name": "delete", "requires": ["manage_business_types"], "description": "Refused if any Tenant currently uses this business_type key."}
+      ]
+    },
+    {
+      "class": "Academorix\\Tenancy\\Policies\\DomainPolicy",
+      "target": "Academorix\\Tenancy\\Models\\Domain",
+      "guard": ["platform_admin", "sanctum"],
+      "abilities": [
+        {"name": "viewAny", "requires": ["manage_tenants (platform) OR tenants.manage_domains (sanctum)"]},
+        {"name": "view", "requires": ["manage_tenants OR tenants.manage_domains"]},
+        {"name": "create", "requires": ["tenants.manage_domains (sanctum only — customers add their own domains)"]},
+        {"name": "update", "requires": ["tenants.manage_domains"]},
+        {"name": "delete", "requires": ["tenants.manage_domains"]},
+        {"name": "verify", "requires": ["tenants.manage_domains"], "description": "Manual re-verify from the SPA."}
+      ]
+    },
+    {
+      "class": "Academorix\\Tenancy\\Policies\\DomainRecordPolicy",
+      "target": "Academorix\\Tenancy\\Models\\DomainRecord",
+      "guard": ["platform_admin", "sanctum"],
+      "abilities": [
+        {"name": "viewAny", "requires": ["tenants.manage_domains OR manage_tenants"]},
+        {"name": "view", "requires": ["tenants.manage_domains OR manage_tenants"]}
+      ],
+      "note": "Read-only. DomainRecord rows are populated by DomainObserver; there is no direct create/update path."
+    },
+    {
+      "class": "Academorix\\Tenancy\\Policies\\BrandingPolicy",
+      "target": "Academorix\\Tenancy\\Models\\Branding",
+      "guard": ["platform_admin", "sanctum"],
+      "abilities": [
+        {"name": "viewAny", "requires": ["manage_tenants OR tenants.manage_branding"]},
+        {"name": "view", "requires": ["manage_tenants OR tenants.manage_branding"]},
+        {"name": "create", "requires": ["tenants.manage_branding"]},
+        {"name": "update", "requires": ["tenants.manage_branding"]},
+        {"name": "promote", "requires": ["tenants.manage_branding"], "description": "Sets this Branding as the tenant's primary_branding_id."},
+        {"name": "delete", "requires": ["tenants.manage_branding"], "description": "Refused when trying to delete the primary — must promote another first."}
+      ]
+    },
+    {
+      "class": "Academorix\\Tenancy\\Policies\\IdentityPolicy",
+      "target": "Academorix\\Tenancy\\Models\\Identity",
+      "guard": "platform_admin",
+      "abilities": [
+        {"name": "viewAny", "requires": ["manage_identities OR manage_tenants"]},
+        {"name": "view", "requires": ["manage_identities OR manage_tenants"]},
+        {"name": "erase", "requires": ["manage_identities"], "description": "GDPR Art. 17 right-to-erasure. Anonymises the row + cascades through User references. Recorded in the audit trail."}
+      ],
+      "note": "No create/update — Identity rows are created by the auth flow, not by admin CRUD."
+    },
+    {
+      "class": "Academorix\\Tenancy\\Policies\\TenantContactPolicy",
+      "target": "Academorix\\Tenancy\\Models\\TenantContact",
+      "guard": ["platform_admin", "sanctum"],
+      "abilities": [
+        {"name": "viewAny", "requires": ["manage_tenants OR tenants.manage_contacts"]},
+        {"name": "view", "requires": ["manage_tenants OR tenants.manage_contacts"]},
+        {"name": "create", "requires": ["manage_tenants OR tenants.manage_contacts"]},
+        {"name": "update", "requires": ["manage_tenants OR tenants.manage_contacts"]},
+        {"name": "delete", "requires": ["manage_tenants OR tenants.manage_contacts"], "description": "Refused when trying to delete the last remaining `kind=dpo` contact if the tenant is GDPR-subject."}
+      ]
+    },
+    {
+      "class": "Academorix\\Tenancy\\Policies\\TenantIntegrationPolicy",
+      "target": "Academorix\\Tenancy\\Models\\TenantIntegration",
+      "guard": ["platform_admin", "sanctum"],
+      "abilities": [
+        {"name": "viewAny", "requires": ["manage_tenants OR tenants.manage_integrations"]},
+        {"name": "view", "requires": ["manage_tenants OR tenants.manage_integrations"]},
+        {"name": "create", "requires": ["tenants.manage_integrations"]},
+        {"name": "update", "requires": ["tenants.manage_integrations"]},
+        {"name": "delete", "requires": ["tenants.manage_integrations"]}
+      ],
+      "note": "v2 — routes exist as stubs in v1 that return 501 unless the caller carries the permission."
+    }
+  ]
+}

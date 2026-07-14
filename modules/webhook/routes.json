@@ -1,0 +1,64 @@
+{
+  "id": "academorix://modules/webhook/routes",
+  "$version": 1,
+  "title": "webhook \u2014 HTTP routes",
+  "description": "Three groups: central inbound receiver (public, signature-verified), platform-admin cross-tenant inspection, tenant subscription + delivery admin.",
+  "groups": [
+    {
+      "name": "central-inbound",
+      "prefix": "/webhooks/inbound",
+      "middleware": ["request.id", "throttle:webhook-inbound", "response.envelope"],
+      "hosts": ["central"],
+      "description": "Universal inbound receiver. Signature-verified per namespace/provider by the webhooks.verify middleware. Rate-limited by (namespace, provider, source IP).",
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/{namespace}/{provider}",
+          "controller": "Academorix\\Webhook\\Http\\Controllers\\InboundWebhookController@ingest",
+          "middleware": ["webhooks.verify:{namespace}.webhook_secrets.{provider},{namespace}.webhook_secrets.{provider}_previous"],
+          "description": "Verifies signature via configured strategy for {namespace}.{provider} + fires InboundWebhookReceived event. Downstream module listeners (filtered by namespace) normalise the provider's payload shape.",
+          "examples": ["POST /webhooks/inbound/notifications-mail/mailgun", "POST /webhooks/inbound/notifications-mail/sendgrid", "POST /webhooks/inbound/notifications-sms/twilio", "POST /webhooks/inbound/notifications-push/fcm", "POST /webhooks/inbound/subscription/stripe"]
+        }
+      ]
+    },
+    {
+      "name": "platform-admin",
+      "prefix": "/api/v1/platform/webhook",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:platform_admin", "platform.user", "throttle:foundation-base", "response.envelope"],
+      "hosts": ["central-admin"],
+      "description": "Cross-tenant subscription + delivery inspection for support / abuse investigation.",
+      "routes": [
+        {"method": "GET", "path": "/subscriptions", "controller": "Academorix\\Webhook\\Http\\Controllers\\Platform\\WebhookSubscriptionController@index", "permission": "platform.webhook.subscriptions.viewAny"},
+        {"method": "GET", "path": "/subscriptions/{subscription}", "controller": "Academorix\\Webhook\\Http\\Controllers\\Platform\\WebhookSubscriptionController@show", "permission": "platform.webhook.subscriptions.view"},
+        {"method": "POST", "path": "/subscriptions/{subscription}/pause", "controller": "Academorix\\Webhook\\Http\\Controllers\\Platform\\WebhookSubscriptionController@pause", "permission": "platform.webhook.subscriptions.manage", "description": "Ops pause during incident. Auditable."},
+        {"method": "POST", "path": "/subscriptions/{subscription}/resume", "controller": "Academorix\\Webhook\\Http\\Controllers\\Platform\\WebhookSubscriptionController@resume", "permission": "platform.webhook.subscriptions.manage"},
+        {"method": "GET", "path": "/deliveries", "controller": "Academorix\\Webhook\\Http\\Controllers\\Platform\\WebhookDeliveryController@index", "permission": "platform.webhook.deliveries.viewAny"},
+        {"method": "GET", "path": "/deliveries/{delivery}", "controller": "Academorix\\Webhook\\Http\\Controllers\\Platform\\WebhookDeliveryController@show", "permission": "platform.webhook.deliveries.view"},
+        {"method": "POST", "path": "/deliveries/{delivery}/retry", "controller": "Academorix\\Webhook\\Http\\Controllers\\Platform\\WebhookDeliveryController@retry", "permission": "platform.webhook.deliveries.retry"}
+      ]
+    },
+    {
+      "name": "tenant",
+      "prefix": "/api/v1/tenant/webhook",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "tenant.resolve", "throttle:webhook-tenant", "response.envelope"],
+      "hosts": ["tenant"],
+      "description": "Tenant admin surface: subscription CRUD + delivery audit + lifecycle actions.",
+      "routes": [
+        {"method": "GET", "path": "/subscriptions", "controller": "Academorix\\Webhook\\Http\\Controllers\\Tenant\\WebhookSubscriptionController@index", "permission": "webhook.subscriptions.viewAny"},
+        {"method": "POST", "path": "/subscriptions", "controller": "Academorix\\Webhook\\Http\\Controllers\\Tenant\\WebhookSubscriptionController@store", "permission": "webhook.subscriptions.create", "description": "Body: {name, description?, destination, destination_config, events, api_version?, http_verb?, timeout_seconds?, max_attempts?, backoff_strategy?, backoff_config?, rate_limit_per_minute?, verify_ssl?, compress_payload?, filter_expression?}. Secret is generated server-side + returned once (never persisted plaintext)."},
+        {"method": "GET", "path": "/subscriptions/{subscription}", "controller": "Academorix\\Webhook\\Http\\Controllers\\Tenant\\WebhookSubscriptionController@show", "permission": "webhook.subscriptions.view"},
+        {"method": "PATCH", "path": "/subscriptions/{subscription}", "controller": "Academorix\\Webhook\\Http\\Controllers\\Tenant\\WebhookSubscriptionController@update", "permission": "webhook.subscriptions.update"},
+        {"method": "DELETE", "path": "/subscriptions/{subscription}", "controller": "Academorix\\Webhook\\Http\\Controllers\\Tenant\\WebhookSubscriptionController@destroy", "permission": "webhook.subscriptions.delete"},
+        {"method": "POST", "path": "/subscriptions/{subscription}/test", "controller": "Academorix\\Webhook\\Http\\Controllers\\Tenant\\WebhookSubscriptionController@test", "permission": "webhook.subscriptions.test", "description": "Dispatches a synthetic webhook.test event to the destination. Response includes the delivery id for follow-up in the audit surface."},
+        {"method": "POST", "path": "/subscriptions/{subscription}/rotate-secret", "controller": "Academorix\\Webhook\\Http\\Controllers\\Tenant\\WebhookSubscriptionController@rotateSecret", "permission": "webhook.subscriptions.rotate-secret", "description": "Rotates the signing secret. Sets secret_previous + secret_previous_expires_at = now() + rotation_grace_seconds. Response includes the new secret ONCE (never returned again)."},
+        {"method": "POST", "path": "/subscriptions/{subscription}/pause", "controller": "Academorix\\Webhook\\Http\\Controllers\\Tenant\\WebhookSubscriptionController@pause", "permission": "webhook.subscriptions.manage"},
+        {"method": "POST", "path": "/subscriptions/{subscription}/resume", "controller": "Academorix\\Webhook\\Http\\Controllers\\Tenant\\WebhookSubscriptionController@resume", "permission": "webhook.subscriptions.manage"},
+        {"method": "GET", "path": "/deliveries", "controller": "Academorix\\Webhook\\Http\\Controllers\\Tenant\\WebhookDeliveryController@index", "permission": "webhook.deliveries.viewAny"},
+        {"method": "GET", "path": "/deliveries/{delivery}", "controller": "Academorix\\Webhook\\Http\\Controllers\\Tenant\\WebhookDeliveryController@show", "permission": "webhook.deliveries.view"},
+        {"method": "POST", "path": "/deliveries/{delivery}/retry", "controller": "Academorix\\Webhook\\Http\\Controllers\\Tenant\\WebhookDeliveryController@retry", "permission": "webhook.deliveries.retry", "description": "Manual retry. Only allowed on state=failedPermanent (retryable state is scheduled automatically)."},
+        {"method": "GET", "path": "/events", "controller": "Academorix\\Webhook\\Http\\Controllers\\Tenant\\WebhookEventController@index", "permission": "webhook.events.viewAny", "description": "Catalog of publishable events + their current version. Powers the subscription-create event picker."},
+        {"method": "GET", "path": "/destinations", "controller": "Academorix\\Webhook\\Http\\Controllers\\Tenant\\WebhookDestinationController@index", "permission": "webhook.destinations.viewAny", "description": "Catalog of available destination drivers. Powers the subscription-create destination picker. Filtered by feature-flag entitlement (EventBridge / PubSub / mTLS require plan tier)."}
+      ]
+    }
+  ]
+}

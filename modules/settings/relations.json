@@ -1,0 +1,14 @@
+{
+  "id": "academorix://modules/settings/relations",
+  "$version": 1,
+  "title": "settings \u2014 model relationships",
+  "description": "SettingValue is the persistence row: (scope_type, scope_id, group, name, payload).",
+  "internal": [
+    {"from": "SettingValue", "kind": "n/a", "note": "No FK to a Settings class \u2014 the (group, name) tuple is the logical key. Groups + fields are discovered from attributes, not stored in a table."}
+  ],
+  "outbound": [
+    {"from": "SettingValue", "kind": "belongsTo", "to": "tenancy::Tenant", "foreignKey": "scope_id", "predicate": "scope_type = 'tenant'", "morphed": true, "description": "Nullable morph target when scope_type=tenant. Resolved via ScopeResolver."},
+    {"from": "SettingValue", "kind": "belongsTo", "to": "user::User", "foreignKey": "scope_id", "predicate": "scope_type = 'user'", "morphed": true}
+  ],
+  "inbound": {"description": "SettingsResolver queries SettingValue rows in scope precedence order. No downstream FK."}
+}

@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/transfer/notifications",
+  "$version": 1,
+  "title": "transfer \u2014 notification classes + categories",
+  "namespace": "Academorix\\Transfer\\Notifications",
+  "description": "Three notifications covering the terminal outcome space. Channels resolved once at dispatch from xfer_jobs.notify_channels and delivered through the notifications module. Cancellations are silent \u2014 the user initiated them.",
+  "notifications": [
+    "XferJobCompletedNotification",
+    "XferJobPartiallySucceededNotification",
+    "XferJobFailedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "transfer.job_completed",
+      "display_name": "Data transfer completed",
+      "description": "Sent when an import / export / sample job succeeds. Copy includes counters + download call-to-action (for exports).",
+      "default_channels": ["mail", "broadcast", "database"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": true,
+      "is_system": true
+    },
+    {
+      "slug": "transfer.job_partially_succeeded",
+      "display_name": "Data transfer completed with errors",
+      "description": "Sent when an import completed but some rows failed validation. Copy includes counters + 'Download errors report' call-to-action linking the errors.csv artifact.",
+      "default_channels": ["mail", "broadcast", "database"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": true,
+      "is_system": true
+    },
+    {
+      "slug": "transfer.job_failed",
+      "display_name": "Data transfer failed",
+      "description": "Sent when a job could not complete. Copy includes error code + short human message + 'View details' call-to-action.",
+      "default_channels": ["mail", "broadcast", "database"],
+      "priority": "critical",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

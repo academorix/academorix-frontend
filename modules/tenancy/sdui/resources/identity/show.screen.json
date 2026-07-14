@@ -1,0 +1,43 @@
+{
+  "id": "tenancy.resources.identity.show",
+  "title": "Identity detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/identities/{id}",
+  "host": "central_admin",
+  "audience": "authenticated",
+  "resource": {"module": "tenancy", "entity": "identity", "action": "show"},
+  "requiresPermission": "platform.identities.view",
+  "params": [{"name": "id", "type": "string", "in": "path", "required": true}],
+  "dataSources": [
+    {"name": "identity", "kind": "http.get", "urlExpr": "'/api/v1/identities/' + params.id + '?include=users,application'", "unwrap": "data"}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-6 p-6 max-w-4xl mx-auto"}, "children": [
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back to identities"}, "actions": {"onPress": {"kind": "navigate", "to": "/platform/identities"}}},
+      {"kind": "View", "children": [
+        {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold font-mono"}, "bindings": {"children": {"$ref": "identity.email"}}},
+        {"kind": "Text", "props": {"className": "text-sm text-muted font-mono"}, "bindings": {"children": {"$ref": "identity.id"}}}
+      ]},
+      {"kind": "Card", "props": {"className": "p-6"}, "children": [
+        {"kind": "Text", "props": {"as": "h2", "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3", "children": "Details"}},
+        {"kind": "DescriptionList", "children": [
+          {"kind": "DescriptionListItem", "props": {"label": "Application"}, "bindings": {"value": {"$expr": "identity.application?.name"}}},
+          {"kind": "DescriptionListItem", "props": {"label": "Linked users"}, "bindings": {"value": {"$ref": "identity.users_count"}}},
+          {"kind": "DescriptionListItem", "props": {"label": "First seen"}, "bindings": {"value": {"$expr": "formatDate(identity.created_at)"}}},
+          {"kind": "DescriptionListItem", "props": {"label": "Last activity"}, "bindings": {"value": {"$expr": "identity.last_activity_at ? formatRelative(identity.last_activity_at) : 'Never'"}}}
+        ]}
+      ]},
+      {"kind": "Card", "props": {"className": "p-6"}, "children": [
+        {"kind": "Text", "props": {"as": "h2", "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3", "children": "Linked users"}},
+        {"kind": "List", "bindings": {"items": {"$ref": "identity.users"}}, "itemRenderer": {"kind": "View", "props": {"className": "flex items-center justify-between py-2 border-b last:border-b-0"}, "children": [
+          {"kind": "View", "children": [
+            {"kind": "Text", "props": {"className": "font-medium"}, "bindings": {"children": {"$ref": "row.display_name"}}},
+            {"kind": "Text", "props": {"className": "text-xs text-muted"}, "bindings": {"children": {"$expr": "row.tenant?.name + ' \u00b7 ' + row.role"}}}
+          ]},
+          {"kind": "Link", "props": {"size": "sm", "children": "Open user"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/platform/users/' + row.id"}}}
+        ]}}
+      ]}
+    ]}
+  ]
+}

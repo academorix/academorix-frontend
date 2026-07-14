@@ -1,0 +1,240 @@
+{
+  "id": "academorix://modules/invitations/schemas/invitation-event",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "InvitationEvent",
+  "description": "Immutable audit + funnel-analytics log. One row per state transition or delivery signal on an Invitation. Powers three consumers: (1) the compliance audit trail (who invited whom to what, when did it flip states, why did it fail); (2) the product-analytics funnel (sent → delivered → opened → clicked → accepted conversion rates); (3) the bounce-tracking pipeline (which addresses reject mail, retry policy). Rows are append-only — no update, no delete except by retention purge.",
+  "type": "object",
+  "x-module": "invitations",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "invitation_events",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "invevt_",
+    "incrementing": false,
+    "model": "Academorix\\Invitations\\Models\\InvitationEvent",
+    "interface": "Academorix\\Invitations\\Contracts\\Data\\InvitationEventInterface",
+    "implements": [
+      "Academorix\\Invitations\\Contracts\\Data\\InvitationEventInterface"
+    ],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToApplication",
+      "BelongsToTenantOptional",
+      "BelongsToInvitation",
+      "HasMetadata"
+    ],
+    "casts": {
+      "occurred_at": "datetime",
+      "metadata": "array"
+    },
+    "appends": [],
+    "observers": [],
+    "hidden": [
+      "metadata"
+    ],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `invevt_<26 chars>`."
+      },
+      "invitation_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "invitations",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "application_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "applications",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        }
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Denormalised from the parent Invitation for scan-by-tenant queries. Matches parent at write time and never changes.",
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "event": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "description": "Enum: `sent`, `delivered`, `opened`, `clicked`, `accepted`, `declined`, `expired`, `revoked`, `bounced`, `resent`, `preflight_failed`, `send_failed`."
+      },
+      "occurred_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "When the event actually happened (may differ from `created_at` if the event is recorded from a batched webhook)."
+      },
+      "actor_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Polymorphic actor key when the event was user-initiated (`user`, `service_account`, `system`, `invitee`, `mail_transport`, `webhook`)."
+      },
+      "actor_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true
+      },
+      "ip_address": {
+        "type": "inet",
+        "nullable": true,
+        "description": "Native Postgres INET type. IPv4 or IPv6."
+      },
+      "user_agent": {
+        "type": "string",
+        "length": 500,
+        "nullable": true
+      },
+      "country_code": {
+        "type": "string",
+        "length": 2,
+        "nullable": true,
+        "description": "ISO-3166-1 alpha-2. Resolved via IP → country lookup at ingest."
+      },
+      "city": {
+        "type": "string",
+        "length": 100,
+        "nullable": true
+      },
+      "transport": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Mail transport that reported this event: `sendgrid`, `ses`, `postmark`, `mailgun`, `twilio`, `slack`. NULL for events not reported by an external transport."
+      },
+      "signal_id": {
+        "type": "string",
+        "length": 200,
+        "nullable": true,
+        "description": "External event ID from the mail-provider webhook. Enables idempotent replay handling."
+      },
+      "error_code": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Provider-specific error code (e.g. SendGrid's `bounce_type`, SES's `bounceType/bounceSubType`)."
+      },
+      "error_message": {
+        "type": "text",
+        "nullable": true,
+        "description": "Provider-specific error message. Length capped by app validation."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form. Typical contents: raw webhook body (verified + parsed), computed risk score for `preflight_failed`."
+      },
+      "created_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Row insertion time. Distinct from `occurred_at` which is when the event happened externally."
+      }
+    },
+    "indexes": [
+      {
+        "columns": ["invitation_id", "occurred_at"],
+        "unique": false,
+        "name": "invitation_events_invitation_occurred_index",
+        "description": "Primary read path — 'timeline for this invitation, chronological'."
+      },
+      {
+        "columns": ["signal_id", "transport"],
+        "unique": true,
+        "name": "invitation_events_signal_transport_unique",
+        "predicate": "signal_id IS NOT NULL",
+        "description": "Idempotency guard — a mail-transport webhook may deliver the same signal_id twice; we ignore duplicates."
+      },
+      {
+        "columns": ["tenant_id", "event", "occurred_at"],
+        "unique": false,
+        "name": "invitation_events_tenant_event_occurred_index",
+        "description": "Funnel-analytics queries — 'count of `opened` in this tenant in the last 30 days'."
+      },
+      {
+        "columns": ["event", "occurred_at"],
+        "unique": false,
+        "name": "invitation_events_event_occurred_index",
+        "description": "Cross-tenant funnel / deliverability queries for the platform-admin dashboard."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "invitation_id",
+    "application_id",
+    "event",
+    "occurred_at",
+    "created_at"
+  ],
+  "properties": {
+    "id": {"type": "string", "pattern": "^invevt_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "invitation_id": {"type": "string", "pattern": "^invite_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "application_id": {"type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "tenant_id": {"type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "event": {
+      "type": "string",
+      "enum": [
+        "sent",
+        "delivered",
+        "opened",
+        "clicked",
+        "accepted",
+        "declined",
+        "expired",
+        "revoked",
+        "bounced",
+        "resent",
+        "preflight_failed",
+        "send_failed"
+      ]
+    },
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "actor_type": {"type": ["string", "null"], "enum": ["user", "service_account", "system", "invitee", "mail_transport", "webhook", null]},
+    "actor_id": {"type": ["string", "null"], "maxLength": 64},
+    "ip_address": {"type": ["string", "null"], "description": "IPv4 or IPv6."},
+    "user_agent": {"type": ["string", "null"], "maxLength": 500},
+    "country_code": {"type": ["string", "null"], "pattern": "^[A-Z]{2}$"},
+    "city": {"type": ["string", "null"], "maxLength": 100},
+    "transport": {"type": ["string", "null"], "enum": ["sendgrid", "ses", "postmark", "mailgun", "twilio", "slack", null]},
+    "signal_id": {"type": ["string", "null"], "maxLength": 200},
+    "error_code": {"type": ["string", "null"], "maxLength": 64},
+    "error_message": {"type": ["string", "null"]},
+    "metadata": {"type": ["object", "null"], "additionalProperties": true},
+    "created_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["metadata"],
+    "computed": []
+  }
+}

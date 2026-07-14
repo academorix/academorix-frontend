@@ -1,0 +1,30 @@
+{
+  "id": "newsletter.resources.newsletter.edit",
+  "title": "Edit newsletter",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/newsletters/{id}/edit",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {"module": "newsletter", "entity": "newsletter", "action": "edit"},
+  "requiresPermission": "newsletters.update",
+  "params": [{"name": "id", "type": "string", "in": "path", "required": true}],
+  "dataSources": [
+    {"name": "newsletter", "kind": "http.get", "urlExpr": "'/api/v1/newsletters/' + params.id", "unwrap": "data"}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto"}, "children": [
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel", "className": "text-sm text-muted"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/newsletters/' + params.id"}}},
+      {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold"}, "bindings": {"children": {"$expr": "'Edit ' + newsletter.name"}}},
+      {"kind": "Form", "props": {"submitUrlExpr": "'/api/v1/newsletters/' + params.id", "submitMethod": "PATCH", "onSuccess": [{"kind": "toast.success", "message": "Saved"}, {"kind": "data.refresh", "source": "newsletter"}]}, "bindings": {"initialValues": {"$ref": "newsletter"}}, "children": [
+        {"kind": "TextField", "props": {"label": "Name", "name": "name"}, "bindings": {"defaultValue": {"$ref": "newsletter.name"}}},
+        {"kind": "TextArea", "props": {"label": "Description", "name": "description"}, "bindings": {"defaultValue": {"$ref": "newsletter.description"}}},
+        {"kind": "Select", "props": {"label": "Cadence", "name": "cadence"}, "options": [{"key": "daily", "label": "Daily"}, {"key": "weekly", "label": "Weekly"}, {"key": "biweekly", "label": "Biweekly"}, {"key": "monthly", "label": "Monthly"}, {"key": "quarterly", "label": "Quarterly"}, {"key": "adhoc", "label": "Ad-hoc"}], "bindings": {"defaultValue": {"$ref": "newsletter.cadence"}}},
+        {"kind": "TextField", "props": {"label": "From email", "name": "sender_config.from_email", "type": "email"}, "bindings": {"defaultValue": {"$expr": "newsletter.sender_config?.from_email"}}},
+        {"kind": "TextField", "props": {"label": "From name", "name": "sender_config.from_name"}, "bindings": {"defaultValue": {"$expr": "newsletter.sender_config?.from_name"}}},
+        {"kind": "TextArea", "props": {"label": "Postal address", "name": "sender_config.postal_address"}, "bindings": {"defaultValue": {"$expr": "newsletter.sender_config?.postal_address"}}},
+        {"kind": "Button", "props": {"variant": "primary", "size": "md", "type": "submit", "children": "Save"}}
+      ]}
+    ]}
+  ]
+}

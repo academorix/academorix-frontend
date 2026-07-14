@@ -1,0 +1,186 @@
+{
+  "id": "academorix://modules/tenancy/schemas/branding",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Branding",
+  "description": "Theme + logo profile per tenant. Multiple profiles per tenant supported (e.g. per-domain branding for a federation with regional sub-brands, or day / night variants). Exactly one profile per tenant is marked `is_default=true`; that profile's fields are denormalised into `tenants.branding` (JSONB) by TenantObserver on save so the workspace picker does not need to join.",
+  "type": "object",
+  "x-module": "tenancy",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "brandings",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "brand_",
+    "incrementing": false,
+    "model": "Academorix\\Tenancy\\Models\\Branding",
+    "interface": "Academorix\\Tenancy\\Contracts\\Data\\BrandingInterface",
+    "implements": ["Academorix\\Tenancy\\Contracts\\Data\\BrandingInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "css_variables": "array",
+      "is_default": "boolean",
+      "metadata": "array"
+    },
+    "appends": [],
+    "observers": ["BrandingObserver"],
+    "hidden": ["metadata"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `brand_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "domain_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Optional FK to a specific Domain. When set, this profile is served only for requests resolving to that domain (per-domain branding). Null = tenant-wide profile.",
+        "foreign": {
+          "table": "domains",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        }
+      },
+      "name": {
+        "type": "string",
+        "length": 100,
+        "nullable": false,
+        "description": "Display name for the profile (e.g. 'Default', 'Dark Mode', 'Championship 2026')."
+      },
+      "is_default": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Exactly one row per tenant with is_default=true (partial unique index). Denormalised into tenants.branding by TenantObserver."
+      },
+      "theme": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "auto",
+        "description": "Enum: `light`, `dark`, `auto`. Controls the base HeroUI theme applied under this profile."
+      },
+      "logo_url": { "type": "string", "length": 2048, "nullable": true },
+      "logo_dark_url": {
+        "type": "string",
+        "length": 2048,
+        "nullable": true,
+        "description": "Alternate logo used when the OS-level colour scheme is dark and theme=`auto`."
+      },
+      "favicon_url": { "type": "string", "length": 2048, "nullable": true },
+      "primary_color": { "type": "string", "length": 7, "nullable": true },
+      "secondary_color": { "type": "string", "length": 7, "nullable": true },
+      "accent_color": { "type": "string", "length": 7, "nullable": true },
+      "background_color": { "type": "string", "length": 7, "nullable": true },
+      "surface_color": { "type": "string", "length": 7, "nullable": true },
+      "text_color": { "type": "string", "length": 7, "nullable": true },
+      "font_stack": { "type": "string", "length": 500, "nullable": true },
+      "custom_font_url": {
+        "type": "string",
+        "length": 2048,
+        "nullable": true,
+        "description": "Optional web-font URL. Must be HTTPS and served with correct CORS."
+      },
+      "css_variables": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form CSS custom-property overrides (e.g. `{'--radius-md': '8px'}`). Applied at :root under this profile."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form platform notes on this branding profile — designer refs, Figma links, migration source. From HasMetadata."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "is_default"],
+        "unique": true,
+        "name": "brandings_tenant_default_unique",
+        "predicate": "is_default = TRUE AND deleted_at IS NULL"
+      },
+      {
+        "columns": ["tenant_id", "domain_id"],
+        "unique": true,
+        "name": "brandings_tenant_domain_unique",
+        "predicate": "domain_id IS NOT NULL AND deleted_at IS NULL"
+      },
+      {
+        "columns": ["tenant_id", "created_at"],
+        "unique": false,
+        "name": "brandings_tenant_created_at_index"
+      }
+    ]
+  },
+  "required": ["id", "tenant_id", "name", "theme", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^brand_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "domain_id": { "type": ["string", "null"], "pattern": "^dom_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+    "is_default": { "type": "boolean", "default": false },
+    "theme": { "type": "string", "enum": ["light", "dark", "auto"] },
+    "logo_url": { "type": ["string", "null"], "format": "uri" },
+    "logo_dark_url": { "type": ["string", "null"], "format": "uri" },
+    "favicon_url": { "type": ["string", "null"], "format": "uri" },
+    "primary_color": { "type": ["string", "null"], "pattern": "^#[0-9a-fA-F]{6}$" },
+    "secondary_color": { "type": ["string", "null"], "pattern": "^#[0-9a-fA-F]{6}$" },
+    "accent_color": { "type": ["string", "null"], "pattern": "^#[0-9a-fA-F]{6}$" },
+    "background_color": { "type": ["string", "null"], "pattern": "^#[0-9a-fA-F]{6}$" },
+    "surface_color": { "type": ["string", "null"], "pattern": "^#[0-9a-fA-F]{6}$" },
+    "text_color": { "type": ["string", "null"], "pattern": "^#[0-9a-fA-F]{6}$" },
+    "font_stack": { "type": ["string", "null"], "maxLength": 500 },
+    "custom_font_url": { "type": ["string", "null"], "format": "uri" },
+    "css_variables": {
+      "type": ["object", "null"],
+      "additionalProperties": { "type": "string" }
+    },
+    "metadata": { "type": ["object", "null"], "additionalProperties": true },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["metadata", "created_by", "updated_by", "deleted_by"],
+    "computed": []
+  }
+}

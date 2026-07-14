@@ -1,0 +1,45 @@
+{
+  "id": "academorix://modules/notifications/middleware",
+  "$version": 1,
+  "title": "notifications core \u2014 HTTP middleware",
+  "description": "Two rate limiters on top of foundation's canonical middleware pipeline. Placed AFTER `throttle:foundation-base` (which handles baseline 60/min authed) so per-surface limits stack additively \u2014 a user can hit their base budget AND the mark-seen budget in the same minute without either bleeding into the other.",
+  "middleware": [
+    {
+      "alias": "throttle.mark-seen",
+      "class": "Illuminate\\Routing\\Middleware\\ThrottleRequests:notifications-mark-seen",
+      "priority": 45,
+      "description": "Bursty by design \u2014 users open a tabbed inbox + mark 20+ notifications seen in seconds. Higher-than-base budget prevents accidental UX blocking; per-user keyed.",
+      "config": {
+        "maxAttempts": 120,
+        "decayMinutes": 1,
+        "keyResolver": "user.id",
+        "responseHeaders": ["X-RateLimit-Limit", "X-RateLimit-Remaining", "Retry-After"]
+      },
+      "returnsOn429": {
+        "code": "FOUNDATION_TOO_MANY_REQUESTS",
+        "hint": "Batching client-side into `POST /mark-all-seen` avoids this limit \u2014 use that endpoint for large inbox drops."
+      }
+    },
+    {
+      "alias": "throttle.preferences",
+      "class": "Illuminate\\Routing\\Middleware\\ThrottleRequests:notifications-preferences",
+      "priority": 45,
+      "description": "Preference updates are settings-page changes \u2014 rare per user but expensive on the DB (bulk upsert + cache invalidation + audit rows). Tight budget catches accidental PATCH loops from a buggy toggle-grid client.",
+      "config": {
+        "maxAttempts": 20,
+        "decayMinutes": 1,
+        "keyResolver": "user.id",
+        "responseHeaders": ["X-RateLimit-Limit", "X-RateLimit-Remaining", "Retry-After"]
+      },
+      "returnsOn429": {
+        "code": "FOUNDATION_TOO_MANY_REQUESTS",
+        "hint": "Debounce toggle changes client-side or send them as a batch PATCH."
+      }
+    }
+  ],
+  "notes": [
+    "Both limiters register in foundation's `RateLimiter::for()` bindings via NotificationsServiceProvider.",
+    "Channel modules ship their OWN limiters for provider-facing routes (mail provider webhooks, sms STOP handlers, push register). Core's limiters cover only the tenant-facing inbox + preferences surface.",
+    "The `signed` middleware on the unsubscribe route is Laravel's built-in \u2014 not declared here."
+  ]
+}

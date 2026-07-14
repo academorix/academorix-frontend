@@ -1,0 +1,16 @@
+{
+  "id": "academorix://modules/notifications-push/errors",
+  "$version": 1,
+  "title": "notifications-push \u2014 error codes",
+  "namespace": "notifications-push",
+  "errors": [
+    {"code": "NOTIFICATIONS_PUSH_INVALID_TOKEN", "http": 200, "retryable": false, "user_facing": false, "audit_severity": "info", "i18n_key": "notifications.push.errors.invalid_token", "description": "Provider reports device token is no longer valid. Subscription marked expired. Not surfaced as error to callers."},
+    {"code": "NOTIFICATIONS_PUSH_PROVIDER_ERROR", "http": 502, "retryable": true, "user_facing": false, "audit_severity": "warn", "i18n_key": "notifications.push.errors.provider_error", "description": "Provider returned 5xx or network error. Retryable via backoff."},
+    {"code": "NOTIFICATIONS_PUSH_PROVIDER_DISABLED", "http": 503, "retryable": true, "user_facing": false, "audit_severity": "alert", "i18n_key": "notifications.push.errors.provider_disabled"},
+    {"code": "NOTIFICATIONS_PUSH_QUOTA_EXCEEDED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "notifications.push.errors.quota_exceeded", "description": "Tenant reached notifications.push.month cap."},
+    {"code": "NOTIFICATIONS_PUSH_SUBSCRIPTIONS_MAX", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "notifications.push.errors.subscriptions_max", "description": "User reached notifications.push.subscriptions.max_per_user cap. Must revoke a device before registering another."},
+    {"code": "NOTIFICATIONS_PUSH_TOKEN_VALIDATION_FAILED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "notifications.push.errors.token_validation_failed", "description": "Provider rejected the token on dry-run at registration. Client should re-generate + retry."},
+    {"code": "NOTIFICATIONS_PUSH_COPPA_BLOCKED", "http": 403, "retryable": false, "user_facing": false, "audit_severity": "info", "i18n_key": "notifications.push.errors.coppa_blocked", "description": "Marketing push refused: recipient is a minor without VPC. Audit-logged for regulatory evidence."},
+    {"code": "NOTIFICATIONS_PUSH_PAYLOAD_TOO_LARGE", "http": 413, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "notifications.push.errors.payload_too_large", "description": "Payload exceeds provider limit (FCM 4KB / APNs 4KB standard, 5KB VoIP)."}
+  ]
+}

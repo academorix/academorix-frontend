@@ -1,0 +1,11 @@
+{
+  "id": "academorix://modules/activity/entitlements",
+  "$version": 1,
+  "title": "activity \u2014 entitlements",
+  "reference": {"publishedBy": "entitlements", "resolvedBy": "GET /api/auth/me \u2192 data.quota_summary", "seededFrom": "BusinessType.default_config.entitlements"},
+  "kinds": [{"kind": "slot"}, {"kind": "boolean"}],
+  "entitlements": [
+    {"key": "activity.retention_days", "kind": "slot", "unit": "days", "defaultsByPlan": {"free": 30, "team": 90, "enterprise": 365}, "description": "Days of activity history retained. Prune job scans against this. Higher plans = longer audit trail for product feed."},
+    {"key": "activity.extended_retention", "kind": "boolean", "defaultsByPlan": {"free": false, "team": false, "enterprise": true}}
+  ]
+}

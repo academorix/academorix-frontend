@@ -1,0 +1,60 @@
+{
+  "id": "academorix://modules/notifications/observers",
+  "$version": 1,
+  "title": "notifications core \u2014 Eloquent observers",
+  "description": "Model observers that live in this module. They translate lifecycle hooks into events + cache invalidations + audit rows. Each observer is registered in NotificationsServiceProvider via `Model::observe(ObserverClass::class)`.",
+  "observers": [
+    {
+      "model": "Notification",
+      "observer": "Academorix\\Notifications\\Observers\\NotificationObserver",
+      "handles": [
+        "created \u2192 fire NotificationDispatched (only if state=queued at persist time)",
+        "updated (state=sent) \u2192 fire NotificationSent",
+        "updated (state=delivered) \u2192 fire NotificationDelivered",
+        "updated (state=failed) \u2192 fire NotificationFailed",
+        "updated (seen_at set) \u2192 fire NotificationSeen + invalidate user's unseen-count cache",
+        "updated (archived_at set) \u2192 fire NotificationArchived",
+        "deleting \u2192 refuse when is_system=true unless actor is super_admin"
+      ]
+    },
+    {
+      "model": "NotificationDelivery",
+      "observer": "Academorix\\Notifications\\Observers\\NotificationDeliveryObserver",
+      "handles": [
+        "created \u2192 fire NotificationQueued for observability",
+        "updated (state transitions) \u2192 update parent Notification.state via a small state-projection routine (Delivery state is per-channel; Notification.state is the aggregate)",
+        "updated (opened_at set) \u2192 fire NotificationOpened",
+        "updated (last_click_at set) \u2192 fire NotificationClicked"
+      ]
+    },
+    {
+      "model": "NotificationTemplate",
+      "observer": "Academorix\\Notifications\\Observers\\NotificationTemplateObserver",
+      "handles": [
+        "created \u2192 write audit row with template_key + version + channel + locale (SOC 2 CC8.1 change management evidence)",
+        "updated (state \u2192 published) \u2192 fire TemplatePublished",
+        "updated (state \u2192 archived) \u2192 invalidate template registry cache",
+        "deleting \u2192 refuse when is_system=true unless actor is super_admin",
+        "deleting \u2192 refuse when Notification.template_id references this row + has state\u2260[archived,failed] (would orphan live sends)"
+      ]
+    },
+    {
+      "model": "NotificationPreference",
+      "observer": "Academorix\\Notifications\\Observers\\NotificationPreferenceObserver",
+      "handles": [
+        "created \u2192 fire PreferenceUpdated with source=user_settings (or from listener source)",
+        "updated \u2192 fire PreferenceUpdated + invalidate user's preference cache",
+        "deleted \u2192 fire PreferenceUpdated with enabled=false (audit trail of the removal)"
+      ]
+    },
+    {
+      "model": "NotificationCategory",
+      "observer": "Academorix\\Notifications\\Observers\\NotificationCategoryObserver",
+      "handles": [
+        "created \u2192 fire CategoryRegistered",
+        "updated \u2192 invalidate category registry cache",
+        "deleting \u2192 refuse when NotificationTemplate rows reference this slug OR when Notification rows referenced this slug in last 90d"
+      ]
+    }
+  ]
+}

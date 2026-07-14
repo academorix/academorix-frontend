@@ -1,0 +1,129 @@
+{
+  "id": "academorix://modules/tenancy/analytics",
+  "$version": 1,
+  "title": "tenancy — product analytics events",
+  "description": "Product analytics events (Segment / Mixpanel / PostHog). Distinct from `events.json` (server-side pub/sub) and `metrics.json` (ops telemetry). Every event carries a `consent_tier` that gates it against the caller's consent state. `essential` events fire without opt-in; every other tier is gated by `Consent.hasConsent(user, tier)`. Fields on each event must be stable — additions are safe; renames + removals require a schema bump.",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "workspace_picker_viewed",
+      "consent_tier": "functional",
+      "firesAt": "Central host GET /find-workspaces render",
+      "properties": {
+        "workspace_count": "integer",
+        "referrer": "string|null"
+      }
+    },
+    {
+      "name": "workspace_selected",
+      "consent_tier": "functional",
+      "firesAt": "SduiTree onPress → navigate.external in workspace-picker screen",
+      "properties": {
+        "workspace_id": "string (ten_<ulid>)",
+        "business_type": "string",
+        "role": "string"
+      }
+    },
+    {
+      "name": "tenant_business_type_selected",
+      "consent_tier": "essential",
+      "firesAt": "Sign-up flow business-type picker",
+      "properties": {
+        "business_type": "string",
+        "step_index": "integer"
+      }
+    },
+    {
+      "name": "tenant_provisioned",
+      "consent_tier": "marketing",
+      "firesAt": "TenantProvisioned event listener",
+      "properties": {
+        "tenant_id": "string",
+        "business_type": "string",
+        "country_code": "string",
+        "locale": "string",
+        "referrer": "string|null",
+        "utm_source": "string|null",
+        "utm_campaign": "string|null"
+      },
+      "description": "Primary conversion event. Feeds attribution + acquisition funnels."
+    },
+    {
+      "name": "tenant_owner_signed_in_first_time",
+      "consent_tier": "functional",
+      "firesAt": "Auth login when identity.last_seen_at was null",
+      "properties": {
+        "tenant_id": "string",
+        "business_type": "string",
+        "hours_since_provisioning": "number"
+      }
+    },
+    {
+      "name": "tenant_suspended",
+      "consent_tier": "functional",
+      "firesAt": "TenantSuspended listener",
+      "properties": {
+        "tenant_id": "string",
+        "reason": "string"
+      }
+    },
+    {
+      "name": "tenant_resumed",
+      "consent_tier": "functional",
+      "firesAt": "TenantResumed listener",
+      "properties": {
+        "tenant_id": "string",
+        "grace_days_elapsed": "integer|null"
+      }
+    },
+    {
+      "name": "tenant_archived",
+      "consent_tier": "functional",
+      "firesAt": "TenantArchived listener",
+      "properties": {
+        "tenant_id": "string",
+        "days_active": "integer"
+      }
+    },
+    {
+      "name": "domain_added",
+      "consent_tier": "functional",
+      "firesAt": "DomainAdded listener",
+      "properties": {
+        "tenant_id": "string",
+        "kind": "string (custom|alias|subdomain)"
+      }
+    },
+    {
+      "name": "domain_verified",
+      "consent_tier": "functional",
+      "firesAt": "DomainVerified listener",
+      "properties": {
+        "tenant_id": "string",
+        "duration_seconds": "integer",
+        "attempts": "integer"
+      }
+    },
+    {
+      "name": "domain_verification_failed",
+      "consent_tier": "functional",
+      "firesAt": "DomainVerificationFailed listener",
+      "properties": {
+        "tenant_id": "string",
+        "failure_reason": "string"
+      }
+    },
+    {
+      "name": "branding_updated",
+      "consent_tier": "essential",
+      "firesAt": "TenantBrandingUpdated listener",
+      "properties": {
+        "tenant_id": "string",
+        "changed_fields": "array<string>",
+        "is_primary_change": "boolean"
+      },
+      "description": "Essential because it drives the shell re-theme cache invalidation, not because it's marketing."
+    }
+  ]
+}

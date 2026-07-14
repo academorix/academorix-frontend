@@ -1,0 +1,89 @@
+{
+  "id": "academorix://modules/invitations/webhooks",
+  "$version": 1,
+  "title": "invitations — inbound + outbound webhooks",
+  "description": "Two-way webhook contracts. INBOUND — mail-transport delivery signals arrive here and mutate invitation state. OUTBOUND — customer-consumable webhooks fire on invitation lifecycle events for CRM / HRIS integrations. This module owns the inbound receiver end-to-end; outbound delivery is handled by the future `webhooks` module which reads the event catalogue defined here.",
+  "inbound": {
+    "endpoint": "POST /webhooks/invitations/mail/{transport}",
+    "signing": "transport-specific (X-Twilio-Email-Event-Webhook-Signature for SendGrid, AWS SNS signature for SES, X-Postmark-Signature for Postmark, X-Mailgun-Signature for Mailgun)",
+    "idempotency": "unique index on (signal_id, transport) on invitation_events — duplicates return 200 with error_code=WEBHOOK_REPLAY_DETECTED",
+    "rate_limits": {
+      "per_transport_ip_per_minute": 5000,
+      "note": "Well above sustained load; drops the shield only for bursts consistent with an attack."
+    },
+    "supported_signals": [
+      {
+        "transport": "sendgrid",
+        "signals": [
+          {"provider_event": "delivered", "invitation_event": "delivered", "notes": "First occurrence flips state=delivered; subsequent occurrences write events but don't re-transition."},
+          {"provider_event": "open", "invitation_event": "opened"},
+          {"provider_event": "click", "invitation_event": "clicked"},
+          {"provider_event": "bounce", "invitation_event": "bounced", "notes": "provider_metadata contains bounce_classification → maps to bounce_kind: hard / soft."},
+          {"provider_event": "dropped", "invitation_event": "bounced", "notes": "SendGrid dropped-at-source events treated as hard bounces."},
+          {"provider_event": "spam_report", "invitation_event": "bounced", "notes": "Complaint → bounce_kind=complaint. Terminal."},
+          {"provider_event": "deferred", "invitation_event": "delivered", "notes": "Transient — no state transition on our side, just logged."},
+          {"provider_event": "unsubscribe", "invitation_event": "bounced", "notes": "Treated as complaint for our purposes."}
+        ]
+      },
+      {
+        "transport": "ses",
+        "signals": [
+          {"provider_event": "Delivery", "invitation_event": "delivered"},
+          {"provider_event": "Open", "invitation_event": "opened"},
+          {"provider_event": "Click", "invitation_event": "clicked"},
+          {"provider_event": "Bounce", "invitation_event": "bounced", "notes": "bounceType=Permanent → hard; bounceType=Transient → soft."},
+          {"provider_event": "Complaint", "invitation_event": "bounced", "notes": "bounce_kind=complaint."}
+        ]
+      },
+      {
+        "transport": "postmark",
+        "signals": [
+          {"provider_event": "Delivery", "invitation_event": "delivered"},
+          {"provider_event": "Open", "invitation_event": "opened"},
+          {"provider_event": "Click", "invitation_event": "clicked"},
+          {"provider_event": "Bounce", "invitation_event": "bounced", "notes": "Type=HardBounce → hard; SoftBounce → soft."},
+          {"provider_event": "SpamComplaint", "invitation_event": "bounced", "notes": "bounce_kind=complaint."}
+        ]
+      },
+      {
+        "transport": "mailgun",
+        "signals": [
+          {"provider_event": "delivered", "invitation_event": "delivered"},
+          {"provider_event": "opened", "invitation_event": "opened"},
+          {"provider_event": "clicked", "invitation_event": "clicked"},
+          {"provider_event": "permanent_fail", "invitation_event": "bounced", "notes": "bounce_kind=hard."},
+          {"provider_event": "temporary_fail", "invitation_event": "bounced", "notes": "bounce_kind=soft."},
+          {"provider_event": "complained", "invitation_event": "bounced", "notes": "bounce_kind=complaint."}
+        ]
+      }
+    ]
+  },
+  "outbound": {
+    "description": "Customer-consumable webhooks that fire on invitation lifecycle events. Fires through the future `webhooks` module. Every event carries a versioned envelope + HMAC-SHA256 signature (customer secret) and follows exponential-backoff retry policy up to 8 attempts.",
+    "signing": {
+      "algorithm": "hmac-sha256",
+      "header_name": "X-Academorix-Signature",
+      "timestamp_header": "X-Academorix-Timestamp",
+      "timestamp_tolerance_seconds": 300
+    },
+    "envelope": {
+      "shape": "{ event: string, version: integer, delivered_at: ISO-8601, tenant_id: string|null, application_id: string, data: <event-specific payload> }",
+      "version_key": "version"
+    },
+    "retry": {
+      "policy": "exponential-backoff",
+      "backoff_seconds": [10, 60, 300, 900, 3600, 10800, 21600, 43200],
+      "max_attempts": 8,
+      "dead_letter_queue": "webhooks-dead-letter"
+    },
+    "webhooks": [
+      {"event": "invitation.sent", "version": 1, "source_event": "InvitationSent"},
+      {"event": "invitation.delivered", "version": 1, "source_event": "InvitationDelivered"},
+      {"event": "invitation.accepted", "version": 1, "source_event": "InvitationAccepted", "description": "Primary integration event — CRMs use this to promote a lead → customer, HRIS to activate an employee."},
+      {"event": "invitation.declined", "version": 1, "source_event": "InvitationDeclined"},
+      {"event": "invitation.expired", "version": 1, "source_event": "InvitationExpired"},
+      {"event": "invitation.revoked", "version": 1, "source_event": "InvitationRevoked"},
+      {"event": "invitation.bounced", "version": 1, "source_event": "InvitationBounced", "description": "Deliverability integrations use this to update contact validity in the CRM."}
+    ]
+  }
+}

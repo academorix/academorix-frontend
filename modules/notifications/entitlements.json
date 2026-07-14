@@ -1,0 +1,70 @@
+{
+  "id": "academorix://modules/notifications/entitlements",
+  "$version": 1,
+  "title": "notifications core \u2014 entitlements",
+  "description": "Aggregate entitlements resolved at `/auth/me` \u2192 `data.quota_summary`. Actual per-channel usage counters live in the respective channel module. Core aggregates them for a single-pane UX and enforces the aggregate caps (e.g. custom-templates.count applies platform-wide).",
+  "reference": {
+    "publishedBy": "entitlements",
+    "resolvedBy": "GET /api/auth/me \u2192 data.quota_summary + GET /api/v1/entitlements",
+    "seededFrom": "BusinessType.default_config.entitlements",
+    "distinctFrom": "features.json (binary capability toggles) \u2014 entitlements are countable"
+  },
+  "kinds": [
+    {"kind": "slot", "description": "Countable slots (custom-templates.count). One-per-row consumption. Refused with 402 when at cap."},
+    {"kind": "pool", "description": "Consumable pool (mail.month, sms.month, push.month). Decremented on use, reset on period roll."},
+    {"kind": "boolean", "description": "Feature toggle expressed as an entitlement (digest.enabled)."},
+    {"kind": "unlimited", "description": "'No cap' for a normally-slotted resource. `remaining` null on the wire."}
+  ],
+  "entitlements": [
+    {
+      "key": "notifications.mail.month",
+      "kind": "pool",
+      "period": "month",
+      "unit": "notifications",
+      "aggregatedFrom": "notifications-mail",
+      "defaultsByPlan": {"free": 100, "team": 5000, "enterprise": "unlimited"},
+      "description": "Monthly outbound mail cap per tenant. Reset at UTC month boundary. Rolls forward to next month's send after 3 warning notifications when approaching cap."
+    },
+    {
+      "key": "notifications.sms.month",
+      "kind": "pool",
+      "period": "month",
+      "unit": "messages",
+      "aggregatedFrom": "notifications-sms",
+      "defaultsByPlan": {"free": 0, "team": 200, "enterprise": 5000},
+      "description": "Monthly outbound SMS cap per tenant. SMS incurs per-message cost so cap is tighter than mail."
+    },
+    {
+      "key": "notifications.push.month",
+      "kind": "pool",
+      "period": "month",
+      "unit": "pushes",
+      "aggregatedFrom": "notifications-push",
+      "defaultsByPlan": {"free": 1000, "team": 100000, "enterprise": "unlimited"},
+      "description": "Monthly outbound push cap. FCM + APNs are free-per-message so cap is generous."
+    },
+    {
+      "key": "notifications.custom-templates.count",
+      "kind": "slot",
+      "unit": "templates",
+      "aggregatedFrom": "notifications (this module)",
+      "defaultsByPlan": {"free": 0, "team": 20, "enterprise": "unlimited"},
+      "description": "Max concurrent tenant-override templates. Platform defaults don't count. Reached cap \u2192 tenant must archive a template before creating another."
+    },
+    {
+      "key": "notifications.digest.enabled",
+      "kind": "boolean",
+      "aggregatedFrom": "notifications (this module)",
+      "defaultsByPlan": {"free": true, "team": true, "enterprise": true},
+      "description": "Whether digest batching is available to tenant users. Currently on for every plan; kept as an entitlement so future plans can toggle off if user-count grows unbounded on free plan."
+    },
+    {
+      "key": "notifications.retention_days",
+      "kind": "slot",
+      "unit": "days",
+      "aggregatedFrom": "notifications (this module)",
+      "defaultsByPlan": {"free": 90, "team": 365, "enterprise": 730},
+      "description": "Hot-retention window for Notification rows before cold-archive + eventual purge. Higher plans keep hot data longer for compliance / support use cases."
+    }
+  ]
+}

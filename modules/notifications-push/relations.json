@@ -1,0 +1,15 @@
+{
+  "id": "academorix://modules/notifications-push/relations",
+  "$version": 1,
+  "title": "notifications-push \u2014 model relationships",
+  "internal": [],
+  "outbound": [
+    {"from": "PushSubscription", "kind": "belongsTo", "to": "user::User", "foreignKey": "user_id", "onDelete": "cascade", "description": "Hard cascade on user delete (GDPR Art. 17)."},
+    {"from": "PushSubscription", "kind": "belongsTo", "to": "tenancy::Tenant", "foreignKey": "tenant_id", "onDelete": "cascade"},
+    {"from": "PushSubscription", "kind": "belongsTo", "to": "tenancy::Application", "foreignKey": "application_id", "onDelete": "restrict"}
+  ],
+  "inbound": {
+    "description": "PushChannel queries active subscriptions on dispatch via PushSubscriptionRegistry binding. No downstream FK.",
+    "conventions": ["SendPushJob queries: WHERE user_id + is_active + application_id + platform"]
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "id": "tenancy.resources.business-type.show",
+  "title": "Business type detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/business-types/{key}",
+  "host": "central_admin",
+  "audience": "authenticated",
+  "resource": {"module": "tenancy", "entity": "business-type", "action": "show"},
+  "requiresPermission": "platform.business-types.view",
+  "params": [{"name": "key", "type": "string", "in": "path", "required": true}],
+  "dataSources": [
+    {"name": "businessType", "kind": "http.get", "urlExpr": "'/api/v1/business-types/' + params.key", "unwrap": "data"}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-6 p-6 max-w-4xl mx-auto"}, "children": [
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Back"}, "actions": {"onPress": {"kind": "navigate", "to": "/platform/business-types"}}},
+      {"kind": "View", "props": {"className": "flex items-start justify-between"}, "children": [
+        {"kind": "View", "props": {"className": "flex items-center gap-3"}, "children": [
+          {"kind": "Icon", "props": {"className": "size-7 text-muted"}, "bindings": {"icon": {"$ref": "businessType.icon"}}},
+          {"kind": "View", "children": [
+            {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold"}, "bindings": {"children": {"$ref": "businessType.display_name"}}},
+            {"kind": "Text", "props": {"className": "text-sm text-muted font-mono"}, "bindings": {"children": {"$ref": "businessType.key"}}}
+          ]}
+        ]},
+        {"kind": "Button", "props": {"variant": "outline", "size": "sm", "leadingIcon": "pencil", "children": "Edit"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/platform/business-types/' + params.key + '/edit'"}}}
+      ]},
+      {"kind": "Text", "props": {"className": "text-sm text-muted"}, "bindings": {"children": {"$ref": "businessType.description"}}},
+      {"kind": "Card", "props": {"className": "p-6"}, "children": [
+        {"kind": "Text", "props": {"as": "h2", "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3", "children": "Terminology"}},
+        {"kind": "DescriptionList", "children": [
+          {"kind": "DescriptionListItem", "props": {"label": "Athletes"}, "bindings": {"value": {"$expr": "businessType.terminology?.athletes || 'Athletes'"}}},
+          {"kind": "DescriptionListItem", "props": {"label": "Coaches"}, "bindings": {"value": {"$expr": "businessType.terminology?.coaches || 'Coaches'"}}},
+          {"kind": "DescriptionListItem", "props": {"label": "Teams"}, "bindings": {"value": {"$expr": "businessType.terminology?.teams || 'Teams'"}}},
+          {"kind": "DescriptionListItem", "props": {"label": "Branches"}, "bindings": {"value": {"$expr": "businessType.terminology?.branches || 'Branches'"}}}
+        ]}
+      ]},
+      {"kind": "Card", "props": {"className": "p-6"}, "children": [
+        {"kind": "Text", "props": {"as": "h2", "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3", "children": "Default features"}},
+        {"kind": "List", "bindings": {"items": {"$expr": "businessType.default_config?.features || []"}}, "itemRenderer": {"kind": "Chip", "props": {"size": "sm", "variant": "neutral", "className": "mr-2 mb-2"}, "bindings": {"children": {"$ref": "row"}}}}
+      ]}
+    ]}
+  ]
+}

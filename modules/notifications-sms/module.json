@@ -1,0 +1,62 @@
+{
+  "$version": 1,
+  "name": "notifications-sms",
+  "alias": "notifications-sms",
+  "namespace": "Academorix\\Notifications\\Sms",
+  "description": "SMS notification channel. Owns the SmsOptOut entity (TCPA + CASL evidence-grade unsubscribe records) + own MultipleInstanceManager wrapping Twilio / MessageBird / Vonage / Plivo / AWS SNS. Handles STOP-keyword inbound via webhook module (namespace=notifications-sms). Tracks per-message cost + destination-country pricing. Cost-cap entitlement prevents runaway spend.",
+  "keywords": ["notifications", "sms", "text-messaging", "twilio", "messagebird", "vonage", "plivo", "aws-sns", "tcpa", "casl", "stop-keyword", "cost-tracking"],
+  "priority": 28,
+  "providers": ["Academorix\\Notifications\\Sms\\Providers\\NotificationsSmsServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "tenancy", "notifications", "webhook"],
+  "extendedBy": [],
+  "contributes": {
+    "traits": [],
+    "blueprints": [],
+    "middleware": [],
+    "events": ["SmsSent", "SmsDelivered", "SmsFailed", "SmsUndeliverable", "SmsOptedOut", "SmsSubscribedIn", "SmsCostRecorded", "SmsOptOutRevoked"],
+    "policies": ["SmsOptOutPolicy"],
+    "hooks": [],
+    "commands": ["notifications:sms:test", "notifications:sms:opt-out-add", "notifications:sms:opt-out-remove", "notifications:sms:cost-report"],
+    "jobs": ["SendSmsJob", "IngestSmsProviderWebhookJob", "RecordSmsOptOutJob", "GenerateSmsCostReportJob"],
+    "notifications": [],
+    "broadcasts": [],
+    "observers": ["SmsOptOutObserver"],
+    "rules": ["valid_e164_phone", "supported_sms_provider"],
+    "casts": ["PhoneNumberCast", "SmsPayloadCast"],
+    "views": [],
+    "lang": ["notifications-sms"],
+    "config": ["notifications-sms"],
+    "macros": [],
+    "bindings": ["SmsChannel", "SmsTransportManager", "SmsOptOutRegistry", "SmsCostCalculator"],
+    "resources": ["sms-opt-out"]
+  },
+  "channelRegistration": {
+    "slug": "sms",
+    "class": "Academorix\\Notifications\\Sms\\Channels\\SmsChannel",
+    "kind": "external",
+    "provider_kind": "provider-mediated",
+    "supported_providers": ["twilio", "messagebird", "vonage", "plivo", "aws-sns", "log", "array"],
+    "supports_open_tracking": false,
+    "supports_click_tracking": true,
+    "supports_delivery_tracking": true
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant admin opt-out list management.",
+      "routes": [
+        "GET /api/v1/tenant/sms-opt-outs",
+        "GET /api/v1/tenant/sms-opt-outs/{opt_out}",
+        "POST /api/v1/tenant/sms-opt-outs",
+        "DELETE /api/v1/tenant/sms-opt-outs/{opt_out}"
+      ]
+    }
+  },
+  "delegated": {
+    "provider_webhooks": {
+      "movedTo": "modules/webhook",
+      "endpoint": "POST /webhooks/inbound/notifications-sms/{provider}",
+      "reason": "Universal webhook module. This module ships TwilioSignatureStrategy + MessageBirdSignatureStrategy + VonageSignatureStrategy + PlivoSignatureStrategy + AwsSnsSignatureStrategy at boot. Both delivery receipts AND inbound STOP messages arrive through this endpoint."
+    }
+  }
+}

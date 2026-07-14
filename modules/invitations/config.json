@@ -1,0 +1,65 @@
+{
+  "id": "academorix://modules/invitations/config",
+  "$version": 1,
+  "title": "invitations — developer configuration",
+  "description": "Developer / operator configuration. Mirrors `config/invitations.php`. Static per deploy; changing requires redeploy + `config:cache`. Distinct from settings.json (which is tenant-editable at runtime).",
+  "configFile": "config/invitations.php",
+  "envPrefix": "INVITATIONS_",
+  "sections": {
+    "token": {
+      "description": "Token generation + hashing.",
+      "keys": [
+        {"path": "invitations.token.random_bytes", "type": "integer", "default": 32, "description": "Bytes of entropy in the raw token (256 bits by default). Encoded as hex → 64 chars."},
+        {"path": "invitations.token.hash_algorithm", "type": "string", "default": "sha256", "enum": ["sha256", "sha512"], "description": "Digest algorithm for token_hash."},
+        {"path": "invitations.token.prefix_length", "type": "integer", "default": 8, "description": "Characters kept in token_prefix (for admin UX). Never exceeds 16."}
+      ]
+    },
+    "defaults": {
+      "description": "Send-time defaults.",
+      "keys": [
+        {"path": "invitations.defaults.expires_after", "type": "iso8601-duration", "default": "P14D", "env": "INVITATIONS_EXPIRES_AFTER"},
+        {"path": "invitations.defaults.channel", "type": "string", "default": "email", "enum": ["email", "sms", "slack", "link"]},
+        {"path": "invitations.defaults.max_resends", "type": "integer", "default": 3, "env": "INVITATIONS_MAX_RESENDS"},
+        {"path": "invitations.defaults.reminder_before_expiry", "type": "iso8601-duration", "default": "PT48H"}
+      ]
+    },
+    "throttle": {
+      "description": "Rate limits (dimension → limit / window).",
+      "keys": [
+        {"path": "invitations.throttle.inviter_user_per_day", "type": "integer", "default": 50, "env": "INVITATIONS_LIMIT_INVITER_USER"},
+        {"path": "invitations.throttle.inviter_service_account_per_day", "type": "integer", "default": 500, "env": "INVITATIONS_LIMIT_INVITER_SA"},
+        {"path": "invitations.throttle.tenant_per_day", "type": "integer", "default": 250, "env": "INVITATIONS_LIMIT_TENANT_DAY"},
+        {"path": "invitations.throttle.invitee_email_per_week", "type": "integer", "default": 5, "env": "INVITATIONS_LIMIT_INVITEE_WEEK"}
+      ]
+    },
+    "transports": {
+      "description": "Mail transport routing.",
+      "keys": [
+        {"path": "invitations.transports.default", "type": "string", "default": "sendgrid", "enum": ["sendgrid", "ses", "postmark", "mailgun"], "env": "INVITATIONS_MAIL_TRANSPORT"},
+        {"path": "invitations.transports.per_application", "type": "map<application_slug, transport>", "default": {"academorix": "sendgrid", "academorix-eu": "ses"}, "description": "Per-Application transport routing. EU app defaults to SES for data-residency."},
+        {"path": "invitations.transports.sendgrid.api_key", "type": "string", "env": "INVITATIONS_SENDGRID_API_KEY", "secret": true},
+        {"path": "invitations.transports.sendgrid.webhook_secret", "type": "string", "env": "INVITATIONS_SENDGRID_WEBHOOK_SECRET", "secret": true},
+        {"path": "invitations.transports.ses.region", "type": "string", "default": "eu-west-1", "env": "INVITATIONS_SES_REGION"},
+        {"path": "invitations.transports.postmark.server_token", "type": "string", "env": "INVITATIONS_POSTMARK_TOKEN", "secret": true},
+        {"path": "invitations.transports.mailgun.api_key", "type": "string", "env": "INVITATIONS_MAILGUN_API_KEY", "secret": true},
+        {"path": "invitations.transports.mailgun.domain", "type": "string", "env": "INVITATIONS_MAILGUN_DOMAIN"}
+      ]
+    },
+    "acceptance": {
+      "description": "Accept-flow behaviour.",
+      "keys": [
+        {"path": "invitations.acceptance.session_ttl_seconds", "type": "integer", "default": 3600, "description": "How long the post-accept session PAT lives before requiring re-authentication."},
+        {"path": "invitations.acceptance.require_mfa_for_role", "type": "map<role_key, boolean>", "default": {"owner": true, "admin": true}, "description": "Roles that MUST have MFA enrolled during the accept flow. Enforced by the auth module."}
+      ]
+    },
+    "risk_scorer": {
+      "description": "Invitation risk scoring — feature-flag gated at `invitations.risk-scorer`.",
+      "keys": [
+        {"path": "invitations.risk_scorer.velocity_window_seconds", "type": "integer", "default": 300},
+        {"path": "invitations.risk_scorer.max_velocity_per_window", "type": "integer", "default": 10},
+        {"path": "invitations.risk_scorer.transient_email_domains", "type": "array<string>", "default": ["mailinator.com", "tempmail.com", "10minutemail.com", "guerrillamail.com"], "description": "Domains that trigger risk_score += 30 automatically."},
+        {"path": "invitations.risk_scorer.block_threshold", "type": "integer", "default": 80, "description": "Risk scores at or above this refuse send with INVITATIONS_INVITEE_BLOCKED."}
+      ]
+    }
+  }
+}

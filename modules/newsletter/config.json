@@ -1,0 +1,30 @@
+{
+  "id": "academorix://modules/newsletter/config",
+  "$version": 1,
+  "title": "newsletter \u2014 developer configuration",
+  "configFile": "config/newsletter.php",
+  "envPrefix": "NEWSLETTER_",
+  "sections": {
+    "tokens": {"keys": [
+      {"path": "newsletter.tokens.signing_secret", "type": "string", "env": "NEWSLETTER_TOKEN_SIGNING_SECRET", "secret": true, "description": "HMAC secret for confirmation + unsubscribe tokens. Rotate quarterly."},
+      {"path": "newsletter.tokens.confirmation_ttl_hours", "type": "int", "env": "NEWSLETTER_CONFIRMATION_TTL_HOURS", "default": 720}
+    ]},
+    "public_urls": {"keys": [
+      {"path": "newsletter.public_urls.subscribe_pattern", "type": "string", "default": "https://{tenant_slug}.academorix.app/newsletters/{newsletter_slug}/subscribe"},
+      {"path": "newsletter.public_urls.confirm_pattern", "type": "string", "default": "https://{tenant_slug}.academorix.app/newsletters/{newsletter_slug}/confirm/{token}"},
+      {"path": "newsletter.public_urls.unsubscribe_pattern", "type": "string", "default": "https://{tenant_slug}.academorix.app/newsletters/{newsletter_slug}/unsubscribe/{token}"}
+    ]},
+    "reputation": {"keys": [
+      {"path": "newsletter.reputation.evaluation_window_days", "type": "int", "default": 30},
+      {"path": "newsletter.reputation.auto_throttle_threshold_breaches", "type": "int", "default": 2, "description": "Number of consecutive campaigns breaching thresholds before auto-throttle."},
+      {"path": "newsletter.reputation.default_thresholds", "type": "array", "default": {"min_open_rate": 0.10, "min_click_rate": 0.01, "max_bounce_rate": 0.05, "max_complaint_rate": 0.003}}
+    ]},
+    "audience": {"keys": [
+      {"path": "newsletter.audience.refresh_ttl_seconds", "type": "int", "env": "NEWSLETTER_AUDIENCE_REFRESH_TTL", "default": 21600, "description": "6 hours default. Explicit refresh via UI shortens."}
+    ]},
+    "campaign": {"keys": [
+      {"path": "newsletter.campaign.default_batch_size", "type": "int", "env": "NEWSLETTER_CAMPAIGN_BATCH_SIZE", "default": 500},
+      {"path": "newsletter.campaign.default_throttle_per_second", "type": "int|null", "default": null, "description": "Null = uncapped, provider decides."}
+    ]}
+  }
+}

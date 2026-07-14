@@ -1,0 +1,221 @@
+{
+  "$version": 1,
+  "name": "webhook",
+  "alias": "webhook",
+  "namespace": "Academorix\\Webhook",
+  "description": "Webhook substrate. Owns the WebhookSubscription entity (customer-registered inbound URLs + destinations) + WebhookDelivery entity (per-attempt outbound audit trail) + attribute-driven event registration (#[AsWebhookEvent]) + pluggable destinations (#[AsWebhookDestination]) + backoff strategies + signing with rotation grace + universal inbound receiver + Bus::batch fan-out + auto-disable on 410 / N consecutive failures + per-subscription rate limiting + health probes. Consumes versioning module for payload transformer chains + subscription api_version pinning.\n\nReimplementing the stackra/laravel-webhook shape under our namespace (Path B). Adds sophistication beyond spatie/laravel-webhook-server: multi-destination (HTTPS + EventBridge + PubSub), rotation grace, Bus::batch, rate limiting, auto-disable, health probes, api-version integration, payload compression, mTLS destinations.",
+  "keywords": [
+    "webhook",
+    "outbound-webhooks",
+    "inbound-webhooks",
+    "signing",
+    "hmac",
+    "rotation-grace",
+    "fan-out",
+    "auto-disable",
+    "rate-limit",
+    "destinations",
+    "eventbridge",
+    "pubsub",
+    "mtls",
+    "payload-transformers"
+  ],
+  "priority": 22,
+  "providers": [
+    "Academorix\\Webhook\\Providers\\WebhookServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "versioning",
+    "tenancy"
+  ],
+  "extendedBy": [
+    "notifications",
+    "notifications-mail",
+    "notifications-push",
+    "notifications-sms",
+    "subscription",
+    "auth",
+    "invitations",
+    "user",
+    "organization",
+    "region",
+    "branch",
+    "teams",
+    "sports",
+    "compliance"
+  ],
+  "contributes": {
+    "traits": [],
+    "blueprints": [
+      "hasInboundWebhooks"
+    ],
+    "middleware": [
+      "webhooks.verify"
+    ],
+    "events": [
+      "WebhookSubscriptionCreated",
+      "WebhookSubscriptionUpdated",
+      "WebhookSubscriptionPaused",
+      "WebhookSubscriptionResumed",
+      "WebhookSubscriptionDisabled",
+      "WebhookSubscriptionUpgraded",
+      "WebhookSecretRotated",
+      "WebhookDeliveryDispatched",
+      "WebhookDelivered",
+      "WebhookDeliveryFailed",
+      "WebhookDeliveryFailedPermanent",
+      "WebhookProbeFailed",
+      "InboundWebhookReceived",
+      "InboundWebhookProcessed"
+    ],
+    "policies": [
+      "WebhookSubscriptionPolicy",
+      "WebhookDeliveryPolicy"
+    ],
+    "hooks": [],
+    "commands": [
+      "webhook:list",
+      "webhook:destinations",
+      "webhook:retry",
+      "webhook:rotate-secret",
+      "webhook:test",
+      "webhook:probe",
+      "webhook:prune"
+    ],
+    "jobs": [
+      "DispatchWebhookJob",
+      "WebhookProbeJob",
+      "PruneWebhookDeliveriesJob",
+      "AutoUpgradePinnedSubscriptionsJob"
+    ],
+    "notifications": [
+      "WebhookSubscriptionDisabledNotification",
+      "WebhookSubscriptionUpgradedNotification",
+      "WebhookProbeFailedNotification"
+    ],
+    "broadcasts": [],
+    "observers": [
+      "WebhookSubscriptionObserver",
+      "WebhookDeliveryObserver"
+    ],
+    "rules": [
+      "valid_destination_config",
+      "valid_event_name",
+      "valid_signing_secret",
+      "supported_backoff_strategy"
+    ],
+    "casts": [
+      "WebhookPayloadCast",
+      "DestinationConfigCast",
+      "BackoffConfigCast"
+    ],
+    "views": [],
+    "lang": [
+      "webhook"
+    ],
+    "config": [
+      "webhook"
+    ],
+    "macros": [],
+    "bindings": [
+      "WebhookRegistry",
+      "WebhookDestinationRegistry",
+      "WebhookSigner",
+      "WebhookSender",
+      "WebhookEventDispatcher",
+      "SecretRotator",
+      "BackoffStrategyResolver",
+      "HmacSigner"
+    ],
+    "resources": [
+      "webhook-subscription",
+      "webhook-delivery"
+    ]
+  },
+  "attributes": {
+    "declaredBy": "webhook",
+    "list": [
+      {
+        "name": "AsWebhookEvent",
+        "class": "Academorix\\Webhook\\Attributes\\AsWebhookEvent",
+        "usage": "#[AsWebhookEvent(name: 'invitation.sent', version: 'v1', description: 'Fired when an invitation is dispatched.')]",
+        "description": "Marks a class (usually an event or DTO) as a publishable webhook event. Build-time compiler auto-discovers + registers with WebhookRegistry. Subscribers declare which events they receive via WebhookSubscription.events jsonb array."
+      },
+      {
+        "name": "AsWebhookDestination",
+        "class": "Academorix\\Webhook\\Attributes\\AsWebhookDestination",
+        "usage": "#[AsWebhookDestination(name: 'eventbridge', supportsBatching: true, requiresConfig: ['region', 'event_bus_name'])]",
+        "description": "Registers a destination driver with WebhookDestinationRegistry. Consumers pick a destination when creating a subscription."
+      }
+    ]
+  },
+  "destinationDrivers": {
+    "description": "Pluggable destinations. https ships in v1; eventbridge + pubsub + mtls are feature-flag guarded (webhook.destination.eventbridge, etc).",
+    "supported": [
+      {"name": "https", "class": "Academorix\\Webhook\\Destinations\\HttpsDestination", "kind": "standard", "requiresConfig": ["url"], "supportsBatching": false, "shipsInV1": true},
+      {"name": "eventbridge", "class": "Academorix\\Webhook\\Destinations\\EventBridgeDestination", "kind": "aws", "requiresConfig": ["region", "event_bus_name", "source"], "supportsBatching": true, "shipsInV1": true, "featureFlag": "webhook.destination.eventbridge"},
+      {"name": "pubsub", "class": "Academorix\\Webhook\\Destinations\\PubSubDestination", "kind": "gcp", "requiresConfig": ["project_id", "topic_name"], "supportsBatching": true, "shipsInV1": true, "featureFlag": "webhook.destination.pubsub"},
+      {"name": "mtls-https", "class": "Academorix\\Webhook\\Destinations\\MtlsHttpsDestination", "kind": "high-security", "requiresConfig": ["url", "client_cert_path", "client_key_path", "ca_bundle_path"], "supportsBatching": false, "shipsInV1": true, "featureFlag": "webhook.destination.mtls"}
+    ]
+  },
+  "backoffStrategies": {
+    "description": "Retry backoff strategies. StaticArray ships in v1; RetryAfterAware honours Retry-After header from receivers.",
+    "supported": [
+      {"name": "static", "class": "Academorix\\Webhook\\Strategies\\StaticArrayBackoffStrategy", "default_config": {"seconds": [10, 60, 300, 900, 3600]}, "description": "Fixed schedule. Same delay regardless of receiver behaviour."},
+      {"name": "retry-after-aware", "class": "Academorix\\Webhook\\Strategies\\RetryAfterAwareBackoffStrategy", "description": "Reads the receiver's Retry-After header on 429/503 responses. Falls back to StaticArray when absent."}
+    ],
+    "default": "static"
+  },
+  "signing": {
+    "algorithm": "sha256",
+    "headers": [
+      {"name": "X-Webhook-ID", "description": "Delivery ULID. Used for idempotency on the receiver side."},
+      {"name": "X-Webhook-Event", "description": "Event name (e.g. 'invitation.sent')."},
+      {"name": "X-Webhook-Event-Version", "description": "Resolved payload version (e.g. 'v1') per versioning module's webhook resolver."},
+      {"name": "X-Webhook-Timestamp", "description": "Unix timestamp when payload was signed. Receiver rejects if abs(now - timestamp) > replay_window_seconds (default 300)."},
+      {"name": "X-Webhook-Signature", "description": "hex(hmac_sha256(timestamp + '.' + event + '.' + payload, secret))"},
+      {"name": "X-Webhook-Signature-Previous", "description": "Only during rotation grace: signature computed with the previous secret. Receiver accepts either."},
+      {"name": "X-Webhook-Attempt", "description": "1-indexed attempt number for this delivery. Enables receiver deduplication."}
+    ],
+    "rotation_grace_seconds": 86400
+  },
+  "hosts": {
+    "central": {
+      "description": "Public inbound receiver + subscription CRUD unsubscribe surface.",
+      "routes": [
+        "POST /webhooks/inbound/{namespace}/{provider}"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant subscription + delivery inspection.",
+      "routes": [
+        "GET /api/v1/platform/webhook/subscriptions",
+        "GET /api/v1/platform/webhook/subscriptions/{id}",
+        "POST /api/v1/platform/webhook/subscriptions/{id}/pause",
+        "POST /api/v1/platform/webhook/subscriptions/{id}/resume",
+        "GET /api/v1/platform/webhook/deliveries"
+      ]
+    },
+    "tenant": {
+      "description": "Tenant admin surface \u2014 subscription CRUD + delivery audit + test / retry / rotate.",
+      "routes": [
+        "GET /api/v1/tenant/webhook/subscriptions",
+        "POST /api/v1/tenant/webhook/subscriptions",
+        "GET /api/v1/tenant/webhook/subscriptions/{id}",
+        "PATCH /api/v1/tenant/webhook/subscriptions/{id}",
+        "DELETE /api/v1/tenant/webhook/subscriptions/{id}",
+        "POST /api/v1/tenant/webhook/subscriptions/{id}/test",
+        "POST /api/v1/tenant/webhook/subscriptions/{id}/rotate-secret",
+        "POST /api/v1/tenant/webhook/subscriptions/{id}/pause",
+        "POST /api/v1/tenant/webhook/subscriptions/{id}/resume",
+        "GET /api/v1/tenant/webhook/deliveries",
+        "GET /api/v1/tenant/webhook/deliveries/{id}",
+        "POST /api/v1/tenant/webhook/deliveries/{id}/retry",
+        "GET /api/v1/tenant/webhook/events",
+        "GET /api/v1/tenant/webhook/destinations"
+      ]
+    }
+  }
+}

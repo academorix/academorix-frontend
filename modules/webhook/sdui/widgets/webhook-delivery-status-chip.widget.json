@@ -1,0 +1,42 @@
+{
+  "id": "webhook.webhook-delivery-status-chip",
+  "title": "Webhook delivery status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for WebhookDelivery.state. Semantic mapping: pending / cancelled = neutral, inFlight = info, delivered = success, failedRetryable = warning, failedPermanent = danger.",
+  "props": {
+    "state": {"type": "string", "description": "The WebhookDelivery.state enum value."},
+    "size": {"type": "string", "default": "sm", "enum": ["xs", "sm", "md"]},
+    "showIcon": {"type": "boolean", "default": true},
+    "showLabel": {"type": "boolean", "default": true}
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "chip",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {"$expr": "props.state === 'delivered' ? 'success' : (props.state === 'inFlight' ? 'info' : (props.state === 'failedRetryable' ? 'warning' : (props.state === 'failedPermanent' ? 'danger' : 'neutral')))"},
+        "size": {"$ref": "props.size"}
+      },
+      "children": [
+        {
+          "kind": "Icon",
+          "props": {"className": "size-3 mr-1"},
+          "bindings": {
+            "hidden": {"$expr": "!props.showIcon"},
+            "icon": {"$expr": "props.state === 'delivered' ? 'check-circle' : (props.state === 'inFlight' ? 'arrow-path' : (props.state === 'failedRetryable' ? 'exclamation-triangle' : (props.state === 'failedPermanent' ? 'x-circle' : (props.state === 'cancelled' ? 'no-symbol' : 'clock'))))"}
+          }
+        },
+        {
+          "kind": "Text",
+          "props": {"as": "span"},
+          "bindings": {
+            "hidden": {"$expr": "!props.showLabel"},
+            "children": {"$expr": "props.state === 'delivered' ? 'Delivered' : (props.state === 'inFlight' ? 'In flight' : (props.state === 'failedRetryable' ? 'Retrying' : (props.state === 'failedPermanent' ? 'Failed' : (props.state === 'cancelled' ? 'Cancelled' : 'Pending'))))"}
+          }
+        }
+      ]
+    }
+  ]
+}

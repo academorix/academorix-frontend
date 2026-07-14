@@ -1,0 +1,40 @@
+{
+  "id": "academorix://modules/newsletter/permissions",
+  "$version": 1,
+  "title": "newsletter \u2014 permissions",
+  "seeder": "Academorix\\Newsletter\\Database\\Seeders\\NewsletterPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {"name": "newsletters.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "editor"]},
+    {"name": "newsletters.view", "guard": "sanctum", "seededOn": ["admin", "owner", "editor"]},
+    {"name": "newsletters.create", "guard": "sanctum", "seededOn": ["admin", "owner"]},
+    {"name": "newsletters.update", "guard": "sanctum", "seededOn": ["admin", "owner", "editor"]},
+    {"name": "newsletters.delete", "guard": "sanctum", "seededOn": ["owner"]},
+    {"name": "newsletters.manage", "guard": "sanctum", "seededOn": ["admin", "owner"]},
+
+    {"name": "newsletter-issues.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "editor"]},
+    {"name": "newsletter-issues.view", "guard": "sanctum", "seededOn": ["admin", "owner", "editor"]},
+    {"name": "newsletter-issues.create", "guard": "sanctum", "seededOn": ["admin", "owner", "editor"]},
+    {"name": "newsletter-issues.update", "guard": "sanctum", "seededOn": ["admin", "owner", "editor"]},
+    {"name": "newsletter-issues.delete", "guard": "sanctum", "seededOn": ["admin", "owner"]},
+    {"name": "newsletter-issues.publish", "guard": "sanctum", "description": "Schedule / send-now / cancel.", "seededOn": ["admin", "owner"]},
+
+    {"name": "newsletter-subscriptions.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner"]},
+    {"name": "newsletter-subscriptions.view", "guard": "sanctum", "seededOn": ["admin", "owner"]},
+    {"name": "newsletter-subscriptions.create", "guard": "sanctum", "seededOn": ["admin", "owner"]},
+    {"name": "newsletter-subscriptions.update", "guard": "sanctum", "seededOn": ["admin", "owner"]},
+    {"name": "newsletter-subscriptions.delete", "guard": "sanctum", "seededOn": ["admin", "owner"]},
+    {"name": "newsletter-subscriptions.import", "guard": "sanctum", "seededOn": ["owner"]},
+    {"name": "newsletter-subscriptions.export", "guard": "sanctum", "description": "Sensitive \u2014 exports PII.", "seededOn": ["owner"]},
+
+    {"name": "newsletter-campaigns.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "editor"]},
+    {"name": "newsletter-campaigns.view", "guard": "sanctum", "seededOn": ["admin", "owner", "editor"]},
+    {"name": "newsletter-campaigns.manage", "guard": "sanctum", "seededOn": ["admin", "owner"]},
+
+    {"name": "newsletter-audiences.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner", "editor"]},
+    {"name": "newsletter-audiences.view", "guard": "sanctum", "seededOn": ["admin", "owner", "editor"]},
+    {"name": "newsletter-audiences.create", "guard": "sanctum", "seededOn": ["admin", "owner"]},
+    {"name": "newsletter-audiences.update", "guard": "sanctum", "seededOn": ["admin", "owner"]},
+    {"name": "newsletter-audiences.delete", "guard": "sanctum", "seededOn": ["admin", "owner"]}
+  ]
+}

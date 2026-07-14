@@ -1,0 +1,37 @@
+{
+  "id": "academorix://modules/audit/traits",
+  "$version": 1,
+  "title": "audit \u2014 trait composition",
+  "description": "Owns `HasAudit` \u2014 opt-in trait models declare to publish to the audit trail. Wraps owen-it's `Auditable` interface + trait bundle.",
+  "owned": [
+    {
+      "trait": "Academorix\\Audit\\Concerns\\HasAudit",
+      "description": "Opt-in trait for compliance-grade auditing. Wraps owen-it's `Auditable` interface + trait. Layers our defaults: tenant_id from TenancyResolver, ULID prefix `aud_`, restricted-tier field values automatically KMS-encrypted via `auditEncrypted` array, tamper-evident row_hash computed on write (when enabled).",
+      "public": true,
+      "usedBy": ["any module opting a model into audit"],
+      "conflicts_with": [],
+      "notes": [
+        "Composes owen-it's `Auditable` \u2014 do NOT also implement `Auditable` interface directly.",
+        "Model author defines `$auditEncrypted` array to opt fields into KMS encryption before persist.",
+        "Model author defines `$auditExclude` array to skip fields entirely.",
+        "Foundation's `HasAuditable` trait is now a thin re-export of this trait for backwards compatibility."
+      ]
+    }
+  ],
+  "consumed": {
+    "framework": [{"trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids", "usedBy": ["Audit model"]}],
+    "owen_it_auditing": [
+      {"interface": "OwenIt\\Auditing\\Contracts\\Auditable", "usedBy": ["HasAudit implements this via trait composition"]},
+      {"trait": "OwenIt\\Auditing\\Auditable", "usedBy": ["HasAudit wraps this internally"]}
+    ],
+    "foundation": [{"trait": "Academorix\\Foundation\\Concerns\\HasUlids", "reason": "ULID prefix `aud_` on audit rows"}],
+    "tenancy": [{"trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenantOptional", "reason": "System-level audits carry tenant_id=NULL (deploys, cron jobs)"}]
+  },
+  "composition": {
+    "audit": {
+      "traits": ["HasUlids", "BelongsToTenantOptional"],
+      "extends": "OwenIt\\Auditing\\Models\\Audit",
+      "notes": "Our Audit model overrides owen-it's + adds ULIDs, tenant scope, KMS casts, optional chain columns."
+    }
+  }
+}

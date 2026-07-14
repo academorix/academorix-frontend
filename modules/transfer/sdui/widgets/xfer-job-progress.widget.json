@@ -1,0 +1,42 @@
+{
+  "id": "transfer.xfer-job-progress",
+  "title": "Xfer job progress",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Progress bar + counter breakdown (created / updated / skipped / failed / deleted / total). Live-updates via the user.{userId}.transfer broadcast channel when `subscribeBroadcast=true`.",
+  "props": {
+    "job": {"type": "object", "description": "XferJob DTO with progress_percent + counters + status."},
+    "subscribeBroadcast": {"type": "boolean", "default": true, "description": "Subscribe to the user's transfer channel and merge XferJobProgress payloads into the local job object."},
+    "compact": {"type": "boolean", "default": false, "description": "Compact single-line mode for row renderers."}
+  },
+  "dataSources": [
+    {
+      "name": "liveJob",
+      "kind": "broadcast.subscribe",
+      "channel": {"$expr": "'user.' + auth.userId + '.transfer'"},
+      "events": ["XferJobProgress", "XferJobShardCompleted"],
+      "filter": {"$expr": "payload.xfer_job_id === props.job.id"},
+      "seed": {"$ref": "props.job"},
+      "reduce": {"$expr": "{ ...state, progress_percent: payload.progress_percent ?? state.progress_percent, counters: payload.counters ?? state.counters }"},
+      "enabled": {"$ref": "props.subscribeBroadcast"}
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": {"className": "flex flex-col gap-2"},
+      "children": [
+        {"kind": "ProgressBar", "bindings": {"value": {"$ref": "liveJob.progress_percent"}, "max": 100, "variant": {"$expr": "liveJob.status === 'failed' ? 'danger' : liveJob.status === 'partially_succeeded' ? 'warning' : 'default'"}}},
+        {"kind": "View", "props": {"className": "flex flex-wrap gap-3 text-xs text-muted"}, "bindings": {"hidden": {"$ref": "props.compact"}}, "children": [
+          {"kind": "Text", "bindings": {"children": {"$expr": "t('transfer.counters.total', {n: liveJob.counters.total})"}}},
+          {"kind": "Text", "bindings": {"children": {"$expr": "t('transfer.counters.created', {n: liveJob.counters.created})"}}},
+          {"kind": "Text", "bindings": {"children": {"$expr": "t('transfer.counters.updated', {n: liveJob.counters.updated})"}}},
+          {"kind": "Text", "bindings": {"children": {"$expr": "t('transfer.counters.skipped', {n: liveJob.counters.skipped})"}, "className": "text-warning"}},
+          {"kind": "Text", "bindings": {"children": {"$expr": "t('transfer.counters.failed',  {n: liveJob.counters.failed})"},  "className": "text-danger"}},
+          {"kind": "Text", "bindings": {"children": {"$expr": "t('transfer.counters.deleted', {n: liveJob.counters.deleted})"}, "hidden": {"$expr": "!liveJob.counters.deleted"}}}
+        ]}
+      ]
+    }
+  ]
+}

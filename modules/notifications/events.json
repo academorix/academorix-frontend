@@ -1,0 +1,293 @@
+{
+  "id": "academorix://modules/notifications/events",
+  "$version": 1,
+  "title": "notifications core \u2014 published events",
+  "description": "Every event emitted by notifications core. Every event carries the full context a subscriber needs \u2014 event-carried state, so channel modules + downstream consumers never need to callback into core. Each event has a stable JSON schema. Breaking-change to a schema requires a new event class with a version suffix (e.g. NotificationDispatchedV2).",
+  "namespace": "Academorix\\Notifications\\Events",
+  "dispatchMode": "afterCommit",
+  "dispatchModeRationale": "Every event fires only AFTER the initiating DB transaction commits. Reason: a subscriber (channel module, downstream consumer) that reads the Notification row must see it. Without after-commit, a race condition surfaces where the subscriber queries a not-yet-visible row.",
+  "events": [
+    {
+      "name": "NotificationDispatched",
+      "class": "Academorix\\Notifications\\Events\\NotificationDispatched",
+      "trigger": "Caller invokes `$user->notify(...)` OR `Notifications::dispatch(...)`. Fires after the Notification row commits + before channel-module handoff.",
+      "queue": "notifications",
+      "priority": "high",
+      "consumers": [
+        "notifications-mail::SendMailListener",
+        "notifications-sms::SendSmsListener",
+        "notifications-push::SendPushListener",
+        "notifications-in-app::BroadcastInAppListener",
+        "notifications::DigestScheduler (batching short-circuit if digest_mode\u2260immediate)"
+      ],
+      "payload": {
+        "notification_id": "ULID",
+        "tenant_id": "ULID",
+        "application_id": "ULID | null",
+        "category_slug": "string \u2014 module-namespaced e.g. invitations.invitation_sent",
+        "template_key": "string \u2014 typically matches category_slug",
+        "priority": "'critical' | 'transactional' | 'product' | 'marketing'",
+        "channels_requested": "string[] \u2014 subset of ['mail','sms','push','in_app'] resolved from preferences",
+        "recipient": {
+          "id": "ULID | null (anonymous / invite-by-email)",
+          "type": "'user' | 'anonymous'",
+          "email": "string | null",
+          "phone": "string (E.164) | null",
+          "name": "string",
+          "locale": "string (ISO 639-1)",
+          "timezone": "string (IANA)",
+          "consent_age_gate": "'adult' | 'minor_over_consent_age' | 'minor_under_consent_age'"
+        },
+        "tenant": {
+          "id": "ULID",
+          "name": "string",
+          "slug": "string",
+          "logo_url": "string | null",
+          "primary_color": "string (hex)",
+          "sender_identity": "string \u2014 'Display Name <no-reply@domain>'",
+          "postal_address": "string \u2014 required for CAN-SPAM footer",
+          "country_code": "string (ISO 3166-1 alpha-2) \u2014 gates CASL express-consent enforcement"
+        },
+        "actor": {
+          "type": "'user' | 'platform_user' | 'system'",
+          "id": "ULID | null"
+        },
+        "variables": "object \u2014 template variables (module-defined)",
+        "occurred_at": "ISO 8601 timestamp"
+      }
+    },
+    {
+      "name": "NotificationQueued",
+      "class": "Academorix\\Notifications\\Events\\NotificationQueued",
+      "trigger": "SendNotificationJob accepted onto its queue. Emitted for observability, not for consumers to act on.",
+      "queue": "notifications",
+      "priority": "low",
+      "consumers": ["observability::MetricsCollector"],
+      "payload": {
+        "notification_id": "ULID",
+        "delivery_id": "ULID",
+        "queue": "'notifications' | 'notifications-critical' | 'notifications-digests'",
+        "channel": "'mail' | 'sms' | 'push' | 'in_app'",
+        "queued_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "NotificationSent",
+      "class": "Academorix\\Notifications\\Events\\NotificationSent",
+      "trigger": "Channel module handed off to its provider AND received a synchronous accept (provider message id captured). Not the same as Delivered \u2014 provider may still bounce later.",
+      "queue": "notifications",
+      "priority": "normal",
+      "consumers": [
+        "invitations::MarkInvitationSentListener",
+        "auth::MarkAuthNotificationSentListener",
+        "compliance::AuditNotificationSentListener"
+      ],
+      "payload": {
+        "notification_id": "ULID",
+        "delivery_id": "ULID",
+        "channel": "'mail' | 'sms' | 'push' | 'in_app'",
+        "provider": "string \u2014 'mailgun' | 'twilio' | 'fcm' | 'reverb' | ...",
+        "provider_message_id": "string | null",
+        "sent_at": "ISO 8601",
+        "cost_micro_units": "integer | null \u2014 populated by SMS + push providers"
+      }
+    },
+    {
+      "name": "NotificationDelivered",
+      "class": "Academorix\\Notifications\\Events\\NotificationDelivered",
+      "trigger": "Provider webhook confirms endpoint delivery (mail: recipient MX accepted / rendered / opened depending on provider convention; sms: carrier delivery receipt; push: FCM/APNs success). Emitted from the channel module's IngestProviderWebhookJob.",
+      "queue": "notifications",
+      "priority": "normal",
+      "consumers": [
+        "invitations::MarkInvitationDeliveredListener",
+        "compliance::AuditNotificationDeliveredListener",
+        "notifications::MetricsCollector"
+      ],
+      "payload": {
+        "notification_id": "ULID",
+        "delivery_id": "ULID",
+        "channel": "string",
+        "provider": "string",
+        "delivered_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "NotificationFailed",
+      "class": "Academorix\\Notifications\\Events\\NotificationFailed",
+      "trigger": "Channel module exhausted retries OR received a hard-failure signal (hard bounce, unsubscribed, invalid device token). No further attempts.",
+      "queue": "notifications",
+      "priority": "high",
+      "consumers": [
+        "invitations::MarkInvitationBouncedListener",
+        "notifications-mail::SuppressAddressListener (hard bounce only)",
+        "notifications-push::ExpireSubscriptionListener (invalid token only)",
+        "compliance::AuditNotificationFailedListener"
+      ],
+      "payload": {
+        "notification_id": "ULID",
+        "delivery_id": "ULID",
+        "channel": "string",
+        "provider": "string",
+        "failure_kind": "'hard_bounce' | 'soft_bounce_exhausted' | 'invalid_recipient' | 'unsubscribed' | 'provider_error' | 'quota_exceeded'",
+        "error_code": "string \u2014 module-namespaced e.g. NOTIFICATIONS_MAIL_HARD_BOUNCE",
+        "error_message": "string \u2014 provider-reported, sanitized",
+        "failed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "NotificationOpened",
+      "class": "Academorix\\Notifications\\Events\\NotificationOpened",
+      "trigger": "Tracking pixel loaded (mail) OR user viewed in inbox (in_app) OR system open event (push).",
+      "queue": "notifications",
+      "priority": "low",
+      "consumers": ["analytics::TrackOpenListener"],
+      "payload": {
+        "notification_id": "ULID",
+        "delivery_id": "ULID",
+        "channel": "string",
+        "opened_at": "ISO 8601",
+        "opened_ip": "string | null \u2014 masked (last octet zeroed) at rest",
+        "user_agent": "string | null"
+      }
+    },
+    {
+      "name": "NotificationClicked",
+      "class": "Academorix\\Notifications\\Events\\NotificationClicked",
+      "trigger": "User clicked a tracked link. Recorded per-link with the target URL.",
+      "queue": "notifications",
+      "priority": "low",
+      "consumers": [
+        "invitations::MarkInvitationClickedListener",
+        "analytics::TrackClickListener"
+      ],
+      "payload": {
+        "notification_id": "ULID",
+        "delivery_id": "ULID",
+        "channel": "string",
+        "clicked_at": "ISO 8601",
+        "clicked_url": "string \u2014 hashed for restricted URLs (unsubscribe tokens etc.)",
+        "opened_ip": "string | null",
+        "user_agent": "string | null"
+      }
+    },
+    {
+      "name": "NotificationSeen",
+      "class": "Academorix\\Notifications\\Events\\NotificationSeen",
+      "trigger": "User explicitly marked a notification seen via inbox UI OR opened it in-app.",
+      "queue": "notifications",
+      "priority": "low",
+      "consumers": ["notifications::UnseenCountCacheInvalidator"],
+      "payload": {
+        "notification_id": "ULID",
+        "user_id": "ULID",
+        "seen_at": "ISO 8601",
+        "seen_via": "'explicit' | 'auto_on_view' | 'mark_all'"
+      }
+    },
+    {
+      "name": "NotificationArchived",
+      "class": "Academorix\\Notifications\\Events\\NotificationArchived",
+      "trigger": "User archived a notification from inbox.",
+      "queue": "notifications",
+      "priority": "low",
+      "consumers": [],
+      "payload": {
+        "notification_id": "ULID",
+        "user_id": "ULID",
+        "archived_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "DigestQueued",
+      "class": "Academorix\\Notifications\\Events\\DigestQueued",
+      "trigger": "DigestScheduler added a notification to a pending digest instead of dispatching immediately.",
+      "queue": "notifications-digests",
+      "priority": "low",
+      "consumers": [],
+      "payload": {
+        "digest_id": "ULID",
+        "notification_id": "ULID",
+        "user_id": "ULID",
+        "category_slug": "string",
+        "channel": "string",
+        "scheduled_for": "ISO 8601 \u2014 digest delivery window boundary"
+      }
+    },
+    {
+      "name": "DigestDelivered",
+      "class": "Academorix\\Notifications\\Events\\DigestDelivered",
+      "trigger": "ProcessDigestJob rendered + dispatched a digest. Notifications inside the digest are marked digest_delivered_at; downstream consumers can mark items sent-via-digest.",
+      "queue": "notifications-digests",
+      "priority": "normal",
+      "consumers": ["analytics::TrackDigestDeliveryListener"],
+      "payload": {
+        "digest_id": "ULID",
+        "user_id": "ULID",
+        "category_slug": "string",
+        "channel": "string",
+        "notification_ids": "ULID[]",
+        "item_count": "integer",
+        "delivered_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TemplatePublished",
+      "class": "Academorix\\Notifications\\Events\\TemplatePublished",
+      "trigger": "Tenant admin (or platform seeder) transitioned a template from draft \u2192 published. Emitted for cache invalidation + audit.",
+      "queue": "notifications",
+      "priority": "normal",
+      "consumers": [
+        "notifications::TemplateRegistryCacheInvalidator",
+        "compliance::AuditTemplateChangeListener (SOC 2 CC8.1 evidence)"
+      ],
+      "payload": {
+        "template_id": "ULID",
+        "tenant_id": "ULID | null",
+        "template_key": "string",
+        "channel": "string",
+        "locale": "string",
+        "version": "integer",
+        "actor_id": "ULID",
+        "published_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "PreferenceUpdated",
+      "class": "Academorix\\Notifications\\Events\\PreferenceUpdated",
+      "trigger": "User changed preferences (opt-in / opt-out / quiet hours / digest mode). Fires per-row (bulk PATCH fans out into many events).",
+      "queue": "notifications",
+      "priority": "normal",
+      "consumers": [
+        "notifications::PreferenceCacheInvalidator",
+        "notifications-mail::UpdateSuppressionListener (on unsubscribe)",
+        "compliance::AuditPreferenceChangeListener (Art. 7 consent trail)"
+      ],
+      "payload": {
+        "user_id": "ULID",
+        "tenant_id": "ULID",
+        "category_slug": "string",
+        "channel": "string",
+        "enabled": "boolean",
+        "digest_mode": "'immediate' | 'daily' | 'weekly' | 'off'",
+        "source": "'user_settings' | 'unsubscribe_link' | 'admin_override' | 'seed'",
+        "changed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "CategoryRegistered",
+      "class": "Academorix\\Notifications\\Events\\CategoryRegistered",
+      "trigger": "A module's ServiceProvider registered a new category during boot. Emitted once per unique slug per boot. Consumers invalidate their caches.",
+      "queue": "notifications",
+      "priority": "low",
+      "consumers": ["notifications::CategoryRegistryCacheInvalidator"],
+      "payload": {
+        "slug": "string",
+        "owning_module": "string",
+        "display_name": "string",
+        "default_channels": "string[]",
+        "priority": "string",
+        "consent_tier": "string"
+      }
+    }
+  ]
+}

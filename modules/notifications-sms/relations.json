@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/notifications-sms/relations",
+  "$version": 1,
+  "title": "notifications-sms \u2014 model relationships",
+  "internal": [],
+  "outbound": [
+    {"from": "SmsOptOut", "kind": "belongsTo", "to": "tenancy::Tenant", "foreignKey": "tenant_id", "nullable": true, "description": "NULL = platform-wide opt-out."},
+    {"from": "SmsOptOut", "kind": "belongsTo", "to": "notifications::NotificationDelivery", "foreignKey": "source_delivery_id", "nullable": true, "description": "The delivery whose inbound reply triggered this opt-out. NULL for admin-created."}
+  ],
+  "inbound": {
+    "description": "SendSmsJob queries SmsOptOutRegistry::isOptedOut(phone, tenant_id): bool on every send. No downstream FK."
+  }
+}

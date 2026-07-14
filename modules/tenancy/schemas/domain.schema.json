@@ -1,0 +1,224 @@
+{
+  "id": "academorix://modules/tenancy/schemas/domain",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Domain",
+  "description": "Custom domain per tenant. Each tenant has zero-to-many domains: the auto-assigned subdomain (kind=subdomain) is always the first, and customers can add custom domains (kind=custom) or aliases (kind=alias, redirects to primary). Resolution + verification are owned by this module's own TenantResolver + VerifyDomainDnsJob \u2014 no third-party tenancy package required.",
+  "type": "object",
+  "x-module": "tenancy",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "domains",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "dom_",
+    "incrementing": false,
+    "model": "Academorix\\Tenancy\\Models\\Domain",
+    "interface": "Academorix\\Tenancy\\Contracts\\Data\\DomainInterface",
+    "implements": ["Academorix\\Tenancy\\Contracts\\Data\\DomainInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToApplication",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "verified_at": "datetime",
+      "ssl_issued_at": "datetime",
+      "ssl_expires_at": "datetime",
+      "is_primary": "boolean",
+      "is_verified": "boolean",
+      "metadata": "array"
+    },
+    "appends": ["is_verified", "public_url"],
+    "observers": ["DomainObserver"],
+    "hidden": ["metadata"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `dom_<26 chars>`."
+      },
+      "application_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "FK to `applications.id`. Applied here because central-host lookup queries `WHERE application_id = ? AND host = ?` before knowing the tenant.",
+        "foreign": {
+          "table": "applications",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        }
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "FK to `tenants.id` via BelongsToTenant.",
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "host": {
+        "type": "string",
+        "length": 253,
+        "nullable": false,
+        "description": "DNS hostname. Unique per application. Max 253 chars per RFC 1035."
+      },
+      "kind": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "subdomain",
+        "description": "Enum: `subdomain` (auto-issued from application central host), `custom` (customer's own), `alias` (redirects to primary)."
+      },
+      "is_primary": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "True for the tenant's canonical domain. Exactly one primary per tenant (enforced by partial unique index)."
+      },
+      "verified_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Timestamp of successful DNS verification. Null until the verification job matches every DomainRecord."
+      },
+      "verification_token": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Random token embedded in the DNS TXT record we expect. Generated on create via DomainObserver."
+      },
+      "verification_method": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "dns_txt",
+        "description": "Enum: `dns_txt`, `dns_cname`, `http_meta`. dns_txt is default."
+      },
+      "verification_attempts": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Failed attempts counter. Reset on success. Hard-cap 100 (then requires manual replay)."
+      },
+      "verification_last_error": {
+        "type": "text",
+        "nullable": true,
+        "description": "Last error message from the DNS verifier. Cleared on success."
+      },
+      "ssl_status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "pending",
+        "description": "Enum: `pending`, `issued`, `failed`, `revoked`, `none`."
+      },
+      "ssl_issued_at": {
+        "type": "timestamptz",
+        "nullable": true
+      },
+      "ssl_expires_at": {
+        "type": "timestamptz",
+        "nullable": true
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form platform notes on this domain — DNS provisioner tag, migration source, ticket refs. From HasMetadata. Never queried."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["application_id", "host"],
+        "unique": true,
+        "name": "domains_application_host_unique"
+      },
+      {
+        "columns": ["tenant_id", "is_primary"],
+        "unique": true,
+        "name": "domains_tenant_primary_unique",
+        "predicate": "is_primary = TRUE AND deleted_at IS NULL"
+      },
+      {
+        "columns": ["tenant_id", "created_at"],
+        "unique": false,
+        "name": "domains_tenant_created_at_index"
+      },
+      {
+        "columns": ["ssl_expires_at"],
+        "unique": false,
+        "name": "domains_ssl_expires_at_index",
+        "predicate": "ssl_status = 'issued'"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "application_id",
+    "tenant_id",
+    "host",
+    "kind",
+    "verification_token",
+    "verification_method",
+    "ssl_status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^dom_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "application_id": { "type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "host": { "type": "string", "format": "hostname", "maxLength": 253 },
+    "kind": { "type": "string", "enum": ["subdomain", "custom", "alias"] },
+    "is_primary": { "type": "boolean", "default": false },
+    "is_verified": { "type": "boolean", "description": "Computed: `verified_at IS NOT NULL`." },
+    "verified_at": { "type": ["string", "null"], "format": "date-time" },
+    "verification_token": { "type": "string", "minLength": 32, "maxLength": 128 },
+    "verification_method": { "type": "string", "enum": ["dns_txt", "dns_cname", "http_meta"] },
+    "verification_attempts": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "verification_last_error": { "type": ["string", "null"] },
+    "ssl_status": { "type": "string", "enum": ["pending", "issued", "failed", "revoked", "none"] },
+    "ssl_issued_at": { "type": ["string", "null"], "format": "date-time" },
+    "ssl_expires_at": { "type": ["string", "null"], "format": "date-time" },
+    "public_url": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "Computed. `https://{host}` when verified + ssl issued."
+    },
+    "metadata": { "type": ["object", "null"], "additionalProperties": true },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["metadata", "verification_last_error", "created_by", "updated_by", "deleted_by"],
+    "computed": ["is_verified", "public_url"]
+  }
+}

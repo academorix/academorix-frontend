@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/notifications-push/health",
+  "$version": 1,
+  "title": "notifications-push \u2014 health probes",
+  "probes": [
+    {"name": "notifications-push-fcm-reachable", "class": "Academorix\\Notifications\\Push\\Health\\Probes\\FcmReachableProbe", "category": "readiness", "critical": false, "description": "OAuth 2.0 token exchange + FCM v1 API reachability.", "timeoutMs": 5000, "featureFlag": "notifications.push.provider.fcm.enabled"},
+    {"name": "notifications-push-apns-reachable", "class": "Academorix\\Notifications\\Push\\Health\\Probes\\ApnsReachableProbe", "category": "readiness", "critical": false, "description": "APNs endpoint reachability via JWT auth. Distinct probe for prod (api.push.apple.com) vs sandbox (api.sandbox.push.apple.com).", "timeoutMs": 5000, "featureFlag": "notifications.push.provider.apns.enabled"},
+    {"name": "notifications-push-expo-reachable", "class": "Academorix\\Notifications\\Push\\Health\\Probes\\ExpoReachableProbe", "category": "readiness", "critical": false, "timeoutMs": 3000, "featureFlag": "notifications.push.provider.expo.enabled"},
+    {"name": "notifications-push-onesignal-reachable", "class": "Academorix\\Notifications\\Push\\Health\\Probes\\OneSignalReachableProbe", "category": "readiness", "critical": false, "timeoutMs": 3000, "featureFlag": "notifications.push.provider.onesignal.enabled"},
+    {"name": "notifications-push-subscription-registry-warm", "class": "Academorix\\Notifications\\Push\\Health\\Probes\\SubscriptionRegistryProbe", "category": "readiness", "critical": false, "description": "Registry cache hit ratio > 90% over rolling 5m.", "timeoutMs": 200, "thresholds": {"warn_ratio": 0.9, "fail_ratio": 0.5}}
+  ]
+}

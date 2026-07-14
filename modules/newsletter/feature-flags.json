@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/newsletter/feature-flags",
+  "$version": 1,
+  "title": "newsletter \u2014 kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {"key": "newsletter.dispatch", "kind": "kill-switch", "default": "on", "description": "Master send toggle. Off halts SendNewsletterCampaignJob execution."},
+    {"key": "newsletter.public_subscribe", "kind": "kill-switch", "default": "on", "description": "Public /subscribe endpoint. Off during list-scraping attacks."},
+    {"key": "newsletter.audience_rebuild", "kind": "kill-switch", "default": "on", "description": "BuildAudienceSegmentJob."},
+    {"key": "newsletter.reputation_auto_throttle", "kind": "kill-switch", "default": "on", "description": "Auto-throttle newsletter state on threshold breach. Off = alerts only, no auto action."}
+  ]
+}

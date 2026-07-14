@@ -1,0 +1,38 @@
+{
+  "id": "tenancy.resources.tenant-contact.list",
+  "title": "Contacts",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/contacts",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {"module": "tenancy", "entity": "tenant-contact", "action": "list"},
+  "requiresPermission": "tenants.manage_contacts",
+  "dataSources": [
+    {"name": "contacts", "kind": "http.get", "url": "/api/v1/tenant/contacts", "unwrap": "data", "paginated": true, "queryParamsFromState": ["filter[kind]", "sort"]}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-4 p-6"}, "children": [
+      {"kind": "View", "props": {"className": "flex items-center justify-between"}, "children": [
+        {"kind": "View", "children": [
+          {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Contacts"}},
+          {"kind": "Text", "props": {"className": "text-sm text-muted", "children": "Billing / legal / technical / DPO / security contacts. GDPR Art. 30 requires a named DPO contact for controllers processing EU data."}}
+        ]},
+        {"kind": "Button", "props": {"variant": "primary", "size": "sm", "leadingIcon": "plus", "children": "Add contact"}, "actions": {"onPress": {"kind": "navigate", "to": "/tenant/contacts/new"}}}
+      ]},
+      {"kind": "Select", "props": {"label": "Kind", "name": "filter[kind]", "placeholder": "All"}, "options": [{"key": "billing", "label": "Billing"}, {"key": "legal", "label": "Legal"}, {"key": "technical", "label": "Technical"}, {"key": "dpo", "label": "DPO"}, {"key": "security", "label": "Security"}], "actions": {"onChange": {"kind": "data.applyFilter", "source": "contacts"}}},
+      {"kind": "DataGrid", "props": {"emptyState": {"title": "No contacts yet", "description": "Add at least a DPO contact to be enterprise-ready."}}, "bindings": {"items": {"$ref": "contacts"}}, "columns": [
+        {"id": "identity", "header": "Contact", "cell": {"kind": "View", "children": [
+          {"kind": "Text", "props": {"className": "font-medium"}, "bindings": {"children": {"$ref": "row.name"}}},
+          {"kind": "Text", "props": {"className": "text-xs text-muted"}, "bindings": {"children": {"$ref": "row.email"}}}
+        ]}},
+        {"id": "kind", "header": "Kind", "cell": {"kind": "Chip", "props": {"size": "sm"}, "bindings": {"children": {"$ref": "row.kind"}}}},
+        {"id": "verified", "header": "Verified", "cell": {"kind": "Chip", "props": {"size": "xs"}, "bindings": {"variant": {"$expr": "row.verified_at ? 'success' : 'warning'"}, "children": {"$expr": "row.verified_at ? 'yes' : 'pending'"}}}},
+        {"id": "actions", "header": "", "align": "end", "cell": {"kind": "Menu", "props": {"trigger": {"kind": "Button", "props": {"variant": "ghost", "isIconOnly": true, "leadingIcon": "ellipsis-horizontal"}}}, "items": [
+          {"id": "edit", "label": "Edit", "leadingIcon": "pencil", "action": {"kind": "navigate", "toExpr": "'/tenant/contacts/' + row.id + '/edit'"}},
+          {"id": "delete", "label": "Remove", "leadingIcon": "trash", "action": {"kind": "http.delete", "urlExpr": "'/api/v1/tenant/contacts/' + row.id", "confirm": {"title": "Remove this contact?"}, "onSuccess": [{"kind": "toast.success", "message": "Removed"}, {"kind": "data.refresh", "source": "contacts"}]}}
+        ]}}
+      ]}
+    ]}
+  ]
+}

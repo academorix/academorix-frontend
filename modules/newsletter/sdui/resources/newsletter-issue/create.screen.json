@@ -1,0 +1,26 @@
+{
+  "id": "newsletter.resources.newsletter-issue.create",
+  "title": "New issue",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/newsletters/{newsletter}/issues/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {"module": "newsletter", "entity": "newsletter-issue", "action": "create"},
+  "requiresPermission": "newsletter-issues.create",
+  "params": [{"name": "newsletter", "type": "string", "in": "path", "required": true}],
+  "dataSources": [],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto"}, "children": [
+      {"kind": "Link", "props": {"leadingIcon": "arrow-left", "children": "Cancel"}, "actions": {"onPress": {"kind": "navigate", "toExpr": "'/tenant/newsletters/' + params.newsletter + '/issues'"}}},
+      {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Compose issue"}},
+      {"kind": "Form", "props": {"submitUrlExpr": "'/api/v1/newsletters/' + params.newsletter + '/issues'", "submitMethod": "POST", "onSuccess": [{"kind": "toast.success", "message": "Draft saved"}, {"kind": "navigateExpr", "expr": "'/tenant/newsletters/' + params.newsletter + '/issues/' + response.data.id"}]}, "children": [
+        {"kind": "TextField", "props": {"label": "Subject", "name": "subject", "isRequired": true, "placeholder": "This week at \u2026"}},
+        {"kind": "TextField", "props": {"label": "Preheader", "name": "preheader", "placeholder": "Preview text shown in the inbox alongside the subject."}},
+        {"kind": "TextField", "props": {"label": "Slug", "name": "slug", "isRequired": true, "placeholder": "auto-generated from subject if left blank"}},
+        {"kind": "Alert", "props": {"variant": "info", "children": "The body composer (rich text / content blocks editor) is provided by the frontend host application. This form saves the metadata only."}},
+        {"kind": "Button", "props": {"variant": "primary", "size": "md", "type": "submit", "children": "Save draft"}}
+      ]}
+    ]}
+  ]
+}

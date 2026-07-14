@@ -1,0 +1,17 @@
+{
+  "id": "academorix://modules/foundation/retention",
+  "$version": 1,
+  "title": "foundation — data retention windows",
+  "description": "Foundation ships zero persistent entities → zero retention rules. The health snapshot, module registry, and import/export contract caches are transient (max 1 hour TTL). This file exists for uniform module shape and to enumerate the compliance-tier taxonomy every downstream retention.json references.",
+  "retention": [],
+  "complianceTiers": {
+    "public": "Non-identifying, safe to expose in logs / URLs. No retention constraint.",
+    "internal": "Platform-internal state. Not personally identifiable. Retention driven by operational usefulness.",
+    "confidential": "PII, DSAR-exportable, erasable on request. Subject to GDPR Art. 5 (storage limitation) — retained no longer than necessary.",
+    "restricted": "Credential-adjacent secrets. Crypto-shredded on erasure. Retention driven by security policy.",
+    "regulated_minor": "PII of subjects under age of consent. COPPA §312.4(c) + GDPR Art. 8 — retained only while parental consent is active.",
+    "regulated_health": "Safeguarding / medical data. Statutory retention (e.g. UK safeguarding — 6 years post-last-contact).",
+    "regulated_financial": "Payment card / tax data. PCI-DSS + tax-jurisdiction retention (typically 7 years).",
+    "audit_log": "Immutable audit records. Retained per compliance regime + operational SLA (typically 1-7 years). Anonymised, not deleted, on erasure requests."
+  }
+}

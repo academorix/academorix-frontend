@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/tenancy/listeners",
+  "$version": 1,
+  "title": "tenancy \u2014 subscribed events",
+  "description": "Event \u2192 listener bindings this module owns. Tenancy is primarily a publisher module but subscribes to boot + user erasure signals now that we've dropped stancl (which used to wire these). Cascade cleanup of tenancy-boundary rows on user + tenant erasure lives here.",
+  "listeners": [
+    {
+      "event": "foundation::ApplicationBooted",
+      "listener": "Academorix\\Tenancy\\Listeners\\WarmHostResolver",
+      "queue": null,
+      "purpose": "Load compiled Host \u2192 Tenant + Host \u2192 Application map at boot into the request-scoped HostResolver binding. Replaces stancl's runtime domain resolution."
+    },
+    {
+      "event": "foundation::ConfigReloaded",
+      "listener": "Academorix\\Tenancy\\Listeners\\RewarmHostResolver",
+      "queue": null,
+      "purpose": "Rebuild host map on hot reload."
+    },
+    {
+      "event": "user::UserErased",
+      "listener": "Academorix\\Tenancy\\Listeners\\MaybeEraseIdentity",
+      "queue": "notifications",
+      "purpose": "When the erased User was the last one referencing an Identity for a given Application, anonymise the Identity + fire IdentityErased. Otherwise no-op \u2014 Identity is retained for the surviving User rows."
+    },
+    {
+      "event": "user::UserErased",
+      "listener": "Academorix\\Tenancy\\Listeners\\PurgeTenantContactsForErasedUser",
+      "queue": "notifications",
+      "purpose": "When the erased User had a TenantContact entry (DPO, billing, technical), clear the person fields but retain the tenant\u2013role linkage so the tenant admin surface can prompt for a replacement."
+    }
+  ],
+  "publishes_only": {
+    "note": "This module also publishes ~19 events consumed elsewhere \u2014 see events.json. Each event carries its expected consumers list."
+  }
+}

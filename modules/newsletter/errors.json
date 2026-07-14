@@ -1,0 +1,22 @@
+{
+  "id": "academorix://modules/newsletter/errors",
+  "$version": 1,
+  "title": "newsletter \u2014 error codes",
+  "namespace": "newsletter",
+  "errors": [
+    {"code": "NEWSLETTER_QUOTA_EXCEEDED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "newsletter.errors.quota_exceeded", "description": "newsletter.publications.max reached."},
+    {"code": "NEWSLETTER_SUBSCRIBERS_QUOTA_EXCEEDED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "newsletter.errors.subscribers_quota_exceeded"},
+    {"code": "NEWSLETTER_CAMPAIGNS_QUOTA_EXCEEDED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "newsletter.errors.campaigns_quota_exceeded"},
+    {"code": "NEWSLETTER_STATE_INVALID_TRANSITION", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "newsletter.errors.state_invalid_transition", "description": "e.g. trying to schedule an issue in state=sent."},
+    {"code": "NEWSLETTER_THROTTLED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "newsletter.errors.throttled", "description": "Newsletter auto-throttled by reputation guardrail. Requires manual review."},
+    {"code": "NEWSLETTER_ARCHIVED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "newsletter.errors.archived"},
+    {"code": "NEWSLETTER_TOKEN_INVALID", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "newsletter.errors.token_invalid", "description": "Confirmation or unsubscribe token invalid / expired / signature mismatch. Returns 404 to prevent enumeration."},
+    {"code": "NEWSLETTER_ALREADY_CONFIRMED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "newsletter.errors.already_confirmed"},
+    {"code": "NEWSLETTER_EMAIL_SUPPRESSED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "newsletter.errors.email_suppressed", "description": "Email on MailSuppression list. Cannot subscribe until admin revokes suppression (rare)."},
+    {"code": "NEWSLETTER_PREFERENCE_OPTED_OUT", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "newsletter.errors.preference_opted_out", "description": "User already opted out of marketing.newsletter category. Cannot force-subscribe."},
+    {"code": "NEWSLETTER_AUDIENCE_EXPRESSION_INVALID", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "newsletter.errors.audience_expression_invalid"},
+    {"code": "NEWSLETTER_CAMPAIGN_ALREADY_IN_PROGRESS", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "newsletter.errors.campaign_already_in_progress", "description": "Refuse cancelling a campaign whose send-batch jobs have finished."},
+    {"code": "NEWSLETTER_KILL_SWITCHED", "http": 503, "retryable": true, "user_facing": false, "audit_severity": "alert", "i18n_key": "newsletter.errors.kill_switched"},
+    {"code": "NEWSLETTER_CONSENT_EVIDENCE_MISSING", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "newsletter.errors.consent_evidence_missing", "description": "Import row missing required consent_evidence column."}
+  ]
+}

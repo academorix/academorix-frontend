@@ -1,0 +1,21 @@
+{
+  "id": "academorix://modules/notifications-in-app/feature-flags",
+  "$version": 1,
+  "title": "notifications-in-app \u2014 kill switches",
+  "description": "Two Pennant flags. Both default ON.",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "notifications.in-app.broadcast",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Disables Reverb broadcasts on in-app deliveries. DB writes continue \u2014 users see notifications on next refresh. Used during Reverb incidents."
+    },
+    {
+      "key": "notifications.in-app.batch-broadcasts",
+      "kind": "rollout",
+      "default": "on",
+      "description": "When many in-app notifications land for the same user in a short window (default > 5), collapse into a single `notifications.bulk` broadcast to reduce socket chatter. Individual db rows still written."
+    }
+  ]
+}
