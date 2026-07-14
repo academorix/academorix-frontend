@@ -1,0 +1,83 @@
+{
+  "id": "academorix://modules/localization/schemas/workspace-locale",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "WorkspaceLocale",
+  "description": "Per-workspace association of a Language. Records that this workspace has enabled the locale, whether it's the default / fallback, and workspace-specific translation preferences (auto-translate driver, quality threshold).",
+  "type": "object",
+  "x-module": "localization",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "workspace_locales",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "wsl_",
+    "incrementing": false,
+    "model": "Academorix\\Localization\\Models\\WorkspaceLocale",
+    "interface": "Academorix\\Localization\\Contracts\\Data\\WorkspaceLocaleInterface",
+    "implements": ["Academorix\\Localization\\Contracts\\Data\\WorkspaceLocaleInterface"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToWorkspace", "HasMetadata", "HasUserstamps", "HasActivityLog", "Filterable", "SoftDeletes"],
+    "casts": {
+      "is_default": "boolean",
+      "is_fallback": "boolean",
+      "is_enabled": "boolean",
+      "auto_translate": "boolean",
+      "auto_translate_ttl_hours": "integer",
+      "min_quality_score": "float",
+      "metadata": "array"
+    },
+    "appends": ["language_code", "language_native_name", "language_direction"],
+    "observers": ["WorkspaceLocaleObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {"type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `wsl_<26 chars>`."},
+      "workspace_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "workspaces", "column": "id", "onDelete": "cascade"}},
+      "language_id": {"type": "string", "length": 64, "nullable": false, "foreign": {"table": "languages", "column": "id", "onDelete": "restrict"}},
+      "is_default": {"type": "boolean", "nullable": false, "default": false, "description": "Exactly one WorkspaceLocale per workspace has is_default=true (enforced by partial unique index)."},
+      "is_fallback": {"type": "boolean", "nullable": false, "default": false, "description": "At most one is_fallback=true per workspace. Falls back for keys missing in the active locale."},
+      "is_enabled": {"type": "boolean", "nullable": false, "default": true, "description": "False = temporarily disabled without deleting the row. Preserves translations for later re-enable."},
+      "auto_translate": {"type": "boolean", "nullable": false, "default": false, "description": "When true + a cache miss occurs, dispatch TranslateJob to fill it. Consumes localization.ai_translations.month entitlement."},
+      "auto_translate_driver": {"type": "string", "length": 32, "nullable": true, "description": "Override driver for this locale. Null = use workspace default. Enum: openai / google / deepl / aws-translate / azure-translator / null."},
+      "auto_translate_ttl_hours": {"type": "integer", "nullable": false, "default": 720, "description": "Cache TTL for auto-translated entries. Default 30 days. Beyond TTL, next resolution re-translates (checked against source_hash for freshness)."},
+      "min_quality_score": {"type": "numeric", "nullable": true, "description": "Optional lower bound on driver-reported quality (0.0\u20131.0). Translations below this score refuse to persist and fall back to key."},
+      "metadata": {"type": "jsonb", "nullable": true},
+      "created_by": {"type": "uuid", "nullable": true},
+      "updated_by": {"type": "uuid", "nullable": true},
+      "deleted_by": {"type": "uuid", "nullable": true},
+      "deleted_at": {"type": "timestamptz", "nullable": true},
+      "created_at": {"type": "timestamptz", "nullable": false},
+      "updated_at": {"type": "timestamptz", "nullable": false}
+    },
+    "indexes": [
+      {"columns": ["workspace_id", "language_id"], "unique": true, "name": "workspace_locales_workspace_language_unique", "predicate": "deleted_at IS NULL"},
+      {"columns": ["workspace_id"], "unique": true, "name": "workspace_locales_default_unique", "predicate": "is_default = true AND deleted_at IS NULL", "description": "One default per workspace."},
+      {"columns": ["workspace_id"], "unique": true, "name": "workspace_locales_fallback_unique", "predicate": "is_fallback = true AND deleted_at IS NULL", "description": "At most one fallback per workspace."},
+      {"columns": ["workspace_id", "is_enabled"], "unique": false, "name": "workspace_locales_scan_idx"}
+    ]
+  },
+  "required": ["id", "workspace_id", "language_id", "is_default", "is_fallback", "is_enabled", "auto_translate", "auto_translate_ttl_hours", "created_at", "updated_at"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^wsl_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "workspace_id": {"type": "string", "pattern": "^wsp_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "language_id": {"type": "string", "pattern": "^lng_[0-9A-HJKMNP-TV-Z]{26}$"},
+    "is_default": {"type": "boolean"},
+    "is_fallback": {"type": "boolean"},
+    "is_enabled": {"type": "boolean"},
+    "auto_translate": {"type": "boolean"},
+    "auto_translate_driver": {"type": ["string", "null"], "enum": ["openai", "google", "deepl", "aws-translate", "azure-translator", "null", null]},
+    "auto_translate_ttl_hours": {"type": "integer", "minimum": 1, "maximum": 8760},
+    "min_quality_score": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "language_code": {"type": "string", "description": "Computed from Language.code."},
+    "language_native_name": {"type": "string"},
+    "language_direction": {"type": "string", "enum": ["ltr", "rtl"]},
+    "metadata": {"type": ["object", "null"]},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false,
+  "x-wire": {"envelope": "spatie-data", "wrap": "data", "mapper": "SnakeCaseMapper", "computed": ["language_code", "language_native_name", "language_direction"]}
+}

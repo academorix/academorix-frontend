@@ -1,0 +1,51 @@
+{
+  "id": "localization.resources.workspace-locale.list",
+  "title": "Languages",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/workspace/settings/languages",
+  "host": "workspace",
+  "audience": "authenticated",
+  "resource": {"module": "localization", "entity": "workspace-locale", "action": "list"},
+  "requiresPermission": "workspace_locales.viewAny",
+  "dataSources": [
+    {"name": "workspaceLocales", "kind": "http.get", "url": "/api/v1/workspace-locales", "unwrap": "data"},
+    {"name": "availableLanguages", "kind": "http.get", "url": "/api/v1/languages", "unwrap": "data"},
+    {"name": "entitlement", "kind": "http.get", "url": "/api/v1/entitlements/localization.locales.count", "unwrap": "data"}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-4 p-6 max-w-5xl mx-auto"}, "children": [
+      {"kind": "View", "props": {"className": "flex items-start justify-between gap-4"}, "children": [
+        {"kind": "View", "children": [
+          {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Languages"}},
+          {"kind": "Text", "props": {"className": "text-sm text-muted", "children": "Locales enabled for this workspace. One is the default; another may be the fallback."}}
+        ]},
+        {"kind": "View", "props": {"className": "flex items-center gap-2"}, "children": [
+          {"kind": "Widget", "widget": "entitlements.entitlement-usage-bar", "props": {"cap": {"$ref": "entitlement.value_cap"}, "used": {"$ref": "entitlement.value_used"}, "size": "sm"}},
+          {"kind": "Button", "props": {"variant": "primary", "leadingIcon": "plus", "children": "Enable language"}, "actions": {"onPress": {"kind": "modal.open", "modal": "enable-language"}}, "bindings": {"disabled": {"$ref": "entitlement.is_exceeded"}}, "requiresPermission": "workspace_locales.manage"}
+        ]}
+      ]},
+      {"kind": "List", "props": {"className": "flex flex-col gap-2"}, "bindings": {"items": {"$ref": "workspaceLocales"}, "isLoading": {"$ref": "workspaceLocales.isLoading"}}, "itemRenderer": {"kind": "Card", "props": {"className": "p-4 flex items-center gap-4"}, "children": [
+        {"kind": "Text", "props": {"className": "text-3xl"}, "bindings": {"children": {"$ref": "row.language.flag_emoji"}}},
+        {"kind": "View", "props": {"className": "flex flex-col flex-1"}, "children": [
+          {"kind": "View", "props": {"className": "flex items-center gap-2"}, "children": [
+            {"kind": "Text", "props": {"className": "font-medium"}, "bindings": {"children": {"$ref": "row.language.name"}}},
+            {"kind": "Text", "props": {"className": "text-sm text-muted"}, "bindings": {"children": {"$expr": "'(' + row.language.native_name + ')'"}}}
+          ]},
+          {"kind": "View", "props": {"className": "flex items-center gap-1 mt-1"}, "children": [
+            {"kind": "Chip", "props": {"size": "xs", "variant": "accent"}, "bindings": {"hidden": {"$expr": "!row.is_default"}, "children": "Default"}},
+            {"kind": "Chip", "props": {"size": "xs", "variant": "info"}, "bindings": {"hidden": {"$expr": "!row.is_fallback"}, "children": "Fallback"}},
+            {"kind": "Chip", "props": {"size": "xs", "variant": "success"}, "bindings": {"hidden": {"$expr": "!row.auto_translate"}, "children": {"$expr": "'Auto (' + (row.auto_translate_driver || 'default') + ')'"}}},
+            {"kind": "Chip", "props": {"size": "xs", "variant": "neutral"}, "bindings": {"hidden": {"$expr": "row.is_enabled"}, "children": "Disabled"}},
+            {"kind": "Chip", "props": {"size": "xs", "variant": "warning"}, "bindings": {"hidden": {"$expr": "row.language.direction !== 'rtl'"}, "children": "RTL"}}
+          ]}
+        ]},
+        {"kind": "Menu", "trigger": {"kind": "Button", "props": {"variant": "ghost", "isIconOnly": true, "children": {"kind": "Icon", "props": {"name": "ellipsis-vertical"}}}}, "items": [
+          {"kind": "MenuItem", "props": {"children": "Edit"}, "actions": {"onPress": {"kind": "modal.open", "modal": "edit-workspace-locale", "propsExpr": "{ workspaceLocaleId: row.id }"}}},
+          {"kind": "MenuItem", "props": {"children": "Set as default"}, "bindings": {"hidden": {"$expr": "row.is_default"}}, "actions": {"onPress": {"kind": "http.patch", "urlExpr": "'/api/v1/workspace-locales/' + row.id", "body": {"is_default": true}}}},
+          {"kind": "MenuItem", "props": {"children": "Disable"}, "bindings": {"hidden": {"$expr": "row.is_default"}}, "actions": {"onPress": {"kind": "http.delete", "urlExpr": "'/api/v1/workspace-locales/' + row.id", "confirm": "Disable this locale? Cached translations are preserved. Confirm to proceed."}}}
+        ]}
+      ]}}
+    ]}
+  ]
+}

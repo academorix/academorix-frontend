@@ -1,0 +1,79 @@
+{
+  "id": "academorix://modules/localization/drivers",
+  "$version": 1,
+  "title": "localization \u2014 translation driver specifications",
+  "description": "Every driver implements Academorix\\Localization\\Contracts\\TranslatorDriverInterface. Resolved by TranslatorDriverManager via config('localization.default_driver') or workspace_locale.auto_translate_driver.",
+  "contract": {
+    "interface": "Academorix\\Localization\\Contracts\\TranslatorDriverInterface",
+    "methods": [
+      {"signature": "translate(string $sourceText, string $sourceLocale, string $targetLocale, array $context = []): TranslationResult", "returns": "TranslationResult DTO: translated_text, quality_score, driver, model, duration_ms."},
+      {"signature": "translateBatch(array $sources, string $sourceLocale, string $targetLocale, array $context = []): TranslationResult[]", "description": "Batched. Some drivers charge per API call, so batching is cost-optimising."},
+      {"signature": "supportsLocalePair(string $sourceLocale, string $targetLocale): bool"},
+      {"signature": "healthcheck(): DriverHealth", "description": "Non-billable reachability probe."}
+    ]
+  },
+  "drivers": [
+    {
+      "name": "openai",
+      "class": "Academorix\\Localization\\Drivers\\OpenAITranslatorDriver",
+      "underlying_package": "openai-php/laravel",
+      "strengths": ["Context-aware; excellent for UI copy", "Preserves :placeholder tokens well", "Handles domain-specific terminology when given context in the prompt"],
+      "weaknesses": ["Higher cost per call", "Slower than dedicated translation APIs (~2\u20135s)"],
+      "supports_all_locales": true,
+      "quality_score_source": "self-reported log-prob or heuristic",
+      "cost_model": "per token",
+      "models": ["gpt-4o-mini", "gpt-4o", "gpt-4-turbo"],
+      "config_prefix": "localization.drivers.openai"
+    },
+    {
+      "name": "google",
+      "class": "Academorix\\Localization\\Drivers\\GoogleTranslatorDriver",
+      "underlying_package": "google/cloud-translate",
+      "strengths": ["Broadest language coverage (100+)", "Cheapest at scale", "Fast (~200ms per call)"],
+      "weaknesses": ["Less context-aware than LLM-based drivers"],
+      "supports_all_locales": true,
+      "quality_score_source": "detectedSourceLanguage confidence",
+      "cost_model": "per character",
+      "models": ["nmt", "base"],
+      "config_prefix": "localization.drivers.google"
+    },
+    {
+      "name": "deepl",
+      "class": "Academorix\\Localization\\Drivers\\DeepLTranslatorDriver",
+      "underlying_package": "deeplcom/deepl-php",
+      "strengths": ["Highest quality on European languages", "EU-native provider (GDPR-friendly)", "No source-string retention"],
+      "weaknesses": ["Limited language coverage (~30 languages)", "Higher cost than Google"],
+      "supports_all_locales": false,
+      "supported_locales": ["en", "de", "fr", "es", "it", "nl", "pl", "pt", "ru", "ja", "zh", "ko", "sv", "da", "fi", "no", "cs", "el", "hu", "ro", "sk", "sl", "bg", "et", "lv", "lt", "tr", "uk", "id", "ar"],
+      "quality_score_source": "self-reported quality field",
+      "cost_model": "per character",
+      "config_prefix": "localization.drivers.deepl"
+    },
+    {
+      "name": "aws-translate",
+      "class": "Academorix\\Localization\\Drivers\\AwsTranslateDriver",
+      "underlying_package": "aws/aws-sdk-php",
+      "strengths": ["AWS-native; keeps traffic in customer's VPC", "Real-time + batch modes"],
+      "weaknesses": ["Requires AWS credentials", "Quality below DeepL on European languages"],
+      "supports_all_locales": true,
+      "cost_model": "per character",
+      "config_prefix": "localization.drivers.aws-translate"
+    },
+    {
+      "name": "azure-translator",
+      "class": "Academorix\\Localization\\Drivers\\AzureTranslatorDriver",
+      "underlying_package": "microsoft/cognitive-services-translator",
+      "strengths": ["Azure-native", "Custom Translator (train on workspace's terminology)"],
+      "weaknesses": ["Requires Azure setup"],
+      "supports_all_locales": true,
+      "cost_model": "per character",
+      "config_prefix": "localization.drivers.azure-translator"
+    },
+    {
+      "name": "null",
+      "class": "Academorix\\Localization\\Drivers\\NullTranslatorDriver",
+      "purpose": "No-op driver. Returns source text unchanged with quality_score=null. Used in tests + when auto-translate is off.",
+      "supports_all_locales": true
+    }
+  ]
+}

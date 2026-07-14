@@ -1,0 +1,91 @@
+{
+  "id": "academorix://modules/localization/routes",
+  "$version": 1,
+  "title": "localization \u2014 HTTP routes",
+  "description": "Workspace-facing locale + translation management surface + platform-admin language catalogue.",
+  "groups": [
+    {
+      "name": "workspace-languages",
+      "prefix": "/api/v1/languages",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "workspace.resolve", "throttle:foundation-base", "response.envelope"],
+      "hosts": ["workspace"],
+      "description": "Read-only. Public catalogue of platform-active languages that any workspace can enable.",
+      "routes": [
+        {"method": "GET", "path": "/", "controller": "Academorix\\Localization\\Http\\Controllers\\Workspace\\LanguageController@index", "permission": "languages.viewAny", "description": "Filterable by is_beta / direction / script_code."},
+        {"method": "GET", "path": "/{language}", "controller": "Academorix\\Localization\\Http\\Controllers\\Workspace\\LanguageController@show", "permission": "languages.view"}
+      ]
+    },
+    {
+      "name": "workspace-locales",
+      "prefix": "/api/v1/workspace-locales",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "workspace.resolve", "throttle:foundation-base", "response.envelope"],
+      "hosts": ["workspace"],
+      "description": "Workspace's enabled locales. Owner + admin only for writes.",
+      "routes": [
+        {"method": "GET", "path": "/", "controller": "Academorix\\Localization\\Http\\Controllers\\Workspace\\WorkspaceLocaleController@index", "permission": "workspace_locales.viewAny"},
+        {"method": "POST", "path": "/{language}", "controller": "Academorix\\Localization\\Http\\Controllers\\Workspace\\WorkspaceLocaleController@enable", "permission": "workspace_locales.manage", "description": "Enable a language for this workspace. Consumes localization.locales.count entitlement."},
+        {"method": "PATCH", "path": "/{workspaceLocale}", "controller": "Academorix\\Localization\\Http\\Controllers\\Workspace\\WorkspaceLocaleController@update", "permission": "workspace_locales.manage", "description": "Body: { is_default, is_fallback, auto_translate, auto_translate_driver, auto_translate_ttl_hours }."},
+        {"method": "DELETE", "path": "/{workspaceLocale}", "controller": "Academorix\\Localization\\Http\\Controllers\\Workspace\\WorkspaceLocaleController@disable", "permission": "workspace_locales.manage", "description": "Cannot disable the default locale. Deactivates + preserves translations. Hard delete via ?purge=true (removes cached translations)."}
+      ]
+    },
+    {
+      "name": "workspace-translations",
+      "prefix": "/api/v1/translations",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "workspace.resolve", "throttle:foundation-base", "response.envelope"],
+      "hosts": ["workspace"],
+      "description": "Workspace-facing translation CRUD. Overrides platform defaults for a workspace.",
+      "routes": [
+        {"method": "GET", "path": "/", "controller": "Academorix\\Localization\\Http\\Controllers\\Workspace\\TranslationController@index", "permission": "translations.viewAny", "description": "filter[language_code], filter[namespace], filter[group], filter[key], filter[source], filter[is_stale]"},
+        {"method": "POST", "path": "/", "controller": "Academorix\\Localization\\Http\\Controllers\\Workspace\\TranslationController@store", "permission": "translations.create", "description": "Hand-authored workspace override. Body: { language_id, namespace, group, key, value }."},
+        {"method": "GET", "path": "/{translation}", "controller": "Academorix\\Localization\\Http\\Controllers\\Workspace\\TranslationController@show", "permission": "translations.view"},
+        {"method": "PATCH", "path": "/{translation}", "controller": "Academorix\\Localization\\Http\\Controllers\\Workspace\\TranslationController@update", "permission": "translations.update"},
+        {"method": "DELETE", "path": "/{translation}", "controller": "Academorix\\Localization\\Http\\Controllers\\Workspace\\TranslationController@destroy", "permission": "translations.delete", "description": "Deletes the workspace override; falls back to platform default or file translation."},
+        {"method": "POST", "path": "/{translation}/verify", "controller": "Academorix\\Localization\\Http\\Controllers\\Workspace\\TranslationController@verify", "permission": "translations.verify", "description": "Marks translation as human-verified (sets verified_at)."}
+      ]
+    },
+    {
+      "name": "workspace-translation-jobs",
+      "prefix": "/api/v1/translation-jobs",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:sanctum", "workspace.resolve", "throttle:foundation-base", "response.envelope", "entitlement.enforce:localization.auto_translate"],
+      "hosts": ["workspace"],
+      "routes": [
+        {"method": "GET", "path": "/", "controller": "Academorix\\Localization\\Http\\Controllers\\Workspace\\TranslationJobController@index", "permission": "translation_jobs.viewAny"},
+        {"method": "POST", "path": "/", "controller": "Academorix\\Localization\\Http\\Controllers\\Workspace\\TranslationJobController@store", "permission": "translation_jobs.create", "description": "Body: { kind, source_locale_code, target_locale_codes[], namespaces[], driver }. Dispatches BulkTranslateNamespaceJob."},
+        {"method": "GET", "path": "/{translationJob}", "controller": "Academorix\\Localization\\Http\\Controllers\\Workspace\\TranslationJobController@show", "permission": "translation_jobs.view"},
+        {"method": "POST", "path": "/{translationJob}/cancel", "controller": "Academorix\\Localization\\Http\\Controllers\\Workspace\\TranslationJobController@cancel", "permission": "translation_jobs.cancel"}
+      ]
+    },
+    {
+      "name": "platform-languages",
+      "prefix": "/api/v1/platform/languages",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:platform_admin", "throttle:foundation-platform", "response.envelope"],
+      "hosts": ["platform-admin"],
+      "description": "Language catalogue CRUD for platform ops.",
+      "routes": [
+        {"method": "GET", "path": "/", "controller": "Academorix\\Localization\\Http\\Controllers\\Platform\\LanguageController@index", "permission": "platform.languages.viewAny"},
+        {"method": "POST", "path": "/", "controller": "Academorix\\Localization\\Http\\Controllers\\Platform\\LanguageController@store", "permission": "platform.languages.create"},
+        {"method": "GET", "path": "/{language}", "controller": "Academorix\\Localization\\Http\\Controllers\\Platform\\LanguageController@show", "permission": "platform.languages.view"},
+        {"method": "PATCH", "path": "/{language}", "controller": "Academorix\\Localization\\Http\\Controllers\\Platform\\LanguageController@update", "permission": "platform.languages.update"},
+        {"method": "DELETE", "path": "/{language}", "controller": "Academorix\\Localization\\Http\\Controllers\\Platform\\LanguageController@archive", "permission": "platform.languages.archive", "description": "Refused when any WorkspaceLocale row references this language."}
+      ]
+    },
+    {
+      "name": "platform-translations-observability",
+      "prefix": "/api/v1/platform/translations",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:platform_admin", "throttle:foundation-platform", "response.envelope"],
+      "hosts": ["platform-admin"],
+      "routes": [
+        {"method": "GET", "path": "/", "controller": "Academorix\\Localization\\Http\\Controllers\\Platform\\TranslationController@index", "permission": "platform.translations.viewAny"}
+      ]
+    },
+    {
+      "name": "platform-driver-status",
+      "prefix": "/api/v1/platform/translation-drivers",
+      "middleware": ["request.id", "cors.strict", "versioning.resolve", "auth:platform_admin", "throttle:foundation-platform", "response.envelope"],
+      "hosts": ["platform-admin"],
+      "routes": [
+        {"method": "GET", "path": "/status", "controller": "Academorix\\Localization\\Http\\Controllers\\Platform\\DriverStatusController@index", "permission": "platform.translations.viewAny", "description": "Per-driver reachability + quota + recent-error report."}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "academorix://modules/localization/metrics",
+  "$version": 1,
+  "title": "localization \u2014 OpenTelemetry metrics",
+  "instrumentation": "self via telemetry-otel",
+  "namespace": "academorix.localization",
+  "labelConventions": {"always": [], "commonlyAvailable": ["locale", "namespace", "source", "driver", "outcome"], "forbiddenAsLabels": ["workspace_id", "translation_id", "key"]},
+  "metrics": [
+    {"name": "academorix.localization.resolve.total", "kind": "counter", "unit": "requests", "labels": ["source"], "description": "source: query / header / user / workspace / accept_language / subdomain / app_default. Where the locale was resolved from."},
+    {"name": "academorix.localization.resolve.duration_ms", "kind": "histogram", "unit": "ms", "buckets": [0.5, 2, 10, 50, 200], "labels": [], "description": "ResolveLocale middleware duration. P99 target < 10ms."},
+    {"name": "academorix.localization.translator.get_total", "kind": "counter", "unit": "lookups", "labels": ["source", "outcome"], "description": "source: file / db / ai / human / miss. outcome: hit / miss."},
+    {"name": "academorix.localization.translator.duration_ms", "kind": "histogram", "unit": "ms", "buckets": [0.1, 0.5, 2, 10, 50, 200], "labels": ["source"], "description": "Translator::get() duration."},
+    {"name": "academorix.localization.cache.hit_ratio", "kind": "gauge", "unit": "ratio", "labels": ["locale"], "description": "DB-cache hit ratio per locale over last 5 minutes."},
+    {"name": "academorix.localization.driver.request_total", "kind": "counter", "unit": "requests", "labels": ["driver", "outcome"], "description": "outcome: success / rate_limited / auth_failed / errored / retried."},
+    {"name": "academorix.localization.driver.duration_ms", "kind": "histogram", "unit": "ms", "buckets": [50, 200, 1000, 5000, 30000], "labels": ["driver"], "description": "Driver.translate() latency."},
+    {"name": "academorix.localization.driver.quality_score", "kind": "histogram", "unit": "score", "buckets": [0.5, 0.7, 0.8, 0.9, 0.95, 0.99], "labels": ["driver"], "description": "Distribution of driver-reported quality scores."},
+    {"name": "academorix.localization.jobs.total", "kind": "counter", "unit": "jobs", "labels": ["kind", "state"]},
+    {"name": "academorix.localization.jobs.keys_processed", "kind": "counter", "unit": "keys", "labels": ["outcome"]},
+    {"name": "academorix.localization.stale_translations.count", "kind": "gauge", "unit": "translations", "labels": [], "description": "Count of is_stale=true rows. Feeds retranslate scheduling."}
+  ]
+}

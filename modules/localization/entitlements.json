@@ -1,0 +1,14 @@
+{
+  "id": "academorix://modules/localization/entitlements",
+  "$version": 1,
+  "title": "localization \u2014 declared entitlements",
+  "description": "Three entitlement keys. Locale count is a slot (concurrent limit). AI translations are a pool (per-month quota). Auto-translate is a boolean gate.",
+  "reference": {"publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements"},
+  "kinds": [{"kind": "slot"}, {"kind": "pool"}, {"kind": "boolean"}],
+  "entitlements": [
+    {"key": "localization.locales.count", "kind": "slot", "unit": "locales", "defaultsByPlan": {"free": 2, "team": 6, "business": 15, "enterprise": null}, "description": "How many WorkspaceLocale rows a workspace can have enabled. Enterprise = unlimited."},
+    {"key": "localization.ai_translations.month", "kind": "pool", "period": "month", "unit": "translations", "defaultsByPlan": {"free": 0, "team": 1000, "business": 50000, "enterprise": null}, "description": "Per-month AI translation quota. One TranslateJob invocation = 1 unit regardless of source-text length. Excess above cap is refused when auto_translate=true."},
+    {"key": "localization.auto_translate", "kind": "boolean", "defaultsByPlan": {"free": 0, "team": 0, "business": 1, "enterprise": 1}, "description": "Gate on auto-translate feature availability. Independent of the monthly quota \u2014 free plan has 0 quota AND boolean=false."},
+    {"key": "localization.translation_cache_days", "kind": "slot", "unit": "days", "defaultsByPlan": {"free": 30, "team": 90, "business": 365, "enterprise": 730}, "description": "How long Translation rows persist in the cache before PruneStaleTranslationsJob purges (source='ai' rows only)."}
+  ]
+}

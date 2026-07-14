@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/localization/listeners",
+  "$version": 1,
+  "title": "localization \u2014 subscribed events",
+  "listeners": [
+    {"event": "foundation::ApplicationBooted", "listener": "Academorix\\Localization\\Listeners\\HydrateTranslationCache", "queue": null, "purpose": "Warms in-memory LRU cache with the 200 most-hit translations per active locale. Reduces DB round-trips on cold requests."},
+    {"event": "workspaces::WorkspaceProvisioned", "listener": "Academorix\\Localization\\Listeners\\SeedInitialWorkspaceLocale", "queue": "notifications", "purpose": "Enables the workspace's business_type default locales (usually en + native language of the workspace's country) as WorkspaceLocale rows."},
+    {"event": "workspaces::WorkspaceErased", "listener": "Academorix\\Localization\\Listeners\\PurgeTranslationsForErasedWorkspace", "queue": "notifications", "purpose": "Cascade delete via FK; this listener writes the compliance audit trail entry + emits count metric."},
+    {"event": "localization::TranslationCacheMiss", "listener": "Academorix\\Localization\\Listeners\\MaybeDispatchAutoTranslate", "queue": null, "purpose": "If workspace_locale.auto_translate=true AND localization.auto_translate feature enabled AND entitlement quota available: dispatch TranslateJob for this single key. Debounced 60s per (workspace, namespace, key, locale) to prevent stampedes."},
+    {"event": "localization::MachineTranslationCompleted", "listener": "Academorix\\Localization\\Listeners\\ConsumeAutoTranslateEntitlement", "queue": "notifications", "purpose": "Consumes 1 unit of localization.ai_translations.month for the workspace. Aggregated per hour to reduce entitlement write pressure."},
+    {"event": "users::UserProfileUpdated", "listener": "Academorix\\Localization\\Listeners\\HandleUserLocaleChange", "queue": null, "purpose": "When user.profile.preferred_locale changed, fire LocaleChanged event + invalidate any per-user translation caches."}
+  ]
+}

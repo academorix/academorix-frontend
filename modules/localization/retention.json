@@ -1,0 +1,17 @@
+{
+  "id": "academorix://modules/localization/retention",
+  "$version": 1,
+  "title": "localization \u2014 retention windows",
+  "description": "Language + WorkspaceLocale retained while workspace active. Translation retention driven by source: file-imported = permanent, human-verified = permanent, ai-translated = TTL per plan. TranslationJob = 1 year hot, then hard purge.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5 (storage limitation \u2014 AI translations don't carry personal data as such but source strings may)",
+    "gdpr Art. 28 (subprocessor \u2014 machine-translation providers)"
+  ],
+  "retention": [
+    {"entity": "Language", "hot": {"days": "while any workspace has it enabled"}, "purge": {"trigger": "manual archive by platform admin + zero WorkspaceLocale references", "action": "hard delete"}},
+    {"entity": "WorkspaceLocale", "hot": {"days": "while workspace active"}, "purge": {"trigger": "workspaces::WorkspaceErased", "action": "hard delete via FK cascade"}},
+    {"entity": "Translation (source='ai')", "hot": {"days": "workspace_locale.auto_translate_ttl_hours / 24 (30\u2013365d per plan)"}, "purge": {"trigger": "translated_at + TTL past + no recent access", "action": "hard delete", "job": "PruneStaleTranslationsJob"}},
+    {"entity": "Translation (source='human' or 'file' or 'imported')", "hot": {"days": "permanent while workspace active"}, "purge": {"trigger": "workspaces::WorkspaceErased", "action": "hard delete via FK cascade"}},
+    {"entity": "TranslationJob", "hot": {"days": 365}, "purge": {"trigger": "> 1 year old + state IN (completed / failed / cancelled)", "action": "hard delete"}}
+  ]
+}

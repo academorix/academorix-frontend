@@ -1,0 +1,44 @@
+{
+  "id": "localization.resources.language.list",
+  "title": "Languages",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/languages",
+  "host": "platform-admin",
+  "audience": "platform_admin",
+  "resource": {"module": "localization", "entity": "language", "action": "list"},
+  "requiresPermission": "platform.languages.viewAny",
+  "dataSources": [
+    {"name": "languages", "kind": "http.get", "url": "/api/v1/platform/languages", "unwrap": "data"}
+  ],
+  "nodes": [
+    {"id": "root", "kind": "View", "props": {"className": "flex flex-col gap-4 p-6"}, "children": [
+      {"kind": "View", "props": {"className": "flex items-center justify-between"}, "children": [
+        {"kind": "View", "children": [
+          {"kind": "Text", "props": {"as": "h1", "className": "text-2xl font-semibold", "children": "Language catalogue"}},
+          {"kind": "Text", "props": {"className": "text-sm text-muted", "children": "Platform-level ISO 639 / BCP 47 catalogue. Workspaces choose from this set."}}
+        ]},
+        {"kind": "Button", "props": {"variant": "primary", "leadingIcon": "plus", "children": "Add language"}, "actions": {"onPress": {"kind": "navigate", "to": "/platform/languages/create"}}, "requiresPermission": "platform.languages.create"}
+      ]},
+      {"kind": "Toolbar", "children": [
+        {"kind": "SearchField", "props": {"placeholder": "Code, name, or native name", "name": "q"}},
+        {"kind": "Select", "props": {"name": "direction", "placeholder": "All directions", "clearable": true}, "options": [{"key": "ltr", "label": "LTR"}, {"key": "rtl", "label": "RTL"}]},
+        {"kind": "Toggle", "props": {"name": "is_active_on_platform", "label": "Active only"}},
+        {"kind": "Toggle", "props": {"name": "is_beta", "label": "Beta only"}}
+      ]},
+      {"kind": "Table", "columns": [
+        {"key": "flag_emoji", "header": "", "cell": {"kind": "Text", "props": {"className": "text-xl"}, "bindings": {"children": {"$ref": "row.flag_emoji"}}}},
+        {"key": "code", "header": "Code", "cell": {"kind": "Link", "propsExpr": "{ to: '/platform/languages/' + row.id, children: row.code, className: 'font-mono text-xs' }"}},
+        {"key": "name", "header": "Name"},
+        {"key": "native_name", "header": "Native"},
+        {"key": "direction", "header": "Dir", "cell": {"kind": "Chip", "props": {"size": "xs"}, "bindings": {"variant": {"$expr": "row.direction === 'rtl' ? 'warning' : 'neutral'"}, "children": {"$ref": "row.direction"}}}},
+        {"key": "script_code", "header": "Script"},
+        {"key": "status", "header": "Status", "cell": {"kind": "View", "props": {"className": "flex items-center gap-1"}, "children": [
+          {"kind": "Chip", "props": {"size": "xs", "variant": "success"}, "bindings": {"hidden": {"$expr": "!row.is_active_on_platform"}, "children": "Active"}},
+          {"kind": "Chip", "props": {"size": "xs", "variant": "warning"}, "bindings": {"hidden": {"$expr": "!row.is_beta"}, "children": "Beta"}},
+          {"kind": "Chip", "props": {"size": "xs", "variant": "neutral"}, "bindings": {"hidden": {"$expr": "row.is_active_on_platform"}, "children": "Inactive"}}
+        ]}}
+      ], "bindings": {"rows": {"$ref": "languages"}}}
+    ]}
+  ]
+}

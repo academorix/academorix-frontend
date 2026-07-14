@@ -1,0 +1,29 @@
+{
+  "id": "academorix://modules/localization/attributes",
+  "$version": 1,
+  "title": "localization \u2014 PHP attribute contracts",
+  "description": "Two attributes. #[Translatable] marks Eloquent properties for per-locale storage in a `translations` JSONB column. #[AsTranslation] on class marks the container.",
+  "namespace": "Academorix\\Localization\\Attributes",
+  "attributes": [
+    {
+      "name": "Translatable",
+      "class": "Academorix\\Localization\\Attributes\\Translatable",
+      "targets": ["property"],
+      "params": [
+        {"name": "column", "type": "string", "default": "translations", "description": "JSONB column on the model storing localised values. Shape: { locale_code: { field: value } }."},
+        {"name": "fallback", "type": "string", "default": "app_default", "enum": ["app_default", "workspace_default", "none"], "description": "How to resolve when active locale is missing. `none` returns null."},
+        {"name": "required_locales", "type": "array<string>", "default": [], "description": "Locale codes that MUST have values (validation rule). Empty = no constraint."},
+        {"name": "max_length", "type": "integer", "default": null, "description": "Per-locale max character length. Null = no limit."}
+      ]
+    },
+    {
+      "name": "AsTranslation",
+      "class": "Academorix\\Localization\\Attributes\\AsTranslation",
+      "targets": ["class"],
+      "params": [
+        {"name": "column", "type": "string", "default": "translations", "description": "Class-level default for the JSONB column name (avoids repeating on every property)."}
+      ],
+      "example": "#[AsTranslation]\nclass Announcement extends Model {\n    use HasTranslations;\n\n    #[Translatable]\n    public string $title;\n\n    #[Translatable(fallback: 'workspace_default')]\n    public string $body;\n}"
+    }
+  ]
+}

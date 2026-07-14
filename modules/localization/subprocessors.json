@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/localization/subprocessors",
+  "$version": 1,
+  "title": "localization \u2014 subprocessors",
+  "description": "Machine-translation providers process source strings + return translated strings. Only engaged when workspace_locale.auto_translate=true. See compliance.json for GDPR Art. 28 obligations.",
+  "subprocessors": [
+    {
+      "name": "OpenAI",
+      "role": "machine_translation",
+      "purpose": "Context-aware translation via chat completion. Best for UI copy + domain-specific terminology.",
+      "data_processed": ["source strings passed to translation prompt", "target locale + source locale metadata"],
+      "location": "US default; EU processing via zero-data-retention EU deployment (config('localization.openai.region'))",
+      "legal_basis": "contract + workspace opt-in",
+      "dpa_url": "https://openai.com/policies/data-processing-addendum",
+      "cardholder_data_exposure": "none",
+      "when_engaged": "workspace_locale.auto_translate_driver='openai' OR default_driver='openai'"
+    },
+    {
+      "name": "Google Cloud Translation",
+      "role": "machine_translation",
+      "purpose": "Broad language coverage + cheapest at scale.",
+      "data_processed": ["source strings", "locale metadata"],
+      "location": "US / EU / APAC (customer-selected via project region)",
+      "legal_basis": "contract + workspace opt-in",
+      "dpa_url": "https://cloud.google.com/terms/data-processing-terms",
+      "when_engaged": "driver='google'"
+    },
+    {
+      "name": "DeepL",
+      "role": "machine_translation",
+      "purpose": "Highest quality on European languages. EU-native provider.",
+      "data_processed": ["source strings", "locale metadata"],
+      "location": "EU (Germany); does not store request payloads (DeepL Pro terms)",
+      "legal_basis": "contract + workspace opt-in",
+      "dpa_url": "https://www.deepl.com/en/pro-data-security",
+      "when_engaged": "driver='deepl'"
+    },
+    {
+      "name": "AWS Translate",
+      "role": "machine_translation",
+      "purpose": "AWS-native. Good when the app is on AWS.",
+      "data_processed": ["source strings", "locale metadata"],
+      "location": "customer's AWS region",
+      "legal_basis": "contract",
+      "dpa_url": "https://aws.amazon.com/agreement/",
+      "when_engaged": "driver='aws-translate'"
+    },
+    {
+      "name": "Azure Translator",
+      "role": "machine_translation",
+      "purpose": "Azure-native.",
+      "data_processed": ["source strings", "locale metadata"],
+      "location": "customer's Azure region",
+      "legal_basis": "contract",
+      "dpa_url": "https://www.microsoft.com/licensing/docs/view/Microsoft-Products-and-Services-Data-Protection-Addendum-DPA",
+      "when_engaged": "driver='azure-translator'"
+    }
+  ],
+  "notes": [
+    "The 'null' driver is a no-op used in tests and when auto-translate is off. Not a subprocessor.",
+    "Workspace-level opt-in means auto_translate=false is the default; workspaces must explicitly consent by flipping the toggle in the settings UI."
+  ]
+}

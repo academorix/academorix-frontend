@@ -1,0 +1,14 @@
+{
+  "id": "academorix://modules/localization/features",
+  "$version": 1,
+  "title": "localization \u2014 feature keys",
+  "reference": {"publishedBy": "feature-flag", "resolvedBy": "GET /api/auth/me \u2192 data.features"},
+  "features": [
+    {"key": "localization.core", "displayName": "Multilingual UI", "description": "Base localization capability. Always on.", "defaultEnabled": true, "planTiers": ["free", "team", "business", "enterprise"]},
+    {"key": "localization.custom_translations", "displayName": "Custom translations", "description": "Workspace admins can override platform-default translations per locale.", "defaultEnabled": true, "planTiers": ["team", "business", "enterprise"]},
+    {"key": "localization.auto_translate", "displayName": "AI auto-translate", "description": "On cache miss, dispatch a driver call to fill the translation. Consumes AI-translation entitlement.", "defaultEnabled": false, "planTiers": ["business", "enterprise"]},
+    {"key": "localization.bulk_translate", "displayName": "Bulk translation jobs", "description": "'Translate all missing to <locale>' button. Batched driver calls.", "defaultEnabled": false, "planTiers": ["business", "enterprise"]},
+    {"key": "localization.translation_review", "displayName": "Human review workflow", "description": "Translation reviewer role + verified_at workflow.", "defaultEnabled": false, "planTiers": ["business", "enterprise"]},
+    {"key": "localization.rtl", "displayName": "RTL languages", "description": "Enable Arabic / Hebrew / Persian / Urdu. Requires the SPA theme to support logical CSS properties.", "defaultEnabled": true, "planTiers": ["free", "team", "business", "enterprise"]}
+  ]
+}

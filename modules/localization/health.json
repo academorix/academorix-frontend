@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/localization/health",
+  "$version": 1,
+  "title": "localization \u2014 health probes",
+  "probes": [
+    {"name": "localization-catalogue-seeded", "class": "Academorix\\Localization\\Health\\Probes\\CatalogueSeededProbe", "category": "startup", "critical": true, "description": "Language catalogue has at least English + one other locale seeded.", "timeoutMs": 200},
+    {"name": "localization-cache-reachable", "class": "Academorix\\Localization\\Health\\Probes\\CacheReachableProbe", "category": "readiness", "critical": false, "description": "Redis LRU cache namespace reachable. Falls back to DB on failure.", "timeoutMs": 300},
+    {"name": "localization-openai-reachable", "class": "Academorix\\Localization\\Health\\Probes\\OpenAIReachableProbe", "category": "readiness", "critical": false, "description": "OpenAI API reachable (models endpoint). Non-critical because other drivers exist.", "timeoutMs": 3000, "enabledWhen": "config('localization.default_driver') === 'openai' OR env('OPENAI_API_KEY')"},
+    {"name": "localization-google-reachable", "class": "Academorix\\Localization\\Health\\Probes\\GoogleReachableProbe", "category": "readiness", "critical": false, "description": "Google Cloud Translation reachable.", "timeoutMs": 3000, "enabledWhen": "config('localization.default_driver') === 'google'"},
+    {"name": "localization-deepl-reachable", "class": "Academorix\\Localization\\Health\\Probes\\DeepLReachableProbe", "category": "readiness", "critical": false, "description": "DeepL API reachable + quota available.", "timeoutMs": 3000, "enabledWhen": "config('localization.default_driver') === 'deepl'"},
+    {"name": "localization-translation-job-stuck", "class": "Academorix\\Localization\\Health\\Probes\\StuckJobProbe", "category": "readiness", "critical": false, "description": "No TranslationJob in state=running for > 1 hour without progress.", "timeoutMs": 500}
+  ]
+}

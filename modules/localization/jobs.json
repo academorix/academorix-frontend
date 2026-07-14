@@ -1,0 +1,73 @@
+{
+  "id": "academorix://modules/localization/jobs",
+  "$version": 1,
+  "title": "localization \u2014 background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Localization\\Jobs\\TranslateJob",
+      "queue": "notifications",
+      "purpose": "Translate one key via the configured driver. Called by the MaybeDispatchAutoTranslate listener + by bulk jobs iterating keys.",
+      "steps": [
+        "Load Translation row (source language) to get source text.",
+        "Resolve driver via TranslatorDriverManager (respects workspace override).",
+        "Call driver.translate(source_text, source_locale, target_locale).",
+        "On success: UPSERT Translation(workspace_id, language_id, namespace, group, key) with source='ai' + provider + quality_score + source_hash.",
+        "Fire MachineTranslationCompleted."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 60,
+      "uniqueVia": "(workspace_id, namespace, group, key, target_locale_code)",
+      "tries": 3,
+      "backoff": [10, 60, 300]
+    },
+    {
+      "class": "Academorix\\Localization\\Jobs\\BulkTranslateNamespaceJob",
+      "queue": "notifications",
+      "purpose": "Translate all keys in a namespace (or across namespaces) for one or more target locales.",
+      "steps": [
+        "Enumerate source keys (from file lang/* or existing Translation rows for source_locale).",
+        "For each key + target_locale: dispatch TranslateJob (chained + throttled to config('localization.bulk_translate.concurrency')).",
+        "Update TranslationJob.keys_total upfront, keys_translated / keys_failed as sub-jobs complete.",
+        "Fire TranslationJobStarted / Completed."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "translation_job_id",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Localization\\Jobs\\WarmTranslationCacheJob",
+      "queue": "notifications",
+      "purpose": "Pre-populate top-N most-frequently-accessed keys in Redis / APCu for the fastest cold-request performance.",
+      "steps": [
+        "Sample analytics for top N keys per workspace + locale.",
+        "Fetch from DB and write to Redis with long TTL (7 days).",
+        "Fire nothing \u2014 pure infra."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Localization\\Jobs\\PruneStaleTranslationsJob",
+      "queue": "notifications",
+      "purpose": "Delete Translation rows past retention (source='ai' + translated_at older than workspace_locale.auto_translate_ttl_hours).",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Localization\\Jobs\\ReconcileTranslationCacheJob",
+      "queue": "notifications",
+      "purpose": "Verify DB Translation row counts match Redis cache counters. Warns on drift.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 2
+    }
+  ]
+}

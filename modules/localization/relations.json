@@ -1,0 +1,21 @@
+{
+  "id": "academorix://modules/localization/relations",
+  "$version": 1,
+  "title": "localization \u2014 model relationships",
+  "internal": [
+    {"from": "Language", "kind": "hasMany", "to": "WorkspaceLocale", "foreignKey": "language_id"},
+    {"from": "WorkspaceLocale", "kind": "belongsTo", "to": "Language", "foreignKey": "language_id", "onDelete": "restrict", "description": "Languages cannot be deleted while any workspace has them enabled."},
+    {"from": "Language", "kind": "hasMany", "to": "Translation", "foreignKey": "language_id", "onDelete": "cascade"},
+    {"from": "Translation", "kind": "belongsTo", "to": "Language", "foreignKey": "language_id"},
+    {"from": "TranslationJob", "kind": "hasMany", "to": "Translation", "foreignKey": "translation_job_id", "onDelete": "set null", "description": "The job that produced each row (null when hand-authored or file-imported)."},
+    {"from": "Translation", "kind": "belongsTo", "to": "TranslationJob", "foreignKey": "translation_job_id", "nullable": true}
+  ],
+  "outbound": [
+    {"from": "WorkspaceLocale", "kind": "belongsTo", "to": "workspaces::Workspace", "foreignKey": "workspace_id", "onDelete": "cascade"},
+    {"from": "Translation", "kind": "belongsTo", "to": "workspaces::Workspace", "foreignKey": "workspace_id", "nullable": true, "onDelete": "cascade", "description": "Null = platform-level default translation (Academorix-shipped). Non-null = workspace override."},
+    {"from": "TranslationJob", "kind": "belongsTo", "to": "workspaces::Workspace", "foreignKey": "workspace_id", "onDelete": "cascade"}
+  ],
+  "inbound": {
+    "description": "Domain models with translated columns compose HasTranslations. No FK inbound \u2014 they store translations in their own JSONB `translations` column rather than joining to our Translation table (that's for translation keys + Laravel-style i18n, not per-row content)."
+  }
+}

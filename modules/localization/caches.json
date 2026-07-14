@@ -1,0 +1,15 @@
+{
+  "id": "academorix://modules/localization/caches",
+  "$version": 1,
+  "title": "localization \u2014 cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["localization", "translations"],
+  "keys": [
+    {"pattern": "loc:trans:{workspace_id}:{locale_code}:{namespace}:{group}:{key_hash}", "description": "Per-key resolved translation. Redis-first, DB-second, file-third. key_hash = short SHA-1 of the full key path to keep Redis keys under 250 bytes.", "ttlSeconds": 3600, "tags": ["localization", "translations", "workspace"], "invalidatedBy": ["TranslationObserver.created", "TranslationObserver.updated"]},
+    {"pattern": "loc:trans:platform:{locale_code}:{namespace}:{group}:{key_hash}", "description": "Platform defaults (workspace_id NULL rows).", "ttlSeconds": 7200, "tags": ["localization", "translations", "platform"]},
+    {"pattern": "loc:top:{workspace_id}:{locale_code}", "description": "Top-200 most-accessed keys per (workspace, locale). Warmed hourly by WarmTranslationCacheJob.", "ttlSeconds": 3600, "tags": ["localization", "translations", "workspace"]},
+    {"pattern": "loc:locales:workspace:{workspace_id}", "description": "Enabled WorkspaceLocale rows for a workspace. Read on ResolveLocale middleware.", "ttlSeconds": 300, "tags": ["localization", "workspace"], "invalidatedBy": ["WorkspaceLocaleObserver.*"]},
+    {"pattern": "loc:languages:catalogue", "description": "Full Language catalogue (is_active_on_platform=true). Warmed on boot.", "ttlSeconds": 86400, "tags": ["localization", "platform"], "invalidatedBy": ["LanguageObserver.*"]},
+    {"pattern": "loc:auto_translate:debounce:{workspace_id}:{ns}:{group}:{key}:{locale}", "description": "60s debounce guard preventing translate stampedes.", "ttlSeconds": 60, "tags": ["localization"]}
+  ]
+}

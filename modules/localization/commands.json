@@ -1,0 +1,14 @@
+{
+  "id": "academorix://modules/localization/commands",
+  "$version": 1,
+  "title": "localization \u2014 Artisan commands",
+  "commands": [
+    {"signature": "localization:list-locales {--workspace=} {--enabled-only}", "class": "Academorix\\Localization\\Console\\Commands\\ListLocalesCommand", "purpose": "List platform languages or workspace-enabled locales. --enabled-only filters to WorkspaceLocale.is_enabled=true."},
+    {"signature": "localization:describe {key} {--workspace=} {--locale=all}", "class": "Academorix\\Localization\\Console\\Commands\\DescribeCommand", "purpose": "Print the resolution trace for one key: file lookup + DB workspace override + DB platform default + fallback chain. Useful for debugging missing translations."},
+    {"signature": "localization:translate {key} {--from=en} {--to=} {--workspace=} {--driver=} {--force}", "class": "Academorix\\Localization\\Console\\Commands\\TranslateCommand", "purpose": "Translate one key. --force retranslates even when a cached row exists."},
+    {"signature": "localization:warm-cache {--workspace=} {--top=200}", "class": "Academorix\\Localization\\Console\\Commands\\WarmCacheCommand", "purpose": "Pre-populate Redis LRU cache with top-N keys per locale."},
+    {"signature": "localization:bulk-translate {--workspace=} {--from=} {--to=*} {--namespace=*} {--driver=} {--dry-run}", "class": "Academorix\\Localization\\Console\\Commands\\BulkTranslateCommand", "purpose": "Dispatch a BulkTranslateNamespaceJob for a workspace + set of target locales."},
+    {"signature": "localization:seed-languages {--refresh}", "class": "Academorix\\Localization\\Console\\Commands\\SeedLanguagesCommand", "purpose": "Seed the platform Language catalogue from data/languages.json. --refresh upserts + preserves is_active_on_platform overrides."},
+    {"signature": "localization:reconcile-cache {--prune} {--dry-run}", "class": "Academorix\\Localization\\Console\\Commands\\ReconcileCacheCommand", "purpose": "Run reconciliation now. --prune also purges stale rows."}
+  ]
+}
