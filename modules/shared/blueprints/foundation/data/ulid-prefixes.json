@@ -1,0 +1,597 @@
+{
+  "id": "academorix://modules/foundation/data/ulid-prefixes",
+  "$version": 1,
+  "title": "foundation — canonical ULID prefix registry",
+  "description": "Authoritative mapping of every ULID prefix used in Academorix. A prefix is a short (3–4 char) semantic tag preceding the 26-char base32 ULID body, forming a primary key like `plt_01HXYZ...` (TenantLocale). The pattern is enforced by every model's `keyPrefix` in x-eloquent + the corresponding JSON Schema `pattern` in properties. Every prefix must be UNIQUE across the platform; this file is the source of truth. Prefix rules: 3–4 lowercase letters + trailing underscore, ASCII only, no vowel-only sequences that read as English words (avoid `and_`, `for_`, `not_` is intentional).",
+  "constraints": {
+    "min_length": 3,
+    "max_length": 4,
+    "trailing_separator": "_",
+    "pattern": "^[a-z]{3,4}_$",
+    "uniqueness": "global",
+    "case": "lowercase",
+    "reservation_convention": "First-registered wins. Renames require this registry to be updated in the SAME commit as the schema changes."
+  },
+  "prefixes": {
+    "aac_": {
+      "module": "approvals",
+      "entity": "ApprovableAction",
+      "description": "Registry entry for an action decorated with #[AsApprovableAction]. Populated by boot-time discovery."
+    },
+    "acg_": {
+      "module": "auth",
+      "entity": "CrossAppGrant",
+      "description": "Short-lived (300s) cross-Application SSO grant token. Consumed atomically at exchange."
+    },
+    "act_": {
+      "module": "activity",
+      "entity": "ActivityLog",
+      "description": "Per-tenant activity feed row."
+    },
+    "aev_": {
+      "module": "auth",
+      "entity": "EmailVerification",
+      "description": "24-hour TTL email verification token. Hashed at rest."
+    },
+    "agr_": {
+      "module": "grants",
+      "entity": "AccessGrant",
+      "description": "Per-resource dynamic access grant. Polymorphic subject + resource, JSONB permissions, decision enum (allow/deny - deny wins)."
+    },
+    "ajd_": {
+      "module": "auth",
+      "entity": "JwtDenyListEntry",
+      "description": "Revoked jti with natural expiry. Populated by password-change / user-suspend / breach-response flows."
+    },
+    "ajk_": {
+      "module": "auth",
+      "entity": "JwtSigningKey",
+      "description": "HS256 signing key with per-Application binding + kid rotation. Secret KMS-envelope-encrypted at rest."
+    },
+    "amc_": {
+      "module": "auth",
+      "entity": "AuthMfaChallenge",
+      "description": "Auth-side pending MFA challenge ledger row. Shared with mfa module (mfc_ is mfa's alias for the same shape)."
+    },
+    "apd_": {
+      "module": "approvals",
+      "entity": "ApprovalDecision",
+      "description": "Individual approve/reject decision by an approver. Write-once - no update, no delete."
+    },
+    "apg_": {
+      "module": "approvals",
+      "entity": "ApprovalTemplateApprover",
+      "description": "Approver group within a template. Ordered via sort_order for sequential + parallel semantics. Quorum type all/any/n_of_m."
+    },
+    "api_": {
+      "module": "approvals",
+      "entity": "ApprovalInstance",
+      "description": "One row per triggered approval flow. Polymorphic subject; immutable-once-created except for lifecycle status transitions."
+    },
+    "apn_": {
+      "module": "approvals",
+      "entity": "ApprovalReminder",
+      "description": "Per-approver reminder audit row. De-duplicated via composite unique on (requirement, approver, reminder_number)."
+    },
+    "app_": {
+      "module": "application",
+      "entity": "Application",
+      "description": "Product container. One or more tenants belong to an Application."
+    },
+    "apr_": {
+      "module": "approvals",
+      "entity": "ApprovalRequirement",
+      "description": "Per-approver-group requirement materialised at instance-create time. Snapshotted selector + resolved_approvers (delegation-aware)."
+    },
+    "apt_": {
+      "module": "approvals",
+      "entity": "ApprovalTemplate",
+      "description": "Tenant-authored approval rule set (runtime data per D-A4). Versioned; multiple templates per action_key with priority-ordered match."
+    },
+    "apv_": {
+      "module": "versioning",
+      "entity": "ApiVersion",
+      "description": "Versioned API surface entry.",
+      "renamed_from": "aver_"
+    },
+    "atr_": {
+      "module": "auth",
+      "entity": "RefreshToken",
+      "description": "Refresh token in the rotation-with-reuse-detection chain. Polymorphic tokenable, family_id for lockdown cascade."
+    },
+    "aud_": {
+      "module": "audit",
+      "entity": "AuditLog",
+      "description": "Compliance-grade audit entry with cryptographic hash chain."
+    },
+    "brd_": {
+      "module": "branding",
+      "entity": "Branding",
+      "description": "Theme + logo profile per Tenant. Extracted from tenants at v0.3.",
+      "renamed_from": "brand_"
+    },
+    "bst_": {
+      "module": "application",
+      "entity": "BusinessType",
+      "description": "Catalogue entry driving per-tenant defaults (features, terminology, seeded roles). Dual-source — code-primary via BusinessTypeEnum + DB mirror in business_types for admin UI + tenant customs (per .kiro/steering/enum-db-seed-dual-source.md)."
+    },
+    "cat_": {
+      "module": "notifications",
+      "entity": "NotificationCategory",
+      "description": "Module-fed category registry row (platform default when tenant_id=null, tenant override otherwise)."
+    },
+    "ccg_": {
+      "module": "compliance",
+      "entity": "ConsentCategory",
+      "description": "Catalogue row for a consent category (essential / functional / marketing / analytics / ai-training / minor-parental). Platform defaults have tenant_id=null; tenant overrides shadow them."
+    },
+    "cns_": {
+      "module": "compliance",
+      "entity": "ConsentRecord",
+      "description": "Immutable subject x category x decision snapshot. Withdrawal writes a new row rather than mutating an existing one."
+    },
+    "cup_": {
+      "module": "storage",
+      "entity": "ChunkedUpload",
+      "description": "In-flight multipart / tus.io state row. State machine: initiating → uploading → finalizing → completed | aborted | expired."
+    },
+    "delv_": {
+      "module": "notifications",
+      "entity": "NotificationDelivery",
+      "description": "Per-channel delivery attempt row for a Notification."
+    },
+    "dep_": {
+      "module": "versioning",
+      "entity": "DeprecationNotice",
+      "description": "RFC 8594 Sunset workflow entry — announces upcoming API version removal.",
+      "renamed_from": "dnot_"
+    },
+    "dgst_": {
+      "module": "notifications",
+      "entity": "NotificationDigest",
+      "description": "Batched digest of pending notifications (daily/weekly)."
+    },
+    "dlg_": {
+      "module": "delegation",
+      "entity": "RoleDelegation",
+      "description": "Time-bounded delegation of a delegator's role(s) to a delegate in the same tenant. Max 90-day window."
+    },
+    "dom_": {
+      "module": "domains",
+      "entity": "Domain",
+      "description": "Canonical hostname owned by a Tenant. State machine: pending -> verifying -> verified -> expired."
+    },
+    "drc_": {
+      "module": "domains",
+      "entity": "DomainRecord",
+      "description": "DNS record inside a Domain. Diff-state, not lifecycle-tracked.",
+      "renamed_from": "dnsr_"
+    },
+    "dsa_": {
+      "module": "compliance",
+      "entity": "DsarArtefact",
+      "description": "Per-module contribution to a DSAR bundle. Points at a storage::File."
+    },
+    "dsr_": {
+      "module": "compliance",
+      "entity": "Dsar",
+      "description": "Data-subject-access-request state machine (received -> triaging -> collecting -> assembling -> delivered | rejected)."
+    },
+    "ent_": {
+      "module": "entitlements",
+      "entity": "Entitlement",
+      "description": "Resolved (tenant, key) quota row."
+    },
+    "fil_": {
+      "module": "storage",
+      "entity": "File",
+      "description": "Uploaded file record. Polymorphic via fileable_type/fileable_id. Content-addressable dedup via sha256 with per-blob refcount."
+    },
+    "fvr_": {
+      "module": "storage",
+      "entity": "FileVariant",
+      "description": "Derived rendition of a File (thumbnail / medium / hero / pdf-thumbnail). One row per (file, variant_key)."
+    },
+    "gfc_": {
+      "module": "geofencing",
+      "entity": "GeofenceCheck",
+      "description": "Immutable audit log of geofence evaluations."
+    },
+    "ide_": {
+      "module": "tenancy",
+      "entity": "Identity",
+      "description": "Cross-tenant person record.",
+      "renamed_from": "ident_"
+    },
+    "idn_": {
+      "module": "identity",
+      "entity": "Identity",
+      "description": "Global credential record - one row per real human across every Application. Reachable ONLY through auth-service actions; never wire-projected."
+    },
+    "imp_": {
+      "module": "delegation",
+      "entity": "ImpersonationSession",
+      "description": "PlatformUser act-as session against a tenant User. 60-min hard cap; append-only compliance evidence."
+    },
+    "inv_": {
+      "module": "invitations",
+      "entity": "Invitation",
+      "description": "An invitation issued to a target_type + target_email tuple.",
+      "renamed_from": "invite_"
+    },
+    "ive_": {
+      "module": "invitations",
+      "entity": "InvitationEvent",
+      "description": "Audit-funnel row: sent → delivered → opened → clicked → accepted/declined.",
+      "renamed_from": "invevt_"
+    },
+    "lhd_": {
+      "module": "compliance",
+      "entity": "LegalHold",
+      "description": "Freezes retention on a subject / tenant / case / class scope. Requires two-person approval to apply."
+    },
+    "lng_": {
+      "module": "localization",
+      "entity": "PlatformLanguage",
+      "description": "Curated per-platform language row (BCP-47 tag + display metadata + is_beta flag)."
+    },
+    "mfc_": {
+      "module": "mfa",
+      "entity": "MfaChallenge",
+      "description": "Ephemeral in-flight MFA challenge. Shared ledger owned by identity/auth; schema documented in mfa module."
+    },
+    "nla_": {
+      "module": "newsletter",
+      "entity": "NewsletterAudience",
+      "description": "Segment definition for a Newsletter."
+    },
+    "nlc_": {
+      "module": "newsletter",
+      "entity": "NewsletterCampaign",
+      "description": "Send event combining an Issue + Audience + scheduled_at."
+    },
+    "nli_": {
+      "module": "newsletter",
+      "entity": "NewsletterIssue",
+      "description": "One issue of a Newsletter (editorial content + subject)."
+    },
+    "nlp_": {
+      "module": "newsletter",
+      "entity": "Newsletter",
+      "description": "Publication container (sender identity, brand, cadence)."
+    },
+    "nls_": {
+      "module": "newsletter",
+      "entity": "NewsletterSubscription",
+      "description": "Per-subscriber row on a Newsletter."
+    },
+    "not_": {
+      "module": "notifications",
+      "entity": "Notification",
+      "description": "The universal delivery record — one row per (recipient, category, template, dispatch).",
+      "renamed_from": "notif_",
+      "note": "`not_` reads naturally as the abbreviation for `notification` in the ULID context; SQL keyword collision is not a concern because ULID values are always quoted strings."
+    },
+    "per_": {
+      "module": "rbac",
+      "entity": "Permission",
+      "description": "Spatie-extended permission row. Dot-notated names with scope suffix."
+    },
+    "pln_": {
+      "module": "subscription",
+      "entity": "Plan",
+      "description": "Per-Application plan definition (maps to Stripe Price or Paddle Product)."
+    },
+    "plp_": {
+      "module": "platform-user",
+      "entity": "PlatformProfile",
+      "description": "1:1 PII satellite of PlatformUser (name, phone, avatar, Slack + GitHub handles, timezone). HR-controlled fields immutable."
+    },
+    "plu_": {
+      "module": "platform-user",
+      "entity": "PlatformUser",
+      "description": "Academorix-staff principal on the `platform_admin` guard. Cross-tenant + cross-application by construction."
+    },
+    "pref_": {
+      "module": "notifications",
+      "entity": "NotificationPreference",
+      "description": "Per-user category + channel opt-in row."
+    },
+    "prf_": {
+      "module": "user",
+      "entity": "Profile",
+      "description": "1:1 PII satellite of User (name, phone, avatar, locale, timezone)."
+    },
+    "psub_": {
+      "module": "subscription",
+      "entity": "PlanSubscription",
+      "description": "Active subscription binding a tenant to a Plan."
+    },
+    "rdf_": {
+      "module": "rbac",
+      "entity": "RoleDefinition",
+      "description": "Academorix metadata layer for system roles - business_type default provisioning, i18n labels, min-tier gating."
+    },
+    "rol_": {
+      "module": "rbac",
+      "entity": "Role",
+      "description": "Spatie-extended role row with (application_id, tenant_id, is_system, description, sort_order)."
+    },
+    "rtr_": {
+      "module": "compliance",
+      "entity": "RetentionRun",
+      "description": "Audit trail of a single retention sweep (per tenant, per invocation)."
+    },
+    "sae_": {
+      "module": "search",
+      "entity": "SearchAliasEntry",
+      "description": "Synonym / alias entry for a search index."
+    },
+    "set_": {
+      "module": "settings",
+      "entity": "SettingValue",
+      "description": "Persisted value for a (owner, group_key, name) tuple."
+    },
+    "sev_": {
+      "module": "search",
+      "entity": "SearchEventVector",
+      "description": "Vector embedding entry for semantic search."
+    },
+    "sfi_": {
+      "module": "compliance",
+      "entity": "SafeguardingIncident",
+      "description": "Minor-safeguarding report inbox entry. Severity-driven escalation SLAs."
+    },
+    "sidx_": {
+      "module": "search",
+      "entity": "SearchIndex",
+      "description": "Definition of a searchable index (target model + fields)."
+    },
+    "sopt_": {
+      "module": "search",
+      "entity": "SearchOption",
+      "description": "Per-index tuning options (ranking rules, stop words)."
+    },
+    "spr_": {
+      "module": "compliance",
+      "entity": "Subprocessor",
+      "description": "Versioned VPC / DPA registry entry - every third party that processes subject data."
+    },
+    "sq_": {
+      "module": "search",
+      "entity": "SearchQueryAudit",
+      "description": "Query audit row for search analytics.",
+      "grandfathered": true,
+      "note": "2 chars — below the min-3 rule; grandfathered until refactor. Rename target: `sqa_` (SearchQueryAudit)."
+    },
+    "ssync_": {
+      "module": "search",
+      "entity": "SearchSyncState",
+      "description": "Per-index sync state (last full index, incremental cursor).",
+      "grandfathered": true,
+      "note": "5 chars — breaks the max-4 rule; grandfathered until refactor. Rename target: `sst_` (SearchSyncState) once the schema is v2."
+    },
+    "sua_": {
+      "module": "storage",
+      "entity": "SignedUrlAudit",
+      "description": "Per-issuance signed-URL audit row. High-volume; 90-day hard-purge retention. signature_hash unique for redemption lookup."
+    },
+    "sub_": {
+      "module": "subscription",
+      "entity": "Subscription",
+      "description": "Legacy alias for `psub_` — grandfathered from v0.1."
+    },
+    "supp_": {
+      "module": "subscription",
+      "entity": "PlanSupplement",
+      "description": "Add-on line attached to a subscription."
+    },
+    "svc_": {
+      "module": "service-accounts",
+      "entity": "ServiceAccount",
+      "description": "Machine credential for inter-service authentication. Bound to one Application via application_id; optionally tenant-scoped."
+    },
+    "syn_": {
+      "module": "search",
+      "entity": "SearchSynonym",
+      "description": "Explicit synonym row."
+    },
+    "ten_": {
+      "module": "tenancy",
+      "entity": "Tenant",
+      "description": "Tenant row. Belongs to an Application."
+    },
+    "tjb_": {
+      "module": "localization",
+      "entity": "TranslationJob",
+      "description": "Append-only machine-translation job audit row."
+    },
+    "tmb_": {
+      "module": "user",
+      "entity": "TenantMember",
+      "description": "Row that pins a User to a Tenant with a Role. Multi-tenant membership pivot."
+    },
+    "tpl_": {
+      "module": "notifications",
+      "entity": "NotificationTemplate",
+      "description": "Versioned reusable template (one row per locale + version)."
+    },
+    "trn_": {
+      "module": "localization",
+      "entity": "Translation",
+      "description": "UI-string translation row keyed on (tenant_id?, namespace, group, key, locale)."
+    },
+    "use_": {
+      "module": "entitlements",
+      "entity": "EntitlementUsage",
+      "description": "Audit row for a consume() call."
+    },
+    "usr_": {
+      "module": "user",
+      "entity": "User",
+      "description": "Per-Application projection of an Identity. Unique on (identity_id, application_id).",
+      "promoted_from_reserved": true
+    },
+    "wac_": {
+      "module": "mfa",
+      "entity": "WebauthnCredential",
+      "description": "FIDO2 credential (platform authenticator or roaming hardware key). Global aggregate - belongs to Identity."
+    },
+    "wct_": {
+      "module": "tenancy",
+      "entity": "TenantContact",
+      "description": "Per-tenant billing / DPO / security contact.",
+      "renamed_from": "contact_"
+    },
+    "wdlv_": {
+      "module": "webhook",
+      "entity": "WebhookDelivery",
+      "description": "Per-attempt outbound delivery audit row."
+    },
+    "wit_": {
+      "module": "integrations",
+      "entity": "TenantIntegration",
+      "description": "Third-party integration credentials per Tenant. Config encrypted at rest.",
+      "renamed_from": "intg_"
+    },
+    "wsl_": {
+      "module": "localization",
+      "entity": "TenantLocale",
+      "description": "Per-tenant enabled locale row (references PlatformLanguage)."
+    },
+    "wsub_": {
+      "module": "webhook",
+      "entity": "WebhookSubscription",
+      "description": "Customer-registered inbound URL + destination + event list."
+    },
+    "xart_": {
+      "module": "transfer",
+      "entity": "TransferArtifact",
+      "description": "Import / export artifact file reference (CSV, XLSX, JSON)."
+    },
+    "xfer_": {
+      "module": "transfer",
+      "entity": "Transfer",
+      "description": "Import or export operation row."
+    },
+    "xmap_": {
+      "module": "transfer",
+      "entity": "TransferMapping",
+      "description": "Field-mapping definition for a Transfer."
+    },
+    "xshd_": {
+      "module": "transfer",
+      "entity": "TransferSchedule",
+      "description": "Recurring transfer schedule."
+    }
+  },
+  "reserved_for_future": {
+    "org_": {
+      "module": "organization (planned)",
+      "entity": "Organization",
+      "description": "Reserved. Not yet in use."
+    },
+    "reg_": {
+      "module": "region (planned)",
+      "entity": "Region",
+      "description": "Reserved."
+    },
+    "brn_": {
+      "module": "branch (planned)",
+      "entity": "Branch",
+      "description": "Reserved. Do NOT reuse for Branding — that's `brd_`."
+    },
+    "tea_": {
+      "module": "teams (planned)",
+      "entity": "Team",
+      "description": "Reserved."
+    },
+    "fac_": {
+      "module": "facilities (planned)",
+      "entity": "Facility",
+      "description": "Reserved."
+    },
+    "spo_": {
+      "module": "sports (planned)",
+      "entity": "Sport",
+      "description": "Reserved."
+    }
+  },
+  "renaming_history": [
+    {
+      "from": "aver_",
+      "to": "apv_",
+      "date": "2026-07-14",
+      "reason": "Length reduction + clearer initialism (ApiVersion → apv)."
+    },
+    {
+      "from": "brand_",
+      "to": "brd_",
+      "date": "2026-07-14",
+      "reason": "Length reduction; frees `bra_` for future use."
+    },
+    {
+      "from": "contact_",
+      "to": "wct_",
+      "date": "2026-07-14",
+      "reason": "Length reduction + entity-qualifying prefix (TenantContact vs generic `contact_` which is too broad)."
+    },
+    {
+      "from": "dnot_",
+      "to": "dep_",
+      "date": "2026-07-14",
+      "reason": "`dep` reads as `deprecation`; `dnot` was cryptic."
+    },
+    {
+      "from": "dnsr_",
+      "to": "drc_",
+      "date": "2026-07-14",
+      "reason": "`drc` = DomainRecord initials."
+    },
+    {
+      "from": "ident_",
+      "to": "ide_",
+      "date": "2026-07-14",
+      "reason": "Length reduction."
+    },
+    {
+      "from": "intg_",
+      "to": "wit_",
+      "date": "2026-07-14",
+      "reason": "Entity-qualifying (TenantIntegration vs generic `intg`); frees `int_` for potential future use."
+    },
+    {
+      "from": "invite_",
+      "to": "inv_",
+      "date": "2026-07-14",
+      "reason": "Length reduction."
+    },
+    {
+      "from": "invevt_",
+      "to": "ive_",
+      "date": "2026-07-14",
+      "reason": "Length reduction (6 chars → 3 chars)."
+    },
+    {
+      "from": "notif_",
+      "to": "not_",
+      "date": "2026-07-14",
+      "reason": "Length reduction. `not_` in the ULID context is unambiguous — SQL parses ULID values as strings, never as boolean operators."
+    },
+    {
+      "from": "usr_ (reserved)",
+      "to": "usr_ (active)",
+      "date": "2026-07-18",
+      "reason": "Wave 1 identity module User schema now landed; prefix promoted from reserved_for_future to active."
+    }
+  ],
+  "validation": {
+    "ci_check": "modules/foundation/scripts/validate-ulid-prefixes.py",
+    "checks": [
+      "Every keyPrefix in x-eloquent maps to an entry here.",
+      "Every JSON Schema `pattern` matches the format `^<prefix>[0-9A-HJKMNP-TV-Z]{26}$`.",
+      "No two entities share a prefix.",
+      "Renamed prefixes have a `renamed_from` field for traceability."
+    ]
+  }
+}
