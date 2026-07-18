@@ -1,0 +1,77 @@
+{
+  "id": "academorix://modules/access/requests/permissions",
+  "$version": 1,
+  "title": "requests \u2014 permissions",
+  "description": "Permission strings this module publishes. Seeded by `AccessRequestPermissionSeeder` with `is_system=true`. Split by guard: `sanctum` for tenant users; `platform_admin` for Academorix cross-tenant ops.",
+  "seeder": "Academorix\\AccessRequest\\Database\\Seeders\\AccessRequestPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "access-requests.viewAny",
+      "guard": "sanctum",
+      "description": "List access requests where the caller participates (as requester, approver, or resource owner). Seeded on every user \u2014 access requests are self-service by design.",
+      "grantsPolicies": ["AccessRequestPolicy@viewAny"],
+      "seededOn": ["*"]
+    },
+    {
+      "name": "access-requests.view",
+      "guard": "sanctum",
+      "description": "Show a specific access request. Same participation-based visibility.",
+      "grantsPolicies": ["AccessRequestPolicy@view"],
+      "seededOn": ["*"]
+    },
+    {
+      "name": "access-requests.create",
+      "guard": "sanctum",
+      "description": "Submit a new access request. Seeded on every user by default \u2014 the whole point of the module is self-service.",
+      "grantsPolicies": ["AccessRequestPolicy@create"],
+      "seededOn": ["*"]
+    },
+    {
+      "name": "access-requests.withdraw",
+      "guard": "sanctum",
+      "description": "Withdraw your own pending request. Seeded on every user.",
+      "grantsPolicies": ["AccessRequestPolicy@withdraw"],
+      "seededOn": ["*"]
+    },
+    {
+      "name": "access-requests.approve",
+      "guard": "sanctum",
+      "description": "Approve a request where you're in the resolved approvers set. Seeded on every user \u2014 approver membership is data-driven (via workflow/approvals selectors + access/delegation), not seeded.",
+      "grantsPolicies": ["AccessRequestPolicy@approve"],
+      "seededOn": ["*"]
+    },
+    {
+      "name": "access-requests.reject",
+      "guard": "sanctum",
+      "description": "Reject a request where you're in the resolved approvers set.",
+      "grantsPolicies": ["AccessRequestPolicy@reject"],
+      "seededOn": ["*"]
+    },
+    {
+      "name": "access-requests.manage_any_tenant",
+      "guard": "sanctum",
+      "description": "Tenant-admin scope. Grants visibility over every access request in the tenant, regardless of participation. Does NOT confer approve/reject authority \u2014 that still comes from the approver-resolver set.",
+      "grantsPolicies": [
+        "AccessRequestPolicy@viewAny (with tenant-wide filter)",
+        "AccessRequestPolicy@view (regardless of participation)"
+      ],
+      "seededOn": ["owner", "admin"]
+    },
+    {
+      "name": "access-requests.manage_any",
+      "guard": "platform_admin",
+      "description": "Cross-tenant read for Academorix ops (abuse investigation, compliance reporting, support tickets). Scoped to a small platform-admin role tier.",
+      "grantsPolicies": [
+        "AccessRequestPolicy@viewAnyPlatform",
+        "AccessRequestPolicy@viewPlatform"
+      ],
+      "seededOn": ["super_admin", "compliance_officer"]
+    }
+  ],
+  "notes": [
+    "The seededOn: [\"*\"] entries are seeded by USER auto-provisioning \u2014 every fresh User in every tenant gets these 6 permissions on the sanctum guard. That's the whole point: access requests are a substrate every authenticated user can reach.",
+    "There is INTENTIONALLY no separate `access-requests.list_own` vs `access-requests.list_reviewing` split \u2014 both come through the single `viewAny` gate; the CONTROLLER decides which subset to return based on the route (`GET /access-requests` filters to caller's own; `GET /access-requests/pending-my-review` filters to caller-as-approver). Splitting the permission strings would let admins ban a user from seeing their own requests, which never made sense.",
+    "Approver membership itself is NOT permission-based \u2014 it's derived from workflow/approvals selectors + delegation state at write time. So `access-requests.approve` is a shape check (`this operation exists at all for this user`), not an authorization gate."
+  ]
+}

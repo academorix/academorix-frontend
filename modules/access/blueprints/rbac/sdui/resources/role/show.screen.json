@@ -1,0 +1,231 @@
+{
+  "id": "rbac.resources.role.show",
+  "title": "Role detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/settings/roles/{roleId}",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "rbac", "entity": "role", "action": "show" },
+  "requiresPermission": "roles.view.tenant",
+  "params": [{ "name": "roleId", "type": "string" }],
+  "dataSources": [
+    {
+      "name": "role",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/rbac/roles/' + params.roleId",
+      "unwrap": "data"
+    },
+    {
+      "name": "rolePermissions",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/rbac/roles/' + params.roleId + '/permissions'",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-4xl mx-auto" },
+      "children": [
+        {
+          "kind": "Breadcrumbs",
+          "props": {
+            "items": [
+              { "label": "Settings", "to": "/tenant/settings" },
+              { "label": "Roles", "to": "/tenant/settings/roles" },
+              { "labelExpr": "role.display_label" }
+            ]
+          }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6 flex flex-col gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex items-start justify-between" },
+              "children": [
+                {
+                  "kind": "View",
+                  "children": [
+                    {
+                      "kind": "View",
+                      "props": { "className": "flex items-center gap-2" },
+                      "children": [
+                        {
+                          "kind": "Text",
+                          "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                          "bindings": { "children": { "$ref": "role.display_label" } }
+                        },
+                        {
+                          "kind": "Widget",
+                          "widget": "rbac.role-badge",
+                          "bindings": { "props": { "role": { "$ref": "role" } } }
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-sm text-muted mt-1" },
+                      "bindings": { "children": { "$ref": "role.display_description" } }
+                    }
+                  ]
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "flex gap-2" },
+                  "children": [
+                    {
+                      "kind": "Button",
+                      "props": { "variant": "secondary", "children": "Assign to users" },
+                      "actions": {
+                        "onPress": {
+                          "kind": "modal.open",
+                          "modal": "assign-role",
+                          "propsExpr": "{ roleId: role.id }"
+                        }
+                      },
+                      "requiresPermission": "principals.roles.assign.tenant"
+                    },
+                    {
+                      "kind": "Button",
+                      "props": { "variant": "danger", "children": "Delete role" },
+                      "bindings": { "hidden": { "$expr": "role.is_system" } },
+                      "actions": {
+                        "onPress": {
+                          "kind": "http.delete",
+                          "urlExpr": "'/api/v1/rbac/roles/' + role.id",
+                          "confirm": "Delete this role? Active assignments must be revoked first.",
+                          "onSuccess": { "kind": "navigate", "to": "/tenant/settings/roles" }
+                        }
+                      },
+                      "requiresPermission": "roles.delete.tenant"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "grid grid-cols-3 gap-4" },
+              "children": [
+                {
+                  "kind": "Stat",
+                  "props": { "label": "Permissions attached" },
+                  "bindings": { "value": { "$ref": "role.permission_count" } }
+                },
+                {
+                  "kind": "Stat",
+                  "props": { "label": "Users assigned" },
+                  "bindings": { "value": { "$ref": "role.principal_count" } }
+                },
+                {
+                  "kind": "Stat",
+                  "props": { "label": "Guard" },
+                  "bindings": { "value": { "$ref": "role.guard_name" } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6 flex flex-col gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-between" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "text-lg font-semibold", "children": "Permissions" }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "secondary",
+                    "leadingIcon": "plus",
+                    "children": "Attach permissions"
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "modal.open",
+                      "modal": "attach-permissions-to-role",
+                      "propsExpr": "{ roleId: role.id, existingIds: rolePermissions.map(p => p.id) }"
+                    }
+                  },
+                  "bindings": {
+                    "hidden": {
+                      "$expr": "role.is_system && !role.role_definition?.is_customisable"
+                    }
+                  },
+                  "requiresPermission": "roles.manage.tenant"
+                }
+              ]
+            },
+            {
+              "kind": "List",
+              "props": { "className": "flex flex-col gap-1" },
+              "bindings": { "items": { "$ref": "rolePermissions" } },
+              "itemRenderer": {
+                "kind": "View",
+                "props": { "className": "flex items-center justify-between p-3 hover:bg-content1 rounded" },
+                "children": [
+                  {
+                    "kind": "View",
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-mono text-sm" },
+                        "bindings": { "children": { "$ref": "row.name" } }
+                      },
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex items-center gap-1 mt-1" },
+                        "children": [
+                          {
+                            "kind": "Chip",
+                            "props": { "size": "xs", "variant": "neutral" },
+                            "bindings": { "children": { "$ref": "row.module_slug" } }
+                          },
+                          {
+                            "kind": "Widget",
+                            "widget": "rbac.permission-scope-chip",
+                            "bindings": { "props": { "scope": { "$ref": "row.scope_suffix" } } }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "Button",
+                    "props": {
+                      "variant": "ghost",
+                      "isIconOnly": true,
+                      "children": { "kind": "Icon", "props": { "name": "x-mark" } }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.delete",
+                        "urlExpr": "'/api/v1/rbac/roles/' + role.id + '/permissions/' + row.id",
+                        "confirm": "Detach this permission?"
+                      }
+                    },
+                    "bindings": {
+                      "hidden": {
+                        "$expr": "role.is_system && !role.role_definition?.is_customisable"
+                      }
+                    },
+                    "requiresPermission": "roles.manage.tenant"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

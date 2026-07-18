@@ -1,0 +1,122 @@
+{
+  "id": "rbac.resources.role.create",
+  "title": "Create custom role",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/settings/roles/create",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "rbac", "entity": "role", "action": "create" },
+  "requiresPermission": "roles.create.tenant",
+  "requiresEntitlement": "custom_roles",
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "Breadcrumbs",
+          "props": {
+            "items": [
+              { "label": "Settings", "to": "/tenant/settings" },
+              { "label": "Roles", "to": "/tenant/settings/roles" },
+              { "label": "New role" }
+            ]
+          }
+        },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Create a custom role"
+          }
+        },
+        {
+          "kind": "Text",
+          "props": {
+            "className": "text-sm text-muted -mt-4",
+            "children": "Pick a snake_case name + attach permissions from the catalogue. You can rename or delete this role later."
+          }
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "url": "/api/v1/rbac/roles",
+            "method": "POST",
+            "onSuccessRedirect": "/tenant/settings/roles/{{ response.data.id }}"
+          },
+          "children": [
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Basics" },
+              "children": [
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "name",
+                    "label": "Role name",
+                    "required": true,
+                    "placeholder": "e.g. senior_coach",
+                    "helpText": "snake_case, max 128 chars. Cannot start with `system.` or `_`."
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "description",
+                    "label": "Description",
+                    "helpText": "Admin-facing. Shown in the role picker."
+                  }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": {
+                    "name": "sort_order",
+                    "label": "Sort order",
+                    "defaultValue": 100,
+                    "min": 0,
+                    "max": 9999,
+                    "helpText": "Ascending. Lower = higher in the picker."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Permissions" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "rbac.permission-picker",
+                  "props": {
+                    "name": "permissions",
+                    "label": "Attach permissions",
+                    "helpText": "Only permissions matching this role's guard + application can be attached. Guard defaults to `sanctum`."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex justify-end gap-2 mt-4" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "children": "Cancel" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/settings/roles" } }
+                },
+                {
+                  "kind": "SubmitButton",
+                  "props": { "variant": "primary", "children": "Create role" }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

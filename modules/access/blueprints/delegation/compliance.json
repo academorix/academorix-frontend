@@ -1,0 +1,90 @@
+{
+  "id": "academorix://modules/delegation/compliance",
+  "$version": 1,
+  "title": "delegation — compliance evidence",
+  "description": "Impersonation is the module's compliance-heavy surface. Every impersonation session is evidence for SOC 2 CC6.1 + CC6.7 (privileged access audit) + PCI-DSS 8.5 (no shared / group / generic accounts — impersonation is the exception, and the audit stream is the compensating control). Delegation is compliance-lighter — a User handing a role to another User is a routine business event captured under standard activity logging.",
+  "regimes": {
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical + physical access controls",
+          "evidence": "Every impersonation_session row is a first-class evidence artefact: impersonator identity (via FK + snapshot fields), impersonated identity, target application + tenant, exact start + end times, reason (min 40 chars), support ticket reference (when captured), read-only flag, end trigger. 7-year hot retention preserves evidence beyond the SOC 2 Type II audit window (typically 12 months trailing + entire cumulative history)."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "data transmission restriction",
+          "evidence": "The impersonation Sanctum PAT is scoped to abilities of the impersonated User (never inherits the impersonator's platform_admin abilities); the JWT `app` claim binds the PAT to a single target application so it cannot be replayed against other applications. Every write during the session is audited with both the impersonated User (as actor) + the impersonator PlatformUser (as `impersonated_by_platform_user_id`)."
+        },
+        {
+          "criterion": "CC6.6",
+          "principle": "restrict + monitor privileged access",
+          "evidence": "Impersonation is gated behind (a) the `platform.impersonate` permission on the platform_admin guard, (b) the `impersonation` entitlement on the PlatformUser row, (c) MFA-mandatory via the platform.mfa_required middleware, (d) the target-tenant + target-application checks. Every attempt (including refusals) is logged via ImpersonationAttemptRefused. Access-review is done by security team via the `impersonation:audit-report` command."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "Health probes flag stuck-active-impersonation sessions + token-scrub lag. Metrics feed dashboards; PagerDuty is paged when stuck-active count > 0."
+        },
+        {
+          "criterion": "CC7.3",
+          "principle": "evaluate + respond to security incidents",
+          "evidence": "The LockdownImpersonationForTenant listener responds to compliance::TenantSecurityIncidentDeclared events — force-terminates all active impersonation on the affected tenant + refuses new attempts until the incident is closed. Automated incident response."
+        }
+      ]
+    },
+    "pci_dss": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "8.5",
+          "principle": "do not use group / shared / generic accounts / passwords",
+          "evidence": "Impersonation is Academorix's LEGITIMATE exception to shared-account use — a support agent operating under a customer's identity for troubleshooting. The compensating controls are: (a) MFA-mandatory on the initiating platform_admin session, (b) short TTL (max 60 minutes default), (c) reason-required (40 chars minimum), (d) mandatory customer notice (cannot-opt-out impersonation.session_started notification), (e) full audit trail preserved 7 years. Every impersonation session is documented as a compliance evidence artefact."
+        },
+        {
+          "requirement": "10.2",
+          "principle": "implement audit trails to reconstruct events",
+          "evidence": "Every impersonation session + every action taken during it is captured in HasAudit's audit stream with correlation IDs linking actor (impersonated user) to operator (impersonator PlatformUser)."
+        }
+      ]
+    },
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 6(1)(f)",
+          "principle": "legitimate interest",
+          "evidence": "The lawful basis for processing impersonation records + delegation records is the legitimate interest of the tenant (audit / accountability) and the platform operator (security / support quality). Tenants are informed via the DPA + the cannot-opt-out impersonation notice."
+        },
+        {
+          "article": "Art. 13",
+          "principle": "information provided when data is collected from the data subject",
+          "evidence": "The cannot-opt-out ImpersonationSessionStartedNotification is the Art. 13 notice: it informs the impersonated User that their account is being processed by an Academorix staff member + provides the identity + basis + retention information."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure — with Art. 17(3)(e) legal claims defence exception",
+          "evidence": "When a User exercises Art. 17 erasure, the impersonation_sessions row IS cascaded (target CASCADE on impersonated_user_id) but the HasAudit audit stream is retained under Art. 17(3)(e) — the audit is necessary for the establishment + defence of legal claims (accountability audit for regulator inspection). The impersonator's own actions on their own PlatformUser row are separate + fall under the platform-user retention policy."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "The impersonator's identity in the audit is minimised (display_name + department snapshot; no PII beyond what the audit reader needs). The impersonation-scoped PAT never inherits the impersonator's platform_admin abilities (least-privilege by construction)."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security of processing",
+          "evidence": "session_token_hash is SHA-256 hashed; raw token is never persisted. Hash is NULLED 30 days after session end (residue removal). MFA-mandatory on operator authentication."
+        }
+      ]
+    },
+    "hipaa": {
+      "applicable": false,
+      "wave_2_hook": {
+        "description": "When a healthcare tenant adopts, session.metadata.compliance_regime opens the door for HIPAA-adjacent audit enhancements: 6-year retention (HIPAA §164.316(b)(2)) instead of 7-year, encryption-at-rest requirement stamps on the audit stream, break-glass authorization pathway for emergency impersonation without customer consent (documented in HIPAA §164.312(a)(2)(ii)). Wave 2 open door.",
+        "current_gap": "The compliance_regime hook exists as a JSON key but is not consumed by any consumer today. When the first healthcare tenant lands, additional Wave 2 work: (a) IHE + HL7 audit-stream enhancements, (b) BAA sign-off flow for the impersonating PlatformUser, (c) 6-year retention branch."
+      }
+    }
+  }
+}

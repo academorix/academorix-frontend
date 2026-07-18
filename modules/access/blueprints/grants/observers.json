@@ -1,0 +1,46 @@
+{
+  "id": "academorix://modules/grants/observers",
+  "$version": 1,
+  "title": "grants — Eloquent observers",
+  "description": "Model observers registered by `GrantServiceProvider::boot()`. AccessGrantObserver enforces the six invariants that make grants safe: (1) cross-tenant refusal, (2) grantor-privilege check (no self-service privilege escalation), (3) permission-catalogue validation, (4) past-dated expires_at refusal, (5) immutability of subject/resource/permissions/decision after issue, (6) revoked-row protection.",
+  "observers": [
+    {
+      "class": "Academorix\\Grant\\Observers\\AccessGrantObserver",
+      "target": "Academorix\\Grant\\Models\\AccessGrant",
+      "hooks": [
+        {
+          "event": "creating",
+          "description": "Generate the ULID+prefix id if unset. Default granted_at = now(). Refuse when subject.tenant_id !== resource.tenant_id !== auth_user.tenant_id — fire GrantCrossTenantAttempt event pre-refusal + throw GRANT_CROSS_TENANT (422). Refuse when grantor does not hold all `permissions` being granted (privilege-escalation guard) — fire SelfServiceGrantAttempted event pre-refusal + throw GRANT_PRIVILEGE_ESCALATION (403). Refuse when any permission name in the array is not in the access/rbac permissions table — throw PERMISSION_UNKNOWN (422). Refuse when the resource_type is not registered in GrantableRegistry — throw GRANT_RESOURCE_TYPE_UNREGISTERED (422). Refuse when reason < 20 chars — throw GRANT_REASON_TOO_SHORT (422). Refuse expires_at <= now() — throw GRANT_EXPIRES_AT_IN_PAST (422). Refuse expires_at IS NULL when tenant lacks the `permanent_grants` entitlement — throw GRANT_PERMANENT_NOT_ENTITLED (402). Refuse decision='deny' when tenant lacks the `deny_grants` entitlement — throw GRANT_DENY_NOT_ENTITLED (402)."
+        },
+        {
+          "event": "created",
+          "description": "Fire GrantIssued (afterCommit). If decision='deny', ALSO fire GrantDenialIssued IMMEDIATELY (pre-commit, high-severity audit)."
+        },
+        {
+          "event": "updating",
+          "description": "REFUSE mutations of `subject_type`, `subject_id`, `resource_type`, `resource_id`, `permissions`, `decision`, `granted_by`, `granted_at`, `source`, `source_reference`, `tenant_id` — these are immutable after issue. Only `expires_at`, `reason`, `metadata` are patchable. Refuse expires_at moving into the past. Refuse when the row is already terminal (revoked_at IS NOT NULL). Any refusal throws GRANT_IMMUTABLE_FIELD_MODIFIED (422)."
+        },
+        {
+          "event": "updated",
+          "description": "Fire GrantUpdated (afterCommit) when at least one non-technical field changed. Skip when only updated_at / updated_by moved."
+        },
+        {
+          "event": "deleting",
+          "description": "Soft-delete pathway. When called via the DELETE endpoint (revoke), the caller populates revoked_at + revoked_by + revoked_reason FIRST, then deletes. Refuse the raw delete when revoked_at is null — the observer forces the caller through GrantRevoker::revoke() (which sets the trail atomically). Never hard-delete outside the retention pipeline."
+        },
+        {
+          "event": "deleted",
+          "description": "Fire GrantRevoked (afterCommit) when the row was actively revoked (revoked_at IS NOT NULL). If decision='deny', ALSO fire GrantDenialRevoked IMMEDIATELY (pre-commit, high-severity audit)."
+        },
+        {
+          "event": "restored",
+          "description": "Fire GrantIssued as if it were a fresh issue. Note: restoration is a support-only path — production code never restores. The event ensures ACL caches invalidate correctly if it happens."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "The observer is the LAST LINE OF DEFENCE for the six invariants. The GrantIssuer action performs the same checks proactively so callers get clean error responses, but the observer refuses at model level too — belt AND braces. If a check ever moves out of the issuer (e.g. bulk-provision path bypassing the action wrapper), the observer catches it.",
+    "Pre-refusal event dispatch (SelfServiceGrantAttempted / GrantCrossTenantAttempt / GrantDenialIssued / GrantDenialRevoked) is IMMEDIATE — not afterCommit — so audit captures the attempt even when the outer transaction rolls back. This is by design; the ATTEMPT is what's audit-worthy for these four."
+  ]
+}

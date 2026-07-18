@@ -1,0 +1,214 @@
+{
+  "id": "academorix://modules/rbac/schemas/role-definition",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "RoleDefinition",
+  "description": "Academorix metadata layer FK-linked to system roles. Pins which business_types default-provision the role, bilingual labels, min-tier gate, default_permissions[] compact array, is_customisable + max_custom_permissions. Populated by `rbac:sync-role-definitions` from `data/role-catalogue.json`. Distinct from spatie's `roles` table \u2014 that's the storage layer; this is the platform-owned metadata layer.",
+  "type": "object",
+  "x-module": "rbac",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "role_definitions",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "rdf_",
+    "incrementing": false,
+    "model": "Academorix\\Rbac\\Models\\RoleDefinition",
+    "interface": "Academorix\\Rbac\\Contracts\\Data\\RoleDefinitionInterface",
+    "implements": ["Academorix\\Rbac\\Contracts\\Data\\RoleDefinitionInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "business_type_slugs": "array",
+      "label_i18n": "array",
+      "description_i18n": "array",
+      "default_permissions": "array",
+      "is_active": "boolean",
+      "is_customisable": "boolean",
+      "max_custom_permissions": "integer",
+      "metadata": "array"
+    },
+    "appends": ["label", "description", "role_name", "role_guard_name"],
+    "observers": ["RoleDefinitionObserver"],
+    "relations_note": "belongsTo Role via role_id.",
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "description": "Metadata layer for system roles. One row per (role_id).",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `rdf_<26 chars>`."
+      },
+      "role_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "roles", "column": "id", "onDelete": "cascade" },
+        "description": "FK to roles.id. Only system roles (is_system=true) have role_definitions rows."
+      },
+      "business_type_slugs": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Array of business_type slugs. E.g. `[\"academy\", \"sports-center\"]`. Empty array = platform-admin role (no business_type applicable)."
+      },
+      "label_i18n": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "Bilingual label. Shape: `{ en: '...', ar: '...' }`. At minimum `en` must be present."
+      },
+      "description_i18n": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Bilingual description."
+      },
+      "default_permissions": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Compact array of permission names to attach on tenant provisioning. Every entry must exist in the permissions table (strict mode) OR be silently skipped (permissive mode). See config('rbac.seeding.mode')."
+      },
+      "min_tier": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'small'",
+        "description": "Enum-like: `small` / `medium` / `business` / `enterprise`. The role only seeds for tenants at or above this tier."
+      },
+      "is_customisable": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "When false, tenant admins CANNOT modify this role's permission set (attach/detach refused). Owner + admin roles are usually locked."
+      },
+      "max_custom_permissions": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Cap on tenant-added permissions when is_customisable=true. Zero = customisation impossible."
+      },
+      "is_active": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "False = deprecated. TenantDefaultRoleSeeder skips inactive rows. Existing tenants keep their seeded roles."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form platform notes (e.g. `deprecated_reason`, `superseded_by_role_id`)."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["role_id"],
+        "unique": true,
+        "predicate": "deleted_at IS NULL",
+        "name": "role_definitions_role_id_unique",
+        "description": "One definition per system role."
+      },
+      {
+        "columns": ["is_active", "min_tier"],
+        "unique": false,
+        "name": "role_definitions_scan_idx",
+        "description": "Fast scan for TenantDefaultRoleSeeder."
+      },
+      {
+        "columns": ["business_type_slugs"],
+        "unique": false,
+        "using": "gin",
+        "name": "role_definitions_business_type_gin",
+        "description": "GIN index on the JSONB array for efficient `?|` (any-match) queries during seeding."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "role_id",
+    "business_type_slugs",
+    "label_i18n",
+    "default_permissions",
+    "min_tier",
+    "is_customisable",
+    "max_custom_permissions",
+    "is_active",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^rdf_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "role_id": { "type": "string", "pattern": "^rol_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "business_type_slugs": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }
+    },
+    "label_i18n": {
+      "type": "object",
+      "required": ["en"],
+      "additionalProperties": { "type": "string" }
+    },
+    "description_i18n": {
+      "type": ["object", "null"],
+      "additionalProperties": { "type": "string" }
+    },
+    "default_permissions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "min_tier": {
+      "type": "string",
+      "enum": ["small", "medium", "business", "enterprise"]
+    },
+    "is_customisable": { "type": "boolean" },
+    "max_custom_permissions": { "type": "integer", "minimum": 0 },
+    "is_active": { "type": "boolean" },
+    "metadata": { "type": ["object", "null"] },
+    "label": {
+      "type": "string",
+      "description": "Computed. label_i18n[caller's locale] || label_i18n.en."
+    },
+    "description": {
+      "type": ["string", "null"],
+      "description": "Computed. description_i18n[caller's locale] || description_i18n.en || null."
+    },
+    "role_name": {
+      "type": "string",
+      "description": "Computed. Denormalised role.name via join."
+    },
+    "role_guard_name": {
+      "type": "string",
+      "description": "Computed. Denormalised role.guard_name via join."
+    },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["label", "description", "role_name", "role_guard_name"]
+  }
+}

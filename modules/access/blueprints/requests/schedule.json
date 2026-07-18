@@ -1,0 +1,39 @@
+{
+  "id": "academorix://modules/access/requests/schedule",
+  "$version": 1,
+  "title": "requests \u2014 scheduled tasks",
+  "description": "Cron entries registered by `AccessRequestServiceProvider::schedule()`. UTC throughout. `runOnOneServer` on every entry so multi-node worker pools do not duplicate work. `withoutOverlapping` where windows may exceed the interval.",
+  "entries": [
+    {
+      "signature": "access-requests:cleanup-orphaned --batch-size=500",
+      "kind": "command",
+      "cron": "15 3 * * *",
+      "timezone": "UTC",
+      "description": "Daily 03:15 UTC. Dispatches CleanupOrphanedRequestsJob. Auto-rejects pending requests whose target resource no longer exists (deleted between submit + decision) or whose resource_type left the registry.",
+      "runOnOneServer": true,
+      "withoutOverlapping": true,
+      "withoutOverlappingExpiresAfterMinutes": 30
+    },
+    {
+      "signature": "access-requests:send-reminders",
+      "kind": "command",
+      "cron": "0 */6 * * *",
+      "timezone": "UTC",
+      "description": "Every 6 hours. Scans pending requests older than `config('access.requests.notifications.reminder_after_hours')` (default 24h) where fewer than `max_reminders` reminders have been sent. Dispatches AccessRequestReminderNotification to each pending approver. Gated by the `access_request_reminders` entitlement \u2014 tenants without it are skipped.",
+      "runOnOneServer": true,
+      "withoutOverlapping": true
+    },
+    {
+      "signature": "access-requests:audit-report --period=30d --format=json",
+      "kind": "command",
+      "cron": "0 8 * * 1",
+      "timezone": "UTC",
+      "description": "Weekly Monday 08:00 UTC. Aggregates the previous week's + previous 30 days' access-request funnel per tenant (submissions, approval rate, average time to decision). Emits a compliance report to platform ops via notifications and snapshots counts to the compliance store for SOC 2 CC7.2 evidence.",
+      "runOnOneServer": true
+    }
+  ],
+  "notes": [
+    "No 'expire pending' entry here \u2014 workflow/approvals already runs its own `approvals:process-timeouts` every 5 minutes. This module inherits that timer via the ApprovalExpired shim listener.",
+    "Reminder cadence is deliberately coarse-grained (6h) so pending approvers get at most 4 reminders a day, and only during their working hours if their tenant's timezone-aware setting is used later. Wave 1b keeps it UTC-uniform."
+  ]
+}

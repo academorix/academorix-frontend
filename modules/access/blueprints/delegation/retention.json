@@ -1,0 +1,55 @@
+{
+  "id": "academorix://modules/delegation/retention",
+  "$version": 1,
+  "title": "delegation — retention windows",
+  "description": "Two distinct retention tracks. RoleDelegation is 730-day hot then hard-purged (soft-deleted rows only — active/expired stay indefinitely until manually revoked or the tenant is erased). ImpersonationSession is 7-year hot AND NEVER HARD-DELETED (compliance evidence retention — SOC 2 Type II requires impersonation evidence for the entire audit window plus one year). The session_token_hash column IS scrubbed after 30 days but the row is preserved.",
+  "compliance_regimes_referenced": [
+    "SOC 2 Type II CC6.1 (Logical + Physical Access Controls) — impersonation actor audit for entire audit window",
+    "SOC 2 Type II CC6.7 (Data Transmission Restriction) — evidence of privileged access is preserved for compliance review",
+    "PCI-DSS 8.5 (Do Not Use Group / Shared / Generic Accounts / Passwords) — impersonation notice + audit is the compensating control",
+    "GDPR Art. 5(1)(e) (Storage Limitation) — role delegations governed by legitimate interest, purged at 730d",
+    "GDPR Art. 17(3)(e) (Right to Erasure exception — legal claims defence) — impersonation audit stream retained through User erasure"
+  ],
+  "retention": [
+    {
+      "entity": "RoleDelegation (soft-deleted rows only)",
+      "hot": { "days": 730 },
+      "purge": {
+        "trigger": "deleted_at + 730 days AND revoked_at IS NOT NULL",
+        "action": "hard delete via PurgeRevokedDelegationsJob (daily 03:15 UTC)",
+        "job": "PurgeRevokedDelegationsJob"
+      }
+    },
+    {
+      "entity": "RoleDelegation (non-soft-deleted)",
+      "hot": { "days": "while tenant active" },
+      "purge": {
+        "trigger": "tenancy::TenantErased",
+        "action": "hard delete via FK cascade (target_tenant_id CASCADE)"
+      }
+    },
+    {
+      "entity": "ImpersonationSession",
+      "hot": { "days": 2555, "note": "7 years — SOC 2 Type II compliance evidence retention" },
+      "purge": {
+        "trigger": "NEVER purged automatically. Row is preserved for compliance evidence retention indefinitely.",
+        "action": "hard delete via FK cascade (target_tenant_id CASCADE) ONLY on tenancy::TenantErased. Otherwise no automatic hard-delete."
+      },
+      "supplementary_action": {
+        "trigger": "session_token_hash IS NOT NULL AND ended_at + 30 days",
+        "action": "UPDATE session_token_hash = NULL — the token is dead anyway; scrubbing removes hash residue",
+        "job": "PurgeImpersonationSessionsJob (weekly Sunday 04:00 UTC)"
+      }
+    },
+    {
+      "entity": "ImpersonationSession (compliance evidence via HasAudit)",
+      "hot": { "days": 2555 },
+      "purge": {
+        "trigger": "manual — via compliance-team review process only",
+        "action": "N/A — never automatic. Compliance evidence retention outlives everything except manual review-driven purge."
+      }
+    }
+  ],
+  "cross_plane_note": "ImpersonationSession rows uniquely SURVIVE the impersonator's PlatformUser hard-delete (which happens 90 days after offboarding per platform-user/retention.json). This is achieved via `impersonator_platform_user_id ON DELETE SET NULL` + the immutable snapshot columns (`impersonator_display_name` + `impersonator_department`). Compliance evidence readers reconstruct operator identity from the snapshot fields when the FK is NULL. See schemas/impersonation-session.schema.json + observers.json.",
+  "audit_stream_separation_note": "The DEDICATED audit trail written by HasAudit's compliance-audit table (not activity_log) is on ITS OWN retention path (7 years) and is NOT purged by tenancy::TenantErased — compliance evidence outlives the tenant it references, per SOC 2 evidence-retention requirements. The impersonation_sessions row itself IS on the tenant cascade — but the audit stream isn't."
+}

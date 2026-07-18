@@ -1,0 +1,120 @@
+{
+  "id": "academorix://modules/access/requests/data-classes-classification",
+  "$version": 1,
+  "title": "requests \u2014 field-level data classification (DTO wire fields)",
+  "description": "This module owns NO tables and therefore has no direct row-level data to classify. The tables it PROJECTS FROM are owned by workflow/approvals + access/grants, which own their own data-classes declarations. This file classifies the FIELDS surfaced on the wire via the AccessRequestData DTO so the compliance module's DSAR + right-to-erasure orchestrators know what to include when a subject requests their access-request activity.",
+  "tiers": {
+    "public": "Non-identifying, safe to expose in logs / URLs.",
+    "internal": "Platform-internal state. Never surfaced to end users. Not personally identifiable.",
+    "confidential": "PII exportable on DSAR and erasable on request. Encrypted in transit + AES-256 at rest (in the OWNING module's tables).",
+    "restricted": "Credential-adjacent secrets. Not applicable to this module."
+  },
+  "wireFieldClassification": {
+    "public": [
+      "AccessRequestData.id",
+      "AccessRequestData.tenant_id",
+      "AccessRequestData.application_id",
+      "AccessRequestData.status",
+      "AccessRequestData.resource.type",
+      "AccessRequestData.resource.id",
+      "AccessRequestData.permissions_wanted",
+      "AccessRequestData.requested_at",
+      "AccessRequestData.decided_at",
+      "AccessRequestData.expires_at",
+      "AccessRequestData.materialised_grant.id",
+      "AccessRequestData.materialised_grant.granted_at",
+      "AccessRequestData.materialised_grant.expires_at",
+      "AccessRequestData.materialised_grant.revoked_at",
+      "AccessRequestData.template_id",
+      "AccessRequestData.reminders_sent",
+      "AccessRequestData.approver_summary.total_approvers_count",
+      "AccessRequestData.approver_summary.decisions_recorded_count",
+      "AccessRequestData.audit_trail[].event",
+      "AccessRequestData.audit_trail[].occurred_at"
+    ],
+    "internal": [
+      "AccessRequestData.materialised_grant.granted_by_id",
+      "AccessRequestData.approver_summary.first_approver_id",
+      "AccessRequestData.audit_trail[].actor_id",
+      "AccessRequestData.audit_trail[].note",
+      "AccessRequestData.decisions[].delegated_from_id",
+      "AccessRequestData.approvers[].is_delegate_of"
+    ],
+    "confidential": [
+      "AccessRequestData.reason \u2014 the human-authored rationale often carries PII",
+      "AccessRequestData.requester.id",
+      "AccessRequestData.requester.display_name",
+      "AccessRequestData.requester.email",
+      "AccessRequestData.requester.avatar_url",
+      "AccessRequestData.approvers[].id",
+      "AccessRequestData.approvers[].display_name",
+      "AccessRequestData.approvers[].email",
+      "AccessRequestData.approvers[].avatar_url",
+      "AccessRequestData.decisions[].approver_id",
+      "AccessRequestData.decisions[].comment \u2014 approver rationale often mentions colleagues",
+      "AccessRequestData.resource.display_name \u2014 e.g. an athlete's name is PII, an invoice's reference is not \u2014 classified conservatively at the confidential tier"
+    ]
+  },
+  "dsar": {
+    "exportableTiers": ["public", "internal", "confidential"],
+    "exportOrchestration": "The compliance module's DSAR orchestrator queries the underlying approval_instances + approval_decisions + access_grants rows filtered on the subject's user_id (as either requester or approver). This module contributes the `AccessRequestPresenter` binding that converts the raw rows into the DTO shape included in the export archive."
+  },
+  "erasureBehaviour": {
+    "confidential": "Erasure orchestrated by the OWNING modules (workflow/approvals + access/grants). See retention.json. This module surfaces the erased fields as anonymised strings in DTO output (`display_name='[erased]'`, `email='erased-<hash>@invalid.local'`).",
+    "internal": "Internal fields naming an actor are anonymised together with the confidential ones \u2014 the reference stays (for graph integrity) but the identity is redacted."
+  },
+  "dtoContractShapes": {
+    "description": "The additional DTOs used at the write path. Every field's tier is inferred from the classification above.",
+    "CreateAccessRequestData": {
+      "purpose": "POST /api/v1/access-requests body",
+      "fields": {
+        "resource_type": {
+          "tier": "public",
+          "validation": "required|string|valid_requestable_resource"
+        },
+        "resource_id": {
+          "tier": "public",
+          "validation": "required|string|resource_in_caller_tenant:resource_type"
+        },
+        "permissions_wanted": {
+          "tier": "public",
+          "validation": "required|array|min:1|permission_belongs_to_resource_type:resource_type"
+        },
+        "reason": {
+          "tier": "confidential",
+          "validation": "required|string|valid_reason_length:20,1000"
+        }
+      }
+    },
+    "ApproveAccessRequestData": {
+      "purpose": "POST /api/v1/access-requests/{id}/approve body",
+      "fields": {
+        "comment": { "tier": "confidential", "validation": "nullable|string|max:1000" }
+      }
+    },
+    "RejectAccessRequestData": {
+      "purpose": "POST /api/v1/access-requests/{id}/reject body",
+      "fields": {
+        "comment": { "tier": "confidential", "validation": "required|string|min:10|max:1000" }
+      }
+    },
+    "WithdrawAccessRequestData": {
+      "purpose": "POST /api/v1/access-requests/{id}/withdraw body",
+      "fields": {
+        "reason": { "tier": "confidential", "validation": "nullable|string|max:500" }
+      }
+    },
+    "AccessRequestAuditReportData": {
+      "purpose": "GET /api/v1/platform/access-requests/audit-report response",
+      "fields": {
+        "period_from": { "tier": "public" },
+        "period_to": { "tier": "public" },
+        "grouped_by": { "tier": "public" },
+        "rows": {
+          "tier": "internal",
+          "description": "Per-group aggregate metrics: submissions_count, approved_count, rejected_count, expired_count, cancelled_count, approval_rate, average_time_to_decision_hours, median_time_to_decision_hours. Aggregates only \u2014 individual user identity is not exposed at this tier."
+        }
+      }
+    }
+  }
+}

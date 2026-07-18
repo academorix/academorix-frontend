@@ -1,0 +1,167 @@
+{
+  "id": "academorix://modules/grants/relations",
+  "$version": 1,
+  "title": "grants — cross-module relations",
+  "description": "AccessGrant is the aggregate root. It is polymorphic on TWO axes: (subject_type, subject_id) — the principal receiving the permission (today always User); (resource_type, resource_id) — the target the permission applies to (any domain aggregate that composes IsGrantable + registers via GrantableRegistry). Concrete tenant + granted_by / revoked_by FKs are hard; every other resource / subject reference is polymorphic. Cross-tenant FKs are forbidden — the observer refuses `resource.tenant_id !== subject.tenant_id !== grant.tenant_id` with GRANT_CROSS_TENANT.",
+  "anchors": [
+    {
+      "model": {
+        "name": "AccessGrant",
+        "class": "Academorix\\Grant\\Models\\AccessGrant",
+        "schemaRef": "academorix://modules/grants/schemas/access-grant"
+      },
+      "relations": [
+        {
+          "name": "tenant",
+          "type": "BelongsTo",
+          "target": {
+            "module": "tenancy",
+            "model": "Tenant",
+            "class": "Academorix\\Tenancy\\Models\\Tenant"
+          },
+          "foreignKey": "tenant_id",
+          "ownerKey": "id",
+          "onDelete": "cascade",
+          "description": "The owning tenant. Applied via the BelongsToTenant trait — every read is auto-filtered on the tenant global scope."
+        },
+        {
+          "name": "grantor",
+          "type": "BelongsTo",
+          "target": {
+            "module": "user",
+            "model": "User",
+            "class": "Academorix\\User\\Models\\User"
+          },
+          "foreignKey": "granted_by",
+          "ownerKey": "id",
+          "nullable": true,
+          "onDelete": "set null",
+          "description": "The User who issued the grant. Nullable because system-issued grants (source in { 'access_request' where auto-approved, 'bulk_provision' }) may have no direct human grantor — provenance lives on the source_reference row instead."
+        },
+        {
+          "name": "revoker",
+          "type": "BelongsTo",
+          "target": {
+            "module": "user",
+            "model": "User",
+            "class": "Academorix\\User\\Models\\User"
+          },
+          "foreignKey": "revoked_by",
+          "ownerKey": "id",
+          "nullable": true,
+          "onDelete": "set null",
+          "description": "The User who revoked the grant. NULL for system-driven revocations (PurgeExpiredGrantsJob, ReconcileOrphanedGrantsJob)."
+        }
+      ],
+      "morphs": [
+        {
+          "name": "subject",
+          "type": "MorphTo",
+          "morphType": "subject_type",
+          "morphId": "subject_id",
+          "description": "The principal receiving the permission. Concrete class resolved by GrantableRegistry at hydrate time.",
+          "registeredBy": "GrantableRegistry (container binding)",
+          "expectedSubjects": [
+            {
+              "module": "user",
+              "model": "User",
+              "subjectTypeKey": "user",
+              "note": "The only subject_type shipped in Wave 1b."
+            },
+            {
+              "module": "user",
+              "model": "Group",
+              "subjectTypeKey": "group",
+              "note": "Reserved for Wave 2. resolver registration in place but no consumer registers `Group` as a target subject_type yet."
+            }
+          ]
+        },
+        {
+          "name": "resource",
+          "type": "MorphTo",
+          "morphType": "resource_type",
+          "morphId": "resource_id",
+          "description": "The target resource the permission applies to. Concrete class resolved by GrantableRegistry at hydrate time. Consumer modules register `resource_type` keys + their class + optional preflight validator in their service provider boot; adding a grantable resource is one class + one register() call.",
+          "registeredBy": "GrantableRegistry (container binding)",
+          "expectedResources": [
+            {
+              "module": "sports",
+              "model": "Athlete",
+              "resourceTypeKey": "athlete",
+              "note": "Grant edit / view access to a specific athlete's profile + progress data."
+            },
+            {
+              "module": "teams",
+              "model": "Team",
+              "resourceTypeKey": "team",
+              "note": "Grant coach-of-team access without a formal team_members row."
+            },
+            {
+              "module": "finance",
+              "model": "Invoice",
+              "resourceTypeKey": "invoice",
+              "note": "Grant view / edit / refund access on a specific invoice (the canonical Google-Docs-style share flow)."
+            },
+            {
+              "module": "documents",
+              "model": "Document",
+              "resourceTypeKey": "document",
+              "note": "Grant read / comment / edit on tenant-authored documents (attendance reports, coach evaluations, meeting notes)."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "outbound": {
+    "description": "Grants module reads FROM these tables but does not own the FK constraint (polymorphic morph OR read-only cross-reference).",
+    "reads": [
+      {
+        "from": "AccessGrant.permissions[]",
+        "kind": "cross-reference",
+        "to": {
+          "module": "access/rbac",
+          "table": "permissions",
+          "column": "name"
+        },
+        "validated_by": "PermissionCatalogueValidator (write-time check against access/rbac's permissions table; unknown names refused with PERMISSION_UNKNOWN)",
+        "description": "Every string in the permissions JSONB array must resolve to a live permission row. Not a hard FK because the array is JSONB — the validator enforces referential integrity at write time."
+      },
+      {
+        "from": "AccessGrant.source_reference (when source='access_request')",
+        "kind": "cross-reference",
+        "to": {
+          "module": "workflow/approvals",
+          "table": "approval_instances",
+          "column": "id"
+        },
+        "description": "Not FK-constrained (polymorphic across sources). When source='access_request', source_reference matches an approval_instance.id (`api_<26>`) — used for reverse-lookup + audit reconciliation."
+      },
+      {
+        "from": "AccessGrant.source_reference (when source='delegation')",
+        "kind": "cross-reference",
+        "to": {
+          "module": "access/delegation",
+          "table": "role_delegations",
+          "column": "id"
+        },
+        "description": "Reserved for the delegation-driven flow. Matches role_delegations.id (`dlg_<26>`) when a delegator grants access on a resource to their delegate."
+      }
+    ]
+  },
+  "inbound": {
+    "description": "Models composing HasResourceGrants expose a MorphMany relation TO AccessGrant. This module does not track inbound consumers directly — GrantableRegistry is the canonical registry.",
+    "consumers_at_wave_1b": [
+      "finance::Invoice → grants for share-invoice flow",
+      "sports::Athlete → grants for share-athlete-progress flow",
+      "teams::Team → grants for coach-of-team without team_members row",
+      "documents::Document → grants for tenant-authored documents"
+    ]
+  },
+  "notes": [
+    "Polymorphic subject + resource are the extension seams. The grants module does NOT know that `athlete` means Sports' Athlete — it just knows a string key + registration hooked at boot.",
+    "GrantableRegistry is a container binding published by this module. Downstream modules register their resource_type + optional preflight validator + display-label at boot. Zero schema changes when a new domain aggregate becomes grantable.",
+    "Tenant + granted_by + revoked_by are hard FKs — polymorphism ends at the tenancy + user substrates. Every grant lives strictly inside its tenant; every grantor / revoker is a real User.",
+    "AccessGrant does NOT compose BelongsToApplication. application_id cascades through tenant_id — grants are NOT one of the eight rows in `.kiro/steering/tenancy-columns.md §2` that carry application_id directly."
+  ]
+}

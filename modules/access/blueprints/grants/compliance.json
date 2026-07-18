@@ -1,0 +1,139 @@
+{
+  "id": "academorix://modules/grants/compliance",
+  "$version": 1,
+  "title": "grants — regulatory compliance",
+  "description": "Compliance controls this module produces evidence for. Grants are the primary access-provisioning mechanism outside RBAC — every issue, patch, revoke is audit-worthy. Deny grants are inviolable blocks that are SOC 2 CC6.3 evidence for tenant-authorised access controls.",
+  "aggregatedBy": "compliance",
+  "regimes": {
+    "soc2_type2": {
+      "applicable": true,
+      "regulation": "AICPA Trust Services Criteria 2017",
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical-and-physical-access-controls",
+          "evidence": "policies.json + permissions.json — every grant mutation gated by a named ability + guard. Cross-tenant + cross-guard writes refused at the observer + policy layers with dedicated error codes (GRANT_CROSS_TENANT, GRANT_PRIVILEGE_ESCALATION)."
+        },
+        {
+          "criterion": "CC6.3",
+          "principle": "access-provisioning-and-modification",
+          "evidence": "Every grant mutation writes (a) an audit row via HasAudit (per-column diff, 7-year retention), (b) an activity_log entry via HasActivityLog, (c) a broadcast event on tenant.{id}.grants. The `reason` column is REQUIRED, min 20 chars, retained indefinitely — every access provisioning decision has a human justification worth reading."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "transmission-integrity",
+          "evidence": "Grant read + write endpoints require TLS 1.2+ (Sanctum PATs + platform admin JWTs). Every mutation is signed by the auth_user PAT and cross-referenced against IP + user_agent in the activity log."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system-monitoring",
+          "evidence": "health.json + metrics.json + grants:audit-report weekly command output. High-signal metrics (self_service_grant_attempts, cross_tenant_attempts, denials_issued) alert on anomalies."
+        },
+        {
+          "criterion": "CC8.1",
+          "principle": "change-management",
+          "evidence": "feature-flags.json — every material behaviour change ships behind a rollout flag with the 90-day retirement policy. `grants:review-flags` monthly report tracks flag ages."
+        }
+      ]
+    },
+    "iso27001": {
+      "applicable": true,
+      "regulation": "ISO/IEC 27001:2022",
+      "controls": [
+        {
+          "clause": "A.5.15",
+          "principle": "access-control",
+          "evidence": "GrantOverlayResolver enforces the D-A3 overlay chain (deny wins, allow overlays RBAC, RBAC roles, delegation). Every check emits a metric so hit rates + latency are observable."
+        },
+        {
+          "clause": "A.5.18",
+          "principle": "access-rights-provisioning",
+          "evidence": "grants:issue path (manual + access_request + delegation + bulk_provision) all thread through GrantIssuer::issue() which enforces the six invariants uniformly. No back-channel writes."
+        },
+        {
+          "clause": "A.9.2.5",
+          "principle": "user-access-reviews",
+          "evidence": "grants:audit-principal + grants:audit-resource commands + the features.json:grants.access_reviews quarterly workflow. Compliance officers can walk every user's grants + every resource's grantees against organisational policy."
+        },
+        {
+          "clause": "A.9.2.6",
+          "principle": "access-rights-removal",
+          "evidence": "grants:revoke path via GrantRevoker::revoke() sets revoked_at + revoked_by + revoked_reason atomically. Deny grants can never be silently deleted — they anonymise on erasure. Tenant erasure cascades all grants via FK."
+        }
+      ]
+    },
+    "gdpr": {
+      "applicable": true,
+      "regulation": "Regulation (EU) 2016/679",
+      "controls": [
+        {
+          "article": "Art. 5(1)(a)",
+          "principle": "lawfulness-transparency",
+          "evidence": "Grant creation is a directly-solicited access change by the grantor (tenant admin OR user with grants.issue). Subject notification (GrantIssuedNotification) fires so the subject knows about their new access."
+        },
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data-minimisation",
+          "evidence": "Grants store only the (subject, resource, permissions, reason) tuple. No profile data, no communication content. reason is optional-to-content but required-to-existence."
+        },
+        {
+          "article": "Art. 5(1)(e)",
+          "principle": "storage-limitation",
+          "evidence": "retention.json — allow grants retained 90 days post-terminal; deny grants retained indefinitely per audit_log tier; reason column retained indefinitely."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right-to-erasure",
+          "evidence": "PurgeGrantsForErasedIdentity listener on user::IdentityErased. Allow grants hard-deleted; deny grants anonymised (subject_id → hash) but preserved for audit."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data-protection-by-design",
+          "evidence": "The six-invariant guard set (cross-tenant refusal, privilege-escalation, permission-catalogue check, past-dated refusal, immutability after issue, revoke-only-through-revoker) is enforced at BOTH the observer AND the issuer/action layer — defence in depth."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security-of-processing",
+          "evidence": "Encrypted at rest via Postgres TDE. Access logged via HasAudit + HasActivityLog. Rate-limited endpoints prevent enumeration."
+        },
+        {
+          "article": "Art. 33",
+          "principle": "breach-notification-72h",
+          "evidence": "GrantCrossTenantAttempt event routes to platform ops via TenantIsolationBreachNotification — tenant-isolation breach is a reportable incident. SelfServiceGrantAttempted alerts fire on repeated attempts (compromise indicator)."
+        }
+      ]
+    },
+    "hipaa": {
+      "applicable": false,
+      "regulation": "45 CFR Parts 160, 162, 164",
+      "note": "Grants substrate itself is not HIPAA-touching, but grants ON healthcare-adjacent resources (athlete medical clearances, athlete injuries) inherit the resource's HIPAA classification. Downstream consumer modules (e.g. a future medical-records module) declare the HIPAA classification on their grantable resources."
+    },
+    "ccpa_cpra": {
+      "applicable": true,
+      "regulation": "Cal. Civ. Code §1798.100",
+      "controls": [
+        {
+          "article": "§1798.105",
+          "principle": "right-to-delete",
+          "evidence": "Same as GDPR Art. 17. PurgeGrantsForErasedIdentity listener handles cascade."
+        }
+      ]
+    },
+    "wcag_2_2_aa": {
+      "applicable": true,
+      "regulation": "W3C Recommendation 5 October 2023",
+      "controls": [
+        {
+          "article": "SC 3.3.4",
+          "control": "error-prevention-legal",
+          "evidence": "The share-access dialog surfaces every guard failure inline (subject can't grant permissions they lack, cross-tenant refused with explanation) before submit. The `grants/preflight` endpoint powers this."
+        },
+        {
+          "article": "SC 2.4.4",
+          "control": "link-purpose-in-context",
+          "evidence": "Grant notification emails carry the resource name + grantor name in the CTA so 'View your new access' is unambiguous out of context."
+        }
+      ]
+    }
+  }
+}

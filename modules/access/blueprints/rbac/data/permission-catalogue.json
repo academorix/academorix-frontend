@@ -1,0 +1,213 @@
+{
+  "$version": 1,
+  "title": "Base permission catalogue (RBAC-owned + framework-tier)",
+  "description": "The seed permission catalogue this module ships. Domain modules (invoices, athletes, teams, sessions, ...) SHIP THEIR OWN `permissions.json` blueprints declaring permissions specific to them. `PermissionCatalogueLoader` aggregates every #[ProvidesPermissions]-decorated provider's contribution at boot + UPSERTs into the `permissions` table. This file is only the RBAC module's OWN surface (permissions ABOUT roles + permissions + principals + platform).",
+  "conventions": {
+    "naming": "dot-notated: `<resource>.<action>.<scope>`. Scope suffix is one of `.own` / `.tenant` / `.branch` / `.team` / `.child` / `.any` / `.organization` / `.region` per config('rbac.permissions.allowed_suffixes'). Enforced by valid_permission_name.",
+    "guard": "'sanctum' for tenant plane; 'platform_admin' for platform plane. NEVER mixed.",
+    "application_id": "nullable. NULL = cross-Application (framework-tier permissions). Non-null = per-Application permission (usually issued by a per-Application module).",
+    "tenant_id": "always NULL for the seeded catalogue \u2014 catalogue permissions are system rows. Tenants can create CUSTOM permissions (Enterprise only) which carry tenant_id."
+  },
+  "permissions": [
+    {
+      "name": "roles.viewAny.tenant",
+      "guard": "sanctum",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "View roles", "ar": "\u0639\u0631\u0636 \u0627\u0644\u0623\u062f\u0648\u0627\u0631" },
+      "description_i18n": {
+        "en": "See the list of roles in this tenant.",
+        "ar": "\u0639\u0631\u0636 \u0642\u0627\u0626\u0645\u0629 \u0627\u0644\u0623\u062f\u0648\u0627\u0631."
+      }
+    },
+    {
+      "name": "roles.view.tenant",
+      "guard": "sanctum",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "View role detail", "ar": "\u0639\u0631\u0636 \u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u062f\u0648\u0631" }
+    },
+    {
+      "name": "roles.create.tenant",
+      "guard": "sanctum",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "Create custom roles", "ar": "\u0625\u0646\u0634\u0627\u0621 \u0623\u062f\u0648\u0627\u0631 \u0645\u062e\u0635\u0635\u0629" }
+    },
+    {
+      "name": "roles.update.tenant",
+      "guard": "sanctum",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "Update roles", "ar": "\u062a\u062d\u062f\u064a\u062b \u0627\u0644\u0623\u062f\u0648\u0627\u0631" }
+    },
+    {
+      "name": "roles.delete.tenant",
+      "guard": "sanctum",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "Delete custom roles", "ar": "\u062d\u0630\u0641 \u0627\u0644\u0623\u062f\u0648\u0627\u0631 \u0627\u0644\u0645\u062e\u0635\u0635\u0629" }
+    },
+    {
+      "name": "roles.manage.tenant",
+      "guard": "sanctum",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "Manage roles", "ar": "\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0623\u062f\u0648\u0627\u0631" },
+      "description_i18n": {
+        "en": "Composite of create + update + delete + attach/detach permissions.",
+        "ar": "\u0627\u0644\u062a\u062d\u0643\u0645 \u0627\u0644\u0643\u0627\u0645\u0644 \u0641\u064a \u0627\u0644\u0623\u062f\u0648\u0627\u0631."
+      }
+    },
+    {
+      "name": "permissions.viewAny.tenant",
+      "guard": "sanctum",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "View permissions catalogue", "ar": "\u0639\u0631\u0636 \u0642\u0627\u0626\u0645\u0629 \u0627\u0644\u0625\u0630\u0648\u0646\u0627\u062a" }
+    },
+    {
+      "name": "permissions.view.tenant",
+      "guard": "sanctum",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "View permission detail", "ar": "\u0639\u0631\u0636 \u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u0625\u0630\u0646" }
+    },
+    {
+      "name": "permissions.create.tenant",
+      "guard": "sanctum",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "Create custom permissions", "ar": "\u0625\u0646\u0634\u0627\u0621 \u0625\u0630\u0648\u0646\u0627\u062a \u0645\u062e\u0635\u0635\u0629" },
+      "description_i18n": {
+        "en": "Enterprise-only. Create new permission strings beyond the shipped catalogue.",
+        "ar": "\u0644\u0644\u0645\u0624\u0633\u0633\u0627\u062a \u0641\u0642\u0637."
+      }
+    },
+    {
+      "name": "principals.viewAny.tenant",
+      "guard": "sanctum",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "View who has access", "ar": "\u0639\u0631\u0636 \u0645\u0646 \u0644\u062f\u064a\u0647 \u0627\u0644\u0648\u0635\u0648\u0644" }
+    },
+    {
+      "name": "principals.roles.viewAny.tenant",
+      "guard": "sanctum",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "View any principal's roles", "ar": "\u0639\u0631\u0636 \u0623\u062f\u0648\u0627\u0631 \u0623\u064a \u0645\u0633\u062a\u062e\u062f\u0645" }
+    },
+    {
+      "name": "principals.roles.viewAny.own",
+      "guard": "sanctum",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "View my roles", "ar": "\u0639\u0631\u0636 \u0623\u062f\u0648\u0627\u0631\u064a" }
+    },
+    {
+      "name": "principals.roles.assign.tenant",
+      "guard": "sanctum",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "Assign roles", "ar": "\u062a\u0639\u064a\u064a\u0646 \u0627\u0644\u0623\u062f\u0648\u0627\u0631" }
+    },
+    {
+      "name": "principals.roles.revoke.tenant",
+      "guard": "sanctum",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "Revoke roles", "ar": "\u0625\u0644\u063a\u0627\u0621 \u0627\u0644\u0623\u062f\u0648\u0627\u0631" }
+    },
+    {
+      "name": "principals.roles.assign.bulk.tenant",
+      "guard": "sanctum",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "Bulk assign roles", "ar": "\u062a\u0639\u064a\u064a\u0646 \u0627\u0644\u0623\u062f\u0648\u0627\u0631 \u0628\u0627\u0644\u062c\u0645\u0644\u0629" }
+    },
+    {
+      "name": "platform.rbac.system_roles.viewAny",
+      "guard": "platform_admin",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "View system roles", "ar": "\u0639\u0631\u0636 \u0623\u062f\u0648\u0627\u0631 \u0627\u0644\u0646\u0638\u0627\u0645" }
+    },
+    {
+      "name": "platform.rbac.system_roles.view",
+      "guard": "platform_admin",
+      "module_slug": "rbac",
+      "is_system": true
+    },
+    {
+      "name": "platform.rbac.system_roles.create",
+      "guard": "platform_admin",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "Create system roles", "ar": "\u0625\u0646\u0634\u0627\u0621 \u0623\u062f\u0648\u0627\u0631 \u0646\u0638\u0627\u0645" }
+    },
+    {
+      "name": "platform.rbac.system_roles.update",
+      "guard": "platform_admin",
+      "module_slug": "rbac",
+      "is_system": true
+    },
+    {
+      "name": "platform.rbac.system_roles.delete",
+      "guard": "platform_admin",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "Archive system roles", "ar": "\u0623\u0631\u0634\u0641\u0629 \u0623\u062f\u0648\u0627\u0631 \u0627\u0644\u0646\u0638\u0627\u0645" }
+    },
+    {
+      "name": "platform.rbac.role_definitions.viewAny",
+      "guard": "platform_admin",
+      "module_slug": "rbac",
+      "is_system": true
+    },
+    {
+      "name": "platform.rbac.role_definitions.view",
+      "guard": "platform_admin",
+      "module_slug": "rbac",
+      "is_system": true
+    },
+    {
+      "name": "platform.rbac.role_definitions.create",
+      "guard": "platform_admin",
+      "module_slug": "rbac",
+      "is_system": true
+    },
+    {
+      "name": "platform.rbac.role_definitions.update",
+      "guard": "platform_admin",
+      "module_slug": "rbac",
+      "is_system": true
+    },
+    {
+      "name": "platform.rbac.permissions.viewAny",
+      "guard": "platform_admin",
+      "module_slug": "rbac",
+      "is_system": true
+    },
+    {
+      "name": "platform.rbac.permissions.create",
+      "guard": "platform_admin",
+      "module_slug": "rbac",
+      "is_system": true
+    },
+    {
+      "name": "platform.rbac.permissions.update",
+      "guard": "platform_admin",
+      "module_slug": "rbac",
+      "is_system": true
+    },
+    {
+      "name": "platform.rbac.tenants.reseed_defaults",
+      "guard": "platform_admin",
+      "module_slug": "rbac",
+      "is_system": true,
+      "label_i18n": { "en": "Re-seed tenant defaults", "ar": "\u0625\u0639\u0627\u062f\u0629 \u0632\u0631\u0639 \u0627\u0644\u0625\u0641\u062a\u0631\u0627\u0636\u0627\u062a" }
+    }
+  ],
+  "domain_module_extension_note": "Every downstream module ships a `permissions.json` blueprint with the SAME shape as this file. The loader concats them all. E.g. `modules/finance/blueprints/invoices/permissions.json` ships `invoices.viewAny.tenant`, `invoices.create.branch`, etc. Domain modules never touch this file."
+}

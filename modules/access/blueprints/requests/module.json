@@ -1,0 +1,169 @@
+{
+  "$version": 1,
+  "name": "requests",
+  "alias": "requests",
+  "namespace": "Academorix\\AccessRequest",
+  "description": "Google-Docs-style access request workflow. When a User hits a resource they lack permissions for, the middleware layer returns 403 with a `request_url`; the SPA renders a `Request access` affordance. Clicking it POSTs to `/access-requests` which creates an `approval_instance` under the hood via `workflow/approvals` with `subject_type='access_request'` and `action_key='access.grants.create'`. Once the approvers approve, an `ApprovalExecutedListener` bridges to `access/grants::GrantIssuer` and materialises the entitlement row — full circle. This module is DELIBERATELY THIN: it holds NO state of its own (the request state lives in `workflow/approvals.approval_instances` rows and the resulting grant lives in `access/grants.access_grants`). It ships the HTTP surface, the CreateAccessRequestAction (marked `#[AsApprovableAction('access.grants.create')]`), the listener bridge to `access/grants`, the 403-response enrichment middleware, and the AccessRequest DTO abstraction over the underlying approval instance. Every access request is tenant-scoped — never cross-tenant — a User can only request access to resources in tenants they're already a member of via TenantMember.",
+  "keywords": [
+    "access-request",
+    "authorization",
+    "google-docs-style",
+    "self-service",
+    "approval-workflow",
+    "grants",
+    "state-less-bridge",
+    "policy-hint",
+    "403-enrichment",
+    "requestable-resources"
+  ],
+  "priority": 35,
+  "providers": [
+    "Academorix\\AccessRequest\\Providers\\AccessRequestServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "identity",
+    "user",
+    "application",
+    "tenancy",
+    "rbac",
+    "grants",
+    "approvals",
+    "notifications"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "billing",
+    "sports",
+    "teams",
+    "facilities",
+    "region",
+    "organization",
+    "compliance"
+  ],
+  "contributes": {
+    "traits": [
+      "IsAccessRequestable"
+    ],
+    "attributes": [
+      "AccessRequestable",
+      "AsAccessRequestListener"
+    ],
+    "blueprints": [
+      "access-requestable"
+    ],
+    "middleware": [
+      "access.request_hint_on_denial"
+    ],
+    "events": [
+      "AccessRequestSubmitted",
+      "AccessRequestApproved",
+      "AccessRequestRejected",
+      "AccessRequestExpired",
+      "AccessRequestCancelled",
+      "AccessRequestApproverNotified",
+      "AccessRequestGrantIssued"
+    ],
+    "policies": [
+      "AccessRequestPolicy"
+    ],
+    "hooks": [],
+    "commands": [
+      "access-requests:list",
+      "access-requests:describe",
+      "access-requests:approve",
+      "access-requests:reject",
+      "access-requests:audit-report",
+      "access-requests:cleanup-orphaned",
+      "access-requests:remediate-orphaned-approvals",
+      "access-requests:cache-clear"
+    ],
+    "jobs": [
+      "NotifyApproversJob",
+      "NotifyRequesterOfDecisionJob",
+      "CleanupOrphanedRequestsJob"
+    ],
+    "notifications": [
+      "AccessRequestSubmittedNotification",
+      "AccessRequestApprovedNotification",
+      "AccessRequestRejectedNotification",
+      "AccessRequestExpiredNotification",
+      "AccessRequestReminderNotification"
+    ],
+    "broadcasts": [
+      "tenant.{id}.access-requests",
+      "user.{id}.access-requests"
+    ],
+    "observers": [],
+    "rules": [
+      "valid_requestable_resource",
+      "resource_in_caller_tenant",
+      "permission_belongs_to_resource_type",
+      "valid_reason_length"
+    ],
+    "casts": [
+      "AccessRequestStateCast",
+      "PermissionsWantedCast"
+    ],
+    "views": [],
+    "lang": [
+      "access-request"
+    ],
+    "config": [
+      "access.requests"
+    ],
+    "macros": [],
+    "bindings": [
+      "AccessRequestSubmitter",
+      "AccessRequestApproverResolver",
+      "AccessRequestableRegistry",
+      "RequestUrlBuilder",
+      "AccessRequestGrantMaterializer",
+      "AccessRequestPresenter"
+    ],
+    "resources": [
+      "access-request"
+    ]
+  },
+  "flow": {
+    "description": "This module IS a bridge — documenting the cross-module event chain here rather than in a dedicated flow.json file (§10 of readme.md traces it in detail).",
+    "chain": [
+      "user → GET /api/v1/invoices/inv_... → 403 (RBAC gate refuses)",
+      "access.request_hint_on_denial middleware → enriches 403 body with request_url",
+      "SPA → POST /api/v1/access-requests {resource_type, resource_id, permissions_wanted, reason}",
+      "CreateAccessRequestAction (marked #[AsApprovableAction('access.grants.create')]) → dispatched via `approve` middleware",
+      "workflow/approvals → creates approval_instance + requirements + resolves approvers",
+      "AccessRequestSubmitted event fires (this module's shim event on top of ApprovalRequested)",
+      "NotifyApproversJob → delivers AccessRequestSubmittedNotification to each approver",
+      "approver → POST /api/v1/access-requests/{id}/approve",
+      "workflow/approvals → records decision → fires ApprovalExecuted when quorum satisfied",
+      "AccessRequestGrantMaterializer listener → calls access/grants::GrantIssuer::issue()",
+      "access/grants → creates access_grants row with source='access_request'",
+      "AccessRequestApproved + AccessRequestGrantIssued events fire",
+      "NotifyRequesterOfDecisionJob → delivers AccessRequestApprovedNotification to requester"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing access-request CRUD. Requesters submit + track their own requests; approvers review + decide.",
+      "routes": [
+        "POST /api/v1/access-requests",
+        "GET /api/v1/access-requests",
+        "GET /api/v1/access-requests/{id}",
+        "POST /api/v1/access-requests/{id}/withdraw",
+        "GET /api/v1/access-requests/pending-my-review",
+        "POST /api/v1/access-requests/{id}/approve",
+        "POST /api/v1/access-requests/{id}/reject"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant read + compliance report for Academorix staff. Never mutates — approve/reject flow the tenant plane.",
+      "routes": [
+        "GET /api/v1/platform/access-requests",
+        "GET /api/v1/platform/access-requests/{id}",
+        "GET /api/v1/platform/access-requests/audit-report"
+      ]
+    }
+  }
+}

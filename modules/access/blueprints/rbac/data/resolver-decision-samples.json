@@ -1,0 +1,192 @@
+{
+  "$version": 1,
+  "title": "PermissionResolver decision-trace samples",
+  "description": "Sample outputs from `rbac:audit-permission-check` covering each step of the 5-step resolver algorithm. Used as QA fixtures + as a teaching aid for new team members. NOT loaded at runtime \u2014 documentation only.",
+  "samples": [
+    {
+      "scenario": "Step 1: cache hit (steady-state)",
+      "input": {
+        "principal_type": "User",
+        "principal_id": "usr_01H1234567890ABCDEFGHIJKLM",
+        "application_id": "app_01H1234567890ABCDEFGHIJKLM",
+        "tenant_id": "tnt_01H1234567890ABCDEFGHIJKLM",
+        "permission": "invoices.viewAny.tenant",
+        "resource": null
+      },
+      "trace": [
+        {
+          "step": "cache lookup",
+          "cache_key": "rbac:permissions:User:usr_01H1234567890ABCDEFGHIJKLM:app_01H1234567890ABCDEFGHIJKLM:tnt_01H1234567890ABCDEFGHIJKLM",
+          "outcome": "hit",
+          "resolved_permissions_snapshot": ["invoices.viewAny.tenant", "invoices.view.tenant", "invoices.create.branch", "roles.viewAny.tenant", "..."]
+        },
+        {
+          "step": "check inclusion",
+          "outcome": "match",
+          "matched_by": "roles: admin"
+        }
+      ],
+      "outcome": { "decision": "allow", "source": "cache_hit", "duration_us": 87 }
+    },
+    {
+      "scenario": "Step 1b: cache miss then DB resolution",
+      "input": {
+        "principal_type": "User",
+        "principal_id": "usr_...",
+        "application_id": "app_...",
+        "tenant_id": "tnt_...",
+        "permission": "athletes.view.branch",
+        "resource": null
+      },
+      "trace": [
+        {
+          "step": "cache lookup",
+          "cache_key": "rbac:permissions:User:usr_...:app_...:tnt_...",
+          "outcome": "miss"
+        },
+        {
+          "step": "db resolution",
+          "query": "SELECT p.name FROM model_has_roles mhr JOIN role_has_permissions rhp ON rhp.role_id = mhr.role_id JOIN permissions p ON p.id = rhp.permission_id WHERE mhr.model_type = 'User' AND mhr.model_id = 'usr_...' UNION SELECT p.name FROM model_has_permissions mhp JOIN permissions p ON p.id = mhp.permission_id WHERE mhp.model_type = 'User' AND mhp.model_id = 'usr_...'",
+          "resolved_permissions_count": 42,
+          "duration_ms": 8
+        },
+        {
+          "step": "cache write",
+          "ttl_seconds": 300
+        },
+        {
+          "step": "check inclusion",
+          "outcome": "match",
+          "matched_by": "roles: coach (via head_coach role's default_permissions)"
+        }
+      ],
+      "outcome": { "decision": "allow", "source": "db_resolved", "duration_us": 8320 }
+    },
+    {
+      "scenario": "Step 2a: explicit deny grant wins",
+      "input": {
+        "principal_type": "User",
+        "principal_id": "usr_...",
+        "permission": "invoices.view.branch",
+        "resource": { "type": "Invoice", "id": "inv_01H9999" }
+      },
+      "trace": [
+        {
+          "step": "cache lookup",
+          "outcome": "hit (permission present in RBAC set)"
+        },
+        {
+          "step": "grant lookup (deny path)",
+          "query": "SELECT * FROM access_grants WHERE subject_type = 'User' AND subject_id = 'usr_...' AND resource_type = 'Invoice' AND resource_id = 'inv_01H9999' AND decision = 'deny' AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at > now())",
+          "outcome": "match",
+          "grant_id": "agr_01H8888",
+          "reason": "customer paid disputed invoice; grant DENY for this specific row"
+        }
+      ],
+      "outcome": { "decision": "deny", "source": "deny_grant", "duration_us": 1200 },
+      "note": "Deny always wins even when RBAC would grant. See design.md \u00a72 D-A3 step 1."
+    },
+    {
+      "scenario": "Step 2b: explicit allow grant when RBAC would deny",
+      "input": {
+        "principal_type": "User",
+        "principal_id": "usr_receptionist",
+        "permission": "invoices.view.tenant",
+        "resource": { "type": "Invoice", "id": "inv_01H7777" }
+      },
+      "trace": [
+        {
+          "step": "cache lookup",
+          "outcome": "hit"
+        },
+        {
+          "step": "check inclusion",
+          "outcome": "no match \u2014 receptionist has invoices.view.branch not .tenant"
+        },
+        {
+          "step": "grant lookup (allow path)",
+          "outcome": "match",
+          "grant_id": "agr_01H6666",
+          "reason": "senior receptionist granted temporary elevated view on this invoice"
+        }
+      ],
+      "outcome": { "decision": "allow", "source": "allow_grant", "duration_us": 1500 }
+    },
+    {
+      "scenario": "Step 4: delegation resolution (OOF)",
+      "input": {
+        "principal_type": "User",
+        "principal_id": "usr_bob_delegate",
+        "permission": "roles.manage.tenant",
+        "resource": null
+      },
+      "trace": [
+        {
+          "step": "cache lookup",
+          "outcome": "hit \u2014 Bob's own permission set does NOT include roles.manage.tenant"
+        },
+        {
+          "step": "delegation lookup",
+          "query": "SELECT delegator_id FROM role_delegations WHERE delegate_id = 'usr_bob_delegate' AND (role_id IS NULL OR role_id = ANY roles_that_hold_perm) AND now() BETWEEN starts_at AND ends_at AND revoked_at IS NULL",
+          "outcome": "match",
+          "delegator_id": "usr_alice_admin",
+          "delegation_id": "dlg_01H5555",
+          "ends_at": "2026-07-22T23:59:59Z"
+        },
+        {
+          "step": "recursive resolve as delegator",
+          "note": "Recursion is guarded by max_delegation_depth=3",
+          "delegator_resolved_permissions_include_target": true
+        }
+      ],
+      "outcome": { "decision": "allow", "source": "delegation", "duration_us": 3800 },
+      "note": "Bob resolves to Alice's permission set for the delegation window."
+    },
+    {
+      "scenario": "Step 5: default deny",
+      "input": {
+        "principal_type": "User",
+        "principal_id": "usr_athlete",
+        "permission": "roles.manage.tenant",
+        "resource": null
+      },
+      "trace": [
+        {
+          "step": "cache lookup",
+          "outcome": "hit"
+        },
+        {
+          "step": "grant lookup",
+          "outcome": "no match (deny nor allow)"
+        },
+        {
+          "step": "check inclusion",
+          "outcome": "no match \u2014 athlete role holds none of the permissions.manage permission"
+        },
+        {
+          "step": "delegation lookup",
+          "outcome": "no match \u2014 athlete is not a delegate"
+        }
+      ],
+      "outcome": { "decision": "deny", "source": "default_deny", "duration_us": 950 }
+    },
+    {
+      "scenario": "Wildcard permission (super_admin platform-plane)",
+      "input": {
+        "principal_type": "PlatformUser",
+        "principal_id": "plu_super_admin",
+        "permission": "platform.identity.erase",
+        "resource": null
+      },
+      "trace": [
+        {
+          "step": "gate_before hook",
+          "outcome": "match",
+          "matched_by": "super_admin role holds wildcard `*`",
+          "note": "Gate::before short-circuits every check for super_admin \u2014 the resolver still fires for audit but the outcome is precomputed."
+        }
+      ],
+      "outcome": { "decision": "allow", "source": "wildcard", "duration_us": 200 }
+    }
+  ]
+}

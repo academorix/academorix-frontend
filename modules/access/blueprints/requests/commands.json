@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/access/requests/commands",
+  "$version": 1,
+  "title": "requests \u2014 artisan commands",
+  "description": "Artisan commands this module ships. Registered by `AccessRequestServiceProvider::registerCommands()`. Audience is `ops` (called by cron + on-call runbooks) or `dev` (local-only).",
+  "commands": [
+    {
+      "class": "Academorix\\AccessRequest\\Console\\Commands\\ListAccessRequestsCommand",
+      "signature": "access-requests:list {--status=pending} {--tenant=} {--application=} {--older-than=} {--limit=50}",
+      "audience": "ops",
+      "description": "Enumerates access requests. Backed by workflow/approvals filtered on `action_key='access.grants.create'`. `--status`: pending | approved | rejected | expired | cancelled | all. `--tenant`: scope to one tenant. `--older-than`: ISO-8601 duration for `requested_at < now - duration`. Prints a compact table (id, tenant, requester, resource, status, requested_at, expires_at)."
+    },
+    {
+      "class": "Academorix\\AccessRequest\\Console\\Commands\\DescribeAccessRequestCommand",
+      "signature": "access-requests:describe {approval_instance_id}",
+      "audience": "ops",
+      "description": "Prints a full access-request-focused projection of the underlying approval instance: requester, resource, permissions wanted, reason, resolved approvers with their decisions + timestamps, current status, materialised grant id (if any), full audit_trail from context_json.audit_trail[]. Use for support tickets \u2014 the SPA show screen renders the same data."
+    },
+    {
+      "class": "Academorix\\AccessRequest\\Console\\Commands\\ApproveAccessRequestCommand",
+      "signature": "access-requests:approve {approval_instance_id} {--as=} {--comment=}",
+      "audience": "ops",
+      "description": "CLI approver decision. `--as` is the approver's user_id or email; defaults to the current console user resolved via `stancl/tenancy`'s console context. `--comment` is passed through to workflow/approvals. Refused when the caller is not in the requirement's resolved_approvers set (same rule as HTTP). ONLY intended for platform ops in incident scenarios \u2014 normal approvals flow through the HTTP endpoint."
+    },
+    {
+      "class": "Academorix\\AccessRequest\\Console\\Commands\\RejectAccessRequestCommand",
+      "signature": "access-requests:reject {approval_instance_id} {--as=} {--comment=}",
+      "audience": "ops",
+      "description": "CLI approver decision \u2014 reject. `--comment` REQUIRED for the SOC 2 audit trail; refuses without one. Same caller restrictions as approve."
+    },
+    {
+      "class": "Academorix\\AccessRequest\\Console\\Commands\\AuditReportCommand",
+      "signature": "access-requests:audit-report {--period=30d} {--tenant=} {--application=} {--group-by=tenant} {--format=summary}",
+      "audience": "ops",
+      "description": "Compiles a compliance report. Metrics: submissions count, approval rate, rejection rate, expiration rate, cancellation rate, average time-to-decision (hours), median time-to-decision (hours). Grouped by `--group-by` (tenant | application | resource_type). Formats: summary (human), json, csv. Ran weekly via schedule.json + on-demand for support tickets."
+    },
+    {
+      "class": "Academorix\\AccessRequest\\Console\\Commands\\CleanupOrphanedRequestsCommand",
+      "signature": "access-requests:cleanup-orphaned {--batch-size=500} {--dry-run}",
+      "audience": "ops",
+      "description": "Dispatches CleanupOrphanedRequestsJob. `--dry-run` prints affected instance ids without dispatching \u2014 useful for verifying cleanup logic before a first run in production."
+    },
+    {
+      "class": "Academorix\\AccessRequest\\Console\\Commands\\RemediateOrphanedApprovalsCommand",
+      "signature": "access-requests:remediate-orphaned-approvals {--dry-run}",
+      "audience": "ops",
+      "description": "Ops runbook. Scans approval_instances where action_key='access.grants.create' AND status='approved' AND context_json.materialised_grant_id IS NULL. These are instances that were approved but whose grant materialisation raised (e.g. transient access/grants outage during ApprovalExecuted). Re-runs AccessRequestGrantMaterializer for each. Idempotent \u2014 subsequent successful runs no-op."
+    },
+    {
+      "class": "Academorix\\AccessRequest\\Console\\Commands\\CacheClearCommand",
+      "signature": "access-requests:cache-clear",
+      "audience": "ops",
+      "description": "Clears the AccessRequestableRegistry cache key (`access-requests:requestable-registry`) so a code change to `#[AccessRequestable]` attributes takes effect without a full `config:cache` clear."
+    }
+  ]
+}

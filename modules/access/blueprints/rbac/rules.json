@@ -1,0 +1,84 @@
+{
+  "id": "academorix://modules/rbac/rules",
+  "$version": 1,
+  "title": "rbac \u2014 validation rules",
+  "description": "Custom Laravel validation rules published by RbacServiceProvider::boot() so any FormRequest / Data class can validate role + permission writes. All rules can be used inline via the string signature OR as class instances for composition.",
+  "namespace": "Academorix\\Rbac\\Rules",
+  "rules": [
+    {
+      "name": "valid_role_name",
+      "class": "Academorix\\Rbac\\Rules\\ValidRoleName",
+      "signature": "valid_role_name",
+      "description": "Enforces role naming conventions: snake_case, max 128 chars, no whitespace, no reserved prefixes (`system.`, `_`), no ASCII-controlled characters. Applied on CreateRoleAction + UpdateRoleAction.",
+      "params": [],
+      "example_field_rule": "name: [required, string, valid_role_name]",
+      "error_message_key": "rbac::validation.valid_role_name",
+      "default_message": "The :attribute must be a valid role name (snake_case, no reserved prefixes)."
+    },
+    {
+      "name": "valid_permission_name",
+      "class": "Academorix\\Rbac\\Rules\\ValidPermissionName",
+      "signature": "valid_permission_name",
+      "description": "Enforces permission naming: dot-notation (`resource.action.scope`), max 128 chars, ends with a suffix from config('rbac.permissions.allowed_suffixes'). Refuses names starting with any reserved_prefix. Enforced only when config('rbac.permissions.require_scope_suffix')=true (default).",
+      "params": [],
+      "example_field_rule": "name: [required, string, valid_permission_name]",
+      "error_message_key": "rbac::validation.valid_permission_name",
+      "default_message": "The :attribute must be dot-notated with a valid scope suffix (e.g. .own, .tenant, .branch)."
+    },
+    {
+      "name": "permission_belongs_to_role_guard",
+      "class": "Academorix\\Rbac\\Rules\\PermissionBelongsToRoleGuard",
+      "signature": "permission_belongs_to_role_guard:<role_id>",
+      "description": "Cross-check on write. Enforces role.guard_name === permission.guard_name. Applied on AttachPermissionToRoleAction. Distinct from the observer's GuardMismatch enforcement \u2014 this rule surfaces the error inline in the FormRequest so the client sees a validation error, not a 500.",
+      "params": [
+        { "name": "role_id", "type": "string", "description": "ULID of the target role (fetched from the URL segment)." }
+      ],
+      "example_field_rule": "permission_id: [required, permission_belongs_to_role_guard:{role}]",
+      "error_message_key": "rbac::validation.permission_belongs_to_role_guard",
+      "default_message": "The permission's guard does not match the role's guard."
+    },
+    {
+      "name": "permission_belongs_to_role_application",
+      "class": "Academorix\\Rbac\\Rules\\PermissionBelongsToRoleApplication",
+      "signature": "permission_belongs_to_role_application:<role_id>",
+      "description": "Same shape as permission_belongs_to_role_guard, for the application_id column. Both non-null => must match. Either NULL => allowed (platform-scoped bindings).",
+      "params": [
+        { "name": "role_id", "type": "string" }
+      ],
+      "example_field_rule": "permission_id: [required, permission_belongs_to_role_application:{role}]",
+      "error_message_key": "rbac::validation.permission_belongs_to_role_application",
+      "default_message": "The permission's application does not match the role's application."
+    },
+    {
+      "name": "role_assignable_by_actor",
+      "class": "Academorix\\Rbac\\Rules\\RoleAssignableByActor",
+      "signature": "role_assignable_by_actor",
+      "description": "The privilege-escalation guard. A role can only be assigned by an actor whose own ResolvedPermissionSet is a SUPERSET of the target role's permission set. This prevents an admin from creating a custom role with permissions they lack + then assigning it to themselves. Enforced by AssignRoleToPrincipalAction.",
+      "params": [],
+      "example_field_rule": "role_id: [required, role_assignable_by_actor]",
+      "error_message_key": "rbac::validation.role_assignable_by_actor",
+      "default_message": "You cannot assign a role holding permissions you do not have."
+    },
+    {
+      "name": "role_not_system",
+      "class": "Academorix\\Rbac\\Rules\\RoleNotSystem",
+      "signature": "role_not_system",
+      "description": "Refuses mutations targeting a role where is_system=true. Applied to UpdateRoleAction + DeleteRoleAction (tenant-plane only).",
+      "params": [],
+      "example_field_rule": "role_id: [required, role_not_system]",
+      "error_message_key": "rbac::validation.role_not_system",
+      "default_message": "System roles cannot be modified."
+    },
+    {
+      "name": "principal_belongs_to_current_application",
+      "class": "Academorix\\Rbac\\Rules\\PrincipalBelongsToCurrentApplication",
+      "signature": "principal_belongs_to_current_application",
+      "description": "For assign/revoke routes on principal-role pivots. Refuses assignments where principal.application_id does NOT match the current request's X-Application-Id. Prevents cross-Application role bleed via the API.",
+      "params": [],
+      "example_field_rule": "principal_id: [required, principal_belongs_to_current_application]",
+      "error_message_key": "rbac::validation.principal_belongs_to_current_application",
+      "default_message": "The target principal does not belong to the current Application."
+    }
+  ],
+  "usage_from_form_request": "The AssignRoleToPrincipalAction's Data class composes these rules automatically. Most callers never write these rules manually. This file is the canonical registry for the underlying rule implementations."
+}

@@ -1,0 +1,39 @@
+{
+  "id": "academorix://modules/grants/broadcasts",
+  "$version": 1,
+  "title": "grants — broadcast channels",
+  "description": "Two broadcast channels this module owns. Registered by `GrantServiceProvider::registerBroadcastChannels()`. Tenant-scoped channel for admin dashboards; user-scoped channel for the subject's live 'my access' view.",
+  "driver": "reverb",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.grants",
+      "kind": "private",
+      "description": "Every grant lifecycle event broadcasts here. Admin dashboards subscribe on the grants list screen; audit-resource screens subscribe filtered. Batched — a burst of bulk-provision inserts (100 rows in 5s) coalesces to a summary broadcast per second.",
+      "authorize": "User belongs to the tenant AND has `grants.viewAny`",
+      "authCallback": "fn (User $user, string $tenantId) => $user->tenant_id === $tenantId && $user->can('grants.viewAny')",
+      "events": [
+        "GrantIssued",
+        "GrantUpdated",
+        "GrantExpired",
+        "GrantRevoked",
+        "GrantDenialIssued",
+        "GrantDenialRevoked",
+        "BulkGrantIssued",
+        "GrantResourceOrphaned"
+      ]
+    },
+    {
+      "name": "user.{userId}.grants",
+      "kind": "private",
+      "description": "Per-subject channel — every grant on this User broadcasts here. Consumed by the subject's 'my access' view in the tenant dashboard so they see grants appear + disappear live. Also consumed by the notification bell for the subject.",
+      "authorize": "auth_user.id === userId",
+      "authCallback": "fn (User $user, string $userId) => $user->id === $userId",
+      "events": [
+        "GrantIssued",
+        "GrantExpired",
+        "GrantRevoked"
+      ],
+      "filter": "Only broadcasts when the User (userId) is the SUBJECT of the grant. Not the grantor — grantors see events on the tenant channel."
+    }
+  ]
+}

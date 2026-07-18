@@ -1,0 +1,131 @@
+{
+  "id": "academorix://modules/access/requests/events",
+  "$version": 1,
+  "title": "requests \u2014 domain events",
+  "description": "Seven lifecycle events published by this module. Each is a SHIM on top of a matching event from workflow/approvals or access/grants \u2014 the shim exists so consumers of THIS module's semantics don't need to know the upstream engines' event schemas. Every event carries `ShouldDispatchAfterCommit` so listeners never react to a rolled-back state change.",
+  "contract": "Academorix\\Foundation\\Contracts\\ShouldDispatchAfterCommit",
+  "eventBase": "Academorix\\AccessRequest\\Events\\AccessRequestEvent",
+  "events": [
+    {
+      "name": "AccessRequestSubmitted",
+      "class": "Academorix\\AccessRequest\\Events\\AccessRequestSubmitted",
+      "when": "Immediately after `workflow/approvals` creates the approval_instance in response to POST /access-requests. Wraps `workflow/approvals::ApprovalRequested` filtered to `action_key='access.grants.create'`.",
+      "afterCommit": true,
+      "payload": {
+        "accessRequest": "AccessRequestData",
+        "approvalInstance": "ApprovalInstance",
+        "resolvedApprovers": "array<UserData>",
+        "requester": "UserData"
+      },
+      "listeners": [
+        "NotifyApproversJob (owned by this module)",
+        "compliance::AuditLogListener (writes SOC 2 CC6.1 evidence row)",
+        "analytics::TrackAccessRequestSubmittedListener (essential-tier analytics)"
+      ]
+    },
+    {
+      "name": "AccessRequestApproved",
+      "class": "Academorix\\AccessRequest\\Events\\AccessRequestApproved",
+      "when": "Fires when the underlying approval_instance transitions to `approved` \u2014 all requirements satisfied. Wraps `workflow/approvals::ApprovalGranted` filtered to `action_key='access.grants.create'`. Does NOT itself materialise the grant \u2014 that happens on `ApprovalExecuted` in AccessRequestGrantMaterializer. This event fires FIRST (before the grant exists) so the requester can be told 'approved!' while the materialiser is still running \u2014 the notification body optimistically says 'you should now be able to access X'.",
+      "afterCommit": true,
+      "payload": {
+        "accessRequest": "AccessRequestData",
+        "approvalInstance": "ApprovalInstance",
+        "decisions": "array<ApprovalDecision>",
+        "requester": "UserData"
+      },
+      "listeners": [
+        "NotifyRequesterOfDecisionListener (this module)",
+        "compliance::AuditLogListener",
+        "analytics::TrackAccessRequestApprovedListener"
+      ]
+    },
+    {
+      "name": "AccessRequestRejected",
+      "class": "Academorix\\AccessRequest\\Events\\AccessRequestRejected",
+      "when": "Fires when the underlying approval_instance transitions to `rejected` \u2014 any requirement failed. Wraps `workflow/approvals::ApprovalRejected` filtered to `action_key='access.grants.create'`. Terminal.",
+      "afterCommit": true,
+      "payload": {
+        "accessRequest": "AccessRequestData",
+        "approvalInstance": "ApprovalInstance",
+        "rejectingDecision": "ApprovalDecision",
+        "requester": "UserData",
+        "reason": "string"
+      },
+      "listeners": [
+        "NotifyRequesterOfDecisionListener (this module)",
+        "compliance::AuditLogListener",
+        "analytics::TrackAccessRequestRejectedListener"
+      ]
+    },
+    {
+      "name": "AccessRequestExpired",
+      "class": "Academorix\\AccessRequest\\Events\\AccessRequestExpired",
+      "when": "Fires when the underlying approval_instance transitions to `expired` because no decision arrived before `expires_at`. Wraps `workflow/approvals::ApprovalExpired` filtered to `action_key='access.grants.create'`. Behaviour depends on the matched template's `on_timeout`: `expire` (default) fires this event; `approve` fires AccessRequestApproved instead; `escalate` fires AccessRequestEscalated (deferred to Wave 2).",
+      "afterCommit": true,
+      "payload": {
+        "accessRequest": "AccessRequestData",
+        "approvalInstance": "ApprovalInstance",
+        "requester": "UserData",
+        "reason": "string \u2014 'timed_out_after_<N>_hours'"
+      },
+      "listeners": [
+        "NotifyRequesterOfDecisionListener (this module)",
+        "compliance::AuditLogListener",
+        "analytics::TrackAccessRequestExpiredListener"
+      ]
+    },
+    {
+      "name": "AccessRequestCancelled",
+      "class": "Academorix\\AccessRequest\\Events\\AccessRequestCancelled",
+      "when": "Fires when the requester withdraws via POST /access-requests/{id}/withdraw. Wraps `workflow/approvals::ApprovalCancelled`. Terminal.",
+      "afterCommit": true,
+      "payload": {
+        "accessRequest": "AccessRequestData",
+        "approvalInstance": "ApprovalInstance",
+        "requester": "UserData",
+        "cancelledByRequester": "boolean"
+      },
+      "listeners": [
+        "compliance::AuditLogListener",
+        "analytics::TrackAccessRequestCancelledListener"
+      ]
+    },
+    {
+      "name": "AccessRequestApproverNotified",
+      "class": "Academorix\\AccessRequest\\Events\\AccessRequestApproverNotified",
+      "when": "Fires once per approver after `NotifyApproversJob` delivers `AccessRequestSubmittedNotification`. Separate event so analytics can measure notification delivery latency + drop rate.",
+      "afterCommit": true,
+      "payload": {
+        "accessRequest": "AccessRequestData",
+        "approver": "UserData",
+        "channel": "string \u2014 'mail' | 'database' | 'broadcast'",
+        "deliveredAt": "datetime"
+      },
+      "listeners": [
+        "analytics::TrackAccessRequestApproverNotifiedListener"
+      ]
+    },
+    {
+      "name": "AccessRequestGrantIssued",
+      "class": "Academorix\\AccessRequest\\Events\\AccessRequestGrantIssued",
+      "when": "Fires from AccessRequestGrantMaterializer AFTER `access/grants::GrantIssuer::issue()` returns successfully. Distinct from AccessRequestApproved (which fires the moment the instance is approved). This event guarantees the grant row exists \u2014 downstream consumers who need the grant id (e.g. audit correlation) subscribe here, not to Approved.",
+      "afterCommit": true,
+      "payload": {
+        "accessRequest": "AccessRequestData",
+        "approvalInstance": "ApprovalInstance",
+        "grant": "AccessGrant",
+        "grantId": "string"
+      },
+      "listeners": [
+        "compliance::CorrelateAccessGrantWithRequestListener (writes cross-ref audit)",
+        "analytics::TrackAccessRequestGrantIssuedListener"
+      ]
+    }
+  ],
+  "notes": [
+    "These events are the PUBLIC interface. Consumers of this module (billing, sports, teams, ...) subscribe to these \u2014 they NEVER subscribe to workflow/approvals events directly, because those fire for every approvable action across the platform (not just access requests).",
+    "Filtering happens at the SHIM listener boundary \u2014 `AccessRequestEventShimListener` subscribes to every workflow/approvals lifecycle event, filters to `action_key='access.grants.create'`, and rebroadcasts as the matching AccessRequest event. This keeps upstream events pure + downstream events focused.",
+    "Every event extends the abstract `AccessRequestEvent` base carrying the shared `accessRequest`, `approvalInstance`, and `requester` fields. Payloads listed above document the extra fields per event."
+  ]
+}

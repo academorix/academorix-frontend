@@ -1,0 +1,200 @@
+{
+  "id": "academorix://modules/grants/traits",
+  "$version": 1,
+  "title": "grants — model traits",
+  "description": "Trait contract this module owns (HasResourceGrants, IsGrantable, BelongsToGrant) and consumes from foundation / tenancy / activity / framework. HasResourceGrants is the primary extension point — every domain aggregate that can be a grant target composes it; IsGrantable is the paired marker for policy-authoring introspection.",
+  "owned": [
+    {
+      "trait": "HasResourceGrants",
+      "class": "Academorix\\Grant\\Concerns\\HasResourceGrants",
+      "schemaRef": "academorix://modules/grants/schemas/access-grant",
+      "description": "Composed on any resource model that can be the TARGET of grants (Invoice, Athlete, Team, Document, ...). Adds a polymorphic `grants()` MorphMany relation + fluent helpers to enumerate active grants + issue new ones. Requires the composing model to register its `resource_type` key with GrantableRegistry in the owner module's service provider boot.",
+      "public": true,
+      "adds": {
+        "columns": [],
+        "compositeIndexes": [],
+        "scopes": { "global": [] },
+        "eventHooks": [],
+        "relations": [
+          {
+            "name": "grants",
+            "type": "MorphMany",
+            "target": "Academorix\\Grant\\Models\\AccessGrant",
+            "morphType": "resource_type",
+            "morphId": "resource_id",
+            "description": "All grants targeting this row, regardless of state (active + terminal)."
+          },
+          {
+            "name": "activeGrants",
+            "type": "MorphMany",
+            "target": "Academorix\\Grant\\Models\\AccessGrant",
+            "morphType": "resource_type",
+            "morphId": "resource_id",
+            "scopes": ["active"],
+            "description": "Only currently-effective grants (revoked_at IS NULL AND (expires_at IS NULL OR expires_at > now()))."
+          },
+          {
+            "name": "activeDenies",
+            "type": "MorphMany",
+            "target": "Academorix\\Grant\\Models\\AccessGrant",
+            "morphType": "resource_type",
+            "morphId": "resource_id",
+            "scopes": ["active", "denies"],
+            "description": "Active deny grants only — surfaces the inviolable blocks that will short-circuit any check."
+          }
+        ],
+        "methods": [
+          {
+            "name": "grantTo",
+            "signature": "grantTo(User|string $subject, array $permissions, array $params = []): AccessGrant",
+            "description": "Create + persist an AccessGrant with this row as the resource. Params: `decision` (default `allow`), `expires_at`, `reason` (required, min 20 chars), `source` (default `manual`), `source_reference`, `metadata`. Dispatches GrantIssued after commit. Enforces cross-tenant refusal + grantor-privilege check + permission-catalogue validation at the observer layer."
+          },
+          {
+            "name": "revokeGrant",
+            "signature": "revokeGrant(string $grantId, string $reason): AccessGrant",
+            "description": "Transition a grant on this resource to `revoked`. Refused when the grant is already terminal."
+          },
+          {
+            "name": "grantsFor",
+            "signature": "grantsFor(User|string $subject, string $decision = null): Collection<AccessGrant>",
+            "description": "Enumerate active grants for (this resource, given subject). Optional decision filter."
+          },
+          {
+            "name": "canBeGrantedBy",
+            "signature": "canBeGrantedBy(User $grantor, array $permissions): bool",
+            "description": "Preflight check: does the grantor hold all the permissions being granted? Consulted by the observer's privilege-escalation guard before insert."
+          }
+        ]
+      },
+      "appliedBy": [
+        "finance::Invoice",
+        "sports::Athlete",
+        "teams::Team",
+        "documents::Document"
+      ],
+      "notAppliedBy": [
+        "tenancy::Tenant — tenants aren't grant targets; use RBAC roles instead",
+        "application::Application — applications don't accept grants; grants exist strictly inside a tenant",
+        "user::User — subjects RECEIVE grants; they aren't targets of them (though there could be niche 'grant view access on this user's profile' cases; deferred)"
+      ]
+    },
+    {
+      "trait": "IsGrantable",
+      "class": "Academorix\\Grant\\Concerns\\IsGrantable",
+      "description": "Marker trait for policy authors. Signals 'this model participates in the grant overlay'. Composing IsGrantable + HasResourceGrants gives full participation; composing only IsGrantable (without HasResourceGrants) is a bug caught at boot by the GrantableRegistry integrity check.",
+      "public": true,
+      "adds": {
+        "columns": [],
+        "compositeIndexes": [],
+        "methods": [
+          {
+            "name": "grantResourceType",
+            "signature": "static grantResourceType(): string",
+            "description": "Static accessor returning the `resource_type` key registered with GrantableRegistry. Defaults to the class basename in snake_case; override to customize."
+          }
+        ]
+      }
+    },
+    {
+      "trait": "BelongsToGrant",
+      "class": "Academorix\\Grant\\Concerns\\BelongsToGrant",
+      "description": "Composed on models CREATED from a grant. Adds a nullable `grant_id` FK + BelongsTo relation for provenance / traceability. Primary consumer: rows that need to trace their existence back to the grant that authorised them (e.g. an audit row for 'Bob accessed invoice #123 because grant agr_...' — recorded by the activity/laravel-activitylog subscriber). Optional — most modules don't need it.",
+      "public": true,
+      "adds": {
+        "columns": [
+          {
+            "name": "grant_id",
+            "type": "string",
+            "length": 64,
+            "nullable": true,
+            "indexed": true,
+            "foreign": {
+              "table": "access_grants",
+              "column": "id",
+              "onUpdate": "cascade",
+              "onDelete": "set null"
+            }
+          }
+        ],
+        "compositeIndexes": [],
+        "scopes": { "global": [] },
+        "eventHooks": [],
+        "relations": [
+          {
+            "name": "originGrant",
+            "type": "BelongsTo",
+            "target": "Academorix\\Grant\\Models\\AccessGrant"
+          }
+        ]
+      },
+      "appliedBy": [
+        "activity::ActivityLog rows for grant-authorised actions (via subject_type='activity_log' + grant_id set at write time by the activity subscriber)"
+      ]
+    }
+  ],
+  "consumed": [
+    {
+      "trait": "HasFactory",
+      "class": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory",
+      "source": "framework"
+    },
+    {
+      "trait": "HasUlids",
+      "class": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids",
+      "source": "framework"
+    },
+    {
+      "trait": "BelongsToTenant",
+      "class": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+      "source": "tenants",
+      "description": "Applies the tenant global scope + auto-fills tenant_id on save. Registered FIRST in the composition chain so subsequent traits observe tenant context in their booted() hooks."
+    },
+    {
+      "trait": "HasMetadata",
+      "class": "Academorix\\Foundation\\Concerns\\HasMetadata",
+      "source": "foundation",
+      "description": "Free-form metadata JSONB column + fluent accessors. Used for csv_row_index (bulk), approver_notes (approval), delegation_scope (delegation)."
+    },
+    {
+      "trait": "HasUserstamps",
+      "class": "Academorix\\Foundation\\Concerns\\HasUserstamps",
+      "source": "foundation",
+      "description": "created_by / updated_by / deleted_by. Applied to AccessGrant so compliance can answer 'who created / updated / soft-deleted this grant' without joining audits."
+    },
+    {
+      "trait": "HasActivityLog",
+      "class": "Academorix\\Activity\\Concerns\\HasActivityLog",
+      "source": "activity",
+      "description": "Emits activity_log rows on every create / update / delete. Consumed by the tenant's activity feed."
+    },
+    {
+      "trait": "HasAudit",
+      "class": "Academorix\\Audit\\Concerns\\HasAudit",
+      "source": "audit",
+      "description": "Emits per-column diff audit rows via owen-it/laravel-auditing. Consumed by compliance for SOC 2 CC6.3 evidence."
+    },
+    {
+      "trait": "Filterable",
+      "class": "Academorix\\Foundation\\Concerns\\Filterable",
+      "source": "foundation",
+      "description": "Query-string filter support for the list endpoints (filter[state], filter[decision], filter[resource_type], etc.)."
+    },
+    {
+      "trait": "Searchable",
+      "class": "Academorix\\Foundation\\Concerns\\Searchable",
+      "source": "foundation",
+      "description": "Full-text search over reason + revoked_reason for admin dashboards."
+    },
+    {
+      "trait": "SoftDeletes",
+      "class": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+      "source": "framework",
+      "description": "Soft-delete-then-hard-delete via the retention pipeline. AccessGrant is high-volume for busy tenants; retention windows are tight (90 days for revoked/expired)."
+    }
+  ],
+  "compositionExample": {
+    "language": "php",
+    "note": "The AccessGrant model — canonical composition example. Note BelongsToTenant is FIRST so subsequent traits observe the tenant context.",
+    "code": "final class AccessGrant extends Model implements AccessGrantInterface\n{\n    use HasFactory;\n    use HasUlids;\n    use BelongsToTenant;    // ← must be first (tenancy hook)\n    use HasMetadata;\n    use HasUserstamps;\n    use HasActivityLog;\n    use HasAudit;\n    use Filterable;\n    use Searchable;\n    use SoftDeletes;\n\n    // Owned by this module — this IS the grant table\n}\n\n// Applying HasResourceGrants on a downstream model:\nfinal class Invoice extends Model\n{\n    use BelongsToTenant;\n    use HasResourceGrants;   // ← from this module — grants relation + issuance helpers\n    use IsGrantable;         // ← paired marker\n\n    // Usage:\n    // $invoice->grantTo($bob, ['invoices.view'], [\n    //     'expires_at' => now()->addWeek(),\n    //     'reason' => 'Bob needs to see this for next Friday meeting - CS-1234',\n    //     'source' => 'manual',\n    // ]);\n}"
+  }
+}

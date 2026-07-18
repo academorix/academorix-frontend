@@ -1,0 +1,311 @@
+{
+  "id": "academorix://modules/delegation/schemas/impersonation-session",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ImpersonationSession",
+  "description": "One row per act-as session started by a PlatformUser (Academorix staff) against a tenant User for support / debug purposes. Cross-plane FK — `impersonator_platform_user_id` references `platform_users.id` (central-plane row); every other FK is tenant-plane. The `session_token_hash` is the SHA-256 of the Sanctum PAT minted by identity/auth's `IssueImpersonationPatAction` — the raw token exists only in the impersonator's browser + is returned once at start-time; the hash exists only for lookup + revocation (never surfaced to consumers). Snapshot columns (`impersonator_display_name` + `impersonator_department`) capture the impersonator's identity at session start and are IMMUTABLE thereafter, so compliance queries survive the impersonator's PlatformUser hard-delete (post 90-day retention hold — see platform-user/retention). NEVER soft-deleted (append-only compliance evidence); `session_token_hash` is NULLED after 30 days by `PurgeImpersonationSessionsJob` (the token is expired anyway, but hash scrubbing avoids leaving a residue that could be brute-forced if the hashing algorithm is compromised).",
+  "type": "object",
+  "x-module": "delegation",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "impersonation_sessions",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "imp_",
+    "incrementing": false,
+    "model": "Academorix\\Delegation\\Models\\ImpersonationSession",
+    "interface": "Academorix\\Delegation\\Contracts\\Data\\ImpersonationSessionInterface",
+    "implements": ["Academorix\\Delegation\\Contracts\\Data\\ImpersonationSessionInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToApplication",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAudit",
+      "Filterable"
+    ],
+    "traits_notes": "NO SoftDeletes — impersonation session rows are append-only compliance evidence. NO HasActivityLog because the impersonation lifecycle uses its own dedicated heavy-audit trail (HasAudit) preserved 7 years hot per retention.json; the activity-log substrate is for lighter operational logs.",
+    "casts": {
+      "end_trigger": "ImpersonationEndTrigger",
+      "started_at": "immutable_datetime",
+      "ends_at": "datetime",
+      "ended_at": "datetime",
+      "is_read_only": "boolean",
+      "metadata": "array"
+    },
+    "appends": [
+      "is_active",
+      "is_ended",
+      "duration_seconds",
+      "remaining_seconds",
+      "was_terminated_early",
+      "actor_line"
+    ],
+    "relations_note": "impersonator() belongsTo PlatformUser via impersonator_platform_user_id (nullable — SET NULL on PlatformUser hard-delete; the display_name + department snapshots preserve identity in the row afterwards). impersonated() belongsTo User via impersonated_user_id. targetTenant() belongsTo Tenant via target_tenant_id. targetApplication() belongsTo Application via target_application_id. The `actor_line` accessor renders 'X (Y department)' from live PlatformUser join OR from snapshot fields if the FK is NULL — always a human-readable actor string for the audit UI.",
+    "observers": ["ImpersonationSessionObserver"],
+    "hidden": ["session_token_hash"],
+    "guarded": [
+      "impersonator_platform_user_id",
+      "impersonated_user_id",
+      "target_application_id",
+      "target_tenant_id",
+      "impersonator_display_name",
+      "impersonator_department",
+      "session_token_hash",
+      "started_at"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `imp_<26 chars>`."
+      },
+      "impersonator_platform_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "platform_users", "column": "id", "onDelete": "set null" },
+        "description": "PlatformUser (Academorix staff) initiating the session. NULLABLE with SET NULL on delete so the row survives the PlatformUser's hard-delete at the end of the 90-day retention hold (see platform-user/retention.json). Snapshot columns `impersonator_display_name` + `impersonator_department` preserve identity for compliance queries after this FK NULLs."
+      },
+      "impersonated_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "cascade" },
+        "description": "Tenant User being impersonated. CASCADE on delete — if the target User is erased (GDPR Art. 17), the impersonation record cascades. Impersonator's actions remain in the audit trail (retained per Art. 17(3)(e) legal claims defence)."
+      },
+      "target_application_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "applications", "column": "id", "onDelete": "restrict" },
+        "description": "Which Academorix Application the session operates within (Sports, Marketplace, ...). Restrict on delete so an application cannot be retired while impersonation records reference it. A PlatformUser starting a session must specify target_application_id explicitly — the JWT `app` claim on the minted PAT binds to this value."
+      },
+      "target_tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" },
+        "description": "The tenant being operated on. CASCADE on tenant erasure — impersonation records die with their tenant (audit trail preserved separately via HasAudit's dedicated table)."
+      },
+      "session_token_hash": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "SHA-256 hex of the Sanctum PAT minted by identity/auth's IssueImpersonationPatAction. NULLABLE — NULLED by PurgeImpersonationSessionsJob 30 days after session end (the token is expired anyway; scrubbing removes hash residue). Never surfaced on the wire (`hidden` in x-eloquent)."
+      },
+      "reason": {
+        "type": "text",
+        "nullable": false,
+        "description": "Required (min 40 chars — heavier than delegation's 20 per rules.json `impersonation_reason_min_length`). Audited. Support-case reason cited by the operator at session start."
+      },
+      "support_ticket_reference": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "External ticket / issue ID (Zendesk, Linear, JIRA, GitHub Issues, ...). Optional — some jurisdictions require correlation with a ticket by contract; captured for those tenants."
+      },
+      "started_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Session start timestamp. IMMUTABLE — the ImpersonationSessionObserver::updating hook refuses any write to this column. Session TTL is measured from here."
+      },
+      "ends_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Hard-cap end. Default = started_at + 60 minutes; may be extended by super_admin (rare, requires `impersonation_extended_ttl` entitlement — enterprise contract-negotiated only). `EndImpersonationSessionsJob` transitions rows past this bound to ended state every 5 minutes; the `impersonation.enforce_active_session` middleware refuses PAT use once now >= ends_at within the same request cycle."
+      },
+      "ended_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Actual session end. NULL while the session is active. May be earlier than ends_at (self-service end, force-terminate) or equal to ends_at (ttl_expired)."
+      },
+      "end_trigger": {
+        "type": "string",
+        "length": 24,
+        "nullable": true,
+        "enum": ["self_service", "ttl_expired", "admin_revocation", "security_lockdown"],
+        "description": "What ended the session. NULL while active. `self_service` = operator hit /end. `ttl_expired` = EndImpersonationSessionsJob ran past ends_at. `admin_revocation` = super_admin fired /force-terminate. `security_lockdown` = security team fired forced-terminate (fires ImpersonationSessionForcedTerminate event + notifies security channel)."
+      },
+      "is_read_only": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "When true, the `impersonation.enforce_read_only` middleware refuses every POST/PUT/PATCH/DELETE during the session. Enterprise entitlement `read_only_impersonation` gates whether this can be set true; some tenant contracts require read-only-only impersonation."
+      },
+      "impersonator_display_name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Snapshot of the impersonator's PlatformProfile display_name (or first + last name if display_name null) at session start. IMMUTABLE after creation. Preserves identity in the row after the impersonator's PlatformUser row hard-deletes (post 90-day retention hold)."
+      },
+      "impersonator_department": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Snapshot of PlatformUser.department at session start. IMMUTABLE. Preserves department identity for compliance queries after PlatformUser hard-delete (see platform-user/data/departments.json for the closed enum)."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "From HasMetadata. `metadata.compliance_regime` is a hook for tenant-specific additional-audit requirements when a healthcare tenant adopts (HIPAA-adjacent hook). Free-form; internal-tier."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["session_token_hash"],
+        "unique": true,
+        "name": "impersonation_sessions_token_hash_unique",
+        "predicate": "session_token_hash IS NOT NULL",
+        "description": "Primary read path — the `impersonation.enforce_active_session` middleware hashes the incoming PAT and looks up here. Unique + partial so NULLed rows (post 30-day scrub) don't collide."
+      },
+      {
+        "columns": ["target_tenant_id", "started_at"],
+        "unique": false,
+        "name": "impersonation_sessions_tenant_started_idx",
+        "description": "Powers the compliance audit query 'who was impersonated in tenant X between date A and B'. This is THE primary read path for SOC 2 evidence review."
+      },
+      {
+        "columns": ["impersonator_platform_user_id", "started_at"],
+        "unique": false,
+        "name": "impersonation_sessions_operator_idx",
+        "description": "Powers 'what did operator Y impersonate over time' — the `HasImpersonationHistory` trait's relation on PlatformUser."
+      },
+      {
+        "columns": ["impersonated_user_id", "started_at"],
+        "unique": false,
+        "name": "impersonation_sessions_target_idx",
+        "description": "Powers the affected-user's retrospective view + 'was this User impersonated between A and B' compliance queries."
+      },
+      {
+        "columns": ["ends_at"],
+        "unique": false,
+        "name": "impersonation_sessions_expiry_scan_idx",
+        "predicate": "ended_at IS NULL",
+        "description": "Powers the 5-minute `EndImpersonationSessionsJob` sweep — finds active sessions past ends_at."
+      },
+      {
+        "columns": ["ended_at"],
+        "unique": false,
+        "name": "impersonation_sessions_scrub_scan_idx",
+        "predicate": "session_token_hash IS NOT NULL AND ended_at IS NOT NULL",
+        "description": "Powers the weekly `PurgeImpersonationSessionsJob` — finds ended sessions > 30 days old still carrying a token_hash."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "impersonated_user_id",
+    "target_application_id",
+    "target_tenant_id",
+    "reason",
+    "started_at",
+    "ends_at",
+    "is_read_only",
+    "impersonator_display_name",
+    "impersonator_department",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^imp_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "impersonator_platform_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^plu_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "impersonated_user_id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "target_application_id": { "type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "target_tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "session_token_hash": { "type": ["string", "null"], "minLength": 64, "maxLength": 128 },
+    "reason": { "type": "string", "minLength": 40, "maxLength": 4000 },
+    "support_ticket_reference": { "type": ["string", "null"], "maxLength": 128 },
+    "started_at": { "type": "string", "format": "date-time" },
+    "ends_at": { "type": "string", "format": "date-time" },
+    "ended_at": { "type": ["string", "null"], "format": "date-time" },
+    "end_trigger": {
+      "type": ["string", "null"],
+      "enum": [
+        "self_service",
+        "ttl_expired",
+        "admin_revocation",
+        "security_lockdown",
+        null
+      ]
+    },
+    "is_read_only": { "type": "boolean" },
+    "impersonator_display_name": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "impersonator_department": {
+      "type": "string",
+      "enum": [
+        "ops",
+        "product",
+        "engineering",
+        "support",
+        "sales",
+        "finance",
+        "legal",
+        "security",
+        "dpo",
+        "hr"
+      ]
+    },
+    "is_active": {
+      "type": "boolean",
+      "description": "Computed. `ended_at IS NULL AND ends_at > now()`."
+    },
+    "is_ended": {
+      "type": "boolean",
+      "description": "Computed. `ended_at IS NOT NULL OR ends_at <= now()`."
+    },
+    "duration_seconds": {
+      "type": ["integer", "null"],
+      "description": "Computed. `(ended_at - started_at)` in seconds; null while active."
+    },
+    "remaining_seconds": {
+      "type": ["integer", "null"],
+      "description": "Computed. `(ends_at - now())` for active sessions; null when ended."
+    },
+    "was_terminated_early": {
+      "type": "boolean",
+      "description": "Computed. `end_trigger IN (self_service, admin_revocation, security_lockdown)` (i.e. not ttl_expired)."
+    },
+    "actor_line": {
+      "type": "string",
+      "description": "Computed. Human-readable operator string, e.g. `Sam Reynolds (support)`. Falls back to snapshot fields when impersonator_platform_user_id is NULL after PlatformUser hard-delete."
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["session_token_hash", "metadata", "created_by", "updated_by"],
+    "computed": [
+      "is_active",
+      "is_ended",
+      "duration_seconds",
+      "remaining_seconds",
+      "was_terminated_early",
+      "actor_line"
+    ]
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`imp_<26>`)"]
+  }
+}

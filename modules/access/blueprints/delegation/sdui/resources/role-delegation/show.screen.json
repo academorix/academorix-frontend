@@ -1,0 +1,186 @@
+{
+  "id": "delegation.resources.role-delegation.show",
+  "title": "Delegation detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/me/delegations/{delegation}",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "delegation", "entity": "role-delegation", "action": "show" },
+  "requiresPermission": "delegations.view",
+  "dataSources": [
+    {
+      "name": "delegation",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/me/delegations/' + route.delegation",
+      "unwrap": "data"
+    },
+    {
+      "name": "activity",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/me/delegations/' + route.delegation + '/activity?limit=50'",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-4xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Delegation" }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-center gap-2 mt-1" },
+                  "children": [
+                    {
+                      "kind": "Widget",
+                      "widget": "delegation.delegation-status-chip",
+                      "propsExpr": "{ delegation: delegation }"
+                    },
+                    {
+                      "kind": "Chip",
+                      "props": { "size": "xs", "variant": "neutral" },
+                      "bindings": {
+                        "children": {
+                          "$expr": "({ oof: 'OOF', handover: 'Handover', emergency: 'Emergency' }[delegation.delegation_type])"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "danger", "leadingIcon": "x-mark", "children": "Revoke early" },
+              "bindings": {
+                "hidden": {
+                  "$expr": "!(delegation.is_active || delegation.is_pending)"
+                }
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "modal.open",
+                  "modal": "revoke-delegation",
+                  "propsExpr": "{ delegationId: delegation.id }"
+                }
+              },
+              "requiresPermission": "delegations.revoke"
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4 flex flex-col gap-3" },
+          "children": [
+            {
+              "kind": "DescriptionList",
+              "items": [
+                {
+                  "label": "Delegator",
+                  "value": {
+                    "kind": "Text",
+                    "bindings": { "children": { "$expr": "delegation.delegator.profile.display_name" } }
+                  }
+                },
+                {
+                  "label": "Delegate",
+                  "value": {
+                    "kind": "Text",
+                    "bindings": { "children": { "$expr": "delegation.delegate.profile.display_name" } }
+                  }
+                },
+                {
+                  "label": "Role",
+                  "value": {
+                    "kind": "Text",
+                    "bindings": {
+                      "children": {
+                        "$expr": "delegation.is_all_roles ? 'All roles (OOF)' : delegation.role.name"
+                      }
+                    }
+                  }
+                },
+                {
+                  "label": "Starts",
+                  "value": {
+                    "kind": "Text",
+                    "bindings": { "children": { "$expr": "delegation.starts_at" } }
+                  }
+                },
+                {
+                  "label": "Ends",
+                  "value": {
+                    "kind": "Text",
+                    "bindings": { "children": { "$expr": "delegation.ends_at" } }
+                  }
+                },
+                {
+                  "label": "Duration",
+                  "value": {
+                    "kind": "Text",
+                    "bindings": { "children": { "$expr": "delegation.duration_hours + ' hours'" } }
+                  }
+                },
+                {
+                  "label": "Reason",
+                  "value": {
+                    "kind": "Text",
+                    "props": { "className": "whitespace-pre-wrap" },
+                    "bindings": { "children": { "$expr": "delegation.reason" } }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h2", "className": "text-lg font-semibold mb-2", "children": "Activity" }
+            },
+            {
+              "kind": "List",
+              "bindings": { "items": { "$ref": "activity" } },
+              "itemRenderer": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2 py-2 border-b border-subtle" },
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted w-40" },
+                    "bindings": { "children": { "$ref": "row.created_at" } }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs" },
+                    "bindings": { "children": { "$ref": "row.event" } }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "flex-1 text-sm" },
+                    "bindings": { "children": { "$ref": "row.description" } }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

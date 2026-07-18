@@ -1,0 +1,219 @@
+{
+  "id": "rbac.resources.role.list",
+  "title": "Roles",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/settings/roles",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "rbac", "entity": "role", "action": "list" },
+  "requiresPermission": "roles.viewAny.tenant",
+  "dataSources": [
+    {
+      "name": "roles",
+      "kind": "http.get",
+      "url": "/api/v1/rbac/roles?include=role_definition",
+      "unwrap": "data"
+    },
+    {
+      "name": "customRoleSlot",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/custom_role_slot",
+      "unwrap": "data"
+    },
+    {
+      "name": "customRolesEntitled",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/custom_roles",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-6xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Roles"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "System roles are shipped by Academorix. Custom roles are yours to define."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "entitlements.entitlement-usage-bar",
+                  "props": {
+                    "cap": { "$ref": "customRoleSlot.value_cap" },
+                    "used": { "$ref": "customRoleSlot.value_used" },
+                    "size": "sm",
+                    "label": "Custom roles"
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "plus",
+                    "children": "Create custom role"
+                  },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/settings/roles/create" } },
+                  "bindings": {
+                    "disabled": {
+                      "$expr": "!customRolesEntitled.value || customRoleSlot.is_exceeded"
+                    }
+                  },
+                  "requiresPermission": "roles.create.tenant"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Toolbar",
+          "children": [
+            {
+              "kind": "SearchField",
+              "props": { "placeholder": "Search roles by name or description", "name": "q" }
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "guard_name", "placeholder": "All guards", "clearable": true },
+              "options": [
+                { "key": "sanctum", "label": "Sanctum (tenant)" },
+                { "key": "platform_admin", "label": "Platform admin" }
+              ]
+            },
+            {
+              "kind": "Toggle",
+              "props": { "name": "is_system", "label": "System roles only" }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "columns": [
+            {
+              "key": "name",
+              "header": "Role",
+              "cell": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2" },
+                "children": [
+                  {
+                    "kind": "Widget",
+                    "widget": "rbac.role-badge",
+                    "bindings": { "props": { "role": { "$ref": "row" } } }
+                  },
+                  {
+                    "kind": "Link",
+                    "propsExpr": "{ to: '/tenant/settings/roles/' + row.id, children: row.display_label, className: 'font-medium' }"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "display_description",
+              "header": "Description",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm text-muted line-clamp-2" },
+                "bindings": { "children": { "$ref": "row.display_description" } }
+              }
+            },
+            {
+              "key": "permission_count",
+              "header": "Permissions",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "xs", "variant": "neutral" },
+                "bindings": { "children": { "$expr": "row.permission_count + ' perms'" } }
+              }
+            },
+            {
+              "key": "principal_count",
+              "header": "Assigned to",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "xs", "variant": "info" },
+                "bindings": { "children": { "$expr": "row.principal_count + ' users'" } }
+              }
+            },
+            {
+              "key": "actions",
+              "header": "",
+              "cell": {
+                "kind": "Menu",
+                "trigger": {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "ghost",
+                    "isIconOnly": true,
+                    "children": { "kind": "Icon", "props": { "name": "ellipsis-vertical" } }
+                  }
+                },
+                "items": [
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "View permissions" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/settings/roles/' + row.id"
+                      }
+                    }
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "View assignments" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/settings/roles/' + row.id + '/assignments'"
+                      }
+                    }
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Delete", "variant": "danger" },
+                    "bindings": { "hidden": { "$expr": "row.is_system" } },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.delete",
+                        "urlExpr": "'/api/v1/rbac/roles/' + row.id",
+                        "confirm": "Delete this custom role? Active assignments must be revoked first."
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "bindings": { "rows": { "$ref": "roles" } }
+        }
+      ]
+    }
+  ]
+}

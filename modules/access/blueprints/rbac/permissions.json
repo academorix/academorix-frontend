@@ -1,0 +1,180 @@
+{
+  "id": "academorix://modules/rbac/permissions",
+  "$version": 1,
+  "title": "rbac \u2014 permissions",
+  "seeder": "Academorix\\Rbac\\Database\\Seeders\\RbacPermissionSeeder",
+  "isSystem": true,
+  "description": "The RBAC module's OWN permission surface (permissions ABOUT roles + permissions). Split by guard. Tenant-plane permissions (guard: sanctum) gate the tenant CRUD surface \u2014 owner + admin can manage custom roles + their permissions. Platform-plane permissions (guard: platform_admin) gate the system role catalogue + role_definitions metadata layer. NEVER cross the guard boundary.",
+  "permissions": [
+    {
+      "name": "roles.viewAny.tenant",
+      "guard": "sanctum",
+      "description": "List roles for the current tenant. Returns system + custom roles applicable to the tenant.",
+      "seededOn": ["owner", "admin", "head_coach", "coach", "receptionist", "member"]
+    },
+    {
+      "name": "roles.view.tenant",
+      "guard": "sanctum",
+      "description": "Show one role. Includes the permission list attached to it.",
+      "seededOn": ["owner", "admin", "head_coach", "coach", "receptionist", "member"]
+    },
+    {
+      "name": "roles.create.tenant",
+      "guard": "sanctum",
+      "description": "Create a NEW custom role. Requires custom_roles entitlement + custom_role_slot quota. Refused when the tenant is on Small tier.",
+      "seededOn": ["owner", "admin"]
+    },
+    {
+      "name": "roles.update.tenant",
+      "guard": "sanctum",
+      "description": "Update a custom role (name, description, sort_order). System roles refuse mutation.",
+      "seededOn": ["owner", "admin"]
+    },
+    {
+      "name": "roles.delete.tenant",
+      "guard": "sanctum",
+      "description": "Soft-delete a custom role. Refused when the role has active assignments.",
+      "seededOn": ["owner", "admin"]
+    },
+    {
+      "name": "roles.manage.tenant",
+      "guard": "sanctum",
+      "description": "Composite: create + update + delete on custom roles + attach/detach permissions to any tenant-scoped role. The natural gate on the admin console's role-management surface.",
+      "seededOn": ["owner", "admin"]
+    },
+    {
+      "name": "permissions.viewAny.tenant",
+      "guard": "sanctum",
+      "description": "List permissions. Read-only for tenant admins \u2014 they see what perms exist in the catalogue.",
+      "seededOn": ["owner", "admin", "head_coach", "coach", "receptionist"]
+    },
+    {
+      "name": "permissions.view.tenant",
+      "guard": "sanctum",
+      "description": "Show one permission with its metadata.",
+      "seededOn": ["owner", "admin", "head_coach", "coach", "receptionist"]
+    },
+    {
+      "name": "permissions.create.tenant",
+      "guard": "sanctum",
+      "description": "Create a NEW custom permission (not just attach an existing one). Enterprise-only \u2014 requires custom_permissions entitlement.",
+      "seededOn": ["owner"]
+    },
+    {
+      "name": "principals.viewAny.tenant",
+      "guard": "sanctum",
+      "description": "List every principal (User) with active role assignments in the tenant. Feeds the admin console's 'who has what' report.",
+      "seededOn": ["owner", "admin"]
+    },
+    {
+      "name": "principals.roles.viewAny.tenant",
+      "guard": "sanctum",
+      "description": "List the roles + permissions held by any principal in the tenant.",
+      "seededOn": ["owner", "admin"]
+    },
+    {
+      "name": "principals.roles.viewAny.own",
+      "guard": "sanctum",
+      "description": "List the caller's own roles + permissions. Backs GET /me/roles + GET /me/permissions.",
+      "seededOn": ["owner", "admin", "head_coach", "coach", "receptionist", "medical", "member", "athlete", "parent"]
+    },
+    {
+      "name": "principals.roles.assign.tenant",
+      "guard": "sanctum",
+      "description": "Assign a role to a principal in the tenant. Subject to the role_assignable_by_actor rule (no privilege escalation).",
+      "seededOn": ["owner", "admin"]
+    },
+    {
+      "name": "principals.roles.revoke.tenant",
+      "guard": "sanctum",
+      "description": "Revoke a role assignment. Cannot revoke roles that the actor doesn't themselves hold (no privilege escalation).",
+      "seededOn": ["owner", "admin"]
+    },
+    {
+      "name": "principals.roles.assign.bulk.tenant",
+      "guard": "sanctum",
+      "description": "CSV bulk-assign endpoint. Requires bulk_role_assignment entitlement.",
+      "seededOn": ["owner", "admin"]
+    },
+    {
+      "name": "platform.rbac.system_roles.viewAny",
+      "guard": "platform_admin",
+      "description": "List every system role across every Application. Platform ops + product view.",
+      "seededOn": ["super_admin", "security", "ops", "product"]
+    },
+    {
+      "name": "platform.rbac.system_roles.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "security", "ops", "product"]
+    },
+    {
+      "name": "platform.rbac.system_roles.create",
+      "guard": "platform_admin",
+      "description": "Create a new system role \u2014 rare platform update. Fires TenantDefaultRolesSeeded on next tenant provisioning.",
+      "seededOn": ["super_admin", "product"],
+      "audit_severity": "warn"
+    },
+    {
+      "name": "platform.rbac.system_roles.update",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "product"],
+      "audit_severity": "warn"
+    },
+    {
+      "name": "platform.rbac.system_roles.delete",
+      "guard": "platform_admin",
+      "description": "Archive a system role (soft-delete). Refused when any tenant has active assignments unless --force + explicit reason.",
+      "seededOn": ["super_admin"],
+      "audit_severity": "critical"
+    },
+    {
+      "name": "platform.rbac.role_definitions.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "security", "ops", "product"]
+    },
+    {
+      "name": "platform.rbac.role_definitions.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "security", "ops", "product"]
+    },
+    {
+      "name": "platform.rbac.role_definitions.create",
+      "guard": "platform_admin",
+      "description": "Create a new role_definitions row \u2014 e.g. shipping a new default role for a new business_type.",
+      "seededOn": ["super_admin", "product"],
+      "audit_severity": "warn"
+    },
+    {
+      "name": "platform.rbac.role_definitions.update",
+      "guard": "platform_admin",
+      "description": "Update i18n labels, business_type_slugs, min_tier, default_permissions.",
+      "seededOn": ["super_admin", "product"],
+      "audit_severity": "warn"
+    },
+    {
+      "name": "platform.rbac.permissions.viewAny",
+      "guard": "platform_admin",
+      "description": "List every permission across every Application.",
+      "seededOn": ["super_admin", "security", "ops", "product"]
+    },
+    {
+      "name": "platform.rbac.permissions.create",
+      "guard": "platform_admin",
+      "description": "Create a NEW system permission string. Rare \u2014 usually happens via the auto-discovery loader reading #[ProvidesPermissions].",
+      "seededOn": ["super_admin", "product"]
+    },
+    {
+      "name": "platform.rbac.permissions.update",
+      "guard": "platform_admin",
+      "description": "Update permission metadata (description, module_slug, is_system flag).",
+      "seededOn": ["super_admin", "product"]
+    },
+    {
+      "name": "platform.rbac.tenants.reseed_defaults",
+      "guard": "platform_admin",
+      "description": "Trigger `rbac:seed-defaults --tenant=X --force` for a specific tenant. Support-driven recovery from broken default sets.",
+      "seededOn": ["super_admin", "support"],
+      "audit_severity": "warn"
+    }
+  ]
+}

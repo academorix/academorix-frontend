@@ -1,0 +1,50 @@
+{
+  "id": "academorix://modules/delegation/feature-flags",
+  "$version": 1,
+  "title": "delegation — kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "delegation.enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for the whole module. OFF disables the /me/delegations surface AND the /platform/impersonation surface AND the DelegationResolver (permission checks + approver-selector fall back to the raw RBAC-only path). Emergency-only kill switch."
+    },
+    {
+      "key": "delegation.role_delegations",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Toggles the role-delegation surface only. OFF disables /me/delegations + hides the OOF-aware substitution in workflow/approvals. Impersonation surface stays alive."
+    },
+    {
+      "key": "delegation.impersonation",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Toggles the impersonation surface only. OFF refuses new sessions AND terminates all active sessions with end_trigger=admin_revocation on the next EndImpersonationSessionsJob run. Nuclear option — used only during confirmed security incidents affecting the platform-admin plane."
+    },
+    {
+      "key": "delegation.emergency_type",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Disable delegation_type=emergency. Regular delegations still work. Used when the emergency-flow is being investigated for abuse."
+    },
+    {
+      "key": "delegation.resolver_cache",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "DelegationResolver's LRU cache. OFF forces every check to hit the DB — for debugging cache-drift issues without disabling the resolver itself."
+    },
+    {
+      "key": "delegation.warm_resolver_cache_on_boot",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "WarmDelegationResolverCache listener on ApplicationBooted. OFF means the resolver starts cold. Useful for CI + tests."
+    },
+    {
+      "key": "impersonation.read_only_middleware",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "impersonation.enforce_read_only middleware. OFF is DANGEROUS — is_read_only=true sessions become read-write. Emergency-only, requires DPO sign-off."
+    }
+  ]
+}

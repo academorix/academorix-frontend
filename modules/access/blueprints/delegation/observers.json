@@ -1,0 +1,50 @@
+{
+  "id": "academorix://modules/delegation/observers",
+  "$version": 1,
+  "title": "delegation — Eloquent observers",
+  "observers": [
+    {
+      "model": "RoleDelegation",
+      "observer": "Academorix\\Delegation\\Observers\\RoleDelegationObserver",
+      "handles": [
+        "creating → populate ULID prefix `dlg_`",
+        "creating → refuse when delegator_id and delegate_id share the same tenant_id (same_tenant_delegation rule) — cross-tenant delegation is impossible in the domain",
+        "creating → refuse when delegator_id === delegate_id (a User cannot delegate to themselves)",
+        "creating → validate the delegator holds the role being delegated (delegator_holds_role rule) — walks RBAC roles + returns false if role_id references a role the delegator lacks. When role_id IS NULL (all-roles OOF), the check is trivially true (the delegator holds every role they hold).",
+        "creating → validate delegation window: starts_at >= now(), ends_at > starts_at, ends_at <= starts_at + config('delegation.role_delegations.max_days', 90). Failure raises InvalidDelegationWindow (422).",
+        "creating → validate reason length >= 20 chars",
+        "creating → for delegation_type=`emergency`, require the delegator to hold the `emergency_delegation` entitlement (checked via entitlements/EntitlementGate). Missing entitlement → 402 EmergencyDelegationNotEntitled.",
+        "creating → probe for a conflicting active delegation: same (tenant, delegator, delegate, role_id) with an overlapping window. If found, refuse + fire DelegationSelfOverlapDetected (critical event — security review + product review). The composite unique index catches identical starts_at; this probe catches overlapping-but-distinct windows.",
+        "creating → derive initial state: `pending` if starts_at > now(); `active` if starts_at <= now() < ends_at (i.e. immediate activation).",
+        "created → fire DelegationCreated event",
+        "created → when state landed as `active` (immediate activation), also fire DelegationActivated",
+        "saving → refuse any update that mutates delegator_id, delegate_id, role_id, tenant_id, or application_id after row creation. The row's identity is immutable — a delegation is created / revoked / expired, never transferred.",
+        "saving → validate ends_at can only be reduced (early ends), never extended, unless the caller holds delegations.manage_any (admin extension is an audited event but exists for rare scheduling fixes).",
+        "updating → when revoked_at transitions from null to non-null, fire DelegationRevokedEarly. Track revoked_by explicitly — the observer refuses a revocation write missing revoked_by.",
+        "deleting → refuse hard-delete outside of the PurgeRevokedDelegationsJob context (the job sets a request-scoped flag). Soft-delete is fine — that's the standard revocation path."
+      ]
+    },
+    {
+      "model": "ImpersonationSession",
+      "observer": "Academorix\\Delegation\\Observers\\ImpersonationSessionObserver",
+      "handles": [
+        "creating → populate ULID prefix `imp_`",
+        "creating → validate impersonator (PlatformUser) is loaded + status = 'active' + holds `platform.impersonate` entitlement. Failure: refuse + fire ImpersonationAttemptRefused with refusal_reason.",
+        "creating → validate impersonated_user_id resolves to a live tenant User whose tenant_id matches target_tenant_id AND whose application_id matches target_application_id. Cross-tenant / cross-app mismatch: refuse + fire ImpersonationAttemptRefused with `cross_tenant_target` or `cross_application_target`.",
+        "creating → validate target_tenant is not disabled + target_application is not disabled. Failure: refuse + fire ImpersonationAttemptRefused with `target_tenant_disabled` / `target_application_disabled`.",
+        "creating → validate reason length >= 40 chars (heavier than delegation's 20)",
+        "creating → validate ends_at within TTL bounds: default max = started_at + 60 minutes; when caller holds `impersonation_extended_ttl` entitlement, higher caps are allowed per entitlement config (see entitlements.json). Failure: refuse + fire ImpersonationAttemptRefused with `ttl_out_of_bounds`.",
+        "creating → when is_read_only=true, validate the impersonator's PlatformUser holds `read_only_impersonation` entitlement OR the target tenant's contract requires read-only-only. Failure: refuse.",
+        "creating → check compliance registry for active security incidents on target_tenant_id via TenantSecurityIncidentGate::isLockedDown(). If locked down: refuse + fire ImpersonationAttemptRefused with `target_tenant_locked_down`.",
+        "creating → SNAPSHOT impersonator_display_name from PlatformProfile (display_name OR first_name + ' ' + last_name if display_name null) + impersonator_department from PlatformUser.department. Snapshot is captured within the same DB transaction; the observer refuses to proceed if the snapshot cannot be resolved (a data-integrity issue that should have surfaced in health probes).",
+        "creating → session_token_hash is populated by the caller (identity/auth's IssueImpersonationPatAction wrote the raw PAT + its hash). The observer validates the hash is 64 hex chars (SHA-256).",
+        "created → fire ImpersonationSessionStarted event (critical severity — SOC 2 evidence)",
+        "updating → refuse ANY write to snapshot columns (impersonator_display_name, impersonator_department, started_at, impersonator_platform_user_id via user code — cascade SET NULL to admin still allowed, impersonated_user_id, target_application_id, target_tenant_id, session_token_hash outside the token-scrub job). The row's identity + snapshot is immutable.",
+        "updating → validate ends_at can only be extended by a super_admin holding `impersonation_extended_ttl` entitlement. Refuse extension by anyone else. On successful extension, fire ImpersonationSessionExtended.",
+        "updating → when ended_at transitions from null to non-null, ensure end_trigger is populated (one of self_service / ttl_expired / admin_revocation / security_lockdown). Fire ImpersonationSessionEnded for self_service + ttl_expired; fire ImpersonationSessionForcedTerminate for admin_revocation + security_lockdown.",
+        "deleting → REFUSE deletion outside of the PurgeImpersonationSessionsJob's token-scrub path. Impersonation session rows are append-only compliance evidence — the scrub job zeroes session_token_hash but never deletes the row.",
+        "restoring / restored → not applicable (no SoftDeletes trait)"
+      ]
+    }
+  ]
+}

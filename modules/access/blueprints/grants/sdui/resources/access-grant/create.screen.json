@@ -1,0 +1,129 @@
+{
+  "id": "grants.resources.access-grant.create",
+  "title": "Share access",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/grants/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "grants", "entity": "access-grant", "action": "create" },
+  "requiresPermission": "grants.issue",
+  "description": "The standalone share-access page. Reuses the share-access-dialog widget but hosts it at a dedicated route for admin workflows that don't originate from a specific resource's page. Users pick the resource type first, then the specific resource, then the widget takes over.",
+  "dataSources": [
+    {
+      "name": "grantTargetTypes",
+      "kind": "http.get",
+      "url": "/api/v1/grants/target-types",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 3600 }
+    },
+    {
+      "name": "tenantSettings",
+      "kind": "http.get",
+      "url": "/api/v1/tenant/settings?filter[section]=grants",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "mx-auto flex max-w-2xl flex-col gap-6 p-6" },
+      "children": [
+        {
+          "id": "header",
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-1" },
+          "children": [
+            {
+              "kind": "Link",
+              "props": {
+                "to": "/tenant/grants",
+                "className": "text-muted flex items-center gap-1 text-sm",
+                "children": "← Back to grants"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Share access"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "p",
+                "className": "text-muted text-sm",
+                "children": "Grant a person time-bounded access to a specific resource. Overlay on their existing role permissions."
+              }
+            }
+          ]
+        },
+        {
+          "id": "resource-picker-panel",
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-3 rounded-md border p-4" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold uppercase text-muted",
+                "children": "Pick a resource"
+              }
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "label": "Resource type",
+                "name": "resource_type",
+                "placeholder": "Choose a resource type…",
+                "isRequired": true
+              },
+              "optionsSource": { "$ref": "grantTargetTypes" }
+            },
+            {
+              "kind": "DynamicPicker",
+              "props": {
+                "label": "Specific resource",
+                "name": "resource_id",
+                "placeholder": "Search for a specific resource…",
+                "isRequired": true
+              },
+              "bindings": {
+                "isHidden": { "$expr": "!form.resource_type" },
+                "pickerScreenRefFromExpr": "grantTargetTypes.find(t => t.key === form.resource_type)?.target_picker_screen_ref"
+              }
+            }
+          ]
+        },
+        {
+          "id": "share-dialog-embed",
+          "kind": "Widget",
+          "widget": "grants.share-access-dialog",
+          "props": {
+            "resourceType": { "$ref": "form.resource_type" },
+            "resourceId": { "$ref": "form.resource_id" },
+            "resourceLabel": { "$expr": "form.resource_type && form.resource_id ? form.resource_type + '#' + form.resource_id : ''" },
+            "allowDeny": { "$expr": "true" }
+          },
+          "bindings": {
+            "isHidden": { "$expr": "!form.resource_type || !form.resource_id" }
+          },
+          "actions": {
+            "onSuccess": {
+              "kind": "sequence",
+              "steps": [
+                { "kind": "toast.success", "message": "Grant issued" },
+                { "kind": "navigate", "toExpr": "'/tenant/grants/' + response.data.id" }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

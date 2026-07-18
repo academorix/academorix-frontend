@@ -1,0 +1,53 @@
+{
+  "id": "academorix://modules/access/requests/caches",
+  "$version": 1,
+  "title": "requests \u2014 cache keys",
+  "description": "Cache keys this module owns. The registry cache is application-wide; per-user + per-tenant caches carry the tenant prefix via CachePrefixTenantHook. All keys use the redis store.",
+  "driver": "redis",
+  "keys": [
+    {
+      "pattern": "access-requests:requestable-registry",
+      "description": "Snapshotted AccessRequestableRegistry map from boot-time discovery. Shape: `{ resource_type: { class, permissions, display_name_source, default_grant_ttl_days } }`. Warmed on boot; refreshed by `config:cache` clear or `access-requests:cache-clear`.",
+      "ttlSeconds": 3600,
+      "tags": ["access-requests"],
+      "note": "Un-prefixed \u2014 application-wide, identical across every tenant."
+    },
+    {
+      "pattern": "access-requests:approver-set:{application_id}:{tenant_id}:{resource_type}:{resource_id}",
+      "description": "Cached approver resolution result per (resource_type, resource_id). Populated by AccessRequestApproverResolver on first miss. Invalidated on template updates + role_delegations mutations. Short TTL because delegation state changes are common.",
+      "ttlSeconds": 300,
+      "tags": ["access-requests", "tenant"],
+      "invalidatedBy": [
+        "workflow/approvals::ApprovalTemplateUpdated",
+        "workflow/approvals::ApprovalTemplateApproverUpdated",
+        "access/delegation::RoleDelegationCreated",
+        "access/delegation::RoleDelegationRevoked"
+      ]
+    },
+    {
+      "pattern": "access-requests:pending-count:{tenant_id}",
+      "description": "Cached count of pending access requests for the tenant admin dashboard header badge. Updated on submit / decide via listener invalidation.",
+      "ttlSeconds": 60,
+      "tags": ["access-requests", "tenant"],
+      "invalidatedBy": [
+        "AccessRequestSubmitted",
+        "AccessRequestApproved",
+        "AccessRequestRejected",
+        "AccessRequestExpired",
+        "AccessRequestCancelled"
+      ]
+    },
+    {
+      "pattern": "access-requests:pending-count-by-approver:{application_id}:{tenant_id}:{approver_user_id}",
+      "description": "Cached per-approver pending count for the approver's inbox badge. Invalidated on submit + decision events matching the approver.",
+      "ttlSeconds": 60,
+      "tags": ["access-requests", "tenant", "user"],
+      "invalidatedBy": [
+        "AccessRequestSubmitted (when approver_user_id in resolved_approvers)",
+        "AccessRequestApproved",
+        "AccessRequestRejected",
+        "AccessRequestExpired"
+      ]
+    }
+  ]
+}

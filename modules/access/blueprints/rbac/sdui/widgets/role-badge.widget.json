@@ -1,0 +1,45 @@
+{
+  "id": "rbac.role-badge",
+  "title": "Role badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for a role \u2014 shows is_system + guard_name + min_tier gate + application-scope at a glance. Used in tables, cards, and picker dropdowns wherever a role's identity needs a visual identifier.",
+  "props": {
+    "role": {
+      "type": "object",
+      "required": true,
+      "description": "Role model row. Reads role.name, role.guard_name, role.is_system, role.display_label, role.role_definition?.min_tier."
+    },
+    "size": {
+      "type": "string",
+      "default": "xs",
+      "enum": ["xs", "sm", "md"]
+    },
+    "showLabel": {
+      "type": "boolean",
+      "default": false,
+      "description": "When false (default), renders only the badge. When true, renders label + badge."
+    }
+  },
+  "nodes": [
+    {
+      "id": "badge",
+      "kind": "Chip",
+      "props": { "size": "xs" },
+      "bindings": {
+        "props": {
+          "size": { "$ref": "props.size" },
+          "variant": {
+            "$expr": "props.role.guard_name === 'platform_admin' ? 'warning' : (props.role.is_system ? 'accent' : 'neutral')"
+          },
+          "leadingIcon": {
+            "$expr": "props.role.guard_name === 'platform_admin' ? 'shield-exclamation' : (props.role.is_system ? 'lock-closed' : 'user-group')"
+          },
+          "children": {
+            "$expr": "props.showLabel ? props.role.display_label : (props.role.is_system ? 'System' : 'Custom')"
+          }
+        }
+      }
+    }
+  ]
+}

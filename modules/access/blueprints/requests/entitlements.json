@@ -1,0 +1,48 @@
+{
+  "id": "academorix://modules/access/requests/entitlements",
+  "$version": 1,
+  "title": "requests \u2014 entitlements",
+  "description": "Entitlement keys this module reads at request time. Values seeded per Tenant by the entitlements module from Subscription plan + BusinessType.default_config. Enforcement points are the CreateAccessRequestAction (for pool-decrement) and the SPA (for feature-flag rendering).",
+  "reference": {
+    "publishedBy": "entitlements",
+    "resolvedBy": "GET /api/auth/me \u2192 data.quota_summary + GET /api/v1/entitlements",
+    "seededFrom": "BusinessType.default_config.entitlements[access_requests.*]"
+  },
+  "kinds": [
+    { "kind": "boolean", "description": "On/off feature enablement." },
+    { "kind": "pool", "description": "Consumable pool decremented on submit. Resets on period roll." }
+  ],
+  "entitlements": [
+    {
+      "key": "access_requests",
+      "kind": "boolean",
+      "description": "Whether the access-request flow is enabled at all for this tenant. Default TRUE on every plan tier \u2014 the substrate is universal. A tenant can opt out via ops-only setting for regulatory reasons (some regulated industries prefer a hard-only offboarding-then-onboarding flow, no in-band access requests).",
+      "consumedOn": "AccessRequestSubmitted event",
+      "refusedResponse": { "http": 403, "code": "ACCESS_REQUESTS_DISABLED_FOR_TENANT" }
+    },
+    {
+      "key": "access_request_reminders",
+      "kind": "boolean",
+      "description": "Whether nightly approver reminders are enabled. Off for small tier, on for medium+.",
+      "consumedOn": "access-requests:send-reminders schedule entry (job is a no-op for tenants where this is false)"
+    },
+    {
+      "key": "access_request_bulk_approve",
+      "kind": "boolean",
+      "description": "Whether the approver can approve N requests in one action. Enterprise-only.",
+      "consumedOn": "POST /api/v1/access-requests/bulk-approve (route reserved; not implemented in Wave 1b)",
+      "refusedResponse": { "http": 402, "code": "ACCESS_REQUEST_BULK_APPROVE_NOT_ENTITLED" }
+    },
+    {
+      "key": "access_requests.max_per_month",
+      "kind": "pool",
+      "description": "Max access requests a tenant can submit in a calendar month. Consumed on transition into `pending`. Rejected submissions (validation failures) do NOT consume. Default: 500 for small tier tenants; 5000 for medium; unlimited for enterprise. Guardrail against a runaway pattern (e.g. a bot spamming requests).",
+      "consumedOn": "AccessRequestSubmitted event (post-commit, so cancelled/rolled-back submissions don't consume)",
+      "refusedResponse": { "http": 402, "code": "ACCESS_REQUESTS_ENTITLEMENT_EXCEEDED" }
+    }
+  ],
+  "notes": [
+    "`access_requests.max_per_month` sits alongside the framework rate-limit (`throttle:access-requests` at 30/day per user). The pool is a TENANT budget; the throttle is a USER limit. They are complementary \u2014 the throttle prevents a single user from spamming; the pool prevents a whole tenant from consuming disproportionate approval-resolver compute.",
+    "Nothing here charges the tenant per request \u2014 access requests are a free substrate. Pool exhaustion is a safety-guardrail, not a billing lever."
+  ]
+}

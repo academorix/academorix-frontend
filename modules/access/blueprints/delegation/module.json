@@ -1,0 +1,174 @@
+{
+  "$version": 1,
+  "name": "delegation",
+  "alias": "delegation",
+  "namespace": "Academorix\\Delegation",
+  "description": "Time-bounded role delegation + real-time impersonation sessions. Two distinct-but-related concerns: (1) role_delegations — 'Alice is on vacation, delegate her manager role to Bob until next Friday' — a tenant User temporarily grants their role assignments to another tenant User in the same tenant, and (2) impersonation_sessions — a PlatformUser (Academorix staff) starts a short-lived act-as session for a specific tenant User, for support / debug purposes. Both concerns integrate with workflow/approvals: the approver selector engine walks role_delegations rows so a Manager's approver requirement resolves to their delegate during OOF (see access-approvals/design.md §7). Delegation is audited via HasActivityLog; impersonation is audited via a dedicated heavy trail preserved indefinitely for compliance evidence retention (SOC 2 CC6.1 + CC6.7, PCI-DSS 8.5). Impersonation session records survive the impersonator's PlatformUser offboarding — the row keeps an anonymised impersonator_display_name + impersonator_department snapshot after the platform_users row hard-deletes at the end of its 90-day retention hold (see platform-user/module.json). The impersonation Sanctum PAT is issued by identity/auth's ImpersonateStartAction (start-point per identity/design.md §12) and is a NEW PAT scoped to the impersonation — never the impersonator's own PlatformUser PAT — so on session end the token dies without invalidating the operator's regular platform-admin session.",
+  "keywords": [
+    "delegation",
+    "role-delegation",
+    "oof",
+    "out-of-office",
+    "impersonation",
+    "support-agent-act-as",
+    "act-as",
+    "approver-resolution",
+    "delegation-aware-oof",
+    "session-management",
+    "time-bounded-access",
+    "soc2",
+    "pci-dss",
+    "audit-heavy",
+    "compliance-evidence"
+  ],
+  "priority": 33,
+  "providers": [
+    "Academorix\\Delegation\\Providers\\DelegationServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "identity",
+    "user",
+    "platform-user",
+    "tenancy",
+    "application",
+    "entitlements",
+    "rbac"
+  ],
+  "extendedBy": [
+    "approvals"
+  ],
+  "consumed_by_note": "workflow/approvals reads role_delegations rows via DelegationResolver during approver-selector evaluation (see access-approvals/design.md §7). Domain modules never call the resolver directly — they call Gate::allows() and the RBAC PermissionResolver traverses delegation transparently.",
+  "contributes": {
+    "traits": [
+      "HasDelegations",
+      "HasImpersonationHistory"
+    ],
+    "attributes": [
+      "AsDelegationListener",
+      "AsImpersonationListener"
+    ],
+    "blueprints": [],
+    "middleware": [
+      "delegation.enforce_delegate_context",
+      "impersonation.enforce_active_session",
+      "impersonation.enforce_read_only"
+    ],
+    "events": [
+      "DelegationCreated",
+      "DelegationActivated",
+      "DelegationExpired",
+      "DelegationRevokedEarly",
+      "DelegationSelfOverlapDetected",
+      "ImpersonationSessionStarted",
+      "ImpersonationSessionEnded",
+      "ImpersonationSessionExtended",
+      "ImpersonationSessionForcedTerminate",
+      "ImpersonationAttemptRefused"
+    ],
+    "policies": [
+      "RoleDelegationPolicy",
+      "ImpersonationSessionPolicy"
+    ],
+    "hooks": [
+      "WarmDelegationResolverCacheOnTenantInit"
+    ],
+    "commands": [
+      "delegations:list",
+      "delegations:describe",
+      "delegations:create",
+      "delegations:revoke",
+      "delegations:audit-oof-usage",
+      "impersonation:list-active",
+      "impersonation:describe",
+      "impersonation:audit-report",
+      "impersonation:force-end"
+    ],
+    "jobs": [
+      "ActivateDelegationsJob",
+      "ExpireDelegationsJob",
+      "EndImpersonationSessionsJob",
+      "PurgeRevokedDelegationsJob",
+      "NotifyDelegateOfActivationJob",
+      "NotifyDelegatorOfExpirationJob",
+      "PurgeImpersonationSessionsJob"
+    ],
+    "notifications": [
+      "DelegationCreatedNotification",
+      "DelegationActivatedNotification",
+      "DelegationExpiringNotification",
+      "DelegationExpiredNotification",
+      "DelegationRevokedEarlyNotification",
+      "ImpersonationSessionStartedNotification",
+      "ImpersonationSessionEndedNotification",
+      "ImpersonationExtendedNotification",
+      "ImpersonationForcedTerminationNotification"
+    ],
+    "broadcasts": [
+      "tenant.{id}.delegations",
+      "platform.impersonation.{platform_user_id}"
+    ],
+    "observers": [
+      "RoleDelegationObserver",
+      "ImpersonationSessionObserver"
+    ],
+    "rules": [
+      "valid_delegation_window",
+      "delegator_holds_role",
+      "same_tenant_delegation",
+      "impersonation_ttl_within_bounds",
+      "impersonation_reason_min_length"
+    ],
+    "casts": [
+      "DelegationType",
+      "ImpersonationEndTrigger"
+    ],
+    "views": [],
+    "lang": [
+      "delegation"
+    ],
+    "config": [
+      "delegation"
+    ],
+    "macros": [],
+    "bindings": [
+      "RoleDelegationRepository",
+      "ImpersonationSessionRepository",
+      "DelegationResolver",
+      "ImpersonationSessionIssuer",
+      "ImpersonationSessionTerminator",
+      "DelegationValidator",
+      "ImpersonationEntitlementChecker"
+    ],
+    "resources": [
+      "role-delegation",
+      "impersonation-session"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing role-delegation CRUD. A delegator invites another User in the same tenant to hold their role for a bounded window. Delegate + delegator can both view; only delegator (or admin) can revoke early. Cross-tenant delegation is refused at the observer (see rules.json + observers.json).",
+      "routes": [
+        "GET /api/v1/me/delegations",
+        "POST /api/v1/me/delegations",
+        "GET /api/v1/me/delegations/{delegation}",
+        "DELETE /api/v1/me/delegations/{delegation}",
+        "GET /api/v1/me/delegation-received"
+      ]
+    },
+    "platform-admin": {
+      "description": "Platform-admin impersonation surface. `POST /impersonation/start` composes identity/auth's ImpersonateStartAction (which mints the impersonation-scoped Sanctum PAT) and writes the impersonation_sessions row atomically. Every read + terminate action is heavily audited. `force-terminate` is reserved for security-lockdown scenarios — always a super_admin or security role.",
+      "routes": [
+        "POST /api/v1/platform/impersonation/start",
+        "POST /api/v1/platform/impersonation/{session}/end",
+        "GET /api/v1/platform/impersonation/sessions",
+        "GET /api/v1/platform/impersonation/sessions/{session}",
+        "GET /api/v1/platform/impersonation/audit",
+        "POST /api/v1/platform/impersonation/{session}/force-terminate"
+      ]
+    }
+  },
+  "compliance_note": "SOC 2 CC6.1 + CC6.7: every impersonation session logged with impersonator + impersonated + reason + duration; audit trail preserved indefinitely (7 years hot per retention.json) even when the impersonator's PlatformUser row is hard-deleted post 90-day retention hold. PCI-DSS 8.5: MFA required for impersonation start (inherited from platform_admin guard's MFA-mandatory policy per platform-user/middleware.json). GDPR Art. 17: impersonation records cascade on target User Identity erasure via CASCADE on impersonated_user_id, but impersonator's actions retained as compliance evidence (justified under Art. 17(3)(e) — legal claims / defence).",
+  "cross_plane_note": "role_delegations rows are TENANT-plane — both delegator + delegate are tenant Users, both same tenant_id, both same application_id. impersonation_sessions rows are CROSS-PLANE — impersonator is a PlatformUser (central-plane, no tenant_id) and impersonated is a tenant User (with tenant_id + application_id). This module is the ONE place in the tenant plane where a central-plane FK (impersonator_platform_user_id → platform_users.id) is permitted; the platform_users row belongs to the impersonation as the actor of record. See tenancy-columns.md §5 exception for platform-plane FKs on tenant-plane rows tracking cross-plane operations."
+}

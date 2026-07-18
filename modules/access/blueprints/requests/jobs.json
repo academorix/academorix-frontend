@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/access/requests/jobs",
+  "$version": 1,
+  "title": "requests \u2014 queued jobs",
+  "description": "Three queued jobs. All models re-hydrated from DB on handle (no stale-payload risk). ShouldBeUnique on jobs whose duplicate execution would over-send.",
+  "defaultQueue": "notifications",
+  "defaultConnection": "redis",
+  "jobs": [
+    {
+      "class": "Academorix\\AccessRequest\\Jobs\\NotifyApproversJob",
+      "description": "Dispatched from ShimApprovalRequestedListener after AccessRequestSubmitted fires. Iterates the resolved approvers set for the request's requirements + dispatches AccessRequestSubmittedNotification to each. Idempotent via (instance_id, approver_id) unique key \u2014 duplicate runs no-op. Fires AccessRequestApproverNotified per successful delivery for the analytics pipeline.",
+      "queue": "notifications",
+      "tries": 5,
+      "timeoutSeconds": 60,
+      "backoffSeconds": [30, 120, 600, 1800, 7200],
+      "uniqueFor": 300,
+      "uniqueKeyExpr": "'access-request:notify-approvers:' + instance_id",
+      "implements": ["ShouldQueue", "ShouldBeUnique"],
+      "input": {
+        "instance_id": "string \u2014 approval_instance id",
+        "approver_ids": "string[] \u2014 resolved from AccessRequestApproverResolver"
+      }
+    },
+    {
+      "class": "Academorix\\AccessRequest\\Jobs\\NotifyRequesterOfDecisionJob",
+      "description": "Dispatched when a terminal event fires (AccessRequestApproved / Rejected / Expired). Delivers the matching notification (AccessRequestApprovedNotification / RejectedNotification / ExpiredNotification) to the requester. Unique key per (instance_id, decision_kind) prevents duplicate notifications on transient failures.",
+      "queue": "notifications",
+      "tries": 5,
+      "timeoutSeconds": 60,
+      "backoffSeconds": [30, 120, 600, 1800, 7200],
+      "uniqueFor": 300,
+      "uniqueKeyExpr": "'access-request:notify-requester:' + instance_id + ':' + decision_kind",
+      "implements": ["ShouldQueue", "ShouldBeUnique"],
+      "input": {
+        "instance_id": "string",
+        "decision_kind": "string \u2014 'approved' | 'rejected' | 'expired'"
+      }
+    },
+    {
+      "class": "Academorix\\AccessRequest\\Jobs\\CleanupOrphanedRequestsJob",
+      "description": "Daily sweeper. Scans approval_instances where `action_key='access.grants.create'` AND status='pending' AND (`subject_id` no longer resolves to a live row OR the resource_type is no longer in the registry). Auto-rejects with `reason='resource_no_longer_exists'` via workflow/approvals::withdraw with a system actor. Batched at 500 per run to avoid blocking the queue. Idempotent by construction \u2014 rejected instances are skipped on the next sweep.",
+      "queue": "retention",
+      "tries": 3,
+      "timeoutSeconds": 300,
+      "backoffSeconds": [3600, 7200, 21600],
+      "input": { "batch_size": "integer (default 500)", "dry_run": "boolean (default false)" }
+    }
+  ],
+  "queues": {
+    "notifications": {
+      "description": "Notification-only work. Isolated from default queue so a burst of decisions (bulk approve on enterprise) does not stall the CriticalPath default queue."
+    },
+    "retention": {
+      "description": "Batched cleanup jobs. Runs off-hours per schedule.json. Shared with other modules' retention work."
+    }
+  },
+  "notes": [
+    "There is INTENTIONALLY no `MaterializeGrantJob` \u2014 grant materialisation runs INLINE in AccessRequestGrantMaterializer on the default queue synchronous with the ApprovalExecuted event. This preserves the invariant 'if AccessRequestApproved fired, the grant WILL exist within seconds' \u2014 users retry the resource fetch expecting it to work.",
+    "If materialisation ever needs to become truly asynchronous (e.g. because the grant creation involves a slow external call), the correct move is to fire an `AccessRequestGrantPending` event first and let the materialiser be a proper job \u2014 don't repurpose Cleanup or NotifyApprovers."
+  ]
+}

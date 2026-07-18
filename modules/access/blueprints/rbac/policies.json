@@ -1,0 +1,181 @@
+{
+  "id": "academorix://modules/rbac/policies",
+  "$version": 1,
+  "title": "rbac \u2014 authorization policies",
+  "description": "Four policies. RolePolicy covers CRUD on tenant + platform role rows. PermissionPolicy covers read-only for tenant admins + platform-admin CRUD. RoleAssignmentPolicy is separate because assignment carries its own gate (an admin can VIEW every role but can only ASSIGN roles whose permissions the actor themselves holds). RoleDefinitionPolicy covers the platform-admin metadata layer.",
+  "policies": [
+    {
+      "model": "Role",
+      "class": "Academorix\\Rbac\\Policies\\RolePolicy",
+      "guard": "sanctum",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "roles.viewAny.tenant",
+          "scope": "any tenant member sees the role list applicable to the tenant"
+        },
+        {
+          "action": "view",
+          "permission": "roles.view.tenant",
+          "scope": "tenant-scoped: refuses when role.tenant_id is set AND != caller.tenant_id"
+        },
+        {
+          "action": "create",
+          "permission": "roles.create.tenant",
+          "scope": "owner + admin. Refused when tenant lacks custom_roles entitlement OR quota exhausted"
+        },
+        {
+          "action": "update",
+          "permission": "roles.update.tenant",
+          "scope": "owner + admin on tenant-owned roles. Refused for is_system=true rows."
+        },
+        {
+          "action": "delete",
+          "permission": "roles.delete.tenant",
+          "scope": "owner + admin on tenant-owned custom roles. Refused when active assignments exist."
+        },
+        {
+          "action": "attachPermission",
+          "permission": "roles.manage.tenant",
+          "scope": "owner + admin. Enforces the RoleHasPermissionsObserver rules \u2014 guard + application boundaries + max_permissions_per_role."
+        },
+        {
+          "action": "detachPermission",
+          "permission": "roles.manage.tenant",
+          "scope": "same as attachPermission."
+        }
+      ]
+    },
+    {
+      "model": "Role \u2014 platform_admin guard",
+      "class": "Academorix\\Rbac\\Policies\\RolePolicy",
+      "guard": "platform_admin",
+      "abilities": [
+        {
+          "action": "platformViewAny",
+          "permission": "platform.rbac.system_roles.viewAny",
+          "scope": "cross-tenant, cross-Application \u2014 shows every system + custom role in the DB"
+        },
+        {
+          "action": "platformView",
+          "permission": "platform.rbac.system_roles.view"
+        },
+        {
+          "action": "platformCreate",
+          "permission": "platform.rbac.system_roles.create",
+          "scope": "platform-plane owned super_admin + product. Compliance-audited."
+        },
+        {
+          "action": "platformUpdate",
+          "permission": "platform.rbac.system_roles.update",
+          "scope": "same as platformCreate. Refuses guard_name / application_id changes on rows with active assignments."
+        },
+        {
+          "action": "platformDelete",
+          "permission": "platform.rbac.system_roles.delete",
+          "scope": "super_admin only. Compliance-audited."
+        }
+      ]
+    },
+    {
+      "model": "Permission",
+      "class": "Academorix\\Rbac\\Policies\\PermissionPolicy",
+      "guard": "sanctum",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "permissions.viewAny.tenant",
+          "scope": "tenant admins see the full catalogue"
+        },
+        {
+          "action": "view",
+          "permission": "permissions.view.tenant"
+        },
+        {
+          "action": "create",
+          "permission": "permissions.create.tenant",
+          "scope": "Enterprise-only, requires custom_permissions entitlement"
+        }
+      ]
+    },
+    {
+      "model": "Permission \u2014 platform_admin guard",
+      "class": "Academorix\\Rbac\\Policies\\PermissionPolicy",
+      "guard": "platform_admin",
+      "abilities": [
+        {
+          "action": "platformViewAny",
+          "permission": "platform.rbac.permissions.viewAny",
+          "scope": "cross-Application \u2014 the full permission catalogue"
+        },
+        {
+          "action": "platformCreate",
+          "permission": "platform.rbac.permissions.create",
+          "scope": "super_admin + product. Usually PermissionCatalogueLoader creates permissions automatically \u2014 this policy gates manual writes."
+        },
+        {
+          "action": "platformUpdate",
+          "permission": "platform.rbac.permissions.update"
+        }
+      ]
+    },
+    {
+      "model": "RoleAssignment (ModelHasRoles pivot)",
+      "class": "Academorix\\Rbac\\Policies\\RoleAssignmentPolicy",
+      "guard": "sanctum",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "principals.roles.viewAny.tenant",
+          "scope": "owner + admin see every principal's assignments in the tenant"
+        },
+        {
+          "action": "viewOwn",
+          "permission": "principals.roles.viewAny.own",
+          "scope": "any authenticated user sees THEIR OWN assignments. Backs GET /me/roles."
+        },
+        {
+          "action": "assign",
+          "permission": "principals.roles.assign.tenant",
+          "scope": "owner + admin. Enforces role_assignable_by_actor \u2014 an admin can only assign roles whose permission set the admin themselves already holds. Prevents privilege escalation."
+        },
+        {
+          "action": "revoke",
+          "permission": "principals.roles.revoke.tenant",
+          "scope": "owner + admin. Same privilege-escalation guard \u2014 can only revoke roles whose permission set the actor holds."
+        },
+        {
+          "action": "bulkAssign",
+          "permission": "principals.roles.assign.bulk.tenant",
+          "scope": "owner + admin, requires bulk_role_assignment entitlement"
+        }
+      ]
+    },
+    {
+      "model": "RoleDefinition \u2014 platform_admin guard",
+      "class": "Academorix\\Rbac\\Policies\\RoleDefinitionPolicy",
+      "guard": "platform_admin",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "platform.rbac.role_definitions.viewAny"
+        },
+        {
+          "action": "view",
+          "permission": "platform.rbac.role_definitions.view"
+        },
+        {
+          "action": "create",
+          "permission": "platform.rbac.role_definitions.create",
+          "scope": "super_admin + product. Creates the metadata row for a new system role."
+        },
+        {
+          "action": "update",
+          "permission": "platform.rbac.role_definitions.update",
+          "scope": "same. Updating default_permissions triggers re-seed of affected tenants (config-gated)."
+        }
+      ]
+    }
+  ],
+  "boundary_note": "Every ability respects the two-audience guard boundary. Tenant-guard abilities scope to the caller's own tenant (application_id + tenant_id filter enforced at the policy). Platform-guard abilities are cross-tenant, cross-Application. Neither leaks into the other's map \u2014 cross-guard checks return false silently. Design.md \u00a72 D-A2 GuardMismatch is the write-time counterpart to this read-time policy split."
+}

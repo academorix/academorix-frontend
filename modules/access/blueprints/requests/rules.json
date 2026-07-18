@@ -1,0 +1,68 @@
+{
+  "id": "academorix://modules/access/requests/rules",
+  "$version": 1,
+  "title": "requests \u2014 validation rules",
+  "description": "Custom Laravel validation rules published by `AccessRequestServiceProvider::boot()` so any FormRequest / Data class can validate the shape of an access-request submission. Applied to `CreateAccessRequestData` at the write path.",
+  "namespace": "Academorix\\AccessRequest\\Rules",
+  "rules": [
+    {
+      "name": "valid_requestable_resource",
+      "class": "Academorix\\AccessRequest\\Rules\\ValidRequestableResource",
+      "signature": "valid_requestable_resource",
+      "description": "Ensures the `resource_type` string is present in AccessRequestableRegistry. Rejects at write time if the caller submits a resource_type not registered by any consumer module. Fires ACCESS_REQUEST_INVALID_REQUESTABLE_RESOURCE (422).",
+      "params": [],
+      "example_field_rule": "resource_type: [required, string, valid_requestable_resource]",
+      "error_message_key": "access-request::validation.valid_requestable_resource",
+      "default_message": "The resource type :attribute is not available for access requests."
+    },
+    {
+      "name": "resource_in_caller_tenant",
+      "class": "Academorix\\AccessRequest\\Rules\\ResourceInCallerTenant",
+      "signature": "resource_in_caller_tenant:<resource_type_field>",
+      "description": "Ensures the row identified by (`resource_type_field`, `resource_id`) exists in the caller's active tenant. The rule resolves the target model class from the registry, queries by primary key + tenant scope, and refuses if the row is not found. Fires ACCESS_REQUEST_RESOURCE_NOT_IN_CALLER_TENANT (403) OR ACCESS_REQUEST_RESOURCE_NOT_FOUND (404).",
+      "params": [
+        {
+          "name": "resource_type_field",
+          "type": "string",
+          "description": "The name of the sibling form field carrying the resource_type value (defaults to 'resource_type')."
+        }
+      ],
+      "example_field_rule": "resource_id: [required, string, resource_in_caller_tenant:resource_type]",
+      "error_message_key": "access-request::validation.resource_in_caller_tenant",
+      "default_message": "The resource :attribute is not accessible in your current tenant."
+    },
+    {
+      "name": "permission_belongs_to_resource_type",
+      "class": "Academorix\\AccessRequest\\Rules\\PermissionBelongsToResourceType",
+      "signature": "permission_belongs_to_resource_type:<resource_type_field>",
+      "description": "Ensures every entry in the `permissions_wanted` array is (a) declared on the target resource type via `#[AccessRequestable(permissions: [...])]` AND (b) a valid permission name on the sanctum guard for the caller's application. Rule iterates the array and rejects the WHOLE request on the first failure. Fires ACCESS_REQUEST_PERMISSION_NOT_ON_RESOURCE_TYPE (422).",
+      "params": [
+        {
+          "name": "resource_type_field",
+          "type": "string",
+          "description": "Sibling field carrying the resource_type value."
+        }
+      ],
+      "example_field_rule": "permissions_wanted: [required, array, min:1, permission_belongs_to_resource_type:resource_type]",
+      "error_message_key": "access-request::validation.permission_belongs_to_resource_type",
+      "default_message": "The permission :permission is not requestable on :resource_type."
+    },
+    {
+      "name": "valid_reason_length",
+      "class": "Academorix\\AccessRequest\\Rules\\ValidReasonLength",
+      "signature": "valid_reason_length[:<min>[,<max>]]",
+      "description": "Ensures the `reason` field is between MIN (default 20) and MAX (default 1000) characters after trimming. Short reasons don't inform approvers; over-long reasons are usually copy-paste artefacts. Multibyte-safe (mb_strlen).",
+      "params": [
+        { "name": "min", "type": "integer", "default": 20 },
+        { "name": "max", "type": "integer", "default": 1000 }
+      ],
+      "example_field_rule": "reason: [required, string, valid_reason_length:20,1000]",
+      "error_message_key": "access-request::validation.valid_reason_length",
+      "default_message": "The reason must be between :min and :max characters (:length given)."
+    }
+  ],
+  "compositionOrder": [
+    "Every CreateAccessRequestData field-rule composition MUST list `valid_requestable_resource` on resource_type BEFORE `resource_in_caller_tenant` and BEFORE `permission_belongs_to_resource_type` \u2014 the latter two depend on the registry lookup succeeding.",
+    "Rule composition: `resource_type: [required, string, valid_requestable_resource]`. `resource_id: [required, string, resource_in_caller_tenant:resource_type]`. `permissions_wanted: [required, array, min:1, permission_belongs_to_resource_type:resource_type]`. `reason: [required, string, valid_reason_length:20,1000]`."
+  ]
+}

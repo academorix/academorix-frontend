@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/delegation/listeners",
+  "$version": 1,
+  "title": "delegation — subscribed events",
+  "description": "Listeners this module registers on OTHER modules' events. Own-module events (DelegationCreated, ImpersonationSessionStarted, etc.) route via events.json's consumer list — that's the module's own outbound wiring. This file is inbound.",
+  "listeners": [
+    {
+      "event": "foundation::ApplicationBooted",
+      "listener": "Academorix\\Delegation\\Listeners\\WarmDelegationResolverCache",
+      "queue": null,
+      "purpose": "Warms the in-memory LRU cache with active delegations for the top-N tenants (by request volume in the last hour). Reduces DB round-trips on the DelegationResolver hot-path (called on every permission check + every approver-selector resolution)."
+    },
+    {
+      "event": "tenancy::TenantErased",
+      "listener": "Academorix\\Delegation\\Listeners\\PurgeDelegationsForErasedTenant",
+      "queue": "notifications",
+      "purpose": "The FK cascade (target_tenant_id CASCADE on tenants) handles the actual row removal. This listener writes the compliance audit trail entry naming the erased tenant + emits the count metric so ops can see tenant-erasure volume. NOTE: does NOT touch impersonation_sessions — that table's CASCADE on target_tenant_id also fires the removal, but the parallel audit stream (HasAudit's dedicated audit table) is on its own retention path (7 years) and is NOT purged with the tenant. Compliance evidence outlives the tenant it references."
+    },
+    {
+      "event": "user::UserErased",
+      "listener": "Academorix\\Delegation\\Listeners\\HandleUserErasure",
+      "queue": "notifications-critical",
+      "purpose": "GDPR Art. 17 handling for the User being erased. For role_delegations: rows where the User is the delegator OR delegate cascade via CASCADE / RESTRICT on the tables — RESTRICT prevents erasure while active delegations exist (must revoke first), and the /user erasure workflow calls the delegation:revoke command as part of its pre-erasure sweep. For impersonation_sessions: rows where the User is impersonated_user_id cascade on CASCADE (the impersonation record is tied to the target); rows where the User is impersonator side... doesn't apply, that's a PlatformUser FK. Listener writes the compliance audit stream entry documenting the cascade."
+    },
+    {
+      "event": "platform-user::PlatformUserOffboarded",
+      "listener": "Academorix\\Delegation\\Listeners\\TerminateActivePlatformImpersonationSessions",
+      "queue": "notifications-critical",
+      "purpose": "The offboarded PlatformUser MUST NOT continue impersonating. On offboarding, walk their active impersonation_sessions + fire ImpersonationSessionForcedTerminate (end_trigger=admin_revocation, reason='platform user offboarded — YYYY-MM-DD') on each. The session's impersonator_platform_user_id is preserved on the row (snapshot fields survive later hard-delete). Coordinated with platform-user's own RevokePlatformUserAccessJob — the two listeners are idempotent + run in parallel."
+    },
+    {
+      "event": "platform-user::PlatformUserSuspended",
+      "listener": "Academorix\\Delegation\\Listeners\\PausePlatformImpersonationSessions",
+      "queue": "notifications-critical",
+      "purpose": "Suspension is temporary (reversible) — but during suspension the PlatformUser must not hold active impersonation. Walk their active sessions + end each with end_trigger=admin_revocation (NOT security_lockdown — that's for security-team actions). If the suspension is later reversed, no automatic session resurrection — the operator must re-start a new session."
+    },
+    {
+      "event": "auth::TokenRevoked",
+      "listener": "Academorix\\Delegation\\Listeners\\EndImpersonationSessionOnTokenRevocation",
+      "queue": "notifications",
+      "purpose": "When an impersonation-scoped PAT is revoked out-of-band (via the standard token-revocation flow in identity/auth), find the corresponding impersonation_session by session_token_hash + set ended_at + end_trigger=admin_revocation. Idempotent — the fire-and-forget from the /end route already handled the same session; this listener catches the case where the token was killed but /end was never called."
+    },
+    {
+      "event": "compliance::TenantSecurityIncidentDeclared",
+      "listener": "Academorix\\Delegation\\Listeners\\LockdownImpersonationForTenant",
+      "queue": "notifications-critical",
+      "purpose": "When compliance declares a security incident on a tenant, walk ALL active impersonation_sessions on that tenant + force-terminate each with end_trigger=security_lockdown + reason='tenant security incident declared: <ref>'. Notifies security team. All future impersonation attempts on that tenant are refused via ImpersonationEntitlementChecker until the incident is closed (checker consults compliance's active-incident registry)."
+    },
+    {
+      "event": "workflow/approvals::ApproverResolved",
+      "listener": "Academorix\\Delegation\\Listeners\\RecordDelegationUsageInApproverResolution",
+      "queue": null,
+      "purpose": "workflow/approvals fires this event every time an approver requirement is resolved. If the resolution used a delegation (i.e. the original approver was a delegator + we substituted their delegate), the listener writes a lightweight event on the delegation row's audit stream: 'delegation used to resolve approval api_...'. Powers the `delegations:audit-oof-usage` report. Fast synchronous listener — no queue."
+    }
+  ]
+}

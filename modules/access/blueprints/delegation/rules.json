@@ -1,0 +1,72 @@
+{
+  "id": "academorix://modules/delegation/rules",
+  "$version": 1,
+  "title": "delegation — validation rules",
+  "description": "Custom Laravel validation rules published by DelegationServiceProvider::boot() so FormRequests / Data classes can validate delegation + impersonation payloads. Every rule below carries a public identifier that the observer + policy layer also invoke as a service — the rule + the observer share a single implementation.",
+  "namespace": "Academorix\\Delegation\\Rules",
+  "rules": [
+    {
+      "name": "valid_delegation_window",
+      "class": "Academorix\\Delegation\\Rules\\ValidDelegationWindow",
+      "signature": "valid_delegation_window",
+      "description": "Validates the (starts_at, ends_at) pair on a role_delegations payload: starts_at >= now(); ends_at > starts_at; ends_at <= starts_at + config('delegation.role_delegations.max_days'). Fails with a specific message per constraint (starts_at_in_past, ends_before_start, window_exceeds_cap).",
+      "params": [],
+      "example_field_rule": "starts_at: [required, date], ends_at: [required, date, valid_delegation_window]",
+      "error_message_key": "delegation.rules.valid_delegation_window",
+      "default_message": "The :attribute is not a valid delegation window (:reason)."
+    },
+    {
+      "name": "delegator_holds_role",
+      "class": "Academorix\\Delegation\\Rules\\DelegatorHoldsRole",
+      "signature": "delegator_holds_role:<delegator_field>",
+      "description": "Validates that the caller (or the explicit delegator_field on the payload) currently holds the role_id being delegated within the current tenant + application. When role_id is null (all-roles OOF), the check is trivially true. Consults RBAC's PermissionResolver.",
+      "params": [
+        {
+          "name": "delegator_field",
+          "type": "string",
+          "default": "delegator_id",
+          "description": "Field on the payload whose value is the delegator User's ULID. Defaults to `delegator_id` — override when validating an admin-on-behalf-of flow."
+        }
+      ],
+      "example_field_rule": "role_id: [nullable, delegator_holds_role:delegator_id]",
+      "error_message_key": "delegation.rules.delegator_holds_role",
+      "default_message": "The :attribute delegator does not hold role :role."
+    },
+    {
+      "name": "same_tenant_delegation",
+      "class": "Academorix\\Delegation\\Rules\\SameTenantDelegation",
+      "signature": "same_tenant_delegation:<delegate_field>",
+      "description": "Validates that the delegate (identified by the delegate_field on the payload) belongs to the same tenant as the delegator (or the current caller's tenant when delegator_field is absent). Refuses cross-tenant delegation.",
+      "params": [
+        {
+          "name": "delegate_field",
+          "type": "string",
+          "default": "delegate_id"
+        }
+      ],
+      "example_field_rule": "delegate_id: [required, exists:users,id, same_tenant_delegation]",
+      "error_message_key": "delegation.rules.same_tenant_delegation",
+      "default_message": "The :attribute must belong to the same tenant as the delegator."
+    },
+    {
+      "name": "impersonation_ttl_within_bounds",
+      "class": "Academorix\\Delegation\\Rules\\ImpersonationTtlWithinBounds",
+      "signature": "impersonation_ttl_within_bounds",
+      "description": "Validates the requested (started_at, ends_at) span on an impersonation session payload. ends_at <= started_at + config('delegation.impersonation.max_minutes') by default; ends_at <= started_at + config('delegation.impersonation.max_minutes_extended') when the target tenant holds impersonation_extended_ttl entitlement AND the caller is a super_admin.",
+      "params": [],
+      "example_field_rule": "ends_at: [required, date, impersonation_ttl_within_bounds]",
+      "error_message_key": "delegation.rules.impersonation_ttl_within_bounds",
+      "default_message": "The :attribute exceeds the maximum impersonation TTL (max :max_minutes minutes; extended cap :max_minutes_extended when entitled)."
+    },
+    {
+      "name": "impersonation_reason_min_length",
+      "class": "Academorix\\Delegation\\Rules\\ImpersonationReasonMinLength",
+      "signature": "impersonation_reason_min_length",
+      "description": "Validates the reason field on an impersonation session payload meets the min length (default 40 chars — heavier than delegation's 20). Multibyte-aware via mb_strlen.",
+      "params": [],
+      "example_field_rule": "reason: [required, string, impersonation_reason_min_length]",
+      "error_message_key": "delegation.rules.impersonation_reason_min_length",
+      "default_message": "The :attribute must be at least :min characters (impersonation requires a substantive reason)."
+    }
+  ]
+}

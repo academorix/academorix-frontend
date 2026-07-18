@@ -1,0 +1,128 @@
+{
+  "id": "academorix://modules/rbac/schemas/model-has-roles",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ModelHasRoles (spatie pivot, augmented)",
+  "description": "Spatie's shipped `model_has_roles` polymorphic pivot augmented with denormalised (application_id, tenant_id) + `assigned_by`, `assigned_at`, `expires_at` for the time-bounded assignment surface. Polymorphic to User / PlatformUser / ServiceAccount. Every write enforces role.guard_name === principal's guard + role.application_id === principal.application_id (for User principals).",
+  "type": "object",
+  "x-module": "rbac",
+  "x-eloquent": {
+    "note": "Spatie-managed pivot \u2014 no dedicated Eloquent model. Consumed via HasRoles trait on each principal (`->assignRole()`, `->syncRoles()`, `->roles`). Our observer attaches for enforcement + audit + cache invalidation.",
+    "observers": ["ModelHasRolesObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "description": "Spatie ships the pivot with columns (role_id, model_type, model_id). Our migration ADDS (application_id, tenant_id, assigned_by, assigned_at, expires_at, audit columns).",
+    "columns": {
+      "role_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "roles", "column": "id", "onDelete": "cascade" }
+      },
+      "model_type": {
+        "type": "string",
+        "length": 255,
+        "nullable": false,
+        "description": "Fully-qualified class name: `Academorix\\User\\Models\\User` / `Academorix\\PlatformUser\\Models\\PlatformUser` / `Academorix\\ServiceAccounts\\Models\\ServiceAccount`."
+      },
+      "model_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Prefixed ULID of the principal."
+      },
+      "application_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "applications", "column": "id", "onDelete": "restrict" },
+        "description": "Denormalised from role.application_id. Observer enforces role.application_id === principal.application_id for User principals."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" },
+        "description": "Denormalised from role.tenant_id."
+      },
+      "assigned_by": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" },
+        "description": "The actor who granted the assignment. NULL = system-seeded (TenantDefaultRoleSeeder)."
+      },
+      "assigned_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "default": "now()",
+        "description": "Snapshot of the assignment moment. Separate from created_at because a re-assignment (revoke + re-grant) shows two distinct assigned_at values in the audit trail."
+      },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When set, PurgeExpiredRoleAssignmentsJob deletes the row at expires_at + fires RoleAssignmentExpired. Requires the `time_bounded_role_assignments` entitlement. Framework ceiling: config('rbac.assignments.max_time_bounded_duration_days') (default 365)."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["role_id", "model_type", "model_id"],
+        "unique": true,
+        "name": "model_has_roles_pkey",
+        "description": "Composite primary key \u2014 one role assignment per principal."
+      },
+      {
+        "columns": ["model_type", "model_id"],
+        "unique": false,
+        "name": "model_has_roles_principal_idx",
+        "description": "Reverse lookup: given a principal, what roles hold?"
+      },
+      {
+        "columns": ["application_id", "tenant_id"],
+        "unique": false,
+        "name": "model_has_roles_scope_idx"
+      },
+      {
+        "columns": ["expires_at"],
+        "unique": false,
+        "predicate": "expires_at IS NOT NULL",
+        "name": "model_has_roles_expiring_idx",
+        "description": "Hot-path scan for PurgeExpiredRoleAssignmentsJob."
+      }
+    ]
+  },
+  "required": ["role_id", "model_type", "model_id", "assigned_at", "created_at", "updated_at"],
+  "properties": {
+    "role_id": { "type": "string", "pattern": "^rol_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "model_type": {
+      "type": "string",
+      "enum": [
+        "Academorix\\User\\Models\\User",
+        "Academorix\\PlatformUser\\Models\\PlatformUser",
+        "Academorix\\ServiceAccounts\\Models\\ServiceAccount"
+      ]
+    },
+    "model_id": { "type": "string" },
+    "application_id": { "type": ["string", "null"], "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": ["string", "null"], "pattern": "^tnt_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "assigned_by": { "type": ["string", "null"] },
+    "assigned_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "note": "Wire projection on the `GET /rbac/principals/{principal}/roles` endpoint returns { role_id, role_name, role_label, assigned_by, assigned_at, expires_at, is_expiring_soon }."
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "id": "academorix://modules/grants/attributes",
+  "$version": 1,
+  "title": "grants — PHP attribute contracts",
+  "description": "Two attributes. #[Grantable] on a class marks the model as a valid grant target and seeds it into GrantableRegistry at boot. #[AsGrantListener] marks a service that reacts to grant lifecycle events (used by consumer modules that need to respond to grant issue / revoke on their aggregates).",
+  "namespace": "Academorix\\Grant\\Attributes",
+  "attributes": [
+    {
+      "name": "Grantable",
+      "class": "Academorix\\Grant\\Attributes\\Grantable",
+      "targets": ["class"],
+      "description": "Class-level marker on models that can be granted. Boot-time discovery scans #[Grantable]-annotated classes and seeds them into GrantableRegistry with their resource_type key. Composes with the HasResourceGrants + IsGrantable traits.",
+      "params": [
+        {
+          "name": "resource_type",
+          "type": "string",
+          "default": "<snake_case of class basename>",
+          "description": "The `resource_type` key stored on access_grants.resource_type. Defaults to snake_case of the class basename (e.g. `Invoice` → `invoice`). Override for legacy naming or namespace collision."
+        },
+        {
+          "name": "display_label",
+          "type": "string",
+          "default": "<Titlecased class basename>",
+          "description": "Human-readable label rendered in the share-access dialog. Localised via `grants.resources.{resource_type}` translation key when present."
+        },
+        {
+          "name": "preflight_validator",
+          "type": "string (class name implementing GrantablePreflightInterface)",
+          "default": "null",
+          "description": "Optional preflight validator invoked before grant creation. Consumers use this to enforce resource-specific rules (e.g. 'can't grant on a soft-deleted invoice', 'can't grant guardian-of-athlete for an athlete already assigned to another guardian')."
+        },
+        {
+          "name": "permission_prefix",
+          "type": "string",
+          "default": "<resource_type>",
+          "description": "Prefix expected on permissions granted for this resource type. E.g. `invoice` → permissions like `invoice.view`, `invoice.edit`. Enforced by PermissionCatalogueValidator to catch typos."
+        },
+        {
+          "name": "allow_deny",
+          "type": "boolean",
+          "default": "true",
+          "description": "Whether deny grants are allowed on this resource type. Almost always true — a consumer setting this to false is unusual (e.g. a resource where 'implicit deny via absence of role' is the only mechanism)."
+        },
+        {
+          "name": "target_picker_screen_ref",
+          "type": "string",
+          "default": "null",
+          "description": "Optional SDUI screen reference the share-access dialog embeds when the caller picks this resource type. Zero coupling — the grants module renders whatever the consumer supplies."
+        }
+      ],
+      "example": "#[Grantable(\n    resource_type: 'invoice',\n    display_label: 'Invoice',\n    preflight_validator: InvoiceGrantPreflight::class,\n    permission_prefix: 'invoice',\n    target_picker_screen_ref: 'finance.pickers.invoice'\n)]\nfinal class Invoice extends Model\n{\n    use HasResourceGrants;\n    use IsGrantable;\n}"
+    },
+    {
+      "name": "AsGrantListener",
+      "class": "Academorix\\Grant\\Attributes\\AsGrantListener",
+      "targets": ["class"],
+      "description": "Marks a service class as a grant-lifecycle listener. Boot-time discovery registers the class with Laravel's event dispatcher for the specified grant events. Alternative to manual EventServiceProvider wiring — keeps grant-adjacent listener registration self-contained.",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": "['*']",
+          "description": "The specific grant events this listener responds to (e.g. ['GrantIssued', 'GrantRevoked']). Default `['*']` = every grant event."
+        },
+        {
+          "name": "queue",
+          "type": "string",
+          "default": "null",
+          "description": "Optional queue name for the listener. Null = sync."
+        }
+      ],
+      "example": "#[AsGrantListener(events: ['GrantIssued', 'GrantRevoked'], queue: 'notifications')]\nfinal class SyncInvoiceAclCache\n{\n    public function handle(GrantIssued|GrantRevoked $event): void\n    {\n        InvoiceAclCache::forget($event->grant->resource_id);\n    }\n}"
+    }
+  ]
+}

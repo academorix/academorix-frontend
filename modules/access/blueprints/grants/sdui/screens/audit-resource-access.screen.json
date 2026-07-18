@@ -1,0 +1,424 @@
+{
+  "id": "grants.screens.audit-resource-access",
+  "title": "Who has access",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/grants/audit/:resourceType/:resourceId",
+  "host": "tenant",
+  "audience": "authenticated",
+  "requiresPermission": "grants.audit_any",
+  "description": "Compliance officer's ISO 27001 A.9.2.5 review surface. Given a resource, enumerates every grant (allow + deny, active + terminal) AND every RBAC role that grants access to this resource type. Powers 'who has access to this thing' + drives quarterly access reviews.",
+  "dataSources": [
+    {
+      "name": "resourceGrants",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/grants/resource/' + route.params.resourceType + '/' + route.params.resourceId + '?include=subject,grantor,revoker'",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": ["filter[active_only]", "filter[decision]", "sort"]
+    },
+    {
+      "name": "resource",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/' + route.params.resourceType + 's/' + route.params.resourceId",
+      "unwrap": "data",
+      "description": "Fetches the resource itself via its module's canonical show endpoint (convention: pluralised resource_type). Consumers may override the URL pattern via GrantableRegistry."
+    },
+    {
+      "name": "rbacRolesGrantingAccess",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/roles?filter[has_permission_prefix]=' + route.params.resourceType",
+      "unwrap": "data",
+      "description": "Every role in the tenant that holds at least one permission with the resource-type prefix. Provides the RBAC context for the overlay — 'these roles grant access to invoices by default; grants overlay on top'."
+    },
+    {
+      "name": "identity",
+      "kind": "http.get",
+      "url": "/api/auth/me",
+      "unwrap": "data"
+    }
+  ],
+  "subscriptions": [
+    {
+      "channel": "tenant.{tenantId}.grants",
+      "kind": "private",
+      "filterExpr": "event.data.resource_type === route.params.resourceType && event.data.resource_id === route.params.resourceId",
+      "onEvent": { "kind": "data.refresh", "source": "resourceGrants" }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6" },
+      "children": [
+        {
+          "id": "header",
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-2" },
+          "children": [
+            {
+              "kind": "Link",
+              "props": {
+                "to": "/tenant/grants",
+                "className": "text-muted flex items-center gap-1 text-sm",
+                "children": "← Back to grants"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold"
+              },
+              "bindings": {
+                "children": {
+                  "$expr": "'Access audit — ' + (resource.display_label || (route.params.resourceType + '#' + route.params.resourceId))"
+                }
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "p",
+                "className": "text-muted text-sm",
+                "children": "Every person who can currently access this resource. Combines RBAC roles + explicit grants. Denies win over everything."
+              }
+            }
+          ]
+        },
+        {
+          "id": "actions-bar",
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex items-end gap-3" },
+              "children": [
+                {
+                  "kind": "Toggle",
+                  "props": {
+                    "label": "Active only",
+                    "name": "filter[active_only]",
+                    "defaultValue": true
+                  },
+                  "actions": { "onChange": { "kind": "data.applyFilter", "source": "resourceGrants" } }
+                },
+                {
+                  "kind": "Select",
+                  "props": {
+                    "label": "Decision",
+                    "name": "filter[decision]",
+                    "placeholder": "Both",
+                    "className": "min-w-32"
+                  },
+                  "options": [
+                    { "key": "allow", "label": "Allow only" },
+                    { "key": "deny", "label": "Deny only" }
+                  ],
+                  "actions": { "onChange": { "kind": "data.applyFilter", "source": "resourceGrants" } }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "ghost",
+                    "size": "sm",
+                    "leadingIcon": "arrow-down-tray",
+                    "children": "Export CSV"
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.download",
+                      "urlExpr": "'/api/v1/grants/resource/' + route.params.resourceType + '/' + route.params.resourceId + '?format=csv'",
+                      "filenameExpr": "'access-audit-' + route.params.resourceType + '-' + route.params.resourceId + '.csv'"
+                    }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "size": "sm",
+                    "leadingIcon": "share",
+                    "children": "Share access"
+                  },
+                  "bindings": {
+                    "isDisabled": {
+                      "$expr": "!identity.permissions.includes('grants.issue')"
+                    }
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "modal.open",
+                      "modalWidget": "grants.share-access-dialog",
+                      "propsExpr": "{ resourceType: route.params.resourceType, resourceId: route.params.resourceId, resourceLabel: resource.display_label }"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "denies-warning",
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "leadingIcon": "no-symbol"
+          },
+          "bindings": {
+            "hidden": {
+              "$expr": "resourceGrants.filter(g => g.decision === 'deny' && g.is_active).length === 0"
+            },
+            "children": {
+              "$expr": "resourceGrants.filter(g => g.decision === 'deny' && g.is_active).length + ' explicit deny grant(s) on this resource. These block access regardless of role permissions or allow grants.'"
+            }
+          }
+        },
+        {
+          "id": "rbac-panel",
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-3",
+                "children": "Roles with default access"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "p",
+                "className": "text-muted text-sm mb-3",
+                "children": "Every role in this tenant that grants a permission on this resource type via RBAC. Deny grants override; other allow grants add on top."
+              }
+            },
+            {
+              "kind": "List",
+              "props": { "className": "flex flex-wrap gap-2" },
+              "bindings": { "items": { "$ref": "rbacRolesGrantingAccess" } },
+              "itemRenderer": {
+                "kind": "Chip",
+                "props": { "variant": "info", "size": "sm" },
+                "bindings": {
+                  "children": {
+                    "$expr": "row.display_name + ' (' + row.member_count + ')'"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "grants-table",
+          "kind": "Card",
+          "props": { "className": "p-0" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "p-4 border-b" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-semibold",
+                    "children": "Explicit grants"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "p",
+                    "className": "text-muted text-sm",
+                    "children": "Denies sorted first — they short-circuit every check."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "DataGrid",
+              "props": {
+                "emptyState": {
+                  "title": "No explicit grants on this resource",
+                  "description": "Access is currently determined by RBAC roles only."
+                }
+              },
+              "bindings": {
+                "items": { "$ref": "resourceGrants" },
+                "isLoading": { "$ref": "resourceGrants.isLoading" }
+              },
+              "columns": [
+                {
+                  "id": "subject",
+                  "header": "Subject",
+                  "cell": {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2" },
+                    "children": [
+                      {
+                        "kind": "Avatar",
+                        "props": { "size": "sm" },
+                        "bindings": {
+                          "src": { "$ref": "row.subject.avatar_url" },
+                          "label": { "$ref": "row.subject.display_name" }
+                        }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-sm font-medium" },
+                        "bindings": {
+                          "children": { "$expr": "row.subject.display_name || row.subject_id" }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "decision",
+                  "header": "Decision",
+                  "cell": {
+                    "kind": "Widget",
+                    "widget": "grants.decision-chip",
+                    "props": {
+                      "decision": { "$ref": "row.decision" },
+                      "isActive": { "$ref": "row.is_active" },
+                      "isRevoked": { "$ref": "row.is_revoked" },
+                      "isExpired": { "$ref": "row.is_expired" },
+                      "isPermanent": { "$ref": "row.is_permanent" }
+                    }
+                  }
+                },
+                {
+                  "id": "permissions",
+                  "header": "Permissions",
+                  "cell": {
+                    "kind": "View",
+                    "props": { "className": "flex flex-wrap gap-1" },
+                    "children": [
+                      {
+                        "kind": "List",
+                        "bindings": { "items": { "$ref": "row.permissions" } },
+                        "itemRenderer": {
+                          "kind": "Chip",
+                          "props": { "size": "xs", "variant": "neutral" },
+                          "bindings": { "children": { "$ref": "item" } }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "granted_by",
+                  "header": "Granted by",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-sm" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.grantor?.display_name || (row.source === 'access_request' ? '(via request)' : row.source === 'bulk_provision' ? '(via bulk)' : '(system)')"
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "expires_at",
+                  "header": "Expires",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-sm" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.expires_at ? formatRelative(row.expires_at) : 'Never'"
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "actions",
+                  "header": "",
+                  "align": "end",
+                  "cell": {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-1" },
+                    "children": [
+                      {
+                        "kind": "Button",
+                        "props": {
+                          "variant": "ghost",
+                          "size": "sm",
+                          "isIconOnly": true,
+                          "leadingIcon": "eye",
+                          "ariaLabel": "View grant details"
+                        },
+                        "actions": {
+                          "onPress": {
+                            "kind": "navigate",
+                            "toExpr": "'/tenant/grants/' + row.id"
+                          }
+                        }
+                      },
+                      {
+                        "kind": "Button",
+                        "props": {
+                          "variant": "ghost",
+                          "size": "sm",
+                          "isIconOnly": true,
+                          "leadingIcon": "ban",
+                          "ariaLabel": "Revoke grant"
+                        },
+                        "bindings": {
+                          "isDisabled": {
+                            "$expr": "row.is_terminal || (!identity.permissions.includes('grants.manage') && row.granted_by !== identity.id)"
+                          }
+                        },
+                        "actions": {
+                          "onPress": {
+                            "kind": "http.delete",
+                            "urlExpr": "'/api/v1/grants/' + row.id",
+                            "confirm": {
+                              "title": "Revoke this grant?",
+                              "description": "The subject will lose access immediately.",
+                              "reasonField": {
+                                "label": "Reason",
+                                "name": "reason",
+                                "kind": "TextArea",
+                                "isRequired": true,
+                                "minLength": 20
+                              }
+                            },
+                            "onSuccess": {
+                              "kind": "sequence",
+                              "steps": [
+                                { "kind": "toast.success", "message": "Grant revoked" },
+                                { "kind": "data.refresh", "source": "resourceGrants" }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "pagination": {
+                "kind": "cursor",
+                "bindTo": "resourceGrants"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

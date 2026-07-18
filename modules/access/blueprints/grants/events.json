@@ -1,0 +1,215 @@
+{
+  "id": "academorix://modules/grants/events",
+  "$version": 1,
+  "title": "grants — domain events",
+  "description": "Twelve events. Lifecycle events (Issued / Updated / Expired / Revoked) carry the AccessGrant model fresh from the DB. Security-critical events (SelfServiceGrantAttempted / GrantCrossTenantAttempt / GrantDenialIssued / GrantDenialRevoked) fire on audit-worthy conditions and always route to compliance. Cache-observability events (GrantEvaluationCacheHit / GrantEvaluationCacheMiss) sampled to keep volume manageable. All lifecycle events implement ShouldDispatchAfterCommit so listeners never fire against a rolled-back transaction; security events fire IMMEDIATELY (pre-commit) so a rolled-back attempt still leaves an audit trail.",
+  "contract": "ShouldDispatchAfterCommit (lifecycle) | dispatched synchronously (security-audit-critical)",
+  "events": [
+    {
+      "name": "GrantIssued",
+      "class": "Academorix\\Grant\\Events\\GrantIssued",
+      "trigger": "GrantIssuer::issue() completes: row inserted, permissions validated, tenant + grantor guards passed. First domain event on the happy path.",
+      "afterCommit": true,
+      "payload": {
+        "grant": "AccessGrant",
+        "grantor": "User|null",
+        "subject": "Model (resolved via GrantableRegistry)",
+        "resource": "Model (resolved via GrantableRegistry)",
+        "source": "string (manual | access_request | delegation | bulk_provision)"
+      },
+      "consumers": [
+        "grants::InvalidateGrantEvaluationCache (drop L1 + L2 cache entries for the subject)",
+        "notifications::DispatchGrantIssuedNotification (email + in-app to subject)",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRow (per-column diff)",
+        "sports::SyncAthleteAclCache (when resource_type=athlete)",
+        "finance::SyncInvoiceAclCache (when resource_type=invoice)"
+      ]
+    },
+    {
+      "name": "GrantUpdated",
+      "class": "Academorix\\Grant\\Events\\GrantUpdated",
+      "trigger": "PATCH /grants/{id} completed — only `expires_at` + `reason` are mutable (never subject/resource/permissions/decision after issue). Fires only when a real change happened.",
+      "afterCommit": true,
+      "payload": {
+        "grant": "AccessGrant",
+        "actor": "User",
+        "dirtyFields": "array<string>",
+        "priorValues": "array<string, mixed>"
+      }
+    },
+    {
+      "name": "GrantExpired",
+      "class": "Academorix\\Grant\\Events\\GrantExpired",
+      "trigger": "PurgeExpiredGrantsJob observed `expires_at <= now()` on a non-terminal grant. Transitions the row to revoked with revoked_reason='expired'. Terminal — no listener can reverse.",
+      "afterCommit": true,
+      "payload": {
+        "grant": "AccessGrant",
+        "expiredAt": "datetime (the actual expires_at wall-clock)"
+      },
+      "consumers": [
+        "grants::InvalidateGrantEvaluationCache",
+        "notifications::DispatchGrantExpiredNotification (to subject; to grantor if opt-in setting enabled)"
+      ]
+    },
+    {
+      "name": "GrantRevoked",
+      "class": "Academorix\\Grant\\Events\\GrantRevoked",
+      "trigger": "Explicit revocation via DELETE /grants/{id} or grantor action. Terminal.",
+      "afterCommit": true,
+      "payload": {
+        "grant": "AccessGrant",
+        "revoker": "User|null (null for system revokes — reconcile orphaned)",
+        "reason": "string (required — the revoked_reason column)",
+        "isSystemRevoke": "boolean (true when triggered by ReconcileOrphanedGrantsJob)"
+      },
+      "consumers": [
+        "grants::InvalidateGrantEvaluationCache",
+        "notifications::DispatchGrantRevokedNotification (to subject)",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRow"
+      ]
+    },
+    {
+      "name": "GrantDenialIssued",
+      "class": "Academorix\\Grant\\Events\\GrantDenialIssued",
+      "trigger": "A grant with decision='deny' was created. FIRES IMMEDIATELY (not afterCommit) so audit captures every attempt even if the outer transaction rolls back.",
+      "afterCommit": false,
+      "severity": "audit-critical",
+      "payload": {
+        "grant": "AccessGrant",
+        "grantor": "User|null",
+        "subject": "Model",
+        "resource": "Model",
+        "permissionsDenied": "array<string>",
+        "reason": "string"
+      },
+      "consumers": [
+        "audit::WriteHighSeverityAuditRow (severity=critical — denies are inviolable, every one is notable)",
+        "compliance::EmitAccessReviewSignal (SOC 2 CC6.3 evidence)",
+        "notifications::MaybeDispatchDeniedAccessAdminNotification (opt-in per settings)"
+      ]
+    },
+    {
+      "name": "GrantDenialRevoked",
+      "class": "Academorix\\Grant\\Events\\GrantDenialRevoked",
+      "trigger": "A deny grant was revoked (lifting an inviolable block). Also audit-critical — someone re-enabled access that was explicitly denied.",
+      "afterCommit": false,
+      "severity": "audit-critical",
+      "payload": {
+        "grant": "AccessGrant",
+        "revoker": "User|null",
+        "reason": "string"
+      },
+      "consumers": [
+        "audit::WriteHighSeverityAuditRow (severity=critical)",
+        "compliance::EmitAccessReviewSignal"
+      ]
+    },
+    {
+      "name": "BulkGrantIssued",
+      "class": "Academorix\\Grant\\Events\\BulkGrantIssued",
+      "trigger": "BulkGrantIssueJob finished processing a CSV batch. Fires ONCE per batch (not per row) so downstream analytics can aggregate correctly.",
+      "afterCommit": true,
+      "payload": {
+        "batchId": "string",
+        "tenant": "Tenant",
+        "actor": "User (the admin who uploaded)",
+        "grantsCreated": "integer",
+        "grantsFailed": "integer",
+        "durationMs": "integer"
+      },
+      "consumers": [
+        "analytics::RecordBulkGrantIssued (functional consent tier)",
+        "notifications::DispatchBulkGrantCompletedNotification (to admin)"
+      ]
+    },
+    {
+      "name": "SelfServiceGrantAttempted",
+      "class": "Academorix\\Grant\\Events\\SelfServiceGrantAttempted",
+      "trigger": "A grantor tried to grant PERMISSIONS THEY DO NOT HOLD (privilege escalation attempt). Refused by observer with GRANT_PRIVILEGE_ESCALATION (403). FIRES IMMEDIATELY (pre-refusal) so audit captures every attempt.",
+      "afterCommit": false,
+      "severity": "audit-critical",
+      "payload": {
+        "attemptedGrantor": "User",
+        "attemptedSubject": "Model",
+        "attemptedResource": "Model",
+        "attemptedPermissions": "array<string>",
+        "grantorHeldPermissions": "array<string> (for gap analysis)",
+        "requestIp": "string|null",
+        "requestUserAgent": "string|null"
+      },
+      "consumers": [
+        "audit::WriteHighSeverityAuditRow (severity=critical)",
+        "compliance::EmitSecurityIncidentSignal",
+        "notifications::DispatchSelfServiceGrantAttemptNotification (to tenant admins + security-team)"
+      ]
+    },
+    {
+      "name": "GrantCrossTenantAttempt",
+      "class": "Academorix\\Grant\\Events\\GrantCrossTenantAttempt",
+      "trigger": "Someone tried to issue a grant where subject.tenant_id !== resource.tenant_id !== grantor.tenant_id — a tenant-isolation breach attempt. Refused by observer with GRANT_CROSS_TENANT (422). FIRES IMMEDIATELY (pre-refusal).",
+      "afterCommit": false,
+      "severity": "audit-critical",
+      "payload": {
+        "attemptedGrantor": "User",
+        "grantorTenantId": "string",
+        "attemptedSubjectId": "string",
+        "attemptedSubjectTenantId": "string|null",
+        "attemptedResourceType": "string",
+        "attemptedResourceId": "string",
+        "attemptedResourceTenantId": "string|null"
+      },
+      "consumers": [
+        "audit::WriteHighSeverityAuditRow (severity=critical)",
+        "compliance::EmitSecurityIncidentSignal",
+        "notifications::DispatchTenantIsolationBreachNotification (to platform ops — this is a platform-level security signal)"
+      ]
+    },
+    {
+      "name": "GrantResourceOrphaned",
+      "class": "Academorix\\Grant\\Events\\GrantResourceOrphaned",
+      "trigger": "ReconcileOrphanedGrantsJob discovered a grant whose resource_id no longer resolves (resource hard-deleted out-of-band). The reconciler auto-revokes the grant with revoked_reason='orphaned_resource' before firing this event.",
+      "afterCommit": true,
+      "payload": {
+        "grant": "AccessGrant (already in revoked state)",
+        "orphanedResourceType": "string",
+        "orphanedResourceId": "string"
+      },
+      "consumers": [
+        "notifications::DispatchGrantRevokedNotification (with orphan-specific copy)",
+        "compliance::EmitDataIntegrityAlert"
+      ]
+    },
+    {
+      "name": "GrantEvaluationCacheHit",
+      "class": "Academorix\\Grant\\Events\\GrantEvaluationCacheHit",
+      "trigger": "GrantOverlayResolver::resolve() returned a decision from the L1 or L2 cache. Sampled per `grants.telemetry.cache_hit_sample_ratio` (default 0.01) to keep volume manageable.",
+      "afterCommit": null,
+      "payload": {
+        "tenantId": "string",
+        "subjectType": "string",
+        "resourceType": "string",
+        "cacheTier": "string (l1_process | l2_redis)",
+        "decision": "string (allow | deny | rbac_fallback)"
+      }
+    },
+    {
+      "name": "GrantEvaluationCacheMiss",
+      "class": "Academorix\\Grant\\Events\\GrantEvaluationCacheMiss",
+      "trigger": "GrantOverlayResolver::resolve() missed both caches and hit the DB. Never sampled — every miss is interesting because they should be rare after warm-up.",
+      "afterCommit": null,
+      "payload": {
+        "tenantId": "string",
+        "subjectType": "string",
+        "resourceType": "string",
+        "queryDurationMs": "integer"
+      }
+    }
+  ],
+  "notes": [
+    "The security-critical events (SelfServiceGrantAttempted / GrantCrossTenantAttempt / GrantDenialIssued / GrantDenialRevoked) fire SYNCHRONOUSLY, not afterCommit. Rationale: even a rolled-back transaction must leave an audit trail for these — the ATTEMPT is what needs recording, not the outcome. Every one of these routes to a critical-severity audit row.",
+    "Cache observability events (GrantEvaluationCacheHit / Miss) are the RED-pattern instrumentation for the resolver's hot path. Miss events feed the SLO — target < 5% miss rate after cold-start.",
+    "GrantIssued / GrantUpdated / GrantRevoked lifecycle events dispatch afterCommit so downstream ACL cache invalidation only fires for durably-persisted rows."
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "id": "delegation.widgets.impersonation-countdown-timer",
+  "title": "Impersonation countdown timer",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widgetName": "delegation.impersonation-countdown-timer",
+  "notes": [
+    "Self-updating timer. Subscribes to the platform.impersonation.{platform_user_id} broadcast so extensions AND force-terminations propagate in real time (< 1s latency).",
+    "The client-side tick loop updates every second locally + reconciles with the broadcast payload; the DB is the source of truth so a drift of > 5s triggers a re-fetch.",
+    "compact mode renders inline (banner) without a label; standard mode renders as a bordered box with the label 'Session ends in'.",
+    "When session.remaining_seconds <= 0, renders 'Ending now' in warning colour + fires an internal 'session-ending' event that the show.screen can react to."
+  ],
+  "props": {
+    "session": {
+      "type": "ImpersonationSession",
+      "required": true,
+      "description": "Session row. Reads .ends_at + .remaining_seconds + .is_active. Subscribed to broadcast under session.impersonator_platform_user_id."
+    },
+    "compact": {
+      "type": "boolean",
+      "default": false,
+      "description": "compact = inline horizontal display without label (for banners); standard = bordered card layout"
+    }
+  },
+  "nodes": [
+    {
+      "kind": "View",
+      "props": {
+        "className": "flex items-center gap-2 px-3 py-1 rounded-md bg-warning-50 text-warning-900"
+      },
+      "bindings": {
+        "hidden": { "$expr": "!session.is_active" }
+      },
+      "children": [
+        {
+          "kind": "Icon",
+          "props": { "name": "clock", "className": "text-warning" }
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs uppercase tracking-wider" },
+          "bindings": {
+            "hidden": { "$ref": "props.compact" },
+            "children": "Session ends in"
+          }
+        },
+        {
+          "kind": "Text",
+          "props": {
+            "className": "font-mono font-semibold tabular-nums",
+            "id": "impersonation-countdown-tick"
+          },
+          "bindings": {
+            "children": {
+              "$expr": "session.remaining_seconds > 60 ? (Math.floor(session.remaining_seconds / 60) + 'm ' + (session.remaining_seconds % 60) + 's') : (session.remaining_seconds + 's')"
+            },
+            "className": {
+              "$expr": "session.remaining_seconds < 300 ? 'font-mono font-semibold tabular-nums text-danger' : 'font-mono font-semibold tabular-nums'"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "clientBehavior": {
+    "tick": {
+      "intervalMs": 1000,
+      "description": "Decrements the local remaining_seconds display. Every 30s ticks re-reads props.session.ends_at from context (in case the source data-source was refreshed via broadcast)."
+    },
+    "subscribe": {
+      "channelExpr": "'platform.impersonation.' + session.impersonator_platform_user_id",
+      "events": [
+        {
+          "name": "impersonation.session_extended",
+          "action": "update ends_at from event payload; recompute remaining_seconds"
+        },
+        {
+          "name": "impersonation.session_ended",
+          "action": "set is_active=false; hide widget"
+        },
+        {
+          "name": "impersonation.session_forced_terminate",
+          "action": "set is_active=false; render 'Force-terminated' badge for 5s; then hide"
+        }
+      ]
+    }
+  }
+}

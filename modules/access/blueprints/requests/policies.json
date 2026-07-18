@@ -1,0 +1,74 @@
+{
+  "id": "academorix://modules/access/requests/policies",
+  "$version": 1,
+  "title": "requests \u2014 authorization policies",
+  "description": "One policy class \u2014 `AccessRequestPolicy` \u2014 with abilities on both `sanctum` (tenant users submitting + reviewing) and `platform_admin` (Academorix ops for cross-tenant compliance). Guard-aware \u2014 each ability checks the caller's guard first and refuses cross-guard actions.",
+  "policies": [
+    {
+      "class": "Academorix\\AccessRequest\\Policies\\AccessRequestPolicy",
+      "target": "Academorix\\AccessRequest\\Data\\AccessRequestData",
+      "guard": ["sanctum", "platform_admin"],
+      "abilities": [
+        {
+          "name": "create",
+          "requires": [
+            "user is authenticated on sanctum guard",
+            "user is a TenantMember of the tenant containing the target resource"
+          ],
+          "description": "Any authenticated TenantMember can submit a request. There is NO permission-string gate on submission \u2014 the whole POINT of access requests is to be self-service for users who lack permissions. Refused only if the caller is not a tenant member (403) or the target resource is not in their tenant (RESOURCE_NOT_IN_CALLER_TENANT 403)."
+        },
+        {
+          "name": "view",
+          "requires": [
+            "access-requests.view AND (caller is requester OR caller is approver OR caller is resource owner)"
+          ],
+          "description": "Show a specific access request. Visibility is restricted so approvers can't browse arbitrary users' requests. The caller is a legitimate observer when they participate in one of three roles for this specific request: requester, resolved approver, resource owner (i.e. created_by on the target)."
+        },
+        {
+          "name": "viewAny",
+          "requires": ["access-requests.viewAny (sanctum)"],
+          "description": "List invitations in the caller's tenant. Default filter still applies (caller sees their own + those they approve; admins with `access-requests.manage_any` see all). Enforcement: admins get a wider scope; regular users see only rows where they participate."
+        },
+        {
+          "name": "withdraw",
+          "requires": [
+            "access-requests.withdraw AND request.requester_id === caller.id AND request.status === 'pending'"
+          ],
+          "description": "Requester withdraws their own pending request. Only the original requester can withdraw \u2014 no admin override in Wave 1b (adds complexity for a corner case)."
+        },
+        {
+          "name": "approve",
+          "requires": [
+            "access-requests.approve AND caller.id in requirement.resolved_approvers[] AND requirement.status === 'pending'"
+          ],
+          "description": "Approver decision \u2014 approve. Delegation-aware: if the caller is a delegate of a named approver via `access/delegation`, the check passes."
+        },
+        {
+          "name": "reject",
+          "requires": [
+            "access-requests.reject AND caller.id in requirement.resolved_approvers[] AND requirement.status === 'pending'",
+            "reject comment MUST be present (min 10 chars) \u2014 enforced at the DTO validation layer, not here"
+          ],
+          "description": "Approver decision \u2014 reject."
+        },
+        {
+          "name": "viewAnyPlatform",
+          "guard": "platform_admin",
+          "requires": ["access-requests.manage_any"],
+          "description": "Cross-tenant list for Academorix ops. Filters + audit context capture on every list read (SOC 2 CC6.1)."
+        },
+        {
+          "name": "viewPlatform",
+          "guard": "platform_admin",
+          "requires": ["access-requests.manage_any"],
+          "description": "Cross-tenant single-request read."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Approver membership check goes through `AccessRequestApproverResolver` which consults `role_delegations` \u2014 so a delegate of a named approver passes the `approve`/`reject` policy without needing to be in the raw resolved_approvers[] list.",
+    "The `view` ability is DELIBERATELY more permissive than requester-only \u2014 approvers need to see the request BEFORE they've decided (or after), resource owners have a legitimate audit interest, and the tenant admin (via `access-requests.manage_any` scoped to sanctum) sees everything. Rows outside these participants are hidden by default.",
+    "No `updateRequest` ability \u2014 access requests are immutable once submitted. The only mutation is withdraw (by requester) or approve/reject (by approver). Every other 'update' is a new request entirely."
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "id": "academorix://modules/rbac/data-classes",
+  "$version": 1,
+  "title": "rbac \u2014 field classification",
+  "description": "Roles + permissions + pivot rows are structural authorization metadata \u2014 internal by default. `role_definitions` labels + descriptions are public (they render in tenant admin UI). No regulated-minor / regulated-health / regulated-financial fields on RBAC's own tables \u2014 those tiers apply to the DATA the permissions protect, not to the permission rows themselves.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "Role.name",
+      "Role.guard_name",
+      "Role.is_system",
+      "Role.description",
+      "Role.sort_order",
+      "Permission.name",
+      "Permission.guard_name",
+      "Permission.is_system",
+      "Permission.description",
+      "Permission.module_slug",
+      "Permission.sort_order",
+      "RoleDefinition.business_type_slugs",
+      "RoleDefinition.label_i18n",
+      "RoleDefinition.description_i18n",
+      "RoleDefinition.default_permissions",
+      "RoleDefinition.min_tier",
+      "RoleDefinition.is_customisable",
+      "RoleDefinition.max_custom_permissions"
+    ],
+    "internal": [
+      "Role.id",
+      "Role.application_id",
+      "Role.tenant_id",
+      "Permission.id",
+      "Permission.application_id",
+      "Permission.tenant_id",
+      "RoleHasPermissions.role_id",
+      "RoleHasPermissions.permission_id",
+      "RoleHasPermissions.application_id",
+      "RoleHasPermissions.tenant_id",
+      "ModelHasRoles.role_id",
+      "ModelHasRoles.model_type",
+      "ModelHasRoles.model_id",
+      "ModelHasRoles.application_id",
+      "ModelHasRoles.tenant_id",
+      "ModelHasRoles.assigned_by",
+      "ModelHasRoles.assigned_at",
+      "ModelHasRoles.expires_at",
+      "ModelHasPermissions.permission_id",
+      "ModelHasPermissions.model_type",
+      "ModelHasPermissions.model_id",
+      "ModelHasPermissions.application_id",
+      "ModelHasPermissions.tenant_id",
+      "RoleDefinition.id",
+      "RoleDefinition.role_id"
+    ],
+    "confidential": [
+      "Role.metadata (may reference internal domain concepts)",
+      "Permission.metadata"
+    ],
+    "restricted": [],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "audit_log": [
+      "ModelHasRoles.assigned_by (identifies the actor \u2014 audited)",
+      "ModelHasRoles.assigned_at",
+      "ModelHasRoles.expires_at",
+      "Role.created_by",
+      "Role.updated_by",
+      "Role.deleted_by",
+      "Permission.created_by",
+      "Permission.updated_by",
+      "Permission.deleted_by"
+    ]
+  },
+  "notes": [
+    "The DATA that permissions protect carries its own classification \u2014 e.g. `athlete.medical.viewAny.branch` protects `regulated_health` rows, but the permission STRING itself is `public`. The permission grants access to a data class; it isn't itself a data class.",
+    "`RoleDefinition.label_i18n` + `description_i18n` are `public` because they render in tenant admin UI. Anyone with `roles.viewAny` sees them.",
+    "GDPR Art. 17 (right to erasure): revoking every role held by an Identity's User rows is required on erasure. The cascade goes: Identity erased \u2192 Users erased \u2192 ModelHasRoles rows for those Users cascade-delete via FK.",
+    "Audit-log rows produced by RoleAssignmentService / RoleObserver never carry PII beyond the actor's user_id. Actor names are resolved via join at read time."
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "id": "academorix://modules/access/requests/attributes",
+  "$version": 1,
+  "title": "requests \u2014 PHP attribute contracts",
+  "description": "Two attributes. `#[AccessRequestable]` marks a class as a legitimate SUBJECT for access requests; boot-time discovery reads it into `AccessRequestableRegistry`. `#[AsAccessRequestListener]` marks a service that reacts to access-request lifecycle events; discovery wires it into the event bus at boot.",
+  "namespace": "Academorix\\AccessRequest\\Attributes",
+  "attributes": [
+    {
+      "name": "AccessRequestable",
+      "class": "Academorix\\AccessRequest\\Attributes\\AccessRequestable",
+      "targets": ["class"],
+      "description": "Marks an Eloquent model as requestable. Populates AccessRequestableRegistry at boot with the (resource_type, class, permissions) tuple. The `access.request_hint_on_denial` middleware consults the registry to decide whether to enrich a 403 body with the `request_url`. The `valid_requestable_resource` rule + `permission_belongs_to_resource_type` rule consult it at write time.",
+      "params": [
+        {
+          "name": "resourceType",
+          "type": "string",
+          "required": true,
+          "description": "Registry key. Must be lowercase snake_case (`invoice`, `athlete`, `trial_session`). Unique across the whole codebase \u2014 discovery fails on collision."
+        },
+        {
+          "name": "permissions",
+          "type": "array<string>",
+          "required": true,
+          "description": "The permission names a caller can legitimately request on THIS model. Every string must be a valid permission on the `sanctum` guard for the caller's application, or the request is rejected with `PERMISSION_NOT_ON_RESOURCE_TYPE`. Example: ['invoices.view', 'invoices.update', 'invoices.export']."
+        },
+        {
+          "name": "displayNameSource",
+          "type": "string",
+          "default": "'name'",
+          "description": "The model attribute or accessor used to render a human-readable subject label in the approver's inbox. Falls back to `id` when the attribute is missing / null."
+        },
+        {
+          "name": "defaultGrantTtlDays",
+          "type": "integer|null",
+          "default": null,
+          "description": "Per-resource-type override for the grant TTL. Falls back to `config('access.requests.default_grant_ttl_days')` (default 7). Higher values are allowed but audited."
+        }
+      ],
+      "example": "use Academorix\\AccessRequest\\Attributes\\AccessRequestable;\n\n#[AccessRequestable(\n    resourceType: 'invoice',\n    permissions: ['invoices.view', 'invoices.update', 'invoices.export'],\n    displayNameSource: 'reference',\n    defaultGrantTtlDays: 14,\n)]\nfinal class Invoice extends Model\n{\n    // \u2026\n}"
+    },
+    {
+      "name": "AsAccessRequestListener",
+      "class": "Academorix\\AccessRequest\\Attributes\\AsAccessRequestListener",
+      "targets": ["class"],
+      "description": "Marks a service as an access-request lifecycle listener. Boot-time discovery walks classes carrying this attribute + registers them with the framework event bus. Preferred over declaring the listener in `$listen[]` on the ServiceProvider because it keeps the wiring local to the class.",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<class-string>",
+          "required": true,
+          "description": "Event class names the listener subscribes to. Every entry must extend `AccessRequestEvent` (see `events.json`). Example: [AccessRequestApproved::class, AccessRequestRejected::class]."
+        },
+        {
+          "name": "queue",
+          "type": "string|null",
+          "default": "null",
+          "description": "Optional Horizon queue name. When set, the listener is auto-wrapped with `ShouldQueue` semantics. Null = synchronous."
+        },
+        {
+          "name": "afterCommit",
+          "type": "boolean",
+          "default": true,
+          "description": "Delivers only after the outer DB transaction commits. Default true \u2014 prevents listeners from acting on rolled-back state changes."
+        }
+      ],
+      "example": "use Academorix\\AccessRequest\\Attributes\\AsAccessRequestListener;\nuse Academorix\\AccessRequest\\Events\\AccessRequestApproved;\nuse Academorix\\AccessRequest\\Events\\AccessRequestRejected;\n\n#[AsAccessRequestListener(\n    events: [AccessRequestApproved::class, AccessRequestRejected::class],\n    queue: 'notifications',\n)]\nfinal class NotifyRequesterOfDecisionListener\n{\n    public function handle(AccessRequestApproved|AccessRequestRejected $event): void\n    {\n        // \u2026\n    }\n}"
+    }
+  ],
+  "discoveryNotes": [
+    "AccessRequestableRegistry discovery runs during ServiceProvider::boot() at priority 34 (after workflow/approvals boots at 35 has not yet run \u2014 the registry is a passive lookup so the ordering is fine; the middleware that consults it fires at request time, well after every module has booted).",
+    "Discovery is cached in `bootstrap/cache/access-requests-registry.php` on first boot; refreshed by `config:cache` clear or `access-requests:cache-clear` command."
+  ]
+}

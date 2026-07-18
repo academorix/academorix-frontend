@@ -1,0 +1,283 @@
+{
+  "id": "access-requests.resources.access-request.show",
+  "title": "Access request",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/access-requests/:id",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "access/requests", "entity": "access-request", "action": "show" },
+  "requiresPermission": "access-requests.viewAny",
+  "dataSources": [
+    {
+      "name": "accessRequest",
+      "kind": "http.get",
+      "url": "/api/v1/access-requests/{id}",
+      "unwrap": "data",
+      "params": { "id": "$route.params.id" },
+      "include": ["decisions", "resource", "materialised_grant", "requester", "approvers"]
+    }
+  ],
+  "subscriptions": [
+    {
+      "channel": "user.{userId}.access-requests",
+      "kind": "private",
+      "filterExpr": "event.data.id === $route.params.id",
+      "onEvent": { "kind": "data.refresh", "source": "accessRequest" }
+    },
+    {
+      "channel": "tenant.{tenantId}.access-requests",
+      "kind": "private",
+      "filterExpr": "event.data.id === $route.params.id",
+      "onEvent": { "kind": "data.refresh", "source": "accessRequest" }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "mx-auto flex max-w-4xl flex-col gap-6 p-6" },
+      "children": [
+        {
+          "id": "breadcrumbs",
+          "kind": "Breadcrumbs",
+          "items": [
+            { "label": "Access requests", "to": "/tenant/access-requests" },
+            { "label": { "$expr": "accessRequest.resource.display_name" }, "isCurrent": true }
+          ]
+        },
+        {
+          "id": "header",
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "id": "identity",
+              "kind": "View",
+              "props": { "className": "flex flex-col gap-1" },
+              "children": [
+                {
+                  "id": "resource",
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$ref": "accessRequest.resource.display_name" } }
+                },
+                {
+                  "id": "meta",
+                  "kind": "View",
+                  "props": { "className": "text-muted flex flex-wrap items-center gap-3 text-sm" },
+                  "children": [
+                    { "id": "status", "kind": "Widget", "widget": "access-requests.status-chip", "props": { "status": { "$ref": "accessRequest.status" }, "size": "md" } },
+                    { "id": "requester", "kind": "Text", "bindings": { "children": { "$expr": "'Requested by: ' + accessRequest.requester.display_name" } } },
+                    { "id": "perms", "kind": "Text", "bindings": { "children": { "$expr": "'Permissions: ' + accessRequest.permissions_wanted.join(', ')" } } }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "actions",
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "id": "withdraw",
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "size": "sm", "children": "Withdraw", "leadingIcon": "no-symbol" },
+                  "bindings": { "isHidden": { "$expr": "accessRequest.status !== 'pending' || accessRequest.requester.id !== identity.id" } },
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.post",
+                      "urlExpr": "'/api/v1/access-requests/' + accessRequest.id + '/withdraw'",
+                      "confirm": { "title": "Withdraw request?", "description": "The approvers will no longer see this in their queue." },
+                      "onSuccess": {
+                        "kind": "sequence",
+                        "steps": [
+                          { "kind": "toast.success", "message": "Request withdrawn" },
+                          { "kind": "data.refresh", "source": "accessRequest" }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "reject",
+                  "kind": "Button",
+                  "props": { "variant": "secondary", "size": "sm", "children": "Reject", "leadingIcon": "x-mark" },
+                  "bindings": {
+                    "isHidden": {
+                      "$expr": "accessRequest.status !== 'pending' || !accessRequest.approvers.some(a => a.id === identity.id)"
+                    }
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.post",
+                      "urlExpr": "'/api/v1/access-requests/' + accessRequest.id + '/reject'",
+                      "confirm": {
+                        "title": "Reject request?",
+                        "description": "The requester will be notified. A comment is required for audit.",
+                        "reasonField": { "label": "Reason", "name": "comment", "kind": "TextArea", "required": true, "minLength": 10 }
+                      },
+                      "onSuccess": {
+                        "kind": "sequence",
+                        "steps": [
+                          { "kind": "toast.success", "message": "Request rejected" },
+                          { "kind": "data.refresh", "source": "accessRequest" }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "approve",
+                  "kind": "Button",
+                  "props": { "variant": "primary", "size": "sm", "children": "Approve", "leadingIcon": "check" },
+                  "bindings": {
+                    "isHidden": {
+                      "$expr": "accessRequest.status !== 'pending' || !accessRequest.approvers.some(a => a.id === identity.id)"
+                    }
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.post",
+                      "urlExpr": "'/api/v1/access-requests/' + accessRequest.id + '/approve'",
+                      "confirm": {
+                        "title": "Approve request?",
+                        "description": "A grant will be created with a 7-day TTL by default.",
+                        "reasonField": { "label": "Comment (optional)", "name": "comment", "kind": "TextArea", "required": false }
+                      },
+                      "onSuccess": {
+                        "kind": "sequence",
+                        "steps": [
+                          { "kind": "toast.success", "message": "Request approved. Grant will be materialised shortly." },
+                          { "kind": "data.refresh", "source": "accessRequest" }
+                        ]
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "main",
+          "kind": "View",
+          "props": { "className": "grid gap-6 md:grid-cols-3" },
+          "children": [
+            {
+              "id": "reason-panel",
+              "kind": "Card",
+              "props": { "className": "md:col-span-2 flex flex-col gap-4" },
+              "children": [
+                { "id": "reason-header", "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Reason" } },
+                {
+                  "id": "reason-body",
+                  "kind": "Text",
+                  "props": { "as": "p", "className": "text-sm whitespace-pre-line" },
+                  "bindings": { "children": { "$ref": "accessRequest.reason" } }
+                },
+                {
+                  "id": "audit-header",
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "text-lg font-medium mt-4", "children": "Timeline" }
+                },
+                {
+                  "id": "audit-timeline",
+                  "kind": "Timeline",
+                  "bindings": { "items": { "$ref": "accessRequest.audit_trail" } },
+                  "itemTemplate": {
+                    "id": "audit-item",
+                    "kind": "TimelineItem",
+                    "bindings": {
+                      "occurredAt": { "$ref": "item.occurred_at" },
+                      "variant": {
+                        "$expr": "item.event === 'rejected' ? 'danger' : (item.event === 'approved' || item.event === 'grant_materialised' ? 'success' : (item.event === 'expired' ? 'warning' : 'info'))"
+                      }
+                    },
+                    "children": [
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex flex-col gap-1" },
+                        "children": [
+                          {
+                            "kind": "Text",
+                            "props": { "className": "font-medium" },
+                            "bindings": { "children": { "$expr": "item.event.charAt(0).toUpperCase() + item.event.slice(1).replace(/_/g, ' ')" } }
+                          },
+                          {
+                            "kind": "Text",
+                            "props": { "className": "text-muted text-sm" },
+                            "bindings": {
+                              "children": {
+                                "$expr": "formatDateTime(item.occurred_at) + (item.note ? ' · ' + item.note : '')"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "details-panel",
+              "kind": "Card",
+              "props": { "className": "flex flex-col gap-4" },
+              "children": [
+                { "id": "details-header", "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Details" } },
+                {
+                  "id": "details-list",
+                  "kind": "DescriptionList",
+                  "items": [
+                    { "label": "Requester", "valueExpr": "accessRequest.requester.display_name" },
+                    { "label": "Resource", "valueExpr": "accessRequest.resource.display_name" },
+                    { "label": "Permissions", "valueExpr": "accessRequest.permissions_wanted.join(', ')" },
+                    { "label": "Requested", "valueExpr": "formatDateTime(accessRequest.requested_at)" },
+                    { "label": "Decided", "valueExpr": "accessRequest.decided_at ? formatDateTime(accessRequest.decided_at) : '\u2014'" },
+                    { "label": "Expires", "valueExpr": "formatDateTime(accessRequest.expires_at)" },
+                    { "label": "Reminders sent", "valueExpr": "accessRequest.reminders_sent" },
+                    {
+                      "label": "Grant",
+                      "valueExpr": "accessRequest.materialised_grant ? accessRequest.materialised_grant.id : '\u2014'",
+                      "hiddenExpr": "accessRequest.status !== 'approved'"
+                    }
+                  ]
+                },
+                {
+                  "id": "approvers-header",
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "text-lg font-medium mt-2", "children": "Approvers" }
+                },
+                {
+                  "id": "approvers-list",
+                  "kind": "List",
+                  "bindings": { "items": { "$ref": "accessRequest.approvers" } },
+                  "itemTemplate": {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2 py-1" },
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-sm" },
+                        "bindings": { "children": { "$ref": "item.display_name" } }
+                      },
+                      {
+                        "kind": "Chip",
+                        "props": { "size": "xs", "variant": "neutral" },
+                        "bindings": {
+                          "hidden": { "$expr": "!item.is_delegate_of" },
+                          "children": { "$expr": "'Delegate of ' + item.is_delegate_of" }
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

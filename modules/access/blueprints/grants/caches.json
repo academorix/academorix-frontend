@@ -1,0 +1,82 @@
+{
+  "id": "academorix://modules/grants/caches",
+  "$version": 1,
+  "title": "grants — cache keys",
+  "description": "Cache keys this module owns. Two-tier evaluation cache (L1 in-process per-worker, L2 Redis shared) drives the resolver's hot path — every permission check touches L1 first. Also tenant-scoped counters for entitlement enforcement + a warmable top-grants set.",
+  "driver": "redis",
+  "keys": [
+    {
+      "pattern": "grants:eval:l1:{tenant_id}:{subject_type}:{subject_id}:{resource_type}:{resource_id}",
+      "description": "L1 evaluation cache. Per-worker in-process (APCu / array driver). Holds the resolved (decision, permissions[]) tuple for one (subject, resource) pair. Reads: every permission check. Writes: on resolve when the L1 slot was cold. Invalidation: per-subject flush on GrantIssued / Updated / Revoked / Expired via InvalidateGrantCacheJob.",
+      "ttlSeconds": 300,
+      "tags": ["grants", "grants:eval", "grants:eval:l1"],
+      "invalidatedBy": [
+        "InvalidateGrantCacheJob (fired per lifecycle event)",
+        "GrantCacheWarmerHook (tenant init — replaces stale entries)"
+      ],
+      "storageTier": "l1_process"
+    },
+    {
+      "pattern": "grants:eval:l2:{tenant_id}:{subject_type}:{subject_id}:{resource_type}:{resource_id}",
+      "description": "L2 evaluation cache. Redis shared across workers. Same shape as L1 but survives worker restarts. Reads: on L1 miss. Writes: on L1 miss + resolve. Invalidation: cascades from L1 invalidation.",
+      "ttlSeconds": 3600,
+      "tags": ["grants", "grants:eval", "grants:eval:l2"],
+      "invalidatedBy": [
+        "InvalidateGrantCacheJob",
+        "GrantCacheWarmerHook"
+      ],
+      "storageTier": "l2_redis"
+    },
+    {
+      "pattern": "grants:eval:subject_footprint:{tenant_id}:{subject_type}:{subject_id}",
+      "description": "The COUNT of active grants for this subject. Warmed by grants.warm_grant_cache middleware; used to decide whether to walk the DB on first check (0 grants = skip resolver entirely, fall through to RBAC).",
+      "ttlSeconds": 300,
+      "tags": ["grants", "grants:footprint"],
+      "invalidatedBy": ["InvalidateGrantCacheJob"]
+    },
+    {
+      "pattern": "grants:active_count:{tenant_id}",
+      "description": "Cached count of active (non-terminal) grants for the tenant. Consumed by the grants.max_active entitlement check + the admin dashboard header.",
+      "ttlSeconds": 60,
+      "tags": ["tenant", "grants"],
+      "invalidatedBy": ["AccessGrantObserver@created", "AccessGrantObserver@updated (state dirty)"]
+    },
+    {
+      "pattern": "grants:warm:top:{tenant_id}",
+      "description": "Cached set of the top-N most-recently-accessed grants for this tenant (N = settings.grants.cache.warm_top_grants). Pre-loaded by GrantCacheWarmerHook on tenant init. Structure: sorted set (grant_id → last_access_at). Consumed by the warm-cache middleware to prioritise which grants to pre-load per-request.",
+      "ttlSeconds": 3600,
+      "tags": ["grants", "grants:warm"]
+    },
+    {
+      "pattern": "grants:target_registry",
+      "description": "Cached copy of GrantableRegistry (resource_type → { class, preflight_validator, permission_prefix, display_label }). Warmed at boot; refreshed on config-cache clear.",
+      "ttlSeconds": 3600,
+      "tags": ["grants"],
+      "note": "Un-prefixed — application-wide registry, not tenant-scoped."
+    },
+    {
+      "pattern": "grants:permission_catalogue",
+      "description": "Cached copy of the access/rbac permissions table (name -> { id, guard_name }) for PermissionCatalogueValidator. Refreshed when access/rbac's permissions table changes (via its own cache-invalidation event).",
+      "ttlSeconds": 900,
+      "tags": ["grants", "access-rbac"],
+      "note": "Un-prefixed — permissions table is platform-scoped (per-guard + per-application, but not per-tenant)."
+    }
+  ],
+  "invalidationRules": [
+    {
+      "trigger": "GrantIssued OR GrantUpdated OR GrantRevoked OR GrantExpired",
+      "action": "Dispatch InvalidateGrantCacheJob with (tenant, subject, resource) keys → flushes L1 + L2 for that (subject, resource) pair AND the subject_footprint counter.",
+      "reasoning": "Cache invalidation is per-subject (all subject_id keys for the affected subject) rather than per-grant so downstream policy checks with different resource_ids don't return stale data."
+    },
+    {
+      "trigger": "Redis instance failover",
+      "action": "L1 continues serving (in-process, unaffected). L2 miss ratio spikes for the failover window; resolver falls back to DB.",
+      "reasoning": "L1 + L2 hierarchy is designed to degrade cleanly — losing L2 means slower checks, not incorrect checks."
+    },
+    {
+      "trigger": "Worker restart / deploy",
+      "action": "L1 is cold on every fresh worker; L2 still holds recent entries; the first checks per (subject, resource) pay the L2 read cost, not the DB cost.",
+      "reasoning": "L1 is not persisted (in-process). GrantCacheWarmerHook and grants.warm_grant_cache middleware together bring L1 up quickly."
+    }
+  ]
+}

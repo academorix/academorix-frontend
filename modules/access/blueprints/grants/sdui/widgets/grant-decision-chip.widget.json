@@ -1,0 +1,100 @@
+{
+  "id": "grants.decision-chip",
+  "title": "Grant decision chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip that renders an AccessGrant's decision + terminal state. Semantic colours: allow + active = success (green); deny + active = danger (red) with a warning icon; revoked = neutral (slate); expired = warning (amber). Consumed by the grant list, show screen, and every resource screen that lists grants inline.",
+  "props": {
+    "decision": {
+      "type": "string",
+      "required": true,
+      "enum": ["allow", "deny"],
+      "description": "The AccessGrant.decision value."
+    },
+    "isActive": {
+      "type": "boolean",
+      "required": true,
+      "description": "The AccessGrant.is_active computed value. Terminal grants (expired / revoked) render differently."
+    },
+    "isRevoked": {
+      "type": "boolean",
+      "default": false
+    },
+    "isExpired": {
+      "type": "boolean",
+      "default": false
+    },
+    "isPermanent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Adds an infinity-icon prefix when expires_at IS NULL."
+    },
+    "size": {
+      "type": "string",
+      "default": "sm",
+      "enum": ["xs", "sm", "md"]
+    },
+    "showIcon": {
+      "type": "boolean",
+      "default": true
+    },
+    "showLabel": {
+      "type": "boolean",
+      "default": true,
+      "description": "Render the text label. False = icon-only for dense tables."
+    }
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "chip",
+      "kind": "Chip",
+      "props": {
+        "className": "focus-ring"
+      },
+      "bindings": {
+        "size": { "$ref": "props.size" },
+        "variant": {
+          "$expr": "props.isRevoked ? 'neutral' : (props.isExpired ? 'warning' : (props.decision === 'deny' ? 'danger' : 'success'))"
+        }
+      },
+      "children": [
+        {
+          "id": "permanent-icon",
+          "kind": "Icon",
+          "props": {
+            "name": "infinity",
+            "className": "size-3 mr-1"
+          },
+          "bindings": {
+            "hidden": { "$expr": "!(props.isPermanent && props.isActive)" }
+          }
+        },
+        {
+          "id": "icon",
+          "kind": "Icon",
+          "props": {
+            "className": "size-3 mr-1"
+          },
+          "bindings": {
+            "hidden": { "$expr": "!props.showIcon" },
+            "name": {
+              "$expr": "props.isRevoked ? 'ban' : (props.isExpired ? 'clock' : (props.decision === 'deny' ? 'no-symbol' : 'check-circle'))"
+            }
+          }
+        },
+        {
+          "id": "label",
+          "kind": "Text",
+          "props": { "as": "span" },
+          "bindings": {
+            "hidden": { "$expr": "!props.showLabel" },
+            "children": {
+              "$expr": "props.isRevoked ? 'Revoked' : (props.isExpired ? 'Expired' : (props.decision === 'deny' ? 'Deny' : (props.isPermanent ? 'Allow (permanent)' : 'Allow')))"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

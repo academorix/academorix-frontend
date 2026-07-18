@@ -1,0 +1,43 @@
+{
+  "$version": 1,
+  "title": "DelegationType enum seed",
+  "description": "Canonical delegation-type taxonomy. Consumed at boot by `DelegationType` enum registration + by the `valid_delegation_window` observer path. Adding a new type requires a schema migration (delegation_type column is an enum in Postgres) + a coordinated update to the emergency-flow entitlement checker.",
+  "columns_note": "Fields on each row: `key` (enum member name, snake_case, stable identifier), `display_name` (human-readable label; i18n keys handled separately), `slug` (URL-safe form for API filters), `sort_order` (picker sort ascending), `default_min_notice_hours` (baseline notice period for this type; can be overridden per-tenant), `bypasses_min_notice` (whether this type ignores the tenant's min_advance_notice_hours setting), `requires_entitlement` (which entitlement gates this type).",
+  "delegation_types": [
+    {
+      "key": "oof",
+      "display_name": "Out of office",
+      "slug": "oof",
+      "sort_order": 1,
+      "default_min_notice_hours": 0,
+      "bypasses_min_notice": false,
+      "requires_entitlement": "role_delegation",
+      "description": "The everyday OOF pattern — user is on vacation / sick / attending a conference and delegates their responsibilities for a bounded window. Symmetric — no expectation of a permanent hand-over. Typical duration: 1-14 days."
+    },
+    {
+      "key": "handover",
+      "display_name": "Handover",
+      "slug": "handover",
+      "sort_order": 2,
+      "default_min_notice_hours": 0,
+      "bypasses_min_notice": false,
+      "requires_entitlement": "role_delegation",
+      "description": "Longer-lived transition, e.g. a team lead departing and handing over management responsibilities to their successor while HR completes the formal role reassignment. Typical duration: 14-90 days. The rest of the audit trail treats this differently — SOC 2 evidence review flags handover-type delegations for extra review because they often correlate with employment transitions."
+    },
+    {
+      "key": "emergency",
+      "display_name": "Emergency",
+      "slug": "emergency",
+      "sort_order": 3,
+      "default_min_notice_hours": 0,
+      "bypasses_min_notice": true,
+      "requires_entitlement": "emergency_delegation",
+      "description": "Immediate delegation bypassing the tenant's min_advance_notice_hours setting. Reserved for genuine emergencies (an unplanned illness taking a delegator out mid-day; a security incident requiring immediate access hand-off). Requires the tenant to hold the emergency_delegation entitlement (medium + enterprise). Audited with higher scrutiny — the SOC 2 report highlights emergency delegations by count + rate + duration."
+    }
+  ],
+  "notes": [
+    "Adding a new type requires: (1) schema migration to extend the Postgres enum on delegation_type column, (2) update this file + regenerate the enum class, (3) update the DelegationType cast, (4) coordinate with the compliance module if the new type has different audit-trail semantics.",
+    "The three types share the SAME storage shape — the difference is behavioural: which entitlement gates it + how the observer treats it + how the SOC 2 report labels it. This is deliberate; a new type is a semantic distinction on the same row, not a new table.",
+    "The `emergency` type does NOT create audit rows on a separate stream; it stamps the standard delegation row with delegation_type='emergency' + the audit row inherits that label. Compliance reports filter by that label."
+  ]
+}

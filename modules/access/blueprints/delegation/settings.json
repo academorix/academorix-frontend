@@ -1,0 +1,131 @@
+{
+  "id": "academorix://modules/delegation/settings",
+  "$version": 1,
+  "title": "delegation — settings",
+  "description": "Tenant-facing preferences for role delegation lifecycle notifications + per-user delegation preferences.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "delegation",
+      "class": "Academorix\\Delegation\\Settings\\DelegationSettings",
+      "label": "Delegation",
+      "description": "Tenant-wide delegation policy — window caps, notification behaviour, emergency-flow eligibility.",
+      "icon": "user-group",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 20,
+      "permission": "delegations.viewAny",
+      "sections": [
+        {
+          "label": "Window policy",
+          "description": "Caps on delegation windows within this tenant. Cannot exceed the platform hard cap of 90 days.",
+          "icon": "clock",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "max_delegation_days",
+              "controlType": "number",
+              "label": "Maximum delegation duration (days)",
+              "defaultValue": 90,
+              "min": 1,
+              "max": 90,
+              "helpText": "Set below the platform cap if your compliance regime requires shorter windows.",
+              "sortOrder": 1
+            },
+            {
+              "name": "min_advance_notice_hours",
+              "controlType": "number",
+              "label": "Minimum advance notice (hours)",
+              "defaultValue": 0,
+              "min": 0,
+              "max": 168,
+              "helpText": "How far in advance a delegation must be created before it can activate. 0 = immediate. Emergency delegations bypass this if the tenant holds the emergency_delegation entitlement.",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Notification cadence",
+          "icon": "bell-alert",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "notify_delegate_on_activation",
+              "controlType": "toggle",
+              "label": "Notify delegate when delegation activates",
+              "defaultValue": true,
+              "sortOrder": 1
+            },
+            {
+              "name": "notify_delegator_on_expiration",
+              "controlType": "toggle",
+              "label": "Notify delegator on expiration",
+              "defaultValue": true,
+              "sortOrder": 2
+            },
+            {
+              "name": "notify_expiring_hours_ahead",
+              "controlType": "number",
+              "label": "Send 'expiring soon' notice (hours before end)",
+              "defaultValue": 24,
+              "min": 1,
+              "max": 168,
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Emergency delegation",
+          "icon": "exclamation-triangle",
+          "sortOrder": 3,
+          "requiresEntitlement": "emergency_delegation",
+          "fields": [
+            {
+              "name": "emergency_type_available",
+              "controlType": "toggle",
+              "label": "Allow emergency-type delegations",
+              "defaultValue": true,
+              "helpText": "Bypasses the min_advance_notice_hours check. Only requestable by users holding the emergency_delegation permission (default: admin + owner).",
+              "sortOrder": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "delegation_user",
+      "class": "Academorix\\Delegation\\Settings\\DelegationUserSettings",
+      "label": "My delegations",
+      "description": "Per-user delegation notification preferences.",
+      "icon": "user-circle",
+      "scope": "user",
+      "public": true,
+      "sortOrder": 40,
+      "sections": [
+        {
+          "label": "Notifications",
+          "icon": "bell",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "notify_on_inbound_delegation",
+              "controlType": "toggle",
+              "label": "Notify me when I receive a delegation",
+              "defaultValue": true,
+              "helpText": "You are always notified for delegation.activated (regulatory — cannot be disabled) but you can turn off the informational delegation.created notice here.",
+              "sortOrder": 1
+            },
+            {
+              "name": "notify_on_outbound_expiring",
+              "controlType": "toggle",
+              "label": "Notify me 24h before my outbound delegation expires",
+              "defaultValue": true,
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

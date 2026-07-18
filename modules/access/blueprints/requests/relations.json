@@ -1,0 +1,104 @@
+{
+  "id": "academorix://modules/access/requests/relations",
+  "$version": 1,
+  "title": "requests \u2014 cross-module relations (no local tables)",
+  "description": "This module owns NO tables and therefore has NO anchors. Every relation documented here is either (a) a READ this module performs against another module's table or (b) a WRITE this module orchestrates on another module's table via that module's public API. The `AccessRequest` DTO is a PROJECTION across these tables \u2014 it is not itself an Eloquent model. Consumers who want a single object should reach for the DTO, not join manually.",
+  "anchors": [],
+  "readsFrom": [
+    {
+      "module": "workflow/approvals",
+      "table": "approval_instances",
+      "usedFor": [
+        "Every access-request read is a projection over this table filtered by `action_key='access.grants.create'`.",
+        "The `AccessRequestPresenter` binding hydrates the underlying instance + its `context_json` + its resolved requirements when producing an `AccessRequest` DTO."
+      ],
+      "queryHotPaths": [
+        {
+          "purpose": "list caller's own requests (`GET /api/v1/access-requests`)",
+          "sql": "SELECT * FROM approval_instances WHERE action_key = 'access.grants.create' AND tenant_id = :tenant AND requester_id = :caller ORDER BY requested_at DESC",
+          "index_needed": "workflow/approvals should carry an index on (action_key, tenant_id, requester_id, requested_at DESC) \u2014 tracked as a dependency in workflow/approvals' relations.json"
+        },
+        {
+          "purpose": "list requests I'm an approver for (`GET /api/v1/access-requests/pending-my-review`)",
+          "sql": "SELECT ai.* FROM approval_instances ai JOIN approval_requirements ar ON ar.instance_id = ai.id WHERE ai.action_key = 'access.grants.create' AND ai.status = 'pending' AND ar.resolved_approvers::jsonb ? :caller_id ORDER BY ai.requested_at DESC",
+          "index_needed": "GIN index on approval_requirements.resolved_approvers"
+        }
+      ]
+    },
+    {
+      "module": "workflow/approvals",
+      "table": "approval_requirements",
+      "usedFor": [
+        "Resolving the approvers list for the AccessRequest projection.",
+        "The `pending-my-review` endpoint filters on `resolved_approvers @> [caller_id]` (Postgres JSONB containment)."
+      ]
+    },
+    {
+      "module": "workflow/approvals",
+      "table": "approval_decisions",
+      "usedFor": [
+        "The DTO surfaces the count + summary of approve/reject decisions to the requester so they can see who decided what.",
+        "Rejection reason is projected from the most recent `approval_decisions.comment` where `decision='reject'` on the failing requirement."
+      ]
+    },
+    {
+      "module": "access/grants",
+      "table": "access_grants",
+      "usedFor": [
+        "When status='approved', the DTO projects the resulting access_grants row (LEFT JOIN by `source='access_request' AND source_reference=<instance_id>`) so a single API call returns both the request outcome AND the grant that was materialised. Zero rows on the LEFT JOIN when the grant was later revoked."
+      ]
+    },
+    {
+      "module": "access/rbac",
+      "table": "permissions",
+      "usedFor": [
+        "The `permission_belongs_to_resource_type` validation rule cross-checks that each `permissions_wanted` string exists on the target resource type's declared permission set (from `#[AccessRequestable(permissions: [...])]`) AND is a valid permission name in `permissions` for the sanctum guard + caller's application."
+      ]
+    },
+    {
+      "module": "tenancy",
+      "table": "tenants",
+      "usedFor": [
+        "Requester's active tenant is derived from the `X-Application-Id` + Sanctum PAT stack. The `resource_in_caller_tenant` rule confirms `<resource>.tenant_id === caller.active_tenant_id`."
+      ]
+    },
+    {
+      "module": "user",
+      "table": "users",
+      "usedFor": [
+        "Requester + approver + resource-owner projections. All three are `User` rows."
+      ]
+    }
+  ],
+  "writesTo": [
+    {
+      "module": "workflow/approvals",
+      "via": "The `approve` middleware creates the `approval_instance` in response to the dispatched `CreateAccessRequestAction`. This module never writes to approval_instances directly \u2014 it dispatches the action and lets the middleware do the write. This preserves the whole approval-engine invariant chain (context snapshot, template resolution, requirements graph, timer registration).",
+      "actions": ["POST /api/v1/access-requests"]
+    },
+    {
+      "module": "access/grants",
+      "via": "`AccessRequestGrantMaterializer` calls `GrantIssuer::issue()` from `access/grants`. Never manipulates `access_grants` directly. Ensures the grant carries `source='access_request'` + `source_reference=<approval_instance_id>` for traceability (queryable both ways).",
+      "listeners": ["AccessRequestGrantMaterializer (on ApprovalExecuted)"]
+    }
+  ],
+  "referencesTo": {
+    "description": "Approval instances created by this module carry cross-module references in their context_json. This shape is a CONTRACT between this module and workflow/approvals \u2014 changing it requires a coordinated migration.",
+    "context_json_shape_for_access_grants_create": {
+      "resource_type": "string \u2014 e.g. 'invoice', 'athlete'",
+      "resource_id": "string \u2014 the resource's prefixed ULID",
+      "resource_owner_id": "string|null \u2014 resource.created_by, for fallback approver resolution",
+      "permissions_wanted": "string[] \u2014 subset of the resource's declared permission set",
+      "requester_reason": "string \u2014 the human-readable rationale",
+      "requester_role_names": "string[] \u2014 snapshot at submit time, informs rule evaluation",
+      "requester_tenant_id": "string \u2014 the tenant we're operating in",
+      "approver_summary": "object \u2014 resolved at approval time; contains first_approver_id + total_approvers_count",
+      "materialised_grant_id": "string|null \u2014 written back after the grant is created; enables round-trip lookup"
+    }
+  },
+  "notes": [
+    "This module INTENTIONALLY has no `x-eloquent` model contract. Consumers who want to interact with an access request programmatically should use the `AccessRequestPresenter` binding to hydrate a DTO, not touch approval_instances directly.",
+    "Cross-tenant references are forbidden \u2014 the `resource_in_caller_tenant` rule catches attempts. Because approval_instances are already scoped by `tenant_id`, this constraint is enforced at BOTH the write path (validation rule) AND the read path (BelongsToTenant global scope on the workflow/approvals model).",
+    "The `materialised_grant_id` writeback into `approval_instances.context_json` after `AccessRequestGrantIssued` is the only mutation this module performs on workflow/approvals' owned rows. It goes through `workflow/approvals::AppendInstanceContextAction` \u2014 never a raw update."
+  ]
+}

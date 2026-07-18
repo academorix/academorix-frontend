@@ -1,0 +1,47 @@
+{
+  "id": "academorix://modules/grants/features",
+  "$version": 1,
+  "title": "grants — feature keys",
+  "description": "Business features this module publishes for tenant-facing UX. Resolved by the tenant client from GET /api/auth/me → data.features. Distinct from entitlements (quota + gate) — features control whether the UI SHOWS a capability. Downstream consumer modules (finance, sports, teams, documents) also gate their share-access buttons behind `grants.share_access`.",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features (string[])"
+  },
+  "features": [
+    {
+      "key": "grants.share_access",
+      "displayName": "Share access",
+      "description": "Enables the Google-Docs-style 'Share' dialog on grantable resources. Members can grant access on resources they own; admins can grant on any resource. Available on every plan.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "small", "medium", "enterprise"]
+    },
+    {
+      "key": "grants.audit_view",
+      "displayName": "Access audit view",
+      "description": "Enables the /audit-resource-access screen that enumerates every grant on a specific resource + the /audit-principal screen that lists every grant a principal holds. Available from small plan up.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "grants.bulk_share",
+      "displayName": "Bulk share",
+      "description": "Surfaces the 'Upload CSV' button on the grant management screen. Medium plan+.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "grants.deny_grants",
+      "displayName": "Explicit deny grants",
+      "description": "Surfaces the 'Deny access' option in the share-access dialog. Deny grants are inviolable — the UI adds a confirmation modal explaining the semantics before submit. Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "grants.access_reviews",
+      "displayName": "Periodic access reviews",
+      "description": "Enables the quarterly access-review workflow: a scheduled reminder to a compliance officer to walk the `grants:audit-principal` output for every user in a role and confirm continued need. ISO 27001 A.9.2.5 evidence. Enterprise + compliance module.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
+}

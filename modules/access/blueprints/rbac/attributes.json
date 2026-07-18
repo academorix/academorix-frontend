@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/rbac/attributes",
+  "$version": 1,
+  "title": "rbac \u2014 PHP attribute contracts",
+  "description": "Two attributes. `#[AsRbacListener]` marks a class as a subscriber to RBAC-lifecycle events (role/permission mutation, principal role change, cache invalidation, system-role modification refused, application/guard mismatch). `#[ProvidesPermissions]` on a service provider signals the boot-time discovery loader (`PermissionCatalogueLoader`) that this module contributes to the seed permission catalogue \u2014 read from the module's `permissions.json` blueprint. NOTE: `#[RequirePermission]` and `#[RequireRole]` are FRAMEWORK primitives owned by `backend-packages/authorization/` \u2014 they are NOT re-declared here (design.md \u00a72 D-A1 framework/business split). This file declares only the BUSINESS-tier attributes.",
+  "namespace": "Academorix\\Rbac\\Attributes",
+  "attributes": [
+    {
+      "name": "AsRbacListener",
+      "class": "Academorix\\Rbac\\Attributes\\AsRbacListener",
+      "targets": ["class"],
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": ["*"],
+          "description": "Which RBAC events this class reacts to. Wildcard `*` = every event under `Academorix\\Rbac\\Events\\*`. Specific list e.g. `['RoleAssignedToPrincipal', 'RoleRevokedFromPrincipal']` subscribes to those only. Validated against the events map at boot; typos abort application boot."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": "notifications",
+          "description": "Queue name for asynchronous dispatch. `null` = synchronous (reserved for cache-invalidation listeners that MUST run before the response is sent). Common values: `notifications` (default), `notifications-critical` (SystemRoleModificationRefused, GuardMismatchRefused, ApplicationMismatchRefused \u2014 compliance-critical), `audit` (write-heavy compliance streams)."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Listener execution order. Lower runs first. Framework-shipped invalidation listeners occupy 1\u201319 (must run first so the cache doesn't lag the DB). Framework audit listeners occupy 20\u201399. User-defined listeners default to 100."
+        }
+      ],
+      "example": "#[AsRbacListener(events: ['SystemRoleModificationRefused'], queue: 'notifications-critical', priority: 5)]\nfinal class AlertSecurityOnSystemRoleTampering\n{\n    public function handle(SystemRoleModificationRefused $event): void\n    {\n        // Pages the security team on-call\n    }\n}"
+    },
+    {
+      "name": "ProvidesPermissions",
+      "class": "Academorix\\Rbac\\Attributes\\ProvidesPermissions",
+      "targets": ["class"],
+      "params": [
+        {
+          "name": "module",
+          "type": "string",
+          "required": true,
+          "description": "The module slug this provider contributes permissions for \u2014 must match the module's `module.json:name`. E.g. `invoices`, `athletes`, `federation`. The loader uses this slug to (a) locate the module's `permissions.json` blueprint and (b) namespace the permissions so the catalogue can be reconciled per-module at deploy time."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Load order across providers contributing permissions. Framework providers (foundation, compliance, auth) load at priority 1\u201310 so their permissions exist before any domain module needs them. Domain modules default to 100."
+        }
+      ],
+      "example": "#[ProvidesPermissions(module: 'invoices', priority: 100)]\nfinal class InvoicesServiceProvider extends ServiceProvider\n{\n    // At boot, PermissionCatalogueLoader reads modules/finance/blueprints/invoices/permissions.json\n    // and UPSERTs the permissions into the `permissions` table.\n}"
+    }
+  ],
+  "note": "The framework-tier attributes (`#[RequirePermission]`, `#[RequireRole]`, `#[RequirePermissionAny]`, `#[RequirePermissionAll]`) live in `backend-packages/authorization/` and are consumed here \u2014 they gate every route via the `rbac.enforce_permission` / `rbac.enforce_role` middleware. See `middleware.json`."
+}

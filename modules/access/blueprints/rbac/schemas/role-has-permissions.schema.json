@@ -1,0 +1,82 @@
+{
+  "id": "academorix://modules/rbac/schemas/role-has-permissions",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "RoleHasPermissions (spatie pivot, augmented)",
+  "description": "Spatie's shipped `role_has_permissions` pivot table augmented with denormalised `application_id` + `tenant_id` for query-plan efficiency. Enforced by RoleHasPermissionsObserver \u2014 refuses cross-guard + cross-application writes with GuardMismatch / ApplicationMismatch.",
+  "type": "object",
+  "x-module": "rbac",
+  "x-eloquent": {
+    "note": "This is a Spatie-managed pivot \u2014 no dedicated Eloquent model. Spatie exposes it via Role::permissions() belongsToMany + Permission::roles() belongsToMany. Our observer attaches for the enforcement + denormalisation logic.",
+    "observers": ["RoleHasPermissionsObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "description": "Spatie ships the pivot with columns (permission_id, role_id). Our migration ADDS (application_id, tenant_id, audit columns).",
+    "columns": {
+      "role_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "roles", "column": "id", "onDelete": "cascade" }
+      },
+      "permission_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "permissions", "column": "id", "onDelete": "cascade" }
+      },
+      "application_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "applications", "column": "id", "onDelete": "restrict" },
+        "description": "Denormalised from role.application_id at write time. RoleHasPermissionsObserver enforces role.application_id === permission.application_id when both non-null."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" },
+        "description": "Denormalised from role.tenant_id."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["role_id", "permission_id"],
+        "unique": true,
+        "name": "role_has_permissions_pkey",
+        "description": "Composite primary key \u2014 one permission per role."
+      },
+      {
+        "columns": ["permission_id"],
+        "unique": false,
+        "name": "role_has_permissions_permission_idx",
+        "description": "Reverse lookup: given a permission, what roles hold it?"
+      },
+      {
+        "columns": ["application_id", "tenant_id"],
+        "unique": false,
+        "name": "role_has_permissions_scope_idx"
+      }
+    ]
+  },
+  "required": ["role_id", "permission_id", "created_at", "updated_at"],
+  "properties": {
+    "role_id": { "type": "string", "pattern": "^rol_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "permission_id": { "type": "string", "pattern": "^per_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "application_id": { "type": ["string", "null"], "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": ["string", "null"], "pattern": "^tnt_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "none",
+    "note": "Pivot rows are not returned to clients directly. Role.permissions() and Permission.roles() belongsToMany relations return the JOINED permissions/roles respectively."
+  }
+}

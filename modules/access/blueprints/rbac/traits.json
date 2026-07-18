@@ -1,0 +1,137 @@
+{
+  "id": "academorix://modules/rbac/traits",
+  "$version": 1,
+  "title": "rbac \u2014 trait composition",
+  "description": "Four owned traits. `HasRoles` + `HasPermissions` are the composable traits every principal-type model uses to participate in RBAC \u2014 they wrap spatie's shipped traits and route the hot-path check through PermissionResolver. `HasResolvedPermissions` exposes a computed accessor for the cached compact permission array. `IsPermissionable` is a marker on models that policies protect \u2014 signals reflection-based tooling that the model is a permission target.",
+  "owned": [
+    {
+      "trait": "Academorix\\Rbac\\Concerns\\HasRoles",
+      "description": "Composable trait for principal-type models. EXTENDS `Spatie\\Permission\\Traits\\HasRoles` and overrides `hasPermissionTo(...)` to route through `PermissionResolver::resolve()` \u2014 so RBAC \u222a grants \u2212 denies + delegation compose at query-time. Composed by User, PlatformUser, ServiceAccount.",
+      "public": true,
+      "usedBy": [
+        "identity::User",
+        "identity::PlatformUser",
+        "identity::ServiceAccount"
+      ],
+      "underlying_package": "spatie/laravel-permission",
+      "wraps": "Extends spatie's HasRoles. Every method spatie ships continues to work; the ONE override is hasPermissionTo() which now goes through PermissionResolver. Compatible with `->assignRole()`, `->syncRoles()`, `->hasRole()`, `->hasAllRoles()`.",
+      "conflicts_with": []
+    },
+    {
+      "trait": "Academorix\\Rbac\\Concerns\\HasPermissions",
+      "description": "Companion trait for direct permission grants (via model_has_permissions). Rare \u2014 usually roles carry perms. Composed alongside HasRoles on the same principal models.",
+      "public": true,
+      "usedBy": [
+        "identity::User",
+        "identity::PlatformUser",
+        "identity::ServiceAccount"
+      ],
+      "underlying_package": "spatie/laravel-permission",
+      "wraps": "Same wrap pattern as HasRoles \u2014 extends spatie's HasPermissions with the resolver override.",
+      "conflicts_with": []
+    },
+    {
+      "trait": "Academorix\\Rbac\\Concerns\\HasResolvedPermissions",
+      "description": "Exposes a computed accessor `->resolvedPermissions` returning the caller's full compact permission array (RBAC \u222a grants \u2212 denies). Cached per-request. Optional to compose \u2014 only for models that need programmatic access to the resolved set (e.g. custom controllers rendering permission-aware UI).",
+      "public": true,
+      "usedBy": [
+        "identity::User (composed by default so /api/v1/auth/me can return the array)"
+      ],
+      "underlying_package": null,
+      "wraps": null,
+      "conflicts_with": []
+    },
+    {
+      "trait": "Academorix\\Rbac\\Concerns\\IsPermissionable",
+      "description": "Marker trait signalling that a model is a permission TARGET (i.e. policies gate reads/writes on it, and access/grants can attach dynamic permissions to it). Adds no accessor / mutator / scope \u2014 pure metadata for reflection-based tooling (the access-request module's discovery scan uses it). Composed by every domain model with a policy.",
+      "public": true,
+      "usedBy": [
+        "invoices::Invoice (Wave 2+)",
+        "athletes::Athlete (Wave 2+)",
+        "teams::Team (Wave 2+)",
+        "any model whose policy extends the standard shape"
+      ],
+      "underlying_package": null,
+      "wraps": null,
+      "conflicts_with": []
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "Role + Permission + RoleDefinition support soft-delete for the 90-day recovery window. Pivots are HARD-deleted (spatie's shipped behaviour)."
+      }
+    ],
+    "spatie": [
+      { "trait": "Spatie\\Permission\\Traits\\HasRoles" },
+      { "trait": "Spatie\\Permission\\Traits\\HasPermissions" }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+  },
+  "composition": {
+    "role": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasSystemFlag",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": [
+        "NO BelongsToTenant \u2014 tenant_id is nullable (null = system role); the resolver handles the nullable case explicitly.",
+        "HasActivityLog because role changes are audit-critical."
+      ]
+    },
+    "permission": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasSystemFlag",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": [
+        "Same composition as Role. tenant_id nullable for the same reason.",
+        "Permissions are rarely deleted \u2014 soft-delete + hold indefinitely, per retention.json."
+      ]
+    },
+    "role_definition": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": [
+        "Platform-scoped metadata layer. Never deleted; only is_active=false.",
+        "NO BelongsToTenant \u2014 platform-plane rows only."
+      ]
+    },
+    "pivots_common_note": [
+      "The pivots (role_has_permissions, model_has_roles, model_has_permissions) do NOT compose traits \u2014 spatie's shipped pivot models are used as-is. Our observers attach for the enforcement logic. Denormalised (application_id, tenant_id) columns are populated by the observers on write."
+    ]
+  }
+}

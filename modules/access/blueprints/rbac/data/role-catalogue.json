@@ -1,0 +1,507 @@
+{
+  "$version": 1,
+  "title": "Default role catalogue",
+  "description": "Seeded by `rbac:sync-role-definitions`. UPSERTS one row per (business_type, role_name) into `role_definitions` + the corresponding `roles` row. Every role_definitions row pins its i18n labels, min_tier gate, default_permissions[] set, is_customisable + max_custom_permissions. On TenantProvisioned, `TenantDefaultRoleSeeder` enumerates this catalogue filtered by (tenant.business_type IN business_type_slugs AND tenant.tier >= min_tier) + seeds the matching roles for the tenant.",
+  "columns_note": "Fields on each entry: `name` (canonical snake_case role name), `guard_name` ('sanctum' or 'platform_admin'), `is_system` (always true \u2014 catalogue rows are system-shipped), `business_type_slugs[]` (which business_types default-provision this role), `label_i18n` ({en, ar}), `description_i18n` ({en, ar}), `min_tier` (small / medium / business / enterprise), `is_customisable` (can tenants edit the permission set), `max_custom_permissions` (cap on tenant-added perms), `default_permissions[]` (compact permission array).",
+  "role_definitions": [
+    {
+      "name": "owner",
+      "guard_name": "sanctum",
+      "is_system": true,
+      "business_type_slugs": ["academy", "sports-center", "school", "gym", "federation", "club"],
+      "min_tier": "small",
+      "is_customisable": false,
+      "max_custom_permissions": 0,
+      "label_i18n": { "en": "Owner", "ar": "\u0645\u0627\u0644\u0643" },
+      "description_i18n": {
+        "en": "Full control over the tenant. Unique per tenant \u2014 the founding user.",
+        "ar": "\u062a\u062d\u0643\u0645 \u0643\u0627\u0645\u0644 \u0641\u064a \u0627\u0644\u062d\u0633\u0627\u0628."
+      },
+      "default_permissions": ["*"]
+    },
+    {
+      "name": "admin",
+      "guard_name": "sanctum",
+      "is_system": true,
+      "business_type_slugs": ["academy", "sports-center", "school", "gym", "federation", "club"],
+      "min_tier": "small",
+      "is_customisable": true,
+      "max_custom_permissions": 100,
+      "label_i18n": { "en": "Administrator", "ar": "\u0645\u062f\u064a\u0631" },
+      "description_i18n": {
+        "en": "Manages users, roles, billing, settings. Cannot delete the tenant.",
+        "ar": "\u064a\u062f\u064a\u0631 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645\u064a\u0646 \u0648\u0627\u0644\u0623\u062f\u0648\u0627\u0631."
+      },
+      "default_permissions": [
+        "users.viewAny.tenant",
+        "users.view.tenant",
+        "users.create.tenant",
+        "users.update.tenant",
+        "users.disable.tenant",
+        "roles.viewAny.tenant",
+        "roles.view.tenant",
+        "roles.create.tenant",
+        "roles.update.tenant",
+        "roles.delete.tenant",
+        "roles.manage.tenant",
+        "permissions.viewAny.tenant",
+        "principals.roles.viewAny.tenant",
+        "principals.roles.assign.tenant",
+        "principals.roles.revoke.tenant",
+        "billing.viewAny.tenant",
+        "billing.manage.tenant",
+        "settings.viewAny.tenant",
+        "settings.manage.tenant"
+      ]
+    },
+    {
+      "name": "head_coach",
+      "guard_name": "sanctum",
+      "is_system": true,
+      "business_type_slugs": ["academy", "sports-center"],
+      "min_tier": "small",
+      "is_customisable": true,
+      "max_custom_permissions": 30,
+      "label_i18n": { "en": "Head Coach", "ar": "\u0627\u0644\u0645\u062f\u0631\u0628 \u0627\u0644\u0631\u0626\u064a\u0633\u064a" },
+      "description_i18n": {
+        "en": "Senior coach with cross-branch oversight. Manages coaches + programme design.",
+        "ar": "\u0645\u062f\u0631\u0628 \u0631\u0626\u064a\u0633\u064a \u0645\u0639 \u0625\u0634\u0631\u0627\u0641 \u0645\u062a\u0639\u062f\u062f \u0627\u0644\u0641\u0631\u0648\u0639."
+      },
+      "default_permissions": [
+        "athletes.viewAny.tenant",
+        "athletes.view.tenant",
+        "athletes.create.branch",
+        "athletes.update.branch",
+        "teams.viewAny.tenant",
+        "teams.view.tenant",
+        "teams.create.branch",
+        "teams.update.branch",
+        "coaches.viewAny.branch",
+        "coaches.view.branch",
+        "sessions.viewAny.tenant",
+        "sessions.create.tenant",
+        "sessions.update.tenant"
+      ]
+    },
+    {
+      "name": "coach",
+      "guard_name": "sanctum",
+      "is_system": true,
+      "business_type_slugs": ["academy", "sports-center", "club"],
+      "min_tier": "small",
+      "is_customisable": true,
+      "max_custom_permissions": 20,
+      "label_i18n": { "en": "Coach", "ar": "\u0645\u062f\u0631\u0628" },
+      "description_i18n": {
+        "en": "Coaches assigned teams + tracks athlete progress.",
+        "ar": "\u064a\u062f\u0631\u0628 \u0627\u0644\u0641\u0631\u0642 \u0627\u0644\u0645\u0642\u0631\u0631\u0629."
+      },
+      "default_permissions": [
+        "athletes.viewAny.team",
+        "athletes.view.team",
+        "teams.viewAny.own",
+        "teams.view.team",
+        "teams.update.own",
+        "sessions.viewAny.team",
+        "sessions.view.team",
+        "sessions.create.own",
+        "sessions.update.own",
+        "attendance.record.team",
+        "progress.view.team",
+        "progress.update.own"
+      ]
+    },
+    {
+      "name": "receptionist",
+      "guard_name": "sanctum",
+      "is_system": true,
+      "business_type_slugs": ["academy", "sports-center", "gym"],
+      "min_tier": "small",
+      "is_customisable": true,
+      "max_custom_permissions": 15,
+      "label_i18n": { "en": "Reception", "ar": "\u0627\u0644\u0627\u0633\u062a\u0642\u0628\u0627\u0644" },
+      "description_i18n": {
+        "en": "Front-desk staff. Registers athletes, takes payments, schedules sessions.",
+        "ar": "\u0645\u0648\u0638\u0641 \u0627\u0644\u0627\u0633\u062a\u0642\u0628\u0627\u0644."
+      },
+      "default_permissions": [
+        "athletes.viewAny.branch",
+        "athletes.view.branch",
+        "athletes.create.branch",
+        "athletes.update.branch",
+        "sessions.viewAny.branch",
+        "sessions.create.branch",
+        "sessions.update.branch",
+        "invoices.viewAny.branch",
+        "invoices.create.branch",
+        "invoices.view.branch",
+        "payments.record.branch",
+        "day_passes.create.branch"
+      ]
+    },
+    {
+      "name": "medical",
+      "guard_name": "sanctum",
+      "is_system": true,
+      "business_type_slugs": ["academy", "sports-center", "club"],
+      "min_tier": "medium",
+      "is_customisable": false,
+      "max_custom_permissions": 0,
+      "label_i18n": { "en": "Medical Staff", "ar": "\u0627\u0644\u0637\u0627\u0642\u0645 \u0627\u0644\u0637\u0628\u064a" },
+      "description_i18n": {
+        "en": "Medical staff \u2014 physio, doctor. Access to injury records + medical notes.",
+        "ar": "\u0637\u0627\u0642\u0645 \u0637\u0628\u064a."
+      },
+      "default_permissions": [
+        "athletes.viewAny.tenant",
+        "athletes.view.tenant",
+        "medical.viewAny.tenant",
+        "medical.view.tenant",
+        "medical.create.tenant",
+        "medical.update.tenant"
+      ]
+    },
+    {
+      "name": "athlete",
+      "guard_name": "sanctum",
+      "is_system": true,
+      "business_type_slugs": ["academy", "sports-center", "club"],
+      "min_tier": "small",
+      "is_customisable": false,
+      "max_custom_permissions": 0,
+      "label_i18n": { "en": "Athlete", "ar": "\u0644\u0627\u0639\u0628" },
+      "description_i18n": {
+        "en": "Athlete \u2014 access to their own schedule, progress, invoices.",
+        "ar": "\u0644\u0627\u0639\u0628."
+      },
+      "default_permissions": [
+        "sessions.viewAny.own",
+        "sessions.view.own",
+        "progress.view.own",
+        "invoices.viewAny.own",
+        "invoices.view.own",
+        "profile.view.own",
+        "profile.update.own",
+        "sessions.viewAny.own",
+        "principals.roles.viewAny.own"
+      ]
+    },
+    {
+      "name": "parent",
+      "guard_name": "sanctum",
+      "is_system": true,
+      "business_type_slugs": ["academy", "sports-center", "school", "club"],
+      "min_tier": "small",
+      "is_customisable": false,
+      "max_custom_permissions": 0,
+      "label_i18n": { "en": "Parent", "ar": "\u0648\u0644\u064a \u0623\u0645\u0631" },
+      "description_i18n": {
+        "en": "Parent / guardian \u2014 access to child athlete data.",
+        "ar": "\u0648\u0644\u064a \u0623\u0645\u0631 \u0627\u0644\u0644\u0627\u0639\u0628."
+      },
+      "default_permissions": [
+        "athletes.viewAny.child",
+        "athletes.view.child",
+        "sessions.viewAny.child",
+        "sessions.view.child",
+        "progress.view.child",
+        "invoices.viewAny.child",
+        "invoices.view.child",
+        "invoices.pay.child",
+        "profile.view.own",
+        "profile.update.own"
+      ]
+    },
+    {
+      "name": "trainer",
+      "guard_name": "sanctum",
+      "is_system": true,
+      "business_type_slugs": ["gym"],
+      "min_tier": "small",
+      "is_customisable": true,
+      "max_custom_permissions": 15,
+      "label_i18n": { "en": "Trainer", "ar": "\u0645\u062f\u0631\u0628" },
+      "description_i18n": {
+        "en": "Personal trainer / class instructor.",
+        "ar": "\u0645\u062f\u0631\u0628 \u0634\u062e\u0635\u064a."
+      },
+      "default_permissions": [
+        "members.viewAny.branch",
+        "members.view.branch",
+        "sessions.viewAny.branch",
+        "sessions.create.own",
+        "progress.view.team",
+        "progress.update.own"
+      ]
+    },
+    {
+      "name": "member",
+      "guard_name": "sanctum",
+      "is_system": true,
+      "business_type_slugs": ["gym", "sports-center", "club"],
+      "min_tier": "small",
+      "is_customisable": false,
+      "max_custom_permissions": 0,
+      "label_i18n": { "en": "Member", "ar": "\u0639\u0636\u0648" },
+      "description_i18n": {
+        "en": "Gym / sports-center member \u2014 access to their own bookings + memberships.",
+        "ar": "\u0639\u0636\u0648."
+      },
+      "default_permissions": [
+        "bookings.viewAny.own",
+        "bookings.create.own",
+        "bookings.cancel.own",
+        "memberships.view.own",
+        "profile.view.own",
+        "profile.update.own"
+      ]
+    },
+    {
+      "name": "principal",
+      "guard_name": "sanctum",
+      "is_system": true,
+      "business_type_slugs": ["school"],
+      "min_tier": "small",
+      "is_customisable": true,
+      "max_custom_permissions": 40,
+      "label_i18n": { "en": "Principal", "ar": "\u0645\u062f\u064a\u0631 \u0627\u0644\u0645\u062f\u0631\u0633\u0629" },
+      "description_i18n": {
+        "en": "School principal \u2014 senior academic leadership.",
+        "ar": "\u0645\u062f\u064a\u0631 \u0627\u0644\u0645\u062f\u0631\u0633\u0629."
+      },
+      "default_permissions": [
+        "students.viewAny.tenant",
+        "students.view.tenant",
+        "teachers.viewAny.tenant",
+        "teachers.view.tenant",
+        "teachers.assign_class.tenant",
+        "classes.viewAny.tenant",
+        "classes.view.tenant",
+        "classes.create.tenant",
+        "classes.update.tenant"
+      ]
+    },
+    {
+      "name": "teacher",
+      "guard_name": "sanctum",
+      "is_system": true,
+      "business_type_slugs": ["school"],
+      "min_tier": "small",
+      "is_customisable": true,
+      "max_custom_permissions": 20,
+      "label_i18n": { "en": "Teacher", "ar": "\u0645\u062f\u0631\u0633" },
+      "description_i18n": {
+        "en": "Classroom teacher \u2014 manages their classes + student progress.",
+        "ar": "\u0645\u062f\u0631\u0633."
+      },
+      "default_permissions": [
+        "students.viewAny.team",
+        "students.view.team",
+        "classes.viewAny.own",
+        "classes.view.own",
+        "grades.record.team",
+        "attendance.record.team"
+      ]
+    },
+    {
+      "name": "student",
+      "guard_name": "sanctum",
+      "is_system": true,
+      "business_type_slugs": ["school"],
+      "min_tier": "small",
+      "is_customisable": false,
+      "max_custom_permissions": 0,
+      "label_i18n": { "en": "Student", "ar": "\u0637\u0627\u0644\u0628" },
+      "description_i18n": {
+        "en": "Student \u2014 access to their own classes, grades, schedules.",
+        "ar": "\u0637\u0627\u0644\u0628."
+      },
+      "default_permissions": [
+        "classes.viewAny.own",
+        "classes.view.own",
+        "grades.viewAny.own",
+        "attendance.viewAny.own",
+        "profile.view.own",
+        "profile.update.own"
+      ]
+    },
+    {
+      "name": "federation_officer",
+      "guard_name": "sanctum",
+      "is_system": true,
+      "business_type_slugs": ["federation"],
+      "min_tier": "medium",
+      "is_customisable": true,
+      "max_custom_permissions": 30,
+      "label_i18n": { "en": "Federation Officer", "ar": "\u0645\u0633\u0624\u0648\u0644 \u0627\u062a\u062d\u0627\u062f\u064a" },
+      "description_i18n": {
+        "en": "Federation staff \u2014 manages events, competitions, member clubs.",
+        "ar": "\u0645\u0648\u0638\u0641 \u0627\u062a\u062d\u0627\u062f\u064a."
+      },
+      "default_permissions": [
+        "events.viewAny.tenant",
+        "events.view.tenant",
+        "events.create.tenant",
+        "events.update.tenant",
+        "competitions.viewAny.tenant",
+        "competitions.create.tenant",
+        "member_clubs.viewAny.tenant",
+        "member_clubs.view.tenant"
+      ]
+    },
+    {
+      "name": "federation_referee",
+      "guard_name": "sanctum",
+      "is_system": true,
+      "business_type_slugs": ["federation"],
+      "min_tier": "medium",
+      "is_customisable": false,
+      "max_custom_permissions": 0,
+      "label_i18n": { "en": "Referee", "ar": "\u062d\u0643\u0645" },
+      "description_i18n": {
+        "en": "Federation-appointed referee.",
+        "ar": "\u062d\u0643\u0645."
+      },
+      "default_permissions": [
+        "events.viewAny.tenant",
+        "events.view.tenant",
+        "matches.viewAny.own",
+        "matches.report.own"
+      ]
+    },
+    {
+      "name": "super_admin",
+      "guard_name": "platform_admin",
+      "is_system": true,
+      "business_type_slugs": [],
+      "min_tier": "small",
+      "is_customisable": false,
+      "max_custom_permissions": 0,
+      "label_i18n": { "en": "Super Admin", "ar": "\u0645\u062f\u064a\u0631 \u0631\u0626\u064a\u0633\u064a" },
+      "description_i18n": {
+        "en": "Academorix super-admin. Cross-tenant, cross-Application. Gate::before bypass.",
+        "ar": "\u0645\u062f\u064a\u0631 \u0631\u0626\u064a\u0633\u064a \u0644\u0644\u0645\u0646\u0635\u0629."
+      },
+      "default_permissions": ["*"]
+    },
+    {
+      "name": "security",
+      "guard_name": "platform_admin",
+      "is_system": true,
+      "business_type_slugs": [],
+      "min_tier": "small",
+      "is_customisable": true,
+      "max_custom_permissions": 50,
+      "label_i18n": { "en": "Security", "ar": "\u0627\u0644\u0623\u0645\u0646" },
+      "description_i18n": {
+        "en": "Academorix security team \u2014 audit, incident response, JWT key management, deny-list.",
+        "ar": "\u0641\u0631\u064a\u0642 \u0627\u0644\u0623\u0645\u0627\u0646."
+      },
+      "default_permissions": [
+        "platform.auth.sessions.viewAny",
+        "platform.auth.sessions.revoke",
+        "platform.auth.sessions.revoke_all",
+        "platform.auth.jwt_keys.viewAny",
+        "platform.auth.jwt_keys.view",
+        "platform.auth.jwt_keys.rotate",
+        "platform.auth.jwt.revoke",
+        "platform.auth.impersonate",
+        "platform.identity.viewAny",
+        "platform.identity.view",
+        "platform.identity.view.pii",
+        "platform.identity.unlock",
+        "platform.identity.force_password_reset"
+      ]
+    },
+    {
+      "name": "support",
+      "guard_name": "platform_admin",
+      "is_system": true,
+      "business_type_slugs": [],
+      "min_tier": "small",
+      "is_customisable": true,
+      "max_custom_permissions": 30,
+      "label_i18n": { "en": "Support", "ar": "\u0627\u0644\u062f\u0639\u0645" },
+      "description_i18n": {
+        "en": "Customer support. Read-heavy access + impersonation.",
+        "ar": "\u062f\u0639\u0645 \u0627\u0644\u0639\u0645\u0644\u0627\u0621."
+      },
+      "default_permissions": [
+        "platform.auth.impersonate",
+        "platform.auth.sessions.viewAny",
+        "platform.auth.sessions.revoke",
+        "platform.identity.viewAny",
+        "platform.identity.view",
+        "platform.identity.unlock",
+        "platform.rbac.system_roles.viewAny",
+        "platform.rbac.tenants.reseed_defaults"
+      ]
+    },
+    {
+      "name": "compliance",
+      "guard_name": "platform_admin",
+      "is_system": true,
+      "business_type_slugs": [],
+      "min_tier": "small",
+      "is_customisable": true,
+      "max_custom_permissions": 20,
+      "label_i18n": { "en": "Compliance", "ar": "\u0627\u0644\u0625\u0645\u062a\u062b\u0627\u0644" },
+      "description_i18n": {
+        "en": "Compliance + privacy officer.",
+        "ar": "\u0645\u0633\u0624\u0648\u0644 \u0627\u0644\u0625\u0645\u062a\u062b\u0627\u0644."
+      },
+      "default_permissions": [
+        "platform.identity.viewAny",
+        "platform.identity.view",
+        "platform.identity.view.pii",
+        "platform.identity.erase"
+      ]
+    },
+    {
+      "name": "product",
+      "guard_name": "platform_admin",
+      "is_system": true,
+      "business_type_slugs": [],
+      "min_tier": "small",
+      "is_customisable": true,
+      "max_custom_permissions": 30,
+      "label_i18n": { "en": "Product", "ar": "\u0641\u0631\u064a\u0642 \u0627\u0644\u0645\u0646\u062a\u062c" },
+      "description_i18n": {
+        "en": "Product team \u2014 role catalogue + role_definitions management.",
+        "ar": "\u0641\u0631\u064a\u0642 \u0627\u0644\u0645\u0646\u062a\u062c."
+      },
+      "default_permissions": [
+        "platform.rbac.system_roles.viewAny",
+        "platform.rbac.system_roles.view",
+        "platform.rbac.system_roles.create",
+        "platform.rbac.system_roles.update",
+        "platform.rbac.role_definitions.viewAny",
+        "platform.rbac.role_definitions.view",
+        "platform.rbac.role_definitions.create",
+        "platform.rbac.role_definitions.update",
+        "platform.rbac.permissions.viewAny"
+      ]
+    },
+    {
+      "name": "ops",
+      "guard_name": "platform_admin",
+      "is_system": true,
+      "business_type_slugs": [],
+      "min_tier": "small",
+      "is_customisable": true,
+      "max_custom_permissions": 20,
+      "label_i18n": { "en": "Ops", "ar": "\u0641\u0631\u064a\u0642 \u0627\u0644\u062a\u0634\u063a\u064a\u0644" },
+      "description_i18n": {
+        "en": "Platform operations \u2014 read-only observability + support tools.",
+        "ar": "\u0641\u0631\u064a\u0642 \u0627\u0644\u062a\u0634\u063a\u064a\u0644."
+      },
+      "default_permissions": [
+        "platform.rbac.system_roles.viewAny",
+        "platform.rbac.role_definitions.viewAny",
+        "platform.rbac.permissions.viewAny",
+        "platform.auth.sessions.viewAny",
+        "platform.auth.jwt_keys.viewAny"
+      ]
+    }
+  ]
+}

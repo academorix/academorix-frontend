@@ -1,0 +1,92 @@
+{
+  "id": "academorix://modules/rbac/schemas/model-has-permissions",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ModelHasPermissions (spatie pivot, augmented)",
+  "description": "Spatie's shipped `model_has_permissions` polymorphic pivot augmented with denormalised (application_id, tenant_id). Direct permission grants \u2014 rare, usually roles carry perms. Enforced by ModelHasPermissionsObserver with the same guard + application boundary rules as ModelHasRoles.",
+  "type": "object",
+  "x-module": "rbac",
+  "x-eloquent": {
+    "note": "Spatie-managed pivot. Consumed via HasPermissions trait on each principal (`->givePermissionTo()`, `->revokePermissionTo()`). Our observer attaches for enforcement + audit + cache invalidation.",
+    "observers": ["ModelHasPermissionsObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "description": "Spatie ships the pivot with columns (permission_id, model_type, model_id). Our migration ADDS (application_id, tenant_id, audit columns).",
+    "columns": {
+      "permission_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "permissions", "column": "id", "onDelete": "cascade" }
+      },
+      "model_type": {
+        "type": "string",
+        "length": 255,
+        "nullable": false
+      },
+      "model_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false
+      },
+      "application_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "applications", "column": "id", "onDelete": "restrict" }
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["permission_id", "model_type", "model_id"],
+        "unique": true,
+        "name": "model_has_permissions_pkey"
+      },
+      {
+        "columns": ["model_type", "model_id"],
+        "unique": false,
+        "name": "model_has_permissions_principal_idx"
+      },
+      {
+        "columns": ["application_id", "tenant_id"],
+        "unique": false,
+        "name": "model_has_permissions_scope_idx"
+      }
+    ]
+  },
+  "required": ["permission_id", "model_type", "model_id", "created_at", "updated_at"],
+  "properties": {
+    "permission_id": { "type": "string", "pattern": "^per_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "model_type": {
+      "type": "string",
+      "enum": [
+        "Academorix\\User\\Models\\User",
+        "Academorix\\PlatformUser\\Models\\PlatformUser",
+        "Academorix\\ServiceAccounts\\Models\\ServiceAccount"
+      ]
+    },
+    "model_id": { "type": "string" },
+    "application_id": { "type": ["string", "null"], "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": ["string", "null"], "pattern": "^tnt_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "note": "Direct permission grants are rare \u2014 the tenant plane's `GET /rbac/principals/{principal}/permissions` returns the RESOLVED permission list (RBAC \u222a grants \u2212 denies), not the pivot rows."
+  }
+}

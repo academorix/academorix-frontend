@@ -1,0 +1,399 @@
+{
+  "id": "academorix://modules/rbac/routes",
+  "$version": 1,
+  "title": "rbac \u2014 HTTP routes",
+  "description": "Tenant plane owns admin-facing role + permission management + assignment. Every mutation goes through the appropriate policy + fires the corresponding event + invalidates cache. Platform plane owns system role + role_definitions CRUD + cross-tenant observability. Every platform-plane mutation is audit-critical.",
+  "groups": [
+    {
+      "name": "tenant-roles",
+      "prefix": "/api/v1/rbac/roles",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "application.resolve",
+        "auth:sanctum",
+        "auth.enforce_session_scope",
+        "tenant.resolve",
+        "rbac.warm_permission_cache",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Tenant-facing role catalogue + CRUD. Reads open to any tenant member; writes require owner/admin permission.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Tenant\\RoleController@index",
+          "permission": "roles.viewAny.tenant",
+          "description": "List roles applicable to the tenant. filter[is_system], filter[guard_name] supported."
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Tenant\\RoleController@store",
+          "action": "Academorix\\Rbac\\Actions\\CreateRoleAction",
+          "permission": "roles.create.tenant",
+          "middleware_add": ["entitlement.enforce:custom_roles"],
+          "description": "Create a custom role. Body: { name, description?, permissions[]?, sort_order? }. Consumes custom_role_slot."
+        },
+        {
+          "method": "GET",
+          "path": "/{role}",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Tenant\\RoleController@show",
+          "permission": "roles.view.tenant"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{role}",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Tenant\\RoleController@update",
+          "action": "Academorix\\Rbac\\Actions\\UpdateRoleAction",
+          "permission": "roles.update.tenant",
+          "description": "Update a custom role. Refused on is_system=true."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{role}",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Tenant\\RoleController@destroy",
+          "action": "Academorix\\Rbac\\Actions\\DeleteRoleAction",
+          "permission": "roles.delete.tenant",
+          "description": "Soft-delete a custom role. Refused if active assignments exist."
+        }
+      ]
+    },
+    {
+      "name": "tenant-role-permissions",
+      "prefix": "/api/v1/rbac/roles/{role}/permissions",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "application.resolve",
+        "auth:sanctum",
+        "auth.enforce_session_scope",
+        "tenant.resolve",
+        "rbac.warm_permission_cache",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Tenant\\RolePermissionController@index",
+          "permission": "roles.view.tenant",
+          "description": "List the permissions currently attached to this role."
+        },
+        {
+          "method": "POST",
+          "path": "/{permission}",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Tenant\\RolePermissionController@attach",
+          "action": "Academorix\\Rbac\\Actions\\AttachPermissionToRoleAction",
+          "permission": "roles.manage.tenant",
+          "description": "Attach a permission to the role. Enforces the RoleHasPermissionsObserver rules \u2014 guard + application boundaries."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{permission}",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Tenant\\RolePermissionController@detach",
+          "action": "Academorix\\Rbac\\Actions\\DetachPermissionFromRoleAction",
+          "permission": "roles.manage.tenant"
+        }
+      ]
+    },
+    {
+      "name": "tenant-permissions",
+      "prefix": "/api/v1/rbac/permissions",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "application.resolve",
+        "auth:sanctum",
+        "auth.enforce_session_scope",
+        "tenant.resolve",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Tenant-facing permission catalogue \u2014 mostly read-only.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Tenant\\PermissionController@index",
+          "permission": "permissions.viewAny.tenant",
+          "description": "List permissions available to attach. filter[module_slug], filter[guard_name] supported."
+        },
+        {
+          "method": "GET",
+          "path": "/{permission}",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Tenant\\PermissionController@show",
+          "permission": "permissions.view.tenant"
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Tenant\\PermissionController@store",
+          "action": "Academorix\\Rbac\\Actions\\CreatePermissionAction",
+          "permission": "permissions.create.tenant",
+          "middleware_add": ["entitlement.enforce:custom_permissions"],
+          "description": "Create a NEW custom permission. Enterprise-only."
+        }
+      ]
+    },
+    {
+      "name": "tenant-principal-roles",
+      "prefix": "/api/v1/rbac/principals/{principal}/roles",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "application.resolve",
+        "auth:sanctum",
+        "auth.enforce_session_scope",
+        "tenant.resolve",
+        "rbac.warm_permission_cache",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Manage role assignments per principal. `{principal}` is a User id in the current tenant (polymorphic to ServiceAccount when principal-type is prefixed).",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Tenant\\PrincipalRoleController@index",
+          "permission": "principals.roles.viewAny.tenant",
+          "description": "List the principal's active role assignments. filter[include_expired] shows historic + active."
+        },
+        {
+          "method": "POST",
+          "path": "/{role}",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Tenant\\PrincipalRoleController@assign",
+          "action": "Academorix\\Rbac\\Actions\\AssignRoleToPrincipalAction",
+          "permission": "principals.roles.assign.tenant",
+          "description": "Assign a role to the principal. Body: { expires_at?, reason? }. Enforces the role_assignable_by_actor rule (no privilege escalation)."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{role}",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Tenant\\PrincipalRoleController@revoke",
+          "action": "Academorix\\Rbac\\Actions\\RevokeRoleFromPrincipalAction",
+          "permission": "principals.roles.revoke.tenant",
+          "description": "Revoke an active assignment. Body: { reason? }."
+        }
+      ]
+    },
+    {
+      "name": "tenant-principal-permissions",
+      "prefix": "/api/v1/rbac/principals/{principal}/permissions",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "application.resolve",
+        "auth:sanctum",
+        "auth.enforce_session_scope",
+        "tenant.resolve",
+        "rbac.warm_permission_cache",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Tenant\\PrincipalPermissionController@index",
+          "permission": "principals.roles.viewAny.tenant",
+          "description": "Compute the principal's effective permission list (RBAC \u222a grants \u2212 denies) via PermissionResolver."
+        }
+      ]
+    },
+    {
+      "name": "tenant-me",
+      "prefix": "/api/v1/me",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "application.resolve",
+        "auth:sanctum",
+        "auth.enforce_session_scope",
+        "tenant.resolve",
+        "rbac.warm_permission_cache",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Self-serve read endpoints for the caller's own permissions + roles.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/permissions",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Tenant\\MeController@permissions",
+          "permission": "principals.roles.viewAny.own",
+          "description": "The caller's effective permission list. Returns the same shape as the compact array on Sanctum PAT abilities."
+        },
+        {
+          "method": "GET",
+          "path": "/roles",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Tenant\\MeController@roles",
+          "permission": "principals.roles.viewAny.own",
+          "description": "The caller's active role list."
+        }
+      ]
+    },
+    {
+      "name": "platform-system-roles",
+      "prefix": "/api/v1/platform/rbac/system-roles",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "platform.domain",
+        "auth:platform_admin",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "System role CRUD \u2014 platform ops + product.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Platform\\SystemRoleController@index",
+          "permission": "platform.rbac.system_roles.viewAny",
+          "description": "List every system role across every Application. filter[application_id], filter[guard_name] supported."
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Platform\\SystemRoleController@store",
+          "action": "Academorix\\Rbac\\Actions\\CreateSystemRoleAction",
+          "permission": "platform.rbac.system_roles.create",
+          "description": "Create a new system role. Body: { name, guard_name, application_id?, description, role_definition: { business_type_slugs, label_i18n, ..., min_tier, is_customisable, default_permissions } }."
+        },
+        {
+          "method": "PATCH",
+          "path": "/{role}",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Platform\\SystemRoleController@update",
+          "action": "Academorix\\Rbac\\Actions\\UpdateSystemRoleAction",
+          "permission": "platform.rbac.system_roles.update",
+          "description": "Update a system role. Refuses guard_name / application_id changes on rows with active assignments."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{role}",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Platform\\SystemRoleController@archive",
+          "action": "Academorix\\Rbac\\Actions\\ArchiveSystemRoleAction",
+          "permission": "platform.rbac.system_roles.delete",
+          "description": "Archive (soft-delete) a system role. Refused if active assignments unless --force + reason."
+        }
+      ]
+    },
+    {
+      "name": "platform-role-definitions",
+      "prefix": "/api/v1/platform/rbac/role-definitions",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "platform.domain",
+        "auth:platform_admin",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Platform\\RoleDefinitionController@index",
+          "permission": "platform.rbac.role_definitions.viewAny"
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Platform\\RoleDefinitionController@store",
+          "permission": "platform.rbac.role_definitions.create"
+        },
+        {
+          "method": "GET",
+          "path": "/{roleDefinition}",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Platform\\RoleDefinitionController@show",
+          "permission": "platform.rbac.role_definitions.view"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{roleDefinition}",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Platform\\RoleDefinitionController@update",
+          "action": "Academorix\\Rbac\\Actions\\UpdateRoleDefinitionAction",
+          "permission": "platform.rbac.role_definitions.update",
+          "description": "Update i18n labels, business_type_slugs, min_tier, default_permissions. Body: partial patch \u2014 supply only changed fields."
+        }
+      ]
+    },
+    {
+      "name": "platform-permissions",
+      "prefix": "/api/v1/platform/rbac/permissions",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "platform.domain",
+        "auth:platform_admin",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Platform\\PlatformPermissionController@index",
+          "permission": "platform.rbac.permissions.viewAny"
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Platform\\PlatformPermissionController@store",
+          "permission": "platform.rbac.permissions.create"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{permission}",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Platform\\PlatformPermissionController@update",
+          "permission": "platform.rbac.permissions.update"
+        }
+      ]
+    },
+    {
+      "name": "platform-tenant-reseed",
+      "prefix": "/api/v1/platform/rbac/tenants",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "platform.domain",
+        "auth:platform_admin",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/{tenant}/reseed-defaults",
+          "controller": "Academorix\\Rbac\\Http\\Controllers\\Platform\\TenantReseedController@__invoke",
+          "action": "Academorix\\Rbac\\Actions\\ReseedTenantDefaultsAction",
+          "permission": "platform.rbac.tenants.reseed_defaults",
+          "description": "Trigger `rbac:seed-defaults` for one tenant. Support-driven recovery. Body: { reason: string (required), force?: bool }."
+        }
+      ]
+    }
+  ]
+}

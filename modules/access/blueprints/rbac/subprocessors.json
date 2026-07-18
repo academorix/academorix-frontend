@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/rbac/subprocessors",
+  "$version": 1,
+  "title": "rbac \u2014 subprocessors",
+  "description": "RBAC does not engage third-party subprocessors. Every read + write is against the platform's own Postgres + Redis. This file documents the empty surface so compliance reviewers can quickly verify.",
+  "subprocessors": [],
+  "notes": [
+    "Data never leaves the platform for RBAC operations. Role + permission strings, role assignments, and cached ResolvedPermissionSets stay on the platform's owned infrastructure.",
+    "The permission catalogue itself (permission strings + descriptions) is CODE-shipped \u2014 the source is in git, seeded via PermissionCatalogueLoader. No external catalogue provider is engaged.",
+    "The `symfony/expression-language` grammar used by workflow/approvals (Wave 1b sibling) is a vendored open-source library, NOT a subprocessor \u2014 no data is sent to Symfony's servers.",
+    "Downstream notifications (RoleAssignedNotification, etc.) are dispatched via the notifications module, which engages email/SMS subprocessors documented in notifications/subprocessors.json. RBAC itself does not engage them directly."
+  ]
+}

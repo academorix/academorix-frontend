@@ -1,0 +1,310 @@
+{
+  "id": "access-requests.resources.access-request.list",
+  "title": "Access requests",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/access-requests",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "access/requests", "entity": "access-request", "action": "list" },
+  "requiresPermission": "access-requests.viewAny",
+  "dataSources": [
+    {
+      "name": "myRequests",
+      "kind": "http.get",
+      "url": "/api/v1/access-requests",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": ["filter[status]", "filter[resource_type]", "sort", "page", "per_page"],
+      "cache": { "ttlSeconds": 60, "staleWhileRevalidate": true },
+      "fallback": {
+        "kind": "mock.static",
+        "path": "modules/access/blueprints/requests/data/access-requests.json"
+      }
+    },
+    {
+      "name": "pendingMyReview",
+      "kind": "http.get",
+      "url": "/api/v1/access-requests/pending-my-review",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": ["filter[urgency]", "sort", "page", "per_page"],
+      "cache": { "ttlSeconds": 30, "staleWhileRevalidate": true }
+    }
+  ],
+  "subscriptions": [
+    {
+      "channel": "tenant.{tenantId}.access-requests",
+      "kind": "private",
+      "onEvent": { "kind": "data.mutateItem", "source": "myRequests", "keyBy": "id", "expr": "event.data" }
+    },
+    {
+      "channel": "user.{userId}.access-requests",
+      "kind": "private",
+      "onEvent": { "kind": "data.mutateItem", "source": "pendingMyReview", "keyBy": "id", "expr": "event.data" }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "id": "header",
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "id": "title",
+              "kind": "Text",
+              "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Access requests" }
+            },
+            {
+              "id": "actions",
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "id": "refresh",
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "size": "sm", "children": "Refresh", "leadingIcon": "arrow-path" },
+                  "actions": { "onPress": { "kind": "data.refresh", "sources": ["myRequests", "pendingMyReview"] } }
+                },
+                {
+                  "id": "create",
+                  "kind": "Button",
+                  "props": { "variant": "primary", "size": "sm", "children": "New request", "leadingIcon": "plus" },
+                  "bindings": { "isDisabled": { "$expr": "!identity.permissions.includes('access-requests.create')" } },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/access-requests/new" } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "tabs",
+          "kind": "Tabs",
+          "props": { "defaultTab": "my_requests" },
+          "tabs": [
+            {
+              "id": "my_requests",
+              "label": "My requests",
+              "children": [
+                {
+                  "id": "my-filters",
+                  "kind": "View",
+                  "props": { "className": "flex flex-wrap items-end gap-3" },
+                  "children": [
+                    {
+                      "id": "filter-status",
+                      "kind": "MultiSelect",
+                      "props": { "label": "Status", "name": "filter[status]", "placeholder": "All statuses", "className": "min-w-48" },
+                      "options": [
+                        { "key": "pending", "label": "Pending" },
+                        { "key": "approved", "label": "Approved" },
+                        { "key": "rejected", "label": "Rejected" },
+                        { "key": "expired", "label": "Expired" },
+                        { "key": "cancelled", "label": "Cancelled" }
+                      ],
+                      "actions": { "onChange": { "kind": "data.applyFilter", "source": "myRequests" } }
+                    },
+                    {
+                      "id": "filter-resource-type",
+                      "kind": "Select",
+                      "props": { "label": "Resource type", "name": "filter[resource_type]", "placeholder": "Any type" },
+                      "actions": { "onChange": { "kind": "data.applyFilter", "source": "myRequests" } }
+                    }
+                  ]
+                },
+                {
+                  "id": "my-table",
+                  "kind": "DataGrid",
+                  "props": {
+                    "selection": "none",
+                    "emptyState": {
+                      "title": "No access requests yet",
+                      "description": "When you request access to a resource you don't have permission for, it will show up here.",
+                      "action": { "label": "Learn more", "route": "/docs/access-requests", "variant": "secondary" }
+                    }
+                  },
+                  "bindings": { "items": { "$ref": "myRequests" }, "isLoading": { "$ref": "myRequests.isLoading" } },
+                  "columns": [
+                    {
+                      "id": "resource",
+                      "header": "Resource",
+                      "cell": {
+                        "kind": "View",
+                        "props": { "className": "flex flex-col" },
+                        "children": [
+                          { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.resource.display_name" } } },
+                          { "kind": "Text", "props": { "className": "text-muted text-xs" }, "bindings": { "children": { "$expr": "row.resource.type + ' · ' + row.resource.id" } } }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "permissions",
+                      "header": "Requested",
+                      "cell": {
+                        "kind": "Text",
+                        "props": { "className": "text-sm text-muted" },
+                        "bindings": { "children": { "$expr": "row.permissions_wanted.join(', ')" } }
+                      }
+                    },
+                    {
+                      "id": "status",
+                      "header": "Status",
+                      "cell": { "kind": "Widget", "widget": "access-requests.status-chip", "props": { "status": { "$ref": "row.status" }, "size": "sm" } }
+                    },
+                    {
+                      "id": "requested_at",
+                      "header": "Requested",
+                      "cell": {
+                        "kind": "Text",
+                        "props": { "className": "text-sm text-muted" },
+                        "bindings": { "children": { "$expr": "formatRelative(row.requested_at)" } }
+                      }
+                    },
+                    {
+                      "id": "actions",
+                      "header": "",
+                      "align": "end",
+                      "cell": {
+                        "kind": "Menu",
+                        "props": {
+                          "trigger": { "kind": "Button", "props": { "variant": "ghost", "isIconOnly": true, "leadingIcon": "ellipsis-horizontal", "ariaLabel": "Row actions" } }
+                        },
+                        "items": [
+                          { "id": "view", "label": "View details", "leadingIcon": "eye", "action": { "kind": "navigate", "toExpr": "'/tenant/access-requests/' + row.id" } },
+                          {
+                            "id": "withdraw",
+                            "label": "Withdraw",
+                            "leadingIcon": "no-symbol",
+                            "variant": "danger",
+                            "bindings": { "isDisabled": { "$expr": "row.status !== 'pending'" } },
+                            "action": {
+                              "kind": "http.post",
+                              "urlExpr": "'/api/v1/access-requests/' + row.id + '/withdraw'",
+                              "confirm": { "title": "Withdraw request?", "description": "The approvers will no longer see this in their queue. You can submit a new request later if needed." },
+                              "onSuccess": { "kind": "toast.success", "message": "Request withdrawn" }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "pagination": { "kind": "cursor", "bindTo": "myRequests" }
+                }
+              ]
+            },
+            {
+              "id": "pending_my_review",
+              "label": "Pending my review",
+              "bindings": { "count": { "$ref": "pendingMyReview.total" } },
+              "children": [
+                {
+                  "id": "review-table",
+                  "kind": "DataGrid",
+                  "props": {
+                    "selection": "none",
+                    "emptyState": {
+                      "title": "Nothing waiting on you",
+                      "description": "When someone requests access to a resource you can approve, it will show up here."
+                    }
+                  },
+                  "bindings": { "items": { "$ref": "pendingMyReview" }, "isLoading": { "$ref": "pendingMyReview.isLoading" } },
+                  "columns": [
+                    {
+                      "id": "requester",
+                      "header": "Requester",
+                      "cell": {
+                        "kind": "View",
+                        "props": { "className": "flex flex-col" },
+                        "children": [
+                          { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.requester.display_name" } } },
+                          { "kind": "Text", "props": { "className": "text-muted text-xs" }, "bindings": { "children": { "$ref": "row.requester.email" } } }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "resource",
+                      "header": "Resource",
+                      "cell": {
+                        "kind": "Text",
+                        "props": { "className": "text-sm" },
+                        "bindings": { "children": { "$ref": "row.resource.display_name" } }
+                      }
+                    },
+                    {
+                      "id": "permissions",
+                      "header": "Requested",
+                      "cell": {
+                        "kind": "Text",
+                        "props": { "className": "text-sm text-muted" },
+                        "bindings": { "children": { "$expr": "row.permissions_wanted.join(', ')" } }
+                      }
+                    },
+                    {
+                      "id": "expires",
+                      "header": "Expires",
+                      "cell": {
+                        "kind": "Text",
+                        "props": { "className": "text-sm" },
+                        "bindings": {
+                          "children": { "$expr": "formatRelative(row.expires_at)" },
+                          "className": {
+                            "$expr": "diffHours(row.expires_at, now()) < 24 ? 'text-amber-600 text-sm font-medium' : 'text-sm text-muted'"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "id": "actions",
+                      "header": "",
+                      "align": "end",
+                      "cell": {
+                        "kind": "View",
+                        "props": { "className": "flex items-center gap-2" },
+                        "children": [
+                          {
+                            "kind": "Button",
+                            "props": { "variant": "secondary", "size": "sm", "children": "Reject", "leadingIcon": "x-mark" },
+                            "action": {
+                              "kind": "http.post",
+                              "urlExpr": "'/api/v1/access-requests/' + row.id + '/reject'",
+                              "confirm": {
+                                "title": "Reject request?",
+                                "description": "The requester will be notified. A comment is required for audit.",
+                                "reasonField": { "label": "Reason", "name": "comment", "kind": "TextArea", "required": true, "minLength": 10 }
+                              },
+                              "onSuccess": { "kind": "toast.success", "message": "Request rejected" }
+                            }
+                          },
+                          {
+                            "kind": "Button",
+                            "props": { "variant": "primary", "size": "sm", "children": "Approve", "leadingIcon": "check" },
+                            "action": {
+                              "kind": "http.post",
+                              "urlExpr": "'/api/v1/access-requests/' + row.id + '/approve'",
+                              "confirm": {
+                                "title": "Approve request?",
+                                "description": "A grant will be created with a 7-day TTL by default.",
+                                "reasonField": { "label": "Comment (optional)", "name": "comment", "kind": "TextArea", "required": false }
+                              },
+                              "onSuccess": { "kind": "toast.success", "message": "Request approved \u2014 grant will be materialised shortly" }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "pagination": { "kind": "cursor", "bindTo": "pendingMyReview" }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "id": "academorix://modules/grants/entitlements",
+  "$version": 1,
+  "title": "grants — entitlements",
+  "description": "Six entitlement keys. Values seeded per Tenant by the entitlements module (from Subscription plan + BusinessType.default_config.entitlements). Enforcement lives in the observer / issuer + the policies — a 402 response indicates the tenant needs to upgrade; distinct from 403 (permission-based refusal).",
+  "reference": {
+    "publishedBy": "entitlements",
+    "resolvedBy": "GET /api/auth/me → data.quota_summary + GET /api/v1/entitlements",
+    "seededFrom": "BusinessType.default_config.entitlements[grants.*]"
+  },
+  "kinds": [
+    { "kind": "boolean", "description": "Enable / disable the feature." },
+    { "kind": "pool", "description": "Consumable pool; decrements on issue." },
+    { "kind": "slot", "description": "Concurrent-cap; enforced at check-time." }
+  ],
+  "entitlements": [
+    {
+      "key": "resource_grants",
+      "kind": "boolean",
+      "description": "Base grant CRUD. Available on every plan. When false (should never happen — this is the baseline), the entire module returns 402 on every write.",
+      "defaultsByPlan": {
+        "free": 1,
+        "small": 1,
+        "medium": 1,
+        "enterprise": 1
+      },
+      "consumedOn": "N/A (boolean gate)",
+      "refusedResponse": {
+        "http": 402,
+        "code": "GRANT_FEATURE_NOT_ENTITLED"
+      }
+    },
+    {
+      "key": "grants.max_active",
+      "kind": "slot",
+      "description": "Concurrent-cap on active (non-terminal) grants per tenant. Prevents runaway grant sprawl on smaller plans. Free: 25 active grants. Small: 200. Medium: 2000. Enterprise: unlimited.",
+      "defaultsByPlan": {
+        "free": 25,
+        "small": 200,
+        "medium": 2000,
+        "enterprise": null
+      },
+      "consumedOn": "Grant creation (checked at check-time, not decremented via consume)",
+      "refusedResponse": {
+        "http": 402,
+        "code": "GRANT_ACTIVE_LIMIT_REACHED"
+      }
+    },
+    {
+      "key": "bulk_grant_provision",
+      "kind": "boolean",
+      "description": "CSV bulk-issue endpoint availability. Medium plan+. Below medium, `POST /api/v1/grants/bulk` returns 402 GRANT_BULK_NOT_ENTITLED.",
+      "defaultsByPlan": {
+        "free": 0,
+        "small": 0,
+        "medium": 1,
+        "enterprise": 1
+      },
+      "refusedResponse": {
+        "http": 402,
+        "code": "GRANT_BULK_NOT_ENTITLED"
+      }
+    },
+    {
+      "key": "permanent_grants",
+      "kind": "boolean",
+      "description": "Ability to issue grants with expires_at = NULL (never expires). Enterprise-only. Other tiers force expires_at ≤ now() + settings.grants.expiration.max_ttl_days (default 365).",
+      "defaultsByPlan": {
+        "free": 0,
+        "small": 0,
+        "medium": 0,
+        "enterprise": 1
+      },
+      "refusedResponse": {
+        "http": 402,
+        "code": "GRANT_PERMANENT_NOT_ENTITLED"
+      }
+    },
+    {
+      "key": "deny_grants",
+      "kind": "boolean",
+      "description": "Ability to issue grants with decision='deny' (an inviolable block that short-circuits every RBAC + grant check). Enterprise-only — deny is a serious control and requires the operational maturity that comes with the enterprise support tier.",
+      "defaultsByPlan": {
+        "free": 0,
+        "small": 0,
+        "medium": 0,
+        "enterprise": 1
+      },
+      "refusedResponse": {
+        "http": 402,
+        "code": "GRANT_DENY_NOT_ENTITLED"
+      }
+    },
+    {
+      "key": "cross_role_grants",
+      "kind": "boolean",
+      "description": "Rare enterprise workflow: grant a permission the grantor does not hold, gated by a matching workflow/approvals template. Without this entitlement, the privilege-escalation guard refuses regardless of approval-flow context. Enterprise + `workflow/approvals` module co-active.",
+      "defaultsByPlan": {
+        "free": 0,
+        "small": 0,
+        "medium": 0,
+        "enterprise": 1
+      },
+      "refusedResponse": {
+        "http": 402,
+        "code": "GRANT_CROSS_ROLE_UNAPPROVED"
+      }
+    },
+    {
+      "key": "grant_audit_report",
+      "kind": "boolean",
+      "description": "Enable cross-tenant audit-report generation on the platform-admin endpoint. Enterprise + compliance module co-active. Free / small / medium tiers cannot generate these — the endpoint returns 402 with an upsell.",
+      "defaultsByPlan": {
+        "free": 0,
+        "small": 0,
+        "medium": 0,
+        "enterprise": 1
+      },
+      "refusedResponse": {
+        "http": 402,
+        "code": "GRANT_AUDIT_REPORT_NOT_ENTITLED"
+      }
+    }
+  ]
+}

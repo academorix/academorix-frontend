@@ -1,0 +1,165 @@
+{
+  "id": "rbac.permission-picker",
+  "title": "Permission picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Multi-select widget for the role create/edit surface. Loads the full permission catalogue filtered to the caller's guard + application. Groups permissions by module_slug + scope_suffix. Enforces client-side that the target role's guard matches the selected permissions' guard (matches RoleHasPermissionsObserver's server-side rule so the user gets immediate feedback instead of a 422).",
+  "props": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "Form field name. The Form component binds the selected permission ids to this field."
+    },
+    "label": {
+      "type": "string",
+      "default": "Attach permissions"
+    },
+    "helpText": {
+      "type": "string",
+      "default": ""
+    },
+    "roleGuardName": {
+      "type": "string",
+      "default": "sanctum",
+      "enum": ["sanctum", "platform_admin"],
+      "description": "Filter permissions to this guard only. Also gates the client-side guard-mismatch preview."
+    },
+    "roleApplicationId": {
+      "type": ["string", "null"],
+      "default": null,
+      "description": "Filter permissions to permissions matching this application_id (or NULL for cross-application platform_admin roles)."
+    },
+    "maxSelectable": {
+      "type": "number",
+      "default": 500,
+      "description": "Mirrors config('rbac.roles.max_permissions_per_role'). UI shows a warning when approaching this cap."
+    }
+  },
+  "dataSources": [
+    {
+      "name": "permissions",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/rbac/permissions?filter[guard_name]=' + props.roleGuardName + (props.roleApplicationId ? '&filter[application_id]=' + props.roleApplicationId : '')",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-2" },
+      "children": [
+        {
+          "kind": "Label",
+          "bindings": { "children": { "$ref": "props.label" } }
+        },
+        {
+          "kind": "SearchField",
+          "props": { "placeholder": "Filter by name, module, or resource", "name": "_picker_q" }
+        },
+        {
+          "kind": "Group",
+          "props": {
+            "groupBy": "module_slug",
+            "className": "max-h-96 overflow-y-auto border rounded"
+          },
+          "bindings": {
+            "items": { "$ref": "permissions" }
+          },
+          "groupHeaderRenderer": {
+            "kind": "View",
+            "props": { "className": "px-3 py-2 bg-content2 sticky top-0 z-10 flex items-center gap-2" },
+            "children": [
+              {
+                "kind": "Text",
+                "props": { "className": "text-xs font-semibold uppercase text-muted" },
+                "bindings": { "children": { "$expr": "group.key || 'Uncategorised'" } }
+              },
+              {
+                "kind": "Chip",
+                "props": { "size": "xs", "variant": "neutral" },
+                "bindings": { "children": { "$expr": "group.items.length" } }
+              },
+              {
+                "kind": "Button",
+                "props": { "variant": "ghost", "size": "xs", "children": "Select all in group" },
+                "actions": {
+                  "onPress": {
+                    "kind": "form.updateField",
+                    "field": { "$ref": "props.name" },
+                    "valueExpr": "[...currentValue, ...group.items.map(p => p.id).filter(id => !currentValue.includes(id))]"
+                  }
+                }
+              }
+            ]
+          },
+          "itemRenderer": {
+            "kind": "View",
+            "props": { "className": "flex items-center gap-3 p-2 hover:bg-content1" },
+            "children": [
+              {
+                "kind": "Checkbox",
+                "props": {
+                  "nameExpr": "props.name + '[]'",
+                  "valueExpr": "row.id"
+                }
+              },
+              {
+                "kind": "View",
+                "props": { "className": "flex flex-col flex-1" },
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2" },
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-mono text-sm" },
+                        "bindings": { "children": { "$ref": "row.name" } }
+                      },
+                      {
+                        "kind": "Widget",
+                        "widget": "rbac.permission-scope-chip",
+                        "bindings": { "props": { "scope": { "$ref": "row.scope_suffix" } } }
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted" },
+                    "bindings": { "children": { "$ref": "row.description" } }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs text-muted" },
+          "bindings": {
+            "children": {
+              "$expr": "form.values[props.name].length + ' / ' + props.maxSelectable + ' permissions selected'"
+            }
+          }
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "warning" },
+          "bindings": {
+            "hidden": { "$expr": "form.values[props.name].length < props.maxSelectable * 0.9" },
+            "children": {
+              "$expr": "'You are approaching the ' + props.maxSelectable + ' permissions-per-role cap.'"
+            }
+          }
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs text-muted" },
+          "bindings": { "children": { "$ref": "props.helpText" } }
+        }
+      ]
+    }
+  ]
+}

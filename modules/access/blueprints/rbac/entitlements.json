@@ -1,0 +1,47 @@
+{
+  "id": "academorix://modules/rbac/entitlements",
+  "$version": 1,
+  "title": "rbac \u2014 declared entitlements",
+  "description": "Five entitlements. Custom-role count is a slot (concurrent limit). Custom permissions is a boolean gate (Enterprise-only, allows tenants to add permission strings beyond the shipped catalogue). Time-bounded assignments is a boolean gate. Bulk role assignment is a boolean gate. RBAC audit trail extension is a boolean gate (Enterprise) that raises retention on rbac_audit_log rows.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "custom_roles",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "small": 0, "medium": 1, "business": 1, "enterprise": 1 },
+      "description": "Master toggle for tenant admins creating custom roles. Off = system roles only, no create/edit/delete on non-system rows."
+    },
+    {
+      "key": "custom_role_slot",
+      "kind": "slot",
+      "unit": "roles",
+      "defaultsByPlan": { "free": 0, "small": 0, "medium": 10, "business": 50, "enterprise": null },
+      "description": "How many CUSTOM roles a tenant can have concurrently (is_system=false). Enterprise = unlimited. Enforced by RoleObserver at creation \u2014 above cap the observer refuses with `CustomRoleQuotaExceeded` (402)."
+    },
+    {
+      "key": "custom_permissions",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "small": 0, "medium": 0, "business": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Allow tenants to CREATE new permission strings beyond the shipped catalogue. Enforced by PermissionObserver \u2014 tenants without this entitlement can only ATTACH existing permissions to their custom roles."
+    },
+    {
+      "key": "time_bounded_role_assignments",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "small": 0, "medium": 1, "business": 1, "enterprise": 1 },
+      "description": "Enable expires_at on model_has_roles. Off = writes with expires_at are refused with `TimeBoundedAssignmentNotEntitled` (402). Required by access/delegation for Wave 1b's OOF flow."
+    },
+    {
+      "key": "bulk_role_assignment",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "small": 0, "medium": 1, "business": 1, "enterprise": 1 },
+      "description": "Enable CSV bulk-assign endpoint (`POST /rbac/principals/bulk-assign`). Off = the endpoint returns 402. Medium+ tiers."
+    },
+    {
+      "key": "rbac_audit_trail_extended",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "small": 0, "medium": 0, "business": 0, "enterprise": 1 },
+      "description": "Extended audit retention on rbac_audit_log rows. Default retention on Small/Medium/Business is 90 days (aligned with the tenant tier's audit retention); Enterprise gets 7 years (or configurable per contract) alongside the audit module's own retention extension."
+    }
+  ]
+}

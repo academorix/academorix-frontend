@@ -1,0 +1,39 @@
+{
+  "id": "delegation.widgets.delegation-status-chip",
+  "title": "Delegation status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widgetName": "delegation.delegation-status-chip",
+  "notes": [
+    "Colour-coded chip for the four effective delegation states (pending / active / expired / revoked). Used in every delegation list + show screen + the shell's delegate-received indicator.",
+    "The state is DERIVED from starts_at + ends_at + revoked_at — do not read a state column (there isn't one on the row; it's an accessor). This widget encapsulates the derivation."
+  ],
+  "props": {
+    "delegation": {
+      "type": "RoleDelegation",
+      "required": true,
+      "description": "The delegation row. Reads .is_pending / .is_active / .is_expired / .is_revoked computed properties."
+    },
+    "size": {
+      "type": "'xs' | 'sm' | 'md'",
+      "default": "sm"
+    }
+  },
+  "nodes": [
+    {
+      "kind": "Chip",
+      "props": { "size": "size" },
+      "bindings": {
+        "variant": {
+          "$expr": "delegation.is_revoked ? 'danger' : (delegation.is_expired ? 'neutral' : (delegation.is_active ? 'success' : 'info'))"
+        },
+        "leadingIcon": {
+          "$expr": "delegation.is_revoked ? 'x-circle' : (delegation.is_expired ? 'clock' : (delegation.is_active ? 'check-circle' : 'ellipsis-horizontal'))"
+        },
+        "children": {
+          "$expr": "delegation.is_revoked ? 'Revoked' : (delegation.is_expired ? 'Expired' : (delegation.is_active ? 'Active' : 'Pending'))"
+        }
+      }
+    }
+  ]
+}

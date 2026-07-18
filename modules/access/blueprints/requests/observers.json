@@ -1,0 +1,15 @@
+{
+  "id": "academorix://modules/access/requests/observers",
+  "$version": 1,
+  "title": "requests \u2014 model observers",
+  "description": "This module owns NO models and therefore contributes NO Eloquent observers. State transitions on the underlying `approval_instances` table are observed by workflow/approvals; state transitions on the resulting `access_grants` table are observed by access/grants. This module reacts to those observers' EVENTS via `listeners.json`, not by attaching observers directly.",
+  "observers": [],
+  "rationale": [
+    "Attaching an observer to another module's model would be a boundary violation \u2014 downstream ordering surprises + double-write semantics + guessing-game on which observer fires first.",
+    "The observer contract is `owner-writes, world-reads-via-events`. This module reads via events + never violates the write path.",
+    "If a future feature genuinely needs pre/post-save hooks on approval_instance rows created by this module, the correct move is to add a `#[AsApprovableAction]` metadata hook to workflow/approvals \u2014 not to hijack the observer contract."
+  ],
+  "notes": [
+    "Distinct from `listeners.json` (this file): observers fire on Eloquent lifecycle events (creating/created/updating/updated/saving/saved/deleting/deleted/restoring/restored) inside the same transaction. Listeners fire on domain events broadcast on the event bus, after commit. This module uses the latter throughout."
+  ]
+}

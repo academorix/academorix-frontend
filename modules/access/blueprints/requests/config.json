@@ -1,0 +1,110 @@
+{
+  "id": "academorix://modules/access/requests/config",
+  "$version": 1,
+  "title": "requests \u2014 developer configuration",
+  "description": "Developer / operator configuration. Mirrors `config/access-requests.php`. Static per deploy; changing requires redeploy + `config:cache`. This module intentionally does not ship tenant-editable settings \u2014 tenant-side approver-flow configuration goes through `workflow/approvals` templates.",
+  "configFile": "config/access-requests.php",
+  "envPrefix": "ACCESS_REQUESTS_",
+  "sections": {
+    "defaults": {
+      "description": "Cross-cutting defaults.",
+      "keys": [
+        {
+          "path": "access.requests.default_grant_ttl_days",
+          "type": "integer",
+          "default": 7,
+          "env": "ACCESS_REQUESTS_DEFAULT_GRANT_TTL_DAYS",
+          "description": "Default TTL for grants materialised from access requests. Overridable per-resource via `#[AccessRequestable(defaultGrantTtlDays: N)]`. Enterprise entitlement `access_request_ttl_override` gates the ability to override."
+        },
+        {
+          "path": "access.requests.default_approvers_selector",
+          "type": "string",
+          "default": "role(admin)",
+          "env": "ACCESS_REQUESTS_DEFAULT_APPROVERS_SELECTOR",
+          "description": "Fallback expression when no approval_template matches. Uses symfony/expression-language via workflow/approvals selector engine. Must evaluate to a non-empty user set for the access-request flow to work on day 1."
+        }
+      ]
+    },
+    "approver_resolution": {
+      "description": "How the approver set is picked when the template layer produces nothing.",
+      "keys": [
+        {
+          "path": "access.requests.approver_resolution.fallback_to_resource_owner",
+          "type": "boolean",
+          "default": true,
+          "env": "ACCESS_REQUESTS_FALLBACK_TO_RESOURCE_OWNER",
+          "description": "When TRUE, if the default_approvers_selector also returns empty, the resource's `created_by` user becomes the approver. Prevents unresolvable requests in fresh tenants where no admin role exists."
+        },
+        {
+          "path": "access.requests.approver_resolution.delegation_aware",
+          "type": "boolean",
+          "default": true,
+          "env": "ACCESS_REQUESTS_DELEGATION_AWARE",
+          "description": "When TRUE, active role_delegations from `access/delegation` are consulted \u2014 delegated approvers replace their delegators in the resolved set. Should always be TRUE in production; a feature flag mirrors this for easier debugging."
+        }
+      ]
+    },
+    "notifications": {
+      "description": "Approver + requester notification tuning.",
+      "keys": [
+        {
+          "path": "access.requests.notifications.reminder_after_hours",
+          "type": "integer",
+          "default": 24,
+          "env": "ACCESS_REQUESTS_REMINDER_AFTER_HOURS",
+          "description": "Approvers get a nightly reminder for pending requests older than this. Gated by the `access_request_reminders` entitlement."
+        },
+        {
+          "path": "access.requests.notifications.max_reminders",
+          "type": "integer",
+          "default": 3,
+          "env": "ACCESS_REQUESTS_MAX_REMINDERS",
+          "description": "Hard cap on reminder count per (request, approver) pair. Third reminder switches to a stronger 'last reminder' variant."
+        },
+        {
+          "path": "access.requests.notifications.optimistic_approved_notification",
+          "type": "boolean",
+          "default": true,
+          "env": "ACCESS_REQUESTS_OPTIMISTIC_APPROVED",
+          "description": "When TRUE, AccessRequestApprovedNotification fires on ApprovalGranted (before the grant is materialised). When FALSE, defers to AccessRequestGrantIssued. Mirrored by a feature flag for canary control."
+        }
+      ]
+    },
+    "expiration": {
+      "description": "Timeout behaviour.",
+      "keys": [
+        {
+          "path": "access.requests.expiration.auto_expire_hours",
+          "type": "integer",
+          "default": 168,
+          "env": "ACCESS_REQUESTS_AUTO_EXPIRE_HOURS",
+          "description": "Hard expiry (7 days by default). Copied into approval_instances.expires_at at create time. Approvers who don't decide within this window trip the ApprovalExpired shim."
+        }
+      ]
+    },
+    "ui": {
+      "description": "SPA-side flags surfaced to the front-end via `/api/config`.",
+      "keys": [
+        {
+          "path": "access.requests.ui.show_request_button_on_403",
+          "type": "boolean",
+          "default": true,
+          "env": "ACCESS_REQUESTS_UI_SHOW_REQUEST_BUTTON",
+          "description": "When TRUE, the SPA renders the 'Request access' affordance on any 403 with `code === 'access_denied.can_request'`. Set FALSE only for tenants that opted out of self-service access requests."
+        }
+      ]
+    },
+    "auto_approve": {
+      "description": "Emergency escape hatch \u2014 defaults to OFF. Toggling ON in production requires a design review.",
+      "keys": [
+        {
+          "path": "access.requests.auto_approve_when_no_approvers",
+          "type": "boolean",
+          "default": false,
+          "env": "ACCESS_REQUESTS_AUTO_APPROVE_WHEN_NO_APPROVERS",
+          "description": "When TRUE, requests that resolve to zero approvers auto-approve (materialising a grant with `granted_by=SYSTEM`). Silently bypasses the entire approval story \u2014 use only for tenant-provisioning bootstrap phases where no admin exists yet. Enable via `platform:override` command with an ops-signed rationale."
+        }
+      ]
+    }
+  }
+}

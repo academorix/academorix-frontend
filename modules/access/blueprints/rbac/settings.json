@@ -1,0 +1,117 @@
+{
+  "id": "academorix://modules/rbac/settings",
+  "$version": 1,
+  "title": "rbac \u2014 settings",
+  "description": "Tenant-facing preferences. RBAC exposes a narrow settings surface \u2014 most configuration is framework-level (config/rbac.php) or entitlement-gated. Tenant admins can toggle notification cadence + adjust the reminder-before-expiry window within the framework floor.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "rbac",
+      "class": "Academorix\\Rbac\\Settings\\RbacSettings",
+      "label": "Access control",
+      "description": "Role + permission notification preferences + assignment lifecycle defaults.",
+      "icon": "shield-check",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 20,
+      "permission": "roles.viewAny.tenant",
+      "sections": [
+        {
+          "label": "Notifications",
+          "description": "Cadence + channels for RBAC-related notifications.",
+          "icon": "bell-alert",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "notify_on_role_assigned",
+              "controlType": "toggle",
+              "label": "Notify members when roles are assigned",
+              "defaultValue": true,
+              "helpText": "Off = only silent seed-time assignments; owner/admin-initiated assignments still notify.",
+              "sortOrder": 1
+            },
+            {
+              "name": "notify_on_role_revoked",
+              "controlType": "toggle",
+              "label": "Notify members when roles are revoked",
+              "defaultValue": true,
+              "helpText": "Cannot be disabled for revocations triggered by system-security events (breach response, principal_disabled).",
+              "sortOrder": 2
+            },
+            {
+              "name": "assignment_expiring_reminder_days",
+              "controlType": "number",
+              "label": "Days before expiry to send reminder",
+              "defaultValue": 7,
+              "min": 1,
+              "max": 30,
+              "helpText": "Framework floor: 1 day. Framework ceiling: 30 days.",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Assignment defaults",
+          "description": "Default behaviour for role assignments.",
+          "icon": "adjustments-horizontal",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "require_reason_on_assign",
+              "controlType": "toggle",
+              "label": "Require a reason on role assignments",
+              "defaultValue": false,
+              "helpText": "When on, admins must include a `reason` field on every assignment. Audit-friendly for regulated tenants."
+            },
+            {
+              "name": "require_reason_on_revoke",
+              "controlType": "toggle",
+              "label": "Require a reason on role revocations",
+              "defaultValue": true,
+              "helpText": "Default on \u2014 revocations are more consequential than assignments."
+            },
+            {
+              "name": "default_time_bounded_duration_days",
+              "controlType": "number",
+              "label": "Default expiration window (days)",
+              "defaultValue": 90,
+              "min": 1,
+              "max": 365,
+              "helpText": "Applied when an admin ticks 'time-bounded' without specifying a specific date. Requires time_bounded_role_assignments entitlement.",
+              "requiresEntitlement": "time_bounded_role_assignments"
+            }
+          ]
+        },
+        {
+          "label": "Custom roles",
+          "description": "Custom role creation policy.",
+          "icon": "sparkles",
+          "sortOrder": 3,
+          "requiresEntitlement": "custom_roles",
+          "fields": [
+            {
+              "name": "custom_role_naming_convention",
+              "controlType": "select",
+              "label": "Naming convention",
+              "defaultValue": "snake_case",
+              "options": {
+                "snake_case": "snake_case (e.g. senior_coach)",
+                "kebab_case": "kebab-case (e.g. senior-coach)"
+              },
+              "helpText": "Applied by the tenant's custom-role naming validator. Framework floor is snake_case; this is a display preference."
+            },
+            {
+              "name": "custom_role_default_permission_set",
+              "controlType": "multi-select",
+              "label": "Default permissions on new custom roles",
+              "defaultValue": [],
+              "optionsSource": "rbac-permissions.tenant-safe",
+              "helpText": "When creating a custom role, pre-select these permissions. Speeds up common configurations."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

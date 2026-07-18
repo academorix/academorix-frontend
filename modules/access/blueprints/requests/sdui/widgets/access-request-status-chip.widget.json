@@ -1,0 +1,67 @@
+{
+  "id": "access-requests.status-chip",
+  "title": "Access-request status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip that renders an AccessRequest's status. Consumed by the access-requests list + show screens and by any downstream surface that displays access-request state (grants module's list, compliance audit report). Semantic colours map to lifecycle: pending = info (blue); approved = success (green); rejected = danger (red); expired = warning (amber); cancelled = neutral (slate).",
+  "props": {
+    "status": {
+      "type": "string",
+      "description": "The AccessRequest status enum value. One of pending / approved / rejected / expired / cancelled."
+    },
+    "size": {
+      "type": "string",
+      "default": "sm",
+      "enum": ["xs", "sm", "md"],
+      "description": "Chip size."
+    },
+    "showIcon": {
+      "type": "boolean",
+      "default": true,
+      "description": "Render the leading icon."
+    },
+    "showLabel": {
+      "type": "boolean",
+      "default": true,
+      "description": "Render the human-readable label. When false, only the icon renders (dense tables)."
+    }
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "chip",
+      "kind": "Chip",
+      "props": { "className": "focus-ring" },
+      "bindings": {
+        "variant": {
+          "$expr": "props.status === 'approved' ? 'success' : (props.status === 'rejected' ? 'danger' : (props.status === 'expired' ? 'warning' : (props.status === 'cancelled' ? 'neutral' : 'info')))"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "children": [
+        {
+          "id": "icon",
+          "kind": "Icon",
+          "props": { "className": "size-3 mr-1" },
+          "bindings": {
+            "hidden": { "$expr": "!props.showIcon" },
+            "icon": {
+              "$expr": "props.status === 'approved' ? 'check-circle' : (props.status === 'rejected' ? 'x-circle' : (props.status === 'expired' ? 'clock' : (props.status === 'cancelled' ? 'no-symbol' : 'hourglass'))) "
+            }
+          }
+        },
+        {
+          "id": "label",
+          "kind": "Text",
+          "props": { "as": "span" },
+          "bindings": {
+            "hidden": { "$expr": "!props.showLabel" },
+            "children": {
+              "$expr": "props.status === 'approved' ? 'Approved' : (props.status === 'rejected' ? 'Rejected' : (props.status === 'expired' ? 'Expired' : (props.status === 'cancelled' ? 'Cancelled' : 'Pending')))"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

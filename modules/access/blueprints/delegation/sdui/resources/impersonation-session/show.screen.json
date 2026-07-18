@@ -1,0 +1,290 @@
+{
+  "id": "delegation.resources.impersonation-session.show",
+  "title": "Impersonation session detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/impersonation/sessions/{session}",
+  "host": "platform-admin",
+  "audience": "platform_admin",
+  "resource": { "module": "delegation", "entity": "impersonation-session", "action": "show" },
+  "requiresPermission": "platform.impersonation.view",
+  "notes": [
+    "For an ACTIVE session where the caller is the operator: shows the countdown timer widget (self-updating via platform.impersonation broadcast) + End Session button.",
+    "For any session viewer with viewAll permission: shows the full audit trail of actions taken during the session (correlation_id-scoped to the session).",
+    "For security / super_admin: shows the Force-terminate button (variant=danger, security-lockdown trigger).",
+    "The operator identity renders from live PlatformUser join OR from snapshot fields when the FK is NULL (post PlatformUser hard-delete)."
+  ],
+  "dataSources": [
+    {
+      "name": "session",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/platform/impersonation/sessions/' + route.session",
+      "unwrap": "data"
+    },
+    {
+      "name": "sessionAudit",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/platform/impersonation/sessions/' + route.session + '/audit?limit=50'",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Impersonation session" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted font-mono" },
+                  "bindings": { "children": { "$ref": "session.id" } }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "delegation.impersonation-countdown-timer",
+                  "propsExpr": "{ session: session }",
+                  "bindings": { "hidden": { "$expr": "!session.is_active" } }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "danger",
+                    "leadingIcon": "x-mark",
+                    "children": "End session",
+                    "confirm": "End this impersonation session immediately? The impersonated user is notified."
+                  },
+                  "bindings": { "hidden": { "$expr": "!session.is_active" } },
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.post",
+                      "urlExpr": "'/api/v1/platform/impersonation/' + session.id + '/end'"
+                    }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "danger",
+                    "leadingIcon": "shield-exclamation",
+                    "children": "Force-terminate",
+                    "confirm": "SECURITY LOCKDOWN — this will terminate the session immediately, notify the security team, and log a critical audit event. Continue?"
+                  },
+                  "bindings": { "hidden": { "$expr": "!session.is_active" } },
+                  "actions": {
+                    "onPress": {
+                      "kind": "modal.open",
+                      "modal": "force-terminate-impersonation",
+                      "propsExpr": "{ sessionId: session.id }"
+                    }
+                  },
+                  "requiresPermission": "platform.impersonation.terminate"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            {
+              "kind": "DescriptionList",
+              "items": [
+                {
+                  "label": "Operator",
+                  "value": {
+                    "kind": "Text",
+                    "bindings": { "children": { "$ref": "session.actor_line" } }
+                  }
+                },
+                {
+                  "label": "Department",
+                  "value": {
+                    "kind": "Chip",
+                    "props": { "size": "xs" },
+                    "bindings": { "children": { "$ref": "session.impersonator_department" } }
+                  }
+                },
+                {
+                  "label": "Impersonated user",
+                  "value": {
+                    "kind": "Link",
+                    "propsExpr": "{ to: '/platform/users/' + session.impersonated.id, children: session.impersonated.profile.display_name }"
+                  }
+                },
+                {
+                  "label": "Target tenant",
+                  "value": {
+                    "kind": "Text",
+                    "bindings": { "children": { "$ref": "session.target_tenant.name" } }
+                  }
+                },
+                {
+                  "label": "Target application",
+                  "value": {
+                    "kind": "Text",
+                    "bindings": { "children": { "$ref": "session.target_application.name" } }
+                  }
+                },
+                {
+                  "label": "Reason",
+                  "value": {
+                    "kind": "Text",
+                    "props": { "className": "whitespace-pre-wrap" },
+                    "bindings": { "children": { "$ref": "session.reason" } }
+                  }
+                },
+                {
+                  "label": "Support ticket",
+                  "value": {
+                    "kind": "Text",
+                    "bindings": {
+                      "children": {
+                        "$expr": "session.support_ticket_reference || '—'"
+                      }
+                    }
+                  }
+                },
+                {
+                  "label": "Mode",
+                  "value": {
+                    "kind": "Chip",
+                    "props": { "size": "xs" },
+                    "bindings": {
+                      "children": { "$expr": "session.is_read_only ? 'Read-only' : 'Read-write'" },
+                      "variant": { "$expr": "session.is_read_only ? 'info' : 'warning'" }
+                    }
+                  }
+                },
+                {
+                  "label": "Started",
+                  "value": {
+                    "kind": "Text",
+                    "bindings": { "children": { "$ref": "session.started_at" } }
+                  }
+                },
+                {
+                  "label": "Scheduled end",
+                  "value": {
+                    "kind": "Text",
+                    "bindings": { "children": { "$ref": "session.ends_at" } }
+                  }
+                },
+                {
+                  "label": "Actual end",
+                  "value": {
+                    "kind": "Text",
+                    "bindings": {
+                      "children": { "$expr": "session.ended_at || '(active)'" }
+                    }
+                  }
+                },
+                {
+                  "label": "End trigger",
+                  "value": {
+                    "kind": "Chip",
+                    "props": { "size": "xs" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "session.end_trigger ? ({ self_service: 'Ended by operator', ttl_expired: 'TTL expired', admin_revocation: 'Ended by administrator', security_lockdown: 'Security lockdown' }[session.end_trigger]) : '—'"
+                      },
+                      "variant": {
+                        "$expr": "session.end_trigger === 'security_lockdown' ? 'danger' : 'neutral'"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h2", "className": "text-lg font-semibold mb-2", "children": "Session audit trail" }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted mb-3",
+                "children": "Every action taken by the operator during this session. Correlation-scoped."
+              }
+            },
+            {
+              "kind": "Table",
+              "columns": [
+                {
+                  "key": "timestamp",
+                  "header": "Time",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-xs font-mono" },
+                    "bindings": { "children": { "$ref": "row.created_at" } }
+                  }
+                },
+                {
+                  "key": "action",
+                  "header": "Action",
+                  "cell": {
+                    "kind": "Chip",
+                    "props": { "size": "xs" },
+                    "bindings": { "children": { "$ref": "row.action" } }
+                  }
+                },
+                {
+                  "key": "resource",
+                  "header": "Resource",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-xs" },
+                    "bindings": { "children": { "$ref": "row.resource_label" } }
+                  }
+                },
+                {
+                  "key": "http",
+                  "header": "HTTP",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-xs" },
+                    "bindings": {
+                      "children": { "$expr": "row.http_method + ' ' + row.http_status" }
+                    }
+                  }
+                }
+              ],
+              "bindings": { "rows": { "$ref": "sessionAudit" } }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "broadcasts": {
+    "subscribeExpr": "['platform.impersonation.' + session.impersonator_platform_user_id]",
+    "refreshDataSourcesOnEvent": {
+      "impersonation.session_ended": ["session"],
+      "impersonation.session_extended": ["session"],
+      "impersonation.session_forced_terminate": ["session"]
+    }
+  }
+}

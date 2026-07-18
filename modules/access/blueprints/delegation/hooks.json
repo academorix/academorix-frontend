@@ -1,0 +1,22 @@
+{
+  "id": "academorix://modules/delegation/hooks",
+  "$version": 1,
+  "title": "delegation — tenancy hooks",
+  "description": "This module publishes ONE tenancy hook. `role_delegations` participates in tenant-init like every other tenant-scoped table — the BelongsToTenant global scope + application_id + cascade behaviour are all standard. `impersonation_sessions` is DELIBERATELY cross-plane and does NOT participate in tenant-init on the impersonator side (impersonator_platform_user_id references a central-plane PlatformUser row that has no tenant_id). The hook file documents both — the participation for delegations and the non-participation for impersonation.",
+  "contract": "Academorix\\ServiceProvider\\Contracts\\TenancyHookInterface",
+  "dispatcher": "Academorix\\ServiceProvider\\Dispatchers\\TenancyHookDispatcher",
+  "registry": "Academorix\\ServiceProvider\\Registry\\TenancyHookRegistry",
+  "hooks": [
+    {
+      "class": "Academorix\\Delegation\\Hooks\\WarmDelegationResolverCacheOnTenantInit",
+      "description": "On tenant-init (a tenant-scoped request bootstrapping the tenant context in RequestContext), warm the DelegationResolver LRU cache for this tenant's active delegations. Reduces the first-request cold-cache latency after tenant switch. Idempotent — a second init on the same tenant no-ops (cache warm-flag is set with a short TTL). Optional at runtime; delegation.warm_resolver_cache_on_boot feature-flag governs.",
+      "priority": 45,
+      "runs_on": "tenant-init only (per-request, after tenant.resolve middleware fires)"
+    }
+  ],
+  "notes": [
+    "The impersonation aggregate does NOT publish a tenant-init hook — the impersonator (a PlatformUser) is cross-plane. When a super_admin is impersonating a tenant User (this module's whole raison d'être), the impersonation session's presence sets `target_tenant_id` in the impersonation-scoped PAT + the standard tenant.resolve middleware activates that tenant's context. Impersonation piggybacks on the tenant substrate; it doesn't add its own tenant-init logic.",
+    "The `impersonation_sessions` global scope via BelongsToTenant applies to target_tenant_id (the tenant BEING impersonated), NOT to the impersonator's tenant (which doesn't exist). This is the design invariant that keeps the module compliant with tenancy-columns.md §5 (platform-plane FKs on tenant-plane rows are permitted for cross-plane operational tracking) while retaining tenant isolation for reads.",
+    "The tenancy-compliance-auditor agent expects EXACTLY one tenant-init hook in this file (the resolver warm). A future PR adding a second hook must justify why the delegation module needs additional tenant-init logic beyond the resolver — otherwise the compliance auditor flags it."
+  ]
+}

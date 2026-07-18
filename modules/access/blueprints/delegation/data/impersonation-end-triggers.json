@@ -1,0 +1,49 @@
+{
+  "$version": 1,
+  "title": "ImpersonationEndTrigger enum seed",
+  "description": "Canonical impersonation-end-trigger taxonomy. Consumed at boot by `ImpersonationEndTrigger` enum registration. Every value maps to a distinct auditability signal — SOC 2 evidence reviewers use end_trigger to segment sessions during review.",
+  "columns_note": "Fields on each row: `key` (enum member name, snake_case, stable identifier), `display_name` (human-readable label), `sort_order` (picker sort ascending), `is_administrative` (whether this trigger fires from admin action vs autonomous / operator-driven), `is_alertable` (whether the trigger fires a security notification chain), `audit_severity` (info / warn / critical — feeds the compliance report grouping).",
+  "impersonation_end_triggers": [
+    {
+      "key": "self_service",
+      "display_name": "Ended by operator",
+      "sort_order": 1,
+      "is_administrative": false,
+      "is_alertable": false,
+      "audit_severity": "info",
+      "description": "The impersonator hit /end voluntarily. The normal happy path — a support agent finished troubleshooting + closed their session. Fires ImpersonationSessionEnded (queue: notifications-critical), notifies impersonated User via ImpersonationSessionEndedNotification (cannot-opt-out)."
+    },
+    {
+      "key": "ttl_expired",
+      "display_name": "TTL expired",
+      "sort_order": 2,
+      "is_administrative": false,
+      "is_alertable": false,
+      "audit_severity": "info",
+      "description": "EndImpersonationSessionsJob observed the session past ends_at and force-transitioned it. Common — a support agent forgot to /end + the session naturally ran out. Fires ImpersonationSessionEnded (queue: notifications-critical), notifies impersonated User."
+    },
+    {
+      "key": "admin_revocation",
+      "display_name": "Ended by administrator",
+      "sort_order": 3,
+      "is_administrative": true,
+      "is_alertable": false,
+      "audit_severity": "warn",
+      "description": "A super_admin (or security team member with the terminate ability) fired /end on someone else's session (usually the impersonator's own manager cutting a session short). Also fires when a PlatformUser is offboarded / suspended mid-session — the TerminateActivePlatformImpersonationSessions listener sets this trigger. Fires ImpersonationSessionEnded (NOT ForcedTerminate — that's for security lockdowns)."
+    },
+    {
+      "key": "security_lockdown",
+      "display_name": "Security lockdown",
+      "sort_order": 4,
+      "is_administrative": true,
+      "is_alertable": true,
+      "audit_severity": "critical",
+      "description": "The security team fired /force-terminate — either directly OR indirectly through the compliance::TenantSecurityIncidentDeclared listener. This is the emergency STOP-EVERYTHING trigger. Fires ImpersonationSessionForcedTerminate (queue: notifications-critical), notifies the impersonated User + the security team via Slack #security + PagerDuty on-call rotation."
+    }
+  ],
+  "notes": [
+    "Adding a new trigger requires: (1) schema migration to extend the Postgres enum, (2) update this file + regenerate the enum class, (3) update the ImpersonationEndTrigger cast, (4) coordinate with the security team on the routing / notification chain for the new trigger.",
+    "audit_severity is deliberately NOT stored on the impersonation_sessions row — the severity is derived from end_trigger at query time so the compliance report can re-classify past sessions if the severity mapping ever changes (rare, but valued for retroactive compliance work).",
+    "The is_alertable flag drives which triggers fire security team notifications. Only security_lockdown is alertable today; if we later add a 'suspicious_activity' trigger (e.g. session accessed a resource the operator's abilities didn't cover — should never happen but paranoid audit), that would also be alertable."
+  ]
+}

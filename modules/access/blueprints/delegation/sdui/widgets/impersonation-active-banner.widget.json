@@ -1,0 +1,82 @@
+{
+  "id": "delegation.widgets.impersonation-active-banner",
+  "title": "Impersonation active banner",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widgetName": "delegation.impersonation-active-banner",
+  "notes": [
+    "Top-of-page sticky banner shown to the operator during an active impersonation session. Always variant=warning — the operator must be visually aware they are acting as another user.",
+    "Reads current_impersonation() (helpers.json) — no data-source fetch. When there is no active session, the widget renders null.",
+    "Displays impersonated User name + read-only badge (if applicable) + countdown timer + End Session button + Force-terminate menu item (visible to security / super_admin)."
+  ],
+  "props": {},
+  "nodes": [
+    {
+      "kind": "Alert",
+      "props": {
+        "variant": "warning",
+        "className": "sticky top-0 z-50 border-b-2 border-warning-500 mb-4",
+        "leadingIcon": "user"
+      },
+      "bindings": {
+        "hidden": { "$expr": "!is_impersonating()" }
+      },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between gap-4 w-full" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2 flex-1" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-medium" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "'Impersonating ' + current_impersonation().impersonated.profile.display_name + ' on ' + current_impersonation().target_tenant.name"
+                    }
+                  }
+                },
+                {
+                  "kind": "Chip",
+                  "props": { "size": "xs" },
+                  "bindings": {
+                    "hidden": { "$expr": "!current_impersonation().is_read_only" },
+                    "props": {
+                      "variant": "info",
+                      "leadingIcon": "eye",
+                      "children": "Read-only"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Widget",
+              "widget": "delegation.impersonation-countdown-timer",
+              "propsExpr": "{ session: current_impersonation(), compact: true }"
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "ghost",
+                "size": "sm",
+                "leadingIcon": "x-mark",
+                "children": "End session"
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "urlExpr": "'/api/v1/platform/impersonation/' + current_impersonation().id + '/end'",
+                  "confirm": "End this impersonation session immediately? The impersonated user is notified."
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

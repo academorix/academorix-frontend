@@ -1,0 +1,215 @@
+{
+  "id": "academorix://modules/grants/errors",
+  "$version": 1,
+  "title": "grants — error catalogue",
+  "description": "Error codes this module emits. `user_facing` controls whether the message renders to end users (translated via i18n). `retryable` signals client-side retry. `audit_severity` routes to the correct log channel — `alert` pages on-call, `critical` fires the security-incident notification pipeline.",
+  "namespace": "grants",
+  "errors": [
+    {
+      "code": "GRANT_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "grants.errors.grant_not_found"
+    },
+    {
+      "code": "GRANT_ALREADY_TERMINAL",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "grants.errors.grant_already_terminal",
+      "description": "Attempt to update / revoke a grant that is already revoked or expired."
+    },
+    {
+      "code": "GRANT_IMMUTABLE_FIELD_MODIFIED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "grants.errors.immutable_field_modified",
+      "description": "Attempt to PATCH `subject_id / resource_type / resource_id / permissions / decision / granted_by / granted_at / source / source_reference / tenant_id`. Only expires_at + reason + metadata are patchable post-issue."
+    },
+    {
+      "code": "GRANT_CROSS_TENANT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "grants.errors.cross_tenant",
+      "description": "Tenant-isolation breach attempt: subject.tenant_id !== resource.tenant_id !== grantor.tenant_id. Fires GrantCrossTenantAttempt event pre-refusal. Security-critical."
+    },
+    {
+      "code": "GRANT_PRIVILEGE_ESCALATION",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "critical",
+      "i18n_key": "grants.errors.privilege_escalation",
+      "description": "Grantor tried to grant permissions they do not hold. Fires SelfServiceGrantAttempted event pre-refusal. Security-critical."
+    },
+    {
+      "code": "PERMISSION_UNKNOWN",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "grants.errors.permission_unknown",
+      "description": "One or more permission names in the array don't resolve to rows in the access/rbac permissions table."
+    },
+    {
+      "code": "GRANT_RESOURCE_TYPE_UNREGISTERED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "grants.errors.resource_type_unregistered",
+      "description": "resource_type is not in GrantableRegistry. Almost always indicates a missing #[Grantable] attribute + registration in the consumer module's service provider boot."
+    },
+    {
+      "code": "GRANT_SUBJECT_TYPE_UNSUPPORTED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "grants.errors.subject_type_unsupported",
+      "description": "subject_type not in the registered subject-type list. Wave 1b: only `user` is supported."
+    },
+    {
+      "code": "GRANT_RESOURCE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "grants.errors.resource_not_found",
+      "description": "resource_id does not resolve to a row of resource_type."
+    },
+    {
+      "code": "GRANT_SUBJECT_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "grants.errors.subject_not_found",
+      "description": "subject_id does not resolve to a row of subject_type in the caller's tenant."
+    },
+    {
+      "code": "GRANT_REASON_TOO_SHORT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "grants.errors.reason_too_short",
+      "description": "reason < 20 characters (or configured settings.grants.min_reason_length)."
+    },
+    {
+      "code": "GRANT_REASON_PLACEHOLDER",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "grants.errors.reason_placeholder",
+      "description": "reason matches a placeholder pattern (`test`, `temp`, `TODO`, `because`, single word without whitespace). Enforces the audit-trail promise: every grant has a meaningful justification."
+    },
+    {
+      "code": "GRANT_EXPIRES_AT_IN_PAST",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "grants.errors.expires_at_in_past",
+      "description": "expires_at, when supplied, must be > now()."
+    },
+    {
+      "code": "GRANT_EXPIRES_AT_TOO_FAR",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "grants.errors.expires_at_too_far",
+      "description": "expires_at exceeds settings.grants.expiration.max_ttl_days (default 365). Enterprise tenants with `permanent_grants` entitlement can bypass by passing NULL."
+    },
+    {
+      "code": "GRANT_PERMANENT_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "grants.errors.permanent_not_entitled",
+      "description": "expires_at IS NULL requires the `permanent_grants` entitlement (enterprise). Other tiers must set an expiry."
+    },
+    {
+      "code": "GRANT_DENY_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "grants.errors.deny_not_entitled",
+      "description": "decision='deny' requires the `deny_grants` entitlement (enterprise). Other tiers can only grant allow."
+    },
+    {
+      "code": "GRANT_BULK_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "grants.errors.bulk_not_entitled",
+      "description": "Bulk provisioning requires the `bulk_grant_provision` entitlement (medium plan+)."
+    },
+    {
+      "code": "GRANT_CROSS_ROLE_UNAPPROVED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "grants.errors.cross_role_unapproved",
+      "description": "Cross-role grants (grantor lacks the permission) require the `cross_role_grants` entitlement AND a matching workflow/approvals template. Refused when the approval instance is not present in the request context."
+    },
+    {
+      "code": "GRANT_DUPLICATE_ACTIVE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "grants.errors.duplicate_active",
+      "description": "An active grant with the same (subject, resource, permissions, decision) tuple already exists. Prevents accidental duplicates. Revoke the existing one first if the intent is to reset."
+    },
+    {
+      "code": "GRANT_BULK_CSV_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "grants.errors.bulk_csv_invalid",
+      "description": "Bulk CSV upload failed validation. Response body includes per-row error map so the uploader can correct + retry."
+    },
+    {
+      "code": "GRANT_BULK_TOO_LARGE",
+      "http": 413,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "grants.errors.bulk_too_large",
+      "description": "Bulk CSV exceeds settings.grants.bulk.max_rows_per_batch (default 10000). Split into smaller batches."
+    },
+    {
+      "code": "GRANT_GRANTOR_DELETED",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "grants.errors.grantor_deleted",
+      "description": "The auth_user was hard-deleted mid-request. Should be nearly impossible; alerts on-call."
+    },
+    {
+      "code": "GRANT_APPROVAL_INSTANCE_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "grants.errors.approval_instance_mismatch",
+      "description": "AccessRequestApprovedListener received an ApprovalExecuted event whose context_json did not shape into a valid grant payload. Usually indicates schema drift between access/requests and grants."
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "id": "academorix://modules/rbac/middleware",
+  "$version": 1,
+  "title": "rbac \u2014 HTTP middleware",
+  "middleware": [
+    {
+      "alias": "rbac.enforce_permission",
+      "class": "Academorix\\Rbac\\Http\\Middleware\\EnforcePermission",
+      "priority": 30,
+      "description": "The primary permission gate. Reads `#[RequirePermission('permission.name')]` from the target action (or accepts `permission:permission.name` inline via the route definition), then calls `PermissionResolver::resolve()`. On false: 403 PermissionDefaultDeny. On true: pass through. This is the middleware every gated route uses.",
+      "auto_applied": false,
+      "auto_applied_to": [],
+      "notes": [
+        "Reads the #[RequirePermission] attribute from either the controller method OR the action class (Actions convention).",
+        "When multiple permissions are declared (#[RequirePermissionAny] or #[RequirePermissionAll]), evaluates the union / intersection accordingly.",
+        "Records the check outcome for the audit stream when config('rbac.telemetry.permission_check_sample_ratio') sampled."
+      ]
+    },
+    {
+      "alias": "rbac.enforce_role",
+      "class": "Academorix\\Rbac\\Http\\Middleware\\EnforceRole",
+      "priority": 31,
+      "description": "Role-based gate. Reads `#[RequireRole('role_name')]` and asserts the caller holds the role. Coarser than permission checks \u2014 useful for admin-console routes where 'owner OR admin' is the natural gate (rather than enumerating every permission the role holds).",
+      "auto_applied": false,
+      "notes": [
+        "When both role AND permission attributes are present on a route, both are enforced (AND, not OR).",
+        "Skipped for platform_admin guard callers with super_admin role (Gate::before hook)."
+      ]
+    },
+    {
+      "alias": "rbac.warm_permission_cache",
+      "class": "Academorix\\Rbac\\Http\\Middleware\\WarmPermissionCache",
+      "priority": 25,
+      "description": "Ensures the caller's ResolvedPermissionSet is loaded into the process-local cache before the first permission check fires. Skipped when config('rbac.cache.warmup_on_login')=false OR when the request has no authenticated user.",
+      "auto_applied": true,
+      "auto_applied_to": ["api"]
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "auth::auth.enforce_session_scope" },
+    { "middleware": "application::application.resolve" },
+    { "middleware": "entitlements::entitlement.enforce" }
+  ],
+  "notes": [
+    "The framework-tier attributes `#[RequirePermission]`, `#[RequireRole]`, `#[RequirePermissionAny]`, `#[RequirePermissionAll]` are DECLARED in `backend-packages/authorization/`. They are READ by `rbac.enforce_permission` / `rbac.enforce_role` middleware. Domain modules decorate their controllers / actions with the attributes and don't reference this module directly.",
+    "In routes.json for a domain module, the alias is used inline: `middleware: ['permission:invoices.viewAny']`. This is sugar for `rbac.enforce_permission` reading the explicit permission name instead of the attribute."
+  ]
+}

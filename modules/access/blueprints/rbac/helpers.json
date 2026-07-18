@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/rbac/helpers",
+  "$version": 1,
+  "title": "rbac \u2014 helper functions",
+  "description": "Two short helpers on top of the resolver + spatie facade. Both are convenience wrappers \u2014 nothing prevents callers from using `Gate::allows(...)` directly, which routes through the same resolver.",
+  "namespace": "Academorix\\Rbac\\Support",
+  "helpers": [
+    {
+      "signature": "can(string $permission, ?object $resource = null): bool",
+      "purpose": "Short helper resolving via `PermissionResolver::resolve(auth()->user(), $permission, $resource)`. Returns bool.",
+      "behaviours": [
+        "Simple: can('users.viewAny.tenant') \u2192 true if the caller holds that permission on the current tenant",
+        "With resource: can('invoices.view', $invoice) \u2192 consults grants on the invoice + falls back to RBAC",
+        "Unauthenticated: returns false (no exception)"
+      ],
+      "flow": "1) Load auth()->user() (short-circuits to false if null). 2) Load current tenant + application from RequestContext. 3) Delegate to PermissionResolver::resolve(). 4) Return the boolean."
+    },
+    {
+      "signature": "authorize(string $permission, ?object $resource = null): void",
+      "purpose": "Throws AuthorizationException on false. Equivalent to `Gate::authorize(...)` with the same routing semantics.",
+      "behaviours": [
+        "Success: returns void",
+        "Failure: throws Illuminate\\Auth\\Access\\AuthorizationException with the permission name + resource type in the message",
+        "Missing permission in catalogue: still throws (default deny with warn-severity log)"
+      ]
+    },
+    {
+      "signature": "rbac_resolver(): PermissionResolver",
+      "purpose": "Container-resolved PermissionResolver instance. Rare \u2014 most call sites use can() / authorize() / #[RequirePermission]. Reserve for services that need programmatic access to the resolver's diagnostics API (audit-permission-check paths).",
+      "behaviours": [
+        "Returns the shared PermissionResolver singleton",
+        "In tests: replaceable via App::instance() to swap in a test double"
+      ]
+    },
+    {
+      "signature": "role_slug(Role|string $role): string",
+      "purpose": "Normalise a Role model or role name to its canonical snake_case slug. Rarely needed \u2014 useful when integrating with third-party libraries that expect string role names."
+    }
+  ],
+  "notes": [
+    "We do NOT re-declare Laravel's Gate helpers. `Gate::allows(...)` / `Gate::authorize(...)` route through our resolver via the AccessControlServiceProvider's `Gate::before()` hook, so existing Laravel code keeps working unchanged.",
+    "The `#[RequirePermission]` and `#[RequireRole]` framework attributes wrap `authorize()` at the middleware layer. Prefer the attribute over calling `authorize()` inline \u2014 attribute-first is design.md \u00a72 D-A1's letter."
+  ],
+  "examples": [
+    {
+      "title": "Simple check in a controller",
+      "code": "if (can('invoices.create.tenant')) {\n    // proceed\n}"
+    },
+    {
+      "title": "Resource-scoped check",
+      "code": "authorize('invoices.view', $invoice);  // throws on false"
+    },
+    {
+      "title": "Blade",
+      "code": "@can('invoices.create.tenant')\n    <button>Create invoice</button>\n@endcan"
+    },
+    {
+      "title": "In an action attribute (framework primitive)",
+      "code": "#[RequirePermission('invoices.create.tenant')]\nfinal class CreateInvoiceAction extends Action { /* ... */ }"
+    }
+  ]
+}

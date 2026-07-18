@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/delegation/middleware",
+  "$version": 1,
+  "title": "delegation — HTTP middleware",
+  "middleware": [
+    {
+      "alias": "delegation.enforce_delegate_context",
+      "class": "Academorix\\Delegation\\Http\\Middleware\\EnforceDelegateContext",
+      "priority": 45,
+      "description": "Runs after auth + tenant.resolve. When the caller is acting AS a delegator (i.e. the session includes an impersonated-delegator hint in the request header `X-Acting-As-Delegator` or the query `?acting_as_delegator=<usr_id>`), validates a matching active delegation exists via DelegationResolver::verifyDelegateOf($caller, $delegator, $tenant, $application). If invalid: 403 with `delegation_missing`. If valid: flags the request context with `active_delegation_id = $delegation->id` so downstream audit rows carry the correlation. When the caller is NOT acting as a delegator, this middleware is a no-op.",
+      "auto_applied": false,
+      "auto_applied_to": [],
+      "run_note": "This is opt-in per route. Tenant admins mount it on high-risk endpoints (approvals, financial writes) where the audit trail needs to distinguish 'Bob approved on behalf of Alice' from 'Bob approved as himself'. Endpoints not mounting the middleware treat delegation as transparent — Bob's own permissions plus his delegator's inherited permissions both count for authorization."
+    },
+    {
+      "alias": "impersonation.enforce_active_session",
+      "class": "Academorix\\Delegation\\Http\\Middleware\\EnforceActiveImpersonationSession",
+      "priority": 46,
+      "description": "Runs after auth:sanctum resolves the caller's User. When the PAT is an impersonation-scoped token (identified by the `impersonation:<session_id>` ability), looks up the ImpersonationSession by session_token_hash + validates now < ends_at + ended_at IS NULL. On mismatch: 401 with `impersonation_session_ended` (fires ImpersonationSessionEnded if the row hasn't already been transitioned by the scheduled job). On match: flags the request context with `impersonation_session_id` + `impersonator_platform_user_id` + `is_impersonation=true` so downstream audit writes stamp both actor + impersonator.",
+      "auto_applied": true,
+      "auto_applied_to": ["api"],
+      "run_note": "Auto-applied globally on the api middleware group. On non-impersonation PATs the middleware is a fast no-op (single header check). Every request served with an impersonation PAT is guaranteed to have a live session — otherwise the request is refused before reaching the controller."
+    },
+    {
+      "alias": "impersonation.enforce_read_only",
+      "class": "Academorix\\Delegation\\Http\\Middleware\\EnforceReadOnlyImpersonation",
+      "priority": 47,
+      "description": "Depends on `impersonation.enforce_active_session` running first (so `is_impersonation` + `is_read_only` are already in request context). When both are true, refuses every POST/PUT/PATCH/DELETE with 403 `impersonation_read_only`. GET + HEAD + OPTIONS pass through. On non-impersonation requests: fast no-op.",
+      "auto_applied": true,
+      "auto_applied_to": ["api"],
+      "run_note": "Auto-applied globally. Read-only sessions are a per-session flag negotiated at session start — some tenant contracts require Academorix impersonation be read-only-only, and the middleware guarantees the constraint regardless of what the impersonator's regular PlatformUser abilities would otherwise permit."
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "application::application.resolve" },
+    { "middleware": "platform-user::platform.audit" },
+    { "middleware": "platform-user::platform.mfa_required" }
+  ],
+  "audit_correlation_note": "The trio of middleware works together to guarantee every audit row written during an impersonation carries BOTH `actor_id = impersonated_user_id` (the perceived actor on the tenant plane) AND `impersonated_by_platform_user_id = impersonator_platform_user_id` (the actual operator). The compliance audit stream inspects both columns during evidence review — reviewers see 'Support agent Sam Reynolds impersonated tenant user Alex Chen at 14:03 UTC and approved refund #inv_01H...' as a single audited action."
+}

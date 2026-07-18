@@ -1,0 +1,174 @@
+{
+  "id": "academorix://modules/grants/routes",
+  "$version": 1,
+  "title": "grants — HTTP routes",
+  "description": "Two route groups. Tenant serves the admin CRUD + enumeration + bulk endpoints. Platform-admin serves read-only cross-tenant search + the compliance audit-report generator.",
+  "prefixes": {
+    "v1": "/api/v1",
+    "platform": "/api/v1/platform"
+  },
+  "groups": [
+    {
+      "id": "tenant-authenticated",
+      "host": "tenant",
+      "middleware": [
+        "api",
+        "resolve.tenant",
+        "auth:sanctum",
+        "tenant.user",
+        "grants.warm_grant_cache"
+      ],
+      "description": "Tenant grant CRUD + enumeration. Grants.warm_grant_cache middleware pre-loads the caller's grant footprint into L1 so subsequent policy checks are cache-hits.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/v1/grants",
+          "name": "tenant.grants.index",
+          "action": "Academorix\\Grant\\Controllers\\Tenant\\GrantController@index",
+          "policy": "AccessGrantPolicy@viewAny",
+          "returns": "PaginatedResource<AccessGrantData>",
+          "description": "List grants. Default filter: WHERE subject_id = auth_user.id (a user sees their own grants). Admins with `grants.manage` can pass filter[subject_id] to widen. Filters: filter[decision], filter[resource_type], filter[source], filter[active_only], filter[granted_by], filter[expiring_before].",
+          "queryParams": [
+            { "name": "filter[decision]", "type": "string", "enum": ["allow", "deny"] },
+            { "name": "filter[resource_type]", "type": "string" },
+            { "name": "filter[source]", "type": "string", "enum": ["manual", "access_request", "delegation", "bulk_provision"] },
+            { "name": "filter[active_only]", "type": "boolean", "default": true },
+            { "name": "filter[granted_by]", "type": "string" },
+            { "name": "filter[subject_id]", "type": "string", "description": "Requires grants.manage permission." },
+            { "name": "sort", "type": "string", "example": "-created_at" },
+            { "name": "per_page", "type": "integer", "default": 25 }
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/grants",
+          "name": "tenant.grants.store",
+          "action": "Academorix\\Grant\\Controllers\\Tenant\\GrantController@store",
+          "policy": "AccessGrantPolicy@create",
+          "accepts": "CreateGrantData",
+          "returns": "AccessGrantData",
+          "description": "Body: `subject_id, resource_type, resource_id, permissions[], decision?, expires_at?, reason`. Delegates to GrantIssuer::issue() with source='manual', granted_by = auth_user. All six invariants fire — cross-tenant / privilege-escalation / permission-unknown / past-dated / etc. Response 201 on success."
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/grants/{grant}",
+          "name": "tenant.grants.show",
+          "action": "Academorix\\Grant\\Controllers\\Tenant\\GrantController@show",
+          "policy": "AccessGrantPolicy@view",
+          "returns": "AccessGrantData",
+          "includes": ["subject", "resource", "grantor", "revoker"]
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/v1/grants/{grant}",
+          "name": "tenant.grants.update",
+          "action": "Academorix\\Grant\\Controllers\\Tenant\\GrantController@update",
+          "policy": "AccessGrantPolicy@update",
+          "accepts": "UpdateGrantData",
+          "returns": "AccessGrantData",
+          "description": "Body may include ONLY `expires_at` + `reason` + `metadata`. Every other field is immutable post-issue. 422 on immutable field mutation attempt."
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/v1/grants/{grant}",
+          "name": "tenant.grants.revoke",
+          "action": "Academorix\\Grant\\Controllers\\Tenant\\GrantController@revoke",
+          "policy": "AccessGrantPolicy@revoke",
+          "accepts": "RevokeGrantData",
+          "returns": "AccessGrantData",
+          "description": "Body: `reason` (required, 20+ chars). Delegates to GrantRevoker::revoke() — sets revoked_at + revoked_by + revoked_reason atomically. Refused when grant is already terminal (revoked / expired)."
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/grants/subject/{subjectType}/{subjectId}",
+          "name": "tenant.grants.by-subject",
+          "action": "Academorix\\Grant\\Controllers\\Tenant\\GrantController@bySubject",
+          "policy": "AccessGrantPolicy@auditPrincipal",
+          "returns": "PaginatedResource<AccessGrantData>",
+          "description": "Enumerate every grant this principal holds. Requires the caller to be the subject themselves OR to hold `grants.audit_any` (admin+)."
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/grants/resource/{resourceType}/{resourceId}",
+          "name": "tenant.grants.by-resource",
+          "action": "Academorix\\Grant\\Controllers\\Tenant\\GrantController@byResource",
+          "policy": "AccessGrantPolicy@auditResource",
+          "returns": "PaginatedResource<AccessGrantData>",
+          "description": "Enumerate every grant on a specific resource. Requires the caller to own the resource OR hold `grants.audit_any`. Sorted denies-first then created_at desc so the inviolable blocks surface at the top."
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/grants/bulk",
+          "name": "tenant.grants.bulk",
+          "action": "Academorix\\Grant\\Controllers\\Tenant\\GrantController@bulk",
+          "policy": "AccessGrantPolicy@bulkCreate",
+          "accepts": "BulkIssueGrantsData",
+          "returns": "{ batch_id: string, status: 'queued', grants_expected: integer }",
+          "description": "Upload a CSV of grants. Body: multipart/form-data `csv` field. Enforced by `bulk_grant_provision` entitlement (medium+ plan). Dispatches BulkGrantIssueJob and returns 202 Accepted with the batch id. Poll `GET /api/v1/grants/bulk/{batch_id}` for status."
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/grants/target-types",
+          "name": "tenant.grants.target-types",
+          "action": "Academorix\\Grant\\Controllers\\Tenant\\GrantController@targetTypes",
+          "policy": "AccessGrantPolicy@viewAny",
+          "returns": "{ data: GrantableRegistryEntryData[] }",
+          "description": "List every registered `resource_type` (from GrantableRegistry) with display label + optional target_picker_screen_ref. Consumed by the share-access dialog to build the resource-type Select."
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/grants/preflight",
+          "name": "tenant.grants.preflight",
+          "action": "Academorix\\Grant\\Controllers\\Tenant\\GrantController@preflight",
+          "policy": "AccessGrantPolicy@create",
+          "accepts": "PreflightGrantData",
+          "returns": "{ ok: boolean, warnings: array<string>, blockers: array<string> }",
+          "description": "Debounced client-side validation endpoint. Runs the six-invariant guards WITHOUT inserting, so the share-access dialog can surface 'Bob already holds this permission via his role; grant is redundant' or 'You don't hold invoice.edit; you cannot grant it' before submit."
+        }
+      ]
+    },
+    {
+      "id": "platform-admin",
+      "host": "platform-admin",
+      "middleware": ["api", "auth:sanctum", "platform.user", "api.version"],
+      "description": "Cross-tenant read + audit-report generation for Academorix compliance ops.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/v1/platform/grants",
+          "name": "platform.grants.index",
+          "action": "Academorix\\Grant\\Controllers\\Platform\\GrantController@index",
+          "policy": "AccessGrantPolicy@viewAnyPlatform",
+          "returns": "PaginatedResource<AccessGrantData>",
+          "queryParams": [
+            { "name": "filter[tenant_id]", "type": "string" },
+            { "name": "filter[subject_id]", "type": "string" },
+            { "name": "filter[resource_type]", "type": "string" },
+            { "name": "filter[decision]", "type": "string" },
+            { "name": "filter[source]", "type": "string" }
+          ],
+          "description": "Cross-tenant grant search for support + audit. Every read is captured in audit context (SOC 2 CC6.1)."
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/platform/grants/{grant}",
+          "name": "platform.grants.show",
+          "action": "Academorix\\Grant\\Controllers\\Platform\\GrantController@show",
+          "policy": "AccessGrantPolicy@viewPlatform",
+          "returns": "AccessGrantData",
+          "includes": ["subject", "resource", "grantor", "revoker", "tenant"]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/platform/grants/audit-report",
+          "name": "platform.grants.audit-report",
+          "action": "Academorix\\Grant\\Controllers\\Platform\\AuditReportController@store",
+          "policy": "AccessGrantPolicy@generateAuditReport",
+          "accepts": "AuditReportRequestData",
+          "returns": "{ report_id: string, expires_at: datetime, download_url: string }",
+          "description": "Generate a cross-tenant compliance snapshot. Body: `since, until, tenant_ids?, resource_types?, format` (csv | json). Signed download URL valid for 24h. Enforced by `grant_audit_report` entitlement (enterprise + compliance module co-active)."
+        }
+      ]
+    }
+  ]
+}

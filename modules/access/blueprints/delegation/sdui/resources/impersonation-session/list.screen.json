@@ -1,0 +1,240 @@
+{
+  "id": "delegation.resources.impersonation-session.list",
+  "title": "Impersonation sessions",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/impersonation/sessions",
+  "host": "platform-admin",
+  "audience": "platform_admin",
+  "resource": { "module": "delegation", "entity": "impersonation-session", "action": "list" },
+  "requiresPermission": "platform.impersonation.view",
+  "notes": [
+    "Regular support agents see only their own sessions (backend filters by impersonator_platform_user_id when caller lacks platform.impersonation.viewAll). Security + super_admin see cross-tenant.",
+    "The 'Start' button is gated on platform.impersonate permission — visible only to operators authorized to start sessions.",
+    "Active-only toggle is DEFAULT ON (operators care about live sessions first)."
+  ],
+  "dataSources": [
+    {
+      "name": "sessions",
+      "kind": "http.get",
+      "url": "/api/v1/platform/impersonation/sessions",
+      "unwrap": "data"
+    },
+    {
+      "name": "activeCount",
+      "kind": "http.get",
+      "url": "/api/v1/platform/impersonation/sessions?filter[is_active]=true&count_only=true",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 10 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Impersonation sessions"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Support-agent act-as sessions against tenant users. Every session is audited under SOC 2 CC6.1."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "Card",
+                  "props": { "className": "p-3 text-center" },
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted", "children": "Active now" }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-2xl font-semibold" },
+                      "bindings": { "children": { "$ref": "activeCount.count" } }
+                    }
+                  ]
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "user-plus",
+                    "children": "Start session"
+                  },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/platform/impersonation/start" } },
+                  "requiresPermission": "platform.impersonate"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Toolbar",
+          "children": [
+            {
+              "kind": "SearchField",
+              "props": { "placeholder": "Session id or ticket ref", "name": "q" }
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "filter[target_tenant_id]", "placeholder": "All tenants", "clearable": true },
+              "requiresPermission": "platform.impersonation.viewAll",
+              "optionsSource": {
+                "kind": "http.get",
+                "url": "/api/v1/platform/tenants",
+                "unwrap": "data",
+                "optionKey": "id",
+                "optionLabel": "name"
+              }
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "filter[end_trigger]", "placeholder": "Any end trigger", "clearable": true },
+              "options": [
+                { "key": "self_service", "label": "Ended by operator" },
+                { "key": "ttl_expired", "label": "TTL expired" },
+                { "key": "admin_revocation", "label": "Ended by administrator" },
+                { "key": "security_lockdown", "label": "Security lockdown" }
+              ]
+            },
+            {
+              "kind": "Toggle",
+              "props": { "name": "filter[is_active]", "label": "Active only", "defaultValue": true }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "columns": [
+            {
+              "key": "operator",
+              "header": "Operator",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "flex flex-col" },
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-medium" },
+                    "bindings": { "children": { "$ref": "row.actor_line" } }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted" },
+                    "bindings": { "children": { "$ref": "row.impersonator_department" } }
+                  }
+                ]
+              }
+            },
+            {
+              "key": "impersonated",
+              "header": "Impersonated user",
+              "cell": {
+                "kind": "Text",
+                "bindings": {
+                  "children": { "$expr": "row.impersonated.profile.display_name" }
+                }
+              }
+            },
+            {
+              "key": "tenant",
+              "header": "Tenant",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-xs" },
+                "bindings": { "children": { "$ref": "row.target_tenant.name" } }
+              }
+            },
+            {
+              "key": "duration",
+              "header": "Duration",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-xs" },
+                "bindings": {
+                  "children": {
+                    "$expr": "row.is_active ? (Math.floor(row.remaining_seconds / 60) + 'm remaining') : (Math.floor(row.duration_seconds / 60) + 'm')"
+                  }
+                }
+              }
+            },
+            {
+              "key": "read_only",
+              "header": "Mode",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "xs" },
+                "bindings": {
+                  "children": { "$expr": "row.is_read_only ? 'Read-only' : 'Read-write'" },
+                  "variant": { "$expr": "row.is_read_only ? 'info' : 'warning'" }
+                }
+              }
+            },
+            {
+              "key": "state",
+              "header": "State",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "xs" },
+                "bindings": {
+                  "children": {
+                    "$expr": "row.is_active ? 'Active' : ({ self_service: 'Ended', ttl_expired: 'Expired', admin_revocation: 'Terminated', security_lockdown: 'Locked down' }[row.end_trigger])"
+                  },
+                  "variant": {
+                    "$expr": "row.is_active ? 'success' : (row.end_trigger === 'security_lockdown' ? 'danger' : 'neutral')"
+                  }
+                }
+              }
+            },
+            {
+              "key": "actions",
+              "header": "",
+              "cell": {
+                "kind": "Button",
+                "props": { "variant": "ghost", "size": "sm", "children": "View" },
+                "actions": {
+                  "onPress": {
+                    "kind": "navigate",
+                    "toExpr": "'/platform/impersonation/sessions/' + row.id"
+                  }
+                }
+              }
+            }
+          ],
+          "bindings": { "rows": { "$ref": "sessions" } }
+        }
+      ]
+    }
+  ],
+  "broadcasts": {
+    "subscribe": ["platform.impersonation.{caller_platform_user_id}"],
+    "refreshDataSourcesOnEvent": {
+      "impersonation.session_started": ["sessions", "activeCount"],
+      "impersonation.session_ended": ["sessions", "activeCount"],
+      "impersonation.session_forced_terminate": ["sessions", "activeCount"]
+    }
+  }
+}

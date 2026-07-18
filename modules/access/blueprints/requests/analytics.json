@@ -1,0 +1,116 @@
+{
+  "id": "academorix://modules/access/requests/analytics",
+  "$version": 1,
+  "title": "requests \u2014 product analytics events",
+  "description": "Product analytics events (Segment / Mixpanel / PostHog). Distinct from `events.json` (server-side pub/sub) and `metrics.json` (ops telemetry). Every event carries a `consent_tier` gating delivery against the caller's consent state. Access-request events are `essential` (they trace the authorization loop essential to operating the platform) or `functional` (optimisation), never `marketing`.",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "access_request_submitted",
+      "consent_tier": "essential",
+      "firesAt": "AccessRequestSubmitted listener",
+      "properties": {
+        "instance_id": "string",
+        "tenant_id": "string",
+        "application_id": "string",
+        "resource_type": "string",
+        "resource_id": "string",
+        "permissions_wanted_count": "integer",
+        "reason_length_chars": "integer",
+        "resolved_approvers_count": "integer",
+        "template_matched": "string|null",
+        "resolution_step": "string \u2014 'template' | 'fallback_selector' | 'resource_owner'"
+      }
+    },
+    {
+      "name": "access_request_hint_offered",
+      "consent_tier": "essential",
+      "firesAt": "access.request_hint_on_denial middleware (when it enriches a 403)",
+      "properties": {
+        "tenant_id": "string",
+        "application_id": "string",
+        "resource_type": "string",
+        "user_role_names": "string[] \u2014 caller's roles at denial time"
+      },
+      "description": "Funnel-top event: the platform hinted a user could request access. Enables 'hint \u2192 submit' conversion analysis."
+    },
+    {
+      "name": "access_request_approved",
+      "consent_tier": "essential",
+      "firesAt": "AccessRequestApproved listener",
+      "properties": {
+        "instance_id": "string",
+        "tenant_id": "string",
+        "resource_type": "string",
+        "time_to_decision_hours": "number",
+        "approvals_count": "integer",
+        "was_reminded": "boolean",
+        "was_delegated_approval": "boolean"
+      },
+      "description": "Primary conversion event. Feeds the 'submit \u2192 approved' funnel plus authorisation-loop health."
+    },
+    {
+      "name": "access_request_rejected",
+      "consent_tier": "essential",
+      "firesAt": "AccessRequestRejected listener",
+      "properties": {
+        "instance_id": "string",
+        "tenant_id": "string",
+        "resource_type": "string",
+        "time_to_decision_hours": "number",
+        "reject_reason_length_chars": "integer",
+        "was_reminded": "boolean"
+      }
+    },
+    {
+      "name": "access_request_expired",
+      "consent_tier": "functional",
+      "firesAt": "AccessRequestExpired listener",
+      "properties": {
+        "instance_id": "string",
+        "tenant_id": "string",
+        "resource_type": "string",
+        "hours_alive": "number",
+        "reminders_sent": "integer"
+      },
+      "description": "Functional \u2014 essential for approver-engagement analysis + tuning reminder cadence."
+    },
+    {
+      "name": "access_request_cancelled",
+      "consent_tier": "functional",
+      "firesAt": "AccessRequestCancelled listener",
+      "properties": {
+        "instance_id": "string",
+        "tenant_id": "string",
+        "hours_alive": "number",
+        "cancelled_by_requester": "boolean"
+      }
+    },
+    {
+      "name": "access_request_approver_notified",
+      "consent_tier": "functional",
+      "firesAt": "AccessRequestApproverNotified listener",
+      "properties": {
+        "instance_id": "string",
+        "approver_user_id": "string \u2014 hashed",
+        "channel": "string \u2014 'mail' | 'database' | 'broadcast'",
+        "hours_since_submitted": "number"
+      }
+    },
+    {
+      "name": "access_request_grant_issued",
+      "consent_tier": "essential",
+      "firesAt": "AccessRequestGrantIssued listener",
+      "properties": {
+        "instance_id": "string",
+        "grant_id": "string",
+        "resource_type": "string",
+        "permissions_granted_count": "integer",
+        "grant_ttl_days": "integer|null",
+        "materialisation_latency_ms": "number"
+      },
+      "description": "Confirms the end-to-end loop completed. Compare to access_request_approved to detect materialisation drift."
+    }
+  ]
+}

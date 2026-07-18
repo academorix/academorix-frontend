@@ -1,0 +1,112 @@
+{
+  "id": "academorix://modules/grants/policies",
+  "$version": 1,
+  "title": "grants — authorization policies",
+  "description": "One policy class with abilities that answer on both `sanctum` (tenant users managing grants in their own tenant) and `platform_admin` (Academorix ops cross-tenant audit-read + report generation) guards. Registered by GrantServiceProvider::registerPolicies(). Guard-aware — each ability checks the caller's guard and gates accordingly.",
+  "policies": [
+    {
+      "class": "Academorix\\Grant\\Policies\\AccessGrantPolicy",
+      "target": "Academorix\\Grant\\Models\\AccessGrant",
+      "guard": ["sanctum", "platform_admin"],
+      "abilities": [
+        {
+          "name": "viewAny",
+          "requires": ["grants.viewAny (sanctum, scoped to caller's tenant)"],
+          "description": "List grants in the caller's tenant. Default scope: WHERE subject_id = auth_user (users see their own grants). Admins with grants.manage or grants.audit_any can pass filter[subject_id] to widen."
+        },
+        {
+          "name": "view",
+          "requires": [
+            "grants.viewAny AND (grant.tenant_id === auth_user.tenant_id) AND (grant.subject_id === auth_user.id OR caller.has('grants.audit_any') OR caller.has('grants.manage'))"
+          ],
+          "description": "Show a specific grant. Tenant-scoped + subject-scoped."
+        },
+        {
+          "name": "create",
+          "requires": [
+            "grants.issue AND resource_type registered in GrantableRegistry AND caller can access the resource AND caller holds every permission being granted (privilege-escalation guard fires either way, but this shortens the loop)"
+          ],
+          "description": "Issue a new grant. The observer also enforces the guard — this policy is the first-line 401/403 filter. Cross-guard / cross-application / cross-tenant grants refused here + at the observer."
+        },
+        {
+          "name": "update",
+          "requires": [
+            "grants.manage AND grant.tenant_id === auth_user.tenant_id"
+          ],
+          "description": "Patch a grant (expires_at + reason + metadata only). Immutable fields refused at the observer."
+        },
+        {
+          "name": "revoke",
+          "requires": [
+            "(grants.manage AND grant.tenant_id === auth_user.tenant_id) OR (grants.revoke AND grant.granted_by === auth_user.id)"
+          ],
+          "description": "Revoke a grant. Admins with grants.manage can revoke any tenant grant; members with grants.revoke can revoke grants they issued. Refused for already-terminal grants."
+        },
+        {
+          "name": "revokeOwn",
+          "requires": ["grants.revoke AND grant.granted_by === auth_user.id"],
+          "description": "The narrow revocation ability — for members who need to unshare something they shared. Split from `revoke` to keep the policy self-documenting."
+        },
+        {
+          "name": "auditPrincipal",
+          "requires": [
+            "grants.audit_any OR (grants.viewAny AND {subjectId} === auth_user.id)"
+          ],
+          "description": "Enumerate grants for a specific subject. Users see their own; admins see anyone in the tenant."
+        },
+        {
+          "name": "auditResource",
+          "requires": [
+            "grants.audit_any OR (caller owns / can view the resource + holds grants.viewAny)"
+          ],
+          "description": "Enumerate grants on a specific resource. Resource owners see grants on their resources; admins see any resource in the tenant."
+        },
+        {
+          "name": "bulkCreate",
+          "requires": [
+            "grants.bulk_provision AND tenant entitled to `bulk_grant_provision` (medium plan+)"
+          ],
+          "description": "Upload a CSV of grants. Entitlement check runs alongside permission check."
+        },
+        {
+          "name": "issueDeny",
+          "requires": [
+            "grants.deny AND tenant entitled to `deny_grants` (enterprise)"
+          ],
+          "description": "Issue a grant with decision='deny'. Also fires the audit-critical GrantDenialIssued event immediately."
+        },
+        {
+          "name": "grantAcrossRole",
+          "requires": [
+            "grants.grant_across_role AND tenant entitled to `cross_role_grants` (enterprise) AND a matching workflow/approvals template exists for the requested cross-role grant"
+          ],
+          "description": "Rare escape hatch — grantor grants a permission not in their own role via an approval flow. Refused without the approval-instance match."
+        },
+        {
+          "name": "viewAnyPlatform",
+          "guard": "platform_admin",
+          "requires": ["platform.grants.viewAny"],
+          "description": "Cross-tenant list for Academorix ops. Every list read captures the (platform_user_id, tenant_ids_touched, filters) tuple in the audit stream."
+        },
+        {
+          "name": "viewPlatform",
+          "guard": "platform_admin",
+          "requires": ["platform.grants.view"],
+          "description": "Cross-tenant detail read."
+        },
+        {
+          "name": "generateAuditReport",
+          "guard": "platform_admin",
+          "requires": [
+            "platform.grants.audit_report AND platform_user holds an active compliance ticket / justification tag (captured in audit metadata)"
+          ],
+          "description": "Generate a cross-tenant compliance snapshot. The report generator refuses without a justification value in the request body; the value is captured verbatim in the audit trail."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Every ability that mutates a grant records an audit trail entry (via HasAudit) + an activity_log row (via HasActivityLog). Refusal (Gate::denies) is ALSO audited under the `preflight_failed` event on the activity log — a denied create is a security signal.",
+    "Preflight validators supplied by grantable-registered consumers run BEFORE this policy — a consumer's Grantable-attribute-declared `preflight_validator` may refuse a grant before the policy is even consulted. Example: InvoiceGrantPreflight refuses grants on locked invoices."
+  ]
+}

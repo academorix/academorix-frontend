@@ -1,0 +1,73 @@
+{
+  "id": "academorix://modules/access/requests/traits",
+  "$version": 1,
+  "title": "requests \u2014 model traits",
+  "description": "One trait: the `IsAccessRequestable` marker. Composed as an OPTIONAL alternative to the `#[AccessRequestable]` PHP attribute for policy authors who prefer trait composition. The trait itself carries no behaviour \u2014 boot-time discovery accepts either signal into the same `AccessRequestableRegistry` map. This module ALSO consumes traits from foundation / tenancy / user / access/rbac for the read + join paths, but composes none of them on its own tables (there are no local tables).",
+  "owned": [
+    {
+      "trait": "IsAccessRequestable",
+      "class": "Academorix\\AccessRequest\\Concerns\\IsAccessRequestable",
+      "schemaRef": null,
+      "description": "Marker trait \u2014 composed on any Eloquent model that can be the SUBJECT of an access request. Zero runtime behaviour; discovery walks every model in the classmap, unions those composing this trait with those carrying `#[AccessRequestable]`, and populates the registry with the union set. Prefer the attribute (it lets you declare the permission set inline); use the trait when a model already carries an attribute-heavy class docblock and you want to keep signals separated.",
+      "pairedBlueprint": "access-requestable",
+      "adds": {
+        "columns": [],
+        "compositeIndexes": [],
+        "scopes": { "global": [] },
+        "eventHooks": [],
+        "relations": [],
+        "methods": [
+          {
+            "name": "accessRequestPermissions",
+            "signature": "public static function accessRequestPermissions(): array",
+            "description": "Consumers implementing the trait override this static to declare the permissions a caller can legitimately request. Default implementation returns [] (which means the model appears in the registry BUT no permissions can be requested \u2014 caught by the `permission_belongs_to_resource_type` rule). When the model carries `#[AccessRequestable(permissions: [...])]` too, the attribute wins."
+          },
+          {
+            "name": "accessRequestResourceType",
+            "signature": "public static function accessRequestResourceType(): string",
+            "description": "Optional override for the registry key. Defaults to `Str::snake(class_basename(static::class))`. When the model carries `#[AccessRequestable(resourceType: '...')]`, the attribute wins."
+          }
+        ]
+      },
+      "appliedBy": [
+        "billing::Invoice (planned)",
+        "billing::Refund (planned)",
+        "sports::Athlete (planned; guardian relationships need this substrate)",
+        "teams::Team (planned)",
+        "facilities::Facility (planned)",
+        "region::Region (planned; enterprise tenants split reporting per Region)",
+        "organization::Organization (planned)"
+      ],
+      "notAppliedBy": [
+        "Every platform-admin surface \u2014 Academorix staff use impersonation via access/delegation, not the access-request loop.",
+        "Root tenancy surfaces (`Application`, `Tenant`) \u2014 access is granted via user provisioning + invitations, not the request loop.",
+        "System-of-record substrate rows (audit rows, activity rows) \u2014 access is granted via tenant-admin permission on the substrate, never per-row."
+      ]
+    }
+  ],
+  "consumed": [
+    {
+      "trait": "BelongsToApplication",
+      "class": "Academorix\\Tenancy\\Concerns\\BelongsToApplication",
+      "source": "tenancy",
+      "description": "Consumed indirectly \u2014 the underlying approval_instance carries application_id and the DTO surfaces it. This module reads via that trait's global scope on `workflow/approvals::ApprovalInstance`."
+    },
+    {
+      "trait": "BelongsToTenant",
+      "class": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+      "source": "tenancy",
+      "description": "Consumed indirectly \u2014 same as above; approval_instance is tenant-scoped so every access-request read is auto-filtered."
+    }
+  ],
+  "compositionExample": {
+    "language": "php",
+    "note": "A requestable model chooses ONE of the two idioms below. Both feed the same registry.",
+    "codeAttribute": "use Academorix\\AccessRequest\\Attributes\\AccessRequestable;\n\n#[AccessRequestable(\n    resourceType: 'invoice',\n    permissions: ['invoices.view', 'invoices.update', 'invoices.export'],\n)]\nfinal class Invoice extends Model\n{\n    // \u2026\n}",
+    "codeTrait": "use Academorix\\AccessRequest\\Concerns\\IsAccessRequestable;\n\nfinal class Invoice extends Model\n{\n    use IsAccessRequestable;\n\n    public static function accessRequestResourceType(): string\n    {\n        return 'invoice';\n    }\n\n    public static function accessRequestPermissions(): array\n    {\n        return ['invoices.view', 'invoices.update', 'invoices.export'];\n    }\n}"
+  },
+  "blueprintExample": {
+    "language": "php",
+    "note": "The paired `->access_requestable()` macro is a REGISTER-ONLY annotation on the target's migration \u2014 it adds NO columns because access-request state does not live on the target's table. It exists so CI cross-checks can flag a table whose model claims to be requestable but hasn't been marked in the migration diff.",
+    "code": "Schema::create('invoices', function (Blueprint $t) {\n    $t->string('id', 64)->primary();\n    $t->tenantable();\n    $t->access_requestable();   // register-only; no column added\n    $t->decimal('amount', 12, 2);\n    $t->string('currency', 3);\n    $t->timestamps();\n});"
+  }
+}

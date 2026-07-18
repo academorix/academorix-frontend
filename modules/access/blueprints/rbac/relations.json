@@ -1,0 +1,131 @@
+{
+  "id": "academorix://modules/rbac/relations",
+  "$version": 1,
+  "title": "rbac \u2014 model relationships",
+  "description": "Role + Permission are spatie-extended tables. Their pivot rows (role_has_permissions, model_has_roles, model_has_permissions) carry the denormalised (application_id, tenant_id) tuple for query-plan efficiency. RoleDefinition is the Academorix metadata layer FK-linked to Role. Every principal (User, PlatformUser, ServiceAccount) participates polymorphically via model_has_roles / model_has_permissions.",
+  "internal": [
+    {
+      "from": "Role",
+      "kind": "belongsToMany",
+      "to": "Permission",
+      "pivot": "role_has_permissions",
+      "foreignPivotKey": "role_id",
+      "relatedPivotKey": "permission_id",
+      "description": "Spatie's own pivot, augmented. Observer enforces guard + application boundaries."
+    },
+    {
+      "from": "Permission",
+      "kind": "belongsToMany",
+      "to": "Role",
+      "pivot": "role_has_permissions",
+      "foreignPivotKey": "permission_id",
+      "relatedPivotKey": "role_id"
+    },
+    {
+      "from": "Role",
+      "kind": "morphedByMany",
+      "to": "polymorphic (User / PlatformUser / ServiceAccount)",
+      "pivot": "model_has_roles",
+      "morphType": "model_type",
+      "morphId": "model_id",
+      "onDelete": "cascade",
+      "description": "The polymorphic role-holder join. `model_type` is one of `Academorix\\User\\Models\\User` / `Academorix\\PlatformUser\\Models\\PlatformUser` / `Academorix\\ServiceAccounts\\Models\\ServiceAccount`."
+    },
+    {
+      "from": "Permission",
+      "kind": "morphedByMany",
+      "to": "polymorphic (User / PlatformUser / ServiceAccount)",
+      "pivot": "model_has_permissions",
+      "morphType": "model_type",
+      "morphId": "model_id",
+      "onDelete": "cascade",
+      "description": "Direct permission grants \u2014 rare, usually roles carry perms."
+    },
+    {
+      "from": "Role",
+      "kind": "hasOne",
+      "to": "RoleDefinition",
+      "foreignKey": "role_id",
+      "onDelete": "cascade",
+      "description": "Every system role (is_system=true) has exactly one role_definitions row carrying its metadata (business_type_slugs, i18n labels, min_tier, default_permissions[])."
+    },
+    {
+      "from": "RoleDefinition",
+      "kind": "belongsTo",
+      "to": "Role",
+      "foreignKey": "role_id",
+      "onDelete": "cascade"
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Role",
+      "kind": "belongsTo",
+      "to": "application::Application",
+      "foreignKey": "application_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "NULL = platform_admin-guard role (cross-Application). Non-null = per-Application role scoped by roles.application_id."
+    },
+    {
+      "from": "Role",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "nullable": true,
+      "description": "NULL = system role (shipped by Academorix). Non-null = tenant-created custom role scoped to a specific tenant."
+    },
+    {
+      "from": "Permission",
+      "kind": "belongsTo",
+      "to": "application::Application",
+      "foreignKey": "application_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Same rules as Role.application_id."
+    },
+    {
+      "from": "Permission",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "nullable": true,
+      "description": "NULL = system permission (shipped by a domain module via #[ProvidesPermissions]). Non-null = tenant-created custom permission (Enterprise only)."
+    },
+    {
+      "from": "ModelHasRoles",
+      "kind": "belongsTo",
+      "to": "identity::User (polymorphic)",
+      "polymorphicKey": "(model_type, model_id)",
+      "onDelete": "cascade",
+      "description": "The reverse of Role\u2192morphedByMany. Polymorphic to User / PlatformUser / ServiceAccount."
+    },
+    {
+      "from": "ModelHasRoles",
+      "kind": "belongsTo",
+      "to": "identity::User (assigned_by attribution)",
+      "foreignKey": "assigned_by",
+      "onDelete": "set null",
+      "nullable": true,
+      "description": "The actor who granted the assignment. NULL = system-seeded (TenantDefaultRoleSeeder)."
+    },
+    {
+      "from": "RoleDefinition",
+      "kind": "belongsToMany (denormalised in JSONB)",
+      "to": "tenancy::BusinessType",
+      "field": "business_type_slugs (JSONB array of slugs)",
+      "description": "Not a traditional pivot \u2014 the slugs are stored in a JSONB array. Denormalised because BusinessType is config-backed (see localization::traits.json \u00a7 tenancy::BusinessType \u2014 no Eloquent model)."
+    }
+  ],
+  "inbound": {
+    "description": "Every model composing HasRoles / HasPermissions participates in the RBAC graph. Currently: `User`, `PlatformUser`, `ServiceAccount`. Access/delegation composes HasRoles too on `RoleDelegation` for the delegator lookup pattern.",
+    "consumers": [
+      "identity::User (composes HasRoles + HasPermissions + HasResolvedPermissions)",
+      "identity::PlatformUser (composes HasRoles + HasPermissions)",
+      "identity::ServiceAccount (composes HasRoles + HasPermissions)",
+      "access/delegation::RoleDelegation (uses the resolver's DelegationStrategy but doesn't compose the traits)"
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/access/requests/broadcasts",
+  "$version": 1,
+  "title": "requests \u2014 broadcast channels",
+  "description": "Real-time broadcast channels this module owns. Registered by `AccessRequestServiceProvider::registerBroadcastChannels()`. Two channels: a tenant-wide feed for the admin dashboard, and a per-user feed for the requester's and approvers' inbox updates.",
+  "driver": "reverb",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.access-requests",
+      "kind": "private",
+      "description": "Tenant-wide access-request feed. Every AccessRequest event broadcasts here so admin dashboards can live-update the list of open requests. Batched \u2014 a burst of approver decisions in bulk-approve coalesces to one broadcast per instance.",
+      "authorize": "User belongs to the tenant AND has `access-requests.viewAny`",
+      "authCallback": "fn (User $user, string $tenantId) => $user->tenant_id === $tenantId && $user->can('access-requests.viewAny')",
+      "events": [
+        "AccessRequestSubmitted",
+        "AccessRequestApproved",
+        "AccessRequestRejected",
+        "AccessRequestExpired",
+        "AccessRequestCancelled",
+        "AccessRequestGrantIssued"
+      ]
+    },
+    {
+      "name": "user.{userId}.access-requests",
+      "kind": "private",
+      "description": "Per-user access-request feed. Requesters subscribe to see status updates on their own requests; approvers subscribe to see new incoming requests they need to review. Auth: the caller IS the user.",
+      "authorize": "User is themselves",
+      "authCallback": "fn (User $user, string $userId) => $user->id === $userId",
+      "events": [
+        "AccessRequestSubmitted (for approvers only \u2014 filtered on payload.approver_ids)",
+        "AccessRequestApproverNotified (for the recipient approver)",
+        "AccessRequestApproved (for the requester)",
+        "AccessRequestRejected (for the requester)",
+        "AccessRequestExpired (for the requester)"
+      ]
+    }
+  ],
+  "notes": [
+    "The `user.{userId}.access-requests` channel replaces per-request polling for the pending-my-review inbox. When an approver has the SPA open, a new request lands live in their inbox without a refresh.",
+    "`AccessRequestApproved` fires on BOTH channels \u2014 the tenant admin dashboard sees the state change AND the requester sees their personal notification. This is by design: the two audiences care about different projections of the same event."
+  ]
+}

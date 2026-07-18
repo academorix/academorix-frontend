@@ -1,0 +1,285 @@
+{
+  "id": "academorix://modules/delegation/schemas/role-delegation",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "RoleDelegation",
+  "description": "Time-bounded delegation of a delegator User's role (or all roles) to a delegate User within the same tenant. Both delegator + delegate MUST share `tenant_id` — cross-tenant delegation is refused at RoleDelegationObserver::creating (see rules.json `same_tenant_delegation`). `role_id` is nullable: null = ALL of the delegator's active roles for the delegation window; non-null = one specific role_id from the extended spatie-permission `roles` table. Composite unique on `(tenant_id, delegator_id, delegate_id, role_id, starts_at) WHERE revoked_at IS NULL AND deleted_at IS NULL` guards against creating duplicate concurrent delegations of the same role between the same actor pair. Hot-path index on `(tenant_id, delegate_id, starts_at, ends_at)` serves the `IsCurrentlyDelegate($delegate)` query used by RBAC PermissionResolver + workflow/approvals approver selector.",
+  "type": "object",
+  "x-module": "delegation",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "role_delegations",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "dlg_",
+    "incrementing": false,
+    "model": "Academorix\\Delegation\\Models\\RoleDelegation",
+    "interface": "Academorix\\Delegation\\Contracts\\Data\\RoleDelegationInterface",
+    "implements": ["Academorix\\Delegation\\Contracts\\Data\\RoleDelegationInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToApplication",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasActivityLog",
+      "HasAudit",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "delegation_type": "DelegationType",
+      "starts_at": "datetime",
+      "ends_at": "datetime",
+      "revoked_at": "datetime",
+      "metadata": "array"
+    },
+    "appends": [
+      "is_pending",
+      "is_active",
+      "is_expired",
+      "is_revoked",
+      "is_all_roles",
+      "duration_hours",
+      "remaining_hours"
+    ],
+    "relations_note": "delegator() belongsTo User via delegator_id; delegate() belongsTo User via delegate_id; role() belongsTo Role via role_id (nullable — null = all-roles delegation); revoker() belongsTo User via revoked_by (nullable). The `is_all_roles` accessor is a convenience: `role_id IS NULL`.",
+    "observers": ["RoleDelegationObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `dlg_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" },
+        "description": "Delegator + delegate MUST share this tenant_id (enforced by observer). Cascade on tenant erasure — delegations are hard-deleted with their tenant."
+      },
+      "application_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "applications", "column": "id", "onDelete": "restrict" },
+        "description": "Cascades through tenant_id per tenancy-columns.md §2 — role_delegations is not one of the eight rows carrying application_id directly, but delegations must be application-scoped for cross-app tenant isolation. Restrict on delete so an application cannot be removed while active delegations reference it."
+      },
+      "delegator_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "The User handing over. Restrict on delete so a User cannot be deleted while active delegations reference them (must revoke first)."
+      },
+      "delegate_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "The User receiving. Restrict on delete (same reason as delegator_id)."
+      },
+      "role_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "roles", "column": "id", "onDelete": "cascade" },
+        "description": "Optional specific role being delegated. NULL = ALL of delegator's active roles for the delegation window (OOF flow). Cascade on role delete — if a tenant admin deletes a custom role, any delegation scoped to that role dies with it. All-roles delegations survive because role_id IS NULL."
+      },
+      "delegation_type": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "oof",
+        "enum": ["oof", "handover", "emergency"],
+        "description": "Semantic hint for UX + audit filtering. `oof` (out-of-office; the default; symmetric) / `handover` (longer-lived transition, e.g. Alice leaves the finance team) / `emergency` (immediate + bypass min_advance_notice_hours; requires `emergency_delegation` entitlement)."
+      },
+      "starts_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "When the delegation becomes effective. Must be >= now() at creation (enforced by valid_delegation_window rule + observer). For future-dated delegations, `ActivateDelegationsJob` transitions the row through the effective boundary."
+      },
+      "ends_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "When the delegation ceases. Must be > starts_at AND <= starts_at + config('delegation.role_delegations.max_days', 90). Enforced by rule + observer."
+      },
+      "revoked_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Populated on early revocation. NULL for pending / active / expired states — the state machine derives from starts_at / ends_at / revoked_at trio."
+      },
+      "revoked_by": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" },
+        "description": "Who fired the early revocation. Must be the delegator OR a user with `delegations.manage_any` (admin). Set null on User erasure so the row stays queryable (the audit trail preserves the id anyway via HasAudit)."
+      },
+      "reason": {
+        "type": "text",
+        "nullable": false,
+        "description": "Required (min 20 chars) — see rules.json. Audited. When delegation_type=`emergency`, expected to include a rationale citing the emergency policy."
+      },
+      "revoke_reason": {
+        "type": "text",
+        "nullable": true,
+        "description": "Populated on early revocation. Distinct from `reason` (the original creation rationale)."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "From HasMetadata. Free-form platform-ops notes bag. Internal-tier — never stores PII."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "delegator_id", "delegate_id", "role_id", "starts_at"],
+        "unique": true,
+        "name": "role_delegations_active_pair_unique",
+        "predicate": "revoked_at IS NULL AND deleted_at IS NULL",
+        "description": "Guards against two overlapping active delegations of the same (delegator, delegate, role) starting at the same moment. Note: does NOT guard against overlapping windows with different starts_at — that's the `DelegationSelfOverlapDetected` observer path."
+      },
+      {
+        "columns": ["tenant_id", "delegate_id", "starts_at", "ends_at"],
+        "unique": false,
+        "name": "role_delegations_delegate_lookup_idx",
+        "description": "Hot-path serving `IsCurrentlyDelegate($delegate)` — used by RBAC PermissionResolver + workflow/approvals approver selector on EVERY permission check + approver resolution."
+      },
+      {
+        "columns": ["tenant_id", "delegator_id", "starts_at", "ends_at"],
+        "unique": false,
+        "name": "role_delegations_delegator_lookup_idx",
+        "description": "Reverse lookup — 'who is currently delegating from me' — powers the /me/delegations list."
+      },
+      {
+        "columns": ["role_id"],
+        "unique": false,
+        "name": "role_delegations_role_idx",
+        "predicate": "role_id IS NOT NULL",
+        "description": "For workflow/approvals — resolve delegators of a specific role_id to find current delegates for approver resolution."
+      },
+      {
+        "columns": ["ends_at"],
+        "unique": false,
+        "name": "role_delegations_expiry_scan_idx",
+        "predicate": "revoked_at IS NULL AND deleted_at IS NULL",
+        "description": "Powers the hourly `ExpireDelegationsJob` sweep."
+      },
+      {
+        "columns": ["starts_at"],
+        "unique": false,
+        "name": "role_delegations_activation_scan_idx",
+        "predicate": "revoked_at IS NULL AND deleted_at IS NULL",
+        "description": "Powers the hourly `ActivateDelegationsJob` sweep."
+      },
+      {
+        "columns": ["revoked_at", "ends_at"],
+        "unique": false,
+        "name": "role_delegations_retention_scan_idx",
+        "predicate": "deleted_at IS NULL",
+        "description": "Powers the daily `PurgeRevokedDelegationsJob` — finds rows past the 730-day retention window."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "application_id",
+    "delegator_id",
+    "delegate_id",
+    "delegation_type",
+    "starts_at",
+    "ends_at",
+    "reason",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^dlg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "application_id": { "type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "delegator_id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "delegate_id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "role_id": { "type": ["string", "null"], "pattern": "^rol_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "delegation_type": {
+      "type": "string",
+      "enum": ["oof", "handover", "emergency"]
+    },
+    "starts_at": { "type": "string", "format": "date-time" },
+    "ends_at": { "type": "string", "format": "date-time" },
+    "revoked_at": { "type": ["string", "null"], "format": "date-time" },
+    "revoked_by": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "reason": { "type": "string", "minLength": 20, "maxLength": 2000 },
+    "revoke_reason": { "type": ["string", "null"], "maxLength": 2000 },
+    "is_pending": {
+      "type": "boolean",
+      "description": "Computed. `starts_at > now() AND revoked_at IS NULL`."
+    },
+    "is_active": {
+      "type": "boolean",
+      "description": "Computed. `starts_at <= now() < ends_at AND revoked_at IS NULL`."
+    },
+    "is_expired": {
+      "type": "boolean",
+      "description": "Computed. `ends_at <= now() AND revoked_at IS NULL`."
+    },
+    "is_revoked": {
+      "type": "boolean",
+      "description": "Computed. `revoked_at IS NOT NULL`."
+    },
+    "is_all_roles": {
+      "type": "boolean",
+      "description": "Computed. `role_id IS NULL` — the OOF flow that delegates every role of the delegator."
+    },
+    "duration_hours": {
+      "type": "number",
+      "description": "Computed. `(ends_at - starts_at) / 3600`."
+    },
+    "remaining_hours": {
+      "type": ["number", "null"],
+      "description": "Computed. `(ends_at - now()) / 3600` for active delegations; null for non-active states."
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["metadata", "created_by", "updated_by", "deleted_by"],
+    "computed": [
+      "is_pending",
+      "is_active",
+      "is_expired",
+      "is_revoked",
+      "is_all_roles",
+      "duration_hours",
+      "remaining_hours"
+    ]
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`dlg_<26>`)"]
+  }
+}

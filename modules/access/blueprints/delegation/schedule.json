@@ -1,0 +1,49 @@
+{
+  "id": "academorix://modules/delegation/schedule",
+  "$version": 1,
+  "title": "delegation — scheduled tasks",
+  "entries": [
+    {
+      "name": "delegations-activate-pending",
+      "command": "delegations:activate-pending",
+      "cron": "*/60 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly. Dispatches ActivateDelegationsJob to transition pending delegations to active on starts_at. The delegation lifecycle depends on this — a delegate cannot exercise a pending delegation, and consumer resolvers (RBAC + workflow/approvals) check state=active before honouring the delegation."
+    },
+    {
+      "name": "delegations-expire-past-ends",
+      "command": "delegations:expire-past-ends",
+      "cron": "*/60 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly. Dispatches ExpireDelegationsJob to transition active delegations to expired on ends_at. Delegator gets NotifyDelegatorOfExpirationJob via the event chain."
+    },
+    {
+      "name": "impersonation-end-past-ttl",
+      "command": "impersonation:end-past-ttl",
+      "cron": "*/5 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 5 minutes — critical cadence. Dispatches EndImpersonationSessionsJob to terminate sessions past ends_at. The impersonation.enforce_active_session middleware ALSO refuses expired-but-not-yet-transitioned PATs within the request cycle so the 5-minute lag never permits an active-past-expiry window."
+    },
+    {
+      "name": "delegations-purge-retention-window",
+      "command": "delegations:purge-retention-window",
+      "cron": "15 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 03:15 UTC. Dispatches PurgeRevokedDelegationsJob to hard-delete soft-deleted role_delegations rows past the 730-day retention window. Coordinated with the audit stream retention purge (also 730 d) so both happen in the same maintenance window."
+    },
+    {
+      "name": "impersonation-scrub-token-hashes",
+      "command": "impersonation:scrub-token-hashes",
+      "cron": "0 4 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly, Sunday 04:00 UTC. Dispatches PurgeImpersonationSessionsJob to NULL session_token_hash on ended sessions > 30 days old. Row is preserved (compliance evidence retained indefinitely per retention.json)."
+    },
+    {
+      "name": "delegations-remind-expiring",
+      "command": "delegations:remind-expiring",
+      "cron": "0 9 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 09:00 UTC. Finds active delegations whose ends_at is within the next 24 hours, sends DelegationExpiringNotification to both delegator + delegate as a heads-up. Idempotent per delegation_id per day (guarded by observability lookback)."
+    }
+  ]
+}

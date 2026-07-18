@@ -1,0 +1,61 @@
+{
+  "id": "delegation.widgets.delegation-scope-badge",
+  "title": "Delegation scope badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widgetName": "delegation.delegation-scope-badge",
+  "notes": [
+    "Small badge shown next to a role name in shell nav / role pickers / permission-denied banners when the caller is currently exercising a delegation for that role.",
+    "Example rendering: `Finance Manager (via Alice)` where `via Alice` is the badge.",
+    "Reads acting_as(user, role) (helpers.json) — matches at most one active delegation for the (user, role) tuple; when nothing matches, the widget renders null."
+  ],
+  "props": {
+    "user": {
+      "type": "User",
+      "required": true,
+      "description": "The user whose delegate-status to check (typically the caller = auth()->user())."
+    },
+    "role": {
+      "type": "Role",
+      "required": true,
+      "description": "The role in question."
+    },
+    "variant": {
+      "type": "'inline' | 'pill'",
+      "default": "inline",
+      "description": "inline = simple parenthetical text; pill = a Chip with the delegator's avatar + display_name."
+    }
+  },
+  "nodes": [
+    {
+      "kind": "View",
+      "bindings": {
+        "hidden": {
+          "$expr": "!(acting_as(user, role).length > 0)"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs text-muted italic" },
+          "bindings": {
+            "hidden": { "$expr": "variant !== 'inline'" },
+            "children": {
+              "$expr": "'(via ' + acting_as(user, role)[0].delegator.profile.display_name + ')'"
+            }
+          }
+        },
+        {
+          "kind": "Chip",
+          "props": { "size": "xs", "variant": "info", "leadingIcon": "arrow-uturn-left" },
+          "bindings": {
+            "hidden": { "$expr": "variant !== 'pill'" },
+            "children": {
+              "$expr": "'via ' + acting_as(user, role)[0].delegator.profile.display_name"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

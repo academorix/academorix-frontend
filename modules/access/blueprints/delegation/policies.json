@@ -1,0 +1,76 @@
+{
+  "id": "academorix://modules/delegation/policies",
+  "$version": 1,
+  "title": "delegation — authorization policies",
+  "policies": [
+    {
+      "model": "RoleDelegation",
+      "class": "Academorix\\Delegation\\Policies\\RoleDelegationPolicy",
+      "guard": "sanctum",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "delegations.viewAny",
+          "scope": "any tenant member — sees own delegations (as delegator + delegate) by default; admin sees all"
+        },
+        {
+          "action": "view",
+          "permission": "delegations.view",
+          "scope": "delegator, delegate, or admin (delegations.manage_any)"
+        },
+        {
+          "action": "create",
+          "permission": "delegations.create",
+          "scope": "caller is the delegator (caller_id === delegator_id in body). No admin-creates-on-behalf-of flow in Wave 1b."
+        },
+        {
+          "action": "revoke",
+          "permission": "delegations.revoke",
+          "scope": "delegator or admin (delegations.manage_any). Delegate CANNOT self-revoke — they can only decline to exercise."
+        },
+        {
+          "action": "extend",
+          "permission": "delegations.manage_any",
+          "scope": "admin only. Rare — mostly used to fix a scheduling error before the delegation activates."
+        }
+      ]
+    },
+    {
+      "model": "ImpersonationSession",
+      "class": "Academorix\\Delegation\\Policies\\ImpersonationSessionPolicy",
+      "guard": "platform_admin",
+      "abilities": [
+        {
+          "action": "create",
+          "permission": "platform.impersonate",
+          "scope": "PlatformUser status === active AND holds platform.impersonate entitlement AND is not currently already operating an active impersonation session (one-at-a-time invariant). Enforced by the observer's creating hook."
+        },
+        {
+          "action": "view",
+          "permission": "platform.impersonation.view",
+          "scope": "impersonator OR super_admin OR security"
+        },
+        {
+          "action": "viewAll",
+          "permission": "platform.impersonation.viewAll",
+          "scope": "super_admin + security. Regular support agents see only their own sessions."
+        },
+        {
+          "action": "audit",
+          "permission": "platform.impersonation.audit",
+          "scope": "super_admin + dpo + security. Cross-tenant compliance audit — the SOC 2 evidence review read."
+        },
+        {
+          "action": "terminate",
+          "permission": "platform.impersonation.terminate",
+          "scope": "impersonator (their own session) OR super_admin OR security. Force-termination uses this ability."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "The `delegations.manage_any` permission is a tenant-scoped admin permission — an admin with this permission can create, view, and revoke ANY delegation in the tenant, not just their own.",
+    "The impersonation-side abilities never grant creation on behalf of another operator. A super_admin can revoke someone else's session (via terminate) but cannot START someone else's session — the impersonator must always be the caller.",
+    "The one-at-a-time invariant (an operator cannot hold two active sessions concurrently) is enforced at observer level, not policy level, because the policy runs before the transaction that would probe the impersonator's active-session count. See observers.json."
+  ]
+}

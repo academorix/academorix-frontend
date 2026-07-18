@@ -1,0 +1,184 @@
+{
+  "id": "academorix://modules/access/requests/schemas/access-request-projection",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AccessRequest (DTO projection)",
+  "description": "The AccessRequest DTO is a PROJECTION over `workflow/approvals.approval_instance` + its `context_json` + the resulting `access/grants.access_grant` (when materialised). It is NOT an Eloquent model \u2014 no local table, no observer, no factory. This schema documents the wire shape emitted on the tenant + platform-admin surfaces.",
+  "type": "object",
+  "x-module": "access/requests",
+  "x-eloquent": {
+    "isProjection": true,
+    "sourceTables": [
+      "workflow/approvals.approval_instances",
+      "workflow/approvals.approval_requirements",
+      "workflow/approvals.approval_decisions",
+      "access/grants.access_grants",
+      "user.users"
+    ],
+    "presenter": "Academorix\\AccessRequest\\Presenters\\AccessRequestPresenter",
+    "dtoClass": "Academorix\\AccessRequest\\Data\\AccessRequestData",
+    "dtoInterface": "Academorix\\AccessRequest\\Contracts\\Data\\AccessRequestInterface",
+    "note": "The `id` of an access request is ALWAYS the underlying approval_instance.id. Consumers who address the request by id are addressing the approval instance."
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "application_id",
+    "resource",
+    "permissions_wanted",
+    "reason",
+    "requester",
+    "approvers",
+    "status",
+    "requested_at",
+    "expires_at"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^api_[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "The underlying workflow/approvals::approval_instance.id."
+    },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "application_id": { "type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "resource": {
+      "type": "object",
+      "description": "The resource the request targets. Projected from approval_instance.subject_type + subject_id.",
+      "required": ["type", "id"],
+      "properties": {
+        "type": { "type": "string", "description": "e.g. 'invoice', 'athlete'" },
+        "id": { "type": "string", "description": "prefixed ULID of the target row" },
+        "display_name": { "type": ["string", "null"], "description": "Resolved via the resource type's `displayNameSource` accessor at projection time. Falls back to the resource's `id` when the accessor returns null." }
+      },
+      "additionalProperties": false
+    },
+    "permissions_wanted": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9_.]*$" },
+      "minItems": 1,
+      "description": "Permission names the requester asked for."
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 1000,
+      "description": "The human-authored rationale from context_json.requester_reason."
+    },
+    "requester": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+        "display_name": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "avatar_url": { "type": ["string", "null"], "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+    "approvers": {
+      "type": "array",
+      "description": "Resolved approvers set for THIS request. Union of every requirement's resolved_approvers[]. Delegation-aware.",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+          "display_name": { "type": ["string", "null"] },
+          "email": { "type": ["string", "null"], "format": "email" },
+          "avatar_url": { "type": ["string", "null"], "format": "uri" },
+          "is_delegate_of": {
+            "type": ["string", "null"],
+            "description": "The delegator's user_id when THIS approver is filling in for someone via role_delegations. null when the approver is themselves."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "description": "Every recorded decision on this request. Included on the show endpoint; omitted on list.",
+      "items": {
+        "type": "object",
+        "required": ["approver_id", "decision", "decided_at"],
+        "properties": {
+          "approver_id": { "type": "string" },
+          "decision": { "type": "string", "enum": ["approve", "reject"] },
+          "comment": { "type": ["string", "null"], "maxLength": 1000 },
+          "decided_at": { "type": "string", "format": "date-time" },
+          "delegated_from_id": { "type": ["string", "null"], "description": "When the approver was a delegate, this is the delegator's user_id." }
+        },
+        "additionalProperties": false
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "approved", "rejected", "expired", "cancelled"],
+      "description": "Projected from approval_instance.status. `executed` maps to `approved` \u2014 the DTO doesn't distinguish the internal 'grant-materialised' sub-state."
+    },
+    "requested_at": { "type": "string", "format": "date-time" },
+    "decided_at": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Set on approved / rejected / cancelled. Null on pending / expired."
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Hard timeout from approval_instance.expires_at."
+    },
+    "materialised_grant": {
+      "type": ["object", "null"],
+      "description": "The access_grant row that resulted from approval. Null when status !== approved OR when materialisation is pending / failed.",
+      "properties": {
+        "id": { "type": "string", "pattern": "^agr_[0-9A-HJKMNP-TV-Z]{26}$" },
+        "granted_by_id": { "type": "string" },
+        "granted_at": { "type": "string", "format": "date-time" },
+        "expires_at": { "type": ["string", "null"], "format": "date-time" },
+        "revoked_at": { "type": ["string", "null"], "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "approver_summary": {
+      "type": "object",
+      "description": "Aggregate approver metadata. Projected once at request-creation time and re-projected on read.",
+      "properties": {
+        "total_approvers_count": { "type": "integer", "minimum": 0 },
+        "decisions_recorded_count": { "type": "integer", "minimum": 0 },
+        "first_approver_id": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "template_id": {
+      "type": ["string", "null"],
+      "description": "The approval_template that matched. Null when the request went to config-level default_approvers_selector."
+    },
+    "reminders_sent": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How many reminders have gone out to pending approvers."
+    },
+    "audit_trail": {
+      "type": "array",
+      "description": "Chronological event trail for this request, projected from approval_events. Included on show; omitted on list.",
+      "items": {
+        "type": "object",
+        "required": ["event", "occurred_at"],
+        "properties": {
+          "event": { "type": "string", "enum": ["submitted", "approver_notified", "reminded", "approved", "rejected", "expired", "cancelled", "grant_materialised", "grant_revoked"] },
+          "occurred_at": { "type": "string", "format": "date-time" },
+          "actor_id": { "type": ["string", "null"] },
+          "note": { "type": ["string", "null"], "maxLength": 500 }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["audit_trail (list only; included on show)", "decisions (list only; included on show)"],
+    "computed": ["approver_summary", "resource.display_name"]
+  }
+}

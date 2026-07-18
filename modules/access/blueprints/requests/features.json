@@ -1,0 +1,41 @@
+{
+  "id": "academorix://modules/access/requests/features",
+  "$version": 1,
+  "title": "requests \u2014 feature keys",
+  "description": "Feature keys this module publishes for the tenant-facing entitlements catalogue. Every tenant on every plan tier gets base access requests on by default \u2014 the module is a substrate, not a premium feature. Reminder + bulk-approve are tier-gated.",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me \u2192 data.features",
+    "seededFrom": "consumer modules \u2014 access-requests base is always on"
+  },
+  "features": [
+    {
+      "key": "access_requests.core",
+      "displayName": "Access requests",
+      "description": "Google-Docs-style request-access flow. When a User hits a resource they don't have permission for, they can request access; approvers decide; approval materialises a time-bounded grant. Always on.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "small", "medium", "enterprise"]
+    },
+    {
+      "key": "access_request_reminders",
+      "displayName": "Approver reminders",
+      "description": "Nightly nudges to approvers who haven't decided on a pending request older than 24h. Reduces stale-request friction \u2014 requesters get an outcome faster.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "access_request_bulk_approve",
+      "displayName": "Bulk approve",
+      "description": "Approver-side: select N pending requests and approve them in one action (writes N decisions atomically). Enterprise-only \u2014 reduces cognitive load on approvers who handle 10+ requests per day.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "access_request_ttl_override",
+      "displayName": "Custom grant TTL",
+      "description": "Enterprise tenants can override the default 7-day grant TTL per resource type via `#[AccessRequestable(defaultGrantTtlDays: N)]`. Standard tiers use the platform default.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
+}

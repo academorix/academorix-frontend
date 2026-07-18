@@ -1,0 +1,147 @@
+{
+  "id": "academorix://modules/delegation/config",
+  "$version": 1,
+  "title": "delegation — developer configuration",
+  "configFile": "config/delegation.php",
+  "envPrefix": "DELEGATION_",
+  "sections": {
+    "role_delegations": {
+      "keys": [
+        {
+          "path": "delegation.role_delegations.max_days",
+          "type": "int",
+          "env": "DELEGATION_ROLE_MAX_DAYS",
+          "default": 90,
+          "description": "Hard cap on delegation window (ends_at - starts_at). Enforced by valid_delegation_window rule + observer."
+        },
+        {
+          "path": "delegation.role_delegations.min_advance_notice_hours",
+          "type": "int",
+          "env": "DELEGATION_MIN_ADVANCE_HOURS",
+          "default": 0,
+          "description": "Minimum hours between now() and starts_at. Default 0 allows immediate delegation. delegation_type=emergency bypasses this check regardless of value."
+        },
+        {
+          "path": "delegation.role_delegations.notify_delegate_on_activation",
+          "type": "bool",
+          "default": true,
+          "description": "Send DelegationActivatedNotification when the delegation becomes effective."
+        },
+        {
+          "path": "delegation.role_delegations.notify_delegator_on_expiration",
+          "type": "bool",
+          "default": true,
+          "description": "Send DelegationExpiredNotification when ends_at is reached."
+        },
+        {
+          "path": "delegation.role_delegations.notify_expiring_hours_ahead",
+          "type": "int",
+          "default": 24,
+          "description": "How many hours before ends_at to fire DelegationExpiringNotification."
+        },
+        {
+          "path": "delegation.role_delegations.reason_min_length",
+          "type": "int",
+          "default": 20,
+          "description": "Min characters for the delegation reason (audited context field)."
+        }
+      ]
+    },
+    "impersonation": {
+      "keys": [
+        {
+          "path": "delegation.impersonation.max_minutes",
+          "type": "int",
+          "env": "DELEGATION_IMPERSONATION_MAX_MINUTES",
+          "default": 60,
+          "description": "Default hard cap on session duration. Enforced by ImpersonationSessionObserver. Extended TTL requires impersonation_extended_ttl entitlement."
+        },
+        {
+          "path": "delegation.impersonation.max_minutes_extended",
+          "type": "int",
+          "default": 240,
+          "description": "Cap for extended-TTL sessions. Still not unlimited — 4 hours is the negotiated upper bound."
+        },
+        {
+          "path": "delegation.impersonation.reason_min_length",
+          "type": "int",
+          "default": 40,
+          "description": "Min characters for the impersonation reason (heavier than delegation's 20)."
+        },
+        {
+          "path": "delegation.impersonation.allow_extension",
+          "type": "bool",
+          "default": false,
+          "description": "Global default. Can be flipped per-session by a super_admin if the tenant holds impersonation_extended_ttl entitlement."
+        },
+        {
+          "path": "delegation.impersonation.require_ticket_reference",
+          "type": "bool",
+          "default": false,
+          "description": "When true, support_ticket_reference is required at session start. Some tenant contracts require this."
+        },
+        {
+          "path": "delegation.impersonation.read_only_enterprise_only",
+          "type": "bool",
+          "default": true,
+          "description": "When true, is_read_only=true requires the target tenant to hold read_only_impersonation entitlement (enterprise). Setting false is a policy relaxation for testing only."
+        },
+        {
+          "path": "delegation.impersonation.one_at_a_time",
+          "type": "bool",
+          "default": true,
+          "description": "Enforces the one-at-a-time invariant per operator. Setting false is a policy relaxation for testing only."
+        }
+      ]
+    },
+    "audit": {
+      "keys": [
+        {
+          "path": "delegation.audit.impersonation_retention_years",
+          "type": "int",
+          "default": 7,
+          "description": "Impersonation session evidence retention. SOC 2 Type II compliant."
+        },
+        {
+          "path": "delegation.audit.delegation_retention_days",
+          "type": "int",
+          "default": 730,
+          "description": "Role delegation retention window before hard-purge (soft-deleted rows only)."
+        },
+        {
+          "path": "delegation.audit.impersonation_token_scrub_days",
+          "type": "int",
+          "default": 30,
+          "description": "After session end + this many days, session_token_hash is NULLED (row preserved). Hash residue removal."
+        }
+      ]
+    },
+    "notifications": {
+      "keys": [
+        {
+          "path": "delegation.notifications.impersonation_notify_target",
+          "type": "string",
+          "default": "always",
+          "enum": ["always"],
+          "description": "The impersonated User is ALWAYS notified. This is a regulatory requirement (SOC 2 + PCI-DSS 8.5); no other value is supported. The key exists for future extensibility (e.g. a locale-specific mail-transport override)."
+        }
+      ]
+    },
+    "resolver": {
+      "keys": [
+        {
+          "path": "delegation.resolver.cache_ttl_seconds",
+          "type": "int",
+          "default": 60,
+          "description": "DelegationResolver LRU cache TTL. Short by design — a newly-activated delegation should be honoured near-immediately in the next request."
+        },
+        {
+          "path": "delegation.resolver.warm_on_boot_top_n_tenants",
+          "type": "int",
+          "default": 25,
+          "description": "How many top-request tenants to warm the resolver cache with on ApplicationBooted."
+        }
+      ]
+    }
+  }
+}

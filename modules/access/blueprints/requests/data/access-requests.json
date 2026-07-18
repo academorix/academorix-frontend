@@ -1,0 +1,275 @@
+[
+  {
+    "id": "api_01K3R7V3A4N7D6Q8K5B2C9ACR01",
+    "tenant_id": "ten_01J5R7V3A4N7D6Q8K5B2C9E1X1",
+    "application_id": "app_01J5R7V3A4N7D6Q8K5B2C9E001",
+    "resource": {
+      "type": "invoice",
+      "id": "inv_01H8KX2P3R4S5T6U7V8W9X0Y1Z",
+      "display_name": "Invoice #INV-2026-07-042 \u2014 Riverside Aquatics"
+    },
+    "permissions_wanted": ["invoices.view"],
+    "reason": "Working on the July quarterly close and need to reconcile this invoice against the trial-balance report. It's currently flagged as unmatched \u2014 need read access to check the line items.",
+    "requester": {
+      "id": "usr_riverside_coach_01",
+      "display_name": "Maya Thompson",
+      "email": "maya.thompson@riverside.example",
+      "avatar_url": null
+    },
+    "approvers": [
+      {
+        "id": "usr_riverside_finance_lead_01",
+        "display_name": "Alex Chen",
+        "email": "alex.chen@riverside.example",
+        "avatar_url": null,
+        "is_delegate_of": null
+      },
+      {
+        "id": "usr_riverside_finance_admin_02",
+        "display_name": "Sam Patel",
+        "email": "sam.patel@riverside.example",
+        "avatar_url": null,
+        "is_delegate_of": null
+      }
+    ],
+    "decisions": [],
+    "status": "pending",
+    "requested_at": "2026-08-01T10:15:23Z",
+    "decided_at": null,
+    "expires_at": "2026-08-08T10:15:23Z",
+    "materialised_grant": null,
+    "approver_summary": {
+      "total_approvers_count": 2,
+      "decisions_recorded_count": 0,
+      "first_approver_id": null
+    },
+    "template_id": null,
+    "reminders_sent": 0,
+    "audit_trail": [
+      {
+        "event": "submitted",
+        "occurred_at": "2026-08-01T10:15:23Z",
+        "actor_id": "usr_riverside_coach_01",
+        "note": null
+      },
+      {
+        "event": "approver_notified",
+        "occurred_at": "2026-08-01T10:15:26Z",
+        "actor_id": null,
+        "note": "Delivered to Alex Chen via mail + database"
+      },
+      {
+        "event": "approver_notified",
+        "occurred_at": "2026-08-01T10:15:26Z",
+        "actor_id": null,
+        "note": "Delivered to Sam Patel via mail + database"
+      }
+    ]
+  },
+  {
+    "id": "api_01K3R7V3A4N7D6Q8K5B2C9ACR02",
+    "tenant_id": "ten_01J5R7V3A4N7D6Q8K5B2C9E1X1",
+    "application_id": "app_01J5R7V3A4N7D6Q8K5B2C9E001",
+    "resource": {
+      "type": "athlete",
+      "id": "ath_riverside_youth_swim_04",
+      "display_name": "Athlete #ath_riverside_youth_swim_04 (guardian view)"
+    },
+    "permissions_wanted": ["athletes.view", "athletes.medical.view"],
+    "reason": "Attending physio session for the swimmer next week \u2014 need to see their injury log to plan the drills safely. Will only need this for the two weeks I'm covering for the head coach.",
+    "requester": {
+      "id": "usr_riverside_physio_01",
+      "display_name": "Dr Priya Iyer",
+      "email": "priya.iyer@riverside.example",
+      "avatar_url": null
+    },
+    "approvers": [
+      {
+        "id": "usr_riverside_head_coach_01",
+        "display_name": "Marcus Bell",
+        "email": "marcus.bell@riverside.example",
+        "avatar_url": null,
+        "is_delegate_of": null
+      }
+    ],
+    "decisions": [
+      {
+        "approver_id": "usr_riverside_head_coach_01",
+        "decision": "approve",
+        "comment": "Approved for two weeks (until 2026-08-30). Priya is covering while I'm away.",
+        "decided_at": "2026-08-02T09:34:12Z",
+        "delegated_from_id": null
+      }
+    ],
+    "status": "approved",
+    "requested_at": "2026-08-02T08:12:04Z",
+    "decided_at": "2026-08-02T09:34:12Z",
+    "expires_at": "2026-08-09T08:12:04Z",
+    "materialised_grant": {
+      "id": "agr_01K3R7V3A4N7D6Q8K5B2C9AGR01",
+      "granted_by_id": "usr_riverside_head_coach_01",
+      "granted_at": "2026-08-02T09:34:12Z",
+      "expires_at": "2026-08-30T09:34:12Z",
+      "revoked_at": null
+    },
+    "approver_summary": {
+      "total_approvers_count": 1,
+      "decisions_recorded_count": 1,
+      "first_approver_id": "usr_riverside_head_coach_01"
+    },
+    "template_id": "apt_riverside_medical_view_template",
+    "reminders_sent": 0,
+    "audit_trail": [
+      { "event": "submitted", "occurred_at": "2026-08-02T08:12:04Z", "actor_id": "usr_riverside_physio_01", "note": null },
+      { "event": "approver_notified", "occurred_at": "2026-08-02T08:12:07Z", "actor_id": null, "note": "Delivered to Marcus Bell via mail + database" },
+      { "event": "approved", "occurred_at": "2026-08-02T09:34:12Z", "actor_id": "usr_riverside_head_coach_01", "note": null },
+      { "event": "grant_materialised", "occurred_at": "2026-08-02T09:34:13Z", "actor_id": null, "note": "Grant agr_01K3R7V3A4N7D6Q8K5B2C9AGR01 created with 28-day TTL" }
+    ]
+  },
+  {
+    "id": "api_01K3R7V3A4N7D6Q8K5B2C9ACR03",
+    "tenant_id": "ten_01J5R7V3A4N7D6Q8K5B2C9E1X2",
+    "application_id": "app_01J5R7V3A4N7D6Q8K5B2C9E002",
+    "resource": {
+      "type": "invoice",
+      "id": "inv_01H9AB1CD2EF3GH4IJ5KL6MN7O",
+      "display_name": "Invoice #INV-2026-06-091 \u2014 Northgate Academy"
+    },
+    "permissions_wanted": ["invoices.update", "invoices.export"],
+    "reason": "Need edit + export permission to correct the outstanding tax rate for June invoices. This is a one-off cleanup task \u2014 will be done by end of week.",
+    "requester": {
+      "id": "usr_northgate_bookkeeper_01",
+      "display_name": "Ben Ortega",
+      "email": "ben.ortega@northgate.example",
+      "avatar_url": null
+    },
+    "approvers": [
+      {
+        "id": "usr_northgate_cfo_01",
+        "display_name": "Sara Kim",
+        "email": "sara.kim@northgate.example",
+        "avatar_url": null,
+        "is_delegate_of": null
+      }
+    ],
+    "decisions": [
+      {
+        "approver_id": "usr_northgate_cfo_01",
+        "decision": "reject",
+        "comment": "Tax rate corrections require an ops-signed change ticket per SOC 2 CC8.1. Please raise a ticket via Zendesk first \u2014 I'll approve once the ticket is filed. This request has enough info to be re-submitted after the ticket lands.",
+        "decided_at": "2026-07-25T14:22:03Z",
+        "delegated_from_id": null
+      }
+    ],
+    "status": "rejected",
+    "requested_at": "2026-07-25T09:45:12Z",
+    "decided_at": "2026-07-25T14:22:03Z",
+    "expires_at": "2026-08-01T09:45:12Z",
+    "materialised_grant": null,
+    "approver_summary": {
+      "total_approvers_count": 1,
+      "decisions_recorded_count": 1,
+      "first_approver_id": "usr_northgate_cfo_01"
+    },
+    "template_id": "apt_northgate_invoice_edit_template",
+    "reminders_sent": 0,
+    "audit_trail": [
+      { "event": "submitted", "occurred_at": "2026-07-25T09:45:12Z", "actor_id": "usr_northgate_bookkeeper_01", "note": null },
+      { "event": "approver_notified", "occurred_at": "2026-07-25T09:45:15Z", "actor_id": null, "note": "Delivered to Sara Kim via mail + database" },
+      { "event": "rejected", "occurred_at": "2026-07-25T14:22:03Z", "actor_id": "usr_northgate_cfo_01", "note": null }
+    ]
+  },
+  {
+    "id": "api_01K3R7V3A4N7D6Q8K5B2C9ACR04",
+    "tenant_id": "ten_01J5R7V3A4N7D6Q8K5B2C9E1X1",
+    "application_id": "app_01J5R7V3A4N7D6Q8K5B2C9E001",
+    "resource": {
+      "type": "team",
+      "id": "tea_riverside_masters_swim_01",
+      "display_name": "Team \u2014 Riverside Masters Swim"
+    },
+    "permissions_wanted": ["teams.view", "teams.schedules.view"],
+    "reason": "Volunteering to help coordinate the summer swim meets \u2014 need to see the master schedule to plan volunteer shifts.",
+    "requester": {
+      "id": "usr_riverside_parent_01",
+      "display_name": "Jamie O'Brien",
+      "email": "jamie.obrien@example.com",
+      "avatar_url": null
+    },
+    "approvers": [
+      {
+        "id": "usr_riverside_team_manager_01",
+        "display_name": "Rachel Simmons",
+        "email": "rachel.simmons@riverside.example",
+        "avatar_url": null,
+        "is_delegate_of": null
+      }
+    ],
+    "decisions": [],
+    "status": "expired",
+    "requested_at": "2026-07-20T08:00:00Z",
+    "decided_at": null,
+    "expires_at": "2026-07-27T08:00:00Z",
+    "materialised_grant": null,
+    "approver_summary": {
+      "total_approvers_count": 1,
+      "decisions_recorded_count": 0,
+      "first_approver_id": null
+    },
+    "template_id": null,
+    "reminders_sent": 3,
+    "audit_trail": [
+      { "event": "submitted", "occurred_at": "2026-07-20T08:00:00Z", "actor_id": "usr_riverside_parent_01", "note": null },
+      { "event": "approver_notified", "occurred_at": "2026-07-20T08:00:04Z", "actor_id": null, "note": "Delivered to Rachel Simmons via mail" },
+      { "event": "reminded", "occurred_at": "2026-07-21T08:00:00Z", "actor_id": null, "note": "First reminder" },
+      { "event": "reminded", "occurred_at": "2026-07-23T08:00:00Z", "actor_id": null, "note": "Second reminder" },
+      { "event": "reminded", "occurred_at": "2026-07-26T08:00:00Z", "actor_id": null, "note": "Final reminder" },
+      { "event": "expired", "occurred_at": "2026-07-27T08:00:12Z", "actor_id": null, "note": "Auto-expired after 168 hours with no decision" }
+    ]
+  },
+  {
+    "id": "api_01K3R7V3A4N7D6Q8K5B2C9ACR05",
+    "tenant_id": "ten_01J5R7V3A4N7D6Q8K5B2C9E1X1",
+    "application_id": "app_01J5R7V3A4N7D6Q8K5B2C9E001",
+    "resource": {
+      "type": "facility",
+      "id": "fac_riverside_pool_main_01",
+      "display_name": "Main Pool \u2014 Riverside"
+    },
+    "permissions_wanted": ["facilities.book.override"],
+    "reason": "Requested a special session slot for a training clinic but immediately realised we can just use the standard booking flow. Never mind.",
+    "requester": {
+      "id": "usr_riverside_coach_02",
+      "display_name": "Danny Rivera",
+      "email": "danny.rivera@riverside.example",
+      "avatar_url": null
+    },
+    "approvers": [
+      {
+        "id": "usr_riverside_facilities_admin_01",
+        "display_name": "Grace Wu",
+        "email": "grace.wu@riverside.example",
+        "avatar_url": null,
+        "is_delegate_of": null
+      }
+    ],
+    "decisions": [],
+    "status": "cancelled",
+    "requested_at": "2026-07-30T14:03:11Z",
+    "decided_at": "2026-07-30T14:06:22Z",
+    "expires_at": "2026-08-06T14:03:11Z",
+    "materialised_grant": null,
+    "approver_summary": {
+      "total_approvers_count": 1,
+      "decisions_recorded_count": 0,
+      "first_approver_id": null
+    },
+    "template_id": null,
+    "reminders_sent": 0,
+    "audit_trail": [
+      { "event": "submitted", "occurred_at": "2026-07-30T14:03:11Z", "actor_id": "usr_riverside_coach_02", "note": null },
+      { "event": "approver_notified", "occurred_at": "2026-07-30T14:03:14Z", "actor_id": null, "note": "Delivered to Grace Wu via mail + database" },
+      { "event": "cancelled", "occurred_at": "2026-07-30T14:06:22Z", "actor_id": "usr_riverside_coach_02", "note": "Withdrawn by requester" }
+    ]
+  }
+]

@@ -1,0 +1,372 @@
+{
+  "id": "grants.share-access-dialog",
+  "title": "Share access dialog",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "The Google-Docs-style share dialog. Consumer modules embed this widget on their resource show screens by passing resourceType + resourceId. Handles: pick subject (typeahead across tenant Users), pick permissions (multi-select filtered by grantor's held permissions on this resource — so the user never sees permissions they can't grant), set expiration (date picker preselected to tenant default), add reason (textarea, min 20 chars). Submits POST /api/v1/grants and closes on success. Debounced preflight validation via POST /api/v1/grants/preflight surfaces guard failures inline before submit.",
+  "props": {
+    "resourceType": {
+      "type": "string",
+      "required": true,
+      "description": "The registered `resource_type` key (e.g. 'invoice', 'athlete', 'team'). Passed by the consumer that opened the dialog."
+    },
+    "resourceId": {
+      "type": "string",
+      "required": true,
+      "description": "The specific resource id the grant will target."
+    },
+    "resourceLabel": {
+      "type": "string",
+      "description": "Optional display label rendered in the dialog title. Consumer supplies for good UX; falls back to '<resourceType>#<resourceId>'."
+    },
+    "allowDeny": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the caller can toggle to a deny grant. Resolved from the tenant's `deny_grants` entitlement AND the grantable resource's Grantable.allow_deny attribute."
+    },
+    "onSuccess": {
+      "type": "action",
+      "description": "Fires after the grant is issued. Consumers hook this to refetch their own resource-grants list."
+    }
+  },
+  "dataSources": [
+    {
+      "name": "resourceGrantsInline",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/grants/resource/' + props.resourceType + '/' + props.resourceId + '?filter[active_only]=true'",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 30 }
+    },
+    {
+      "name": "grantorPermissions",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/me/permissions?resource_type=' + props.resourceType + '&resource_id=' + props.resourceId",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 },
+      "description": "The permissions the auth_user could grant on THIS specific resource. Feeds the permissions multi-select — filters options so the caller never sees a permission they can't grant."
+    },
+    {
+      "name": "tenantSettings",
+      "kind": "http.get",
+      "url": "/api/v1/tenant/settings?filter[section]=grants",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "entitlements",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "dialog",
+      "kind": "Dialog",
+      "props": {
+        "size": "md",
+        "className": "flex flex-col gap-4"
+      },
+      "children": [
+        {
+          "id": "header",
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-1" },
+          "children": [
+            {
+              "id": "title",
+              "kind": "Text",
+              "props": { "as": "h2", "className": "text-xl font-semibold" },
+              "bindings": {
+                "children": { "$expr": "'Share ' + (props.resourceLabel || (props.resourceType + '#' + props.resourceId))" }
+              }
+            },
+            {
+              "id": "subtitle",
+              "kind": "Text",
+              "props": {
+                "as": "p",
+                "className": "text-muted text-sm",
+                "children": "Grant a person access to this resource. They'll be notified. You can revoke access at any time."
+              }
+            }
+          ]
+        },
+        {
+          "id": "existing-grants-panel",
+          "kind": "Disclosure",
+          "props": {
+            "className": "rounded-md border p-3",
+            "defaultOpen": false
+          },
+          "bindings": {
+            "hidden": { "$expr": "resourceGrantsInline.length === 0" }
+          },
+          "trigger": {
+            "kind": "Text",
+            "props": { "className": "text-sm font-medium" },
+            "bindings": {
+              "children": { "$expr": "'People with access (' + resourceGrantsInline.length + ')'" }
+            }
+          },
+          "children": [
+            {
+              "kind": "List",
+              "bindings": { "items": { "$ref": "resourceGrantsInline" } },
+              "itemRenderer": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2 py-1" },
+                "children": [
+                  {
+                    "kind": "Avatar",
+                    "bindings": {
+                      "src": { "$ref": "row.subject.avatar_url" },
+                      "label": { "$ref": "row.subject.display_name" }
+                    },
+                    "props": { "size": "sm" }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "flex-1 text-sm" },
+                    "bindings": {
+                      "children": { "$expr": "row.subject.display_name + ' · ' + row.permissions.join(', ')" }
+                    }
+                  },
+                  {
+                    "kind": "Widget",
+                    "widget": "grants.decision-chip",
+                    "props": {
+                      "decision": { "$ref": "row.decision" },
+                      "isActive": { "$ref": "row.is_active" },
+                      "isPermanent": { "$ref": "row.is_permanent" },
+                      "size": "xs"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "form",
+          "kind": "Form",
+          "props": { "className": "flex flex-col gap-4" },
+          "target": {
+            "action": "create",
+            "resource": "grants",
+            "endpoint": "POST /api/v1/grants",
+            "authorize": "AccessGrantPolicy@create"
+          },
+          "defaults": {
+            "resource_type": { "$ref": "props.resourceType" },
+            "resource_id": { "$ref": "props.resourceId" },
+            "subject_type": "user",
+            "decision": "allow"
+          },
+          "sections": [
+            {
+              "id": "subject",
+              "title": "Who gets access",
+              "fields": [
+                {
+                  "name": "subject_id",
+                  "kind": "UserPicker",
+                  "label": "Person",
+                  "isRequired": true,
+                  "placeholder": "Search team members...",
+                  "description": "Only people in your tenant. Search by name or email.",
+                  "validation": {
+                    "async": {
+                      "kind": "http.post",
+                      "url": "/api/v1/grants/preflight",
+                      "debounceMs": 500,
+                      "payloadExpr": "{ subject_id: form.subject_id, resource_type: props.resourceType, resource_id: props.resourceId, permissions: form.permissions || [], decision: form.decision }"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "permissions",
+              "title": "What they can do",
+              "fields": [
+                {
+                  "name": "permissions",
+                  "kind": "MultiSelect",
+                  "label": "Permissions",
+                  "isRequired": true,
+                  "optionsSource": { "$ref": "grantorPermissions" },
+                  "description": "Only permissions you hold on this resource are shown. Multiple permissions can be granted at once.",
+                  "renderOption": {
+                    "kind": "View",
+                    "props": { "className": "flex flex-col" },
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-medium" },
+                        "bindings": { "children": { "$ref": "option.label" } }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted" },
+                        "bindings": { "children": { "$ref": "option.description" } }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "name": "decision",
+                  "kind": "RadioGroup",
+                  "label": "Access type",
+                  "defaultValue": "allow",
+                  "options": [
+                    {
+                      "value": "allow",
+                      "label": "Allow — grants these permissions",
+                      "leadingIcon": "check-circle"
+                    },
+                    {
+                      "value": "deny",
+                      "label": "Deny — explicitly blocks (overrides role permissions)",
+                      "leadingIcon": "no-symbol",
+                      "bindings": {
+                        "isDisabled": {
+                          "$expr": "!props.allowDeny || !entitlements.deny_grants"
+                        }
+                      },
+                      "description": "A deny grant blocks these permissions even if the person's role would otherwise grant them. Inviolable. Enterprise only.",
+                      "confirmOnSelect": {
+                        "title": "Deny access?",
+                        "description": "A deny grant is inviolable — it overrides the person's role permissions AND any allow grants. Only use this to explicitly block someone. Confirm you want to deny access to these permissions."
+                      }
+                    }
+                  ],
+                  "bindings": {
+                    "hidden": { "$expr": "!props.allowDeny" }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "expiration",
+              "title": "How long",
+              "fields": [
+                {
+                  "name": "expires_at_kind",
+                  "kind": "RadioGroup",
+                  "label": "Expiry",
+                  "defaultValue": "default",
+                  "options": [
+                    {
+                      "value": "default",
+                      "labelExpr": "'Default (' + (tenantSettings.default_ttl_days || 30) + ' days)'"
+                    },
+                    { "value": "custom", "label": "Custom date" },
+                    {
+                      "value": "permanent",
+                      "label": "Never expires",
+                      "bindings": {
+                        "isDisabled": { "$expr": "!entitlements.permanent_grants" }
+                      },
+                      "description": "Grant lives forever until manually revoked. Enterprise only."
+                    }
+                  ]
+                },
+                {
+                  "name": "expires_at",
+                  "kind": "DateField",
+                  "label": "Expires on",
+                  "bindings": {
+                    "isHidden": { "$expr": "form.expires_at_kind !== 'custom'" }
+                  },
+                  "defaultValueExpr": "addDays(now(), tenantSettings.default_ttl_days || 30)",
+                  "min": "now",
+                  "maxExpr": "addDays(now(), tenantSettings.max_ttl_days || 365)"
+                }
+              ]
+            },
+            {
+              "id": "reason",
+              "title": "Reason (audit trail)",
+              "fields": [
+                {
+                  "name": "reason",
+                  "kind": "TextArea",
+                  "label": "Why are you granting this access?",
+                  "isRequired": true,
+                  "rows": 3,
+                  "minLengthExpr": "tenantSettings.min_reason_length || 20",
+                  "maxLength": 2000,
+                  "placeholder": "e.g. 'Consultant working on Q3 audit needs read access through 15 Aug — see JIRA CS-1234.'",
+                  "counter": true,
+                  "description": "Retained indefinitely for audit. Be specific — future compliance reviews will read this."
+                }
+              ]
+            }
+          ],
+          "footer": {
+            "primaryAction": {
+              "label": "Share",
+              "kind": "form.submit",
+              "leadingIcon": "share",
+              "bindings": {
+                "labelExpr": "form.decision === 'deny' ? 'Confirm deny access' : 'Share access'"
+              },
+              "onSuccess": {
+                "kind": "sequence",
+                "steps": [
+                  {
+                    "kind": "toast.success",
+                    "messageExpr": "form.decision === 'deny' ? 'Deny grant issued' : 'Access shared with ' + form.subject_display_name"
+                  },
+                  { "kind": "modal.close" },
+                  { "kind": "callback", "callback": "props.onSuccess" }
+                ]
+              },
+              "onError": {
+                "byCode": {
+                  "GRANT_PRIVILEGE_ESCALATION": {
+                    "kind": "toast.error",
+                    "message": "You can only grant permissions you hold. Some permissions have been highlighted for removal."
+                  },
+                  "GRANT_CROSS_TENANT": {
+                    "kind": "toast.error",
+                    "message": "Cannot grant access across tenants. This is a system-level restriction."
+                  },
+                  "GRANT_DUPLICATE_ACTIVE": {
+                    "kind": "toast.warning",
+                    "message": "An identical grant already exists. Revoke the existing one first if you want to reset."
+                  },
+                  "GRANT_PERMANENT_NOT_ENTITLED": {
+                    "kind": "modal.upsell",
+                    "feature": "permanent_grants",
+                    "message": "Permanent grants require the Enterprise plan."
+                  },
+                  "GRANT_DENY_NOT_ENTITLED": {
+                    "kind": "modal.upsell",
+                    "feature": "deny_grants",
+                    "message": "Deny grants require the Enterprise plan."
+                  },
+                  "GRANT_ACTIVE_LIMIT_REACHED": {
+                    "kind": "modal.upsell",
+                    "feature": "grants.max_active",
+                    "message": "You've reached the maximum number of active grants for your plan."
+                  }
+                },
+                "default": {
+                  "kind": "toast.error",
+                  "messageExpr": "error.message || 'Failed to share access.'"
+                }
+              }
+            },
+            "secondaryAction": {
+              "label": "Cancel",
+              "kind": "modal.close"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

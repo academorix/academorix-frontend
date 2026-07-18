@@ -1,0 +1,69 @@
+{
+  "id": "academorix://modules/delegation/analytics",
+  "$version": 1,
+  "title": "delegation — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Delegation Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "delegator_id", "delegate_id", "delegation_type", "duration_hours", "is_all_roles"],
+      "description": "Tenant member created an OOF / handover / emergency delegation. Feeds product-team analysis of OOF adoption + delegate-selection patterns."
+    },
+    {
+      "name": "Delegation Activated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "delegation_id", "delegation_type"]
+    },
+    {
+      "name": "Delegation Revoked Early",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "delegation_id", "delegation_type", "duration_actual_hours", "duration_planned_hours"],
+      "description": "Delegator revoked before ends_at. duration_actual vs duration_planned reveals whether tenants tend to over-allot or under-allot OOF windows."
+    },
+    {
+      "name": "Delegation Used In Approval",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "delegation_id", "role_id", "approval_instance_id"],
+      "description": "Fired by RecordDelegationUsageInApproverResolution listener when workflow/approvals substituted a delegate for a delegator during approver resolution. This is THE product-analytics signal answering 'is OOF actually being used'."
+    },
+    {
+      "name": "Impersonation Started",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["department", "target_application_id", "is_read_only", "has_support_ticket_reference"],
+      "description": "Note: NEVER include tenant_id or impersonated_user_id in analytics payload — those are PII / regulated. Only aggregate labels."
+    },
+    {
+      "name": "Impersonation Ended",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["department", "duration_seconds_bucket", "end_trigger"],
+      "description": "duration_seconds_bucket: 0-60s / 1-5min / 5-15min / 15-30min / 30-60min / 60+min. Feeds product-team analysis of how long support sessions actually take."
+    },
+    {
+      "name": "Impersonation Extended",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["department"]
+    },
+    {
+      "name": "Impersonation Force Terminated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["department", "duration_seconds_before_termination_bucket"]
+    },
+    {
+      "name": "Impersonation Attempt Refused",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["department", "refusal_reason"],
+      "description": "Reveals pattern of denied-impersonation attempts. Feeds security-team review of whether operators are hitting refusal gates that should be relaxed or tightened."
+    }
+  ]
+}

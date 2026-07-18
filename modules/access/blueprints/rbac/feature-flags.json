@@ -1,0 +1,68 @@
+{
+  "id": "academorix://modules/rbac/feature-flags",
+  "$version": 1,
+  "title": "rbac \u2014 kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "rbac.resolver_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for PermissionResolver. Off = every check returns TRUE (fail-open, emergency-only). NEVER set off in production without an active incident + change-approval."
+    },
+    {
+      "key": "rbac.cache_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = resolver always hits DB. Emergency toggle if the cache substrate corrupts. 40x slower steady-state performance."
+    },
+    {
+      "key": "rbac.grants_overlay",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = skip steps 1\u20132 of the algorithm (deny/allow grants). Only for cases where access/grants is having a bad day and pure RBAC must serve traffic."
+    },
+    {
+      "key": "rbac.delegation_resolution",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = skip step 4 (delegation). Emergency toggle when access/delegation is unreachable."
+    },
+    {
+      "key": "rbac.cache_broadcast",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = disable Redis pubsub cross-node invalidation. Nodes fall back to TTL-based eviction only."
+    },
+    {
+      "key": "rbac.auto_seed_defaults",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = TenantProvisioned no longer triggers TenantDefaultRoleSeeder. Tenants ship with zero roles until admins run `rbac:seed-defaults` manually. Useful during multi-tenant migrations."
+    },
+    {
+      "key": "rbac.system_role_immutability",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = allow modifications to is_system=true rows. NEVER set off in production. Reserved for platform migrations that need to rename a system role across every tenant."
+    },
+    {
+      "key": "rbac.guard_boundary_enforcement",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = disable GuardMismatch refusals. NEVER set off in production. Reserved for platform bootstrap where a temporary guard-crossing migration is unavoidable."
+    },
+    {
+      "key": "rbac.permission_check_sampling",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = disable the sampled `Permission Check Performed` analytics events. Cuts a small amount of segment volume during high-traffic events."
+    },
+    {
+      "key": "rbac.time_bounded_assignments",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ignore expires_at writes (assignments live forever until revoked). Emergency toggle if the hourly purge job is misbehaving."
+    }
+  ]
+}

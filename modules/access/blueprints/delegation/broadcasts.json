@@ -1,0 +1,36 @@
+{
+  "id": "academorix://modules/delegation/broadcasts",
+  "$version": 1,
+  "title": "delegation — broadcast channels",
+  "description": "Two channels — one tenant-plane for delegation lifecycle updates in real time, one platform-plane for impersonation session updates surfaced to the operator's browser (session ends, extensions, forced-terminations should update the operator's UI without a full poll).",
+  "driver": "reverb",
+  "channels": [
+    {
+      "channel": "tenant.{tenant_id}.delegations",
+      "authorization": "presence — caller must be a member of tenant_id AND hold delegations.viewAny",
+      "events": [
+        "delegation.created (payload = summary of new delegation)",
+        "delegation.activated",
+        "delegation.expired",
+        "delegation.revoked_early",
+        "delegation.self_overlap_detected"
+      ],
+      "purpose": "Powers the tenant admin's /me/delegations table live-update. Also powers the delegate-received widget in the shell — when a new inbound delegation activates, the delegate's shell shows the 'you can now act as X' banner instantly."
+    },
+    {
+      "channel": "platform.impersonation.{platform_user_id}",
+      "authorization": "private — caller must be the PlatformUser with matching id AND hold platform.impersonate",
+      "events": [
+        "impersonation.session_started (own sessions only)",
+        "impersonation.session_ended",
+        "impersonation.session_extended",
+        "impersonation.session_forced_terminate (from security team)"
+      ],
+      "purpose": "Powers the impersonation-countdown-timer widget in the platform-admin shell + real-time termination notification. When security force-terminates the operator's session, the operator's browser knows within a second — critical for UX + for the operator to stop typing into a session they no longer have."
+    }
+  ],
+  "notes": [
+    "Broadcast channels are OPPORTUNISTIC — the tenant / operator UI polls as a fallback (30s). Losing a broadcast never breaks the audit trail; the DB is the source of truth.",
+    "There is NO cross-tenant broadcast for impersonation on the tenant plane. The impersonated User does not get a live WebSocket event when their account is impersonated — they get the cannot-opt-out notification (mail + in-app) via the notifications module. Live-broadcasting to the impersonated User would leak operator identity in real time before the audit stream has committed."
+  ]
+}

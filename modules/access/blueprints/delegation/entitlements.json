@@ -1,0 +1,41 @@
+{
+  "id": "academorix://modules/delegation/entitlements",
+  "$version": 1,
+  "title": "delegation — declared entitlements",
+  "description": "Five entitlement keys. Two on the tenant plane (role_delegation core + emergency_delegation), three on the PlatformUser plane (impersonation itself + two enterprise-negotiated flags on the target-tenant side).",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "role_delegation",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Base role-delegation availability on the tenant. Always on for every tier — role_delegation is a core capability, not an upsell. The entitlement is present so contract-negotiated disable is possible in rare cases (e.g. a highly regulated tenant that explicitly bans OOF)."
+    },
+    {
+      "key": "emergency_delegation",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables delegation_type=emergency (bypasses min_advance_notice_hours). Small tier tenants use the standard oof / handover types only."
+    },
+    {
+      "key": "impersonation",
+      "kind": "boolean",
+      "defaultsByPlan": {},
+      "description": "The impersonation capability itself. This is NOT a tenant-side entitlement — it lives on the PlatformUser row + is granted by super_admin to specific support-department staff via platform-user seed data. Never appears in a tenant's entitlement bundle. Kept in this file for canonical registry + so the ImpersonationEntitlementChecker knows to look it up on platform_users, not on tenants."
+    },
+    {
+      "key": "read_only_impersonation",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 0 },
+      "description": "TENANT-side flag — when TRUE, all impersonation of this tenant's users MUST be is_read_only=true (enforced by ImpersonationSessionObserver::creating). Only enterprise + contract-negotiated. Some tenant contracts require Academorix impersonation be read-only-only for confidentiality reasons; this entitlement is the mechanism."
+    },
+    {
+      "key": "impersonation_extended_ttl",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 0 },
+      "description": "TENANT-side flag — when TRUE, sessions against this tenant's users may exceed the 60-minute default cap (still capped at the max_minutes value in config('delegation.impersonation.max_minutes_extended')). Only super_admin can invoke the extension. Enterprise + contract-negotiated."
+    }
+  ],
+  "seeding_note": "The `impersonation` entitlement is peculiar — it's the ONE entitlement in the system that lives on a central-plane row (PlatformUser) instead of a tenant row. The entitlements module's storage layer treats the PlatformUser row as a first-class subject for entitlement grants; the ImpersonationEntitlementChecker consults it before the observer creates a session. This is registered as an exception in entitlements/module.json."
+}

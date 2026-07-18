@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/rbac/commands",
+  "$version": 1,
+  "title": "rbac \u2014 Artisan commands",
+  "commands": [
+    {
+      "signature": "rbac:list-roles {--tenant=} {--application=} {--guard=} {--include-system}",
+      "class": "Academorix\\Rbac\\Console\\Commands\\ListRolesCommand",
+      "purpose": "List roles filtered by tenant / application / guard. Without --include-system, custom roles only. Support-facing diagnostic \u2014 no state mutation."
+    },
+    {
+      "signature": "rbac:describe-role {role} {--principals} {--permissions}",
+      "class": "Academorix\\Rbac\\Console\\Commands\\DescribeRoleCommand",
+      "purpose": "Print one role's full detail: name, guard, application, tenant, is_system, description, sort_order, permission count. --permissions expands the permission list; --principals lists every principal currently holding the role."
+    },
+    {
+      "signature": "rbac:seed-defaults {--tenant=} {--dry-run} {--force}",
+      "class": "Academorix\\Rbac\\Console\\Commands\\SeedDefaultsCommand",
+      "purpose": "Re-seed default system roles for a specific tenant. Reads role_definitions rows matching the tenant's business_type + min_tier gate, UPSERTs the roles + attaches default_permissions. Idempotent. --dry-run reports intended changes without writing. --force overrides the safety refusal that fires when the tenant already has custom roles with the same name."
+    },
+    {
+      "signature": "rbac:sync-role-definitions {--refresh-catalogue} {--dry-run}",
+      "class": "Academorix\\Rbac\\Console\\Commands\\SyncRoleDefinitionsCommand",
+      "purpose": "Reconcile role_definitions rows with data/role-catalogue.json + the permission catalogue. Called by the release pipeline after every deploy. --refresh-catalogue also re-loads permissions.json blueprints from every #[ProvidesPermissions] provider (invalidates rbac:permissions:catalogue:{application_id})."
+    },
+    {
+      "signature": "rbac:list-principal-roles {principal_type} {principal_id} {--include-expired}",
+      "class": "Academorix\\Rbac\\Console\\Commands\\ListPrincipalRolesCommand",
+      "purpose": "List roles held by a principal (User / PlatformUser / ServiceAccount). --include-expired shows past assignments (expires_at < now())."
+    },
+    {
+      "signature": "rbac:assign-role {principal_type} {principal_id} {role_name} {--tenant=} {--application=} {--expires-at=} {--reason=}",
+      "class": "Academorix\\Rbac\\Console\\Commands\\AssignRoleCommand",
+      "purpose": "Support-facing role assignment. --reason required in production (rbac.commands.require_reason=true). Enforces the same GuardBoundaryEnforcer + ApplicationMismatch checks as the HTTP path.",
+      "audit_severity": "warn"
+    },
+    {
+      "signature": "rbac:revoke-role {principal_type} {principal_id} {role_name} {--tenant=} {--application=} {--reason=}",
+      "class": "Academorix\\Rbac\\Console\\Commands\\RevokeRoleCommand",
+      "purpose": "Support-facing role revocation. Fires RoleRevokedFromPrincipal + invalidates the principal's permission cache.",
+      "audit_severity": "warn"
+    },
+    {
+      "signature": "rbac:list-permissions {--role=} {--principal-type=} {--principal-id=} {--module=} {--pattern=}",
+      "class": "Academorix\\Rbac\\Console\\Commands\\ListPermissionsCommand",
+      "purpose": "Filter permissions by role / principal / module owner / name pattern (glob-like). Useful for auditing 'what does permission `athletes.viewAny.branch` currently attach to?'."
+    },
+    {
+      "signature": "rbac:audit-permission-check {principal_type} {principal_id} {permission} {--resource-type=} {--resource-id=} {--verbose}",
+      "class": "Academorix\\Rbac\\Console\\Commands\\AuditPermissionCheckCommand",
+      "purpose": "Trace how a permission resolves for a principal. Prints the full 5-step algorithm output: which grants applied (deny/allow), which roles matched, whether delegation fired, final outcome. --verbose also prints the resolved permission set + cache key. The single most useful diagnostic for 'why can Alice see this invoice?' support tickets."
+    },
+    {
+      "signature": "rbac:purge-expired-assignments {--dry-run}",
+      "class": "Academorix\\Rbac\\Console\\Commands\\PurgeExpiredAssignmentsCommand",
+      "purpose": "Manual trigger for the hourly PurgeExpiredRoleAssignmentsJob. --dry-run reports rows that would be purged."
+    },
+    {
+      "signature": "rbac:migrate-legacy-roles {--tenant=} {--map=} {--dry-run}",
+      "class": "Academorix\\Rbac\\Console\\Commands\\MigrateLegacyRolesCommand",
+      "purpose": "One-shot migration helper for tenants upgrading from earlier RBAC schemas (pre-Wave 1b). --map=/path/to/role-map.json takes { \"old_role_name\": \"new_role_name\", ... }. Idempotent."
+    }
+  ],
+  "safety": {
+    "require_reason": "rbac:assign-role and rbac:revoke-role refuse to run without --reason=<text> when rbac.commands.require_reason=true (default true in staging + prod). The reason is written to the audit log alongside the mutation."
+  }
+}

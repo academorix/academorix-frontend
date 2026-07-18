@@ -1,0 +1,53 @@
+{
+  "id": "academorix://modules/rbac/features",
+  "$version": 1,
+  "title": "rbac \u2014 feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me \u2192 data.features"
+  },
+  "features": [
+    {
+      "key": "rbac.core",
+      "displayName": "Role-based access control",
+      "description": "Base RBAC capability. Always on \u2014 the app is unusable without it.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "small", "medium", "business", "enterprise"]
+    },
+    {
+      "key": "rbac.custom_roles",
+      "displayName": "Custom roles",
+      "description": "Tenant admins can create custom roles beyond the system-shipped set.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "business", "enterprise"]
+    },
+    {
+      "key": "rbac.custom_permissions",
+      "displayName": "Custom permissions",
+      "description": "Tenant admins can create NEW permission strings (not just attach existing ones). Requires custom permission-aware domain code \u2014 usually reserved for enterprise tenants that self-serve their integrations.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "rbac.time_bounded_assignments",
+      "displayName": "Time-bounded role assignments",
+      "description": "Role grants can carry expires_at. Powers the delegation module's OOF flow + supports 'temporary elevated access' patterns.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "business", "enterprise"]
+    },
+    {
+      "key": "rbac.bulk_assignment",
+      "displayName": "Bulk role assignment",
+      "description": "CSV bulk-assign endpoint. Useful for onboarding a full staff cohort at once.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "business", "enterprise"]
+    },
+    {
+      "key": "rbac.audit_trail_extended",
+      "displayName": "Extended RBAC audit trail",
+      "description": "Extended audit retention on RBAC mutations \u2014 up to 7 years. Complements the audit module's own retention extension.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
+}

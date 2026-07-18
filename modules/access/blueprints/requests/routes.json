@@ -1,0 +1,184 @@
+{
+  "id": "academorix://modules/access/requests/routes",
+  "$version": 1,
+  "title": "requests \u2014 HTTP routes",
+  "description": "Two route groups. Tenant-plane routes handle the whole submit \u2192 review \u2192 decide loop on the caller's tenant. Platform-admin routes are read-only cross-tenant compliance surfaces \u2014 approve/reject flow the tenant plane, never the platform plane.",
+  "prefixes": {
+    "api": "/api",
+    "v1": "/api/v1",
+    "platform": "/api/v1/platform"
+  },
+  "groups": [
+    {
+      "id": "tenant-authenticated",
+      "host": "tenant",
+      "middleware": [
+        "api",
+        "resolve.application",
+        "resolve.tenant",
+        "auth:sanctum",
+        "tenant.user",
+        "throttle:access-requests"
+      ],
+      "description": "Tenant-plane submit + review + decide surface. Every route is scoped to the caller's active tenant + application by the middleware stack. Rate limits per (caller, day) enforced by the framework throttle.",
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/access-requests",
+          "name": "tenant.access-requests.store",
+          "action": "Academorix\\AccessRequest\\Http\\Controllers\\Tenant\\AccessRequestController@store",
+          "policy": "AccessRequestPolicy@create",
+          "accepts": "CreateAccessRequestData",
+          "returns": "AccessRequestData",
+          "status": 202,
+          "description": "Submits a new access request. Body: `resource_type`, `resource_id`, `permissions_wanted[]`, `reason`. Dispatches `CreateAccessRequestAction`, which triggers the `approve` middleware from workflow/approvals and creates the approval_instance under the hood. Returns 202 Accepted because the approval flow is asynchronous \u2014 the request is now pending an approver's decision.",
+          "errors": [
+            "INVALID_REQUESTABLE_RESOURCE (422)",
+            "RESOURCE_NOT_IN_CALLER_TENANT (403)",
+            "PERMISSION_NOT_ON_RESOURCE_TYPE (422)",
+            "INVALID_REASON_LENGTH (422)",
+            "DUPLICATE_PENDING_REQUEST (409)",
+            "INVALID_APPROVER_CONFIGURATION (500)"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/access-requests",
+          "name": "tenant.access-requests.index",
+          "action": "Academorix\\AccessRequest\\Http\\Controllers\\Tenant\\AccessRequestController@index",
+          "policy": "AccessRequestPolicy@viewAny",
+          "returns": "PaginatedResource<AccessRequestData>",
+          "description": "Lists the caller's own access requests. Default filter: `requester_id=caller.id`. Scoped by tenant + application via middleware.",
+          "queryParams": [
+            { "name": "filter[status]", "type": "string|string[]", "enum": ["pending", "approved", "rejected", "expired", "cancelled"] },
+            { "name": "filter[resource_type]", "type": "string" },
+            { "name": "filter[submitted_since]", "type": "date-time" },
+            { "name": "sort", "type": "string", "example": "-requested_at" },
+            { "name": "per_page", "type": "integer", "default": 25 }
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/access-requests/{id}",
+          "name": "tenant.access-requests.show",
+          "action": "Academorix\\AccessRequest\\Http\\Controllers\\Tenant\\AccessRequestController@show",
+          "policy": "AccessRequestPolicy@view",
+          "returns": "AccessRequestData",
+          "description": "Show a single access request. `id` is the underlying approval_instance.id. Response includes approvers[], decisions[] projected via AccessRequestPresenter.",
+          "includes": ["decisions", "resource", "materialised_grant", "requester", "approvers"]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/access-requests/{id}/withdraw",
+          "name": "tenant.access-requests.withdraw",
+          "action": "Academorix\\AccessRequest\\Http\\Controllers\\Tenant\\AccessRequestController@withdraw",
+          "policy": "AccessRequestPolicy@withdraw",
+          "accepts": "WithdrawAccessRequestData",
+          "returns": "AccessRequestData",
+          "description": "Requester withdraws their own pending request. Delegates to `workflow/approvals::withdraw` \u2014 sets `approval_instance.status='cancelled'`. Fires AccessRequestCancelled. Refused on terminal states."
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/access-requests/pending-my-review",
+          "name": "tenant.access-requests.pending-my-review",
+          "action": "Academorix\\AccessRequest\\Http\\Controllers\\Tenant\\AccessRequestController@pendingMyReview",
+          "policy": "AccessRequestPolicy@viewAny",
+          "returns": "PaginatedResource<AccessRequestData>",
+          "description": "Lists access requests where the caller is in the resolved approvers set for at least one pending requirement. Backed by a JSONB containment query on `approval_requirements.resolved_approvers`.",
+          "queryParams": [
+            { "name": "filter[urgency]", "type": "string", "enum": ["all", "expiring_soon"], "default": "all", "description": "'expiring_soon' filters to instances with expires_at within 24 hours." },
+            { "name": "sort", "type": "string", "example": "expires_at" },
+            { "name": "per_page", "type": "integer", "default": 25 }
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/access-requests/{id}/approve",
+          "name": "tenant.access-requests.approve",
+          "action": "Academorix\\AccessRequest\\Http\\Controllers\\Tenant\\AccessRequestController@approve",
+          "policy": "AccessRequestPolicy@approve",
+          "accepts": "ApproveAccessRequestData",
+          "returns": "AccessRequestData",
+          "description": "Approver decision. Body: `comment` (optional, max 1000). Delegates to `workflow/approvals::approve` which records the approval_decision and evaluates quorum. If final approval fires ApprovalExecuted \u2192 AccessRequestGrantMaterializer kicks in.",
+          "errors": [
+            "CALLER_NOT_APPROVER (403)",
+            "ALREADY_DECIDED (409)",
+            "REQUEST_TERMINAL (410)"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/access-requests/{id}/reject",
+          "name": "tenant.access-requests.reject",
+          "action": "Academorix\\AccessRequest\\Http\\Controllers\\Tenant\\AccessRequestController@reject",
+          "policy": "AccessRequestPolicy@reject",
+          "accepts": "RejectAccessRequestData",
+          "returns": "AccessRequestData",
+          "description": "Approver decision. Body: `comment` (required for rejects, max 1000, min 10 \u2014 SOC 2 auditable rationale). Sets requirement.status='failed' \u2192 instance.status='rejected'.",
+          "errors": [
+            "CALLER_NOT_APPROVER (403)",
+            "ALREADY_DECIDED (409)",
+            "REJECT_COMMENT_REQUIRED (422)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "platform-admin",
+      "host": "platform-admin",
+      "middleware": [
+        "api",
+        "auth:sanctum",
+        "platform.user",
+        "api.version"
+      ],
+      "description": "Cross-tenant read-only compliance surface for Academorix ops. No decision endpoints \u2014 approve/reject stay on the tenant plane.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/v1/platform/access-requests",
+          "name": "platform.access-requests.index",
+          "action": "Academorix\\AccessRequest\\Http\\Controllers\\Platform\\AccessRequestController@index",
+          "policy": "AccessRequestPolicy@viewAnyPlatform",
+          "returns": "PaginatedResource<AccessRequestData>",
+          "queryParams": [
+            { "name": "filter[tenant_id]", "type": "string" },
+            { "name": "filter[application_id]", "type": "string" },
+            { "name": "filter[requester_id]", "type": "string" },
+            { "name": "filter[status]", "type": "string|string[]" },
+            { "name": "filter[resource_type]", "type": "string" },
+            { "name": "filter[submitted_between]", "type": "string", "example": "2026-06-01,2026-07-01" }
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/platform/access-requests/{id}",
+          "name": "platform.access-requests.show",
+          "action": "Academorix\\AccessRequest\\Http\\Controllers\\Platform\\AccessRequestController@show",
+          "policy": "AccessRequestPolicy@viewPlatform",
+          "returns": "AccessRequestData",
+          "includes": ["decisions", "resource", "materialised_grant", "requester", "approvers", "tenant", "application"]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/platform/access-requests/audit-report",
+          "name": "platform.access-requests.audit-report",
+          "action": "Academorix\\AccessRequest\\Http\\Controllers\\Platform\\AccessRequestAuditReportController@show",
+          "policy": "AccessRequestPolicy@viewAnyPlatform",
+          "returns": "AccessRequestAuditReportData",
+          "queryParams": [
+            { "name": "period", "type": "string", "enum": ["7d", "30d", "90d", "1y"], "default": "30d" },
+            { "name": "group_by", "type": "string", "enum": ["tenant", "application", "resource_type"], "default": "tenant" },
+            { "name": "format", "type": "string", "enum": ["json", "csv"], "default": "json" }
+          ],
+          "description": "SOC 2 CC6.1 compliance report. Emits per-tenant metrics: total_requests, approved_count, rejected_count, expired_count, approval_rate, average_time_to_decision_hours, median_time_to_decision_hours."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Every tenant-plane route requires `X-Application-Id` \u2014 enforced by `resolve.application` (see hierarchy.md §4). Missing/unknown/disabled headers 400/404/403 per the platform contract.",
+    "The `approve` middleware from workflow/approvals is NOT applied at the group level here \u2014 only the `POST /access-requests` action carries `#[AsApprovableAction]` and triggers it. The other routes work directly against the already-existing approval_instance.",
+    "No public host \u2014 access requests are strictly authenticated. Compare to invitations, whose central host serves the invitee token flow."
+  ]
+}

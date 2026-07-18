@@ -1,0 +1,38 @@
+{
+  "id": "academorix://modules/grants/middleware",
+  "$version": 1,
+  "title": "grants — HTTP middleware",
+  "description": "One middleware this module contributes: `grants.warm_grant_cache`. Deferred per-request cache warming so the first policy check on a tenant request already has the caller's grant footprint in L1. Also relies on framework + tenants middleware composed on its route groups.",
+  "middleware": [
+    {
+      "alias": "grants.warm_grant_cache",
+      "class": "Academorix\\Grant\\Middleware\\WarmGrantCache",
+      "priority": 55,
+      "description": "On authenticated Sanctum requests, pre-loads the caller's active grants into the L1 (in-process) evaluation cache. Runs AFTER auth + tenant resolution but BEFORE the first policy check. Zero-latency for requests that touch no grantable resources (skipped when the auth user has no active grants — checked via a fast COUNT on the composite index). For requests where grants apply, warming makes the first check a cache-hit instead of a DB round-trip.",
+      "sideEffects": [
+        "Reads active grants WHERE (tenant_id = caller.tenant, subject_id = caller.id, revoked_at IS NULL). Ceiling of 500 grants per request (settings.grants.warm_cache_ceiling); beyond that, caching happens lazily on first check.",
+        "Populates the L1 GrantEvaluationCache keyed by (tenant, subject, resource_type, resource_id).",
+        "Emits GrantEvaluationCacheHit / GrantEvaluationCacheMiss telemetry (sampled) for observability.",
+        "For delegated callers (see access/delegation), ALSO pre-loads the delegator's grants so the union query is fast."
+      ],
+      "requires": ["auth:sanctum", "tenant.resolve"],
+      "auto_applied": true,
+      "auto_applied_to": ["tenant"],
+      "opt_out_headers": ["X-Skip-Grant-Warm: 1 (support-only)"]
+    }
+  ],
+  "priorityOrder": [
+    "platform.domain",
+    "resolve.tenant",
+    "auth:sanctum",
+    "tenant.user",
+    "grants.warm_grant_cache",
+    "can:*"
+  ],
+  "notes": [
+    "The warm-cache middleware is the ONLY grant-specific HTTP middleware in Wave 1b. Cache invalidation lives in the model observer + the InvalidateGrantCacheJob — not in middleware.",
+    "For platform-admin routes, warming is skipped — platform admins never carry per-resource grants (they operate on the platform_admin guard, which has no grant footprint). The middleware detects this and short-circuits.",
+    "For high-cardinality principals (a support user granted 5000+ grants — unusual but possible for a compliance officer reviewing a large tenant), the middleware caps at 500 and delegates the rest to lazy L2 Redis lookups. Metric `academorix.grants.warm_cache.overflow.total` tracks these.",
+    "Feature-flag `grants.cache-warm` can turn the middleware off in an incident without a redeploy. When off, resolver falls back to per-check DB lookups (slower but correct)."
+  ]
+}

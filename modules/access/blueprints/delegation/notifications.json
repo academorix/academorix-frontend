@@ -1,0 +1,116 @@
+{
+  "id": "academorix://modules/delegation/notifications",
+  "$version": 1,
+  "title": "delegation — notification classes + categories",
+  "namespace": "Academorix\\Delegation\\Notifications",
+  "notifications": [
+    "DelegationCreatedNotification",
+    "DelegationActivatedNotification",
+    "DelegationExpiringNotification",
+    "DelegationExpiredNotification",
+    "DelegationRevokedEarlyNotification",
+    "ImpersonationSessionStartedNotification",
+    "ImpersonationSessionEndedNotification",
+    "ImpersonationExtendedNotification",
+    "ImpersonationForcedTerminationNotification"
+  ],
+  "categories": [
+    {
+      "slug": "delegation.created",
+      "display_name": "Delegation created",
+      "description": "A delegation was created — sent to both delegator + delegate as confirmation.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "delegation.activated",
+      "display_name": "Delegation activated",
+      "description": "A pending delegation just crossed starts_at + is now effective. Sent to the delegate — 'you can now act as X'. Include the role name + expiry + revoke-early link.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "delegation.expiring",
+      "display_name": "Delegation expiring in 24h",
+      "description": "Fired 24 hours before an active delegation ends_at. Reminds both delegator + delegate. Delegator may extend (rare) or plan handover; delegate is reminded their exercise window is closing.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "delegation.expired",
+      "display_name": "Delegation expired",
+      "description": "Fired at ends_at. Sent to delegator confirming the delegation window closed.",
+      "default_channels": ["in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "delegation.revoked_early",
+      "display_name": "Delegation revoked early",
+      "description": "Fired when the delegator (or admin) revoked before ends_at. Sent to both delegator + delegate + revoke_reason.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "impersonation.session_started",
+      "display_name": "Your account is being impersonated",
+      "description": "CANNOT-OPT-OUT. Regulatory notice sent to the impersonated tenant User the moment their account starts being impersonated by an Academorix staff member. Names the operator + department + reason + support ticket reference (when provided). Regulatory basis: SOC 2 CC6.1 + PCI-DSS 8.5 mandated notice — the tenant User has an inalienable right to know their account is being operated by someone else. is_read_only sessions include a badge on the notification saying 'read-only session'.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true,
+      "regulatory_note": "This category CANNOT be disabled by tenant admins or by the recipient User under any tier. Attempts to opt out are refused at the notifications module with a compliance-explanation response."
+    },
+    {
+      "slug": "impersonation.session_ended",
+      "display_name": "Impersonation of your account ended",
+      "description": "CANNOT-OPT-OUT. Sent to the impersonated tenant User confirming the session ended + summarising duration + end_trigger + any actions the operator took (writes count from audit-stream aggregation). Companion to the started notification.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true,
+      "regulatory_note": "Same regulatory basis as impersonation.session_started."
+    },
+    {
+      "slug": "impersonation.session_extended",
+      "display_name": "Impersonation session extended",
+      "description": "Fired when a super_admin extends the session past 60 minutes (rare — requires impersonation_extended_ttl entitlement). Sent to the impersonated User + the security team (Slack #security channel).",
+      "default_channels": ["mail", "in_app", "slack"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "impersonation.forced_termination",
+      "display_name": "Impersonation force-terminated (security lockdown)",
+      "description": "Fired on end_trigger=security_lockdown. Sent to the impersonated User + the security team (Slack #security channel) + PagerDuty for on-call awareness. Include termination_reason. High-severity — indicates a security event.",
+      "default_channels": ["mail", "in_app", "slack", "pagerduty"],
+      "priority": "critical",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

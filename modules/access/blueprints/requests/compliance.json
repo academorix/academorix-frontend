@@ -1,0 +1,108 @@
+{
+  "id": "academorix://modules/access/requests/compliance",
+  "$version": 1,
+  "title": "requests \u2014 regulatory compliance",
+  "description": "Compliance controls this module produces evidence for. Access requests are authorization decisions \u2014 SOC 2 Trust Services Criteria CC6 (logical access) is the primary applicable regime, with GDPR Art. 32 (security of processing) applying to the audit trail itself.",
+  "aggregatedBy": "compliance",
+  "regimes": {
+    "soc2_type2": {
+      "applicable": true,
+      "regulation": "AICPA Trust Services Criteria 2017",
+      "controls": [
+        {
+          "article": "CC6.1",
+          "control": "logical-access-authorization-workflow",
+          "evidence": "Every access request produces an approval_instance carrying the full authorization decision trail: who requested, when, for what resource, what permissions, who resolved as approver, who decided, what comment. The `access-requests:audit-report` command produces monthly compliance evidence packages."
+        },
+        {
+          "article": "CC6.2",
+          "control": "authentication-of-approvers",
+          "evidence": "Every approve/reject decision goes through the standard `auth:sanctum` middleware. The approver's User row is FK-linked in `approval_decisions.approver_id` and immutable. Impersonation-during-decision is prevented by the platform-plane / tenant-plane guard split."
+        },
+        {
+          "article": "CC6.3",
+          "control": "logical-access-provisioning",
+          "evidence": "Every grant materialised via an access request carries `source='access_request'` + `source_reference=<approval_instance_id>`. Auditors can trace ANY entry in access_grants back to (a) an approval_instance with (b) a resolved approver group + (c) at least one approve decision \u2014 or reject if the grant reached materialisation through a template.on_timeout='approve' escalation."
+        },
+        {
+          "article": "CC6.6",
+          "control": "logical-access-removal",
+          "evidence": "Grants sourced from access requests carry `expires_at` (default 7 days from `config('access.requests.default_grant_ttl_days')`). Automated revocation runs via `access/grants::ExpireGrantsJob` at the TTL boundary. Manual revocation also fires `access/grants::GrantRevoked` \u2014 our CleanupOrphanedRequestOnGrantRevocationListener writes an audit-trail note back to the originating approval_instance."
+        },
+        {
+          "article": "CC7.2",
+          "control": "system-monitoring",
+          "evidence": "health.json + metrics.json + `access-requests:audit-report` weekly output. Orphaned-approval metric alerts on-call when materialisation stalls."
+        },
+        {
+          "article": "CC8.1",
+          "control": "change-management",
+          "evidence": "feature-flags.json \u2014 every material change ships behind a Pennant flag. Kill-switch on `access_requests.kill_switch` lets ops disable the submit path without a redeploy."
+        }
+      ]
+    },
+    "iso_27001": {
+      "applicable": true,
+      "regulation": "ISO/IEC 27001:2022",
+      "controls": [
+        {
+          "article": "A.5.15",
+          "control": "access-control-policy-enforcement",
+          "evidence": "The access-request flow IS the platform's user-facing enforcement of the access-control policy. Every 403 with a `request_url` hint is a policy touchpoint captured in metrics."
+        },
+        {
+          "article": "A.5.18",
+          "control": "access-rights-review",
+          "evidence": "The `access-requests:audit-report` output is the input to the quarterly access-rights review. Approvers who approve at outlier rates (very high or very low compared to peers) are surfaced for HR / management review."
+        }
+      ]
+    },
+    "gdpr": {
+      "applicable": true,
+      "regulation": "Regulation (EU) 2016/679",
+      "controls": [
+        {
+          "article": "Art. 6(1)(f)",
+          "control": "legitimate-interest-authorization-loop",
+          "evidence": "Processing of requester + approver identity is necessary for the legitimate interest of operating the authorization loop. No consent basis is needed \u2014 access-request activity is directly tied to the contractual context of platform use."
+        },
+        {
+          "article": "Art. 15",
+          "control": "dsar-export",
+          "evidence": "Access-request activity for a given user (as requester OR approver OR resource owner) exports via the compliance module's DSAR orchestrator. Includes the request context, the approvers' decisions with comments, and the resulting grant id."
+        },
+        {
+          "article": "Art. 17",
+          "control": "right-to-erasure",
+          "evidence": "Erasure on a user's record anonymises their references in approval_instances.context_json + approval_decisions.comment + access_grants.subject_id / granted_by. See retention.json."
+        },
+        {
+          "article": "Art. 32",
+          "control": "confidentiality-integrity-of-authorization-decisions",
+          "evidence": "Every decision is captured in approval_decisions rows with FK to the approver's User (immutable). Every state transition writes an audit-trail entry \u2014 tampering is detectable via the audit-log integrity chain (owned by compliance module)."
+        }
+      ]
+    },
+    "wcag_2_2_aa": {
+      "applicable": true,
+      "regulation": "W3C Recommendation 5 October 2023",
+      "controls": [
+        {
+          "article": "SC 3.3.1",
+          "control": "error-identification",
+          "evidence": "The 403 body with `request_url` hint is an error-identification touchpoint. The SPA renders a clear 'you don't have permission \u2014 request access here' affordance."
+        },
+        {
+          "article": "SC 3.3.2",
+          "control": "labels-or-instructions",
+          "evidence": "The SDUI create screen renders a labelled TextArea for `reason` + a clear submit button. Field descriptions in SDUI accompany every input."
+        },
+        {
+          "article": "SC 4.1.3",
+          "control": "status-messages",
+          "evidence": "Every state transition fires a broadcast to the requester + approvers via the private channels; SPA surfaces them as toast + inbox updates. Live status is available without polling."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "id": "academorix://modules/grants/analytics",
+  "$version": 1,
+  "title": "grants — product analytics events",
+  "description": "Product analytics events (Segment / Mixpanel / PostHog). Distinct from `events.json` (server-side pub/sub) and `metrics.json` (ops telemetry). Every event carries a `consent_tier` that gates delivery through the analytics pipeline against the caller's consent state. Grant events are primarily `functional` (help us optimise the share-access flow); a couple are `essential` (feature-adoption funnel that we need to run the product).",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "grant_issued",
+      "consent_tier": "essential",
+      "firesAt": "GrantIssued listener",
+      "properties": {
+        "grant_id": "string",
+        "tenant_id": "string",
+        "resource_type": "string",
+        "decision": "string",
+        "source": "string",
+        "has_expiry": "boolean",
+        "expiry_days": "number|null",
+        "permission_count": "integer"
+      },
+      "description": "Primary adoption metric. Sampling: 100% (essential events don't sample)."
+    },
+    {
+      "name": "grant_revoked",
+      "consent_tier": "functional",
+      "firesAt": "GrantRevoked listener",
+      "properties": {
+        "grant_id": "string",
+        "tenant_id": "string",
+        "resource_type": "string",
+        "hours_alive": "number",
+        "is_system_revoke": "boolean",
+        "revoke_reason_category": "string"
+      }
+    },
+    {
+      "name": "grant_expired",
+      "consent_tier": "functional",
+      "firesAt": "GrantExpired listener",
+      "properties": {
+        "grant_id": "string",
+        "tenant_id": "string",
+        "resource_type": "string",
+        "hours_from_issue_to_expiry": "number"
+      }
+    },
+    {
+      "name": "grant_denial_issued",
+      "consent_tier": "essential",
+      "firesAt": "GrantDenialIssued listener",
+      "properties": {
+        "grant_id": "string",
+        "tenant_id": "string",
+        "resource_type": "string",
+        "permission_count": "integer"
+      },
+      "description": "Deny grants are rare + high-signal — track adoption independent of allow. Essential tier."
+    },
+    {
+      "name": "bulk_grant_issued",
+      "consent_tier": "functional",
+      "firesAt": "BulkGrantIssued listener",
+      "properties": {
+        "batch_id": "string",
+        "tenant_id": "string",
+        "grants_created": "integer",
+        "grants_failed": "integer",
+        "duration_ms": "integer"
+      }
+    },
+    {
+      "name": "self_service_grant_attempted",
+      "consent_tier": "essential",
+      "firesAt": "SelfServiceGrantAttempted listener",
+      "properties": {
+        "tenant_id": "string",
+        "attempted_grantor_id": "string",
+        "attempted_permission_count": "integer",
+        "missing_permission_count": "integer"
+      },
+      "description": "Security-relevant funnel — how often is the privilege-escalation guard tripping? A high count on one tenant suggests misconfigured RBAC roles."
+    },
+    {
+      "name": "share_access_dialog_opened",
+      "consent_tier": "functional",
+      "firesAt": "SDUI ShareAccessDialog widget mount",
+      "properties": {
+        "tenant_id": "string",
+        "resource_type": "string",
+        "entry_point": "string (share_button | menu | audit_view)"
+      },
+      "description": "Adoption funnel. Compares dialog opens to actual grants issued so we can spot UX friction."
+    },
+    {
+      "name": "share_access_dialog_completed",
+      "consent_tier": "functional",
+      "firesAt": "SDUI ShareAccessDialog form submit",
+      "properties": {
+        "tenant_id": "string",
+        "resource_type": "string",
+        "duration_ms": "integer",
+        "has_expiry": "boolean",
+        "decision": "string"
+      }
+    },
+    {
+      "name": "share_access_dialog_abandoned",
+      "consent_tier": "functional",
+      "firesAt": "SDUI ShareAccessDialog closed without submit",
+      "properties": {
+        "tenant_id": "string",
+        "resource_type": "string",
+        "duration_ms": "integer",
+        "last_field_touched": "string"
+      }
+    }
+  ]
+}

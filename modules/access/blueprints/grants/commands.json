@@ -1,0 +1,68 @@
+{
+  "id": "academorix://modules/grants/commands",
+  "$version": 1,
+  "title": "grants — artisan commands",
+  "description": "Artisan commands this module ships. Registered by `GrantServiceProvider::registerCommands()`. Ops audience for support tooling + compliance evidence generation; dev audience for local seeding.",
+  "commands": [
+    {
+      "class": "Academorix\\Grant\\Console\\Commands\\ListGrantsCommand",
+      "signature": "grants:list {--tenant=} {--subject=} {--resource=} {--decision=} {--source=} {--active-only}",
+      "audience": "ops",
+      "description": "Prints grants matching filters as a table. `--active-only` hides revoked + expired. Useful during support tickets when the tenant-facing UI doesn't surface enough context."
+    },
+    {
+      "class": "Academorix\\Grant\\Console\\Commands\\DescribeGrantCommand",
+      "signature": "grants:describe {grant_id}",
+      "audience": "ops",
+      "description": "Prints the full row + related resolver metadata: overlay-resolution trace ('this deny wins over these three allows'), the RBAC comparison ('user held X via role Y before this grant'), audit-log link, activity-log links. Debug tool for 'why does Bob NOT see invoice #123'."
+    },
+    {
+      "class": "Academorix\\Grant\\Console\\Commands\\IssueGrantCommand",
+      "signature": "grants:issue {subject_id} {resource_type} {resource_id} {--permissions=} {--decision=allow} {--expires-at=} {--reason=} {--source=manual} {--source-reference=} {--tenant=}",
+      "audience": "ops",
+      "description": "Issue a grant from the CLI. Delegates to GrantIssuer::issue() so the same guards fire. `--permissions=` accepts a comma-separated list. Requires the caller to have the tenant admin PAT via `--tenant=`."
+    },
+    {
+      "class": "Academorix\\Grant\\Console\\Commands\\RevokeGrantCommand",
+      "signature": "grants:revoke {grant_id} {--reason=}",
+      "audience": "ops",
+      "description": "Revoke a grant. Requires a reason of 20+ characters. Delegates to GrantRevoker::revoke() so audit + notification cascade fires. Used mostly for incident-response revocations that can't route through the tenant UI."
+    },
+    {
+      "class": "Academorix\\Grant\\Console\\Commands\\BulkIssueGrantsCommand",
+      "signature": "grants:bulk-issue {csv_file} {--tenant=} {--actor=} {--dry-run}",
+      "audience": "ops",
+      "description": "Bulk-issue grants from a local CSV. CSV columns: `subject_id, resource_type, resource_id, permissions, decision, expires_at, reason`. `--dry-run` validates every row without inserting. Actor-attribution required — sets granted_by on every produced grant."
+    },
+    {
+      "class": "Academorix\\Grant\\Console\\Commands\\AuditResourceCommand",
+      "signature": "grants:audit-resource {resource_type} {resource_id} {--tenant=} {--include-terminal}",
+      "audience": "ops",
+      "description": "Enumerates every grant on a specific resource. Sorted by decision (denies first) then created_at desc. `--include-terminal` includes revoked/expired grants. Answers 'who has access to this thing right now' + 'who has EVER had access'."
+    },
+    {
+      "class": "Academorix\\Grant\\Console\\Commands\\AuditPrincipalCommand",
+      "signature": "grants:audit-principal {subject_id} {--tenant=} {--include-terminal}",
+      "audience": "ops",
+      "description": "Enumerates every grant this principal holds. Cross-resource view. Feeds ISO 27001 A.9.2.5 access reviews — 'what does this user have access to via grants (outside their RBAC roles)'."
+    },
+    {
+      "class": "Academorix\\Grant\\Console\\Commands\\PurgeExpiredGrantsCommand",
+      "signature": "grants:purge-expired {--batch-size=500} {--dry-run}",
+      "audience": "ops",
+      "description": "Dispatches PurgeExpiredGrantsJob. Called hourly by the scheduler + on-demand during backfills."
+    },
+    {
+      "class": "Academorix\\Grant\\Console\\Commands\\ReconcileOrphanedGrantsCommand",
+      "signature": "grants:reconcile-orphaned {--batch-size=10000} {--dry-run}",
+      "audience": "ops",
+      "description": "Sweeps grants whose resource no longer exists. Dry-run first (weekly scheduled entry) — an unusually high orphan count indicates cascade-delete bugs elsewhere in the platform."
+    },
+    {
+      "class": "Academorix\\Grant\\Console\\Commands\\ReviewFlagsCommand",
+      "signature": "grants:review-flags",
+      "audience": "ops",
+      "description": "Prints feature-flag ages + rollout state. Fires the retirement-policy alert for flags past 90d at 100% GA (per `feature-flags.json` retirement_policy)."
+    }
+  ]
+}

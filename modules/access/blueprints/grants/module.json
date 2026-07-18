@@ -1,0 +1,166 @@
+{
+  "$version": 1,
+  "name": "grants",
+  "alias": "grants",
+  "namespace": "Academorix\\Grant",
+  "description": "Per-resource dynamic access grants — 'Alice grants Bob edit on invoice #123 until Friday'. Overlays above RBAC (per D-A3 of the access-approvals spec): effective permission on a resource = RBAC ∪ grants − denies. Deny grants take priority over allow grants AND over RBAC roles — an explicit deny is inviolable and short-circuits every check. Grants are subject-polymorphic (usually User; Group deferred to Wave 2) and resource-polymorphic (Invoice / Athlete / Team / any domain aggregate that composes IsGrantable). The `permissions` column is a JSONB array of permission names scoped to that specific (resource_type, resource_id) tuple — no scope suffix needed because the resource is explicit. Time-bounded via `expires_at` (nullable = permanent; enterprise-gated). Revocable at any time — `revoked_at + revoked_by + revoked_reason` track the revocation trail. Every write audited via HasActivityLog + HasAudit. Consumed by the RBAC PermissionResolver at every check via GrantOverlayResolver: walks the (principal, resource_type, resource_id) tuple, short-circuits on any deny, returns allow, defers to RBAC otherwise. Ships the GrantIssuer central action that access/requests + workflow/approvals invoke to materialise approved access requests into grant rows (source='access_request', source_reference=approval_instance_id).",
+  "keywords": [
+    "grants",
+    "access-grant",
+    "acl",
+    "authorization",
+    "polymorphic",
+    "resource-scoped",
+    "deny-wins",
+    "share-access",
+    "google-docs-style",
+    "audit-provisioning",
+    "soc2-cc6.3",
+    "iso27001-a.9.2.5"
+  ],
+  "priority": 32,
+  "providers": [
+    "Academorix\\Grant\\Providers\\GrantServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "identity",
+    "user",
+    "application",
+    "tenancy",
+    "rbac"
+  ],
+  "extendedBy": [
+    "requests",
+    "approvals",
+    "delegation"
+  ],
+  "contributes": {
+    "traits": [
+      "HasResourceGrants",
+      "IsGrantable",
+      "BelongsToGrant"
+    ],
+    "attributes": [
+      "Grantable",
+      "AsGrantListener"
+    ],
+    "blueprints": [],
+    "middleware": [
+      "grants.warm_grant_cache"
+    ],
+    "events": [
+      "GrantIssued",
+      "GrantUpdated",
+      "GrantExpired",
+      "GrantRevoked",
+      "GrantDenialIssued",
+      "GrantDenialRevoked",
+      "BulkGrantIssued",
+      "SelfServiceGrantAttempted",
+      "GrantCrossTenantAttempt",
+      "GrantResourceOrphaned",
+      "GrantEvaluationCacheHit",
+      "GrantEvaluationCacheMiss"
+    ],
+    "policies": [
+      "AccessGrantPolicy"
+    ],
+    "hooks": [],
+    "commands": [
+      "grants:list",
+      "grants:describe",
+      "grants:issue",
+      "grants:revoke",
+      "grants:bulk-issue",
+      "grants:audit-resource",
+      "grants:audit-principal",
+      "grants:purge-expired",
+      "grants:reconcile-orphaned",
+      "grants:review-flags"
+    ],
+    "jobs": [
+      "PurgeExpiredGrantsJob",
+      "NotifyGrantExpiringJob",
+      "PurgeRevokedGrantsJob",
+      "ReconcileOrphanedGrantsJob",
+      "BulkGrantIssueJob",
+      "InvalidateGrantCacheJob"
+    ],
+    "notifications": [
+      "GrantIssuedNotification",
+      "GrantRevokedNotification",
+      "GrantExpiringSoonNotification",
+      "GrantExpiredNotification",
+      "DeniedAccessAttemptNotification",
+      "SelfServiceGrantAttemptNotification"
+    ],
+    "broadcasts": [
+      "tenant.{id}.grants",
+      "user.{id}.grants"
+    ],
+    "observers": [
+      "AccessGrantObserver"
+    ],
+    "rules": [
+      "valid_permission_list",
+      "grant_expires_in_future",
+      "subject_in_same_tenant_as_resource",
+      "grantor_holds_permissions_being_granted",
+      "valid_grant_reason",
+      "grantable_resource_registered",
+      "grantable_subject_type"
+    ],
+    "casts": [
+      "GrantDecision",
+      "GrantSource"
+    ],
+    "views": [],
+    "lang": [
+      "grants"
+    ],
+    "config": [
+      "grants"
+    ],
+    "macros": [],
+    "bindings": [
+      "AccessGrantRepository",
+      "GrantOverlayResolver",
+      "GrantIssuer",
+      "GrantRevoker",
+      "GrantResourceValidator",
+      "PermissionCatalogueValidator",
+      "GrantableRegistry",
+      "GrantEvaluationCache"
+    ],
+    "resources": [
+      "access-grant"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing grant CRUD. Owners + delegated grantors manage per-resource access grants for their tenant.",
+      "routes": [
+        "GET /api/v1/grants",
+        "POST /api/v1/grants",
+        "GET /api/v1/grants/{grant}",
+        "PATCH /api/v1/grants/{grant}",
+        "DELETE /api/v1/grants/{grant}",
+        "GET /api/v1/grants/subject/{subjectType}/{subjectId}",
+        "GET /api/v1/grants/resource/{resourceType}/{resourceId}",
+        "POST /api/v1/grants/bulk",
+        "GET /api/v1/grants/target-types",
+        "POST /api/v1/grants/preflight"
+      ]
+    },
+    "platform-admin": {
+      "description": "Platform-admin cross-tenant grant read + compliance snapshot generation. Read-only + audit-report only; platform staff never issue tenant-scope grants.",
+      "routes": [
+        "GET /api/v1/platform/grants",
+        "GET /api/v1/platform/grants/{grant}",
+        "POST /api/v1/platform/grants/audit-report"
+      ]
+    }
+  }
+}

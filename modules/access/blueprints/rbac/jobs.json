@@ -1,0 +1,98 @@
+{
+  "id": "academorix://modules/rbac/jobs",
+  "$version": 1,
+  "title": "rbac \u2014 background jobs",
+  "description": "Five jobs. One seeds default roles on tenant provisioning. One reconciles role_definitions against the shipped catalogue on deploy. One purges expired role assignments every hour. One invalidates the permission cache in bulk (used after seeder-driven re-provisioning). One hard-deletes soft-deleted roles past retention.",
+  "jobs": [
+    {
+      "class": "Academorix\\Rbac\\Jobs\\SeedTenantDefaultRolesJob",
+      "queue": "notifications",
+      "purpose": "Provision the default role set for a newly-created tenant. Dispatched by the TenantProvisioned listener. Reads role_definitions matching the tenant's business_type + min_tier gate.",
+      "steps": [
+        "Load tenant + business_type + tier.",
+        "Enumerate role_definitions WHERE business_type_slugs @> tenant.business_type AND min_tier <= tenant.tier AND application_id = tenant.application_id.",
+        "For each definition: UPSERT role in `roles` (is_system=true, application_id + tenant_id set).",
+        "For each definition.default_permissions[]: verify permission exists in the catalogue; attach via role_has_permissions.",
+        "Fire TenantDefaultRolesSeeded once with aggregated counts.",
+        "Warm PermissionCacheManager for the tenant's initial owner user (if provided in the event payload)."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "tenant_id (one seed in-flight per tenant at a time)",
+      "tries": 3,
+      "backoff": [30, 120, 600],
+      "timeout": 300
+    },
+    {
+      "class": "Academorix\\Rbac\\Jobs\\ReconcileRoleDefinitionsJob",
+      "queue": "notifications",
+      "purpose": "Nightly reconciliation of role_definitions against `data/role-catalogue.json`. Fixes drift when the catalogue has been updated but `rbac:sync-role-definitions` wasn't run in the deploy pipeline.",
+      "steps": [
+        "Load `data/role-catalogue.json`.",
+        "For each entry: UPSERT into role_definitions.",
+        "For each row in role_definitions NOT in the catalogue: mark is_active=false (do NOT delete \u2014 tenants may still reference it).",
+        "Emit `academorix.rbac.role_definitions.drift` metric with (upserted, marked_inactive) counts.",
+        "Log a warn-level entry when drift count > 0 so ops sees deploy-pipeline gaps."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2,
+      "backoff": [300, 1800],
+      "timeout": 600
+    },
+    {
+      "class": "Academorix\\Rbac\\Jobs\\PurgeExpiredRoleAssignmentsJob",
+      "queue": "notifications",
+      "purpose": "Hourly cadence. Removes `model_has_roles` rows past their `expires_at` and fires RoleAssignmentExpired per removal.",
+      "steps": [
+        "SELECT id FROM model_has_roles WHERE expires_at IS NOT NULL AND expires_at < now() LIMIT 5000.",
+        "For each row: DELETE inside a transaction + fire RoleAssignmentExpired.",
+        "The event's listener chain invalidates the affected principal's permission cache + dispatches RoleRevokedNotification.",
+        "Emit `academorix.rbac.assignments.expired` metric with the batch count.",
+        "Recurse if batch was 5000."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "tries": 3,
+      "backoff": [30, 120, 600],
+      "timeout": 300
+    },
+    {
+      "class": "Academorix\\Rbac\\Jobs\\InvalidatePermissionCacheJob",
+      "queue": "notifications-critical",
+      "purpose": "Bulk cache invalidation. Dispatched after seeder-driven mass mutations (e.g. `rbac:seed-defaults` re-run for every tenant) so the cache doesn't lag behind DB state longer than the natural TTL.",
+      "steps": [
+        "Enumerate cache keys matching the invalidation pattern (per rbac:cache-key-patterns).",
+        "Batched delete in 1000-key chunks (guard against KEYS scan on large deployments).",
+        "Broadcast invalidation events per (tenant_id, principal_id) tuple so other nodes evict.",
+        "Fire PermissionCacheInvalidated with aggregated key count."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueVia": "invalidation_scope (tenant_id or 'global')",
+      "uniqueFor": 300,
+      "tries": 3,
+      "backoff": [30, 120, 600],
+      "timeout": 600
+    },
+    {
+      "class": "Academorix\\Rbac\\Jobs\\PurgeSoftDeletedRolesJob",
+      "queue": "notifications",
+      "purpose": "Daily cadence. Hard-deletes `roles` rows past their 90-day soft-delete retention. Runs AFTER model_has_roles rows have cascade-deleted (FK CASCADE on role delete).",
+      "steps": [
+        "SELECT id FROM roles WHERE deleted_at IS NOT NULL AND deleted_at < now() - INTERVAL '90 days' LIMIT 1000.",
+        "For each row: verify zero rows in model_has_roles (should be zero due to CASCADE) + hard DELETE.",
+        "Emit `academorix.rbac.roles.hard_deleted` metric."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2,
+      "backoff": [60, 300, 1200],
+      "timeout": 600
+    }
+  ]
+}

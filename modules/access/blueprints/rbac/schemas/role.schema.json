@@ -1,0 +1,196 @@
+{
+  "id": "academorix://modules/rbac/schemas/role",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Role",
+  "description": "Spatie's `roles` table augmented with Academorix scope columns (application_id, tenant_id, is_system, description, sort_order). Wave 1b materialises the D-A2 decision: RBAC is spatie-extended \u2014 no reimplementation, only column additions. Composite unique on (application_id, tenant_id, name, guard_name).",
+  "type": "object",
+  "x-module": "rbac",
+  "x-eloquent": {
+    "baseClass": "Spatie\\Permission\\Models\\Role",
+    "table": "roles",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "rol_",
+    "incrementing": false,
+    "model": "Academorix\\Rbac\\Models\\Role",
+    "interface": "Academorix\\Rbac\\Contracts\\Data\\RoleInterface",
+    "implements": ["Academorix\\Rbac\\Contracts\\Data\\RoleInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "HasSystemFlag",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "is_system": "boolean",
+      "sort_order": "integer",
+      "metadata": "array"
+    },
+    "appends": ["permission_count", "principal_count", "display_label", "display_description"],
+    "observers": ["RoleObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "description": "Extends spatie/laravel-permission's shipped roles table with the Academorix scope columns. The spatie migration creates `id / name / guard_name / created_at / updated_at`; our migration ADDS `application_id / tenant_id / is_system / description / sort_order / metadata / deleted_at / audit columns` and swaps `id` type from bigint to string(64) via a config toggle.",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `rol_<26 chars>`. Requires the spatie config toggle `permission.models.role.key_type=string` + `permission.models.role.incrementing=false`."
+      },
+      "application_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "applications",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "FK to applications.id. NULL = platform_admin-guard role (cross-Application). Non-null = per-Application role."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "FK to tenants.id. NULL = system role (shipped by Academorix). Non-null = tenant-created custom role."
+      },
+      "name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Snake_case role name. `owner`, `admin`, `head_coach`, `coach`, etc. Validated by valid_role_name rule."
+      },
+      "guard_name": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'sanctum'",
+        "description": "Enum-like: `sanctum` (tenant plane) OR `platform_admin` (platform plane). Enforced by GuardBoundaryEnforcer at write time."
+      },
+      "is_system": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "True = shipped by Academorix (immutable). False = tenant-created custom role. Modifications on is_system=true rows raise SystemRoleModificationRefused."
+      },
+      "description": {
+        "type": "text",
+        "nullable": true,
+        "description": "Admin-facing description. Falls back to role_definitions.description_i18n for system roles."
+      },
+      "sort_order": {
+        "type": "integer",
+        "nullable": false,
+        "default": 100,
+        "description": "Ascending sort in the admin UI role picker. System roles have hand-tuned values (owner=1, admin=10, head_coach=20)."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form platform notes bag (from HasMetadata)."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["application_id", "tenant_id", "name", "guard_name"],
+        "unique": true,
+        "predicate": "deleted_at IS NULL",
+        "name": "roles_composite_unique",
+        "description": "The four-column composite unique. Design.md \u00a73 explicit."
+      },
+      {
+        "columns": ["application_id", "tenant_id"],
+        "unique": false,
+        "name": "roles_scope_idx",
+        "description": "Hot-path lookup for the resolver walking `model_has_roles \u2192 roles`."
+      },
+      {
+        "columns": ["guard_name"],
+        "unique": false,
+        "name": "roles_guard_idx"
+      },
+      {
+        "columns": ["is_system"],
+        "unique": false,
+        "name": "roles_is_system_idx",
+        "description": "Fast-filter for the platform-admin catalogue query."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "name",
+    "guard_name",
+    "is_system",
+    "sort_order",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^rol_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "application_id": { "type": ["string", "null"], "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": ["string", "null"], "pattern": "^tnt_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "name": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,127}$", "maxLength": 128 },
+    "guard_name": { "type": "string", "enum": ["sanctum", "platform_admin"] },
+    "is_system": { "type": "boolean" },
+    "description": { "type": ["string", "null"] },
+    "sort_order": { "type": "integer", "minimum": 0 },
+    "metadata": { "type": ["object", "null"] },
+    "permission_count": {
+      "type": "integer",
+      "description": "Computed accessor. Live count from role_has_permissions."
+    },
+    "principal_count": {
+      "type": "integer",
+      "description": "Computed accessor. Live count from model_has_roles."
+    },
+    "display_label": {
+      "type": "string",
+      "description": "Computed. From role_definitions.label_i18n if is_system, else `name`."
+    },
+    "display_description": {
+      "type": ["string", "null"],
+      "description": "Computed. From role_definitions.description_i18n if is_system, else `description`."
+    },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["permission_count", "principal_count", "display_label", "display_description"]
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`rol_<26>`)", "name + guard_name (query-scoped to caller's tenant + application)"]
+  }
+}

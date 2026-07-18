@@ -1,0 +1,86 @@
+{
+  "id": "academorix://modules/delegation/traits",
+  "$version": 1,
+  "title": "delegation — trait composition",
+  "description": "Two owned traits. HasDelegations composes on the tenant `User` model + exposes the outbound + inbound delegation relations plus fluent helpers. HasImpersonationHistory is dual-use — composes on BOTH tenant `User` (the impersonated party's retrospective view) AND PlatformUser (the impersonator's history of sessions they operated).",
+  "owned": [
+    {
+      "trait": "Academorix\\Delegation\\Concerns\\HasDelegations",
+      "description": "Mixed into the tenant `User` model. Adds `outboundDelegations()` (as delegator) + `inboundDelegations()` (as delegate) + `activeOutboundDelegations()` (scoped to now-within-window + not-revoked) + `activeInboundDelegations()` (same, from delegate perspective). Also adds fluent helpers `delegate(User $to, ?Role $role, DateTimeInterface $ends_at, string $reason, DelegationType $type = OOF)` for creating a delegation + `revokeDelegation(string $id, string $reason)` for early revocation. The active-* scopes are the primary reads for the /me/delegations UI + the DelegationResolver service.",
+      "public": true,
+      "usedBy": ["user::User"],
+      "conflicts_with": [],
+      "example_use": "$user->delegate($bob, role: $manager, ends_at: now()->addDays(5), reason: 'On vacation Aug 20-25, delegating manager approvals to Bob');\n$user->outboundDelegations()->pending()->get();\n$user->activeInboundDelegations()->with('delegator.profile', 'role')->get();"
+    },
+    {
+      "trait": "Academorix\\Delegation\\Concerns\\HasImpersonationHistory",
+      "description": "Dual-use trait mixed into BOTH tenant `User` AND PlatformUser. On the User side, exposes `impersonationSessionsAsTarget()` — historical sessions where they were impersonated (the affected party's retrospective view). On the PlatformUser side, exposes `impersonationSessionsAsOperator()` — sessions they initiated (their operator history, used by the audit + the platform-admin UI). Both relations point at `impersonation_sessions` via different FK columns (`impersonated_user_id` vs `impersonator_platform_user_id`) so no relation collision. Snapshot fields (impersonator_display_name + impersonator_department) preserve the operator relation view even after the PlatformUser row hard-deletes.",
+      "public": true,
+      "usedBy": ["user::User", "platform-user::PlatformUser"],
+      "conflicts_with": [],
+      "example_use": "$user->impersonationSessionsAsTarget()->latest('started_at')->limit(10)->get();\n$platformUser->impersonationSessionsAsOperator()->activeOrRecent()->count();"
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "RoleDelegation ONLY. NOT ImpersonationSession — impersonation sessions are append-only compliance evidence + never soft-deleted."
+      }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "application": [{ "trait": "Academorix\\Application\\Concerns\\BelongsToApplication" }],
+    "activity": [
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "RoleDelegation ONLY. Lightweight activity log for the delegator + delegate audit trail. Not on ImpersonationSession — impersonation uses HasAudit's heavier trail for compliance evidence."
+      }
+    ],
+    "audit": [
+      {
+        "trait": "Academorix\\Compliance\\Concerns\\HasAudit",
+        "reason": "BOTH RoleDelegation AND ImpersonationSession — but ImpersonationSession's audit rows are flagged with `is_compliance_evidence=true` so the retention job leaves them untouched at 7-year hot (see retention.json)."
+      }
+    ]
+  },
+  "composition": {
+    "role_delegation": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToApplication",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasActivityLog",
+        "HasAudit",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "BelongsToTenant MUST come first per tenancy-columns.md §14 note — subsequent traits observe the tenant context in their booted() hooks. Soft-deleted so a revoked delegation stays queryable through the 730-day retention window before PurgeRevokedDelegationsJob hard-deletes."
+    },
+    "impersonation_session": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToApplication",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAudit",
+        "Filterable"
+      ],
+      "notes": "NO SoftDeletes — impersonation session rows are append-only compliance evidence + preserved indefinitely. NO Searchable (the surface is opinionated + we already publish the /audit endpoint for cross-cutting query). NO HasActivityLog (that's the tenant-side activity substrate; impersonation belongs to the heavier HasAudit compliance substrate). BelongsToTenant applies via target_tenant_id — the global scope filters by the caller's current tenant on tenant-plane reads (there are none — this table is platform-plane-read-only), but on platform_admin routes the scope is bypassed by the RolesPermissions middleware since a platform admin is cross-tenant by construction."
+    }
+  }
+}

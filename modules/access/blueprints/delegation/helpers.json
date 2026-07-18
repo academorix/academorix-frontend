@@ -1,0 +1,34 @@
+{
+  "id": "academorix://modules/delegation/helpers",
+  "$version": 1,
+  "title": "delegation — helper functions",
+  "description": "Small helper facade over the DelegationResolver + the impersonation session lookup. Consumers rarely need direct access — the traits (HasDelegations + HasImpersonationHistory) cover the common cases — but these helpers exist for one-off checks in blade views, notification composers, and console commands.",
+  "namespace": "Academorix\\Delegation\\Support",
+  "helpers": [
+    {
+      "signature": "delegating(User $delegator, ?Role $role = null, ?Tenant $tenant = null, ?Application $application = null): Collection<RoleDelegation>",
+      "purpose": "Returns the collection of active delegations where $delegator is currently delegating (as delegator). Optional role/tenant/application filters. Reads through the DelegationResolver LRU cache.",
+      "example": "$activeOut = delegating(auth()->user());"
+    },
+    {
+      "signature": "acting_as(User $user, ?Role $role = null, ?Tenant $tenant = null, ?Application $application = null): Collection<RoleDelegation>",
+      "purpose": "Returns the collection of active delegations where $user is currently the delegate. This is the primary read for 'am I currently acting on someone's behalf'.",
+      "example": "$actingAs = acting_as(auth()->user());"
+    },
+    {
+      "signature": "is_impersonating(): bool",
+      "purpose": "Returns true when the current request is served with an impersonation-scoped PAT (checked by inspecting the request context flag set by the enforce_active_session middleware).",
+      "example": "@if (is_impersonating())\n    <div class=\"banner banner--impersonation\">You are impersonating {{ current_impersonation()->impersonated->profile->display_name }}.</div>\n@endif"
+    },
+    {
+      "signature": "current_impersonation(): ?ImpersonationSession",
+      "purpose": "Returns the current impersonation session (or null when not impersonating). Reads from the request context (set by the middleware); does NOT re-hit the DB.",
+      "example": "$session = current_impersonation();\nif ($session) {\n    logger()->info('Action taken during impersonation', ['session_id' => $session->id]);\n}"
+    },
+    {
+      "signature": "delegation_state(RoleDelegation $delegation): string",
+      "purpose": "Returns the effective state string ('pending' | 'active' | 'expired' | 'revoked') derived from starts_at + ends_at + revoked_at. Used by SDUI status chips + notification templates.",
+      "example": "$state = delegation_state($delegation);\n// 'active'"
+    }
+  ]
+}

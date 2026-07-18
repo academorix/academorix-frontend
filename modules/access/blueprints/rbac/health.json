@@ -1,0 +1,86 @@
+{
+  "id": "academorix://modules/rbac/health",
+  "$version": 1,
+  "title": "rbac \u2014 health probes",
+  "probes": [
+    {
+      "name": "rbac-schema-current",
+      "class": "Academorix\\Rbac\\Health\\Probes\\SchemaCurrentProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Verifies the spatie migrations have run + our column additions (application_id, tenant_id, is_system, etc.) are in place on roles + permissions + pivots.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "rbac-catalogue-loaded",
+      "class": "Academorix\\Rbac\\Health\\Probes\\CatalogueLoadedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "PermissionCatalogueLoader has finished scanning every #[ProvidesPermissions] provider and the `permissions` table holds at least the framework-tier rows (foundation.*, compliance.*, auth.*, rbac.*).",
+      "timeoutMs": 1000
+    },
+    {
+      "name": "rbac-cache-reachable",
+      "class": "Academorix\\Rbac\\Health\\Probes\\CacheReachableProbe",
+      "category": "readiness",
+      "critical": true,
+      "description": "Configured cache store (config('rbac.cache.store'), default `redis`) reachable for a ping+set+get round-trip. Critical because DB-only fallback is 40x slower and cannot sustain steady-state load.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "rbac-broadcast-reachable",
+      "class": "Academorix\\Rbac\\Health\\Probes\\BroadcastReachableProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Redis pubsub reachable for cross-node invalidation. Non-critical because TTL-based eviction still bounds staleness; probe alerts ops the cache lags.",
+      "timeoutMs": 300,
+      "enabledWhen": "config('rbac.cache.broadcast_invalidation') === true"
+    },
+    {
+      "name": "rbac-role-definitions-seeded",
+      "class": "Academorix\\Rbac\\Health\\Probes\\RoleDefinitionsSeededProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "role_definitions table has rows for every declared business_type in `data/role-catalogue.json`. Failure indicates `rbac:sync-role-definitions` never ran.",
+      "timeoutMs": 300
+    },
+    {
+      "name": "rbac-system-roles-immutable",
+      "class": "Academorix\\Rbac\\Health\\Probes\\SystemRolesImmutableProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Verifies the RoleObserver is registered + refuses is_system=true mutations. Runs a dry-transaction that attempts to rename a system role and confirms the refusal.",
+      "timeoutMs": 1000
+    },
+    {
+      "name": "rbac-purge-scheduler-alive",
+      "class": "Academorix\\Rbac\\Health\\Probes\\PurgeSchedulerAliveProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "PurgeExpiredRoleAssignmentsJob has run in the last 2 hours. Failure indicates the hourly scheduled task is stuck OR the queue worker is behind.",
+      "timeoutMs": 300
+    },
+    {
+      "name": "rbac-resolver-under-latency-budget",
+      "class": "Academorix\\Rbac\\Health\\Probes\\ResolverLatencyProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Runs a warm-cache permission check against a probe principal and asserts the p95 latency across 100 samples is under 5ms. Alerts ops when the cache is thrashing.",
+      "timeoutMs": 2000
+    },
+    {
+      "name": "rbac-orphaned-pivots",
+      "class": "Academorix\\Rbac\\Health\\Probes\\OrphanedPivotsProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Counts rows in model_has_roles / model_has_permissions where the referenced role / permission has been hard-deleted (should never happen \u2014 FK is CASCADE). Warns on non-zero count."
+    },
+    {
+      "name": "rbac-custom-role-quota-not-exceeded",
+      "class": "Academorix\\Rbac\\Health\\Probes\\CustomRoleQuotaProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Enumerates tenants where custom role count exceeds their `custom_role_slot` entitlement (should never happen \u2014 observer enforces). Warns on non-zero count."
+    }
+  ]
+}

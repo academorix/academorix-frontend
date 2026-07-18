@@ -1,0 +1,75 @@
+{
+  "id": "academorix://modules/delegation/permissions",
+  "$version": 1,
+  "title": "delegation — permissions",
+  "seeder": "Academorix\\Delegation\\Database\\Seeders\\DelegationPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "delegations.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner"],
+      "description": "Every tenant member can see their own delegations (as delegator + as delegate). Admin sees all."
+    },
+    {
+      "name": "delegations.view",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner"],
+      "description": "View a specific delegation — delegator, delegate, or admin."
+    },
+    {
+      "name": "delegations.create",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner"],
+      "description": "Every tenant member can create outbound delegations of their own roles. Admin can create on behalf of another user via manage_any (rare — mostly break-glass)."
+    },
+    {
+      "name": "delegations.revoke",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner"],
+      "description": "The delegator can revoke their own outbound delegations. Admin can revoke any."
+    },
+    {
+      "name": "delegations.manage_any",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Admin-level cross-delegation management. Enables create-on-behalf-of + revoke-any + extend-ends-at (rare)."
+    },
+    {
+      "name": "platform.impersonate",
+      "guard": "platform_admin",
+      "seededOn": ["support", "super_admin"],
+      "description": "PERMISSION to invoke impersonation. Also requires the ENTITLEMENT `impersonation` on the PlatformUser row (see entitlements.json). Default-seeded on support department roles + super_admin. Product / engineering / other departments do NOT get this by default; must be granted per-PlatformUser by super_admin."
+    },
+    {
+      "name": "platform.impersonation.view",
+      "guard": "platform_admin",
+      "seededOn": ["support", "security", "super_admin", "dpo"],
+      "description": "View own + adjacent impersonation sessions. Regular support agents see their own; security + super_admin see all in scope."
+    },
+    {
+      "name": "platform.impersonation.viewAll",
+      "guard": "platform_admin",
+      "seededOn": ["security", "super_admin"],
+      "description": "Cross-tenant listing of active + historical impersonation sessions."
+    },
+    {
+      "name": "platform.impersonation.audit",
+      "guard": "platform_admin",
+      "seededOn": ["security", "super_admin", "dpo"],
+      "description": "Read the compliance evidence report. DPO is included because they own the compliance evidence-review workflow."
+    },
+    {
+      "name": "platform.impersonation.terminate",
+      "guard": "platform_admin",
+      "seededOn": ["security", "super_admin"],
+      "description": "Force-terminate a session. Restricted to security + super_admin — even the impersonator's own /end route doesn't need this permission (they end via a different code path). Force-terminate is the LOCKDOWN action, distinct from self-service end."
+    },
+    {
+      "name": "platform.impersonation.extend",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin"],
+      "description": "Extend a session past its default TTL. Reserved for super_admin — even security cannot extend. Requires the target session to hold impersonation_extended_ttl entitlement (enterprise contract-negotiated)."
+    }
+  ]
+}

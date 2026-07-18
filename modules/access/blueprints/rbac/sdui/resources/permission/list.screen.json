@@ -1,0 +1,148 @@
+{
+  "id": "rbac.resources.permission.list",
+  "title": "Permissions catalogue",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/settings/permissions",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "rbac", "entity": "permission", "action": "list" },
+  "requiresPermission": "permissions.viewAny.tenant",
+  "dataSources": [
+    {
+      "name": "permissions",
+      "kind": "http.get",
+      "url": "/api/v1/rbac/permissions?include=role_count",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-6xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Permissions"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "The full permission catalogue. Grouped by module. Custom permissions available on the Enterprise plan."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Toolbar",
+          "children": [
+            {
+              "kind": "SearchField",
+              "props": { "placeholder": "Search by permission name or resource", "name": "q" }
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "module_slug", "placeholder": "All modules", "clearable": true },
+              "optionsSource": "rbac-permissions.modules"
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "scope_suffix", "placeholder": "All scopes", "clearable": true },
+              "options": [
+                { "key": "any", "label": ".any (cross-tenant)" },
+                { "key": "tenant", "label": ".tenant" },
+                { "key": "organization", "label": ".organization" },
+                { "key": "region", "label": ".region" },
+                { "key": "branch", "label": ".branch" },
+                { "key": "team", "label": ".team" },
+                { "key": "child", "label": ".child (guardian scope)" },
+                { "key": "own", "label": ".own" }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Group",
+          "props": { "groupBy": "module_slug" },
+          "bindings": { "items": { "$ref": "permissions" } },
+          "groupHeaderRenderer": {
+            "kind": "View",
+            "props": { "className": "flex items-center gap-2 mt-4 mb-2" },
+            "children": [
+              {
+                "kind": "Text",
+                "props": { "className": "text-sm font-semibold uppercase text-muted" },
+                "bindings": { "children": { "$expr": "group.key || 'Uncategorised'" } }
+              },
+              {
+                "kind": "Chip",
+                "props": { "size": "xs", "variant": "neutral" },
+                "bindings": { "children": { "$expr": "group.items.length + ' perms'" } }
+              }
+            ]
+          },
+          "itemRenderer": {
+            "kind": "View",
+            "props": { "className": "flex items-center justify-between p-3 hover:bg-content1 rounded" },
+            "children": [
+              {
+                "kind": "View",
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2" },
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-mono text-sm" },
+                        "bindings": { "children": { "$ref": "row.name" } }
+                      },
+                      {
+                        "kind": "Widget",
+                        "widget": "rbac.permission-scope-chip",
+                        "bindings": { "props": { "scope": { "$ref": "row.scope_suffix" } } }
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted mt-1" },
+                    "bindings": { "children": { "$ref": "row.description" } }
+                  }
+                ]
+              },
+              {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2" },
+                "children": [
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "info" },
+                    "bindings": { "children": { "$expr": "row.role_count + ' roles'" } }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "warning" },
+                    "bindings": {
+                      "hidden": { "$expr": "row.guard_name !== 'platform_admin'" },
+                      "children": "Platform"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

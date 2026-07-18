@@ -1,0 +1,202 @@
+{
+  "id": "academorix://modules/delegation/errors",
+  "$version": 1,
+  "title": "delegation — error codes",
+  "namespace": "delegation",
+  "errors": [
+    {
+      "code": "DELEGATION_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "delegation.errors.delegation_not_found"
+    },
+    {
+      "code": "CROSS_TENANT_DELEGATION",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "delegation.errors.cross_tenant_delegation",
+      "description": "The delegate belongs to a different tenant than the delegator. Delegation is refused; cross-tenant delegation is not part of the domain."
+    },
+    {
+      "code": "SELF_DELEGATION",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "delegation.errors.self_delegation",
+      "description": "A User attempted to delegate to themselves. Refused."
+    },
+    {
+      "code": "DELEGATOR_LACKS_ROLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "delegation.errors.delegator_lacks_role",
+      "description": "The delegator does not hold the role_id they are attempting to delegate. Refused with the specific role name in the payload."
+    },
+    {
+      "code": "INVALID_DELEGATION_WINDOW",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "delegation.errors.invalid_delegation_window",
+      "description": "The window fails validation — starts_at in past, ends_at <= starts_at, or ends_at > starts_at + max_days cap. Specific reason in the payload."
+    },
+    {
+      "code": "DELEGATION_SELF_OVERLAP_DETECTED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "delegation.errors.delegation_self_overlap_detected",
+      "description": "An existing active delegation of the same (role, delegate) exists with an overlapping window. Refuses to create a duplicate. Payload names the existing_delegation_id."
+    },
+    {
+      "code": "DELEGATION_ALREADY_REVOKED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "delegation.errors.delegation_already_revoked",
+      "description": "Attempted to revoke a delegation that was already revoked."
+    },
+    {
+      "code": "DELEGATION_REASON_TOO_SHORT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "delegation.errors.delegation_reason_too_short",
+      "description": "The delegation reason is under 20 characters. Provide more context."
+    },
+    {
+      "code": "EMERGENCY_DELEGATION_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "delegation.errors.emergency_delegation_not_entitled",
+      "description": "delegation_type=emergency requested but tenant lacks emergency_delegation entitlement (small tier)."
+    },
+    {
+      "code": "IMPERSONATION_NOT_ENTITLED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "critical",
+      "i18n_key": "delegation.errors.impersonation_not_entitled",
+      "description": "PlatformUser lacks the `impersonation` entitlement. Fires ImpersonationAttemptRefused with refusal_reason=missing_entitlement."
+    },
+    {
+      "code": "IMPERSONATION_OPERATOR_NOT_ACTIVE",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "delegation.errors.impersonation_operator_not_active",
+      "description": "PlatformUser.status is not active (pending / suspended / offboarded). Fires ImpersonationAttemptRefused."
+    },
+    {
+      "code": "IMPERSONATION_TARGET_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "delegation.errors.impersonation_target_not_found"
+    },
+    {
+      "code": "IMPERSONATION_CROSS_TENANT_TARGET",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "delegation.errors.impersonation_cross_tenant_target",
+      "description": "target_tenant_id doesn't match the impersonated User's tenant_id. Deliberately not exposed to the caller (may leak tenant boundaries) — logged with critical severity."
+    },
+    {
+      "code": "IMPERSONATION_TARGET_TENANT_DISABLED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "delegation.errors.impersonation_target_tenant_disabled"
+    },
+    {
+      "code": "IMPERSONATION_TARGET_APPLICATION_DISABLED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "delegation.errors.impersonation_target_application_disabled"
+    },
+    {
+      "code": "IMPERSONATION_TARGET_TENANT_LOCKED_DOWN",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "critical",
+      "i18n_key": "delegation.errors.impersonation_target_tenant_locked_down",
+      "description": "compliance module has an active security incident declared on the target tenant — impersonation refused until the incident is closed."
+    },
+    {
+      "code": "IMPERSONATION_TTL_OUT_OF_BOUNDS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "delegation.errors.impersonation_ttl_out_of_bounds",
+      "description": "Requested duration exceeds the 60-minute default cap AND tenant lacks impersonation_extended_ttl entitlement, OR requested duration exceeds max_minutes_extended."
+    },
+    {
+      "code": "IMPERSONATION_REASON_TOO_SHORT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "delegation.errors.impersonation_reason_too_short",
+      "description": "The impersonation reason is under 40 characters (heavier than delegation's 20)."
+    },
+    {
+      "code": "IMPERSONATION_ALREADY_ACTIVE_FOR_OPERATOR",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "delegation.errors.impersonation_already_active_for_operator",
+      "description": "The PlatformUser already has an active impersonation session. Must end the current session before starting a new one. One-at-a-time invariant."
+    },
+    {
+      "code": "IMPERSONATION_SESSION_ENDED",
+      "http": 401,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "delegation.errors.impersonation_session_ended",
+      "description": "Fires from the enforce_active_session middleware when a request bearing an impersonation PAT arrives against an ended session."
+    },
+    {
+      "code": "IMPERSONATION_READ_ONLY",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "delegation.errors.impersonation_read_only",
+      "description": "The session is is_read_only=true; the mutating verb is refused by enforce_read_only middleware."
+    },
+    {
+      "code": "IMPERSONATION_EXTEND_REFUSED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "delegation.errors.impersonation_extend_refused",
+      "description": "Attempted to extend a session past its default TTL by a non-super_admin OR without the impersonation_extended_ttl entitlement."
+    }
+  ]
+}

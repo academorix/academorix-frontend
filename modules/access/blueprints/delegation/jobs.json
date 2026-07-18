@@ -1,0 +1,114 @@
+{
+  "id": "academorix://modules/delegation/jobs",
+  "$version": 1,
+  "title": "delegation — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Delegation\\Jobs\\ActivateDelegationsJob",
+      "queue": "notifications",
+      "purpose": "Hourly. Finds pending delegations whose starts_at has passed but state is still `pending`, transitions them to `active`, fires DelegationActivated. Idempotent — a re-run picks up newly-eligible rows and skips already-activated ones.",
+      "steps": [
+        "SELECT * FROM role_delegations WHERE revoked_at IS NULL AND deleted_at IS NULL AND starts_at <= now() AND ends_at > now() AND `is_active_snapshot` = false — the last column is a computed helper the observer maintains; the query is index-friendly.",
+        "For each match: fire DelegationActivated event (which cascades to NotifyDelegateOfActivationJob for the delegate notification).",
+        "Update the row atomically to prevent double-processing under parallel job runners."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 900,
+      "tries": 3,
+      "backoff": [10, 60, 300]
+    },
+    {
+      "class": "Academorix\\Delegation\\Jobs\\ExpireDelegationsJob",
+      "queue": "notifications",
+      "purpose": "Hourly. Finds active delegations whose ends_at has passed (without being revoked), transitions them to `expired`, fires DelegationExpired. Coordinated with ActivateDelegationsJob so a row cannot be both activating + expiring in the same hour (would only happen for a same-hour create-with-past-start-and-past-end, which the observer refuses).",
+      "steps": [
+        "SELECT * FROM role_delegations WHERE revoked_at IS NULL AND deleted_at IS NULL AND ends_at <= now() AND `is_active_snapshot` = true — index on ends_at partial predicate speeds the scan.",
+        "For each match: fire DelegationExpired (which cascades to NotifyDelegatorOfExpirationJob).",
+        "Row is not soft-deleted at this step — retention.json's 730-day window governs eventual purge."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 900,
+      "tries": 3,
+      "backoff": [10, 60, 300]
+    },
+    {
+      "class": "Academorix\\Delegation\\Jobs\\EndImpersonationSessionsJob",
+      "queue": "notifications-critical",
+      "purpose": "Every 5 minutes. Finds impersonation sessions past ends_at with ended_at still null, transitions them to ended with end_trigger=ttl_expired, fires ImpersonationSessionEnded. Critical cadence — session TTL enforcement cannot lag.",
+      "steps": [
+        "SELECT * FROM impersonation_sessions WHERE ended_at IS NULL AND ends_at <= now() — index on ends_at partial predicate.",
+        "For each match: set ended_at = now(), end_trigger = 'ttl_expired' via the observer path (so events fire).",
+        "The `impersonation.enforce_active_session` middleware ALSO refuses expired-but-not-yet-transitioned PATs within the request cycle, so a lag between session expiry + this job's next run does NOT permit a live-in-middle window."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 180,
+      "tries": 3,
+      "backoff": [5, 15, 30]
+    },
+    {
+      "class": "Academorix\\Delegation\\Jobs\\PurgeRevokedDelegationsJob",
+      "queue": "notifications",
+      "purpose": "Daily 03:15 UTC. Hard-deletes soft-deleted role_delegations rows past the 730-day retention window. Coordinated with the audit stream retention (also 730 d) so the deletion + the audit purge happen in the same maintenance window.",
+      "steps": [
+        "SELECT * FROM role_delegations WHERE deleted_at IS NOT NULL AND deleted_at <= now() - interval '730 days'",
+        "Hard delete via forceDelete(). The observer's `deleting` refuse-guard is bypassed because the job flags request-scoped `is_retention_purge = true`.",
+        "Chunk in batches of 500 to avoid holding long transactions.",
+        "Emits a per-tenant count metric via observability::EmitDelegationsPurgedMetric."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Delegation\\Jobs\\NotifyDelegateOfActivationJob",
+      "queue": "notifications",
+      "purpose": "One-shot dispatched by the DelegationActivated event's consumer chain. Sends the DelegationActivatedNotification to the delegate — 'you can now act as X' — via in-app + email. Idempotent per delegation_id (uniqueFor guards against double-sends).",
+      "steps": [
+        "Load the delegation row + delegator + delegate + role.",
+        "Compose DelegationActivatedNotification.",
+        "Dispatch through the delegate's preferred channels (mail + in-app; slack + sms opt-in via delegate settings)."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "delegation_id",
+      "tries": 3,
+      "backoff": [30, 300, 900]
+    },
+    {
+      "class": "Academorix\\Delegation\\Jobs\\NotifyDelegatorOfExpirationJob",
+      "queue": "notifications",
+      "purpose": "One-shot dispatched by the DelegationExpired event's consumer chain. Sends the DelegationExpiredNotification to the delegator — 'your delegation to X has ended'. Idempotent per delegation_id.",
+      "steps": [
+        "Load the delegation row + delegator + delegate.",
+        "Compose DelegationExpiredNotification.",
+        "Dispatch through the delegator's preferred channels."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "delegation_id",
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Delegation\\Jobs\\PurgeImpersonationSessionsJob",
+      "queue": "notifications",
+      "purpose": "WEEKLY. NEVER purges the row (rows are append-only compliance evidence). Scrubs session_token_hash from ended sessions > 30 days old — the token is dead anyway, but scrubbing removes hash residue that could be brute-forced if the hashing algorithm is ever compromised.",
+      "steps": [
+        "SELECT * FROM impersonation_sessions WHERE session_token_hash IS NOT NULL AND ended_at IS NOT NULL AND ended_at <= now() - interval '30 days'",
+        "UPDATE session_token_hash = NULL on each match. The observer's `updating` refusal on session_token_hash is bypassed via request-scoped flag.",
+        "Chunk in batches of 500.",
+        "Emits observability::EmitImpersonationTokensScrubbedMetric with the count.",
+        "CRITICAL: this job MUST NOT delete the row + MUST NOT alter any other column. Reviewer + auditor agent both check the diff of every run."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 604800,
+      "tries": 2
+    }
+  ]
+}

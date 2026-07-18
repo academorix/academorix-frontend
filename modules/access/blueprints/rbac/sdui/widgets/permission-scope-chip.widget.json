@@ -1,0 +1,43 @@
+{
+  "id": "rbac.permission-scope-chip",
+  "title": "Permission scope chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for a permission's scope suffix (.own, .team, .branch, .tenant, .any, ...). Includes an explanatory tooltip so users understand what each scope means. Widest chip = widest scope (.any, red); narrowest chip = narrowest scope (.own, green).",
+  "props": {
+    "scope": {
+      "type": "string",
+      "required": true,
+      "enum": ["any", "tenant", "organization", "region", "branch", "team", "child", "own"]
+    },
+    "size": {
+      "type": "string",
+      "default": "xs",
+      "enum": ["xs", "sm", "md"]
+    }
+  },
+  "nodes": [
+    {
+      "id": "chip",
+      "kind": "Tooltip",
+      "props": {
+        "contentExpr": "({ any: 'Cross-tenant \u2014 platform-admin only', tenant: 'Everything in the current tenant', organization: 'Within the current organization', region: 'Within the current region', branch: 'Within the current branch', team: 'Within teams you coach or play on', child: 'For your linked child athletes (guardian scope)', own: 'Only rows you own' }[props.scope])"
+      },
+      "children": [
+        {
+          "kind": "Chip",
+          "props": { "size": "xs" },
+          "bindings": {
+            "props": {
+              "size": { "$ref": "props.size" },
+              "variant": {
+                "$expr": "({ any: 'danger', tenant: 'warning', organization: 'info', region: 'info', branch: 'accent', team: 'accent', child: 'success', own: 'success' }[props.scope])"
+              },
+              "children": { "$expr": "'.' + props.scope" }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

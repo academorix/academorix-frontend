@@ -1,0 +1,152 @@
+{
+  "id": "academorix://modules/rbac/analytics",
+  "$version": 1,
+  "title": "rbac \u2014 product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Role Created",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "tenant_id",
+        "actor_id",
+        "role_name",
+        "guard_name",
+        "is_system",
+        "permission_count"
+      ],
+      "description": "A role row was persisted. Fired for both system-seeded rows (actor_id null) and admin-created custom rows."
+    },
+    {
+      "name": "Role Assigned",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "tenant_id",
+        "actor_id",
+        "principal_type",
+        "principal_id",
+        "role_name",
+        "expires_at_iso",
+        "was_delegated"
+      ],
+      "description": "A principal was granted a role. principal_type is one of `User` / `PlatformUser` / `ServiceAccount`."
+    },
+    {
+      "name": "Role Revoked",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "tenant_id",
+        "actor_id",
+        "principal_type",
+        "principal_id",
+        "role_name",
+        "trigger"
+      ],
+      "description": "trigger: 'admin_revoke' | 'assignment_expired' | 'role_deleted' | 'principal_disabled'."
+    },
+    {
+      "name": "Permission Attached To Role",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "tenant_id",
+        "actor_id",
+        "role_name",
+        "permission_name",
+        "is_custom_permission"
+      ]
+    },
+    {
+      "name": "Permission Detached From Role",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "actor_id", "role_name", "permission_name"]
+    },
+    {
+      "name": "Custom Role Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "tenant_id",
+        "actor_id",
+        "role_name",
+        "permission_count",
+        "custom_role_slot_used",
+        "custom_role_slot_cap"
+      ],
+      "description": "A tenant admin created a NEW custom role (not shipped by Academorix). Feeds the tier-adoption dashboard."
+    },
+    {
+      "name": "Custom Role Deleted",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "actor_id", "role_name", "principal_count_before_delete"]
+    },
+    {
+      "name": "System Role Modification Refused",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "tenant_id",
+        "actor_id",
+        "role_name",
+        "attempted_action",
+        "refusal_reason"
+      ],
+      "description": "Someone tried to modify an is_system=true role. Fires the SystemRoleModificationRefused event too \u2014 audit-critical."
+    },
+    {
+      "name": "Guard Mismatch Refused",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "tenant_id",
+        "actor_id",
+        "attempted_role_guard",
+        "attempted_permission_guard"
+      ],
+      "description": "A write would have crossed the sanctum \u2194 platform_admin boundary. Refused."
+    },
+    {
+      "name": "Application Mismatch Refused",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "tenant_id",
+        "actor_id",
+        "attempted_role_application_id",
+        "attempted_permission_application_id"
+      ]
+    },
+    {
+      "name": "Permission Check Performed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "tenant_id",
+        "principal_type",
+        "permission_name",
+        "outcome",
+        "resolution_source",
+        "duration_us"
+      ],
+      "description": "Fired ONLY when sampled (rbac.telemetry.permission_check_sample_ratio, default 0.001 = 0.1%). Volume would be crushing otherwise \u2014 every request checks a permission. resolution_source: 'cache_hit' | 'db_resolved' | 'deny_grant' | 'allow_grant' | 'delegation' | 'default_deny'."
+    },
+    {
+      "name": "Permission Cache Invalidated",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "tenant_id",
+        "principal_type",
+        "principal_id",
+        "trigger",
+        "cached_keys_purged"
+      ]
+    }
+  ]
+}

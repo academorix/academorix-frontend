@@ -1,0 +1,91 @@
+{
+  "id": "academorix://modules/rbac/macros",
+  "$version": 1,
+  "title": "rbac \u2014 published macros",
+  "description": "Two Blueprint macros for the migration DSL. Both are registered by RbacServiceProvider::boot() during the framework boot phase so every downstream migration can call them regardless of module priority.",
+  "namespace_note": "Blueprint macros extend `Illuminate\\Database\\Schema\\Blueprint`. Registered on the framework blueprint class \u2014 no rbac dependency is added to consumers because Blueprint is a Laravel core class.",
+  "macros": [
+    {
+      "name": "Blueprint::guardable_columns",
+      "signature": "Blueprint::guardable_columns(): void",
+      "adds": {
+        "columns": [
+          {
+            "name": "guard_name",
+            "type": "string",
+            "length": 32,
+            "nullable": false,
+            "default": "'sanctum'",
+            "description": "Enum-like column (validated at write time by the observer) with values `sanctum` OR `platform_admin`. Mirrors spatie's own `guard_name` on roles + permissions."
+          }
+        ],
+        "indexes": [
+          {
+            "columns": ["guard_name"],
+            "unique": false,
+            "name_suffix": "guard_name_idx"
+          }
+        ]
+      },
+      "description": "Adds the `guard_name` column + index used by every table participating in the guard-scoping contract. Spatie's own roles + permissions tables already ship this column \u2014 the macro is for cross-module extensions (e.g. a future `role_assignment_requests` table in access/requests) that need to carry the guard.",
+      "usage_example": "Schema::create('role_assignment_requests', function (Blueprint $t) {\n    $t->id();\n    $t->guardable_columns();  // \u2190 adds guard_name column + index\n    // ...\n});",
+      "companion": {
+        "observer": "GuardBoundaryEnforcer",
+        "reference": "See `rules.json:permission_belongs_to_role_guard` for the write-time validation."
+      }
+    },
+    {
+      "name": "Blueprint::rbac_scoped_columns",
+      "signature": "Blueprint::rbac_scoped_columns(): void",
+      "adds": {
+        "columns": [
+          {
+            "name": "application_id",
+            "type": "string",
+            "length": 30,
+            "nullable": true,
+            "description": "FK to applications.id, ON DELETE RESTRICT. NULL = platform-plane row."
+          },
+          {
+            "name": "tenant_id",
+            "type": "string",
+            "length": 30,
+            "nullable": true,
+            "description": "FK to tenants.id, ON DELETE CASCADE (tenant deletion cascades to their RBAC rows). NULL = system row (shipped by Academorix)."
+          }
+        ],
+        "indexes": [
+          {
+            "columns": ["application_id", "tenant_id"],
+            "unique": false,
+            "name_suffix": "rbac_scope_idx",
+            "description": "Composite index for the resolver's hot-path lookups on `(application_id, tenant_id)`."
+          }
+        ],
+        "foreign_keys": [
+          {
+            "column": "application_id",
+            "references": {
+              "table": "applications",
+              "column": "id"
+            },
+            "on_delete": "restrict"
+          },
+          {
+            "column": "tenant_id",
+            "references": {
+              "table": "tenants",
+              "column": "id"
+            },
+            "on_delete": "cascade"
+          }
+        ]
+      },
+      "description": "Adds the two-column scope contract carried by every RBAC table (both the roles / permissions tables AND their pivots for denormalisation). Idempotent \u2014 safe to call in either `create` or `table` migrations.",
+      "usage_example": "// In the migration that adds RBAC columns to spatie's `role_has_permissions` pivot.\nSchema::table('role_has_permissions', function (Blueprint $t) {\n    $t->rbac_scoped_columns();\n});",
+      "boot_order_note": "Registered by `RbacServiceProvider::boot()`. Because Laravel loads every ServiceProvider's `boot()` before running any migration, the macro is available to every migration regardless of the rbac module's priority (30)."
+    }
+  ],
+  "registered_by": "Academorix\\Rbac\\Providers\\RbacServiceProvider::boot()",
+  "note": "The macros are DSL sugar \u2014 the same columns could be written by hand. The value is centralising the shape so a future change (e.g. tightening the FK constraint) lands in one place."
+}

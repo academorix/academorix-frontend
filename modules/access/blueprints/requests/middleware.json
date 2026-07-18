@@ -1,0 +1,49 @@
+{
+  "id": "academorix://modules/access/requests/middleware",
+  "$version": 1,
+  "title": "requests \u2014 HTTP middleware",
+  "description": "Middleware this module contributes. Registered by `AccessRequestServiceProvider::boot()` via `Router::aliasMiddleware()`. Only `access.request_hint_on_denial` is access-request-specific; framework + tenancy + throttle middleware come from their own modules.",
+  "middleware": [
+    {
+      "alias": "access.request_hint_on_denial",
+      "class": "Academorix\\AccessRequest\\Http\\Middleware\\EnrichAccessDeniedResponseWithRequestHint",
+      "priority": 200,
+      "description": "POST-response decorator. Runs AFTER the RBAC `permission` middleware (from access/rbac) refused with 403. Inspects the outgoing response body \u2014 if `code === 'access_denied'` AND the route's resolved model class is registered in `AccessRequestableRegistry`, appends the four `request_*` fields (`request_url`, `request_payload_template`, `resource`, `permissions_wanted`) and rewrites `code === 'access_denied.can_request'`. If any check fails, the response is left untouched (no `request_url`, no shape change). This is the Google-Docs 'you don't have access, would you like to request it?' hint.",
+      "sideEffects": [
+        "None on the underlying resource state. The middleware is pure response decoration.",
+        "Increments `access_requests.request_hint_offered.total` metric labelled by (application_id, tenant_id, resource_type) when it decides to enrich."
+      ],
+      "requires": ["auth:sanctum", "resolve.tenant"],
+      "runsAfter": ["can:*", "permission:*"],
+      "runsBefore": [],
+      "codeShape": "final class EnrichAccessDeniedResponseWithRequestHint\n{\n    public function handle(Request $request, Closure $next): Response\n    {\n        $response = $next($request);\n\n        if ($response->getStatusCode() !== 403) {\n            return $response;\n        }\n\n        $body = json_decode($response->getContent(), associative: true);\n        if (($body['code'] ?? null) !== 'access_denied') {\n            return $response;\n        }\n\n        $resourceType = $this->resolveResourceType($request);\n        $entry = $this->registry->find($resourceType);\n        if ($entry === null) {\n            return $response;\n        }\n\n        $body['code'] = 'access_denied.can_request';\n        $body['resource'] = ['type' => $resourceType, 'id' => $request->route('id')];\n        $body['permissions_wanted'] = $entry->permissions;\n        $body['request_url'] = route('tenant.access-requests.store');\n        $body['request_payload_template'] = [\n            'resource_type' => $resourceType,\n            'resource_id' => $request->route('id'),\n            'permissions_wanted' => $entry->permissions,\n            'reason' => '',\n        ];\n\n        $this->metrics->increment('access_requests.request_hint_offered.total', labels: [\n            'application_id' => $request->attributes->get('application_id'),\n            'tenant_id' => $request->attributes->get('tenant_id'),\n            'resource_type' => $resourceType,\n        ]);\n\n        return $response->setContent(json_encode($body));\n    }\n}"
+    },
+    {
+      "alias": "throttle:access-requests",
+      "class": "Illuminate\\Routing\\Middleware\\ThrottleRequests",
+      "priority": 50,
+      "description": "Framework throttle applied to the submit endpoint. Rate: 30 submissions per (caller_id, day) on POST /access-requests; 60 decisions per (caller_id, hour) on approve/reject. Distinct from tenant-level throttles managed by workflow/approvals. A 429 response carries `X-RateLimit-Trigger: submissions_per_day` or `X-RateLimit-Trigger: decisions_per_hour`.",
+      "config": {
+        "submissions": { "limit": 30, "window_seconds": 86400, "key": "user_id", "route_names": ["tenant.access-requests.store"] },
+        "decisions": { "limit": 60, "window_seconds": 3600, "key": "user_id", "route_names": ["tenant.access-requests.approve", "tenant.access-requests.reject"] }
+      }
+    }
+  ],
+  "priorityOrder": [
+    "resolve.application",
+    "resolve.tenant",
+    "auth:sanctum",
+    "tenant.user",
+    "platform.user",
+    "throttle:access-requests",
+    "can:*",
+    "permission:*",
+    "access.request_hint_on_denial"
+  ],
+  "notes": [
+    "`access.request_hint_on_denial` is applied GLOBALLY at the API middleware group level so every 403 emitted by any tenant-plane API route participates. It is CHEAP when the response is not 403 (fast-path returns immediately).",
+    "Attaching the middleware globally is safe because it never blocks a request \u2014 it only decorates 403 responses. If a route's response is 403 without `code === 'access_denied'` (a policy denial with a different code), the middleware leaves it alone.",
+    "The middleware never fires for platform-admin routes \u2014 platform staff use impersonation via access/delegation, not the request loop.",
+    "There is NO `access.request_hint_on_denial` for the `POST /access-requests` route itself \u2014 if the caller lacks permission to submit a request (e.g. their tenant membership was revoked), the 403 stays a plain 403; no meta-request-to-request-access."
+  ]
+}

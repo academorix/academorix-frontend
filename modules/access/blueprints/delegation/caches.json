@@ -1,0 +1,85 @@
+{
+  "id": "academorix://modules/delegation/caches",
+  "$version": 1,
+  "title": "delegation — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["delegation", "impersonation"],
+  "keys": [
+    {
+      "pattern": "dlg:resolver:as-delegate:{tenant_id}:{application_id}:{user_id}",
+      "description": "Cached result of DelegationResolver::activeAsDelegate($user, $tenant, $application). List of currently-effective delegations where the User is the delegate. THE hot-path cache — read on every RBAC permission check + every workflow/approvals approver resolution.",
+      "ttlSeconds": 60,
+      "tags": ["delegation", "tenant"],
+      "invalidatedBy": [
+        "RoleDelegationObserver.created",
+        "RoleDelegationObserver.updated",
+        "RoleDelegationObserver.deleted",
+        "ActivateDelegationsJob (per activated row)",
+        "ExpireDelegationsJob (per expired row)"
+      ]
+    },
+    {
+      "pattern": "dlg:resolver:as-delegator:{tenant_id}:{application_id}:{user_id}",
+      "description": "Reverse — list of active delegations where the User is the delegator. Powers /me/delegations + workflow/approvals selector substitution.",
+      "ttlSeconds": 60,
+      "tags": ["delegation", "tenant"],
+      "invalidatedBy": [
+        "RoleDelegationObserver.created",
+        "RoleDelegationObserver.updated",
+        "RoleDelegationObserver.deleted",
+        "ActivateDelegationsJob (per activated row)",
+        "ExpireDelegationsJob (per expired row)"
+      ]
+    },
+    {
+      "pattern": "dlg:resolver:role-delegators:{tenant_id}:{application_id}:{role_id}",
+      "description": "Powers the workflow/approvals selector engine. Given a role_id, list of active delegators (with their delegates) — the substitution set for approver resolution.",
+      "ttlSeconds": 60,
+      "tags": ["delegation", "tenant"],
+      "invalidatedBy": [
+        "RoleDelegationObserver.created",
+        "RoleDelegationObserver.updated",
+        "RoleDelegationObserver.deleted"
+      ]
+    },
+    {
+      "pattern": "dlg:impersonation:active-by-token:{token_hash}",
+      "description": "Fast lookup of an active impersonation session by session_token_hash. Read by the impersonation.enforce_active_session middleware on every request bearing an impersonation PAT.",
+      "ttlSeconds": 30,
+      "tags": ["impersonation"],
+      "invalidatedBy": [
+        "ImpersonationSessionObserver.created",
+        "ImpersonationSessionObserver.updated (on ended_at set)",
+        "EndImpersonationSessionsJob (per session ended)"
+      ]
+    },
+    {
+      "pattern": "dlg:impersonation:active-count",
+      "description": "Global gauge of currently-active impersonation sessions. Read by the active-impersonations-within-cap health probe + used by rate-limiting on the /impersonation/start route.",
+      "ttlSeconds": 10,
+      "tags": ["impersonation"],
+      "invalidatedBy": [
+        "ImpersonationSessionObserver.created",
+        "ImpersonationSessionObserver.updated (on ended_at set)"
+      ]
+    },
+    {
+      "pattern": "dlg:impersonation:operator-has-active:{platform_user_id}",
+      "description": "Guard for the one-at-a-time invariant — whether a specific PlatformUser already has an active session. Consulted by the observer's creating hook.",
+      "ttlSeconds": 60,
+      "tags": ["impersonation"],
+      "invalidatedBy": ["ImpersonationSessionObserver.created", "ImpersonationSessionObserver.updated"]
+    },
+    {
+      "pattern": "dlg:tenant:locked-down:{tenant_id}",
+      "description": "Compliance module's active-security-incident registry, cached for fast reads from the impersonation observer. When the flag is set, ALL new impersonation attempts against that tenant are refused with target_tenant_locked_down.",
+      "ttlSeconds": 30,
+      "tags": ["impersonation", "compliance"],
+      "invalidatedBy": ["compliance::TenantSecurityIncidentDeclared", "compliance::TenantSecurityIncidentClosed"]
+    }
+  ],
+  "notes": [
+    "TTLs are deliberately short (10-60s) because the state changes have real-time UX consequences (a newly-activated delegation should be honoured immediately in the next request; a terminated session must be refused immediately). The DB is the source of truth; caches are opportunistic speed-ups.",
+    "The `dlg:resolver:*` caches sit on the CRITICAL PATH of every authorization check + every approver resolution — cache miss rates matter for latency. Warm-cache on boot + short TTLs together keep the hit rate high without introducing staleness."
+  ]
+}

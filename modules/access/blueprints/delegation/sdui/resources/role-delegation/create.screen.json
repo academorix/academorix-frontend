@@ -1,0 +1,166 @@
+{
+  "id": "delegation.resources.role-delegation.create",
+  "title": "New delegation",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/me/delegations/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "delegation", "entity": "role-delegation", "action": "create" },
+  "requiresPermission": "delegations.create",
+  "notes": [
+    "Reason field enforces a 20-char minimum with a live character counter. All rules from rules.json are surfaced as inline validation before submit.",
+    "delegation_type=emergency option is disabled unless the caller holds the emergency_delegation entitlement — surfaced via a tooltip on the disabled option.",
+    "Delegate picker is a searchable combobox scoped to the caller's tenant (cross-tenant delegate refused by same_tenant_delegation rule).",
+    "Role picker shows only roles the caller currently holds (delegator_holds_role rule) — plus an 'All roles (OOF)' option when the caller has more than one role."
+  ],
+  "dataSources": [
+    {
+      "name": "myRoles",
+      "kind": "http.get",
+      "url": "/api/v1/me/roles",
+      "unwrap": "data"
+    },
+    {
+      "name": "emergencyEntitlement",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/emergency_delegation",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-2xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Delegate a role" }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Choose the colleague, the role (or all roles), and the window. They'll receive an activation notice when the delegation begins."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "action": { "kind": "http.post", "url": "/api/v1/me/delegations" },
+            "onSuccess": { "kind": "navigate", "to": "/tenant/me/delegations" }
+          },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": {
+                "name": "delegate_id",
+                "label": "Delegate",
+                "required": true,
+                "placeholder": "Search a colleague...",
+                "optionsSource": {
+                  "kind": "http.get",
+                  "url": "/api/v1/users?filter[same_tenant]=true",
+                  "unwrap": "data",
+                  "optionKey": "id",
+                  "optionLabel": "profile.display_name"
+                },
+                "helpText": "The colleague who will act on your behalf. Must belong to the same tenant."
+              }
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "name": "role_id",
+                "label": "Role",
+                "required": true,
+                "helpText": "Pick a specific role or delegate ALL your roles (out-of-office flow)."
+              },
+              "bindings": {
+                "options": {
+                  "$expr": "[{ key: '__all__', label: 'All roles (OOF)' }].concat((myRoles || []).map(r => ({ key: r.id, label: r.name })))"
+                }
+              }
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "name": "delegation_type",
+                "label": "Delegation type",
+                "required": true,
+                "defaultValue": "oof",
+                "helpText": "OOF is the everyday pattern. Handover is a longer-lived transition. Emergency bypasses advance-notice checks (requires entitlement)."
+              },
+              "options": [
+                { "key": "oof", "label": "Out of office" },
+                { "key": "handover", "label": "Handover" },
+                {
+                  "key": "emergency",
+                  "label": "Emergency",
+                  "bindings": {
+                    "disabled": { "$expr": "!emergencyEntitlement?.granted" }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "DateTimePicker",
+              "props": {
+                "name": "starts_at",
+                "label": "Starts at",
+                "required": true,
+                "minValueExpr": "now()"
+              }
+            },
+            {
+              "kind": "DateTimePicker",
+              "props": {
+                "name": "ends_at",
+                "label": "Ends at",
+                "required": true,
+                "helpText": "Maximum 90 days from start."
+              }
+            },
+            {
+              "kind": "TextArea",
+              "props": {
+                "name": "reason",
+                "label": "Reason",
+                "required": true,
+                "minLength": 20,
+                "maxLength": 2000,
+                "showCounter": true,
+                "helpText": "Why this delegation? Recorded in the audit trail. Minimum 20 characters."
+              }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex gap-2 justify-end mt-4" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "children": "Cancel" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/me/delegations" } }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "type": "submit",
+                    "children": "Create delegation"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

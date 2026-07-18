@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/rbac/schedule",
+  "$version": 1,
+  "title": "rbac \u2014 scheduled tasks",
+  "entries": [
+    {
+      "name": "rbac-purge-expired-assignments",
+      "command": "rbac:purge-expired-assignments",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every hour on the hour: remove `model_has_roles` rows past their expires_at + fire RoleAssignmentExpired per removal. The listener chain invalidates the affected principals' caches + dispatches revoke notifications."
+    },
+    {
+      "name": "rbac-reconcile-role-definitions",
+      "command": "rbac:sync-role-definitions",
+      "cron": "0 4 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 04:00 UTC: reconcile role_definitions rows against `data/role-catalogue.json`. Catches drift when the catalogue was updated but `rbac:sync-role-definitions` wasn't run in the deploy pipeline. Idempotent."
+    },
+    {
+      "name": "rbac-purge-soft-deleted-roles",
+      "command": "queue:dispatch Academorix\\\\Rbac\\\\Jobs\\\\PurgeSoftDeletedRolesJob",
+      "cron": "0 5 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 05:00 UTC: hard-delete `roles` rows past their 90-day soft-delete retention window."
+    },
+    {
+      "name": "rbac-fire-expiring-notifications",
+      "command": "rbac:notify-expiring-assignments",
+      "cron": "0 10 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 10:00 UTC (business hours, US): dispatch RoleAssignmentExpiringNotification for every assignment whose expires_at falls within config('rbac.assignments.reminder_days_before_expiry') days from now. Also fires the 24h-before-expiry final reminder."
+    },
+    {
+      "name": "rbac-emit-quota-metrics",
+      "command": "rbac:emit-quota-metrics",
+      "cron": "*/15 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 15 minutes: sample custom_role_slot usage per tenant + emit `academorix.rbac.custom_role_slot_usage` gauge. Feeds the tier-adoption dashboard."
+    }
+  ]
+}

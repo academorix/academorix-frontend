@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/grants/schedule",
+  "$version": 1,
+  "title": "grants — scheduled tasks",
+  "description": "Cron entries registered by `GrantServiceProvider::schedule()`. UTC throughout. `runOnOneServer` on every entry so multi-node worker pools do not duplicate work. `withoutOverlapping` where windows may exceed the interval.",
+  "entries": [
+    {
+      "signature": "grants:purge-expired",
+      "kind": "command",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "description": "Hourly. Dispatches PurgeExpiredGrantsJob to sweep grants whose expires_at just crossed. Hourly cadence means a grant expires within 1 hour of its wall-clock cutoff — tight enough for time-boxed access, loose enough to keep the queue calm.",
+      "runOnOneServer": true,
+      "withoutOverlapping": true,
+      "withoutOverlappingExpiresAfterMinutes": 55
+    },
+    {
+      "signature": "grants:notify-expiring",
+      "kind": "command",
+      "cron": "0 9 * * *",
+      "timezone": "UTC",
+      "description": "Daily 09:00 UTC. Dispatches NotifyGrantExpiringJob for grants expiring in the next 24 hours. 09:00 chosen to hit European working hours; expiring-tomorrow notifications land at start-of-day.",
+      "runOnOneServer": true,
+      "withoutOverlapping": true
+    },
+    {
+      "signature": "grants:purge-revoked",
+      "kind": "command",
+      "cron": "0 4 * * *",
+      "timezone": "UTC",
+      "description": "Daily 04:00 UTC. Hard-deletes revoked/expired grants past the P90D retention window (allow decision only — deny decisions retained indefinitely per compliance policy).",
+      "runOnOneServer": true,
+      "withoutOverlapping": true
+    },
+    {
+      "signature": "grants:reconcile-orphaned --dry-run",
+      "kind": "command",
+      "cron": "0 3 * * 1",
+      "timezone": "UTC",
+      "description": "Weekly Monday 03:00 UTC — DRY RUN first. Emits metric + logs count of grants whose resource no longer exists but does not modify data. On-call reviews the output and triggers the non-dry version manually if the count looks reasonable.",
+      "runOnOneServer": true,
+      "withoutOverlapping": true
+    },
+    {
+      "signature": "grants:reconcile-orphaned",
+      "kind": "command",
+      "cron": "0 5 * * 1",
+      "timezone": "UTC",
+      "description": "Weekly Monday 05:00 UTC — real reconciliation. Runs after the dry-run so ops has two hours to disable this entry if the dry-run spotted anomalies. Auto-revokes orphaned grants with revoked_reason='orphaned_resource'.",
+      "runOnOneServer": true,
+      "withoutOverlapping": true
+    },
+    {
+      "signature": "grants:review-flags",
+      "kind": "command",
+      "cron": "0 8 1 * *",
+      "timezone": "UTC",
+      "description": "Monthly 08:00 UTC on the 1st. Emits a report of feature-flag ages so long-lived flags don't linger past the 90-day GA retirement policy. Called by ops as part of monthly flag hygiene review.",
+      "runOnOneServer": true
+    }
+  ]
+}

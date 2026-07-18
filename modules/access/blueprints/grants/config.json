@@ -1,0 +1,203 @@
+{
+  "id": "academorix://modules/grants/config",
+  "$version": 1,
+  "title": "grants — developer configuration",
+  "description": "Developer / operator configuration. Mirrors `config/grants.php`. Static per deploy; changing requires redeploy + `config:cache`. Distinct from settings.json (tenant-editable at runtime).",
+  "configFile": "config/grants.php",
+  "envPrefix": "GRANTS_",
+  "sections": {
+    "expiration": {
+      "description": "Grant expiry defaults + caps.",
+      "keys": [
+        {
+          "path": "grants.expiration.default_ttl_days",
+          "type": "integer",
+          "default": 30,
+          "env": "GRANTS_DEFAULT_TTL_DAYS",
+          "description": "Default `expires_at` = now() + this many days when create call doesn't specify. Callers may override per-grant."
+        },
+        {
+          "path": "grants.expiration.max_ttl_days",
+          "type": "integer",
+          "default": 365,
+          "env": "GRANTS_MAX_TTL_DAYS",
+          "description": "Hard ceiling on non-permanent grants. Enterprise tenants with `permanent_grants` entitlement can set expires_at=NULL to bypass; other tiers are capped here."
+        },
+        {
+          "path": "grants.expiration.warn_before_hours",
+          "type": "integer",
+          "default": 24,
+          "description": "How many hours before expiry the NotifyGrantExpiringJob dispatches the warning notification."
+        }
+      ]
+    },
+    "validation": {
+      "description": "Grant-content validation rules.",
+      "keys": [
+        {
+          "path": "grants.validation.require_reason",
+          "type": "boolean",
+          "default": true,
+          "description": "Whether the `reason` field is required. Should always be true — audit trail promise. Disabling requires an ADR."
+        },
+        {
+          "path": "grants.validation.min_reason_length",
+          "type": "integer",
+          "default": 20,
+          "env": "GRANTS_MIN_REASON_LENGTH",
+          "description": "Minimum characters in `reason` after trim. 20 is the compromise between 'meaningful sentence' and 'not so long it invites laziness like copy-pasting Lorem Ipsum'."
+        },
+        {
+          "path": "grants.validation.placeholder_patterns",
+          "type": "array<string>",
+          "default": ["test", "temp", "todo", "because", "reason", "n/a", "-", "xx"],
+          "description": "Case-insensitive placeholder patterns refused by the ValidGrantReason rule. Update to broaden the guard against low-effort reasons."
+        },
+        {
+          "path": "grants.validation.max_permissions_per_grant",
+          "type": "integer",
+          "default": 64,
+          "description": "Hard cap on the permissions[] array length. 64 is generous; typical grants have 1-5 permissions."
+        }
+      ]
+    },
+    "resolver": {
+      "description": "GrantOverlayResolver tuning.",
+      "keys": [
+        {
+          "path": "grants.resolver.l1_cache_ttl_seconds",
+          "type": "integer",
+          "default": 300,
+          "description": "L1 in-process evaluation cache TTL. 5 minutes is a compromise between staleness (a revoked grant taking effect) and cache-warm-cost (rebuilding on every request)."
+        },
+        {
+          "path": "grants.resolver.l2_cache_ttl_seconds",
+          "type": "integer",
+          "default": 3600,
+          "description": "L2 Redis evaluation cache TTL. 1 hour — invalidation events do the heavy lifting, TTL is a safety net."
+        },
+        {
+          "path": "grants.resolver.cache_prefix",
+          "type": "string",
+          "default": "grants:eval",
+          "description": "Redis key prefix for the evaluation cache."
+        },
+        {
+          "path": "grants.resolver.enable_l2",
+          "type": "boolean",
+          "default": true,
+          "description": "Toggle L2 Redis cache participation. Off = L1 only + DB fallback."
+        },
+        {
+          "path": "grants.resolver.deny_short_circuit",
+          "type": "boolean",
+          "default": true,
+          "description": "Whether the resolver short-circuits on the first deny. Should always be true — this is the safety guarantee we sell. Disabling requires an ADR."
+        }
+      ]
+    },
+    "retention": {
+      "description": "Retention windows for terminal grants.",
+      "keys": [
+        {
+          "path": "grants.retention.revoked_allow_days",
+          "type": "integer",
+          "default": 90,
+          "description": "How many days to retain revoked allow grants before hard-delete."
+        },
+        {
+          "path": "grants.retention.expired_allow_days",
+          "type": "integer",
+          "default": 90,
+          "description": "How many days to retain expired allow grants before hard-delete."
+        },
+        {
+          "path": "grants.retention.deny_grants",
+          "type": "string",
+          "default": "indefinite",
+          "description": "Retention policy for terminal deny grants. Value ALWAYS 'indefinite' — enforced by policy, not config. Present here for documentation."
+        }
+      ]
+    },
+    "bulk": {
+      "description": "Bulk-provisioning tuning.",
+      "keys": [
+        {
+          "path": "grants.bulk.max_rows_per_batch",
+          "type": "integer",
+          "default": 10000,
+          "description": "Hard cap on CSV batch size. Larger uploads refused with GRANT_BULK_TOO_LARGE."
+        },
+        {
+          "path": "grants.bulk.batch_expiry_hours",
+          "type": "integer",
+          "default": 24,
+          "description": "How long a bulk-batch job stays retryable after failure."
+        }
+      ]
+    },
+    "cache_warm": {
+      "description": "grants.warm_grant_cache middleware tuning.",
+      "keys": [
+        {
+          "path": "grants.cache.warm_ceiling",
+          "type": "integer",
+          "default": 500,
+          "description": "Max grants pre-loaded per request by the warm-cache middleware. Beyond this, resolver falls back to lazy L2 lookups."
+        },
+        {
+          "path": "grants.cache.warm_top_grants",
+          "type": "integer",
+          "default": 100,
+          "description": "How many top-recent grants GrantCacheWarmerHook pre-loads on tenant init."
+        }
+      ]
+    },
+    "telemetry": {
+      "description": "Sampling + observability knobs.",
+      "keys": [
+        {
+          "path": "grants.telemetry.cache_hit_sample_ratio",
+          "type": "float",
+          "default": 0.01,
+          "description": "Fraction of GrantEvaluationCacheHit events actually fired (sampling to reduce volume). 1.0 = all, 0.0 = none. Miss events fire 100% — every miss is interesting."
+        },
+        {
+          "path": "grants.telemetry.self_service_attempt_alert_threshold_per_hour",
+          "type": "integer",
+          "default": 10,
+          "description": "Per-tenant alert threshold. Above this, on-call is paged (privilege-escalation stampede)."
+        }
+      ]
+    },
+    "source_registry": {
+      "description": "Enable / disable grant sources.",
+      "keys": [
+        {
+          "path": "grants.source_registry.manual",
+          "type": "boolean",
+          "default": true,
+          "description": "Enable manual admin CRUD path."
+        },
+        {
+          "path": "grants.source_registry.access_request",
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the access-request → grant bridge listener."
+        },
+        {
+          "path": "grants.source_registry.delegation",
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the delegation-driven grant path. Reserved for access/delegation module — no-op until that module lands."
+        },
+        {
+          "path": "grants.source_registry.bulk_provision",
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the CSV bulk-issue path. Complementary to the bulk_grant_provision entitlement."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,203 @@
+{
+  "id": "academorix://modules/rbac/config",
+  "$version": 1,
+  "title": "rbac \u2014 developer configuration",
+  "configFile": "config/rbac.php",
+  "envPrefix": "RBAC_",
+  "description": "RBAC's canonical config surface. Read alongside `config/permission.php` (spatie's shipped file) \u2014 our config OVERLAYS spatie's with Academorix-specific keys. Any key that exists in both, `rbac.*` wins on the code path (it's the tenant-configurable surface); spatie's key remains the substrate default for the vendor package's own paths.",
+  "sections": {
+    "cache": {
+      "description": "Permission cache configuration. See `caches.json` for the key patterns.",
+      "keys": [
+        {
+          "path": "rbac.cache.store",
+          "type": "string",
+          "env": "RBAC_CACHE_STORE",
+          "default": "redis",
+          "enum": ["redis", "memcached", "array"],
+          "description": "Cache store name (must resolve via config('cache.stores')). Falls back to `array` in tests. `array` in production is a startup-fail via CacheStoreProbe."
+        },
+        {
+          "path": "rbac.cache.ttl_seconds",
+          "type": "int",
+          "env": "RBAC_CACHE_TTL",
+          "default": 300,
+          "description": "Per-principal ResolvedPermissionSet TTL. Framework floor: 60s (below this the resolver stampedes DB). Framework ceiling: 3600s (above this cross-node propagation lags too long)."
+        },
+        {
+          "path": "rbac.cache.prefix",
+          "type": "string",
+          "default": "rbac",
+          "description": "Cache key prefix. Overridable per-service so multiple services sharing a Redis instance don't cross-invalidate."
+        },
+        {
+          "path": "rbac.cache.warmup_on_login",
+          "type": "bool",
+          "default": true,
+          "description": "When true, auth's LoginAction fires PermissionCacheManager::warm($user) so the FIRST post-login request doesn't cold-resolve. Off = lazy warm on first check."
+        },
+        {
+          "path": "rbac.cache.broadcast_invalidation",
+          "type": "bool",
+          "env": "RBAC_BROADCAST",
+          "default": true,
+          "description": "Broadcast cache invalidation on Redis pubsub for cross-node propagation. Off = each node's cache lags by up to rbac.cache.ttl_seconds. Required in multi-node deployments."
+        }
+      ]
+    },
+    "roles": {
+      "description": "Role provisioning + creation policy.",
+      "keys": [
+        {
+          "path": "rbac.roles.auto_provision_on_tenant_create",
+          "type": "bool",
+          "default": true,
+          "description": "When true, TenantProvisioned event triggers TenantDefaultRoleSeeder for the tenant's business_type. Off = tenants start with zero roles and admins must manually seed."
+        },
+        {
+          "path": "rbac.roles.allow_custom_roles",
+          "type": "string",
+          "default": "per_entitlement",
+          "enum": ["never", "per_entitlement", "always"],
+          "description": "`per_entitlement` = check `custom_roles` entitlement (Medium+); `always` = ignore entitlements (dev only); `never` = system roles only, no custom creation."
+        },
+        {
+          "path": "rbac.roles.max_permissions_per_role",
+          "type": "int",
+          "default": 500,
+          "description": "Hard cap on permission attach per role. Guards against pathological configurations where an admin attaches every permission to a single role."
+        },
+        {
+          "path": "rbac.roles.max_active_per_principal",
+          "type": "int",
+          "default": 20,
+          "description": "Hard cap on active role assignments per principal. Above this, the assignment observer refuses with `PrincipalTooManyRoles` (422)."
+        }
+      ]
+    },
+    "permissions": {
+      "description": "Permission naming + validation policy.",
+      "keys": [
+        {
+          "path": "rbac.permissions.require_scope_suffix",
+          "type": "bool",
+          "default": true,
+          "description": "When true, every new permission must end with one of the allowed_suffixes. Enforced by `valid_permission_name` rule. Off = free-form permission names (dev only)."
+        },
+        {
+          "path": "rbac.permissions.allowed_suffixes",
+          "type": "array",
+          "default": [".any", ".tenant", ".organization", ".region", ".branch", ".team", ".child", ".own"],
+          "description": "The scope-suffix set enforced by valid_permission_name. See `auth::ScopeSuffixResolver` for how each suffix translates to a query filter."
+        },
+        {
+          "path": "rbac.permissions.reserved_prefixes",
+          "type": "array",
+          "default": ["system.", "_"],
+          "description": "Permission names starting with any of these are refused as custom permissions (owned by the platform, not by tenants)."
+        },
+        {
+          "path": "rbac.permissions.max_name_length",
+          "type": "int",
+          "default": 128,
+          "description": "Enforced by valid_permission_name. Spatie's `name` column is VARCHAR(128) so this is a hard limit."
+        }
+      ]
+    },
+    "assignments": {
+      "description": "Role assignment lifecycle.",
+      "keys": [
+        {
+          "path": "rbac.assignments.allow_time_bounded",
+          "type": "bool",
+          "default": true,
+          "description": "Master toggle for expires_at on model_has_roles. Off = ignore expires_at values from callers; assignments live forever until revoked."
+        },
+        {
+          "path": "rbac.assignments.max_time_bounded_duration_days",
+          "type": "int",
+          "default": 365,
+          "description": "Hard cap on the max distance from now() to expires_at at assignment time. Guards against 'permanent' assignments accidentally set via a distant timestamp."
+        },
+        {
+          "path": "rbac.assignments.reminder_days_before_expiry",
+          "type": "int",
+          "default": 7,
+          "description": "How many days before expires_at to dispatch RoleAssignmentExpiringNotification. 0 = never notify."
+        }
+      ]
+    },
+    "seeding": {
+      "description": "Default role catalogue seeding.",
+      "keys": [
+        {
+          "path": "rbac.seeding.business_type_role_map_path",
+          "type": "string",
+          "default": "modules/access/blueprints/rbac/data/role-catalogue.json",
+          "description": "Path to the JSON manifest driving `rbac:sync-role-definitions`. Absolute paths OK; relative paths resolved against config('app.base_path')."
+        },
+        {
+          "path": "rbac.seeding.mode",
+          "type": "string",
+          "default": "strict",
+          "enum": ["strict", "permissive"],
+          "description": "`strict` = fail seed on any missing referenced permission (must exist in the catalogue first). `permissive` = skip missing permissions with a warning."
+        },
+        {
+          "path": "rbac.seeding.dry_run",
+          "type": "bool",
+          "env": "RBAC_SEED_DRY_RUN",
+          "default": false,
+          "description": "When true, TenantDefaultRoleSeeder reports intended writes to logs without persisting. Useful during migrations."
+        }
+      ]
+    },
+    "resolver": {
+      "description": "PermissionResolver tuning.",
+      "keys": [
+        {
+          "path": "rbac.resolver.consult_grants",
+          "type": "bool",
+          "default": true,
+          "description": "When true (default), step 2 of the resolver algorithm evaluates access/grants. Off = pure RBAC without the grants overlay. Only for dev + tests \u2014 production must have grants on."
+        },
+        {
+          "path": "rbac.resolver.consult_delegation",
+          "type": "bool",
+          "default": true,
+          "description": "Whether step 4 (delegation) fires. Off = principals never inherit delegated permissions."
+        },
+        {
+          "path": "rbac.resolver.default_when_permission_unknown",
+          "type": "string",
+          "default": "deny",
+          "enum": ["deny", "warn_and_deny"],
+          "description": "When the requested permission doesn't exist in the catalogue: `deny` = silent deny; `warn_and_deny` = deny + write a warn-severity log entry. `warn_and_deny` catches typos in `#[RequirePermission('users.viewaany')]`."
+        }
+      ]
+    },
+    "telemetry": {
+      "description": "Analytics sampling for permission checks.",
+      "keys": [
+        {
+          "path": "rbac.telemetry.permission_check_sample_ratio",
+          "type": "float",
+          "default": 0.001,
+          "description": "Fraction of permission checks that fire the `Permission Check Performed` analytics event. 0.001 = 0.1%. Sampling is critical because volume would be crushing (every gated request = one check)."
+        }
+      ]
+    },
+    "commands": {
+      "description": "Console-command safety guards.",
+      "keys": [
+        {
+          "path": "rbac.commands.require_reason",
+          "type": "bool",
+          "env": "RBAC_COMMANDS_REQUIRE_REASON",
+          "default": true,
+          "description": "Every mutating Artisan command (rbac:assign-role, rbac:revoke-role, rbac:seed-defaults --force) requires --reason=<text>. Off in dev; on in staging + prod."
+        }
+      ]
+    }
+  }
+}

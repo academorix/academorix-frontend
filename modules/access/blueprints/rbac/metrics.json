@@ -1,0 +1,126 @@
+{
+  "id": "academorix://modules/rbac/metrics",
+  "$version": 1,
+  "title": "rbac \u2014 OpenTelemetry metrics",
+  "instrumentation": "self via telemetry",
+  "namespace": "academorix.rbac",
+  "labelConventions": {
+    "always": [],
+    "commonlyAvailable": ["guard", "principal_type", "trigger", "source", "outcome"],
+    "forbiddenAsLabels": ["tenant_id", "principal_id", "role_id", "permission_id", "permission_name"]
+  },
+  "metrics": [
+    {
+      "name": "academorix.rbac.resolver.check_total",
+      "kind": "counter",
+      "unit": "checks",
+      "labels": ["source", "outcome"],
+      "description": "source: cache_hit / db_resolved / deny_grant / allow_grant / delegation / default_deny. outcome: allow / deny."
+    },
+    {
+      "name": "academorix.rbac.resolver.duration_us",
+      "kind": "histogram",
+      "unit": "microseconds",
+      "buckets": [50, 200, 1000, 5000, 20000, 100000],
+      "labels": ["source"],
+      "description": "PermissionResolver::resolve() latency. cache_hit P99 target < 1ms; db_resolved P99 target < 20ms."
+    },
+    {
+      "name": "academorix.rbac.cache.hit_ratio",
+      "kind": "gauge",
+      "unit": "ratio",
+      "labels": [],
+      "description": "Rolling 5-minute cache hit ratio across the resolver. Alert threshold <0.9 (cache thrashing indicates broken invalidation OR a stampede)."
+    },
+    {
+      "name": "academorix.rbac.cache.invalidations_total",
+      "kind": "counter",
+      "unit": "invalidations",
+      "labels": ["trigger"],
+      "description": "trigger: role_change / permission_change / assignment_change / bulk / broadcast."
+    },
+    {
+      "name": "academorix.rbac.cache.keys_purged",
+      "kind": "counter",
+      "unit": "keys",
+      "labels": ["trigger"],
+      "description": "How many cache keys purged per invalidation trigger. Feeds a 'invalidation blast radius' dashboard."
+    },
+    {
+      "name": "academorix.rbac.roles.total",
+      "kind": "gauge",
+      "unit": "roles",
+      "labels": ["guard", "is_system"],
+      "description": "Live count of roles per (guard, is_system) tuple."
+    },
+    {
+      "name": "academorix.rbac.permissions.total",
+      "kind": "gauge",
+      "unit": "permissions",
+      "labels": ["guard", "is_system"]
+    },
+    {
+      "name": "academorix.rbac.assignments.total",
+      "kind": "gauge",
+      "unit": "assignments",
+      "labels": ["principal_type", "is_time_bounded"],
+      "description": "Live count of active model_has_roles rows. is_time_bounded: expires_at IS NOT NULL."
+    },
+    {
+      "name": "academorix.rbac.assignments.assigned_total",
+      "kind": "counter",
+      "unit": "assignments",
+      "labels": ["principal_type", "trigger"],
+      "description": "trigger: 'admin_assign' | 'seed_defaults' | 'delegation' | 'onboarding'."
+    },
+    {
+      "name": "academorix.rbac.assignments.revoked_total",
+      "kind": "counter",
+      "unit": "assignments",
+      "labels": ["principal_type", "trigger"],
+      "description": "trigger: 'admin_revoke' | 'assignment_expired' | 'role_deleted' | 'principal_disabled'."
+    },
+    {
+      "name": "academorix.rbac.assignments.expired_total",
+      "kind": "counter",
+      "unit": "assignments",
+      "labels": ["principal_type"],
+      "description": "PurgeExpiredRoleAssignmentsJob output."
+    },
+    {
+      "name": "academorix.rbac.system_role_tampering_total",
+      "kind": "counter",
+      "unit": "refusals",
+      "labels": ["attempted_action"],
+      "description": "Compliance-critical. Alert threshold >0 in prod."
+    },
+    {
+      "name": "academorix.rbac.guard_mismatch_total",
+      "kind": "counter",
+      "unit": "refusals",
+      "labels": ["attempted_role_guard", "attempted_permission_guard"],
+      "description": "Cross-guard write refusals. Alert threshold >0 in prod."
+    },
+    {
+      "name": "academorix.rbac.application_mismatch_total",
+      "kind": "counter",
+      "unit": "refusals",
+      "labels": [],
+      "description": "Cross-Application write refusals. Alert threshold >0 in prod."
+    },
+    {
+      "name": "academorix.rbac.custom_role_slot_usage",
+      "kind": "gauge",
+      "unit": "ratio",
+      "labels": [],
+      "description": "Aggregate: (sum of tenants' custom role counts / sum of tenants' custom_role_slot caps). Feeds the 'tenants approaching quota' dashboard."
+    },
+    {
+      "name": "academorix.rbac.role_definitions.drift",
+      "kind": "gauge",
+      "unit": "definitions",
+      "labels": ["direction"],
+      "description": "direction: 'added' | 'removed_from_catalogue'. Drift between data/role-catalogue.json and role_definitions rows. Emitted by ReconcileRoleDefinitionsJob."
+    }
+  ]
+}

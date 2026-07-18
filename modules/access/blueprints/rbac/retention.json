@@ -1,0 +1,85 @@
+{
+  "id": "academorix://modules/rbac/retention",
+  "$version": 1,
+  "title": "rbac \u2014 retention windows",
+  "description": "Role + permission rows retained while tenant active. Pivots (role_has_permissions + model_has_roles + model_has_permissions) cascade on parent delete. Soft-deleted custom roles retained 90 days for restore, then hard-purged. RoleDefinition never deleted \u2014 only marked is_active=false. Audit rows in the audit module have their own retention window.",
+  "compliance_regimes_referenced": [
+    "soc2_type2 CC6.3 (access provisioning)",
+    "iso_27001 A.9.2 (access management)",
+    "gdpr Art. 5(1)(e) (storage limitation), Art. 17 (right to erasure)"
+  ],
+  "retention": [
+    {
+      "entity": "Role (is_system=true, tenant_id NULL)",
+      "hot": { "days": "permanent while catalogue references the row" },
+      "purge": {
+        "trigger": "manual archive by platform admin (super_admin) + zero active model_has_roles references",
+        "action": "hard delete",
+        "notes": "System roles are shipped by Academorix. Removing one is a platform decision \u2014 usually happens when a business_type is deprecated."
+      }
+    },
+    {
+      "entity": "Role (is_system=false, tenant custom)",
+      "hot": { "days": "while soft-delete window open (up to 90 days after deleted_at)" },
+      "purge": {
+        "trigger": "deleted_at + 90 days OR tenant erasure",
+        "action": "hard delete",
+        "job": "PurgeSoftDeletedRolesJob",
+        "notes": "90-day soft-delete window supports admin recovery ('oops, I deleted the wrong role'). Beyond 90 days, hard-purge."
+      }
+    },
+    {
+      "entity": "Permission (is_system=true)",
+      "hot": { "days": "permanent \u2014 permissions represent code contracts" },
+      "purge": {
+        "trigger": "removed from PermissionCatalogueLoader (i.e. no module #[ProvidesPermissions] contributes this name)",
+        "action": "soft-delete (deleted_at set) + hold indefinitely",
+        "notes": "Never hard-purged because historic audit rows may reference the permission name. Hard-purge would break audit read-back."
+      }
+    },
+    {
+      "entity": "Permission (is_system=false, tenant custom)",
+      "hot": { "days": "while tenant active" },
+      "purge": {
+        "trigger": "tenant erasure",
+        "action": "hard delete via FK cascade",
+        "notes": "Tenant-scoped custom permissions have no cross-tenant audit value \u2014 hard-cascade on tenant delete."
+      }
+    },
+    {
+      "entity": "RoleHasPermissions",
+      "hot": { "days": "while parent role AND parent permission both live" },
+      "purge": {
+        "trigger": "role hard-delete OR permission hard-delete OR explicit detach",
+        "action": "hard delete via FK cascade"
+      }
+    },
+    {
+      "entity": "ModelHasRoles",
+      "hot": { "days": "while assignment active + not expired" },
+      "purge": {
+        "trigger": "expires_at reached (fires RoleAssignmentExpired) OR explicit revoke OR principal delete OR role delete",
+        "action": "hard delete",
+        "job": "PurgeExpiredRoleAssignmentsJob (for the expires_at path)",
+        "notes": "Assignment history is preserved in the audit-log stream (owned by the audit module) \u2014 not in this table. Revoked/expired assignments are hard-purged; the audit row remembers."
+      }
+    },
+    {
+      "entity": "ModelHasPermissions",
+      "hot": { "days": "while assignment active" },
+      "purge": {
+        "trigger": "explicit revoke OR principal delete OR permission delete",
+        "action": "hard delete"
+      }
+    },
+    {
+      "entity": "RoleDefinition",
+      "hot": { "days": "permanent \u2014 never deleted, only marked is_active=false" },
+      "purge": {
+        "trigger": "never (see notes)",
+        "action": "n/a",
+        "notes": "Role definitions are shipped catalogue entries. Removed entries are marked is_active=false so seeder loops skip them but historic tenants can still reference them. Hard purge only happens as part of a controlled platform migration."
+      }
+    }
+  ]
+}

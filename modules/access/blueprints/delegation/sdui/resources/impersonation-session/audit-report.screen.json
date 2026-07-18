@@ -1,0 +1,332 @@
+{
+  "id": "delegation.resources.impersonation-session.audit-report",
+  "title": "Impersonation audit report",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/impersonation/audit",
+  "host": "platform-admin",
+  "audience": "platform_admin",
+  "resource": { "module": "delegation", "entity": "impersonation-session", "action": "audit" },
+  "requiresPermission": "platform.impersonation.audit",
+  "notes": [
+    "This is THE SOC 2 evidence review screen. Auditors traverse this during Type II reviews. All sessions in the window are shown regardless of state — active + ended + refused attempts.",
+    "Restricted to super_admin + dpo + security (see permissions.json). Regular support agents cannot reach.",
+    "CSV + JSON export buttons emit the audit-scoped data (matches the impersonation:audit-report CLI command). The export includes snapshot fields so post-PlatformUser-hard-delete rows remain traceable.",
+    "Grouped-by-operator summary at the top surfaces high-volume operators + high-severity end triggers first."
+  ],
+  "dataSources": [
+    {
+      "name": "auditRows",
+      "kind": "http.get",
+      "url": "/api/v1/platform/impersonation/audit",
+      "unwrap": "data"
+    },
+    {
+      "name": "auditSummary",
+      "kind": "http.get",
+      "url": "/api/v1/platform/impersonation/audit/summary",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Impersonation audit report"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "SOC 2 Type II compliance evidence. Every impersonation session logged with actor + timestamp + reason + duration. 7-year retention."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "leadingIcon": "arrow-down-tray", "children": "Export CSV" },
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.download",
+                      "url": "/api/v1/platform/impersonation/audit.csv"
+                    }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "leadingIcon": "arrow-down-tray", "children": "Export JSON" },
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.download",
+                      "url": "/api/v1/platform/impersonation/audit.json"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Toolbar",
+          "children": [
+            {
+              "kind": "DateRangePicker",
+              "props": {
+                "name": "started_at_range",
+                "label": "Started between",
+                "required": true,
+                "defaultValueExpr": "{ from: (now() - 90d), to: now() }"
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": {
+                "name": "filter[target_tenant_id]",
+                "placeholder": "All tenants",
+                "clearable": true,
+                "optionsSource": {
+                  "kind": "http.get",
+                  "url": "/api/v1/platform/tenants",
+                  "unwrap": "data",
+                  "optionKey": "id",
+                  "optionLabel": "name"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": {
+                "name": "filter[impersonator_platform_user_id]",
+                "placeholder": "All operators",
+                "clearable": true,
+                "optionsSource": {
+                  "kind": "http.get",
+                  "url": "/api/v1/platform/platform-users?filter[status]=active&filter[status]=offboarded",
+                  "unwrap": "data",
+                  "optionKey": "id",
+                  "optionLabel": "profile.display_name"
+                }
+              }
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "filter[department]", "placeholder": "All departments", "clearable": true },
+              "options": [
+                { "key": "support", "label": "Support" },
+                { "key": "engineering", "label": "Engineering" },
+                { "key": "security", "label": "Security" },
+                { "key": "ops", "label": "Operations" },
+                { "key": "dpo", "label": "Data Protection Office" }
+              ]
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "filter[end_trigger]", "placeholder": "Any end trigger", "clearable": true },
+              "options": [
+                { "key": "self_service", "label": "Ended by operator" },
+                { "key": "ttl_expired", "label": "TTL expired" },
+                { "key": "admin_revocation", "label": "Ended by administrator" },
+                { "key": "security_lockdown", "label": "Security lockdown" }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "grid grid-cols-4 gap-4" },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Total sessions" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$ref": "auditSummary.total" } }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Force-terminated" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold text-danger" },
+                  "bindings": { "children": { "$ref": "auditSummary.security_lockdown_count" } }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Refused attempts" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold text-warning" },
+                  "bindings": { "children": { "$ref": "auditSummary.refused_count" } }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Average duration" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "Math.floor(auditSummary.avg_duration_seconds / 60) + 'm'"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "columns": [
+            {
+              "key": "started_at",
+              "header": "Started",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-xs font-mono" },
+                "bindings": { "children": { "$ref": "row.started_at" } }
+              }
+            },
+            {
+              "key": "operator",
+              "header": "Operator",
+              "cell": {
+                "kind": "Text",
+                "bindings": { "children": { "$ref": "row.actor_line" } }
+              }
+            },
+            {
+              "key": "department",
+              "header": "Dept",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "xs" },
+                "bindings": { "children": { "$ref": "row.impersonator_department" } }
+              }
+            },
+            {
+              "key": "tenant",
+              "header": "Tenant",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-xs" },
+                "bindings": { "children": { "$ref": "row.target_tenant.name" } }
+              }
+            },
+            {
+              "key": "impersonated",
+              "header": "Impersonated",
+              "cell": {
+                "kind": "Text",
+                "bindings": {
+                  "children": { "$expr": "row.impersonated.profile.display_name" }
+                }
+              }
+            },
+            {
+              "key": "duration",
+              "header": "Duration",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-xs" },
+                "bindings": {
+                  "children": {
+                    "$expr": "row.duration_seconds ? (Math.floor(row.duration_seconds / 60) + 'm') : '(active)'"
+                  }
+                }
+              }
+            },
+            {
+              "key": "mode",
+              "header": "Mode",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "xs" },
+                "bindings": {
+                  "children": { "$expr": "row.is_read_only ? 'RO' : 'RW'" },
+                  "variant": { "$expr": "row.is_read_only ? 'info' : 'warning'" }
+                }
+              }
+            },
+            {
+              "key": "end_trigger",
+              "header": "End trigger",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "xs" },
+                "bindings": {
+                  "children": {
+                    "$expr": "row.end_trigger ? ({ self_service: 'Ended', ttl_expired: 'Expired', admin_revocation: 'Admin', security_lockdown: 'Lockdown' }[row.end_trigger]) : 'Active'"
+                  },
+                  "variant": {
+                    "$expr": "row.end_trigger === 'security_lockdown' ? 'danger' : (row.is_active ? 'success' : 'neutral')"
+                  }
+                }
+              }
+            },
+            {
+              "key": "ticket",
+              "header": "Ticket",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-xs font-mono" },
+                "bindings": {
+                  "children": { "$expr": "row.support_ticket_reference || '—'" }
+                }
+              }
+            },
+            {
+              "key": "actions",
+              "header": "",
+              "cell": {
+                "kind": "Button",
+                "props": { "variant": "ghost", "size": "sm", "children": "Detail" },
+                "actions": {
+                  "onPress": {
+                    "kind": "navigate",
+                    "toExpr": "'/platform/impersonation/sessions/' + row.id"
+                  }
+                }
+              }
+            }
+          ],
+          "bindings": { "rows": { "$ref": "auditRows" } }
+        }
+      ]
+    }
+  ]
+}

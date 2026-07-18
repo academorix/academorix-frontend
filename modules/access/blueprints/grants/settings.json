@@ -1,0 +1,228 @@
+{
+  "id": "academorix://modules/grants/settings",
+  "$version": 1,
+  "title": "grants — settings",
+  "description": "Tenant-editable settings. Two groups: `grants` (tenant defaults + notifications; owner + admin only) and `grants_review` (compliance officer's access-review preferences). Distinct from config.json (developer / deploy-time configuration).",
+  "storedIn": "settings",
+  "sduiScreen": "sdui/screens/settings-grants.screen.json",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "grants",
+      "class": "Academorix\\Grant\\Settings\\GrantSettings",
+      "label": "Access grants",
+      "description": "Tenant-wide preferences for the share-access feature. Owner + admin only.",
+      "icon": "shield-check",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 30,
+      "permission": "grants.manage",
+      "sections": [
+        {
+          "label": "Expiration defaults",
+          "description": "How long grants stay valid by default. Callers may override per-grant within these limits.",
+          "icon": "clock",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "default_ttl_days",
+              "controlType": "number",
+              "label": "Default expiry (days)",
+              "defaultValue": 30,
+              "validation": ["required", "integer", "min:1", "max:365"],
+              "min": 1,
+              "max": 365,
+              "sortOrder": 1,
+              "helpText": "Default `expires_at` on new grants. Users can override per-grant within the max_ttl_days ceiling."
+            },
+            {
+              "name": "max_ttl_days",
+              "controlType": "number",
+              "label": "Maximum expiry (days)",
+              "defaultValue": 365,
+              "validation": ["required", "integer", "min:1", "max:365"],
+              "min": 1,
+              "max": 365,
+              "sortOrder": 2,
+              "helpText": "Hard ceiling. Enterprise tenants with the permanent-grants entitlement can bypass by leaving expiry empty.",
+              "gates": { "hidden_when_entitlement": "permanent_grants" }
+            },
+            {
+              "name": "warn_before_hours",
+              "controlType": "number",
+              "label": "Warn subject before expiry (hours)",
+              "defaultValue": 24,
+              "validation": ["required", "integer", "min:1", "max:168"],
+              "min": 1,
+              "max": 168,
+              "sortOrder": 3,
+              "helpText": "How many hours before a grant expires the subject + grantor receive a warning notification. Zero disables the warning."
+            }
+          ]
+        },
+        {
+          "label": "Reason requirements",
+          "description": "The audit trail's promise: every grant carries a meaningful reason.",
+          "icon": "document-text",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "min_reason_length",
+              "controlType": "number",
+              "label": "Minimum reason length (characters)",
+              "defaultValue": 20,
+              "validation": ["required", "integer", "min:0", "max:200"],
+              "min": 0,
+              "max": 200,
+              "sortOrder": 1,
+              "helpText": "Reason field must be at least this many characters (after trim). 20 is the compromise between meaningful and non-intrusive."
+            },
+            {
+              "name": "block_placeholder_reasons",
+              "controlType": "toggle",
+              "label": "Block placeholder reasons",
+              "defaultValue": true,
+              "validation": ["boolean"],
+              "sortOrder": 2,
+              "helpText": "Reject reasons matching common placeholders like 'test', 'temp', 'because'."
+            }
+          ]
+        },
+        {
+          "label": "Notifications",
+          "icon": "bell-alert",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "notify_subject_on_issue",
+              "controlType": "toggle",
+              "label": "Notify subject when they receive a grant",
+              "defaultValue": true,
+              "validation": ["boolean"],
+              "sortOrder": 1
+            },
+            {
+              "name": "notify_subject_on_revoke",
+              "controlType": "toggle",
+              "label": "Notify subject when a grant is revoked",
+              "defaultValue": true,
+              "validation": ["boolean"],
+              "sortOrder": 2
+            },
+            {
+              "name": "notify_grantor_on_expiring",
+              "controlType": "toggle",
+              "label": "Notify grantor when a grant they issued is expiring",
+              "defaultValue": false,
+              "validation": ["boolean"],
+              "sortOrder": 3,
+              "helpText": "By default only the subject sees the expiry warning. Enable this for grantors who want to renew proactively."
+            },
+            {
+              "name": "notify_admins_on_deny_attempt",
+              "controlType": "toggle",
+              "label": "Alert admins when a deny grant blocks an access attempt",
+              "defaultValue": false,
+              "validation": ["boolean"],
+              "sortOrder": 4,
+              "helpText": "Fires DeniedAccessAttemptNotification when a subject with a deny grant tries the denied action. Noisy on high-traffic tenants — off by default.",
+              "gates": { "requires_entitlement": "deny_grants" }
+            }
+          ]
+        },
+        {
+          "label": "Bulk provisioning",
+          "description": "Preferences for the CSV bulk-issue feature.",
+          "icon": "queue-list",
+          "sortOrder": 4,
+          "requiresEntitlement": "bulk_grant_provision",
+          "fields": [
+            {
+              "name": "bulk_default_source",
+              "controlType": "text",
+              "label": "Default source tag",
+              "defaultValue": "bulk_provision",
+              "validation": ["nullable", "string", "max:64"],
+              "sortOrder": 1,
+              "helpText": "Grants uploaded via CSV get this string as `source_reference` prefix, useful when running multiple batches in a day."
+            },
+            {
+              "name": "bulk_require_reason_per_row",
+              "controlType": "toggle",
+              "label": "Require a reason on every CSV row",
+              "defaultValue": true,
+              "validation": ["boolean"],
+              "sortOrder": 2,
+              "helpText": "When off, missing per-row reasons fall back to the batch-level reason."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "grants_review",
+      "class": "Academorix\\Grant\\Settings\\GrantsReviewSettings",
+      "label": "Access reviews",
+      "description": "Preferences for the periodic access-review workflow (ISO 27001 A.9.2.5). Compliance officer role.",
+      "icon": "clipboard-document-check",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 32,
+      "permission": "grants.audit_any",
+      "requiresFeature": "grants.access_reviews",
+      "requiresEntitlement": "grant_audit_report",
+      "sections": [
+        {
+          "label": "Review cadence",
+          "icon": "calendar",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "review_frequency",
+              "controlType": "select",
+              "label": "How often should reviews run?",
+              "defaultValue": "quarterly",
+              "options": {
+                "monthly": "Monthly",
+                "quarterly": "Quarterly (ISO 27001 recommendation)",
+                "semi_annually": "Every 6 months",
+                "annually": "Annually"
+              },
+              "sortOrder": 1
+            },
+            {
+              "name": "review_scope",
+              "controlType": "select",
+              "label": "Which grants require review?",
+              "defaultValue": "long_lived",
+              "options": {
+                "all_active": "Every active grant",
+                "long_lived": "Grants older than 90 days",
+                "permanent_only": "Permanent grants (no expiry)",
+                "deny_only": "Deny grants only"
+              },
+              "sortOrder": 2,
+              "helpText": "Long-lived + permanent grants are the highest-risk category — reviewing everything is time-consuming."
+            }
+          ]
+        },
+        {
+          "label": "Reviewer routing",
+          "icon": "users",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "primary_reviewer_role",
+              "controlType": "select",
+              "label": "Primary reviewer role",
+              "defaultValue": "compliance_officer",
+              "optionsSource": "roles.tenant",
+              "sortOrder": 1,
+              "helpText": "Every user with this role receives a review-batch notification at the start of each review cycle."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

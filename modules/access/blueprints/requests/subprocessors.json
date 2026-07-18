@@ -1,0 +1,22 @@
+{
+  "id": "academorix://modules/access/requests/subprocessors",
+  "$version": 1,
+  "title": "requests \u2014 third-party subprocessors",
+  "description": "This module does NOT directly integrate with any third-party subprocessor. Every external touchpoint (mail delivery for notifications, database, cache) is owned by a UPSTREAM module (`notifications` for mail transports, `foundation` for Redis/DB) whose own subprocessors.json documents its providers. This file exists for uniform blueprint shape and to make the empty state explicit \u2014 auditors verifying the DPA registry get a clean 'no direct integrations' signal.",
+  "publicRegistryUrl": "https://academorix.app/subprocessors",
+  "subprocessors": [],
+  "indirectSubprocessors": [
+    {
+      "module": "notifications",
+      "description": "Mail transport for AccessRequestSubmittedNotification, AccessRequestApprovedNotification, AccessRequestRejectedNotification, AccessRequestExpiredNotification, AccessRequestReminderNotification. Actual transport per tenant is one of SendGrid / SES / Postmark / Mailgun \u2014 see `modules/notifications/subprocessors.json` for the DPA-registered list."
+    },
+    {
+      "module": "foundation",
+      "description": "Postgres for the underlying approval_instances + access_grants storage; Redis for cache keys + queue backing. Standard shared infrastructure."
+    }
+  ],
+  "operational_notes": [
+    "Because there is no direct integration, no per-module DPA action is required if a mail transport is added or removed. The notifications module owns those transitions.",
+    "If a future version of this module introduces a dedicated subprocessor (e.g. Twilio for SMS access-request escalation), the DPA + region + region metadata will land here."
+  ]
+}

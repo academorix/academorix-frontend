@@ -1,0 +1,205 @@
+{
+  "id": "academorix://modules/rbac/schemas/permission",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Permission",
+  "description": "Spatie's `permissions` table augmented with Academorix scope columns (application_id, tenant_id, is_system, description, module_slug, sort_order). Dot-notated names with scope-suffix (`invoices.viewAny.tenant`). Composite unique on (application_id, tenant_id, name, guard_name).",
+  "type": "object",
+  "x-module": "rbac",
+  "x-eloquent": {
+    "baseClass": "Spatie\\Permission\\Models\\Permission",
+    "table": "permissions",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "per_",
+    "incrementing": false,
+    "model": "Academorix\\Rbac\\Models\\Permission",
+    "interface": "Academorix\\Rbac\\Contracts\\Data\\PermissionInterface",
+    "implements": ["Academorix\\Rbac\\Contracts\\Data\\PermissionInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "HasSystemFlag",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "is_system": "boolean",
+      "sort_order": "integer",
+      "metadata": "array"
+    },
+    "appends": ["scope_suffix", "resource", "action", "display_label", "role_count"],
+    "observers": ["PermissionObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "description": "Extends spatie's shipped permissions table. Same shape augmentation as roles.",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `per_<26 chars>`."
+      },
+      "application_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "applications",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        }
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "Non-null only for tenant-created custom permissions (Enterprise entitlement)."
+      },
+      "name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Dot-notated. `<resource>.<action>.<scope>` per config('rbac.permissions.allowed_suffixes'). Validated by valid_permission_name rule."
+      },
+      "guard_name": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'sanctum'"
+      },
+      "is_system": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "True = seeded from a module's permissions.json (via PermissionCatalogueLoader) OR from data/permission-catalogue.json."
+      },
+      "description": {
+        "type": "text",
+        "nullable": true
+      },
+      "module_slug": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Slug of the module that provided this permission (e.g. `invoices`, `athletes`, `rbac`). NULL for tenant-created custom permissions. Populated by PermissionCatalogueLoader from #[ProvidesPermissions(module: ...)]."
+      },
+      "sort_order": {
+        "type": "integer",
+        "nullable": false,
+        "default": 100,
+        "description": "Ascending sort in the tenant admin's permission picker UI. Module-scoped defaults are hand-tuned."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["application_id", "tenant_id", "name", "guard_name"],
+        "unique": true,
+        "predicate": "deleted_at IS NULL",
+        "name": "permissions_composite_unique"
+      },
+      {
+        "columns": ["application_id", "tenant_id"],
+        "unique": false,
+        "name": "permissions_scope_idx"
+      },
+      {
+        "columns": ["guard_name"],
+        "unique": false,
+        "name": "permissions_guard_idx"
+      },
+      {
+        "columns": ["module_slug"],
+        "unique": false,
+        "name": "permissions_module_idx",
+        "description": "Fast filter for the module-scoped list view (`filter[module_slug]=invoices`)."
+      },
+      {
+        "columns": ["name"],
+        "unique": false,
+        "name": "permissions_name_prefix_idx",
+        "description": "Prefix scan for `filter[pattern]=athletes.*`. Postgres uses this via LIKE 'athletes.%'."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "name",
+    "guard_name",
+    "is_system",
+    "sort_order",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^per_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "application_id": { "type": ["string", "null"], "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": ["string", "null"], "pattern": "^tnt_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.]*\\.(any|tenant|organization|region|branch|team|child|own)$",
+      "maxLength": 128
+    },
+    "guard_name": { "type": "string", "enum": ["sanctum", "platform_admin"] },
+    "is_system": { "type": "boolean" },
+    "description": { "type": ["string", "null"] },
+    "module_slug": { "type": ["string", "null"], "pattern": "^[a-z][a-z0-9_-]*$" },
+    "sort_order": { "type": "integer", "minimum": 0 },
+    "metadata": { "type": ["object", "null"] },
+    "scope_suffix": {
+      "type": "string",
+      "enum": ["any", "tenant", "organization", "region", "branch", "team", "child", "own"],
+      "description": "Computed. Last segment of the dot-notated name."
+    },
+    "resource": {
+      "type": "string",
+      "description": "Computed. First segment. E.g. `invoices` in `invoices.viewAny.tenant`."
+    },
+    "action": {
+      "type": "string",
+      "description": "Computed. Middle segment(s). E.g. `viewAny` in `invoices.viewAny.tenant`."
+    },
+    "display_label": {
+      "type": "string",
+      "description": "Computed. Human-readable form. Falls back to `name`."
+    },
+    "role_count": {
+      "type": "integer",
+      "description": "Computed. Number of roles this permission is attached to (via role_has_permissions)."
+    },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["scope_suffix", "resource", "action", "display_label", "role_count"]
+  }
+}

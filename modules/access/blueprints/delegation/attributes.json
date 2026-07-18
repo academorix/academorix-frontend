@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/delegation/attributes",
+  "$version": 1,
+  "title": "delegation — PHP attribute contracts",
+  "description": "Two attributes for lifecycle listeners. `#[AsDelegationListener]` marks a class as a subscriber to role_delegations events (Created / Activated / Expired / RevokedEarly / SelfOverlapDetected). `#[AsImpersonationListener]` marks a class as a subscriber to impersonation_sessions events (Started / Ended / Extended / ForcedTerminate / AttemptRefused). Both are discovered at boot by `DelegationServiceProvider` so internal services under `notifications`, `observability`, `compliance`, and `workflow/approvals` react without hard-coded event bindings.",
+  "namespace": "Academorix\\Delegation\\Attributes",
+  "attributes": [
+    {
+      "name": "AsDelegationListener",
+      "class": "Academorix\\Delegation\\Attributes\\AsDelegationListener",
+      "targets": ["class"],
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": ["*"],
+          "description": "Which delegation events this class reacts to. Wildcard `*` = every event under `Academorix\\Delegation\\Events\\*` matching the delegation aggregate (Created / Activated / Expired / RevokedEarly / SelfOverlapDetected). Specific list e.g. `['DelegationRevokedEarly']` subscribes to that event only. Validated against the events map at boot; typos abort application boot."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": "notifications",
+          "description": "Queue name for asynchronous dispatch. Set to `null` for synchronous listeners (rare — reserve for audit tap-outs that MUST land in the same request cycle). Common values: `notifications` (default), `notifications-critical` (for DelegationSelfOverlapDetected — a security-sensitive signal that must not queue behind a backlog)."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Listener execution order. Lower values run first. Reserve 1–99 for framework-owned listeners (audit stamping, cache invalidation). Example: `InvalidateDelegationResolverCache` runs at priority=10 so the resolver cache is fresh before any downstream listener queries it."
+        }
+      ],
+      "example": "#[AsDelegationListener(events: ['DelegationCreated', 'DelegationActivated', 'DelegationExpired'], queue: 'notifications')]\nfinal class SendDelegationLifecycleEmail\n{\n    public function handle(object $event): void\n    {\n        // ... compose + dispatch email\n    }\n}"
+    },
+    {
+      "name": "AsImpersonationListener",
+      "class": "Academorix\\Delegation\\Attributes\\AsImpersonationListener",
+      "targets": ["class"],
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": ["*"],
+          "description": "Which impersonation events this class reacts to. Wildcard `*` = every event under `Academorix\\Delegation\\Events\\*` matching the impersonation aggregate (Started / Ended / Extended / ForcedTerminate / AttemptRefused). Specific list e.g. `['ImpersonationSessionForcedTerminate']` subscribes to that event only."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": "notifications-critical",
+          "description": "Queue name for asynchronous dispatch. DEFAULT `notifications-critical` because impersonation events have SLA implications — SOC 2 evidence writes cannot be delayed by a backlog. Override to `notifications` for lighter listeners (e.g. analytics tracking) where a moderate lag is acceptable."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Listener execution order. Lower values run first. Reserve 1–99 for framework-owned listeners. Example: `WriteHeavyAuditRow` on ImpersonationSessionStarted runs at priority=10 so the compliance audit is written BEFORE downstream notification-composers read the row."
+        },
+        {
+          "name": "requires_platform_permission",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional permission gate on the `platform_admin` guard. When set, the listener refuses to run if the triggering actor lacks the permission. Rarely used — impersonation listeners typically fire for compliance-driven side effects that must not skip."
+        }
+      ],
+      "example": "#[AsImpersonationListener(events: ['ImpersonationSessionForcedTerminate'], queue: 'notifications-critical', priority: 5)]\nfinal class PageSecurityOnForcedTerminate\n{\n    public function handle(ImpersonationSessionForcedTerminate $event): void\n    {\n        // ... PagerDuty + Slack #security\n    }\n}"
+    }
+  ]
+}

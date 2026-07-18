@@ -1,0 +1,316 @@
+{
+  "id": "delegation.resources.role-delegation.list",
+  "title": "My delegations",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/me/delegations",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "delegation", "entity": "role-delegation", "action": "list" },
+  "requiresPermission": "delegations.viewAny",
+  "notes": [
+    "Split view — outbound (as delegator) at the top, inbound (as delegate) below. The two tables share the same row shape but differ in the pronoun used in labels + the available actions (revoke only on outbound).",
+    "Live-updates via the tenant.{tenant_id}.delegations broadcast — a newly-activated inbound delegation appears without reload; a revoked outbound row transitions state instantly."
+  ],
+  "dataSources": [
+    {
+      "name": "outboundDelegations",
+      "kind": "http.get",
+      "url": "/api/v1/me/delegations",
+      "unwrap": "data"
+    },
+    {
+      "name": "inboundDelegations",
+      "kind": "http.get",
+      "url": "/api/v1/me/delegation-received",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-6xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Delegations"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Hand a role to a colleague while you're out. They'll receive your approver duties + role permissions for the window."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "plus",
+                "children": "New delegation"
+              },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/me/delegations/new" } },
+              "requiresPermission": "delegations.create"
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-2",
+                "children": "I'm delegating out"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted mb-4",
+                "children": "Delegations where you are the delegator. Only you (or an admin) can revoke."
+              }
+            },
+            {
+              "kind": "Table",
+              "columns": [
+                {
+                  "key": "delegate",
+                  "header": "Delegate",
+                  "cell": {
+                    "kind": "Link",
+                    "propsExpr": "{ to: '/tenant/me/delegations/' + row.id, children: row.delegate.profile.display_name }"
+                  }
+                },
+                {
+                  "key": "role",
+                  "header": "Role",
+                  "cell": {
+                    "kind": "Text",
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.is_all_roles ? 'All roles' : (row.role.name)"
+                      }
+                    }
+                  }
+                },
+                {
+                  "key": "type",
+                  "header": "Type",
+                  "cell": {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "neutral" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "({ oof: 'OOF', handover: 'Handover', emergency: 'Emergency' }[row.delegation_type])"
+                      }
+                    }
+                  }
+                },
+                {
+                  "key": "window",
+                  "header": "Window",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-xs" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.starts_at + ' → ' + row.ends_at"
+                      }
+                    }
+                  }
+                },
+                {
+                  "key": "state",
+                  "header": "State",
+                  "cell": {
+                    "kind": "Widget",
+                    "widget": "delegation.delegation-status-chip",
+                    "propsExpr": "{ delegation: row, size: 'xs' }"
+                  }
+                },
+                {
+                  "key": "remaining",
+                  "header": "Remaining",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.is_active ? (row.remaining_hours < 24 ? row.remaining_hours + 'h' : Math.floor(row.remaining_hours / 24) + 'd') : '—'"
+                      }
+                    }
+                  }
+                },
+                {
+                  "key": "actions",
+                  "header": "",
+                  "cell": {
+                    "kind": "Menu",
+                    "trigger": {
+                      "kind": "Button",
+                      "props": {
+                        "variant": "ghost",
+                        "isIconOnly": true,
+                        "children": { "kind": "Icon", "props": { "name": "ellipsis-vertical" } }
+                      }
+                    },
+                    "items": [
+                      {
+                        "kind": "MenuItem",
+                        "props": { "children": "View" },
+                        "actions": {
+                          "onPress": {
+                            "kind": "navigate",
+                            "toExpr": "'/tenant/me/delegations/' + row.id"
+                          }
+                        }
+                      },
+                      {
+                        "kind": "MenuItem",
+                        "props": { "children": "Revoke early", "variant": "danger" },
+                        "bindings": { "hidden": { "$expr": "!row.is_active && !row.is_pending" } },
+                        "actions": {
+                          "onPress": {
+                            "kind": "modal.open",
+                            "modal": "revoke-delegation",
+                            "propsExpr": "{ delegationId: row.id }"
+                          }
+                        },
+                        "requiresPermission": "delegations.revoke"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "bindings": { "rows": { "$ref": "outboundDelegations" } }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold mb-2",
+                "children": "Delegated to me"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted mb-4",
+                "children": "Active delegations where you may act on behalf of someone else. Only the delegator (or admin) can revoke early."
+              }
+            },
+            {
+              "kind": "Table",
+              "columns": [
+                {
+                  "key": "delegator",
+                  "header": "Delegator",
+                  "cell": {
+                    "kind": "Text",
+                    "bindings": { "children": { "$expr": "row.delegator.profile.display_name" } }
+                  }
+                },
+                {
+                  "key": "role",
+                  "header": "Role",
+                  "cell": {
+                    "kind": "Text",
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.is_all_roles ? 'All roles' : (row.role.name)"
+                      }
+                    }
+                  }
+                },
+                {
+                  "key": "type",
+                  "header": "Type",
+                  "cell": {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "neutral" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "({ oof: 'OOF', handover: 'Handover', emergency: 'Emergency' }[row.delegation_type])"
+                      }
+                    }
+                  }
+                },
+                {
+                  "key": "window",
+                  "header": "Window",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-xs" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.starts_at + ' → ' + row.ends_at"
+                      }
+                    }
+                  }
+                },
+                {
+                  "key": "remaining",
+                  "header": "Remaining",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-xs" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.remaining_hours < 24 ? row.remaining_hours + 'h' : Math.floor(row.remaining_hours / 24) + 'd'"
+                      }
+                    }
+                  }
+                },
+                {
+                  "key": "actions",
+                  "header": "",
+                  "cell": {
+                    "kind": "Button",
+                    "props": { "variant": "ghost", "size": "sm", "children": "View" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/me/delegations/' + row.id"
+                      }
+                    }
+                  }
+                }
+              ],
+              "bindings": { "rows": { "$ref": "inboundDelegations" } }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "broadcasts": {
+    "subscribe": ["tenant.{tenant_id}.delegations"],
+    "refreshDataSourcesOnEvent": {
+      "delegation.created": ["outboundDelegations"],
+      "delegation.activated": ["outboundDelegations", "inboundDelegations"],
+      "delegation.expired": ["outboundDelegations", "inboundDelegations"],
+      "delegation.revoked_early": ["outboundDelegations", "inboundDelegations"]
+    }
+  }
+}

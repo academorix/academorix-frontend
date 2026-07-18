@@ -1,0 +1,100 @@
+{
+  "id": "access-requests.screens.access-denied",
+  "title": "Access denied",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/access-denied",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": null,
+  "description": "The Google-Docs 403 shell. Rendered by the SPA router whenever any tenant-plane API responds 403 with `code === 'access_denied.can_request'`. Reads the resource / permissions / request_payload_template from the route state (populated by the SPA's HTTP error interceptor from the 403 body) and offers the requester the affordance to submit a new access request in a pre-filled modal.",
+  "dataSources": [
+    {
+      "name": "denial",
+      "kind": "route.state",
+      "path": "denial",
+      "description": "Populated by the SPA error interceptor when it caught a 403 with `code='access_denied.can_request'`. Shape: `{ resource, permissions_wanted, request_url, request_payload_template }`."
+    },
+    {
+      "name": "myPermissions",
+      "kind": "http.get",
+      "url": "/api/auth/me",
+      "unwrap": "data.permissions",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "mx-auto flex max-w-2xl flex-col items-center gap-6 p-12" },
+      "children": [
+        {
+          "id": "icon",
+          "kind": "Icon",
+          "props": { "icon": "lock-closed", "className": "size-16 text-muted" }
+        },
+        {
+          "id": "heading",
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold text-center", "children": "You don't have permission" }
+        },
+        {
+          "id": "subheading",
+          "kind": "Text",
+          "props": { "as": "p", "className": "text-muted text-center max-w-lg" },
+          "bindings": {
+            "children": {
+              "$expr": "denial ? ('You need ' + denial.permissions_wanted.join(' and ') + ' on ' + (denial.resource && denial.resource.display_name ? denial.resource.display_name : denial.resource.type) + ' to see this page. Ask for access below \u2014 the resource owner will decide.') : 'You do not have access to this page. If you think this is a mistake, contact your admin.'"
+            }
+          }
+        },
+        {
+          "id": "actions",
+          "kind": "View",
+          "props": { "className": "flex items-center gap-3" },
+          "children": [
+            {
+              "id": "back",
+              "kind": "Button",
+              "props": { "variant": "secondary", "size": "md", "children": "Go back", "leadingIcon": "arrow-left" },
+              "actions": { "onPress": { "kind": "navigate.back" } }
+            },
+            {
+              "id": "request",
+              "kind": "Button",
+              "props": { "variant": "primary", "size": "md", "children": "Request access", "leadingIcon": "paper-airplane" },
+              "bindings": { "isHidden": { "$expr": "!denial || !denial.request_url" } },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "to": "/tenant/access-requests/new",
+                  "stateFromExpr": "{ request_payload_template: denial.request_payload_template }"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "already-have-hint",
+          "kind": "Alert",
+          "props": { "variant": "info", "className": "mt-4" },
+          "bindings": {
+            "hidden": { "$expr": "!denial || !denial.permissions_wanted.every(p => myPermissions.includes(p))" }
+          },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm" },
+              "bindings": {
+                "children": {
+                  "$expr": "'Hmm \u2014 our records show you already have ' + denial.permissions_wanted.join(' and ') + '. Try refreshing your session, or contact your admin if this persists.'"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

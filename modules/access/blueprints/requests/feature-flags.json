@@ -1,0 +1,72 @@
+{
+  "id": "academorix://modules/access/requests/feature-flags",
+  "$version": 1,
+  "title": "requests \u2014 rollout flags",
+  "description": "Rollout / change-management flags for THIS module. Distinct from `features.json` (tenant-facing catalogue entries). Every material change ships behind a flag per SOC 2 CC8.1.",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "access_requests.kill_switch",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Turns off ALL submit endpoints without a redeploy. Incident-response only \u2014 flipping off returns 503 to every POST /access-requests. Existing pending requests continue through approval + materialisation normally."
+    },
+    {
+      "key": "access_requests.request_hint_on_denial",
+      "kind": "rollout",
+      "default": "on",
+      "cohorts": [],
+      "description": "The `access.request_hint_on_denial` middleware. On by default. Kill switch on if we ever hit a 403-decoration pathology (e.g. a bad registry entry causing false-positive hints)."
+    },
+    {
+      "key": "access_requests.grant_materialisation_inline",
+      "kind": "rollout",
+      "default": "on",
+      "cohorts": [],
+      "description": "AccessRequestGrantMaterializer runs inline in the ApprovalExecuted listener chain (synchronous with commit). Setting to `off` reroutes materialisation through a queued job (`MaterializeGrantJob`, not shipped yet). Only for use if grant creation ever becomes slow enough to stall the approval commit."
+    },
+    {
+      "key": "access_requests.optimistic_approved_notification",
+      "kind": "rollout",
+      "default": "on",
+      "cohorts": [],
+      "description": "AccessRequestApproved notification fires on the ApprovalGranted event (BEFORE the grant is materialised). Body language: 'you should now be able to access X' (optimistic). Setting to `off` defers the notification to AccessRequestGrantIssued so it only sends AFTER the grant exists. Trade-off: certainty vs latency."
+    },
+    {
+      "key": "access_requests.approver_delegation_awareness",
+      "kind": "rollout",
+      "default": "on",
+      "cohorts": [],
+      "description": "AccessRequestApproverResolver consults active `role_delegations` and swaps delegated approvers into the resolved set. Off by default in dev environments to make delegation debugging easier."
+    },
+    {
+      "key": "access_requests.resource_owner_fallback",
+      "kind": "rollout",
+      "default": "on",
+      "cohorts": [],
+      "description": "When the approver-selector returns an empty set (no admin role in the tenant, no matching template), fall back to the resource's `created_by` user as the sole approver. Off = raise INVALID_APPROVER_CONFIGURATION instead. Recommended ON in production for graceful degradation; OFF in dev to surface misconfigurations early."
+    },
+    {
+      "key": "access_requests.bulk_approve_ui",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [
+        { "name": "enterprise-canary", "predicate": "tenant.subscription.plan = 'enterprise' AND tenant.entitlements.access_request_bulk_approve = true", "state": "on" }
+      ],
+      "description": "SDUI bulk-approve control in the pending-my-review list. Ships to enterprise-tier canary tenants first; broader rollout gated on real-world data."
+    },
+    {
+      "key": "access_requests.audit_report_v2",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [
+        { "name": "internal-compliance-team", "predicate": "user.email ENDS WITH '@academorix.com' AND user.groups CONTAINS 'compliance'", "state": "on" }
+      ],
+      "description": "Enhanced audit-report format with per-resource-type breakdowns + time-to-decision histograms. Off until the compliance team signs off on the shape."
+    }
+  ],
+  "retirement_policy": {
+    "description": "A flag lives at most 90 days after reaching 100% GA. After 90d, either the flag is deleted OR converts to a `kill-switch`. Prevents flag-registry sprawl.",
+    "reviewCommand": "access-requests:review-flags"
+  }
+}

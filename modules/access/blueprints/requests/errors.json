@@ -1,0 +1,180 @@
+{
+  "id": "academorix://modules/access/requests/errors",
+  "$version": 1,
+  "title": "requests \u2014 error catalogue",
+  "description": "Error codes this module emits. `user_facing` controls whether the message renders to end users (translated via i18n). `retryable` signals client-side retry. `audit_severity` routes to the correct log channel \u2014 `alert` pages on-call.",
+  "namespace": "access_requests",
+  "errors": [
+    {
+      "code": "ACCESS_DENIED_CAN_REQUEST",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "access-request.errors.access_denied_can_request",
+      "description": "The Google-Docs 403 hint. This is NOT an error emitted by THIS module \u2014 it's the CODE the `access.request_hint_on_denial` middleware writes into another module's 403 body. Documented here so the front-end error catalogue is complete."
+    },
+    {
+      "code": "INVALID_REQUESTABLE_RESOURCE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "access-request.errors.invalid_requestable_resource",
+      "description": "The submitted `resource_type` is not in AccessRequestableRegistry."
+    },
+    {
+      "code": "RESOURCE_NOT_IN_CALLER_TENANT",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "access-request.errors.resource_not_in_caller_tenant",
+      "description": "The target resource exists but is in a different tenant. Cross-tenant access requests are forbidden. Warn severity because it may indicate an attempted lateral-move probe."
+    },
+    {
+      "code": "RESOURCE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "access-request.errors.resource_not_found",
+      "description": "The `resource_id` does not resolve to a live row of `resource_type` in the caller's tenant."
+    },
+    {
+      "code": "PERMISSION_NOT_ON_RESOURCE_TYPE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "access-request.errors.permission_not_on_resource_type",
+      "description": "One or more `permissions_wanted` are not declared on the resource type via `#[AccessRequestable(permissions: [...])]`."
+    },
+    {
+      "code": "INVALID_REASON_LENGTH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "access-request.errors.invalid_reason_length",
+      "description": "`reason` must be between 20 and 1000 chars. Short reasons don't help approvers decide; over-long reasons are usually copy-paste artefacts."
+    },
+    {
+      "code": "DUPLICATE_PENDING_REQUEST",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "access-request.errors.duplicate_pending_request",
+      "description": "The caller already has a pending request for the same (resource_type, resource_id, permissions_wanted) tuple. Withdraw or wait for the existing request before submitting a new one."
+    },
+    {
+      "code": "INVALID_APPROVER_CONFIGURATION",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "access-request.errors.invalid_approver_configuration",
+      "description": "AccessRequestApproverResolver produced an empty approver set + resource-owner fallback also failed. Platform-side misconfiguration \u2014 pages on-call to fix the tenant's role assignments or template."
+    },
+    {
+      "code": "CALLER_NOT_APPROVER",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "access-request.errors.caller_not_approver",
+      "description": "The caller is not in the resolved approvers set for any pending requirement on this request."
+    },
+    {
+      "code": "ALREADY_DECIDED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "access-request.errors.already_decided",
+      "description": "The caller already recorded an approve/reject decision on this request. Decisions are one-shot per approver."
+    },
+    {
+      "code": "REQUEST_TERMINAL",
+      "http": 410,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "access-request.errors.request_terminal",
+      "description": "The request is in a terminal state (approved / rejected / expired / cancelled). No decisions can be recorded."
+    },
+    {
+      "code": "REQUEST_NOT_WITHDRAWABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "access-request.errors.request_not_withdrawable",
+      "description": "Only pending requests can be withdrawn."
+    },
+    {
+      "code": "REJECT_COMMENT_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "access-request.errors.reject_comment_required",
+      "description": "SOC 2 requires an auditable rationale on every reject. `comment` must be at least 10 characters."
+    },
+    {
+      "code": "ACCESS_REQUESTS_DISABLED_FOR_TENANT",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "access-request.errors.disabled_for_tenant",
+      "description": "The `access_requests` entitlement is FALSE for this tenant \u2014 opted out via ops-only setting for regulatory reasons."
+    },
+    {
+      "code": "ACCESS_REQUESTS_ENTITLEMENT_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "access-request.errors.entitlement_exceeded",
+      "description": "`access_requests.max_per_month` pool exhausted for this tenant. Requires plan upgrade or resets on the next period."
+    },
+    {
+      "code": "ACCESS_REQUEST_BULK_APPROVE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "access-request.errors.bulk_approve_not_entitled",
+      "description": "Bulk approve is enterprise-only. Enterprise upgrade required."
+    },
+    {
+      "code": "ACCESS_REQUESTS_RATE_LIMIT_EXCEEDED",
+      "http": 429,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "access-request.errors.rate_limit_exceeded",
+      "description": "Framework throttle tripped. Response includes X-RateLimit-Trigger + Retry-After."
+    },
+    {
+      "code": "GRANT_MATERIALISATION_FAILED",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "access-request.errors.grant_materialisation_failed",
+      "description": "AccessRequestGrantMaterializer raised while calling GrantIssuer::issue(). The approval_instance is left in status='approved' but `context_json.materialised_grant_id=NULL` \u2014 remediate via `access-requests:remediate-orphaned-approvals`. Pages on-call."
+    },
+    {
+      "code": "REGISTRY_NOT_LOADED",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "access-request.errors.registry_not_loaded",
+      "description": "AccessRequestableRegistry has zero entries at request time. Indicates a boot-time discovery failure or a broken cache. Pages on-call."
+    }
+  ]
+}

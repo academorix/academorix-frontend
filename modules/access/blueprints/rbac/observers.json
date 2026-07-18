@@ -1,0 +1,101 @@
+{
+  "id": "academorix://modules/rbac/observers",
+  "$version": 1,
+  "title": "rbac \u2014 Eloquent observers",
+  "observers": [
+    {
+      "model": "Role",
+      "observer": "Academorix\\Rbac\\Observers\\RoleObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `rol_`",
+        "creating \u2192 refuse when name fails valid_role_name rule",
+        "creating \u2192 refuse when the (application_id, tenant_id, name, guard_name) composite already exists (defense against the DB unique constraint race)",
+        "creating \u2192 consume 1 unit of custom_role_slot entitlement when is_system=false + fire CustomRoleQuotaExceeded on cap",
+        "creating \u2192 refuse when tenant lacks custom_roles entitlement + is_system=false",
+        "creating \u2192 fire RoleCreated + TenantCustomRoleCreated (when is_system=false)",
+        "updating (name / guard_name / application_id changed) \u2192 refuse when is_system=true \u2014 fire SystemRoleModificationRefused",
+        "updating (any change) \u2192 fire RoleUpdated",
+        "deleting \u2192 refuse when is_system=true \u2014 fire SystemRoleModificationRefused",
+        "deleting \u2192 refuse when any active model_has_roles rows reference this role (`ROLE_IN_USE`)",
+        "deleting (custom role, no active assignments) \u2192 release 1 unit of custom_role_slot entitlement + fire RoleDeleted + TenantCustomRoleDeleted",
+        "restoring \u2192 refuse when name conflicts with a live row",
+        "any mutation \u2192 fire PermissionCacheInvalidated for every principal holding the role"
+      ]
+    },
+    {
+      "model": "Permission",
+      "observer": "Academorix\\Rbac\\Observers\\PermissionObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `per_`",
+        "creating \u2192 refuse when name fails valid_permission_name rule (dot notation + valid scope suffix + no reserved prefix)",
+        "creating \u2192 refuse when the (application_id, tenant_id, name, guard_name) composite already exists",
+        "creating \u2192 refuse when tenant lacks custom_permissions entitlement + is_system=false (only Enterprise can create new permission strings)",
+        "creating (is_system=false) \u2192 fire PermissionCreated",
+        "creating (is_system=true) \u2192 fire PermissionCreated + emit `academorix.rbac.permissions.total` gauge update",
+        "updating (name / guard_name / application_id changed) \u2192 refuse when is_system=true \u2014 fire SystemRoleModificationRefused (same event; the permission surface uses the same alert path)",
+        "deleting \u2192 refuse when is_system=true \u2014 fire SystemPermissionDeletionRefused error",
+        "deleting \u2192 refuse when any role_has_permissions or model_has_permissions rows reference this permission (`PERMISSION_IN_USE`)",
+        "any mutation \u2192 fire PermissionCacheInvalidated (bulk, all principals \u2014 permissions are structurally impactful)"
+      ]
+    },
+    {
+      "model": "RoleHasPermissions (pivot)",
+      "observer": "Academorix\\Rbac\\Observers\\RoleHasPermissionsObserver",
+      "handles": [
+        "creating \u2192 refuse when role.guard_name !== permission.guard_name \u2014 fire GuardMismatchRefused",
+        "creating \u2192 refuse when role.application_id !== permission.application_id (both non-null) \u2014 fire ApplicationMismatchRefused",
+        "creating \u2192 refuse when role.tenant_id !== permission.tenant_id AND both non-null (permissions can be system-scoped tenant_id NULL and roles can be tenant-scoped, but a tenant-scoped role can never bind a different tenant's permission)",
+        "creating \u2192 refuse when role.is_system=true AND permission.is_system=false AND tenant lacks custom_permissions entitlement",
+        "creating \u2192 refuse when role's current permission count >= config('rbac.roles.max_permissions_per_role') \u2014 `ROLE_TOO_MANY_PERMISSIONS`",
+        "creating \u2192 denormalise application_id + tenant_id from the role for query-plan efficiency",
+        "created \u2192 fire PermissionsAttachedToRole (batched \u2014 the service dispatches ONE event per attach transaction covering all permissions)",
+        "deleted \u2192 fire PermissionsDetachedFromRole (same batching)",
+        "any mutation \u2192 fire PermissionCacheInvalidated for every principal holding the role"
+      ]
+    },
+    {
+      "model": "ModelHasRoles (pivot)",
+      "observer": "Academorix\\Rbac\\Observers\\ModelHasRolesObserver",
+      "handles": [
+        "creating \u2192 refuse when role.guard_name doesn't match the principal's guard (`GuardMismatch`)",
+        "creating \u2192 refuse when role.application_id doesn't match the principal's application_id (for User principals) \u2014 `PRINCIPAL_APPLICATION_MISMATCH`",
+        "creating \u2192 refuse when the role_assignable_by_actor rule fails (no privilege escalation)",
+        "creating \u2192 refuse when principal's active role count >= config('rbac.roles.max_active_per_principal') \u2014 `PRINCIPAL_TOO_MANY_ROLES`",
+        "creating \u2192 refuse when expires_at is set AND tenant lacks time_bounded_role_assignments entitlement",
+        "creating \u2192 refuse when expires_at > now() + config('rbac.assignments.max_time_bounded_duration_days')",
+        "creating \u2192 denormalise application_id + tenant_id from the role",
+        "creating \u2192 populate assigned_by + assigned_at from the current actor (auth()->user()) if not explicitly set",
+        "created \u2192 fire RoleAssignedToPrincipal",
+        "updated (expires_at changed) \u2192 emit `academorix.rbac.assignments.expiration_extended` metric",
+        "deleting \u2192 fire RoleRevokedFromPrincipal with the resolved trigger",
+        "any mutation \u2192 fire PermissionCacheInvalidated for the affected principal"
+      ]
+    },
+    {
+      "model": "ModelHasPermissions (pivot)",
+      "observer": "Academorix\\Rbac\\Observers\\ModelHasPermissionsObserver",
+      "handles": [
+        "creating \u2192 refuse on guard mismatch + application mismatch (same rules as ModelHasRolesObserver)",
+        "creating \u2192 denormalise application_id + tenant_id",
+        "created \u2192 fire PermissionGrantedToPrincipal",
+        "deleted \u2192 fire PermissionRevokedFromPrincipal",
+        "any mutation \u2192 fire PermissionCacheInvalidated for the affected principal"
+      ]
+    },
+    {
+      "model": "RoleDefinition",
+      "observer": "Academorix\\Rbac\\Observers\\RoleDefinitionObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `rdf_`",
+        "creating \u2192 verify role_id references a valid, is_system=true role",
+        "creating \u2192 verify every entry in default_permissions[] exists in the permissions table (config('rbac.seeding.mode') = strict enforces this; permissive logs a warning and drops missing entries)",
+        "creating \u2192 verify every entry in business_type_slugs[] exists in tenancy's business_type catalogue",
+        "creating \u2192 verify min_tier is one of ['small', 'medium', 'business', 'enterprise']",
+        "creating \u2192 invalidate rbac:role_definitions:{application_id} cache",
+        "updating (default_permissions or business_type_slugs changed) \u2192 invalidate rbac:role_definitions:{application_id} + optionally re-run TenantDefaultRoleSeeder for affected tenants (config-gated)",
+        "deleting \u2192 refuse when any active role_definitions references this row (must archive first)",
+        "any mutation \u2192 emit `academorix.rbac.role_definitions.updated` metric"
+      ]
+    }
+  ]
+}

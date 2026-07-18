@@ -1,0 +1,73 @@
+{
+  "id": "academorix://modules/grants/data-classes",
+  "$version": 1,
+  "title": "grants — field-level data classification",
+  "description": "Every column on AccessGrant classified by sensitivity tier. Drives DSAR export scope, right-to-erasure behaviour, encryption-at-rest policy. Field paths: `AccessGrant.field`.",
+  "reference": "foundation::data-classes.json.tiers",
+  "tiers": {
+    "public": "Non-identifying, safe to expose in logs / URLs.",
+    "internal": "Platform-internal state. Never surfaced to end users outside grant admin. Not personally identifiable.",
+    "confidential": "PII / access-decision data — exportable on DSAR, erasable on request. Encrypted in transit + AES-256 at rest.",
+    "audit_log": "Immutable audit-tier data. Anonymised, not deleted, on erasure requests.",
+    "restricted": "Not present on this model — no credential-adjacent secrets stored here."
+  },
+  "classes": {
+    "public": [
+      "AccessGrant.id",
+      "AccessGrant.tenant_id",
+      "AccessGrant.resource_type",
+      "AccessGrant.decision",
+      "AccessGrant.source",
+      "AccessGrant.granted_at",
+      "AccessGrant.expires_at",
+      "AccessGrant.revoked_at",
+      "AccessGrant.created_at",
+      "AccessGrant.updated_at"
+    ],
+    "internal": [
+      "AccessGrant.subject_type",
+      "AccessGrant.resource_id",
+      "AccessGrant.permissions",
+      "AccessGrant.source_reference",
+      "AccessGrant.metadata",
+      "AccessGrant.revoked_reason (when system sentinel like 'expired', 'orphaned_resource')"
+    ],
+    "confidential": [
+      "AccessGrant.subject_id (points at a User — the subject's identity is PII)",
+      "AccessGrant.granted_by (points at a User — the grantor's identity is PII)",
+      "AccessGrant.revoked_by (points at a User)",
+      "AccessGrant.reason (may contain PII — free-text operator note, tenant admins are responsible for content)"
+    ],
+    "audit_log": [
+      "AccessGrant.reason (retained indefinitely; anonymised but never deleted on erasure)",
+      "AccessGrant.decision (audit trail promise — deny decisions especially)",
+      "AccessGrant rows where decision='deny' (retained indefinitely per retention.json)"
+    ],
+    "restricted": [],
+    "regulated_minor": [
+      "AccessGrant.reason when the resource is an Athlete (a minor's care record) — inherits regulated_minor from the resource"
+    ],
+    "regulated_health": [
+      "AccessGrant.permissions when the resource_type is a healthcare-adjacent aggregate (medical-records module, future). This module's data-classes stay `confidential`; the RESOURCE inherits regulated_health."
+    ],
+    "regulated_financial": [
+      "AccessGrant.permissions when the resource_type is an Invoice / Payment / financial aggregate — the permissions strings enumerate WHAT financial data the subject can access."
+    ]
+  },
+  "dsar": {
+    "exportableTiers": ["public", "internal", "confidential"],
+    "exportExclusions": [
+      "AccessGrant.metadata.approver_notes when the approver marked them confidential (approval-instance context)"
+    ],
+    "erasureBehaviour": {
+      "confidential": "purge-with-audit-record — allow grants hard-deleted; the reason column value is preserved on the audit_row (retained indefinitely) but the subject reference in `reason` is replaced with 'erased-<hash>' if the reason contains the subject's name.",
+      "audit_log": "anonymise-in-place — deny grants preserved indefinitely; subject_id → 'erased-<hash>@invalid.local'; reason text preserved as authored (retention promise).",
+      "regulated_minor": "purge-plus-anonymise per COPPA + GDPR Art. 8 — the athlete's identity is erased from every grant row; reason preserved as an audit trail with athlete reference replaced with 'erased-<hash>'."
+    }
+  },
+  "notes": [
+    "AccessGrant is a CROSS-CUTTING module — it doesn't own the underlying subject or resource PII. It owns the RELATIONSHIP between them (who has access to what). The confidential tier reflects that: knowing 'user X has access to invoice Y' is itself sensitive because it reveals organisational structure.",
+    "The `reason` column is the tightest classification decision in this file. It's user-authored free text (a compliance officer describing why they granted a consultant view on the CFO's inbox). Contains PII by shape, retained by policy indefinitely for audit. Erasure anonymises PII references INSIDE the text but preserves the sentence structure — the audit promise is 'we retain the WHY', not 'we retain the WHO'.",
+    "Downstream consumer modules with regulated resources (medical, financial) declare their own tier UP the chain — this module's row inherits the resource's tier for policy purposes. E.g. a grant on an Athlete's medical record is regulated_health at the grants-row level, not just confidential."
+  ]
+}

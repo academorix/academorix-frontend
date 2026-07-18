@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/delegation/data-classes",
+  "$version": 1,
+  "title": "delegation — field classification",
+  "description": "role_delegations metadata is largely internal-tier (delegator + delegate identity is already visible to both parties by the domain rules). impersonation_sessions is heavier — the operator identity + reason + support ticket reference are internal-tier (visible only to compliance-authorized readers), and the session_token_hash is confidential (equivalent to a password hash for the short-lived impersonation credential).",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [],
+    "internal": [
+      "RoleDelegation.id",
+      "RoleDelegation.tenant_id",
+      "RoleDelegation.application_id",
+      "RoleDelegation.delegator_id",
+      "RoleDelegation.delegate_id",
+      "RoleDelegation.role_id",
+      "RoleDelegation.delegation_type",
+      "RoleDelegation.starts_at",
+      "RoleDelegation.ends_at",
+      "RoleDelegation.revoked_at",
+      "RoleDelegation.revoked_by",
+      "RoleDelegation.metadata",
+      "ImpersonationSession.id",
+      "ImpersonationSession.target_application_id",
+      "ImpersonationSession.target_tenant_id",
+      "ImpersonationSession.started_at",
+      "ImpersonationSession.ends_at",
+      "ImpersonationSession.ended_at",
+      "ImpersonationSession.end_trigger",
+      "ImpersonationSession.is_read_only",
+      "ImpersonationSession.impersonator_department",
+      "ImpersonationSession.metadata"
+    ],
+    "confidential": [
+      "RoleDelegation.reason",
+      "RoleDelegation.revoke_reason",
+      "ImpersonationSession.impersonator_platform_user_id",
+      "ImpersonationSession.impersonated_user_id",
+      "ImpersonationSession.reason",
+      "ImpersonationSession.support_ticket_reference",
+      "ImpersonationSession.impersonator_display_name"
+    ],
+    "restricted": [
+      "ImpersonationSession.session_token_hash (equivalent to a short-lived password hash — never surfaced on the wire; access limited to the enforce_active_session middleware + the token-scrub job)"
+    ],
+    "regulated_minor": [],
+    "regulated_health": [
+      "ImpersonationSession.reason WHEN session.metadata.compliance_regime='hipaa' — may reference minor's medical care (Wave 2 hook, not currently active)"
+    ],
+    "regulated_financial": [],
+    "audit_log": [
+      "RoleDelegation.* (subject to HasActivityLog + HasAudit trail rules)",
+      "ImpersonationSession.* (subject to HasAudit heavy-trail rules — every field logged on every write; correlation IDs preserved for the whole session lifetime)"
+    ]
+  },
+  "notes": [
+    "RoleDelegation.reason + revoke_reason are marked confidential because they may reference internal HR context ('Alice is on medical leave until 2026-08-15'). Public-tier readers of the /me/delegations surface see the reason (delegator + delegate know it), but cross-user reads via the admin surface are permission-gated.",
+    "ImpersonationSession.reason + support_ticket_reference are confidential because they may reference customer-support context that is itself sensitive (a customer's billing dispute, a suspected security issue on the target's account). Access is scoped to the impersonator + security + super_admin + dpo via ImpersonationSessionPolicy.",
+    "The impersonator_display_name snapshot is confidential because it identifies a specific Academorix staff member's real name — internal-tier by our classification but revealing enough that we treat it as confidential for consistency with employment records.",
+    "session_token_hash is RESTRICTED — even the impersonator does not see the hash after session start (they only ever knew the raw token, which is not persisted). It exists solely for the middleware's lookup + is scrubbed at 30 days.",
+    "GDPR Art. 17 erasure: on target User erasure, the ImpersonationSession row cascades but the parallel HasAudit stream is retained under Art. 17(3)(e) legal claims defence."
+  ]
+}

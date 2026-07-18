@@ -1,0 +1,128 @@
+{
+  "id": "academorix://modules/access/requests/metrics",
+  "$version": 1,
+  "title": "requests \u2014 OpenTelemetry metrics",
+  "description": "OpenTelemetry / Prometheus metrics this module emits. RED pattern for the submit + approve + reject surfaces; funnel counters mirror events.json + analytics.json but at the ops / SLO level (not gated by user consent).",
+  "instrumentation": "open-telemetry/sdk",
+  "namespace": "academorix.access_requests",
+  "metrics": [
+    {
+      "name": "academorix.access_requests.submitted.total",
+      "kind": "counter",
+      "unit": "requests",
+      "labels": ["application_id", "tenant_id", "resource_type"],
+      "description": "Increments on AccessRequestSubmitted."
+    },
+    {
+      "name": "academorix.access_requests.approved.total",
+      "kind": "counter",
+      "unit": "requests",
+      "labels": ["application_id", "tenant_id", "resource_type"]
+    },
+    {
+      "name": "academorix.access_requests.rejected.total",
+      "kind": "counter",
+      "unit": "requests",
+      "labels": ["application_id", "tenant_id", "resource_type"]
+    },
+    {
+      "name": "academorix.access_requests.expired.total",
+      "kind": "counter",
+      "unit": "requests",
+      "labels": ["application_id", "tenant_id", "resource_type"]
+    },
+    {
+      "name": "academorix.access_requests.cancelled.total",
+      "kind": "counter",
+      "unit": "requests",
+      "labels": ["application_id", "tenant_id"]
+    },
+    {
+      "name": "academorix.access_requests.grant_issued.total",
+      "kind": "counter",
+      "unit": "grants",
+      "labels": ["application_id", "tenant_id", "resource_type"],
+      "description": "Increments on AccessRequestGrantIssued. Difference vs approved.total = number of orphaned approvals (materialisation failures)."
+    },
+    {
+      "name": "academorix.access_requests.grant_materialisation_failed.total",
+      "kind": "counter",
+      "unit": "failures",
+      "labels": ["application_id", "tenant_id", "resource_type", "failure_reason"],
+      "description": "Increments when AccessRequestGrantMaterializer raises. Alerts fire above 1 per hour \u2014 orphaned approvals block requesters."
+    },
+    {
+      "name": "academorix.access_requests.pending",
+      "kind": "gauge",
+      "unit": "requests",
+      "labels": ["application_id", "tenant_id"],
+      "description": "Point-in-time count of pending access requests. Sampled every 60s."
+    },
+    {
+      "name": "academorix.access_requests.pending_by_approver",
+      "kind": "gauge",
+      "unit": "requests",
+      "labels": ["application_id", "tenant_id", "approver_user_id"],
+      "description": "Per-approver backlog. Feeds the 'approver overload' dashboard \u2014 an approver with 15+ pending requests likely needs delegation help."
+    },
+    {
+      "name": "academorix.access_requests.submit.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [10, 25, 50, 100, 250, 500, 1000, 2500, 5000],
+      "labels": ["application_id"],
+      "description": "POST /access-requests end-to-end \u2014 covers validation + approver resolution + approval_instance creation."
+    },
+    {
+      "name": "academorix.access_requests.approver_resolution.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [1, 5, 10, 25, 50, 100, 250, 500, 1000],
+      "labels": ["application_id", "resolver_step"],
+      "description": "AccessRequestApproverResolver step timings. `resolver_step` = template_match | fallback_selector | resource_owner_fallback. Slow template matching signals rule complexity growth."
+    },
+    {
+      "name": "academorix.access_requests.time_to_decision_hours",
+      "kind": "histogram",
+      "unit": "hours",
+      "buckets": [0.25, 1, 4, 8, 24, 48, 96, 168],
+      "labels": ["application_id", "tenant_id", "outcome"],
+      "description": "Time from submission to terminal decision. `outcome` = approved | rejected | expired | cancelled. SLO target: p50 < 8h for approved, p95 < 48h."
+    },
+    {
+      "name": "academorix.access_requests.approval_rate",
+      "kind": "gauge",
+      "unit": "ratio",
+      "labels": ["application_id", "tenant_id"],
+      "description": "Rolling 30d (approved / (approved + rejected + expired)). SLO target: > 0.5 for a healthy tenant \u2014 lower rates suggest a mismatch between roles and expected work."
+    },
+    {
+      "name": "academorix.access_requests.reminder_sent.total",
+      "kind": "counter",
+      "unit": "reminders",
+      "labels": ["application_id", "tenant_id", "reminder_index"],
+      "description": "Approver reminder deliveries. `reminder_index` = 1 | 2 | 3."
+    },
+    {
+      "name": "academorix.access_requests.request_hint_offered.total",
+      "kind": "counter",
+      "unit": "responses",
+      "labels": ["application_id", "tenant_id", "resource_type"],
+      "description": "Incremented by `access.request_hint_on_denial` middleware every time it enriches a 403. High volume on a specific resource_type signals a role assignment gap for tenants."
+    },
+    {
+      "name": "academorix.access_requests.rate_limit_exceeded.total",
+      "kind": "counter",
+      "unit": "requests",
+      "labels": ["dimension"],
+      "description": "Framework throttle 429s. Dimension = submissions_per_day | decisions_per_hour."
+    },
+    {
+      "name": "academorix.access_requests.orphaned_approvals.gauge",
+      "kind": "gauge",
+      "unit": "instances",
+      "labels": ["application_id", "tenant_id"],
+      "description": "Approved approval_instances without a materialised grant. Non-zero for more than 1 hour pages on-call."
+    }
+  ]
+}

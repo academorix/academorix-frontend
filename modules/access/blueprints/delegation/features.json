@@ -1,0 +1,53 @@
+{
+  "id": "academorix://modules/delegation/features",
+  "$version": 1,
+  "title": "delegation — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "delegation.core",
+      "displayName": "Role delegation",
+      "description": "Base role-delegation capability — the OOF / handover flow. Every tenant tier gets this.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "delegation.emergency",
+      "displayName": "Emergency delegation",
+      "description": "Bypass min_advance_notice_hours (default 0 — allow immediate) — reserved for tenants that need instant delegation without lead-time confirmation. Medium + enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "delegation.audit_report",
+      "displayName": "Delegation audit report",
+      "description": "Access to `delegations:audit-oof-usage` report + the equivalent surface in the admin UI. Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "impersonation.read_only",
+      "displayName": "Read-only impersonation (enforced)",
+      "description": "Some enterprise tenant contracts require ALL impersonation of their users be read-only-only. When this feature is enabled on a tenant, the ImpersonationSessionObserver refuses any is_read_only=false session against that tenant's users. Enterprise + contract-negotiated.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "impersonation.extended_ttl",
+      "displayName": "Extended impersonation TTL",
+      "description": "Sessions longer than 60 minutes. Enterprise contract-negotiated. Individual sessions still require super_admin extension.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "impersonation.compliance_regime_hook",
+      "displayName": "Additional compliance regime (HIPAA-adjacent)",
+      "description": "Enterprise hook — when a tenant declares a compliance regime (via metadata.compliance_regime), additional audit stream annotations + notification channels activate. Wave 2 open door for HIPAA / SOX customers.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
+}

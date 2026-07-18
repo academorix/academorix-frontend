@@ -1,0 +1,46 @@
+{
+  "id": "academorix://modules/access/requests/retention",
+  "$version": 1,
+  "title": "requests \u2014 data retention windows",
+  "description": "This module owns NO tables. Retention windows for the underlying data live in the modules that OWN the rows: workflow/approvals owns approval_instances retention, access/grants owns access_grants retention. This file documents the WINDOWS this module DEPENDS on so ops can verify the two are consistent + compliance auditors can trace the retention chain.",
+  "retention": [],
+  "dependsOn": [
+    {
+      "model": "workflow/approvals::ApprovalInstance",
+      "expectedRetention": {
+        "softDeleteAfter": null,
+        "hardDeleteAfter": "P2Y",
+        "description": "Approval instances retained 2 years for compliance evidence. SOC 2 requires audit trails on authorization decisions; 2 years matches the typical audit window."
+      },
+      "complianceTier": "audit_log"
+    },
+    {
+      "model": "access/grants::AccessGrant",
+      "expectedRetention": {
+        "softDeleteAfter": "expires_at",
+        "hardDeleteAfter": "expires_at + P90D",
+        "description": "Grants soft-delete at their TTL expiry; hard-delete 90 days later. Preserves the audit trail for expired grants (compliance auditors ask 'was Bob EVER granted access to X?') while eventually cleaning up."
+      },
+      "complianceTier": "customer_data + audit_log dual-tier"
+    }
+  ],
+  "erasureOnRequest": {
+    "description": "GDPR right-to-erasure requests against the requester or approver flow through the OWNING modules \u2014 they anonymise their rows.",
+    "ownedBy": {
+      "workflow/approvals": [
+        "approval_instances.context_json.requester_reason \u2014 anonymised to '[erased]'",
+        "approval_instances.context_json.requester_id \u2014 anonymised to 'usr_erased_<hash>'",
+        "approval_decisions.comment \u2014 anonymised to '[erased]'"
+      ],
+      "access/grants": [
+        "access_grants.subject_id \u2014 anonymised to 'usr_erased_<hash>'",
+        "access_grants.granted_by \u2014 anonymised to 'usr_erased_<hash>'",
+        "access_grants.reason \u2014 anonymised to '[erased]'"
+      ]
+    }
+  },
+  "notes": [
+    "Because this module owns no rows, `access-requests:cleanup-orphaned` command is NOT a retention command \u2014 it's a consistency-repair command that auto-rejects pending requests whose resource was deleted. Retention proper is handled by the OWNING modules' own retention pipelines.",
+    "The compliance module's DSAR orchestrator queries approval_instances filtered on `action_key='access.grants.create'` to include access-request activity in a user's data export. Erasure on the requester's user record cascades to the same rows."
+  ]
+}

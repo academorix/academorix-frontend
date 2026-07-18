@@ -1,0 +1,104 @@
+{
+  "id": "academorix://modules/grants/feature-flags",
+  "$version": 1,
+  "title": "grants — rollout flags",
+  "description": "Rollout / change-management flags for THIS module. Distinct from `features.json` (business-tier features gated by entitlement + plan). Every material change ships behind a flag per SOC 2 CC8.1.",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "grants.kill-switch",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master kill-switch. Off = every write endpoint returns 503 without a redeploy. Existing grants continue to resolve normally through GrantOverlayResolver — the switch only blocks NEW grants. Incident-response only."
+    },
+    {
+      "key": "grants.overlay-resolver",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master switch for GrantOverlayResolver participation in access/rbac's PermissionResolver. Off = every check falls through to RBAC-only (deny disappears, all allow grants disappear, delegation deny-check disappears). Incident-response only — turning this off leaves grant rows in the DB but they're not enforced. Alerts on-call every 60s while off."
+    },
+    {
+      "key": "grants.cache-warm",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Toggle for the `grants.warm_grant_cache` middleware. Off = resolver falls back to per-check DB lookups (slower but correct). Used during incidents where cache warming causes memory pressure."
+    },
+    {
+      "key": "grants.deny-grants",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [
+        {
+          "name": "enterprise-tenants",
+          "predicate": "tenant.subscription.plan = 'enterprise' AND tenant.entitlements.deny_grants = true",
+          "state": "on"
+        }
+      ],
+      "description": "Rollout guard for the deny-decision issue path. Off by default; enterprise entitlement flips on. Provides an extra kill-switch beyond the entitlement so we can freeze deny writes tenant-wide during an incident."
+    },
+    {
+      "key": "grants.bulk-provision",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [
+        {
+          "name": "medium-plan-and-above",
+          "predicate": "tenant.subscription.plan in ('medium', 'enterprise') AND tenant.entitlements.bulk_grant_provision = true",
+          "state": "on"
+        }
+      ],
+      "description": "Rollout guard for the CSV bulk-issue endpoint. Independent of the entitlement so ops can freeze bulk writes if the BulkGrantIssueJob is misbehaving without pulling the tenant's plan."
+    },
+    {
+      "key": "grants.cross-role-grants",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [
+        {
+          "name": "enterprise-with-workflow",
+          "predicate": "tenant.subscription.plan = 'enterprise' AND tenant.modules.workflow_approvals = 'active' AND tenant.entitlements.cross_role_grants = true",
+          "state": "on"
+        }
+      ],
+      "description": "Rollout guard for the cross-role grant escape hatch (grantor grants a permission not in their role, gated by an approval flow). Enterprise + workflow/approvals co-active."
+    },
+    {
+      "key": "grants.evaluation-cache-l2",
+      "kind": "rollout",
+      "default": "on",
+      "cohorts": [],
+      "description": "Rollout guard for the L2 Redis evaluation cache. Off = L1 in-process only (per-worker; cache-miss on cold worker). Used during Redis latency incidents."
+    },
+    {
+      "key": "grants.reconcile-orphaned",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [
+        {
+          "name": "canary",
+          "predicate": "tenant.metadata.canary_bucket = 'a'",
+          "state": "on"
+        }
+      ],
+      "description": "Rollout guard for the ReconcileOrphanedGrantsJob (the auto-revoke path when a resource disappears out-of-band). Off in v1 — dry-run scheduled entry still emits the metric so ops can see would-be revokes. Canary bucket enables the write path for one tenant per canary group."
+    },
+    {
+      "key": "grants.access-reviews",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [],
+      "description": "Rollout guard for the periodic access-review workflow (ISO 27001 A.9.2.5). Off in Wave 1b — surface exists in features.json but the scheduler + notification wiring lands in a later wave."
+    },
+    {
+      "key": "grants.audit-report",
+      "kind": "rollout",
+      "default": "on",
+      "cohorts": [],
+      "description": "Rollout guard for the platform-admin audit-report endpoint. On by default — gated by the enterprise entitlement anyway. Kill-switch during platform incidents."
+    }
+  ],
+  "retirement_policy": {
+    "description": "A flag lives at most 90 days after reaching 100% GA. After 90d, either the flag is deleted OR converts to a `kill-switch`. `grants:review-flags` command prints ages monthly (schedule.json entry).",
+    "reviewCommand": "grants:review-flags"
+  }
+}

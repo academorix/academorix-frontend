@@ -1,0 +1,100 @@
+{
+  "id": "academorix://modules/grants/permissions",
+  "$version": 1,
+  "title": "grants — permissions",
+  "description": "Permission strings this module publishes. Split by guard: `sanctum` for tenant admins + tenant users managing grants; `platform_admin` for Academorix ops with cross-tenant read + audit-report authority. Seeded by GrantPermissionSeeder with is_system=true.",
+  "seeder": "Academorix\\Grant\\Database\\Seeders\\GrantPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "grants.viewAny",
+      "guard": "sanctum",
+      "description": "List + show grants in the caller's tenant. Scoped by default to grants where subject_id = auth_user (users see their own grants); widened for admins with `grants.manage`.",
+      "grantsPolicies": ["AccessGrantPolicy@viewAny", "AccessGrantPolicy@view"],
+      "seededOn": ["owner", "admin", "member"]
+    },
+    {
+      "name": "grants.manage",
+      "guard": "sanctum",
+      "description": "Full grant CRUD scope. Includes issue, patch, revoke, view any grant in the tenant (not just own).",
+      "grantsPolicies": [
+        "AccessGrantPolicy@create",
+        "AccessGrantPolicy@update",
+        "AccessGrantPolicy@revoke",
+        "AccessGrantPolicy@viewAnyBySubject"
+      ],
+      "seededOn": ["owner", "admin"]
+    },
+    {
+      "name": "grants.issue",
+      "guard": "sanctum",
+      "description": "Issue a grant. The grantor must ALSO hold every permission being granted (privilege-escalation guard — enforced by observer + issuer regardless of this permission). Members with grants.issue can share access on resources they own (e.g. a coach sharing view on athletes they manage).",
+      "grantsPolicies": ["AccessGrantPolicy@create"],
+      "seededOn": ["owner", "admin", "member"]
+    },
+    {
+      "name": "grants.revoke",
+      "guard": "sanctum",
+      "description": "Revoke a grant the caller issued (granted_by = auth_user). Broader revocation (any grant in the tenant) requires `grants.manage`.",
+      "grantsPolicies": ["AccessGrantPolicy@revokeOwn"],
+      "seededOn": ["owner", "admin", "member"]
+    },
+    {
+      "name": "grants.audit_any",
+      "guard": "sanctum",
+      "description": "Enumerate grants across the tenant — call `/grants/subject/{id}` for any principal or `/grants/resource/{type}/{id}` for any resource. Admin-level compliance surface.",
+      "grantsPolicies": [
+        "AccessGrantPolicy@auditPrincipal",
+        "AccessGrantPolicy@auditResource"
+      ],
+      "seededOn": ["owner", "admin", "compliance_officer"]
+    },
+    {
+      "name": "grants.bulk_provision",
+      "guard": "sanctum",
+      "description": "Upload a CSV of grants for bulk issue. Gated by the `bulk_grant_provision` entitlement (medium plan+) AND this permission.",
+      "grantsPolicies": ["AccessGrantPolicy@bulkCreate"],
+      "seededOn": ["owner", "admin"]
+    },
+    {
+      "name": "grants.deny",
+      "guard": "sanctum",
+      "description": "Issue a grant with decision='deny' (an inviolable block). Rarer than allow — split into its own permission because denies short-circuit everything and are audit-critical. Gated by the `deny_grants` entitlement (enterprise) AND this permission.",
+      "grantsPolicies": ["AccessGrantPolicy@issueDeny"],
+      "seededOn": ["owner", "admin"]
+    },
+    {
+      "name": "grants.grant_across_role",
+      "guard": "sanctum",
+      "description": "Rare enterprise workflow: grant a permission the grantor DOES NOT hold in their own role, via an approval flow. Requires this permission AND the `cross_role_grants` entitlement AND a matching workflow/approvals template. Without it, the privilege-escalation guard refuses.",
+      "grantsPolicies": ["AccessGrantPolicy@grantAcrossRole"],
+      "seededOn": ["owner"]
+    },
+    {
+      "name": "platform.grants.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant list. Every read captured in audit context (SOC 2 CC6.1).",
+      "grantsPolicies": ["AccessGrantPolicy@viewAnyPlatform"],
+      "seededOn": ["super_admin", "ops", "compliance"]
+    },
+    {
+      "name": "platform.grants.view",
+      "guard": "platform_admin",
+      "description": "Cross-tenant detail read.",
+      "grantsPolicies": ["AccessGrantPolicy@viewPlatform"],
+      "seededOn": ["super_admin", "ops", "compliance"]
+    },
+    {
+      "name": "platform.grants.audit_report",
+      "guard": "platform_admin",
+      "description": "Generate cross-tenant compliance audit reports. Enforced by the `grant_audit_report` entitlement AND this permission.",
+      "grantsPolicies": ["AccessGrantPolicy@generateAuditReport"],
+      "seededOn": ["super_admin", "compliance"]
+    }
+  ],
+  "notes": [
+    "The `grants.issue` seeded on `member` looks liberal but is neutered by the privilege-escalation guard: a member can only issue grants for permissions THEY HOLD (via their role). A member cannot grant admin-scope permissions no matter how the RBAC config drifts.",
+    "Deny grants (`grants.deny`) are a separate permission because they are inviolable — a compromised admin issuing denies is worse than an admin issuing allows. Splitting them lets tenants restrict deny-issue to a smaller role tier.",
+    "`grants.grant_across_role` is the escape hatch for the rare 'CFO delegating limited access to a consultant they don't share role permissions with' pattern. Requires approval workflow gating — the grant cannot land without a template match."
+  ]
+}

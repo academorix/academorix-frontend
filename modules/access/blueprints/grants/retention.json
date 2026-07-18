@@ -1,0 +1,71 @@
+{
+  "id": "academorix://modules/grants/retention",
+  "$version": 1,
+  "title": "grants — data retention windows",
+  "description": "Retention per model + per grant state. Active grants have no floor (they live until revoked or expired). Terminal grants (revoked / expired) hard-purge at 90 days for allow decisions; deny decisions retain INDEFINITELY (an inviolable block that ever existed is compliance-worthy even after revocation — someone may need to know 'this user was once explicitly denied access to this resource'). The `reason` field is retained indefinitely regardless of state — audit trail is the promise.",
+  "retention": [
+    {
+      "model": "AccessGrant (state=active)",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": null,
+      "description": "Active grants have no TTL. Live until revoke or expiry.",
+      "complianceTier": "customer_access_data",
+      "erasureOnRequest": "P0D"
+    },
+    {
+      "model": "AccessGrant (state=revoked OR expired, decision=allow)",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": "P90D",
+      "description": "90-day hot hold after revoke/expiry for admin visibility ('why did Bob lose access last Tuesday'). Then hard-deleted by PurgeRevokedGrantsJob / PurgeExpiredGrantsJob.",
+      "complianceTier": "customer_access_data",
+      "erasureOnRequest": "P0D"
+    },
+    {
+      "model": "AccessGrant (state=revoked OR expired, decision=deny)",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": null,
+      "description": "Deny grants retained INDEFINITELY. Deny was ever issued = compliance evidence — a compromised admin may have lifted a legitimate deny; the audit trail lets us reconstruct the timeline.",
+      "complianceTier": "audit_log",
+      "erasureOnRequest": "P0D (never — deny grants are anonymised on erasure, never deleted)"
+    },
+    {
+      "model": "AccessGrant.reason (field)",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": null,
+      "description": "The `reason` column value is retained INDEFINITELY per audit policy. Never redacted after grant expiry / revoke. Erasure requests anonymise the subject reference in `reason` (if any) but preserve the text itself.",
+      "complianceTier": "audit_log"
+    },
+    {
+      "model": "AccessGrant activity_log rows",
+      "hardDeleteAfter": "P365D",
+      "description": "activity_log rows emitted by the HasActivityLog trait are retained 1 year per compliance policy (owned by activity module — this module just states its expectation).",
+      "complianceTier": "audit_log",
+      "ownedBy": "activity"
+    },
+    {
+      "model": "AccessGrant audit rows",
+      "hardDeleteAfter": "P2555D",
+      "description": "audit rows emitted by the HasAudit trait retain 7 years per SOC 2 evidence retention. Owned by audit module.",
+      "complianceTier": "audit_log",
+      "ownedBy": "audit"
+    }
+  ],
+  "complianceTiers": {
+    "customer_access_data": "Customer-owned records (allow grants). Retained for the customer's benefit until the retention window. Subject to erasure on request.",
+    "audit_log": "Immutable audit records (deny grants + reason fields). Retained for the shortest of the compliance regime maximum + the operational SLA. Anonymised, not deleted, on erasure requests."
+  },
+  "erasureBehavior": {
+    "identityErasure": {
+      "description": "When a User's Identity is erased under GDPR Art. 17, this module cascades: every grant WHERE subject is that User is hard-deleted (allow grants) or anonymised (deny grants — subject_id → 'erased-<hash>').",
+      "cascadeVia": "PurgeGrantsForErasedIdentity listener on user::IdentityErased"
+    },
+    "tenantErasure": {
+      "description": "When a Tenant is erased, EVERY grant in the tenant is hard-deleted via the tenant_id CASCADE FK. Activity_log + audit rows travel with their own retention.",
+      "cascadeVia": "PurgeGrantsForErasedTenant listener on tenancy::TenantErased"
+    },
+    "resourceErasure": {
+      "description": "When a grantable resource is hard-deleted, grants on it are auto-revoked with revoked_reason='orphaned_resource' by ReconcileOrphanedGrantsJob within the following week. For an immediate cascade, consumer modules can emit `resource::HardDeleted` events that this module listens to (deferred).",
+      "cascadeVia": "ReconcileOrphanedGrantsJob (weekly sweep)"
+    }
+  }
+}

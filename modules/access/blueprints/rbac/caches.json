@@ -1,0 +1,66 @@
+{
+  "id": "academorix://modules/rbac/caches",
+  "$version": 1,
+  "title": "rbac \u2014 cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["rbac", "permissions", "roles"],
+  "keys": [
+    {
+      "pattern": "rbac:permissions:{principal_type}:{principal_id}:{application_id}:{tenant_id}",
+      "description": "The compact ResolvedPermissionSet per principal. THE hot path \u2014 read on every gated request. principal_type is one of `User` / `PlatformUser` / `ServiceAccount`. application_id + tenant_id are load-bearing (same Identity's User rows on different Applications resolve to different sets).",
+      "ttlSeconds": 300,
+      "tags": ["rbac", "permissions", "tenant"],
+      "invalidatedBy": [
+        "RoleAssignedToPrincipal",
+        "RoleRevokedFromPrincipal",
+        "PermissionGrantedToPrincipal",
+        "PermissionRevokedFromPrincipal",
+        "PermissionsAttachedToRole",
+        "PermissionsDetachedFromRole",
+        "RoleAssignmentExpired",
+        "RoleUpdated",
+        "PermissionUpdated"
+      ]
+    },
+    {
+      "pattern": "rbac:roles:{tenant_id}:{application_id}",
+      "description": "Full role catalogue per (tenant, application). Read on the tenant plane's `GET /rbac/roles` \u2014 sub-100ms P99. Includes system roles seeded for this tenant + custom roles the tenant created.",
+      "ttlSeconds": 900,
+      "tags": ["rbac", "roles", "tenant"],
+      "invalidatedBy": ["RoleObserver.*", "RoleAssignedToPrincipal", "RoleRevokedFromPrincipal"]
+    },
+    {
+      "pattern": "rbac:permissions:catalogue:{application_id}",
+      "description": "Full permission catalogue per Application. Populated at boot by PermissionCatalogueLoader from every module's permissions.json. Long TTL because permission names are ~static across deploys; invalidated on deploy via the release pipeline calling `php artisan rbac:sync-role-definitions --refresh-catalogue`.",
+      "ttlSeconds": 86400,
+      "tags": ["rbac", "permissions", "platform"],
+      "invalidatedBy": ["PermissionObserver.*", "PermissionCatalogueLoader.reloaded"]
+    },
+    {
+      "pattern": "rbac:role_definitions:{application_id}",
+      "description": "role_definitions rows for an Application (business_type_slugs, i18n labels, min_tier, default_permissions[]). Read by the TenantDefaultRoleSeeder on TenantProvisioned. Long TTL since metadata rarely changes.",
+      "ttlSeconds": 86400,
+      "tags": ["rbac", "roles", "platform"],
+      "invalidatedBy": ["RoleDefinitionObserver.*"]
+    },
+    {
+      "pattern": "rbac:principal:{principal_type}:{principal_id}:roles",
+      "description": "The role slugs held by a principal (short list, distinct from the full permission set). Used by the tenant-plane `GET /rbac/principals/{principal}/roles` and by delegation resolvers to walk the role chain.",
+      "ttlSeconds": 300,
+      "tags": ["rbac", "roles", "principal"],
+      "invalidatedBy": ["RoleAssignedToPrincipal", "RoleRevokedFromPrincipal", "RoleAssignmentExpired"]
+    },
+    {
+      "pattern": "rbac:cache:stale:{tenant_id}",
+      "description": "A tenant-scoped marker used by the cross-node broadcast pattern. When RBAC mutates on Node A, the invalidation event is broadcast on `tenant.{id}.rbac.principal.{principal_id}.permissions` (Redis pubsub). Node B receives, sets `rbac:cache:stale:{tenant_id}` for 60 seconds, and next request re-resolves. Bounds the eventual-consistency window without requiring active cache pruning.",
+      "ttlSeconds": 60,
+      "tags": ["rbac", "tenant"]
+    },
+    {
+      "pattern": "rbac:permission_check_debounce:{principal_id}:{permission}",
+      "description": "60s debounce guard preventing repeated permission checks for the same (principal, permission) tuple from stampeding the resolver on cache miss. Set by `PermissionResolver::resolve()` on first miss; subsequent misses within the window fall to DB directly without stampede coordination.",
+      "ttlSeconds": 60,
+      "tags": ["rbac"]
+    }
+  ]
+}

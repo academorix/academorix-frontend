@@ -1,0 +1,132 @@
+{
+  "id": "academorix://modules/rbac/notifications",
+  "$version": 1,
+  "title": "rbac \u2014 notification classes + categories",
+  "namespace": "Academorix\\Rbac\\Notifications",
+  "description": "Four notifications. Two are informational (role assigned / revoked). One is a proactive nudge (assignment expiring in 7 days). One is a tier-boundary alert (custom role slot exhausted).",
+  "notifications": [
+    "RoleAssignedNotification",
+    "RoleRevokedNotification",
+    "RoleAssignmentExpiringNotification",
+    "CustomRoleLimitReachedNotification"
+  ],
+  "notification_definitions": [
+    {
+      "class": "RoleAssignedNotification",
+      "category_slug": "rbac.role_assigned",
+      "channels": ["mail", "in_app"],
+      "queue": "notifications",
+      "subject_template": "rbac::mail.role_assigned.subject",
+      "body_template_path": "rbac::mail.role_assigned.body",
+      "default_subject_en": "You were granted the :role_name role on Academorix",
+      "trigger_event": "RoleAssignedToPrincipal",
+      "payload_bindings": {
+        "role_name": "string (human-readable label from RoleDefinition.label_i18n)",
+        "role_description": "string | null",
+        "expires_at": "ISO-8601 timestamp | null",
+        "assigned_by_display_name": "string | null (null when system-seeded)",
+        "was_delegated": "boolean",
+        "review_permissions_url": "string (deep link to /me/permissions on the SPA)"
+      },
+      "notes": "Suppressed for system-seeded assignments during TenantProvisioned (avoids notifying tenants of the initial role wave). Also suppressed when config('rbac.assignments.notify_on_seed')=false."
+    },
+    {
+      "class": "RoleRevokedNotification",
+      "category_slug": "rbac.role_revoked",
+      "channels": ["mail", "in_app"],
+      "queue": "notifications",
+      "subject_template": "rbac::mail.role_revoked.subject",
+      "body_template_path": "rbac::mail.role_revoked.body",
+      "default_subject_en": "Your :role_name role was revoked",
+      "trigger_event": "RoleRevokedFromPrincipal",
+      "payload_bindings": {
+        "role_name": "string",
+        "trigger": "'admin_revoke' | 'assignment_expired' | 'role_deleted' | 'principal_disabled'",
+        "revoked_by_display_name": "string | null",
+        "revoked_at": "ISO-8601 timestamp",
+        "review_permissions_url": "string"
+      },
+      "notes": "Silenced when trigger='principal_disabled' (the user isn't logging back in anyway) and when trigger='role_deleted' AND the deleted role was is_system=false (the role itself is gone, no useful action for the user)."
+    },
+    {
+      "class": "RoleAssignmentExpiringNotification",
+      "category_slug": "rbac.role_assignment_expiring",
+      "channels": ["mail", "in_app"],
+      "queue": "notifications",
+      "subject_template": "rbac::mail.role_assignment_expiring.subject",
+      "body_template_path": "rbac::mail.role_assignment_expiring.body",
+      "default_subject_en": "Your :role_name access expires in :days_until_expiry days",
+      "trigger_event": "RoleAssignmentExpiringSoon (fired by the scheduler)",
+      "payload_bindings": {
+        "role_name": "string",
+        "expires_at": "ISO-8601 timestamp",
+        "days_until_expiry": "integer",
+        "extend_url": "string | null (deep link to the role-management page; null when the caller isn't the assigner)"
+      },
+      "notes": "Fires config('rbac.assignments.reminder_days_before_expiry') (default 7) days before expiry. Also fires 24h before expiry as a final reminder."
+    },
+    {
+      "class": "CustomRoleLimitReachedNotification",
+      "category_slug": "rbac.custom_role_limit",
+      "channels": ["mail", "in_app"],
+      "queue": "notifications",
+      "subject_template": "rbac::mail.custom_role_limit.subject",
+      "body_template_path": "rbac::mail.custom_role_limit.body",
+      "default_subject_en": "You've reached your custom-role limit on Academorix",
+      "trigger_event": "CustomRoleQuotaExceeded",
+      "payload_bindings": {
+        "current_custom_role_count": "integer",
+        "custom_role_slot_cap": "integer",
+        "upgrade_url": "string (deep link to the billing plan-picker)",
+        "tier_display_name": "string ('Medium', 'Business')"
+      },
+      "notes": "Only dispatched to owners + admins on the tenant. Non-admin members don't see this notification."
+    }
+  ],
+  "categories": [
+    {
+      "slug": "rbac.role_assigned",
+      "display_name": "Role assigned to you",
+      "description": "You were granted a role. Includes expiration info + a link to review your permissions.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "rbac.role_revoked",
+      "display_name": "Role revoked",
+      "description": "One of your roles was revoked. Includes the revocation reason.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "rbac.role_assignment_expiring",
+      "display_name": "Role assignment expiring soon",
+      "description": "A time-bounded role assignment expires in 7 days.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "rbac.custom_role_limit",
+      "display_name": "Custom role limit reached",
+      "description": "Your tenant reached the custom-role slot cap.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    }
+  ]
+}

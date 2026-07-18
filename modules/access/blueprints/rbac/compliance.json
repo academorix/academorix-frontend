@@ -1,0 +1,82 @@
+{
+  "id": "academorix://modules/rbac/compliance",
+  "$version": 1,
+  "title": "rbac \u2014 compliance evidence",
+  "description": "Access control is the load-bearing surface for every framework's access-provisioning + access-review requirement. Every role/permission mutation is audited. System role modifications are refused + logged critical.",
+  "regimes": {
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical access controls restrict access to information assets",
+          "evidence": "PermissionResolver is the SINGLE entry point for every permission check across the codebase. RBAC \u222a grants \u2212 denies + delegation composition per design.md \u00a72 D-A3. Deny-priority ensures explicit blocks always win."
+        },
+        {
+          "criterion": "CC6.3",
+          "principle": "user access provisioning",
+          "evidence": "Every role assignment fires RoleAssignedToPrincipal + writes an audit row with actor_id + timestamp + reason (see roles.retention). System role modifications are refused + logged at critical severity. Time-bounded assignments (expires_at) support least-privilege review."
+        },
+        {
+          "criterion": "CC6.6",
+          "principle": "prevent unauthorized access",
+          "evidence": "GuardMismatch (422) refuses any write that would bind a sanctum permission to a platform_admin role. ApplicationMismatch (422) refuses cross-Application role rows. Both are compliance-audited."
+        }
+      ]
+    },
+    "iso_27001": {
+      "applicable": true,
+      "controls": [
+        {
+          "clause": "A.9.2.1",
+          "principle": "user registration and de-registration",
+          "evidence": "TenantDefaultRoleSeeder on TenantProvisioned. Cascade-revocation on User disable / suspend via HasSessionRevocation trait chain."
+        },
+        {
+          "clause": "A.9.2.2",
+          "principle": "user access provisioning",
+          "evidence": "RoleAssignmentService enforces the four-eyes principle via #[AsApprovableAction] wiring on assign/revoke actions when the tenant has approvals configured for those actions."
+        },
+        {
+          "clause": "A.9.2.3",
+          "principle": "privileged access management",
+          "evidence": "Platform-admin roles (super_admin, security, ops) are isolated by guard boundary. Every platform-plane mutation writes an audit-log entry with actor + reason."
+        },
+        {
+          "clause": "A.9.2.5",
+          "principle": "review of user access rights",
+          "evidence": "PurgeExpiredRoleAssignmentsJob enforces expiration. `rbac:list-principal-roles --include-expired` supports access-review audits."
+        },
+        {
+          "clause": "A.9.2.6",
+          "principle": "removal or adjustment of access rights",
+          "evidence": "Role revocation cascades through PermissionCacheManager \u2014 the compact permission array on Sanctum PATs is updated within seconds. Immediate lockdown available via auth::sessions.revoke_all (breach response)."
+        }
+      ]
+    },
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(f)",
+          "principle": "integrity and confidentiality (least privilege)",
+          "evidence": "Scope-suffix convention (.own / .tenant / .branch / .team / .child / .any) narrows permission scope at query-build time. Base repository applies the WHERE clause \u2014 principals see only rows in scope."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "Default deny at step 5 of the resolver. New permissions without a scope suffix fail the valid_permission_name rule at write time."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security of processing",
+          "evidence": "Cache invalidation window bounded to <1 second across nodes (Redis pubsub broadcast). Permission changes propagate before the next request lands."
+        }
+      ]
+    },
+    "hipaa": {
+      "applicable": false,
+      "reason": "Academorix does not process protected health information (PHI) at this tier. Sports academies that record injury notes trigger different controls under `modules/products/sports/medical/`."
+    }
+  }
+}

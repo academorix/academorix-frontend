@@ -1,0 +1,353 @@
+{
+  "id": "academorix://modules/rbac/events",
+  "$version": 1,
+  "title": "rbac \u2014 published events",
+  "namespace": "Academorix\\Rbac\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every RBAC-lifecycle event fires after DB commit so downstream listeners never see uncommitted state. Payloads are readonly value objects. High-severity events (SystemRoleModificationRefused, GuardMismatchRefused, ApplicationMismatchRefused) fire on `notifications-critical` so ops paging pipelines catch them.",
+  "events": [
+    {
+      "name": "RoleCreated",
+      "class": "Academorix\\Rbac\\Events\\RoleCreated",
+      "trigger": "New row inserted into `roles`. Fires for both system-seeded rows (created_by null) and admin-created custom rows.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "audit::WriteToAuditLog",
+        "observability::EmitRoleCreatedMetric",
+        "rbac::InvalidateTenantRoleCatalogueCache"
+      ],
+      "payload": {
+        "role_id": "ULID (`rol_...`)",
+        "tenant_id": "ULID | null",
+        "application_id": "ULID | null",
+        "name": "string",
+        "guard_name": "'sanctum' | 'platform_admin'",
+        "is_system": "boolean",
+        "actor_id": "ULID | null",
+        "created_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "RoleUpdated",
+      "class": "Academorix\\Rbac\\Events\\RoleUpdated",
+      "trigger": "Any column on `roles` changed. Excludes assignment count changes (those fire RoleAssignedToPrincipal / RoleRevokedFromPrincipal).",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "rbac::InvalidateTenantRoleCatalogueCache",
+        "rbac::PurgeAllPrincipalPermissionCachesForRole"
+      ],
+      "payload": {
+        "role_id": "ULID",
+        "tenant_id": "ULID | null",
+        "changed_fields": "string[]",
+        "actor_id": "ULID | null",
+        "updated_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "RoleDeleted",
+      "class": "Academorix\\Rbac\\Events\\RoleDeleted",
+      "trigger": "`roles` row soft-deleted (`deleted_at` set). Custom roles only \u2014 system roles refuse deletion.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "audit::WriteToAuditLog",
+        "rbac::InvalidateTenantRoleCatalogueCache",
+        "rbac::PurgeAllPrincipalPermissionCachesForRole"
+      ],
+      "payload": {
+        "role_id": "ULID",
+        "tenant_id": "ULID",
+        "name": "string",
+        "principal_count_before_delete": "integer",
+        "actor_id": "ULID",
+        "deleted_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "PermissionCreated",
+      "class": "Academorix\\Rbac\\Events\\PermissionCreated",
+      "trigger": "New row inserted into `permissions`. Fires for both catalogue-loader inserts (created_by null) and tenant-created custom permissions.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitPermissionCreatedMetric"
+      ],
+      "payload": {
+        "permission_id": "ULID (`per_...`)",
+        "tenant_id": "ULID | null",
+        "application_id": "ULID | null",
+        "name": "string",
+        "guard_name": "'sanctum' | 'platform_admin'",
+        "module_slug": "string | null",
+        "is_system": "boolean",
+        "actor_id": "ULID | null"
+      }
+    },
+    {
+      "name": "PermissionUpdated",
+      "class": "Academorix\\Rbac\\Events\\PermissionUpdated",
+      "queue": "notifications",
+      "payload": {
+        "permission_id": "ULID",
+        "changed_fields": "string[]",
+        "actor_id": "ULID | null"
+      }
+    },
+    {
+      "name": "PermissionDeleted",
+      "class": "Academorix\\Rbac\\Events\\PermissionDeleted",
+      "queue": "notifications",
+      "payload": {
+        "permission_id": "ULID",
+        "name": "string",
+        "roles_detached_count": "integer",
+        "actor_id": "ULID"
+      }
+    },
+    {
+      "name": "RoleAssignedToPrincipal",
+      "class": "Academorix\\Rbac\\Events\\RoleAssignedToPrincipal",
+      "trigger": "A `model_has_roles` row was inserted. Applies to User / PlatformUser / ServiceAccount.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "audit::WriteToAuditLog",
+        "rbac::InvalidatePrincipalPermissionCache",
+        "notifications::DispatchRoleAssignedNotification",
+        "observability::EmitRoleAssignedMetric"
+      ],
+      "payload": {
+        "role_id": "ULID",
+        "role_name": "string",
+        "principal_type": "'User' | 'PlatformUser' | 'ServiceAccount'",
+        "principal_id": "ULID",
+        "tenant_id": "ULID | null",
+        "application_id": "ULID | null",
+        "assigned_by": "ULID | null (null = system-seeded assignment on tenant provisioning)",
+        "expires_at": "ISO-8601 timestamp | null",
+        "was_delegated": "boolean",
+        "assigned_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "RoleRevokedFromPrincipal",
+      "class": "Academorix\\Rbac\\Events\\RoleRevokedFromPrincipal",
+      "trigger": "`model_has_roles` row hard-deleted (spatie does not soft-delete pivots).",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "audit::WriteToAuditLog",
+        "rbac::InvalidatePrincipalPermissionCache",
+        "notifications::DispatchRoleRevokedNotification"
+      ],
+      "payload": {
+        "role_id": "ULID",
+        "role_name": "string",
+        "principal_type": "string",
+        "principal_id": "ULID",
+        "trigger": "'admin_revoke' | 'assignment_expired' | 'role_deleted' | 'principal_disabled'",
+        "actor_id": "ULID | null",
+        "revoked_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "PermissionGrantedToPrincipal",
+      "class": "Academorix\\Rbac\\Events\\PermissionGrantedToPrincipal",
+      "trigger": "Direct permission attach via `model_has_permissions` (rare \u2014 usually roles carry perms).",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "audit::WriteToAuditLog",
+        "rbac::InvalidatePrincipalPermissionCache"
+      ],
+      "payload": {
+        "permission_id": "ULID",
+        "permission_name": "string",
+        "principal_type": "string",
+        "principal_id": "ULID",
+        "actor_id": "ULID"
+      }
+    },
+    {
+      "name": "PermissionRevokedFromPrincipal",
+      "class": "Academorix\\Rbac\\Events\\PermissionRevokedFromPrincipal",
+      "queue": "notifications",
+      "payload": {
+        "permission_id": "ULID",
+        "principal_type": "string",
+        "principal_id": "ULID",
+        "actor_id": "ULID"
+      }
+    },
+    {
+      "name": "PermissionsAttachedToRole",
+      "class": "Academorix\\Rbac\\Events\\PermissionsAttachedToRole",
+      "trigger": "One or more permissions attached to a role via `role_has_permissions`. Emitted ONCE per attach transaction \u2014 batches many permissions into one event with a `permission_ids[]` array.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "rbac::PurgeAllPrincipalPermissionCachesForRole",
+        "rbac::InvalidateTenantRoleCatalogueCache"
+      ],
+      "payload": {
+        "role_id": "ULID",
+        "role_name": "string",
+        "permission_ids": "string[]",
+        "permission_names": "string[]",
+        "actor_id": "ULID | null"
+      }
+    },
+    {
+      "name": "PermissionsDetachedFromRole",
+      "class": "Academorix\\Rbac\\Events\\PermissionsDetachedFromRole",
+      "queue": "notifications",
+      "payload": {
+        "role_id": "ULID",
+        "permission_ids": "string[]",
+        "actor_id": "ULID"
+      }
+    },
+    {
+      "name": "SystemRoleModificationRefused",
+      "class": "Academorix\\Rbac\\Events\\SystemRoleModificationRefused",
+      "trigger": "RoleObserver refused a rename / delete / non-permission mutation on an is_system=true row. THE compliance-critical event \u2014 pages security.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::AlertSecurityTeam",
+        "observability::EmitSystemRoleTamperingMetric"
+      ],
+      "payload": {
+        "role_id": "ULID",
+        "role_name": "string",
+        "attempted_action": "'rename' | 'delete' | 'guard_change' | 'application_change'",
+        "actor_id": "ULID",
+        "actor_type": "'User' | 'PlatformUser'",
+        "request_ip_hash": "string",
+        "refused_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "RoleAssignmentExpired",
+      "class": "Academorix\\Rbac\\Events\\RoleAssignmentExpired",
+      "trigger": "PurgeExpiredRoleAssignmentsJob removed a `model_has_roles` row past its `expires_at`. Fires ONCE per purged row.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "rbac::InvalidatePrincipalPermissionCache",
+        "notifications::DispatchRoleRevokedNotification"
+      ],
+      "payload": {
+        "role_id": "ULID",
+        "principal_type": "string",
+        "principal_id": "ULID",
+        "originally_assigned_at": "ISO-8601 timestamp",
+        "originally_assigned_by": "ULID | null",
+        "expires_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "TenantCustomRoleCreated",
+      "class": "Academorix\\Rbac\\Events\\TenantCustomRoleCreated",
+      "trigger": "A NEW custom role was created by a tenant admin (distinct from system-seeded roles). Feeds the tier-adoption analytics.",
+      "queue": "notifications",
+      "consumers": [
+        "analytics::TrackCustomRoleCreated",
+        "observability::EmitCustomRoleCreatedMetric"
+      ],
+      "payload": {
+        "role_id": "ULID",
+        "tenant_id": "ULID",
+        "actor_id": "ULID",
+        "permission_count": "integer",
+        "custom_role_slot_used_after": "integer",
+        "custom_role_slot_cap": "integer | null"
+      }
+    },
+    {
+      "name": "TenantCustomRoleDeleted",
+      "class": "Academorix\\Rbac\\Events\\TenantCustomRoleDeleted",
+      "queue": "notifications",
+      "payload": {
+        "role_id": "ULID",
+        "tenant_id": "ULID",
+        "actor_id": "ULID",
+        "principal_count_before_delete": "integer"
+      }
+    },
+    {
+      "name": "TenantDefaultRolesSeeded",
+      "class": "Academorix\\Rbac\\Events\\TenantDefaultRolesSeeded",
+      "trigger": "TenantDefaultRoleSeeder finished seeding a tenant's default role set on TenantProvisioned OR on `rbac:seed-defaults --force` re-seed.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitDefaultRolesSeededMetric"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "application_id": "ULID",
+        "business_type_slug": "string",
+        "tier": "'small' | 'medium' | 'business' | 'enterprise'",
+        "roles_seeded": "integer",
+        "permissions_attached": "integer",
+        "seeded_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "PermissionCacheInvalidated",
+      "class": "Academorix\\Rbac\\Events\\PermissionCacheInvalidated",
+      "trigger": "PermissionCacheManager purged one or more cache keys. Fires ONCE per invalidation call (may batch many keys).",
+      "queue": null,
+      "consumers": [
+        "observability::EmitPermissionCacheInvalidatedMetric"
+      ],
+      "payload": {
+        "tenant_id": "ULID | null",
+        "principal_type": "string | null (null = tenant-wide)",
+        "principal_id": "ULID | null",
+        "cached_keys_purged": "integer",
+        "trigger": "'role_change' | 'permission_change' | 'assignment_change' | 'bulk' | 'broadcast'"
+      }
+    },
+    {
+      "name": "GuardMismatchRefused",
+      "class": "Academorix\\Rbac\\Events\\GuardMismatchRefused",
+      "trigger": "RoleHasPermissionsObserver OR ModelHasRolesObserver refused a cross-guard write. Compliance-critical.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "observability::EmitGuardMismatchMetric"
+      ],
+      "payload": {
+        "actor_id": "ULID",
+        "attempted_role_guard": "string",
+        "attempted_permission_guard": "string",
+        "role_id": "ULID | null",
+        "permission_id": "ULID | null",
+        "refused_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "ApplicationMismatchRefused",
+      "class": "Academorix\\Rbac\\Events\\ApplicationMismatchRefused",
+      "trigger": "RoleHasPermissionsObserver OR ModelHasRolesObserver refused a cross-Application write.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "observability::EmitApplicationMismatchMetric"
+      ],
+      "payload": {
+        "actor_id": "ULID",
+        "attempted_role_application_id": "ULID",
+        "attempted_permission_application_id": "ULID",
+        "role_id": "ULID | null",
+        "permission_id": "ULID | null",
+        "refused_at": "ISO-8601 timestamp"
+      }
+    }
+  ]
+}

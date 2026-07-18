@@ -1,0 +1,239 @@
+{
+  "id": "academorix://modules/rbac/errors",
+  "$version": 1,
+  "title": "rbac \u2014 error codes",
+  "namespace": "rbac",
+  "errors": [
+    {
+      "code": "ROLE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.role_not_found"
+    },
+    {
+      "code": "PERMISSION_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.permission_not_found"
+    },
+    {
+      "code": "GUARD_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "critical",
+      "i18n_key": "rbac.errors.guard_mismatch",
+      "description": "A write would have crossed the sanctum \u2194 platform_admin boundary. E.g. attaching a `sanctum`-guard permission to a `platform_admin`-guard role. Refused."
+    },
+    {
+      "code": "APPLICATION_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "critical",
+      "i18n_key": "rbac.errors.application_mismatch",
+      "description": "A write would have crossed the Application boundary. E.g. attaching an `application_id=app_sports` permission to a `application_id=app_marketplace` role. Refused."
+    },
+    {
+      "code": "SYSTEM_ROLE_MODIFICATION_REFUSED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "critical",
+      "i18n_key": "rbac.errors.system_role_modification_refused",
+      "description": "Someone tried to rename / delete / modify permissions on an `is_system=true` role. Fires the matching event. Custom permissions can still be attached (with entitlement)."
+    },
+    {
+      "code": "SYSTEM_PERMISSION_DELETION_REFUSED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "critical",
+      "i18n_key": "rbac.errors.system_permission_deletion_refused",
+      "description": "Someone tried to hard-delete an `is_system=true` permission. Refused. Platform admins archive instead (soft-delete)."
+    },
+    {
+      "code": "CUSTOM_ROLE_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.custom_role_quota_exceeded",
+      "description": "Tenant reached the `custom_role_slot` cap. Response includes upgrade path CTA."
+    },
+    {
+      "code": "CUSTOM_ROLES_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.custom_roles_not_entitled",
+      "description": "Tenant on Small tier attempted to create a custom role. Response includes upgrade path CTA."
+    },
+    {
+      "code": "CUSTOM_PERMISSIONS_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.custom_permissions_not_entitled",
+      "description": "Non-Enterprise tenant attempted to create a NEW permission string (not just attach an existing one)."
+    },
+    {
+      "code": "TIME_BOUNDED_ASSIGNMENT_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.time_bounded_assignment_not_entitled",
+      "description": "Attempted to write expires_at on model_has_roles without the `time_bounded_role_assignments` entitlement."
+    },
+    {
+      "code": "INVALID_ROLE_NAME",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.invalid_role_name",
+      "description": "Role name failed the `valid_role_name` rule (snake_case, max 128 chars, no reserved prefix)."
+    },
+    {
+      "code": "INVALID_PERMISSION_NAME",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.invalid_permission_name",
+      "description": "Permission name failed the `valid_permission_name` rule (dot-notation, valid scope suffix, no reserved prefix). See config('rbac.permissions.allowed_suffixes')."
+    },
+    {
+      "code": "ROLE_NAME_DUPLICATE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.role_name_duplicate",
+      "description": "Composite unique (application_id, tenant_id, name, guard_name) collision."
+    },
+    {
+      "code": "PERMISSION_NAME_DUPLICATE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.permission_name_duplicate"
+    },
+    {
+      "code": "ROLE_ASSIGNMENT_NOT_ALLOWED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "rbac.errors.role_assignment_not_allowed",
+      "description": "Actor tried to assign a role holding permissions the actor doesn't themselves hold. Refused by the `role_assignable_by_actor` rule (no privilege escalation via role assignment)."
+    },
+    {
+      "code": "ROLE_ASSIGNMENT_EXISTS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.role_assignment_exists",
+      "description": "Principal already holds this role. Duplicate write refused."
+    },
+    {
+      "code": "ROLE_ASSIGNMENT_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.role_assignment_not_found",
+      "description": "DELETE /rbac/principals/{principal}/roles/{role} refused \u2014 no active assignment matches."
+    },
+    {
+      "code": "PRINCIPAL_TOO_MANY_ROLES",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.principal_too_many_roles",
+      "description": "Principal has reached config('rbac.roles.max_active_per_principal') active assignments."
+    },
+    {
+      "code": "ROLE_TOO_MANY_PERMISSIONS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.role_too_many_permissions",
+      "description": "Role has reached config('rbac.roles.max_permissions_per_role') attached permissions."
+    },
+    {
+      "code": "ROLE_IN_USE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.role_in_use",
+      "description": "Attempted to hard-delete a role that still has active assignments. Revoke first or soft-delete."
+    },
+    {
+      "code": "PERMISSION_IN_USE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.permission_in_use",
+      "description": "Attempted to hard-delete a permission still attached to at least one role or principal."
+    },
+    {
+      "code": "PRINCIPAL_APPLICATION_MISMATCH",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "rbac.errors.principal_application_mismatch",
+      "description": "Attempted to assign a role from Application A to a User whose `application_id` is B. Refused."
+    },
+    {
+      "code": "ROLE_DEFINITION_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.role_definition_not_found",
+      "description": "role_definitions row not found (typically means `rbac:sync-role-definitions` never ran)."
+    },
+    {
+      "code": "ROLE_DEFINITION_MIN_TIER_UNMET",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.role_definition_min_tier_unmet",
+      "description": "Role definition requires a higher subscription tier than the tenant's current tier."
+    },
+    {
+      "code": "PERMISSION_CACHE_UNREACHABLE",
+      "http": 500,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "rbac.errors.permission_cache_unreachable",
+      "description": "Redis (or configured cache store) unreachable. Resolver falls back to DB queries \u2014 40x slower. Ops alerted."
+    },
+    {
+      "code": "PERMISSION_DEFAULT_DENY",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "rbac.errors.permission_default_deny",
+      "description": "Resolver returned false. Distinct from the framework auth failure \u2014 this is the FINE-GRAINED authorisation refusal. Response is `access_denied` with the missing permission name (when config('rbac.errors.disclose_missing_permission')=true, off by default in production for security)."
+    }
+  ]
+}

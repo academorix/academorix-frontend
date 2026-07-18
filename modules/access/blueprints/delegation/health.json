@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/delegation/health",
+  "$version": 1,
+  "title": "delegation — health probes",
+  "probes": [
+    {
+      "name": "delegation-migrations-applied",
+      "class": "Academorix\\Delegation\\Health\\Probes\\MigrationsAppliedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "role_delegations + impersonation_sessions tables exist with the expected column set. Fails startup if schema is out of date.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "delegation-resolver-cache-reachable",
+      "class": "Academorix\\Delegation\\Health\\Probes\\ResolverCacheReachableProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Redis LRU cache for DelegationResolver reachable. Failure falls through to DB reads — degraded performance but no data loss.",
+      "timeoutMs": 300
+    },
+    {
+      "name": "delegation-permissions-seeded",
+      "class": "Academorix\\Delegation\\Health\\Probes\\PermissionsSeededProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "All 11 permissions from permissions.json exist in the roles/permissions table for both sanctum + platform_admin guards. Missing permissions block authorization.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "delegation-scheduled-jobs-registered",
+      "class": "Academorix\\Delegation\\Health\\Probes\\ScheduledJobsRegisteredProbe",
+      "category": "readiness",
+      "critical": true,
+      "description": "ActivateDelegationsJob + ExpireDelegationsJob + EndImpersonationSessionsJob + PurgeRevokedDelegationsJob + PurgeImpersonationSessionsJob are registered in the schedule. Any missing → the lifecycle guarantee breaks.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "delegation-active-impersonations-within-cap",
+      "class": "Academorix\\Delegation\\Health\\Probes\\ActiveImpersonationsWithinCapProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Count of active impersonation_sessions across the platform is below the operational cap (default 50 concurrent). A large excess signals either an ExpireImpersonationSessionsJob outage OR abuse — both are pageable.",
+      "timeoutMs": 500,
+      "reference": "The cap is deliberately conservative — no operational scenario should produce 50+ concurrent Academorix-staff impersonation sessions."
+    },
+    {
+      "name": "delegation-stuck-pending-count",
+      "class": "Academorix\\Delegation\\Health\\Probes\\StuckPendingDelegationsProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Count of pending delegations whose starts_at is > 1h in the past (should have activated). > 0 signals an ActivateDelegationsJob outage.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "delegation-stuck-expired-count",
+      "class": "Academorix\\Delegation\\Health\\Probes\\StuckActiveExpiredDelegationsProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Count of active delegations whose ends_at is > 1h in the past (should have expired). > 0 signals an ExpireDelegationsJob outage.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "delegation-stuck-active-impersonations",
+      "class": "Academorix\\Delegation\\Health\\Probes\\StuckActiveImpersonationsProbe",
+      "category": "readiness",
+      "critical": true,
+      "description": "Count of active impersonation_sessions whose ends_at is > 15 minutes in the past. > 0 is CRITICAL — impersonation session TTL enforcement has failed. Fires PagerDuty alert.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "delegation-token-scrub-lag",
+      "class": "Academorix\\Delegation\\Health\\Probes\\TokenScrubLagProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Count of ended impersonation_sessions with session_token_hash still populated AND ended_at > 30 days ago. > 0 signals a PurgeImpersonationSessionsJob outage. Not critical (the tokens are dead), but must be resolved before compliance review.",
+      "timeoutMs": 500
+    }
+  ]
+}

@@ -1,0 +1,242 @@
+{
+  "$version": 1,
+  "name": "rbac",
+  "alias": "rbac",
+  "namespace": "Academorix\\Rbac",
+  "description": "The runtime role + permission storage layer for the sanctum + platform_admin guards. Extends spatie/laravel-permission's tables with `application_id` + `tenant_id` columns per design.md §2 D-A2. Ships CRUD APIs for tenant admins to manage their tenant's roles + custom permissions (gated by the `custom_roles` entitlement + `custom_role_slot` quota). System roles are seeded per-business-type from `role_definitions` — a metadata layer that pins which business_types default-provision which roles, plus i18n labels + min-tier gating. Enforces `GuardMismatch` (422) on any write that would bind a sanctum permission to a platform_admin role (or vice versa) + `ApplicationMismatch` (422) on cross-Application writes. Ships the base `PermissionResolver` that composes RBAC ∪ grants − denies + delegation per design.md §2 D-A3 — every downstream permission check flows through this resolver. Owns the seed permissions catalogue that domain modules extend (users.*, tenants.*, invoices.*, athletes.*, ...) — with the `.own` / `.tenant` / `.branch` / `.team` / `.child` / `.any` scope-suffix convention resolved by `auth::ScopeSuffixResolver`. Framework primitives (`#[RequirePermission]`, `#[RequireRole]`, base guard classes) live in `backend-packages/authorization/` — THIS module owns the business data. RBAC binds polymorphically to `User` (tenant plane, sanctum guard), `PlatformUser` (platform plane, platform_admin guard), and `ServiceAccount` (machine plane, sanctum guard via a dedicated ability slice).",
+  "keywords": [
+    "rbac",
+    "roles",
+    "permissions",
+    "spatie-permission",
+    "sanctum",
+    "platform-admin",
+    "guard-mismatch",
+    "application-mismatch",
+    "permission-resolver",
+    "scope-suffix",
+    "role-definitions",
+    "business-type",
+    "custom-roles",
+    "entitlement-gated",
+    "polymorphic-principals",
+    "service-accounts",
+    "cache-invalidation",
+    "time-bounded-assignment",
+    "soc2-cc6.3",
+    "iso27001-a9.2"
+  ],
+  "priority": 30,
+  "providers": [
+    "Academorix\\Rbac\\Providers\\RbacServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "identity",
+    "user",
+    "platform-user",
+    "application",
+    "tenancy",
+    "entitlements"
+  ],
+  "extendedBy": [
+    "grants",
+    "delegation",
+    "requests",
+    "approvals"
+  ],
+  "consumedIndirectlyBy": {
+    "description": "Every downstream tenant-plane + platform-plane module reaches this module through the framework attributes `#[RequirePermission]` / `#[RequireRole]` (which resolve through `PermissionResolver::resolve()`) OR the composed `Gate::allows()` bridge. Domain modules NEVER query `role_has_permissions` / `model_has_roles` directly — they authorise via the resolver. The resolver is Sanctum-abilities-cached at PAT issue-time (auth module owns the caching write; RBAC owns the read-path resolution).",
+    "modules": [
+      "every module below platform tier",
+      "every action gated by #[RequirePermission] or #[RequireRole]",
+      "every base repository consulting ScopeSuffixResolver (which itself consults RBAC for the caller's permissions)"
+    ]
+  },
+  "contributes": {
+    "traits": [
+      "HasRoles",
+      "HasPermissions",
+      "HasResolvedPermissions",
+      "IsPermissionable"
+    ],
+    "attributes": [
+      "AsRbacListener",
+      "ProvidesPermissions"
+    ],
+    "blueprints": [
+      "roles",
+      "permissions",
+      "role_has_permissions",
+      "model_has_roles",
+      "model_has_permissions",
+      "role_definitions"
+    ],
+    "middleware": [
+      "rbac.enforce_permission",
+      "rbac.enforce_role",
+      "rbac.warm_permission_cache"
+    ],
+    "events": [
+      "RoleCreated",
+      "RoleUpdated",
+      "RoleDeleted",
+      "PermissionCreated",
+      "PermissionUpdated",
+      "PermissionDeleted",
+      "RoleAssignedToPrincipal",
+      "RoleRevokedFromPrincipal",
+      "PermissionGrantedToPrincipal",
+      "PermissionRevokedFromPrincipal",
+      "PermissionsAttachedToRole",
+      "PermissionsDetachedFromRole",
+      "SystemRoleModificationRefused",
+      "RoleAssignmentExpired",
+      "TenantCustomRoleCreated",
+      "TenantCustomRoleDeleted",
+      "TenantDefaultRolesSeeded",
+      "PermissionCacheInvalidated",
+      "GuardMismatchRefused",
+      "ApplicationMismatchRefused"
+    ],
+    "policies": [
+      "RolePolicy",
+      "PermissionPolicy",
+      "RoleAssignmentPolicy",
+      "RoleDefinitionPolicy"
+    ],
+    "hooks": [],
+    "commands": [
+      "rbac:list-roles",
+      "rbac:describe-role",
+      "rbac:seed-defaults",
+      "rbac:sync-role-definitions",
+      "rbac:list-principal-roles",
+      "rbac:assign-role",
+      "rbac:revoke-role",
+      "rbac:list-permissions",
+      "rbac:audit-permission-check",
+      "rbac:purge-expired-assignments",
+      "rbac:migrate-legacy-roles"
+    ],
+    "jobs": [
+      "SeedTenantDefaultRolesJob",
+      "ReconcileRoleDefinitionsJob",
+      "PurgeExpiredRoleAssignmentsJob",
+      "InvalidatePermissionCacheJob",
+      "PurgeSoftDeletedRolesJob"
+    ],
+    "notifications": [
+      "RoleAssignedNotification",
+      "RoleRevokedNotification",
+      "RoleAssignmentExpiringNotification",
+      "CustomRoleLimitReachedNotification"
+    ],
+    "broadcasts": [
+      "tenant.{id}.rbac.roles",
+      "tenant.{id}.rbac.principal.{principal_id}.permissions"
+    ],
+    "observers": [
+      "RoleObserver",
+      "PermissionObserver",
+      "RoleHasPermissionsObserver",
+      "ModelHasRolesObserver",
+      "ModelHasPermissionsObserver",
+      "RoleDefinitionObserver"
+    ],
+    "rules": [
+      "valid_role_name",
+      "valid_permission_name",
+      "permission_belongs_to_role_guard",
+      "permission_belongs_to_role_application",
+      "role_assignable_by_actor",
+      "role_not_system",
+      "principal_belongs_to_current_application"
+    ],
+    "casts": [
+      "GuardName",
+      "PermissionName",
+      "ResolvedPermissionSet"
+    ],
+    "views": [],
+    "lang": [
+      "rbac"
+    ],
+    "config": [
+      "rbac"
+    ],
+    "macros": [
+      "Blueprint::guardable_columns",
+      "Blueprint::rbac_scoped_columns"
+    ],
+    "bindings": [
+      "RoleRepository",
+      "PermissionRepository",
+      "RoleAssignmentService",
+      "PermissionResolver",
+      "PermissionCacheManager",
+      "ScopeSuffixValidator",
+      "TenantDefaultRoleSeeder",
+      "PermissionCatalogueLoader",
+      "RoleDefinitionRegistry",
+      "GuardBoundaryEnforcer"
+    ],
+    "resources": [
+      "role",
+      "permission",
+      "role-definition",
+      "principal-role",
+      "principal-permission"
+    ]
+  },
+  "wraps": {
+    "packages": [
+      "spatie/laravel-permission (roles + permissions + spatie pivots)"
+    ],
+    "rationale": "spatie/laravel-permission's `roles` + `permissions` + `role_has_permissions` + `model_has_roles` + `model_has_permissions` tables are used as-shipped — we DO NOT reimplement the pivot semantics. Migrations in this module ADD columns (`application_id`, `tenant_id`, `is_system`, `description`, `sort_order`, denormalised `application_id` + `tenant_id` on the pivots) without altering the vendor-owned columns. Our `HasRoles` trait EXTENDS Spatie\\Permission\\Traits\\HasRoles and overrides `hasPermissionTo(...)` to route through `PermissionResolver::resolve()` so RBAC + grants + delegation compose at query-time. Overriding at the trait level (not the model level) lets every model composing the trait inherit the resolver without touching call sites."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing RBAC surface. Owner + admin can CRUD custom roles (gated by `custom_roles` entitlement + `custom_role_slot` quota). Every tenant member can read their own permissions via `GET /me/permissions`. Every mutation triggers PermissionCacheInvalidated so downstream Sanctum PATs re-warm on next request.",
+      "routes": [
+        "GET /api/v1/rbac/roles",
+        "POST /api/v1/rbac/roles",
+        "GET /api/v1/rbac/roles/{role}",
+        "PATCH /api/v1/rbac/roles/{role}",
+        "DELETE /api/v1/rbac/roles/{role}",
+        "GET /api/v1/rbac/permissions",
+        "GET /api/v1/rbac/permissions/{permission}",
+        "GET /api/v1/rbac/roles/{role}/permissions",
+        "POST /api/v1/rbac/roles/{role}/permissions/{permission}",
+        "DELETE /api/v1/rbac/roles/{role}/permissions/{permission}",
+        "GET /api/v1/rbac/principals/{principal}/roles",
+        "POST /api/v1/rbac/principals/{principal}/roles/{role}",
+        "DELETE /api/v1/rbac/principals/{principal}/roles/{role}",
+        "GET /api/v1/rbac/principals/{principal}/permissions",
+        "GET /api/v1/me/permissions",
+        "GET /api/v1/me/roles"
+      ]
+    },
+    "platform-admin": {
+      "description": "Platform-admin RBAC surface. Manages system roles (application_id + tenant_id nullable), role_definitions metadata (business_type_slugs, i18n labels, min_tier), cross-Application observability. Every write is audit-critical.",
+      "routes": [
+        "GET /api/v1/platform/rbac/system-roles",
+        "POST /api/v1/platform/rbac/system-roles",
+        "PATCH /api/v1/platform/rbac/system-roles/{role}",
+        "DELETE /api/v1/platform/rbac/system-roles/{role}",
+        "GET /api/v1/platform/rbac/role-definitions",
+        "POST /api/v1/platform/rbac/role-definitions",
+        "GET /api/v1/platform/rbac/role-definitions/{roleDefinition}",
+        "PATCH /api/v1/platform/rbac/role-definitions/{roleDefinition}",
+        "GET /api/v1/platform/rbac/permissions",
+        "POST /api/v1/platform/rbac/permissions",
+        "PATCH /api/v1/platform/rbac/permissions/{permission}",
+        "POST /api/v1/platform/rbac/tenants/{tenant}/reseed-defaults"
+      ]
+    }
+  },
+  "planned_consumers": [
+    "every downstream domain module"
+  ]
+}

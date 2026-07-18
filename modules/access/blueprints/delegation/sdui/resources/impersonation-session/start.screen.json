@@ -1,0 +1,218 @@
+{
+  "id": "delegation.resources.impersonation-session.start",
+  "title": "Start impersonation session",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/impersonation/start",
+  "host": "platform-admin",
+  "audience": "platform_admin",
+  "resource": { "module": "delegation", "entity": "impersonation-session", "action": "create" },
+  "requiresPermission": "platform.impersonate",
+  "notes": [
+    "The response includes the RAW impersonation PAT (returned once). The client MUST NOT persist it beyond session storage — no copy-to-clipboard button, no export. On success, the client swaps the PAT into its session AND navigates to the impersonated tenant's URL with the impersonation context active.",
+    "Reason has a 40-char minimum with a live counter. Support ticket reference is required if the tenant's contract mandates it (config.delegation.impersonation.require_ticket_reference or per-tenant setting).",
+    "Duration slider max is capped at 60 minutes by default; extended cap (240 min) only when target tenant holds impersonation_extended_ttl entitlement + caller is super_admin. The slider disables the extended band otherwise.",
+    "is_read_only toggle default: unchecked. Locked to true (uncheckable) when target tenant holds read_only_impersonation entitlement — enforced by the observer regardless of the UI, but the UI reflects the constraint."
+  ],
+  "dataSources": [
+    {
+      "name": "myImpersonationEntitlement",
+      "kind": "http.get",
+      "url": "/api/v1/platform/me/entitlements/impersonation",
+      "unwrap": "data"
+    },
+    {
+      "name": "myActiveSession",
+      "kind": "http.get",
+      "url": "/api/v1/platform/impersonation/sessions?filter[is_active]=true&filter[impersonator_platform_user_id]=me",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 10 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Start impersonation session"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "You will operate as another user for the specified window. The impersonated user is notified immediately + the session is audited under SOC 2 CC6.1."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "title": "You already have an active session",
+            "children": "End your current session before starting a new one — only one at a time."
+          },
+          "bindings": {
+            "hidden": { "$expr": "!myActiveSession || myActiveSession.length === 0" }
+          }
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "action": {
+              "kind": "http.post",
+              "url": "/api/v1/platform/impersonation/start"
+            },
+            "onSuccess": {
+              "kind": "action.chain",
+              "steps": [
+                {
+                  "kind": "session.setImpersonationToken",
+                  "tokenExpr": "response.token"
+                },
+                {
+                  "kind": "navigate",
+                  "toExpr": "'/platform/impersonation/sessions/' + response.session.id"
+                }
+              ]
+            }
+          },
+          "bindings": {
+            "disabled": {
+              "$expr": "myActiveSession && myActiveSession.length > 0"
+            }
+          },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": {
+                "name": "target_tenant_id",
+                "label": "Target tenant",
+                "required": true,
+                "placeholder": "Search tenant...",
+                "optionsSource": {
+                  "kind": "http.get",
+                  "url": "/api/v1/platform/tenants",
+                  "unwrap": "data",
+                  "optionKey": "id",
+                  "optionLabel": "name"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": {
+                "name": "target_application_id",
+                "label": "Target application",
+                "required": true,
+                "placeholder": "Sports / Marketplace / ...",
+                "optionsSource": {
+                  "kind": "http.get",
+                  "url": "/api/v1/platform/applications",
+                  "unwrap": "data",
+                  "optionKey": "id",
+                  "optionLabel": "name"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": {
+                "name": "impersonated_user_id",
+                "label": "Impersonated user",
+                "required": true,
+                "placeholder": "Search a user in the target tenant...",
+                "optionsSourceExpr": {
+                  "kind": "http.get",
+                  "urlExpr": "'/api/v1/platform/users?filter[tenant_id]=' + form.target_tenant_id + '&filter[application_id]=' + form.target_application_id",
+                  "unwrap": "data",
+                  "optionKey": "id",
+                  "optionLabel": "profile.display_name"
+                },
+                "helpText": "Only users in the selected tenant + application appear here."
+              }
+            },
+            {
+              "kind": "TextArea",
+              "props": {
+                "name": "reason",
+                "label": "Reason",
+                "required": true,
+                "minLength": 40,
+                "maxLength": 4000,
+                "showCounter": true,
+                "helpText": "Why do you need to impersonate this user? Minimum 40 characters. The impersonated user sees this reason in their notification. Recorded in the audit trail."
+              }
+            },
+            {
+              "kind": "Input",
+              "props": {
+                "name": "support_ticket_reference",
+                "label": "Support ticket reference",
+                "placeholder": "e.g. ZD-12345 or LIN-4567",
+                "helpText": "Recommended: link to the ticket driving this impersonation."
+              }
+            },
+            {
+              "kind": "Slider",
+              "props": {
+                "name": "requested_duration_minutes",
+                "label": "Session duration",
+                "defaultValue": 30,
+                "min": 5,
+                "step": 5,
+                "showValue": true,
+                "valueFormat": "value + ' min'",
+                "helpText": "Default cap is 60 minutes. Extended cap (up to 240 min) requires impersonation_extended_ttl entitlement on the target tenant + super_admin extension."
+              },
+              "bindings": {
+                "max": { "$expr": "myImpersonationEntitlement.extended_ttl ? 240 : 60" }
+              }
+            },
+            {
+              "kind": "Toggle",
+              "props": {
+                "name": "is_read_only",
+                "label": "Read-only session",
+                "defaultValue": false,
+                "helpText": "Refuses all POST / PUT / PATCH / DELETE during the session. Enterprise entitlement required for locking this off; some tenant contracts REQUIRE read-only-only."
+              }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex gap-2 justify-end mt-6" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "children": "Cancel" },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/platform/impersonation/sessions" }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "type": "submit",
+                    "children": "Start session",
+                    "confirm": "The user you impersonate will be notified immediately. Every action you take is audited. Continue?"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

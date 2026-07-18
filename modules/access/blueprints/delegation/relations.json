@@ -1,0 +1,128 @@
+{
+  "id": "academorix://modules/delegation/relations",
+  "$version": 1,
+  "title": "delegation — model relationships",
+  "description": "Two aggregates, each with its own relationship tree. RoleDelegation is tenant-plane (delegator + delegate + role are all tenant-scoped). ImpersonationSession is cross-plane — impersonator is a PlatformUser (central-plane); everything else is tenant-plane. This is the ONE place in the tenant-plane where a central-plane FK is permitted, per tenancy-columns.md §5 exception for platform-plane FKs tracking cross-plane operations.",
+  "internal": [
+    {
+      "from": "RoleDelegation",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "delegator_id",
+      "onDelete": "restrict",
+      "description": "The User handing over their role(s). Restrict on delete — cannot delete a User with outstanding delegations; must revoke first."
+    },
+    {
+      "from": "RoleDelegation",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "delegate_id",
+      "onDelete": "restrict",
+      "description": "The User receiving the delegation. Restrict on delete — cannot delete a User currently designated as a delegate."
+    },
+    {
+      "from": "RoleDelegation",
+      "kind": "belongsTo",
+      "to": "access/rbac::Role",
+      "foreignKey": "role_id",
+      "nullable": true,
+      "onDelete": "cascade",
+      "description": "Specific role being delegated. NULL = ALL of delegator's active roles for the delegation window (OOF flow). Cascade on role delete — if a tenant admin deletes a custom role, any delegation scoped to that role dies with it. All-roles delegations survive because role_id IS NULL."
+    },
+    {
+      "from": "RoleDelegation",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "revoked_by",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "The User (delegator or admin) who fired an early revocation. Set null on User erasure so the row stays queryable — the id remains in the audit trail via HasAudit."
+    },
+    {
+      "from": "ImpersonationSession",
+      "kind": "belongsTo",
+      "to": "platform-user::PlatformUser",
+      "foreignKey": "impersonator_platform_user_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "The Academorix staff member who initiated the session. NULLABLE — SET NULL on PlatformUser hard-delete at the end of the 90-day retention hold. Snapshot columns (impersonator_display_name + impersonator_department) preserve identity for compliance queries after this FK NULLs. This is the ONE cross-plane FK in the tenant-plane delegation module — deliberate + documented (see tenancy-columns.md §5 exception)."
+    },
+    {
+      "from": "ImpersonationSession",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "impersonated_user_id",
+      "onDelete": "cascade",
+      "description": "The tenant User being impersonated. CASCADE on delete — if the target User is erased (GDPR Art. 17 erasure), the impersonation record cascades. The impersonator's own actions in the audit stream are retained under Art. 17(3)(e) legal claims exception, via HasAudit's dedicated audit table which is not on the User erasure cascade path."
+    },
+    {
+      "from": "ImpersonationSession",
+      "kind": "belongsTo",
+      "to": "application::Application",
+      "foreignKey": "target_application_id",
+      "onDelete": "restrict",
+      "description": "The Application the impersonation session operates within. Restrict on delete so an application cannot be retired while impersonation records reference it. The JWT `app` claim on the minted impersonation PAT binds to this value + downstream services reject mismatched tokens."
+    },
+    {
+      "from": "ImpersonationSession",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "target_tenant_id",
+      "onDelete": "cascade",
+      "description": "The tenant being operated on. CASCADE on tenant erasure — impersonation records die with their tenant, but the parallel audit trail via HasAudit is not on this cascade path (compliance evidence separation)."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "RoleDelegation",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Delegations live within one tenant + cascade on tenant erasure. Cross-tenant delegation is refused at the RoleDelegationObserver::creating hook."
+    },
+    {
+      "from": "RoleDelegation",
+      "kind": "belongsTo",
+      "to": "application::Application",
+      "foreignKey": "application_id",
+      "onDelete": "restrict",
+      "description": "Delegations are application-scoped for cross-app isolation. Not one of the eight rows in tenancy-columns.md §2 carrying application_id directly (delegations cascade through tenant_id conceptually), but the direct column exists here for query-plan efficiency on the delegate-lookup hot path."
+    }
+  ],
+  "inbound": {
+    "description": "Consumers hit this module via the DelegationResolver service (never the tables directly). RBAC PermissionResolver + workflow/approvals approver selector are the primary consumers. Consumer modules do NOT declare an FK back to role_delegations — the lookup is service-mediated so the resolver can absorb future storage changes.",
+    "consumers": [
+      {
+        "consumer": "access/rbac::PermissionResolver",
+        "kind": "service",
+        "description": "After the standard role check fails, the resolver walks the caller's active delegations via DelegationResolver::activeAsDelegate($user, $tenant, $application). If any delegation grants a role that holds the target permission, the check allows. Delegated permissions cannot exceed the delegator's own permissions at delegation-creation time (validated in RoleDelegationObserver::creating)."
+      },
+      {
+        "consumer": "workflow/approvals::ApproverSelector",
+        "kind": "service",
+        "description": "When a selector expression like `role('finance_manager')` resolves, the engine finds every User with that role, then for each such delegator replaces them with their active delegate via DelegationResolver::activeDelegateOf($delegator, $role, $tenant, $application). Deduplicated. See access-approvals/design.md §7 for the full flow."
+      },
+      {
+        "consumer": "audit::AuditWriter",
+        "kind": "listener",
+        "description": "The AuditWriter listener on ImpersonationSessionStarted / Ended / ForcedTerminate writes a heavy-audit row into the compliance audit stream. Delegation lifecycle uses the lighter HasActivityLog path via the sibling ActivityWriter listener."
+      }
+    ]
+  },
+  "accessor_chain": {
+    "description": "Consumers rarely reach through the raw FKs — the models surface a small set of accessors that fold snapshot fields + relations into human-readable output.",
+    "ImpersonationSession": {
+      "actor_line": "impersonator?->platformProfile?->display_name ?? impersonator_display_name",
+      "actor_department": "impersonator?->department ?? impersonator_department",
+      "target_line": "impersonated->profile->display_name + ' (@' + impersonated->profile->email_snapshot + ')'",
+      "duration_seconds": "ended_at ? (ended_at - started_at) : null",
+      "remaining_seconds": "!ended_at ? (ends_at - now()) : null"
+    },
+    "RoleDelegation": {
+      "duration_hours": "(ends_at - starts_at) / 3600",
+      "is_all_roles": "role_id === null",
+      "state": "revoked_at ? 'revoked' : (ends_at <= now() ? 'expired' : (starts_at <= now() ? 'active' : 'pending'))"
+    }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "id": "academorix://modules/grants/notifications",
+  "$version": 1,
+  "title": "grants — Laravel notifications",
+  "description": "Six notifications this module owns. Grant lifecycle notifications (Issued / Revoked / ExpiringSoon / Expired) route to the subject via mail + in-app. Two audit-adjacent notifications (DeniedAccessAttempt, SelfServiceGrantAttempt) route to tenant admins + security team.",
+  "namespace": "Academorix\\Grant\\Notifications",
+  "notifications": [
+    {
+      "class": "Academorix\\Grant\\Notifications\\GrantIssuedNotification",
+      "channels": ["mail", "database"],
+      "consentTier": "transactional",
+      "targets": ["User (the subject)"],
+      "template": {
+        "mail": "grants::email.grant-issued",
+        "markdown": true
+      },
+      "queue": "notifications",
+      "description": "Sent to the subject when they receive a new grant. Body: 'You have been granted <permissions> on <resource> by <grantor>. Expires <date> or never.' Includes a CTA to the resource + a note explaining any deny grants stacked underneath (visible to subject: 'note: X permissions are explicitly denied by <admin> — you cannot exercise these regardless of this grant')."
+    },
+    {
+      "class": "Academorix\\Grant\\Notifications\\GrantRevokedNotification",
+      "channels": ["mail", "database"],
+      "consentTier": "transactional",
+      "targets": ["User (the subject)"],
+      "template": {
+        "mail": "grants::email.grant-revoked",
+        "markdown": true
+      },
+      "queue": "notifications",
+      "description": "Sent to the subject when a grant on them is revoked. Body: 'Your access to <resource> has been revoked by <revoker>. Reason: <revoked_reason>.' Suppressed when revoked_reason is a system sentinel (`expired`, `orphaned_resource`, `orphaned_subject`, `tenant_erased`) — those get the appropriate expired / expired-orphan copy instead."
+    },
+    {
+      "class": "Academorix\\Grant\\Notifications\\GrantExpiringSoonNotification",
+      "channels": ["mail", "database"],
+      "consentTier": "transactional",
+      "targets": ["User (the subject) + User (the grantor, opt-in via settings)"],
+      "template": {
+        "mail": "grants::email.grant-expiring-soon",
+        "markdown": true
+      },
+      "queue": "notifications",
+      "description": "24-hour warning. Sent by NotifyGrantExpiringJob. Body: 'Your access to <resource> expires in <hours> hours. If you still need it, ask <grantor> to renew.' Includes a one-click 'request renewal' link that opens an access-request via workflow/approvals (deferred until access/requests lands). Marked once per grant via metadata.expiring_notification_sent."
+    },
+    {
+      "class": "Academorix\\Grant\\Notifications\\GrantExpiredNotification",
+      "channels": ["mail", "database"],
+      "consentTier": "transactional",
+      "targets": ["User (the subject)"],
+      "template": {
+        "mail": "grants::email.grant-expired",
+        "markdown": true
+      },
+      "queue": "notifications",
+      "description": "Post-expiration confirmation. Body: 'Your access to <resource> expired at <expires_at>. Ask <grantor> if you still need access.' Suppressed for source='access_request' grants when the request module has its own re-request flow to avoid double-notification."
+    },
+    {
+      "class": "Academorix\\Grant\\Notifications\\DeniedAccessAttemptNotification",
+      "channels": ["mail", "database", "slack"],
+      "consentTier": "transactional",
+      "targets": ["User (tenant admins + security_team_members matched by `security_incident_response` role)"],
+      "template": {
+        "mail": "grants::email.denied-access-attempt",
+        "markdown": true
+      },
+      "queue": "notifications-critical",
+      "description": "Opt-in per settings.grants.notifications.notify_on_deny_attempt (default off — noisy on high-traffic tenants). Fires when a subject with a deny grant on a resource attempts an action that would be authorised by RBAC — i.e. the deny actually blocked something. Body: 'Bob attempted to <action> on <resource> at <timestamp>. Blocked by deny grant <grant_id> issued by <grantor> on <granted_at>.'"
+    },
+    {
+      "class": "Academorix\\Grant\\Notifications\\SelfServiceGrantAttemptNotification",
+      "channels": ["mail", "database", "slack"],
+      "consentTier": "transactional",
+      "targets": ["User (tenant admins + security_team_members)"],
+      "template": {
+        "mail": "grants::email.self-service-grant-attempt",
+        "markdown": true
+      },
+      "queue": "notifications-critical",
+      "description": "Fires on every SelfServiceGrantAttempted event (privilege escalation attempt). Body: 'Bob tried to grant <permissions> to Alice on <resource> at <timestamp>. Bob does not hold <missing_permissions> via any role. The grant was refused (GRANT_PRIVILEGE_ESCALATION). IP: <ip>. Investigate.' Always ON — always transactional-consent — always to security team."
+    }
+  ],
+  "consentTierNotes": {
+    "transactional": "All grant notifications are transactional — grants are directly-solicited access changes to a subject's account. Not gated by marketing opt-out."
+  }
+}

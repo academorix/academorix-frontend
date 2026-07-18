@@ -1,0 +1,244 @@
+{
+  "id": "academorix://modules/delegation/events",
+  "$version": 1,
+  "title": "delegation — published events",
+  "namespace": "Academorix\\Delegation\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Ten events split across two aggregates. All fire `afterCommit` so downstream listeners never see uncommitted state. Payloads are readonly value objects (readonly class + readonly properties) — immutable by construction. Impersonation events with SLA implications route to the `notifications-critical` queue so they never queue behind a backlog (SOC 2 evidence writes cannot be delayed). Every consumer listed is a listener declared in listeners.json — the pairing is the traceability contract.",
+  "events": [
+    {
+      "name": "DelegationCreated",
+      "class": "Academorix\\Delegation\\Events\\DelegationCreated",
+      "trigger": "RoleDelegationObserver::created hook after the row is inserted + all validators passed. Fires exactly once per delegation, ever.",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::DispatchDelegationCreatedNotification",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRow",
+        "observability::EmitDelegationCreatedMetric",
+        "analytics::TrackDelegationCreated"
+      ],
+      "payload": {
+        "delegation_id": "ULID (dlg_)",
+        "tenant_id": "ULID (ten_)",
+        "application_id": "ULID (app_)",
+        "delegator_id": "ULID (usr_)",
+        "delegate_id": "ULID (usr_)",
+        "role_id": "ULID (rol_) | null (null = all-roles OOF)",
+        "delegation_type": "'oof' | 'handover' | 'emergency'",
+        "starts_at": "ISO-8601 timestamp",
+        "ends_at": "ISO-8601 timestamp",
+        "reason": "string (min 20)",
+        "created_at": "ISO-8601 timestamp",
+        "actor_id": "ULID (the caller — always the delegator on POST /me/delegations)"
+      }
+    },
+    {
+      "name": "DelegationActivated",
+      "class": "Academorix\\Delegation\\Events\\DelegationActivated",
+      "trigger": "ActivateDelegationsJob observed `starts_at <= now() AND state was pending`. Also fires when a delegation is created with starts_at already in the past (i.e. immediate activation on POST). Delegate gets notified — 'you can now act as X'.",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::DispatchDelegationActivatedNotification",
+        "delegation::DispatchNotifyDelegateOfActivationJob",
+        "activity::WriteToActivityLog",
+        "observability::EmitDelegationActivatedMetric"
+      ],
+      "payload": {
+        "delegation_id": "ULID (dlg_)",
+        "tenant_id": "ULID (ten_)",
+        "delegator_id": "ULID (usr_)",
+        "delegate_id": "ULID (usr_)",
+        "role_id": "ULID (rol_) | null",
+        "activated_at": "ISO-8601 timestamp",
+        "ends_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "DelegationExpired",
+      "class": "Academorix\\Delegation\\Events\\DelegationExpired",
+      "trigger": "ExpireDelegationsJob observed `ends_at <= now() AND revoked_at IS NULL AND state was active`. Terminal state. Delegator gets notified.",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::DispatchDelegationExpiredNotification",
+        "delegation::DispatchNotifyDelegatorOfExpirationJob",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRow",
+        "observability::EmitDelegationExpiredMetric"
+      ],
+      "payload": {
+        "delegation_id": "ULID (dlg_)",
+        "tenant_id": "ULID (ten_)",
+        "delegator_id": "ULID (usr_)",
+        "delegate_id": "ULID (usr_)",
+        "role_id": "ULID (rol_) | null",
+        "expired_at": "ISO-8601 timestamp",
+        "duration_hours": "number"
+      }
+    },
+    {
+      "name": "DelegationRevokedEarly",
+      "class": "Academorix\\Delegation\\Events\\DelegationRevokedEarly",
+      "trigger": "DELETE /me/delegations/{delegation} succeeded — the delegator (or admin) revoked before ends_at was reached. RoleDelegationObserver::updated on `revoked_at` transitioning from null to non-null.",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::DispatchDelegationRevokedEarlyNotification",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRow",
+        "observability::EmitDelegationRevokedMetric",
+        "analytics::TrackDelegationRevokedEarly"
+      ],
+      "payload": {
+        "delegation_id": "ULID (dlg_)",
+        "tenant_id": "ULID (ten_)",
+        "delegator_id": "ULID (usr_)",
+        "delegate_id": "ULID (usr_)",
+        "role_id": "ULID (rol_) | null",
+        "revoked_at": "ISO-8601 timestamp",
+        "revoked_by": "ULID (usr_) — the delegator OR an admin",
+        "revoke_reason": "string",
+        "planned_ends_at": "ISO-8601 timestamp (the original ends_at, retained for audit narrative)"
+      }
+    },
+    {
+      "name": "DelegationSelfOverlapDetected",
+      "class": "Academorix\\Delegation\\Events\\DelegationSelfOverlapDetected",
+      "trigger": "RoleDelegationObserver::creating rejected a POST because the delegator already has an ACTIVE delegation of the same role to the same delegate with a window that overlaps the requested one. Critical severity — signals a UX bug in the tenant admin surface OR an abuse attempt. No row is created; the event fires so security + product can investigate.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRow",
+        "observability::EmitDelegationSelfOverlapMetric",
+        "monitoring::AlertSecurityOnOverlap"
+      ],
+      "payload": {
+        "tenant_id": "ULID (ten_)",
+        "attempted_delegator_id": "ULID (usr_)",
+        "attempted_delegate_id": "ULID (usr_)",
+        "attempted_role_id": "ULID (rol_) | null",
+        "attempted_starts_at": "ISO-8601 timestamp",
+        "attempted_ends_at": "ISO-8601 timestamp",
+        "existing_delegation_id": "ULID (dlg_) — the overlapping row that caused refusal",
+        "detected_at": "ISO-8601 timestamp",
+        "attempted_actor_id": "ULID (usr_)"
+      }
+    },
+    {
+      "name": "ImpersonationSessionStarted",
+      "class": "Academorix\\Delegation\\Events\\ImpersonationSessionStarted",
+      "trigger": "ImpersonationSessionObserver::created after all safety gates passed (entitlement check, PlatformUser is active, target tenant is enabled, snapshot fields captured). CRITICAL severity — routes to notifications-critical + fires the cannot-opt-out notification to the impersonated User.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "notifications::DispatchImpersonationSessionStartedNotification",
+        "audit::WriteHeavyAuditRow",
+        "activity::WriteToActivityLog",
+        "observability::EmitImpersonationStartedMetric",
+        "monitoring::AlertOnImpersonationStart",
+        "analytics::TrackImpersonationStarted"
+      ],
+      "payload": {
+        "session_id": "ULID (imp_)",
+        "impersonator_platform_user_id": "ULID (plu_)",
+        "impersonated_user_id": "ULID (usr_)",
+        "target_application_id": "ULID (app_)",
+        "target_tenant_id": "ULID (ten_)",
+        "reason": "string (min 40)",
+        "support_ticket_reference": "string | null",
+        "is_read_only": "boolean",
+        "started_at": "ISO-8601 timestamp",
+        "ends_at": "ISO-8601 timestamp",
+        "impersonator_display_name": "string (snapshot)",
+        "impersonator_department": "string (snapshot)"
+      }
+    },
+    {
+      "name": "ImpersonationSessionEnded",
+      "class": "Academorix\\Delegation\\Events\\ImpersonationSessionEnded",
+      "trigger": "ImpersonationSessionObserver::updated on ended_at transitioning from null to non-null. Fires for end_trigger IN (self_service, ttl_expired). NOT for admin_revocation / security_lockdown — those fire the dedicated ForcedTerminate event instead.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "notifications::DispatchImpersonationSessionEndedNotification",
+        "audit::WriteHeavyAuditRow",
+        "activity::WriteToActivityLog",
+        "observability::EmitImpersonationEndedMetric",
+        "analytics::TrackImpersonationEnded"
+      ],
+      "payload": {
+        "session_id": "ULID (imp_)",
+        "impersonator_platform_user_id": "ULID (plu_) | null (if hard-deleted post-90d)",
+        "impersonated_user_id": "ULID (usr_)",
+        "target_tenant_id": "ULID (ten_)",
+        "started_at": "ISO-8601 timestamp",
+        "ended_at": "ISO-8601 timestamp",
+        "duration_seconds": "integer",
+        "end_trigger": "'self_service' | 'ttl_expired'"
+      }
+    },
+    {
+      "name": "ImpersonationSessionExtended",
+      "class": "Academorix\\Delegation\\Events\\ImpersonationSessionExtended",
+      "trigger": "A super_admin extended the session's ends_at (rare — the tenant must hold `impersonation_extended_ttl` entitlement + only super_admin can invoke). ImpersonationSessionObserver::updated on ends_at increase.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "notifications::DispatchImpersonationExtendedNotification",
+        "audit::WriteHeavyAuditRow",
+        "activity::WriteToActivityLog",
+        "observability::EmitImpersonationExtendedMetric",
+        "monitoring::AlertOnImpersonationExtended"
+      ],
+      "payload": {
+        "session_id": "ULID (imp_)",
+        "previous_ends_at": "ISO-8601 timestamp",
+        "new_ends_at": "ISO-8601 timestamp",
+        "extended_by": "ULID (plu_) — the super_admin approving",
+        "extension_reason": "string (min 40)",
+        "extended_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "ImpersonationSessionForcedTerminate",
+      "class": "Academorix\\Delegation\\Events\\ImpersonationSessionForcedTerminate",
+      "trigger": "Security team fired `POST /impersonation/{session}/force-terminate` — a lockdown event. Sets ended_at + end_trigger=security_lockdown. Notifies security team via ImpersonationForcedTerminationNotification (cannot-opt-out).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "notifications::DispatchImpersonationForcedTerminationNotification",
+        "audit::WriteHeavyAuditRow",
+        "activity::WriteToActivityLog",
+        "observability::EmitImpersonationForcedTerminatedMetric",
+        "monitoring::PageOnCallOnLockdown",
+        "analytics::TrackImpersonationForcedTerminated"
+      ],
+      "payload": {
+        "session_id": "ULID (imp_)",
+        "impersonator_platform_user_id": "ULID (plu_)",
+        "impersonated_user_id": "ULID (usr_)",
+        "target_tenant_id": "ULID (ten_)",
+        "terminated_by": "ULID (plu_) — super_admin or security",
+        "termination_reason": "string (min 40)",
+        "terminated_at": "ISO-8601 timestamp",
+        "duration_seconds_before_termination": "integer"
+      }
+    },
+    {
+      "name": "ImpersonationAttemptRefused",
+      "class": "Academorix\\Delegation\\Events\\ImpersonationAttemptRefused",
+      "trigger": "ImpersonationSessionObserver::creating refused. Reason falls into: entitlement missing (PlatformUser lacks `platform.impersonate`), PlatformUser status != active, target User doesn't exist / belongs to different tenant, target tenant is disabled, target application is disabled, TTL request out of bounds, reason too short. No row created; the event fires so security can spot patterns.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteHeavyAuditRow",
+        "observability::EmitImpersonationRefusedMetric",
+        "monitoring::AlertOnRepeatedRefusals",
+        "analytics::TrackImpersonationRefused"
+      ],
+      "payload": {
+        "attempted_by_platform_user_id": "ULID (plu_)",
+        "attempted_impersonated_user_id": "ULID (usr_) | null",
+        "attempted_target_application_id": "ULID (app_) | null",
+        "attempted_target_tenant_id": "ULID (ten_) | null",
+        "refusal_reason": "string — machine-readable code (missing_entitlement / operator_not_active / target_not_found / cross_tenant_target / target_tenant_disabled / target_application_disabled / ttl_out_of_bounds / reason_too_short)",
+        "refusal_detail": "string (human-readable)",
+        "attempted_at": "ISO-8601 timestamp"
+      }
+    }
+  ]
+}

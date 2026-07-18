@@ -1,0 +1,109 @@
+{
+  "id": "academorix://modules/grants/rules",
+  "$version": 1,
+  "title": "grants — validation rules",
+  "description": "Custom Laravel validation rules published by `GrantServiceProvider::boot()` so any FormRequest / Data class can validate grant payloads. Every rule is defence-in-depth for the six-invariant guard set enforced at the observer layer — the rules run first (returning 422 with structured errors) so callers get clean feedback before the observer fires.",
+  "namespace": "Academorix\\Grant\\Rules",
+  "rules": [
+    {
+      "name": "valid_permission_list",
+      "class": "Academorix\\Grant\\Rules\\ValidPermissionList",
+      "signature": "valid_permission_list[:resource_type]",
+      "description": "Every string in the JSONB permissions array must resolve to a live row in the `permissions` table (owned by access/rbac). Optional `resource_type` argument constrains the acceptable prefix (e.g. `valid_permission_list:invoice` requires every permission name to start with `invoice.`). Cross-referenced via PermissionCatalogueValidator.",
+      "params": [
+        {
+          "name": "resource_type",
+          "type": "string",
+          "description": "Optional. When supplied, enforces permission_prefix from the resource_type's Grantable attribute."
+        }
+      ],
+      "example_field_rule": "permissions: [required, array, min:1, max:64, valid_permission_list:invoice]",
+      "error_message_key": "grants::validation.valid_permission_list",
+      "default_message": "One or more permissions are unknown or do not apply to :resource_type."
+    },
+    {
+      "name": "grant_expires_in_future",
+      "class": "Academorix\\Grant\\Rules\\GrantExpiresInFuture",
+      "signature": "grant_expires_in_future",
+      "description": "expires_at, when present, must be > now(). Nullable is allowed here — the rule only fires when a value is passed. The permanent_grants entitlement check happens separately (a rule cannot enforce entitlements).",
+      "params": [],
+      "example_field_rule": "expires_at: [nullable, date, grant_expires_in_future]",
+      "error_message_key": "grants::validation.grant_expires_in_future",
+      "default_message": "The :attribute must be in the future."
+    },
+    {
+      "name": "subject_in_same_tenant_as_resource",
+      "class": "Academorix\\Grant\\Rules\\SubjectInSameTenantAsResource",
+      "signature": "subject_in_same_tenant_as_resource:{other_field_map}",
+      "description": "Cross-field rule. Verifies (subject.tenant_id) === (resource.tenant_id) === (auth_user.tenant_id). Refuses cross-tenant grant attempts with a translated 422. The observer ALSO refuses at model layer with GRANT_CROSS_TENANT event dispatch — this rule is the friendly first-line filter.",
+      "params": [
+        {
+          "name": "other_field_map",
+          "type": "string",
+          "description": "Field name convention: `subject_id,resource_type,resource_id` — the resolver looks up the subject + resource by ID + type to compare tenant_ids."
+        }
+      ],
+      "example_field_rule": "subject_id: [required, subject_in_same_tenant_as_resource:subject_id,resource_type,resource_id]",
+      "error_message_key": "grants::validation.subject_in_same_tenant_as_resource",
+      "default_message": "The subject and resource must belong to the same tenant."
+    },
+    {
+      "name": "grantor_holds_permissions_being_granted",
+      "class": "Academorix\\Grant\\Rules\\GrantorHoldsPermissionsBeingGranted",
+      "signature": "grantor_holds_permissions_being_granted:{permissions_field}",
+      "description": "Privilege-escalation guard. Verifies the auth_user (who will be recorded as `granted_by`) holds every permission being granted, either through RBAC roles OR through their own active allow grants. Refused otherwise with GRANT_PRIVILEGE_ESCALATION. Bypassed only when the caller has `grants.grant_across_role` + a matching approval-flow context (system-driven grants from workflow/approvals also bypass — the approval IS the justification).",
+      "params": [
+        {
+          "name": "permissions_field",
+          "type": "string",
+          "description": "The form field carrying the permissions array."
+        }
+      ],
+      "example_field_rule": "permissions: [required, array, grantor_holds_permissions_being_granted:permissions]",
+      "error_message_key": "grants::validation.grantor_holds_permissions_being_granted",
+      "default_message": "You cannot grant permissions you do not hold."
+    },
+    {
+      "name": "valid_grant_reason",
+      "class": "Academorix\\Grant\\Rules\\ValidGrantReason",
+      "signature": "valid_grant_reason",
+      "description": "reason must be at least 20 characters (configurable via settings.grants.min_reason_length), trimmed of whitespace, not a sentinel like 'test' / 'temp' / 'because'. Enforces the audit-trail promise: every grant has a human-readable justification worth reading. The minimum is a nudge — 20 chars forces a real sentence.",
+      "params": [],
+      "example_field_rule": "reason: [required, string, valid_grant_reason]",
+      "error_message_key": "grants::validation.valid_grant_reason",
+      "default_message": "The :attribute must be at least :min characters and describe why the grant is being issued (avoid placeholder text)."
+    },
+    {
+      "name": "grantable_resource_registered",
+      "class": "Academorix\\Grant\\Rules\\GrantableResourceRegistered",
+      "signature": "grantable_resource_registered:{resource_type_field},{resource_id_field}",
+      "description": "Cross-field rule. Verifies (a) resource_type is registered in GrantableRegistry, (b) resource_id resolves to a live row of that type in the caller's tenant. Refused with GRANT_RESOURCE_TYPE_UNREGISTERED (unknown type) or RESOURCE_NOT_FOUND (unknown id).",
+      "params": [
+        {
+          "name": "resource_type_field",
+          "type": "string",
+          "description": "Field name carrying the resource_type value."
+        },
+        {
+          "name": "resource_id_field",
+          "type": "string",
+          "description": "Field name carrying the resource_id value."
+        }
+      ],
+      "example_field_rule": "resource_type: [required, grantable_resource_registered:resource_type,resource_id]",
+      "error_message_key": "grants::validation.grantable_resource_registered",
+      "default_message": "The specified resource is not grantable or does not exist."
+    },
+    {
+      "name": "grantable_subject_type",
+      "class": "Academorix\\Grant\\Rules\\GrantableSubjectType",
+      "signature": "grantable_subject_type",
+      "description": "Verifies subject_type is in the registered subject-type list. Wave 1b: only `user`. Future: `group`. Refused with GRANT_SUBJECT_TYPE_UNSUPPORTED for anything else.",
+      "params": [],
+      "example_field_rule": "subject_type: [required, grantable_subject_type]",
+      "error_message_key": "grants::validation.grantable_subject_type",
+      "default_message": "The subject type ':value' is not supported."
+    }
+  ],
+  "usage_from_data_class": "The CreateGrantData / UpdateGrantData / BulkIssueGrantsData spatie-data classes register these rules via their `rules()` method. This file is the canonical registry for the underlying rule implementations."
+}

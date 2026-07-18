@@ -1,0 +1,314 @@
+{
+  "id": "academorix://modules/grants/schemas/access-grant",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AccessGrant",
+  "description": "One per-resource dynamic access grant. Polymorphic `subject` (the principal receiving the permission — usually a User, potentially a Group in future) and polymorphic `resource` (the target the grant applies to — Invoice, Athlete, Team, any domain aggregate that composes IsGrantable + is registered in the GrantableRegistry). The `permissions` JSONB array names the specific permissions being granted, scoped to this exact (resource_type, resource_id) tuple. `decision` splits allow-vs-deny — deny wins over allow AND over RBAC roles, and short-circuits every permission check. `expires_at` is nullable (permanent grant; enterprise-gated) but observer refuses past-dated values. `source` traces where the grant came from (manual admin CRUD / access-request approval / delegation / bulk provision) with `source_reference` naming the specific approval / delegation / bulk-batch row.",
+  "type": "object",
+  "x-module": "grants",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "access_grants",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "agr_",
+    "incrementing": false,
+    "model": "Academorix\\Grant\\Models\\AccessGrant",
+    "interface": "Academorix\\Grant\\Contracts\\Data\\AccessGrantInterface",
+    "implements": ["Academorix\\Grant\\Contracts\\Data\\AccessGrantInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasActivityLog",
+      "HasAudit",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "decision": "GrantDecision",
+      "source": "GrantSource",
+      "permissions": "array",
+      "grants": "array",
+      "metadata": "array",
+      "granted_at": "datetime",
+      "expires_at": "datetime",
+      "revoked_at": "datetime"
+    },
+    "appends": ["is_active", "is_expired", "is_revoked", "is_terminal", "is_permanent"],
+    "observers": ["AccessGrantObserver"],
+    "hidden": ["metadata"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `agr_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "Owning tenant. Auto-filled by BelongsToTenant. Grants are STRICTLY tenant-scoped — cross-tenant refusal at the observer + rule layer."
+      },
+      "subject_type": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "default": "'user'",
+        "description": "Polymorphic subject key. Registered kinds today: `user`. Future: `group`. Enforced by `grantable_subject_type` rule."
+      },
+      "subject_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "ID of the principal receiving the grant. Not FK-constrained at DB level (polymorphic) — existence verified at write time by the GrantResourceValidator."
+      },
+      "resource_type": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Polymorphic resource key registered via GrantableRegistry (e.g. `invoice`, `athlete`, `team`, `document`). Enforced by the `grantable_resource_registered` validation rule."
+      },
+      "resource_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "ID of the resource row. Not FK-constrained at DB level (polymorphic) — existence verified at write time by GrantResourceValidator. ReconcileOrphanedGrantsJob sweeps periodically to catch resources that disappeared out-of-band."
+      },
+      "permissions": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "JSONB array of permission NAME strings scoped to this specific (resource_type, resource_id). No scope suffix required — the resource IS the scope. Each name is cross-referenced against the `permissions` table (owned by access/rbac) at write time by PermissionCatalogueValidator; unknown names refused with PERMISSION_UNKNOWN."
+      },
+      "decision": {
+        "type": "string",
+        "length": 8,
+        "nullable": false,
+        "default": "'allow'",
+        "description": "Enum: `allow` (positive grant) or `deny` (inviolable block). Deny wins over allow AND over RBAC roles — the safety guarantee we sell. Enterprise-gated (see `deny_grants` entitlement)."
+      },
+      "granted_by": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        },
+        "description": "The User who issued this grant. Nullable because system-generated grants (`source='access_request'` where the approval was auto-approved, `source='bulk_provision'` for CSV batches) may have no direct human grantor — the audit trail lives on the source_reference row instead."
+      },
+      "granted_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Moment the grant became effective. Defaults to `now()` on create. Distinct from `created_at` — an admin may back-date `granted_at` to match a paper trail (observer refuses future values)."
+      },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Nullable. NULL = permanent grant (enterprise-gated via `permanent_grants` entitlement; other tiers force expires_at ≤ now() + 365d). Observer refuses `expires_at < now()` at create. `PurgeExpiredGrantsJob` sweeps periodically and transitions past-expires_at rows to `revoked` state (semantically) by setting `revoked_at = expires_at` + `revoked_reason = 'expired'`."
+      },
+      "revoked_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When the grant was revoked (or auto-revoked due to expiry / orphan). NULL for active grants. When set, the row is considered terminal and never appears in resolver lookups (partial index excludes non-NULL)."
+      },
+      "revoked_by": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        },
+        "description": "User who revoked. NULL for system-driven revokes (expiration sweep, orphan reconciliation)."
+      },
+      "revoked_reason": {
+        "type": "text",
+        "nullable": true,
+        "description": "Free-text reason for revocation. Required when the revoker is a User (admin CRUD, delete). System-driven revokes populate this with the sentinel `'expired'` / `'orphaned_resource'` / `'orphaned_subject'`."
+      },
+      "reason": {
+        "type": "text",
+        "nullable": false,
+        "description": "Mandatory operator note. Minimum 20 characters (enforced by `valid_grant_reason` rule + settings). The audit-trail justification for the grant. Retained INDEFINITELY for audit even after grant expiry / revoke — never redacted."
+      },
+      "source": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'manual'",
+        "description": "Enum: `manual` (admin CRUD), `access_request` (materialised from a workflow/approvals instance), `delegation` (issued via access/delegation flow — reserved for Wave 1b delegation module), `bulk_provision` (CSV batch upload)."
+      },
+      "source_reference": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "The ID of the source row that produced this grant. When source='access_request': the approval_instance_id (`api_<26>`). When source='bulk_provision': the batch id. When source='delegation': the delegation_id. NULL for source='manual'. Powers reverse-lookup (`grants:audit-source api_...` → list grants materialised from this approval)."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "From HasMetadata. Free-form platform notes bag. Typical contents: `csv_row_index` for bulk, `approver_notes` mirrored from approval, `delegation_scope` for delegation-sourced grants."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": [
+          "tenant_id",
+          "subject_type",
+          "subject_id",
+          "resource_type",
+          "resource_id",
+          "decision"
+        ],
+        "unique": false,
+        "name": "access_grants_resolver_hot_idx",
+        "predicate": "revoked_at IS NULL AND deleted_at IS NULL",
+        "description": "The overlay resolver's primary read path. Covers the (principal, resource, decision) tuple every permission check touches; the partial index means only active rows are scanned. Deny-first behaviour reads with `decision='deny'` first, then `decision='allow'`."
+      },
+      {
+        "columns": ["tenant_id", "expires_at"],
+        "unique": false,
+        "name": "access_grants_expiration_scan_idx",
+        "predicate": "revoked_at IS NULL AND expires_at IS NOT NULL AND deleted_at IS NULL",
+        "description": "Powers PurgeExpiredGrantsJob (hourly) + NotifyGrantExpiringJob (daily). Ordered scan of grants about to expire."
+      },
+      {
+        "columns": ["tenant_id", "source", "source_reference"],
+        "unique": false,
+        "name": "access_grants_source_reverse_idx",
+        "predicate": "source_reference IS NOT NULL AND deleted_at IS NULL",
+        "description": "Reverse-lookup from approval / delegation / bulk-batch → grants. Consumers: workflow/approvals' 'grants issued from this approval' panel."
+      },
+      {
+        "columns": ["tenant_id", "resource_type", "resource_id"],
+        "unique": false,
+        "name": "access_grants_resource_scan_idx",
+        "predicate": "deleted_at IS NULL",
+        "description": "Powers `grants:audit-resource` command + the `/grants/resource/{type}/{id}` enumeration endpoint."
+      },
+      {
+        "columns": ["tenant_id", "subject_type", "subject_id"],
+        "unique": false,
+        "name": "access_grants_subject_scan_idx",
+        "predicate": "deleted_at IS NULL",
+        "description": "Powers `grants:audit-principal` command + the `/grants/subject/{id}` enumeration endpoint."
+      },
+      {
+        "columns": ["tenant_id", "granted_by", "created_at"],
+        "unique": false,
+        "name": "access_grants_grantor_scan_idx",
+        "predicate": "granted_by IS NOT NULL AND deleted_at IS NULL",
+        "description": "Powers 'grants issued by this admin' audit view."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "subject_type",
+    "subject_id",
+    "resource_type",
+    "resource_id",
+    "permissions",
+    "decision",
+    "granted_at",
+    "reason",
+    "source",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^agr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "subject_type": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$", "maxLength": 64 },
+    "subject_id": { "type": "string", "maxLength": 64 },
+    "resource_type": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$", "maxLength": 64 },
+    "resource_id": { "type": "string", "maxLength": 64 },
+    "permissions": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9_.]*$", "maxLength": 128 },
+      "minItems": 1,
+      "uniqueItems": true,
+      "maxItems": 64,
+      "description": "1-64 unique permission-name strings. Each cross-referenced against the `permissions` table by PermissionCatalogueValidator at write time."
+    },
+    "decision": { "type": "string", "enum": ["allow", "deny"] },
+    "granted_by": { "type": ["string", "null"], "maxLength": 64 },
+    "granted_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": ["string", "null"], "format": "date-time" },
+    "revoked_at": { "type": ["string", "null"], "format": "date-time" },
+    "revoked_by": { "type": ["string", "null"], "maxLength": 64 },
+    "revoked_reason": { "type": ["string", "null"] },
+    "reason": { "type": "string", "minLength": 20, "maxLength": 2000 },
+    "source": {
+      "type": "string",
+      "enum": ["manual", "access_request", "delegation", "bulk_provision"]
+    },
+    "source_reference": { "type": ["string", "null"], "maxLength": 64 },
+    "is_active": {
+      "type": "boolean",
+      "description": "Computed. revoked_at IS NULL AND (expires_at IS NULL OR expires_at > now())."
+    },
+    "is_expired": {
+      "type": "boolean",
+      "description": "Computed. expires_at IS NOT NULL AND expires_at <= now() AND revoked_at IS NULL."
+    },
+    "is_revoked": {
+      "type": "boolean",
+      "description": "Computed. revoked_at IS NOT NULL."
+    },
+    "is_terminal": {
+      "type": "boolean",
+      "description": "Computed. is_expired OR is_revoked."
+    },
+    "is_permanent": {
+      "type": "boolean",
+      "description": "Computed. expires_at IS NULL (permanent grant — enterprise-gated)."
+    },
+    "metadata": { "type": ["object", "null"], "additionalProperties": true },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["metadata", "created_by", "updated_by", "deleted_by"],
+    "computed": ["is_active", "is_expired", "is_revoked", "is_terminal", "is_permanent"]
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`agr_<26>`)"]
+  }
+}
