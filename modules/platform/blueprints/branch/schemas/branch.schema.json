@@ -1,0 +1,463 @@
+{
+  "id": "academorix://modules/branch/schemas/branch",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Branch",
+  "description": "Physical venue — the concrete place where a Tenant's activities happen. FK-central: every downstream domain aggregate (facility, team, staff, coach, athlete, session, booking, membership) references `branches.id`. Three orthogonal FKs converge here — tenant_id + organization_id + region_id. Structured address + coordinates + opening_hours + amenities live as JSONB blobs (no dedicated address / geometry module in Wave 2 — the geofencing module in Wave 3 owns PostGIS + polygon math via subscribing to `BranchCoordinatesUpdated`).",
+  "type": "object",
+  "x-module": "branch",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "branches",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "brn_",
+    "incrementing": false,
+    "model": "Academorix\\Branch\\Models\\Branch",
+    "interface": "Academorix\\Branch\\Contracts\\Data\\BranchInterface",
+    "implements": ["Academorix\\Branch\\Contracts\\Data\\BranchInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToOrganization",
+      "BelongsToRegion",
+      "HasSlug",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "status": "BranchStatus",
+      "is_default": "boolean",
+      "address": "StructuredAddress",
+      "coordinates": "StructuredCoordinates",
+      "opening_hours": "OpeningHoursSchedule",
+      "amenities": "AmenityTagList",
+      "capacity": "integer",
+      "sort_order": "integer",
+      "opened_date": "date",
+      "closed_date": "date",
+      "metadata": "array"
+    },
+    "appends": [
+      "timezone",
+      "currency_code",
+      "locale",
+      "organization_name",
+      "region_name",
+      "is_open_now",
+      "formatted_address"
+    ],
+    "observers": ["BranchObserver"],
+    "relations_note": "`tenant()` belongsTo tenancy::Tenant via tenant_id (CASCADE). `organization()` belongsTo organization::Organization via organization_id (RESTRICT). `region()` belongsTo region::Region via region_id (RESTRICT). Downstream: hasMany facility::Facility, hasMany teams::Team, hasMany sports::Coach, hasMany sports::Athlete, hasMany finance::Membership — all via `branch_id` FK on the child table, all RESTRICT on delete + guarded by the observer's `saving (status → closed)` dependency check.",
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `brn_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" },
+        "description": "Home tenant. CASCADE aligns with tenancy::TenantErased. IMMUTABLE post-create — observer refuses any change with BRANCH_TENANT_IMMUTABLE."
+      },
+      "organization_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "organizations", "column": "id", "onDelete": "restrict" },
+        "description": "Structural sub-brand. RESTRICT — Organizations cannot be dropped while any Branch references them. IMMUTABLE post-create — observer refuses any change with BRANCH_ORGANIZATION_IMMUTABLE."
+      },
+      "region_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "regions", "column": "id", "onDelete": "restrict" },
+        "description": "Commercial + regulatory zone (currency, tax, timezone, locale). RESTRICT — Regions carry historic invoice snapshots. IMMUTABLE post-create — observer refuses any change with BRANCH_REGION_IMMUTABLE."
+      },
+      "name": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "description": "The venue's display name. Snapshotted into historic invoices — treat as regulated_financial for retention."
+      },
+      "slug": {
+        "type": "string",
+        "length": 100,
+        "nullable": false,
+        "description": "URL-safe identifier, generated from name via HasSlug. Composite unique with (tenant_id, organization_id)."
+      },
+      "code": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Short internal identifier (e.g. 'SF-001'). Used by external systems + reporting. Not unique — tenants often reuse codes across orgs."
+      },
+      "description": {
+        "type": "text",
+        "nullable": true,
+        "description": "Long-form description. Public-adjacent — surfaced on member-facing screens."
+      },
+      "logo_url": {
+        "type": "string",
+        "length": 500,
+        "nullable": true,
+        "description": "Optional per-branch logo (overrides the parent organization's logo when set). Points at the storage module's file store."
+      },
+      "address": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Structured address. Shape: { line1, line2, city, subdivision, postal_code, country_code, formatted }. Validated by valid_address_structure rule. `formatted` computed server-side by AddressFormatter per branch.region.timezone locale.",
+        "sub_shape": {
+          "line1": { "type": "string", "maxLength": 200, "required": true },
+          "line2": { "type": "string|null", "maxLength": 200 },
+          "city": { "type": "string", "maxLength": 100, "required": true },
+          "subdivision": {
+            "type": "string|null",
+            "maxLength": 100,
+            "description": "State / province / emirate."
+          },
+          "postal_code": {
+            "type": "string|null",
+            "maxLength": 20,
+            "description": "Nullable for countries without postal codes."
+          },
+          "country_code": {
+            "type": "string",
+            "length": 2,
+            "required": true,
+            "description": "ISO-3166-1 alpha-2 uppercase."
+          },
+          "formatted": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Computed server-side per locale — never trust the client-submitted value."
+          }
+        }
+      },
+      "coordinates": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Structured coordinates. Shape: { lat, lng, accuracy_m, source }. No PostGIS in Wave 2 — geometry math lives in the Wave 3 geofencing module.",
+        "sub_shape": {
+          "lat": { "type": "number", "minimum": -90, "maximum": 90, "required": true },
+          "lng": { "type": "number", "minimum": -180, "maximum": 180, "required": true },
+          "accuracy_m": {
+            "type": "number|null",
+            "minimum": 0,
+            "description": "Reported accuracy in meters. Internal-tier — reveals geocoder confidence."
+          },
+          "source": {
+            "type": "string",
+            "enum": ["manual", "geocoded", "imported"],
+            "required": true
+          }
+        }
+      },
+      "phone": {
+        "type": "string",
+        "length": 20,
+        "nullable": true,
+        "description": "Business contact phone in E.164 format. Validated by valid_e164_phone."
+      },
+      "email": {
+        "type": "string",
+        "length": 200,
+        "nullable": true,
+        "description": "Business contact email."
+      },
+      "website_url": {
+        "type": "string",
+        "length": 500,
+        "nullable": true,
+        "description": "Optional per-branch website (falls back to organization.website_url when null)."
+      },
+      "opening_hours": {
+        "type": "jsonb",
+        "nullable": true,
+        "default": "{}",
+        "description": "Per-day opening_hours + exceptions. Every time local to branch.region.timezone (never UTC). Multi-period days require the branch_multi_period_hours entitlement.",
+        "sub_shape": {
+          "monday": {
+            "type": "array",
+            "items": { "type": "object", "properties": { "open": "HH:MM", "close": "HH:MM" } }
+          },
+          "tuesday": { "type": "array", "items": "same" },
+          "wednesday": { "type": "array", "items": "same" },
+          "thursday": { "type": "array", "items": "same" },
+          "friday": { "type": "array", "items": "same" },
+          "saturday": { "type": "array", "items": "same" },
+          "sunday": { "type": "array", "items": "same" },
+          "exceptions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": "ISO-8601 date",
+                "reason": "string (nullable)",
+                "closed": "boolean (when true, hours must be absent)",
+                "hours": "array of {open, close} periods (when closed=false)"
+              }
+            }
+          }
+        }
+      },
+      "capacity": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Max concurrent occupants — fire-safety cap. Nullable for tenants without a formal cap. Consumed by CapacityGate when branch_capacity_gating is on."
+      },
+      "amenities": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "[]",
+        "description": "Array of amenity tags. Tags outside the platform catalogue require branch_amenities: custom (Enterprise).",
+        "sub_shape": {
+          "items": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 40,
+            "pattern": "^[a-z][a-z0-9_]*$"
+          }
+        }
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'active'",
+        "description": "Enum: active / paused / closed."
+      },
+      "is_default": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Exactly one Branch per (tenant_id, organization_id) has is_default=true. Enforced by partial unique index + BranchObserver."
+      },
+      "opened_date": {
+        "type": "date",
+        "nullable": true,
+        "description": "The physical venue's real-world opening date. Distinct from created_at (which is the row insertion time)."
+      },
+      "closed_date": {
+        "type": "date",
+        "nullable": true,
+        "description": "Populated when status transitions to closed. Nullable for active + paused branches."
+      },
+      "sort_order": {
+        "type": "integer",
+        "nullable": false,
+        "default": 100,
+        "description": "Ascending sort in picker UIs + roster lists."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form operational notes bag from HasMetadata trait. Never exposed on the wire without `?include=metadata` + metadata-read permission."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "organization_id", "slug"],
+        "unique": true,
+        "name": "branches_tenant_org_slug_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "One slug per (tenant, organization)."
+      },
+      {
+        "columns": ["tenant_id", "organization_id"],
+        "unique": true,
+        "name": "branches_default_per_org_unique",
+        "predicate": "is_default = true AND deleted_at IS NULL",
+        "description": "Enforces exactly-one-default per (tenant, organization)."
+      },
+      {
+        "columns": ["tenant_id", "organization_id"],
+        "unique": false,
+        "name": "branches_tenant_org_idx"
+      },
+      {
+        "columns": ["tenant_id", "region_id"],
+        "unique": false,
+        "name": "branches_tenant_region_idx"
+      },
+      {
+        "columns": ["tenant_id", "status"],
+        "unique": false,
+        "name": "branches_tenant_status_idx"
+      },
+      {
+        "columns": ["tenant_id", "sort_order"],
+        "unique": false,
+        "name": "branches_tenant_sort_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "organization_id",
+    "region_id",
+    "name",
+    "slug",
+    "amenities",
+    "status",
+    "is_default",
+    "sort_order",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^brn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "organization_id": { "type": "string", "pattern": "^org_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "region_id": { "type": "string", "pattern": "^reg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "maxLength": 100 },
+    "code": { "type": ["string", "null"], "maxLength": 32 },
+    "description": { "type": ["string", "null"] },
+    "logo_url": { "type": ["string", "null"], "format": "uri", "maxLength": 500 },
+    "address": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "line1": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "line2": { "type": ["string", "null"], "maxLength": 200 },
+        "city": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "subdivision": { "type": ["string", "null"], "maxLength": 100 },
+        "postal_code": { "type": ["string", "null"], "maxLength": 20 },
+        "country_code": { "type": "string", "pattern": "^[A-Z]{2}$" },
+        "formatted": { "type": "string", "maxLength": 500 }
+      },
+      "required": ["line1", "city", "country_code"]
+    },
+    "coordinates": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "lat": { "type": "number", "minimum": -90, "maximum": 90 },
+        "lng": { "type": "number", "minimum": -180, "maximum": 180 },
+        "accuracy_m": { "type": ["number", "null"], "minimum": 0 },
+        "source": { "type": "string", "enum": ["manual", "geocoded", "imported"] }
+      },
+      "required": ["lat", "lng", "source"]
+    },
+    "phone": { "type": ["string", "null"], "pattern": "^\\+[1-9]\\d{1,14}$", "maxLength": 20 },
+    "email": { "type": ["string", "null"], "format": "email", "maxLength": 200 },
+    "website_url": { "type": ["string", "null"], "format": "uri", "maxLength": 500 },
+    "opening_hours": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "monday": { "$ref": "#/$defs/dayPeriods" },
+        "tuesday": { "$ref": "#/$defs/dayPeriods" },
+        "wednesday": { "$ref": "#/$defs/dayPeriods" },
+        "thursday": { "$ref": "#/$defs/dayPeriods" },
+        "friday": { "$ref": "#/$defs/dayPeriods" },
+        "saturday": { "$ref": "#/$defs/dayPeriods" },
+        "sunday": { "$ref": "#/$defs/dayPeriods" },
+        "exceptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "date": { "type": "string", "format": "date" },
+              "reason": { "type": ["string", "null"] },
+              "closed": { "type": "boolean" },
+              "hours": { "$ref": "#/$defs/dayPeriods" }
+            },
+            "required": ["date"]
+          }
+        }
+      }
+    },
+    "capacity": { "type": ["integer", "null"], "minimum": 0 },
+    "amenities": {
+      "type": "array",
+      "maxItems": 30,
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$", "minLength": 2, "maxLength": 40 }
+    },
+    "status": { "type": "string", "enum": ["active", "paused", "closed"] },
+    "is_default": { "type": "boolean" },
+    "opened_date": { "type": ["string", "null"], "format": "date" },
+    "closed_date": { "type": ["string", "null"], "format": "date" },
+    "sort_order": { "type": "integer", "minimum": 0 },
+    "metadata": { "type": ["object", "null"] },
+    "timezone": { "type": "string", "description": "Computed. From region->timezone." },
+    "currency_code": { "type": "string", "description": "Computed. From region->currency_code." },
+    "locale": {
+      "type": "string",
+      "description": "Computed. From region->locale (may be overridden per tenant)."
+    },
+    "organization_name": { "type": "string", "description": "Computed. From organization->name." },
+    "region_name": { "type": "string", "description": "Computed. From region->name." },
+    "is_open_now": {
+      "type": "boolean",
+      "description": "Computed via OpeningHoursEvaluator. Respects both status + opening_hours."
+    },
+    "formatted_address": {
+      "type": ["string", "null"],
+      "description": "Computed. From address.formatted (server-side per-locale rendering)."
+    },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "dayPeriods": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "open": { "type": "string", "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$" },
+          "close": { "type": "string", "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$" }
+        },
+        "required": ["open", "close"]
+      }
+    }
+  },
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": [
+      "timezone",
+      "currency_code",
+      "locale",
+      "organization_name",
+      "region_name",
+      "is_open_now",
+      "formatted_address"
+    ]
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`brn_<26>`)", "slug (composite with active organization; case-insensitive)"]
+  }
+}

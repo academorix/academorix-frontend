@@ -1,0 +1,28 @@
+{
+  "id": "academorix://modules/region/entitlements",
+  "$version": 1,
+  "title": "region — declared entitlements",
+  "description": "Three entitlement keys. `region_slot` gates the quantity of Regions per tenant (matches hierarchy.md §7 tier matrix). `region_custom_tax_rules` gates the multi-rate tax_config.rates[] array. `region_time_travel` gates retroactive tax_config edits — Enterprise-only + heavily audited.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "region_slot",
+      "kind": "slot",
+      "defaultsByPlan": { "small": 1, "medium": 3, "enterprise": null },
+      "description": "Max Regions per tenant. Matches `hierarchy.md` §7: Small=1 (default-only), Medium up to 3, Enterprise=unlimited (null). Consumed on create. The SYSTEM-provisioned default Region (via SeedDefaultRegionForTenantJob) does NOT consume a slot — it's a platform invariant. Refuses further Region creates with `RegionQuotaExceeded` (402) once the cap is reached. The observer decrements on create + returns the slot on hard-delete (soft-delete keeps the slot occupied per financial retention). Downgrading a Medium tenant back to Small does NOT auto-archive extra Regions — the entitlement reconciler surfaces the drift + suggests a manual archive path."
+    },
+    {
+      "key": "region_custom_tax_rules",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enables multi-rate tax_config with the `rates[]` array — per-category (e.g. reduced VAT for children's programmes, luxury tax, alcohol tax). Off = only `tax_config.default_rate_percent` + `name` + `inclusive` are honoured; any `rates[]` entries in the payload are refused with `REGION_CUSTOM_TAX_RULES_DISABLED` (402). Enterprise-only because multi-rate jurisdictions add invoice-generation complexity that most tenants don't need."
+    },
+    {
+      "key": "region_time_travel",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 0 },
+      "description": "Enables RETROACTIVE tax_config edits that replay against already-issued Invoices. Enterprise-only + off by default even for Enterprise (a per-tenant activation gate requires ops sign-off + a compliance letter). When off, tax_config changes affect ONLY future invoices — historical rows keep the snapshot they were issued with. Wave 3 feature; the payload contract is documented here but the code lives behind the feature flag `region.time_travel_execution` until Wave 3 lands."
+    }
+  ]
+}

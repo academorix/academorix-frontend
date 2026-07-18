@@ -1,0 +1,74 @@
+{
+  "id": "academorix://modules/branch/caches",
+  "$version": 1,
+  "title": "branch — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["branch", "opening-hours", "default-branch"],
+  "keys": [
+    {
+      "pattern": "br:default:{tenant_id}:{organization_id}",
+      "description": "Default Branch ULID for a (tenant, organization) tuple. Consumed by `DefaultBranchResolver`. Warmed on first read; invalidated on any BranchDefaultChanged event OR any is_default flip.",
+      "ttlSeconds": 3600,
+      "tags": ["branch", "default-branch", "tenant"],
+      "invalidatedBy": [
+        "BranchObserver.created (when is_default=true)",
+        "BranchObserver.updated (when is_default touched)",
+        "BranchObserver.deleted",
+        "BranchDefaultChanged event handler (fallback invalidation)"
+      ]
+    },
+    {
+      "pattern": "br:hours:{branch_id}",
+      "description": "The Branch's opening_hours JSONB blob + a pre-computed lookup table of open-periods per day-of-week in `branch.region.timezone`. Consumed by `OpeningHoursEvaluator::isOpenNow()` + the `/hours` + `/is-open` endpoints.",
+      "ttlSeconds": 600,
+      "tags": ["branch", "opening-hours"],
+      "invalidatedBy": ["BranchOpeningHoursUpdated", "BranchStatusChanged (paused / closed affect is-open)"]
+    },
+    {
+      "pattern": "br:is_open:{branch_id}:{yyyy_mm_dd_hh_mm}",
+      "description": "Per-minute is-open cache. Short TTL (55 seconds — one minute minus grace). Cheap to compute but the `/is-open` endpoint gets hit from every session render on the SPA, so caching per-minute-bucket avoids repeated timezone math + exception-scan.",
+      "ttlSeconds": 55,
+      "tags": ["branch", "opening-hours"]
+    },
+    {
+      "pattern": "br:resolve_active:{tenant_id}:{user_id}",
+      "description": "The active branch resolved by `branch.resolve_active` middleware for this (tenant, user) tuple. Written when the caller carries `X-Branch-Id` OR when their default resolves. Idle-timeout matches the Sanctum PAT idle timeout so a session-scoped resolution survives page refreshes without hitting the DB.",
+      "ttlSeconds": 86400,
+      "tags": ["branch"]
+    },
+    {
+      "pattern": "br:facilities_count:{branch_id}",
+      "description": "The count of active Facility rows referencing this Branch. Used by the branch-list SDUI screen's summary column + by the `saving (status → closed)` dependency check as a fast-path for zero-facilities case.",
+      "ttlSeconds": 300,
+      "tags": ["branch", "facility"],
+      "invalidatedBy": ["facility::Facility observers (Wave 3, when the module lands)"]
+    },
+    {
+      "pattern": "br:active_teams_count:{branch_id}",
+      "description": "Same pattern for active Teams referencing this Branch.",
+      "ttlSeconds": 300,
+      "tags": ["branch", "team"],
+      "invalidatedBy": ["teams::Team observers (Wave 3)"]
+    },
+    {
+      "pattern": "br:coverage:{branch_id}",
+      "description": "The geofence-polygon coverage report for this Branch (from the Wave 3 geofencing module). Populated lazily by `OnGeofencePolygonUpdated` — empty in Wave 2. Included here so downstream modules can reserve the key namespace.",
+      "ttlSeconds": 3600,
+      "tags": ["branch", "geofence"]
+    },
+    {
+      "pattern": "br:geocode:address_hash:{sha256}",
+      "description": "Result of a geocode lookup keyed by SHA-256 of the canonical structured address. Cross-tenant cache — same address input yields same coordinates regardless of who asked. Long TTL because geocoding results rarely change and provider costs are per-call.",
+      "ttlSeconds": 2592000,
+      "tags": ["branch", "geocode"],
+      "invalidatedBy": ["manual purge via `branch:geocode --force`"]
+    },
+    {
+      "pattern": "br:amenity_catalog",
+      "description": "The platform-wide amenity catalogue loaded from `data/amenity-catalog.json`. Cached on boot; long TTL because the catalogue only changes via code deploy.",
+      "ttlSeconds": 86400,
+      "tags": ["branch", "platform"],
+      "invalidatedBy": ["deploy hook — every deploy invalidates the platform-tag namespace"]
+    }
+  ]
+}

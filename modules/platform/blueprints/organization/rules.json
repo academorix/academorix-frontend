@@ -1,0 +1,108 @@
+{
+  "id": "academorix://modules/organization/rules",
+  "$version": 1,
+  "title": "organization — validation rules",
+  "description": "Custom Laravel validation rules published by OrganizationServiceProvider::boot() so any FormRequest / Data class can validate Organization writes. All rules can be used inline via the string signature OR as class instances for composition.",
+  "namespace": "Academorix\\Organization\\Rules",
+  "rules": [
+    {
+      "name": "valid_hex_color",
+      "class": "Academorix\\Organization\\Rules\\ValidHexColor",
+      "signature": "valid_hex_color",
+      "description": "Enforces a strict 7-character hex color format (`#RRGGBB`). The `#` is required. Uppercase or lowercase A-F. Applied to primary_color + secondary_color on CreateOrganizationAction + UpdateOrganizationAction. Refuses short-form `#RGB` (visually the same but harder to compare programmatically).",
+      "params": [],
+      "example_field_rule": "primary_color: [nullable, string, valid_hex_color]",
+      "error_message_key": "organization::validation.valid_hex_color",
+      "default_message": "The :attribute must be a 7-character hex color starting with `#` (e.g. `#1F2937`).",
+      "regex": "^#[0-9A-Fa-f]{6}$"
+    },
+    {
+      "name": "valid_e164_phone",
+      "class": "Academorix\\Organization\\Rules\\ValidE164Phone",
+      "signature": "valid_e164_phone",
+      "description": "Enforces ITU-T E.164 phone number format: `+` followed by 1..15 digits, no whitespace or punctuation. Applied to support_phone. Refuses formats like `(415) 555-1234` — callers must normalise before submitting.",
+      "params": [],
+      "example_field_rule": "support_phone: [nullable, string, valid_e164_phone]",
+      "error_message_key": "organization::validation.valid_e164_phone",
+      "default_message": "The :attribute must be an E.164 phone number (e.g. `+14155551234`).",
+      "regex": "^\\+[1-9][0-9]{1,14}$"
+    },
+    {
+      "name": "valid_url",
+      "class": "Academorix\\Organization\\Rules\\ValidUrl",
+      "signature": "valid_url[:<scheme>]",
+      "description": "Enforces full URL with scheme (defaults to allowing http + https). Rejects protocol-relative URLs and bare hostnames. Applied to website_url + logo_url.",
+      "params": [
+        {
+          "name": "scheme",
+          "type": "string",
+          "default": "http,https",
+          "description": "Comma-joined allowed schemes. For logo_url the recommended usage is `valid_url:https` (force TLS)."
+        }
+      ],
+      "example_field_rule": "website_url: [nullable, string, valid_url:http,https]",
+      "error_message_key": "organization::validation.valid_url",
+      "default_message": "The :attribute must be a valid URL with an allowed scheme."
+    },
+    {
+      "name": "parent_same_tenant",
+      "class": "Academorix\\Organization\\Rules\\ParentSameTenant",
+      "signature": "parent_same_tenant",
+      "description": "Refuses when the proposed parent_id references an Organization belonging to a different tenant. Enforced on both CreateOrganizationAction (initial parent_id) and ReparentOrganizationAction (parent_id change). Defense-in-depth on top of the tenant scope.",
+      "params": [],
+      "example_field_rule": "parent_id: [nullable, ulid, parent_same_tenant]",
+      "error_message_key": "organization::validation.parent_same_tenant",
+      "default_message": "The parent organization must belong to the same tenant."
+    },
+    {
+      "name": "parent_no_cycle",
+      "class": "Academorix\\Organization\\Rules\\ParentNoCycle",
+      "signature": "parent_no_cycle:<organization_id>",
+      "description": "Cycle-detection rule. Given the current Organization id + proposed parent_id, walks the proposed parent's ancestor chain (via existing tree_path) looking for the current id. Returns the cycle_path array in the validation error for UI visualisation. Applied on ReparentOrganizationAction (create-time parent_id is trivially cycle-safe because the new row has no descendants yet).",
+      "params": [
+        {
+          "name": "organization_id",
+          "type": "string",
+          "description": "ULID of the row whose parent is changing. Provided as `{organization}` from the route URL parameter."
+        }
+      ],
+      "example_field_rule": "new_parent_id: [nullable, ulid, parent_no_cycle:{organization}]",
+      "error_message_key": "organization::validation.parent_no_cycle",
+      "default_message": "This reparent would create a cycle."
+    },
+    {
+      "name": "parent_within_depth_cap",
+      "class": "Academorix\\Organization\\Rules\\ParentWithinDepthCap",
+      "signature": "parent_within_depth_cap:<organization_id>",
+      "description": "Refuses when the proposed parent's tree_depth + 1 + (moved node's max descendant depth) would exceed config('organization.hierarchy.max_depth'). Applied on both create (moved node's descendant depth = 0) and reparent (moved node may carry a deep subtree).",
+      "params": [
+        {
+          "name": "organization_id",
+          "type": "string | null",
+          "description": "ULID of the row being moved (null on create — computes with descendant depth 0)."
+        }
+      ],
+      "example_field_rule": "new_parent_id: [nullable, ulid, parent_within_depth_cap:{organization}]",
+      "error_message_key": "organization::validation.parent_within_depth_cap",
+      "default_message": "This reparent exceeds the maximum tree depth of :max."
+    },
+    {
+      "name": "organization_slug_reserved",
+      "class": "Academorix\\Organization\\Rules\\OrganizationSlugReserved",
+      "signature": "organization_slug_reserved[:allow_system]",
+      "description": "Refuses slugs listed in config('organization.validation.reserved_slugs'). The `allow_system` param bypasses the check when the writer is in system context (e.g. SeedDefaultOrganizationForTenantJob writing slug='default').",
+      "params": [
+        {
+          "name": "allow_system",
+          "type": "bool",
+          "default": false,
+          "description": "When true, the seeder path is allowed to use reserved slugs. Kept off for API callers."
+        }
+      ],
+      "example_field_rule": "slug: [required, string, organization_slug_reserved]",
+      "error_message_key": "organization::validation.organization_slug_reserved",
+      "default_message": "The :attribute uses a reserved slug (:reserved). Choose a different value."
+    }
+  ],
+  "usage_from_form_request": "The CreateOrganizationAction's Data class composes these rules automatically. Most callers never write these rules manually. This file is the canonical registry for the underlying rule implementations."
+}

@@ -1,0 +1,149 @@
+{
+  "id": "facility.resources.facility.blackouts",
+  "title": "Blackouts",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/facilities/:facilityId/blackouts",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "facility", "entity": "facility", "action": "blackouts" },
+  "requiresPermission": "facilities.manage-blackouts",
+  "requiresEntitlement": "facilities_advanced",
+  "dataSources": [
+    {
+      "name": "facility",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/facilities/' + $params.facilityId",
+      "unwrap": "data"
+    },
+    {
+      "name": "blackouts",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/facilities/' + $params.facilityId + '/blackouts'",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-4xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$expr": "'Blackouts — ' + facility.name" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "One-off closures that cascade: bookings inside the window are cancelled."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "leadingIcon": "plus", "children": "Add blackout" },
+              "actions": {
+                "onPress": {
+                  "kind": "modal.open",
+                  "modal": "add-blackout",
+                  "propsExpr": "{ facilityId: facility.id }"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "children": "Adding a blackout cancels every booking inside the window. Cancellations are notified to bookers (cannot-opt-out). This action is irreversible — removed blackouts do NOT restore cancelled bookings."
+          }
+        },
+        {
+          "kind": "List",
+          "props": { "className": "flex flex-col gap-2" },
+          "bindings": {
+            "items": { "$ref": "blackouts" },
+            "isLoading": { "$ref": "blackouts.isLoading" }
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "text-center py-8" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "calendar-x", "className": "size-8 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-2 text-sm text-muted", "children": "No blackouts scheduled." } }
+            ]
+          },
+          "itemRenderer": {
+            "kind": "Card",
+            "props": { "className": "p-4 flex items-center gap-4" },
+            "children": [
+              {
+                "kind": "Icon",
+                "props": { "name": "no-symbol", "className": "size-6 text-warning shrink-0" }
+              },
+              {
+                "kind": "View",
+                "props": { "className": "flex flex-col flex-1" },
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-medium" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "formatDateTimeRange(row.starts_at, row.ends_at, 'facility_timezone')"
+                      }
+                    }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-sm text-muted" },
+                    "bindings": {
+                      "children": { "$expr": "row.reason || 'No reason provided'" }
+                    }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted mt-1" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "'Added ' + relativeTime(row.created_at) + ' by ' + row.created_by.display_name"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "Button",
+                "props": {
+                  "variant": "ghost",
+                  "size": "sm",
+                  "leadingIcon": "trash",
+                  "children": "Remove"
+                },
+                "actions": {
+                  "onPress": {
+                    "kind": "http.delete",
+                    "urlExpr": "'/api/v1/facilities/' + facility.id + '/blackouts/' + row.id",
+                    "confirm": "Remove this blackout? Cancelled bookings will NOT be restored."
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

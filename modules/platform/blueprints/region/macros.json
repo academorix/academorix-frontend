@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/region/macros",
+  "$version": 1,
+  "title": "region — published macros",
+  "description": "No Blueprint schema macros. The region module does NOT publish schema-level composition helpers — Branch adds region_id via its own explicit column declaration (Wave 2b). Two runtime macros are published on `Illuminate\\Http\\Request` for `active-region`-flavoured helpers on inbound requests.",
+  "namespace_note": "Runtime macros extend `Illuminate\\Http\\Request`. Registered by `RegionServiceProvider::boot()` during framework boot.",
+  "macros": [
+    {
+      "name": "Request::activeRegion",
+      "signature": "Request::activeRegion(): ?Region",
+      "description": "Returns the Region row the middleware `region.resolve_active` resolved for THIS request. Reads (in order): (1) the `X-Region-Id` header if the caller's active tenant has a Region on that slug/id + it's not archived; (2) the tenant's Region where `is_default = true`; (3) null if the caller has no active tenant (platform-plane request).",
+      "usage_example": "$region = $request->activeRegion();\nif ($region === null) throw new NoActiveRegion();\n$currencySymbol = $region->currency_symbol;"
+    },
+    {
+      "name": "Request::activeRegionId",
+      "signature": "Request::activeRegionId(): ?string",
+      "description": "Shorthand for `$request->activeRegion()?->id`. Returns the region ULID (`reg_*`) or null. Cheap — reads from the middleware-populated slot; never queries the DB.",
+      "usage_example": "$regionId = $request->activeRegionId();"
+    }
+  ],
+  "registered_by": "Academorix\\Region\\Providers\\RegionServiceProvider::boot()",
+  "registration_order": "Registered during the standard boot phase. Depends on tenancy having booted first so the tenant scope is already registered when the macros run — tenancy priority (10) < region priority (40) so ordering is safe by construction. Also depends on the `region.resolve_active` middleware having run in the request pipeline before the macros are called; the middleware populates the RequestContext slot the macros read from."
+}

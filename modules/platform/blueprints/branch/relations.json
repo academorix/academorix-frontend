@@ -1,0 +1,70 @@
+{
+  "id": "academorix://modules/branch/relations",
+  "$version": 1,
+  "title": "branch — model relationships",
+  "description": "Branch is the FK-central aggregate of the whole platform. Outbound: 3 FKs (tenant + organization + region), all required + immutable. Inbound: every downstream domain aggregate (facility, team, staff, coach, athlete, session, booking, membership, pass, visit) references `branches.id` via `branch_id`. This is where the platform hierarchy actually joins up.",
+  "internal": [
+    {
+      "note": "Single-aggregate module — no internal relations within the branch module itself."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Branch",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Home tenant. CASCADE aligns with tenancy::TenantErased — erasing a Tenant erases every Branch under it. The `BranchesOnTenantErased` hook cancels in-flight geocoding jobs before the cascade fires."
+    },
+    {
+      "from": "Branch",
+      "kind": "belongsTo",
+      "to": "organization::Organization",
+      "foreignKey": "organization_id",
+      "onDelete": "restrict",
+      "description": "Structural sub-brand this Branch belongs to. RESTRICT on delete — an Organization cannot be dropped while any Branch references it. Organization archival is the correct path (which requires every Branch to be closed first)."
+    },
+    {
+      "from": "Branch",
+      "kind": "belongsTo",
+      "to": "region::Region",
+      "foreignKey": "region_id",
+      "onDelete": "restrict",
+      "description": "Commercial + regulatory zone (currency, tax, timezone, locale). RESTRICT — Regions carry historic invoice snapshots and cannot be dropped while any Branch references them."
+    },
+    {
+      "note": "There is NO outbound FK to `applications` on Branch. Application cascades through `tenant_id → tenants.application_id` per hierarchy.md §2 + tenancy-columns.md §2 — no shortcut."
+    }
+  ],
+  "inbound": {
+    "description": "Every downstream domain model with a per-branch operational context composes the `BelongsToBranch` trait (this module's owned trait). They store the linkage as `branch_id` FK (non-nullable for most — a session or booking without a venue is nonsensical).",
+    "examples": [
+      "facility::Facility.branch_id — required. RESTRICT: facilities block branch closure until reassigned or closed.",
+      "teams::Team.branch_id — required. RESTRICT.",
+      "teams::TeamMember.branch_id — denormalised from Team for query performance; kept in sync by observer.",
+      "sports::Coach.branch_id — required for on-site coaches; nullable for federation-level coaches (Wave 3).",
+      "sports::Athlete.branch_id — required (an athlete is registered at a branch even when they participate in touring events).",
+      "sports::Session.branch_id — required. RESTRICT — sessions block branch closure.",
+      "sports::Booking.branch_id — required. RESTRICT.",
+      "finance::Membership.branch_id — required. The parent contract runs on the branch's Stripe account, per hierarchy.md §17.",
+      "finance::Pass.branch_id — required.",
+      "attendance::Visit.branch_id — required.",
+      "audit::audits.subject_type='Branch'.subject_id — polymorphic; not an FK.",
+      "activity::activity_log.subject_type='Branch'.subject_id — polymorphic; not an FK."
+    ],
+    "onDelete": "RESTRICT by convention on domain FKs referencing branches.id — branch closure is guarded by the observer's dependency check + the `branch.close.dependency_checks` config registry. The dependency check is enforced in application code (with a 409 BRANCH_IN_USE response) rather than by DB-level RESTRICT so that the user gets a clear error naming which downstream rows block the closure. Downstream FKs still carry RESTRICT as belt-and-braces."
+  },
+  "accessor_chain": {
+    "description": "Branch surfaces convenience accessors so downstream code rarely reaches into the joined aggregates directly.",
+    "Branch": {
+      "timezone": "region->timezone",
+      "currency_code": "region->currency_code",
+      "locale": "region->locale (may be overridden per-tenant setting)",
+      "organization_name": "organization->name",
+      "region_name": "region->name",
+      "tenant_slug": "tenant->slug"
+    }
+  },
+  "note_on_polymorphism": "Every polymorphic FK targeting a Branch stores `subject_type = 'Academorix\\Branch\\Models\\Branch'` (or the class alias `App\\Branch\\Branch` when Laravel's morph map is configured). Downstream modules that filter by branch on a polymorphic table use this — e.g. `activity_log.subject_type = 'Branch' AND activity_log.subject_id = brn_...`."
+}

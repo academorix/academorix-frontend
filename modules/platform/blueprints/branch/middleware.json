@@ -1,0 +1,40 @@
+{
+  "id": "academorix://modules/branch/middleware",
+  "$version": 1,
+  "title": "branch — HTTP middleware",
+  "middleware": [
+    {
+      "alias": "branch.resolve_active",
+      "class": "Academorix\\Branch\\Http\\Middleware\\ResolveActiveBranch",
+      "priority": 22,
+      "description": "Resolves the caller's active Branch for THIS request when the route consumes one (booking / session / attendance surfaces). Reads (in order): (1) `X-Branch-Id` header when the branch belongs to the caller's active tenant; (2) the caller's `me.default_branch_id` (their assigned branch as a coach / staff / reception member); (3) the tenant's default branch under the resolved `(tenant, organization)`. Refuses paused / closed branches on write routes (BRANCH_PAUSED / BRANCH_CLOSED, 403); reads pass through. Sets `Request::activeBranchId()` + writes to the `RequestContext.branch_id` slot. Runs AFTER `tenant.resolve` (needs the tenant) but BEFORE the domain policy check.",
+      "auto_applied": false,
+      "auto_applied_to": [],
+      "consumed_by_route_groups": [
+        "sports::sessions (Wave 3)",
+        "sports::bookings (Wave 3)",
+        "attendance::visits (Wave 3)",
+        "facility::facilities (Wave 3)"
+      ]
+    },
+    {
+      "alias": "branch.enforce_operating_hours",
+      "class": "Academorix\\Branch\\Http\\Middleware\\EnforceOperatingHours",
+      "priority": 23,
+      "description": "For booking-adjacent write routes ONLY. Reads the branch resolved by `branch.resolve_active` and refuses with 403 `BRANCH_OUTSIDE_OPERATING_HOURS` when `now()->setTimezone(branch.region.timezone)` falls outside the branch's opening_hours + exceptions. Read routes are never gated. Killable via the `branch.enforce_operating_hours_middleware` feature flag when a tenant needs to force a booking through outside hours (e.g. rescheduling after a public holiday change). Includes the next-open timestamp in the error response so the caller can retry."
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "auth:sanctum" },
+    { "middleware": "application::resolve.application" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "user::user.resolve_active_tenant" },
+    { "middleware": "user::user.enforce_tenant_membership" }
+  ],
+  "notes": [
+    "The Branch resource CRUD endpoints (`/api/v1/branches[/{branch}]`) do NOT compose `branch.resolve_active` because they manipulate the Branch itself, not scope by it. Downstream domain routes (bookings, sessions, attendance) compose both middleware.",
+    "`branch.enforce_operating_hours` is a defence-in-depth check. The primary path is per-controller — booking-adjacent controllers refuse the operation with a domain-specific error (e.g. `BOOKING_OUTSIDE_HOURS`). This middleware catches the rare case where a controller forgets."
+  ]
+}

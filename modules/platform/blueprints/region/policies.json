@@ -1,0 +1,89 @@
+{
+  "id": "academorix://modules/region/policies",
+  "$version": 1,
+  "title": "region — authorization policies",
+  "description": "One policy — RegionPolicy — narrows by scope suffix (`.any` / `.tenant` / `.own`). Every tenant member can READ regions in their active tenant (they are a base commercial reference every UI dropdown needs). Only admins + owners can WRITE. The default region has extra guardrails: `CANNOT_DELETE_DEFAULT_REGION` is a hard 409 refusal even for owners; changing the default requires the caller to carry `regions.set_default`.",
+  "policies": [
+    {
+      "model": "Region",
+      "class": "Academorix\\Region\\Policies\\RegionPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "regions.viewAny",
+          "scope": "resolved via ScopeSuffixResolver — `.tenant` narrows to the caller's active tenant; `.any` unrestricted (platform_admin only). Every tenant role gets `.tenant` by default because regions are UI reference data."
+        },
+        {
+          "action": "view",
+          "permission": "regions.view",
+          "scope": "single-row check by suffix. `.tenant` requires the Region's tenant_id to match the caller's active tenant. Tax registration number gated further by `regions.view.tax_registration`."
+        },
+        {
+          "action": "viewTaxRegistration",
+          "permission": "regions.view.tax_registration",
+          "scope": "admin + owner only. Guards egress of `tax_config.registration_number` (confidential per data-classes.json)."
+        },
+        {
+          "action": "create",
+          "permission": "regions.create",
+          "scope": "admin or owner in the active tenant. Also gated by the `region_slot` entitlement — the observer decrements on create + refuses with RegionQuotaExceeded when the slot is exhausted."
+        },
+        {
+          "action": "update",
+          "permission": "regions.update",
+          "scope": "admin or owner. Mutable fields: name, slug, timezone, locale, weekend_days, sort_order, subdivision_code, fiscal_year_start_month. Immutable-after-use: country_code + currency (attempted change refused when any inbound row exists)."
+        },
+        {
+          "action": "updateTaxConfig",
+          "permission": "regions.update.tax_config",
+          "scope": "admin or owner. Separated from `regions.update` because tax_config mutations are financial-record-generating events + belong under a higher-privilege permission."
+        },
+        {
+          "action": "setDefault",
+          "permission": "regions.set_default",
+          "scope": "owner only. Changing the default region affects invoice calculations for legacy rows — narrow blast radius."
+        },
+        {
+          "action": "pause",
+          "permission": "regions.pause",
+          "scope": "admin or owner. Refused when is_default=true (would block every new membership in the tenant)."
+        },
+        {
+          "action": "resume",
+          "permission": "regions.resume",
+          "scope": "admin or owner."
+        },
+        {
+          "action": "archive",
+          "permission": "regions.archive",
+          "scope": "admin or owner. Refused when is_default=true (`CANNOT_DELETE_DEFAULT_REGION`) OR when any inbound row references the Region (`REGION_IN_USE`)."
+        },
+        {
+          "action": "restore",
+          "permission": "regions.restore",
+          "scope": "admin or owner. Only within the 730-day archived retention window."
+        },
+        {
+          "action": "delete",
+          "permission": "regions.delete",
+          "scope": "owner only. Refused when is_default=true. Refused when any inbound row references. Soft-delete only — hard-delete via PurgeArchivedRegionsJob after retention window."
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.regions.viewAny",
+          "scope": "platform_admin only. Cross-tenant read for support tooling."
+        },
+        {
+          "action": "platformView",
+          "permission": "platform.regions.view",
+          "scope": "platform_admin only."
+        },
+        {
+          "action": "platformViewCountryDefaults",
+          "permission": null,
+          "scope": "public (read-only) — every tenant admin choosing a country_code needs to see the shipped defaults. The platform surface exposes the same JSON at `GET /api/v1/platform/country-defaults` for convenience."
+        }
+      ]
+    }
+  ]
+}

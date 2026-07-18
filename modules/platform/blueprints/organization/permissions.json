@@ -1,0 +1,92 @@
+{
+  "id": "academorix://modules/organization/permissions",
+  "$version": 1,
+  "title": "organization — permissions",
+  "seeder": "Academorix\\Organization\\Database\\Seeders\\OrganizationPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "organizations.viewAny.tenant",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner"],
+      "description": "List Organizations for the current tenant. Any tenant member can see the org list."
+    },
+    {
+      "name": "organizations.view.tenant",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner"]
+    },
+    {
+      "name": "organizations.create.tenant",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Create a new Organization. Consumes organization_slot. Refused at cap."
+    },
+    {
+      "name": "organizations.update.tenant",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "organizations.delete.tenant",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Soft-delete + archive. Refused on is_default / has descendants / referenced by branches."
+    },
+    {
+      "name": "organizations.reparent.tenant",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Move an Organization under a new parent. Requires organization_reparent entitlement. Every reparent is audit-critical."
+    },
+    {
+      "name": "organizations.set_default.tenant",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Flip is_default=true. Audit-critical (shifts every downstream default-org filter)."
+    },
+    {
+      "name": "organizations.pause.tenant",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "organizations.resume.tenant",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "organizations.archive.tenant",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "organizations.branding.update.tenant",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"],
+      "description": "Write logo_url + primary_color + secondary_color + description. Requires organization_branding entitlement."
+    },
+    {
+      "name": "organizations.tree.view.tenant",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner"],
+      "description": "Read the tenant tree (org hierarchy). Same audience as viewAny."
+    },
+    {
+      "name": "platform.organizations.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "product", "support"],
+      "description": "Cross-tenant Organization observability."
+    },
+    {
+      "name": "platform.organizations.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "product", "support"]
+    },
+    {
+      "name": "platform.organizations.tree.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "product", "support"]
+    }
+  ]
+}

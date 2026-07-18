@@ -1,0 +1,198 @@
+{
+  "id": "academorix://modules/facility/config",
+  "$version": 1,
+  "title": "facility — developer configuration",
+  "configFile": "config/facility.php",
+  "envPrefix": "FACILITY_",
+  "sections": {
+    "booking": {
+      "keys": [
+        {
+          "path": "facility.booking.default_min_duration_minutes",
+          "type": "int",
+          "env": "FACILITY_BOOKING_DEFAULT_MIN_DURATION",
+          "default": 60,
+          "description": "Default value for Facility.min_booking_duration_minutes when the create path doesn't set it explicitly."
+        },
+        {
+          "path": "facility.booking.default_max_duration_minutes",
+          "type": "int",
+          "env": "FACILITY_BOOKING_DEFAULT_MAX_DURATION",
+          "default": 240,
+          "description": "Default value for Facility.max_booking_duration_minutes."
+        },
+        {
+          "path": "facility.booking.default_slot_step_minutes",
+          "type": "int",
+          "env": "FACILITY_BOOKING_DEFAULT_SLOT_STEP",
+          "default": 30,
+          "description": "Default booking_slot_step_minutes. Facilities may override per-row."
+        },
+        {
+          "path": "facility.booking.default_advance_window_days",
+          "type": "int",
+          "env": "FACILITY_BOOKING_DEFAULT_ADVANCE_WINDOW",
+          "default": 30,
+          "description": "Default advance_booking_window_days. Corporate tenants often bump to 90 via the /facilities/{id} PATCH."
+        },
+        {
+          "path": "facility.booking.default_cancellation_notice_hours",
+          "type": "int",
+          "env": "FACILITY_BOOKING_DEFAULT_CANCELLATION_NOTICE",
+          "default": 24,
+          "description": "Default cancellation_notice_hours. Cancels inside this window face full charge (Wave 4 refund flow decides)."
+        },
+        {
+          "path": "facility.booking.pending_ttl_minutes",
+          "type": "int",
+          "default": 30,
+          "description": "ExpireLapsedBookingsJob cancels pending-status bookings that stay pending past this window."
+        },
+        {
+          "path": "facility.booking.no_show_after_minutes",
+          "type": "int",
+          "default": 15,
+          "description": "MarkNoShowJob transitions confirmed→no_show when starts_at + this many minutes has passed without check-in."
+        },
+        {
+          "path": "facility.booking.complete_after_minutes",
+          "type": "int",
+          "default": 15,
+          "description": "MarkBookingCompletedJob transitions confirmed→completed when ends_at + this many minutes has passed."
+        },
+        {
+          "path": "facility.booking.overlap_isolation",
+          "type": "string",
+          "default": "SERIALIZABLE",
+          "enum": ["SERIALIZABLE", "REPEATABLE_READ"],
+          "description": "DB isolation level for the overlap check. Default SERIALIZABLE. Downgrade only in high-concurrency test environments where the reconciler catches drift — production must stay SERIALIZABLE."
+        }
+      ]
+    },
+    "pricing": {
+      "keys": [
+        {
+          "path": "facility.pricing.default_model",
+          "type": "string",
+          "default": "per_hour",
+          "enum": ["per_hour", "per_slot", "per_person", "included_in_membership"],
+          "description": "Default pricing model when the create path doesn't set pricing_json explicitly."
+        },
+        {
+          "path": "facility.pricing.freeze_on_booking",
+          "type": "bool",
+          "default": true,
+          "description": "true = booking captures the resolved price at booking-time (subsequent pricing_json edits do NOT retroactively reprice). false = booking reads pricing_json live at each display (breaks financial audit — never turn off in production)."
+        },
+        {
+          "path": "facility.pricing.cache_ttl_seconds",
+          "type": "int",
+          "default": 300,
+          "description": "PricingCalculator caches resolved rate lookups for 5 min. Invalidated by FacilityPricingUpdated event."
+        }
+      ]
+    },
+    "blackouts": {
+      "keys": [
+        {
+          "path": "facility.blackouts.cascade_cancel_batch_size",
+          "type": "int",
+          "default": 500,
+          "description": "Cascade-cancellation on FacilityBlackoutAdded processes affected bookings in batches of this size."
+        },
+        {
+          "path": "facility.blackouts.max_windows_per_facility",
+          "type": "int",
+          "default": 100,
+          "description": "Cap on Facility.blackout_dates array length. Tenants with more than 100 concurrent blackouts should model those as recurring facility hours instead."
+        }
+      ]
+    },
+    "day_passes": {
+      "keys": [
+        {
+          "path": "facility.day_passes.receipt_number_format",
+          "type": "string",
+          "default": "DP-{tenant_prefix}-{year}-{sequential:06d}",
+          "description": "Template for ReceiptNumberGenerator. Available substitutions: {tenant_prefix}, {year}, {month}, {sequential:Nd}."
+        },
+        {
+          "path": "facility.day_passes.max_advance_days",
+          "type": "int",
+          "default": 30,
+          "description": "Max days ahead a day pass may be issued for. Beyond this, sell a Pass instead."
+        },
+        {
+          "path": "facility.day_passes.refund_window_days",
+          "type": "int",
+          "default": 30,
+          "description": "Refunds accepted only within this many days of purchase. Refused after."
+        },
+        {
+          "path": "facility.day_passes.anonymous_redaction_days",
+          "type": "int",
+          "default": 90,
+          "description": "RedactAnonymousDayPassProfileJob redacts anonymous profile fields this many days after consumed_at."
+        }
+      ]
+    },
+    "passes": {
+      "keys": [
+        {
+          "path": "facility.passes.default_ttl_days",
+          "type": "int",
+          "default": 365,
+          "description": "Default (valid_until - valid_from) window for newly-issued passes when the caller doesn't specify."
+        },
+        {
+          "path": "facility.passes.expiring_notification_days",
+          "type": "int",
+          "default": 7,
+          "description": "PassExpiringNotification fires this many days before valid_until."
+        }
+      ]
+    },
+    "reconciliation": {
+      "keys": [
+        {
+          "path": "facility.reconciliation.overlap_scan_batch_size",
+          "type": "int",
+          "default": 1000,
+          "description": "ReconcileBookingOverlapsJob scans this many facility_id rows per pass."
+        },
+        {
+          "path": "facility.reconciliation.expected_orphan_findings",
+          "type": "int",
+          "default": 0,
+          "description": "Baseline for the reconciler alerts. Any finding above this is a P1 signal."
+        }
+      ]
+    },
+    "reminders": {
+      "keys": [
+        {
+          "path": "facility.reminders.dispatch_offsets_hours",
+          "type": "array",
+          "default": [24, 1],
+          "description": "How many hours before starts_at to dispatch reminders. Two-shot default (24h + 1h). Set to [] to disable."
+        },
+        {
+          "path": "facility.reminders.short_notice_threshold_hours",
+          "type": "int",
+          "default": 2,
+          "description": "Bookings created less than this many hours before starts_at skip reminder scheduling entirely."
+        }
+      ]
+    },
+    "capacity": {
+      "keys": [
+        {
+          "path": "facility.capacity.default_persons",
+          "type": "int",
+          "default": 1,
+          "description": "Default Facility.capacity_persons when the create path doesn't set it. Single-user facilities (a treadmill, one lane) leave this at 1."
+        }
+      ]
+    }
+  }
+}

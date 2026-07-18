@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/region/schedule",
+  "$version": 1,
+  "title": "region — scheduled tasks",
+  "entries": [
+    {
+      "name": "region-reconcile-defaults",
+      "command": "region:reconcile-defaults",
+      "cron": "15 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 03:15 UTC. Verifies every tenant has exactly one is_default=true Region. Reports drift + optionally auto-heals per `region.reconciliation.auto_heal` config. Feeds the `academorix.region.default_invariant_drift.count` gauge."
+    },
+    {
+      "name": "region-purge-archived",
+      "command": "queue:work --queue=low --once --job=PurgeArchivedRegionsJob",
+      "cron": "15 4 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 04:15 UTC. Hard-delete Region rows past their 730-day retention window IF no inbound FK still references them."
+    },
+    {
+      "name": "region-auto-resume-paused",
+      "command": "region:auto-resume-due --dry-run=false",
+      "cron": "*/15 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 15 minutes. Find Regions with status=paused AND expected_resume_at <= now(); transition to status=active + fire RegionResumed."
+    },
+    {
+      "name": "region-metrics-snapshot",
+      "command": "region:metrics:snapshot",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly. Compute `academorix.region.active.count` per (status, country_code) + `academorix.region.per_tenant.count` histogram + `academorix.region.purge_pending.count`. Publishes to the OpenTelemetry endpoint."
+    },
+    {
+      "name": "region-cache-warm-country-defaults",
+      "command": "region:cache:warm-country-defaults",
+      "cron": "0 5 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 05:00 UTC. Re-parses `data/country-defaults.json` + writes `rgn:country_defaults` + `rgn:country_default:{code}` per-country. Cheap idempotent task — mostly a safety net in case the file changed between deploys."
+    }
+  ]
+}

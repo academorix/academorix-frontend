@@ -1,0 +1,425 @@
+{
+  "id": "academorix://modules/organization/schemas/organization",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Organization",
+  "description": "Structural sub-brand belonging to a Tenant. Answers 'which brand does this row belong to?' Orthogonal to Region; meets at Branch. Carries `tenant_id` only — NEVER `application_id` (cascades through tenants), NEVER `region_id` (orthogonal axis), NEVER `scope_node_id` (Organization is a scope-node entity, not a scope consumer). Nesting via self-referential `parent_id` + materialised `tree_path` for O(1) descendant lookup. Exactly one `is_default=true` per tenant, seeded on TenantProvisioned.",
+  "type": "object",
+  "x-module": "organization",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "organizations",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "org_",
+    "incrementing": false,
+    "model": "Academorix\\Organization\\Models\\Organization",
+    "interface": "Academorix\\Organization\\Contracts\\Data\\OrganizationInterface",
+    "implements": ["Academorix\\Organization\\Contracts\\Data\\OrganizationInterface"],
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasOrganizationHierarchy",
+      "HasSlug",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasActivityLog",
+      "Auditable",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "is_default": "boolean",
+      "sort_order": "integer",
+      "tree_depth": "integer",
+      "established_date": "date",
+      "category": "Academorix\\Organization\\Enums\\OrganizationCategory",
+      "status": "Academorix\\Organization\\Enums\\OrganizationStatus",
+      "metadata": "array"
+    },
+    "appends": ["display_label", "descendant_count", "is_root"],
+    "observers": ["OrganizationObserver"],
+    "relations_note": "`parent()` belongsTo Organization (self) via parent_id. `children()` hasMany Organization (self) via parent_id. `descendants()` + `ancestors()` are computed via HasOrganizationHierarchy trait — not real Eloquent relations, but returned as EloquentBuilder for downstream ->with()/->where() composition. `tenant()` belongsTo Tenant.",
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "description": "One first-party table. Composite scoping via `tenant_id` only — no application_id column (cascades), no region_id column (orthogonal). tree_path is a materialised path with sentinel wraps (`.<a>.<b>.<c>.`) supporting BTREE-indexed LIKE prefix scans for O(1) descendant queries.",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `org_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "Every Organization belongs to a Tenant. Cascade delete on TenantErased."
+      },
+      "parent_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "organizations",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        },
+        "description": "Self-referential FK. Null = root node. Same-tenant enforced by rule + observer (defense-in-depth beyond the FK)."
+      },
+      "name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Display name. Not unique — two orgs may share a name (different slugs)."
+      },
+      "slug": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "URL-safe identifier. Unique per (tenant_id, slug). Regex `^[a-z][a-z0-9-]*[a-z0-9]$`. Reserved slugs refused (see rules.json)."
+      },
+      "short_name": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Compact form for tight UI slots. `Elite` for `Elite Sports Academy`."
+      },
+      "description": {
+        "type": "text",
+        "nullable": true,
+        "description": "Long-form description. Writes gated by organization_branding entitlement."
+      },
+      "category": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: sports_academy / sports_center / school / gym / federation / club / mixed. May be more specific than the tenant's business_type."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'active'",
+        "description": "Enum: active / paused / archived. Same semantics as region."
+      },
+      "is_default": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Exactly one is_default=true per tenant. Auto-demote on flip. Cannot be deleted / archived / paused."
+      },
+      "sort_order": {
+        "type": "integer",
+        "nullable": false,
+        "default": 100,
+        "description": "Ascending sort in UI picker. Defaults to 100 so seeded rows (sort_order=0) sort first."
+      },
+      "logo_url": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "URL to a storage::File. Writes gated by organization_branding entitlement."
+      },
+      "primary_color": {
+        "type": "string",
+        "length": 7,
+        "nullable": true,
+        "description": "Hex `#RRGGBB`. Writes gated by organization_branding entitlement."
+      },
+      "secondary_color": {
+        "type": "string",
+        "length": 7,
+        "nullable": true
+      },
+      "website_url": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "Full URL with scheme."
+      },
+      "support_email": {
+        "type": "string",
+        "length": 254,
+        "nullable": true,
+        "description": "Org-level customer support address. Distinct from the tenant's DPO/billing contacts on TenantContact."
+      },
+      "support_phone": {
+        "type": "string",
+        "length": 20,
+        "nullable": true,
+        "description": "E.164 format."
+      },
+      "contact_person_name": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Named contact at the Organization. PII-adjacent (classified `internal` — see data-classes.json)."
+      },
+      "established_date": {
+        "type": "date",
+        "nullable": true,
+        "description": "When the Organization was founded (not when the row was created). Optional; used by public 'About Us' surfaces."
+      },
+      "tree_path": {
+        "type": "string",
+        "length": 1024,
+        "nullable": false,
+        "default": "''",
+        "description": "Materialised path: `.<root_id>.<parent_id>.<self_id>.`. Sentinel-wrapped so LIKE '.a.' matches self and LIKE '.a.%' matches descendants. Recomputed by OrganizationObserver on parent_id change + by RebuildTreePathsJob for descendants."
+      },
+      "tree_depth": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "0 = root; 1 = child of root; etc. Derived from tree_path (count splits - 2 to account for sentinels)."
+      },
+      "notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Ops-only notes. Hidden from tenant-plane responses."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form metadata bag (from HasMetadata)."
+      },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "slug"],
+        "unique": true,
+        "name": "organizations_tenant_slug_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "One live slug per tenant. Soft-deleted rows do not collide."
+      },
+      {
+        "columns": ["tenant_id", "is_default"],
+        "unique": true,
+        "name": "organizations_tenant_default_unique",
+        "predicate": "is_default = true AND deleted_at IS NULL",
+        "description": "Enforces the exactly-one-default invariant at the DB level. Belt-and-braces on top of the observer's auto-demote logic."
+      },
+      {
+        "columns": ["tenant_id", "parent_id"],
+        "unique": false,
+        "name": "organizations_tenant_parent_idx",
+        "description": "Fast lookup of direct children per tenant."
+      },
+      {
+        "columns": ["tenant_id", "status", "sort_order"],
+        "unique": false,
+        "name": "organizations_tenant_status_sort_idx",
+        "description": "Picker query: active orgs, sorted."
+      },
+      {
+        "columns": ["tree_path"],
+        "unique": false,
+        "name": "organizations_tree_path_idx",
+        "description": "BTREE index supports LIKE prefix scans for descendant lookups. text_pattern_ops opclass to guarantee prefix-friendly ordering under any Postgres locale."
+      },
+      {
+        "columns": ["tenant_id", "tree_depth"],
+        "unique": false,
+        "name": "organizations_tenant_depth_idx",
+        "description": "Aggregation queries: how many roots? how deep is the deepest chain?"
+      },
+      {
+        "columns": ["deleted_at"],
+        "unique": false,
+        "name": "organizations_deleted_at_idx",
+        "description": "PurgeArchivedOrganizationsJob sweeps by deleted_at."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "name",
+    "slug",
+    "category",
+    "status",
+    "is_default",
+    "sort_order",
+    "tree_path",
+    "tree_depth",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^org_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "tenant_id": {
+      "type": "string",
+      "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "parent_id": {
+      "type": ["string", "null"],
+      "pattern": "^org_[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "Null = root node. Non-null must match the same tenant_id."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 128
+    },
+    "slug": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 64,
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$"
+    },
+    "short_name": {
+      "type": ["string", "null"],
+      "maxLength": 32
+    },
+    "description": {
+      "type": ["string", "null"]
+    },
+    "category": {
+      "type": "string",
+      "enum": ["sports_academy", "sports_center", "school", "gym", "federation", "club", "mixed"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "paused", "archived"]
+    },
+    "is_default": {
+      "type": "boolean"
+    },
+    "sort_order": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9999
+    },
+    "logo_url": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "maxLength": 512
+    },
+    "primary_color": {
+      "type": ["string", "null"],
+      "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "secondary_color": {
+      "type": ["string", "null"],
+      "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "website_url": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "maxLength": 512
+    },
+    "support_email": {
+      "type": ["string", "null"],
+      "format": "email",
+      "maxLength": 254
+    },
+    "support_phone": {
+      "type": ["string", "null"],
+      "pattern": "^\\+[1-9][0-9]{1,14}$"
+    },
+    "contact_person_name": {
+      "type": ["string", "null"],
+      "maxLength": 128
+    },
+    "established_date": {
+      "type": ["string", "null"],
+      "format": "date"
+    },
+    "tree_path": {
+      "type": "string",
+      "pattern": "^\\.(org_[0-9A-HJKMNP-TV-Z]{26}\\.)+$",
+      "maxLength": 1024,
+      "description": "Sentinel-wrapped materialised path. Enforced format: leading dot, one or more `org_<ulid>.` chunks."
+    },
+    "tree_depth": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "Ops-only. Hidden from tenant-plane responses."
+    },
+    "metadata": {
+      "type": ["object", "null"]
+    },
+    "display_label": {
+      "type": "string",
+      "description": "Computed. `<name> (<short_name>)` when short_name is set, else `<name>`."
+    },
+    "descendant_count": {
+      "type": "integer",
+      "description": "Computed via tree_path prefix scan. Included by default in list responses; suppressed on show responses unless `?include=descendant_count`."
+    },
+    "is_root": {
+      "type": "boolean",
+      "description": "Computed. parent_id IS NULL."
+    },
+    "created_by": {
+      "type": ["string", "null"]
+    },
+    "updated_by": {
+      "type": ["string", "null"]
+    },
+    "deleted_by": {
+      "type": ["string", "null"]
+    },
+    "deleted_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["display_label", "descendant_count", "is_root"],
+    "hidden_from_tenant_plane": ["notes"]
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": [
+      "ULID (`org_<26>`)",
+      "slug (case-insensitive, matches slug column within the resolved tenant)"
+    ]
+  },
+  "invariants": [
+    "COUNT(*) FILTER (WHERE is_default=true) = 1 per tenant_id (enforced by unique index + observer + reconciler).",
+    "parent_id.tenant_id = tenant_id when parent_id IS NOT NULL (enforced by rule + observer).",
+    "tree_path prefix chain matches parent_id chain (enforced by observer + rebuilt by RebuildTreePathsJob after each parent_id change).",
+    "tree_depth = count(tree_path splits) - 2 (accounts for the sentinel dots).",
+    "No cycles: for any pair (a, b), NOT (a.tree_path startsWith b.tree_path AND b.tree_path startsWith a.tree_path).",
+    "tree_depth ≤ config('organization.hierarchy.max_depth') (default 5, enforced by observer)."
+  ]
+}

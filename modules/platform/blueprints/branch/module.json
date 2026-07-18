@@ -1,0 +1,154 @@
+{
+  "$version": 1,
+  "name": "branch",
+  "alias": "branch",
+  "namespace": "Academorix\\Branch",
+  "description": "Physical venue — the concrete place where a Tenant's activities happen. Answers 'where does this happen?'. Every Branch belongs to one Organization (structural sub-brand — 'Elite Sports Academy') AND one Region (commercial/regulatory zone — 'US-CA', 'AE-DU'). These two orthogonal axes converge here. Cascades through Organization + Region for reporting; no shortcut FKs on downstream tables — Facility, Team, Athlete, Staff, Coach, Membership, Session all reach Region + Organization by joining through `branches`. Ships: Branch model + branch CRUD HTTP surface, structured-address column (jsonb), geolocation as structured coordinates (jsonb: lat/lng/accuracy_m/source) for future geofencing (Wave 3), opening_hours per-day (jsonb, multi-period days + tz-aware exceptions), capacity for booking calculations, status lifecycle (active/paused/closed), business-hours-open() runtime helper, and ships NOTHING on TenantProvisioned — Branches are explicit tenant admin actions. Slot-gated via `branch_slot` entitlement (Small=3, Medium=25, Enterprise=unlimited). Geocoding is optional (subprocessor: Google Maps / Mapbox / Nominatim) gated by `branch_geocoding` entitlement. This is the FK-central module of the whole platform — every downstream domain module (facility, team, staff, coach, athlete, invoice, session, booking) references `branch_id`.",
+  "keywords": [
+    "branch",
+    "venue",
+    "location",
+    "site",
+    "physical",
+    "capacity",
+    "opening-hours",
+    "address",
+    "coordinates",
+    "geolocation",
+    "amenities",
+    "timezone",
+    "organization",
+    "region",
+    "facility",
+    "team",
+    "geocoding"
+  ],
+  "priority": 45,
+  "providers": ["Academorix\\Branch\\Providers\\BranchServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "organization",
+    "region",
+    "application",
+    "entitlements"
+  ],
+  "extendedBy": ["facility"],
+  "planned_consumers": [
+    "facility",
+    "teams",
+    "staff",
+    "sports",
+    "finance",
+    "geofencing",
+    "notifications",
+    "attendance",
+    "coaching"
+  ],
+  "contributes": {
+    "traits": ["BelongsToBranch"],
+    "attributes": ["AsBranchListener"],
+    "blueprints": [],
+    "middleware": ["branch.resolve_active", "branch.enforce_operating_hours"],
+    "events": [
+      "BranchCreated",
+      "BranchUpdated",
+      "BranchStatusChanged",
+      "BranchPaused",
+      "BranchResumed",
+      "BranchClosed",
+      "BranchReopened",
+      "BranchDefaultChanged",
+      "BranchOpeningHoursUpdated",
+      "BranchCapacityChanged",
+      "BranchCoordinatesUpdated",
+      "BranchAddressUpdated",
+      "BranchDeleted"
+    ],
+    "policies": ["BranchPolicy"],
+    "hooks": ["BranchesOnTenantErased"],
+    "commands": [
+      "branch:list",
+      "branch:describe",
+      "branch:create",
+      "branch:set-default",
+      "branch:pause",
+      "branch:resume",
+      "branch:close",
+      "branch:reopen",
+      "branch:update-hours",
+      "branch:geocode",
+      "branch:audit-address"
+    ],
+    "jobs": [
+      "GeocodeAddressJob",
+      "ReconcileDefaultBranchInvariantJob",
+      "NotifyStaffOfBranchClosureJob"
+    ],
+    "notifications": [
+      "BranchCreatedNotification",
+      "BranchClosedNotification",
+      "BranchOpeningHoursChangedNotification"
+    ],
+    "broadcasts": ["tenant.{id}.branches"],
+    "observers": ["BranchObserver"],
+    "rules": [
+      "valid_e164_phone",
+      "valid_url",
+      "valid_hex_color",
+      "valid_opening_hours",
+      "valid_address_structure",
+      "valid_coordinates",
+      "branch_organization_same_tenant",
+      "branch_region_same_tenant"
+    ],
+    "casts": [
+      "BranchStatus",
+      "StructuredAddress",
+      "StructuredCoordinates",
+      "OpeningHoursSchedule",
+      "AmenityTagList"
+    ],
+    "views": [],
+    "lang": ["branch"],
+    "config": ["branch"],
+    "macros": [],
+    "bindings": [
+      "BranchRepository",
+      "BranchProvisioner",
+      "DefaultBranchResolver",
+      "OpeningHoursEvaluator",
+      "AddressFormatter",
+      "GeocodingClient",
+      "AmenityCatalog",
+      "CapacityGate"
+    ],
+    "resources": ["branch"]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing branch CRUD + operational-state transitions + hours + geocoding + is-open probe.",
+      "routes": [
+        "GET/POST /api/v1/branches",
+        "GET/PATCH/DELETE /api/v1/branches/{branch}",
+        "POST /api/v1/branches/{branch}/set-default",
+        "POST /api/v1/branches/{branch}/pause",
+        "POST /api/v1/branches/{branch}/resume",
+        "POST /api/v1/branches/{branch}/close",
+        "POST /api/v1/branches/{branch}/reopen",
+        "POST /api/v1/branches/{branch}/geocode",
+        "GET /api/v1/branches/{branch}/hours",
+        "GET /api/v1/branches/{branch}/is-open"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant read for support tooling + force-close (support only).",
+      "routes": [
+        "GET /api/v1/platform/branches",
+        "GET /api/v1/platform/branches/{branch}",
+        "POST /api/v1/platform/branches/{branch}/force-close"
+      ]
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "id": "academorix://modules/facility/schedule",
+  "$version": 1,
+  "title": "facility — scheduled tasks",
+  "entries": [
+    {
+      "name": "facility-expire-lapsed-bookings",
+      "command": "queue:dispatch --job=Academorix\\Facility\\Jobs\\ExpireLapsedBookingsJob",
+      "cron": "*/15 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 15 min: transition pending bookings past their 30-min TTL to cancelled."
+    },
+    {
+      "name": "facility-mark-no-show",
+      "command": "queue:dispatch --job=Academorix\\Facility\\Jobs\\MarkNoShowJob",
+      "cron": "*/30 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 30 min: transition confirmed bookings past starts_at + 15 min without check-in to no_show."
+    },
+    {
+      "name": "facility-mark-completed",
+      "command": "queue:dispatch --job=Academorix\\Facility\\Jobs\\MarkBookingCompletedJob",
+      "cron": "*/30 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 30 min: transition confirmed bookings past ends_at + 15 min to completed. Note: rows already marked no_show by the sibling job are skipped."
+    },
+    {
+      "name": "facility-expire-day-passes",
+      "command": "queue:dispatch --job=Academorix\\Facility\\Jobs\\ExpireDayPassesJob",
+      "cron": "0 1 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 01:00 UTC: expire day_passes past valid_on_date without consumption. No refund flow."
+    },
+    {
+      "name": "facility-expire-passes",
+      "command": "queue:dispatch --job=Academorix\\Facility\\Jobs\\ExpirePassesJob",
+      "cron": "0 2 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 02:00 UTC: expire passes past valid_until."
+    },
+    {
+      "name": "facility-purge-soft-deleted",
+      "command": "queue:dispatch --job=Academorix\\Facility\\Jobs\\PurgeSoftDeletedFacilitiesJob",
+      "cron": "0 4 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 04:00 UTC: hard-purge soft-deleted facilities past the 7-year retention window."
+    },
+    {
+      "name": "facility-reconcile-orphan-bookings",
+      "command": "queue:dispatch --job=Academorix\\Facility\\Jobs\\ReconcileBookingsAgainstRetiredFacilitiesJob",
+      "cron": "0 3 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 03:00 UTC: catch bookings referencing retired facilities that missed the cascade. Every finding is a P1 signal."
+    },
+    {
+      "name": "facility-reconcile-overlaps",
+      "command": "queue:dispatch --job=Academorix\\Facility\\Jobs\\ReconcileBookingOverlapsJob",
+      "cron": "0 3 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 03:00 UTC: catch double-bookings that slipped through overlap detection. Every finding is a P1 incident + fires BookingOverlapDetected."
+    },
+    {
+      "name": "facility-redact-anonymous-day-passes",
+      "command": "queue:dispatch --job=Academorix\\Facility\\Jobs\\RedactAnonymousDayPassProfileJob",
+      "cron": "0 5 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 05:00 UTC: GDPR minimisation. Redact anonymous walk-in profile fields 90 days post-consumed_at."
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "id": "academorix://modules/organization/entitlements",
+  "$version": 1,
+  "title": "organization — declared entitlements",
+  "description": "Four entitlement keys. `organization_slot` is a slot (concurrent cap on rows). Three booleans gate distinct capabilities: nesting via parent_id, per-org branding, and post-create reparent moves. Every key is composite-scoped by (application_id, tenant_id) per hierarchy.md §7.",
+  "reference": {
+    "publishedBy": "entitlements",
+    "seededFrom": "Plan.default_entitlements"
+  },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "organization_slot",
+      "kind": "slot",
+      "unit": "organizations",
+      "defaultsByPlan": {
+        "small": 1,
+        "medium": 5,
+        "enterprise": null
+      },
+      "description": "How many active Organizations a tenant may have. Small tier locks at 1 (the auto-provisioned default). Medium up to 5. Enterprise unlimited (null cap). Consumed on `creating`; released on `deleting` (soft-delete + archive both release; restore re-consumes). Refused with ORGANIZATION_SLOT_EXCEEDED (402) at cap."
+    },
+    {
+      "key": "organization_hierarchy",
+      "kind": "boolean",
+      "defaultsByPlan": {
+        "small": 0,
+        "medium": 0,
+        "enterprise": 1
+      },
+      "description": "Whether the tenant may set `parent_id` on Organization rows (create nested rows). Enterprise-only. When off, the observer refuses any non-null parent_id write (ORGANIZATION_NESTING_NOT_ENTITLED 402). Independent of `organization_reparent` — this gates creation-time nesting; that gates post-create moves."
+    },
+    {
+      "key": "organization_branding",
+      "kind": "boolean",
+      "defaultsByPlan": {
+        "small": 0,
+        "medium": 1,
+        "enterprise": 1
+      },
+      "description": "Whether the tenant may customise `logo_url`, `primary_color`, `secondary_color`, `description` per Organization. When off, the tenant's default Branding applies to every org (no per-org override). Refused with ORGANIZATION_BRANDING_NOT_ENTITLED (402) on write attempts."
+    },
+    {
+      "key": "organization_reparent",
+      "kind": "boolean",
+      "defaultsByPlan": {
+        "small": 0,
+        "medium": 0,
+        "enterprise": 1
+      },
+      "description": "Whether the tenant may move an existing Organization to a new parent via POST /reparent AFTER create. Separate from `organization_hierarchy` because compliance-heavy tenants may want to nest at create time but LOCK the tree after initial setup. Refuse with ORGANIZATION_REPARENT_NOT_ENTITLED (402)."
+    }
+  ]
+}

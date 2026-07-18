@@ -1,0 +1,160 @@
+{
+  "$version": 1,
+  "title": "Facility type × sport compatibility catalogue",
+  "description": "The valid_facility_type_for_sport rule reads this catalogue. Each facility_type lists the sport_categories it can legitimately host. A NULL sport_category is always valid (sport-agnostic rooms/studios). Attempted (facility_type, sport_category) pairs outside this catalogue are refused with FACILITY_TYPE_SPORT_MISMATCH.",
+  "types": [
+    {
+      "facility_type": "court",
+      "display_name": "Court",
+      "description": "Enclosed hard or synthetic playing area. Indoor or outdoor.",
+      "typical_capacity": 4,
+      "typical_min_duration_minutes": 60,
+      "typical_max_duration_minutes": 180,
+      "typical_slot_step_minutes": 30,
+      "compatible_sports": [
+        "basketball",
+        "tennis",
+        "volleyball",
+        "badminton",
+        "squash",
+        "padel",
+        "pickleball",
+        "handball",
+        "netball",
+        "futsal"
+      ]
+    },
+    {
+      "facility_type": "field",
+      "display_name": "Field",
+      "description": "Large open playing area with grass or turf. Outdoor.",
+      "typical_capacity": 22,
+      "typical_min_duration_minutes": 60,
+      "typical_max_duration_minutes": 240,
+      "typical_slot_step_minutes": 60,
+      "compatible_sports": [
+        "football",
+        "rugby",
+        "cricket",
+        "baseball",
+        "field_hockey",
+        "lacrosse",
+        "american_football",
+        "gaelic_football",
+        "ultimate_frisbee"
+      ]
+    },
+    {
+      "facility_type": "pool",
+      "display_name": "Pool",
+      "description": "Swimming pool. Lap pool or leisure pool.",
+      "typical_capacity": 20,
+      "typical_min_duration_minutes": 30,
+      "typical_max_duration_minutes": 120,
+      "typical_slot_step_minutes": 30,
+      "compatible_sports": [
+        "swimming",
+        "water_polo",
+        "diving",
+        "synchronised_swimming",
+        "underwater_hockey",
+        "aqua_aerobics"
+      ]
+    },
+    {
+      "facility_type": "studio",
+      "display_name": "Studio",
+      "description": "Enclosed instructional space with mirrors + floor space.",
+      "typical_capacity": 20,
+      "typical_min_duration_minutes": 45,
+      "typical_max_duration_minutes": 120,
+      "typical_slot_step_minutes": 15,
+      "compatible_sports": [
+        "yoga",
+        "pilates",
+        "dance",
+        "martial_arts",
+        "boxing",
+        "aerobics",
+        "spinning",
+        "barre",
+        "gymnastics",
+        "general_fitness"
+      ]
+    },
+    {
+      "facility_type": "room",
+      "display_name": "Room",
+      "description": "Small enclosed multi-purpose room. Meetings, seminars, small-group instruction.",
+      "typical_capacity": 12,
+      "typical_min_duration_minutes": 30,
+      "typical_max_duration_minutes": 240,
+      "typical_slot_step_minutes": 30,
+      "compatible_sports": null
+    },
+    {
+      "facility_type": "gym_floor",
+      "display_name": "Gym floor",
+      "description": "Weights + cardio + functional-training area. Shared open space.",
+      "typical_capacity": 50,
+      "typical_min_duration_minutes": 30,
+      "typical_max_duration_minutes": 180,
+      "typical_slot_step_minutes": 30,
+      "compatible_sports": [
+        "weightlifting",
+        "crossfit",
+        "general_fitness",
+        "strength_training",
+        "cardio",
+        "functional_training",
+        "physiotherapy"
+      ]
+    },
+    {
+      "facility_type": "equipment",
+      "display_name": "Equipment",
+      "description": "Single-item bookable equipment (treadmill, rowing machine, spin bike, specialised trainer).",
+      "typical_capacity": 1,
+      "typical_min_duration_minutes": 30,
+      "typical_max_duration_minutes": 60,
+      "typical_slot_step_minutes": 15,
+      "compatible_sports": [
+        "cardio",
+        "cycling",
+        "rowing",
+        "strength_training",
+        "physiotherapy"
+      ]
+    },
+    {
+      "facility_type": "lane",
+      "display_name": "Lane",
+      "description": "Sub-facility of a pool or track. A single swimming lane or running lane.",
+      "typical_capacity": 4,
+      "typical_min_duration_minutes": 30,
+      "typical_max_duration_minutes": 90,
+      "typical_slot_step_minutes": 30,
+      "compatible_sports": [
+        "swimming",
+        "running",
+        "athletics",
+        "walking"
+      ]
+    },
+    {
+      "facility_type": "general",
+      "display_name": "General",
+      "description": "Catch-all for non-sport-specific bookable resources. When you don't have a better match, use this.",
+      "typical_capacity": 10,
+      "typical_min_duration_minutes": 30,
+      "typical_max_duration_minutes": 240,
+      "typical_slot_step_minutes": 30,
+      "compatible_sports": null
+    }
+  ],
+  "notes": [
+    "The `compatible_sports` array is a validation whitelist — pool + basketball fails; court + basketball passes.",
+    "A `null` value on `compatible_sports` means sport-agnostic — the facility_type accepts any sport_category OR a null sport_category.",
+    "New sports categories added by future modules must land here first. The rule catalogue is the write-side authority for what pairs are valid."
+  ]
+}

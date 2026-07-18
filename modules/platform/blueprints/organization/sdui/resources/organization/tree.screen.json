@@ -1,0 +1,255 @@
+{
+  "id": "organization.resources.organization.tree",
+  "title": "Organization tree",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/settings/organizations/tree",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {
+    "module": "organization",
+    "entity": "organization",
+    "action": "list"
+  },
+  "requiresPermission": "organizations.tree.view.tenant",
+  "notes": [
+    "Full-page tree renderer. Reads /api/v1/organizations/tree (cached response). Root nodes at the top; children indented by tree_depth.",
+    "Drag-and-drop reparent is available ONLY when tenant holds both organization_hierarchy AND organization_reparent entitlements. Non-Enterprise tenants see a read-only tree.",
+    "Dropping onto self / a descendant is blocked client-side; server-side re-validates via parent_no_cycle rule.",
+    "The `descendant_count` badge on each node is populated from the tree_path prefix scan (returned on the tree endpoint)."
+  ],
+  "dataSources": [
+    {
+      "name": "tree",
+      "kind": "http.get",
+      "url": "/api/v1/organizations/tree",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 30 }
+    },
+    {
+      "name": "entitlements",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements?keys=organization_hierarchy,organization_reparent",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-6xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Breadcrumbs",
+                  "items": [
+                    { "label": "Organizations", "to": "/settings/organizations" },
+                    { "label": "Tree", "to": null }
+                  ]
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Organization tree"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted"
+                  },
+                  "bindings": {
+                    "children": {
+                      "$expr": "entitlements.organization_reparent ? 'Drag rows to reparent. Refuses cycles + depth violations.' : 'Read-only. Upgrade to Enterprise to reparent existing organizations.'"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "ghost",
+                "leadingIcon": "list-bullet",
+                "children": "Flat view"
+              },
+              "actions": {
+                "onPress": { "kind": "navigate", "to": "/settings/organizations" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            {
+              "kind": "TreeView",
+              "props": {
+                "itemsSource": "tree",
+                "childrenKey": "children",
+                "expandDefault": "all"
+              },
+              "bindings": {
+                "draggable": { "$ref": "entitlements.organization_reparent" }
+              },
+              "itemRenderer": {
+                "kind": "View",
+                "props": {
+                  "className": "flex items-center gap-2 py-2 px-2 rounded hover:bg-content1"
+                },
+                "children": [
+                  {
+                    "kind": "Avatar",
+                    "props": { "size": "xs" },
+                    "bindings": {
+                      "src": { "$ref": "item.logo_url" },
+                      "name": { "$ref": "item.name" }
+                    }
+                  },
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex flex-col flex-1" },
+                    "children": [
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex items-center gap-2" },
+                        "children": [
+                          {
+                            "kind": "Link",
+                            "propsExpr": "{ to: '/settings/organizations/' + item.id, children: item.name, className: 'font-medium' }"
+                          },
+                          {
+                            "kind": "Chip",
+                            "props": { "size": "xs", "variant": "accent" },
+                            "bindings": {
+                              "hidden": { "$expr": "!item.is_default" },
+                              "children": "Default"
+                            }
+                          },
+                          {
+                            "kind": "Chip",
+                            "props": { "size": "xs", "variant": "warning" },
+                            "bindings": {
+                              "hidden": { "$expr": "item.status !== 'paused'" },
+                              "children": "Paused"
+                            }
+                          },
+                          {
+                            "kind": "Chip",
+                            "props": { "size": "xs", "variant": "neutral" },
+                            "bindings": {
+                              "hidden": { "$expr": "item.status !== 'archived'" },
+                              "children": "Archived"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex items-center gap-2 mt-0.5" },
+                        "children": [
+                          {
+                            "kind": "Text",
+                            "props": { "className": "text-xs text-muted font-mono" },
+                            "bindings": { "children": { "$ref": "item.slug" } }
+                          },
+                          {
+                            "kind": "Text",
+                            "props": { "className": "text-xs text-muted" },
+                            "bindings": {
+                              "children": {
+                                "$expr": "'depth ' + item.tree_depth + ' · ' + item.descendant_count + ' descendants'"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "Menu",
+                    "trigger": {
+                      "kind": "Button",
+                      "props": {
+                        "variant": "ghost",
+                        "isIconOnly": true,
+                        "aria-label": "Row actions",
+                        "children": { "kind": "Icon", "props": { "name": "ellipsis-vertical" } }
+                      }
+                    },
+                    "items": [
+                      {
+                        "kind": "MenuItem",
+                        "props": { "children": "Add child" },
+                        "bindings": {
+                          "hidden": { "$expr": "!entitlements.organization_hierarchy" }
+                        },
+                        "actions": {
+                          "onPress": {
+                            "kind": "navigate",
+                            "toExpr": "'/settings/organizations/new?parent_id=' + item.id"
+                          }
+                        },
+                        "requiresPermission": "organizations.create.tenant"
+                      },
+                      {
+                        "kind": "MenuItem",
+                        "props": { "children": "View" },
+                        "actions": {
+                          "onPress": {
+                            "kind": "navigate",
+                            "toExpr": "'/settings/organizations/' + item.id"
+                          }
+                        }
+                      },
+                      {
+                        "kind": "MenuItem",
+                        "props": { "children": "Reparent" },
+                        "bindings": {
+                          "hidden": {
+                            "$expr": "!entitlements.organization_reparent || item.is_default"
+                          }
+                        },
+                        "actions": {
+                          "onPress": {
+                            "kind": "modal.open",
+                            "modal": "reparent-organization",
+                            "propsExpr": "{ organizationId: item.id }"
+                          }
+                        },
+                        "requiresPermission": "organizations.reparent.tenant"
+                      }
+                    ]
+                  }
+                ],
+                "actions": {
+                  "onDropOn": {
+                    "kind": "http.post",
+                    "urlExpr": "'/api/v1/organizations/' + drag.id + '/reparent'",
+                    "bodyExpr": "{ new_parent_id: drop.id, reason: 'drag-and-drop reparent' }",
+                    "onSuccess": { "kind": "refresh", "source": "tree" },
+                    "onError": {
+                      "kind": "toast",
+                      "variant": "error",
+                      "titleExpr": "response.error.code",
+                      "messageExpr": "response.error.message"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,259 @@
+{
+  "$version": 1,
+  "title": "tree_path materialisation examples",
+  "description": "Worked examples of the `.a.b.c.` materialised-path format used by the Organization module. Explains the sentinel-wrap semantics, the LIKE-prefix scans, and the RebuildTreePathsJob update patterns. NOT loaded at runtime — reference material for engineers touching hierarchy code.",
+  "format_rules": {
+    "separator": ".",
+    "sentinel_open": ". (leading dot before the root id)",
+    "sentinel_close": ". (trailing dot after the self id)",
+    "shape": ".<root_id>.<parent_id>.<self_id>.",
+    "root_shape": ".<self_id>. (single node — root has no parent)",
+    "why_sentinel_wrap": [
+      "Trailing dot lets LIKE '.a.' match EXACTLY the node itself (no partial-id collisions).",
+      "Trailing dot lets LIKE '.a.%' match self + every descendant.",
+      "Leading dot lets us split on '.' and drop the empty first + last elements to reconstruct the ordered id chain.",
+      "Without the sentinels, `LIKE 'a.'` would falsely match `ba.foo.` because BTREE prefix-scanning doesn't anchor at word boundaries."
+    ]
+  },
+  "trees": [
+    {
+      "scenario": "Flat tenant (Small tier — one default org)",
+      "rows": [
+        {
+          "id": "org_01H_DEFAULT",
+          "parent_id": null,
+          "is_default": true,
+          "tree_path": ".org_01H_DEFAULT.",
+          "tree_depth": 0
+        }
+      ],
+      "queries": [
+        {
+          "purpose": "Is this the root?",
+          "check": "parent_id IS NULL → true"
+        },
+        {
+          "purpose": "How many descendants?",
+          "sql": "SELECT COUNT(*) FROM organizations WHERE tree_path LIKE '.org_01H_DEFAULT.%' AND id != 'org_01H_DEFAULT'",
+          "result": 0
+        }
+      ]
+    },
+    {
+      "scenario": "Medium tenant — 3 flat orgs (no nesting entitlement)",
+      "rows": [
+        {
+          "id": "org_01H_A",
+          "parent_id": null,
+          "is_default": true,
+          "tree_path": ".org_01H_A.",
+          "tree_depth": 0
+        },
+        {
+          "id": "org_01H_B",
+          "parent_id": null,
+          "tree_path": ".org_01H_B.",
+          "tree_depth": 0
+        },
+        {
+          "id": "org_01H_C",
+          "parent_id": null,
+          "tree_path": ".org_01H_C.",
+          "tree_depth": 0
+        }
+      ],
+      "note": "Even without nesting, every row has a tree_path so downstream code has a uniform prefix-scan API."
+    },
+    {
+      "scenario": "Enterprise tenant — 3-level nesting",
+      "rows": [
+        {
+          "id": "org_01H_ELITE",
+          "parent_id": null,
+          "is_default": true,
+          "name": "Elite Sports Group",
+          "tree_path": ".org_01H_ELITE.",
+          "tree_depth": 0
+        },
+        {
+          "id": "org_01H_ELITE_JUNIOR",
+          "parent_id": "org_01H_ELITE",
+          "name": "Elite Junior Academy",
+          "tree_path": ".org_01H_ELITE.org_01H_ELITE_JUNIOR.",
+          "tree_depth": 1
+        },
+        {
+          "id": "org_01H_ELITE_ADULT",
+          "parent_id": "org_01H_ELITE",
+          "name": "Elite Adult Programme",
+          "tree_path": ".org_01H_ELITE.org_01H_ELITE_ADULT.",
+          "tree_depth": 1
+        },
+        {
+          "id": "org_01H_ELITE_JUNIOR_U12",
+          "parent_id": "org_01H_ELITE_JUNIOR",
+          "name": "Elite U12 Squad",
+          "tree_path": ".org_01H_ELITE.org_01H_ELITE_JUNIOR.org_01H_ELITE_JUNIOR_U12.",
+          "tree_depth": 2
+        }
+      ],
+      "queries": [
+        {
+          "purpose": "All descendants of Elite Junior Academy",
+          "sql": "SELECT * FROM organizations WHERE tree_path LIKE '.org_01H_ELITE.org_01H_ELITE_JUNIOR.%' AND id != 'org_01H_ELITE_JUNIOR'",
+          "result_ids": ["org_01H_ELITE_JUNIOR_U12"]
+        },
+        {
+          "purpose": "All ancestors of Elite U12 Squad",
+          "compute": "Split tree_path by '.' → ['', 'org_01H_ELITE', 'org_01H_ELITE_JUNIOR', 'org_01H_ELITE_JUNIOR_U12', ''] → drop empties + last (self) → ['org_01H_ELITE', 'org_01H_ELITE_JUNIOR']",
+          "result_ids": ["org_01H_ELITE", "org_01H_ELITE_JUNIOR"]
+        },
+        {
+          "purpose": "Is Elite Junior an ancestor of U12?",
+          "check": "U12.tree_path startsWith Junior.tree_path (excluding U12's terminal dot) → true"
+        },
+        {
+          "purpose": "Direct children of Elite Sports Group",
+          "sql": "SELECT * FROM organizations WHERE parent_id = 'org_01H_ELITE'",
+          "note": "Uses the parent_id BTREE index — cheaper than LIKE for direct-children lookups."
+        }
+      ]
+    }
+  ],
+  "reparent_walkthrough": {
+    "scenario": "Move Elite Junior Academy under Elite Adult Programme",
+    "before": [
+      {
+        "id": "org_01H_ELITE",
+        "parent_id": null,
+        "tree_path": ".org_01H_ELITE.",
+        "tree_depth": 0
+      },
+      {
+        "id": "org_01H_ELITE_JUNIOR",
+        "parent_id": "org_01H_ELITE",
+        "tree_path": ".org_01H_ELITE.org_01H_ELITE_JUNIOR.",
+        "tree_depth": 1
+      },
+      {
+        "id": "org_01H_ELITE_ADULT",
+        "parent_id": "org_01H_ELITE",
+        "tree_path": ".org_01H_ELITE.org_01H_ELITE_ADULT.",
+        "tree_depth": 1
+      },
+      {
+        "id": "org_01H_ELITE_JUNIOR_U12",
+        "parent_id": "org_01H_ELITE_JUNIOR",
+        "tree_path": ".org_01H_ELITE.org_01H_ELITE_JUNIOR.org_01H_ELITE_JUNIOR_U12.",
+        "tree_depth": 2
+      }
+    ],
+    "operation": {
+      "route": "POST /api/v1/organizations/org_01H_ELITE_JUNIOR/reparent",
+      "body": { "new_parent_id": "org_01H_ELITE_ADULT" }
+    },
+    "cycle_check": {
+      "walk_ancestors_of": "org_01H_ELITE_ADULT",
+      "ancestors": ["org_01H_ELITE"],
+      "match_target": "org_01H_ELITE_JUNIOR",
+      "found": false,
+      "result": "no cycle"
+    },
+    "depth_check": {
+      "new_parent_depth": 1,
+      "moving_subtree_max_descendant_depth": 1,
+      "computed_new_max_depth": 3,
+      "cap": 5,
+      "result": "within cap"
+    },
+    "step_1_transaction_update_self": {
+      "id": "org_01H_ELITE_JUNIOR",
+      "new_parent_id": "org_01H_ELITE_ADULT",
+      "new_tree_path": ".org_01H_ELITE.org_01H_ELITE_ADULT.org_01H_ELITE_JUNIOR.",
+      "new_tree_depth": 2
+    },
+    "step_2_dispatch_rebuild_tree_paths_job": {
+      "moved_organization_id": "org_01H_ELITE_JUNIOR",
+      "old_prefix": ".org_01H_ELITE.org_01H_ELITE_JUNIOR.",
+      "new_prefix": ".org_01H_ELITE.org_01H_ELITE_ADULT.org_01H_ELITE_JUNIOR.",
+      "descendants_to_update": ["org_01H_ELITE_JUNIOR_U12"]
+    },
+    "step_3_job_updates_descendants": [
+      {
+        "id": "org_01H_ELITE_JUNIOR_U12",
+        "old_tree_path": ".org_01H_ELITE.org_01H_ELITE_JUNIOR.org_01H_ELITE_JUNIOR_U12.",
+        "new_tree_path": ".org_01H_ELITE.org_01H_ELITE_ADULT.org_01H_ELITE_JUNIOR.org_01H_ELITE_JUNIOR_U12.",
+        "old_tree_depth": 2,
+        "new_tree_depth": 3
+      }
+    ],
+    "after": [
+      {
+        "id": "org_01H_ELITE",
+        "parent_id": null,
+        "tree_path": ".org_01H_ELITE.",
+        "tree_depth": 0
+      },
+      {
+        "id": "org_01H_ELITE_ADULT",
+        "parent_id": "org_01H_ELITE",
+        "tree_path": ".org_01H_ELITE.org_01H_ELITE_ADULT.",
+        "tree_depth": 1
+      },
+      {
+        "id": "org_01H_ELITE_JUNIOR",
+        "parent_id": "org_01H_ELITE_ADULT",
+        "tree_path": ".org_01H_ELITE.org_01H_ELITE_ADULT.org_01H_ELITE_JUNIOR.",
+        "tree_depth": 2
+      },
+      {
+        "id": "org_01H_ELITE_JUNIOR_U12",
+        "parent_id": "org_01H_ELITE_JUNIOR",
+        "tree_path": ".org_01H_ELITE.org_01H_ELITE_ADULT.org_01H_ELITE_JUNIOR.org_01H_ELITE_JUNIOR_U12.",
+        "tree_depth": 3
+      }
+    ]
+  },
+  "cycle_examples": [
+    {
+      "scenario": "Direct self-parent",
+      "attempted": "org_01H_A.parent_id = 'org_01H_A'",
+      "cycle_path": ["org_01H_A"],
+      "detected_by": "parent_no_cycle rule + observer"
+    },
+    {
+      "scenario": "Two-step cycle",
+      "attempted": "org_01H_A.parent_id = 'org_01H_B' AND org_01H_B.parent_id = 'org_01H_A' (attempt to set the second)",
+      "cycle_path": ["org_01H_A", "org_01H_B"],
+      "note": "Walking B's proposed ancestors, we start at A (B's proposed new parent), then follow A's tree_path back to A itself."
+    },
+    {
+      "scenario": "Multi-hop cycle",
+      "attempted": "Long chain A → B → C → D → attempt to set A.parent = D",
+      "cycle_path": ["org_01H_A", "org_01H_B", "org_01H_C", "org_01H_D"],
+      "detection_walk": "Walking D's ancestors: [C, B, A] → match A → cycle detected."
+    }
+  ],
+  "depth_examples": [
+    {
+      "scenario": "Just at cap",
+      "config": { "max_depth": 5 },
+      "attempted_tree_depth": 5,
+      "result": "allowed (root is depth 0; cap-5 means five levels beneath the root)"
+    },
+    {
+      "scenario": "Exceeding cap",
+      "config": { "max_depth": 5 },
+      "attempted_tree_depth": 6,
+      "result": "refused with ORGANIZATION_PARENT_DEPTH_EXCEEDED"
+    },
+    {
+      "scenario": "Moving a deep subtree",
+      "moving_node_own_depth_if_reparented": 4,
+      "moving_node_max_descendant_depth_from_self": 2,
+      "new_effective_max_depth": 6,
+      "cap": 5,
+      "result": "refused — the descendants would break the cap even though the moving node itself would not"
+    }
+  ]
+}

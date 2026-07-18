@@ -1,0 +1,87 @@
+{
+  "id": "academorix://modules/facility/commands",
+  "$version": 1,
+  "title": "facility — Artisan commands",
+  "commands": [
+    {
+      "signature": "facility:list {--tenant=} {--branch=} {--type=} {--sport=} {--status=} {--include-retired}",
+      "class": "Academorix\\Facility\\Console\\Commands\\ListFacilitiesCommand",
+      "purpose": "Table view of facilities. Filterable by tenant, branch, facility_type, sport_category, status. --include-retired shows retired rows; default hides them."
+    },
+    {
+      "signature": "facility:describe {facility}",
+      "class": "Academorix\\Facility\\Console\\Commands\\DescribeFacilityCommand",
+      "purpose": "Verbose read of one facility: base fields + availability_json (day-by-day summary) + pricing_json (per-tier breakdown) + active blackouts + active bookings count + revenue trailing-30-day rollup."
+    },
+    {
+      "signature": "facility:create {branch} {name} {--slug=} {--type=general} {--sport=} {--capacity=1} {--min-duration=60} {--max-duration=240} {--slot-step=30} {--dry-run}",
+      "class": "Academorix\\Facility\\Console\\Commands\\CreateFacilityCommand",
+      "purpose": "Scriptable facility creation (test harness + tenant onboarding). --dry-run validates the input against every observer rule without persisting."
+    },
+    {
+      "signature": "facility:add-blackout {facility} {--starts=} {--ends=} {--reason=}",
+      "class": "Academorix\\Facility\\Console\\Commands\\AddBlackoutCommand",
+      "purpose": "CLI equivalent of POST /{facility}/blackouts. Cascades: cancels bookings inside the window."
+    },
+    {
+      "signature": "facility:remove-blackout {facility} {blackoutId}",
+      "class": "Academorix\\Facility\\Console\\Commands\\RemoveBlackoutCommand",
+      "purpose": "Removes a blackout window. Does NOT restore cascade-cancelled bookings."
+    },
+    {
+      "signature": "facility:pricing {facility} {--set=} {--dry-run}",
+      "class": "Academorix\\Facility\\Console\\Commands\\PricingCommand",
+      "purpose": "Display current pricing_json when called without --set. With --set=/path/to/pricing.json: replace the facility's pricing_json (financial-audit-critical; --dry-run validates + shows diff)."
+    },
+    {
+      "signature": "facility:reconcile-bookings {--tenant=} {--dry-run}",
+      "class": "Academorix\\Facility\\Console\\Commands\\ReconcileBookingsCommand",
+      "purpose": "One-shot invocation of ReconcileBookingsAgainstRetiredFacilitiesJob + ReconcileBookingOverlapsJob. --dry-run reports findings without repairing. Every finding is a P1 signal."
+    },
+    {
+      "signature": "booking:list {--tenant=} {--facility=} {--user=} {--status=} {--from=} {--to=}",
+      "class": "Academorix\\Facility\\Console\\Commands\\ListBookingsCommand",
+      "purpose": "Cross-tenant (with --tenant filter) or tenant-scoped booking view. Filter by facility, booker/booked_for user, status, date range."
+    },
+    {
+      "signature": "booking:cancel {booking} {--reason=} {--force}",
+      "class": "Academorix\\Facility\\Console\\Commands\\CancelBookingCommand",
+      "purpose": "Support-plane cancel. --force bypasses cancellation_notice_hours (audit-critical). Prompts for confirmation unless --no-interaction."
+    },
+    {
+      "signature": "booking:reschedule {booking} {--starts=} {--ends=}",
+      "class": "Academorix\\Facility\\Console\\Commands\\RescheduleBookingCommand",
+      "purpose": "Support-plane reschedule. Runs the full observer check chain."
+    },
+    {
+      "signature": "booking:mark-no-show {booking}",
+      "class": "Academorix\\Facility\\Console\\Commands\\MarkNoShowCommand",
+      "purpose": "Manual no-show. The automated MarkNoShowJob handles the common case; this exists for support intervention."
+    },
+    {
+      "signature": "day-pass:list {--tenant=} {--branch=} {--date=} {--consumed}",
+      "class": "Academorix\\Facility\\Console\\Commands\\ListDayPassesCommand",
+      "purpose": "Day-pass ledger view. --date filters by valid_on_date; --consumed shows only consumed rows."
+    },
+    {
+      "signature": "day-pass:issue {branch} {--user=} {--profile-name=} {--profile-phone=} {--profile-age-band=adult} {--price-cents=} {--payment-method=cash}",
+      "class": "Academorix\\Facility\\Console\\Commands\\IssueDayPassCommand",
+      "purpose": "CLI POS. --user OR --profile-name+--profile-phone required (anonymous walk-in mandate)."
+    },
+    {
+      "signature": "pass:list {--tenant=} {--user=} {--facility=} {--include-expired}",
+      "class": "Academorix\\Facility\\Console\\Commands\\ListPassesCommand",
+      "purpose": "Pass ledger view."
+    },
+    {
+      "signature": "pass:issue {--tenant=} {--branch=} {--facility=} {--membership=} {--total-credits=} {--valid-from=} {--valid-until=} {--assignable-users=*}",
+      "class": "Academorix\\Facility\\Console\\Commands\\IssuePassCommand",
+      "purpose": "Manual pass issue. Wave 4 will auto-issue on Membership provisioning; this covers ad-hoc cases + Wave 2 placeholder testing."
+    },
+    {
+      "signature": "pass:revoke {pass} {--reason=}",
+      "class": "Academorix\\Facility\\Console\\Commands\\RevokePassCommand",
+      "purpose": "Terminate a pass. Refunds are Finance module's job."
+    }
+  ]
+}

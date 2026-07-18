@@ -1,0 +1,55 @@
+{
+  "id": "academorix://modules/organization/helpers",
+  "$version": 1,
+  "title": "organization — helper functions",
+  "description": "Two helpers. `active_organization()` returns the currently-resolved Organization (from the `organization.resolve_active` middleware). `default_organization()` returns the tenant's is_default row. Both are cached per-request. NO getter equivalent for descendants / ancestors — callers use the trait accessors on the model directly.",
+  "namespace": "Academorix\\Organization\\Support",
+  "helpers": [
+    {
+      "signature": "active_organization(): Academorix\\Organization\\Models\\Organization | null",
+      "purpose": "The Organization resolved for the current request by the `organization.resolve_active` middleware. Reads: (1) `X-Organization-Id` header (ULID or slug), (2) `me.default_organization_id` (user's pinned org), (3) tenant.default_organization (via cache).",
+      "behaviours": [
+        "Returns null on unauthenticated + platform-admin requests (no organization context).",
+        "Returns null when the resolved id does not exist / is soft-deleted (middleware would have already 404ed the request in that case).",
+        "The resolution is cached on the RequestContext singleton so multiple calls in one request cost O(1)."
+      ],
+      "flow": "1) Read RequestContext::organization() if set. 2) Fall through to middleware resolution. 3) Return null when unresolved."
+    },
+    {
+      "signature": "default_organization(?string $tenantId = null): Academorix\\Organization\\Models\\Organization | null",
+      "purpose": "The tenant's is_default=true row. Cached in Redis at `org:default:{tenant_id}` for 15 minutes.",
+      "behaviours": [
+        "$tenantId omitted → uses RequestContext::tenant() (current tenant).",
+        "Explicit $tenantId → bypasses request context, useful in queue workers.",
+        "Returns null when the tenant has no is_default=true row — a state that should NEVER occur post-provisioning + is a critical alert (see health probes)."
+      ]
+    },
+    {
+      "signature": "organization_scope(): Illuminate\\Database\\Eloquent\\Builder",
+      "purpose": "Convenience helper that returns an Eloquent Builder scoped to the current tenant's Organizations. Composed with the tenant scope so callers never re-add tenant_id manually.",
+      "behaviours": [
+        "organization_scope()->where('is_default', true)->first() → tenant's default row",
+        "organization_scope()->tree() → adds the ORDER BY tree_path clause",
+        "Always applies status filter EXCLUDING archived; callers include archived via ->withArchived()."
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "title": "Read the active org in a controller",
+      "code": "$org = active_organization();\nif (! $org) {\n    abort(400, 'organization_context_required');\n}\n\nreturn $org->name;"
+    },
+    {
+      "title": "Iterate descendants of the active org",
+      "code": "$org = active_organization();\n$descendants = $org->descendants()->pluck('id');\n// tree-path prefix scan under the hood: WHERE tree_path LIKE '.a.b.c.%'"
+    },
+    {
+      "title": "Fetch the tenant's default from a queue worker",
+      "code": "$default = default_organization($tenantId);\nMailable::to($default->support_email)->send(new WelcomeMailable(...));"
+    },
+    {
+      "title": "Build a tree view",
+      "code": "$rows = organization_scope()->tree()->get();\n$grouped = $rows->groupBy('parent_id');\n// $grouped[null] → root nodes;\n// $grouped[<id>] → direct children of that id."
+    }
+  ]
+}

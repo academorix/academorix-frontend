@@ -1,0 +1,98 @@
+{
+  "id": "academorix://modules/facility/compliance",
+  "$version": 1,
+  "title": "facility — compliance evidence",
+  "description": "Facility module is financial-record-adjacent. Every booking, day-pass, and pass write is a compliance-relevant financial event. SOC 2 CC6.3 (approval + segregation of duties), PCI-DSS scope (never store CVV / PAN; payment_method categories only; payment references upstream Finance module records), GDPR data-minimisation (anonymous walk-in redaction at 90 days), and WCAG 2.2 AA on the booking widget.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "Anonymous day-pass profile fields (name + phone) captured at issuance for operational necessity (lost-property callbacks, safety incidents). Redacted to [REDACTED] 90 days after consumption by RedactAnonymousDayPassProfileJob. Registered users retain their normal user-profile relationship."
+        },
+        {
+          "article": "Art. 6(1)(b)",
+          "principle": "lawful basis: contract",
+          "evidence": "Booking creation implies a contract of use (or a pre-existing membership contract). No consent flag required for booking-level PII (booked_for_user_id is a User FK, not raw PII)."
+        },
+        {
+          "article": "Art. 15",
+          "principle": "right of access",
+          "evidence": "Users see their own bookings + passes via /api/v1/bookings + /api/v1/passes with the own-only default filter. Downstream Wave 5 export flow surfaces the full history."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "TenantErased cascades hard-delete of every facility + booking + day_pass + pass row via FK CASCADE. Audit trail rows survive per financial retention (Art. 17 Art. 3 exception: legal obligation to retain financial records)."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "The `payment_method` field on day_passes is a CATEGORY (cash / card / wallet / free / comp) — never a card number. Payment references upstream Finance module tokens (Wave 4), never inline card data."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.3",
+          "principle": "restricted access + segregation of duties",
+          "evidence": "facilities.manage-pricing + passes.revoke + bookings.cancel-any are seeded to admin/owner only. Reception cannot revoke passes or force-cancel bookings. Platform.bookings.force-cancel is ops-only + emits a notification to the tenant admin (segregation)."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "restrict data transmission",
+          "evidence": "All /api/v1/facilities /bookings /day-passes /passes routes are TLS-only + require auth:sanctum + entitlement middleware. Platform routes additionally require auth:platform_admin."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "BookingOverlapDetected event is a P1 signal + tracked via academorix.facility.overlaps.detected counter (should stay at 0). The reconciler jobs run weekly + emit findings to the alerting pipeline."
+        },
+        {
+          "criterion": "CC9.1",
+          "principle": "risk mitigation",
+          "evidence": "The SERIALIZABLE overlap check is the primary mitigation for the double-booking risk. The reconciler jobs are the defense-in-depth. Every double-booking incident is a P1 with a post-mortem."
+        }
+      ]
+    },
+    "pci_dss": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "3.4",
+          "principle": "no PAN storage",
+          "evidence": "day_passes.payment_method is a category enum (cash / card / wallet / free / comp) — never a card number. No CVV, no PAN, no expiry, no cardholder name stored on any facility row. Payment references upstream Finance module (Wave 4) tokens only."
+        },
+        {
+          "requirement": "10.2",
+          "principle": "audit trail",
+          "evidence": "Every write to facilities / resource_bookings / day_passes / passes emits an audit row (Auditable trait). Financial-record retention: 7 years. Every mutation to pricing_json + status transition + refund is captured."
+        }
+      ]
+    },
+    "wcag_2_2_aa": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "1.4.3 (Contrast Minimum)",
+          "principle": "readable text",
+          "evidence": "The available-slots calendar widget + booking-status chip use HeroUI's design tokens which meet AA contrast by default. Status chip colours (pending / confirmed / cancelled / no-show / completed) do not rely on colour alone — each carries a text label."
+        },
+        {
+          "criterion": "2.1.1 (Keyboard)",
+          "principle": "keyboard operable",
+          "evidence": "Slot picker + booking-create modal are fully keyboard-navigable per HeroUI ComboBox + Calendar semantics."
+        },
+        {
+          "criterion": "4.1.3 (Status Messages)",
+          "principle": "aria-live regions",
+          "evidence": "Booking-create response uses aria-live=polite on the success/error message. Overlap-detection failures return an inline error at the slot picker (not a modal, per WCAG 3.3.4 error prevention)."
+        }
+      ]
+    }
+  }
+}

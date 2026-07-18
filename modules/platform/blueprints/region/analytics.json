@@ -1,0 +1,77 @@
+{
+  "id": "academorix://modules/region/analytics",
+  "$version": 1,
+  "title": "region — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Region Created",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "region_id", "country_code", "currency", "source", "is_default"],
+      "description": "New Region row created. `source` explains the entry point (tenant_provisioning / admin_created / legacy_backfill_command)."
+    },
+    {
+      "name": "Region Default Changed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "from_region_id", "to_region_id", "from_country_code", "to_country_code"],
+      "description": "The default flag flipped. Feeds the compliance dashboard — default changes are audit-critical."
+    },
+    {
+      "name": "Region Tax Config Updated",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "region_id", "country_code", "changed_fields_count", "rate_delta"],
+      "description": "`changed_fields_count` only + `rate_delta` (numeric change in default_rate_percent). Full field names + registration_number are financial-tier + NEVER Segment properties."
+    },
+    {
+      "name": "Region Paused",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "region_id", "country_code", "has_expected_resume_at"],
+      "description": "has_expected_resume_at is boolean — signals whether the pause is scheduled or open-ended."
+    },
+    {
+      "name": "Region Resumed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "region_id", "country_code", "hours_paused"],
+      "description": "Distribution of pause durations feeds the ops-readiness dashboard."
+    },
+    {
+      "name": "Region Archived",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "region_id", "country_code", "had_inbound_rows"],
+      "description": "had_inbound_rows is boolean — signals whether the caller used --force to bypass the FK check."
+    },
+    {
+      "name": "Region Quota Exceeded",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "tier", "attempted_country_code"],
+      "description": "Attempt to create a Region beyond the region_slot cap. Feeds the upsell funnel — Small-tier tenants hitting the 1-region cap are prime Medium upgrade candidates."
+    },
+    {
+      "name": "Country Defaults Consulted",
+      "kind": "track",
+      "consent_required": "analytics",
+      "properties": ["tenant_id", "country_code", "surface"],
+      "description": "surface: admin_ui_create / admin_ui_edit / platform_admin_lookup. Signals which countries the tenant admin UI has to render defaults for most often."
+    },
+    {
+      "name": "Default Region Auto-Healed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "heal_action", "drift_kind"],
+      "description": "heal_action: promote_oldest / re-seed / demote_extras. drift_kind: zero_default / multiple_default. Fed by ReconcileDefaultRegionInvariantJob."
+    }
+  ],
+  "notes": [
+    "Region.tax_config.registration_number is confidential-tier — it is never a Segment property.",
+    "region_id is ULID (`reg_*`) — an anonymised identifier. No PII risk.",
+    "`identify` calls do not happen in this module. Only `track` events."
+  ]
+}

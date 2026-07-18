@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/branch/feature-flags",
+  "$version": 1,
+  "title": "branch — kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "branch.provisioning_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle. Off = every write path (create + update + lifecycle transitions) returns 503. Emergency-only — flips down when the tenant plane must freeze branch mutations mid-migration."
+    },
+    {
+      "key": "branch.geocoding_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = `GeocodeAddressJob` no-ops immediately + `/branches/{branch}/geocode` returns 503. Used during subprocessor outages (Google Maps rate-limit incident, Mapbox billing suspension) so the queue doesn't back up on failing calls."
+    },
+    {
+      "key": "branch.close_endpoint",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = `POST /branches/{branch}/close` returns 503. Used during a legal-hold window where closing a Branch would destroy referenced-by evidence."
+    },
+    {
+      "key": "branch.reopen_endpoint",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = `POST /branches/{branch}/reopen` returns 503. Used sparingly — rare use case."
+    },
+    {
+      "key": "branch.enforce_operating_hours_middleware",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = `branch.enforce_operating_hours` middleware bypasses (always permits). Used when the tenant needs to force a booking through outside the venue's normal hours (e.g. rescheduling after a public holiday change)."
+    },
+    {
+      "key": "branch.dependency_check_on_close",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = the `saving (status → closed)` dependency check bypasses. Used only by platform support during compliance-forced closures (`POST /platform/branches/{branch}/force-close`). Dangerous — leaves orphaned downstream rows referencing a closed branch. Fires an alert every time it's tripped."
+    },
+    {
+      "key": "branch.reconcile_default_invariant",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = `ReconcileDefaultBranchInvariantJob` no-ops. Used during large data-migration windows where the invariant is temporarily violated by design."
+    },
+    {
+      "key": "branch.map_view_endpoint",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = the map-view SDUI screen returns an empty state instead of hitting the tile subprocessor. Used during Mapbox / OpenStreetMap tile outages."
+    }
+  ]
+}

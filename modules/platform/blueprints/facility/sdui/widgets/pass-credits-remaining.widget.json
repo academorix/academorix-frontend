@@ -1,0 +1,63 @@
+{
+  "id": "facility.pass-credits-remaining",
+  "title": "Pass credits remaining",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Progress-bar widget showing used_credits/total_credits with a semantic-colour bar (green when > 50% remaining, yellow < 50%, red < 20%). Rendered on the pass list + on the booking-create modal when a covering pass is detected.",
+  "props": {
+    "used": { "type": "integer", "required": true },
+    "total": { "type": "integer", "required": true },
+    "showLabel": { "type": "boolean", "default": true },
+    "size": { "type": "string", "default": "md", "enum": ["sm", "md", "lg"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-1 min-w-40" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between text-sm" },
+          "bindings": {
+            "hidden": { "$expr": "!props.showLabel" }
+          },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "className": "font-medium" },
+              "bindings": {
+                "children": {
+                  "$expr": "(props.total - props.used) + ' of ' + props.total + ' credits'"
+                }
+              }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-xs text-muted" },
+              "bindings": {
+                "children": {
+                  "$expr": "Math.round(((props.total - props.used) / props.total) * 100) + '%'"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "ProgressBar",
+          "bindings": {
+            "value": { "$expr": "((props.total - props.used) / props.total) * 100" },
+            "maxValue": 100,
+            "variant": {
+              "$expr": "((props.total - props.used) / props.total) > 0.5 ? 'success' : (((props.total - props.used) / props.total) > 0.2 ? 'warning' : 'danger')"
+            },
+            "size": { "$ref": "props.size" }
+          },
+          "props": {
+            "ariaLabel": "Pass credits remaining"
+          }
+        }
+      ]
+    }
+  ]
+}

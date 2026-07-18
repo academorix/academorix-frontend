@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/region/traits",
+  "$version": 1,
+  "title": "region — trait composition",
+  "description": "One owned trait — `BelongsToRegion` — for domain models that carry a `region_id` FK (Branch, Finance::Membership, Finance::Transaction, Finance::Invoice). Order matters when composed with `BelongsToTenant`: tenant MUST come first so the scope chain observes the tenant context in this trait's `booted()` hook.",
+  "owned": [
+    {
+      "trait": "Academorix\\Region\\Concerns\\BelongsToRegion",
+      "description": "Mixed into any domain model that carries a Region FK. Adds the `region()` belongsTo relation, a `resolveInRegion(?Region $region = null)` query scope that filters `WHERE region_id = ?` (falling back to the caller's `Request::activeRegion()` when the arg is omitted), and a `booted()` hook that fills `region_id = active_region_id()` on `creating` when the field is null AND the current request carries a resolved active region. Refuses to save a row whose `region_id` points at a Region in a different tenant than the row itself (defense-in-depth against cross-tenant FK smuggling — the compliance-auditor would catch a bad schema, this catches a bad write).",
+      "public": true,
+      "usedBy": [
+        "branch::Branch (required region_id — every venue anchored to a Region)",
+        "finance::Membership (required region_id — priced + taxed per Region)",
+        "finance::Transaction (required region_id — the Region that governed the sale)",
+        "finance::Invoice (required region_id — matches the fiscal_year_start_month)",
+        "subscription::TenantSubscription (optional — reserved-instance pricing may override per Region)"
+      ],
+      "conflicts_with": [],
+      "composition_notes": [
+        "Order: `BelongsToTenant` must appear BEFORE `BelongsToRegion` in the trait list so the tenant scope resolves first and the region scope observes it.",
+        "The `booted()` fill hook is off by default for models that already default their region via a factory / observer chain (Branch). Turn on per-model via a `bool $fillRegionOnCreating = true` property.",
+        "Query scope naming: `resolveInRegion(?Region)` mirrors tenancy's `resolveInTenant(?Tenant)` — same shape, same nullable-arg-defaults-to-active behaviour."
+      ]
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "tenants": [
+      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }
+    ],
+    "audit": [
+      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Region mutations (rename, tax_config changes, status transitions, is_default flip) write to the `audits` table — every one of them is compliance-relevant." }
+    ],
+    "activity": [
+      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Region lifecycle events feed the tenant admin's product-facing activity feed." }
+    ]
+  },
+  "composition": {
+    "region": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasSlug",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "Order matters. BelongsToTenant precedes every trait that observes tenant scope. HasSlug generates the tenant-unique slug on create. NO BelongsToApplication trait — Regions do NOT carry application_id (tenancy-columns.md §2)."
+    }
+  }
+}

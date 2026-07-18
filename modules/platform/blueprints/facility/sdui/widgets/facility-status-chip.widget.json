@@ -1,0 +1,43 @@
+{
+  "id": "facility.facility-status-chip",
+  "title": "Facility status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for facility.status. Values: active (green), maintenance (yellow), retired (grey with strikethrough).",
+  "props": {
+    "status": {
+      "type": "string",
+      "enum": ["active", "maintenance", "retired"],
+      "required": true
+    },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showIcon": { "type": "boolean", "default": true }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "props.status === 'active' ? 'success' : (props.status === 'maintenance' ? 'warning' : 'neutral')"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "props": {
+        "leadingIcon": {
+          "$expr": "props.showIcon ? (props.status === 'active' ? 'check-circle' : (props.status === 'maintenance' ? 'wrench-screwdriver' : 'archive-box')) : null"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "props.status === 'active' ? 'Active' : (props.status === 'maintenance' ? 'Maintenance' : 'Retired')"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "id": "academorix://modules/region/data-classes",
+  "$version": 1,
+  "title": "region — field classification",
+  "description": "Region carries commercial + regulatory reference data. No PII. `tax_config.registration_number` is the highest-sensitivity field (a tenant's tax registration ID for the jurisdiction) — classified `confidential` because leakage would expose the tenant's tax posture to competitors. Every status transition + tax_config change is audit-logged (financial-record retention). Domain rows below Region (Branch, Membership, Invoice) inherit their own classification per their owning module.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "Region.id",
+      "Region.tenant_id",
+      "Region.name",
+      "Region.slug",
+      "Region.country_code",
+      "Region.subdivision_code",
+      "Region.currency",
+      "Region.currency_symbol",
+      "Region.timezone",
+      "Region.locale",
+      "Region.rtl",
+      "Region.weekend_days",
+      "Region.status",
+      "Region.is_default",
+      "Region.sort_order",
+      "Region.fiscal_year_start_month",
+      "Region.tax_config.name",
+      "Region.tax_config.inclusive",
+      "Region.tax_config.default_rate_percent",
+      "Region.tax_config.rates"
+    ],
+    "internal": [
+      "Region.metadata",
+      "Region.created_by",
+      "Region.updated_by",
+      "Region.deleted_by",
+      "Region.created_at",
+      "Region.updated_at",
+      "Region.deleted_at"
+    ],
+    "confidential": [
+      "Region.tax_config.registration_number"
+    ],
+    "restricted": [],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [
+      "Region.tax_config (the aggregate object — every field participates in invoice / receipt generation, so mutations feed the tenant's financial audit trail)",
+      "Region.fiscal_year_start_month (determines when the tenant's reporting cutovers land)"
+    ],
+    "audit_log": [
+      "Region.status (every transition written to `audits`)",
+      "Region.is_default (every flip written to `audits` — default region change affects invoice pricing calculations)",
+      "Region.tax_config (any change written to `audits` — financial-record retention 7 years)",
+      "Region.currency (never mutable after use — but attempted changes are logged)",
+      "Region.country_code (never mutable after use — attempted changes logged)",
+      "Region.deleted_at (soft-delete + hard-delete written to `audits` + retained 7 years for financial records)"
+    ]
+  },
+  "notes": [
+    "`tax_config.registration_number` is the ONLY confidential field on the Region row. The redactor pipeline strips it on egress unless the caller carries the `regions.view.tax_registration` permission (admin + owner only per `permissions.json`).",
+    "Region does NOT carry any minor / health / PII data. The row is purely commercial + regulatory reference data + configuration.",
+    "The `tax_config` blob is a JSONB column. Sub-field classification above applies field-by-field when the response serialiser walks the blob. `default_rate_percent` + `name` + `inclusive` are safe for every authenticated caller (they set customer expectations); `registration_number` is not.",
+    "Financial retention (7 years) applies to Region audit rows even after the Region is hard-deleted — the audit row outlives the Region, matching the general audit-outlives-source principle (see `retention.json`).",
+    "Region.tax_config changes NEVER retroactively repricing existing Invoices. Historical Invoices carry a snapshot of the tax_config that applied at the time of issuance (finance module Wave 4 will carry that snapshot). The `region_time_travel` entitlement (Enterprise-only) unlocks retroactive edits with full audit trail."
+  ]
+}

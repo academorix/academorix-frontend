@@ -1,0 +1,57 @@
+{
+  "id": "academorix://modules/region/helpers",
+  "$version": 1,
+  "title": "region — helper functions",
+  "description": "Three published helpers for common region-flavoured lookups from any layer (controller, action, listener, blade template, artisan command).",
+  "namespace": "Academorix\\Region\\Support",
+  "helpers": [
+    {
+      "signature": "active_region(): ?Region",
+      "purpose": "Returns the Region row the middleware `region.resolve_active` resolved for THIS request. Null when there's no active tenant (platform plane) OR when the tenant's default region hasn't been seeded yet (invariant-violating state).",
+      "behaviours": [
+        "Alias for `request()->activeRegion()`.",
+        "Never throws — returns null in every unresolved case. Callers must handle null explicitly.",
+        "Reads from the middleware-populated slot; never queries the DB."
+      ],
+      "flow": "1) Read the current Request from the container. 2) Return `$request->activeRegion()`.",
+      "usage_example": "$region = active_region();\nif ($region === null) throw new NoActiveRegion();\n$currency = $region->currency;"
+    },
+    {
+      "signature": "active_region_id(): ?string",
+      "purpose": "Shorthand for `active_region()?->id`. Returns the region ULID (`reg_*`) or null.",
+      "behaviours": [
+        "Cheap — reads from the middleware slot, no DB.",
+        "Returns null when no active region is resolved."
+      ],
+      "usage_example": "$regionId = active_region_id();"
+    },
+    {
+      "signature": "region_currency_symbol(?Region $region = null): string",
+      "purpose": "Returns the currency symbol for the given Region (or the active region when the arg is omitted). Falls back to the ISO 4217 currency code when the symbol isn't in the shipped currency-symbols map.",
+      "behaviours": [
+        "Reads from a shipped currency-symbols lookup (USD → '$', AED → 'د.إ', GBP → '£', EUR → '€').",
+        "Falls back to the raw ISO 4217 code when the symbol isn't known (safer than a missing symbol on an invoice).",
+        "Returns the empty string when no Region can be resolved."
+      ],
+      "usage_example": "$symbol = region_currency_symbol();  // uses active_region()\n$symbol = region_currency_symbol($someRegion);"
+    }
+  ],
+  "notes": [
+    "Every helper here is a thin wrapper. Prefer container-injected services (`RegionRepository`, `DefaultRegionResolver`, `CurrencyFormatter`) for anything more complex — helpers are a convenience for readable one-liners in view + controller code.",
+    "No `tax_rate_for($category, $when)` helper — that lives on the `TaxConfigResolver` service because it requires a date argument (for `region_time_travel`-aware lookup) and a category argument (for multi-rate configs). Wrapping it as a global helper would hide those params."
+  ],
+  "examples": [
+    {
+      "title": "Read the active region on a controller",
+      "code": "$region = active_region();\nabort_unless($region !== null, 424, 'TENANT_MISSING_DEFAULT_REGION');"
+    },
+    {
+      "title": "Format a price with the active currency",
+      "code": "$symbol = region_currency_symbol();\n$formatted = $symbol . number_format($amount, 2);"
+    },
+    {
+      "title": "Filter a query to the active region",
+      "code": "$branches = Branch::query()\n    ->where('region_id', active_region_id())\n    ->get();"
+    }
+  ]
+}

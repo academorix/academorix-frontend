@@ -1,0 +1,393 @@
+{
+  "id": "academorix://modules/facility/errors",
+  "$version": 1,
+  "title": "facility — error codes",
+  "namespace": "facility",
+  "errors": [
+    {
+      "code": "FACILITY_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.facility_not_found"
+    },
+    {
+      "code": "FACILITY_FEATURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.facility_feature_not_entitled",
+      "description": "Tenant is on Small tier (or `facilities` entitlement is otherwise off). Response includes upgrade CTA in meta.upgrade_url."
+    },
+    {
+      "code": "FACILITY_ADVANCED_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.facility_advanced_not_entitled",
+      "description": "Day-pass + pass routes hit this on non-Enterprise tenants."
+    },
+    {
+      "code": "FACILITY_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.facility_quota_exceeded",
+      "description": "Reached facility_slot cap. Medium: 20 per tenant. Response includes upgrade path."
+    },
+    {
+      "code": "FACILITY_BRANCH_NOT_ACTIVE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.facility_branch_not_active",
+      "description": "Attempted to create/modify a facility whose parent branch is closed or archived."
+    },
+    {
+      "code": "FACILITY_AVAILABILITY_EXCEEDS_BRANCH_HOURS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.facility_availability_exceeds_branch_hours",
+      "description": "The submitted availability_json contains a window outside the parent branch.opening_hours envelope."
+    },
+    {
+      "code": "FACILITY_PRICING_CURRENCY_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "facility.errors.facility_pricing_currency_mismatch",
+      "description": "pricing_json.currency does not match parent branch.region.currency. Region currency changes require manual re-price."
+    },
+    {
+      "code": "FACILITY_TYPE_SPORT_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.facility_type_sport_mismatch",
+      "description": "facility_type is not valid for sport_category (e.g. pool with sport_category='basketball')."
+    },
+    {
+      "code": "FACILITY_HAS_ACTIVE_BOOKINGS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.facility_has_active_bookings",
+      "description": "Retire refused because active bookings still exist. Pass cascade_bookings=true to force-cancel them."
+    },
+    {
+      "code": "BRANCH_HAS_ACTIVE_FACILITIES",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.branch_has_active_facilities",
+      "description": "Branch archive refused because active facilities exist. Retire the facilities first."
+    },
+    {
+      "code": "BOOKING_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.booking_not_found"
+    },
+    {
+      "code": "BOOKING_IN_PAST",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.booking_in_past"
+    },
+    {
+      "code": "BOOKING_INVALID_WINDOW",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.booking_invalid_window",
+      "description": "ends_at <= starts_at."
+    },
+    {
+      "code": "BOOKING_DURATION_OUT_OF_BOUNDS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.booking_duration_out_of_bounds",
+      "description": "Duration outside facility.min/max_booking_duration_minutes."
+    },
+    {
+      "code": "BOOKING_SLOT_MISALIGNED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.booking_slot_misaligned",
+      "description": "starts_at not aligned to facility.booking_slot_step_minutes."
+    },
+    {
+      "code": "BOOKING_ADVANCE_WINDOW_EXCEEDED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.booking_advance_window_exceeded"
+    },
+    {
+      "code": "BOOKING_FACILITY_NOT_ACTIVE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.booking_facility_not_active",
+      "description": "Facility is in maintenance or retired."
+    },
+    {
+      "code": "BOOKING_OUTSIDE_FACILITY_HOURS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.booking_outside_facility_hours"
+    },
+    {
+      "code": "BOOKING_OUTSIDE_BRANCH_HOURS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.booking_outside_branch_hours"
+    },
+    {
+      "code": "BOOKING_IN_BLACKOUT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.booking_in_blackout"
+    },
+    {
+      "code": "BOOKING_OVERLAP",
+      "http": 409,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.booking_overlap",
+      "description": "Requested slot conflicts with an existing pending/confirmed booking. Retryable: the client may pick a different slot."
+    },
+    {
+      "code": "BOOKING_CAPACITY_EXCEEDED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.booking_capacity_exceeded"
+    },
+    {
+      "code": "BOOKING_CANCELLATION_NOTICE_WINDOW",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.booking_cancellation_notice_window",
+      "description": "Cancellation inside facility.cancellation_notice_hours refused. Admins with bookings.cancel-any can override."
+    },
+    {
+      "code": "BOOKING_MANUAL_COMPLETION_FORBIDDEN",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "facility.errors.booking_manual_completion_forbidden",
+      "description": "Completed is a system-managed terminal state; only the automated MarkBookingCompletedJob may transition to it."
+    },
+    {
+      "code": "BOOKING_PASS_CONSUMPTION_FAILED",
+      "http": 409,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "facility.errors.booking_pass_consumption_failed",
+      "description": "Attempt to consume a pass credit on booking-create failed (concurrent double-spend or pass expired between check and consume). Retry the request."
+    },
+    {
+      "code": "DAY_PASS_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.day_pass_not_found"
+    },
+    {
+      "code": "DAY_PASS_FEATURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.day_pass_feature_not_entitled",
+      "description": "Day passes are Enterprise-only. Non-Enterprise tenants hit this at the entitlement middleware."
+    },
+    {
+      "code": "DAY_PASS_BRANCH_NOT_ACTIVE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.day_pass_branch_not_active"
+    },
+    {
+      "code": "DAY_PASS_DATE_IN_PAST",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.day_pass_date_in_past"
+    },
+    {
+      "code": "DAY_PASS_DATE_TOO_FAR",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.day_pass_date_too_far",
+      "description": "Requested valid_on_date is more than 30 days in the future. Sell a Pass instead."
+    },
+    {
+      "code": "DAY_PASS_NEGATIVE_PRICE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "facility.errors.day_pass_negative_price"
+    },
+    {
+      "code": "DAY_PASS_ANONYMOUS_REQUIRES_NAME",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.day_pass_anonymous_requires_name",
+      "description": "Anonymous walk-ins must capture at least a name. Data-quality mandate."
+    },
+    {
+      "code": "DAY_PASS_ANONYMOUS_REQUIRES_PHONE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.day_pass_anonymous_requires_phone"
+    },
+    {
+      "code": "DAY_PASS_NOT_VALID_TODAY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.day_pass_not_valid_today"
+    },
+    {
+      "code": "DAY_PASS_ALREADY_CONSUMED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.day_pass_already_consumed"
+    },
+    {
+      "code": "DAY_PASS_CONSUMED_CANNOT_REFUND",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.day_pass_consumed_cannot_refund"
+    },
+    {
+      "code": "DAY_PASS_REFUND_WINDOW_EXPIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.day_pass_refund_window_expired"
+    },
+    {
+      "code": "PASS_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.pass_not_found"
+    },
+    {
+      "code": "PASS_FEATURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.pass_feature_not_entitled"
+    },
+    {
+      "code": "PASS_INVALID_WINDOW",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.pass_invalid_window",
+      "description": "valid_from > valid_until."
+    },
+    {
+      "code": "PASS_INVALID_CREDITS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.pass_invalid_credits",
+      "description": "total_credits < 1."
+    },
+    {
+      "code": "PASS_FACILITY_BRANCH_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "facility.errors.pass_facility_branch_mismatch",
+      "description": "Pass.facility_id points to a facility in a different branch than pass.branch_id."
+    },
+    {
+      "code": "PASS_DOUBLE_SPEND",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "facility.errors.pass_double_spend",
+      "description": "Attempted to consume beyond total_credits. Should never surface — the observer's SELECT ... FOR UPDATE prevents the race. Every fire is a P1 signal."
+    },
+    {
+      "code": "PASS_NOT_TRANSFERABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "facility.errors.pass_not_transferable"
+    },
+    {
+      "code": "OVERLAP_DETECTED_POST_COMMIT",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "facility.errors.overlap_detected_post_commit",
+      "description": "The reconciler discovered a double-booking after the fact. Fires BookingOverlapDetected. Every occurrence is a P1 incident."
+    }
+  ]
+}

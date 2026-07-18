@@ -1,0 +1,200 @@
+{
+  "id": "academorix://modules/facility/schemas/pass",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Pass",
+  "description": "Credit + eligibility record binding Membership (Wave 4) to Facility access. Branch-scoped; may target a specific facility_id OR any facility in the branch (facility_id NULL). Credits decrement atomically on booking-create. Financial record: 7-year retention.",
+  "type": "object",
+  "x-module": "facility",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "passes",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "pas_",
+    "incrementing": false,
+    "model": "Academorix\\Facility\\Models\\Pass",
+    "interface": "Academorix\\Facility\\Contracts\\Data\\PassInterface",
+    "implements": ["Academorix\\Facility\\Contracts\\Data\\PassInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToBranch",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "valid_from": "date",
+      "valid_until": "date",
+      "total_credits": "integer",
+      "used_credits": "integer",
+      "expires_after_last_use_days": "integer",
+      "is_transferable": "boolean",
+      "assignable_user_ids": "array",
+      "revoked_at": "datetime",
+      "expired_at": "datetime",
+      "exhausted_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["PassObserver"],
+    "appends": ["remaining_credits", "is_exhausted", "is_expired", "is_active"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `pas_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "membership_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Wave 4 FK to finance::memberships.id. Null in Wave 2 (placeholder). Wave 4 will add the FK constraint."
+      },
+      "facility_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "facilities", "column": "id", "onDelete": "restrict" },
+        "description": "NULL = valid at any facility in branch. Non-null = facility-specific."
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "branches", "column": "id", "onDelete": "restrict" }
+      },
+      "valid_from": { "type": "date", "nullable": false },
+      "valid_until": { "type": "date", "nullable": false },
+      "total_credits": {
+        "type": "integer",
+        "nullable": false,
+        "description": "Total facility uses granted by this pass. Immutable after create."
+      },
+      "used_credits": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Incremented atomically on booking-create when the pass is invoked. Observer refuses used_credits > total_credits (SELECT ... FOR UPDATE serialises)."
+      },
+      "expires_after_last_use_days": {
+        "type": "integer",
+        "nullable": true,
+        "description": "For pay-as-you-go packages: expires N days after last credit consumption regardless of valid_until."
+      },
+      "is_transferable": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "When false, assignable_user_ids cannot change after issuance."
+      },
+      "assignable_user_ids": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Array of user IDs who can consume this pass. A booking's booked_for_user_id must be in this array for the pass to apply."
+      },
+      "revoked_at": { "type": "timestamptz", "nullable": true },
+      "revoked_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "revocation_reason": { "type": "text", "nullable": true },
+      "expired_at": { "type": "timestamptz", "nullable": true },
+      "exhausted_at": { "type": "timestamptz", "nullable": true },
+      "issued_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "membership_id", "facility_id"],
+        "name": "passes_membership_facility_idx"
+      },
+      {
+        "columns": ["tenant_id", "branch_id", "valid_from", "valid_until"],
+        "name": "passes_by_branch_date_idx"
+      },
+      {
+        "columns": ["assignable_user_ids"],
+        "name": "passes_assignable_users_gin",
+        "type": "gin",
+        "description": "GIN index on the JSONB array — powers the fac:passes:user:{user_id} cache invalidation + PassCreditGate lookup."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "branch_id",
+    "valid_from",
+    "valid_until",
+    "total_credits",
+    "used_credits",
+    "is_transferable",
+    "assignable_user_ids",
+    "issued_by_user_id",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^pas_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "membership_id": { "type": ["string", "null"] },
+    "facility_id": { "type": ["string", "null"], "pattern": "^fac_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "branch_id": { "type": "string", "pattern": "^brn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "valid_from": { "type": "string", "format": "date" },
+    "valid_until": { "type": "string", "format": "date" },
+    "total_credits": { "type": "integer", "minimum": 1 },
+    "used_credits": { "type": "integer", "minimum": 0 },
+    "expires_after_last_use_days": { "type": ["integer", "null"], "minimum": 1 },
+    "is_transferable": { "type": "boolean" },
+    "assignable_user_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" }
+    },
+    "revoked_at": { "type": ["string", "null"], "format": "date-time" },
+    "revoked_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "revocation_reason": { "type": ["string", "null"] },
+    "expired_at": { "type": ["string", "null"], "format": "date-time" },
+    "exhausted_at": { "type": ["string", "null"], "format": "date-time" },
+    "issued_by_user_id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "valid_from <= valid_until",
+    "total_credits >= 1",
+    "used_credits >= 0 AND used_credits <= total_credits (observer + SELECT FOR UPDATE enforces)",
+    "facility_id IS NULL OR facility.branch_id = branch_id (cross-branch pass forbidden)",
+    "when is_transferable=false: assignable_user_ids immutable after create",
+    "hard-delete refused unless > 7 years past deleted_at (financial retention)"
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "$version": 1,
+  "title": "Per-locale address formatting rules",
+  "description": "The AddressFormatter service reads this catalogue to compute `Branch.address.formatted` on every save. The format string uses `{placeholder}` interpolation over the structured address fields — missing fields collapse the surrounding whitespace / comma cleanly.",
+  "default_format": "{line1}{, line2}, {city}{, subdivision}{ postal_code}, {country_code}",
+  "notes": [
+    "Format templates use `{field}` for required placeholders + `{prefix field}` for prefix-conditional placeholders that render only when the field is non-empty (with the prefix included).",
+    "Country resolution happens by `country_code` (ISO-3166-1 alpha-2). Unlisted countries fall back to `default_format`.",
+    "The catalogue is code-shipped — additions require a deploy + trigger a re-format of every existing Branch's `address.formatted` field via a data migration.",
+    "The rendered string is never longer than 500 characters (the DB column cap). Longer inputs are truncated with an ellipsis + logged as a warning."
+  ],
+  "rules": [
+    {
+      "country_code": "US",
+      "display_label": "United States",
+      "format": "{line1}{, line2}, {city}, {subdivision} {postal_code}, {country_code}",
+      "example_input": {
+        "line1": "123 Market St",
+        "line2": "Suite 400",
+        "city": "San Francisco",
+        "subdivision": "CA",
+        "postal_code": "94103",
+        "country_code": "US"
+      },
+      "example_output": "123 Market St, Suite 400, San Francisco, CA 94103, US"
+    },
+    {
+      "country_code": "GB",
+      "display_label": "United Kingdom",
+      "format": "{line1}{, line2}, {city}{, subdivision} {postal_code}, {country_code}",
+      "example_input": {
+        "line1": "10 Downing Street",
+        "city": "London",
+        "postal_code": "SW1A 2AA",
+        "country_code": "GB"
+      },
+      "example_output": "10 Downing Street, London SW1A 2AA, GB"
+    },
+    {
+      "country_code": "CA",
+      "display_label": "Canada",
+      "format": "{line1}{, line2}, {city}, {subdivision} {postal_code}, {country_code}",
+      "example_input": {
+        "line1": "1 Blue Jays Way",
+        "city": "Toronto",
+        "subdivision": "ON",
+        "postal_code": "M5V 1J1",
+        "country_code": "CA"
+      },
+      "example_output": "1 Blue Jays Way, Toronto, ON M5V 1J1, CA"
+    },
+    {
+      "country_code": "FR",
+      "display_label": "France",
+      "format": "{line1}{, line2}, {postal_code} {city}, {country_code}",
+      "example_input": {
+        "line1": "12 Rue Saint-Antoine",
+        "city": "Paris",
+        "postal_code": "75004",
+        "country_code": "FR"
+      },
+      "example_output": "12 Rue Saint-Antoine, 75004 Paris, FR"
+    },
+    {
+      "country_code": "DE",
+      "display_label": "Germany",
+      "format": "{line1}{, line2}, {postal_code} {city}, {country_code}",
+      "example_input": {
+        "line1": "Unter den Linden 1",
+        "city": "Berlin",
+        "postal_code": "10117",
+        "country_code": "DE"
+      },
+      "example_output": "Unter den Linden 1, 10117 Berlin, DE"
+    },
+    {
+      "country_code": "ES",
+      "display_label": "Spain",
+      "format": "{line1}{, line2}, {postal_code} {city}{, subdivision}, {country_code}",
+      "example_input": {
+        "line1": "Gran Vía 32",
+        "city": "Madrid",
+        "postal_code": "28013",
+        "country_code": "ES"
+      },
+      "example_output": "Gran Vía 32, 28013 Madrid, ES"
+    },
+    {
+      "country_code": "JP",
+      "display_label": "Japan",
+      "format": "{postal_code} {country_code}, {subdivision}, {city}, {line1}{, line2}",
+      "example_input": {
+        "line1": "6-10-1 Roppongi",
+        "city": "Minato-ku",
+        "subdivision": "Tokyo",
+        "postal_code": "106-6108",
+        "country_code": "JP"
+      },
+      "example_output": "106-6108 JP, Tokyo, Minato-ku, 6-10-1 Roppongi",
+      "note": "Japanese addresses conventionally start with the largest administrative unit + narrow down. `subdivision` = prefecture."
+    },
+    {
+      "country_code": "AE",
+      "display_label": "United Arab Emirates",
+      "format": "{line1}{, line2}, {city}{, subdivision}, {country_code}",
+      "example_input": {
+        "line1": "Sheikh Zayed Road, Tower 3",
+        "city": "Dubai",
+        "subdivision": "Business Bay",
+        "country_code": "AE"
+      },
+      "example_output": "Sheikh Zayed Road, Tower 3, Dubai, Business Bay, AE",
+      "note": "UAE addresses often lack postal codes — the field collapses cleanly when null."
+    },
+    {
+      "country_code": "SA",
+      "display_label": "Saudi Arabia",
+      "format": "{line1}{, line2}, {city}{, subdivision} {postal_code}, {country_code}",
+      "example_input": {
+        "line1": "King Fahd Road",
+        "city": "Riyadh",
+        "postal_code": "12333",
+        "country_code": "SA"
+      },
+      "example_output": "King Fahd Road, Riyadh 12333, SA"
+    },
+    {
+      "country_code": "AU",
+      "display_label": "Australia",
+      "format": "{line1}{, line2}, {city} {subdivision} {postal_code}, {country_code}",
+      "example_input": {
+        "line1": "1 Macquarie Street",
+        "city": "Sydney",
+        "subdivision": "NSW",
+        "postal_code": "2000",
+        "country_code": "AU"
+      },
+      "example_output": "1 Macquarie Street, Sydney NSW 2000, AU"
+    },
+    {
+      "country_code": "BR",
+      "display_label": "Brazil",
+      "format": "{line1}{, line2}, {city}{, subdivision} {postal_code}, {country_code}",
+      "example_input": {
+        "line1": "Avenida Paulista 1578",
+        "city": "São Paulo",
+        "subdivision": "SP",
+        "postal_code": "01310-200",
+        "country_code": "BR"
+      },
+      "example_output": "Avenida Paulista 1578, São Paulo, SP 01310-200, BR"
+    },
+    {
+      "country_code": "IN",
+      "display_label": "India",
+      "format": "{line1}{, line2}, {city}{, subdivision} {postal_code}, {country_code}",
+      "example_input": {
+        "line1": "Bandra Kurla Complex, Tower A",
+        "city": "Mumbai",
+        "subdivision": "Maharashtra",
+        "postal_code": "400051",
+        "country_code": "IN"
+      },
+      "example_output": "Bandra Kurla Complex, Tower A, Mumbai, Maharashtra 400051, IN"
+    }
+  ]
+}

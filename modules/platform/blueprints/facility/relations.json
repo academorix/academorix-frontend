@@ -1,0 +1,174 @@
+{
+  "id": "academorix://modules/facility/relations",
+  "$version": 1,
+  "title": "facility — model relationships",
+  "description": "Four owned entities. Facility is a leaf below Branch (which is under Region + Organization). ResourceBooking, DayPass, and Pass all attach to Facility (bookings) or Branch (day_passes) or Membership+Facility+Branch (passes). Every outbound FK stays same-tenant per tenancy-columns.md §5. NO organization_id / region_id / application_id on any owned row (facilities cascade all three through branch_id).",
+  "internal": [
+    {
+      "from": "Facility",
+      "kind": "hasMany",
+      "to": "ResourceBooking",
+      "foreignKey": "facility_id",
+      "description": "Booking → facility relationship. RESTRICT on facility hard-delete via observer — booking rows must be cancelled before their facility can be purged."
+    },
+    {
+      "from": "ResourceBooking",
+      "kind": "belongsTo",
+      "to": "Facility",
+      "foreignKey": "facility_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT on delete. Bookings anchor to their facility for auditing; a retired facility keeps its bookings for financial retention."
+    },
+    {
+      "from": "Facility",
+      "kind": "hasMany",
+      "to": "Pass",
+      "foreignKey": "facility_id",
+      "description": "Facility-specific passes. Pass.facility_id NULL means the pass is valid at ANY facility in the branch."
+    },
+    {
+      "from": "Pass",
+      "kind": "belongsTo",
+      "to": "Facility",
+      "foreignKey": "facility_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Nullable — a pass may be branch-wide (facility_id=null) or facility-specific. RESTRICT on facility hard-delete."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Facility",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every facility is tenant-scoped per tenancy-columns.md §3."
+    },
+    {
+      "from": "Facility",
+      "kind": "belongsTo",
+      "to": "branch::Branch",
+      "foreignKey": "branch_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT: branches cannot be hard-deleted while facilities reference them. Branch archive is blocked by PreventFacilityOrphansOnBranchArchived hook when active facilities exist."
+    },
+    {
+      "from": "ResourceBooking",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Denormalised tenant_id — cascades through facility.tenant_id but explicit for query-plan + FK integrity."
+    },
+    {
+      "from": "ResourceBooking",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "booked_by_user_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT for audit-integrity — a user's hard-delete cannot orphan booking audit history."
+    },
+    {
+      "from": "ResourceBooking",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "booked_for_user_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "For whom the booking is (parent booking for a child, receptionist for a member). Nullable for team bookings (booked_for_team_id) or self-bookings (equal to booked_by_user_id).",
+      "note": "The observer denormalises booked_for_user_id = booked_by_user_id when nullable AND booked_for_team_id also null. This preserves a consistent 'for whom' semantic."
+    },
+    {
+      "from": "ResourceBooking",
+      "kind": "belongsTo",
+      "to": "teams::Team",
+      "foreignKey": "booked_for_team_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Wave 3 — team-level bookings (a coach reserving the pitch for team practice). Nullable in Wave 2 (Teams module lands in Wave 3)."
+    },
+    {
+      "from": "ResourceBooking",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "cancelled_by_user_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "The actor who cancelled (null for system cascades)."
+    },
+    {
+      "from": "DayPass",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "DayPass",
+      "kind": "belongsTo",
+      "to": "branch::Branch",
+      "foreignKey": "branch_id",
+      "onDelete": "restrict",
+      "description": "Day passes are branch-scoped, not facility-scoped — a walk-in visitor gets access to the whole branch."
+    },
+    {
+      "from": "DayPass",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "issued_to_user_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Null = anonymous walk-in. The issued_to_profile_name + phone captured at issuance carry the identity in that case (redacted at 90 days per GDPR)."
+    },
+    {
+      "from": "DayPass",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "issued_by_user_id",
+      "onDelete": "restrict",
+      "description": "The staff member who sold the pass. RESTRICT for audit-integrity — sales staff hard-delete cannot orphan financial records."
+    },
+    {
+      "from": "Pass",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "Pass",
+      "kind": "belongsTo",
+      "to": "branch::Branch",
+      "foreignKey": "branch_id",
+      "onDelete": "restrict",
+      "description": "Every pass is branch-scoped. Cross-branch passes are non-goals for Wave 2 (per module.json non-goals)."
+    },
+    {
+      "from": "Pass",
+      "kind": "belongsTo",
+      "to": "finance::Membership",
+      "foreignKey": "membership_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Wave 4 — the parent's paid Membership contract this pass belongs to. Nullable in Wave 2 (Finance module lands in Wave 4; passes issued manually in the meantime carry NULL)."
+    }
+  ],
+  "inbound": {
+    "description": "Two downstream modules will attach to Facility in later waves:",
+    "examples": [
+      "sports::Session (Wave 3) — belongs to Facility via BelongsToFacility trait. Practice sessions reserve a facility for a window.",
+      "sports::EventBooking (Wave 3) — belongs to Facility. Tournaments reserve N contiguous slots.",
+      "finance::Invoice (Wave 4) — line items reference ResourceBooking + DayPass + Pass for revenue attribution."
+    ],
+    "note": "Facility does NOT have inbound relations in Wave 2 beyond the internal ones above."
+  },
+  "morphs": [],
+  "notes": [
+    "Facilities cascade Organization + Region through Branch. `facility.organization_id` and `facility.region_id` DO NOT EXIST — they are forbidden columns per tenancy-columns.md §5. Reach them via `$facility->branch->organization` / `$facility->branch->region`.",
+    "ResourceBooking does not carry branch_id — it cascades through facility_id → facility.branch_id. Same reasoning applies to region + organization.",
+    "DayPass carries branch_id directly because it's branch-scoped (not tied to any specific facility).",
+    "Pass carries branch_id + optional facility_id — the facility_id is nullable for branch-wide passes.",
+    "The `resource_bookings` table is the WRITE-side of Wave 3+ session scheduling. When Sports::Session lands in Wave 3, it composes ResourceBooking rather than duplicating the reservation primitive."
+  ]
+}

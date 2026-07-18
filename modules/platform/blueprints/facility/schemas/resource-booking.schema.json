@@ -1,0 +1,211 @@
+{
+  "id": "academorix://modules/facility/schemas/resource-booking",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ResourceBooking",
+  "description": "Timed reservation against a facility. Carries `tenant_id` + `facility_id` — cascades branch/region/organization through facility. State machine: pending → confirmed → completed/cancelled/no_show. NEVER carries `branch_id` / `application_id` / `organization_id` / `region_id`.",
+  "type": "object",
+  "x-module": "facility",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "resource_bookings",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "bkg_",
+    "incrementing": false,
+    "model": "Academorix\\Facility\\Models\\ResourceBooking",
+    "interface": "Academorix\\Facility\\Contracts\\Data\\ResourceBookingInterface",
+    "implements": ["Academorix\\Facility\\Contracts\\Data\\ResourceBookingInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToFacility",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "starts_at": "datetime",
+      "ends_at": "datetime",
+      "duration_minutes": "integer",
+      "status": "BookingStatus",
+      "payment_status": "BookingPaymentStatus",
+      "price_amount_cents": "integer",
+      "attendees_count": "integer",
+      "cancelled_at": "datetime",
+      "completed_at": "datetime",
+      "checked_in_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["ResourceBookingObserver"],
+    "appends": ["is_cancellable_by_current_user", "is_within_notice_window"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `bkg_<26>`." },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "facility_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "facilities", "column": "id", "onDelete": "restrict" }
+      },
+      "booked_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "Actor who made the booking."
+      },
+      "booked_for_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "For whom the booking is (parent for a child, receptionist for a member)."
+      },
+      "booked_for_team_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Wave 3 — team-level bookings. FK deferred until Teams module lands."
+      },
+      "purpose": { "type": "string", "length": 500, "nullable": true, "description": "Free-form booker note." },
+      "starts_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Booking start (UTC in DB; converted to facility.branch.region.timezone in observers)."
+      },
+      "ends_at": { "type": "timestamptz", "nullable": false },
+      "duration_minutes": {
+        "type": "integer",
+        "nullable": false,
+        "description": "Computed as (ends_at - starts_at) in minutes. Observer validates against facility.min/max_booking_duration_minutes."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "Enum: pending / confirmed / cancelled / no_show / completed. Terminal states: cancelled / no_show / completed."
+      },
+      "cancellation_reason": { "type": "text", "nullable": true },
+      "cancelled_at": { "type": "timestamptz", "nullable": true },
+      "cancelled_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "checked_in_at": { "type": "timestamptz", "nullable": true },
+      "completed_at": { "type": "timestamptz", "nullable": true },
+      "price_amount_cents": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Frozen at booking-time from facility.pricing_json + duration + attendees. Never mutable after create."
+      },
+      "price_currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": false,
+        "description": "ISO 4217. Inherited from facility.branch.region.currency at create-time."
+      },
+      "payment_status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'none'",
+        "description": "Enum: none / pending / paid / refunded / failed. Managed by Wave 4 Finance."
+      },
+      "attendees_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 1,
+        "description": "For capacity math. Observer refuses when > facility.capacity_persons (when capacity_gating on)."
+      },
+      "notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Staff-visible operational notes. Booker does not see this in wire projection."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["facility_id", "starts_at", "ends_at"],
+        "unique": false,
+        "name": "resource_bookings_overlap_idx",
+        "predicate": "status IN ('pending','confirmed') AND deleted_at IS NULL",
+        "description": "COVERING INDEX for the SERIALIZABLE overlap check. Missing this index makes booking-create O(N) per facility — a p99 blowup."
+      },
+      { "columns": ["tenant_id", "booked_by_user_id", "starts_at"], "name": "resource_bookings_by_booker_idx" },
+      { "columns": ["tenant_id", "booked_for_user_id", "starts_at"], "name": "resource_bookings_by_bookedfor_idx" },
+      { "columns": ["tenant_id", "status", "starts_at"], "name": "resource_bookings_status_idx" },
+      { "columns": ["tenant_id", "created_at"], "name": "resource_bookings_recent_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "facility_id", "booked_by_user_id", "starts_at", "ends_at", "duration_minutes", "status", "price_amount_cents", "price_currency", "payment_status", "attendees_count", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^bkg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "facility_id": { "type": "string", "pattern": "^fac_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "booked_by_user_id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "booked_for_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "booked_for_team_id": { "type": ["string", "null"] },
+    "purpose": { "type": ["string", "null"], "maxLength": 500 },
+    "starts_at": { "type": "string", "format": "date-time" },
+    "ends_at": { "type": "string", "format": "date-time" },
+    "duration_minutes": { "type": "integer", "minimum": 15 },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "confirmed", "cancelled", "no_show", "completed"]
+    },
+    "cancellation_reason": { "type": ["string", "null"] },
+    "cancelled_at": { "type": ["string", "null"], "format": "date-time" },
+    "cancelled_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "checked_in_at": { "type": ["string", "null"], "format": "date-time" },
+    "completed_at": { "type": ["string", "null"], "format": "date-time" },
+    "price_amount_cents": { "type": "integer", "minimum": 0 },
+    "price_currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "payment_status": {
+      "type": "string",
+      "enum": ["none", "pending", "paid", "refunded", "failed"]
+    },
+    "attendees_count": { "type": "integer", "minimum": 1 },
+    "notes": { "type": ["string", "null"] },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "starts_at > now() at insert time",
+    "ends_at > starts_at",
+    "duration_minutes IN [facility.min_booking_duration_minutes, facility.max_booking_duration_minutes]",
+    "starts_at aligned to facility.booking_slot_step_minutes multiples",
+    "starts_at <= now() + facility.advance_booking_window_days",
+    "window inside facility.availability_json for that day",
+    "window inside branch.opening_hours for that day",
+    "window NOT overlapping any facility.blackout_dates entry",
+    "window NOT overlapping any other pending/confirmed booking on the same facility (SERIALIZABLE-enforced)",
+    "attendees_count <= facility.capacity_persons (when booking_capacity_gating on)",
+    "price_amount_cents + price_currency frozen at create; never mutable",
+    "status transitions per allowed matrix; completed only via automated job"
+  ]
+}

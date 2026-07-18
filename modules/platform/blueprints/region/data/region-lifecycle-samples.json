@@ -1,0 +1,569 @@
+{
+  "$version": 1,
+  "title": "Region lifecycle samples",
+  "description": "Reference scenarios covering the important transitions in the Region module. Used as QA fixtures + as a teaching aid for new engineers. NOT loaded at runtime — documentation only.",
+  "samples": [
+    {
+      "scenario": "Default region auto-seed on TenantProvisioned (Small tier, US)",
+      "input": {
+        "event": "tenancy::TenantProvisioned",
+        "tenant": {
+          "id": "ten_01H1111TENANTSMALLXXXXX",
+          "name": "Elite Sports Group",
+          "plan": "small",
+          "registered_country": "US"
+        }
+      },
+      "trace": [
+        {
+          "step": "Listener SeedDefaultRegionOnTenantProvisioned fires",
+          "queue": "notifications",
+          "afterCommit": true
+        },
+        {
+          "step": "Dispatch SeedDefaultRegionForTenantJob",
+          "unique_key": "ten_01H1111TENANTSMALLXXXXX"
+        },
+        {
+          "step": "Job runs — idempotent guard",
+          "check": "SELECT id FROM regions WHERE tenant_id='ten_01H1111TENANTSMALLXXXXX' AND is_default=true",
+          "result": "0 rows — proceed"
+        },
+        {
+          "step": "Resolve country_code",
+          "input": "tenant.registered_country='US'",
+          "output": "country_code='US'"
+        },
+        {
+          "step": "Hydrate defaults from data/country-defaults.json",
+          "input": "US",
+          "output": {
+            "currency": "USD",
+            "currency_symbol": "$",
+            "timezone": "America/New_York",
+            "locale": "en-US",
+            "rtl": false,
+            "weekend_days": ["saturday", "sunday"],
+            "tax_config": {
+              "default_rate_percent": 0.000,
+              "name": "Sales Tax",
+              "inclusive": false,
+              "notes": "US federal has no sales tax..."
+            }
+          }
+        },
+        {
+          "step": "INSERT",
+          "row": {
+            "id": "reg_01H2222DEFAULTUSXXXXXXX0",
+            "tenant_id": "ten_01H1111TENANTSMALLXXXXX",
+            "name": "United States",
+            "slug": "default",
+            "country_code": "US",
+            "currency": "USD",
+            "timezone": "America/New_York",
+            "locale": "en-US",
+            "weekend_days": ["saturday", "sunday"],
+            "status": "active",
+            "is_default": true,
+            "sort_order": 0,
+            "fiscal_year_start_month": 1,
+            "created_by": null
+          }
+        },
+        {
+          "step": "SKIP region_slot consumption",
+          "reason": "is_system_provisioned=true flag on the RegionProvisioner call. System-provisioned default regions do NOT consume a slot — they are a platform invariant."
+        },
+        {
+          "step": "Fire events",
+          "events": ["RegionCreated (source='tenant_provision')", "TenantDefaultRegionSeeded"]
+        }
+      ],
+      "outcome": {
+        "http": "202 Accepted (tenant provisioning) → 200 OK downstream",
+        "duration_ms": 55,
+        "notification_dispatched": "None — default region seed is silent (system invariant, not a purchase)"
+      }
+    },
+    {
+      "scenario": "Multi-region tenant creates second region (Medium tier, AE)",
+      "input": {
+        "route": "POST /api/v1/regions",
+        "tenant": {
+          "id": "ten_01H2222TENANTMEDIUMXXXXX",
+          "plan": "medium",
+          "region_slot_used": 1,
+          "region_slot_cap": 3
+        },
+        "actor": { "id": "usr_01H_ADMINXXXXXXXXXXXXXX", "role": "admin" },
+        "body": {
+          "name": "United Arab Emirates",
+          "slug": "uae",
+          "country_code": "AE",
+          "tax_config": {
+            "default_rate_percent": 5.000,
+            "name": "VAT",
+            "inclusive": false,
+            "registration_number": "TRN-100234567890003"
+          }
+        }
+      },
+      "trace": [
+        {
+          "step": "Auth + tenant + application resolve",
+          "result": "OK"
+        },
+        {
+          "step": "Policy check regions.create",
+          "actor_role": "admin",
+          "result": "allow"
+        },
+        {
+          "step": "Entitlement gate region_slot",
+          "used": 1,
+          "cap": 3,
+          "result": "allow"
+        },
+        {
+          "step": "Validation",
+          "checks": [
+            "valid_country_code(AE, mode=strict) — present in data/country-defaults.json → pass",
+            "valid_tax_rate(5.000) → pass",
+            "tax_config schema → pass",
+            "no rates[] supplied — region_custom_tax_rules gate not triggered → pass",
+            "region_slug_reserved(uae) → pass"
+          ]
+        },
+        {
+          "step": "Observer creating — hydrate country_code defaults",
+          "action": "The caller supplied country_code=AE + name + slug + tax_config. Currency, timezone, locale, weekend_days, currency_symbol NOT supplied — the observer fills from data/country-defaults.json (AE)",
+          "hydrated": {
+            "currency": "AED",
+            "currency_symbol": "AED",
+            "timezone": "Asia/Dubai",
+            "locale": "ar-AE",
+            "rtl": true,
+            "weekend_days": ["saturday", "sunday"],
+            "fiscal_year_start_month": 1
+          }
+        },
+        {
+          "step": "Observer creating — populate row + consume slot",
+          "actions": [
+            "populate id=reg_01H3333UAEXXXXXXXXXXXXX0",
+            "is_default=false → skip default-flip logic",
+            "consume region_slot (used 1 → 2, cap 3)"
+          ]
+        },
+        {
+          "step": "INSERT + commit"
+        },
+        {
+          "step": "Post-commit events",
+          "events": [
+            "RegionCreated (source='admin_created')"
+          ]
+        }
+      ],
+      "outcome": {
+        "http": "201 Created",
+        "response": {
+          "data": {
+            "id": "reg_01H3333UAEXXXXXXXXXXXXX0",
+            "slug": "uae",
+            "country_code": "AE",
+            "currency": "AED",
+            "timezone": "Asia/Dubai",
+            "locale": "ar-AE",
+            "rtl": true,
+            "weekend_days": ["saturday", "sunday"],
+            "tax_config": {
+              "default_rate_percent": 5.000,
+              "name": "VAT",
+              "inclusive": false,
+              "registration_number": "TRN-100234567890003"
+            },
+            "is_default": false,
+            "status": "active"
+          }
+        },
+        "duration_ms": 45,
+        "notification_dispatched": "RegionCreatedNotification to admin+owner (opt-outable)"
+      }
+    },
+    {
+      "scenario": "Small tier — refused at 2nd region",
+      "input": {
+        "route": "POST /api/v1/regions",
+        "tenant": {
+          "id": "ten_01H1111TENANTSMALLXXXXX",
+          "plan": "small",
+          "region_slot_used": 1,
+          "region_slot_cap": 1
+        },
+        "body": { "name": "United Kingdom", "slug": "uk", "country_code": "GB" }
+      },
+      "trace": [
+        {
+          "step": "Entitlement gate region_slot",
+          "used": 1,
+          "cap": 1,
+          "result": "refused"
+        }
+      ],
+      "outcome": {
+        "http": "402 Payment Required",
+        "error_code": "REGION_QUOTA_EXCEEDED",
+        "response": {
+          "error": {
+            "code": "REGION_QUOTA_EXCEEDED",
+            "message": "Small tier limits you to 1 region. Upgrade to Medium for up to 3.",
+            "upgrade_url": "/settings/billing/upgrade",
+            "current_tier": "small",
+            "cap": 1,
+            "used": 1
+          }
+        }
+      }
+    },
+    {
+      "scenario": "Enterprise tenant creates custom multi-rate tax_config",
+      "input": {
+        "route": "POST /api/v1/regions",
+        "tenant": {
+          "id": "ten_01H4444ENTERPRISEXXXXXX",
+          "plan": "enterprise",
+          "entitlement_region_custom_tax_rules": true
+        },
+        "actor": { "id": "usr_01H_OWNERXXXXXXXXXXXXXX", "role": "owner" },
+        "body": {
+          "name": "United Kingdom",
+          "slug": "uk",
+          "country_code": "GB",
+          "tax_config": {
+            "default_rate_percent": 20.000,
+            "name": "VAT",
+            "inclusive": true,
+            "rates": [
+              { "category": "youth_programme", "rate_percent": 0.000, "notes": "VAT-exempt for programmes serving under-18s (schedule 8, group 6)" },
+              { "category": "adult_gym_membership", "rate_percent": 20.000 },
+              { "category": "food_service", "rate_percent": 20.000, "notes": "Hot food only; cold takeaway is 0% but that's out of scope for the SDK" }
+            ],
+            "registration_number": "GB123456789"
+          }
+        }
+      },
+      "trace": [
+        {
+          "step": "Auth + policy check regions.create",
+          "result": "allow"
+        },
+        {
+          "step": "Entitlement gate region_slot",
+          "cap": null,
+          "result": "allow (unlimited on Enterprise)"
+        },
+        {
+          "step": "Entitlement gate region_custom_tax_rules",
+          "held": true,
+          "reason": "body.tax_config.rates[] non-empty (3 entries)",
+          "result": "allow"
+        },
+        {
+          "step": "Validation",
+          "checks": [
+            "valid_country_code(GB) → pass",
+            "valid_tax_rate(20.000) → pass",
+            "each rates[].rate_percent → pass",
+            "each rates[].category pattern → pass",
+            "tax_config schema → pass"
+          ]
+        },
+        {
+          "step": "Observer creating — hydrate remaining GB defaults",
+          "hydrated": {
+            "currency": "GBP",
+            "currency_symbol": "£",
+            "timezone": "Europe/London",
+            "locale": "en-GB",
+            "rtl": false,
+            "weekend_days": ["saturday", "sunday"]
+          }
+        },
+        {
+          "step": "INSERT + commit + fire RegionCreated"
+        }
+      ],
+      "outcome": {
+        "http": "201 Created",
+        "duration_ms": 50,
+        "audit_severity": "info (creation) — but subsequent tax_config edits will be `regulated_financial` per data-classes.json"
+      }
+    },
+    {
+      "scenario": "Set default — auto-demote flow",
+      "input": {
+        "route": "POST /api/v1/regions/reg_01H3333UAEXXXXXXXXXXXXX0/set-default",
+        "body": {},
+        "current_state": {
+          "current_default_id": "reg_01H2222DEFAULTUSXXXXXXX0",
+          "new_default_id": "reg_01H3333UAEXXXXXXXXXXXXX0"
+        }
+      },
+      "trace": [
+        {
+          "step": "Policy regions.set_default",
+          "actor_role": "owner",
+          "result": "allow (owner-only)"
+        },
+        {
+          "step": "Transaction begin"
+        },
+        {
+          "step": "UPDATE regions SET is_default=false WHERE tenant_id=? AND id != new_default_id AND is_default=true",
+          "rows_affected": 1
+        },
+        {
+          "step": "UPDATE regions SET is_default=true WHERE id = new_default_id",
+          "rows_affected": 1
+        },
+        {
+          "step": "Commit"
+        },
+        {
+          "step": "Post-commit event",
+          "event": "RegionDefaultChanged",
+          "payload": {
+            "tenant_id": "ten_01H2222TENANTMEDIUMXXXXX",
+            "from_region_id": "reg_01H2222DEFAULTUSXXXXXXX0",
+            "to_region_id": "reg_01H3333UAEXXXXXXXXXXXXX0",
+            "changed_by": "usr_01H_OWNERXXXXXXXXXXXXXX"
+          },
+          "consumers": [
+            "audit::WriteToAuditLog (financial-record retention 7 years)",
+            "activity::WriteToActivityLog",
+            "notifications::DispatchRegionDefaultChangedNotification (cannot-opt-out)",
+            "finance::RecomputeDefaultAttributionForLegacyRows (Wave 4)"
+          ]
+        }
+      ],
+      "outcome": {
+        "http": "200 OK",
+        "audit_severity": "critical (default region change affects invoice calculations for legacy regionless rows)",
+        "duration_ms": 60
+      }
+    },
+    {
+      "scenario": "Pause — block new bookings",
+      "input": {
+        "route": "POST /api/v1/regions/reg_01H3333UAEXXXXXXXXXXXXX0/pause",
+        "body": { "reason": "Regulatory review pending — pausing new memberships in AE until Q3.", "expected_resume_at": "2026-10-01T00:00:00Z" }
+      },
+      "trace": [
+        {
+          "step": "Policy regions.pause",
+          "result": "allow"
+        },
+        {
+          "step": "Observer updating (status active → paused)",
+          "checks": [
+            "is_default=false → proceed (would refuse with CANNOT_PAUSE_DEFAULT_REGION if true)"
+          ]
+        },
+        {
+          "step": "UPDATE regions SET status='paused' WHERE id=?"
+        },
+        {
+          "step": "Post-commit events",
+          "events": ["RegionStatusChanged", "RegionPaused"]
+        },
+        {
+          "step": "Downstream cache invalidation",
+          "consumers": [
+            "branch::InvalidateRegionAvailabilityCache",
+            "facility::InvalidateBookingWindowCache (Wave 2b)",
+            "finance::PauseNewMembershipsInRegion (Wave 4)"
+          ]
+        }
+      ],
+      "outcome": {
+        "http": "200 OK",
+        "response": {
+          "data": {
+            "id": "reg_01H3333UAEXXXXXXXXXXXXX0",
+            "status": "paused"
+          }
+        },
+        "downstream_effects": [
+          "The `region.resolve_active` middleware will reject any subsequent booking-adjacent request (POST /bookings, POST /memberships) with X-Region-Id=reg_01H3333UAE... as REGION_PAUSED_FOR_BOOKING (409).",
+          "Existing Branches + Memberships in the Region remain valid — pause only affects NEW writes."
+        ],
+        "notification_dispatched": "RegionPausedNotification (cannot-opt-out — new-booking block is ops-critical)"
+      }
+    },
+    {
+      "scenario": "Archive refused — Branches reference this Region",
+      "input": {
+        "route": "POST /api/v1/regions/reg_01H3333UAEXXXXXXXXXXXXX0/archive",
+        "target": {
+          "id": "reg_01H3333UAEXXXXXXXXXXXXX0",
+          "is_default": false,
+          "inbound_reference_count": 4,
+          "inbound_references": {
+            "branches": 4,
+            "memberships": 0,
+            "invoices": 0
+          }
+        }
+      },
+      "trace": [
+        {
+          "step": "Policy regions.archive",
+          "result": "allow"
+        },
+        {
+          "step": "Observer updating (status → archived): inbound check",
+          "sql": "SELECT COUNT(*) FROM branches WHERE region_id='reg_01H3333UAEXXXXXXXXXXXXX0'",
+          "count": 4,
+          "result": "refused"
+        }
+      ],
+      "outcome": {
+        "http": "409 Conflict",
+        "error_code": "REGION_IN_USE",
+        "response": {
+          "error": {
+            "code": "REGION_IN_USE",
+            "message": "This region has 4 active branches. Move or archive them before archiving the region.",
+            "inbound_reference_count": 4,
+            "inbound_references": {
+              "branches": 4,
+              "memberships": 0
+            },
+            "suggested_actions": [
+              "Move affected branches to a different region",
+              "Archive the branches first",
+              "Pause the region instead — pause blocks new bookings without removing the region"
+            ]
+          }
+        },
+        "note": "The FK RESTRICT (branches.region_id ON DELETE RESTRICT) is the DB-level fallback; the observer surfaces the clearer error above."
+      }
+    },
+    {
+      "scenario": "Delete refused — default region",
+      "input": {
+        "route": "DELETE /api/v1/regions/reg_01H2222DEFAULTUSXXXXXXX0",
+        "target": { "is_default": true, "inbound_reference_count": 0 }
+      },
+      "trace": [
+        {
+          "step": "Policy regions.delete",
+          "actor_role": "owner",
+          "result": "allow"
+        },
+        {
+          "step": "Observer deleting: is_default check",
+          "result": "refused"
+        }
+      ],
+      "outcome": {
+        "http": "409 Conflict",
+        "error_code": "CANNOT_DELETE_DEFAULT_REGION",
+        "response": {
+          "error": {
+            "code": "CANNOT_DELETE_DEFAULT_REGION",
+            "message": "Every tenant must have exactly one default region. Promote another region to default first, then retry.",
+            "suggested_action": "POST /api/v1/regions/{other_region_id}/set-default"
+          }
+        }
+      }
+    },
+    {
+      "scenario": "Retroactive tax edit refused — no region_time_travel entitlement",
+      "input": {
+        "route": "PATCH /api/v1/regions/reg_01H3333UAEXXXXXXXXXXXXX0",
+        "tenant": {
+          "plan": "enterprise",
+          "entitlement_region_time_travel": false,
+          "feature_flag_region_time_travel_execution": false
+        },
+        "body": {
+          "tax_config": {
+            "default_rate_percent": 5.000,
+            "name": "VAT",
+            "inclusive": false,
+            "apply_retroactively": true,
+            "retroactive_from": "2024-01-01T00:00:00Z"
+          }
+        }
+      },
+      "trace": [
+        {
+          "step": "Policy regions.update.tax_config",
+          "result": "allow"
+        },
+        {
+          "step": "Entitlement gate region_time_travel",
+          "reason": "body.tax_config.apply_retroactively=true",
+          "held": false,
+          "result": "refused"
+        }
+      ],
+      "outcome": {
+        "http": "402 Payment Required",
+        "error_code": "REGION_TIME_TRAVEL_DISABLED",
+        "response": {
+          "error": {
+            "code": "REGION_TIME_TRAVEL_DISABLED",
+            "message": "Retroactive tax config edits require the `region_time_travel` entitlement + ops sign-off + a compliance letter. Contact your CSM.",
+            "audit_severity": "warn",
+            "documentation_url": "/docs/regions/retroactive-tax-changes"
+          }
+        }
+      }
+    },
+    {
+      "scenario": "Legacy tenant backfill — region:seed-defaults-for-legacy-tenants",
+      "input": {
+        "command": "php artisan region:seed-defaults-for-legacy-tenants --chunk=100",
+        "actor": "system (ops-invoked cron)",
+        "current_state": {
+          "region_less_tenant_count": 47,
+          "tenant_ids_missing_default": ["ten_LEGACY01...", "ten_LEGACY02...", "…"]
+        }
+      },
+      "trace": [
+        {
+          "step": "Command finds region-less tenants",
+          "sql": "SELECT id, registered_country FROM tenants WHERE deleted_at IS NULL AND id NOT IN (SELECT DISTINCT tenant_id FROM regions WHERE is_default=true AND deleted_at IS NULL)",
+          "found": 47
+        },
+        {
+          "step": "For each tenant: dispatch SeedDefaultRegionForTenantJob",
+          "unique_key_per": "tenant_id",
+          "batch_size": 100,
+          "queue": "backfill"
+        },
+        {
+          "step": "Job runs per tenant — idempotent guard",
+          "action": "Same code path as TenantProvisioned auto-seed"
+        },
+        {
+          "step": "Per-tenant event fired",
+          "event": "TenantDefaultRegionSeeded",
+          "payload": {
+            "seeded_by": "legacy_backfill_command"
+          }
+        }
+      ],
+      "outcome": {
+        "duration_ms_total": 12400,
+        "seeded_count": 47,
+        "failed_count": 0,
+        "note": "Idempotent — safe to re-run. Re-running against tenants that ALREADY have a default region is a no-op (the observer's is_default check catches it)."
+      }
+    }
+  ]
+}

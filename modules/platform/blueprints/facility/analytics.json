@@ -1,0 +1,120 @@
+{
+  "id": "academorix://modules/facility/analytics",
+  "$version": 1,
+  "title": "facility — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Facility Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "facility_type", "sport_category", "capacity_persons"],
+      "description": "Admin created a facility. Powers onboarding funnel + facility-mix insight."
+    },
+    {
+      "name": "Facility Retired",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "cascaded_booking_count"]
+    },
+    {
+      "name": "Facility Blackout Added",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "facility_id", "affected_booking_count", "hours_span"]
+    },
+    {
+      "name": "Facility Pricing Updated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "facility_id", "changed_fields"],
+      "description": "Financial-audit event. Rate-of-change tracked for anomaly detection."
+    },
+    {
+      "name": "Booking Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "facility_id", "duration_minutes", "price_amount_cents_bucket", "days_in_advance_bucket", "for_self", "attendees_count", "used_pass"],
+      "description": "Booking created. price_amount_cents_bucket + days_in_advance_bucket are pre-computed bins to avoid high-cardinality labels."
+    },
+    {
+      "name": "Booking Cancelled",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "facility_id", "cascade_trigger", "was_within_notice_window", "hours_before_starts_at_bucket"]
+    },
+    {
+      "name": "Booking Rescheduled",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "facility_id"]
+    },
+    {
+      "name": "Booking No-Show Recorded",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "facility_id", "trigger"]
+    },
+    {
+      "name": "Booking Completed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "facility_id", "was_checked_in", "duration_minutes"]
+    },
+    {
+      "name": "Booking Overlap Detected",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "facility_id", "detected_by"],
+      "description": "P1 event — every fire indicates data-integrity concern. Consent tier: essential (safety + integrity)."
+    },
+    {
+      "name": "Day Pass Sold",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "payment_method", "price_amount_cents_bucket", "age_band", "is_anonymous"]
+    },
+    {
+      "name": "Day Pass Consumed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "seconds_since_purchase_bucket"]
+    },
+    {
+      "name": "Day Pass Refunded",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "days_since_purchase_bucket"]
+    },
+    {
+      "name": "Pass Issued",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "facility_specific", "total_credits_bucket", "is_transferable"]
+    },
+    {
+      "name": "Pass Credit Consumed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "used_credits_after", "total_credits_bucket"]
+    },
+    {
+      "name": "Pass Exhausted",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "total_credits_bucket", "days_since_issued_bucket"]
+    },
+    {
+      "name": "Pass Revoked",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "unused_credits_at_revocation_bucket"]
+    }
+  ],
+  "notes": [
+    "Analytics never carry raw price_amount_cents — always the bucket (0-999, 1000-2999, 3000-9999, 10000+). Prevents competitor-tenant cross-inference from aggregated data.",
+    "user_id + facility_id + booking_id + pass_id ARE included as properties on functional-tier events for the tenant's own product analytics. GDPR consent tier 'functional' covers first-party operational analytics per notifications::consent-tiers.json.",
+    "The 'essential' consent tier for Booking Overlap Detected is deliberate — data integrity signals cannot be opted out. Applies platform-side observability, not tenant-visible dashboards."
+  ]
+}

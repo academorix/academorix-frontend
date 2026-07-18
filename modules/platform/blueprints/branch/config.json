@@ -1,0 +1,157 @@
+{
+  "id": "academorix://modules/branch/config",
+  "$version": 1,
+  "title": "branch — developer configuration",
+  "configFile": "config/branch.php",
+  "envPrefix": "BRANCH_",
+  "sections": {
+    "provisioning": {
+      "keys": [
+        {
+          "path": "branch.provisioning.seed_default_on_organization_create",
+          "type": "bool",
+          "env": "BRANCH_SEED_ON_ORG",
+          "default": false,
+          "description": "When true, creating a new Organization auto-seeds a default Branch under it (the tenant's default region is used). Default false — branches are explicit tenant admin actions."
+        },
+        {
+          "path": "branch.provisioning.default_status",
+          "type": "string",
+          "default": "active",
+          "enum": ["active", "paused"],
+          "description": "Initial status for newly-provisioned Branches. Default active. Set to paused for enterprise onboarding flows that pre-create branches during setup + require an explicit resume."
+        }
+      ]
+    },
+    "geocoding": {
+      "keys": [
+        {
+          "path": "branch.geocoding.enabled",
+          "type": "bool",
+          "env": "BRANCH_GEOCODING_ENABLED",
+          "default": false,
+          "description": "Global toggle. Off = every geocoding call short-circuits regardless of tenant entitlement. Overrides the per-tenant `branch_geocoding` entitlement. Used during subprocessor outages via the `branch.geocoding_enabled` feature flag."
+        },
+        {
+          "path": "branch.geocoding.provider",
+          "type": "string",
+          "env": "BRANCH_GEOCODING_PROVIDER",
+          "default": "google_maps",
+          "enum": ["google_maps", "mapbox", "openstreetmap", "null"],
+          "description": "The default geocoding subprocessor. Per-tenant override via `TenantSetting.branch.geocoding.provider`. The `null` driver is a no-op used in tests."
+        },
+        {
+          "path": "branch.geocoding.quality_threshold",
+          "type": "float",
+          "env": "BRANCH_GEOCODING_QUALITY_THRESHOLD",
+          "default": 0.75,
+          "description": "Confidence threshold below which the geocoded result is refused. Coordinates stay at their prior value; caller falls back to manual pin drop."
+        },
+        {
+          "path": "branch.geocoding.google_maps.api_key",
+          "type": "string",
+          "env": "GOOGLE_MAPS_API_KEY",
+          "description": "API key for the Google Maps Geocoding API."
+        },
+        {
+          "path": "branch.geocoding.mapbox.access_token",
+          "type": "string",
+          "env": "MAPBOX_ACCESS_TOKEN"
+        },
+        {
+          "path": "branch.geocoding.openstreetmap.contact_email",
+          "type": "string",
+          "env": "NOMINATIM_CONTACT_EMAIL",
+          "description": "Nominatim requires a contact email in the User-Agent header per their usage policy."
+        },
+        {
+          "path": "branch.geocoding.openstreetmap.rate_limit_per_second",
+          "type": "float",
+          "default": 1.0,
+          "description": "Nominatim's public tile is rate-limited to 1 req/s per the usage policy. Set to 0 to disable throttling when hitting a private Nominatim instance."
+        },
+        {
+          "path": "branch.geocoding.timeout_seconds",
+          "type": "int",
+          "default": 30
+        }
+      ]
+    },
+    "hours": {
+      "keys": [
+        {
+          "path": "branch.hours.default_opening",
+          "type": "string",
+          "env": "BRANCH_HOURS_DEFAULT_OPENING",
+          "default": "09:00",
+          "description": "Default open time for weekday periods when the observer seeds initial opening_hours for a new Branch."
+        },
+        {
+          "path": "branch.hours.default_closing",
+          "type": "string",
+          "env": "BRANCH_HOURS_DEFAULT_CLOSING",
+          "default": "18:00"
+        },
+        {
+          "path": "branch.hours.default_weekend_closed",
+          "type": "bool",
+          "default": false,
+          "description": "When true, seeded opening_hours mark Saturday + Sunday as closed. Default false — most sports venues operate weekends."
+        },
+        {
+          "path": "branch.hours.enforce_operating_hours_default_on",
+          "type": "bool",
+          "default": true,
+          "description": "Global default for the `branch.enforce_operating_hours` middleware. Tenant setting may override."
+        }
+      ]
+    },
+    "reconciliation": {
+      "keys": [
+        {
+          "path": "branch.reconciliation.default_invariant_schedule",
+          "type": "string",
+          "default": "daily-03:15-utc",
+          "description": "Schedule string for ReconcileDefaultBranchInvariantJob. Interpreted by the shared scheduler service."
+        }
+      ]
+    },
+    "validation": {
+      "keys": [
+        {
+          "path": "branch.validation.require_address_on_create",
+          "type": "bool",
+          "default": false,
+          "description": "When true, `address` is required on Branch creation. Default false — allows sparse initial creation for tenants importing a legacy roster and backfilling addresses later."
+        },
+        {
+          "path": "branch.validation.require_phone_on_create",
+          "type": "bool",
+          "default": false
+        },
+        {
+          "path": "branch.validation.max_amenity_tags",
+          "type": "int",
+          "default": 30,
+          "description": "Upper bound on the length of the amenities array. Defence in depth against a malicious client submitting a 10k-element array."
+        }
+      ]
+    },
+    "close": {
+      "keys": [
+        {
+          "path": "branch.close.dependency_checks",
+          "type": "array",
+          "default": [
+            "facility::facilities.branch_id",
+            "teams::teams.branch_id",
+            "sports::sessions.branch_id",
+            "sports::bookings.branch_id",
+            "finance::memberships.branch_id"
+          ],
+          "description": "Registry of downstream table+column pairs that block closure. Modules opt in by appending to this list from their own service providers via `Config::push('branch.close.dependency_checks', ...)`. Empty entries are silently skipped — modules that haven't landed yet are safe by design."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "id": "academorix://modules/region/rules",
+  "$version": 1,
+  "title": "region — validation rules",
+  "description": "Six custom Laravel validation rules published by RegionServiceProvider::boot() so any FormRequest / Data class can validate Region-adjacent fields. Named after their intent so they read cleanly at the composition site.",
+  "namespace": "Academorix\\Region\\Rules",
+  "rules": [
+    {
+      "name": "valid_country_code",
+      "class": "Academorix\\Region\\Rules\\ValidCountryCode",
+      "signature": "valid_country_code[:strict]",
+      "description": "Ensures the value is a valid ISO 3166-1 alpha-2 country code (2 uppercase letters). In default `strict` mode also requires the code to be present in `data/country-defaults.json`. Set `unknown` to accept any well-formed ISO 3166-1 code — used for supranational zones (EU) that don't have per-country defaults.",
+      "params": [
+        {
+          "name": "mode",
+          "type": "'strict' | 'unknown'",
+          "default": "strict",
+          "description": "strict = must exist in country-defaults.json; unknown = any well-formed ISO 3166-1 alpha-2 accepted."
+        }
+      ],
+      "example_field_rule": "country_code: ['required', 'valid_country_code']",
+      "error_message_key": "region::validation.valid_country_code",
+      "default_message": "The :attribute must be a valid ISO 3166-1 country code (2 uppercase letters, e.g. US, AE, GB)."
+    },
+    {
+      "name": "valid_currency_code",
+      "class": "Academorix\\Region\\Rules\\ValidCurrencyCode",
+      "signature": "valid_currency_code",
+      "description": "Ensures the value is a well-formed ISO 4217 currency code (3 uppercase letters — 'USD', 'AED', 'GBP', 'EUR'). Not gated on the country_code — a tenant in AE may legitimately price in USD.",
+      "params": [],
+      "example_field_rule": "currency: ['required', 'valid_currency_code']",
+      "error_message_key": "region::validation.valid_currency_code",
+      "default_message": "The :attribute must be a valid ISO 4217 currency code (3 uppercase letters, e.g. USD, AED, GBP)."
+    },
+    {
+      "name": "valid_iana_timezone",
+      "class": "Academorix\\Region\\Rules\\ValidIanaTimezone",
+      "signature": "valid_iana_timezone[:strict]",
+      "description": "Ensures the value is a member of PHP's `\\DateTimeZone::listIdentifiers()` — the full IANA tz database. In default `strict` mode rejects deprecated aliases (e.g. `US/Pacific`) — use the canonical IANA form (`America/Los_Angeles`).",
+      "params": [{ "name": "strict", "type": "bool", "default": true }],
+      "example_field_rule": "timezone: ['required', 'valid_iana_timezone']",
+      "error_message_key": "region::validation.valid_iana_timezone",
+      "default_message": "The :attribute must be a valid IANA timezone (e.g. America/New_York, Europe/London, Asia/Dubai)."
+    },
+    {
+      "name": "valid_bcp47_locale",
+      "class": "Academorix\\Region\\Rules\\ValidBcp47Locale",
+      "signature": "valid_bcp47_locale",
+      "description": "Ensures the value is a syntactically valid BCP-47 language tag. Delegates to `Locale::parseLocale()`. Distinct from the sibling rule shipped by the `user` module — this one accepts ANY BCP-47 tag (regions may serve locales the tenant hasn't enabled yet; the user module gates on tenant-enabled).",
+      "params": [],
+      "example_field_rule": "locale: ['required', 'valid_bcp47_locale']",
+      "error_message_key": "region::validation.valid_bcp47_locale",
+      "default_message": "The :attribute must be a valid BCP-47 language tag (e.g. en, en-US, ar-AE, zh-Hans)."
+    },
+    {
+      "name": "valid_tax_rate",
+      "class": "Academorix\\Region\\Rules\\ValidTaxRate",
+      "signature": "valid_tax_rate",
+      "description": "Ensures the value is a decimal 0..100 with up to 3 decimal places (matches the DECIMAL(5,3) storage). Rejects negative rates + rates > 100. Used on `tax_config.default_rate_percent` + every entry in `tax_config.rates[].rate_percent`.",
+      "params": [],
+      "example_field_rule": "tax_config.default_rate_percent: ['required', 'valid_tax_rate']",
+      "error_message_key": "region::validation.valid_tax_rate",
+      "default_message": "The :attribute must be a decimal between 0 and 100 with up to 3 decimal places."
+    },
+    {
+      "name": "weekend_days_valid",
+      "class": "Academorix\\Region\\Rules\\WeekendDaysValid",
+      "signature": "weekend_days_valid",
+      "description": "Ensures the value is a non-empty array whose entries are all valid day-of-week names (lowercase). Accepts 1-7 entries. Rejects duplicates. The default per country in `data/country-defaults.json` is normally `[saturday, sunday]` (Western) or `[friday, saturday]` (Gulf); tenants in the Maldives may opt for `[friday]` alone.",
+      "params": [],
+      "example_field_rule": "weekend_days: ['required', 'array', 'weekend_days_valid']",
+      "error_message_key": "region::validation.weekend_days_valid",
+      "default_message": "The :attribute must be a non-empty array of day names (monday, tuesday, wednesday, thursday, friday, saturday, sunday), with no duplicates."
+    }
+  ]
+}

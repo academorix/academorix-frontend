@@ -1,0 +1,45 @@
+{
+  "id": "academorix://modules/branch/notifications",
+  "$version": 1,
+  "title": "branch — notification classes + categories",
+  "namespace": "Academorix\\Branch\\Notifications",
+  "notifications": [
+    "BranchCreatedNotification",
+    "BranchClosedNotification",
+    "BranchOpeningHoursChangedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "branch.created",
+      "display_name": "New branch created",
+      "description": "Sent to tenant admins + owners when a new Branch is provisioned. Includes the branch name, organization, region, and a link to the branch settings.",
+      "default_channels": ["in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "branch.closed",
+      "display_name": "Branch closed",
+      "description": "Sent when a Branch transitions to closed status. Recipients are: tenant admins + owners AND every Staff / Coach / Reception User currently assigned to the Branch. Closure affects operational scheduling — cannot be opted out of.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "branch.opening_hours_changed",
+      "display_name": "Opening hours changed",
+      "description": "Sent to members with active memberships referencing the Branch when opening_hours changes (or the branch is paused / resumed, since those effectively change availability). Opt-in — many members prefer to check the current hours on-demand rather than receive a mail per edit.",
+      "default_channels": ["in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    }
+  ]
+}

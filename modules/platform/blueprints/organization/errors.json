@@ -1,0 +1,169 @@
+{
+  "id": "academorix://modules/organization/errors",
+  "$version": 1,
+  "title": "organization — error codes",
+  "namespace": "organization",
+  "errors": [
+    {
+      "code": "ORGANIZATION_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "organization.errors.organization_not_found"
+    },
+    {
+      "code": "ORGANIZATION_SLUG_TAKEN",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "organization.errors.organization_slug_taken",
+      "description": "The (tenant_id, slug) tuple already exists. Slugs are unique per tenant (partial unique WHERE deleted_at IS NULL — soft-deleted rows do not collide)."
+    },
+    {
+      "code": "ORGANIZATION_SLUG_RESERVED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "organization.errors.organization_slug_reserved",
+      "description": "Attempted a slug listed in config('organization.validation.reserved_slugs') without the system-context bypass. Reserved list includes `admin`, `api`, `platform`, `system`, `default`, `www`, `app`, `static`, `test`, `internal`."
+    },
+    {
+      "code": "ORGANIZATION_SLUG_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "organization.errors.organization_slug_invalid",
+      "description": "Slug fails the regex config('organization.validation.require_slug_pattern')."
+    },
+    {
+      "code": "ORGANIZATION_SLOT_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "organization.errors.organization_slot_exceeded",
+      "description": "Reached `organization_slot` cap. Response includes the current tier + upgrade path. Small tier is locked to 1 (the default org)."
+    },
+    {
+      "code": "ORGANIZATION_NESTING_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "organization.errors.organization_nesting_not_entitled",
+      "description": "Tenant lacks the `organization_hierarchy` boolean entitlement + attempted parent_id != null. Enterprise-only feature. Response includes upgrade path."
+    },
+    {
+      "code": "ORGANIZATION_REPARENT_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "organization.errors.organization_reparent_not_entitled",
+      "description": "Tenant lacks the `organization_reparent` boolean entitlement + attempted POST /reparent. Distinct from creation-time nesting."
+    },
+    {
+      "code": "ORGANIZATION_BRANDING_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "organization.errors.organization_branding_not_entitled",
+      "description": "Tenant lacks the `organization_branding` boolean entitlement + attempted to write logo_url/primary_color/secondary_color/description. Medium+ feature. The tenant-level Branding still applies."
+    },
+    {
+      "code": "ORGANIZATION_PARENT_CROSS_TENANT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "organization.errors.organization_parent_cross_tenant",
+      "description": "The proposed parent_id belongs to a different tenant. Enforced by `parent_same_tenant` rule + OrganizationObserver — a defense-in-depth check on top of the tenant scope. Never expected in a well-formed request; when observed, indicates either an integration bug or an attempted lateral-move attack."
+    },
+    {
+      "code": "ORGANIZATION_PARENT_CYCLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "organization.errors.organization_parent_cycle",
+      "description": "Proposed parent_id is a descendant of the current node — would create a cycle. Response includes the offending `cycle_path` array so the UI can visualise the loop."
+    },
+    {
+      "code": "ORGANIZATION_PARENT_DEPTH_EXCEEDED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "organization.errors.organization_parent_depth_exceeded",
+      "description": "The proposed parent's tree_depth + 1 exceeds config('organization.hierarchy.max_depth'). Response includes current cap + this node's descendant-max-depth."
+    },
+    {
+      "code": "ORGANIZATION_PARENT_NOT_FOUND",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "organization.errors.organization_parent_not_found",
+      "description": "Proposed parent_id references a non-existent (or soft-deleted) row."
+    },
+    {
+      "code": "ORGANIZATION_HAS_DESCENDANTS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "organization.errors.organization_has_descendants",
+      "description": "Attempted to delete an Organization while at least one descendant Organization still exists. Move or archive descendants first. Response includes `descendant_count`."
+    },
+    {
+      "code": "ORGANIZATION_IN_USE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "organization.errors.organization_in_use",
+      "description": "Attempted to delete/archive an Organization referenced by one or more `branches` rows. Archive/reassign the branches first. Response includes `branch_count`."
+    },
+    {
+      "code": "ORGANIZATION_IS_DEFAULT",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "organization.errors.organization_is_default",
+      "description": "Attempted to delete / archive / pause the tenant's is_default=true Organization without first promoting another row to default. Enforced by OrganizationObserver + DeleteOrganizationAction."
+    },
+    {
+      "code": "ORGANIZATION_STATUS_TRANSITION_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "organization.errors.organization_status_transition_invalid",
+      "description": "Requested status transition is not valid from the current state (e.g. resume from archived). Response includes the allowed transitions."
+    },
+    {
+      "code": "ORGANIZATION_DEFAULT_INVARIANT_VIOLATED",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "organization.errors.organization_default_invariant_violated",
+      "description": "The tenant has zero or 2+ is_default=true rows. Emitted by ReconcileDefaultOrganizationInvariantJob when `repair_mode=alert-only`. Reads are blocked until ops repairs the state."
+    },
+    {
+      "code": "ORGANIZATION_TREE_PATH_DRIFT",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "organization.errors.organization_tree_path_drift",
+      "description": "A row's tree_path is inconsistent with its parent_id chain (materialised path drift). Fired by the health probe; reads through the tree cache are refused until RebuildTreePathsJob repairs the row."
+    }
+  ]
+}

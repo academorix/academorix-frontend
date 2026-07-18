@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/facility/helpers",
+  "$version": 1,
+  "title": "facility — helper functions",
+  "description": "Ergonomic helpers for accessing the active facility from the request context, resolving pricing, checking availability, and computing pass credits. All helpers are thin wrappers around bound services — never business logic.",
+  "namespace": "Academorix\\Facility\\Support",
+  "helpers": [
+    {
+      "signature": "active_facility(): ?Facility",
+      "purpose": "Returns the resolved Facility for the current request (set by facility.resolve_active middleware). Null when no facility context.",
+      "example": "$facility = active_facility();\nif ($facility === null) throw new NoActiveFacilityException();",
+      "delegates_to": "Request::activeFacility() macro"
+    },
+    {
+      "signature": "active_facility_id(): ?string",
+      "purpose": "Returns the resolved Facility.id or null. Convenience for creators that need the ID without loading the model.",
+      "delegates_to": "Request::activeFacilityId() macro"
+    },
+    {
+      "signature": "compute_booking_price(Facility $facility, Carbon $startsAt, Carbon $endsAt, int $attendeesCount = 1): int",
+      "purpose": "Returns the resolved booking price in cents. Consults facility.pricing_json + peak_hours + attendees_count via PricingCalculator. Delegated to the bound service so tenants swapping the calculator swap this too.",
+      "delegates_to": "PricingCalculator::compute()"
+    },
+    {
+      "signature": "is_facility_available(Facility $facility, Carbon $startsAt, Carbon $endsAt): bool",
+      "purpose": "Check whether a facility is available for a given window (respects availability_json + blackout_dates but NOT the overlap check). Cheap read-only check for UI-side gating.",
+      "delegates_to": "AvailabilityEvaluator::isAvailable()"
+    },
+    {
+      "signature": "find_covering_pass(User $user, Facility $facility, Carbon $onDate): ?Pass",
+      "purpose": "Returns the pass that would cover a booking-create for this user + facility + date, or null. Used by the SDUI booking flow to render 'pay with pass' vs 'pay full' branches.",
+      "delegates_to": "PassCreditGate::findCoveringPass()"
+    },
+    {
+      "signature": "generate_receipt_number(Tenant $tenant, DateTimeInterface $on = null): string",
+      "purpose": "Materialises a unique receipt number in the tenant's yearly sequence. Consumed by DayPassObserver on create.",
+      "delegates_to": "ReceiptNumberGenerator::next()"
+    }
+  ],
+  "notes": [
+    "Helpers deliberately delegate — testing swaps the bound service to a stub, and every helper follows.",
+    "No helper directly touches the DB — everything routes through repositories or services. Keeps the boundary clean."
+  ]
+}

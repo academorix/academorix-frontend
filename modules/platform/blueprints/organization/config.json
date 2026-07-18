@@ -1,0 +1,172 @@
+{
+  "id": "academorix://modules/organization/config",
+  "$version": 1,
+  "title": "organization — developer configuration",
+  "configFile": "config/organization.php",
+  "envPrefix": "ORGANIZATION_",
+  "sections": {
+    "provisioning": {
+      "keys": [
+        {
+          "path": "organization.provisioning.seed_default_on_tenant_create",
+          "type": "bool",
+          "env": "ORGANIZATION_SEED_DEFAULT_ON_TENANT_CREATE",
+          "default": true,
+          "description": "Dispatch SeedDefaultOrganizationForTenantJob on tenancy::TenantProvisioned. Off = tenants land with zero Organizations (only valid for tests / migration seeds)."
+        },
+        {
+          "path": "organization.provisioning.default_category_from_business_type",
+          "type": "bool",
+          "default": true,
+          "description": "When true, the default org's `category` is inferred from `tenant.business_type` via config('organization.category_map'). When false, defaults to `mixed`."
+        },
+        {
+          "path": "organization.provisioning.category_map",
+          "type": "array",
+          "default": {
+            "academy": "sports_academy",
+            "sports_center": "sports_center",
+            "school": "school",
+            "gym": "gym",
+            "federation": "federation",
+            "club": "club",
+            "mixed": "mixed"
+          },
+          "description": "Maps a tenant's business_type slug to an Organization category enum value."
+        }
+      ]
+    },
+    "hierarchy": {
+      "keys": [
+        {
+          "path": "organization.hierarchy.max_depth",
+          "type": "int",
+          "env": "ORGANIZATION_MAX_DEPTH",
+          "default": 5,
+          "description": "Cap on tree_depth. Rows are 0-indexed (root = depth 0). max_depth=5 means five levels of nesting under a root. Enforced by `parent_within_depth_cap` rule + OrganizationObserver."
+        },
+        {
+          "path": "organization.hierarchy.allow_reparent",
+          "type": "bool",
+          "default": true,
+          "description": "Master switch for the POST /reparent endpoint. Off = create + delete only; parent_id is immutable after create. Compliance-heavy tenants may prefer immutable trees."
+        },
+        {
+          "path": "organization.hierarchy.entitlement_key",
+          "type": "string",
+          "default": "organization_hierarchy",
+          "description": "The boolean entitlement gating parent_id use. Change here also changes what the observer + policy check for."
+        },
+        {
+          "path": "organization.hierarchy.reparent_entitlement_key",
+          "type": "string",
+          "default": "organization_reparent",
+          "description": "Distinct from creation-time nesting — this entitlement is the extra gate on POST-create moves. A tenant may nest at create time (organization_hierarchy) yet forbid post-create moves (organization_reparent) — locking the tree after initial setup for audit rigor."
+        },
+        {
+          "path": "organization.hierarchy.tree_path_separator",
+          "type": "string",
+          "default": ".",
+          "description": "Separator character in the materialised tree_path. NEVER change on a live tenant — every existing row would need rebuilding. Reserve for greenfield deploys."
+        }
+      ]
+    },
+    "branding": {
+      "keys": [
+        {
+          "path": "organization.branding.entitlement_key",
+          "type": "string",
+          "default": "organization_branding",
+          "description": "Boolean entitlement gating logo_url + primary_color + secondary_color + description writes."
+        },
+        {
+          "path": "organization.branding.default_primary_color",
+          "type": "string",
+          "default": "#1F2937",
+          "description": "Fallback primary color when an org has no branding + the tenant has no default branding."
+        },
+        {
+          "path": "organization.branding.default_secondary_color",
+          "type": "string",
+          "default": "#F97316"
+        }
+      ]
+    },
+    "reconciliation": {
+      "keys": [
+        {
+          "path": "organization.reconciliation.schedule",
+          "type": "string",
+          "default": "0 3 * * *",
+          "description": "Cron for ReconcileDefaultOrganizationInvariantJob. Default = daily 03:00 UTC."
+        },
+        {
+          "path": "organization.reconciliation.repair_mode",
+          "type": "string",
+          "default": "auto",
+          "enum": ["auto", "alert-only"],
+          "description": "auto = repair drift immediately + fire OrganizationDefaultChanged; alert-only = fire OrganizationDefaultInvariantViolated + block reads until support intervenes."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "organization.retention.archived_retention_days",
+          "type": "int",
+          "default": 730,
+          "description": "Hard-delete an archived Organization row after this many days IF no descendants + no branch references remain."
+        },
+        {
+          "path": "organization.retention.purge_batch_size",
+          "type": "int",
+          "default": 100,
+          "description": "PurgeArchivedOrganizationsJob batch size. Small to avoid holding row-level locks across many rows."
+        }
+      ]
+    },
+    "validation": {
+      "keys": [
+        {
+          "path": "organization.validation.require_slug_pattern",
+          "type": "string",
+          "default": "^[a-z][a-z0-9-]*[a-z0-9]$",
+          "description": "PCRE for slug validation. Enforces lowercase, alphanumeric + hyphen, no leading/trailing hyphens. Length 2..64 enforced separately by the FormRequest."
+        },
+        {
+          "path": "organization.validation.reserved_slugs",
+          "type": "array",
+          "default": [
+            "admin",
+            "api",
+            "platform",
+            "system",
+            "internal",
+            "default",
+            "test",
+            "www",
+            "app",
+            "static"
+          ],
+          "description": "Slugs that would collide with routing / infra keywords. Enforced by the `organization_slug_reserved` rule. NOTE: 'default' is on this list even though the default org SEEDER uses slug='default' — the observer allows the seeder path (is_default=true + system-context) as a bypass."
+        }
+      ]
+    },
+    "cache": {
+      "keys": [
+        {
+          "path": "organization.cache.tree_ttl_seconds",
+          "type": "int",
+          "default": 900,
+          "description": "TTL for `org:tree:{tenant_id}` and `org:descendants:*`. Long because writes are rare + tags handle invalidation."
+        },
+        {
+          "path": "organization.cache.default_ttl_seconds",
+          "type": "int",
+          "default": 900,
+          "description": "TTL for `org:default:{tenant_id}`."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "id": "academorix://modules/region/settings",
+  "$version": 1,
+  "title": "region — settings",
+  "description": "Tenant-scoped policy for region provisioning + retention + reconciliation behaviour. Compliance floors clamp retention_days up when the tenant's regulatory profile requires it (financial-record retention floor: 730 days).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "region",
+      "class": "Academorix\\Region\\Settings\\RegionSettings",
+      "label": "Regions",
+      "description": "Tenant-wide policy for commercial + regulatory zones.",
+      "icon": "globe-alt",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 40,
+      "permission": "regions.manage",
+      "sections": [
+        {
+          "label": "Provisioning",
+          "description": "How new regions get created.",
+          "icon": "plus-circle",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "async_seed",
+              "controlType": "toggle",
+              "label": "Seed default region asynchronously",
+              "defaultValue": true,
+              "helpText": "When on, the default region is provisioned on a background queue immediately after tenant creation. Off = the default region is created inside the tenant-provisioning transaction (slower but the tenant is never briefly regionless).",
+              "sortOrder": 1
+            },
+            {
+              "name": "require_tax_config_on_create",
+              "controlType": "toggle",
+              "label": "Require tax config when creating a region",
+              "defaultValue": false,
+              "helpText": "When on, POST /regions refuses without a fully-formed tax_config. When off, defaults from the country's shipped defaults auto-fill.",
+              "sortOrder": 2
+            },
+            {
+              "name": "reject_unknown_country_code",
+              "controlType": "toggle",
+              "label": "Reject unknown country codes",
+              "defaultValue": true,
+              "helpText": "When on, region create refuses country codes not in the shipped defaults table. Off = accept any ISO 3166-1 code (needed for supranational zones).",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Reconciliation",
+          "description": "How the system heals default-region drift.",
+          "icon": "arrow-path",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "alert_on_drift",
+              "controlType": "toggle",
+              "label": "Alert on default-region drift",
+              "defaultValue": true,
+              "helpText": "When on, the reconciler pages ops on drift (a tenant with 0 or 2+ default regions). Off = drift is only logged.",
+              "sortOrder": 1
+            },
+            {
+              "name": "auto_heal",
+              "controlType": "toggle",
+              "label": "Auto-heal drift",
+              "defaultValue": false,
+              "helpText": "When on, the reconciler auto-heals drift (promote-oldest OR re-seed-from-country_code). Off by default — surface + acknowledge before healing.",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Retention",
+          "description": "How long archived regions are kept.",
+          "icon": "archive-box",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "archived_regions_retention_days",
+              "controlType": "number",
+              "label": "Days to hold archived regions",
+              "defaultValue": 730,
+              "min": 730,
+              "max": 2555,
+              "helpText": "Days a soft-deleted (archived) region stays recoverable. Compliance floor: 730 days (2 years — financial record retention). Enterprise tenants may extend up to 2555 (7 years).",
+              "sortOrder": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

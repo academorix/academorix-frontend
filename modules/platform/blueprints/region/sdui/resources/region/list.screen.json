@@ -1,0 +1,418 @@
+{
+  "id": "region.resources.region.list",
+  "title": "Regions",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/settings/regions",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "region", "entity": "region", "action": "list" },
+  "requiresPermission": "regions.viewAny",
+  "notes": [
+    "Renders as a filterable table by default. Every row action is gated by the appropriate policy ability + entitlement — hidden buttons never render.",
+    "`is_default` renders as a compact chip (leading star icon); non-default rows show nothing in that column.",
+    "The `Tax` column uses the shared `region.tax-badge` widget so the format matches invoices + line items.",
+    "Row menu action `Edit tax config` navigates to the focused tax-config screen (an audit-facing detail view) instead of the generic edit screen. Preserves the audit narrative that tax edits are separately-gated + financial-record retained."
+  ],
+  "dataSources": [
+    {
+      "name": "regions",
+      "kind": "http.get",
+      "url": "/api/v1/regions?include=inbound_reference_count,is_in_use,tax_registration_redacted",
+      "unwrap": "data"
+    },
+    {
+      "name": "slotUsage",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/region_slot",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    },
+    {
+      "name": "entitlements",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements?keys=region_custom_tax_rules,region_time_travel",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    },
+    {
+      "name": "me",
+      "kind": "http.get",
+      "url": "/api/auth/me",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Regions"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Commercial + regulatory zones under this tenant. Each region has its own currency, timezone, locale, and tax posture. Every tenant has exactly one default."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "entitlements.entitlement-usage-bar",
+                  "props": {
+                    "size": "sm",
+                    "label": "Regions"
+                  },
+                  "bindings": {
+                    "props": {
+                      "cap": { "$ref": "slotUsage.value_cap" },
+                      "used": { "$ref": "slotUsage.value_used" }
+                    }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "plus",
+                    "children": "New region"
+                  },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/settings/regions/new" }
+                  },
+                  "bindings": { "disabled": { "$ref": "slotUsage.is_exceeded" } },
+                  "requiresPermission": "regions.create"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Toolbar",
+          "children": [
+            {
+              "kind": "SearchField",
+              "props": {
+                "placeholder": "Search by name, slug, country code, currency…",
+                "name": "q"
+              }
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "name": "status",
+                "placeholder": "All statuses",
+                "clearable": true
+              },
+              "options": [
+                { "key": "active", "label": "Active" },
+                { "key": "paused", "label": "Paused" },
+                { "key": "archived", "label": "Archived" }
+              ]
+            },
+            {
+              "kind": "Widget",
+              "props": { "id": "region.country-picker" },
+              "bindings": {
+                "props": {
+                  "name": "country_code",
+                  "placeholder": "All countries",
+                  "clearable": true,
+                  "size": "sm"
+                }
+              }
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "name": "has_registration_number",
+                "placeholder": "Tax registration",
+                "clearable": true
+              },
+              "options": [
+                { "key": "true", "label": "Has registration" },
+                { "key": "false", "label": "No registration" }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "columns": [
+            {
+              "key": "name",
+              "header": "Region",
+              "cell": {
+                "kind": "View",
+                "props": { "className": "flex flex-col" },
+                "children": [
+                  {
+                    "kind": "Link",
+                    "propsExpr": "{ to: '/settings/regions/' + row.id, children: row.name, className: 'font-medium' }"
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted font-mono" },
+                    "bindings": { "children": { "$ref": "row.slug" } }
+                  }
+                ]
+              }
+            },
+            {
+              "key": "country_code",
+              "header": "Country",
+              "cell": {
+                "kind": "View",
+                "props": { "className": "flex flex-col" },
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-mono text-sm" },
+                    "bindings": { "children": { "$expr": "row.country_code || '—'" } }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted" },
+                    "bindings": {
+                      "hidden": { "$expr": "!row.subdivision_code" },
+                      "children": { "$ref": "row.subdivision_code" }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "key": "currency",
+              "header": "Currency",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "font-mono text-sm" },
+                "bindings": {
+                  "children": { "$expr": "row.currency_symbol + ' ' + row.currency" }
+                }
+              }
+            },
+            {
+              "key": "timezone",
+              "header": "Timezone",
+              "cell": {
+                "kind": "View",
+                "props": { "className": "flex flex-col" },
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-sm" },
+                    "bindings": { "children": { "$ref": "row.timezone" } }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted" },
+                    "bindings": { "children": { "$ref": "row.locale" } }
+                  }
+                ]
+              }
+            },
+            {
+              "key": "tax",
+              "header": "Tax",
+              "cell": {
+                "kind": "Widget",
+                "props": { "id": "region.tax-badge" },
+                "bindings": {
+                  "props": {
+                    "currencySymbol": { "$ref": "row.currency_symbol" },
+                    "ratePercent": { "$ref": "row.tax_config.default_rate_percent" },
+                    "name": { "$ref": "row.tax_config.name" },
+                    "hasCustomRates": { "$expr": "(row.tax_config.rates || []).length > 0" }
+                  }
+                }
+              }
+            },
+            {
+              "key": "is_default",
+              "header": "Default",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "xs", "variant": "accent", "leadingIcon": "star-solid", "children": "Default" },
+                "bindings": { "hidden": { "$expr": "!row.is_default" } }
+              }
+            },
+            {
+              "key": "status",
+              "header": "Status",
+              "cell": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-1" },
+                "children": [
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "success", "children": "Active" },
+                    "bindings": { "hidden": { "$expr": "row.status !== 'active'" } }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "warning", "children": "Paused" },
+                    "bindings": { "hidden": { "$expr": "row.status !== 'paused'" } }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "neutral", "children": "Archived" },
+                    "bindings": { "hidden": { "$expr": "row.status !== 'archived'" } }
+                  }
+                ]
+              }
+            },
+            {
+              "key": "sort_order",
+              "header": "Order",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-xs font-mono" },
+                "bindings": { "children": { "$ref": "row.sort_order" } }
+              }
+            },
+            {
+              "key": "actions",
+              "header": "",
+              "cell": {
+                "kind": "Menu",
+                "trigger": {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "ghost",
+                    "isIconOnly": true,
+                    "aria-label": "Row actions",
+                    "children": { "kind": "Icon", "props": { "name": "ellipsis-vertical" } }
+                  }
+                },
+                "items": [
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "View" },
+                    "actions": {
+                      "onPress": { "kind": "navigate", "toExpr": "'/settings/regions/' + row.id" }
+                    }
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Edit" },
+                    "actions": {
+                      "onPress": { "kind": "navigate", "toExpr": "'/settings/regions/' + row.id + '/edit'" }
+                    },
+                    "requiresPermission": "regions.update"
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Edit tax config" },
+                    "actions": {
+                      "onPress": { "kind": "navigate", "toExpr": "'/settings/regions/' + row.id + '/tax'" }
+                    },
+                    "requiresPermission": "regions.update.tax_config"
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Set as default" },
+                    "bindings": {
+                      "hidden": { "$expr": "row.is_default || row.status !== 'active'" }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "urlExpr": "'/api/v1/regions/' + row.id + '/set-default'",
+                        "confirm": "Set this as the default region? Invoice pricing for legacy regionless rows will shift."
+                      }
+                    },
+                    "requiresPermission": "regions.set_default"
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Pause" },
+                    "bindings": {
+                      "hidden": { "$expr": "row.status !== 'active' || row.is_default" }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "modal.open",
+                        "modal": "pause-region",
+                        "propsExpr": "{ regionId: row.id, regionName: row.name }"
+                      }
+                    },
+                    "requiresPermission": "regions.pause"
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Resume" },
+                    "bindings": { "hidden": { "$expr": "row.status !== 'paused'" } },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "urlExpr": "'/api/v1/regions/' + row.id + '/resume'"
+                      }
+                    },
+                    "requiresPermission": "regions.resume"
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": {
+                      "children": "Archive",
+                      "className": "text-danger"
+                    },
+                    "bindings": {
+                      "hidden": { "$expr": "row.status === 'archived' || row.is_default" }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "urlExpr": "'/api/v1/regions/' + row.id + '/archive'",
+                        "confirm": "Archive this region? Refused if any branches or memberships still reference it."
+                      }
+                    },
+                    "requiresPermission": "regions.archive"
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Restore" },
+                    "bindings": { "hidden": { "$expr": "row.status !== 'archived'" } },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "urlExpr": "'/api/v1/regions/' + row.id + '/resume'",
+                        "confirm": "Restore this region? The 730-day retention window must not have expired."
+                      }
+                    },
+                    "requiresPermission": "regions.restore"
+                  }
+                ]
+              }
+            }
+          ],
+          "bindings": {
+            "rows": { "$ref": "regions" },
+            "isLoading": { "$ref": "regions.isLoading" }
+          }
+        }
+      ]
+    }
+  ]
+}

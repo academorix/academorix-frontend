@@ -1,0 +1,33 @@
+{
+  "id": "academorix://modules/branch/permissions",
+  "$version": 1,
+  "title": "branch — permissions",
+  "seeder": "Academorix\\Branch\\Database\\Seeders\\BranchPermissionSeeder",
+  "isSystem": true,
+  "scope_suffix_convention": "Same suffix convention as user/access — `.any` / `.tenant` / `.branch` / `.own` — resolved by the `ScopeSuffixResolver` shipped by the user module. The base permission (no suffix) is the highest-tier variant, effectively `.tenant`.",
+  "permissions": [
+    { "name": "branches.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Base variant — tenant-scoped list across every branch under the caller's active tenant." },
+    { "name": "branches.viewAny.tenant", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "branches.viewAny.own", "guard": "sanctum", "seededOn": ["member", "coach", "reception", "athlete", "guardian"], "description": "Members see only the branches they participate in (via TenantMember / TeamMember / AthleteEnrollment)." },
+    { "name": "branches.view", "guard": "sanctum", "seededOn": ["admin", "owner", "member", "coach", "reception", "athlete", "guardian"], "description": "Read a single Branch. Every tenant member can read the branches they have visibility on." },
+    { "name": "branches.view.own", "guard": "sanctum", "seededOn": ["member", "coach", "reception", "athlete", "guardian"] },
+    { "name": "branches.create", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Also gated by the `branch_slot` entitlement." },
+    { "name": "branches.update", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "branches.update_hours", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Fine-grained permission for opening-hours edits. Separated because staff-tier roles may need to update hours without being able to touch address / capacity." },
+    { "name": "branches.update_hours.branch", "guard": "sanctum", "seededOn": ["reception"], "description": "Reception role can update hours only for the branches they're assigned to." },
+    { "name": "branches.update_address", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Address edits are audit-sensitive — kept as a distinct permission." },
+    { "name": "branches.update_coordinates", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Manual coordinate pin drops. Distinct from `update_address` because pinning without editing the address is a common map-view flow." },
+    { "name": "branches.update_capacity", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Fire-safety cap edits. Compliance-relevant — kept as a distinct permission for audit clarity." },
+    { "name": "branches.pause", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "branches.resume", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "branches.close", "guard": "sanctum", "seededOn": ["owner"], "description": "Higher bar than update — closure affects downstream operations. Owner-tier by default." },
+    { "name": "branches.reopen", "guard": "sanctum", "seededOn": ["owner"] },
+    { "name": "branches.set_default", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "branches.geocode", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Explicitly trigger re-geocoding via `POST /branches/{branch}/geocode`. Also gated by the `branch_geocoding` entitlement." },
+    { "name": "branches.audit_address", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Read the address-audit CLI-style report — validates the structured address against the country's postal format + reports drift from the geocoded canonical form." },
+    { "name": "platform.branches.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"], "description": "Cross-tenant read for support tooling." },
+    { "name": "platform.branches.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
+    { "name": "platform.branches.force_close", "guard": "platform_admin", "seededOn": ["super_admin"], "description": "Compliance-forced closure that bypasses the dependency-check kill switch. Super-admin only — every use fires an alert." },
+    { "name": "platform.branches.hard_delete", "guard": "platform_admin", "seededOn": ["super_admin"], "description": "Two-person approval via `branch:hard-delete --platform-support`. Never exposed on any HTTP surface — CLI-only." }
+  ]
+}

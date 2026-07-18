@@ -1,0 +1,235 @@
+{
+  "id": "facility.resources.pass.list",
+  "title": "Passes",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/passes",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "facility", "entity": "pass", "action": "list" },
+  "requiresPermission": "passes.viewAny",
+  "requiresEntitlement": "facilities_advanced",
+  "dataSources": [
+    {
+      "name": "passes",
+      "kind": "http.get",
+      "url": "/api/v1/passes",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "branches",
+      "kind": "http.get",
+      "url": "/api/v1/branches?filter[status]=active",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-6xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Passes" }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Membership-linked or manually-issued facility access credits."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "leadingIcon": "plus", "children": "Issue pass" },
+              "actions": {
+                "onPress": { "kind": "modal.open", "modal": "issue-pass" }
+              },
+              "requiresPermission": "passes.create"
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 flex-wrap py-2" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Branch", "menuTrigger": "focus", "className": "min-w-56" },
+              "bindings": { "items": { "$ref": "branches" } },
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "branch_id",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus", "className": "min-w-40" },
+              "props_items": [
+                { "id": "active", "label": "Active" },
+                { "id": "exhausted", "label": "Exhausted" },
+                { "id": "expired", "label": "Expired" },
+                { "id": "revoked", "label": "Revoked" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status_derived",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "props": { "className": "w-full" },
+          "columns": [
+            { "id": "holder", "label": "Holder" },
+            { "id": "scope", "label": "Valid at" },
+            { "id": "credits", "label": "Credits" },
+            { "id": "validity", "label": "Validity" },
+            { "id": "actions", "label": "" }
+          ],
+          "bindings": {
+            "items": { "$ref": "passes" },
+            "isLoading": { "$ref": "passes.isLoading" }
+          },
+          "rowRenderer": {
+            "kind": "TableRow",
+            "cells": [
+              {
+                "kind": "TableCell",
+                "children": [
+                  {
+                    "kind": "Text",
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.assignable_user_ids.length + ' user' + (row.assignable_user_ids.length === 1 ? '' : 's')"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "TableCell",
+                "children": [
+                  {
+                    "kind": "Text",
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.facility ? row.facility.name : 'Any facility in ' + row.branch.name"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "TableCell",
+                "children": [
+                  {
+                    "kind": "Widget",
+                    "widget": "facility.pass-credits-remaining",
+                    "props": {},
+                    "bindings": {
+                      "used": { "$ref": "row.used_credits" },
+                      "total": { "$ref": "row.total_credits" }
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "TableCell",
+                "children": [
+                  {
+                    "kind": "View",
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-sm" },
+                        "bindings": { "children": { "$expr": "formatDate(row.valid_from, 'short')" } }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted" },
+                        "bindings": { "children": { "$expr": "'to ' + formatDate(row.valid_until, 'short')" } }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "TableCell",
+                "children": [
+                  {
+                    "kind": "Menu",
+                    "trigger": {
+                      "kind": "Button",
+                      "props": {
+                        "variant": "ghost",
+                        "isIconOnly": true,
+                        "children": { "kind": "Icon", "props": { "name": "ellipsis-vertical" } }
+                      }
+                    },
+                    "items": [
+                      {
+                        "kind": "MenuItem",
+                        "props": { "children": "View details" },
+                        "actions": {
+                          "onPress": {
+                            "kind": "navigate",
+                            "toExpr": "'/tenant/passes/' + row.id"
+                          }
+                        }
+                      },
+                      {
+                        "kind": "MenuItem",
+                        "props": { "children": "Transfer" },
+                        "bindings": { "hidden": { "$expr": "!row.is_transferable" } },
+                        "actions": {
+                          "onPress": {
+                            "kind": "modal.open",
+                            "modal": "transfer-pass",
+                            "propsExpr": "{ passId: row.id }"
+                          }
+                        },
+                        "requiresPermission": "passes.transfer"
+                      },
+                      {
+                        "kind": "MenuItem",
+                        "props": { "children": "Revoke", "className": "text-danger" },
+                        "actions": {
+                          "onPress": {
+                            "kind": "modal.open",
+                            "modal": "revoke-pass",
+                            "propsExpr": "{ passId: row.id }"
+                          }
+                        },
+                        "requiresPermission": "passes.revoke"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

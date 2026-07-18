@@ -1,0 +1,215 @@
+{
+  "id": "academorix://modules/facility/permissions",
+  "$version": 1,
+  "title": "facility — permissions",
+  "seeder": "Academorix\\Facility\\Database\\Seeders\\FacilityPermissionSeeder",
+  "isSystem": true,
+  "description": "Two audiences. Tenant plane (sanctum) — facility catalogue CRUD by owner/admin/branch-manager; booking CRUD by any member (with per-facility permission for restricted facilities via `facilities.book.branch`); day-pass POS by reception staff + admins; pass management by owner/admin/coach. Platform plane (platform_admin) — cross-tenant read + support tooling. All permissions carry the `facilities.` prefix (or `platform.facilities.` on the platform audience) to align with hierarchy.md §4 audience-boundary rules.",
+  "permissions": [
+    {
+      "name": "facilities.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["member", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "facilities.view",
+      "guard": "sanctum",
+      "seededOn": ["member", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "facilities.create",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "facilities.update",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "facilities.delete",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "facilities.retire",
+      "guard": "sanctum",
+      "description": "Transition facility to retired status — terminal, cascades future bookings when combined with --cascade flag.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "facilities.manage-blackouts",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "facilities.manage-pricing",
+      "guard": "sanctum",
+      "description": "Edit pricing_json. Financial-audit-critical; scoped to admins + owners.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "facilities.manage-availability",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "facilities.view-audit-usage",
+      "guard": "sanctum",
+      "description": "See utilisation reports (hourly occupancy, revenue per facility).",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "bookings.viewAny",
+      "guard": "sanctum",
+      "description": "See bookings owned by the caller. Admins additionally see all bookings via the ResourceBookingPolicy scope hook.",
+      "seededOn": ["member", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "bookings.view-all",
+      "guard": "sanctum",
+      "description": "See EVERY booking in the tenant (staff / support tooling). Distinct from bookings.viewAny (own-only).",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "bookings.view",
+      "guard": "sanctum",
+      "seededOn": ["member", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "bookings.create",
+      "guard": "sanctum",
+      "description": "Book a facility. Scoped by ResolveScope middleware — a coach with scope 'branch:X' can only book facilities in branch X.",
+      "seededOn": ["member", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "bookings.create.for-other",
+      "guard": "sanctum",
+      "description": "Book a facility on behalf of ANOTHER user (booked_for_user_id != booked_by_user_id). Parents booking for children, coaches for team members, receptionists for walk-ins.",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "bookings.cancel",
+      "guard": "sanctum",
+      "description": "Cancel a booking owned by the caller.",
+      "seededOn": ["member", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "bookings.cancel-any",
+      "guard": "sanctum",
+      "description": "Cancel any booking, including bypassing the cancellation_notice_hours window.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "bookings.reschedule",
+      "guard": "sanctum",
+      "seededOn": ["member", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "bookings.mark-no-show",
+      "guard": "sanctum",
+      "description": "Manually mark a booking as no-show before the automated job runs.",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "bookings.check-in",
+      "guard": "sanctum",
+      "description": "Set checked_in_at on a booking. Reception staff + admins.",
+      "seededOn": ["reception", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "bookings.complete",
+      "guard": "sanctum",
+      "description": "Reserved: manual completion is refused by the observer; this permission exists so downstream Wave 4 refund flows can grant it to specific ops staff.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "day_passes.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["reception", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "day_passes.view",
+      "guard": "sanctum",
+      "seededOn": ["reception", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "day_passes.issue",
+      "guard": "sanctum",
+      "description": "POS surface. Reception staff sell day passes.",
+      "seededOn": ["reception", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "day_passes.consume",
+      "guard": "sanctum",
+      "description": "Turnstile / receptionist marks a day pass consumed.",
+      "seededOn": ["reception", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "day_passes.refund",
+      "guard": "sanctum",
+      "description": "Reverse a day-pass sale within the 30-day refund window.",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "passes.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["member", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "passes.view",
+      "guard": "sanctum",
+      "seededOn": ["member", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "passes.create",
+      "guard": "sanctum",
+      "description": "Manually issue a pass (Wave 4 will auto-issue on Membership provisioning; manual creates cover ad-hoc cases).",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "passes.update",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "passes.transfer",
+      "guard": "sanctum",
+      "description": "Change assignable_user_ids on a transferable pass.",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "passes.revoke",
+      "guard": "sanctum",
+      "description": "Terminate a pass early (soft-delete + revocation_reason).",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "platform.facilities.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.facilities.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.facilities.view-audit-usage",
+      "guard": "platform_admin",
+      "description": "Cross-tenant utilisation report for support tooling + capacity planning.",
+      "seededOn": ["super_admin", "ops"]
+    },
+    {
+      "name": "platform.bookings.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.bookings.force-cancel",
+      "guard": "platform_admin",
+      "description": "Support intervention to cancel a booking bypassing every tenant-level guard. Every fire is audit-critical + notifies the tenant admin.",
+      "seededOn": ["super_admin", "ops"]
+    }
+  ]
+}

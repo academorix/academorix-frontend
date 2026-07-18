@@ -1,0 +1,182 @@
+{
+  "id": "branch.amenity-picker",
+  "title": "Amenity picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Amenity-tag picker with category grouping + inline search. Consumed by the branch create + edit screens. Feature-gates custom-tag entry on Enterprise-only (`branch_amenities: custom`).",
+  "props": {
+    "value_field": { "type": "string", "required": true, "description": "The form field name to submit under (typically 'amenities')." },
+    "defaultValue": { "type": "array", "default": [], "description": "Initial selected tags." },
+    "catalog": { "type": "array", "required": true, "description": "The platform amenity catalogue categories from data/amenity-catalog.json." },
+    "allow_custom": { "type": "boolean", "default": false, "description": "Enable the free-text 'add custom tag' input. Requires branch_amenities:custom entitlement." },
+    "layout": { "type": "string", "default": "grid", "enum": ["grid", "list"] },
+    "max_tags": { "type": "integer", "default": 30, "description": "Upper bound on selected count (matches config('branch.validation.max_amenity_tags'))." }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "SearchField",
+              "props": { "placeholder": "Filter amenities...", "name": "amenity_search", "className": "w-64" }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-xs text-muted" },
+              "bindings": {
+                "children": {
+                  "$expr": "selectedTags.length + ' selected · ' + (props.max_tags - selectedTags.length) + ' remaining'"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-wrap gap-2" },
+          "bindings": {
+            "hidden": { "$expr": "selectedTags.length === 0" }
+          },
+          "children": [
+            {
+              "kind": "List",
+              "bindings": { "items": { "$ref": "selectedTags" } },
+              "itemRenderer": {
+                "kind": "Chip",
+                "props": { "variant": "accent", "removable": true },
+                "bindings": {
+                  "children": { "$expr": "row.display_label || row.tag" }
+                },
+                "actions": {
+                  "onRemove": {
+                    "kind": "toggle_tag",
+                    "field": "props.value_field",
+                    "tag": "row.tag"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Accordion",
+          "props": { "multiple": true, "defaultExpanded": ["all"] },
+          "bindings": { "items": { "$ref": "props.catalog" } },
+          "itemRenderer": {
+            "kind": "AccordionItem",
+            "props": { "key": "row.category" },
+            "children": [
+              {
+                "kind": "AccordionHeader",
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-semibold" },
+                    "bindings": { "children": { "$ref": "row.display_label" } }
+                  }
+                ]
+              },
+              {
+                "kind": "AccordionContent",
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "grid grid-cols-2 md:grid-cols-3 gap-2" },
+                    "children": [
+                      {
+                        "kind": "List",
+                        "bindings": { "items": { "$ref": "row.amenities" } },
+                        "itemRenderer": {
+                          "kind": "Pressable",
+                          "props": {
+                            "className": "flex items-start gap-2 p-2 rounded border hover:bg-content1"
+                          },
+                          "bindings": {
+                            "props": {
+                              "className": {
+                                "$expr": "selectedTags.some(t => t.tag === row.tag) ? 'flex items-start gap-2 p-2 rounded border-2 border-accent bg-content1' : 'flex items-start gap-2 p-2 rounded border hover:bg-content1'"
+                              }
+                            }
+                          },
+                          "actions": {
+                            "onPress": {
+                              "kind": "toggle_tag",
+                              "field": "props.value_field",
+                              "tag": "row.tag"
+                            }
+                          },
+                          "children": [
+                            {
+                              "kind": "Icon",
+                              "props": { "className": "size-4 mt-0.5" },
+                              "bindings": { "props": { "name": { "$ref": "row.icon" } } }
+                            },
+                            {
+                              "kind": "View",
+                              "props": { "className": "flex flex-col" },
+                              "children": [
+                                {
+                                  "kind": "Text",
+                                  "props": { "className": "text-sm font-medium" },
+                                  "bindings": { "children": { "$ref": "row.display_label" } }
+                                },
+                                {
+                                  "kind": "Text",
+                                  "props": { "className": "text-xs text-muted" },
+                                  "bindings": {
+                                    "hidden": { "$expr": "!row.description" },
+                                    "children": { "$ref": "row.description" }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Fieldset",
+          "props": { "legend": "Custom amenities", "description": "Add tags that aren't in the platform catalogue." },
+          "bindings": { "hidden": { "$expr": "!props.allow_custom" } },
+          "children": [
+            {
+              "kind": "TextField",
+              "props": {
+                "name": "custom_amenity_input",
+                "placeholder": "e.g. rooftop_terrace",
+                "helpText": "Lowercase letters, digits, and underscores only. Tenant-scoped — doesn't affect the platform catalogue."
+              },
+              "actions": {
+                "onSubmit": {
+                  "kind": "toggle_tag",
+                  "field": "props.value_field",
+                  "tagExpr": "value.toLowerCase().replace(/[^a-z0-9_]/g, '_')"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "InfoBanner",
+          "props": { "variant": "info" },
+          "bindings": {
+            "hidden": { "$expr": "props.allow_custom" },
+            "children": "Need a tag that isn't in the catalogue? Custom amenity tags are available on Enterprise plans."
+          }
+        }
+      ]
+    }
+  ]
+}

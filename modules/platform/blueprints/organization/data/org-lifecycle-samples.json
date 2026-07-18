@@ -1,0 +1,493 @@
+{
+  "$version": 1,
+  "title": "Organization lifecycle samples",
+  "description": "Reference scenarios covering the important transitions in the Organization module. Used as QA fixtures + as a teaching aid for new engineers. NOT loaded at runtime — documentation only.",
+  "samples": [
+    {
+      "scenario": "Default org auto-seed on TenantProvisioned",
+      "input": {
+        "event": "tenancy::TenantProvisioned",
+        "tenant": {
+          "id": "tnt_01H1111TENANT",
+          "name": "Elite Sports Group",
+          "business_type": "sports_academy"
+        }
+      },
+      "trace": [
+        {
+          "step": "Listener SeedDefaultOrganizationOnTenantProvisioned fires",
+          "queue": "notifications",
+          "afterCommit": true
+        },
+        {
+          "step": "Dispatch SeedDefaultOrganizationForTenantJob",
+          "unique_key": "tnt_01H1111TENANT"
+        },
+        {
+          "step": "Job runs — idempotent guard",
+          "check": "SELECT id FROM organizations WHERE tenant_id='tnt_01H1111TENANT' AND is_default=true",
+          "result": "0 rows — proceed"
+        },
+        {
+          "step": "Infer category",
+          "input": "tenant.business_type='sports_academy'",
+          "output": "category='sports_academy'"
+        },
+        {
+          "step": "INSERT",
+          "row": {
+            "id": "org_01H2222DEFAULT",
+            "tenant_id": "tnt_01H1111TENANT",
+            "parent_id": null,
+            "name": "Elite Sports Group",
+            "slug": "default",
+            "category": "sports_academy",
+            "status": "active",
+            "is_default": true,
+            "sort_order": 0,
+            "tree_path": ".org_01H2222DEFAULT.",
+            "tree_depth": 0
+          }
+        },
+        {
+          "step": "Consume organization_slot",
+          "entitlement": "organization_slot",
+          "consumed": 1,
+          "remaining_by_tier": {
+            "small": 0,
+            "medium": 4,
+            "enterprise": null
+          }
+        },
+        {
+          "step": "Fire events",
+          "events": ["OrganizationCreated (was_seeded=true)", "TenantDefaultOrganizationSeeded"]
+        }
+      ],
+      "outcome": {
+        "http": "202 Accepted (tenant provisioning) → 200 OK downstream",
+        "duration_ms": 45
+      }
+    },
+    {
+      "scenario": "Create a second Organization (Medium tier)",
+      "input": {
+        "route": "POST /api/v1/organizations",
+        "tenant": {
+          "id": "tnt_01H1111TENANT",
+          "plan": "medium",
+          "organization_slot_used": 1,
+          "organization_slot_cap": 5
+        },
+        "actor": { "id": "usr_01H_ADMIN", "role": "admin" },
+        "body": {
+          "name": "Community Sports",
+          "slug": "community-sports",
+          "short_name": "Community",
+          "category": "sports_center",
+          "primary_color": "#0EA5E9",
+          "secondary_color": "#F97316"
+        }
+      },
+      "trace": [
+        {
+          "step": "Auth + tenant + application resolve",
+          "result": "OK"
+        },
+        {
+          "step": "Policy check organizations.create.tenant",
+          "actor_role": "admin",
+          "result": "allow"
+        },
+        {
+          "step": "Entitlement gate organization_slot",
+          "used": 1,
+          "cap": 5,
+          "result": "allow"
+        },
+        {
+          "step": "Entitlement gate organization_branding",
+          "reason": "primary_color + secondary_color present in body",
+          "tier": "medium",
+          "result": "allow"
+        },
+        {
+          "step": "Validation",
+          "checks": [
+            "valid_hex_color(primary_color=#0EA5E9) → pass",
+            "valid_hex_color(secondary_color=#F97316) → pass",
+            "organization_slug_reserved(community-sports) → pass",
+            "slug regex → pass"
+          ]
+        },
+        {
+          "step": "Observer creating",
+          "actions": [
+            "populate id=org_01H3333COMMUNITY",
+            "parent_id=null → skip hierarchy check",
+            "tree_path='.org_01H3333COMMUNITY.'",
+            "tree_depth=0",
+            "consume organization_slot"
+          ]
+        },
+        {
+          "step": "INSERT + commit"
+        },
+        {
+          "step": "Post-commit events",
+          "events": [
+            "OrganizationCreated",
+            "OrganizationBrandingUpdated (from initial branding writes)"
+          ]
+        }
+      ],
+      "outcome": {
+        "http": "201 Created",
+        "response": {
+          "data": {
+            "id": "org_01H3333COMMUNITY",
+            "slug": "community-sports",
+            "tree_depth": 0,
+            "is_default": false,
+            "status": "active"
+          }
+        }
+      }
+    },
+    {
+      "scenario": "Small tier — refused at second org",
+      "input": {
+        "route": "POST /api/v1/organizations",
+        "tenant": {
+          "plan": "small",
+          "organization_slot_used": 1,
+          "organization_slot_cap": 1
+        },
+        "body": { "name": "Second Brand", "slug": "second-brand", "category": "gym" }
+      },
+      "trace": [
+        {
+          "step": "Entitlement gate organization_slot",
+          "used": 1,
+          "cap": 1,
+          "result": "refused"
+        }
+      ],
+      "outcome": {
+        "http": "402 Payment Required",
+        "error_code": "ORGANIZATION_SLOT_EXCEEDED",
+        "response": {
+          "error": {
+            "code": "ORGANIZATION_SLOT_EXCEEDED",
+            "message": "Small tier limits you to 1 organization. Upgrade to Medium for up to 5.",
+            "upgrade_url": "/settings/billing/upgrade"
+          }
+        }
+      }
+    },
+    {
+      "scenario": "Nested create — refused without organization_hierarchy",
+      "input": {
+        "route": "POST /api/v1/organizations",
+        "tenant": {
+          "plan": "medium",
+          "entitlement_organization_hierarchy": false
+        },
+        "body": {
+          "name": "Elite Junior Academy",
+          "slug": "elite-junior",
+          "category": "sports_academy",
+          "parent_id": "org_01H3333ELITE"
+        }
+      },
+      "trace": [
+        {
+          "step": "Observer creating: parent_id present",
+          "check": "organization_hierarchy entitlement",
+          "held": false,
+          "result": "refused"
+        }
+      ],
+      "outcome": {
+        "http": "402 Payment Required",
+        "error_code": "ORGANIZATION_NESTING_NOT_ENTITLED"
+      }
+    },
+    {
+      "scenario": "Reparent — Enterprise tenant moves subtree",
+      "input": {
+        "route": "POST /api/v1/organizations/org_01H_CHILD/reparent",
+        "tenant": {
+          "plan": "enterprise",
+          "entitlement_organization_hierarchy": true,
+          "entitlement_organization_reparent": true
+        },
+        "body": {
+          "new_parent_id": "org_01H_OTHER_PARENT",
+          "reason": "org restructure: move Community into North Region division"
+        },
+        "current_state": {
+          "moving_node_id": "org_01H_CHILD",
+          "moving_node_tree_path": ".org_01H_ROOT.org_01H_OLD_PARENT.org_01H_CHILD.",
+          "moving_node_descendants": 12,
+          "new_parent_tree_path": ".org_01H_ROOT.org_01H_OTHER_PARENT.",
+          "new_parent_depth": 1
+        }
+      },
+      "trace": [
+        {
+          "step": "Policy organizations.reparent.tenant",
+          "result": "allow"
+        },
+        {
+          "step": "Entitlement gate organization_reparent",
+          "result": "allow"
+        },
+        {
+          "step": "Rule parent_same_tenant",
+          "result": "pass"
+        },
+        {
+          "step": "Rule parent_no_cycle",
+          "action": "walk new_parent's ancestors looking for org_01H_CHILD",
+          "ancestors_walked": ["org_01H_OTHER_PARENT", "org_01H_ROOT"],
+          "result": "pass (no cycle)"
+        },
+        {
+          "step": "Rule parent_within_depth_cap",
+          "computation": "new_parent_depth (1) + 1 + moving_node.max_descendant_depth (3) = 5",
+          "cap": 5,
+          "result": "pass (== cap)"
+        },
+        {
+          "step": "Observer saving parent_id",
+          "action": "update self's tree_path in transaction",
+          "old_tree_path": ".org_01H_ROOT.org_01H_OLD_PARENT.org_01H_CHILD.",
+          "new_tree_path": ".org_01H_ROOT.org_01H_OTHER_PARENT.org_01H_CHILD.",
+          "old_depth": 2,
+          "new_depth": 2
+        },
+        {
+          "step": "Commit"
+        },
+        {
+          "step": "Post-commit event OrganizationParentChanged",
+          "listener": "DispatchRebuildTreePathsJob",
+          "descendant_count": 12
+        },
+        {
+          "step": "RebuildTreePathsJob runs",
+          "duration_ms": 320,
+          "rows_updated": 12,
+          "tree_path_pattern_before": ".org_01H_ROOT.org_01H_OLD_PARENT.org_01H_CHILD.%",
+          "tree_path_pattern_after": ".org_01H_ROOT.org_01H_OTHER_PARENT.org_01H_CHILD.%"
+        },
+        {
+          "step": "Cache invalidation",
+          "tag": "organization-tree",
+          "tenant": "the moving-node's tenant"
+        }
+      ],
+      "outcome": {
+        "http": "200 OK",
+        "duration_ms": 350,
+        "notification_dispatched": "OrganizationReparentedNotification to owner+admins"
+      }
+    },
+    {
+      "scenario": "Reparent refused — cycle detected",
+      "input": {
+        "route": "POST /api/v1/organizations/org_01H_ROOT/reparent",
+        "body": {
+          "new_parent_id": "org_01H_CHILD"
+        },
+        "current_state": {
+          "moving_node_id": "org_01H_ROOT",
+          "moving_node_tree_path": ".org_01H_ROOT.",
+          "proposed_parent_id": "org_01H_CHILD",
+          "proposed_parent_tree_path": ".org_01H_ROOT.org_01H_OLD_PARENT.org_01H_CHILD."
+        }
+      },
+      "trace": [
+        {
+          "step": "Rule parent_no_cycle",
+          "action": "walk org_01H_CHILD's ancestors: [org_01H_OLD_PARENT, org_01H_ROOT]",
+          "match": "org_01H_ROOT (self)",
+          "result": "refused"
+        }
+      ],
+      "outcome": {
+        "http": "422 Unprocessable Content",
+        "error_code": "ORGANIZATION_PARENT_CYCLE",
+        "response": {
+          "error": {
+            "code": "ORGANIZATION_PARENT_CYCLE",
+            "message": "This reparent would create a cycle.",
+            "cycle_path": [
+              "org_01H_ROOT",
+              "org_01H_OLD_PARENT",
+              "org_01H_CHILD"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "scenario": "Set default — auto-demotes previous default",
+      "input": {
+        "route": "POST /api/v1/organizations/org_01H_NEW_DEFAULT/set-default",
+        "body": {},
+        "current_state": {
+          "current_default_id": "org_01H_OLD_DEFAULT",
+          "new_default_id": "org_01H_NEW_DEFAULT"
+        }
+      },
+      "trace": [
+        {
+          "step": "Policy organizations.set_default.tenant",
+          "result": "allow"
+        },
+        {
+          "step": "Transaction begin"
+        },
+        {
+          "step": "UPDATE organizations SET is_default=false WHERE tenant_id=? AND id != new_default_id"
+        },
+        {
+          "step": "UPDATE organizations SET is_default=true WHERE id = new_default_id"
+        },
+        {
+          "step": "Commit"
+        },
+        {
+          "step": "Post-commit event",
+          "event": "OrganizationDefaultChanged",
+          "source": "action",
+          "consumers": [
+            "InvalidateDefaultOrganizationCache",
+            "activity::WriteToActivityLog",
+            "audit::WriteCriticalAuditRow",
+            "notifications::DispatchOrganizationDefaultChangedNotification"
+          ]
+        }
+      ],
+      "outcome": {
+        "http": "200 OK",
+        "audit_severity": "critical"
+      }
+    },
+    {
+      "scenario": "Delete refused — default org",
+      "input": {
+        "route": "DELETE /api/v1/organizations/org_01H_DEFAULT",
+        "target": { "is_default": true }
+      },
+      "trace": [
+        {
+          "step": "Observer deleting: is_default check",
+          "result": "refused"
+        }
+      ],
+      "outcome": {
+        "http": "409 Conflict",
+        "error_code": "ORGANIZATION_IS_DEFAULT"
+      }
+    },
+    {
+      "scenario": "Delete refused — has descendants",
+      "input": {
+        "route": "DELETE /api/v1/organizations/org_01H_PARENT",
+        "target": {
+          "is_default": false,
+          "descendants_count": 3
+        }
+      },
+      "trace": [
+        {
+          "step": "Observer deleting: descendants check",
+          "count": 3,
+          "result": "refused"
+        }
+      ],
+      "outcome": {
+        "http": "409 Conflict",
+        "error_code": "ORGANIZATION_HAS_DESCENDANTS",
+        "response": {
+          "error": {
+            "code": "ORGANIZATION_HAS_DESCENDANTS",
+            "descendant_count": 3
+          }
+        }
+      }
+    },
+    {
+      "scenario": "Delete refused — branches reference",
+      "input": {
+        "route": "DELETE /api/v1/organizations/org_01H_HAS_BRANCHES",
+        "target": {
+          "is_default": false,
+          "descendants_count": 0,
+          "branch_count": 5
+        }
+      },
+      "trace": [
+        {
+          "step": "Observer deleting: branch reference check",
+          "count": 5,
+          "result": "refused"
+        }
+      ],
+      "outcome": {
+        "http": "409 Conflict",
+        "error_code": "ORGANIZATION_IN_USE",
+        "response": {
+          "error": {
+            "code": "ORGANIZATION_IN_USE",
+            "branch_count": 5
+          }
+        }
+      }
+    },
+    {
+      "scenario": "Tier downgrade — Enterprise → Medium flattens the tree",
+      "input": {
+        "event": "entitlements::EntitlementDowngraded",
+        "payload": {
+          "tenant_id": "tnt_01H_ENT",
+          "entitlement_key": "organization_hierarchy",
+          "from_value": true,
+          "to_value": false
+        },
+        "current_state": {
+          "nested_organizations_count": 8,
+          "flat_organizations_count": 2
+        }
+      },
+      "trace": [
+        {
+          "step": "Listener HandleHierarchyEntitlementLoss fires",
+          "queue": "notifications-critical"
+        },
+        {
+          "step": "SELECT rows to flatten",
+          "sql": "SELECT id FROM organizations WHERE tenant_id=? AND parent_id IS NOT NULL AND is_default=false"
+        },
+        {
+          "step": "For each: UPDATE organizations SET parent_id=null",
+          "rows": 8
+        },
+        {
+          "step": "For each: fire OrganizationParentChanged (reason='entitlement_flatten')"
+        },
+        {
+          "step": "RebuildTreePathsJob dispatched per row"
+        }
+      ],
+      "outcome": {
+        "duration_ms": 2400,
+        "notification_dispatched": "None (suppressed for entitlement_flatten reason)"
+      },
+      "note": "Per hierarchy.md §10 tier-transition rules — children reparent to tenant root when hierarchy entitlement lost."
+    }
+  ]
+}

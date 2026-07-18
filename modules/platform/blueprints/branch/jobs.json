@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/branch/jobs",
+  "$version": 1,
+  "title": "branch — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Branch\\Jobs\\GeocodeAddressJob",
+      "queue": "notifications",
+      "purpose": "Resolve `Branch.address` → `Branch.coordinates` via the configured geocoding subprocessor. Dispatched by the BranchObserver on BranchCreated + BranchAddressUpdated (when coordinates.source === 'geocoded'), by the `POST /branches/{branch}/geocode` endpoint, and by the `branch:geocode` command.",
+      "steps": [
+        "Refuse when tenant lacks `branch_geocoding` entitlement (BRANCH_GEOCODING_UNAVAILABLE, job fails hard — no retry).",
+        "Compute `address_hash = sha256(canonical(branch.address))` for the idempotency key.",
+        "Skip when a completed geocode result for the same `address_hash` already exists (short-circuit).",
+        "Resolve the driver via `GeocodingClient::driver(config('branch.geocoding.provider'))` — google / mapbox / nominatim.",
+        "Call `driver.geocode(structured_address)` — returns { lat, lng, accuracy_m, confidence, formatted, place_id }.",
+        "Refuse when `confidence < config('branch.geocoding.quality_threshold')` (default 0.75) — BRANCH_GEOCODING_LOW_QUALITY. Job fails soft (no retry) + coordinates stay at their prior value.",
+        "UPDATE the Branch: coordinates = { lat, lng, accuracy_m, source: 'geocoded' }.",
+        "Server-side re-computes address.formatted from the subprocessor's canonical string when it differs from the tenant-submitted formatted (audit-logged for drift detection).",
+        "The Eloquent update itself fires BranchCoordinatesUpdated via the observer."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 900,
+      "uniqueVia": "(tenant_id, branch_id, address_hash)",
+      "tries": 3,
+      "backoff": [30, 120, 600]
+    },
+    {
+      "class": "Academorix\\Branch\\Jobs\\ReconcileDefaultBranchInvariantJob",
+      "queue": "low",
+      "purpose": "Nightly integrity job. Scans every `(tenant, organization)` tuple + verifies the default-branch invariant holds: exactly one `is_default = true` Branch per (tenant, organization). Fixes drift by promoting the oldest non-closed Branch to default when a tuple has zero defaults, and by demoting all-but-one when a tuple has multiple (should be impossible via observer, but partial unique index race conditions during a bulk operation could theoretically slip past).",
+      "steps": [
+        "SELECT tenant_id, organization_id, COUNT(*) FILTER (WHERE is_default=true) FROM branches WHERE deleted_at IS NULL AND status != 'closed' GROUP BY tenant_id, organization_id.",
+        "For each tuple with default_count = 0: promote the oldest by created_at.",
+        "For each tuple with default_count > 1: demote all but the first (by created_at); fire BranchDefaultChanged for each change.",
+        "Emit `academorix.branch.reconcile.corrections` metric per tenant + write a compliance-severity audit row when > 0 corrections."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2,
+      "notes": "Killable via `branch.reconcile_default_invariant` feature flag during large data-migration windows where the invariant is temporarily violated by design."
+    },
+    {
+      "class": "Academorix\\Branch\\Jobs\\NotifyStaffOfBranchClosureJob",
+      "queue": "notifications",
+      "purpose": "On BranchClosed, notify every Staff / Coach / Reception User currently assigned to this Branch. Batched — one job per closure, iterates the affected users internally + dispatches individual `BranchClosedNotification` mails. Deferred from the BranchClosed listener because the recipient enumeration is DB-heavy (joins across staff / coaches / tenant_members) + can produce thousands of recipients on a large chain-gym branch closure.",
+      "steps": [
+        "SELECT user_id FROM staff / coaches / tenant_members WHERE branch_id = :branch_id AND deleted_at IS NULL.",
+        "DISTINCT — one recipient per unique User even when they hold multiple roles at the branch.",
+        "For each recipient: dispatch BranchClosedNotification via the configured notification channels (default: mail).",
+        "Emit `academorix.branch.closure_notification.fanout_size` histogram."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "branch_id",
+      "tries": 2
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "id": "academorix://modules/facility/middleware",
+  "$version": 1,
+  "title": "facility — HTTP middleware",
+  "middleware": [
+    {
+      "alias": "facility.enforce_entitlement",
+      "class": "Academorix\\Facility\\Http\\Middleware\\EnforceFacilityEntitlement",
+      "priority": 40,
+      "description": "Thin wrapper over entitlement.enforce that specifically checks the `facilities` (basic) or `facilities_advanced` (Enterprise) entitlement per route. On refusal, returns 402 `FACILITY_FEATURE_NOT_ENTITLED` with an upgrade CTA in the response envelope's `.errors[0].meta.upgrade_url`. Reads the entitlement key from the middleware parameter (e.g. `facility.enforce_entitlement:facilities_advanced`).",
+      "auto_applied": false,
+      "auto_applied_to": []
+    },
+    {
+      "alias": "facility.resolve_active",
+      "class": "Academorix\\Facility\\Http\\Middleware\\ResolveActiveFacility",
+      "priority": 42,
+      "description": "Reads facility_id from the request body (create/update flows) or the X-Facility-Id header (rare — booking widgets pass via body). Loads the Facility model, checks tenant scoping (refuses when facility.tenant_id != request tenant), and stores it on RequestContext::facility() so downstream services can call `Request::activeFacility()` without re-fetching. Publishes the `activeFacility` + `activeFacilityId` macros on the Request class. Optional (skipped when the request carries no facility_id — most read routes).",
+      "auto_applied": false,
+      "auto_applied_to": []
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "application::application.resolve" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "entitlements::entitlement.enforce" },
+    {
+      "middleware": "access::authorize",
+      "note": "The permission-based authorize middleware wraps the ability checks defined in policies.json + permissions.json. Route-level `permission` metadata resolves through this middleware."
+    },
+    {
+      "middleware": "scope::resolve_scope",
+      "note": "ResolveScope narrows queries by the caller's active branch/organization scope. Applied globally to authenticated tenant routes; facility routes rely on it for the branch narrowing described in policies.json."
+    }
+  ]
+}

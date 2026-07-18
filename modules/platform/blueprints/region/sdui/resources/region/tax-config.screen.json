@@ -1,0 +1,426 @@
+{
+  "id": "region.resources.region.tax-config",
+  "title": "Tax configuration",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/settings/regions/{region_id}/tax",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "region", "entity": "region", "action": "updateTaxConfig" },
+  "requiresPermission": "regions.update.tax_config",
+  "notes": [
+    "Focused, audit-facing view of a single Region's tax_config. Reads GET /api/v1/regions/{id}/tax-config which returns the same tax_config sub-shape as the full region resource + the recent RegionTaxConfigUpdated audit entries.",
+    "The `registration_number` field is redacted unless the caller carries `regions.view.tax_registration`. When redacted, the field renders as `••••••••` with a permission hint tooltip.",
+    "The `rates[]` sub-form + banner are gated by `region_custom_tax_rules` entitlement — Enterprise-only.",
+    "A retroactive-apply toggle is present only when the tenant carries `region_time_travel` AND the `region.time_travel_execution` feature flag is on. Even for eligible tenants, retroactive edits write a critical-severity audit row + fire a warning notification to owner+admins."
+  ],
+  "dataSources": [
+    {
+      "name": "region",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/regions/' + route.region_id",
+      "unwrap": "data"
+    },
+    {
+      "name": "taxConfig",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/regions/' + route.region_id + '/tax-config'",
+      "unwrap": "data"
+    },
+    {
+      "name": "history",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/regions/' + route.region_id + '/tax-config/history?limit=10'",
+      "unwrap": "data"
+    },
+    {
+      "name": "entitlements",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements?keys=region_custom_tax_rules,region_time_travel",
+      "unwrap": "data"
+    },
+    {
+      "name": "featureFlags",
+      "kind": "http.get",
+      "url": "/api/v1/feature-flags?keys=region.time_travel_execution",
+      "unwrap": "data"
+    },
+    {
+      "name": "me",
+      "kind": "http.get",
+      "url": "/api/auth/me",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-4xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-1" },
+          "children": [
+            {
+              "kind": "Breadcrumbs",
+              "items": [
+                { "label": "Regions", "to": "/settings/regions" },
+                { "label": "region.name", "toExpr": "'/settings/regions/' + route.region_id" },
+                { "label": "Tax configuration", "to": null }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-between" },
+              "children": [
+                {
+                  "kind": "View",
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                      "bindings": { "children": { "$expr": "'Tax configuration — ' + region.name" } }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-sm text-muted" },
+                      "bindings": { "children": { "$expr": "region.country_code + ' · ' + region.currency + ' · ' + region.timezone" } }
+                    }
+                  ]
+                },
+                {
+                  "kind": "Widget",
+                  "props": { "id": "region.tax-badge" },
+                  "bindings": {
+                    "props": {
+                      "currencySymbol": { "$ref": "region.currency_symbol" },
+                      "ratePercent": { "$ref": "taxConfig.default_rate_percent" },
+                      "name": { "$ref": "taxConfig.name" },
+                      "hasCustomRates": { "$expr": "(taxConfig.rates || []).length > 0" },
+                      "size": "md"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "InfoBanner",
+          "props": {
+            "variant": "warning",
+            "children": "Tax config edits produce financial-record audit rows retained for 7 years. Historical invoices are NEVER retroactively repriced by default — snapshots at issuance keep them valid. Retroactive edits require the `region_time_travel` entitlement AND the `region.time_travel_execution` feature flag."
+          }
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "action": "http.patch",
+            "urlExpr": "'/api/v1/regions/' + route.region_id + '/tax-config'",
+            "onSuccess": {
+              "kind": "toast",
+              "message": "Tax configuration updated. Audit entry recorded."
+            }
+          },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "text-lg font-medium", "children": "Standard rate" }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "grid grid-cols-3 gap-4" },
+                  "children": [
+                    {
+                      "kind": "NumberField",
+                      "props": {
+                        "name": "default_rate_percent",
+                        "label": "Default rate (%)",
+                        "required": true,
+                        "min": 0,
+                        "max": 100,
+                        "step": 0.001,
+                        "helpText": "Applied to any line item without a category match."
+                      },
+                      "bindings": { "defaultValue": { "$ref": "taxConfig.default_rate_percent" } }
+                    },
+                    {
+                      "kind": "TextField",
+                      "props": {
+                        "name": "name",
+                        "label": "Display name",
+                        "required": true,
+                        "maxLength": 32,
+                        "placeholder": "VAT"
+                      },
+                      "bindings": { "defaultValue": { "$ref": "taxConfig.name" } }
+                    },
+                    {
+                      "kind": "Switch",
+                      "props": {
+                        "name": "inclusive",
+                        "label": "List prices include tax"
+                      },
+                      "bindings": { "defaultValue": { "$ref": "taxConfig.inclusive" } }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "text-lg font-medium", "children": "Registration number" }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-center gap-2" },
+                  "bindings": {
+                    "hidden": { "$expr": "me.permissions.includes('regions.view.tax_registration')" }
+                  },
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": {
+                        "className": "font-mono text-lg tracking-wider",
+                        "children": "••••••••"
+                      }
+                    },
+                    {
+                      "kind": "Tooltip",
+                      "props": {
+                        "content": "You need `regions.view.tax_registration` to see + edit this field. Ask your owner to grant it."
+                      },
+                      "children": [
+                        {
+                          "kind": "Icon",
+                          "props": { "name": "information-circle", "className": "size-4 text-muted" }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "registration_number",
+                    "label": "Tax registration number",
+                    "maxLength": 64,
+                    "helpText": "Tenant's tax registration ID for this jurisdiction. Confidential — visible only to admins + owners."
+                  },
+                  "bindings": {
+                    "hidden": { "$expr": "!me.permissions.includes('regions.view.tax_registration')" },
+                    "defaultValue": { "$ref": "taxConfig.registration_number" }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "bindings": {
+                "hidden": { "$expr": "!entitlements.region_custom_tax_rules" }
+              },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "text-lg font-medium", "children": "Custom rates" }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Per-category rates (e.g. reduced VAT for youth programmes, luxury tax). Applied by matching the invoice line item's category."
+                  }
+                },
+                {
+                  "kind": "Repeatable",
+                  "props": {
+                    "name": "rates",
+                    "addLabel": "+ Add rate",
+                    "removeLabel": "Remove"
+                  },
+                  "bindings": { "defaultValue": { "$ref": "taxConfig.rates" } },
+                  "itemRenderer": {
+                    "kind": "View",
+                    "props": { "className": "grid grid-cols-3 gap-2 items-end p-3 border rounded" },
+                    "children": [
+                      {
+                        "kind": "TextField",
+                        "props": {
+                          "name": "category",
+                          "label": "Category",
+                          "required": true,
+                          "maxLength": 64,
+                          "helpText": "Lowercase, letters + digits + underscores."
+                        }
+                      },
+                      {
+                        "kind": "NumberField",
+                        "props": {
+                          "name": "rate_percent",
+                          "label": "Rate (%)",
+                          "required": true,
+                          "min": 0,
+                          "max": 100,
+                          "step": 0.001
+                        }
+                      },
+                      {
+                        "kind": "TextField",
+                        "props": { "name": "notes", "label": "Notes", "maxLength": 200 }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "InfoBanner",
+              "props": {
+                "variant": "info",
+                "children": "Multi-rate tax configuration is an Enterprise feature. Upgrade to configure per-category rates (e.g. reduced VAT for youth programmes)."
+              },
+              "bindings": {
+                "hidden": { "$expr": "entitlements.region_custom_tax_rules" }
+              }
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4 border-warning" },
+              "bindings": {
+                "hidden": {
+                  "$expr": "!(entitlements.region_time_travel && featureFlags['region.time_travel_execution'])"
+                }
+              },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "text-lg font-medium text-warning", "children": "Retroactive edits" }
+                },
+                {
+                  "kind": "InfoBanner",
+                  "props": {
+                    "variant": "warning",
+                    "children": "Retroactively applying tax changes rewrites historical invoices. This is a compliance-sensitive operation — every retroactive edit writes a critical-severity audit row + fires a warning notification to admins + owners. Contact your CSM before enabling."
+                  }
+                },
+                {
+                  "kind": "Switch",
+                  "props": {
+                    "name": "apply_retroactively",
+                    "label": "Apply retroactively to historical invoices",
+                    "defaultValue": false
+                  }
+                },
+                {
+                  "kind": "DateField",
+                  "props": {
+                    "name": "retroactive_from",
+                    "label": "Retroactive from",
+                    "helpText": "Apply to invoices issued on or after this date."
+                  },
+                  "bindings": { "hidden": { "$expr": "!form.apply_retroactively" } }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-end gap-2 pt-4 border-t" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "children": "Cancel" },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "toExpr": "'/settings/regions/' + route.region_id" }
+                  }
+                },
+                {
+                  "kind": "SubmitButton",
+                  "props": { "variant": "primary", "children": "Save tax configuration" }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6 flex flex-col gap-4" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h2", "className": "text-lg font-medium", "children": "Recent changes" }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-xs text-muted",
+                "children": "The last 10 RegionTaxConfigUpdated audit entries. Financial-record retention: 7 years."
+              }
+            },
+            {
+              "kind": "Table",
+              "columns": [
+                {
+                  "key": "at",
+                  "header": "When",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-xs font-mono" },
+                    "bindings": { "children": { "$ref": "row.created_at" } }
+                  }
+                },
+                {
+                  "key": "who",
+                  "header": "Actor",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-sm" },
+                    "bindings": { "children": { "$ref": "row.actor_name" } }
+                  }
+                },
+                {
+                  "key": "changed",
+                  "header": "Changed fields",
+                  "cell": {
+                    "kind": "View",
+                    "props": { "className": "flex flex-wrap gap-1" },
+                    "children": [
+                      {
+                        "kind": "List",
+                        "bindings": { "items": { "$ref": "row.changed_fields" } },
+                        "itemRenderer": {
+                          "kind": "Chip",
+                          "props": { "size": "xs", "variant": "neutral" },
+                          "bindings": { "children": { "$ref": "item" } }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "key": "before_after",
+                  "header": "Δ",
+                  "cell": {
+                    "kind": "Link",
+                    "propsExpr": "{ to: '/settings/audit/' + row.audit_id, children: 'View diff', className: 'text-xs' }"
+                  }
+                }
+              ],
+              "bindings": { "rows": { "$ref": "history" } }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

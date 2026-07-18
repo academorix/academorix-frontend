@@ -1,0 +1,134 @@
+{
+  "id": "branch.resources.branch.hours-editor",
+  "title": "Opening hours",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/branches/{branch_id}/hours",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "branch", "entity": "branch", "action": "updateHours" },
+  "requiresPermission": "branches.update_hours",
+  "dataSources": [
+    {
+      "name": "branch",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/branches/' + route.branch_id + '?include=region'",
+      "unwrap": "data"
+    },
+    {
+      "name": "hours",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/branches/' + route.branch_id + '/hours'",
+      "unwrap": "data"
+    },
+    {
+      "name": "me",
+      "kind": "http.get",
+      "url": "/api/auth/me",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$expr": "'Opening hours — ' + branch.name" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted" },
+                  "bindings": { "children": { "$expr": "'All times local to ' + branch.timezone + '. Currently ' + (hours.is_open_now ? 'open' : 'closed') + '.'" } }
+                }
+              ]
+            },
+            {
+              "kind": "Widget",
+              "props": { "id": "branch.is-open-chip" },
+              "bindings": {
+                "props": {
+                  "status": { "$ref": "branch.status" },
+                  "isOpenNow": { "$ref": "hours.is_open_now" },
+                  "nextTransitionAt": { "$ref": "hours.next_close_at" },
+                  "showLabel": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "InfoBanner",
+          "props": { "variant": "warning" },
+          "bindings": {
+            "hidden": { "$expr": "me.features.indexOf('branch.multi_period_hours') > -1" },
+            "children": "Your plan supports one open/close period per day. Upgrade to enable split shifts (e.g. 9-12, 17-22)."
+          }
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "action": "http.patch",
+            "urlExpr": "'/api/v1/branches/' + route.branch_id + '/hours'",
+            "onSuccess": { "kind": "toast", "message": "Hours updated. Members with active memberships will be notified." }
+          },
+          "children": [
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Weekly schedule" },
+              "children": [
+                {
+                  "kind": "HoursEditor",
+                  "props": {
+                    "name": "opening_hours",
+                    "days": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"],
+                    "timezone_label": { "$ref": "branch.timezone" }
+                  },
+                  "bindings": {
+                    "defaultValue": { "$ref": "hours" },
+                    "props": {
+                      "allowMultiPeriod": { "$expr": "me.features.indexOf('branch.multi_period_hours') > -1" }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Exceptions", "description": "Holidays + one-off closures + special hours." },
+              "children": [
+                {
+                  "kind": "ExceptionsEditor",
+                  "props": { "name": "opening_hours.exceptions" },
+                  "bindings": { "defaultValue": { "$ref": "hours.exceptions" } }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex justify-end gap-2 pt-4 border-t" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "children": "Cancel" },
+                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/branches/' + route.branch_id" } }
+                },
+                { "kind": "SubmitButton", "props": { "variant": "primary", "children": "Save schedule" } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

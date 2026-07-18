@@ -1,0 +1,48 @@
+{
+  "id": "academorix://modules/organization/retention",
+  "$version": 1,
+  "title": "organization — retention windows",
+  "description": "Active + paused Organizations never expire. Archived rows hold for 730 days then hard-purge IF no descendants + no branch references. TenantErased cascades hard-delete via FK regardless of retention state.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5 (storage limitation)",
+    "gdpr Art. 17 (right to erasure)",
+    "soc2_type2 CC6.5 (data disposal)"
+  ],
+  "retention": [
+    {
+      "entity": "Organization (status=active OR status=paused)",
+      "hot": { "days": "while tenant active" },
+      "purge": {
+        "trigger": "tenancy::TenantErased",
+        "action": "hard delete via FK cascade",
+        "notes": "Active + paused rows are always addressable. No automatic expiry — a tenant may keep hundreds of active orgs indefinitely (subject to entitlement caps)."
+      }
+    },
+    {
+      "entity": "Organization (status=archived, soft-deleted)",
+      "hot": { "days": 730 },
+      "purge": {
+        "trigger": "deleted_at + 730 days elapsed + no descendants + no branch references",
+        "action": "hard delete",
+        "job": "PurgeArchivedOrganizationsJob",
+        "notes": "The 730-day window is deliberately long — Organizations are often referenced by long-lived compliance reports (e.g. 'which brand ran which programme in 2024?'). Hard-purge blocks when descendants OR branches still reference — retention is HELD until those clear."
+      }
+    },
+    {
+      "entity": "Organization (status=archived, all guards pass)",
+      "hot": { "days": "0 (immediately purgeable)" },
+      "purge": {
+        "trigger": "PurgeArchivedOrganizationsJob nightly run",
+        "action": "hard delete + fire OrganizationDeleted"
+      }
+    }
+  ],
+  "audit_retention": {
+    "description": "Audit rows (via `owen-it/laravel-auditing`) for Organization mutations follow the `audit::retention` tier-driven window (90d / 1y / 7y per plan). Retention DOES NOT cascade — an archived Organization's history is preserved for the full audit retention window even after the Organization itself has been hard-purged (rare but possible in the failure mode where audits outlive the row via async retention job races)."
+  },
+  "notes": [
+    "The 730-day window is separate from the tier-driven audit retention. Rationale: the Organization row's absence signals 'this brand no longer exists' to the platform; the audit trail signals 'here is what happened before it went away' and must survive per compliance rules.",
+    "TenantErased always wins over the 730-day hold. GDPR Art. 17 obligations force cascade delete regardless of retention state.",
+    "Restore paths: an archived row within the 730-day window may be restored via `POST /organizations/{id}/restore` (permission organizations.restore.tenant — planned; observer already handles the restore lifecycle). After the 730-day window OR after hard-purge, restoration is impossible — a new row must be created with a new id."
+  ]
+}

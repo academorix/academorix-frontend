@@ -1,0 +1,113 @@
+{
+  "$version": 1,
+  "title": "Opening-hours schedule examples",
+  "description": "Canonical example schedules for the six common venue shapes. Used by the SDUI hours-editor screen's 'Start from a template' picker + by the observer's default-seed logic when the caller doesn't supply opening_hours at creation time.",
+  "examples": [
+    {
+      "key": "standard_business_hours",
+      "display_label": "Standard business hours (9-6, weekdays only)",
+      "description": "Typical office / admin-facility schedule. Weekend closed.",
+      "tier_available": ["small", "medium", "enterprise"],
+      "schedule": {
+        "monday": [{ "open": "09:00", "close": "18:00" }],
+        "tuesday": [{ "open": "09:00", "close": "18:00" }],
+        "wednesday": [{ "open": "09:00", "close": "18:00" }],
+        "thursday": [{ "open": "09:00", "close": "18:00" }],
+        "friday": [{ "open": "09:00", "close": "18:00" }],
+        "saturday": [],
+        "sunday": [],
+        "exceptions": []
+      }
+    },
+    {
+      "key": "standard_gym_hours",
+      "display_label": "Standard gym hours (6-22, 7 days)",
+      "description": "Typical fitness venue. Long daily window, seven-day operation. Slight weekend curtailment.",
+      "tier_available": ["small", "medium", "enterprise"],
+      "schedule": {
+        "monday": [{ "open": "06:00", "close": "22:00" }],
+        "tuesday": [{ "open": "06:00", "close": "22:00" }],
+        "wednesday": [{ "open": "06:00", "close": "22:00" }],
+        "thursday": [{ "open": "06:00", "close": "22:00" }],
+        "friday": [{ "open": "06:00", "close": "22:00" }],
+        "saturday": [{ "open": "08:00", "close": "20:00" }],
+        "sunday": [{ "open": "08:00", "close": "20:00" }],
+        "exceptions": []
+      }
+    },
+    {
+      "key": "twenty_four_seven",
+      "display_label": "24-hour access (7 days)",
+      "description": "Badge-access facility open around the clock. Members badge in outside staffed hours.",
+      "tier_available": ["small", "medium", "enterprise"],
+      "schedule": {
+        "monday": [{ "open": "00:00", "close": "23:59" }],
+        "tuesday": [{ "open": "00:00", "close": "23:59" }],
+        "wednesday": [{ "open": "00:00", "close": "23:59" }],
+        "thursday": [{ "open": "00:00", "close": "23:59" }],
+        "friday": [{ "open": "00:00", "close": "23:59" }],
+        "saturday": [{ "open": "00:00", "close": "23:59" }],
+        "sunday": [{ "open": "00:00", "close": "23:59" }],
+        "exceptions": []
+      },
+      "note": "23:59 stands in for midnight — the evaluator treats end-of-day and next-day-00:00 equivalently."
+    },
+    {
+      "key": "split_shift_mediterranean",
+      "display_label": "Split shift (Mediterranean pattern, siesta closure)",
+      "description": "Common in Spain / Italy / parts of the Middle East: two service periods separated by an afternoon closure. Requires branch_multi_period_hours entitlement.",
+      "tier_available": ["medium", "enterprise"],
+      "schedule": {
+        "monday": [{ "open": "08:00", "close": "13:00" }, { "open": "17:00", "close": "22:00" }],
+        "tuesday": [{ "open": "08:00", "close": "13:00" }, { "open": "17:00", "close": "22:00" }],
+        "wednesday": [{ "open": "08:00", "close": "13:00" }, { "open": "17:00", "close": "22:00" }],
+        "thursday": [{ "open": "08:00", "close": "13:00" }, { "open": "17:00", "close": "22:00" }],
+        "friday": [{ "open": "08:00", "close": "13:00" }, { "open": "17:00", "close": "22:00" }],
+        "saturday": [{ "open": "09:00", "close": "13:00" }],
+        "sunday": [],
+        "exceptions": []
+      }
+    },
+    {
+      "key": "school_hours_academic",
+      "display_label": "Academic year (term-time weekdays + school holidays closed)",
+      "description": "School-attached venue. Weekend / summer / winter breaks are exception blocks that override the base weekday schedule. Requires branch_multi_period_hours + is a template — tenants populate the exception dates on save.",
+      "tier_available": ["medium", "enterprise"],
+      "schedule": {
+        "monday": [{ "open": "07:30", "close": "18:00" }],
+        "tuesday": [{ "open": "07:30", "close": "18:00" }],
+        "wednesday": [{ "open": "07:30", "close": "18:00" }],
+        "thursday": [{ "open": "07:30", "close": "18:00" }],
+        "friday": [{ "open": "07:30", "close": "18:00" }],
+        "saturday": [],
+        "sunday": [],
+        "exceptions": [
+          { "date": "2026-12-24", "reason": "Winter break begins", "closed": true },
+          { "date": "2027-01-04", "reason": "Winter break ends", "closed": true }
+        ]
+      },
+      "note": "The example exceptions are placeholder dates — tenants edit them to their actual calendar."
+    },
+    {
+      "key": "weekend_only_tournament_venue",
+      "display_label": "Weekend-only (tournament / event venue)",
+      "description": "Facility that hosts events only on weekends. Weekdays closed by default; specific tournament dates added as exceptions with hours override.",
+      "tier_available": ["small", "medium", "enterprise"],
+      "schedule": {
+        "monday": [],
+        "tuesday": [],
+        "wednesday": [],
+        "thursday": [],
+        "friday": [],
+        "saturday": [{ "open": "07:00", "close": "20:00" }],
+        "sunday": [{ "open": "07:00", "close": "20:00" }],
+        "exceptions": []
+      }
+    }
+  ],
+  "notes": [
+    "Every time in every schedule is LOCAL to the Branch's Region timezone. Never UTC. The evaluator converts `now()` to the branch's tz before comparing.",
+    "The observer's default seed (used when the caller doesn't supply opening_hours) picks `standard_business_hours` when `branch.hours.default_weekend_closed=true` and `standard_gym_hours` (adjusted to config defaults) otherwise.",
+    "`close < open` in a period is refused by `valid_opening_hours`. To model an overnight period (e.g. 22:00-06:00), split it into two periods: `{open: 22:00, close: 23:59}` on day N + `{open: 00:00, close: 06:00}` on day N+1. Requires `branch_multi_period_hours` on both days."
+  ]
+}

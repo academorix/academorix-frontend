@@ -1,0 +1,163 @@
+{
+  "id": "branch.resources.branch.map-view",
+  "title": "Branches — map",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/branches/map",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "branch", "entity": "branch", "action": "list" },
+  "requiresPermission": "branches.viewAny",
+  "requiresFeature": "branch.map_view",
+  "dataSources": [
+    {
+      "name": "branches",
+      "kind": "http.get",
+      "url": "/api/v1/branches?include=organization,region,is_open_now",
+      "unwrap": "data"
+    },
+    {
+      "name": "me",
+      "kind": "http.get",
+      "url": "/api/auth/me",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col h-screen" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between p-4 border-b" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "leadingIcon": "arrow-left" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/branches" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-xl font-semibold", "children": "Branches on map" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted" },
+                  "bindings": { "children": { "$expr": "branches.filter(b => b.coordinates).length + ' pinned · ' + branches.filter(b => !b.coordinates).length + ' unpinned'" } }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "ToggleGroup",
+                  "props": { "name": "map_mode", "defaultValue": "view" },
+                  "options": [
+                    { "key": "view", "label": "View" },
+                    { "key": "pin", "label": "Pin mode", "requiresPermission": "branches.update_coordinates" }
+                  ]
+                },
+                {
+                  "kind": "SearchField",
+                  "props": { "placeholder": "Filter branches", "name": "q", "className": "w-64" }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "MapCanvas",
+          "props": {
+            "provider": "mapbox",
+            "className": "flex-1",
+            "clustering": true,
+            "focusExpr": "route.query.focus ? { branch_id: route.query.focus, zoom: 15 } : null"
+          },
+          "bindings": {
+            "markers": {
+              "$expr": "branches.filter(b => b.coordinates).map(b => ({ id: b.id, lat: b.coordinates.lat, lng: b.coordinates.lng, label: b.name, variant: b.status === 'closed' ? 'muted' : (b.is_open_now ? 'success' : 'neutral'), popover: { branch_id: b.id } }))"
+            }
+          },
+          "children": [
+            {
+              "kind": "MapMarkerPopover",
+              "props": { "keyed_by": "branch_id" },
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "flex flex-col gap-1 min-w-[200px]" },
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-semibold" },
+                      "bindings": { "children": { "$ref": "popover_row.name" } }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted" },
+                      "bindings": { "children": { "$ref": "popover_row.formatted_address" } }
+                    },
+                    {
+                      "kind": "Widget",
+                      "props": { "id": "branch.is-open-chip", "size": "xs" },
+                      "bindings": {
+                        "props": {
+                          "status": { "$ref": "popover_row.status" },
+                          "isOpenNow": { "$ref": "popover_row.is_open_now" },
+                          "showLabel": true
+                        }
+                      }
+                    },
+                    {
+                      "kind": "View",
+                      "props": { "className": "flex gap-1 pt-1" },
+                      "children": [
+                        {
+                          "kind": "Link",
+                          "propsExpr": "{ to: '/branches/' + popover_row.id, children: 'Details', className: 'text-xs' }"
+                        },
+                        {
+                          "kind": "Link",
+                          "propsExpr": "{ to: '/branches/' + popover_row.id + '/edit', children: 'Edit', className: 'text-xs' }"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "border-t p-4" },
+          "children": [
+            {
+              "kind": "InfoBanner",
+              "props": { "variant": "info" },
+              "bindings": {
+                "hidden": { "$expr": "branches.filter(b => !b.coordinates).length === 0" },
+                "children": {
+                  "$expr": "branches.filter(b => !b.coordinates).length + ' branches have no coordinates yet. Switch to Pin mode to drop them onto the map, or update the address to trigger auto-geocoding.'"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "The map tile subprocessor (Mapbox by default) is billed to the platform, not the tenant.",
+    "Pin mode only appears for callers carrying `branches.update_coordinates` — the mode toggle option is hidden otherwise via the ToggleGroup's per-option `requiresPermission` gate.",
+    "Coordinates lat/lng are only rendered client-side inside the tenant's own SPA — the API surface never leaks them across tenants."
+  ]
+}

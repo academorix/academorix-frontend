@@ -1,0 +1,245 @@
+{
+  "id": "facility.resources.facility.list",
+  "title": "Facilities",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/facilities",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "facility", "entity": "facility", "action": "list" },
+  "requiresPermission": "facilities.viewAny",
+  "requiresEntitlement": "facilities",
+  "dataSources": [
+    {
+      "name": "facilities",
+      "kind": "http.get",
+      "url": "/api/v1/facilities",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "branches",
+      "kind": "http.get",
+      "url": "/api/v1/branches?filter[status]=active",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "slot_entitlement",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/facility_slot",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Facilities"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Bookable resources across your branches."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "entitlements.entitlement-usage-bar",
+                  "props": {
+                    "cap": { "$ref": "slot_entitlement.value_cap" },
+                    "used": { "$ref": "slot_entitlement.value_used" },
+                    "size": "sm",
+                    "label": "Facility slots"
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "plus",
+                    "children": "New facility"
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "to": "/tenant/facilities/new"
+                    }
+                  },
+                  "bindings": { "disabled": { "$ref": "slot_entitlement.is_exceeded" } },
+                  "requiresPermission": "facilities.create"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": {
+                "label": "Branch",
+                "menuTrigger": "focus",
+                "className": "min-w-64"
+              },
+              "bindings": { "items": { "$ref": "branches" } },
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "branch_id",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Facility type", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "court", "label": "Court" },
+                { "id": "field", "label": "Field" },
+                { "id": "pool", "label": "Pool" },
+                { "id": "studio", "label": "Studio" },
+                { "id": "room", "label": "Room" },
+                { "id": "gym_floor", "label": "Gym floor" },
+                { "id": "equipment", "label": "Equipment" },
+                { "id": "lane", "label": "Lane" },
+                { "id": "general", "label": "General" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "facility_type",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus", "className": "min-w-40" },
+              "props_items": [
+                { "id": "active", "label": "Active" },
+                { "id": "maintenance", "label": "Maintenance" },
+                { "id": "retired", "label": "Retired" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Grid",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" },
+          "bindings": {
+            "items": { "$ref": "facilities" },
+            "isLoading": { "$ref": "facilities.isLoading" }
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "col-span-full text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "building-office-2", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No facilities yet" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Create your first facility to start accepting bookings." } }
+            ]
+          },
+          "itemRenderer": {
+            "kind": "Card",
+            "props": { "className": "p-4 hover:shadow-md transition-shadow cursor-pointer" },
+            "actions": {
+              "onPress": {
+                "kind": "navigate",
+                "toExpr": "'/tenant/facilities/' + row.id"
+              }
+            },
+            "children": [
+              {
+                "kind": "View",
+                "props": { "className": "flex items-start justify-between gap-2 mb-2" },
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-medium text-lg" },
+                    "bindings": { "children": { "$ref": "row.name" } }
+                  },
+                  {
+                    "kind": "Widget",
+                    "widget": "facility.facility-status-chip",
+                    "props": {},
+                    "bindings": { "status": { "$ref": "row.status" } }
+                  }
+                ]
+              },
+              {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2 text-sm text-muted mb-2" },
+                "children": [
+                  { "kind": "Icon", "props": { "name": "map-pin", "className": "size-4" } },
+                  { "kind": "Text", "bindings": { "children": { "$ref": "row.branch.name" } } }
+                ]
+              },
+              {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-3 text-sm mt-3" },
+                "children": [
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "sm", "variant": "neutral" },
+                    "bindings": { "children": { "$ref": "row.facility_type" } }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "sm", "variant": "info" },
+                    "bindings": {
+                      "hidden": { "$expr": "!row.sport_category" },
+                      "children": { "$ref": "row.sport_category" }
+                    }
+                  },
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-1 text-muted ml-auto" },
+                    "children": [
+                      { "kind": "Icon", "props": { "name": "users", "className": "size-4" } },
+                      {
+                        "kind": "Text",
+                        "bindings": { "children": { "$expr": "row.capacity_persons + ' cap'" } }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

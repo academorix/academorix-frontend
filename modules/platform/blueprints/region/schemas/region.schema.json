@@ -1,0 +1,473 @@
+{
+  "id": "academorix://modules/region/schemas/region",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Region",
+  "description": "Commercial + regulatory zone belonging to a Tenant. Answers 'what currency, tax rules, timezone, and locale apply here?'. Orthogonal to Organization (structural sub-brand) — they meet at Branch, which carries FKs to both. Carries `tenant_id` ONLY — NEVER `application_id` (cascades through tenants), NEVER `organization_id` (orthogonal axis), NEVER `scope_node_id` (Region is a scope-node entity, not a scope consumer), NEVER `parent_id` (Regions are flat per tenant; sub-jurisdictions use `subdivision_code`). Exactly one `is_default=true` per tenant, seeded on TenantProvisioned. `country_code` + `currency` are IMMUTABLE once any inbound row (Branch, Membership, Invoice) references the Region — financial reconciliation depends on both. `tax_config.registration_number` is confidential-tier (redacted unless the caller carries `regions.view.tax_registration`).",
+  "type": "object",
+  "x-module": "region",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "regions",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "reg_",
+    "incrementing": false,
+    "model": "Academorix\\Region\\Models\\Region",
+    "interface": "Academorix\\Region\\Contracts\\Data\\RegionInterface",
+    "implements": ["Academorix\\Region\\Contracts\\Data\\RegionInterface"],
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasSlug",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasActivityLog",
+      "Auditable",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "is_default": "boolean",
+      "rtl": "boolean",
+      "sort_order": "integer",
+      "fiscal_year_start_month": "integer",
+      "status": "Academorix\\Region\\Enums\\RegionStatus",
+      "country_code": "Academorix\\Region\\Casts\\CountryCode",
+      "currency": "Academorix\\Region\\Casts\\CurrencyCode",
+      "timezone": "Academorix\\Region\\Casts\\IanaTimezone",
+      "locale": "Academorix\\Region\\Casts\\Bcp47Locale",
+      "weekend_days": "array",
+      "tax_config": "Academorix\\Region\\Casts\\TaxConfig",
+      "metadata": "array"
+    },
+    "appends": [
+      "display_label",
+      "is_in_use",
+      "inbound_reference_count",
+      "tax_registration_redacted"
+    ],
+    "observers": ["RegionObserver"],
+    "relations_note": "`tenant()` belongsTo tenancy::Tenant via tenant_id (CASCADE). Downstream: hasMany branch::Branch (RESTRICT — the branch module owns the FK + the observer surfaces REGION_IN_USE as a clearer error than the DB constraint). Future consumers (finance::Membership, finance::Invoice, finance::Transaction) will hasMany via `region_id` on the child table + join through `BelongsToRegion`. No FK to Organization — regions are orthogonal.",
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "description": "One first-party table. Composite scoping via `tenant_id` only — no application_id column (cascades through tenants.application_id), no organization_id column (orthogonal axis), no scope_node_id column (Region is a scope-node entity, not a scope consumer). Two partial-unique indexes guard the two hard invariants: (tenant_id, slug) live-only, and (tenant_id) live-and-default-true.",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `reg_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "Every Region belongs to a Tenant. Cascade delete on TenantErased — hooked via `PreventRegionOrphansOnTenantErased` for a graceful pre-delete audit pass."
+      },
+      "name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Display name (e.g. 'United Arab Emirates', 'EU — Ireland', 'US — West Coast'). Not unique — two Regions may share a display name (different slugs)."
+      },
+      "slug": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "URL-safe identifier. Unique per (tenant_id, slug) partial WHERE deleted_at IS NULL. Regex `^[a-z][a-z0-9-]*[a-z0-9]$`."
+      },
+      "country_code": {
+        "type": "string",
+        "length": 2,
+        "nullable": true,
+        "description": "ISO 3166-1 alpha-2 (uppercase). Nullable for supranational Regions (EU, GCC) when `region.validation.reject_unknown_country_code=false`. Otherwise required + must be present in `data/country-defaults.json`. IMMUTABLE once inbound rows exist (COUNTRY_CODE_IMMUTABLE 409)."
+      },
+      "subdivision_code": {
+        "type": "string",
+        "length": 8,
+        "nullable": true,
+        "description": "ISO 3166-2 subdivision (e.g. `US-CA`, `AE-DU`, `GB-SCT`). Nullable — most Regions cover a whole country. Used by the tax + address rendering layer for per-state / per-emirate nuance."
+      },
+      "currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": false,
+        "description": "ISO 4217 currency code (3 uppercase letters, e.g. USD, AED, GBP). IMMUTABLE once inbound rows exist (CURRENCY_IMMUTABLE 409 — historical financial records must remain reconcilable against their issued currency)."
+      },
+      "currency_symbol": {
+        "type": "string",
+        "length": 8,
+        "nullable": false,
+        "default": "''",
+        "description": "Denormalised currency symbol (e.g. `$`, `AED`, `£`, `€`). Cached on the row so invoice + list rendering avoids a symbol lookup on every read."
+      },
+      "timezone": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "IANA timezone identifier (e.g. `America/New_York`, `Asia/Dubai`). Rejected: deprecated aliases like `US/Pacific` — use canonical form. Determines when opening_hours + fiscal cutovers land."
+      },
+      "locale": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "BCP-47 language tag (e.g. `en-US`, `ar-AE`, `fr-FR`). Determines default date + number + address formatting for the Region."
+      },
+      "rtl": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Denormalised right-to-left flag. Derived from locale (`ar-*`, `he-*`, `fa-*`, `ur-*`) on the observer's `creating` + `updating` hooks. Cached on the row so UI rendering avoids re-parsing on every read."
+      },
+      "weekend_days": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[\"saturday\",\"sunday\"]'",
+        "description": "Array of day-of-week names (lowercase). Length 1-7 with no duplicates. Country defaults: Gulf countries (SA, KW, QA, OM, BH, JO, EG) commonly seed `[friday,saturday]`; UAE post-2022 seeds `[saturday,sunday]`; most of the rest seed `[saturday,sunday]`."
+      },
+      "tax_config": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'",
+        "description": "Tax configuration blob. Sub-shape: default_rate_percent + name + inclusive + rates[] + registration_number + notes. `rates[]` is gated by the `region_custom_tax_rules` entitlement. `registration_number` is confidential-tier (redacted unless the caller carries `regions.view.tax_registration`).",
+        "sub_shape": {
+          "default_rate_percent": { "type": "number", "minimum": 0, "maximum": 100, "multipleOf": 0.001, "required": true, "description": "Default rate applied to any line item. DECIMAL(5,3) precision." },
+          "name": { "type": "string", "maxLength": 32, "required": true, "description": "Display name for the tax (e.g. `VAT`, `Sales Tax`, `GST`)." },
+          "inclusive": { "type": "boolean", "required": true, "description": "True = list prices include tax; false = tax added at checkout." },
+          "rates": { "type": "array", "description": "Multi-rate for jurisdictions with different rates per category. Enterprise-only via `region_custom_tax_rules` entitlement.", "items": { "type": "object", "properties": { "category": { "type": "string", "maxLength": 64 }, "rate_percent": { "type": "number", "minimum": 0, "maximum": 100, "multipleOf": 0.001 }, "notes": { "type": "string", "maxLength": 200 } }, "required": ["category", "rate_percent"] } },
+          "registration_number": { "type": "string", "maxLength": 64, "description": "Tenant's tax registration ID for this jurisdiction. Confidential-tier — redacted on egress unless the caller carries `regions.view.tax_registration`." },
+          "notes": { "type": "string", "maxLength": 500, "description": "Ops-only tax posture notes (e.g. 'Registered under UAE VAT effective 2018-01-01')." }
+        }
+      },
+      "fiscal_year_start_month": {
+        "type": "integer",
+        "nullable": false,
+        "default": 1,
+        "description": "Month (1-12) the tenant's fiscal year starts for this Region. Default 1 = January. Determines annual reporting cutovers. Common non-Jan values: UK/IE=4 (April), AU/NZ=7 (July), JP=4 (April), AE=1 (Gregorian)."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'active'",
+        "description": "Enum: active / paused / archived. Paused = new bookings + memberships refused; existing rows survive. Archived = soft-deleted; hidden from selectors. Same lifecycle model as Organization."
+      },
+      "is_default": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Exactly one is_default=true per tenant. Auto-demote on flip (RegionObserver). Cannot be deleted / archived / paused (409 with specific error codes). Enforced by partial unique index + observer + reconciler."
+      },
+      "sort_order": {
+        "type": "integer",
+        "nullable": false,
+        "default": 100,
+        "description": "Ascending sort in Region-picker UI. Defaults to 100 so seeded default Regions (sort_order=0) sort first."
+      },
+      "notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Ops-only notes. Hidden from tenant-plane responses (internal-tier)."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form metadata bag (from HasMetadata trait). Never exposed on the wire without `?include=metadata` + metadata-read permission."
+      },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "slug"],
+        "unique": true,
+        "name": "regions_tenant_slug_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "One live slug per tenant. Soft-deleted rows do not collide."
+      },
+      {
+        "columns": ["tenant_id"],
+        "unique": true,
+        "name": "regions_tenant_default_unique",
+        "predicate": "is_default = true AND deleted_at IS NULL",
+        "description": "Enforces exactly-one-default per tenant at the DB level. Belt-and-braces on top of the observer's auto-demote logic."
+      },
+      {
+        "columns": ["tenant_id", "status", "sort_order"],
+        "unique": false,
+        "name": "regions_tenant_status_sort_idx",
+        "description": "Picker query: active Regions for a tenant, sorted."
+      },
+      {
+        "columns": ["tenant_id", "country_code"],
+        "unique": false,
+        "name": "regions_tenant_country_idx",
+        "description": "Reporting query: how many Regions per country per tenant?"
+      },
+      {
+        "columns": ["tenant_id", "currency"],
+        "unique": false,
+        "name": "regions_tenant_currency_idx",
+        "description": "Reporting query: what currencies is this tenant transacting in?"
+      },
+      {
+        "columns": ["deleted_at"],
+        "unique": false,
+        "name": "regions_deleted_at_idx",
+        "description": "PurgeArchivedRegionsJob sweeps by deleted_at."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "name",
+    "slug",
+    "currency",
+    "currency_symbol",
+    "timezone",
+    "locale",
+    "rtl",
+    "weekend_days",
+    "tax_config",
+    "fiscal_year_start_month",
+    "status",
+    "is_default",
+    "sort_order",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^reg_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "tenant_id": {
+      "type": "string",
+      "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 128
+    },
+    "slug": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 64,
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$"
+    },
+    "country_code": {
+      "type": ["string", "null"],
+      "pattern": "^[A-Z]{2}$",
+      "description": "ISO 3166-1 alpha-2. Nullable for supranational Regions when `region.validation.reject_unknown_country_code=false`."
+    },
+    "subdivision_code": {
+      "type": ["string", "null"],
+      "pattern": "^[A-Z]{2}-[A-Z0-9]{1,3}$",
+      "maxLength": 8,
+      "description": "ISO 3166-2 subdivision. e.g. `US-CA`, `AE-DU`, `GB-SCT`."
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "currency_symbol": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 8
+    },
+    "timezone": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 64,
+      "description": "IANA identifier. Rejected: deprecated aliases like `US/Pacific`."
+    },
+    "locale": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}(-[A-Za-z]{4})?(-[A-Z]{2}|-[0-9]{3})?(-[A-Za-z0-9]{5,8})*$",
+      "maxLength": 16,
+      "description": "BCP-47 language tag."
+    },
+    "rtl": {
+      "type": "boolean"
+    },
+    "weekend_days": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 7,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+      }
+    },
+    "tax_config": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "default_rate_percent": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "multipleOf": 0.001
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "inclusive": {
+          "type": "boolean"
+        },
+        "rates": {
+          "type": "array",
+          "maxItems": 50,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "category": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "rate_percent": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100,
+                "multipleOf": 0.001
+              },
+              "notes": {
+                "type": ["string", "null"],
+                "maxLength": 200
+              }
+            },
+            "required": ["category", "rate_percent"]
+          }
+        },
+        "registration_number": {
+          "type": ["string", "null"],
+          "maxLength": 64,
+          "description": "Confidential — redacted on egress unless the caller carries `regions.view.tax_registration`."
+        },
+        "notes": {
+          "type": ["string", "null"],
+          "maxLength": 500
+        }
+      },
+      "required": ["default_rate_percent", "name", "inclusive"]
+    },
+    "fiscal_year_start_month": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 12
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "paused", "archived"]
+    },
+    "is_default": {
+      "type": "boolean"
+    },
+    "sort_order": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9999
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "Ops-only. Hidden from tenant-plane responses."
+    },
+    "metadata": {
+      "type": ["object", "null"]
+    },
+    "display_label": {
+      "type": "string",
+      "description": "Computed. `<name> (<country_code>)` when country_code is set, else `<name>`."
+    },
+    "is_in_use": {
+      "type": "boolean",
+      "description": "Computed. True when any inbound row (Branch, Membership, Invoice, Transaction) references this Region."
+    },
+    "inbound_reference_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Computed via inbound-count aggregate. Included on show responses; suppressed on list responses unless `?include=inbound_reference_count` (list computation is N+1 without a rollup cache)."
+    },
+    "tax_registration_redacted": {
+      "type": "boolean",
+      "description": "Computed. True when the response body has redacted `tax_config.registration_number` because the caller lacks `regions.view.tax_registration`."
+    },
+    "created_by": {
+      "type": ["string", "null"]
+    },
+    "updated_by": {
+      "type": ["string", "null"]
+    },
+    "deleted_by": {
+      "type": ["string", "null"]
+    },
+    "deleted_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["display_label", "is_in_use", "inbound_reference_count", "tax_registration_redacted"],
+    "hidden_from_tenant_plane": ["notes"],
+    "redacted_without_permission": {
+      "tax_config.registration_number": "regions.view.tax_registration"
+    }
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": [
+      "ULID (`reg_<26>`)",
+      "slug (case-insensitive, matches slug column within the resolved tenant)"
+    ]
+  },
+  "invariants": [
+    "COUNT(*) FILTER (WHERE is_default=true) = 1 per tenant_id (enforced by unique index + observer + reconciler).",
+    "country_code IS NULL OR country_code MATCHES /^[A-Z]{2}$/ (ISO 3166-1 alpha-2 uppercase, enforced by rule + observer).",
+    "country_code IS IMMUTABLE once at least one inbound row references the Region (COUNTRY_CODE_IMMUTABLE — enforced by observer).",
+    "currency IS IMMUTABLE once at least one inbound row references the Region (CURRENCY_IMMUTABLE — enforced by observer; break-glass bypass via `region.validation.allow_currency_immutable_bypass`).",
+    "timezone IS a member of PHP `\\DateTimeZone::listIdentifiers()` (rejected: deprecated aliases like `US/Pacific`).",
+    "locale IS a syntactically valid BCP-47 tag (enforced by rule + observer).",
+    "weekend_days IS a non-empty array of 1-7 unique day-of-week names.",
+    "tax_config.rates[] is empty UNLESS the tenant carries `region_custom_tax_rules` entitlement (enforced by observer — refuses at write time).",
+    "tax_config.default_rate_percent IS in [0, 100] with 3-decimal precision (matches DECIMAL(5,3) storage).",
+    "is_default=true rows CANNOT be deleted, archived, or paused (CANNOT_DELETE_DEFAULT_REGION / CANNOT_ARCHIVE_DEFAULT_REGION / CANNOT_PAUSE_DEFAULT_REGION — 409).",
+    "Regions in use CANNOT be archived or deleted (REGION_IN_USE 409 — enforced by observer, DB RESTRICT is fallback).",
+    "Retroactive tax_config edits refused UNLESS the tenant carries `region_time_travel` entitlement AND the `region.time_travel_execution` feature flag is on (REGION_TIME_TRAVEL_DISABLED — 402)."
+  ]
+}

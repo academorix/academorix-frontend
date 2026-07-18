@@ -1,0 +1,47 @@
+{
+  "id": "academorix://modules/region/relations",
+  "$version": 1,
+  "title": "region — model relationships",
+  "description": "Region is a leaf below Tenant with no children of its own inside this module. Inbound relations arrive from Branch (Wave 2b) + Finance::Membership (Wave 4) via the `BelongsToRegion` trait shipped here. Every FK from a Region to another aggregate is same-tenant — cross-tenant FKs are forbidden per `.kiro/steering/tenancy-columns.md` §5. `region_id` NEVER carries `application_id` (hierarchy.md §2 forbids it — Application cascades through `tenants.application_id`).",
+  "internal": [],
+  "outbound": [
+    {
+      "from": "Region",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "The tenant that owns this region. CASCADE aligns with tenancy's TenantErased contract — every region is same-tenant scoped. The tenant-erasure hook (`PreventRegionOrphansOnTenantErased`) does NOT rehome regions to another tenant (cross-tenant regions are forbidden); it just lets the cascade fire after every dependent row (Branch, Membership) has already been erased."
+    }
+  ],
+  "inbound": {
+    "description": "Domain models with a per-region attribution key compose the `BelongsToRegion` trait shipped here. They store the linkage as a `region_id` FK. FK is nullable ONLY on rows created before their Region existed (data-import legacy path); every new row carries a required region_id.",
+    "examples": [
+      "branch::Branch.region_id — required. Every venue is anchored to exactly one Region (commercial + tax attribution).",
+      "finance::Membership.region_id — required. Every renewing contract is priced + taxed against exactly one Region.",
+      "finance::Transaction.region_id — required. Every money movement carries the Region that determined its tax + currency rules.",
+      "finance::Invoice.region_id — required. Invoices are region-scoped so the fiscal_year_start_month + tax_config apply consistently.",
+      "facility::Facility — NOT direct. Facilities cascade through branch_id → branch.region_id."
+    ],
+    "onDelete": "RESTRICT by convention on domain FKs referencing regions.id — the RegionObserver refuses to delete a Region while ANY inbound row (Branch, Membership, Invoice, Transaction) still references it. The user-facing error is `REGION_IN_USE` (409)."
+  },
+  "morphs": [
+    {
+      "name": "scopeNode",
+      "type": "MorphOne",
+      "target": {
+        "module": "scope",
+        "model": "ScopeNode",
+        "class": "Academorix\\Scope\\Models\\ScopeNode"
+      },
+      "morphType": "entity_type",
+      "morphId": "entity_id",
+      "description": "Every Region projects into the scope substrate as a node under the tenant root — enabling per-Region configuration overrides on the config-consumer modules (settings, entitlements, subscription). NOT a scope consumer itself: Region rows never carry `scope_node_id` (per `.kiro/steering/tenancy-columns.md` §4). The scope node references the Region via `entity_id`; the reverse lookup happens through this morph."
+    }
+  ],
+  "notes": [
+    "Region is orthogonal to Organization. Neither carries an FK to the other. Both are direct children of Tenant. They meet at Branch — every Branch carries both `organization_id` (required) AND `region_id` (required). See `hierarchy.md` §2 for the full tree.",
+    "The forbidden columns per `tenancy-columns.md` §5 are ENFORCED at review + by the tenancy-compliance-auditor: `organization_id` on regions is a schema violation; `application_id` on regions is a schema violation; `region_id` on organizations is a schema violation.",
+    "Region does not carry `parent_id` — regions are flat per tenant. Countries with sub-jurisdictions use `subdivision_code` (ISO 3166-2) as a column on the Region row, not as a hierarchical FK."
+  ]
+}

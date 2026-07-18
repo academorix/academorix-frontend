@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/branch/commands",
+  "$version": 1,
+  "title": "branch — Artisan commands",
+  "commands": [
+    {
+      "signature": "branch:list {--tenant=} {--organization=} {--region=} {--status=} {--limit=50}",
+      "class": "Academorix\\Branch\\Console\\Commands\\ListBranchesCommand",
+      "purpose": "Enumerate Branches. Filter by tenant / organization / region / status. Prints a table with id, name, org, region, status, is_default, opening_hours_summary, facilities_count. Ops tooling — not a tenant hot path."
+    },
+    {
+      "signature": "branch:describe {branch : ULID or slug} {--tenant=} {--include-hours} {--include-facilities}",
+      "class": "Academorix\\Branch\\Console\\Commands\\DescribeBranchCommand",
+      "purpose": "Print full detail for one Branch: identity + address (formatted per region locale) + coordinates + capacity + amenities + current is_open_now + counts of downstream references (facilities, teams, active sessions, active memberships). --include-hours expands the full opening_hours schedule for the current + next week including exceptions."
+    },
+    {
+      "signature": "branch:create {tenant : ULID or slug} {organization : ULID or slug} {region : ULID or slug} {name} {--slug=} {--code=} {--is-default} {--json-file=}",
+      "class": "Academorix\\Branch\\Console\\Commands\\CreateBranchCommand",
+      "purpose": "CLI-triggered creation. Resolves the three parent aggregates by identifier + invokes BranchProvisioner. --json-file accepts a full body payload for structured-address + coordinates + hours; ideal for one-off imports. Prints the resulting ULID + the URL for the tenant admin to review."
+    },
+    {
+      "signature": "branch:set-default {branch : ULID or slug} {--tenant=}",
+      "class": "Academorix\\Branch\\Console\\Commands\\SetDefaultBranchCommand",
+      "purpose": "Flip is_default=true on the target Branch. Observer enforces exactly-one-default per (tenant, organization) — the previous default is demoted in the same transaction. Fires BranchDefaultChanged."
+    },
+    {
+      "signature": "branch:pause {branch : ULID or slug} {--tenant=} {--reason=} {--resume-at=}",
+      "class": "Academorix\\Branch\\Console\\Commands\\PauseBranchCommand",
+      "purpose": "Transition status active → paused. Fires BranchPaused + BranchStatusChanged. --resume-at accepts ISO 8601; the scheduler auto-resumes at the boundary via `branch:resume-due` (see schedule.json)."
+    },
+    {
+      "signature": "branch:resume {branch : ULID or slug} {--tenant=}",
+      "class": "Academorix\\Branch\\Console\\Commands\\ResumeBranchCommand",
+      "purpose": "Transition status paused → active. Fires BranchResumed + BranchStatusChanged."
+    },
+    {
+      "signature": "branch:close {branch : ULID or slug} {--tenant=} {--reason=} {--closed-date=} {--successor=}",
+      "class": "Academorix\\Branch\\Console\\Commands\\CloseBranchCommand",
+      "purpose": "Transition status → closed. Refuses when active downstream rows reference (teams, facilities, sessions, bookings, memberships). --closed-date accepts a past-dated closure for post-hoc admin corrections. --successor identifies the replacement Branch for the closure notification email."
+    },
+    {
+      "signature": "branch:reopen {branch : ULID or slug} {--tenant=}",
+      "class": "Academorix\\Branch\\Console\\Commands\\ReopenBranchCommand",
+      "purpose": "Transition status closed → active. Refuses when a successor Branch was created under the same (tenant, organization) post-close (BRANCH_SUCCESSOR_EXISTS, 409). Fires BranchReopened + BranchStatusChanged."
+    },
+    {
+      "signature": "branch:update-hours {branch : ULID or slug} {--tenant=} {--json-file=} {--interactive}",
+      "class": "Academorix\\Branch\\Console\\Commands\\UpdateHoursCommand",
+      "purpose": "Replace the branch's opening_hours JSON blob. --json-file reads from disk (the canonical automated path). --interactive opens an inline prompt-driven editor day-by-day (ideal for support agents). Refuses multi-period days on tenants without `branch_multi_period_hours`."
+    },
+    {
+      "signature": "branch:geocode {branch : ULID or slug} {--tenant=} {--force}",
+      "class": "Academorix\\Branch\\Console\\Commands\\GeocodeCommand",
+      "purpose": "Explicitly re-run geocoding. --force bypasses the address_hash idempotency short-circuit (useful when the subprocessor's canonical rendering changed). Refuses when the tenant lacks `branch_geocoding` entitlement."
+    },
+    {
+      "signature": "branch:audit-address {branch : ULID or slug} {--tenant=}",
+      "class": "Academorix\\Branch\\Console\\Commands\\AuditAddressCommand",
+      "purpose": "Compare the tenant-supplied `address.formatted` against the subprocessor's canonical form + validate the structured shape against the country's postal format. Prints a diff report + a compliance-severity audit row when drift is detected. Read-only — never mutates the row."
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "id": "academorix://modules/branch/observers",
+  "$version": 1,
+  "title": "branch — Eloquent observers",
+  "observers": [
+    {
+      "model": "Branch",
+      "observer": "Academorix\\Branch\\Observers\\BranchObserver",
+      "handles": [
+        "creating → populate ULID prefix `brn_`.",
+        "creating → refuse when `organization.tenant_id !== branch.tenant_id` (`BRANCH_ORGANIZATION_TENANT_MISMATCH`, 422). Belt-and-braces on top of the DB FK — surfaces a clearer error than a raw FK violation.",
+        "creating → refuse when `region.tenant_id !== branch.tenant_id` (`BRANCH_REGION_TENANT_MISMATCH`, 422).",
+        "creating → refuse when `organization.status = 'archived'` (`BRANCH_ORGANIZATION_ARCHIVED`, 409). Cannot create a branch under an archived org.",
+        "creating → refuse when `region.status = 'archived'` (`BRANCH_REGION_ARCHIVED`, 409).",
+        "creating → consume 1 unit of `branch_slot` entitlement (throws `BRANCH_SLOT_QUOTA_EXCEEDED`, 402). Small=3, Medium=25, Enterprise=null.",
+        "creating → default `status = 'active'` when the caller left it unset.",
+        "creating → default `sort_order = 100` when unset.",
+        "creating → generate `slug` from `name` via HasSlug when unset; guarantee composite uniqueness via `(tenant_id, organization_id, slug)` partial unique index.",
+        "creating → seed default `opening_hours` from `branch.hours.default_*` config when the caller didn't provide one (9-5 weekday defaults, weekend closed).",
+        "creating → seed default `is_default = true` when this is the first Branch under `(tenant, organization)`. Otherwise leaves as false unless the caller explicitly set true.",
+        "creating (is_default=true) → demote any prior `is_default = true` row for the same `(tenant_id, organization_id)` in the same transaction (invariant: exactly one default per (tenant, org)).",
+        "created → invalidate `DefaultBranchResolver` cache keyed by `(tenant_id, organization_id)`.",
+        "created → fire `BranchCreated`.",
+        "created (address present + tenant has `branch_geocoding`) → dispatch `GeocodeAddressJob`.",
+        "saving (organization_id changed post-create) → refuse with `BRANCH_ORGANIZATION_IMMUTABLE` (422). Branches don't move between orgs (see readme §1.3).",
+        "saving (region_id changed post-create) → refuse with `BRANCH_REGION_IMMUTABLE` (422). Branches don't move between regions (financial/tax implications).",
+        "saving (tenant_id changed post-create) → refuse with `BRANCH_TENANT_IMMUTABLE` (422). Branches never cross tenants (tenancy isolation).",
+        "saving (is_default flipped true) → demote every other `is_default = true` row for the same `(tenant_id, organization_id)` in the same transaction; fire `BranchDefaultChanged`.",
+        "saving (is_default flipped false with no sibling is_default=true) → refuse with `BRANCH_LAST_DEFAULT` (409). At least one branch per (tenant, org) must be default.",
+        "saving (status transitioning) → dispatch the correct lifecycle event per transition (BranchPaused / BranchResumed / BranchClosed / BranchReopened) alongside the umbrella `BranchStatusChanged`.",
+        "saving (status → closed) → refuse when active downstream rows reference the branch (`BRANCH_IN_USE`, 409). The dependency check spans planned tables (`facilities`, `teams`, `sessions`, `bookings`, `memberships`) via a config-driven registry (`branch.close.dependency_checks`) so future modules opt in without touching this observer.",
+        "saving (status → closed) → set `closed_date = now()->toDateString()` unless the caller explicitly supplied one (past-dated closures are allowed for post-hoc admin corrections).",
+        "saving (status → active from closed) → refuse when a successor branch was created under the same `(tenant, organization)` after the previous `closed_date` (`BRANCH_SUCCESSOR_EXISTS`, 409). Guards against accidental resurrection.",
+        "saving (coordinates set OR changed) → fire `BranchCoordinatesUpdated` with old + new values so the Wave 3 geofencing module can recompute polygon coverage.",
+        "saving (address changed) → fire `BranchAddressUpdated`; when tenant has `branch_geocoding` AND `coordinates.source === 'geocoded'` AND the change touched a locality-affecting field (line1, city, subdivision, postal_code, country_code), dispatch `GeocodeAddressJob`. Manual pin drops (source='manual') stay pinned regardless.",
+        "saving (opening_hours changed) → fire `BranchOpeningHoursUpdated` with the `days_touched` array; refuse writes that use multi-period days when tenant lacks `branch_multi_period_hours` entitlement (`BRANCH_MULTI_PERIOD_HOURS_UNAVAILABLE`, 402).",
+        "saving (capacity changed) → fire `BranchCapacityChanged`.",
+        "saving (amenities include tags outside the platform catalogue) → refuse with `BRANCH_AMENITY_UNKNOWN` (422) unless tenant has `branch_amenities: custom` (Enterprise).",
+        "updated → invalidate `DefaultBranchResolver` cache when is_default touched; invalidate `OpeningHoursEvaluator` cache when opening_hours touched.",
+        "updated (any field except *_at / *_by / metadata) → fire `BranchUpdated` when no more specific event fired (dedupes against the specific-field events above).",
+        "deleting → refuse with `BRANCH_PUBLIC_DELETE_FORBIDDEN` (403) unless the delete is invoked from the two-person platform-support CLI path (`branch:hard-delete` command with `--platform-support` flag). Wave 2 public API never hard-deletes.",
+        "deleted (soft delete) → refuse — Wave 2 has no soft-delete path (public API returns 405). Kept in the observer signature for future compatibility.",
+        "forceDeleted (platform-support only) → fire `BranchDeleted` with the cascade-summary payload; note the cascade actually happens at the DB layer (CASCADE FK on tenant_id + RESTRICT on downstream domain FKs — the platform-support flow does its own dependency cleanup first)."
+      ]
+    }
+  ]
+}

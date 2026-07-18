@@ -1,0 +1,241 @@
+{
+  "id": "academorix://modules/branch/events",
+  "$version": 1,
+  "title": "branch — published events",
+  "namespace": "Academorix\\Branch\\Events",
+  "dispatchMode": "afterCommit",
+  "events": [
+    {
+      "name": "BranchCreated",
+      "class": "Academorix\\Branch\\Events\\BranchCreated",
+      "trigger": "ProvisionBranch action completed. Fires exactly once per new `branches.id`.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::MaybeDispatchBranchCreatedNotification",
+        "branch::MaybeDispatchGeocodeAddressJob (fires only when tenant has branch_geocoding entitlement)"
+      ],
+      "payload": {
+        "branch_id": "ULID (brn_*)",
+        "tenant_id": "ULID (ten_*)",
+        "organization_id": "ULID (org_*)",
+        "region_id": "ULID (rgn_*)",
+        "name": "string",
+        "slug": "string",
+        "is_default": "boolean",
+        "created_by": "ULID (usr_*) | null"
+      }
+    },
+    {
+      "name": "BranchUpdated",
+      "class": "Academorix\\Branch\\Events\\BranchUpdated",
+      "trigger": "Any mutable field on Branch was updated. Distinct from the specific-field events below (BranchAddressUpdated, BranchCoordinatesUpdated, …) — this one fires for everything else (name, description, phone, email, website, sort_order, logo_url).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "branch_id": "ULID",
+        "tenant_id": "ULID",
+        "updated_by": "ULID",
+        "changed_fields": "string[] (e.g. ['name', 'phone', 'sort_order'])"
+      }
+    },
+    {
+      "name": "BranchStatusChanged",
+      "class": "Academorix\\Branch\\Events\\BranchStatusChanged",
+      "trigger": "Branch.status transitioned to any new value. A superset event; the specific-state events below fire alongside for the routing case that cares.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "branch_id": "ULID",
+        "tenant_id": "ULID",
+        "from_status": "'active' | 'paused' | 'closed'",
+        "to_status": "'active' | 'paused' | 'closed'",
+        "changed_by": "ULID",
+        "reason": "string | null"
+      }
+    },
+    {
+      "name": "BranchPaused",
+      "class": "Academorix\\Branch\\Events\\BranchPaused",
+      "trigger": "Branch.status transitioned active → paused. New bookings + registrations refused via the enforce_operating_hours middleware.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchBranchOpeningHoursChangedNotification (paused counts as a hours change to members with active memberships)"
+      ],
+      "payload": {
+        "branch_id": "ULID",
+        "tenant_id": "ULID",
+        "paused_by": "ULID",
+        "reason": "string | null",
+        "resume_scheduled_for": "ISO 8601 timestamp | null (null = indefinite)"
+      }
+    },
+    {
+      "name": "BranchResumed",
+      "class": "Academorix\\Branch\\Events\\BranchResumed",
+      "trigger": "Branch.status transitioned paused → active.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "branch_id": "ULID",
+        "tenant_id": "ULID",
+        "resumed_by": "ULID",
+        "days_paused": "integer"
+      }
+    },
+    {
+      "name": "BranchClosed",
+      "class": "Academorix\\Branch\\Events\\BranchClosed",
+      "trigger": "Branch.status transitioned to closed. Refused when active downstream rows reference the branch — this event only fires after that check passes.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchBranchClosedNotification (transactional, no opt-out)",
+        "branch::DispatchNotifyStaffOfBranchClosureJob"
+      ],
+      "payload": {
+        "branch_id": "ULID",
+        "tenant_id": "ULID",
+        "closed_by": "ULID",
+        "reason": "string",
+        "closed_date": "ISO 8601 date",
+        "successor_branch_id": "ULID | null (when the tenant designated a replacement venue)"
+      }
+    },
+    {
+      "name": "BranchReopened",
+      "class": "Academorix\\Branch\\Events\\BranchReopened",
+      "trigger": "Branch.status transitioned closed → active. Refused when a successor branch was created under the same (tenant, organization) after the close event.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "branch_id": "ULID",
+        "tenant_id": "ULID",
+        "reopened_by": "ULID",
+        "days_closed": "integer",
+        "previous_closed_date": "ISO 8601 date"
+      }
+    },
+    {
+      "name": "BranchDefaultChanged",
+      "class": "Academorix\\Branch\\Events\\BranchDefaultChanged",
+      "trigger": "The default branch for a (tenant, organization) tuple was reassigned. Fires with both the newly-default row + the previously-default row so downstream caches can drop keys keyed on both.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "organization_id": "ULID",
+        "new_default_branch_id": "ULID",
+        "previous_default_branch_id": "ULID | null",
+        "changed_by": "ULID"
+      }
+    },
+    {
+      "name": "BranchOpeningHoursUpdated",
+      "class": "Academorix\\Branch\\Events\\BranchOpeningHoursUpdated",
+      "trigger": "Branch.opening_hours was updated. Distinct from BranchUpdated because the notification consumers care about member-facing hours changes specifically.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::MaybeDispatchBranchOpeningHoursChangedNotification (to members with active memberships referencing this branch, opt-in)"
+      ],
+      "payload": {
+        "branch_id": "ULID",
+        "tenant_id": "ULID",
+        "updated_by": "ULID",
+        "days_touched": "string[] (['monday', 'saturday', 'exceptions', ...])"
+      }
+    },
+    {
+      "name": "BranchCapacityChanged",
+      "class": "Academorix\\Branch\\Events\\BranchCapacityChanged",
+      "trigger": "Branch.capacity was updated (set, changed, or cleared).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "branch_id": "ULID",
+        "tenant_id": "ULID",
+        "updated_by": "ULID",
+        "from_capacity": "integer | null",
+        "to_capacity": "integer | null"
+      }
+    },
+    {
+      "name": "BranchCoordinatesUpdated",
+      "class": "Academorix\\Branch\\Events\\BranchCoordinatesUpdated",
+      "trigger": "Branch.coordinates was set OR changed. Distinct from BranchUpdated because the Wave 3 geofencing module subscribes to this event to recompute polygon coverage for every geofence attached to this Branch.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "geofencing::RecomputeGeofenceCoverageJob (Wave 3, when the geofencing module lands)"
+      ],
+      "payload": {
+        "branch_id": "ULID",
+        "tenant_id": "ULID",
+        "old_coordinates": "{ lat, lng, accuracy_m, source } | null",
+        "new_coordinates": "{ lat, lng, accuracy_m, source }",
+        "source": "'manual' | 'geocoded' | 'imported'",
+        "updated_by": "ULID"
+      }
+    },
+    {
+      "name": "BranchAddressUpdated",
+      "class": "Academorix\\Branch\\Events\\BranchAddressUpdated",
+      "trigger": "Branch.address was updated. Distinct from BranchUpdated because it optionally triggers a re-geocode when the tenant has `branch_geocoding` entitlement + coordinates.source === 'geocoded' (i.e. the coordinates were auto-derived; a manual pin drop stays pinned).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "branch::MaybeDispatchGeocodeAddressJob"
+      ],
+      "payload": {
+        "branch_id": "ULID",
+        "tenant_id": "ULID",
+        "updated_by": "ULID",
+        "changed_address_fields": "string[] (['line1', 'city', 'postal_code', ...])"
+      }
+    },
+    {
+      "name": "BranchDeleted",
+      "class": "Academorix\\Branch\\Events\\BranchDeleted",
+      "trigger": "Hard-delete completed. Wave 2 refuses public hard-delete (closed is terminal); this event only fires on the two-person platform-support CLI path.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — the audit outlives the row)",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "branch_id": "ULID (the row is gone; the ULID is preserved in the audit trail)",
+        "tenant_id": "ULID",
+        "organization_id": "ULID",
+        "region_id": "ULID",
+        "deleted_by": "ULID (platform-support operator)",
+        "cascade_summary": "{ facilities: int, teams: int, sessions: int, bookings: int } — for post-mortem"
+      }
+    }
+  ]
+}

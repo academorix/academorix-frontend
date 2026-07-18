@@ -1,0 +1,108 @@
+{
+  "id": "academorix://modules/facility/observers",
+  "$version": 1,
+  "title": "facility — Eloquent observers",
+  "description": "Four observers enforce the module's write-time invariants: facility catalogue integrity, resource-booking overlap + capacity + availability + blackout + timing, day-pass entitlement + receipt-generation, and pass credit + eligibility. The ResourceBookingObserver is the most consequential — the overlap check runs under SERIALIZABLE isolation to preserve atomicity across concurrent booking requests.",
+  "observers": [
+    {
+      "model": "Facility",
+      "observer": "Academorix\\Facility\\Observers\\FacilityObserver",
+      "handles": [
+        "creating → populate ULID prefix `fac_`",
+        "creating → refuse when tenant does NOT hold `facilities` entitlement (returns `FACILITY_FEATURE_NOT_ENTITLED` — small tier is locked out entirely)",
+        "creating → refuse when parent Branch.status = 'closed' or 'archived' (returns `FACILITY_BRANCH_NOT_ACTIVE`)",
+        "creating → consume 1 unit of `facility_slot` entitlement against (application_id, tenant_id); refuse with `FACILITY_QUOTA_EXCEEDED` when cap reached (Medium: 20 per tenant; Enterprise: unlimited)",
+        "creating → validate availability_json against schemas/availability.schema.json + refuse when any window lies OUTSIDE the parent branch.opening_hours envelope (returns `FACILITY_AVAILABILITY_EXCEEDS_BRANCH_HOURS` with the offending day)",
+        "creating → validate pricing_json against schemas/pricing.schema.json + refuse when currency does not match parent branch.region.currency (returns `FACILITY_PRICING_CURRENCY_MISMATCH` — pricing is frozen at creation-time; region currency changes require manual re-price)",
+        "creating → validate facility_type against sport_category via `valid_facility_type_for_sport` rule (returns `FACILITY_TYPE_SPORT_MISMATCH` — e.g. pool with sport_category='basketball')",
+        "creating → derive slug from name when omitted; refuse duplicate slug within (tenant_id, branch_id) via composite unique index",
+        "creating → fire FacilityCreated",
+        "updating (pricing_json changed) → fire FacilityPricingUpdated; snapshot before/after into the audit-payload for the 7-year retention record",
+        "updating (availability_json changed) → refuse when new window exceeds branch.opening_hours; fire FacilityAvailabilityChanged",
+        "updating (status = maintenance) → allow; do NOT cascade bookings (maintenance is temporary; bookings will simply fail their booked_at-check when the maintenance window overlaps)",
+        "updating (status = retired) → refuse when any resource_bookings row references this facility with status IN ('pending','confirmed') AND starts_at > now() UNLESS caller passed the `--cascade-bookings` flag (in which case: fire FacilityRetired synchronously → CancelFutureBookingsOnFacilityRetired listener fires BookingCancelled per booking → then set the retired status)",
+        "updating (blackout_dates added) → for each new window: fire FacilityBlackoutAdded; enqueue the cascade job that finds bookings in the window + fires BookingCancelled with cascade_trigger='facility_blackout'",
+        "updating (blackout_dates removed) → fire FacilityBlackoutRemoved (does NOT restore cancelled bookings — those are gone)",
+        "deleting (soft-delete) → refuse when status != 'retired' (must be retired first to soft-delete); allow when retired",
+        "deleting (hard-delete) → RESTRICT when day_passes or passes reference this facility (day_passes.branch_id + facility_id → RESTRICT; passes.facility_id → RESTRICT); allow only after 7-year financial retention window closes"
+      ]
+    },
+    {
+      "model": "ResourceBooking",
+      "observer": "Academorix\\Facility\\Observers\\ResourceBookingObserver",
+      "handles": [
+        "creating → populate ULID prefix `bkg_`",
+        "creating → refuse when starts_at is in the past (returns `BOOKING_IN_PAST`)",
+        "creating → refuse when ends_at <= starts_at (returns `BOOKING_INVALID_WINDOW`)",
+        "creating → refuse when duration_minutes < facility.min_booking_duration_minutes OR > facility.max_booking_duration_minutes (returns `BOOKING_DURATION_OUT_OF_BOUNDS`)",
+        "creating → refuse when starts_at not aligned to facility.booking_slot_step_minutes multiples (returns `BOOKING_SLOT_MISALIGNED` — e.g. facility.step=30 rejects starts_at at :15)",
+        "creating → refuse when starts_at > now() + facility.advance_booking_window_days (returns `BOOKING_ADVANCE_WINDOW_EXCEEDED`)",
+        "creating → refuse when facility.status != 'active' (returns `BOOKING_FACILITY_NOT_ACTIVE`)",
+        "creating → refuse when window is OUTSIDE facility.availability_json (returns `BOOKING_OUTSIDE_FACILITY_HOURS` — evaluates against the day's window)",
+        "creating → refuse when window is OUTSIDE parent facility.branch.opening_hours (returns `BOOKING_OUTSIDE_BRANCH_HOURS` — defense-in-depth; facility hours already constrained to branch hours at facility-create time)",
+        "creating → refuse when window OVERLAPS any facility.blackout_dates entry (returns `BOOKING_IN_BLACKOUT`)",
+        "creating → run overlap detection under DB.transaction with SERIALIZABLE isolation: SELECT existing bookings WHERE facility_id = ? AND status IN ('pending','confirmed') AND deleted_at IS NULL AND tsrange(starts_at, ends_at) && tsrange(new.starts_at, new.ends_at); refuse with `BOOKING_OVERLAP` when any row returns. CRITICAL: SERIALIZABLE ensures atomicity — concurrent requests won't both pass the check. If a second-order overlap slips through (raw SQL bypass, corrupted index), the reconciler job catches it and fires BookingOverlapDetected.",
+        "creating → refuse when attendees_count > facility.capacity_persons (returns `BOOKING_CAPACITY_EXCEEDED`)",
+        "creating → compute price_amount_cents from facility.pricing_json + booking window + attendees_count via PricingCalculator; store frozen at booking-time (subsequent pricing_json edits do NOT retroactively reprice)",
+        "creating → set price_currency from parent facility.branch.region.currency",
+        "creating → if booked_for_user has an active pass covering this facility: atomically increment pass.used_credits (fires PassCreditConsumed within the same transaction); refuse booking when pass consumption fails (returns `BOOKING_PASS_CONSUMPTION_FAILED`)",
+        "creating → set status='confirmed' when no approval gate applies (default in Wave 2); status='pending' when Wave 4 Finance approval gate is configured for this booking amount",
+        "creating → fire BookingCreated + BookingConfirmed (in that order, both afterCommit)",
+        "creating → schedule 24h + 1h BookingReminderNotification via the BookingReminderScheduler",
+        "updating (status → cancelled) → refuse when starts_at - now() < facility.cancellation_notice_hours UNLESS caller is admin (has facility.bookings.cancel-anywhere permission) OR the booking has an available pass (returns `BOOKING_CANCELLATION_NOTICE_WINDOW`)",
+        "updating (status → cancelled) → set cancelled_at = now(), cancelled_by_user_id = actor; if pass credit was consumed on create AND cancel is inside notice window: DO NOT restore the credit (retention policy); if cancel is outside notice window: restore 1 credit to the pass",
+        "updating (status → cancelled) → fire BookingCancelled",
+        "updating (status → completed) → refuse when caller is not the automated MarkBookingCompletedJob (returns `BOOKING_MANUAL_COMPLETION_FORBIDDEN` — completed is a system-managed terminal state)",
+        "updating (status → completed) → fire BookingCompleted",
+        "updating (status → no_show) → allowed from automated MarkNoShowJob OR manual admin action with facility.bookings.mark-no-show permission; fire BookingMarkedNoShow",
+        "updating (starts_at / ends_at changed) → run the full overlap + availability + capacity + timing check chain again; fire BookingRescheduled on success",
+        "updating (checked_in_at set) → fire BookingCheckedIn",
+        "deleting (soft-delete) → refuse when status='pending' or 'confirmed' AND starts_at > now() (must cancel first)",
+        "post-commit reconciler pass → fire BookingOverlapDetected if the reconciler discovers overlapping rows that somehow slipped through — this is the ops alarm; every fire is a P1 incident"
+      ]
+    },
+    {
+      "model": "DayPass",
+      "observer": "Academorix\\Facility\\Observers\\DayPassObserver",
+      "handles": [
+        "creating → populate ULID prefix `dpa_`",
+        "creating → refuse when tenant does NOT hold `facilities_advanced` entitlement (returns `DAY_PASS_FEATURE_NOT_ENTITLED` — Enterprise-only)",
+        "creating → refuse when parent Branch.status != 'active' (returns `DAY_PASS_BRANCH_NOT_ACTIVE`)",
+        "creating → refuse when valid_on_date < today() (returns `DAY_PASS_DATE_IN_PAST`)",
+        "creating → refuse when valid_on_date > today() + 30 days (returns `DAY_PASS_DATE_TOO_FAR` — advance-day-pass is not a valid use case)",
+        "creating → refuse when price_amount_cents < 0 (returns `DAY_PASS_NEGATIVE_PRICE`)",
+        "creating → refuse when payment_method='card' or 'wallet' but no payment_reference (Wave 4 Finance integration will enrich this)",
+        "creating → refuse when issued_to_user_id IS NULL AND issued_to_profile_name IS NULL (returns `DAY_PASS_ANONYMOUS_REQUIRES_NAME` — data-quality mandate)",
+        "creating → refuse when issued_to_profile_name IS NOT NULL AND issued_to_profile_phone IS NULL (returns `DAY_PASS_ANONYMOUS_REQUIRES_PHONE` — data-quality mandate helps ops call about lost items etc)",
+        "creating → generate receipt_number via ReceiptNumberGenerator (format: `DP-{tenant_prefix}-{year}-{sequential:06d}`); refuse duplicate via composite unique on (tenant_id, receipt_number)",
+        "creating → set purchased_at = now() (frozen — never mutable)",
+        "creating → fire DayPassIssued",
+        "updating (consumed_at set) → refuse when valid_on_date != today() (returns `DAY_PASS_NOT_VALID_TODAY`); refuse when consumed_at already set (returns `DAY_PASS_ALREADY_CONSUMED`); fire DayPassConsumed",
+        "updating (refund path) → refuse when consumed_at is set (returns `DAY_PASS_CONSUMED_CANNOT_REFUND`); require facility.day_passes.refund permission on the actor; refuse when purchased_at > 30 days ago (returns `DAY_PASS_REFUND_WINDOW_EXPIRED`); fire DayPassRefunded",
+        "deleting → REFUSE ALL — day passes are financial records, hard-purged by the retention pipeline only",
+        "post-commit anonymous-redaction check → if purchased_at + 90 days AND consumed_at IS NOT NULL: enqueue RedactAnonymousDayPassProfileJob (redacts issued_to_profile_name + phone to '[REDACTED]' per GDPR minimisation)"
+      ]
+    },
+    {
+      "model": "Pass",
+      "observer": "Academorix\\Facility\\Observers\\PassObserver",
+      "handles": [
+        "creating → populate ULID prefix `pas_`",
+        "creating → refuse when tenant does NOT hold `facilities_advanced` entitlement (returns `PASS_FEATURE_NOT_ENTITLED` — Enterprise-only)",
+        "creating → refuse when valid_from > valid_until (returns `PASS_INVALID_WINDOW`)",
+        "creating → refuse when total_credits < 1 (returns `PASS_INVALID_CREDITS`)",
+        "creating → refuse when facility_id is set AND facility.branch_id != pass.branch_id (returns `PASS_FACILITY_BRANCH_MISMATCH`)",
+        "creating → refuse when membership_id is set AND membership.tenant_id != pass.tenant_id (cross-tenant FK smuggling)",
+        "creating → set used_credits = 0",
+        "creating → fire PassIssued",
+        "updating (used_credits incremented) → REFUSE when used_credits + delta > total_credits (returns `PASS_DOUBLE_SPEND` — critical defense against race-condition over-consumption; the observer uses SELECT ... FOR UPDATE inside the booking transaction to serialize)",
+        "updating (used_credits incremented) → fire PassCreditConsumed; if new used_credits == total_credits: also fire PassExhausted",
+        "updating (assignable_user_ids changed) → refuse when is_transferable=false (returns `PASS_NOT_TRANSFERABLE`); fire PassTransferred",
+        "updating (revoke path — soft-delete + revocation_reason) → require facility.passes.revoke permission; fire PassRevoked",
+        "updating (valid_until reached — via ExpirePassesJob) → fire PassExpired",
+        "deleting (hard-delete) → REFUSE unless > 7 years past deleted_at (financial retention window)",
+        "post-commit exhaustion check → if used_credits == total_credits AND PassExhausted has not fired in this transaction: fire PassExhausted (defensive belt-and-suspenders)"
+      ]
+    }
+  ]
+}

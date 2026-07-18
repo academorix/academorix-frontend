@@ -1,0 +1,139 @@
+{
+  "id": "academorix://modules/facility/traits",
+  "$version": 1,
+  "title": "facility — trait composition",
+  "description": "Four owned traits. `BelongsToFacility` is the FK trait for downstream models (ResourceBooking today; Session/EventTeam bookings in Wave 3). `HasBookings` / `HasDayPasses` / `HasPasses` are inverse-side conveniences on the Facility model itself, exposing scoped query helpers (`->activeBookings()`, `->overlappingBookings($window)`, `->activePasses()`). Order matters when composed with `BelongsToTenant` / `BelongsToBranch` / `BelongsToRegion` — tenant MUST come first so the scope chain observes the tenant context; branch precedes region because the branch FK is the cascade path for region attribution (facilities cascade region through branch per hierarchy.md §2).",
+  "owned": [
+    {
+      "trait": "Academorix\\Facility\\Concerns\\BelongsToFacility",
+      "description": "Mixed into any domain model that carries a `facility_id` FK. Adds the `facility()` belongsTo relation, a `resolveInFacility(?Facility)` query scope that filters `WHERE facility_id = ?` (falling back to the caller's `Request::activeFacility()` when the arg is omitted), and a `booted()` hook that fills `facility_id = active_facility_id()` on `creating` when the field is null AND the current request carries a resolved active facility. Refuses to save a row whose `facility_id` points at a Facility in a different tenant than the row itself (defense-in-depth against cross-tenant FK smuggling — the compliance-auditor would catch a bad schema, this catches a bad write).",
+      "public": true,
+      "usedBy": [
+        "facility::ResourceBooking (required facility_id — every booking anchored to exactly one Facility)",
+        "sports::Session (Wave 3 — practices book a Facility for a window)",
+        "sports::EventBooking (Wave 3 — tournaments reserve N contiguous slots)"
+      ],
+      "conflicts_with": [],
+      "composition_notes": [
+        "Order: `BelongsToTenant` must appear BEFORE `BelongsToFacility` in the trait list so the tenant scope resolves first.",
+        "`BelongsToBranch` is implied by the facility — do NOT compose `BelongsToBranch` on models that already carry `BelongsToFacility` (the branch cascades through facility → branch_id in queries).",
+        "The `booted()` fill hook is off by default when the consumer's create-flow always specifies facility_id explicitly (ResourceBooking). Turn on per-model via `bool $fillFacilityOnCreating = true`."
+      ]
+    },
+    {
+      "trait": "Academorix\\Facility\\Concerns\\HasBookings",
+      "description": "Composed onto the Facility model itself. Adds `->bookings()` (hasMany over ResourceBooking), `->activeBookings()` (scope filter status IN ['pending', 'confirmed']), `->futureBookings()` (scope filter starts_at > now()), `->overlappingBookings(Carbon $starts, Carbon $ends)` (index-driven overlap query using the covering index on (facility_id, starts_at, ends_at)). The overlap query is the read side of the write-time SERIALIZABLE overlap-detection observer — same predicate, same index.",
+      "public": true,
+      "usedBy": ["facility::Facility"]
+    },
+    {
+      "trait": "Academorix\\Facility\\Concerns\\HasDayPasses",
+      "description": "Composed onto the Branch model (NOT the Facility — day passes are branch-scoped, not facility-scoped). Adds `->dayPasses()`, `->dayPassesOnDate(Carbon $date)` (scope filter valid_on_date = ?), `->activeDayPasses()` (scope filter valid_on_date >= today()). Not composed on Facility because a walk-in visitor buys a day pass to the *branch* (they can use any facility their pass tier grants).",
+      "public": true,
+      "usedBy": ["branch::Branch"]
+    },
+    {
+      "trait": "Academorix\\Facility\\Concerns\\HasPasses",
+      "description": "Composed onto the Membership model (Wave 4 — placeholder relation today) AND the Facility model. On Membership: `->passes()` (hasMany over Pass). On Facility: `->passes()` (hasMany filtered on facility_id = self.id OR facility_id IS NULL AND branch_id = self.branch_id — passes that are facility-specific OR any-facility-in-branch). The dual-composition is why the trait is one abstraction: same relation shape, different scoping predicate.",
+      "public": true,
+      "usedBy": [
+        "facility::Facility (facility-specific + any-facility-in-branch passes)",
+        "finance::Membership (Wave 4 — passes issued against this contract)"
+      ]
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "Facility, ResourceBooking, Pass. NOT DayPass — day_passes are financial records with no soft-delete (7-year hard retention)."
+      }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSlug", "reason": "Facility only — unique per (tenant_id, branch_id)." }
+    ],
+    "tenants": [
+      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+    ],
+    "branch": [
+      { "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch", "reason": "Facility, DayPass, Pass all carry branch_id directly. ResourceBooking does NOT — it cascades through facility.branch_id." }
+    ],
+    "audit": [
+      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every write to facilities / resource_bookings / day_passes / passes is compliance-relevant (financial-record retention 7 years)." }
+    ],
+    "activity": [
+      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Booking lifecycle transitions + pass credit consumption feed the staff-visible activity feed. NOT on DayPass — POS-issued rows are high-volume + already covered by receipt_number." }
+    ]
+  },
+  "composition": {
+    "facility": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToBranch",
+        "HasSlug",
+        "HasBookings",
+        "HasPasses",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "Order matters: BelongsToTenant precedes every scope-observing trait. HasSlug generates the (tenant_id, branch_id)-unique slug on create. HasBookings + HasPasses are inverse-side conveniences. NO BelongsToOrganization / BelongsToRegion — facilities cascade both through branch (hierarchy.md §2 + tenancy-columns.md §5)."
+    },
+    "resource_booking": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToFacility",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "NO BelongsToBranch trait — the branch cascades through facility. Bookings inherit tenant/branch/region through the facility chain. Auditable applies because financial retention requires 7-year audit trail on every state transition."
+    },
+    "day_pass": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToBranch",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "Filterable"
+      ],
+      "notes": "NO SoftDeletes — day passes are financial records (7-year hard retention). NO HasActivityLog — POS volume is too high, and every row already has a receipt_number that fills the audit-trail role. Auditable still applies for compliance retention of the payment_method + price_amount_cents fields."
+    },
+    "pass": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToBranch",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "SoftDeletes for the revoke path (soft-delete on revoke, hard-purge after 7-year retention). Auditable is critical — every used_credits increment is a compliance-relevant financial mutation."
+    }
+  }
+}

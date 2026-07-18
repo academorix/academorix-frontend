@@ -1,0 +1,179 @@
+{
+  "id": "academorix://modules/organization/events",
+  "$version": 1,
+  "title": "organization — published events",
+  "namespace": "Academorix\\Organization\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. `OrganizationParentChanged` is the most consequential — it can shift access boundaries for large sub-trees, and its listener chain synchronously updates tree_path for the moved row + asynchronously updates every descendant.",
+  "events": [
+    {
+      "name": "OrganizationCreated",
+      "class": "Academorix\\Organization\\Events\\OrganizationCreated",
+      "trigger": "New Organization row committed.",
+      "queue": "notifications",
+      "afterCommit": true,
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "organization::WarmSlotUsageCache",
+        "notifications::DispatchOrganizationCreatedNotification"
+      ],
+      "payload": {
+        "organization": "Organization",
+        "tenant_id": "string",
+        "actor_id": "string | null",
+        "was_seeded": "boolean (true when created by SeedDefaultOrganizationForTenantJob)"
+      }
+    },
+    {
+      "name": "OrganizationUpdated",
+      "class": "Academorix\\Organization\\Events\\OrganizationUpdated",
+      "trigger": "One or more mutable fields changed. Distinct from ParentChanged / DefaultChanged / StatusChanged / BrandingUpdated — those are the SPECIFIC events; this fires for everything else (name / slug / short_name / description / website_url / contact fields / sort_order / established_date / category).",
+      "queue": "notifications",
+      "afterCommit": true,
+      "consumers": ["activity::WriteToActivityLog"],
+      "payload": {
+        "organization": "Organization",
+        "changed_fields": "string[]",
+        "old_values": "object (keyed by changed field)",
+        "actor_id": "string | null"
+      }
+    },
+    {
+      "name": "OrganizationStatusChanged",
+      "class": "Academorix\\Organization\\Events\\OrganizationStatusChanged",
+      "trigger": "`status` transitioned (active ↔ paused, or active → archived).",
+      "queue": "notifications",
+      "afterCommit": true,
+      "consumers": ["activity::WriteToActivityLog", "branch::CascadePauseToBranches"],
+      "payload": {
+        "organization": "Organization",
+        "from_status": "string",
+        "to_status": "string",
+        "reason": "string | null",
+        "actor_id": "string | null"
+      }
+    },
+    {
+      "name": "OrganizationParentChanged",
+      "class": "Academorix\\Organization\\Events\\OrganizationParentChanged",
+      "trigger": "`parent_id` changed on an existing row. Fires on both nulling (child → root) and setting (root → child, or child → new parent).",
+      "queue": "notifications-critical",
+      "afterCommit": true,
+      "consumers": [
+        "organization::DispatchRebuildTreePathsJob",
+        "activity::WriteToActivityLog",
+        "audit::WriteCriticalAuditRow",
+        "notifications::DispatchOrganizationReparentedNotification",
+        "branch::InvalidateBranchScopeCaches"
+      ],
+      "payload": {
+        "organization": "Organization",
+        "old_parent_id": "string | null",
+        "new_parent_id": "string | null",
+        "old_tree_path": "string",
+        "new_tree_path": "string",
+        "old_depth": "integer",
+        "new_depth": "integer",
+        "descendant_count": "integer",
+        "actor_id": "string | null",
+        "reason": "string | null"
+      }
+    },
+    {
+      "name": "OrganizationDefaultChanged",
+      "class": "Academorix\\Organization\\Events\\OrganizationDefaultChanged",
+      "trigger": "The tenant's `is_default=true` Organization changed. Fires when `is_default` flips on the NEW default (the auto-demotion of the OLD default is part of the same event; no separate demotion event).",
+      "queue": "notifications-critical",
+      "afterCommit": true,
+      "consumers": [
+        "organization::InvalidateDefaultCache",
+        "activity::WriteToActivityLog",
+        "audit::WriteCriticalAuditRow",
+        "notifications::DispatchOrganizationDefaultChangedNotification"
+      ],
+      "payload": {
+        "tenant_id": "string",
+        "from_organization_id": "string | null",
+        "to_organization_id": "string",
+        "actor_id": "string | null",
+        "source": "'action' | 'reconciler' | 'seeder'"
+      }
+    },
+    {
+      "name": "OrganizationBrandingUpdated",
+      "class": "Academorix\\Organization\\Events\\OrganizationBrandingUpdated",
+      "trigger": "One of `logo_url`, `primary_color`, `secondary_color`, `description` changed. Requires `organization_branding` entitlement to have been active at write time.",
+      "queue": "notifications",
+      "afterCommit": true,
+      "consumers": ["activity::WriteToActivityLog", "branding::CascadeBrandingResolution"],
+      "payload": {
+        "organization": "Organization",
+        "changed_fields": "string[]",
+        "old_values": "object",
+        "actor_id": "string | null"
+      }
+    },
+    {
+      "name": "OrganizationArchived",
+      "class": "Academorix\\Organization\\Events\\OrganizationArchived",
+      "trigger": "Soft-delete + status=archived transition. Refused when is_default / has descendants / referenced by branches — the event fires only after all guards pass.",
+      "queue": "notifications",
+      "afterCommit": true,
+      "consumers": [
+        "entitlements::ReleaseOrganizationSlot",
+        "activity::WriteToActivityLog",
+        "audit::WriteCriticalAuditRow"
+      ],
+      "payload": {
+        "organization": "Organization",
+        "reason": "string | null",
+        "actor_id": "string | null"
+      }
+    },
+    {
+      "name": "OrganizationRestored",
+      "class": "Academorix\\Organization\\Events\\OrganizationRestored",
+      "trigger": "Soft-deleted row restored (deleted_at set to null). Re-consumes the `organization_slot` — refused with ORGANIZATION_SLOT_EXCEEDED when the tenant is at cap.",
+      "queue": "notifications",
+      "afterCommit": true,
+      "consumers": ["entitlements::ConsumeOrganizationSlot", "activity::WriteToActivityLog"],
+      "payload": {
+        "organization": "Organization",
+        "actor_id": "string | null"
+      }
+    },
+    {
+      "name": "OrganizationDeleted",
+      "class": "Academorix\\Organization\\Events\\OrganizationDeleted",
+      "trigger": "Hard-delete via PurgeArchivedOrganizationsJob (after the 730-day archive hold + zero descendants + zero branch references). Distinct from OrganizationArchived — that is the soft-delete signal; this is the terminal-purge signal.",
+      "queue": "notifications-critical",
+      "afterCommit": true,
+      "consumers": ["activity::WriteToActivityLog", "audit::WriteCriticalAuditRow"],
+      "payload": {
+        "tenant_id": "string",
+        "organization_id": "string",
+        "slug": "string",
+        "name": "string",
+        "archived_at": "datetime",
+        "deleted_at": "datetime"
+      }
+    },
+    {
+      "name": "TenantDefaultOrganizationSeeded",
+      "class": "Academorix\\Organization\\Events\\TenantDefaultOrganizationSeeded",
+      "trigger": "SeedDefaultOrganizationForTenantJob committed the tenant's default row. Fires exactly once per tenant. Distinct from OrganizationCreated (which fires for the same row) — this event has extra context tying the seed to the provisioning transaction.",
+      "queue": "notifications",
+      "afterCommit": true,
+      "consumers": [
+        "branch::MayAutoSeedDefaultBranch (planned)",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "tenant_id": "string",
+        "organization_id": "string",
+        "seeded_from": "'tenant_provisioning' | 'reconciler_repair'",
+        "inferred_category": "string"
+      }
+    }
+  ]
+}

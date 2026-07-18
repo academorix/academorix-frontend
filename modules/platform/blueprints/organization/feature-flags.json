@@ -1,0 +1,50 @@
+{
+  "id": "academorix://modules/organization/feature-flags",
+  "$version": 1,
+  "title": "organization — kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "organization.write_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for every write path (create, update, reparent, set-default, pause, resume, archive). Off = read-only mode. Emergency-only when a corruption bug threatens organizational data integrity."
+    },
+    {
+      "key": "organization.seed_default_on_provisioning",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "SeedDefaultOrganizationForTenantJob dispatch on tenancy::TenantProvisioned. Off during migrations that pre-seed defaults out of band."
+    },
+    {
+      "key": "organization.reparent_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "The POST /reparent endpoint. Off = every attempt returns 503 REPARENT_TEMPORARILY_UNAVAILABLE. Emergency when tree-drift issues are being investigated."
+    },
+    {
+      "key": "organization.rebuild_tree_paths_async",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "When on, RebuildTreePathsJob dispatches to the queue after ParentChanged. When off, the job runs SYNCHRONOUSLY in the same request as the reparent — slower response but zero eventual-consistency window. Use `off` during regression testing."
+    },
+    {
+      "key": "organization.reconcile_defaults_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Nightly ReconcileDefaultOrganizationInvariantJob dispatch. Off during migrations that intentionally leave the invariant temporarily broken (e.g. mass tenant re-seed)."
+    },
+    {
+      "key": "organization.branding_writes_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Whether logo_url + primary_color + secondary_color + description are writable. Off makes them read-only across the platform even for tenants holding the `organization_branding` entitlement — used during branding-audit rollouts."
+    },
+    {
+      "key": "organization.tree_cache_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "The `org:tree:*` and `org:descendants:*` Redis caches. Off routes every scoped-access decision through the DB. Used to isolate cache-consistency bugs."
+    }
+  ]
+}

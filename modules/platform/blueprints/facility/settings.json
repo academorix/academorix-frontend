@@ -1,0 +1,214 @@
+{
+  "id": "academorix://modules/facility/settings",
+  "$version": 1,
+  "title": "facility — settings",
+  "description": "Tenant-facing preferences (branch-level facility defaults) + user-level preferences (booking notification opt-outs).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "facility",
+      "class": "Academorix\\Facility\\Settings\\FacilitySettings",
+      "label": "Facilities & Bookings",
+      "description": "Tenant-wide defaults for facility creation + booking policy.",
+      "icon": "map-pin",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 30,
+      "permission": "facilities.viewAny",
+      "requiresEntitlement": "facilities",
+      "sections": [
+        {
+          "label": "Booking defaults",
+          "description": "Default values applied to newly-created facilities. Can be overridden per-facility.",
+          "icon": "clock",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "default_min_duration_minutes",
+              "controlType": "number",
+              "label": "Minimum booking duration (minutes)",
+              "defaultValue": 60,
+              "min": 15,
+              "max": 480,
+              "sortOrder": 1
+            },
+            {
+              "name": "default_max_duration_minutes",
+              "controlType": "number",
+              "label": "Maximum booking duration (minutes)",
+              "defaultValue": 240,
+              "min": 30,
+              "max": 1440,
+              "sortOrder": 2
+            },
+            {
+              "name": "default_slot_step_minutes",
+              "controlType": "select",
+              "label": "Booking slot granularity",
+              "defaultValue": 30,
+              "options": {
+                "15": "15 min",
+                "30": "30 min",
+                "60": "1 hour",
+                "120": "2 hours"
+              },
+              "sortOrder": 3
+            },
+            {
+              "name": "default_advance_booking_window_days",
+              "controlType": "number",
+              "label": "How far in advance can users book (days)",
+              "defaultValue": 30,
+              "min": 1,
+              "max": 365,
+              "sortOrder": 4
+            },
+            {
+              "name": "default_cancellation_notice_hours",
+              "controlType": "number",
+              "label": "Cancellation notice required (hours)",
+              "defaultValue": 24,
+              "min": 0,
+              "max": 168,
+              "helpText": "Cancellations inside this window may incur a fee (per your refund policy).",
+              "sortOrder": 5
+            }
+          ]
+        },
+        {
+          "label": "Capacity policy",
+          "icon": "users",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "enforce_capacity",
+              "controlType": "toggle",
+              "label": "Enforce facility capacity",
+              "defaultValue": true,
+              "helpText": "When off, capacity is a UI hint only. Gyms with overbook waivers may prefer this.",
+              "requiresEntitlement": "booking_capacity_gating",
+              "sortOrder": 1
+            },
+            {
+              "name": "default_capacity_persons",
+              "controlType": "number",
+              "label": "Default capacity for new facilities",
+              "defaultValue": 1,
+              "min": 1,
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Reminders",
+          "icon": "bell",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "reminder_offsets_hours",
+              "controlType": "multi-select",
+              "label": "Booking reminder offsets",
+              "defaultValue": [24, 1],
+              "options": {
+                "48": "48 hours before",
+                "24": "24 hours before",
+                "4": "4 hours before",
+                "1": "1 hour before",
+                "0": "Do not send reminders"
+              },
+              "helpText": "Users can opt out individually per their profile settings.",
+              "sortOrder": 1
+            }
+          ]
+        },
+        {
+          "label": "Day passes",
+          "icon": "ticket",
+          "sortOrder": 4,
+          "requiresEntitlement": "facilities_advanced",
+          "fields": [
+            {
+              "name": "day_pass_default_price_cents",
+              "controlType": "currency",
+              "label": "Default day-pass price (cents)",
+              "defaultValue": 1500,
+              "min": 0,
+              "sortOrder": 1
+            },
+            {
+              "name": "day_pass_refund_window_days",
+              "controlType": "number",
+              "label": "Refund window (days)",
+              "defaultValue": 30,
+              "min": 0,
+              "max": 90,
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "facility_user",
+      "class": "Academorix\\Facility\\Settings\\FacilityUserSettings",
+      "label": "My bookings",
+      "description": "Per-user booking preferences.",
+      "icon": "user-circle",
+      "scope": "user",
+      "public": true,
+      "sortOrder": 25,
+      "sections": [
+        {
+          "label": "Reminders",
+          "icon": "bell",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "receive_booking_reminders",
+              "controlType": "toggle",
+              "label": "Send me booking reminders",
+              "defaultValue": true,
+              "sortOrder": 1
+            },
+            {
+              "name": "reminder_channels",
+              "controlType": "multi-select",
+              "label": "Reminder channels",
+              "defaultValue": ["push", "in_app"],
+              "options": {
+                "mail": "Email",
+                "push": "Push notification",
+                "in_app": "In-app",
+                "sms": "SMS (usage charged)"
+              },
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Preferences",
+          "icon": "adjustments-horizontal",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "default_facility_id",
+              "controlType": "resource-select",
+              "label": "My usual facility",
+              "helpText": "Pre-selected in the booking widget when set.",
+              "resource": "facility",
+              "sortOrder": 1
+            },
+            {
+              "name": "show_price_in_slots",
+              "controlType": "toggle",
+              "label": "Show price on the slot picker",
+              "defaultValue": true,
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

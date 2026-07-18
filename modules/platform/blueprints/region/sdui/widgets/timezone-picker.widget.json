@@ -1,0 +1,168 @@
+{
+  "id": "region.timezone-picker",
+  "title": "Timezone picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Searchable single-select for IANA timezone identifiers. Renders as HeroUI `ComboBox` (per the ui-components rule) with all identifiers from PHP's `\\DateTimeZone::listIdentifiers()`. Options group by prefix (`Africa/*`, `America/*`, `Antarctica/*`, `Asia/*`, `Atlantic/*`, `Australia/*`, `Europe/*`, `Indian/*`, `Pacific/*`) via `ListBox.Section`. Consumed by the region create + edit screens, the user preferences screen (profile timezone override), and any admin flow that needs a timezone pick.",
+  "notes": [
+    "Uses `ComboBox` — 400+ IANA identifiers require free-text search.",
+    "Rejects deprecated aliases (`US/Pacific`, `Canada/Eastern`) — only canonical forms are surfaced. The ValidIanaTimezone rule in strict mode enforces the same on writes.",
+    "Item renderer shows the identifier + current UTC offset + display name for the timezone (e.g. `America/Los_Angeles — UTC-08:00 (Pacific Standard Time)`).",
+    "The `preferredForCountry` prop biases the surfaced timezones — passing `AE` boosts `Asia/Dubai` to the top of the list. Consumed by the region create screen: when the country picker selects `AE`, the timezone picker biases toward Dubai.",
+    "For countries with a single timezone (UK, IE, AE), the timezone auto-fills but the user may still change it (e.g. a tenant's UK operation may prefer UTC display for internal reporting)."
+  ],
+  "props": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "Form field name (typically `timezone`)."
+    },
+    "label": {
+      "type": "string",
+      "default": "Timezone"
+    },
+    "required": {
+      "type": "boolean",
+      "default": false
+    },
+    "clearable": {
+      "type": "boolean",
+      "default": false
+    },
+    "placeholder": {
+      "type": "string",
+      "default": "Search timezones… (e.g. New York, Dubai, +02)"
+    },
+    "helpText": {
+      "type": "string",
+      "default": null
+    },
+    "size": {
+      "type": "string",
+      "default": "md",
+      "enum": ["sm", "md", "lg"]
+    },
+    "defaultValue": {
+      "type": "string",
+      "default": null,
+      "description": "Pre-selected IANA identifier."
+    },
+    "preferredForCountry": {
+      "type": "string",
+      "default": null,
+      "description": "Optional ISO 3166-1 alpha-2 country code. When set, the picker biases toward that country's timezones from `data/country-defaults.json.timezone_options` — pins them to the top of the list."
+    }
+  },
+  "dataSources": [
+    {
+      "name": "timezones",
+      "kind": "http.get",
+      "url": "/api/v1/timezones",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 3600 },
+      "description": "Returns `[{ identifier, region, city, utc_offset_minutes, display_name, is_deprecated }]` for every non-deprecated IANA identifier. Populated by the RegionServiceProvider from PHP's `\\DateTimeZone::listIdentifiers()`."
+    },
+    {
+      "name": "grouped",
+      "kind": "computed",
+      "expr": "groupTimezonesByRegion(timezones, props.preferredForCountry)",
+      "description": "Groups the flat timezone list into ordered sections. Section order: preferred (when preferredForCountry is set) → Africa → America → Antarctica → Asia → Atlantic → Australia → Europe → Indian → Pacific. Alphabetical by city within each section."
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "props": {
+        "menuTrigger": "focus"
+      },
+      "bindings": {
+        "props": {
+          "name": { "$ref": "props.name" },
+          "aria-label": { "$ref": "props.label" },
+          "placeholder": { "$ref": "props.placeholder" },
+          "size": { "$ref": "props.size" },
+          "clearable": { "$ref": "props.clearable" },
+          "isRequired": { "$ref": "props.required" },
+          "selectedKey": { "$ref": "props.defaultValue" }
+        }
+      },
+      "children": [
+        {
+          "kind": "Label",
+          "bindings": { "children": { "$ref": "props.label" } }
+        },
+        {
+          "kind": "ComboBox.InputGroup",
+          "children": [
+            {
+              "kind": "Input",
+              "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } }
+            },
+            { "kind": "ComboBox.Trigger" }
+          ]
+        },
+        {
+          "kind": "Description",
+          "bindings": {
+            "hidden": { "$expr": "!props.helpText" },
+            "children": { "$ref": "props.helpText" }
+          }
+        },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "props": { "className": "max-h-96 overflow-y-auto w-96" },
+              "bindings": { "items": { "$ref": "grouped" } },
+              "itemRenderer": {
+                "kind": "ListBox.Section",
+                "propsExpr": "{ title: item.region }",
+                "children": [
+                  {
+                    "kind": "List",
+                    "bindings": { "items": { "$ref": "item.timezones" } },
+                    "itemRenderer": {
+                      "kind": "ListBox.Item",
+                      "propsExpr": "{ key: item.identifier, id: item.identifier, textValue: item.identifier + ' ' + item.display_name }",
+                      "children": [
+                        {
+                          "kind": "View",
+                          "props": { "className": "flex items-center gap-2 py-1" },
+                          "children": [
+                            {
+                              "kind": "View",
+                              "props": { "className": "flex flex-col flex-1 min-w-0" },
+                              "children": [
+                                {
+                                  "kind": "Text",
+                                  "props": { "className": "text-sm font-medium font-mono truncate" },
+                                  "bindings": { "children": { "$ref": "item.identifier" } }
+                                },
+                                {
+                                  "kind": "Text",
+                                  "props": { "className": "text-xs text-muted truncate" },
+                                  "bindings": {
+                                    "children": {
+                                      "$expr": "formatUtcOffset(item.utc_offset_minutes) + ' — ' + item.display_name"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            { "kind": "ListBox.ItemIndicator", "props": { "className": "size-4 text-accent" } }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

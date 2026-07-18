@@ -1,0 +1,180 @@
+{
+  "id": "region.region-picker",
+  "title": "Region picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Reusable single-select for the caller's active Regions. Renders as HeroUI `ComboBox` (per the ui-components rule) with regions filtered by (tenant, status). Consumed by the branch-create flow (region selection is required — every Branch carries region_id), the tenant sidebar for switching active region context, and any downstream module that scopes writes by region. Searches on name + country_code + slug. Groups by country_code when the tenant has more than one region per country.",
+  "notes": [
+    "Uses `ComboBox` — Enterprise tenants may have unlimited regions; free-text search is essential.",
+    "Filters to `filter[status]=active` by default. Callers may pass `filter=all` to include paused / archived (rare — usually for admin editors).",
+    "The `paused` chip in the item renderer alerts the picker that selecting a paused region will refuse subsequent booking-adjacent writes with REGION_PAUSED_FOR_BOOKING (409).",
+    "Hidden entirely when the tenant has 0 or 1 regions (no meaningful pick)."
+  ],
+  "props": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "Form field name (e.g. `region_id`)."
+    },
+    "label": {
+      "type": "string",
+      "default": "Region"
+    },
+    "required": {
+      "type": "boolean",
+      "default": false
+    },
+    "clearable": {
+      "type": "boolean",
+      "default": false
+    },
+    "placeholder": {
+      "type": "string",
+      "default": "Search regions…"
+    },
+    "helpText": {
+      "type": "string",
+      "default": null
+    },
+    "size": {
+      "type": "string",
+      "default": "md",
+      "enum": ["sm", "md", "lg"]
+    },
+    "defaultValue": {
+      "type": "string",
+      "default": null,
+      "description": "Pre-selected region ULID."
+    },
+    "filter": {
+      "type": "string",
+      "default": "active",
+      "enum": ["active", "all"],
+      "description": "`active` = include only status=active. `all` = include paused + archived (for admin flows)."
+    },
+    "hideWhenTrivial": {
+      "type": "boolean",
+      "default": true,
+      "description": "Hide the picker entirely when the tenant has ≤ 1 region. Turn off for admin flows where seeing 'only one option' is still useful."
+    }
+  },
+  "dataSources": [
+    {
+      "name": "regions",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/regions?filter[status]=' + (props.filter === 'all' ? '' : 'active') + '&sort=sort_order,name'",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "props": {
+        "menuTrigger": "focus"
+      },
+      "bindings": {
+        "hidden": {
+          "$expr": "props.hideWhenTrivial && regions.length <= 1"
+        },
+        "props": {
+          "name": { "$ref": "props.name" },
+          "aria-label": { "$ref": "props.label" },
+          "placeholder": { "$ref": "props.placeholder" },
+          "size": { "$ref": "props.size" },
+          "clearable": { "$ref": "props.clearable" },
+          "isRequired": { "$ref": "props.required" },
+          "selectedKey": { "$ref": "props.defaultValue" }
+        }
+      },
+      "children": [
+        {
+          "kind": "Label",
+          "bindings": { "children": { "$ref": "props.label" } }
+        },
+        {
+          "kind": "ComboBox.InputGroup",
+          "children": [
+            {
+              "kind": "Input",
+              "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } }
+            },
+            { "kind": "ComboBox.Trigger" }
+          ]
+        },
+        {
+          "kind": "Description",
+          "bindings": {
+            "hidden": { "$expr": "!props.helpText" },
+            "children": { "$ref": "props.helpText" }
+          }
+        },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "props": { "className": "max-h-96 overflow-y-auto w-96" },
+              "bindings": { "items": { "$ref": "regions" } },
+              "itemRenderer": {
+                "kind": "ListBox.Item",
+                "propsExpr": "{ key: item.id, id: item.id, textValue: item.name + ' ' + item.country_code + ' ' + item.slug }",
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2 py-1" },
+                    "children": [
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex flex-col flex-1 min-w-0" },
+                        "children": [
+                          {
+                            "kind": "View",
+                            "props": { "className": "flex items-center gap-1" },
+                            "children": [
+                              {
+                                "kind": "Text",
+                                "props": { "className": "font-medium truncate" },
+                                "bindings": { "children": { "$ref": "item.name" } }
+                              },
+                              {
+                                "kind": "Chip",
+                                "props": { "size": "xs", "variant": "accent", "leadingIcon": "star-solid", "children": "Default" },
+                                "bindings": { "hidden": { "$expr": "!item.is_default" } }
+                              },
+                              {
+                                "kind": "Chip",
+                                "props": { "size": "xs", "variant": "warning", "children": "Paused" },
+                                "bindings": { "hidden": { "$expr": "item.status !== 'paused'" } }
+                              },
+                              {
+                                "kind": "Chip",
+                                "props": { "size": "xs", "variant": "neutral", "children": "Archived" },
+                                "bindings": { "hidden": { "$expr": "item.status !== 'archived'" } }
+                              }
+                            ]
+                          },
+                          {
+                            "kind": "Text",
+                            "props": { "className": "text-xs text-muted font-mono" },
+                            "bindings": {
+                              "children": {
+                                "$expr": "(item.country_code || '—') + ' · ' + item.currency_symbol + ' ' + item.currency + ' · ' + item.timezone + ' · ' + item.slug"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      { "kind": "ListBox.ItemIndicator", "props": { "className": "size-4 text-accent" } }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

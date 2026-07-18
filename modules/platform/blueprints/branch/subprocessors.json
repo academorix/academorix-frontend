@@ -1,0 +1,76 @@
+{
+  "id": "academorix://modules/branch/subprocessors",
+  "$version": 1,
+  "title": "branch — subprocessors",
+  "description": "Geocoding providers process the tenant's structured address + return coordinates. Only engaged when tenant has `branch_geocoding` entitlement (Medium+). Map tile rendering (for the map-view SDUI screen) engages one additional subprocessor per tenant selection — those tiles are billed to the platform.",
+  "subprocessors": [
+    {
+      "name": "Google Maps Geocoding API",
+      "role": "geocoding",
+      "purpose": "Resolve tenant-supplied structured address → coordinates (lat/lng/accuracy_m) + canonical formatted address. Highest-quality provider for most global addresses.",
+      "data_processed": [
+        "The tenant's structured address (line1, line2, city, subdivision, postal_code, country_code)",
+        "The Branch ULID (as an opaque token in the request metadata; used for the API cost-attribution log)"
+      ],
+      "location": "US default; EU processing via `region=EU` parameter when the tenant's Region.data_residency_zone = EU",
+      "legal_basis": "contract + tenant opt-in via `branch_geocoding` entitlement",
+      "dpa_url": "https://cloud.google.com/terms/data-processing-terms",
+      "cardholder_data_exposure": "none",
+      "engaged_by": "branch::GoogleMapsGeocodingDriver via GeocodeAddressJob",
+      "when_engaged": "config('branch.geocoding.provider') === 'google_maps' AND tenant has branch_geocoding entitlement",
+      "retention_note": "Google may cache request payloads for up to 30 days per their DPA. The Branch ULID we ship as metadata is opaque — reverse-linkage to tenant identity is impossible from the payload alone."
+    },
+    {
+      "name": "Mapbox Geocoding",
+      "role": "geocoding",
+      "purpose": "Alternative geocoding provider. Moderate quality, developer-friendly rate limits, competitive pricing.",
+      "data_processed": [
+        "The tenant's structured address",
+        "The Branch ULID as metadata"
+      ],
+      "location": "US default (Mapbox); EU-region processing available via a separate endpoint config",
+      "legal_basis": "contract + tenant opt-in",
+      "dpa_url": "https://www.mapbox.com/legal/dpa",
+      "cardholder_data_exposure": "none",
+      "engaged_by": "branch::MapboxGeocodingDriver",
+      "when_engaged": "config('branch.geocoding.provider') === 'mapbox'"
+    },
+    {
+      "name": "Nominatim (OpenStreetMap)",
+      "role": "geocoding",
+      "purpose": "Free community geocoding service. Aggressive rate limits (1 req/s per Nominatim usage policy). Suitable for small-tier tenants without heavy geocoding needs OR for tenants running a private Nominatim instance in their own infra.",
+      "data_processed": [
+        "The tenant's structured address",
+        "A contact email in the User-Agent header (required by Nominatim usage policy)"
+      ],
+      "location": "OpenStreetMap Foundation infrastructure (multiple regions)",
+      "legal_basis": "OpenStreetMap Foundation ToS + tenant opt-in",
+      "dpa_url": "https://osmfoundation.org/wiki/Privacy_Policy",
+      "cardholder_data_exposure": "none",
+      "engaged_by": "branch::OpenStreetMapGeocodingDriver",
+      "when_engaged": "config('branch.geocoding.provider') === 'openstreetmap'",
+      "rate_limit_note": "The public Nominatim tile is rate-limited to 1 req/s. Tenants with heavy geocoding needs should self-host Nominatim + configure the endpoint override — the branch module falls back to per-tenant throttling to keep within the policy."
+    },
+    {
+      "name": "Mapbox Static Maps",
+      "role": "map_tile_rendering",
+      "purpose": "Render the map-view SDUI screen's tile layer. Tiles are fetched by the client browser directly from Mapbox — the branch module never proxies tiles.",
+      "data_processed": [
+        "The branch's coordinates (in the tile-request URL)",
+        "The end-user's IP address (browser-to-Mapbox direct connection)"
+      ],
+      "location": "Mapbox CDN (global)",
+      "legal_basis": "contract",
+      "dpa_url": "https://www.mapbox.com/legal/dpa",
+      "cardholder_data_exposure": "none",
+      "engaged_by": "SDUI map-view screen client code",
+      "when_engaged": "tenant loads the /branches map view",
+      "note": "The Mapbox access token is a platform-scoped token, NOT per-tenant. Tenants that require self-hosted tiles for regulatory reasons can configure `branch.map_view.tile_provider` to a custom URL (deferred to Wave 3)."
+    }
+  ],
+  "notes": [
+    "Nominatim + OpenStreetMap tiles are 'best effort' — Nominatim explicitly disclaims any SLA on the public tile. The branch module's `branch.geocoding_enabled` kill switch is the mitigation.",
+    "The map-view tile provider is DISTINCT from the geocoding provider — a tenant can pick Google Maps for geocoding + accept the platform-default Mapbox tiles for the map view (or vice versa).",
+    "GDPR Art. 44 (cross-border transfers): each provider's DPA covers the transfer legal basis. EU-region tenants who require EU-only processing configure Google Maps with `region=EU` OR pick Nominatim (OSM Foundation is EU-based)."
+  ]
+}

@@ -1,0 +1,192 @@
+{
+  "id": "facility.resources.resource-booking.create",
+  "title": "Book a slot",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/bookings/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "facility", "entity": "resource-booking", "action": "create" },
+  "requiresPermission": "bookings.create",
+  "requiresEntitlement": "facilities",
+  "dataSources": [
+    {
+      "name": "facilities",
+      "kind": "http.get",
+      "url": "/api/v1/facilities?filter[status]=active",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    },
+    {
+      "name": "selectedFacility",
+      "kind": "http.get",
+      "urlExpr": "form.facility_id ? '/api/v1/facilities/' + form.facility_id : null",
+      "unwrap": "data",
+      "enabled": { "$expr": "!!form.facility_id" }
+    },
+    {
+      "name": "availableSlots",
+      "kind": "http.get",
+      "urlExpr": "form.facility_id && form.date ? '/api/v1/facilities/' + form.facility_id + '/available-slots?starts=' + form.date + '&ends=' + form.date : null",
+      "unwrap": "data",
+      "enabled": { "$expr": "!!form.facility_id && !!form.date" }
+    },
+    {
+      "name": "coveringPass",
+      "kind": "http.get",
+      "urlExpr": "form.facility_id && form.starts_at ? '/api/v1/passes?filter[facility_id]=' + form.facility_id + '&filter[user_id]=' + (form.booked_for_user_id || $me.id) + '&filter[valid_on_date]=' + form.date + '&limit=1' : null",
+      "unwrap": "data[0]",
+      "enabled": { "$expr": "!!form.facility_id && !!form.starts_at" }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-4xl mx-auto" },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Book a slot" }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "grid grid-cols-1 md:grid-cols-2 gap-4" },
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": {
+                    "label": "Facility",
+                    "menuTrigger": "focus",
+                    "isRequired": true,
+                    "placeholder": "Choose a facility..."
+                  },
+                  "bindings": { "items": { "$ref": "facilities" } },
+                  "form": { "field": "facility_id" }
+                },
+                {
+                  "kind": "DateField",
+                  "props": { "label": "Date", "isRequired": true },
+                  "form": { "field": "date" },
+                  "bindings": {
+                    "minValue": { "$expr": "today()" },
+                    "maxValue": {
+                      "$expr": "selectedFacility ? addDays(today(), selectedFacility.advance_booking_window_days) : addDays(today(), 30)"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "bindings": {
+            "hidden": { "$expr": "!form.facility_id || !form.date" }
+          },
+          "children": [
+            {
+              "kind": "Widget",
+              "widget": "facility.available-slots-calendar",
+              "props": {},
+              "bindings": {
+                "slots": { "$ref": "availableSlots" },
+                "facility": { "$ref": "selectedFacility" },
+                "isLoading": { "$ref": "availableSlots.isLoading" }
+              },
+              "actions": {
+                "onSlotSelect": {
+                  "kind": "form.set-many",
+                  "valuesExpr": "{ starts_at: $slot.starts_at, ends_at: $slot.ends_at, price_amount_cents_preview: $slot.price_amount_cents }"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "bindings": { "hidden": { "$expr": "!form.starts_at" } },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Confirm details" }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "grid grid-cols-1 md:grid-cols-2 gap-4" },
+              "children": [
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "Attendees", "minValue": 1, "defaultValue": 1 },
+                  "bindings": {
+                    "maxValue": { "$expr": "selectedFacility?.capacity_persons" }
+                  },
+                  "form": { "field": "attendees_count" }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "label": "Purpose (optional)",
+                    "placeholder": "e.g. Team practice, group class"
+                  },
+                  "form": { "field": "purpose" }
+                }
+              ]
+            },
+            {
+              "kind": "Alert",
+              "props": { "variant": "success", "className": "mt-4" },
+              "bindings": {
+                "hidden": { "$expr": "!coveringPass" },
+                "children": {
+                  "$expr": "'Pass will be used: ' + coveringPass.remaining_credits + ' credit' + (coveringPass.remaining_credits === 1 ? '' : 's') + ' remaining after this booking.'"
+                }
+              }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-between mt-4 pt-4 border-t" },
+              "children": [
+                {
+                  "kind": "View",
+                  "children": [
+                    { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Total" } },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xl font-semibold" },
+                      "bindings": {
+                        "children": {
+                          "$expr": "coveringPass ? 'Free (pass credit)' : formatMoney(form.price_amount_cents_preview, selectedFacility?.pricing_json?.currency || 'USD')"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "size": "lg", "children": "Confirm booking" },
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.post",
+                      "url": "/api/v1/bookings",
+                      "bodyExpr": "{ facility_id: form.facility_id, starts_at: form.starts_at, ends_at: form.ends_at, attendees_count: form.attendees_count, purpose: form.purpose }",
+                      "onSuccess": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/bookings/' + $response.data.id"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

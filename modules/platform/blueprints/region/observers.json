@@ -1,0 +1,36 @@
+{
+  "id": "academorix://modules/region/observers",
+  "$version": 1,
+  "title": "region — Eloquent observers",
+  "observers": [
+    {
+      "model": "Region",
+      "observer": "Academorix\\Region\\Observers\\RegionObserver",
+      "handles": [
+        "creating → populate ULID prefix `reg_`.",
+        "creating → apply country_code defaults from `data/country-defaults.json` when currency / timezone / locale / weekend_days / tax_config fields are left unset by the caller (RegionProvisioner honours partial input — caller may supply { country_code: 'AE' } and receive AED + Asia/Dubai + ar-AE + [friday, saturday] + VAT 5% auto-filled).",
+        "creating → derive rtl = true when locale starts with ar-*/he-*/fa-*/ur-*. Stored on the row for perf (avoids re-parsing on every read).",
+        "creating → refuse when the resolved country_code is not present in `data/country-defaults.json` AND `config('region.validation.reject_unknown_country_code')` = true (default true). Set the flag to false when tenants need supranational zones (EU) or exotic markets that aren't shipped yet.",
+        "creating → refuse when UNIQUE(tenant_id, slug) partial (WHERE deleted_at IS NULL) already exists (defense in depth against the race — the DB partial unique index is the primary guard).",
+        "creating → consume 1 unit of the `region_slot` entitlement for the target tenant (throws RegionQuotaExceeded 402). BYPASS ONLY WHEN the caller flag `is_system_provisioned=true` is set (SeedDefaultRegionForTenantJob does this — the default region is a system invariant, not a purchase).",
+        "creating (is_default=true) → set is_default=false on the previous default Region in same transaction (only one default per tenant invariant). Fire RegionDefaultChanged for the demoted row.",
+        "created → fire RegionCreated.",
+        "created → invalidate the tenant's region-list cache (`rgn:list:{tenant_id}`).",
+        "updating (status changed) → dispatch the correct lifecycle event per transition (RegionPaused / RegionResumed / RegionArchived / RegionRestored) + always fire RegionStatusChanged as the umbrella.",
+        "updating (status → archived) → refuse when is_default=true (CANNOT_ARCHIVE_DEFAULT_REGION 409). Refuse when any inbound row references (REGION_IN_USE 409). The FK RESTRICT is the DB fallback; the observer surfaces the clearer error.",
+        "updating (status → paused) → refuse when is_default=true (CANNOT_PAUSE_DEFAULT_REGION 409 — the default region must always accept new bookings).",
+        "updating (is_default flipped true) → set is_default=false on every other Region row for this tenant_id in same transaction. Fire RegionDefaultChanged { from_region_id: previous, to_region_id: this }.",
+        "updating (is_default flipped false) → refuse when no sibling Region has is_default=true (RegionMissingDefault 409). Tenants must always have exactly one default; the caller must promote another Region first.",
+        "updating (tax_config changed) → fire RegionTaxConfigUpdated with before + after snapshots + changed_fields dotted-path array. Financial-record retention 7 years applies to the audit row.",
+        "updating (country_code changed AFTER inbound rows exist) → refuse (COUNTRY_CODE_IMMUTABLE 409). country_code is immutable once any Branch or Membership references the Region.",
+        "updating (currency changed AFTER inbound rows exist) → refuse (CURRENCY_IMMUTABLE 409). Same reasoning — historical financial records must remain reconcilable against the currency they were priced in.",
+        "updating (any other tracked field) → fire RegionUpdated with `changed_fields` populated from `$model->getDirty()->keys()`.",
+        "deleting → refuse when is_default=true (CANNOT_DELETE_DEFAULT_REGION 409).",
+        "deleting → refuse when any inbound row references this Region (REGION_IN_USE 409). FK RESTRICT is the DB fallback.",
+        "deleted (soft) → fire RegionDeleted { mode: 'soft', was_default: false }; the row transitions into the archived state internally + surfaces to the retention job in 730 days.",
+        "forceDeleted → fire RegionDeleted { mode: 'hard' }; audit row survives per financial retention (7 years, outlives the row).",
+        "restored → fire RegionRestored + RegionStatusChanged."
+      ]
+    }
+  ]
+}

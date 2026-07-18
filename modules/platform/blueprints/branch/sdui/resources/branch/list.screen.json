@@ -1,0 +1,239 @@
+{
+  "id": "branch.resources.branch.list",
+  "title": "Branches",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/branches",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "branch", "entity": "branch", "action": "list" },
+  "requiresPermission": "branches.viewAny",
+  "dataSources": [
+    {
+      "name": "branches",
+      "kind": "http.get",
+      "url": "/api/v1/branches?include=organization,region,facilities_count,active_teams_count,is_open_now&sort=sort_order",
+      "unwrap": "data"
+    },
+    {
+      "name": "organizations",
+      "kind": "http.get",
+      "url": "/api/v1/organizations?filter[status]=active",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "regions",
+      "kind": "http.get",
+      "url": "/api/v1/regions?filter[status]=active",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Branches" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Every physical venue where activities happen. Every downstream row (facility, team, staff, booking) belongs to one." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "leadingIcon": "map", "children": "Map view" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/branches/map" } }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "leadingIcon": "plus", "children": "Add branch" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/branches/create" } },
+                  "requiresPermission": "branches.create",
+                  "requiresEntitlement": "branch_slot"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Toolbar",
+          "children": [
+            { "kind": "SearchField", "props": { "placeholder": "Name, slug, or code", "name": "q" } },
+            {
+              "kind": "Select",
+              "props": { "name": "organization_id", "placeholder": "All organizations", "clearable": true },
+              "bindings": { "options": { "$expr": "organizations.map(o => ({ key: o.id, label: o.name }))" } }
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "region_id", "placeholder": "All regions", "clearable": true },
+              "bindings": { "options": { "$expr": "regions.map(r => ({ key: r.id, label: r.name + ' (' + r.country_code + ')' }))" } }
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "status", "placeholder": "All statuses", "clearable": true },
+              "options": [
+                { "key": "active", "label": "Active" },
+                { "key": "paused", "label": "Paused" },
+                { "key": "closed", "label": "Closed" }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "columns": [
+            {
+              "key": "name",
+              "header": "Branch",
+              "cell": {
+                "kind": "View",
+                "props": { "className": "flex flex-col" },
+                "children": [
+                  {
+                    "kind": "Link",
+                    "propsExpr": "{ to: '/branches/' + row.id, children: row.name, className: 'font-medium' }"
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted font-mono" },
+                    "bindings": { "children": { "$ref": "row.slug" } }
+                  }
+                ]
+              }
+            },
+            {
+              "key": "organization",
+              "header": "Organization",
+              "cell": {
+                "kind": "Text",
+                "bindings": { "children": { "$ref": "row.organization_name" } }
+              }
+            },
+            {
+              "key": "region",
+              "header": "Region",
+              "cell": {
+                "kind": "View",
+                "props": { "className": "flex flex-col" },
+                "children": [
+                  { "kind": "Text", "bindings": { "children": { "$ref": "row.region_name" } } },
+                  { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$ref": "row.timezone" } } }
+                ]
+              }
+            },
+            {
+              "key": "status",
+              "header": "Status",
+              "cell": {
+                "kind": "Widget",
+                "props": { "id": "branch.is-open-chip" },
+                "bindings": {
+                  "props": {
+                    "status": { "$ref": "row.status" },
+                    "isOpenNow": { "$ref": "row.is_open_now" },
+                    "showLabel": true
+                  }
+                }
+              }
+            },
+            {
+              "key": "is_default",
+              "header": "Default",
+              "cell": {
+                "kind": "Icon",
+                "props": { "name": "star-solid", "className": "size-4 text-warning" },
+                "bindings": { "hidden": { "$expr": "!row.is_default" } }
+              }
+            },
+            {
+              "key": "counts",
+              "header": "Facilities / Teams",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-xs text-muted" },
+                "bindings": {
+                  "children": { "$expr": "row.facilities_count + ' facilities · ' + row.active_teams_count + ' teams'" }
+                }
+              }
+            },
+            {
+              "key": "actions",
+              "header": "",
+              "cell": {
+                "kind": "MenuButton",
+                "props": { "icon": "ellipsis-vertical", "variant": "ghost" },
+                "children": [
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Edit branch" },
+                    "actions": { "onPress": { "kind": "navigate", "toExpr": "'/branches/' + row.id + '/edit'" } },
+                    "requiresPermission": "branches.update"
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Edit hours" },
+                    "actions": { "onPress": { "kind": "navigate", "toExpr": "'/branches/' + row.id + '/hours'" } },
+                    "requiresPermission": "branches.update_hours"
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "View on map" },
+                    "actions": { "onPress": { "kind": "navigate", "toExpr": "'/branches/map?focus=' + row.id" } }
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Set as default" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "urlExpr": "'/api/v1/branches/' + row.id + '/set-default'",
+                        "onSuccess": { "kind": "toast", "message": "Default branch updated." }
+                      }
+                    },
+                    "requiresPermission": "branches.set_default",
+                    "bindings": { "hidden": { "$expr": "row.is_default" } }
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Pause branch", "className": "text-warning" },
+                    "actions": { "onPress": { "kind": "openModal", "id": "pause-branch-modal", "input": { "branch_id": "row.id" } } },
+                    "requiresPermission": "branches.pause",
+                    "bindings": { "hidden": { "$expr": "row.status !== 'active'" } }
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Resume branch", "className": "text-success" },
+                    "actions": { "onPress": { "kind": "openModal", "id": "resume-branch-modal", "input": { "branch_id": "row.id" } } },
+                    "requiresPermission": "branches.resume",
+                    "bindings": { "hidden": { "$expr": "row.status !== 'paused'" } }
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Close branch", "className": "text-danger" },
+                    "actions": { "onPress": { "kind": "openModal", "id": "close-branch-modal", "input": { "branch_id": "row.id" } } },
+                    "requiresPermission": "branches.close",
+                    "bindings": { "hidden": { "$expr": "row.status === 'closed'" } }
+                  }
+                ]
+              }
+            }
+          ],
+          "bindings": { "rows": { "$ref": "branches" } }
+        }
+      ]
+    }
+  ]
+}

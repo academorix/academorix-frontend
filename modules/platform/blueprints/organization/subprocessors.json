@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/organization/subprocessors",
+  "$version": 1,
+  "title": "organization — subprocessors",
+  "description": "The organization module does not engage third-party subprocessors. All reads + writes hit the platform's own Postgres + Redis. Organization data never leaves the platform for organizational operations. This file documents the empty surface so compliance reviewers can quickly verify.",
+  "subprocessors": [],
+  "notes": [
+    "Data never leaves the platform for Organization operations. Names, slugs, tree_path values, contact information, and branding assets stay on the platform's owned infrastructure.",
+    "The `logo_url` field references an asset URL — the asset itself lives on `storage::File` (which may in turn be backed by an object-store subprocessor). Any subprocessor obligation there is documented in the storage module's subprocessors.json, not here.",
+    "The tenant `Branding` model (owned by `branding`) may reference brand assets under CDN — those CDN subprocessor obligations live in the branding module.",
+    "Downstream notifications (OrganizationCreatedNotification, etc.) route through the notifications module which engages email/SMS subprocessors documented in notifications/subprocessors.json. Organization itself does not engage them directly."
+  ]
+}

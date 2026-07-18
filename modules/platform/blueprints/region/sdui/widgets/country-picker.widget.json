@@ -1,0 +1,174 @@
+{
+  "id": "region.country-picker",
+  "title": "Country picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Searchable single-select for ISO 3166-1 alpha-2 country codes. Renders as HeroUI `ComboBox` (per the ui-components rule) with every entry from `data/country-defaults.json`. Options group by continent (Africa, Americas, Asia, Europe, Oceania) via `ListBox.Section` for scannability. Consumed by the region create screen (auto-fills sibling commercial + tax defaults on selection), the region list toolbar (as a filter), and any future flow that needs a country pick.",
+  "notes": [
+    "Uses `ComboBox` — NOT `Select` — because the 40+ countries + growing set require free-text search. The user types 'em' + Emirates appears, 'kingdom' + UK + Saudi Arabia (Kingdom) surface.",
+    "Continent grouping via `ListBox.Section` mirrors the HeroUI compound API. Alphabetical within each section.",
+    "The `onSelectionChange` action optionally hydrates sibling form fields — the consuming screen decides which fields to hydrate (see the region create screen for the canonical wiring)."
+  ],
+  "props": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "Form field name to submit under."
+    },
+    "label": {
+      "type": "string",
+      "default": "Country",
+      "description": "Field label."
+    },
+    "required": {
+      "type": "boolean",
+      "default": false
+    },
+    "clearable": {
+      "type": "boolean",
+      "default": false,
+      "description": "Show a clear-selection button. Useful in list filters; off in create forms."
+    },
+    "placeholder": {
+      "type": "string",
+      "default": "Search countries…"
+    },
+    "helpText": {
+      "type": "string",
+      "default": null
+    },
+    "size": {
+      "type": "string",
+      "default": "md",
+      "enum": ["sm", "md", "lg"]
+    },
+    "defaultValue": {
+      "type": "string",
+      "default": null,
+      "description": "Pre-selected country_code (ISO 3166-1 alpha-2)."
+    },
+    "onSelectionChange": {
+      "type": "action",
+      "default": null,
+      "description": "Optional action fired on selection change. Typically a `form.hydrate_from_country_defaults` action."
+    }
+  },
+  "dataSources": [
+    {
+      "name": "countries",
+      "kind": "static",
+      "sourceFile": "data/country-defaults.json",
+      "unwrap": "countries"
+    },
+    {
+      "name": "grouped",
+      "kind": "computed",
+      "expr": "groupCountriesByContinent(countries)",
+      "description": "Groups the flat country_code → defaults map into an ordered list of { continent, countries: [{code, ...}] } sections. Section order: Africa, Americas, Asia, Europe, Oceania. Countries alphabetical by name within each section."
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "props": {
+        "menuTrigger": "focus"
+      },
+      "bindings": {
+        "props": {
+          "name": { "$ref": "props.name" },
+          "aria-label": { "$ref": "props.label" },
+          "placeholder": { "$ref": "props.placeholder" },
+          "size": { "$ref": "props.size" },
+          "clearable": { "$ref": "props.clearable" },
+          "isRequired": { "$ref": "props.required" },
+          "selectedKey": { "$ref": "props.defaultValue" }
+        },
+        "actions": {
+          "onSelectionChange": { "$ref": "props.onSelectionChange" }
+        }
+      },
+      "children": [
+        {
+          "kind": "Label",
+          "bindings": { "children": { "$ref": "props.label" } }
+        },
+        {
+          "kind": "ComboBox.InputGroup",
+          "children": [
+            {
+              "kind": "Input",
+              "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } }
+            },
+            { "kind": "ComboBox.Trigger" }
+          ]
+        },
+        {
+          "kind": "Description",
+          "bindings": {
+            "hidden": { "$expr": "!props.helpText" },
+            "children": { "$ref": "props.helpText" }
+          }
+        },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "props": { "className": "max-h-96 overflow-y-auto w-80" },
+              "bindings": { "items": { "$ref": "grouped" } },
+              "itemRenderer": {
+                "kind": "ListBox.Section",
+                "propsExpr": "{ title: item.continent }",
+                "children": [
+                  {
+                    "kind": "List",
+                    "bindings": { "items": { "$ref": "item.countries" } },
+                    "itemRenderer": {
+                      "kind": "ListBox.Item",
+                      "propsExpr": "{ key: item.code, id: item.code, textValue: item.name + ' ' + item.code }",
+                      "children": [
+                        {
+                          "kind": "View",
+                          "props": { "className": "flex items-center gap-2 py-1" },
+                          "children": [
+                            {
+                              "kind": "Text",
+                              "props": { "className": "font-mono text-xs text-muted w-8" },
+                              "bindings": { "children": { "$ref": "item.code" } }
+                            },
+                            {
+                              "kind": "View",
+                              "props": { "className": "flex flex-col flex-1" },
+                              "children": [
+                                {
+                                  "kind": "Text",
+                                  "props": { "className": "text-sm font-medium" },
+                                  "bindings": { "children": { "$ref": "item.name" } }
+                                },
+                                {
+                                  "kind": "Text",
+                                  "props": { "className": "text-xs text-muted" },
+                                  "bindings": {
+                                    "children": {
+                                      "$expr": "item.currency + ' · ' + item.default_timezone + ' · ' + item.locale"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            { "kind": "ListBox.ItemIndicator", "props": { "className": "size-4 text-accent" } }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

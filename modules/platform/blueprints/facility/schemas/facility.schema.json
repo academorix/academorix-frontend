@@ -1,0 +1,256 @@
+{
+  "id": "academorix://modules/facility/schemas/facility",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Facility",
+  "description": "Bookable resource inside a Branch. Carries `tenant_id` + `branch_id` — cascades organization + region through branch per hierarchy.md §2. NEVER carries `application_id` (cascades through tenant), `organization_id` (cascades through branch), or `region_id` (cascades through branch).",
+  "type": "object",
+  "x-module": "facility",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "facilities",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "fac_",
+    "incrementing": false,
+    "model": "Academorix\\Facility\\Models\\Facility",
+    "interface": "Academorix\\Facility\\Contracts\\Data\\FacilityInterface",
+    "implements": ["Academorix\\Facility\\Contracts\\Data\\FacilityInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToBranch",
+      "HasSlug",
+      "HasBookings",
+      "HasPasses",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "facility_type": "FacilityType",
+      "status": "FacilityStatus",
+      "capacity_persons": "integer",
+      "min_booking_duration_minutes": "integer",
+      "max_booking_duration_minutes": "integer",
+      "booking_slot_step_minutes": "integer",
+      "advance_booking_window_days": "integer",
+      "cancellation_notice_hours": "integer",
+      "sort_order": "integer",
+      "availability_json": "array",
+      "blackout_dates": "array",
+      "pricing_json": "array",
+      "image_urls": "array",
+      "amenities": "array",
+      "metadata": "array",
+      "retired_at": "datetime"
+    },
+    "observers": ["FacilityObserver"],
+    "appends": ["is_bookable_now", "occupancy_ratio_today"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `fac_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "branches", "column": "id", "onDelete": "restrict" }
+      },
+      "name": { "type": "string", "length": 200, "nullable": false },
+      "slug": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "description": "Unique per (tenant_id, branch_id, deleted_at IS NULL)."
+      },
+      "description": { "type": "text", "nullable": true },
+      "facility_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: court / field / pool / studio / room / gym_floor / equipment / lane / general."
+      },
+      "sport_category": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "e.g. basketball, football, swimming, yoga. Null for sport-agnostic facilities. Validated against facility_type via valid_facility_type_for_sport rule."
+      },
+      "capacity_persons": {
+        "type": "integer",
+        "nullable": false,
+        "default": 1,
+        "description": "Max concurrent users. Enforced at booking-create when booking_capacity_gating entitlement is on."
+      },
+      "min_booking_duration_minutes": {
+        "type": "integer",
+        "nullable": false,
+        "default": 60
+      },
+      "max_booking_duration_minutes": {
+        "type": "integer",
+        "nullable": false,
+        "default": 240
+      },
+      "booking_slot_step_minutes": {
+        "type": "integer",
+        "nullable": false,
+        "default": 30,
+        "description": "Bookings must start on multiples of this. E.g. 30 → :00 or :30."
+      },
+      "advance_booking_window_days": {
+        "type": "integer",
+        "nullable": false,
+        "default": 30
+      },
+      "cancellation_notice_hours": {
+        "type": "integer",
+        "nullable": false,
+        "default": 24
+      },
+      "availability_json": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Per-day windows within parent branch.opening_hours. Shape: { monday: [{starts, ends}], ..., sunday: [...] }. Validated against schemas/availability.schema.json."
+      },
+      "blackout_dates": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Array of one-off closure windows. Shape: [{id, starts_at, ends_at, reason, created_at, created_by_user_id}]. Adding cascades: cancels bookings inside window."
+      },
+      "pricing_json": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "Pricing model + currency + tiers + optional peak_hours. Validated against schemas/pricing.schema.json. Every mutation writes to audits with 7-year retention."
+      },
+      "image_urls": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Array of storage::File references. Rendered on the facility detail screen."
+      },
+      "amenities": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Subset of the branch amenity vocabulary + facility-specific tokens (`lockers_included`, `coach_available`, `equipment_provided`)."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'active'",
+        "description": "Enum: active / maintenance / retired."
+      },
+      "retired_at": { "type": "timestamptz", "nullable": true },
+      "sort_order": { "type": "integer", "nullable": false, "default": 0 },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "branch_id", "slug"],
+        "unique": true,
+        "name": "facilities_tenant_branch_slug_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      { "columns": ["tenant_id", "branch_id", "status"], "name": "facilities_status_idx" },
+      { "columns": ["tenant_id", "facility_type"], "name": "facilities_type_idx" },
+      { "columns": ["tenant_id", "sport_category"], "name": "facilities_sport_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "branch_id",
+    "name",
+    "slug",
+    "facility_type",
+    "capacity_persons",
+    "min_booking_duration_minutes",
+    "max_booking_duration_minutes",
+    "booking_slot_step_minutes",
+    "advance_booking_window_days",
+    "cancellation_notice_hours",
+    "availability_json",
+    "blackout_dates",
+    "pricing_json",
+    "status",
+    "sort_order",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^fac_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "branch_id": { "type": "string", "pattern": "^brn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "maxLength": 200 },
+    "description": { "type": ["string", "null"] },
+    "facility_type": {
+      "type": "string",
+      "enum": [
+        "court",
+        "field",
+        "pool",
+        "studio",
+        "room",
+        "gym_floor",
+        "equipment",
+        "lane",
+        "general"
+      ]
+    },
+    "sport_category": { "type": ["string", "null"] },
+    "capacity_persons": { "type": "integer", "minimum": 1 },
+    "min_booking_duration_minutes": { "type": "integer", "minimum": 15 },
+    "max_booking_duration_minutes": { "type": "integer", "minimum": 30 },
+    "booking_slot_step_minutes": { "type": "integer", "enum": [15, 30, 60, 120] },
+    "advance_booking_window_days": { "type": "integer", "minimum": 1, "maximum": 365 },
+    "cancellation_notice_hours": { "type": "integer", "minimum": 0, "maximum": 168 },
+    "availability_json": { "$ref": "./availability.schema.json" },
+    "blackout_dates": { "type": "array" },
+    "pricing_json": { "$ref": "./pricing.schema.json" },
+    "image_urls": { "type": ["array", "null"] },
+    "amenities": { "type": ["array", "null"] },
+    "status": {
+      "type": "string",
+      "enum": ["active", "maintenance", "retired"]
+    },
+    "retired_at": { "type": ["string", "null"], "format": "date-time" },
+    "sort_order": { "type": "integer", "minimum": 0 },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "availability_json every day window MUST be within parent branch.opening_hours for that day",
+    "pricing_json.currency MUST match parent branch.region.currency",
+    "sport_category MUST be valid for facility_type per data/facility-type-catalog.json",
+    "status='retired' + hard-delete refused while any active booking references the row",
+    "max_booking_duration_minutes >= min_booking_duration_minutes"
+  ]
+}

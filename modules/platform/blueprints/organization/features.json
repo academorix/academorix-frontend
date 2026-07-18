@@ -1,0 +1,53 @@
+{
+  "id": "academorix://modules/organization/features",
+  "$version": 1,
+  "title": "organization — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "organization.core",
+      "displayName": "Organizations",
+      "description": "Core Organization capability. Always on — every tenant has at least the default org.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "organization.multi",
+      "displayName": "Multiple organizations",
+      "description": "Ability to create more than one Organization per tenant. Small tier is locked at 1; Medium + Enterprise unlock this feature.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "organization.hierarchy",
+      "displayName": "Nested organizations",
+      "description": "Nest Organizations via parent_id (create sub-brands under a parent brand). Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "organization.reparent",
+      "displayName": "Reparent organizations",
+      "description": "Move an existing Organization to a new parent after create. Enterprise + audited. Separate from `organization.hierarchy` so compliance-heavy tenants may nest at create time yet forbid post-create moves.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "organization.branding",
+      "displayName": "Per-organization branding",
+      "description": "Give each Organization its own logo + colors + description. When off, the tenant's default branding applies.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "organization.contact_info",
+      "displayName": "Organization contact information",
+      "description": "Set support_email / support_phone / contact_person_name / website_url per Organization for tenants running multi-brand operations that need distinct customer-facing contact routes.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    }
+  ]
+}

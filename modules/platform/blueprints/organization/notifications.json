@@ -1,0 +1,46 @@
+{
+  "id": "academorix://modules/organization/notifications",
+  "$version": 1,
+  "title": "organization — notification classes + categories",
+  "namespace": "Academorix\\Organization\\Notifications",
+  "notifications": [
+    "OrganizationCreatedNotification",
+    "OrganizationDefaultChangedNotification",
+    "OrganizationReparentedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "organization.created",
+      "display_name": "Organization created",
+      "description": "A new Organization was added to the tenant. Fires the notification to owner/admin members. Skips the notification for the seeded default org (was_seeded=true) so tenants don't get a duplicate welcome touchpoint.",
+      "default_channels": ["in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "organization.default_changed",
+      "display_name": "Default organization changed",
+      "description": "The tenant's default Organization was flipped. Audit-critical because downstream tools that filter by default org will shift results. Sends to all owner/admin members.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "organization.reparented",
+      "display_name": "Organization reparented",
+      "description": "An Organization was moved to a new parent. Includes the descendant count so recipients see the blast radius. Sends to owner/admin members. Suppressed when the reparent was an automatic tier-downgrade flatten (that surfaces via a different notification category owned by entitlements).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    }
+  ]
+}

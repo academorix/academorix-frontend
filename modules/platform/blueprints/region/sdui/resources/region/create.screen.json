@@ -1,0 +1,497 @@
+{
+  "id": "region.resources.region.create",
+  "title": "New region",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/settings/regions/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "region", "entity": "region", "action": "create" },
+  "requiresPermission": "regions.create",
+  "requiresEntitlement": "region_slot",
+  "notes": [
+    "Three-card layout: Identity (Card 1), Commercial (Card 2), Tax (Card 3).",
+    "Card 1's country-picker auto-fills Card 2 + Card 3 defaults from `data/country-defaults.json`. Every field the caller edits after auto-fill overrides its default — the form's `on_country_change` action hydrates sibling fields.",
+    "The `rates[]` sub-form in Card 3 is hidden unless the tenant carries `region_custom_tax_rules` (Enterprise). Tenants without the entitlement see an upgrade banner in that slot.",
+    "The `registration_number` field renders only when the caller carries `regions.view.tax_registration` (admin + owner). Otherwise the field is hidden — writes require reads.",
+    "Every picker uses HeroUI `ComboBox` per the ui-components rule."
+  ],
+  "dataSources": [
+    {
+      "name": "countryDefaults",
+      "kind": "static",
+      "sourceFile": "data/country-defaults.json",
+      "unwrap": "countries"
+    },
+    {
+      "name": "entitlements",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements?keys=region_slot,region_custom_tax_rules,region_time_travel",
+      "unwrap": "data"
+    },
+    {
+      "name": "me",
+      "kind": "http.get",
+      "url": "/api/auth/me",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-1" },
+          "children": [
+            {
+              "kind": "Breadcrumbs",
+              "items": [
+                { "label": "Regions", "to": "/settings/regions" },
+                { "label": "New", "to": null }
+              ]
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "New region"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Pick a country to auto-fill commercial + tax defaults, then override anything you need."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "onSubmit": {
+              "kind": "http.post",
+              "url": "/api/v1/regions",
+              "onSuccess": {
+                "kind": "navigate",
+                "toExpr": "'/settings/regions/' + response.data.id"
+              }
+            }
+          },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Identity"
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "name",
+                    "label": "Name",
+                    "required": true,
+                    "maxLength": 128,
+                    "helpText": "Display name (e.g. 'United States — West Coast', 'UAE', 'EU — Ireland')."
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "slug",
+                    "label": "URL slug",
+                    "required": true,
+                    "maxLength": 64,
+                    "helpText": "Lowercase, alphanumeric + hyphen. Must be unique within the tenant. Regex: ^[a-z][a-z0-9-]*[a-z0-9]$."
+                  }
+                },
+                {
+                  "kind": "Widget",
+                  "props": { "id": "region.country-picker" },
+                  "bindings": {
+                    "props": {
+                      "name": "country_code",
+                      "label": "Country",
+                      "required": true,
+                      "helpText": "ISO 3166-1 alpha-2. Selecting a country auto-fills the currency, timezone, locale, weekend days, and tax defaults on this form.",
+                      "onSelectionChange": {
+                        "kind": "form.hydrate_from_country_defaults",
+                        "source": "countryDefaults",
+                        "keyExpr": "selectedKey",
+                        "targetFields": ["currency", "currency_symbol", "timezone", "locale", "rtl", "weekend_days", "tax_config.default_rate_percent", "tax_config.name", "tax_config.inclusive", "fiscal_year_start_month"]
+                      }
+                    }
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "subdivision_code",
+                    "label": "Subdivision (optional)",
+                    "maxLength": 8,
+                    "placeholder": "e.g. US-CA, AE-DU, GB-SCT",
+                    "helpText": "ISO 3166-2 subdivision. Only fill in if this region covers a single state / emirate / province."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Commercial"
+                  }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "grid grid-cols-2 gap-4" },
+                  "children": [
+                    {
+                      "kind": "TextField",
+                      "props": {
+                        "name": "currency",
+                        "label": "Currency (ISO 4217)",
+                        "required": true,
+                        "maxLength": 3,
+                        "placeholder": "USD",
+                        "helpText": "3 uppercase letters."
+                      }
+                    },
+                    {
+                      "kind": "TextField",
+                      "props": {
+                        "name": "currency_symbol",
+                        "label": "Currency symbol",
+                        "required": true,
+                        "maxLength": 8,
+                        "placeholder": "$"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "Widget",
+                  "props": { "id": "region.timezone-picker" },
+                  "bindings": {
+                    "props": {
+                      "name": "timezone",
+                      "label": "Timezone",
+                      "required": true,
+                      "helpText": "IANA identifier — determines when opening hours + fiscal cutovers land."
+                    }
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "locale",
+                    "label": "Locale (BCP-47)",
+                    "required": true,
+                    "maxLength": 16,
+                    "placeholder": "en-US",
+                    "helpText": "e.g. en-US, ar-AE, fr-FR."
+                  }
+                },
+                {
+                  "kind": "CheckboxGroup",
+                  "props": {
+                    "name": "weekend_days",
+                    "label": "Weekend days",
+                    "required": true,
+                    "helpText": "Which days are the local weekend? Determines when new-booking rules relax."
+                  },
+                  "options": [
+                    { "key": "monday", "label": "Monday" },
+                    { "key": "tuesday", "label": "Tuesday" },
+                    { "key": "wednesday", "label": "Wednesday" },
+                    { "key": "thursday", "label": "Thursday" },
+                    { "key": "friday", "label": "Friday" },
+                    { "key": "saturday", "label": "Saturday" },
+                    { "key": "sunday", "label": "Sunday" }
+                  ]
+                },
+                {
+                  "kind": "Select",
+                  "props": {
+                    "name": "fiscal_year_start_month",
+                    "label": "Fiscal year start month",
+                    "required": true,
+                    "defaultValue": 1,
+                    "helpText": "Month the tenant's fiscal year starts in this region. UK/IE=Apr, AU/NZ=Jul, most others=Jan."
+                  },
+                  "options": [
+                    { "key": 1, "label": "January" },
+                    { "key": 2, "label": "February" },
+                    { "key": 3, "label": "March" },
+                    { "key": 4, "label": "April" },
+                    { "key": 5, "label": "May" },
+                    { "key": 6, "label": "June" },
+                    { "key": 7, "label": "July" },
+                    { "key": 8, "label": "August" },
+                    { "key": 9, "label": "September" },
+                    { "key": 10, "label": "October" },
+                    { "key": 11, "label": "November" },
+                    { "key": 12, "label": "December" }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-center justify-between" },
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": {
+                        "as": "h2",
+                        "className": "text-lg font-medium",
+                        "children": "Tax configuration"
+                      }
+                    },
+                    {
+                      "kind": "Widget",
+                      "props": { "id": "region.tax-badge" },
+                      "bindings": {
+                        "props": {
+                          "currencySymbol": { "$ref": "form.currency_symbol" },
+                          "ratePercent": { "$ref": "form.tax_config.default_rate_percent" },
+                          "name": { "$ref": "form.tax_config.name" },
+                          "hasCustomRates": { "$expr": "(form.tax_config.rates || []).length > 0" }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "InfoBanner",
+                  "props": {
+                    "variant": "info",
+                    "children": "Tax config edits are written to the financial-record audit stream (7-year retention). Historical invoices are never retroactively repriced — the region_time_travel entitlement is required for retroactive changes."
+                  }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "grid grid-cols-2 gap-4" },
+                  "children": [
+                    {
+                      "kind": "NumberField",
+                      "props": {
+                        "name": "tax_config.default_rate_percent",
+                        "label": "Default rate (%)",
+                        "required": true,
+                        "min": 0,
+                        "max": 100,
+                        "step": 0.001,
+                        "helpText": "0-100 with up to 3 decimal places."
+                      }
+                    },
+                    {
+                      "kind": "TextField",
+                      "props": {
+                        "name": "tax_config.name",
+                        "label": "Tax display name",
+                        "required": true,
+                        "maxLength": 32,
+                        "placeholder": "VAT",
+                        "helpText": "Shown on invoices (e.g. VAT, GST, Sales Tax, TVA)."
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "Switch",
+                  "props": {
+                    "name": "tax_config.inclusive",
+                    "label": "List prices include tax",
+                    "helpText": "When on, published prices already include tax. When off, tax is added at checkout."
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "tax_config.registration_number",
+                    "label": "Tax registration number",
+                    "maxLength": 64,
+                    "helpText": "Tenant's tax registration ID for this jurisdiction. Confidential — visible only to admins + owners."
+                  },
+                  "bindings": {
+                    "hidden": { "$expr": "!me.permissions.includes('regions.view.tax_registration')" }
+                  }
+                },
+                {
+                  "kind": "InfoBanner",
+                  "props": {
+                    "variant": "warning",
+                    "children": "You don't have the `regions.view.tax_registration` permission. The registration number field is hidden. Ask your owner to grant it."
+                  },
+                  "bindings": {
+                    "hidden": { "$expr": "me.permissions.includes('regions.view.tax_registration')" }
+                  }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "flex flex-col gap-2 pt-2 border-t" },
+                  "bindings": {
+                    "hidden": { "$expr": "!entitlements.region_custom_tax_rules" }
+                  },
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": {
+                        "as": "h3",
+                        "className": "text-sm font-semibold",
+                        "children": "Custom rates (multi-rate jurisdictions)"
+                      }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": {
+                        "className": "text-xs text-muted",
+                        "children": "Per-category rates (e.g. reduced VAT for children's programmes, luxury tax, etc.). Applied by category on line items."
+                      }
+                    },
+                    {
+                      "kind": "Repeatable",
+                      "props": {
+                        "name": "tax_config.rates",
+                        "addLabel": "+ Add rate",
+                        "removeLabel": "Remove"
+                      },
+                      "itemRenderer": {
+                        "kind": "View",
+                        "props": { "className": "grid grid-cols-3 gap-2 items-end" },
+                        "children": [
+                          {
+                            "kind": "TextField",
+                            "props": {
+                              "name": "category",
+                              "label": "Category",
+                              "required": true,
+                              "maxLength": 64,
+                              "placeholder": "youth_programme",
+                              "helpText": "Lowercase, letters + digits + underscores."
+                            }
+                          },
+                          {
+                            "kind": "NumberField",
+                            "props": {
+                              "name": "rate_percent",
+                              "label": "Rate (%)",
+                              "required": true,
+                              "min": 0,
+                              "max": 100,
+                              "step": 0.001
+                            }
+                          },
+                          {
+                            "kind": "TextField",
+                            "props": {
+                              "name": "notes",
+                              "label": "Notes (optional)",
+                              "maxLength": 200
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "InfoBanner",
+                  "props": {
+                    "variant": "info",
+                    "children": "Multi-rate tax configuration is an Enterprise feature. Upgrade to configure per-category rates (e.g. reduced VAT for youth programmes)."
+                  },
+                  "bindings": {
+                    "hidden": { "$expr": "entitlements.region_custom_tax_rules" }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Ordering + defaults"
+                  }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "grid grid-cols-2 gap-4" },
+                  "children": [
+                    {
+                      "kind": "NumberField",
+                      "props": {
+                        "name": "sort_order",
+                        "label": "Sort order",
+                        "min": 0,
+                        "max": 9999,
+                        "defaultValue": 100,
+                        "helpText": "Lower runs first in region-picker lists."
+                      }
+                    },
+                    {
+                      "kind": "Switch",
+                      "props": {
+                        "name": "is_default",
+                        "label": "Set as default region",
+                        "helpText": "Auto-demotes the current default. Only one region per tenant can be default."
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-end gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "children": "Cancel" },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/settings/regions" }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "type": "submit",
+                    "children": "Create region"
+                  },
+                  "bindings": { "disabled": { "$ref": "entitlements.region_slot.is_exceeded" } }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

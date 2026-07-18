@@ -1,0 +1,278 @@
+{
+  "id": "facility.resources.resource-booking.list",
+  "title": "Bookings",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/bookings",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "facility", "entity": "resource-booking", "action": "list" },
+  "requiresPermission": "bookings.viewAny",
+  "requiresEntitlement": "facilities",
+  "dataSources": [
+    {
+      "name": "bookings",
+      "kind": "http.get",
+      "url": "/api/v1/bookings",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "facilities",
+      "kind": "http.get",
+      "url": "/api/v1/facilities",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "me",
+      "kind": "http.get",
+      "url": "/api/auth/me",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-6xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Bookings" }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Your upcoming and past bookings. Staff with the right permission can toggle 'Show all'."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "leadingIcon": "plus", "children": "Book a slot" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/bookings/new" } },
+              "requiresPermission": "bookings.create"
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 flex-wrap py-2" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Facility", "menuTrigger": "focus", "className": "min-w-56" },
+              "bindings": { "items": { "$ref": "facilities" } },
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "facility_id",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus", "className": "min-w-40" },
+              "props_items": [
+                { "id": "pending", "label": "Pending" },
+                { "id": "confirmed", "label": "Confirmed" },
+                { "id": "cancelled", "label": "Cancelled" },
+                { "id": "no_show", "label": "No-show" },
+                { "id": "completed", "label": "Completed" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "Switch",
+              "props": { "label": "Show all bookings" },
+              "requiresPermission": "bookings.view-all",
+              "actions": {
+                "onChange": {
+                  "kind": "filter.set",
+                  "field": "show_all",
+                  "valueExpr": "$value"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "props": { "className": "w-full" },
+          "columns": [
+            { "id": "facility", "label": "Facility" },
+            { "id": "when", "label": "When" },
+            { "id": "who", "label": "Who" },
+            { "id": "status", "label": "Status" },
+            { "id": "actions", "label": "" }
+          ],
+          "bindings": {
+            "items": { "$ref": "bookings" },
+            "isLoading": { "$ref": "bookings.isLoading" }
+          },
+          "rowRenderer": {
+            "kind": "TableRow",
+            "cells": [
+              {
+                "kind": "TableCell",
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex flex-col" },
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-medium" },
+                        "bindings": { "children": { "$ref": "row.facility.name" } }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted" },
+                        "bindings": { "children": { "$ref": "row.facility.branch.name" } }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "TableCell",
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex flex-col" },
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-medium" },
+                        "bindings": {
+                          "children": { "$expr": "formatDate(row.starts_at, 'short')" }
+                        }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted" },
+                        "bindings": {
+                          "children": { "$expr": "formatTimeRange(row.starts_at, row.ends_at)" }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "TableCell",
+                "bindings": {
+                  "children": {
+                    "$expr": "row.booked_for_user ? row.booked_for_user.display_name : (row.booked_for_team ? row.booked_for_team.name : row.booked_by_user.display_name)"
+                  }
+                }
+              },
+              {
+                "kind": "TableCell",
+                "children": [
+                  {
+                    "kind": "Widget",
+                    "widget": "facility.booking-status-chip",
+                    "props": {},
+                    "bindings": { "status": { "$ref": "row.status" } }
+                  }
+                ]
+              },
+              {
+                "kind": "TableCell",
+                "children": [
+                  {
+                    "kind": "Menu",
+                    "trigger": {
+                      "kind": "Button",
+                      "props": {
+                        "variant": "ghost",
+                        "isIconOnly": true,
+                        "children": { "kind": "Icon", "props": { "name": "ellipsis-vertical" } }
+                      }
+                    },
+                    "items": [
+                      {
+                        "kind": "MenuItem",
+                        "props": { "children": "View details" },
+                        "actions": {
+                          "onPress": {
+                            "kind": "navigate",
+                            "toExpr": "'/tenant/bookings/' + row.id"
+                          }
+                        }
+                      },
+                      {
+                        "kind": "MenuItem",
+                        "props": { "children": "Check in" },
+                        "bindings": {
+                          "hidden": {
+                            "$expr": "row.status !== 'confirmed' || row.checked_in_at || !(minutesUntil(row.starts_at) < 30 && minutesUntil(row.starts_at) > -60)"
+                          }
+                        },
+                        "actions": {
+                          "onPress": {
+                            "kind": "http.post",
+                            "urlExpr": "'/api/v1/bookings/' + row.id + '/check-in'"
+                          }
+                        },
+                        "requiresPermission": "bookings.check-in"
+                      },
+                      {
+                        "kind": "MenuItem",
+                        "props": { "children": "Reschedule" },
+                        "bindings": {
+                          "hidden": { "$expr": "!['pending', 'confirmed'].includes(row.status)" }
+                        },
+                        "actions": {
+                          "onPress": {
+                            "kind": "modal.open",
+                            "modal": "reschedule-booking",
+                            "propsExpr": "{ bookingId: row.id }"
+                          }
+                        },
+                        "requiresPermission": "bookings.reschedule"
+                      },
+                      {
+                        "kind": "MenuItem",
+                        "props": { "children": "Cancel", "className": "text-danger" },
+                        "bindings": {
+                          "hidden": { "$expr": "!['pending', 'confirmed'].includes(row.status)" }
+                        },
+                        "actions": {
+                          "onPress": {
+                            "kind": "modal.open",
+                            "modal": "cancel-booking",
+                            "propsExpr": "{ bookingId: row.id }"
+                          }
+                        },
+                        "requiresPermission": "bookings.cancel"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

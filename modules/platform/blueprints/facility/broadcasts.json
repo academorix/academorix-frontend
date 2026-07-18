@@ -1,0 +1,69 @@
+{
+  "id": "academorix://modules/facility/broadcasts",
+  "$version": 1,
+  "title": "facility — realtime broadcast channels",
+  "description": "Three broadcast channel families for live UI updates. Tenant-level channel for cross-branch admin dashboards; facility-level channel for the live-availability slot picker; user-level channel for a user's own booking updates + pass credit changes. Reverb driver (Laravel Reverb) is the default transport; the notifications module handles fanout.",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.facilities",
+      "class": "Academorix\\Facility\\Broadcasts\\TenantFacilitiesChannel",
+      "description": "Tenant-wide facility + booking + day-pass + pass stream. Sink for admin dashboards showing cross-branch activity.",
+      "authorization": "sanctum::authed AND tenant_matches",
+      "events": [
+        "FacilityCreated",
+        "FacilityStatusChanged",
+        "FacilityRetired",
+        "FacilityBlackoutAdded",
+        "FacilityPricingUpdated",
+        "BookingCreated",
+        "BookingCancelled",
+        "BookingCompleted",
+        "BookingMarkedNoShow",
+        "DayPassIssued",
+        "DayPassConsumed",
+        "PassIssued",
+        "PassRevoked"
+      ],
+      "throttle": "100 events/minute per channel",
+      "notes": "Payload is trimmed to non-confidential fields (see data-classes.json). Pricing changes broadcast the fact-of-change only, not before/after values."
+    },
+    {
+      "name": "facility.{facilityId}.bookings",
+      "class": "Academorix\\Facility\\Broadcasts\\FacilityBookingsChannel",
+      "description": "Facility-scoped booking activity. Powers the live-availability slot picker — a booker sees new bookings appear as other users grab slots.",
+      "authorization": "sanctum::authed AND (facilities.view for facility_id OR platform_admin)",
+      "events": [
+        "BookingCreated",
+        "BookingCancelled",
+        "BookingRescheduled",
+        "BookingCheckedIn",
+        "FacilityBlackoutAdded",
+        "FacilityAvailabilityChanged"
+      ],
+      "throttle": "50 events/minute per channel",
+      "notes": "Payload is trimmed to (booking_id, starts_at, ends_at, status) — never the booker's identity or price."
+    },
+    {
+      "name": "user.{userId}.bookings",
+      "class": "Academorix\\Facility\\Broadcasts\\UserBookingsChannel",
+      "description": "Per-user booking stream + pass credit updates. Powers the my-bookings live-updates widget in the user dashboard.",
+      "authorization": "sanctum::authed AND user_matches",
+      "events": [
+        "BookingCreated (where booked_by_user_id = userId OR booked_for_user_id = userId)",
+        "BookingConfirmed",
+        "BookingCancelled",
+        "BookingRescheduled",
+        "BookingCheckedIn",
+        "BookingCompleted",
+        "BookingMarkedNoShow",
+        "PassIssued (where userId IN assignable_user_ids)",
+        "PassCreditConsumed (where the booked_for_user_id = userId)",
+        "PassExhausted",
+        "PassExpired",
+        "PassRevoked"
+      ],
+      "throttle": "20 events/minute per channel",
+      "notes": "Payload trimmed to what the user needs to render their dashboard row."
+    }
+  ]
+}

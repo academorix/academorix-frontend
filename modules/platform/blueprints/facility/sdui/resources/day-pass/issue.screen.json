@@ -1,0 +1,203 @@
+{
+  "id": "facility.resources.day-pass.issue",
+  "title": "Sell day pass",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/day-passes/issue",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "facility", "entity": "day-pass", "action": "issue" },
+  "requiresPermission": "day_passes.issue",
+  "requiresEntitlement": "facilities_advanced",
+  "dataSources": [
+    {
+      "name": "branches",
+      "kind": "http.get",
+      "url": "/api/v1/branches?filter[status]=active",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "settings",
+      "kind": "http.get",
+      "url": "/api/v1/settings/facility",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-2xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Sell day pass" }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "POS entry. Prints a receipt. Anonymous walk-ins require name + phone."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Branch", "menuTrigger": "focus", "isRequired": true },
+              "bindings": { "items": { "$ref": "branches" } },
+              "form": { "field": "branch_id" }
+            },
+            {
+              "kind": "DateField",
+              "props": {
+                "label": "Valid on",
+                "isRequired": true,
+                "helpText": "Usually today. Max 30 days ahead."
+              },
+              "bindings": {
+                "defaultValue": { "$expr": "today()" },
+                "minValue": { "$expr": "today()" },
+                "maxValue": { "$expr": "addDays(today(), 30)" }
+              },
+              "form": { "field": "valid_on_date" }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Recipient" }
+            },
+            {
+              "kind": "Tabs",
+              "props": { "defaultValue": "registered" },
+              "items": [
+                {
+                  "id": "registered",
+                  "label": "Registered user",
+                  "children": [
+                    {
+                      "kind": "ComboBox",
+                      "props": {
+                        "label": "User",
+                        "menuTrigger": "input",
+                        "placeholder": "Search by name, email, phone...",
+                        "isRequired": true
+                      },
+                      "dataSourceExpr": "/api/v1/users?filter[name]={query}",
+                      "form": { "field": "issued_to_user_id" }
+                    }
+                  ]
+                },
+                {
+                  "id": "anonymous",
+                  "label": "Anonymous walk-in",
+                  "children": [
+                    {
+                      "kind": "Alert",
+                      "props": {
+                        "variant": "info",
+                        "children": "Name and phone are required for anonymous walk-ins. Redacted 90 days after use per GDPR."
+                      }
+                    },
+                    {
+                      "kind": "TextField",
+                      "props": { "label": "Name", "isRequired": true },
+                      "form": { "field": "issued_to_profile_name" }
+                    },
+                    {
+                      "kind": "TextField",
+                      "props": { "label": "Phone (E.164)", "placeholder": "+15551234567", "isRequired": true },
+                      "form": { "field": "issued_to_profile_phone" }
+                    },
+                    {
+                      "kind": "ComboBox",
+                      "props": { "label": "Age band", "menuTrigger": "focus", "isRequired": true },
+                      "props_items": [
+                        { "id": "under_18", "label": "Under 18" },
+                        { "id": "adult", "label": "Adult" },
+                        { "id": "senior", "label": "Senior (60+)" }
+                      ],
+                      "form": { "field": "issued_to_profile_age_band" }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Payment" }
+            },
+            {
+              "kind": "NumberField",
+              "props": {
+                "label": "Price (cents)",
+                "isRequired": true
+              },
+              "bindings": {
+                "defaultValue": { "$ref": "settings.day_pass_default_price_cents" }
+              },
+              "form": { "field": "price_amount_cents" }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Payment method", "menuTrigger": "focus", "isRequired": true, "defaultSelectedKey": "cash" },
+              "props_items": [
+                { "id": "cash", "label": "Cash" },
+                { "id": "card", "label": "Card (terminal)" },
+                { "id": "wallet", "label": "Digital wallet" },
+                { "id": "free", "label": "Free" },
+                { "id": "comp", "label": "Complimentary" }
+              ],
+              "form": { "field": "payment_method" }
+            }
+          ]
+        },
+        {
+          "kind": "Button",
+          "props": {
+            "variant": "primary",
+            "size": "lg",
+            "className": "self-stretch",
+            "leadingIcon": "printer",
+            "children": "Sell + print receipt"
+          },
+          "actions": {
+            "onPress": {
+              "kind": "http.post",
+              "url": "/api/v1/day-passes",
+              "bodyExpr": "form",
+              "onSuccess": {
+                "kind": "chain",
+                "steps": [
+                  { "kind": "print.receipt", "receiptExpr": "$response.data.receipt_number" },
+                  { "kind": "toast", "message": "Day pass issued. Receipt sent to printer." },
+                  { "kind": "form.reset" }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

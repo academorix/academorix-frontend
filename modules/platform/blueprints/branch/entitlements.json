@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/branch/entitlements",
+  "$version": 1,
+  "title": "branch — declared entitlements",
+  "description": "Five entitlement keys. `branch_slot` scopes concurrent Branch rows per tenant. `branch_geocoding` gates automatic address→coordinates via subprocessor. `branch_capacity_gating` enables the capacity enforcement layer on booking-adjacent routes. `branch_amenities` gates custom amenity tags. `branch_multi_period_hours` allows multi-period opening days (e.g. 9-12, 17-22).",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }, { "kind": "enum" }],
+  "entitlements": [
+    {
+      "key": "branch_slot",
+      "kind": "slot",
+      "unit": "branches",
+      "defaultsByPlan": { "small": 3, "medium": 25, "enterprise": null },
+      "description": "Concurrent limit on active Branch rows per tenant. Enterprise = unlimited (null). Consumed by BranchObserver on create; released when a Branch transitions to `closed` OR is force-deleted by platform support. Slot count is per-tenant, NOT per-(tenant, organization) — a small-tier tenant with two orgs still gets 3 branches total across both."
+    },
+    {
+      "key": "branch_geocoding",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables automatic address→coordinates via subprocessor (Google Maps / Mapbox / Nominatim). Off on small tier — small-tier tenants pin coordinates manually via the map-view screen. When off, `GeocodeAddressJob` no-ops immediately and the coordinates.source stays `manual` (or null). The subprocessor call itself is billed to the platform, not the tenant."
+    },
+    {
+      "key": "branch_capacity_gating",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 0 },
+      "description": "Default OFF across every tier — capacity gating is opt-in. When on, `CapacityGate::allowsAdditional()` enforces `capacity` against concurrent bookings on booking-adjacent routes; when off, the gate always returns true and `capacity` is display-only. Medium + Enterprise tenants may flip the entitlement on via the entitlements admin UI; small tier cannot even opt in (capacity column exists but is display-only)."
+    },
+    {
+      "key": "branch_amenities",
+      "kind": "enum",
+      "values": ["catalog_only", "custom"],
+      "defaultsByPlan": { "small": "catalog_only", "medium": "catalog_only", "enterprise": "custom" },
+      "description": "Governs which amenity tags a tenant may set. `catalog_only` = the platform catalogue in `data/amenity-catalog.json` is the sole source of truth. `custom` = tenant may add tags outside the catalogue (Enterprise). Custom tags are still per-tenant scoped — they do NOT pollute the platform catalogue."
+    },
+    {
+      "key": "branch_multi_period_hours",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables multi-period opening days (e.g. 9-12, 17-22 for a facility that closes over lunch, or a restaurant with a service split). Small tier restricted to a single period per day. When off, the observer refuses opening_hours writes that contain > 1 period per day-key with `BRANCH_MULTI_PERIOD_HOURS_UNAVAILABLE` (402). Exceptions are always single-period regardless of tier."
+    }
+  ]
+}

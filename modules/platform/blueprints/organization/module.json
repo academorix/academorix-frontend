@@ -1,0 +1,148 @@
+{
+  "$version": 1,
+  "name": "organization",
+  "alias": "organization",
+  "namespace": "Academorix\\Organization",
+  "description": "Structural sub-brand belonging to a Tenant. Answers 'which brand does this belong to?' — a tenant running two academies (say 'Elite Sports' and 'Community Sports') under one Tenant runs them as two Organizations. Orthogonal to Region; the two meet at Branch which carries FKs to both. Every Tenant provisions exactly one `is_default=true` Organization on TenantProvisioned so single-brand tenants never special-case it. Multi-org tenants add Organizations per entitlement. Enterprise tenants may NEST Organizations via `parent_id` self-referential FK (parent must be same tenant + no cycles + max depth cap). Small tier is locked to 1 Organization no nesting; Medium up to 5 no nesting; Enterprise unlimited + nesting via the `organization_hierarchy` entitlement. Ships: Organization model, org CRUD HTTP surface, default-org seeder listener on `TenantProvisioned`, is_default enforcement, parent_id cycle detection, materialised tree_path for efficient descendant queries, and a branding-integration hook (an Organization row can pin its own Branding profile when the tenant subscribes to `organization_branding` — otherwise the tenant's default branding applies).",
+  "keywords": [
+    "organization",
+    "sub-brand",
+    "structural",
+    "hierarchy",
+    "tree",
+    "tree-path",
+    "materialised-path",
+    "parent-id",
+    "reparent",
+    "default-org",
+    "cycle-detection",
+    "depth-cap",
+    "orthogonal-to-region",
+    "meets-at-branch",
+    "tenant-scoped",
+    "no-application-id",
+    "organization-slot",
+    "organization-hierarchy-entitlement",
+    "organization-branding",
+    "enterprise-nesting",
+    "soc2-cc6.3"
+  ],
+  "priority": 41,
+  "providers": ["Academorix\\Organization\\Providers\\OrganizationServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "tenancy", "application", "entitlements"],
+  "extendedBy": ["branch"],
+  "planned_consumers": [
+    "branch",
+    "teams",
+    "facilities",
+    "region",
+    "settings",
+    "branding",
+    "sports",
+    "compliance"
+  ],
+  "contributes": {
+    "traits": ["BelongsToOrganization", "HasOrganizationHierarchy"],
+    "attributes": ["AsOrganizationListener"],
+    "blueprints": ["organizations"],
+    "middleware": [
+      "organization.resolve_active",
+      "organization.require",
+      "organization.enforce_scoped_read"
+    ],
+    "events": [
+      "OrganizationCreated",
+      "OrganizationUpdated",
+      "OrganizationStatusChanged",
+      "OrganizationParentChanged",
+      "OrganizationDefaultChanged",
+      "OrganizationBrandingUpdated",
+      "OrganizationArchived",
+      "OrganizationRestored",
+      "OrganizationDeleted",
+      "TenantDefaultOrganizationSeeded"
+    ],
+    "policies": ["OrganizationPolicy"],
+    "hooks": [],
+    "commands": [
+      "organization:list",
+      "organization:describe",
+      "organization:create",
+      "organization:reparent",
+      "organization:set-default",
+      "organization:tree",
+      "organization:pause",
+      "organization:resume",
+      "organization:archive",
+      "organization:rebuild-tree-paths",
+      "organization:reconcile-defaults"
+    ],
+    "jobs": [
+      "SeedDefaultOrganizationForTenantJob",
+      "RebuildTreePathsJob",
+      "ReconcileDefaultOrganizationInvariantJob",
+      "PurgeArchivedOrganizationsJob"
+    ],
+    "notifications": [
+      "OrganizationCreatedNotification",
+      "OrganizationDefaultChangedNotification",
+      "OrganizationReparentedNotification"
+    ],
+    "broadcasts": ["tenant.{id}.organizations"],
+    "observers": ["OrganizationObserver"],
+    "rules": [
+      "valid_hex_color",
+      "valid_e164_phone",
+      "valid_url",
+      "parent_same_tenant",
+      "parent_no_cycle",
+      "parent_within_depth_cap",
+      "organization_slug_reserved"
+    ],
+    "casts": ["OrganizationCategory", "OrganizationStatus", "TreePath"],
+    "views": [],
+    "lang": ["organization"],
+    "config": ["organization"],
+    "macros": [],
+    "bindings": [
+      "OrganizationRepository",
+      "OrganizationProvisioner",
+      "DefaultOrganizationResolver",
+      "OrganizationTreeService",
+      "CycleDetector",
+      "TreePathBuilder"
+    ],
+    "resources": ["organization"]
+  },
+  "wraps": {
+    "packages": [],
+    "rationale": "Organization is a first-party aggregate. No vendor packages wrapped. The materialised-path tree walker is a purpose-built primitive because Postgres RECURSIVE CTE is too expensive on the hot path of `is-descendant-of?` checks that fire in every scoped access decision."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing Organization CRUD + hierarchy management. Reads open to any tenant member; writes require owner/admin. Nesting via parent_id is gated by the `organization_hierarchy` entitlement. Every mutation invalidates tree_path caches for affected subtrees.",
+      "routes": [
+        "GET /api/v1/organizations",
+        "POST /api/v1/organizations",
+        "GET /api/v1/organizations/{organization}",
+        "PATCH /api/v1/organizations/{organization}",
+        "DELETE /api/v1/organizations/{organization}",
+        "POST /api/v1/organizations/{organization}/reparent",
+        "POST /api/v1/organizations/{organization}/set-default",
+        "POST /api/v1/organizations/{organization}/pause",
+        "POST /api/v1/organizations/{organization}/resume",
+        "POST /api/v1/organizations/{organization}/archive",
+        "GET /api/v1/organizations/{organization}/tree",
+        "GET /api/v1/organizations/tree"
+      ]
+    },
+    "platform-admin": {
+      "description": "Platform-admin cross-tenant Organization observability. Read-only in v1 (writes stay tenant-plane so provenance is captured).",
+      "routes": [
+        "GET /api/v1/platform/organizations",
+        "GET /api/v1/platform/organizations/{organization}/tree"
+      ]
+    }
+  }
+}

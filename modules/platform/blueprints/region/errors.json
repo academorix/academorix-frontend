@@ -1,0 +1,178 @@
+{
+  "id": "academorix://modules/region/errors",
+  "$version": 1,
+  "title": "region — error codes",
+  "namespace": "region",
+  "errors": [
+    {
+      "code": "REGION_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "region.errors.region_not_found"
+    },
+    {
+      "code": "REGION_ALREADY_EXISTS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "region.errors.region_already_exists",
+      "description": "Attempted to create a Region with a (tenant_id, slug) pair that already exists. If the existing row is soft-deleted, response includes the restore path."
+    },
+    {
+      "code": "REGION_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "region.errors.region_quota_exceeded",
+      "description": "Reached the `region_slot` entitlement cap for this tenant (Small=1, Medium=3, Enterprise=unlimited). Response includes tier + upgrade path."
+    },
+    {
+      "code": "REGION_IN_USE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "region.errors.region_in_use",
+      "description": "Attempted to archive or delete a Region that has active inbound references (Branch / Membership / Invoice / Transaction). Response includes the reference counts + suggests archiving the referring rows first or transferring them to another Region."
+    },
+    {
+      "code": "CANNOT_DELETE_DEFAULT_REGION",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "region.errors.cannot_delete_default_region",
+      "description": "The Region is is_default=true. Every tenant must have exactly one default region. The caller must promote another Region to default first, then retry."
+    },
+    {
+      "code": "CANNOT_ARCHIVE_DEFAULT_REGION",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "region.errors.cannot_archive_default_region",
+      "description": "Same reasoning as CANNOT_DELETE_DEFAULT_REGION but for archive."
+    },
+    {
+      "code": "CANNOT_PAUSE_DEFAULT_REGION",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "region.errors.cannot_pause_default_region",
+      "description": "The default Region must always accept new bookings. Promote another Region to default first, then pause this one."
+    },
+    {
+      "code": "REGION_MISSING_DEFAULT",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "region.errors.region_missing_default",
+      "description": "Attempted to flip is_default=false without a sibling Region carrying is_default=true. System invariant refuses the write. Warn-severity because the invariant should have been guarded by the observer chain."
+    },
+    {
+      "code": "COUNTRY_CODE_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "region.errors.country_code_immutable",
+      "description": "Attempted to change country_code on a Region that already has inbound rows. country_code is immutable once used — financial reconciliation depends on it. Create a new Region for the new country instead."
+    },
+    {
+      "code": "CURRENCY_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "region.errors.currency_immutable",
+      "description": "Attempted to change currency on a Region that already has inbound rows. currency is immutable — historical financial records must remain reconcilable against their issued currency. Break-glass bypass via `region.validation.allow_currency_immutable_bypass` config (requires ops sign-off)."
+    },
+    {
+      "code": "REGION_UNKNOWN_COUNTRY_CODE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "region.errors.region_unknown_country_code",
+      "description": "The supplied country_code is not present in `data/country-defaults.json`. Response includes the list of shipped country codes. Bypass via the `region.validation.reject_unknown_country_code=false` config for supranational zones (EU) — the caller then supplies every field explicitly."
+    },
+    {
+      "code": "REGION_CUSTOM_TAX_RULES_DISABLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "region.errors.region_custom_tax_rules_disabled",
+      "description": "`tax_config.rates[]` supplied but the `region_custom_tax_rules` entitlement is off (small + medium tiers). Response includes upgrade path. The caller may still set `tax_config.default_rate_percent`."
+    },
+    {
+      "code": "REGION_TIME_TRAVEL_DISABLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "region.errors.region_time_travel_disabled",
+      "description": "Attempted a retroactive tax_config edit without the `region_time_travel` entitlement OR without the `region.time_travel_execution` feature flag turned on for the tenant. Warn-severity because retroactive financial edits are compliance-sensitive."
+    },
+    {
+      "code": "REGION_TAX_CONFIG_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "region.errors.region_tax_config_invalid",
+      "description": "tax_config blob failed schema validation. Response includes the JSON Pointer paths of every failing field."
+    },
+    {
+      "code": "REGION_STATUS_TRANSITION_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "region.errors.region_status_transition_invalid",
+      "description": "Attempted a status transition that isn't in the state machine (e.g. archived → paused directly, without restore first)."
+    },
+    {
+      "code": "REGION_PAUSED_FOR_BOOKING",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "region.errors.region_paused_for_booking",
+      "description": "The `region.resolve_active` middleware rejected the request because the target Region is paused + the route is booking-adjacent (POST /bookings, POST /memberships). Retry with a different X-Region-Id or wait for resume."
+    },
+    {
+      "code": "REGION_ARCHIVED",
+      "http": 410,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "region.errors.region_archived",
+      "description": "Attempted to reference an archived Region on a booking or write path. Response includes the tenant's current default region as a hint."
+    },
+    {
+      "code": "REGION_CROSS_TENANT",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "region.errors.region_cross_tenant",
+      "description": "The `X-Region-Id` header points at a Region in a different tenant. Security-relevant — forged header attempting cross-tenant access. Logged with tenant + user + attempted region + IP."
+    },
+    {
+      "code": "TENANT_MISSING_DEFAULT_REGION",
+      "http": 424,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "region.errors.tenant_missing_default_region",
+      "description": "The middleware couldn't resolve a default region for the caller's tenant. System-invariant violation — the reconciler will alert + auto-heal (when enabled). Retryable because auto-heal usually resolves within seconds."
+    }
+  ]
+}

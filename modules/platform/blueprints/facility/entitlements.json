@@ -1,0 +1,60 @@
+{
+  "id": "academorix://modules/facility/entitlements",
+  "$version": 1,
+  "title": "facility — declared entitlements",
+  "description": "Five entitlement keys. `facilities` is the boolean feature gate for the whole module (off on Small tier per hierarchy.md §7). `facilities_advanced` gates the Enterprise-only surfaces (day_passes, passes, recurring bookings, blackouts, package integration). `facility_slot` caps the number of facilities per tenant. `booking_recurring` gates recurring-booking rule creation (Enterprise). `booking_capacity_gating` toggles per-tenant capacity enforcement (default off — gate exists so ops can flip it per-tenant without a code change).",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "pool" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "facilities",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Master feature gate. Off = the whole module is invisible: no facility CRUD, no booking CRUD, no routes reachable. Small tier is locked out entirely per hierarchy.md §7.",
+      "enforcedBy": [
+        "facility.enforce_entitlement middleware on every /api/v1/facilities /api/v1/bookings /api/v1/day-passes /api/v1/passes route",
+        "FacilityObserver refuses facility create when the gate is closed",
+        "SDUI resource surfaces hidden when features array does not include 'facilities.core'"
+      ]
+    },
+    {
+      "key": "facilities_advanced",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only advanced features: day_passes, passes, recurring bookings, blackouts, package integration. Medium tenants get basic facility + booking; Enterprise unlocks the rest.",
+      "enforcedBy": [
+        "facility.enforce_entitlement:facilities_advanced middleware on day-pass + pass routes",
+        "DayPassObserver refuses create when the gate is closed",
+        "PassObserver refuses create when the gate is closed",
+        "SDUI day-pass + pass resource surfaces hidden when features array does not include 'facilities.advanced'"
+      ]
+    },
+    {
+      "key": "facility_slot",
+      "kind": "slot",
+      "unit": "facilities",
+      "defaultsByPlan": { "small": 0, "medium": 20, "enterprise": null },
+      "description": "How many facilities a tenant can have. Small: 0 (feature off; slot is 0 for compliance with the gate). Medium: 20. Enterprise: unlimited (null cap). Consumed on facility create; released on soft-delete.",
+      "enforcedBy": [
+        "FacilityObserver.creating consumes 1 unit via EntitlementGate::consume('facility_slot')",
+        "FacilityObserver.deleted (soft-delete) releases 1 unit via EntitlementGate::release('facility_slot')"
+      ]
+    },
+    {
+      "key": "booking_recurring",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Recurring booking rules that auto-create N bookings from a template (e.g. 'every Tuesday 18:00–19:00 for 12 weeks'). Wave 2 ships the entitlement key + the SDUI toggle; the underlying `recurring_booking_rules` table lands in Wave 2b."
+    },
+    {
+      "key": "booking_capacity_gating",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enforces facility.capacity_persons when set. Default off in tests + ops-flip-off for tenants that want overbooking (rare — mostly gyms during peak with a waiver flow). When off, capacity is a UI hint only, not a hard block. Medium + Enterprise default on.",
+      "enforcedBy": [
+        "ResourceBookingObserver.creating skips the capacity check when this entitlement is off",
+        "PricingCalculator still uses capacity_persons in its computations regardless"
+      ]
+    }
+  ]
+}

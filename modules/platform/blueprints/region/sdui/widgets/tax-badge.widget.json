@@ -1,0 +1,85 @@
+{
+  "id": "region.tax-badge",
+  "title": "Tax badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Compact chip showing `<currency_symbol> <rate>% <name>` (e.g. `AED 5% VAT`, `£ 20% VAT`, `$ 0% Sales Tax`). Rendered in invoice detail + line items + the region list tax column + the region create/edit summary. When the tax_config carries multi-rate `rates[]`, a small badge overlay signals `+ N more`.",
+  "notes": [
+    "Uses HeroUI `Chip` — no bespoke class-name literals per the ui-components rule.",
+    "The variant maps to tax posture: 0% renders as `neutral`, > 0% and ≤ 10% as `accent`, > 10% as `warning` (visual signal that it's a high-tax jurisdiction).",
+    "Rate formatting: 3-decimal precision from the API, rendered with locale-aware separator (e.g. `5,00%` in fr-FR, `5.00%` in en-US) via the sibling `formatPercent` helper.",
+    "When `hasCustomRates: true`, appends a small subscript `+N` chip inside the badge for at-a-glance multi-rate visibility."
+  ],
+  "props": {
+    "currencySymbol": {
+      "type": "string",
+      "required": true,
+      "description": "Currency symbol (e.g. `$`, `AED`, `£`)."
+    },
+    "ratePercent": {
+      "type": "number",
+      "required": true,
+      "description": "The default_rate_percent value from tax_config."
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "Tax display name (e.g. `VAT`, `Sales Tax`)."
+    },
+    "hasCustomRates": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when tax_config.rates[] is non-empty. Renders a subscript `+N` chip."
+    },
+    "customRatesCount": {
+      "type": "integer",
+      "default": 0,
+      "description": "Number of custom rates in tax_config.rates[]. Only rendered when hasCustomRates=true."
+    },
+    "size": {
+      "type": "string",
+      "default": "xs",
+      "enum": ["xs", "sm", "md"]
+    },
+    "showLabel": {
+      "type": "boolean",
+      "default": true,
+      "description": "When false, renders just the numeric rate + symbol (compact tables)."
+    }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "inline-flex items-center gap-1" },
+      "children": [
+        {
+          "kind": "Chip",
+          "bindings": {
+            "props": {
+              "size": { "$ref": "props.size" },
+              "variant": {
+                "$expr": "props.ratePercent === 0 ? 'neutral' : (props.ratePercent <= 10 ? 'accent' : 'warning')"
+              },
+              "children": {
+                "$expr": "props.showLabel ? (props.currencySymbol + ' ' + formatPercent(props.ratePercent) + ' ' + props.name) : (props.currencySymbol + ' ' + formatPercent(props.ratePercent))"
+              }
+            }
+          }
+        },
+        {
+          "kind": "Chip",
+          "props": { "size": "xs", "variant": "info" },
+          "bindings": {
+            "hidden": { "$expr": "!props.hasCustomRates" },
+            "props": {
+              "children": {
+                "$expr": "'+' + (props.customRatesCount || '?') + ' more'"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

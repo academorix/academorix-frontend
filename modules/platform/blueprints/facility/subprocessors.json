@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/facility/subprocessors",
+  "$version": 1,
+  "title": "facility — subprocessors",
+  "description": "The Facility module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. The Notifications module dispatches booking confirmations + reminders via its own subprocessors (mail, SMS, push); those are declared in notifications::subprocessors.json. The Finance module (Wave 4) will engage payment processors for the money side of bookings + day-passes + passes; those live in finance::subprocessors.json. This file lists ZERO active subprocessors to be explicit about the module's boundary — booking state is fully first-party.",
+  "subprocessors": [],
+  "downstream_subprocessors_referenced": [
+    {
+      "module": "notifications",
+      "reference": "notifications::subprocessors.json",
+      "used_for": "Dispatching BookingConfirmed / BookingCancelled / BookingReminder / FacilityBlackoutAffectsBooking / PassIssued / PassExhausted / PassExpiring / PassRevoked notifications via mail / SMS / push channels."
+    },
+    {
+      "module": "finance",
+      "reference": "finance::subprocessors.json (Wave 4)",
+      "used_for": "Payment processing for booking prices + day-pass sales + membership renewals that provision passes. Stripe / Paddle / Adyen depending on region."
+    }
+  ],
+  "notes": [
+    "This file exists deliberately even with an empty subprocessors array. The GDPR Art. 30 record of processing activities requires per-module subprocessor lists; an empty list is the correct declaration for a module that engages none directly.",
+    "If a future Wave introduces a subprocessor into this module (e.g. an availability-optimisation AI service), add it here + update compliance.json Art. 28 evidence + refresh the tenant-facing subprocessor list."
+  ]
+}

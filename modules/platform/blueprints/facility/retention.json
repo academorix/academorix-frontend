@@ -1,0 +1,86 @@
+{
+  "id": "academorix://modules/facility/retention",
+  "$version": 1,
+  "title": "facility — retention windows",
+  "description": "Facilities are permanent while any tenant references them. Bookings + day-passes + passes are financial records retained 7 years (SOC 2 CC6.3 + local tax requirements + PCI-DSS 10.7). Anonymous day-pass profile fields (name + phone) are redacted 90 days post-consumption per GDPR Art. 5(1)(c) minimisation.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(c) — data minimisation (anonymous day-pass redaction)",
+    "gdpr Art. 17 — right to erasure (with financial-retention carve-out)",
+    "soc2 CC6.3 — audit trail retention",
+    "pci-dss 10.7 — audit trail retention 1 year hot + 6 years archive",
+    "national tax law — 7-year financial-record retention (US, EU, UK, CA baselines)"
+  ],
+  "retention": [
+    {
+      "entity": "Facility",
+      "hot": { "days": "while any booking / day_pass / pass references it (RESTRICT FKs enforce)" },
+      "cold": { "days": "7 years post-retirement" },
+      "purge": {
+        "trigger": "manual archive by admin + zero downstream references + 7 years past deleted_at",
+        "action": "hard delete via PurgeSoftDeletedFacilitiesJob",
+        "notes": "The observer refuses hard-delete while any downstream row exists. Retention window aligns with the longest-lived downstream row (booking / day_pass / pass), all of which retain 7 years."
+      }
+    },
+    {
+      "entity": "ResourceBooking",
+      "hot": { "days": 365, "description": "Active + first year for dispute resolution + support queries" },
+      "cold": { "days": "2555 (7 years)", "description": "Financial-audit retention. Soft-deleted after 1 year; hard-purged after 7." },
+      "purge": {
+        "trigger": "> 7 years past ends_at + status IN (completed / cancelled / no_show)",
+        "action": "hard delete via retention pipeline",
+        "notes": "Retention runs against ends_at, not created_at, because a booking's financial significance is realised at its end. Cancelled bookings past ends_at still retain 7 years."
+      }
+    },
+    {
+      "entity": "DayPass",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years)" },
+      "purge": {
+        "trigger": "> 7 years past purchased_at",
+        "action": "hard delete",
+        "notes": "NO SoftDeletes on day_passes — retention is straight hot→purge."
+      }
+    },
+    {
+      "entity": "DayPass — anonymous profile fields",
+      "hot": { "days": 90, "description": "issued_to_profile_name + issued_to_profile_phone + issued_to_profile_age_band" },
+      "purge": {
+        "trigger": "consumed_at + 90 days",
+        "action": "field-level redaction (replace with [REDACTED]) via RedactAnonymousDayPassProfileJob",
+        "notes": "Preserves receipt_number + price_amount_cents + payment_method for financial retention. Only the PII sub-fields are redacted, not the whole row. Registered-user day passes (issued_to_user_id NOT NULL) are unaffected — their profile lives on the User row and follows the User's retention."
+      }
+    },
+    {
+      "entity": "Pass",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years)" },
+      "purge": {
+        "trigger": "> 7 years past valid_until (or revoked_at when revoked)",
+        "action": "hard delete",
+        "notes": "Soft-deleted on revoke; hard-purged 7 years past. Financial retention applies because passes tie to Membership revenue."
+      }
+    },
+    {
+      "entity": "Facility blackout_dates entries",
+      "hot": { "days": "co-terminous with facility" },
+      "purge": {
+        "trigger": "facility hard-delete",
+        "action": "cascaded via the facility row (blackouts are a JSONB sub-field, not a separate table)",
+        "notes": "Historical blackout data is inspectable via the audit trail's before/after snapshots on FacilityBlackoutAdded / FacilityBlackoutRemoved events."
+      }
+    },
+    {
+      "entity": "Facility pricing_json history",
+      "hot": { "days": "co-terminous with facility" },
+      "purge": {
+        "trigger": "facility hard-delete",
+        "action": "cascaded",
+        "notes": "Every pricing_json change writes to the audits table with before/after snapshots + 7-year audit retention (financial). The current pricing_json lives on the facility row; historical values live in the audit trail."
+      }
+    }
+  ],
+  "cross_reference": [
+    "The audit rows written by Auditable outlive the source rows per audit::retention.json — audit retention is 7 years regardless of source-row retention.",
+    "TenantErased cascades hard-delete of every facility row + downstream (FK cascade), but the audit rows written during those events survive the cascade (per audit module's outlives-source design)."
+  ]
+}

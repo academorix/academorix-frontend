@@ -1,0 +1,526 @@
+{
+  "id": "academorix://modules/facility/events",
+  "$version": 1,
+  "title": "facility — published events",
+  "namespace": "Academorix\\Facility\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Booking lifecycle events fan out to notifications + activity + audit; financial events (day-pass sales, pass credit consumption) additionally fan out to finance (Wave 4) for revenue attribution. BookingOverlapDetected is the CRITICAL event of the module — it means the SERIALIZABLE overlap-detection observer failed and a double-booking exists; ops must be paged immediately.",
+  "events": [
+    {
+      "name": "FacilityCreated",
+      "class": "Academorix\\Facility\\Events\\FacilityCreated",
+      "trigger": "FacilityRepository finished a successful create. Fires exactly once per (tenant_id, branch_id, slug) tuple.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateBranchFacilityListCache"
+      ],
+      "payload": {
+        "facility_id": "ULID (fac_*)",
+        "tenant_id": "ULID (ten_*)",
+        "branch_id": "ULID (brc_*)",
+        "name": "string",
+        "slug": "string",
+        "facility_type": "string (court / field / pool / studio / room / gym_floor / equipment / lane / general)",
+        "sport_category": "string | null",
+        "capacity_persons": "integer",
+        "created_by": "ULID (usr_*)"
+      }
+    },
+    {
+      "name": "FacilityUpdated",
+      "class": "Academorix\\Facility\\Events\\FacilityUpdated",
+      "trigger": "Any Facility scalar field mutated except status (FacilityStatusChanged), pricing_json (FacilityPricingUpdated), availability_json (FacilityAvailabilityChanged), and blackout_dates (FacilityBlackoutAdded / FacilityBlackoutRemoved). Umbrella event for renames, capacity changes, sport_category changes, min/max duration tweaks, advance_booking_window_days edits.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "facility_id": "ULID",
+        "tenant_id": "ULID",
+        "branch_id": "ULID",
+        "changed_fields": "string[]",
+        "updated_by": "ULID"
+      }
+    },
+    {
+      "name": "FacilityStatusChanged",
+      "class": "Academorix\\Facility\\Events\\FacilityStatusChanged",
+      "trigger": "Facility.status transitioned. Values: active / maintenance / retired. `active → maintenance` is temporary; `active → retired` is terminal (fires FacilityRetired in parallel).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "facility::CancelFutureBookingsOnMaintenance (Wave 2b — dispatched only on maintenance transition; retired path is a separate flow)"
+      ],
+      "payload": {
+        "facility_id": "ULID",
+        "tenant_id": "ULID",
+        "branch_id": "ULID",
+        "from_status": "'active' | 'maintenance' | 'retired'",
+        "to_status": "'active' | 'maintenance' | 'retired'",
+        "changed_by": "ULID",
+        "reason": "string | null"
+      }
+    },
+    {
+      "name": "FacilityPricingUpdated",
+      "class": "Academorix\\Facility\\Events\\FacilityPricingUpdated",
+      "trigger": "Facility.pricing_json JSONB blob mutated. Any sub-field change (model, currency, tiers[], peak_hours) fires this event. Financial-record retention 7 years applies to the resulting audit row.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "finance::InvalidatePricingCache (Wave 4)"
+      ],
+      "payload": {
+        "facility_id": "ULID",
+        "tenant_id": "ULID",
+        "updated_by": "ULID",
+        "before": "object (previous pricing_json snapshot)",
+        "after": "object (new pricing_json snapshot)",
+        "changed_fields": "string[] (dotted paths, e.g. ['tiers[0].rate', 'peak_hours.friday'])"
+      }
+    },
+    {
+      "name": "FacilityBlackoutAdded",
+      "class": "Academorix\\Facility\\Events\\FacilityBlackoutAdded",
+      "trigger": "A blackout window was appended to Facility.blackout_dates. Fires per blackout added — a multi-blackout admin update emits N events.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "facility::CancelBookingsInBlackoutWindow (cascades: finds bookings inside the window + fires BookingCancelled on each)",
+        "notifications::DispatchFacilityBlackoutAffectsBookingNotification (cannot-opt-out to affected bookers)"
+      ],
+      "payload": {
+        "facility_id": "ULID",
+        "tenant_id": "ULID",
+        "blackout_id": "string (opaque handle for the JSON array element)",
+        "starts_at": "ISO 8601",
+        "ends_at": "ISO 8601",
+        "reason": "string | null",
+        "affected_booking_count": "integer (bookings inside the window at the time of add; cascaded to BookingCancelled)"
+      }
+    },
+    {
+      "name": "FacilityBlackoutRemoved",
+      "class": "Academorix\\Facility\\Events\\FacilityBlackoutRemoved",
+      "trigger": "A blackout window was removed from Facility.blackout_dates. Does NOT restore cancelled bookings — those are gone.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "facility_id": "ULID",
+        "tenant_id": "ULID",
+        "blackout_id": "string",
+        "removed_by": "ULID",
+        "was_starts_at": "ISO 8601",
+        "was_ends_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "FacilityAvailabilityChanged",
+      "class": "Academorix\\Facility\\Events\\FacilityAvailabilityChanged",
+      "trigger": "Facility.availability_json mutated. Distinct from FacilityBlackout* (recurring weekly hours vs one-off windows). Observer refuses saves whose new availability window is broader than the parent Branch.opening_hours.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateFacilityAvailabilityCache"
+      ],
+      "payload": {
+        "facility_id": "ULID",
+        "tenant_id": "ULID",
+        "updated_by": "ULID",
+        "before": "object (previous availability_json)",
+        "after": "object (new availability_json)"
+      }
+    },
+    {
+      "name": "FacilityRetired",
+      "class": "Academorix\\Facility\\Events\\FacilityRetired",
+      "trigger": "Facility.status transitioned to `retired` OR facility soft-delete completed with the `--cascade-bookings` flag. Terminal. Fires alongside FacilityStatusChanged.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "facility::CancelFutureBookingsOnFacilityRetired (cascades: cancels every pending/confirmed booking with starts_at > now; fires BookingCancelled per booking)",
+        "notifications::DispatchFacilityBlackoutAffectsBookingNotification"
+      ],
+      "payload": {
+        "facility_id": "ULID",
+        "tenant_id": "ULID",
+        "branch_id": "ULID",
+        "retired_at": "ISO 8601",
+        "retired_by": "ULID",
+        "reason": "string | null",
+        "cascaded_booking_count": "integer",
+        "hard_delete_scheduled_for": "ISO 8601"
+      }
+    },
+    {
+      "name": "BookingCreated",
+      "class": "Academorix\\Facility\\Events\\BookingCreated",
+      "trigger": "ResourceBookingObserver committed a new resource_bookings row. Fires ONCE per booking. Precedes BookingConfirmed for pending-status bookings; for auto-confirmed bookings the two events fire in the same transaction.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchBookingConfirmedNotification (when status='confirmed')",
+        "notifications::DispatchBookingReminderNotification (schedules the 24h and 1h reminders)",
+        "finance::AttributePendingRevenue (Wave 4 — for status='confirmed' + price > 0)"
+      ],
+      "payload": {
+        "booking_id": "ULID (bkg_*)",
+        "tenant_id": "ULID",
+        "facility_id": "ULID",
+        "booked_by_user_id": "ULID",
+        "booked_for_user_id": "ULID | null",
+        "booked_for_team_id": "ULID | null (Wave 3+)",
+        "starts_at": "ISO 8601",
+        "ends_at": "ISO 8601",
+        "duration_minutes": "integer",
+        "status": "'pending' | 'confirmed'",
+        "price_amount_cents": "integer",
+        "price_currency": "string (ISO 4217)",
+        "payment_status": "'none' | 'pending' | 'paid'",
+        "attendees_count": "integer",
+        "purpose": "string | null"
+      }
+    },
+    {
+      "name": "BookingConfirmed",
+      "class": "Academorix\\Facility\\Events\\BookingConfirmed",
+      "trigger": "ResourceBooking.status transitioned pending → confirmed. Fires when the payment/gate approval flow (Wave 4 Finance approval, or immediate on free bookings) resolves. Also fires directly at BookingCreated time for auto-confirmed bookings — the two events are dispatched in the same afterCommit hook, in that order.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchBookingConfirmedNotification"
+      ],
+      "payload": {
+        "booking_id": "ULID",
+        "tenant_id": "ULID",
+        "facility_id": "ULID",
+        "confirmed_at": "ISO 8601",
+        "was_pending_for_seconds": "integer (created_at → confirmed_at latency)"
+      }
+    },
+    {
+      "name": "BookingCancelled",
+      "class": "Academorix\\Facility\\Events\\BookingCancelled",
+      "trigger": "ResourceBooking.status transitioned to `cancelled` — either voluntarily by the booker/admin (via the cancel action) OR cascaded by FacilityRetired / FacilityBlackoutAdded. The `cancellation_reason` payload field distinguishes the two.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchBookingCancelledNotification",
+        "finance::MaybeRefund (Wave 4 — refund logic evaluates cancellation_notice_hours + payment_status + admin override)"
+      ],
+      "payload": {
+        "booking_id": "ULID",
+        "tenant_id": "ULID",
+        "facility_id": "ULID",
+        "cancelled_at": "ISO 8601",
+        "cancelled_by_user_id": "ULID | null (null = system cascade)",
+        "cancellation_reason": "string | null",
+        "cascade_trigger": "'user' | 'admin' | 'facility_retired' | 'facility_blackout' | 'no_show_penalty' | 'expired_pending'",
+        "was_within_notice_window": "boolean (starts_at - now() < facility.cancellation_notice_hours)"
+      }
+    },
+    {
+      "name": "BookingCompleted",
+      "class": "Academorix\\Facility\\Events\\BookingCompleted",
+      "trigger": "ResourceBooking.status transitioned confirmed → completed. Fired ONLY by the automated `MarkBookingCompletedJob` when ends_at + 15 min has passed AND the booking wasn't cancelled or no-show. Never fires from a manual admin action (observer refuses manual transitions to completed).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "finance::RecognizeBookingRevenue (Wave 4 — moves pending revenue to recognised)"
+      ],
+      "payload": {
+        "booking_id": "ULID",
+        "tenant_id": "ULID",
+        "facility_id": "ULID",
+        "completed_at": "ISO 8601",
+        "was_checked_in": "boolean"
+      }
+    },
+    {
+      "name": "BookingMarkedNoShow",
+      "class": "Academorix\\Facility\\Events\\BookingMarkedNoShow",
+      "trigger": "ResourceBooking.status transitioned to `no_show`. Fired by the automated `MarkNoShowJob` when starts_at + 15 min has passed with no check-in AND the booking is still confirmed. Also fired by manual admin action.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchBookingNoShowRecordedNotification (to the booker for accountability)",
+        "finance::MaybeRetainPayment (Wave 4 — most tenants keep the full charge on no-show)"
+      ],
+      "payload": {
+        "booking_id": "ULID",
+        "tenant_id": "ULID",
+        "facility_id": "ULID",
+        "starts_at": "ISO 8601",
+        "marked_at": "ISO 8601",
+        "marked_by_user_id": "ULID | null (null = automated job)",
+        "trigger": "'automated_job' | 'manual_admin'"
+      }
+    },
+    {
+      "name": "BookingRescheduled",
+      "class": "Academorix\\Facility\\Events\\BookingRescheduled",
+      "trigger": "ResourceBooking.starts_at / ends_at mutated on an in-flight booking. Rescheduling into a conflicting slot is refused by the observer (overlap detection runs on reschedule too). Rescheduling triggers a fresh overlap check + capacity check + availability check.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchBookingConfirmedNotification (as a re-confirmation)"
+      ],
+      "payload": {
+        "booking_id": "ULID",
+        "tenant_id": "ULID",
+        "facility_id": "ULID",
+        "rescheduled_by_user_id": "ULID",
+        "was_starts_at": "ISO 8601",
+        "was_ends_at": "ISO 8601",
+        "new_starts_at": "ISO 8601",
+        "new_ends_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "BookingOverlapDetected",
+      "class": "Academorix\\Facility\\Events\\BookingOverlapDetected",
+      "trigger": "CRITICAL — the SERIALIZABLE overlap-detection observer detected a double-booking after the fact. Fires ONLY as a paranoia safety net (e.g. a raw SQL write bypassed the observer, or a race in a non-SERIALIZABLE transaction slipped through). Every fire indicates ops attention is required. This event exists so alerting has a first-class signal to hook — it should NEVER fire in production.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::AlertOpsOnBookingOverlap (page the on-call)",
+        "observability::MetricsCollector (increments academorix.facility.overlaps.detected — this counter should stay at 0)"
+      ],
+      "payload": {
+        "facility_id": "ULID",
+        "tenant_id": "ULID",
+        "booking_a_id": "ULID",
+        "booking_b_id": "ULID",
+        "overlap_window_starts_at": "ISO 8601",
+        "overlap_window_ends_at": "ISO 8601",
+        "detected_at": "ISO 8601",
+        "detected_by": "'observer' | 'reconciler_job' | 'audit_scan'"
+      }
+    },
+    {
+      "name": "BookingCheckedIn",
+      "class": "Academorix\\Facility\\Events\\BookingCheckedIn",
+      "trigger": "Booker or receptionist called the check-in action. Sets checked_in_at on the booking. Distinct from BookingCompleted (check-in is at start-time; completion is at end-time + 15 min).",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "booking_id": "ULID",
+        "tenant_id": "ULID",
+        "facility_id": "ULID",
+        "checked_in_at": "ISO 8601",
+        "checked_in_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "DayPassIssued",
+      "class": "Academorix\\Facility\\Events\\DayPassIssued",
+      "trigger": "DayPassRepository committed a new day_passes row from the POS surface. Fires exactly once per row.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "finance::AttributeDayPassRevenue (Wave 4)"
+      ],
+      "payload": {
+        "day_pass_id": "ULID (dpa_*)",
+        "tenant_id": "ULID",
+        "branch_id": "ULID",
+        "issued_to_user_id": "ULID | null",
+        "issued_to_profile_name": "string | null (present for anonymous)",
+        "valid_on_date": "YYYY-MM-DD",
+        "price_amount_cents": "integer",
+        "price_currency": "string (ISO 4217)",
+        "payment_method": "'cash' | 'card' | 'wallet' | 'free' | 'comp'",
+        "issued_by_user_id": "ULID",
+        "receipt_number": "string"
+      }
+    },
+    {
+      "name": "DayPassConsumed",
+      "class": "Academorix\\Facility\\Events\\DayPassConsumed",
+      "trigger": "DayPass.consumed_at set from null → now(). Fires on turnstile scan or receptionist manual confirmation.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "day_pass_id": "ULID",
+        "tenant_id": "ULID",
+        "branch_id": "ULID",
+        "consumed_at": "ISO 8601",
+        "consumed_by_user_id": "ULID | null (null = automated turnstile scan)"
+      }
+    },
+    {
+      "name": "DayPassExpired",
+      "class": "Academorix\\Facility\\Events\\DayPassExpired",
+      "trigger": "ExpireDayPassesJob transitioned a DayPass past valid_on_date without consumption. No refund flow triggered — day-pass revenue was already recognised on purchase.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "day_pass_id": "ULID",
+        "tenant_id": "ULID",
+        "branch_id": "ULID",
+        "was_valid_on_date": "YYYY-MM-DD",
+        "expired_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "DayPassRefunded",
+      "class": "Academorix\\Facility\\Events\\DayPassRefunded",
+      "trigger": "Manual refund action from staff (Wave 4 refund flow reversal). Requires DayPass.consumed_at IS NULL AND staff has facility.day_passes.refund permission.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog",
+        "finance::ReverseDayPassRevenue (Wave 4)"
+      ],
+      "payload": {
+        "day_pass_id": "ULID",
+        "tenant_id": "ULID",
+        "branch_id": "ULID",
+        "refunded_at": "ISO 8601",
+        "refunded_by_user_id": "ULID",
+        "refund_reason": "string",
+        "refund_amount_cents": "integer (may differ from price_amount_cents on partial refunds)"
+      }
+    },
+    {
+      "name": "PassIssued",
+      "class": "Academorix\\Facility\\Events\\PassIssued",
+      "trigger": "PassProvisioner committed a new passes row. Fires either from a Wave 4 Membership provisioning listener OR from manual admin action.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchPassIssuedNotification (opt-in to the pass owner)"
+      ],
+      "payload": {
+        "pass_id": "ULID (pas_*)",
+        "tenant_id": "ULID",
+        "branch_id": "ULID",
+        "facility_id": "ULID | null (null = valid at any facility in the branch)",
+        "membership_id": "ULID | null (Wave 4 — null in Wave 2 placeholder rows)",
+        "valid_from": "YYYY-MM-DD",
+        "valid_until": "YYYY-MM-DD",
+        "total_credits": "integer",
+        "is_transferable": "boolean",
+        "issued_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "PassCreditConsumed",
+      "class": "Academorix\\Facility\\Events\\PassCreditConsumed",
+      "trigger": "Pass.used_credits incremented by 1 during BookingCreated (when the booking booked_for_user has an active pass covering this facility). The observer atomically increments in the same transaction as the booking-create — a failure to consume aborts the booking.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "observability::MetricsCollector (increments academorix.facility.pass_credits.consumed)"
+      ],
+      "payload": {
+        "pass_id": "ULID",
+        "tenant_id": "ULID",
+        "consumed_credits": "integer (always 1 in Wave 2 — bulk consumption reserved for future)",
+        "used_credits_after": "integer",
+        "total_credits": "integer",
+        "consuming_booking_id": "ULID | null (null = day-pass consumption if we later route DayPass through Pass)"
+      }
+    },
+    {
+      "name": "PassExhausted",
+      "class": "Academorix\\Facility\\Events\\PassExhausted",
+      "trigger": "Pass.used_credits reached Pass.total_credits. Fires from PassObserver.updated when the increment crosses the threshold. NOT fired on subsequent increments (there won't be any — the observer refuses over-consumption).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchPassExhaustedNotification (opt-in to the pass owner)",
+        "finance::MaybeAutoRenew (Wave 4 — for renewing memberships)"
+      ],
+      "payload": {
+        "pass_id": "ULID",
+        "tenant_id": "ULID",
+        "total_credits": "integer",
+        "exhausted_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "PassExpired",
+      "class": "Academorix\\Facility\\Events\\PassExpired",
+      "trigger": "ExpirePassesJob transitioned a pass past valid_until (with unused credits — expired-and-unused). Refunds handled by Finance module case-by-case, not automatic.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchPassExpiringNotification (dispatched 7 days BEFORE expiry — this event fires ON expiry)"
+      ],
+      "payload": {
+        "pass_id": "ULID",
+        "tenant_id": "ULID",
+        "was_valid_until": "YYYY-MM-DD",
+        "unused_credits": "integer",
+        "expired_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "PassTransferred",
+      "class": "Academorix\\Facility\\Events\\PassTransferred",
+      "trigger": "Pass.assignable_user_ids mutated OR the primary owner-of-record on the pass changed. Refused when pass.is_transferable=false.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "pass_id": "ULID",
+        "tenant_id": "ULID",
+        "was_assignable_user_ids": "ULID[]",
+        "new_assignable_user_ids": "ULID[]",
+        "transferred_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "PassRevoked",
+      "class": "Academorix\\Facility\\Events\\PassRevoked",
+      "trigger": "Admin invoked the revoke action. Sets deleted_at + revocation_reason. Distinct from PassExhausted (used-up) and PassExpired (time-up). Refund handling is Finance module's job.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchPassRevokedNotification (cannot-opt-out — the pass owner needs to know)"
+      ],
+      "payload": {
+        "pass_id": "ULID",
+        "tenant_id": "ULID",
+        "revoked_at": "ISO 8601",
+        "revoked_by_user_id": "ULID",
+        "revocation_reason": "string",
+        "unused_credits_at_revocation": "integer"
+      }
+    }
+  ]
+}

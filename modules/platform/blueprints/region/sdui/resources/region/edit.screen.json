@@ -1,0 +1,355 @@
+{
+  "id": "region.resources.region.edit",
+  "title": "Edit region",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/settings/regions/{region_id}/edit",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "region", "entity": "region", "action": "update" },
+  "requiresPermission": "regions.update",
+  "notes": [
+    "Same three-card layout as create.screen.json, BUT `country_code` + `currency` are surfaced as read-only. Rationale: both are IMMUTABLE once inbound rows exist (COUNTRY_CODE_IMMUTABLE / CURRENCY_IMMUTABLE 409). Rendering as read-only outright is clearer than surfacing an input that will reject on submit — reserve the explicit-immutable posture until the tenant asks how to change it, then link to the 'create a new region' flow.",
+    "The tax_config section links to the focused `tax-config.screen.json` for detailed edits — inline edits stay high-level (default_rate_percent + name + inclusive). Multi-rate + registration_number edits happen on the focused screen so the audit narrative is preserved.",
+    "The status banner shows when the region is paused or archived — edits go through but a banner warns that new bookings/memberships are refused."
+  ],
+  "dataSources": [
+    {
+      "name": "region",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/regions/' + route.region_id + '?include=inbound_reference_count,is_in_use,tax_registration_redacted'",
+      "unwrap": "data"
+    },
+    {
+      "name": "entitlements",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements?keys=region_custom_tax_rules,region_time_travel",
+      "unwrap": "data"
+    },
+    {
+      "name": "me",
+      "kind": "http.get",
+      "url": "/api/auth/me",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-1" },
+          "children": [
+            {
+              "kind": "Breadcrumbs",
+              "items": [
+                { "label": "Regions", "to": "/settings/regions" },
+                { "label": "region.name", "toExpr": "'/settings/regions/' + route.region_id" },
+                { "label": "Edit", "to": null }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-between" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$expr": "'Edit ' + region.name" } }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-center gap-2" },
+                  "children": [
+                    {
+                      "kind": "Chip",
+                      "props": { "size": "sm", "variant": "accent", "leadingIcon": "star-solid", "children": "Default" },
+                      "bindings": { "hidden": { "$expr": "!region.is_default" } }
+                    },
+                    {
+                      "kind": "Chip",
+                      "props": { "size": "sm", "variant": "success", "children": "Active" },
+                      "bindings": { "hidden": { "$expr": "region.status !== 'active'" } }
+                    },
+                    {
+                      "kind": "Chip",
+                      "props": { "size": "sm", "variant": "warning", "children": "Paused" },
+                      "bindings": { "hidden": { "$expr": "region.status !== 'paused'" } }
+                    },
+                    {
+                      "kind": "Chip",
+                      "props": { "size": "sm", "variant": "neutral", "children": "Archived" },
+                      "bindings": { "hidden": { "$expr": "region.status !== 'archived'" } }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "InfoBanner",
+          "props": { "variant": "warning" },
+          "bindings": {
+            "hidden": { "$expr": "region.status === 'active'" },
+            "children": {
+              "$expr": "region.status === 'paused' ? 'This region is paused. Edits save but new bookings + memberships are refused until you resume it.' : 'This region is archived. Edits save but it is hidden from selectors + no new inbound rows can reference it.'"
+            }
+          }
+        },
+        {
+          "kind": "InfoBanner",
+          "props": { "variant": "info" },
+          "bindings": {
+            "hidden": { "$expr": "!region.is_in_use" },
+            "children": {
+              "$expr": "'This region is in use by ' + region.inbound_reference_count + ' downstream rows (branches, memberships, invoices). Country and currency are locked once the region is in use — financial records must remain reconcilable against their issued values.'"
+            }
+          }
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "action": "http.patch",
+            "urlExpr": "'/api/v1/regions/' + route.region_id",
+            "onSuccess": { "kind": "toast", "message": "Region updated." }
+          },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "text-lg font-medium", "children": "Identity" }
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "name": "name", "label": "Name", "required": true, "maxLength": 128 },
+                  "bindings": { "defaultValue": { "$ref": "region.name" } }
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "name": "slug", "label": "URL slug", "required": true, "maxLength": 64 },
+                  "bindings": { "defaultValue": { "$ref": "region.slug" } }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "country_code",
+                    "label": "Country",
+                    "readOnly": true,
+                    "helpText": "Immutable. Create a new region for a different country."
+                  },
+                  "bindings": { "defaultValue": { "$ref": "region.country_code" } }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "subdivision_code",
+                    "label": "Subdivision",
+                    "maxLength": 8,
+                    "placeholder": "e.g. US-CA"
+                  },
+                  "bindings": { "defaultValue": { "$ref": "region.subdivision_code" } }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "text-lg font-medium", "children": "Commercial" }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "grid grid-cols-2 gap-4" },
+                  "children": [
+                    {
+                      "kind": "TextField",
+                      "props": {
+                        "name": "currency",
+                        "label": "Currency (ISO 4217)",
+                        "readOnly": true,
+                        "helpText": "Immutable once the region is in use."
+                      },
+                      "bindings": { "defaultValue": { "$ref": "region.currency" } }
+                    },
+                    {
+                      "kind": "TextField",
+                      "props": { "name": "currency_symbol", "label": "Currency symbol", "maxLength": 8 },
+                      "bindings": { "defaultValue": { "$ref": "region.currency_symbol" } }
+                    }
+                  ]
+                },
+                {
+                  "kind": "Widget",
+                  "props": { "id": "region.timezone-picker" },
+                  "bindings": {
+                    "props": {
+                      "name": "timezone",
+                      "label": "Timezone",
+                      "required": true,
+                      "defaultValue": { "$ref": "region.timezone" }
+                    }
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "name": "locale", "label": "Locale (BCP-47)", "required": true, "maxLength": 16 },
+                  "bindings": { "defaultValue": { "$ref": "region.locale" } }
+                },
+                {
+                  "kind": "CheckboxGroup",
+                  "props": { "name": "weekend_days", "label": "Weekend days", "required": true },
+                  "options": [
+                    { "key": "monday", "label": "Monday" },
+                    { "key": "tuesday", "label": "Tuesday" },
+                    { "key": "wednesday", "label": "Wednesday" },
+                    { "key": "thursday", "label": "Thursday" },
+                    { "key": "friday", "label": "Friday" },
+                    { "key": "saturday", "label": "Saturday" },
+                    { "key": "sunday", "label": "Sunday" }
+                  ],
+                  "bindings": { "defaultValue": { "$ref": "region.weekend_days" } }
+                },
+                {
+                  "kind": "Select",
+                  "props": {
+                    "name": "fiscal_year_start_month",
+                    "label": "Fiscal year start month",
+                    "required": true
+                  },
+                  "options": [
+                    { "key": 1, "label": "January" },
+                    { "key": 2, "label": "February" },
+                    { "key": 3, "label": "March" },
+                    { "key": 4, "label": "April" },
+                    { "key": 5, "label": "May" },
+                    { "key": 6, "label": "June" },
+                    { "key": 7, "label": "July" },
+                    { "key": 8, "label": "August" },
+                    { "key": 9, "label": "September" },
+                    { "key": 10, "label": "October" },
+                    { "key": 11, "label": "November" },
+                    { "key": 12, "label": "December" }
+                  ],
+                  "bindings": { "defaultValue": { "$ref": "region.fiscal_year_start_month" } }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-center justify-between" },
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "as": "h2", "className": "text-lg font-medium", "children": "Tax configuration (summary)" }
+                    },
+                    {
+                      "kind": "Button",
+                      "props": { "variant": "ghost", "leadingIcon": "arrow-right", "children": "Open tax config editor" },
+                      "actions": {
+                        "onPress": {
+                          "kind": "navigate",
+                          "toExpr": "'/settings/regions/' + route.region_id + '/tax'"
+                        }
+                      },
+                      "requiresPermission": "regions.update.tax_config"
+                    }
+                  ]
+                },
+                {
+                  "kind": "Widget",
+                  "props": { "id": "region.tax-badge" },
+                  "bindings": {
+                    "props": {
+                      "currencySymbol": { "$ref": "region.currency_symbol" },
+                      "ratePercent": { "$ref": "region.tax_config.default_rate_percent" },
+                      "name": { "$ref": "region.tax_config.name" },
+                      "hasCustomRates": { "$expr": "(region.tax_config.rates || []).length > 0" }
+                    }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-xs text-muted",
+                    "children": "Tax config edits are managed on the focused tax config editor to preserve the audit trail (7-year financial-record retention)."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "text-lg font-medium", "children": "Ordering" }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "name": "sort_order", "label": "Sort order", "min": 0, "max": 9999 },
+                  "bindings": { "defaultValue": { "$ref": "region.sort_order" } }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-between pt-4 border-t" },
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "flex gap-2" },
+                  "children": [
+                    {
+                      "kind": "Button",
+                      "props": { "variant": "ghost", "children": "Set as default" },
+                      "actions": {
+                        "onPress": {
+                          "kind": "http.post",
+                          "urlExpr": "'/api/v1/regions/' + route.region_id + '/set-default'",
+                          "confirm": "Set this as the default region? Invoice pricing for legacy regionless rows will shift."
+                        }
+                      },
+                      "requiresPermission": "regions.set_default",
+                      "bindings": { "hidden": { "$expr": "region.is_default || region.status !== 'active'" } }
+                    }
+                  ]
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "flex gap-2" },
+                  "children": [
+                    {
+                      "kind": "Button",
+                      "props": { "variant": "ghost", "children": "Cancel" },
+                      "actions": {
+                        "onPress": { "kind": "navigate", "toExpr": "'/settings/regions/' + route.region_id" }
+                      }
+                    },
+                    {
+                      "kind": "SubmitButton",
+                      "props": { "variant": "primary", "children": "Save changes" }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

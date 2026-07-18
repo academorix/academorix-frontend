@@ -1,0 +1,109 @@
+{
+  "id": "academorix://modules/branch/policies",
+  "$version": 1,
+  "title": "branch — authorization policies",
+  "description": "One policy. Reads are broad — every tenant member sees the branches they participate in. Writes are admin+owner only. Close (and reopen) are owner-tier. Cross-tenant reads live on the platform surface.",
+  "policies": [
+    {
+      "model": "Branch",
+      "class": "Academorix\\Branch\\Policies\\BranchPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "branches.viewAny",
+          "scope": "resolved via ScopeSuffixResolver. `.tenant` = every branch under the caller's active tenant. `.own` = branches the caller participates in via TenantMember / TeamMember / AthleteEnrollment / Coach.branch_id / Staff.branch_id."
+        },
+        {
+          "action": "view",
+          "permission": "branches.view",
+          "scope": "single-row check. Any tenant member can read a branch they have visibility on. Coaches / reception / athletes with `.own` scope only see branches they're linked to."
+        },
+        {
+          "action": "create",
+          "permission": "branches.create",
+          "scope": "admin or owner in the active tenant. Also gated by the `branch_slot` entitlement — the observer decrements on create."
+        },
+        {
+          "action": "update",
+          "permission": "branches.update",
+          "scope": "admin. Body limited to non-address, non-capacity, non-hours fields when the caller only carries `branches.update`; wider fields require the specific permissions (update_address / update_capacity / update_hours)."
+        },
+        {
+          "action": "updateHours",
+          "permission": "branches.update_hours",
+          "scope": "admin OR reception (with .branch scope narrowing to the reception's assigned branches). Reception role is typical for a chain gym where the head-of-branch runs the schedule board."
+        },
+        {
+          "action": "updateAddress",
+          "permission": "branches.update_address",
+          "scope": "admin. Compliance-audited — every address change writes an audit row."
+        },
+        {
+          "action": "updateCoordinates",
+          "permission": "branches.update_coordinates",
+          "scope": "admin. Manual pin-drop from the map view."
+        },
+        {
+          "action": "updateCapacity",
+          "permission": "branches.update_capacity",
+          "scope": "admin. Fire-safety-cap changes are compliance-relevant."
+        },
+        {
+          "action": "pause",
+          "permission": "branches.pause",
+          "scope": "admin. Cannot pause a Branch that's already paused (BRANCH_ALREADY_PAUSED, 409)."
+        },
+        {
+          "action": "resume",
+          "permission": "branches.resume",
+          "scope": "admin."
+        },
+        {
+          "action": "close",
+          "permission": "branches.close",
+          "scope": "owner-tier. Refused when active downstream rows reference the branch (BRANCH_IN_USE, 409). Refused when the branch is the last non-closed branch on its (tenant, organization) AND that organization is not archived (leaving an organization with no active branches is a hard error — the org must be archived first)."
+        },
+        {
+          "action": "reopen",
+          "permission": "branches.reopen",
+          "scope": "owner-tier. Refused when a successor branch was created under the same (tenant, organization) post-close (BRANCH_SUCCESSOR_EXISTS, 409)."
+        },
+        {
+          "action": "setDefault",
+          "permission": "branches.set_default",
+          "scope": "admin. Auto-demotes the previous default via the observer."
+        },
+        {
+          "action": "geocode",
+          "permission": "branches.geocode",
+          "scope": "admin. Also requires `branch_geocoding` entitlement (returns 402 with upgrade path when absent)."
+        },
+        {
+          "action": "auditAddress",
+          "permission": "branches.audit_address",
+          "scope": "admin."
+        },
+        {
+          "action": "delete",
+          "permission": null,
+          "scope": "ALWAYS DENIES on the tenant surface. Response redirects the caller to `POST /branches/{branch}/close`. Hard-delete lives on the platform-support CLI."
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.branches.viewAny",
+          "scope": "platform_admin only. Cross-tenant read for support tooling."
+        },
+        {
+          "action": "platformView",
+          "permission": "platform.branches.view",
+          "scope": "platform_admin only."
+        },
+        {
+          "action": "platformForceClose",
+          "permission": "platform.branches.force_close",
+          "scope": "super_admin. Bypasses the dependency-check kill switch. Every use fires an alert; audit-severity=warn."
+        }
+      ]
+    }
+  ]
+}

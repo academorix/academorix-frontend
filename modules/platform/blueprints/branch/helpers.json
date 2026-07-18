@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/branch/helpers",
+  "$version": 1,
+  "title": "branch — helper functions",
+  "description": "Three published helpers for common branch lookups from any layer (controller, action, listener, blade template, Artisan command).",
+  "namespace": "Academorix\\Branch\\Support",
+  "helpers": [
+    {
+      "signature": "active_branch(): ?Branch",
+      "purpose": "Returns the Branch resolved by the `branch.resolve_active` middleware for THIS request. Null when no active branch could be resolved (typical for read-only pages that don't scope by branch).",
+      "behaviours": [
+        "Reads from the `RequestContext.branch_id` slot the middleware writes.",
+        "Eager-loads `organization + region` in a single query when the accessor is first hit (via a per-request memoized lookup).",
+        "Never queries the DB when the middleware short-circuits (no `X-Branch-Id` + no default) — returns null."
+      ]
+    },
+    {
+      "signature": "active_branch_id(): ?string",
+      "purpose": "Returns the active-branch ULID without hydrating the model. Faster than `active_branch()->id` because it avoids the eager-load of Organization + Region.",
+      "behaviours": [
+        "Reads directly from `RequestContext.branch_id`.",
+        "Never queries the DB."
+      ]
+    },
+    {
+      "signature": "branch_is_open_now(Branch|string $branchOrId, ?CarbonInterface $moment = null): bool",
+      "purpose": "Compute is-open-now for a branch. Accepts a Branch model, a ULID, OR a slug. Handles the timezone conversion via branch.region.timezone. Respects opening_hours, exceptions, and status (paused = closed for is-open purposes; closed status = closed).",
+      "behaviours": [
+        "Loads the branch when passed an id string (SELECT includes region for the tz).",
+        "Uses `now()` when $moment is null.",
+        "Consults the `br:is_open:{branch_id}:{minute_bucket}` cache first."
+      ],
+      "flow": "1) Resolve Branch. 2) When status IN (paused, closed), return false. 3) Convert $moment to branch.region.timezone. 4) Check exceptions — if the date has an exception with `closed: true`, return false; with `hours: [...]`, use those periods. 5) Otherwise use opening_hours[day-of-week]. 6) For each period, return true when $moment falls in [open, close). 7) Otherwise false."
+    }
+  ],
+  "notes": [
+    "Every helper is a thin wrapper. Prefer container-injected services (`BranchRepository`, `OpeningHoursEvaluator`, `DefaultBranchResolver`) for anything more complex.",
+    "`branch_is_open_now()` respects both `opening_hours` AND `status` — a paused or closed Branch always returns false regardless of the schedule."
+  ],
+  "examples": [
+    {
+      "title": "Read the active branch in a controller",
+      "code": "$branch = active_branch();\nif ($branch === null) throw new NoActiveBranchException();"
+    },
+    {
+      "title": "Fast-path: just need the ULID",
+      "code": "$branchId = active_branch_id();\nif ($branchId === null) return abort(400, 'branch_required');"
+    },
+    {
+      "title": "Guard a booking submission with is-open check",
+      "code": "abort_unless(branch_is_open_now($booking->branch_id, $booking->starts_at), 403, 'outside_hours');"
+    },
+    {
+      "title": "Blade — surface is-open badge in a template",
+      "code": "@if (branch_is_open_now($branch))\n  <span class=\"chip success\">Open now</span>\n@else\n  <span class=\"chip neutral\">Closed</span>\n@endif"
+    }
+  ]
+}

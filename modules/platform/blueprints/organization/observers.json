@@ -1,0 +1,47 @@
+{
+  "id": "academorix://modules/organization/observers",
+  "$version": 1,
+  "title": "organization — Eloquent observers",
+  "observers": [
+    {
+      "model": "Organization",
+      "observer": "Academorix\\Organization\\Observers\\OrganizationObserver",
+      "handles": [
+        "creating → populate ULID prefix `org_`",
+        "creating → refuse when slug fails valid_role_name-style regex config('organization.validation.require_slug_pattern')",
+        "creating → refuse when slug is in config('organization.validation.reserved_slugs') UNLESS the system-context bypass flag is set (SeedDefaultOrganizationForTenantJob sets it)",
+        "creating → refuse when the (tenant_id, slug) pair already exists in a non-deleted row (defense-in-depth on top of the partial-unique index)",
+        "creating → refuse when parent_id.tenant_id != current tenant_id — fire ORGANIZATION_PARENT_CROSS_TENANT + audit critical",
+        "creating → refuse when parent_id is set + tenant lacks organization_hierarchy entitlement — fire ORGANIZATION_NESTING_NOT_ENTITLED",
+        "creating → refuse when parent_id is set + parent's tree_depth + 1 exceeds config('organization.hierarchy.max_depth') — fire ORGANIZATION_PARENT_DEPTH_EXCEEDED",
+        "creating → build tree_path = TreePathBuilder::build(parent.tree_path_ancestors, self.id) + set tree_depth accordingly",
+        "creating → consume 1 unit of organization_slot entitlement (throws QuotaExceeded when cap reached)",
+        "creating (is_default=true) → set is_default=false on every other row for this tenant in the same transaction (auto-demote)",
+        "creating → refuse when branding-column writes (logo_url, primary_color, secondary_color, description) are present + tenant lacks organization_branding entitlement — fire ORGANIZATION_BRANDING_NOT_ENTITLED",
+        "created → fire OrganizationCreated + TenantDefaultOrganizationSeeded when the was_seeded flag is set",
+        "saving parent_id → refuse when new parent_id.tenant_id != current tenant_id (ORGANIZATION_PARENT_CROSS_TENANT)",
+        "saving parent_id → refuse when tenant lacks organization_reparent entitlement — fire ORGANIZATION_REPARENT_NOT_ENTITLED (distinct from the create-time organization_hierarchy check)",
+        "saving parent_id → invoke CycleDetectorStrategy: walk the proposed parent's ancestors looking for self — refuse with ORGANIZATION_PARENT_CYCLE + cycle_path payload when found",
+        "saving parent_id → refuse when new depth exceeds max_depth (ORGANIZATION_PARENT_DEPTH_EXCEEDED)",
+        "saving parent_id → capture old_tree_path + old_depth into the pending event payload; recompute tree_path + tree_depth for self within the transaction",
+        "saving is_default=true → auto-demote every OTHER row for this tenant in the same transaction (single-default invariant)",
+        "saving is_default=false → refuse when this is the only is_default=true row for the tenant (ORGANIZATION_IS_DEFAULT — must promote another first)",
+        "saving status → refuse invalid transitions: cannot resume from archived; cannot pause is_default=true (ORGANIZATION_IS_DEFAULT); cannot pause an already-archived row",
+        "saving status → refuse status=archived on is_default=true row (ORGANIZATION_IS_DEFAULT)",
+        "saved (parent_id changed) → fire OrganizationParentChanged with descendant_count computed from tree_path prefix scan",
+        "saved (is_default flipped to true) → fire OrganizationDefaultChanged(source='action')",
+        "saved (status changed) → fire OrganizationStatusChanged",
+        "saved (branding fields changed) → fire OrganizationBrandingUpdated",
+        "saved (other mutable fields changed) → fire OrganizationUpdated",
+        "deleting → refuse when is_default=true (ORGANIZATION_IS_DEFAULT)",
+        "deleting → refuse when descendants exist (children.parent_id = self.id AND deleted_at IS NULL) — fire ORGANIZATION_HAS_DESCENDANTS + descendant_count",
+        "deleting → refuse when branches reference this org (branches.organization_id = self.id AND deleted_at IS NULL) — fire ORGANIZATION_IN_USE + branch_count",
+        "deleting → fire OrganizationArchived (soft-delete = archive semantics)",
+        "restoring → refuse when the tenant is at organization_slot cap (would re-consume 1 unit that isn't available)",
+        "restoring → refuse when slug conflicts with a live row",
+        "restored → fire OrganizationRestored",
+        "any-mutation → invalidate the `organization-tree` cache tag on the tenant"
+      ]
+    }
+  ]
+}

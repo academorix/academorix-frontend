@@ -1,0 +1,78 @@
+{
+  "id": "academorix://modules/region/compliance",
+  "$version": 1,
+  "title": "region — compliance evidence",
+  "description": "Region is the commercial + regulatory reference table. No PII on the row itself. The bulk of compliance responsibility is around FINANCIAL-record retention (tax_config changes generate 7-year audit rows) + SOC 2 CC6.3 change tracking (region_id changes to Branch / Membership are audit-logged). Tenant tax registration_number is confidential.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(b)",
+          "principle": "purpose limitation",
+          "evidence": "Region fields are used only for commercial attribution (currency, tax, timezone, locale) + configuration cascading (default region for legacy rows). Never resold, never joined with third-party enrichment."
+        },
+        {
+          "article": "Art. 5(1)(e)",
+          "principle": "storage limitation",
+          "evidence": "Archived Regions retained 730 days (2 years for financial reconciliation) — see `retention.json`. Financial audit rows outlive the source Region per the 7-year floor for financial records."
+        },
+        {
+          "article": "Art. 30",
+          "principle": "records of processing activities",
+          "evidence": "Every Region mutation is `Auditable`; every status transition + is_default flip + tax_config change writes to `audits` with actor, timestamp, changed_fields, request_id, before + after snapshots (for tax_config). Financial-record retention 7 years."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical access controls",
+          "evidence": "Every write path is behind RegionPolicy. Tax-registration read gated by `regions.view.tax_registration` (admin + owner only). tax_config writes gated by `regions.update.tax_config` (separated from base update for higher-privilege audit trail)."
+        },
+        {
+          "criterion": "CC6.3",
+          "principle": "authorisation of changes to system components",
+          "evidence": "region_id changes to inbound rows (Branch, Membership, Invoice, Transaction) generate audit_log rows in those modules. The Region audit trail itself captures every own-row change. The `regions.set_default` permission is owner-only — the narrowest privilege in the module."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "Health probes cover FK integrity + default-region-invariant + tax-config shape validation + purge queue drain. The `DefaultRegionInvariantProbe` catches drift the observer normally prevents; failure pages ops."
+        }
+      ]
+    },
+    "tax_regulation": {
+      "applicable": true,
+      "controls": [
+        {
+          "provision": "VAT / Sales Tax / GST invoice-record retention",
+          "principle": "invoice historical integrity",
+          "evidence": "Region.tax_config changes NEVER retroactively reprice historical Invoices. Historical Invoices carry a snapshot of the tax_config that applied at issuance (finance module Wave 4 will carry the snapshot column). The `region_time_travel` entitlement (Enterprise-only + off by default even for Enterprise) is the ONLY path to retroactive edits + is fully audit-logged."
+        },
+        {
+          "provision": "tax registration number confidentiality",
+          "principle": "commercial confidentiality",
+          "evidence": "`Region.tax_config.registration_number` is `confidential`-tier. Redactor strips it on egress unless the caller holds `regions.view.tax_registration`. NEVER a Segment / analytics property. NEVER logged in audit rows in cleartext — audit rows carry a `[REDACTED]` marker for that field."
+        },
+        {
+          "provision": "fiscal_year_start_month cutover",
+          "principle": "financial reporting boundary integrity",
+          "evidence": "Every Region carries `fiscal_year_start_month` (1..12). Finance module Wave 4 uses this to define reporting cutovers. Changes to this column generate an audit row + fire RegionUpdated; downstream reports rebase on the boundary."
+        }
+      ]
+    },
+    "ccpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "provision": "§1798.105",
+          "principle": "right to delete",
+          "evidence": "Aliased to the GDPR Art. 17 erasure flow. Region rows themselves are not PII; the cascade on TenantErased cleans them up when the tenant is erased."
+        }
+      ]
+    }
+  }
+}

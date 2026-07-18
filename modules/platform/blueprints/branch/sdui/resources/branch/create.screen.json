@@ -1,0 +1,225 @@
+{
+  "id": "branch.resources.branch.create",
+  "title": "Add branch",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/branches/create",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "branch", "entity": "branch", "action": "create" },
+  "requiresPermission": "branches.create",
+  "requiresEntitlement": "branch_slot",
+  "dataSources": [
+    {
+      "name": "organizations",
+      "kind": "http.get",
+      "url": "/api/v1/organizations?filter[status]=active",
+      "unwrap": "data"
+    },
+    {
+      "name": "regions",
+      "kind": "http.get",
+      "url": "/api/v1/regions?filter[status]=active",
+      "unwrap": "data"
+    },
+    {
+      "name": "hoursExamples",
+      "kind": "static",
+      "sourceFile": "data/opening-hours-examples.json",
+      "unwrap": "examples"
+    },
+    {
+      "name": "amenityCatalog",
+      "kind": "static",
+      "sourceFile": "data/amenity-catalog.json",
+      "unwrap": "categories"
+    },
+    {
+      "name": "me",
+      "kind": "http.get",
+      "url": "/api/auth/me",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Form",
+      "props": {
+        "action": "http.post",
+        "url": "/api/v1/branches",
+        "onSuccess": { "kind": "navigate", "toExpr": "'/branches/' + response.data.id" },
+        "className": "flex flex-col gap-6 p-6 max-w-3xl"
+      },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Add a new branch" } },
+        { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "A branch is one physical venue. It belongs to one organization + one region. Both are immutable once set." } },
+        {
+          "kind": "Stepper",
+          "props": { "steps": ["Identity", "Address", "Hours", "Amenities & review"] },
+          "children": [
+            {
+              "kind": "StepperPanel",
+              "props": { "step": 0, "label": "Identity" },
+              "children": [
+                {
+                  "kind": "Fieldset",
+                  "props": { "legend": "Which organization + region does this venue belong to?" },
+                  "children": [
+                    {
+                      "kind": "Select",
+                      "props": { "name": "organization_id", "label": "Organization", "required": true, "helpText": "Immutable after creation." },
+                      "bindings": { "options": { "$expr": "organizations.map(o => ({ key: o.id, label: o.name }))" } }
+                    },
+                    {
+                      "kind": "Select",
+                      "props": { "name": "region_id", "label": "Region", "required": true, "helpText": "Determines timezone, currency, and tax. Immutable after creation." },
+                      "bindings": { "options": { "$expr": "regions.map(r => ({ key: r.id, label: r.name + ' — ' + r.timezone + ' · ' + r.currency_code }))" } }
+                    }
+                  ]
+                },
+                {
+                  "kind": "Fieldset",
+                  "props": { "legend": "Basic details" },
+                  "children": [
+                    { "kind": "TextField", "props": { "name": "name", "label": "Name", "required": true, "placeholder": "e.g. Downtown SF" } },
+                    { "kind": "TextField", "props": { "name": "slug", "label": "Slug", "helpText": "Auto-generated from name; edit if needed. URL-safe, unique within the organization." } },
+                    { "kind": "TextField", "props": { "name": "code", "label": "Internal code (optional)", "placeholder": "e.g. SF-001", "maxLength": 32, "helpText": "Short identifier for external systems + reports." } },
+                    { "kind": "TextArea", "props": { "name": "description", "label": "Description (optional)", "rows": 3 } },
+                    { "kind": "Toggle", "props": { "name": "is_default", "label": "Make this the default branch for the organization", "defaultValue": false, "helpText": "Auto-demotes any existing default." } }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "StepperPanel",
+              "props": { "step": 1, "label": "Address" },
+              "children": [
+                {
+                  "kind": "Fieldset",
+                  "props": { "legend": "Structured address" },
+                  "children": [
+                    { "kind": "TextField", "props": { "name": "address.line1", "label": "Street address", "required": true } },
+                    { "kind": "TextField", "props": { "name": "address.line2", "label": "Line 2 (optional)" } },
+                    {
+                      "kind": "View",
+                      "props": { "className": "grid grid-cols-2 gap-4" },
+                      "children": [
+                        { "kind": "TextField", "props": { "name": "address.city", "label": "City", "required": true } },
+                        { "kind": "TextField", "props": { "name": "address.subdivision", "label": "State / province / emirate" } },
+                        { "kind": "TextField", "props": { "name": "address.postal_code", "label": "Postal code" } },
+                        { "kind": "TextField", "props": { "name": "address.country_code", "label": "Country (ISO code)", "required": true, "maxLength": 2, "helpText": "Two-letter code, e.g. US, GB, AE." } }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "kind": "Fieldset",
+                  "props": { "legend": "Coordinates", "description": "Auto-geocoded on save when your plan includes it. Otherwise pin manually on the map after creation." },
+                  "children": [
+                    {
+                      "kind": "InfoBanner",
+                      "props": { "variant": "info" },
+                      "bindings": {
+                        "children": {
+                          "$expr": "me.features.indexOf('branch.geocoding') > -1 ? 'Coordinates will be resolved automatically from the address.' : 'Automatic geocoding is not available on your plan — pin the branch on the map view after saving.'"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "Fieldset",
+                  "props": { "legend": "Contact" },
+                  "children": [
+                    { "kind": "TextField", "props": { "name": "phone", "label": "Business phone (E.164)", "placeholder": "+14155552671" } },
+                    { "kind": "TextField", "props": { "name": "email", "label": "Business email", "inputMode": "email" } },
+                    { "kind": "TextField", "props": { "name": "website_url", "label": "Website", "inputMode": "url", "placeholder": "https://..." } }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "StepperPanel",
+              "props": { "step": 2, "label": "Hours" },
+              "children": [
+                {
+                  "kind": "Fieldset",
+                  "props": { "legend": "Start from a template" },
+                  "children": [
+                    {
+                      "kind": "RadioGroup",
+                      "props": { "name": "hours_template" },
+                      "bindings": {
+                        "options": {
+                          "$expr": "hoursExamples.filter(e => e.tier_available.indexOf(me.tenant.tier) > -1).map(e => ({ key: e.key, label: e.display_label, description: e.description }))"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "InfoBanner",
+                      "props": { "variant": "info" },
+                      "bindings": {
+                        "hidden": { "$expr": "me.features.indexOf('branch.multi_period_hours') > -1" },
+                        "children": "Multi-period days (e.g. split lunch closure) require an upgraded plan. Templates using split shifts are hidden."
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "You'll fine-tune the schedule on the hours editor after creation." }
+                }
+              ]
+            },
+            {
+              "kind": "StepperPanel",
+              "props": { "step": 3, "label": "Amenities & review" },
+              "children": [
+                {
+                  "kind": "Fieldset",
+                  "props": { "legend": "Amenities" },
+                  "children": [
+                    {
+                      "kind": "Widget",
+                      "props": { "id": "branch.amenity-picker" },
+                      "bindings": {
+                        "props": {
+                          "value_field": "amenities",
+                          "catalog": { "$ref": "amenityCatalog" },
+                          "allow_custom": { "$expr": "me.features.indexOf('branch.custom_amenities') > -1" }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "Fieldset",
+                  "props": { "legend": "Capacity (optional)" },
+                  "children": [
+                    { "kind": "NumberField", "props": { "name": "capacity", "label": "Maximum concurrent occupants", "min": 1, "helpText": "Fire-safety cap. Leave blank if you don't have a formal cap." } }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/branches" } }
+            },
+            {
+              "kind": "SubmitButton",
+              "props": { "variant": "primary", "children": "Create branch" }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

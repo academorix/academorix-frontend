@@ -1,0 +1,394 @@
+{
+  "id": "organization.resources.organization.list",
+  "title": "Organizations",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/settings/organizations",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {
+    "module": "organization",
+    "entity": "organization",
+    "action": "list"
+  },
+  "requiresPermission": "organizations.viewAny.tenant",
+  "notes": [
+    "Renders as a filterable table by default; toggle to tree view via the segmented control in the toolbar.",
+    "Every row action is gated by the appropriate policy ability + entitlement — hidden buttons never render.",
+    "The `descendant_count` column is populated from the tree_path prefix scan (computed on read)."
+  ],
+  "dataSources": [
+    {
+      "name": "organizations",
+      "kind": "http.get",
+      "url": "/api/v1/organizations?include=parent,children",
+      "unwrap": "data"
+    },
+    {
+      "name": "slotUsage",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/organization_slot",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    },
+    {
+      "name": "entitlements",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements?keys=organization_hierarchy,organization_reparent,organization_branding",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Organizations"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Structural sub-brands under this tenant. One is the default; others may nest under it on Enterprise."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "entitlements.entitlement-usage-bar",
+                  "props": {
+                    "cap": { "$ref": "slotUsage.value_cap" },
+                    "used": { "$ref": "slotUsage.value_used" },
+                    "size": "sm",
+                    "label": "Organizations"
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "plus",
+                    "children": "New organization"
+                  },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/settings/organizations/new" }
+                  },
+                  "bindings": { "disabled": { "$ref": "slotUsage.is_exceeded" } },
+                  "requiresPermission": "organizations.create.tenant"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Toolbar",
+          "children": [
+            {
+              "kind": "SearchField",
+              "props": {
+                "placeholder": "Search by name, slug, short name…",
+                "name": "q"
+              }
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "name": "status",
+                "placeholder": "All statuses",
+                "clearable": true
+              },
+              "options": [
+                { "key": "active", "label": "Active" },
+                { "key": "paused", "label": "Paused" },
+                { "key": "archived", "label": "Archived" }
+              ]
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "name": "category",
+                "placeholder": "All categories",
+                "clearable": true
+              },
+              "options": [
+                { "key": "sports_academy", "label": "Sports academy" },
+                { "key": "sports_center", "label": "Sports center" },
+                { "key": "school", "label": "School" },
+                { "key": "gym", "label": "Gym" },
+                { "key": "federation", "label": "Federation" },
+                { "key": "club", "label": "Club" },
+                { "key": "mixed", "label": "Mixed" }
+              ]
+            },
+            {
+              "kind": "SegmentedControl",
+              "props": {
+                "name": "view_mode",
+                "defaultValue": "flat"
+              },
+              "options": [
+                { "key": "flat", "label": "List" },
+                { "key": "tree", "label": "Tree" }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "columns": [
+            {
+              "key": "name",
+              "header": "Organization",
+              "cell": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2" },
+                "children": [
+                  {
+                    "kind": "Avatar",
+                    "props": { "size": "sm" },
+                    "bindings": {
+                      "src": { "$ref": "row.logo_url" },
+                      "name": { "$ref": "row.name" }
+                    }
+                  },
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex flex-col" },
+                    "children": [
+                      {
+                        "kind": "Link",
+                        "propsExpr": "{ to: '/settings/organizations/' + row.id, children: row.name, className: 'font-medium' }"
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted font-mono" },
+                        "bindings": { "children": { "$ref": "row.slug" } }
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "key": "category",
+              "header": "Category",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "xs", "variant": "neutral" },
+                "bindings": { "children": { "$ref": "row.category" } }
+              }
+            },
+            {
+              "key": "parent",
+              "header": "Parent",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm text-muted" },
+                "bindings": { "children": { "$expr": "row.parent?.name || '—'" } }
+              }
+            },
+            {
+              "key": "tree_depth",
+              "header": "Depth",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm font-mono" },
+                "bindings": { "children": { "$ref": "row.tree_depth" } }
+              }
+            },
+            {
+              "key": "descendant_count",
+              "header": "Descendants",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm font-mono" },
+                "bindings": { "children": { "$ref": "row.descendant_count" } }
+              }
+            },
+            {
+              "key": "status",
+              "header": "Status",
+              "cell": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-1" },
+                "children": [
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "accent" },
+                    "bindings": {
+                      "hidden": { "$expr": "!row.is_default" },
+                      "children": "Default"
+                    }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "success" },
+                    "bindings": {
+                      "hidden": { "$expr": "row.status !== 'active'" },
+                      "children": "Active"
+                    }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "warning" },
+                    "bindings": {
+                      "hidden": { "$expr": "row.status !== 'paused'" },
+                      "children": "Paused"
+                    }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "neutral" },
+                    "bindings": {
+                      "hidden": { "$expr": "row.status !== 'archived'" },
+                      "children": "Archived"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "key": "actions",
+              "header": "",
+              "cell": {
+                "kind": "Menu",
+                "trigger": {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "ghost",
+                    "isIconOnly": true,
+                    "aria-label": "Row actions",
+                    "children": { "kind": "Icon", "props": { "name": "ellipsis-vertical" } }
+                  }
+                },
+                "items": [
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "View" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/settings/organizations/' + row.id"
+                      }
+                    }
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Edit" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/settings/organizations/' + row.id + '/edit'"
+                      }
+                    },
+                    "requiresPermission": "organizations.update.tenant"
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Reparent" },
+                    "bindings": {
+                      "hidden": {
+                        "$expr": "!entitlements.organization_reparent || row.is_default"
+                      }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "modal.open",
+                        "modal": "reparent-organization",
+                        "propsExpr": "{ organizationId: row.id }"
+                      }
+                    },
+                    "requiresPermission": "organizations.reparent.tenant"
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Set as default" },
+                    "bindings": {
+                      "hidden": { "$expr": "row.is_default || row.status !== 'active'" }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "urlExpr": "'/api/v1/organizations/' + row.id + '/set-default'",
+                        "confirm": "Set this as the default organization? All tools filtering by default org will shift."
+                      }
+                    },
+                    "requiresPermission": "organizations.set_default.tenant"
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Pause" },
+                    "bindings": {
+                      "hidden": { "$expr": "row.status !== 'active' || row.is_default" }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "urlExpr": "'/api/v1/organizations/' + row.id + '/pause'"
+                      }
+                    },
+                    "requiresPermission": "organizations.pause.tenant"
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Resume" },
+                    "bindings": { "hidden": { "$expr": "row.status !== 'paused'" } },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "urlExpr": "'/api/v1/organizations/' + row.id + '/resume'"
+                      }
+                    },
+                    "requiresPermission": "organizations.resume.tenant"
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": {
+                      "children": "Archive",
+                      "className": "text-danger"
+                    },
+                    "bindings": {
+                      "hidden": { "$expr": "row.status === 'archived' || row.is_default" }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "urlExpr": "'/api/v1/organizations/' + row.id + '/archive'",
+                        "confirm": "Archive this organization? Refused if it has descendants or referenced branches."
+                      }
+                    },
+                    "requiresPermission": "organizations.archive.tenant"
+                  }
+                ]
+              }
+            }
+          ],
+          "bindings": {
+            "rows": { "$ref": "organizations" },
+            "isLoading": { "$ref": "organizations.isLoading" }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "id": "academorix://modules/organization/drivers",
+  "$version": 1,
+  "title": "organization — driver + strategy extension points",
+  "description": "Organization has no third-party driver plug-ins. It exposes ONE internal strategy contract — `CycleDetectorStrategyInterface` — as an extension seam so future modules (for instance a policy-as-code overlay) can substitute a different tree-cycle algorithm without forking the module. This file documents that contract for completeness; the framework ships one implementation.",
+  "contracts": {
+    "cycle_detector": {
+      "interface": "Academorix\\Organization\\Contracts\\CycleDetectorStrategyInterface",
+      "purpose": "Given a proposed (child_id, new_parent_id) tuple, decide whether the change would introduce a cycle in the tenant's Organization tree. Runs synchronously in the write path.",
+      "methods": [
+        {
+          "signature": "wouldCycle(string $childId, ?string $newParentId, string $tenantId): CycleDetectionResult",
+          "returns": "CycleDetectionResult DTO: would_cycle (bool), cycle_path (array<string> of ids forming the cycle when detected), diagnostics (array)."
+        }
+      ]
+    },
+    "tree_path_builder": {
+      "interface": "Academorix\\Organization\\Contracts\\TreePathBuilderInterface",
+      "purpose": "Given a node + its resolved parent chain, produce the materialised `.a.b.c.` path string. Extension seam only — the framework implementation is optimal for the sentinel-wrapped format.",
+      "methods": [
+        {
+          "signature": "build(array $ancestorIds, string $selfId): string",
+          "description": "Compose `.<ancestor_1>.<ancestor_2>.<self>.` with the configured separator."
+        },
+        {
+          "signature": "parse(string $treePath): array<string>",
+          "description": "Split a stored tree_path back into an ordered array of ids (root → self)."
+        }
+      ]
+    }
+  },
+  "framework_strategies": [
+    {
+      "name": "AncestorWalkCycleDetector",
+      "class": "Academorix\\Organization\\Detection\\AncestorWalkCycleDetector",
+      "purpose": "Default implementation. Walks the proposed parent's ancestor chain (via existing tree_path — no recursive query needed) looking for the child id. O(depth) per call; typical depth ≤ 5 so effectively constant."
+    },
+    {
+      "name": "DottedTreePathBuilder",
+      "class": "Academorix\\Organization\\Trees\\DottedTreePathBuilder",
+      "purpose": "Default `.a.b.c.` sentinel-wrapped builder. Uses config('organization.hierarchy.tree_path_separator') as the join char."
+    }
+  ],
+  "extension_note": "New strategies register via the container: `$container->bind(CycleDetectorStrategyInterface::class, MyStrategy::class)`. The observer + the reparent action resolve through the interface, so no call site changes when swapping. No tenant-configurable override — this is set-once at boot."
+}

@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/region/feature-flags",
+  "$version": 1,
+  "title": "region — kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "region.crud_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle. Off = every write path in the region module returns 503. Emergency-only — flips down when the identity-service must freeze Region mutations (e.g. mid-migration or during a compliance-motivated freeze)."
+    },
+    {
+      "key": "region.middleware_reject_paused",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = `region.resolve_active` middleware accepts a paused Region on booking-adjacent routes with a warning header instead of a 409. Emergency-only — used when a bad pause has been applied + rolling it back is faster than un-pausing per-tenant."
+    },
+    {
+      "key": "region.default_reconciler",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReconcileDefaultRegionInvariantJob no-ops. Used during scheduled migrations that intentionally leave tenants in a temporary invariant-violating state."
+    },
+    {
+      "key": "region.auto_heal",
+      "kind": "kill-switch",
+      "default": "off",
+      "description": "Independent of `region.reconciliation.auto_heal` config — when this flag is off, no auto-heal happens even if the config is on. Two layers of guard because auto-heal changes financial-attribution behaviour + must never surprise ops."
+    },
+    {
+      "key": "region.purge_execution",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PurgeArchivedRegionsJob no-ops. Archived Regions sit past their 730-day retention window. Rare — used during legal holds when Region-scoped financial evidence must be preserved."
+    },
+    {
+      "key": "region.tax_config_edit",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PATCH /{region}/tax-config returns 503. Used during month-end / year-end financial close when tax_config must remain stable."
+    },
+    {
+      "key": "region.set_default",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = POST /{region}/set-default returns 503. Used during scheduled invoice runs when the default region must not flip mid-batch."
+    },
+    {
+      "key": "region.time_travel_execution",
+      "kind": "kill-switch",
+      "default": "off",
+      "description": "Master gate for the `region_time_travel` entitlement's write path. Off (default) = retroactive tax_config replays are silently deferred even when the tenant is entitled. Turns on with Wave 3 when the finance replay pipeline lands."
+    },
+    {
+      "key": "region.async_seed",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = SeedDefaultRegionForTenantJob runs synchronously inside the tenancy provisioning transaction. Slower but safer (tenant is never briefly regionless). On is the default because tenant onboarding must feel instant."
+    }
+  ]
+}

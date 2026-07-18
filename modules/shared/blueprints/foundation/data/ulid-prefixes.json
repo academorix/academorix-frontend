@@ -104,11 +104,22 @@
       "entity": "AuditLog",
       "description": "Compliance-grade audit entry with cryptographic hash chain."
     },
+    "bkg_": {
+      "module": "facility",
+      "entity": "ResourceBooking",
+      "description": "Timed reservation against a Facility. State machine: pending → confirmed → completed/cancelled/no_show. Overlap detection under SERIALIZABLE isolation."
+    },
     "brd_": {
       "module": "branding",
       "entity": "Branding",
       "description": "Theme + logo profile per Tenant. Extracted from tenants at v0.3.",
       "renamed_from": "brand_"
+    },
+    "brn_": {
+      "module": "branch",
+      "entity": "Branch",
+      "description": "Physical venue where Organization + Region axes meet. Carries tenant_id + organization_id + region_id. FK-central: every downstream domain aggregate (facility, team, staff, coach, athlete, membership) references branches.id.",
+      "promoted_from_reserved": true
     },
     "bst_": {
       "module": "application",
@@ -161,6 +172,11 @@
       "entity": "Domain",
       "description": "Canonical hostname owned by a Tenant. State machine: pending -> verifying -> verified -> expired."
     },
+    "dpa_": {
+      "module": "facility",
+      "entity": "DayPass",
+      "description": "Untimed same-day admission — branch-scoped POS record. Financial record: 7-year retention, NO soft-delete. Anonymous walk-in profile fields redacted 90 days post-consumption per GDPR Art. 5(1)(c)."
+    },
     "drc_": {
       "module": "domains",
       "entity": "DomainRecord",
@@ -181,6 +197,12 @@
       "module": "entitlements",
       "entity": "Entitlement",
       "description": "Resolved (tenant, key) quota row."
+    },
+    "fac_": {
+      "module": "facility",
+      "entity": "Facility",
+      "description": "Bookable resource inside a Branch. Court / field / pool / studio / room / gym floor / lane. Availability + pricing + blackouts + capacity live as JSONB on the row.",
+      "promoted_from_reserved": true
     },
     "fil_": {
       "module": "storage",
@@ -272,6 +294,17 @@
       "renamed_from": "notif_",
       "note": "`not_` reads naturally as the abbreviation for `notification` in the ULID context; SQL keyword collision is not a concern because ULID values are always quoted strings."
     },
+    "org_": {
+      "module": "organization",
+      "entity": "Organization",
+      "description": "Structural sub-brand belonging to a Tenant. Nested via parent_id self-FK + materialised tree_path (sentinel-wrapped `.a.b.c.`). Every tenant provisions exactly one is_default=true Organization on TenantProvisioned. Enterprise tier gates nesting via `organization_hierarchy` entitlement.",
+      "promoted_from_reserved": true
+    },
+    "pas_": {
+      "module": "facility",
+      "entity": "Pass",
+      "description": "Credit + eligibility record binding Membership (Wave 4) to Facility access. Credits decrement atomically on booking-create via SELECT ... FOR UPDATE."
+    },
     "per_": {
       "module": "rbac",
       "entity": "Permission",
@@ -311,6 +344,12 @@
       "module": "rbac",
       "entity": "RoleDefinition",
       "description": "Academorix metadata layer for system roles - business_type default provisioning, i18n labels, min-tier gating."
+    },
+    "reg_": {
+      "module": "region",
+      "entity": "Region",
+      "description": "Commercial + regulatory zone belonging to a Tenant. Currency + timezone + locale + tax_config + weekend_days. Orthogonal to Organization; they meet at Branch. Every tenant provisions exactly one is_default=true Region on TenantProvisioned.",
+      "promoted_from_reserved": true
     },
     "rol_": {
       "module": "rbac",
@@ -486,29 +525,9 @@
     }
   },
   "reserved_for_future": {
-    "org_": {
-      "module": "organization (planned)",
-      "entity": "Organization",
-      "description": "Reserved. Not yet in use."
-    },
-    "reg_": {
-      "module": "region (planned)",
-      "entity": "Region",
-      "description": "Reserved."
-    },
-    "brn_": {
-      "module": "branch (planned)",
-      "entity": "Branch",
-      "description": "Reserved. Do NOT reuse for Branding — that's `brd_`."
-    },
     "tea_": {
       "module": "teams (planned)",
       "entity": "Team",
-      "description": "Reserved."
-    },
-    "fac_": {
-      "module": "facilities (planned)",
-      "entity": "Facility",
       "description": "Reserved."
     },
     "spo_": {
@@ -583,6 +602,30 @@
       "to": "usr_ (active)",
       "date": "2026-07-18",
       "reason": "Wave 1 identity module User schema now landed; prefix promoted from reserved_for_future to active."
+    },
+    {
+      "from": "reg_ (reserved)",
+      "to": "reg_ (active)",
+      "date": "2026-07-18",
+      "reason": "Wave 2a region module blueprint landed; prefix promoted from reserved_for_future to active."
+    },
+    {
+      "from": "org_ (reserved)",
+      "to": "org_ (active)",
+      "date": "2026-07-18",
+      "reason": "Wave 2a organization module blueprint landed; prefix promoted from reserved_for_future to active."
+    },
+    {
+      "from": "brn_ (reserved)",
+      "to": "brn_ (active)",
+      "date": "2026-07-18",
+      "reason": "Wave 2a branch module blueprint landed; prefix promoted from reserved_for_future to active."
+    },
+    {
+      "from": "fac_ (reserved)",
+      "to": "fac_ (active)",
+      "date": "2026-07-18",
+      "reason": "Wave 2a facility module blueprint landed; prefix promoted from reserved_for_future to active."
     }
   ],
   "validation": {

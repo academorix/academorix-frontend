@@ -1,0 +1,213 @@
+{
+  "id": "academorix://modules/region/events",
+  "$version": 1,
+  "title": "region — published events",
+  "namespace": "Academorix\\Region\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Financial-adjacent events (tax_config, is_default) fan out to the audit + finance modules; lifecycle events (paused, archived) fan out to notifications + the Branch module (which caches the default region).",
+  "events": [
+    {
+      "name": "RegionCreated",
+      "class": "Academorix\\Region\\Events\\RegionCreated",
+      "trigger": "RegionProvisioner completed successfully. Fires exactly once per (tenant_id, slug) pair.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchRegionCreatedNotification",
+        "branch::InvalidateRegionListCache (Wave 2b — Branch caches allowed regions for its dropdowns)"
+      ],
+      "payload": {
+        "region_id": "ULID (reg_*)",
+        "tenant_id": "ULID (ten_*)",
+        "country_code": "string (ISO 3166-1 alpha-2)",
+        "currency": "string (ISO 4217)",
+        "timezone": "string (IANA identifier)",
+        "locale": "string (BCP-47)",
+        "is_default": "boolean",
+        "created_by": "ULID (usr_*) | null (null = system-provisioned on TenantProvisioned)",
+        "source": "'tenant_provision' | 'admin_created' | 'legacy_seed'"
+      }
+    },
+    {
+      "name": "RegionUpdated",
+      "class": "Academorix\\Region\\Events\\RegionUpdated",
+      "trigger": "Any Region field mutated except status (RegionStatusChanged), is_default (RegionDefaultChanged), and tax_config (RegionTaxConfigUpdated). Fires for renames, timezone changes, locale changes, sort_order, weekend_days, subdivision_code.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "region_id": "ULID",
+        "tenant_id": "ULID",
+        "updated_by": "ULID",
+        "changed_fields": "string[] (e.g. ['name', 'timezone', 'weekend_days'])"
+      }
+    },
+    {
+      "name": "RegionStatusChanged",
+      "class": "Academorix\\Region\\Events\\RegionStatusChanged",
+      "trigger": "Region.status transitioned. Umbrella event fired alongside the specific transition event (RegionPaused / RegionResumed / RegionArchived / RegionRestored). Downstream consumers subscribe to whichever level of specificity they need.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "region_id": "ULID",
+        "tenant_id": "ULID",
+        "from_status": "'active' | 'paused' | 'archived'",
+        "to_status": "'active' | 'paused' | 'archived'",
+        "changed_by": "ULID",
+        "reason": "string | null (free-form ops note; internal-tier)"
+      }
+    },
+    {
+      "name": "RegionPaused",
+      "class": "Academorix\\Region\\Events\\RegionPaused",
+      "trigger": "Region.status transitioned active → paused. New bookings + new memberships referencing this Region are refused; existing rows survive unchanged.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchRegionPausedNotification (cannot-opt-out — new-booking block is ops-critical)",
+        "branch::InvalidateRegionAvailabilityCache",
+        "facility::InvalidateBookingWindowCache (Wave 2b)",
+        "finance::PauseNewMembershipsInRegion (Wave 4)"
+      ],
+      "payload": {
+        "region_id": "ULID",
+        "tenant_id": "ULID",
+        "paused_by": "ULID",
+        "reason": "string | null",
+        "expected_resume_at": "ISO 8601 timestamp | null"
+      }
+    },
+    {
+      "name": "RegionResumed",
+      "class": "Academorix\\Region\\Events\\RegionResumed",
+      "trigger": "Region.status transitioned paused → active. Reverses RegionPaused. New bookings + memberships accepted again.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "branch::InvalidateRegionAvailabilityCache",
+        "facility::InvalidateBookingWindowCache",
+        "finance::ResumeNewMembershipsInRegion"
+      ],
+      "payload": {
+        "region_id": "ULID",
+        "tenant_id": "ULID",
+        "resumed_by": "ULID",
+        "was_paused_at": "ISO 8601 timestamp"
+      }
+    },
+    {
+      "name": "RegionArchived",
+      "class": "Academorix\\Region\\Events\\RegionArchived",
+      "trigger": "Region.status transitioned to archived. Refused when is_default=true (observer catches it). Refused when any inbound row (Branch, Membership) still references this Region (REGION_IN_USE). Archived Regions vanish from selectors but existing rows stay valid.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::MaybeDispatchRegionArchivedNotification"
+      ],
+      "payload": {
+        "region_id": "ULID",
+        "tenant_id": "ULID",
+        "archived_by": "ULID",
+        "reason": "string | null",
+        "hard_delete_scheduled_for": "ISO 8601 timestamp"
+      }
+    },
+    {
+      "name": "RegionRestored",
+      "class": "Academorix\\Region\\Events\\RegionRestored",
+      "trigger": "Archived Region transitioned back to active. Restoration allowed within the 730-day retention window (financial retention).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "region_id": "ULID",
+        "tenant_id": "ULID",
+        "restored_by": "ULID",
+        "was_archived_at": "ISO 8601 timestamp"
+      }
+    },
+    {
+      "name": "RegionDefaultChanged",
+      "class": "Academorix\\Region\\Events\\RegionDefaultChanged",
+      "trigger": "The is_default flag flipped. Fires with the previous default's ID + the new default's ID. Audit-critical: the default region determines invoice calculations for regionless legacy rows.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchRegionDefaultChangedNotification (cannot-opt-out — financial calculation impact)",
+        "finance::RecomputeDefaultAttributionForLegacyRows (Wave 4 — recomputes attribution for the small set of legacy rows that lack region_id)"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "from_region_id": "ULID | null (null when this is the tenant's first default — TenantDefaultRegionSeeded fires that path)",
+        "to_region_id": "ULID",
+        "changed_by": "ULID"
+      }
+    },
+    {
+      "name": "RegionTaxConfigUpdated",
+      "class": "Academorix\\Region\\Events\\RegionTaxConfigUpdated",
+      "trigger": "Region.tax_config JSONB mutated. Any sub-field change (default_rate_percent, rates, name, inclusive, registration_number, fiscal_year_start_month) fires this event. Financial-record retention 7 years.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog",
+        "finance::InvalidateTaxCalculationCache (Wave 4)",
+        "finance::MaybeReplayFutureInvoices (Wave 4 — only when the caller carries `region_time_travel` entitlement)"
+      ],
+      "payload": {
+        "region_id": "ULID",
+        "tenant_id": "ULID",
+        "updated_by": "ULID",
+        "before": "object (previous tax_config snapshot)",
+        "after": "object (new tax_config snapshot)",
+        "changed_fields": "string[] (dotted paths, e.g. ['default_rate_percent', 'rates[0].rate_percent'])"
+      }
+    },
+    {
+      "name": "RegionDeleted",
+      "class": "Academorix\\Region\\Events\\RegionDeleted",
+      "trigger": "Region soft-deleted OR hard-deleted. Distinct events not needed — the payload carries the mode.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "region_id": "ULID",
+        "tenant_id": "ULID",
+        "deleted_by": "ULID",
+        "mode": "'soft' | 'hard'",
+        "was_default": "boolean (true means the tenant lost its default region — a system-invariant violation; the reconciler will alert)"
+      }
+    },
+    {
+      "name": "TenantDefaultRegionSeeded",
+      "class": "Academorix\\Region\\Events\\TenantDefaultRegionSeeded",
+      "trigger": "SeedDefaultRegionForTenantJob completed for a freshly-provisioned tenant. Fires exactly once per tenant lifetime (unless the tenant loses its default region + the reconciler re-seeds — that path fires a fresh event).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "branch::PopulateAllowedRegionsCacheOnFirstSeed"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "region_id": "ULID",
+        "country_code": "string (resolved from tenant's registered country)",
+        "seeded_by": "'tenant_provisioning' | 'reconciler' | 'legacy_backfill_command'"
+      }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/region/subprocessors",
+  "$version": 1,
+  "title": "region — subprocessors",
+  "description": "The region module engages ZERO third-party processors. Every field is stored in the tenant's own database. Region data feeds the Finance module's tax + invoice pipelines, and those pipelines engage their own processors (Stripe / Paddle for payment, S3 for invoice PDF storage) — those subprocessors are documented in `modules/notifications/subprocessors.json` + `modules/billing/subprocessors.json`, not here.",
+  "subprocessors": [],
+  "notes": [
+    "Region.tax_config.registration_number is confidential data — but it's stored ONLY in the tenant's own DB, never shipped to a subprocessor. Invoice PDFs produced by the finance module DO print the registration_number on the invoice header (regulatory requirement) — that path's subprocessor (the S3 bucket the PDF lands in) is documented under finance.",
+    "The country-defaults reference table (`data/country-defaults.json`) is a static shipped artifact. It contains NO tenant data — just country → { currency, timezone, locale, weekend_days, tax_config-defaults } mappings that are public knowledge. Consumers may cache it at the edge without concern.",
+    "If a future feature adds automated tax-rate lookups (e.g. Avalara AvaTax, TaxJar), that integration will engage a new subprocessor + this file will grow. Not in scope for Wave 2a."
+  ]
+}

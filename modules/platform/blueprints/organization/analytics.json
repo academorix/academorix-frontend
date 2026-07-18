@@ -1,0 +1,115 @@
+{
+  "id": "academorix://modules/organization/analytics",
+  "$version": 1,
+  "title": "organization — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Organization Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "tenant_id",
+        "organization_id",
+        "actor_id",
+        "category",
+        "has_parent",
+        "tree_depth"
+      ],
+      "description": "A new Organization was created. `has_parent` = true means the row was created as a child (nesting entitled + used)."
+    },
+    {
+      "name": "Organization Default Changed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "tenant_id",
+        "from_organization_id",
+        "to_organization_id",
+        "actor_id"
+      ],
+      "description": "The tenant's is_default Organization was flipped. Critical for troubleshooting reports because most downstream tools default their filters to the default org."
+    },
+    {
+      "name": "Organization Reparented",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "tenant_id",
+        "organization_id",
+        "old_parent_id",
+        "new_parent_id",
+        "old_depth",
+        "new_depth",
+        "descendant_count",
+        "actor_id"
+      ],
+      "description": "An Organization was moved to a different parent. `descendant_count` measures blast radius (how many rows had their tree_path recomputed). Bulk-cascading updates warrant a follow-up 'org restructuring detected' outreach from CS."
+    },
+    {
+      "name": "Organization Status Changed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "tenant_id",
+        "organization_id",
+        "from_status",
+        "to_status",
+        "actor_id",
+        "reason"
+      ],
+      "description": "Status transitioned. `to_status=paused` while descendants active is a churn signal."
+    },
+    {
+      "name": "Organization Branding Updated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "tenant_id",
+        "organization_id",
+        "actor_id",
+        "changed_fields"
+      ],
+      "description": "logo_url / primary_color / secondary_color / description changed. Only fires when the tenant holds `organization_branding` entitlement."
+    },
+    {
+      "name": "Organization Archived",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "tenant_id",
+        "organization_id",
+        "actor_id",
+        "reason",
+        "descendant_count",
+        "branch_count"
+      ]
+    },
+    {
+      "name": "Organization Restored",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "organization_id", "actor_id"]
+    },
+    {
+      "name": "Organization Slot Consumed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "slot_used", "slot_cap", "slot_utilisation_pct"],
+      "description": "Fires when `organization_slot` entitlement consumption crosses 50 / 75 / 90 / 100 %. Drives upsell CTAs."
+    },
+    {
+      "name": "Organization Nesting Refused",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "tenant_id",
+        "actor_id",
+        "reason",
+        "tier"
+      ],
+      "description": "A parent_id set was refused because the tenant lacks `organization_hierarchy`. Strong upsell signal — the tenant tried to nest."
+    }
+  ]
+}

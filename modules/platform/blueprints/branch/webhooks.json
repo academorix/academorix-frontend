@@ -1,0 +1,77 @@
+{
+  "id": "academorix://modules/branch/webhooks",
+  "$version": 1,
+  "title": "branch — outbound webhooks",
+  "description": "Tenant admins can subscribe to branch-lifecycle events via the webhook module (shared/webhooks, Wave 4). This blueprint declares the event types this module publishes. Payload shapes mirror the corresponding entries in `events.json` — the webhook module wraps them in the standard envelope + HMAC-signs with the tenant's webhook secret.",
+  "reference": {
+    "publishedBy": "webhooks",
+    "resolvedBy": "GET /api/v1/webhooks/event-types"
+  },
+  "event_types": [
+    {
+      "type": "branch.created",
+      "description": "New Branch provisioned. Payload mirrors BranchCreated event.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "branch.updated",
+      "description": "Branch fields (not address / coordinates / hours / capacity) updated. Payload mirrors BranchUpdated event with `changed_fields`.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "branch.status_changed",
+      "description": "Umbrella event for any status transition. Payload mirrors BranchStatusChanged.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "branch.paused",
+      "description": "Branch transitioned active → paused. Payload mirrors BranchPaused.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "branch.resumed",
+      "description": "Branch transitioned paused → active.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "branch.closed",
+      "description": "Branch transitioned to closed. Payload includes `successor_branch_id` when set — external systems syncing the tenant's roster use this to redirect operations.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "branch.reopened",
+      "description": "Branch transitioned closed → active. Rare — most external systems don't listen for this.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "branch.default_changed",
+      "description": "The default branch for a (tenant, organization) tuple was reassigned. Payload mirrors BranchDefaultChanged.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "branch.address_updated",
+      "description": "Branch.address changed. Payload includes the full new address + `changed_address_fields`.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "branch.coordinates_updated",
+      "description": "Branch.coordinates changed. Payload includes the new coordinates AND the source (manual / geocoded / imported). External CRM systems syncing venue pin locations use this.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "branch.opening_hours_updated",
+      "description": "Branch.opening_hours changed. Payload includes the full new opening_hours blob — external scheduling systems consume this directly.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "branch.capacity_changed",
+      "description": "Branch.capacity changed. Payload includes from/to values (or null for cleared).",
+      "since_version": "1.0.0"
+    }
+  ],
+  "notes": [
+    "Every payload is HMAC-SHA256 signed with the tenant's webhook secret per the shared webhook contract.",
+    "The `branch.deleted` event is NOT published to webhooks — public API never hard-deletes; the platform-support CLI path deliberately bypasses webhooks because the tenant contract is void at that point.",
+    "External systems syncing venue rosters should subscribe to `branch.created` + `branch.status_changed` + `branch.address_updated` + `branch.coordinates_updated` at minimum. `branch.updated` is optional — the changed_fields tell the subscriber whether to re-fetch."
+  ]
+}

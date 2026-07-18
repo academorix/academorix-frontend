@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/branch/schedule",
+  "$version": 1,
+  "title": "branch — scheduled tasks",
+  "entries": [
+    {
+      "name": "branch-reconcile-default-invariant",
+      "command": "queue:work --queue=low --once --job=ReconcileDefaultBranchInvariantJob",
+      "cron": "15 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily at 03:15 UTC. Verifies exactly-one-default per (tenant, organization). Fixes drift by promoting the oldest branch when a tuple has zero defaults + demoting all-but-one when it has multiple. Killable via `branch.reconcile_default_invariant` feature flag."
+    },
+    {
+      "name": "branch-resume-due",
+      "command": "branch:resume-due",
+      "cron": "*/15 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 15 minutes. Find Branches with status=paused AND resume_scheduled_for <= now() (stored on the paused_notification or in metadata.resume_scheduled_for); transition to status=active + fire BranchResumed."
+    },
+    {
+      "name": "branch-metrics-snapshot",
+      "command": "branch:metrics:snapshot",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly. Compute `academorix.branch.active.count` per status + `academorix.branch.slot_usage` gauges per tenant. Publishes to the OpenTelemetry endpoint."
+    },
+    {
+      "name": "branch-geocoding-stuck-alert",
+      "command": "branch:geocoding:alert-stuck",
+      "cron": "*/10 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 10 minutes. Alerts ops when > 5 `GeocodeAddressJob` rows are pending for > 30 minutes (signals subprocessor outage or rate-limit exhaustion). Non-critical."
+    },
+    {
+      "name": "branch-close-notice-reminder",
+      "command": "branch:close-notice:remind",
+      "cron": "0 9 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily at 09:00 UTC. For every Branch with `closed_date` in the future (i.e. tenant scheduled a future closure), send a reminder notification to the branch's staff 7 days before + 1 day before + on the day. Respects `branch.settings.closure_notice_days` regional floor."
+    }
+  ]
+}

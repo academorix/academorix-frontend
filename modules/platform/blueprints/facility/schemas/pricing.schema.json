@@ -1,0 +1,135 @@
+{
+  "id": "academorix://modules/facility/schemas/pricing",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Facility pricing_json — sub-shape",
+  "description": "Facility pricing configuration. Referenced by facility.schema.json.properties.pricing_json. Four models: per_hour, per_slot, per_person, included_in_membership. Every mutation writes to audits with 7-year financial retention.",
+  "type": "object",
+  "properties": {
+    "model": {
+      "type": "string",
+      "enum": ["per_hour", "per_slot", "per_person", "included_in_membership"]
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "description": "ISO 4217 3-letter currency code. MUST match parent branch.region.currency (observer enforces)."
+    },
+    "tiers": {
+      "type": "array",
+      "description": "Rate tiers. Required when model != included_in_membership. Non-empty in that case. When present alongside model=included_in_membership, tiers are ignored.",
+      "items": { "$ref": "#/$defs/tier" }
+    },
+    "peak_hours": {
+      "type": ["object", "null"],
+      "description": "Optional day-shape multiplier map. Same key structure as availability_json but each window carries a multiplier float.",
+      "properties": {
+        "monday": { "$ref": "#/$defs/peakWindows" },
+        "tuesday": { "$ref": "#/$defs/peakWindows" },
+        "wednesday": { "$ref": "#/$defs/peakWindows" },
+        "thursday": { "$ref": "#/$defs/peakWindows" },
+        "friday": { "$ref": "#/$defs/peakWindows" },
+        "saturday": { "$ref": "#/$defs/peakWindows" },
+        "sunday": { "$ref": "#/$defs/peakWindows" }
+      },
+      "additionalProperties": false
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "Free-form admin note. Not user-visible."
+    }
+  },
+  "required": ["model", "currency"],
+  "additionalProperties": false,
+  "$defs": {
+    "tier": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Display name (e.g. Standard, Member, Guest, Senior). Rendered to bookers when multiple tiers apply."
+        },
+        "rate_cents": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Rate in the facility's currency. For per_hour: cents/hour. For per_slot: cents/booking. For per_person: cents/attendee."
+        },
+        "requires_membership": {
+          "type": ["boolean", "null"],
+          "description": "When true, this tier only applies when the booker holds an active membership."
+        },
+        "requires_age_band": {
+          "type": ["string", "null"],
+          "enum": ["under_18", "adult", "senior", null],
+          "description": "When set, the tier applies only when the booker's profile.age_band matches."
+        }
+      },
+      "required": ["name", "rate_cents"],
+      "additionalProperties": false
+    },
+    "peakWindows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "starts": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+          },
+          "ends": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+          },
+          "multiplier": {
+            "type": "number",
+            "minimum": 0.1,
+            "maximum": 10.0,
+            "description": "Float multiplier applied to the base tier rate for windows overlapping this peak. e.g. 1.5 = 50% surcharge."
+          }
+        },
+        "required": ["starts", "ends", "multiplier"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "x-invariants": [
+    "currency MUST match parent branch.region.currency",
+    "when model IN (per_hour, per_slot, per_person): tiers is non-empty",
+    "when model = included_in_membership: booking price is 0, but a Pass covering the facility MUST be available at booking-time",
+    "tier picker precedence: age_band + membership matches win over Standard; ties broken by first match in array order",
+    "peak_hours multipliers apply to the resolved tier rate; a booking straddling peak/off-peak proportions by minute count"
+  ],
+  "x-examples": [
+    {
+      "model": "per_hour",
+      "currency": "USD",
+      "tiers": [
+        { "name": "Standard", "rate_cents": 2500 }
+      ]
+    },
+    {
+      "model": "per_hour",
+      "currency": "GBP",
+      "tiers": [
+        { "name": "Member", "rate_cents": 1500, "requires_membership": true },
+        { "name": "Guest", "rate_cents": 3000 }
+      ],
+      "peak_hours": {
+        "monday": [],
+        "tuesday": [],
+        "wednesday": [],
+        "thursday": [],
+        "friday": [{ "starts": "17:00", "ends": "22:00", "multiplier": 1.75 }],
+        "saturday": [{ "starts": "09:00", "ends": "20:00", "multiplier": 1.75 }],
+        "sunday": [{ "starts": "09:00", "ends": "20:00", "multiplier": 1.5 }]
+      }
+    },
+    {
+      "model": "included_in_membership",
+      "currency": "USD",
+      "notes": "Booking price is 0. A valid Pass covering this facility MUST be available at booking time."
+    }
+  ]
+}

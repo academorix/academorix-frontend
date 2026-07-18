@@ -1,0 +1,60 @@
+{
+  "id": "academorix://modules/region/features",
+  "$version": 1,
+  "title": "region — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "region.core",
+      "displayName": "Regions",
+      "description": "Base capability. Every tenant has at least one Region (the auto-provisioned default). Always on across every tier.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "region.multiple",
+      "displayName": "Multiple regions",
+      "description": "Tenant can create more than one Region beyond the default. Off on small tier (locked to 1 region — the default). Medium up to 3; Enterprise unlimited. Backed by the `region_slot` entitlement.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "region.custom_tax_rules",
+      "displayName": "Multi-rate tax configuration",
+      "description": "Tenant can define multiple tax rates per Region via the `tax_config.rates[]` array (e.g. reduced VAT for children's programmes, luxury tax, alcohol tax). Enterprise-only. Backed by the `region_custom_tax_rules` entitlement.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "region.pause_resume",
+      "displayName": "Pause + resume regions",
+      "description": "Tenant can pause a Region (blocking new bookings + memberships while existing rows survive). All tiers can pause; Small tier is limited because they only have one Region and pausing the default is forbidden.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "region.archive_restore",
+      "displayName": "Archive + restore regions",
+      "description": "Tenant can archive a Region (soft-delete, 730-day retention). Small tier cannot archive because they only have the default region. Medium + Enterprise can archive non-default regions.",
+      "defaultEnabled": true,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "region.time_travel",
+      "displayName": "Retroactive tax edits",
+      "description": "Tenant can edit tax_config retroactively — changes replay against already-issued Invoices. Enterprise-only + off by default even for Enterprise (per-tenant activation gate). Wave 3 feature.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "region.tax_registration",
+      "displayName": "Tax registration number field",
+      "description": "Tenant can capture + display their tax registration number (VAT registration, TRN, GSTIN, EIN). All tiers. Field is confidential — redactor gates egress to `regions.view.tax_registration` permission.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    }
+  ]
+}

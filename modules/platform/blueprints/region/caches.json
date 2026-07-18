@@ -1,0 +1,83 @@
+{
+  "id": "academorix://modules/region/caches",
+  "$version": 1,
+  "title": "region — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["region", "region-defaults", "country-defaults"],
+  "keys": [
+    {
+      "pattern": "rgn:default:{tenant_id}",
+      "description": "The default Region ULID + summary for one tenant. Read by DefaultRegionResolver on every tenant-plane request that lacks an X-Region-Id header (the vast majority). Written on tenant provision + on any is_default flip; invalidated on RegionArchived / RegionDeleted for the default row.",
+      "ttlSeconds": 600,
+      "tags": ["region", "region-defaults"],
+      "invalidatedBy": [
+        "RegionObserver.updated (is_default changed)",
+        "RegionObserver.deleted (was_default)",
+        "TenantDefaultRegionSeeded"
+      ]
+    },
+    {
+      "pattern": "rgn:list:{tenant_id}",
+      "description": "The full active-region list for one tenant. Read by the tenant admin UI + by the `region.resolve_active` middleware when validating an X-Region-Id header. Small payload (id, name, slug, country_code, status, is_default).",
+      "ttlSeconds": 300,
+      "tags": ["region"],
+      "invalidatedBy": [
+        "RegionObserver.created",
+        "RegionObserver.updated",
+        "RegionObserver.deleted",
+        "RegionObserver.restored"
+      ]
+    },
+    {
+      "pattern": "rgn:full:{region_id}",
+      "description": "One Region row (unredacted, including tax_config.registration_number). Read by the tax + currency resolvers on hot paths (every invoice + every price display).",
+      "ttlSeconds": 300,
+      "tags": ["region"],
+      "invalidatedBy": [
+        "RegionObserver.updated",
+        "RegionObserver.deleted"
+      ]
+    },
+    {
+      "pattern": "rgn:tax_config:{region_id}",
+      "description": "The tax_config sub-object for one Region, isolated so tax-only consumers don't fetch the full row. TaxConfigResolver reads this.",
+      "ttlSeconds": 300,
+      "tags": ["region"],
+      "invalidatedBy": [
+        "RegionTaxConfigUpdated"
+      ]
+    },
+    {
+      "pattern": "rgn:country_defaults",
+      "description": "The full `data/country-defaults.json` shipped table. Static artifact — parsed once, cached indefinitely. Invalidated on deploy (the cache key includes a hash of the file).",
+      "ttlSeconds": 604800,
+      "tags": ["country-defaults"],
+      "invalidatedBy": ["deploy artifact fingerprint change"]
+    },
+    {
+      "pattern": "rgn:country_default:{country_code}",
+      "description": "One country's defaults, cached per-key for O(1) lookup. Populated on first read from `rgn:country_defaults`.",
+      "ttlSeconds": 604800,
+      "tags": ["country-defaults"]
+    },
+    {
+      "pattern": "rgn:allowed_regions:{tenant_id}",
+      "description": "A precomputed set of {region_id, name, currency, status} tuples used by Branch's `region_id` dropdown at Wave 2b. Warmed on tenant provision; kept small (< 20 rows even for Enterprise tenants).",
+      "ttlSeconds": 900,
+      "tags": ["region"],
+      "invalidatedBy": [
+        "RegionObserver.created",
+        "RegionObserver.updated",
+        "RegionObserver.deleted",
+        "RegionObserver.restored"
+      ]
+    },
+    {
+      "pattern": "rgn:reconciler_last_run",
+      "description": "Timestamp of the last successful ReconcileDefaultRegionInvariantJob run. Read by the health probe + the ops dashboard.",
+      "ttlSeconds": 172800,
+      "tags": ["region"],
+      "invalidatedBy": ["ReconcileDefaultRegionInvariantJob completion"]
+    }
+  ]
+}

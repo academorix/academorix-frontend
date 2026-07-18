@@ -1,0 +1,83 @@
+{
+  "id": "academorix://modules/facility/schemas/availability",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Facility availability_json — sub-shape",
+  "description": "Per-day windows within the parent Branch.opening_hours envelope. Referenced by facility.schema.json.properties.availability_json.",
+  "type": "object",
+  "properties": {
+    "monday": { "$ref": "#/$defs/dayWindows" },
+    "tuesday": { "$ref": "#/$defs/dayWindows" },
+    "wednesday": { "$ref": "#/$defs/dayWindows" },
+    "thursday": { "$ref": "#/$defs/dayWindows" },
+    "friday": { "$ref": "#/$defs/dayWindows" },
+    "saturday": { "$ref": "#/$defs/dayWindows" },
+    "sunday": { "$ref": "#/$defs/dayWindows" }
+  },
+  "additionalProperties": false,
+  "required": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"],
+  "$defs": {
+    "dayWindows": {
+      "type": "array",
+      "description": "Ordered list of open windows for the day. Empty array = facility closed that day. Windows within a day may not overlap; must be sorted ascending by starts.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "starts": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+            "description": "24h 'HH:MM' in the facility's local timezone (inherited from facility.branch.region.timezone)."
+          },
+          "ends": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+            "description": "24h 'HH:MM'. MUST be > starts."
+          }
+        },
+        "required": ["starts", "ends"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "x-invariants": [
+    "For each day: windows sorted ascending by 'starts'",
+    "For each day: no two windows overlap",
+    "For each day: each window ends > starts",
+    "For each day: every window is entirely within the parent branch.opening_hours for that day (validated at write-time by FacilityObserver)"
+  ],
+  "x-examples": [
+    {
+      "monday": [{ "starts": "06:00", "ends": "22:00" }],
+      "tuesday": [{ "starts": "06:00", "ends": "22:00" }],
+      "wednesday": [{ "starts": "06:00", "ends": "22:00" }],
+      "thursday": [{ "starts": "06:00", "ends": "22:00" }],
+      "friday": [{ "starts": "06:00", "ends": "22:00" }],
+      "saturday": [{ "starts": "08:00", "ends": "20:00" }],
+      "sunday": [{ "starts": "08:00", "ends": "20:00" }]
+    },
+    {
+      "monday": [
+        { "starts": "07:00", "ends": "12:00" },
+        { "starts": "13:30", "ends": "21:00" }
+      ],
+      "tuesday": [
+        { "starts": "07:00", "ends": "12:00" },
+        { "starts": "13:30", "ends": "21:00" }
+      ],
+      "wednesday": [
+        { "starts": "07:00", "ends": "12:00" },
+        { "starts": "13:30", "ends": "21:00" }
+      ],
+      "thursday": [
+        { "starts": "07:00", "ends": "12:00" },
+        { "starts": "13:30", "ends": "21:00" }
+      ],
+      "friday": [
+        { "starts": "07:00", "ends": "12:00" },
+        { "starts": "13:30", "ends": "21:00" }
+      ],
+      "saturday": [{ "starts": "08:00", "ends": "16:00" }],
+      "sunday": []
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "id": "academorix://modules/organization/routes",
+  "$version": 1,
+  "title": "organization — HTTP routes",
+  "description": "Tenant-plane CRUD + hierarchy management + status transitions. Platform-plane read-only cross-tenant observability. Every mutation goes through the OrganizationPolicy + fires the corresponding event + invalidates tree caches.",
+  "groups": [
+    {
+      "name": "tenant-organizations",
+      "prefix": "/api/v1/organizations",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "application.resolve",
+        "auth:sanctum",
+        "auth.enforce_session_scope",
+        "tenant.resolve",
+        "organization.resolve_active",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Tenant-facing Organization CRUD. Reads open to any tenant member; writes require owner/admin.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Organization\\Http\\Controllers\\Tenant\\OrganizationController@index",
+          "permission": "organizations.viewAny.tenant",
+          "description": "List Organizations for the current tenant. filter[status], filter[parent_id] (with `parent_id=null` for root-only), filter[category], filter[has_descendants], filter[is_default] supported. Default sort: sort_order ASC, then name ASC. Includes: parent, children, ancestors, descendants."
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Organization\\Http\\Controllers\\Tenant\\OrganizationController@store",
+          "action": "Academorix\\Organization\\Actions\\CreateOrganizationAction",
+          "permission": "organizations.create.tenant",
+          "middleware_add": ["entitlement.enforce:organization_slot"],
+          "description": "Create a new Organization. Body: { name, slug?, short_name?, description?, category, parent_id?, primary_color?, secondary_color?, logo_url?, website_url?, support_email?, support_phone?, contact_person_name?, established_date?, sort_order? }. Consumes organization_slot. Nesting requires organization_hierarchy. Branding fields require organization_branding."
+        },
+        {
+          "method": "GET",
+          "path": "/tree",
+          "controller": "Academorix\\Organization\\Http\\Controllers\\Tenant\\OrganizationController@tree",
+          "permission": "organizations.tree.view.tenant",
+          "description": "Full tenant tree (flat list of all rows with parent_id + tree_path + tree_depth). Cached at `org:tree:{tenant_id}` for 15m. Sorted so parents precede children."
+        },
+        {
+          "method": "GET",
+          "path": "/{organization}",
+          "controller": "Academorix\\Organization\\Http\\Controllers\\Tenant\\OrganizationController@show",
+          "permission": "organizations.view.tenant",
+          "description": "Retrieve a single Organization. `?include=parent,children,ancestors,descendants,siblings` for related rows."
+        },
+        {
+          "method": "PATCH",
+          "path": "/{organization}",
+          "controller": "Academorix\\Organization\\Http\\Controllers\\Tenant\\OrganizationController@update",
+          "action": "Academorix\\Organization\\Actions\\UpdateOrganizationAction",
+          "permission": "organizations.update.tenant",
+          "description": "Update mutable fields. parent_id changes MUST go through the /reparent endpoint (this route refuses parent_id in the body). is_default flips MUST go through /set-default. Branding-field writes require organization_branding entitlement."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{organization}",
+          "controller": "Academorix\\Organization\\Http\\Controllers\\Tenant\\OrganizationController@destroy",
+          "action": "Academorix\\Organization\\Actions\\ArchiveOrganizationAction",
+          "permission": "organizations.delete.tenant",
+          "description": "Soft-delete + status=archived. Refused on is_default OR has_descendants OR referenced_by_branches. Releases organization_slot."
+        },
+        {
+          "method": "POST",
+          "path": "/{organization}/reparent",
+          "controller": "Academorix\\Organization\\Http\\Controllers\\Tenant\\OrganizationController@reparent",
+          "action": "Academorix\\Organization\\Actions\\ReparentOrganizationAction",
+          "permission": "organizations.reparent.tenant",
+          "middleware_add": ["entitlement.enforce:organization_reparent"],
+          "description": "Body: { new_parent_id: uuid | null, reason?: string }. Enforces same-tenant + no-cycle + within-depth-cap. Fires OrganizationParentChanged + dispatches RebuildTreePathsJob."
+        },
+        {
+          "method": "POST",
+          "path": "/{organization}/set-default",
+          "controller": "Academorix\\Organization\\Http\\Controllers\\Tenant\\OrganizationController@setDefault",
+          "action": "Academorix\\Organization\\Actions\\SetDefaultOrganizationAction",
+          "permission": "organizations.set_default.tenant",
+          "description": "Flip is_default=true on the target row. Auto-demotes the current default in the same transaction. Body: { reason?: string }."
+        },
+        {
+          "method": "POST",
+          "path": "/{organization}/pause",
+          "controller": "Academorix\\Organization\\Http\\Controllers\\Tenant\\OrganizationController@pause",
+          "action": "Academorix\\Organization\\Actions\\PauseOrganizationAction",
+          "permission": "organizations.pause.tenant",
+          "description": "Body: { reason?: string }. Refused on is_default."
+        },
+        {
+          "method": "POST",
+          "path": "/{organization}/resume",
+          "controller": "Academorix\\Organization\\Http\\Controllers\\Tenant\\OrganizationController@resume",
+          "action": "Academorix\\Organization\\Actions\\ResumeOrganizationAction",
+          "permission": "organizations.resume.tenant",
+          "description": "Reverse of pause. Only valid from status=paused."
+        },
+        {
+          "method": "POST",
+          "path": "/{organization}/archive",
+          "controller": "Academorix\\Organization\\Http\\Controllers\\Tenant\\OrganizationController@archive",
+          "action": "Academorix\\Organization\\Actions\\ArchiveOrganizationAction",
+          "permission": "organizations.archive.tenant",
+          "description": "Body: { reason?: string }. Explicit archive route (in addition to DELETE) so tenants that use DELETE for other semantics can still archive."
+        },
+        {
+          "method": "GET",
+          "path": "/{organization}/tree",
+          "controller": "Academorix\\Organization\\Http\\Controllers\\Tenant\\OrganizationController@subtree",
+          "permission": "organizations.tree.view.tenant",
+          "description": "The subtree rooted at this Organization (self + all descendants). Cheaper than /tree when a caller only cares about a specific branch."
+        }
+      ]
+    },
+    {
+      "name": "platform-organizations",
+      "prefix": "/api/v1/platform/organizations",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "platform.domain",
+        "auth:platform_admin",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "Platform-admin cross-tenant Organization observability. Read-only in v1. Any write must go through the tenant-plane so provenance is captured.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Organization\\Http\\Controllers\\Platform\\OrganizationController@index",
+          "permission": "platform.organizations.viewAny",
+          "description": "Cross-tenant list. filter[tenant_id], filter[status], filter[category], filter[has_descendants] supported. Aggregations at the top: { total_rows, per_tenant_max, per_tenant_p95, tree_depth_max }."
+        },
+        {
+          "method": "GET",
+          "path": "/{organization}",
+          "controller": "Academorix\\Organization\\Http\\Controllers\\Platform\\OrganizationController@show",
+          "permission": "platform.organizations.view",
+          "description": "Full detail including sensitive columns (`notes`, `contact_person_name`) that are hidden from tenant-plane responses."
+        },
+        {
+          "method": "GET",
+          "path": "/{organization}/tree",
+          "controller": "Academorix\\Organization\\Http\\Controllers\\Platform\\OrganizationController@subtree",
+          "permission": "platform.organizations.tree.view",
+          "description": "Subtree rooted at the given Organization. Support tool for diagnosing tenant-reported hierarchy issues."
+        }
+      ]
+    }
+  ]
+}

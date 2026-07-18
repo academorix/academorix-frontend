@@ -1,0 +1,53 @@
+{
+  "id": "academorix://modules/region/middleware",
+  "$version": 1,
+  "title": "region — HTTP middleware",
+  "middleware": [
+    {
+      "alias": "region.resolve_active",
+      "class": "Academorix\\Region\\Http\\Middleware\\ResolveActiveRegion",
+      "priority": 30,
+      "description": "Resolves the caller's active Region for THIS request. Reads (in order): (1) `X-Region-Id` header when the caller's active tenant has a Region on that slug or ULID AND the Region's status is 'active' (paused / archived rejected on booking-adjacent routes; permitted on read-only routes with a warning header); (2) DefaultRegionResolver → the tenant's Region where is_default=true. Sets `Request::activeRegion()` + writes to the `RequestContext.region_id` slot that downstream middleware (subscription pricing, finance tax calc) reads. Runs AFTER `tenant.resolve` (needs tenant_id) but BEFORE any domain policy check that consults `activeRegion()`.",
+      "auto_applied": true,
+      "auto_applied_to": ["api"],
+      "responses": [
+        {
+          "condition": "X-Region-Id header points at a Region in a different tenant",
+          "http": 403,
+          "code": "REGION_CROSS_TENANT",
+          "audit_severity": "warn",
+          "description": "Security-relevant — a forged header attempting to reach another tenant's Region. Logged with the tenant + user + attempted region + IP."
+        },
+        {
+          "condition": "X-Region-Id header points at a paused Region on a booking-adjacent route (POST /bookings, POST /memberships)",
+          "http": 409,
+          "code": "REGION_PAUSED_FOR_BOOKING",
+          "audit_severity": "info"
+        },
+        {
+          "condition": "X-Region-Id header points at an archived Region",
+          "http": 410,
+          "code": "REGION_ARCHIVED",
+          "audit_severity": "info",
+          "description": "Region exists but has been archived. Response includes the current default region's id as a hint."
+        },
+        {
+          "condition": "No X-Region-Id header AND tenant has no default Region",
+          "http": 424,
+          "code": "TENANT_MISSING_DEFAULT_REGION",
+          "audit_severity": "warn",
+          "description": "System-invariant violation — every tenant should have a default. The reconciler will alert; consumers should retry once the invariant is restored."
+        }
+      ]
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "auth:sanctum" },
+    { "middleware": "application::resolve.application" },
+    { "middleware": "user::user.resolve_active_tenant" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "user::user.enforce_tenant_membership" }
+  ]
+}

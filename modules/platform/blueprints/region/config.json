@@ -1,0 +1,113 @@
+{
+  "id": "academorix://modules/region/config",
+  "$version": 1,
+  "title": "region — developer configuration",
+  "configFile": "config/region.php",
+  "envPrefix": "REGION_",
+  "sections": {
+    "provisioning": {
+      "keys": [
+        {
+          "path": "region.provisioning.seed_default_on_tenant_create",
+          "type": "bool",
+          "env": "REGION_SEED_ON_TENANT",
+          "default": true,
+          "description": "When true (default), tenancy::TenantProvisioned dispatches SeedDefaultRegionForTenantJob. Off = the tenant lands without a default Region; callers must create one before any Branch or Membership can be provisioned. Off is only safe in migration harnesses where a bespoke seed handles the invariant."
+        },
+        {
+          "path": "region.provisioning.fallback_country_code",
+          "type": "string",
+          "env": "REGION_FALLBACK_COUNTRY",
+          "default": "US",
+          "description": "ISO 3166-1 alpha-2. Used by SeedDefaultRegionForTenantJob when neither the tenant's registered country nor the billing contact's country resolves to a country present in `data/country-defaults.json`."
+        },
+        {
+          "path": "region.provisioning.async",
+          "type": "bool",
+          "env": "REGION_ASYNC_PROVISION",
+          "default": true,
+          "description": "When true, SeedDefaultRegionForTenantJob is dispatched to a queue. When false, RegionProvisioner runs synchronously in the tenant-provisioning transaction. Sync provisioning is safer (the tenant is never briefly regionless) but slower — the async path is default because tenant onboarding must feel instant."
+        }
+      ]
+    },
+    "reconciliation": {
+      "keys": [
+        {
+          "path": "region.reconciliation.schedule",
+          "type": "string",
+          "env": "REGION_RECONCILE_CRON",
+          "default": "15 3 * * *",
+          "description": "Cron expression for ReconcileDefaultRegionInvariantJob. Daily 03:15 UTC by default."
+        },
+        {
+          "path": "region.reconciliation.alert_on_drift",
+          "type": "bool",
+          "default": true,
+          "description": "When true, drift (a tenant with 0 or 2+ default regions) fires the alert per `config('monitoring.channels.compliance')`. Off = drift is only logged; ops must poll audits."
+        },
+        {
+          "path": "region.reconciliation.auto_heal",
+          "type": "bool",
+          "env": "REGION_AUTO_HEAL",
+          "default": false,
+          "description": "When true, the reconciler heals drift automatically (promote-oldest OR re-seed-from-country_code). Off by default — surface + acknowledge before healing. Turn on in production when ops has built confidence in the drift patterns."
+        }
+      ]
+    },
+    "validation": {
+      "keys": [
+        {
+          "path": "region.validation.require_tax_config_on_create",
+          "type": "bool",
+          "default": false,
+          "description": "When true, POST /api/v1/regions refuses without a fully-formed tax_config. When false (default), the observer auto-fills from country-defaults.json when the caller omits it — tenants get a sensible tax posture out of the box + can refine it later."
+        },
+        {
+          "path": "region.validation.reject_unknown_country_code",
+          "type": "bool",
+          "default": true,
+          "description": "When true (default), Region create refuses when the country_code is not in `data/country-defaults.json`. Set to false to support supranational zones (EU, ASEAN) or exotic markets before their defaults are shipped — the tenant admin then supplies every field explicitly."
+        },
+        {
+          "path": "region.validation.allow_currency_immutable_bypass",
+          "type": "bool",
+          "default": false,
+          "description": "When true, currency changes on a Region-in-use are allowed with an audit + a warning. Off by default — changing currency invalidates historical financial reconciliation. On is a break-glass switch for migration corrections; require ops sign-off + a compliance review."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "region.retention.archived_regions_retention_days",
+          "type": "int",
+          "env": "REGION_ARCHIVE_RETENTION_DAYS",
+          "default": 730,
+          "description": "Days a soft-deleted Region stays in the archived state before PurgeArchivedRegionsJob hard-deletes it. Default 730 (2 years — financial retention). Compliance floor: 365 (1 year). Tenants may EXTEND per the tier matrix (Enterprise up to 2555 = 7 years matching audit retention)."
+        },
+        {
+          "path": "region.retention.audit_row_retention_days",
+          "type": "int",
+          "default": 2555,
+          "description": "Days audit rows produced by this module survive after their source Region is hard-deleted. Default 2555 (7 years — financial retention). Read-only reference — the actual retention is enforced by the audit module's retention policy."
+        }
+      ]
+    },
+    "cache": {
+      "keys": [
+        {
+          "path": "region.cache.default_region_ttl_seconds",
+          "type": "int",
+          "default": 600,
+          "description": "TTL for `rgn:default:{tenant_id}` — the cached default-region lookup used by DefaultRegionResolver on every tenant-plane request that lacks an explicit X-Region-Id header."
+        },
+        {
+          "path": "region.cache.list_ttl_seconds",
+          "type": "int",
+          "default": 300,
+          "description": "TTL for `rgn:list:{tenant_id}` — cached region list used by the tenant admin UI + the X-Region-Id resolver."
+        }
+      ]
+    }
+  }
+}

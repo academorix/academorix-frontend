@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/region/notifications",
+  "$version": 1,
+  "title": "region — notification classes + categories",
+  "namespace": "Academorix\\Region\\Notifications",
+  "notifications": [
+    "RegionCreatedNotification",
+    "RegionPausedNotification",
+    "RegionDefaultChangedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "region.created",
+      "display_name": "Region created",
+      "description": "Sent to tenant admins when a new Region is provisioned in the tenant. Distinct from TenantDefaultRegionSeeded — that path is silent (the very first region is a system-provisioned invariant + would just noise up the inbox during tenant onboarding).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "region.paused",
+      "display_name": "Region paused",
+      "description": "Sent to tenant admins when a Region is paused. Cannot opt out — new bookings blocked from this Region has direct ops impact and admins must know. Includes the reason (when set) + the expected_resume_at timestamp when the admin scheduled one.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "region.default_changed",
+      "display_name": "Default region changed",
+      "description": "Sent to tenant admins when the tenant's default Region flips. Cannot opt out — audit-critical because the default Region determines invoice calculations for legacy rows that lack an explicit region_id. Payload includes both from + to Region names.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

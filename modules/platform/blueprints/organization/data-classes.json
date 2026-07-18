@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/organization/data-classes",
+  "$version": 1,
+  "title": "organization — field classification",
+  "description": "Organization rows are structural metadata about a customer's business — brand names, colors, categories, contact points. Almost no PII. The one PII-adjacent column is `contact_person_name` (a designated org-level contact, typically an employee of the tenant). Every other column is either public (visible to any tenant member) or internal (ops-only). No fields ever cross into `regulated_minor` / `regulated_health` / `regulated_financial` because Organization is above the domain plane where such data lives.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "Organization.name",
+      "Organization.slug",
+      "Organization.short_name",
+      "Organization.description",
+      "Organization.category",
+      "Organization.status",
+      "Organization.is_default",
+      "Organization.sort_order",
+      "Organization.parent_id",
+      "Organization.tree_depth",
+      "Organization.established_date",
+      "Organization.logo_url",
+      "Organization.primary_color",
+      "Organization.secondary_color",
+      "Organization.website_url"
+    ],
+    "internal": [
+      "Organization.id",
+      "Organization.tenant_id",
+      "Organization.tree_path",
+      "Organization.support_email",
+      "Organization.support_phone",
+      "Organization.contact_person_name",
+      "Organization.created_by",
+      "Organization.updated_by",
+      "Organization.deleted_by",
+      "Organization.deleted_at",
+      "Organization.created_at",
+      "Organization.updated_at"
+    ],
+    "confidential": [],
+    "restricted": [],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "audit_log": [
+      "Organization.parent_id",
+      "Organization.is_default",
+      "Organization.status",
+      "Organization.tree_path",
+      "Organization.logo_url",
+      "Organization.primary_color",
+      "Organization.secondary_color"
+    ]
+  },
+  "notes": [
+    "`contact_person_name` is the one PII-adjacent field. It is a role designation (e.g. 'Head of Operations') that names an individual for external correspondence. Under GDPR it is personal data — classified `internal` (not public) so it appears only to authorised tenant members + platform admins. Never exposed to unauthenticated surfaces.",
+    "`support_email` + `support_phone` are legally the tenant's business contact — visible to the tenant's own members + to platform admins under contract. Classified `internal` for consistency with contact_person_name.",
+    "`tree_path` is `internal` because it embeds a chain of internal ULIDs — revealing it publicly would leak the tenant's internal structural size + shape. The wire projection returns `tree_depth` (safe) but NOT `tree_path` (unsafe unless the caller is authenticated to the tenant).",
+    "The `audit_log` list is fields whose changes MUST be captured by `owen-it/laravel-auditing`. Reparent + default-flip + status transition + branding change are compliance-material.",
+    "`sort_order` is public because it directly drives the UI picker order — no confidentiality concern; a competitor knowing that tenant X sorts Elite Sports above Community Sports is a nothingburger."
+  ]
+}

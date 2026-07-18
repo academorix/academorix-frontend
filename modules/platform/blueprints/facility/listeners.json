@@ -1,0 +1,57 @@
+{
+  "id": "academorix://modules/facility/listeners",
+  "$version": 1,
+  "title": "facility — subscribed events",
+  "listeners": [
+    {
+      "event": "branch::BranchArchived",
+      "listener": "Academorix\\Facility\\Listeners\\PreventFacilityOrphansOnBranchArchived",
+      "queue": "facility",
+      "purpose": "Refuses the Branch archive when any facility referencing it still has status='active'. Fires a domain-level refusal event; the branch module surfaces the error as `BRANCH_HAS_ACTIVE_FACILITIES` (409). Distinct from the FK CASCADE — we intentionally block, not cascade, because facility retirement is a deliberate ops decision."
+    },
+    {
+      "event": "facility::FacilityRetired",
+      "listener": "Academorix\\Facility\\Listeners\\CancelFutureBookingsOnFacilityRetired",
+      "queue": "facility",
+      "priority": 50,
+      "purpose": "Cascades: finds every resource_booking with facility_id = event.facility_id AND status IN ('pending','confirmed') AND starts_at > now(), fires BookingCancelled per booking with cascade_trigger='facility_retired'. Runs at priority 50 (before notification-tier listeners) so the notification fan-out sees the cancelled state."
+    },
+    {
+      "event": "facility::FacilityBlackoutAdded",
+      "listener": "Academorix\\Facility\\Listeners\\CancelBookingsInBlackoutWindow",
+      "queue": "facility",
+      "priority": 50,
+      "purpose": "For the new blackout window: finds bookings that overlap, cancels each with cascade_trigger='facility_blackout'. Payload.affected_booking_count is populated by this listener so the audit row + operator dashboard shows impact."
+    },
+    {
+      "event": "facility::BookingCreated",
+      "listener": "Academorix\\Facility\\Listeners\\ScheduleBookingReminders",
+      "queue": "notifications",
+      "purpose": "Schedules SendBookingReminderJob for (booking.starts_at - 24h) and (booking.starts_at - 1h). Skips scheduling when starts_at is already past the reminder threshold (short-notice bookings)."
+    },
+    {
+      "event": "finance::MembershipTerminated",
+      "listener": "Academorix\\Facility\\Listeners\\CascadePassesOnMembershipTerminated",
+      "queue": "facility",
+      "purpose": "Wave 4 bridge. When a Membership is terminated, revoke every associated Pass with revocation_reason='membership_terminated'. Placeholder listener in Wave 2 (Finance module lands in Wave 4)."
+    },
+    {
+      "event": "tenancy::TenantErased",
+      "listener": "Academorix\\Facility\\Listeners\\PurgeFacilityDataForErasedTenant",
+      "queue": "facility",
+      "purpose": "Cascade delete via FK; this listener writes the compliance audit trail entry + emits count metrics (facilities purged, bookings purged, day_passes purged, passes purged). Financial-record retention still applies to the audit rows, which outlive the source rows."
+    },
+    {
+      "event": "region::RegionPaused",
+      "listener": "Academorix\\Facility\\Listeners\\FreezeNewBookingsInRegion",
+      "queue": "facility",
+      "purpose": "When a region is paused, mark every facility in every branch in that region as status='maintenance' (soft-freeze — active bookings survive, new ones refused). Reverses on RegionResumed via ThawNewBookingsInRegion."
+    },
+    {
+      "event": "region::RegionResumed",
+      "listener": "Academorix\\Facility\\Listeners\\ThawNewBookingsInRegion",
+      "queue": "facility",
+      "purpose": "Reverses FreezeNewBookingsInRegion. Only unfreezes facilities that were frozen BY the RegionPaused cascade (checks metadata.frozen_by='region_pause' to avoid unfreezing ones explicitly paused by ops)."
+    }
+  ]
+}

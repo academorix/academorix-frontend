@@ -1,0 +1,183 @@
+{
+  "id": "academorix://modules/branch/settings",
+  "$version": 1,
+  "title": "branch — settings",
+  "description": "Tenant-scoped policy for branch provisioning + geocoding + hours enforcement + capacity + closure notifications. Compliance floors clamp every value where they apply (e.g. minimum notification lead time on closure is set by regional labor-notice law).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "branch",
+      "class": "Academorix\\Branch\\Settings\\BranchSettings",
+      "label": "Branches",
+      "description": "Tenant-wide policy for branch provisioning + operational-hours enforcement + geocoding preferences.",
+      "icon": "building-storefront",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 25,
+      "permission": "branches.viewAny",
+      "sections": [
+        {
+          "label": "Provisioning defaults",
+          "description": "Defaults applied when a new Branch is created.",
+          "icon": "plus-circle",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "seed_default_on_organization_create",
+              "controlType": "toggle",
+              "label": "Auto-create a default branch with each organization",
+              "defaultValue": false,
+              "helpText": "When on, creating a new Organization automatically provisions a default Branch under it. Off by default — most tenants want explicit control.",
+              "sortOrder": 1
+            },
+            {
+              "name": "default_status",
+              "controlType": "select",
+              "label": "Initial status for new branches",
+              "defaultValue": "active",
+              "options": {
+                "active": "Active (default)",
+                "paused": "Paused (requires explicit resume)"
+              },
+              "sortOrder": 2
+            },
+            {
+              "name": "require_address_on_create",
+              "controlType": "toggle",
+              "label": "Require full address on creation",
+              "defaultValue": false,
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Geocoding",
+          "description": "Automatic address→coordinates via a mapping subprocessor. Requires the geocoding entitlement.",
+          "icon": "globe-alt",
+          "sortOrder": 2,
+          "requiresEntitlement": "branch_geocoding",
+          "fields": [
+            {
+              "name": "geocoding_provider",
+              "controlType": "select",
+              "label": "Provider",
+              "defaultValue": "google_maps",
+              "options": {
+                "google_maps": "Google Maps (broad coverage, higher cost)",
+                "mapbox": "Mapbox (developer-friendly, moderate cost)",
+                "openstreetmap": "OpenStreetMap / Nominatim (free, rate-limited, community data)"
+              },
+              "sortOrder": 1
+            },
+            {
+              "name": "geocoding_quality_threshold",
+              "controlType": "slider",
+              "label": "Minimum confidence to accept a geocoded match",
+              "defaultValue": 0.75,
+              "min": 0.5,
+              "max": 1.0,
+              "step": 0.05,
+              "helpText": "Below this, the result is refused + coordinates stay at their prior value.",
+              "sortOrder": 2
+            },
+            {
+              "name": "auto_regeocode_on_address_change",
+              "controlType": "toggle",
+              "label": "Automatically re-geocode when address changes",
+              "defaultValue": true,
+              "helpText": "Off = address edits do not touch coordinates unless the admin explicitly triggers a re-geocode.",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Operating hours",
+          "description": "Defaults for opening_hours + enforcement policy.",
+          "icon": "clock",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "default_opening",
+              "controlType": "time",
+              "label": "Default opening time",
+              "defaultValue": "09:00",
+              "sortOrder": 1
+            },
+            {
+              "name": "default_closing",
+              "controlType": "time",
+              "label": "Default closing time",
+              "defaultValue": "18:00",
+              "sortOrder": 2
+            },
+            {
+              "name": "default_weekend_closed",
+              "controlType": "toggle",
+              "label": "Weekend closed by default",
+              "defaultValue": false,
+              "sortOrder": 3
+            },
+            {
+              "name": "enforce_operating_hours",
+              "controlType": "toggle",
+              "label": "Refuse bookings outside opening hours",
+              "defaultValue": true,
+              "helpText": "When on, booking-adjacent write routes refuse with 403 outside the branch's opening_hours + exceptions.",
+              "sortOrder": 4
+            }
+          ]
+        },
+        {
+          "label": "Capacity",
+          "description": "Fire-safety cap enforcement.",
+          "icon": "users",
+          "sortOrder": 4,
+          "requiresEntitlement": "branch_capacity_gating",
+          "fields": [
+            {
+              "name": "capacity_gating_enabled",
+              "controlType": "toggle",
+              "label": "Enforce capacity on bookings",
+              "defaultValue": false,
+              "helpText": "When on, booking-adjacent routes refuse when the branch's fire-safety cap would be exceeded. Off = capacity is display-only.",
+              "sortOrder": 1
+            }
+          ]
+        },
+        {
+          "label": "Closure notifications",
+          "description": "Who gets notified when a branch closes.",
+          "icon": "bell-alert",
+          "sortOrder": 5,
+          "fields": [
+            {
+              "name": "notify_all_staff_on_closure",
+              "controlType": "toggle",
+              "label": "Notify every staff member assigned to the branch",
+              "defaultValue": true,
+              "sortOrder": 1
+            },
+            {
+              "name": "notify_members_on_closure",
+              "controlType": "toggle",
+              "label": "Notify members with active memberships",
+              "defaultValue": true,
+              "sortOrder": 2
+            },
+            {
+              "name": "closure_notice_days",
+              "controlType": "number",
+              "label": "Minimum days between closure decision and closed_date",
+              "defaultValue": 7,
+              "min": 0,
+              "max": 90,
+              "helpText": "Regional labor-notice laws may force this higher. When the value is 0, closure is immediate.",
+              "sortOrder": 3
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

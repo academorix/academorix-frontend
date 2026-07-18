@@ -1,0 +1,327 @@
+{
+  "id": "organization.resources.organization.create",
+  "title": "New organization",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/settings/organizations/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {
+    "module": "organization",
+    "entity": "organization",
+    "action": "create"
+  },
+  "requiresPermission": "organizations.create.tenant",
+  "notes": [
+    "Branding-fields section is conditionally hidden when the tenant lacks `organization_branding` entitlement.",
+    "Parent selector is conditionally hidden when the tenant lacks `organization_hierarchy` entitlement.",
+    "Parent selector uses HeroUI `ComboBox` (per the ui-components rule — searchable single-select is essential when a tenant has many orgs)."
+  ],
+  "dataSources": [
+    {
+      "name": "candidateParents",
+      "kind": "http.get",
+      "url": "/api/v1/organizations?filter[status]=active",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    },
+    {
+      "name": "entitlements",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements?keys=organization_hierarchy,organization_branding,organization_slot",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-1" },
+          "children": [
+            {
+              "kind": "Breadcrumbs",
+              "items": [
+                { "label": "Organizations", "to": "/settings/organizations" },
+                { "label": "New", "to": null }
+              ]
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "New organization"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "onSubmit": {
+              "kind": "http.post",
+              "url": "/api/v1/organizations",
+              "onSuccess": {
+                "kind": "navigate",
+                "toExpr": "'/settings/organizations/' + response.data.id"
+              }
+            }
+          },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Identity"
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "name",
+                    "label": "Name",
+                    "required": true,
+                    "maxLength": 128,
+                    "helpText": "Display name shown throughout the app."
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "slug",
+                    "label": "URL slug",
+                    "required": true,
+                    "maxLength": 64,
+                    "helpText": "Lowercase, alphanumeric + hyphen. Must be unique within the tenant. Regex: ^[a-z][a-z0-9-]*[a-z0-9]$."
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "short_name",
+                    "label": "Short name",
+                    "maxLength": 32,
+                    "helpText": "Optional. Used in compact UI slots (e.g. 'Elite' for 'Elite Sports Academy')."
+                  }
+                },
+                {
+                  "kind": "Select",
+                  "props": {
+                    "name": "category",
+                    "label": "Category",
+                    "required": true,
+                    "defaultValue": "mixed"
+                  },
+                  "options": [
+                    { "key": "sports_academy", "label": "Sports academy" },
+                    { "key": "sports_center", "label": "Sports center" },
+                    { "key": "school", "label": "School" },
+                    { "key": "gym", "label": "Gym" },
+                    { "key": "federation", "label": "Federation" },
+                    { "key": "club", "label": "Club" },
+                    { "key": "mixed", "label": "Mixed" }
+                  ]
+                },
+                {
+                  "kind": "TextArea",
+                  "props": {
+                    "name": "description",
+                    "label": "Description",
+                    "helpText": "Optional. Long-form public description. Writes gated by branding entitlement."
+                  },
+                  "bindings": {
+                    "hidden": { "$expr": "!entitlements.organization_branding" }
+                  }
+                },
+                {
+                  "kind": "DateField",
+                  "props": {
+                    "name": "established_date",
+                    "label": "Established date",
+                    "helpText": "Optional. When this organization was founded (not when this row was created)."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "bindings": {
+                "hidden": { "$expr": "!entitlements.organization_hierarchy" }
+              },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Hierarchy"
+                  }
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": {
+                    "name": "parent_id",
+                    "label": "Parent organization",
+                    "menuTrigger": "focus",
+                    "clearable": true,
+                    "placeholder": "Root (no parent)"
+                  },
+                  "bindings": { "items": { "$ref": "candidateParents" } },
+                  "itemRenderer": {
+                    "kind": "ListBoxItem",
+                    "propsExpr": "{ key: item.id, id: item.id, textValue: item.name }",
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "bindings": { "children": { "$ref": "item.name" } }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted" },
+                        "bindings": {
+                          "children": {
+                            "$expr": "'depth ' + item.tree_depth + ' · ' + item.category"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "bindings": {
+                "hidden": { "$expr": "!entitlements.organization_branding" }
+              },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Branding"
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "logo_url",
+                    "label": "Logo URL",
+                    "type": "url",
+                    "maxLength": 512
+                  }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "grid grid-cols-2 gap-4" },
+                  "children": [
+                    {
+                      "kind": "ColorField",
+                      "props": {
+                        "name": "primary_color",
+                        "label": "Primary color",
+                        "helpText": "Hex #RRGGBB."
+                      }
+                    },
+                    {
+                      "kind": "ColorField",
+                      "props": {
+                        "name": "secondary_color",
+                        "label": "Secondary color"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-medium",
+                    "children": "Contact"
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "contact_person_name",
+                    "label": "Contact person name",
+                    "maxLength": 128
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "support_email",
+                    "label": "Support email",
+                    "type": "email",
+                    "maxLength": 254
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "support_phone",
+                    "label": "Support phone",
+                    "helpText": "E.164 format: +CC then digits (e.g. +14155551234)."
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "website_url",
+                    "label": "Website URL",
+                    "type": "url",
+                    "maxLength": 512
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-end gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "ghost",
+                    "children": "Cancel"
+                  },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/settings/organizations" }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "type": "submit",
+                    "children": "Create organization"
+                  },
+                  "bindings": { "disabled": { "$ref": "entitlements.organization_slot.is_exceeded" } }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

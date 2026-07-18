@@ -1,0 +1,60 @@
+{
+  "id": "branch.is-open-chip",
+  "title": "Branch is-open chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for the branch's live open/closed state. Respects both `status` (active/paused/closed) AND `is_open_now` (opening_hours + exceptions evaluated in branch.region.timezone). Consumed by the branch list, map view, hours editor, and edit screen.",
+  "props": {
+    "status": {
+      "type": "string",
+      "required": true,
+      "enum": ["active", "paused", "closed"]
+    },
+    "isOpenNow": {
+      "type": "boolean",
+      "required": true,
+      "description": "The evaluated is-open-now signal (respects opening_hours + exceptions). Ignored when status != 'active' — a paused/closed branch is always shown as closed."
+    },
+    "nextTransitionAt": {
+      "type": "string",
+      "default": null,
+      "description": "Optional ISO-8601 timestamp of the next open/close transition. Rendered as a subtitle when present (e.g. 'Closes at 22:00')."
+    },
+    "size": { "type": "string", "default": "xs", "enum": ["xs", "sm", "md"] },
+    "showLabel": { "type": "boolean", "default": true, "description": "When false, renders only the coloured indicator dot without text." }
+  },
+  "nodes": [
+    {
+      "id": "chip",
+      "kind": "Chip",
+      "bindings": {
+        "props": {
+          "size": { "$ref": "props.size" },
+          "variant": {
+            "$expr": "props.status === 'closed' ? 'neutral' : (props.status === 'paused' ? 'warning' : (props.isOpenNow ? 'success' : 'danger'))"
+          },
+          "leadingIcon": {
+            "$expr": "props.status === 'closed' ? 'x-circle' : (props.status === 'paused' ? 'pause-circle' : (props.isOpenNow ? 'check-circle' : 'moon'))"
+          },
+          "children": {
+            "$expr": "!props.showLabel ? '' : (props.status === 'closed' ? 'Closed permanently' : (props.status === 'paused' ? 'Paused' : (props.isOpenNow ? 'Open now' : 'Closed')))"
+          }
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs text-muted ml-1" },
+          "bindings": {
+            "hidden": {
+              "$expr": "!props.showLabel || !props.nextTransitionAt || props.status !== 'active'"
+            },
+            "children": {
+              "$expr": "props.isOpenNow ? ('· Closes at ' + formatTime(props.nextTransitionAt)) : ('· Opens at ' + formatTime(props.nextTransitionAt))"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

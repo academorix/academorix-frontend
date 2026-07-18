@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/organization/commands",
+  "$version": 1,
+  "title": "organization — Artisan commands",
+  "commands": [
+    {
+      "signature": "organization:list {--tenant=} {--parent=} {--depth=} {--status=}",
+      "class": "Academorix\\Organization\\Console\\Commands\\ListCommand",
+      "purpose": "List Organizations for one tenant. --parent=<id> narrows to direct children of that parent; --parent=null narrows to root nodes. --depth caps the walk. Renders as an indented tree by default; --format=json emits machine-readable output."
+    },
+    {
+      "signature": "organization:describe {organization}",
+      "class": "Academorix\\Organization\\Console\\Commands\\DescribeCommand",
+      "purpose": "Print full detail for one Organization including ancestors (root-to-self), direct children, all descendants, referencing branches, and referencing teams. Used by support to diagnose scoping issues."
+    },
+    {
+      "signature": "organization:create {tenant} {name} {--parent=} {--slug=} {--category=} {--short-name=} {--make-default}",
+      "class": "Academorix\\Organization\\Console\\Commands\\CreateCommand",
+      "purpose": "CLI create bypassing the API. Applies every observer + rule. Consumes organization_slot. --make-default demotes the tenant's current default in the same transaction."
+    },
+    {
+      "signature": "organization:reparent {organization} {new_parent?} {--reason=}",
+      "class": "Academorix\\Organization\\Console\\Commands\\ReparentCommand",
+      "purpose": "Move an Organization under a new parent (or to root when new_parent omitted). Refused on cross-tenant / cycle / depth-cap violation. --reason feeds the audit row. Dispatches RebuildTreePathsJob synchronously for CLI-callers so the exit code reflects the tree update result."
+    },
+    {
+      "signature": "organization:set-default {organization} {--reason=}",
+      "class": "Academorix\\Organization\\Console\\Commands\\SetDefaultCommand",
+      "purpose": "Flip is_default=true on the target row + auto-demote the current default. Fires OrganizationDefaultChanged."
+    },
+    {
+      "signature": "organization:tree {tenant} {--format=indent}",
+      "class": "Academorix\\Organization\\Console\\Commands\\TreeCommand",
+      "purpose": "Visual tree render. --format={indent,ascii,dot}. `dot` output pipes into Graphviz for org-chart PDFs."
+    },
+    {
+      "signature": "organization:pause {organization} {--reason=}",
+      "class": "Academorix\\Organization\\Console\\Commands\\PauseCommand",
+      "purpose": "Transition status → paused. Refused when is_default=true. Emits OrganizationStatusChanged."
+    },
+    {
+      "signature": "organization:resume {organization}",
+      "class": "Academorix\\Organization\\Console\\Commands\\ResumeCommand",
+      "purpose": "Transition status → active. Only valid from paused."
+    },
+    {
+      "signature": "organization:archive {organization} {--reason=}",
+      "class": "Academorix\\Organization\\Console\\Commands\\ArchiveCommand",
+      "purpose": "Transition status → archived + soft-delete. Refused when is_default=true, when descendants exist, or when branches reference this org. Releases the organization_slot entitlement."
+    },
+    {
+      "signature": "organization:rebuild-tree-paths {--tenant=} {--organization=} {--dry-run}",
+      "class": "Academorix\\Organization\\Console\\Commands\\RebuildTreePathsCommand",
+      "purpose": "Force RebuildTreePathsJob to walk + recompute tree_path for a subtree (or the whole tenant). Support tool for suspected tree drift. --dry-run prints planned changes without writing."
+    },
+    {
+      "signature": "organization:reconcile-defaults {--tenant=} {--dry-run}",
+      "class": "Academorix\\Organization\\Console\\Commands\\ReconcileDefaultsCommand",
+      "purpose": "Sweep every tenant (or the given one) for the is_default invariant. Zero defaults → promote the oldest active row; multiple defaults → keep the oldest, demote the rest. --dry-run lists violations."
+    }
+  ]
+}

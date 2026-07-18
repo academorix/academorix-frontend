@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/region/broadcasts",
+  "$version": 1,
+  "title": "region — realtime broadcasts",
+  "description": "The region module does NOT broadcast on realtime channels directly. Region mutations fire domain events (see `events.json`) which downstream modules (notifications, activity, branch) may republish over their own broadcast channels — but this module ships zero channels of its own. Broadcast surfaces belong to the domain that owns the read side (branch UI for the region-picker, activity feed for the audit trail), not the write side.",
+  "channels": [],
+  "notes": [
+    "If the SPA needs live updates when a Region is paused (blocking new bookings), it subscribes to `tenant.{id}.lifecycle` — that channel is owned by the tenancy module.",
+    "If the SPA needs to react to the default-region flip (invoice preview UI needs the new default's tax_config), it subscribes to the standard settings-changed channel + the region-scoped cache-invalidation broadcast the settings module already ships.",
+    "The Branch module (Wave 2b) will ship a broadcast channel for region-picker updates — but that channel lives with Branch, not here, because Branch owns the read UI + the SPA subscription lifecycle."
+  ]
+}

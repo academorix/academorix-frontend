@@ -1,0 +1,89 @@
+{
+  "id": "academorix://modules/branch/analytics",
+  "$version": 1,
+  "title": "branch — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Branch Created",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "organization_id", "region_id", "country_code", "is_default", "created_via"],
+      "description": "New Branch provisioned. `created_via`: admin-ui / import / cli / provisioning-api."
+    },
+    {
+      "name": "Branch Closed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "branch_id", "reason_kind", "successor_designated", "days_since_created"],
+      "description": "reason_kind: relocation / consolidation / lease-ended / underperformance / other. Free-form reason text is NOT included — internal-tier."
+    },
+    {
+      "name": "Branch Reopened",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "branch_id", "days_closed"]
+    },
+    {
+      "name": "Branch Paused",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "reason_kind", "auto_resume_scheduled"]
+    },
+    {
+      "name": "Branch Default Changed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "organization_id", "changed_via"],
+      "description": "`changed_via`: admin-ui / cli / auto-reconcile (drift correction)."
+    },
+    {
+      "name": "Branch Opening Hours Changed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "days_touched_count", "has_multi_period", "has_exceptions"],
+      "description": "Feeds the schedule-management funnel dashboard."
+    },
+    {
+      "name": "Branch Address Changed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "changed_fields_count", "triggered_geocode"],
+      "description": "`changed_fields_count` only — actual field names would leak intent."
+    },
+    {
+      "name": "Branch Coordinates Updated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "source"],
+      "description": "`source`: manual / geocoded / imported. Feeds the map-usage dashboard."
+    },
+    {
+      "name": "Branch Capacity Changed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "from_capacity_bucket", "to_capacity_bucket"],
+      "description": "Bucketed (null / <=50 / 51-200 / 201-500 / 501+) rather than exact — exact capacity reveals venue size which is competitive-intel."
+    },
+    {
+      "name": "Branch Geocoded",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "outcome", "confidence_bucket"],
+      "description": "outcome: success / low_quality / failed / unavailable. confidence_bucket: high (>=0.9) / medium (0.75-0.9) / low (<0.75)."
+    },
+    {
+      "name": "Branch Force Closed by Platform",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "branch_id", "reason_kind"],
+      "description": "Support-tier action. Every use writes to activity log AND analytics for post-incident review."
+    }
+  ],
+  "notes": [
+    "No PII in any Branch analytics event — Branch carries no personal data.",
+    "Reason free-form text is NEVER a Segment property — kept internal-tier in the audit trail.",
+    "`Coordinates` values (lat/lng) are NEVER a Segment property — competitive intelligence risk. Only `source` is exposed."
+  ]
+}

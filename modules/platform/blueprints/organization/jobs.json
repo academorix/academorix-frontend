@@ -1,0 +1,79 @@
+{
+  "id": "academorix://modules/organization/jobs",
+  "$version": 1,
+  "title": "organization — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Organization\\Jobs\\SeedDefaultOrganizationForTenantJob",
+      "queue": "notifications",
+      "purpose": "Create the tenant's is_default=true Organization on tenancy::TenantProvisioned. Runs once per tenant. Idempotent: no-op when a default already exists.",
+      "steps": [
+        "Guard: fail-fast if the tenant already has an is_default=true row (idempotent re-dispatch safety).",
+        "Read tenant.name + tenant.business_type.",
+        "Infer category via config('organization.provisioning.category_map').",
+        "INSERT organizations row: name=<tenant.name>, slug='default' (via reserved-slug bypass), is_default=true, parent_id=null, category=<inferred>, status=active, sort_order=0.",
+        "Consume 1 unit of organization_slot entitlement.",
+        "Fire OrganizationCreated (was_seeded=true) + TenantDefaultOrganizationSeeded."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "tenant_id",
+      "tries": 5,
+      "backoff": [10, 30, 60, 300, 900]
+    },
+    {
+      "class": "Academorix\\Organization\\Jobs\\RebuildTreePathsJob",
+      "queue": "notifications-critical",
+      "purpose": "After a parent_id change on an Organization, walk the moved subtree BFS + recompute tree_path + tree_depth for every descendant. Blocks the tree cache invalidation until completion.",
+      "steps": [
+        "Load the moved Organization + its new tree_path (already updated in the reparent transaction by the observer).",
+        "Enumerate every descendant via `WHERE tree_path LIKE '.<old_prefix>.%'` (querying against the OLD tree_path snapshot captured in the event payload).",
+        "For each descendant: compute new tree_path = <moved_new_prefix>.<descendant_old_suffix>. Also update tree_depth = count(tree_path splits) - 2 (accounts for sentinel dots).",
+        "Batch-update in chunks of 100 rows within a single transaction per chunk (avoids holding row-locks on the whole subtree).",
+        "Invalidate the tag 'organization-tree' on the affected tenant.",
+        "Fire an internal `RebuildTreePathsJobCompleted` event so downstream caches (branch scope, teams scope) can refresh."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "moved_organization_id",
+      "tries": 3,
+      "backoff": [5, 30, 120],
+      "notes": [
+        "Uniqueness prevents duplicate concurrent rebuilds for the same node — a rapid reparent-then-revert would otherwise fire two overlapping jobs.",
+        "Rebuild is idempotent: rerunning against the same node produces identical output."
+      ]
+    },
+    {
+      "class": "Academorix\\Organization\\Jobs\\ReconcileDefaultOrganizationInvariantJob",
+      "queue": "notifications",
+      "purpose": "Nightly sweep. Verifies EXACTLY ONE is_default=true row per tenant. Repairs drift when config('organization.reconciliation.repair_mode')='auto'; escalates otherwise.",
+      "steps": [
+        "SELECT tenant_id, COUNT(*) FILTER (WHERE is_default=true) FROM organizations GROUP BY tenant_id HAVING COUNT(*) != 1.",
+        "For each violating tenant, decide the resolution: zero defaults → promote the oldest active row (or dispatch SeedDefaultOrganizationForTenantJob when zero rows exist); multiple defaults → keep the oldest is_default=true row, demote the rest.",
+        "Fire OrganizationDefaultChanged(source='reconciler') for every repair.",
+        "Emit the `academorix.organization.default_invariant.violations` counter with the tenant_id label pattern for observability."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 43200,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Organization\\Jobs\\PurgeArchivedOrganizationsJob",
+      "queue": "notifications",
+      "purpose": "Daily. Hard-delete archived Organizations past the 730-day hold window IF no descendants + no branch references remain.",
+      "steps": [
+        "SELECT id, tenant_id FROM organizations WHERE deleted_at < NOW() - INTERVAL '730 days'.",
+        "For each candidate: verify (a) no descendants (JOIN organizations children ON children.parent_id = id — zero rows required), (b) no branches referencing (JOIN branches ON branches.organization_id = id — zero rows required).",
+        "When both checks pass: hard-delete + fire OrganizationDeleted with the terminal-purge payload.",
+        "When either check fails: leave the row archived (retention held for another sweep) + emit `academorix.organization.purge_blocked` metric with reason label."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    }
+  ]
+}

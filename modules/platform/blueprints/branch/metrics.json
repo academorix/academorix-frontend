@@ -1,0 +1,117 @@
+{
+  "id": "academorix://modules/branch/metrics",
+  "$version": 1,
+  "title": "branch — OpenTelemetry metrics",
+  "instrumentation": "self via telemetry",
+  "namespace": "academorix.branch",
+  "labelConventions": {
+    "always": [],
+    "commonlyAvailable": ["status", "provider", "outcome", "country_code"],
+    "forbiddenAsLabels": ["tenant_id", "branch_id", "organization_id", "region_id"]
+  },
+  "metrics": [
+    {
+      "name": "academorix.branch.created.total",
+      "kind": "counter",
+      "unit": "branches",
+      "labels": ["country_code"],
+      "description": "New Branches provisioned. `country_code` bucketed to the Branch's address.country_code."
+    },
+    {
+      "name": "academorix.branch.closed.total",
+      "kind": "counter",
+      "unit": "branches",
+      "labels": ["reason_kind"],
+      "description": "reason_kind: relocation / consolidation / lease-ended / underperformance / other. Free-form reason text is NOT a label."
+    },
+    {
+      "name": "academorix.branch.status.total",
+      "kind": "counter",
+      "unit": "transitions",
+      "labels": ["from_status", "to_status"],
+      "description": "Every status transition. Feeds the lifecycle dashboard."
+    },
+    {
+      "name": "academorix.branch.active.count",
+      "kind": "gauge",
+      "unit": "branches",
+      "labels": ["status"],
+      "description": "Point-in-time count per status. Populated hourly by the metrics-snapshot task."
+    },
+    {
+      "name": "academorix.branch.geocode.total",
+      "kind": "counter",
+      "unit": "requests",
+      "labels": ["provider", "outcome"],
+      "description": "outcome: success / low_quality / failed / rate_limited / unavailable."
+    },
+    {
+      "name": "academorix.branch.geocode.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [50, 200, 1000, 3000, 10000],
+      "labels": ["provider"],
+      "description": "Subprocessor call latency. P95 target < 3s (nominatim policy allows up to 10s)."
+    },
+    {
+      "name": "academorix.branch.geocode.confidence",
+      "kind": "histogram",
+      "unit": "confidence",
+      "buckets": [0.5, 0.7, 0.8, 0.9, 0.95, 0.99],
+      "labels": ["provider"],
+      "description": "Distribution of provider-reported confidence scores. Low tail signals input-quality issues (vague addresses)."
+    },
+    {
+      "name": "academorix.branch.reconcile.corrections",
+      "kind": "counter",
+      "unit": "corrections",
+      "labels": ["correction_kind"],
+      "description": "Number of default-branch invariant corrections applied per reconcile run. correction_kind: no_default_promoted / multi_default_demoted. Sustained non-zero indicates the observer + partial unique index are being bypassed (concerning)."
+    },
+    {
+      "name": "academorix.branch.default_branch_resolve.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [0.1, 0.5, 2, 10, 50],
+      "labels": [],
+      "description": "`DefaultBranchResolver` resolution latency. Should be dominated by the Redis cache hit path."
+    },
+    {
+      "name": "academorix.branch.is_open.total",
+      "kind": "counter",
+      "unit": "checks",
+      "labels": ["outcome"],
+      "description": "outcome: open / closed_hours / closed_status / paused_status. Feeds the map view usage dashboard."
+    },
+    {
+      "name": "academorix.branch.opening_hours.days_touched",
+      "kind": "histogram",
+      "unit": "days",
+      "buckets": [1, 2, 3, 5, 7],
+      "labels": [],
+      "description": "How many day-keys were touched per opening_hours edit. Feeds the schedule-management analytics — long tail signals bulk edits (a whole-week rewrite vs an exception-day tweak)."
+    },
+    {
+      "name": "academorix.branch.capacity_gate.total",
+      "kind": "counter",
+      "unit": "checks",
+      "labels": ["outcome"],
+      "description": "outcome: permitted / refused_capacity. Fires from `CapacityGate::allowsAdditional()` — populated only when the tenant has `branch_capacity_gating` on."
+    },
+    {
+      "name": "academorix.branch.closure_notification.fanout_size",
+      "kind": "histogram",
+      "unit": "recipients",
+      "buckets": [1, 10, 50, 200, 1000, 5000],
+      "labels": [],
+      "description": "Number of recipients per BranchClosedNotification fanout. Fires from `NotifyStaffOfBranchClosureJob`. Long tail signals large chain-gym closures — the ops team pre-alerts these."
+    },
+    {
+      "name": "academorix.branch.slot_usage",
+      "kind": "gauge",
+      "unit": "ratio",
+      "labels": [],
+      "description": "Point-in-time `active_branches / branch_slot_cap` per tenant. Populated hourly. Feeds the entitlement-upgrade-nudge dashboard for tenants approaching the cap."
+    }
+  ]
+}

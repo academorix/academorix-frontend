@@ -1,0 +1,255 @@
+{
+  "id": "academorix://modules/branch/errors",
+  "$version": 1,
+  "title": "branch — error codes",
+  "namespace": "branch",
+  "errors": [
+    {
+      "code": "BRANCH_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_not_found"
+    },
+    {
+      "code": "BRANCH_ORGANIZATION_TENANT_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "branch.errors.branch_organization_tenant_mismatch",
+      "description": "Attempted to create a Branch under an Organization belonging to a different tenant. Warn-level because a mismatch is a security signal (forged `organization_id` from a caller with cross-tenant visibility)."
+    },
+    {
+      "code": "BRANCH_REGION_TENANT_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "branch.errors.branch_region_tenant_mismatch",
+      "description": "Same as above for Region. Same security-signal severity."
+    },
+    {
+      "code": "BRANCH_ORGANIZATION_ARCHIVED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_organization_archived",
+      "description": "Attempted to create a Branch under an Organization with status='archived'. Response asks the caller to unarchive the org first OR pick another."
+    },
+    {
+      "code": "BRANCH_REGION_ARCHIVED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_region_archived"
+    },
+    {
+      "code": "BRANCH_ORGANIZATION_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_organization_immutable",
+      "description": "Attempted to change `organization_id` on an existing Branch. Immutable post-create — see readme §1.3. Response asks the caller to create a fresh Branch under the new org and close the old one."
+    },
+    {
+      "code": "BRANCH_REGION_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_region_immutable",
+      "description": "Attempted to change `region_id`. Immutable — tax + currency + timezone implications. Same guidance as BRANCH_ORGANIZATION_IMMUTABLE."
+    },
+    {
+      "code": "BRANCH_TENANT_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "branch.errors.branch_tenant_immutable",
+      "description": "Attempted to change `tenant_id`. Never permitted — tenancy isolation violation. Warn-level because a tenant_id write attempt from a non-platform-admin path is a security signal."
+    },
+    {
+      "code": "BRANCH_SLUG_TAKEN",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_slug_taken",
+      "description": "Composite unique (tenant_id, organization_id, slug) violated. Response includes a suggested variant slug."
+    },
+    {
+      "code": "BRANCH_SLOT_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_slot_quota_exceeded",
+      "description": "Reached the `branch_slot` entitlement cap (Small=3, Medium=25, Enterprise=null). Response includes upgrade path + current slot usage count."
+    },
+    {
+      "code": "BRANCH_LAST_DEFAULT",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_last_default",
+      "description": "Attempted to unset is_default=true when no other Branch under the same (tenant, org) is default. Response asks the caller to promote another Branch first."
+    },
+    {
+      "code": "BRANCH_IN_USE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_in_use",
+      "description": "Attempted to close a Branch with active downstream references (teams, facilities, sessions, bookings, memberships). Response includes the dependent-row counts + a link to reassign them."
+    },
+    {
+      "code": "BRANCH_SUCCESSOR_EXISTS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_successor_exists",
+      "description": "Attempted to reopen a closed Branch after a successor Branch was created under the same (tenant, organization) post-close. Response identifies the successor Branch's ULID + created_at."
+    },
+    {
+      "code": "BRANCH_ALREADY_CLOSED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_already_closed"
+    },
+    {
+      "code": "BRANCH_ALREADY_ACTIVE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_already_active"
+    },
+    {
+      "code": "BRANCH_ALREADY_PAUSED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_already_paused"
+    },
+    {
+      "code": "BRANCH_INVALID_OPENING_HOURS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_invalid_opening_hours",
+      "description": "opening_hours JSON failed the `valid_opening_hours` rule. Response identifies the offending day / period / field (e.g. `sunday[0].close before open`)."
+    },
+    {
+      "code": "BRANCH_INVALID_ADDRESS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_invalid_address",
+      "description": "address JSON failed the `valid_address_structure` rule. Response identifies the missing required field (line1 / city / country_code)."
+    },
+    {
+      "code": "BRANCH_INVALID_COORDINATES",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_invalid_coordinates",
+      "description": "coordinates JSON failed the `valid_coordinates` rule. Common causes: lat outside [-90, 90], lng outside [-180, 180], accuracy_m <= 0, unknown source value."
+    },
+    {
+      "code": "BRANCH_MULTI_PERIOD_HOURS_UNAVAILABLE",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_multi_period_hours_unavailable",
+      "description": "Attempted to submit opening_hours with > 1 period per day-key on a tenant lacking the `branch_multi_period_hours` entitlement. Response includes upgrade path."
+    },
+    {
+      "code": "BRANCH_AMENITY_UNKNOWN",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_amenity_unknown",
+      "description": "Submitted amenity tag is not in the platform catalogue AND tenant lacks `branch_amenities: custom` (Enterprise). Response includes the offending tag(s) + a link to the catalogue reference."
+    },
+    {
+      "code": "BRANCH_GEOCODING_UNAVAILABLE",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_geocoding_unavailable",
+      "description": "Attempted `POST /branches/{branch}/geocode` on a tenant lacking the `branch_geocoding` entitlement. Response includes upgrade path."
+    },
+    {
+      "code": "BRANCH_GEOCODING_FAILED",
+      "http": 502,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "branch.errors.branch_geocoding_failed",
+      "description": "Subprocessor returned an error or no result. Retryable — the job retries 3× with backoff before surfacing. `warn` severity because sustained failures often indicate the subprocessor API key rotated / quota exhausted."
+    },
+    {
+      "code": "BRANCH_GEOCODING_LOW_QUALITY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_geocoding_low_quality",
+      "description": "Subprocessor returned a match with confidence < `branch.geocoding.quality_threshold`. Coordinates not persisted; falls back to `manual` mode. Common cause: address too vague (missing city or postal code)."
+    },
+    {
+      "code": "BRANCH_CLOSED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_closed",
+      "description": "Write attempted against a Branch with status=closed. Returned by `branch.resolve_active` middleware on booking-adjacent routes."
+    },
+    {
+      "code": "BRANCH_PAUSED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_paused",
+      "description": "Write attempted against a Branch with status=paused. Returned by `branch.resolve_active` middleware on booking-adjacent routes; reads pass through."
+    },
+    {
+      "code": "BRANCH_OUTSIDE_OPERATING_HOURS",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_outside_operating_hours",
+      "description": "Booking-adjacent write attempted outside the resolved open window (per branch.region.timezone + opening_hours + exceptions). Returned by `branch.enforce_operating_hours`. Response includes the next-open timestamp."
+    },
+    {
+      "code": "BRANCH_PUBLIC_DELETE_FORBIDDEN",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "branch.errors.branch_public_delete_forbidden",
+      "description": "Attempted DELETE `/branches/{branch}`. Wave 2 has no public hard-delete — close is terminal. Response guides the caller to `POST /branches/{branch}/close`."
+    }
+  ]
+}

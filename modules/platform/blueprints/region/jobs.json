@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/region/jobs",
+  "$version": 1,
+  "title": "region — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Region\\Jobs\\SeedDefaultRegionForTenantJob",
+      "queue": "notifications",
+      "purpose": "Dispatched on tenancy::TenantProvisioned. Creates the tenant's default Region using the tenant's registered country_code (from tenant.registration_country or the primary billing contact's country). Idempotent — a second dispatch for the same tenant no-ops.",
+      "steps": [
+        "Resolve tenant + verify no existing Region row (idempotency check by (tenant_id) with `is_default=true`).",
+        "Resolve country_code — try tenant.registration_country first, then billing contact's country, fall back to `config('region.provisioning.fallback_country_code')` (default 'US').",
+        "Look up country defaults in data/country-defaults.json → { currency, timezone, locale, rtl, weekend_days, tax_config }.",
+        "Invoke RegionProvisioner with { tenant, country_code, currency, timezone, locale, weekend_days, tax_config, is_default=true, name=country_defaults.name, slug=Str::slug(country_defaults.name) }.",
+        "Fire TenantDefaultRegionSeeded with seeded_by='tenant_provisioning'.",
+        "Do NOT consume a region_slot entitlement — the default region is a system-provisioned invariant, not a tenant purchase."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "(tenant_id)",
+      "tries": 5,
+      "backoff": [10, 60, 300, 1200, 3600],
+      "note": "Runs on the notifications queue because it's part of the tenant-onboarding path — its latency is user-visible."
+    },
+    {
+      "class": "Academorix\\Region\\Jobs\\ReconcileDefaultRegionInvariantJob",
+      "queue": "low",
+      "purpose": "Daily nightly at 03:15 UTC. Verifies the invariant `every tenant has exactly one Region row with is_default=true`. Alerts on drift; when configured, auto-heals by re-seeding a default (via SeedDefaultRegionForTenantJob) OR promoting the oldest active Region to default.",
+      "steps": [
+        "SELECT tenant_id, COUNT(*) FILTER (WHERE is_default=true) AS default_count FROM regions WHERE deleted_at IS NULL GROUP BY tenant_id HAVING default_count != 1.",
+        "For each drifted row: log a telemetry counter + fire the alert per `config('region.reconciliation.alert_on_drift')`.",
+        "When `config('region.reconciliation.auto_heal')` = true:",
+        "  a. default_count = 0 AND >= 1 active region exists → promote the oldest active Region to is_default=true.",
+        "  b. default_count = 0 AND no active region exists → dispatch SeedDefaultRegionForTenantJob to provision a fresh one from the tenant's country_code.",
+        "  c. default_count > 1 → keep the newest is_default row; flip the older ones to is_default=false. Fire RegionDefaultChanged for each demotion.",
+        "Write a reconciliation report row to `audit_events`."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2,
+      "note": "Off by default in staging; on in production. Auto-heal is off by default even in production — surface + acknowledge before healing."
+    },
+    {
+      "class": "Academorix\\Region\\Jobs\\PurgeArchivedRegionsJob",
+      "queue": "low",
+      "purpose": "Daily at 04:15 UTC. Hard-deletes soft-deleted (archived) Region rows past `region.retention.archived_regions_retention_days` (default 730 days — 2 years for financial retention) IF no inbound FK row still references them.",
+      "steps": [
+        "SELECT id, tenant_id FROM regions WHERE deleted_at IS NOT NULL AND deleted_at < NOW() - INTERVAL 'region.retention.archived_regions_retention_days days'.",
+        "For each: verify NO inbound row references the Region (branch.region_id, finance.membership.region_id, finance.transaction.region_id, finance.invoice.region_id). If any references remain, SKIP + log — the row survives another day.",
+        "When clear: hard-delete the row + fire RegionDeleted with mode='hard'.",
+        "The audit row survives per financial retention (7 years) — the audit outlives the Region."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2,
+      "note": "Conservative — the retention window is 730 days, and even then a single lingering inbound FK keeps the row alive indefinitely. Explicit tenant-admin action via `region:archive --force` bypasses the FK check (requires ops sign-off)."
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "id": "academorix://modules/branch/data-classes",
+  "$version": 1,
+  "title": "branch — field classification",
+  "description": "Branch carries no PII directly. The address is business location (often published on the tenant's marketing site). Phone / email / website_url are business contacts. Coordinates are business location. Amenities + capacity are administrative. The one field with a redactor tier is `notes` (via HasMetadata → metadata jsonb) which may carry internal-only operational notes.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "Branch.id",
+      "Branch.tenant_id",
+      "Branch.organization_id",
+      "Branch.region_id",
+      "Branch.name",
+      "Branch.slug",
+      "Branch.code",
+      "Branch.description",
+      "Branch.logo_url",
+      "Branch.address (business address — public-adjacent)",
+      "Branch.coordinates.lat",
+      "Branch.coordinates.lng",
+      "Branch.coordinates.source",
+      "Branch.phone (business contact)",
+      "Branch.email (business contact)",
+      "Branch.website_url",
+      "Branch.opening_hours",
+      "Branch.capacity",
+      "Branch.amenities",
+      "Branch.status",
+      "Branch.is_default",
+      "Branch.sort_order",
+      "Branch.opened_date",
+      "Branch.closed_date"
+    ],
+    "internal": [
+      "Branch.coordinates.accuracy_m (implementation detail — reveals geocoder confidence)",
+      "Branch.metadata (opaque JSON operational notes bag from HasMetadata trait)"
+    ],
+    "confidential": [],
+    "restricted": [],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [
+      "Branch.name (snapshotted into historic invoices — subject to invoice retention regulations)",
+      "Branch.address (snapshotted into historic invoices for tax jurisdiction determination)",
+      "Branch.region_id (snapshotted into invoices for tax rate + currency)"
+    ],
+    "audit_log": [
+      "Branch.status (every transition written to `audits`)",
+      "Branch.is_default (every flip written)",
+      "Branch.address (every change written with before/after diff)",
+      "Branch.coordinates (every change written — geofencing hand-off signal)",
+      "Branch.opening_hours (every change — member-facing schedule)",
+      "Branch.capacity (every change — fire-safety cap is compliance-relevant)",
+      "Branch.organization_id (immutable, but attempts to change are logged with severity=warn)",
+      "Branch.region_id (same)",
+      "Branch.tenant_id (immutable, attempts logged with severity=warn)"
+    ]
+  },
+  "notes": [
+    "Branch is one of the few tenant-scoped aggregates where NO field is confidential. The venue's address is often published on the tenant's marketing site. Phone + email are business contacts, not personal PII.",
+    "Branch.metadata is an opaque JSON bag consumers use for internal operational notes (e.g. 'key held by John, backup in front desk drawer'). Marked `internal` — never exposed on the wire by default; only surfaced when the caller explicitly requests `?include=metadata` + carries the metadata-read permission.",
+    "Branch.coordinates.accuracy_m is intentionally `internal` — knowing that a geocoder returned 20-meter accuracy vs 500-meter accuracy reveals which subprocessor the tenant uses + at what confidence, information the tenant may want to keep private.",
+    "The Branch's name + address are `regulated_financial` because Finance module invoices snapshot them at issue time. Retention windows on the audits table are set to accommodate the maximum invoice-retention regulation (7 years for enterprise tier).",
+    "Cross-tenant reads are gated by `platform.branches.viewAny` — support agents see the raw fields on the platform surface. There is no redactor for Branch fields."
+  ]
+}

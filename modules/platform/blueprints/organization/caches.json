@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/organization/caches",
+  "$version": 1,
+  "title": "organization — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["organization", "organization-tree"],
+  "keys": [
+    {
+      "pattern": "org:default:{tenant_id}",
+      "description": "The tenant's default Organization row (id + slug + name + logo_url). Read by every `me` payload + every server-side render. Warmed on TenantProvisioned + invalidated by DefaultOrganizationResolver on OrganizationDefaultChanged.",
+      "ttlSeconds": 900,
+      "tags": ["organization", "tenant"],
+      "invalidatedBy": [
+        "OrganizationObserver.default_flipped",
+        "OrganizationObserver.deleted",
+        "OrganizationDefaultChanged"
+      ]
+    },
+    {
+      "pattern": "org:by-id:{tenant_id}:{organization_id}",
+      "description": "A single Organization row projection for tenant-plane API responses (excludes ops-only columns like `notes`).",
+      "ttlSeconds": 600,
+      "tags": ["organization", "tenant"],
+      "invalidatedBy": ["OrganizationObserver.saved", "OrganizationObserver.deleted"]
+    },
+    {
+      "pattern": "org:tree:{tenant_id}",
+      "description": "Full tenant tree serialised as `[{ id, parent_id, tree_path, tree_depth, name, slug, status, is_default, sort_order }]`. Rebuilt on any parent_id change + any status/name/sort_order mutation. Used by the tenant sidebar picker + platform-admin tree renderer.",
+      "ttlSeconds": 900,
+      "tags": ["organization", "organization-tree", "tenant"],
+      "invalidatedBy": [
+        "OrganizationObserver.saved",
+        "OrganizationObserver.deleted",
+        "OrganizationParentChanged",
+        "RebuildTreePathsJob.completed"
+      ]
+    },
+    {
+      "pattern": "org:descendants:{tenant_id}:{organization_id}",
+      "description": "Every descendant id of the given Organization (for `is-ancestor-of?` / `is-descendant-of?` checks on the hot path). Backed by a LIKE-prefix query on tree_path + cached because per-request scoped-access decisions can hit this dozens of times.",
+      "ttlSeconds": 300,
+      "tags": ["organization", "organization-tree", "tenant"],
+      "invalidatedBy": [
+        "RebuildTreePathsJob.completed",
+        "OrganizationObserver.deleted"
+      ]
+    },
+    {
+      "pattern": "org:ancestors:{tenant_id}:{organization_id}",
+      "description": "Every ancestor id, in root-to-self order. Derived by splitting `tree_path` on the dot separator. Same TTL rationale as descendants.",
+      "ttlSeconds": 300,
+      "tags": ["organization", "organization-tree", "tenant"],
+      "invalidatedBy": ["RebuildTreePathsJob.completed"]
+    },
+    {
+      "pattern": "org:slot_usage:{tenant_id}",
+      "description": "Precomputed slot-utilisation payload for the entitlement bar UI ({ used, cap, pct }). Warmed by the entitlement observer + invalidated on any create / delete.",
+      "ttlSeconds": 300,
+      "tags": ["organization", "tenant"],
+      "invalidatedBy": [
+        "OrganizationCreated",
+        "OrganizationDeleted",
+        "OrganizationArchived",
+        "OrganizationRestored"
+      ]
+    },
+    {
+      "pattern": "org:by-slug:{tenant_id}:{slug}",
+      "description": "Slug → id lookup for `X-Organization-Id` header resolution when the header carries a slug instead of a ULID. Case-insensitive keying (slug is stored lowercase).",
+      "ttlSeconds": 900,
+      "tags": ["organization", "tenant"],
+      "invalidatedBy": ["OrganizationObserver.saved", "OrganizationObserver.deleted"]
+    }
+  ],
+  "notes": [
+    "All caches are tenant-namespaced — a `flushTag('tenant:{tenant_id}')` sweeps every Organization cache row for that tenant, which is the pattern used by `tenancy::TenantErased`.",
+    "The `organization-tree` tag is a super-tag over `tree` + `descendants` + `ancestors` so a single RebuildTreePathsJob completion can invalidate everything tree-shaped in one call.",
+    "TTLs are relatively long because Organizations are LOW-churn — a tenant may add one every few weeks. The tags make targeted invalidation fast so long TTLs don't produce stale reads."
+  ]
+}

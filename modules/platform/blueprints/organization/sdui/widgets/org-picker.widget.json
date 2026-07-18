@@ -1,0 +1,164 @@
+{
+  "id": "organization.org-picker",
+  "title": "Organization picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Sidebar picker for the caller's active Organization. Renders as a HeroUI `ComboBox` (per the ui-components rule — searchable single-select). Selecting an Organization writes it to `user.profile.default_organization_id` + reloads. Hidden when the tenant has ≤ 1 Organization (nothing to pick from).",
+  "notes": [
+    "Uses `ComboBox` NOT `Select` — mandated by `.kiro/steering/ui-components.md`. A tenant may have up to 100 orgs on Enterprise; free-text search is essential.",
+    "Grouped by parent when nesting is used (Enterprise). ListBox.Section per parent, ordered by tree_path.",
+    "Hidden entirely when tenant has exactly 1 Organization — the picker is noise on single-brand tenants."
+  ],
+  "props": {
+    "size": {
+      "type": "string",
+      "default": "md",
+      "enum": ["sm", "md", "lg"]
+    },
+    "showLogo": {
+      "type": "boolean",
+      "default": true
+    },
+    "showCategory": {
+      "type": "boolean",
+      "default": false,
+      "description": "Show the category chip inline. Off by default for compact sidebars."
+    }
+  },
+  "dataSources": [
+    {
+      "name": "organizations",
+      "kind": "http.get",
+      "url": "/api/v1/organizations?filter[status]=active",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "me",
+      "kind": "http.get",
+      "url": "/api/auth/me",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "props": {
+        "menuTrigger": "focus",
+        "aria-label": "Active organization",
+        "placeholder": "Search organizations…"
+      },
+      "bindings": {
+        "hidden": { "$expr": "organizations.length <= 1" },
+        "selectedKey": { "$ref": "me.profile.default_organization_id" },
+        "items": { "$ref": "organizations" }
+      },
+      "actions": {
+        "onSelectionChange": {
+          "kind": "http.patch",
+          "url": "/api/v1/profile",
+          "bodyExpr": "{ default_organization_id: selectedKey }",
+          "onSuccess": { "kind": "reload" }
+        }
+      },
+      "children": [
+        {
+          "kind": "ComboBox.InputGroup",
+          "children": [
+            {
+              "kind": "Input",
+              "props": {
+                "placeholder": "Search organizations…"
+              }
+            },
+            {
+              "kind": "ComboBox.Trigger"
+            }
+          ]
+        },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "props": { "className": "max-h-96 overflow-y-auto w-72" },
+              "itemRenderer": {
+                "kind": "ListBox.Item",
+                "propsExpr": "{ key: item.id, id: item.id, textValue: item.name }",
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2 py-1" },
+                    "children": [
+                      {
+                        "kind": "Avatar",
+                        "props": { "size": "xs" },
+                        "bindings": {
+                          "hidden": { "$expr": "!props.showLogo" },
+                          "src": { "$ref": "item.logo_url" },
+                          "name": { "$ref": "item.name" }
+                        }
+                      },
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex flex-col items-start flex-1" },
+                        "children": [
+                          {
+                            "kind": "View",
+                            "props": { "className": "flex items-center gap-1" },
+                            "children": [
+                              {
+                                "kind": "Text",
+                                "props": { "className": "font-medium truncate" },
+                                "bindings": { "children": { "$ref": "item.name" } }
+                              },
+                              {
+                                "kind": "Chip",
+                                "props": { "size": "xs", "variant": "accent" },
+                                "bindings": {
+                                  "hidden": { "$expr": "!item.is_default" },
+                                  "children": "Default"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "kind": "View",
+                            "props": { "className": "flex items-center gap-1" },
+                            "children": [
+                              {
+                                "kind": "Text",
+                                "props": { "className": "text-xs text-muted font-mono truncate" },
+                                "bindings": { "children": { "$ref": "item.slug" } }
+                              },
+                              {
+                                "kind": "Chip",
+                                "props": { "size": "xs", "variant": "neutral" },
+                                "bindings": {
+                                  "hidden": { "$expr": "!props.showCategory" },
+                                  "children": { "$ref": "item.category" }
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "ListBox.ItemIndicator",
+                        "props": {
+                          "className": "size-4 text-accent"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

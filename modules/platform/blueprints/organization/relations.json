@@ -1,0 +1,86 @@
+{
+  "id": "academorix://modules/organization/relations",
+  "$version": 1,
+  "title": "organization — model relationships",
+  "description": "Organization is the aggregate root of the sub-brand tree. Self-referential parent/children via `parent_id`. Owned by `tenants` (cascade delete). Referenced by `branches` (RESTRICT — cannot delete an Organization while any Branch belongs to it) and future planned aggregates (Teams, Facilities via Branch, Season). NEVER carries region_id or application_id (per tenancy-columns.md §5).",
+  "internal": [
+    {
+      "from": "Organization",
+      "kind": "belongsTo",
+      "to": "Organization (self)",
+      "as": "parent",
+      "foreignKey": "parent_id",
+      "onDelete": "set null",
+      "nullable": true,
+      "description": "The parent Organization in the hierarchy. Null = root node. Deleting a parent SET NULLs children — the delete only succeeds when descendants have already been reparented (observer refuses otherwise); SET NULL is a defense-in-depth against out-of-band deletes."
+    },
+    {
+      "from": "Organization",
+      "kind": "hasMany",
+      "to": "Organization (self)",
+      "as": "children",
+      "foreignKey": "parent_id",
+      "description": "Direct children of this Organization."
+    },
+    {
+      "from": "Organization",
+      "kind": "hasMany (via tree_path)",
+      "to": "Organization (self)",
+      "as": "descendants",
+      "foreignKey": "tree_path LIKE ?.self.id.%?",
+      "description": "Every descendant node (self excluded). Uses the materialised tree_path for O(log N) BTREE-indexed LIKE prefix scan — faster than a recursive CTE and cache-friendly."
+    },
+    {
+      "from": "Organization",
+      "kind": "hasMany (via tree_path)",
+      "to": "Organization (self)",
+      "as": "ancestors",
+      "foreignKey": "computed from tree_path split",
+      "description": "Every ancestor node (self excluded), in root-to-self order. Derived by splitting tree_path on the separator + fetching each id."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Organization",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every Organization belongs to exactly one Tenant. tenancy::TenantErased cascades hard-delete via this FK."
+    }
+  ],
+  "inbound": [
+    {
+      "from": "branch::Branch",
+      "kind": "belongsTo",
+      "to": "Organization",
+      "foreignKey": "organization_id",
+      "onDelete": "restrict",
+      "description": "Every Branch carries an organization_id (required). Refused to delete an Organization while ANY Branch references it (`ORGANIZATION_IN_USE` 409)."
+    },
+    {
+      "from": "teams::Team (planned)",
+      "kind": "belongsTo",
+      "to": "Organization",
+      "foreignKey": "organization_id",
+      "onDelete": "restrict",
+      "description": "Every Team carries an organization_id via branch. When a Team is added directly under an Organization (organization-wide team, no specific branch), this FK carries the value directly."
+    }
+  ],
+  "note_no_region_id": "Organization does NOT carry region_id. Regions are ORTHOGONAL — see hierarchy.md §2. The join point is Branch, which carries FKs to BOTH `organization_id` AND `region_id`. Adding `region_id` to organizations would violate the non-goal in hierarchy.md §13.",
+  "note_no_application_id": "Organization does NOT carry application_id. Application cascades through `tenant_id → tenants.application_id`. Enforced by tenancy-columns.md §2 — only 8 rows carry application_id directly, and Organization is not one of them.",
+  "note_no_scope_node_id": "Organization is a scope-node ENTITY (referenced by scope_nodes.entity_id) — not a scope CONSUMER. Adding scope_node_id to the organizations table would violate tenancy-columns.md §4.",
+  "cascade_chain": {
+    "description": "When Organization is deleted (soft OR hard), the cascade chain is:",
+    "steps": [
+      "0. Observer refuses when is_default=true / has descendants / referenced by branches. If any refusal fires, cascade stops.",
+      "1. Organization soft-delete (deleted_at set + status=archived).",
+      "2. OrganizationArchived event fires post-commit.",
+      "3. ReleaseOrganizationSlot listener releases 1 entitlement unit.",
+      "4. Branches referencing this org stay put — they were already refused-to-delete at step 0.",
+      "5. Retention (730 days) then hard-deletes via PurgeArchivedOrganizationsJob IF no descendants + no branches remain.",
+      "6. Hard-delete cascades to `owen-it/laravel-auditing`.audits rows via the auditable morph.",
+      "7. Fires OrganizationDeleted terminal event."
+    ]
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "id": "academorix://modules/facility/health",
+  "$version": 1,
+  "title": "facility — health probes",
+  "probes": [
+    {
+      "name": "facility-schema-migrations-applied",
+      "class": "Academorix\\Facility\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms every migration this module ships has run: facilities, resource_bookings, day_passes, passes, plus their indexes (facility_id + starts_at composite index for overlap check).",
+      "timeoutMs": 500
+    },
+    {
+      "name": "facility-overlap-index-present",
+      "class": "Academorix\\Facility\\Health\\Probes\\OverlapIndexPresentProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms the composite index (facility_id, starts_at, ends_at) WHERE status IN ('pending','confirmed') AND deleted_at IS NULL exists on resource_bookings. Missing this index makes overlap detection O(N) per facility — a p99 blowup waiting to happen.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "facility-serializable-supported",
+      "class": "Academorix\\Facility\\Health\\Probes\\SerializableIsolationSupportedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms the DB engine (PostgreSQL) accepts SET TRANSACTION ISOLATION LEVEL SERIALIZABLE. Fails hard on MySQL / SQLite where the guarantee differs.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "facility-pending-booking-backlog",
+      "class": "Academorix\\Facility\\Health\\Probes\\PendingBookingBacklogProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Warns when > 100 rows in resource_bookings are stuck in status='pending' for > 60 min. Indicates ExpireLapsedBookingsJob has stalled.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "facility-overlap-counter-clean",
+      "class": "Academorix\\Facility\\Health\\Probes\\OverlapCounterCleanProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Reads academorix.facility.overlaps.detected counter. Any non-zero value in the last 24h is a P1 signal.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "facility-reconciler-recent",
+      "class": "Academorix\\Facility\\Health\\Probes\\ReconcilerRecentProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Confirms ReconcileBookingOverlapsJob + ReconcileBookingsAgainstRetiredFacilitiesJob completed within the last 8 days (weekly cadence + 24h slop). Stale reconcilers indicate scheduler drift.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "facility-day-pass-sequence-gaps",
+      "class": "Academorix\\Facility\\Health\\Probes\\DayPassSequenceGapsProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Scans the year's receipt_number sequence per tenant for gaps. A gap indicates a receipt generation race that dropped a number — accounting anomaly.",
+      "timeoutMs": 3000,
+      "enabledWhen": "config('facility.day_passes.gap_check_enabled', true)"
+    },
+    {
+      "name": "facility-pass-double-spend-attempts",
+      "class": "Academorix\\Facility\\Health\\Probes\\PassDoubleSpendAttemptsProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Counts PASS_DOUBLE_SPEND error occurrences in the last 24h. Should be 0 — every fire indicates a race the observer's SELECT ... FOR UPDATE should have prevented.",
+      "timeoutMs": 200
+    }
+  ]
+}

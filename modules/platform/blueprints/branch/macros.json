@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/branch/macros",
+  "$version": 1,
+  "title": "branch — published macros",
+  "description": "No Blueprint schema macros. The three JSONB columns (address, coordinates, opening_hours) are added by ordinary `$table->jsonb()` calls in migrations; downstream modules that FK to Branch just use the standard `$table->foreignUlid('branch_id')` call — no branch-specific macro needed. Two runtime macros are published on `Illuminate\\Http\\Request` for `active-branch`-flavoured helpers on inbound requests.",
+  "namespace_note": "Runtime macros extend `Illuminate\\Http\\Request`. Registered by `BranchServiceProvider::boot()` during framework boot.",
+  "macros": [
+    {
+      "name": "Request::activeBranch",
+      "signature": "Request::activeBranch(): ?Branch",
+      "description": "Returns the Branch resolved by `branch.resolve_active` middleware for this request. Convenience — same result as `active_branch()` global helper, but chains fluently on a Request instance. Null when no active branch resolved.",
+      "usage_example": "$branch = $request->activeBranch();\nif ($branch === null) throw new NoActiveBranchException();"
+    },
+    {
+      "name": "Request::activeBranchId",
+      "signature": "Request::activeBranchId(): ?string",
+      "description": "Fast path — returns the ULID without hydrating the Branch model. Used by controllers that just need to persist the branch_id on a new domain row.",
+      "usage_example": "$row = Session::create([\n    'branch_id' => $request->activeBranchId(),\n    // ...\n]);"
+    }
+  ],
+  "registered_by": "Academorix\\Branch\\Providers\\BranchServiceProvider::boot()",
+  "registration_order": "Registered during the standard boot phase. Depends on tenancy having booted first so the parent `BelongsToTenant` scope is already registered — tenancy priority (10) < branch priority (45), so ordering is safe by construction."
+}

@@ -1,0 +1,141 @@
+{
+  "id": "facility.available-slots-calendar",
+  "title": "Available slots calendar",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Calendar-driven slot picker. Reads a computed slot list from GET /facilities/{id}/available-slots + renders slots as pressable tiles. Selecting a slot fires onSlotSelect with { starts_at, ends_at, price_amount_cents }. Empty slots (blackouts + existing bookings + outside availability windows) are rendered but disabled.",
+  "props": {
+    "slots": { "type": "array", "required": true },
+    "facility": { "type": "object", "required": true },
+    "isLoading": { "type": "boolean", "default": false },
+    "selectedStartsAt": { "type": "string", "format": "date-time" },
+    "size": { "type": "string", "default": "md", "enum": ["sm", "md", "lg"] }
+  },
+  "actions": {
+    "onSlotSelect": {
+      "description": "Fires when the user picks a slot. Payload: { starts_at, ends_at, price_amount_cents }."
+    }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-3" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h3", "className": "font-medium", "children": "Available slots" }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-xs text-muted" },
+              "bindings": {
+                "children": {
+                  "$expr": "'Slots aligned to ' + props.facility.booking_slot_step_minutes + '-minute grid'"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "bindings": { "hidden": { "$expr": "!props.isLoading" } },
+          "children": [
+            {
+              "kind": "Spinner",
+              "props": { "size": "md", "label": "Loading available slots..." }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "bindings": { "hidden": { "$expr": "props.isLoading || props.slots.length > 0" } },
+          "children": [
+            {
+              "kind": "Alert",
+              "props": {
+                "variant": "warning",
+                "children": "No available slots on this date. Try another date, another facility, or a shorter duration."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Grid",
+          "props": { "className": "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2" },
+          "bindings": {
+            "items": { "$ref": "props.slots" },
+            "hidden": { "$expr": "props.isLoading || props.slots.length === 0" }
+          },
+          "itemRenderer": {
+            "kind": "Pressable",
+            "props": {
+              "className": "flex flex-col p-3 rounded-md border text-sm hover:border-accent transition-colors"
+            },
+            "bindings": {
+              "className": {
+                "$expr": "'flex flex-col p-3 rounded-md border text-sm transition-colors ' + (row.is_available ? 'hover:border-accent cursor-pointer' : 'opacity-40 cursor-not-allowed line-through') + (row.starts_at === props.selectedStartsAt ? ' border-accent bg-accent-subtle' : '')"
+              },
+              "isDisabled": { "$expr": "!row.is_available" }
+            },
+            "actions": {
+              "onPress": {
+                "kind": "emit",
+                "event": "onSlotSelect",
+                "payloadExpr": "{ starts_at: row.starts_at, ends_at: row.ends_at, price_amount_cents: row.price_amount_cents }"
+              }
+            },
+            "children": [
+              {
+                "kind": "Text",
+                "props": { "className": "font-medium" },
+                "bindings": {
+                  "children": { "$expr": "formatTime(row.starts_at)" }
+                }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "text-xs text-muted" },
+                "bindings": {
+                  "children": {
+                    "$expr": "'to ' + formatTime(row.ends_at)"
+                  }
+                }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "text-xs mt-1" },
+                "bindings": {
+                  "hidden": { "$expr": "!row.price_amount_cents" },
+                  "children": {
+                    "$expr": "formatMoney(row.price_amount_cents, props.facility.pricing_json.currency)"
+                  }
+                }
+              },
+              {
+                "kind": "Chip",
+                "props": { "size": "xs", "variant": "warning", "className": "mt-1" },
+                "bindings": {
+                  "hidden": { "$expr": "!row.is_peak" },
+                  "children": "Peak"
+                }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "text-xs text-muted mt-1" },
+                "bindings": {
+                  "hidden": { "$expr": "row.is_available" },
+                  "children": { "$expr": "row.unavailable_reason || 'Unavailable'" }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

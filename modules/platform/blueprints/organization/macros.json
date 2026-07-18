@@ -1,0 +1,51 @@
+{
+  "id": "academorix://modules/organization/macros",
+  "$version": 1,
+  "title": "organization — published macros",
+  "description": "One Blueprint macro. `Blueprint::organizationable()` adds the `organization_id` column + FK + index used by every table below Organization that needs to identify which brand owns the row (Branches, Teams, and future planned aggregates). Registered by OrganizationServiceProvider::boot() during framework boot so every downstream migration can call it regardless of priority ordering.",
+  "namespace_note": "Blueprint macros extend `Illuminate\\Database\\Schema\\Blueprint`. Registered on the framework blueprint class — no organization dependency is added to consumers because Blueprint is a Laravel core class.",
+  "macros": [
+    {
+      "name": "Blueprint::organizationable",
+      "signature": "Blueprint::organizationable(bool $nullable = false, string $column = 'organization_id'): ColumnDefinition",
+      "adds": {
+        "columns": [
+          {
+            "name": "organization_id",
+            "type": "string",
+            "length": 30,
+            "nullable": "argument-controlled",
+            "description": "FK to organizations.id. `nullable=false` (default) is the common case — every Branch belongs to exactly one Organization. `nullable=true` for aggregates that MAY be tenant-wide (rare)."
+          }
+        ],
+        "indexes": [
+          {
+            "columns": ["organization_id"],
+            "unique": false,
+            "name_suffix": "organization_id_idx",
+            "description": "Every table with organization_id needs this index — hot path for scoped-access + descendant queries."
+          }
+        ],
+        "foreign_keys": [
+          {
+            "column": "organization_id",
+            "references": {
+              "table": "organizations",
+              "column": "id"
+            },
+            "on_delete": "restrict",
+            "description": "RESTRICT because deleting an Organization while descendants reference it is refused at the observer level. The FK is defense-in-depth."
+          }
+        ]
+      },
+      "description": "Adds the FK column + index + FK constraint used by tables that belong to an Organization. Pairs with the `BelongsToOrganization` trait on the model (composed AFTER `BelongsToTenant`).",
+      "companion": {
+        "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization",
+        "reference": "See `traits.json` for the trait's global-scope + auto-fill behaviour."
+      },
+      "usage_example": "// In branches migration\nSchema::create('branches', function (Blueprint $t) {\n    $t->prefixedUlid('id', 'brc_');\n    $t->tenantable();\n    $t->organizationable();  // ← adds organization_id + FK + index\n    $t->foreignId('region_id')->constrained();\n    // ...\n});",
+      "boot_order_note": "Registered by OrganizationServiceProvider::boot(). Because Laravel loads every ServiceProvider's boot() before running any migration, the macro is available to every migration regardless of the organization module's priority (41)."
+    }
+  ],
+  "registered_by": "Academorix\\Organization\\Providers\\OrganizationServiceProvider::boot()"
+}

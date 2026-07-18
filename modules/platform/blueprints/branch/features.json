@@ -1,0 +1,60 @@
+{
+  "id": "academorix://modules/branch/features",
+  "$version": 1,
+  "title": "branch — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "branch.core",
+      "displayName": "Branches",
+      "description": "Base capability. Always on across every tier. Enables the branch CRUD surface + the default-branch invariant.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "branch.multi_period_hours",
+      "displayName": "Multi-period opening hours",
+      "description": "Allow more than one open/close period per day (e.g. 9-12, 17-22). Off on small tier — small-tier tenants have a single period per day. Backed by the `branch_multi_period_hours` entitlement.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "branch.geocoding",
+      "displayName": "Automatic geocoding",
+      "description": "Resolve `address` → `coordinates` automatically via a subprocessor (Google Maps / Mapbox / Nominatim). Off on small tier — small-tier tenants pin the map manually. Backed by the `branch_geocoding` entitlement.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "branch.capacity_gating",
+      "displayName": "Capacity enforcement",
+      "description": "Enforce `capacity` on booking-adjacent write routes via `CapacityGate`. Off by default across all tiers; opt-in on Medium + Enterprise via the entitlements admin UI. When off, capacity is display-only.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "branch.custom_amenities",
+      "displayName": "Custom amenity tags",
+      "description": "Add amenity tags outside the platform catalogue. Enterprise only. Backed by the `branch_amenities: custom` entitlement.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "branch.map_view",
+      "displayName": "Map view",
+      "description": "Enable the map-view SDUI screen for the branch list. Renders every branch as a pin on a Mapbox / OpenStreetMap tile layer. Available across every tier; the map tile subprocessor is billed to the platform.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "branch.public_directory",
+      "displayName": "Public directory (deferred)",
+      "description": "Expose selected branches on a public tenant directory URL (no auth). Deferred beyond Wave 2 — this feature key is reserved so the SDUI + settings surface can hint at future availability without shipping the endpoint.",
+      "defaultEnabled": false,
+      "planTiers": []
+    }
+  ]
+}

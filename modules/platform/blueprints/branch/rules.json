@@ -1,0 +1,91 @@
+{
+  "id": "academorix://modules/branch/rules",
+  "$version": 1,
+  "title": "branch — validation rules",
+  "description": "Eight custom Laravel validation rules published by BranchServiceProvider::boot() so any FormRequest / Data class can validate branch-shaped fields. Some are shared with sibling modules (valid_e164_phone, valid_url, valid_hex_color); the branch-specific ones (valid_opening_hours, valid_address_structure, valid_coordinates, branch_*_same_tenant) are the payoff for using a structured JSONB blob.",
+  "namespace": "Academorix\\Branch\\Rules",
+  "rules": [
+    {
+      "name": "valid_e164_phone",
+      "class": "Academorix\\Branch\\Rules\\ValidE164Phone",
+      "signature": "valid_e164_phone",
+      "description": "Same shape as `user::valid_e164_phone` — ensures the value is a valid E.164 international phone number. Aliased here so callers targeting the Branch endpoints don't need to import from the user module. Delegates to `giggsey/libphonenumber-for-php`.",
+      "params": [],
+      "example_field_rule": "phone: ['nullable', 'valid_e164_phone']",
+      "error_message_key": "branch::validation.valid_e164_phone",
+      "default_message": "The :attribute must be a valid international phone number in E.164 format (e.g. +14155552671)."
+    },
+    {
+      "name": "valid_url",
+      "class": "Academorix\\Branch\\Rules\\ValidUrl",
+      "signature": "valid_url[:scheme]",
+      "description": "Extends Laravel's built-in `url` rule with a per-scheme allowlist. Default = { 'https' }; loosen to { 'http', 'https' } when the caller passes 'http' explicitly. Refuses `data:` / `javascript:` / `file:` schemes. Length-capped at 500 chars to match the DB column.",
+      "params": [
+        { "name": "schemes", "type": "string", "default": "https", "description": "Comma-joined allowed schemes." }
+      ],
+      "example_field_rule": "website_url: ['nullable', 'valid_url']",
+      "error_message_key": "branch::validation.valid_url",
+      "default_message": "The :attribute must be a valid URL using one of the allowed schemes (:schemes)."
+    },
+    {
+      "name": "valid_hex_color",
+      "class": "Academorix\\Branch\\Rules\\ValidHexColor",
+      "signature": "valid_hex_color",
+      "description": "Ensures the value is a 3-digit or 6-digit hex color prefixed with `#`. Used for branding-adjacent fields (though the Branch model itself doesn't ship one in Wave 2 — reserved for future `Branch.brand_color` when the branding module lands).",
+      "params": [],
+      "example_field_rule": "brand_color: ['nullable', 'valid_hex_color']",
+      "error_message_key": "branch::validation.valid_hex_color",
+      "default_message": "The :attribute must be a hex color in the form #RGB or #RRGGBB."
+    },
+    {
+      "name": "valid_opening_hours",
+      "class": "Academorix\\Branch\\Rules\\ValidOpeningHours",
+      "signature": "valid_opening_hours",
+      "description": "Structural + semantic validation of the opening_hours JSONB blob. Rejects when: (a) any of the 7 day keys (monday..sunday) is missing OR is not an array; (b) any period is missing `open` or `close`; (c) any time is not HH:MM format; (d) any period has `close <= open` (support-agent flag: the observer normalises 24:00 → next day at 00:00 explicitly; passing an actual 24:00 in HH:MM is refused); (e) any exception is missing `date` or has an invalid ISO-8601 date; (f) multi-period days are present when the tenant lacks `branch_multi_period_hours` entitlement (checked lazily against the resolved tenant on the request, not at rule registration).",
+      "params": [],
+      "example_field_rule": "opening_hours: ['required', 'valid_opening_hours']",
+      "error_message_key": "branch::validation.valid_opening_hours",
+      "default_message": "The :attribute is not a valid opening_hours structure: :error_detail."
+    },
+    {
+      "name": "valid_address_structure",
+      "class": "Academorix\\Branch\\Rules\\ValidAddressStructure",
+      "signature": "valid_address_structure",
+      "description": "Ensures the address JSONB has required fields (`line1`, `city`, `country_code`) + optional-but-typed fields (`line2` string, `subdivision` string, `postal_code` string, `formatted` string). Rejects unknown top-level keys. `country_code` is validated as a 2-letter ISO-3166-1 alpha-2 uppercase code. Does NOT validate that the country_code resolves to a live geography::Country row — that soft check runs in the observer against the geography catalogue.",
+      "params": [],
+      "example_field_rule": "address: ['nullable', 'valid_address_structure']",
+      "error_message_key": "branch::validation.valid_address_structure",
+      "default_message": "The :attribute is not a valid structured address: :error_detail."
+    },
+    {
+      "name": "valid_coordinates",
+      "class": "Academorix\\Branch\\Rules\\ValidCoordinates",
+      "signature": "valid_coordinates",
+      "description": "Ensures the coordinates JSONB has `lat` in [-90, 90], `lng` in [-180, 180], `accuracy_m` a positive number (nullable), and `source` in {'manual', 'geocoded', 'imported'} (nullable — null accepted at write time; the observer defaults it to 'manual' when the caller supplies coordinates without source). Also refuses (0, 0) (Null Island) unless the caller explicitly opts in via a `metadata.null_island_allowed=true` flag — (0, 0) is almost always a bug from a client that forgot to include coordinates.",
+      "params": [],
+      "example_field_rule": "coordinates: ['nullable', 'valid_coordinates']",
+      "error_message_key": "branch::validation.valid_coordinates",
+      "default_message": "The :attribute is not valid: :error_detail."
+    },
+    {
+      "name": "branch_organization_same_tenant",
+      "class": "Academorix\\Branch\\Rules\\BranchOrganizationSameTenant",
+      "signature": "branch_organization_same_tenant",
+      "description": "Cross-field rule. On a create request, resolves `organization_id` from the payload against the caller's active tenant + refuses when `organization.tenant_id !== active_tenant.id`. Belt-and-braces on top of the observer — surfaces a clean form-validation error before the DB write. On update requests, no-ops (organization_id is immutable so the observer refuses regardless).",
+      "params": [],
+      "example_field_rule": "organization_id: ['required', 'ulid', 'branch_organization_same_tenant']",
+      "error_message_key": "branch::validation.branch_organization_same_tenant",
+      "default_message": "The selected :attribute belongs to a different tenant."
+    },
+    {
+      "name": "branch_region_same_tenant",
+      "class": "Academorix\\Branch\\Rules\\BranchRegionSameTenant",
+      "signature": "branch_region_same_tenant",
+      "description": "Same shape as `branch_organization_same_tenant` for the Region FK.",
+      "params": [],
+      "example_field_rule": "region_id: ['required', 'ulid', 'branch_region_same_tenant']",
+      "error_message_key": "branch::validation.branch_region_same_tenant",
+      "default_message": "The selected :attribute belongs to a different tenant."
+    }
+  ]
+}

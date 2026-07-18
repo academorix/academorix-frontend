@@ -1,0 +1,41 @@
+{
+  "id": "academorix://modules/organization/attributes",
+  "$version": 1,
+  "title": "organization — PHP attribute contracts",
+  "description": "One attribute. `AsOrganizationListener` marks a service that reacts to Organization lifecycle events (created / reparented / default-changed / archived / …). The organization module scans for this attribute at boot + auto-registers the class with the event dispatcher — no manual EventServiceProvider wiring per listener.",
+  "namespace": "Academorix\\Organization\\Attributes",
+  "attributes": [
+    {
+      "name": "AsOrganizationListener",
+      "class": "Academorix\\Organization\\Attributes\\AsOrganizationListener",
+      "targets": ["class"],
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Explicit list of event class-short-names the listener handles (e.g. `['OrganizationCreated', 'OrganizationReparented']`). When empty, the discovery scan reads the class's method signatures + auto-wires (`handleOrganizationCreated(OrganizationCreated $e)` binds to that event). Explicit list wins over signature scan."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Queue name for asynchronous handling. Null = synchronous. Common values: `notifications` (welcome flows), `notifications-critical` (compliance signals like default-change)."
+        },
+        {
+          "name": "priority",
+          "type": "int",
+          "default": 0,
+          "description": "Ordering among listeners for the same event. Lower runs first. Reserve `<0` for framework listeners; consumers start at 0."
+        },
+        {
+          "name": "afterCommit",
+          "type": "bool",
+          "default": true,
+          "description": "Fire after the write transaction commits (safe against rollback). Rare exceptions to `false` when the listener MUST run in the same transaction (e.g. seeding the default org during `TenantProvisioning`)."
+        }
+      ],
+      "example": "#[AsOrganizationListener(events: ['OrganizationReparented'], queue: 'notifications', priority: 10)]\nclass RebuildTreePathsListener\n{\n    public function handleOrganizationReparented(OrganizationParentChanged $event): void\n    {\n        RebuildTreePathsJob::dispatch($event->organization);\n    }\n}"
+    }
+  ]
+}

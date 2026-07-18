@@ -1,0 +1,154 @@
+{
+  "$version": 1,
+  "title": "Facility pricing_json — canonical examples",
+  "description": "Concrete examples of the pricing_json blob shape for each of the four pricing models. Consumed by test fixtures + the SDUI pricing editor's presets. Every sample validates against schemas/pricing.schema.json.",
+  "shape_definition": {
+    "type": "object",
+    "required_fields": ["model", "currency"],
+    "conditional_fields": {
+      "when_model_is_per_hour_or_per_slot_or_per_person": ["tiers"],
+      "when_model_is_included_in_membership": []
+    },
+    "optional_fields": ["peak_hours", "notes"],
+    "invariants": [
+      "currency is a 3-letter ISO 4217 code",
+      "currency MUST match parent branch.region.currency",
+      "tiers[] is non-empty when model is not included_in_membership",
+      "each tier has name + rate_cents (positive integer)",
+      "peak_hours mirrors availability_json day shape with a multiplier float per window"
+    ]
+  },
+  "examples": [
+    {
+      "id": "per_hour_flat_rate",
+      "name": "Per-hour flat rate — $25/hr",
+      "pricing_json": {
+        "model": "per_hour",
+        "currency": "USD",
+        "tiers": [
+          {
+            "name": "Standard",
+            "rate_cents": 2500
+          }
+        ]
+      },
+      "example_computation": "60-min booking, 1 attendee → 25.00 USD",
+      "notes": "The simplest case. One rate, applied per hour, regardless of attendees."
+    },
+    {
+      "id": "per_hour_member_vs_guest",
+      "name": "Per-hour with member and guest tiers",
+      "pricing_json": {
+        "model": "per_hour",
+        "currency": "USD",
+        "tiers": [
+          {
+            "name": "Member",
+            "rate_cents": 1500,
+            "requires_membership": true
+          },
+          {
+            "name": "Guest",
+            "rate_cents": 3000,
+            "requires_membership": false
+          }
+        ]
+      },
+      "example_computation": "60-min booking, 1 attendee, member → 15.00 USD; same booking, non-member → 30.00 USD",
+      "notes": "Tier picker: the booker's active Membership (or lack thereof) chooses the applicable tier."
+    },
+    {
+      "id": "per_hour_with_peak",
+      "name": "Per-hour with peak-hours multiplier",
+      "pricing_json": {
+        "model": "per_hour",
+        "currency": "GBP",
+        "tiers": [
+          {
+            "name": "Standard",
+            "rate_cents": 2000
+          }
+        ],
+        "peak_hours": {
+          "monday": [{ "starts": "17:00", "ends": "22:00", "multiplier": 1.5 }],
+          "tuesday": [{ "starts": "17:00", "ends": "22:00", "multiplier": 1.5 }],
+          "wednesday": [{ "starts": "17:00", "ends": "22:00", "multiplier": 1.5 }],
+          "thursday": [{ "starts": "17:00", "ends": "22:00", "multiplier": 1.5 }],
+          "friday": [{ "starts": "17:00", "ends": "22:00", "multiplier": 1.75 }],
+          "saturday": [{ "starts": "09:00", "ends": "20:00", "multiplier": 1.75 }],
+          "sunday": [{ "starts": "09:00", "ends": "20:00", "multiplier": 1.5 }]
+        }
+      },
+      "example_computation": "60-min booking Fri 18:00–19:00 → 20.00 × 1.75 = 35.00 GBP",
+      "notes": "peak_hours mirrors availability_json shape. A booking window entirely within a peak window gets the full multiplier. A booking straddling peak + off-peak proportions the multiplier by the minutes in each."
+    },
+    {
+      "id": "per_slot_padel",
+      "name": "Per-slot flat rate — 90-min padel court",
+      "pricing_json": {
+        "model": "per_slot",
+        "currency": "EUR",
+        "tiers": [
+          {
+            "name": "Standard",
+            "rate_cents": 4000
+          }
+        ]
+      },
+      "example_computation": "Any booking of any duration → 40.00 EUR",
+      "notes": "per_slot ignores duration. Ideal when the facility charges by the reservation not the hour."
+    },
+    {
+      "id": "per_person_group_class",
+      "name": "Per-person — group class in a studio",
+      "pricing_json": {
+        "model": "per_person",
+        "currency": "USD",
+        "tiers": [
+          {
+            "name": "Standard",
+            "rate_cents": 1500
+          }
+        ]
+      },
+      "example_computation": "Booking with 8 attendees → 8 × 15.00 = 120.00 USD",
+      "notes": "attendees_count drives price. Duration is irrelevant (assumed to be the class length)."
+    },
+    {
+      "id": "included_in_membership",
+      "name": "Facility included in an active Membership — no charge, requires pass",
+      "pricing_json": {
+        "model": "included_in_membership",
+        "currency": "USD",
+        "notes": "Booking price is 0. A valid Pass covering this facility MUST be available at booking time; the PassCreditGate refuses the booking otherwise."
+      },
+      "example_computation": "60-min booking → 0.00 USD; consumes 1 credit from the covering Pass",
+      "notes": "This is how Wave 4 Finance's Membership → Facility flow attaches. Membership provisions a Pass; Pass grants free-at-point-of-use bookings."
+    },
+    {
+      "id": "senior_discount",
+      "name": "Per-hour with an age-based discount tier",
+      "pricing_json": {
+        "model": "per_hour",
+        "currency": "USD",
+        "tiers": [
+          {
+            "name": "Standard",
+            "rate_cents": 2500
+          },
+          {
+            "name": "Senior (60+)",
+            "rate_cents": 1500,
+            "requires_age_band": "senior"
+          },
+          {
+            "name": "Junior (under 18)",
+            "rate_cents": 1000,
+            "requires_age_band": "under_18"
+          }
+        ]
+      },
+      "notes": "The booker's profile.age_band or (for day-pass linked bookings) the day_pass.issued_to_profile_age_band chooses the applicable tier. Falls back to Standard when no age match."
+    }
+  ]
+}

@@ -1,0 +1,234 @@
+{
+  "id": "facility.resources.facility.edit",
+  "title": "Edit facility",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/facilities/:facilityId/edit",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "facility", "entity": "facility", "action": "edit" },
+  "requiresPermission": "facilities.update",
+  "requiresEntitlement": "facilities",
+  "dataSources": [
+    {
+      "name": "facility",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/facilities/' + $params.facilityId",
+      "unwrap": "data"
+    },
+    {
+      "name": "facilityTypeCatalog",
+      "kind": "static",
+      "path": "modules/facility/data/facility-type-catalog.json"
+    },
+    {
+      "name": "availabilitySamples",
+      "kind": "static",
+      "path": "modules/facility/data/availability-samples.json"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h1", "className": "text-2xl font-semibold" },
+              "bindings": { "children": { "$expr": "'Edit ' + facility.name" } }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm text-muted" },
+              "bindings": {
+                "children": {
+                  "$expr": "'Branch: ' + facility.branch.name + ' — Type: ' + facility.facility_type"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "info",
+            "children": "Branch is not editable after creation. To move a facility to a different branch, retire this one and create a new one."
+          }
+        },
+        {
+          "kind": "Tabs",
+          "props": { "defaultValue": "basics" },
+          "items": [
+            {
+              "id": "basics",
+              "label": "Basics",
+              "children": [
+                {
+                  "kind": "TextField",
+                  "props": { "label": "Name", "isRequired": true },
+                  "bindings": { "defaultValue": { "$ref": "facility.name" } },
+                  "form": { "field": "name" }
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "label": "Slug", "isRequired": true },
+                  "bindings": { "defaultValue": { "$ref": "facility.slug" } },
+                  "form": { "field": "slug" }
+                },
+                {
+                  "kind": "TextArea",
+                  "props": { "label": "Description" },
+                  "bindings": { "defaultValue": { "$ref": "facility.description" } },
+                  "form": { "field": "description" }
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": { "label": "Sport category", "menuTrigger": "focus" },
+                  "bindings": {
+                    "defaultSelectedKey": { "$ref": "facility.sport_category" },
+                    "items": {
+                      "$expr": "facilityTypeCatalog.types.find(t => t.facility_type === facility.facility_type)?.compatible_sports?.map(s => ({ id: s, label: s })) ?? []"
+                    }
+                  },
+                  "form": { "field": "sport_category" }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "Capacity (persons)", "minValue": 1 },
+                  "bindings": { "defaultValue": { "$ref": "facility.capacity_persons" } },
+                  "form": { "field": "capacity_persons" }
+                }
+              ]
+            },
+            {
+              "id": "duration",
+              "label": "Duration & slot",
+              "children": [
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "Min duration (min)" },
+                  "bindings": { "defaultValue": { "$ref": "facility.min_booking_duration_minutes" } },
+                  "form": { "field": "min_booking_duration_minutes" }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "Max duration (min)" },
+                  "bindings": { "defaultValue": { "$ref": "facility.max_booking_duration_minutes" } },
+                  "form": { "field": "max_booking_duration_minutes" }
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": { "label": "Slot step", "menuTrigger": "focus" },
+                  "props_items": [
+                    { "id": 15, "label": "15 min" },
+                    { "id": 30, "label": "30 min" },
+                    { "id": 60, "label": "1 hour" },
+                    { "id": 120, "label": "2 hours" }
+                  ],
+                  "bindings": { "defaultSelectedKey": { "$ref": "facility.booking_slot_step_minutes" } },
+                  "form": { "field": "booking_slot_step_minutes" }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "Advance window (days)" },
+                  "bindings": { "defaultValue": { "$ref": "facility.advance_booking_window_days" } },
+                  "form": { "field": "advance_booking_window_days" }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "Cancellation notice (hours)" },
+                  "bindings": { "defaultValue": { "$ref": "facility.cancellation_notice_hours" } },
+                  "form": { "field": "cancellation_notice_hours" }
+                }
+              ]
+            },
+            {
+              "id": "availability",
+              "label": "Availability",
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "facility.availability-editor",
+                  "props": {},
+                  "bindings": { "defaultValue": { "$ref": "facility.availability_json" } },
+                  "form": { "field": "availability_json" }
+                }
+              ]
+            },
+            {
+              "id": "danger",
+              "label": "Danger zone",
+              "children": [
+                {
+                  "kind": "Card",
+                  "props": { "className": "p-4 border-danger" },
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": {
+                        "as": "h3",
+                        "className": "font-semibold text-danger",
+                        "children": "Retire facility"
+                      }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": {
+                        "className": "text-sm text-muted mt-1",
+                        "children": "Retiring is terminal. Bookings against a retired facility are refused. Existing future bookings must be cancelled first (or use cascade)."
+                      }
+                    },
+                    {
+                      "kind": "Button",
+                      "props": {
+                        "variant": "danger",
+                        "className": "mt-3",
+                        "children": "Retire facility",
+                        "isDisabled": { "$expr": "facility.status === 'retired'" }
+                      },
+                      "actions": {
+                        "onPress": {
+                          "kind": "modal.open",
+                          "modal": "retire-facility-confirm",
+                          "propsExpr": "{ facilityId: facility.id }"
+                        }
+                      },
+                      "requiresPermission": "facilities.retire"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2 pt-4" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate.back" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "children": "Save changes" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.patch",
+                  "urlExpr": "'/api/v1/facilities/' + facility.id",
+                  "bodyExpr": "form",
+                  "onSuccess": { "kind": "navigate.back" }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

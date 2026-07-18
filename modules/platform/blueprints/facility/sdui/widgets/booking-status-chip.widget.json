@@ -1,0 +1,43 @@
+{
+  "id": "facility.booking-status-chip",
+  "title": "Booking status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for resource_booking.status. Values: pending (info), confirmed (success), cancelled (danger), no_show (warning), completed (neutral). Never relies on colour alone — always carries a text label + optional icon.",
+  "props": {
+    "status": {
+      "type": "string",
+      "enum": ["pending", "confirmed", "cancelled", "no_show", "completed"],
+      "required": true
+    },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showIcon": { "type": "boolean", "default": true }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "({ pending: 'info', confirmed: 'success', cancelled: 'danger', no_show: 'warning', completed: 'neutral' })[props.status]"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "props": {
+        "leadingIcon": {
+          "$expr": "props.showIcon ? ({ pending: 'clock', confirmed: 'check-circle', cancelled: 'x-circle', no_show: 'exclamation-triangle', completed: 'check-badge' })[props.status] : null"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "({ pending: 'Pending', confirmed: 'Confirmed', cancelled: 'Cancelled', no_show: 'No-show', completed: 'Completed' })[props.status]"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

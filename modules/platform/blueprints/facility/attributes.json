@@ -1,0 +1,90 @@
+{
+  "id": "academorix://modules/facility/attributes",
+  "$version": 1,
+  "title": "facility — PHP attribute contracts",
+  "description": "Three class-level attributes for listener discovery. No property-level attributes: the four owned rows (Facility, ResourceBooking, DayPass, Pass) use ordinary Eloquent + spatie/laravel-data class attributes shipped by foundation. `#[AsFacilityListener]` subscribes to facility-catalogue events (create / retire / blackout / pricing / availability). `#[AsBookingListener]` subscribes to booking-lifecycle events (create / cancel / no-show / complete / overlap-detected). `#[AsPassListener]` subscribes to both DayPass AND Pass events. Discovery loader picks up each class at boot + wires the declared events.",
+  "namespace": "Academorix\\Facility\\Attributes",
+  "attributes": [
+    {
+      "name": "AsFacilityListener",
+      "class": "Academorix\\Facility\\Attributes\\AsFacilityListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to facility-catalogue lifecycle events (FacilityCreated / FacilityUpdated / FacilityStatusChanged / FacilityPricingUpdated / FacilityBlackoutAdded / FacilityBlackoutRemoved / FacilityAvailabilityChanged / FacilityRetired).",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Array of event short names (`FacilityCreated`, `FacilityRetired`, `FacilityBlackoutAdded`, …). Empty = subscribe to every `Academorix\\Facility\\Events\\Facility*` event. Names resolve against events.json at boot; typos abort boot with a discovery error."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue override. Falls back to the event's default queue (see events.json). Use to route cache-warmers / notification fan-out onto a dedicated queue."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Handler ordering within a single event. Lower runs first. Cascade listeners (CancelFutureBookingsOnFacilityRetired) declare priority 50 so they run before notification listeners."
+        }
+      ],
+      "example": "#[AsFacilityListener(events: ['FacilityRetired', 'FacilityBlackoutAdded'], queue: 'notifications', priority: 50)]\nfinal class CancelFutureBookingsOnFacilityRetired\n{\n    public function __construct(private readonly ResourceBookingRepository $bookings) {}\n\n    public function __invoke(FacilityRetired|FacilityBlackoutAdded $event): void\n    {\n        // …\n    }\n}"
+    },
+    {
+      "name": "AsBookingListener",
+      "class": "Academorix\\Facility\\Attributes\\AsBookingListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to booking-lifecycle events (BookingCreated / BookingConfirmed / BookingCancelled / BookingCompleted / BookingMarkedNoShow / BookingRescheduled / BookingOverlapDetected / BookingCheckedIn). BookingOverlapDetected is CRITICAL — it means overlap-detection failed and a double-booking exists; consumers of that event MUST alert ops immediately.",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Empty = subscribe to every `Academorix\\Facility\\Events\\Booking*` event."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue override. BookingOverlapDetected consumers should override to `notifications-critical`."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100
+        }
+      ],
+      "example": "#[AsBookingListener(events: ['BookingOverlapDetected'], queue: 'notifications-critical', priority: 10)]\nfinal class AlertOpsOnBookingOverlap\n{\n    public function __invoke(BookingOverlapDetected $event): void\n    {\n        // Page on-call. Overlap-detection failure = race condition = data integrity problem.\n    }\n}"
+    },
+    {
+      "name": "AsPassListener",
+      "class": "Academorix\\Facility\\Attributes\\AsPassListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to Pass + DayPass lifecycle events (PassIssued / PassCreditConsumed / PassExhausted / PassExpired / PassTransferred / PassRevoked / DayPassIssued / DayPassConsumed / DayPassExpired / DayPassRefunded). The two entity types share this attribute because most bridging consumers care about the union (Finance module attributes revenue for both alike, Notifications module renders both alike).",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Empty = subscribe to every `Academorix\\Facility\\Events\\Pass*` AND `Academorix\\Facility\\Events\\DayPass*` event."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100
+        }
+      ],
+      "example": "#[AsPassListener(events: ['PassExhausted', 'PassExpired'], queue: 'notifications')]\nfinal class AttributeExhaustedPassRevenue\n{\n    public function __invoke(PassExhausted|PassExpired $event): void\n    {\n        // Finance-module bridging: recognise revenue for the exhausted credits.\n    }\n}"
+    }
+  ]
+}

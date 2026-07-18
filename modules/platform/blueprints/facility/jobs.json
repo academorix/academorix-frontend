@@ -1,0 +1,150 @@
+{
+  "id": "academorix://modules/facility/jobs",
+  "$version": 1,
+  "title": "facility — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Facility\\Jobs\\ExpireLapsedBookingsJob",
+      "queue": "facility",
+      "purpose": "Sweep resource_bookings for rows in status='pending' with created_at + 30 minutes past-due. Transitions them to 'cancelled' with cascade_trigger='expired_pending'. Ensures pending-approval bookings don't linger indefinitely + free up their slot for other users.",
+      "steps": [
+        "SELECT id FROM resource_bookings WHERE status='pending' AND created_at < now() - interval '30 minutes' AND deleted_at IS NULL FOR UPDATE SKIP LOCKED LIMIT 500",
+        "For each: transition to status='cancelled' + set cancellation_reason='pending_approval_expired' + fire BookingCancelled with cascade_trigger='expired_pending'",
+        "If pass credit was consumed on the pending create: restore 1 credit to the pass (double-write safety — pending bookings don't hold credits in normal flow, but Wave 4 approvals may)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "facility-expire-lapsed",
+      "tries": 3,
+      "backoff": [30, 120, 600]
+    },
+    {
+      "class": "Academorix\\Facility\\Jobs\\MarkNoShowJob",
+      "queue": "facility",
+      "purpose": "Sweep resource_bookings for confirmed rows past starts_at + 15 min without a checked_in_at. Transitions them to 'no_show' + fires BookingMarkedNoShow (trigger='automated_job').",
+      "steps": [
+        "SELECT id FROM resource_bookings WHERE status='confirmed' AND starts_at < now() - interval '15 minutes' AND checked_in_at IS NULL AND deleted_at IS NULL FOR UPDATE SKIP LOCKED LIMIT 500",
+        "For each: transition to status='no_show' + set marked_at + fire BookingMarkedNoShow with trigger='automated_job'"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "facility-mark-no-show",
+      "tries": 3,
+      "backoff": [30, 120, 600]
+    },
+    {
+      "class": "Academorix\\Facility\\Jobs\\MarkBookingCompletedJob",
+      "queue": "facility",
+      "purpose": "Sweep resource_bookings for confirmed rows past ends_at + 15 min. Transitions them to 'completed' + fires BookingCompleted. Note: skips rows that were marked no_show by MarkNoShowJob (status != confirmed at this point).",
+      "steps": [
+        "SELECT id FROM resource_bookings WHERE status='confirmed' AND ends_at < now() - interval '15 minutes' AND deleted_at IS NULL FOR UPDATE SKIP LOCKED LIMIT 500",
+        "For each: transition to status='completed' + set completed_at + fire BookingCompleted"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "facility-mark-completed",
+      "tries": 3,
+      "backoff": [30, 120, 600]
+    },
+    {
+      "class": "Academorix\\Facility\\Jobs\\ExpireDayPassesJob",
+      "queue": "facility",
+      "purpose": "Daily sweep of day_passes past valid_on_date with consumed_at IS NULL. Marks them expired + fires DayPassExpired. No refund flow.",
+      "steps": [
+        "SELECT id FROM day_passes WHERE valid_on_date < today() AND consumed_at IS NULL LIMIT 5000",
+        "For each: set expired_at + fire DayPassExpired"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Facility\\Jobs\\ExpirePassesJob",
+      "queue": "facility",
+      "purpose": "Daily sweep of passes past valid_until OR with used_credits >= total_credits (belt-and-suspenders — the observer already fires PassExhausted on the crossing increment). Fires PassExpired for time-expired rows.",
+      "steps": [
+        "SELECT id FROM passes WHERE valid_until < today() AND deleted_at IS NULL LIMIT 5000",
+        "For each row past valid_until: fire PassExpired",
+        "SELECT id FROM passes WHERE used_credits >= total_credits AND deleted_at IS NULL AND NOT EXISTS (audit row with type='PassExhausted' in last 24h)",
+        "For each: fire PassExhausted (recovery path for missed observer fires)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Facility\\Jobs\\PurgeSoftDeletedFacilitiesJob",
+      "queue": "facility",
+      "purpose": "Weekly sweep of soft-deleted facilities past retention (7 years for financial records associated with the facility). Hard-deletes the row only when NO day_passes or passes still reference it (RESTRICT FKs enforce this at DB level too — the job just cleans up rows that pass all checks).",
+      "steps": [
+        "SELECT id FROM facilities WHERE deleted_at < now() - interval '7 years' LIMIT 500",
+        "For each: attempt hard delete; catch FK RESTRICT and record as 'retention_blocked' in metrics"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 1
+    },
+    {
+      "class": "Academorix\\Facility\\Jobs\\SendBookingReminderJob",
+      "queue": "notifications",
+      "purpose": "Individual reminder dispatch. Scheduled by BookingReminderScheduler at booking-create time (24h + 1h before starts_at). Fires the BookingReminderNotification unless the booking has been cancelled since scheduling.",
+      "steps": [
+        "Load booking; refuse dispatch when status != 'confirmed' (booking may have been cancelled)",
+        "Refuse dispatch when the recipient has opted out of facility.booking_reminder category",
+        "Fire BookingReminderNotification via the notifications module"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "(booking_id, hours_before)",
+      "tries": 3,
+      "backoff": [10, 60, 300]
+    },
+    {
+      "class": "Academorix\\Facility\\Jobs\\ReconcileBookingsAgainstRetiredFacilitiesJob",
+      "queue": "facility",
+      "purpose": "Weekly audit sweep to catch bookings referencing retired facilities that should have been cancelled by the FacilityRetired cascade. A finding here indicates a race + fires BookingOverlapDetected (misuse of the event? no — same class of ops-alarm: unexpected state).",
+      "steps": [
+        "SELECT b.id FROM resource_bookings b JOIN facilities f ON f.id = b.facility_id WHERE f.status='retired' AND b.status IN ('pending','confirmed') AND b.starts_at > now()",
+        "For each: fire BookingCancelled with cascade_trigger='facility_retired' + cancellation_reason='reconciler_orphan_cleanup'",
+        "Emit metric academorix.facility.reconcile.orphans_found — should always be 0"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Facility\\Jobs\\ReconcileBookingOverlapsJob",
+      "queue": "facility",
+      "purpose": "Weekly audit to catch double-bookings that slipped through the SERIALIZABLE overlap check. Every finding fires BookingOverlapDetected. This job's counter should always report 0 findings.",
+      "steps": [
+        "For each facility: SELECT a.id, b.id FROM resource_bookings a JOIN resource_bookings b ON a.facility_id=b.facility_id AND a.id < b.id WHERE a.status IN ('pending','confirmed') AND b.status IN ('pending','confirmed') AND tsrange(a.starts_at, a.ends_at) && tsrange(b.starts_at, b.ends_at)",
+        "For each overlap pair: fire BookingOverlapDetected with detected_by='reconciler_job'"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Facility\\Jobs\\RedactAnonymousDayPassProfileJob",
+      "queue": "facility",
+      "purpose": "GDPR data-minimisation. Sweeps day_passes issued to anonymous walk-ins (issued_to_user_id IS NULL) 90 days past consumed_at. Replaces issued_to_profile_name + issued_to_profile_phone with '[REDACTED]' but preserves the receipt_number + price_amount_cents + payment_method for financial retention.",
+      "steps": [
+        "SELECT id FROM day_passes WHERE issued_to_user_id IS NULL AND consumed_at < now() - interval '90 days' AND issued_to_profile_name != '[REDACTED]' LIMIT 2000",
+        "For each: UPDATE day_passes SET issued_to_profile_name='[REDACTED]', issued_to_profile_phone='[REDACTED]', issued_to_profile_age_band='unknown'"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    }
+  ]
+}

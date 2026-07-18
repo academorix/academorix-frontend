@@ -1,0 +1,231 @@
+{
+  "id": "facility.resources.resource-booking.detail",
+  "title": "Booking",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/bookings/:bookingId",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "facility", "entity": "resource-booking", "action": "show" },
+  "requiresPermission": "bookings.view",
+  "requiresEntitlement": "facilities",
+  "dataSources": [
+    {
+      "name": "booking",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/bookings/' + $params.bookingId",
+      "unwrap": "data",
+      "refetchInterval": 60
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$ref": "booking.facility.name" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted" },
+                  "bindings": { "children": { "$expr": "booking.facility.branch.name" } }
+                }
+              ]
+            },
+            {
+              "kind": "Widget",
+              "widget": "facility.booking-status-chip",
+              "props": { "size": "lg" },
+              "bindings": { "status": { "$ref": "booking.status" } }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "grid grid-cols-2 gap-4" },
+              "children": [
+                {
+                  "kind": "View",
+                  "children": [
+                    { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Date" } },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-medium" },
+                      "bindings": { "children": { "$expr": "formatDate(booking.starts_at, 'long')" } }
+                    }
+                  ]
+                },
+                {
+                  "kind": "View",
+                  "children": [
+                    { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Time" } },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-medium" },
+                      "bindings": {
+                        "children": { "$expr": "formatTimeRange(booking.starts_at, booking.ends_at)" }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "View",
+                  "children": [
+                    { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "For" } },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-medium" },
+                      "bindings": {
+                        "children": {
+                          "$expr": "booking.booked_for_user?.display_name || booking.booked_for_team?.name || booking.booked_by_user.display_name"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "View",
+                  "children": [
+                    { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Attendees" } },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-medium" },
+                      "bindings": { "children": { "$ref": "booking.attendees_count" } }
+                    }
+                  ]
+                },
+                {
+                  "kind": "View",
+                  "children": [
+                    { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Price" } },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-medium" },
+                      "bindings": {
+                        "children": {
+                          "$expr": "booking.price_amount_cents === 0 ? 'Free' : formatMoney(booking.price_amount_cents, booking.price_currency)"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "View",
+                  "children": [
+                    { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Payment" } },
+                    {
+                      "kind": "Chip",
+                      "props": { "size": "sm" },
+                      "bindings": { "children": { "$ref": "booking.payment_status" } }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "bindings": { "hidden": { "$expr": "!booking.purpose" } },
+          "children": [
+            { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Purpose" } },
+            {
+              "kind": "Text",
+              "props": { "className": "mt-1" },
+              "bindings": { "children": { "$ref": "booking.purpose" } }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-wrap gap-2" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "leadingIcon": "check-badge", "children": "Check in" },
+              "bindings": {
+                "hidden": {
+                  "$expr": "booking.status !== 'confirmed' || booking.checked_in_at"
+                },
+                "isDisabled": {
+                  "$expr": "minutesUntil(booking.starts_at) > 30"
+                }
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "urlExpr": "'/api/v1/bookings/' + booking.id + '/check-in'"
+                }
+              },
+              "requiresPermission": "bookings.check-in"
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "secondary", "leadingIcon": "calendar-days", "children": "Reschedule" },
+              "bindings": {
+                "hidden": { "$expr": "!['pending', 'confirmed'].includes(booking.status)" }
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "modal.open",
+                  "modal": "reschedule-booking",
+                  "propsExpr": "{ bookingId: booking.id }"
+                }
+              },
+              "requiresPermission": "bookings.reschedule"
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "danger", "leadingIcon": "x-circle", "children": "Cancel booking" },
+              "bindings": {
+                "hidden": { "$expr": "!['pending', 'confirmed'].includes(booking.status)" }
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "modal.open",
+                  "modal": "cancel-booking",
+                  "propsExpr": "{ bookingId: booking.id }"
+                }
+              },
+              "requiresPermission": "bookings.cancel"
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "danger" },
+          "bindings": {
+            "hidden": { "$expr": "booking.status !== 'cancelled'" },
+            "children": {
+              "$expr": "'Cancelled ' + relativeTime(booking.cancelled_at) + '. ' + (booking.cancellation_reason || '')"
+            }
+          }
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "warning" },
+          "bindings": {
+            "hidden": { "$expr": "booking.status !== 'no_show'" },
+            "children": "Marked no-show. Contact staff if this was recorded in error."
+          }
+        }
+      ]
+    }
+  ]
+}

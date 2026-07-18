@@ -1,0 +1,79 @@
+{
+  "id": "academorix://modules/facility/caches",
+  "$version": 1,
+  "title": "facility — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["facility", "facility.bookings", "facility.pricing", "facility.availability"],
+  "keys": [
+    {
+      "pattern": "fac:catalogue:{tenant_id}:{branch_id}",
+      "description": "Per-branch facility catalogue (list of facility rows for a branch, filtered by status='active'). Read by SDUI list screens + the available-slots widget's facility picker.",
+      "ttlSeconds": 300,
+      "tags": ["facility", "tenant"],
+      "invalidatedBy": ["FacilityObserver.created", "FacilityObserver.updated", "FacilityObserver.deleted", "FacilityStatusChanged"]
+    },
+    {
+      "pattern": "fac:catalogue:{tenant_id}",
+      "description": "Cross-branch facility catalogue for tenant-wide reports.",
+      "ttlSeconds": 600,
+      "tags": ["facility", "tenant"],
+      "invalidatedBy": ["FacilityObserver.*"]
+    },
+    {
+      "pattern": "fac:availability:{facility_id}",
+      "description": "Facility.availability_json + blackout_dates + status. Read hot by the available-slots endpoint (fac-heavy tenant hits this thousands of times per day).",
+      "ttlSeconds": 300,
+      "tags": ["facility", "facility.availability"],
+      "invalidatedBy": ["FacilityAvailabilityChanged", "FacilityBlackoutAdded", "FacilityBlackoutRemoved", "FacilityStatusChanged"]
+    },
+    {
+      "pattern": "fac:pricing:{facility_id}",
+      "description": "Facility.pricing_json. Read by PricingCalculator on every booking create. 5-min TTL because pricing changes are rare + we invalidate on change.",
+      "ttlSeconds": 300,
+      "tags": ["facility", "facility.pricing"],
+      "invalidatedBy": ["FacilityPricingUpdated"]
+    },
+    {
+      "pattern": "fac:available-slots:{facility_id}:{date}",
+      "description": "Computed available slot list for a facility on a specific date. Materialised on first request; invalidated on any booking-create for the facility on that date OR any blackout-add on that date.",
+      "ttlSeconds": 300,
+      "tags": ["facility", "facility.bookings", "facility.availability"],
+      "invalidatedBy": ["BookingCreated (per-date)", "BookingCancelled (per-date)", "BookingRescheduled (both source + dest dates)", "FacilityBlackoutAdded (per overlapping date)", "FacilityBlackoutRemoved (per date)"]
+    },
+    {
+      "pattern": "fac:bookings-count:{facility_id}:{date}",
+      "description": "Booked slot count for a facility on a specific date. Feeds the utilisation-bar widget.",
+      "ttlSeconds": 300,
+      "tags": ["facility", "facility.bookings"],
+      "invalidatedBy": ["BookingCreated (per-date)", "BookingCancelled (per-date)", "BookingRescheduled (both dates)"]
+    },
+    {
+      "pattern": "fac:passes:user:{user_id}",
+      "description": "Active passes for a user (used by the pass-credits-remaining widget + the booking flow's PassCreditGate). TTL is short because credit consumption invalidates aggressively.",
+      "ttlSeconds": 60,
+      "tags": ["facility", "user"],
+      "invalidatedBy": ["PassIssued", "PassCreditConsumed", "PassExhausted", "PassExpired", "PassRevoked", "PassTransferred"]
+    },
+    {
+      "pattern": "fac:passes:facility:{facility_id}",
+      "description": "Passes applicable to a facility (facility_id = ? OR facility_id IS NULL AND branch_id = facility.branch_id).",
+      "ttlSeconds": 300,
+      "tags": ["facility", "facility.pricing"],
+      "invalidatedBy": ["PassIssued", "PassRevoked", "PassExpired"]
+    },
+    {
+      "pattern": "fac:day-passes-today:{branch_id}",
+      "description": "Today's day-pass ledger for reception dashboards. Refreshed every 60s.",
+      "ttlSeconds": 60,
+      "tags": ["facility", "tenant"],
+      "invalidatedBy": ["DayPassIssued", "DayPassConsumed", "DayPassRefunded"]
+    },
+    {
+      "pattern": "fac:audit-usage:{tenant_id}:{window}",
+      "description": "Utilisation + revenue rollup per facility per (day/week/month) window. Powers the audit-usage dashboards on both tenant + platform planes.",
+      "ttlSeconds": 3600,
+      "tags": ["facility", "facility.bookings", "tenant"],
+      "invalidatedBy": ["BookingCompleted", "BookingCancelled", "DayPassConsumed", "PassCreditConsumed"]
+    }
+  ]
+}

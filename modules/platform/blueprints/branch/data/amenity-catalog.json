@@ -1,0 +1,92 @@
+{
+  "$version": 1,
+  "title": "Platform-wide amenity catalogue",
+  "description": "The canonical list of amenity tags every tenant may set on a Branch. Tenants on the `branch_amenities: catalog_only` entitlement (Small + Medium) are restricted to these tags. Enterprise tenants with `branch_amenities: custom` may add tenant-scoped custom tags outside the catalogue. The catalogue is versioned + audit-tracked — additions ship via code deploy + a `branch-amenity-catalog-loaded` health probe validates it parses at boot.",
+  "categories": [
+    {
+      "category": "connectivity",
+      "display_label": "Connectivity",
+      "amenities": [
+        { "tag": "wifi", "display_label": "Wi-Fi", "icon": "wifi", "description": "Free member Wi-Fi network." },
+        { "tag": "wifi_premium", "display_label": "Premium Wi-Fi", "icon": "wifi", "description": "Dedicated high-speed guest network (typically fibre-backed)." },
+        { "tag": "cellular_coverage", "display_label": "Cellular coverage", "icon": "signal", "description": "Signal boosters covering areas with weak mobile reception." }
+      ]
+    },
+    {
+      "category": "access_and_mobility",
+      "display_label": "Access + mobility",
+      "amenities": [
+        { "tag": "parking", "display_label": "Parking", "icon": "truck", "description": "Vehicle parking available on-site." },
+        { "tag": "parking_free", "display_label": "Free parking", "icon": "truck", "description": "Parking included at no additional cost." },
+        { "tag": "parking_paid", "display_label": "Paid parking", "icon": "truck", "description": "Paid parking arrangement (metered or valet)." },
+        { "tag": "parking_ev_charging", "display_label": "EV charging", "icon": "bolt", "description": "Electric vehicle charging stations." },
+        { "tag": "bike_racks", "display_label": "Bike parking", "icon": "bicycle", "description": "Bicycle racks / lock-up." },
+        { "tag": "wheelchair_accessible", "display_label": "Wheelchair accessible", "icon": "hand-raised", "description": "ADA / regional-equivalent accessible entrances + facilities." },
+        { "tag": "elevator", "display_label": "Elevator", "icon": "arrows-up-down", "description": "Elevator access to all floors." },
+        { "tag": "public_transit_nearby", "display_label": "Public transit nearby", "icon": "map-pin", "description": "Bus / metro / tram stop within 500m." }
+      ]
+    },
+    {
+      "category": "facilities",
+      "display_label": "On-site facilities",
+      "amenities": [
+        { "tag": "showers", "display_label": "Showers", "icon": "droplet", "description": "Members' showers." },
+        { "tag": "lockers", "display_label": "Lockers", "icon": "lock-closed", "description": "Member lockers (day-use or rented)." },
+        { "tag": "changing_rooms", "display_label": "Changing rooms", "icon": "user-group" },
+        { "tag": "cafe", "display_label": "Café / snack bar", "icon": "cake", "description": "Food + beverage service on-site." },
+        { "tag": "vending_machines", "display_label": "Vending machines", "icon": "shopping-bag" },
+        { "tag": "pro_shop", "display_label": "Pro shop", "icon": "shopping-cart", "description": "Retail sales of equipment / apparel." },
+        { "tag": "childcare", "display_label": "Childcare", "icon": "user-plus", "description": "On-site supervised childcare during member visits." },
+        { "tag": "physiotherapy", "display_label": "Physiotherapy", "icon": "heart", "description": "On-site physio / sports medicine services." },
+        { "tag": "sauna", "display_label": "Sauna", "icon": "fire" },
+        { "tag": "steam_room", "display_label": "Steam room", "icon": "cloud" }
+      ]
+    },
+    {
+      "category": "family_and_faith",
+      "display_label": "Family + faith",
+      "amenities": [
+        { "tag": "prayer_room", "display_label": "Prayer room", "icon": "sparkles", "description": "Dedicated prayer / meditation space." },
+        { "tag": "family_room", "display_label": "Family room", "icon": "home", "description": "Family-friendly waiting area." },
+        { "tag": "nursing_room", "display_label": "Nursing room", "icon": "heart", "description": "Private space for parents to nurse infants." },
+        { "tag": "family_changing_room", "display_label": "Family changing room", "icon": "user-group" }
+      ]
+    },
+    {
+      "category": "sport_specific",
+      "display_label": "Sport-specific",
+      "amenities": [
+        { "tag": "indoor_courts", "display_label": "Indoor courts", "icon": "square-3-stack-3d" },
+        { "tag": "outdoor_courts", "display_label": "Outdoor courts", "icon": "sun" },
+        { "tag": "swimming_pool", "display_label": "Swimming pool", "icon": "droplet" },
+        { "tag": "swimming_pool_heated", "display_label": "Heated swimming pool", "icon": "droplet" },
+        { "tag": "gym", "display_label": "Gym / fitness room", "icon": "bolt" },
+        { "tag": "cardio_zone", "display_label": "Cardio zone", "icon": "chart-bar" },
+        { "tag": "free_weights", "display_label": "Free weights area", "icon": "beaker" },
+        { "tag": "yoga_studio", "display_label": "Yoga / pilates studio", "icon": "sparkles" },
+        { "tag": "spin_studio", "display_label": "Spin studio", "icon": "arrow-path" },
+        { "tag": "track", "display_label": "Running track", "icon": "map" },
+        { "tag": "climbing_wall", "display_label": "Climbing wall", "icon": "arrow-trending-up" }
+      ]
+    },
+    {
+      "category": "safety_and_service",
+      "display_label": "Safety + service",
+      "amenities": [
+        { "tag": "24_hour_access", "display_label": "24-hour access", "icon": "clock", "description": "Member-badge access outside staffed hours." },
+        { "tag": "staffed_reception", "display_label": "Staffed reception", "icon": "user" },
+        { "tag": "cctv", "display_label": "CCTV monitored", "icon": "eye" },
+        { "tag": "defibrillator", "display_label": "AED / defibrillator on-site", "icon": "heart" },
+        { "tag": "first_aid_trained_staff", "display_label": "First-aid-trained staff", "icon": "plus" }
+      ]
+    }
+  ],
+  "notes": [
+    "The `tag` field is the persisted value in `Branch.amenities` — snake_case, immutable once shipped. Renaming a tag is a schema-migration event because existing rows carry the old value.",
+    "`display_label` may be updated freely — it's a UI concern, not a persistence one. Localisation of display_label happens via the localization module (tenant-locale-aware).",
+    "`icon` names match the heroicons v2 outline set (kebab-case, no `heroicons-` prefix). The SDUI widget maps them to the actual SVG at render time.",
+    "Amenity categories are for UI grouping only — the persisted array on Branch.amenities is flat.",
+    "Ordering within a category is intentional — the amenity-picker widget presents them in this order to reduce decision fatigue.",
+    "Custom-mode Enterprise tenants may add tenant-scoped tags outside this catalogue. Those tags do NOT get a `display_label` from the platform — the tenant supplies their own (currently unlocalised)."
+  ]
+}

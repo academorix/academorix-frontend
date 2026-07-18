@@ -1,0 +1,79 @@
+{
+  "id": "academorix://modules/branch/traits",
+  "$version": 1,
+  "title": "branch — trait composition",
+  "description": "One owned trait. `BelongsToBranch` — mixed into every downstream domain model that carries a `branch_id` FK (Facility, Team, Athlete, Staff, Coach, Session, Booking, Membership, …). Adds the belongsTo relation + a per-branch global scope + auto-fill from RequestContext on save. The FK-central nature of Branch means the trait order matters — see composition_order below.",
+  "owned": [
+    {
+      "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch",
+      "description": "Adds `branch()` belongsTo relation, `scopeForBranch($branchId)` local scope, an OPTIONAL global scope that filters to `RequestContext::branch()` when the caller carries an active-branch header, and a `booted()` hook that auto-fills `branch_id` on `creating` from `RequestContext::branch()`. Refuses save when the target Branch's `tenant_id` differs from the row's `tenant_id` (defence in depth on top of the observer + DB FK).",
+      "public": true,
+      "usedBy": [
+        "facility::Facility (planned Wave 3)",
+        "teams::Team",
+        "teams::TeamMember (planned Wave 3)",
+        "staff::Staff (planned Wave 3)",
+        "sports::Coach (planned Wave 3)",
+        "sports::Athlete (planned Wave 3)",
+        "sports::Session (planned Wave 3)",
+        "sports::Booking (planned Wave 3)",
+        "finance::Membership (planned Wave 4)",
+        "finance::Pass (planned Wave 4)",
+        "attendance::Visit (planned Wave 3)"
+      ],
+      "conflicts_with": [],
+      "composition_order": "MUST come AFTER `BelongsToTenant`, `BelongsToOrganization`, `BelongsToRegion`. Rationale: the `booted()` hook reads `RequestContext::branch()` which is resolved by the `branch.resolve_active` middleware only after the tenant is resolved. The upstream traits set up their own `booted()` hooks that must run first so their global scopes are registered before this one's."
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSlug" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "tenants": [
+      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }
+    ],
+    "organization": [
+      { "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization" }
+    ],
+    "region": [
+      { "trait": "Academorix\\Region\\Concerns\\BelongsToRegion" }
+    ],
+    "audit": [
+      { "trait": "OwenIt\\Auditing\\Auditable" }
+    ],
+    "activity": [
+      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }
+    ]
+  },
+  "composition": {
+    "branch": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToOrganization",
+        "BelongsToRegion",
+        "HasSlug",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "Order matters: BelongsToTenant FIRST (its booted hook seeds the tenant scope every subsequent trait relies on), then BelongsToOrganization, then BelongsToRegion (both compose the tenant scope in their own booted hooks). HasSlug generates the URL-safe slug from name at creation; the composite unique index handles the collision case (tenant + org + slug)."
+    }
+  }
+}

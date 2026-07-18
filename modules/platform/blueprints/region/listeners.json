@@ -1,0 +1,37 @@
+{
+  "id": "academorix://modules/region/listeners",
+  "$version": 1,
+  "title": "region — subscribed events",
+  "listeners": [
+    {
+      "event": "tenancy::TenantProvisioned",
+      "listener": "Academorix\\Region\\Listeners\\SeedDefaultRegionOnTenantProvisioned",
+      "queue": "notifications",
+      "purpose": "Fires when a new Tenant is created. Dispatches SeedDefaultRegionForTenantJob (or invokes RegionProvisioner synchronously when `region.provisioning.async=false`). Idempotent — skips when the tenant already has a default region. Silent (does NOT fire RegionCreatedNotification); the very first region is a system-provisioned invariant + would just noise up the inbox during onboarding."
+    },
+    {
+      "event": "tenancy::TenantErased",
+      "listener": "Academorix\\Region\\Listeners\\PreventRegionOrphansOnTenantErased",
+      "queue": null,
+      "purpose": "Fires BEFORE tenancy's FK cascade drops the tenant. Verifies that every Region on this tenant has already lost its inbound references (Branch, Membership, Invoice, Transaction have been erased first). When any inbound reference still exists, logs a telemetry counter + surfaces a diagnostic in the tenancy erasure report. Does NOT rehome Regions to another tenant (cross-tenant regions are forbidden per hierarchy.md §13). The actual DELETE fires afterward via the tenant_id FK CASCADE."
+    },
+    {
+      "event": "entitlements::EntitlementDowngrade",
+      "listener": "Academorix\\Region\\Listeners\\FlagRegionSlotDriftOnDowngrade",
+      "queue": "low",
+      "purpose": "Fires when a tenant downgrades their plan + the new tier has fewer `region_slot` slots than the current active region count. Does NOT auto-archive — it surfaces the drift in the tenant admin UI + logs a `academorix.region.slot_drift.total` counter. The tenant admin must manually archive extra regions."
+    },
+    {
+      "event": "audit::AuditFlushed",
+      "listener": "Academorix\\Region\\Listeners\\CacheReconciliationLastRun",
+      "queue": null,
+      "purpose": "Fires when ReconcileDefaultRegionInvariantJob completes + writes its report. Caches the timestamp in `rgn:reconciler_last_run` so the health probe + ops dashboard can read the last-successful-run marker without querying `audit_events`."
+    },
+    {
+      "event": "branch::BranchProvisioning",
+      "listener": "Academorix\\Region\\Listeners\\WarmDefaultRegionCacheOnBranchProvisioning",
+      "queue": null,
+      "purpose": "Fires when Branch (Wave 2b) is about to create its first Branch row. Ensures the tenant's default region cache is warm — the Branch observer will read it synchronously. Cheap; runs before the transaction commits."
+    }
+  ]
+}

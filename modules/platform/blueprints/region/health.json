@@ -1,0 +1,71 @@
+{
+  "id": "academorix://modules/region/health",
+  "$version": 1,
+  "title": "region — health probes",
+  "probes": [
+    {
+      "name": "region-tables-migrated",
+      "class": "Academorix\\Region\\Health\\Probes\\TablesMigratedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "The `regions` table exists + carries the latest schema version. Failure indicates a missed migration.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "region-country-defaults-loaded",
+      "class": "Academorix\\Region\\Health\\Probes\\CountryDefaultsLoadedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "`data/country-defaults.json` parses cleanly + contains at minimum the fallback country_code (default 'US'). Failure indicates a corrupted deploy artifact.",
+      "timeoutMs": 100
+    },
+    {
+      "name": "region-tenant-fk-integrity",
+      "class": "Academorix\\Region\\Health\\Probes\\TenantFkIntegrityProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Every `regions.tenant_id` resolves to a live `tenants` row. Failure indicates orphaned rows after out-of-band tenant manipulation. The FK is onDelete=cascade so the DB should never permit orphans; this probe catches direct SQL manipulation.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "region-default-invariant",
+      "class": "Academorix\\Region\\Health\\Probes\\DefaultRegionInvariantProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Every tenant with at least one active Region has EXACTLY ONE row with `is_default = true`. Failure is a data-quality signal; the observer normally prevents this state, but the probe catches drift from bulk-imports + direct SQL. Runs a limited-cost aggregate query.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "region-slug-uniqueness",
+      "class": "Academorix\\Region\\Health\\Probes\\SlugUniquenessProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "No two active Regions share (tenant_id, slug). Backed by the partial unique index; the probe verifies the index is in place + healthy.",
+      "timeoutMs": 300
+    },
+    {
+      "name": "region-tax-config-shape",
+      "class": "Academorix\\Region\\Health\\Probes\\TaxConfigShapeProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Every Region.tax_config JSONB blob validates against `schemas/region.schema.json#/properties/tax_config`. Catches drift from raw SQL edits + migration bugs. Runs against a sampled 100-row window per invocation.",
+      "timeoutMs": 800
+    },
+    {
+      "name": "region-purge-queue-drained",
+      "class": "Academorix\\Region\\Health\\Probes\\PurgeQueueDrainedProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "No `PurgeArchivedRegionsJob` has been pending for > 48h. Catches queue stalls that could push an archived Region past its 730-day retention window.",
+      "timeoutMs": 300
+    },
+    {
+      "name": "region-inbound-fk-drift",
+      "class": "Academorix\\Region\\Health\\Probes\\InboundFkDriftProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "No Branch / Membership / Transaction / Invoice row references a hard-deleted Region (i.e. a Region row that no longer exists). Every FK is RESTRICT so this should never happen — this probe catches direct SQL manipulation.",
+      "timeoutMs": 800
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "id": "academorix://modules/organization/settings",
+  "$version": 1,
+  "title": "organization — settings",
+  "description": "Tenant-facing preferences for the Organization module. One group (tenant scope). No per-user preferences — the user's default_organization_id lives on their profile in the user module, not here.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "organization",
+      "class": "Academorix\\Organization\\Settings\\OrganizationSettings",
+      "label": "Organizations",
+      "description": "Tenant-wide Organization behaviour preferences. Distinct from per-Organization branding (which lives on each row).",
+      "icon": "building-office-2",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 20,
+      "permission": "organizations.viewAny.tenant",
+      "sections": [
+        {
+          "label": "Defaults",
+          "description": "Behaviour when the caller has not pinned a specific Organization.",
+          "icon": "adjustments-horizontal",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "auto_resolve_default_on_missing_header",
+              "controlType": "toggle",
+              "label": "Auto-resolve default organization",
+              "defaultValue": true,
+              "helpText": "When on, requests without an X-Organization-Id header fall back to the tenant's default org. When off, missing header is a hard 400 error.",
+              "sortOrder": 1
+            },
+            {
+              "name": "prompt_for_organization_on_login",
+              "controlType": "toggle",
+              "label": "Ask users to pick an organization at login",
+              "defaultValue": false,
+              "helpText": "When on and the tenant has more than one Organization, the login flow shows a picker instead of routing to the default.",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Hierarchy",
+          "description": "Nesting behaviour for tenants on Enterprise tier.",
+          "icon": "square-3-stack-3d",
+          "sortOrder": 2,
+          "requiresEntitlement": "organization_hierarchy",
+          "fields": [
+            {
+              "name": "allow_reparent_after_create",
+              "controlType": "toggle",
+              "label": "Allow moving organizations after create",
+              "defaultValue": true,
+              "helpText": "When off, parent_id becomes IMMUTABLE — an organization can only be created with a parent, never moved. Recommended for compliance-heavy tenants.",
+              "sortOrder": 1
+            },
+            {
+              "name": "max_hierarchy_depth",
+              "controlType": "number",
+              "label": "Max nesting depth",
+              "defaultValue": 5,
+              "min": 1,
+              "max": 10,
+              "helpText": "Hard cap on tree_depth. Existing rows deeper than the new cap remain until reparented.",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Branding cascade",
+          "description": "How Organizations without their own branding inherit from the tenant.",
+          "icon": "swatch",
+          "sortOrder": 3,
+          "requiresEntitlement": "organization_branding",
+          "fields": [
+            {
+              "name": "cascade_branding_from_parent",
+              "controlType": "toggle",
+              "label": "Inherit branding from parent organization",
+              "defaultValue": true,
+              "helpText": "When on, a child Organization without its own logo/colors inherits from its nearest ancestor. When off, the tenant-level branding is used directly.",
+              "sortOrder": 1
+            }
+          ]
+        },
+        {
+          "label": "Notifications",
+          "icon": "bell-alert",
+          "sortOrder": 4,
+          "fields": [
+            {
+              "name": "notify_admins_on_create",
+              "controlType": "toggle",
+              "label": "Notify admins when a new organization is created",
+              "defaultValue": true,
+              "sortOrder": 1
+            },
+            {
+              "name": "notify_admins_on_reparent",
+              "controlType": "toggle",
+              "label": "Notify admins when an organization is reparented",
+              "defaultValue": true,
+              "sortOrder": 2
+            },
+            {
+              "name": "notify_admins_on_default_change",
+              "controlType": "toggle",
+              "label": "Notify admins when the default organization changes",
+              "defaultValue": true,
+              "helpText": "Cannot be turned off — default-changes are transactional (they shift every downstream default-org filter).",
+              "readonly": true,
+              "sortOrder": 3
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

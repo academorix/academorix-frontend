@@ -1,0 +1,92 @@
+{
+  "id": "academorix://modules/organization/policies",
+  "$version": 1,
+  "title": "organization — authorization policies",
+  "policies": [
+    {
+      "model": "Organization",
+      "class": "Academorix\\Organization\\Policies\\OrganizationPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "organizations.viewAny.tenant",
+          "scope": "any tenant member — Organizations are discoverable to every member because the frontend picker depends on them"
+        },
+        {
+          "action": "view",
+          "permission": "organizations.view.tenant",
+          "scope": "any tenant member"
+        },
+        {
+          "action": "create",
+          "permission": "organizations.create.tenant",
+          "scope": "admin + owner. Additional gates: (a) organization_slot cap; (b) organization_hierarchy entitlement when parent_id is set"
+        },
+        {
+          "action": "update",
+          "permission": "organizations.update.tenant",
+          "scope": "admin + owner. Branding-column writes require organization_branding entitlement (checked in the branding-update ability)"
+        },
+        {
+          "action": "delete",
+          "permission": "organizations.delete.tenant",
+          "scope": "admin + owner. Refused on is_default OR has descendants OR referenced by branches"
+        },
+        {
+          "action": "reparent",
+          "permission": "organizations.reparent.tenant",
+          "scope": "admin + owner. Requires organization_reparent entitlement. Distinct from `update` because reparenting has extra audit weight"
+        },
+        {
+          "action": "setDefault",
+          "permission": "organizations.set_default.tenant",
+          "scope": "admin + owner"
+        },
+        {
+          "action": "pause",
+          "permission": "organizations.pause.tenant",
+          "scope": "admin + owner. Refused on is_default"
+        },
+        {
+          "action": "resume",
+          "permission": "organizations.resume.tenant",
+          "scope": "admin + owner"
+        },
+        {
+          "action": "archive",
+          "permission": "organizations.archive.tenant",
+          "scope": "admin + owner. Refused on is_default OR has descendants OR referenced by branches"
+        },
+        {
+          "action": "updateBranding",
+          "permission": "organizations.branding.update.tenant",
+          "scope": "admin + owner + entitlement organization_branding. Ability short-circuits with ORGANIZATION_BRANDING_NOT_ENTITLED when the entitlement is missing"
+        },
+        {
+          "action": "viewTree",
+          "permission": "organizations.tree.view.tenant",
+          "scope": "any tenant member"
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.organizations.viewAny"
+        },
+        {
+          "action": "platformView",
+          "permission": "platform.organizations.view"
+        },
+        {
+          "action": "platformViewTree",
+          "permission": "platform.organizations.tree.view"
+        }
+      ]
+    }
+  ],
+  "before_hooks": [
+    {
+      "policy": "OrganizationPolicy",
+      "hook": "before",
+      "purpose": "Short-circuit on the super_admin bypass (platform-plane) and on `is_default` guards (tenant-plane). Ensures ability checks fail with ORGANIZATION_IS_DEFAULT BEFORE evaluating permission strings — surfaces the meaningful error rather than 403"
+    }
+  ]
+}

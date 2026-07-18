@@ -1,0 +1,223 @@
+{
+  "id": "academorix://modules/facility/schemas/day-pass",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "DayPass",
+  "description": "Untimed same-day admission. Branch-scoped POS record — a walk-in visitor buys access to the whole branch, not a specific facility. Financial record: 7-year hard retention, NO soft-delete. Anonymous walk-in profile fields (name + phone + age_band) redacted 90 days post-consumption per GDPR Art. 5(1)(c).",
+  "type": "object",
+  "x-module": "facility",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "day_passes",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "dpa_",
+    "incrementing": false,
+    "model": "Academorix\\Facility\\Models\\DayPass",
+    "interface": "Academorix\\Facility\\Contracts\\Data\\DayPassInterface",
+    "implements": ["Academorix\\Facility\\Contracts\\Data\\DayPassInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToBranch",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable"
+    ],
+    "casts": {
+      "issued_to_profile_age_band": "DayPassAgeBand",
+      "payment_method": "DayPassPaymentMethod",
+      "purchased_at": "datetime",
+      "consumed_at": "datetime",
+      "expired_at": "datetime",
+      "refunded_at": "datetime",
+      "valid_on_date": "date",
+      "price_amount_cents": "integer",
+      "metadata": "array"
+    },
+    "observers": ["DayPassObserver"],
+    "appends": ["is_valid_today", "is_anonymous"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `dpa_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "branches", "column": "id", "onDelete": "restrict" }
+      },
+      "issued_to_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "NULL = anonymous walk-in (profile fields carry the identity)."
+      },
+      "issued_to_profile_name": {
+        "type": "string",
+        "length": 200,
+        "nullable": true,
+        "description": "Anonymous walk-in PII. Redacted to '[REDACTED]' 90 days post-consumed_at per GDPR minimisation."
+      },
+      "issued_to_profile_phone": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "E.164 format. Same redaction as name."
+      },
+      "issued_to_profile_age_band": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'unknown'",
+        "description": "Enum: under_18 / adult / senior / unknown. Powers age-based pricing tiers + when under_18, minor-data-protection compliance."
+      },
+      "purchased_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Set to now() on create. Never mutable."
+      },
+      "valid_on_date": {
+        "type": "date",
+        "nullable": false,
+        "description": "The specific day the pass is good for. Consumer refused when this != today()."
+      },
+      "price_amount_cents": { "type": "integer", "nullable": false, "default": 0 },
+      "price_currency": { "type": "string", "length": 3, "nullable": false },
+      "payment_method": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum category (cash / card / wallet / free / comp). NEVER a card number — PCI-DSS scope excluded."
+      },
+      "issued_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "Staff member who sold the pass."
+      },
+      "consumed_at": { "type": "timestamptz", "nullable": true },
+      "consumed_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "Reception staff who marked the pass consumed. Null = automated turnstile scan."
+      },
+      "expired_at": { "type": "timestamptz", "nullable": true },
+      "refunded_at": { "type": "timestamptz", "nullable": true },
+      "refunded_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "refund_amount_cents": { "type": "integer", "nullable": true },
+      "refund_reason": { "type": "text", "nullable": true },
+      "receipt_number": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Format: DP-{tenant_prefix}-{year}-{sequential:06d}. Unique per (tenant_id, receipt_number)."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "receipt_number"],
+        "unique": true,
+        "name": "day_passes_receipt_unique"
+      },
+      { "columns": ["tenant_id", "branch_id", "valid_on_date"], "name": "day_passes_by_date_idx" },
+      { "columns": ["tenant_id", "issued_by_user_id"], "name": "day_passes_by_issuer_idx" },
+      { "columns": ["tenant_id", "issued_to_user_id"], "name": "day_passes_by_holder_idx" },
+      {
+        "columns": ["consumed_at"],
+        "name": "day_passes_consumed_idx",
+        "predicate": "consumed_at IS NOT NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "branch_id",
+    "issued_to_profile_age_band",
+    "purchased_at",
+    "valid_on_date",
+    "price_amount_cents",
+    "price_currency",
+    "payment_method",
+    "issued_by_user_id",
+    "receipt_number",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^dpa_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "branch_id": { "type": "string", "pattern": "^brn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "issued_to_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "issued_to_profile_name": { "type": ["string", "null"], "maxLength": 200 },
+    "issued_to_profile_phone": { "type": ["string", "null"] },
+    "issued_to_profile_age_band": {
+      "type": "string",
+      "enum": ["under_18", "adult", "senior", "unknown"]
+    },
+    "purchased_at": { "type": "string", "format": "date-time" },
+    "valid_on_date": { "type": "string", "format": "date" },
+    "price_amount_cents": { "type": "integer", "minimum": 0 },
+    "price_currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "payment_method": {
+      "type": "string",
+      "enum": ["cash", "card", "wallet", "free", "comp"]
+    },
+    "issued_by_user_id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "consumed_at": { "type": ["string", "null"], "format": "date-time" },
+    "consumed_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "expired_at": { "type": ["string", "null"], "format": "date-time" },
+    "refunded_at": { "type": ["string", "null"], "format": "date-time" },
+    "refunded_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "refund_amount_cents": { "type": ["integer", "null"], "minimum": 0 },
+    "refund_reason": { "type": ["string", "null"] },
+    "receipt_number": { "type": "string", "maxLength": 32 },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "issued_to_user_id IS NOT NULL OR (issued_to_profile_name IS NOT NULL AND issued_to_profile_phone IS NOT NULL) — anonymous walk-in mandate",
+    "valid_on_date >= today() at create-time",
+    "valid_on_date <= today() + 30 days at create-time",
+    "price_amount_cents >= 0",
+    "consumed_at only set when valid_on_date = today() at consume-time",
+    "refunded_at only when consumed_at IS NULL AND purchased_at + 30 days > now()",
+    "hard-delete refused for financial records — 7-year retention"
+  ]
+}

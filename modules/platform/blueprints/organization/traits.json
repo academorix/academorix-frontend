@@ -1,0 +1,84 @@
+{
+  "id": "academorix://modules/organization/traits",
+  "$version": 1,
+  "title": "organization — trait composition",
+  "description": "Two owned traits. `BelongsToOrganization` for downstream models (Branch, Team, planned Facility + Season) with an `organization_id` FK. `HasOrganizationHierarchy` for the Organization model itself — adds descendant/ancestor accessor methods over the materialised tree_path.",
+  "owned": [
+    {
+      "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization",
+      "description": "Mixed into models with an `organization_id` FK. Adds (a) belongsTo relation `organization()`, (b) global scope filtering to the request's active Organization when composed with a matching middleware, (c) auto-fill of organization_id on save from RequestContext::organization() when not explicitly set, (d) refuses cross-organization writes on save (defense-in-depth beyond the FK).",
+      "public": true,
+      "compose_order": "AFTER BelongsToTenant. BelongsToTenant sets tenant_id first; BelongsToOrganization then enforces that the resolved Organization's tenant_id matches.",
+      "usedBy": [
+        "branch::Branch (planned)",
+        "teams::Team (planned)",
+        "facility::Facility (planned — cascades through Branch, but a direct FK exists on the row for query-plan efficiency)"
+      ],
+      "conflicts_with": []
+    },
+    {
+      "trait": "Academorix\\Organization\\Concerns\\HasOrganizationHierarchy",
+      "description": "Applied to the Organization model itself. Adds five accessor methods for tree navigation, backed by the materialised tree_path (never a recursive CTE): `parent()`, `children()`, `ancestors()`, `descendants()`, `siblings()`, plus two predicate helpers `isAncestorOf($other)` and `isDescendantOf($other)`.",
+      "public": false,
+      "usedBy": ["organization::Organization"],
+      "method_semantics": {
+        "parent()": "belongsTo(Organization) via parent_id — returns null on root nodes",
+        "children()": "hasMany(Organization) via parent_id — direct children only",
+        "ancestors()": "computed from tree_path split — returns root→parent (self excluded), ordered",
+        "descendants()": "WHERE tree_path LIKE '.<self.id>.%' AND id != self.id — returns every descendant, ordered by tree_path",
+        "siblings()": "WHERE parent_id = self.parent_id AND id != self.id",
+        "isAncestorOf($other)": "$other.tree_path startsWith self.tree_path",
+        "isDescendantOf($other)": "self.tree_path startsWith $other.tree_path"
+      },
+      "conflicts_with": []
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSlug" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "tenancy": [
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "compose_order_note": "MUST come first among the tenant-scoping traits. Applies the global scope + fills tenant_id on save."
+      }
+    ],
+    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }],
+    "audit": [{ "trait": "OwenIt\\Auditing\\Auditable" }]
+  },
+  "composition": {
+    "organization": {
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "BelongsToTenant",
+        "HasOrganizationHierarchy",
+        "HasSlug",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasActivityLog",
+        "Auditable",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": [
+        "BelongsToTenant → HasOrganizationHierarchy → HasSlug order matters: tenant scope must apply BEFORE slug uniqueness check (partial unique per tenant).",
+        "SoftDeletes for the archive semantics — status=archived + deleted_at set on the same operation.",
+        "Auditable via `owen-it/laravel-auditing` — compliance-critical fields (parent_id, is_default, status, tree_path, branding fields) are captured on every mutation.",
+        "HasActivityLog for the tenant-visible activity feed. Distinct from Auditable — Activity is the human-readable feed (`Kate reparented Elite Sports under Community Group`); Audit is the field-level diff for compliance."
+      ]
+    }
+  }
+}

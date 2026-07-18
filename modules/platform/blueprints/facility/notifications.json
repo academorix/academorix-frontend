@@ -1,0 +1,112 @@
+{
+  "id": "academorix://modules/facility/notifications",
+  "$version": 1,
+  "title": "facility — notification classes + categories",
+  "namespace": "Academorix\\Facility\\Notifications",
+  "notifications": [
+    "BookingConfirmedNotification",
+    "BookingCancelledNotification",
+    "BookingReminderNotification",
+    "BookingNoShowRecordedNotification",
+    "FacilityBlackoutAffectsBookingNotification",
+    "PassIssuedNotification",
+    "PassExhaustedNotification",
+    "PassExpiringNotification",
+    "PassRevokedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "facility.booking_confirmed",
+      "display_name": "Booking confirmed",
+      "description": "Your booking is confirmed. Includes facility name, date/time, price, cancellation policy summary.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "facility.booking_cancelled",
+      "display_name": "Booking cancelled",
+      "description": "Your booking has been cancelled. Includes cancellation cause (voluntary / facility blackout / facility retired / cascade), refund status (if applicable), and how to rebook.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "facility.booking_reminder",
+      "display_name": "Booking reminder",
+      "description": "You have a booking coming up. Sent 24h before and 1h before start-time. Booker can opt out per booking.",
+      "default_channels": ["push", "in_app", "mail"],
+      "priority": "transactional",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "facility.booking_no_show",
+      "display_name": "No-show recorded",
+      "description": "You were marked no-show on a recent booking. Details, penalty (if any), and how to appeal.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "facility.blackout_affects_booking",
+      "display_name": "Facility unavailable — booking cancelled",
+      "description": "The facility you booked is temporarily closed. Your booking was cancelled. Full refund automatic. Suggested alternatives listed.",
+      "default_channels": ["mail", "in_app", "sms"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "facility.pass_issued",
+      "display_name": "Pass issued",
+      "description": "A new pass has been issued to you. Includes total credits, expiry, and which facilities it grants access to.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "facility.pass_exhausted",
+      "display_name": "Pass credits exhausted",
+      "description": "Your pass has no remaining credits. Details on renewal / top-up options included.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "facility.pass_expiring",
+      "display_name": "Pass expiring soon",
+      "description": "Your pass expires in 7 days with N unused credits. Renew now to keep them.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "facility.pass_revoked",
+      "display_name": "Pass revoked",
+      "description": "A pass assigned to you has been revoked by staff. Includes revocation reason and any refund handling.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

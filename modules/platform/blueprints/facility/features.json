@@ -1,0 +1,60 @@
+{
+  "id": "academorix://modules/facility/features",
+  "$version": 1,
+  "title": "facility — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "facility.core",
+      "displayName": "Facilities & bookings",
+      "description": "Facility catalogue + resource booking. Off for Small-tier tenants.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "facility.advanced",
+      "displayName": "Day passes, passes, blackouts",
+      "description": "POS day-pass sale, membership-linked passes, one-off blackout windows, recurring booking rules.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "facility.recurring_bookings",
+      "displayName": "Recurring bookings",
+      "description": "Rules that auto-create N bookings from a template (e.g. every Tuesday 18:00–19:00 for 12 weeks). Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "facility.capacity_gating",
+      "displayName": "Capacity enforcement",
+      "description": "Refuse booking when attendees_count > facility.capacity_persons. Off means capacity is a UI hint only.",
+      "defaultEnabled": true,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "facility.pass_transfer",
+      "displayName": "Transferable passes",
+      "description": "Allow passes to be reassigned to different users. When off, is_transferable defaults to false on all new passes.",
+      "defaultEnabled": true,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "facility.pricing_editor",
+      "displayName": "Pricing editor",
+      "description": "SDUI surface for editing pricing_json. When off, pricing is API-only. Financial-audit-critical when on.",
+      "defaultEnabled": true,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "facility.slot_picker",
+      "displayName": "Slot picker UI",
+      "description": "Calendar widget showing available slots. When off, booking creation is manual date/time entry only.",
+      "defaultEnabled": true,
+      "planTiers": ["medium", "enterprise"]
+    }
+  ]
+}

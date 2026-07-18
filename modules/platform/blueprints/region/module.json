@@ -1,0 +1,167 @@
+{
+  "$version": 1,
+  "name": "region",
+  "alias": "region",
+  "namespace": "Academorix\\Region",
+  "description": "Commercial + regulatory zone belonging to a Tenant. Answers 'what currency, tax rules, timezone, and locale apply here?'. Orthogonal to Organization (structural sub-brand) — they meet at Branch, which carries FKs to both. Every Tenant provisions exactly one `is_default=true` Region on TenantProvisioned so downstream code never special-cases the single-region case. Multi-region tenants add regions per entitlement. Small tier locked to 1 region; Medium up to 3; Enterprise unlimited. `region_slot` entitlement gate + `RegionQuotaExceeded` refusal on write. Ships: Region model, region CRUD HTTP surface, default-region seeder listener on TenantProvisioned, tax + tz + locale + currency defaults per country_code, is_default enforcement (exactly one per tenant), RegionDeactivated cascade that prevents deletion when any Branch or Membership still references it.",
+  "keywords": [
+    "region",
+    "regions",
+    "tenant",
+    "tax",
+    "vat",
+    "currency",
+    "timezone",
+    "locale",
+    "country",
+    "iso3166",
+    "iso4217",
+    "fiscal-year",
+    "commercial-zone",
+    "regulatory-zone"
+  ],
+  "priority": 40,
+  "providers": [
+    "Academorix\\Region\\Providers\\RegionServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "entitlements"
+  ],
+  "extendedBy": [
+    "branch"
+  ],
+  "planned_consumers": [
+    "branch",
+    "facility",
+    "subscription",
+    "finance",
+    "notifications",
+    "audit",
+    "activity"
+  ],
+  "contributes": {
+    "traits": [
+      "BelongsToRegion"
+    ],
+    "attributes": [
+      "AsRegionListener"
+    ],
+    "blueprints": [],
+    "middleware": [
+      "region.resolve_active"
+    ],
+    "events": [
+      "RegionCreated",
+      "RegionUpdated",
+      "RegionStatusChanged",
+      "RegionPaused",
+      "RegionResumed",
+      "RegionArchived",
+      "RegionRestored",
+      "RegionDefaultChanged",
+      "RegionTaxConfigUpdated",
+      "RegionDeleted",
+      "TenantDefaultRegionSeeded"
+    ],
+    "policies": [
+      "RegionPolicy"
+    ],
+    "hooks": [
+      "SeedDefaultRegionOnTenantProvisioned",
+      "PreventRegionOrphansOnTenantErased"
+    ],
+    "commands": [
+      "region:list",
+      "region:describe",
+      "region:create",
+      "region:set-default",
+      "region:pause",
+      "region:resume",
+      "region:archive",
+      "region:reconcile-defaults",
+      "region:audit-tax-config",
+      "region:seed-defaults-for-legacy-tenants"
+    ],
+    "jobs": [
+      "SeedDefaultRegionForTenantJob",
+      "ReconcileDefaultRegionInvariantJob",
+      "PurgeArchivedRegionsJob"
+    ],
+    "notifications": [
+      "RegionCreatedNotification",
+      "RegionPausedNotification",
+      "RegionDefaultChangedNotification"
+    ],
+    "broadcasts": [],
+    "observers": [
+      "RegionObserver"
+    ],
+    "rules": [
+      "valid_country_code",
+      "valid_currency_code",
+      "valid_iana_timezone",
+      "valid_bcp47_locale",
+      "valid_tax_rate",
+      "weekend_days_valid"
+    ],
+    "casts": [
+      "RegionStatus",
+      "CountryCode",
+      "CurrencyCode",
+      "IanaTimezone",
+      "Bcp47Locale",
+      "TaxConfig"
+    ],
+    "views": [],
+    "lang": [
+      "region"
+    ],
+    "config": [
+      "region"
+    ],
+    "macros": [
+      "Request::activeRegion",
+      "Request::activeRegionId"
+    ],
+    "bindings": [
+      "RegionRepository",
+      "RegionProvisioner",
+      "DefaultRegionResolver",
+      "TaxConfigResolver",
+      "TimezoneResolver",
+      "CurrencyFormatter"
+    ],
+    "resources": [
+      "region"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing region CRUD, default-toggle, pause/resume/archive lifecycle, and tax-config detail.",
+      "routes": [
+        "GET /api/v1/regions",
+        "POST /api/v1/regions",
+        "GET /api/v1/regions/{region}",
+        "PATCH /api/v1/regions/{region}",
+        "DELETE /api/v1/regions/{region}",
+        "POST /api/v1/regions/{region}/set-default",
+        "POST /api/v1/regions/{region}/pause",
+        "POST /api/v1/regions/{region}/resume",
+        "POST /api/v1/regions/{region}/archive",
+        "GET /api/v1/regions/{region}/tax-config"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant read for support tooling + the shipped country-defaults reference table available to tenant admins choosing a country_code.",
+      "routes": [
+        "GET /api/v1/platform/regions",
+        "GET /api/v1/platform/regions/{region}",
+        "GET /api/v1/platform/country-defaults"
+      ]
+    }
+  }
+}

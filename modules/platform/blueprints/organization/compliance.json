@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/organization/compliance",
+  "$version": 1,
+  "title": "organization — compliance evidence",
+  "description": "Organization structure changes are compliance-critical because they reveal a customer's org restructuring — reparenting, default flips, and archives are audit-material for SOC 2 CC6.3 and can be evidence in regulatory disputes about who controlled which asset when.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(b)",
+          "principle": "purpose limitation",
+          "evidence": "Organization rows carry only structural + branding + contact metadata. No individual PII. `contact_person_name` (string) is the ONE PII-adjacent field; it is a designated contact for the org, not a member id, and is classified `internal` in `data-classes.json`."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "TenantErased cascades hard-delete via FK. Retention job PurgeArchivedOrganizationsJob hard-deletes rows past the 730-day archive hold IF no descendants and no branch references."
+        },
+        {
+          "article": "Art. 30",
+          "principle": "records of processing",
+          "evidence": "Every Organization mutation is audit-logged via `owen-it/laravel-auditing` on the Organization model. Reparent + default-flip carry the before/after `tree_path` and `is_default` snapshots for full traceability."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.3",
+          "principle": "restrict access to authorized users",
+          "evidence": "Reparenting an Organization moves every descendant + every downstream scoped row (Branches, Teams, Facilities) under a new access-cascade root. The event carries `tree_path.before` + `tree_path.after` + `descendant_count` + `branch_count` so an auditor can reconstruct exactly which resources changed access boundary at what timestamp."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "Two independent invariants monitored: (1) exactly one is_default per tenant — reconciled nightly + monitored via the `academorix.organization.default_invariant.violations` metric; (2) tree_path consistency across parent_id — monitored via `academorix.organization.tree_path_drift.count` after every RebuildTreePathsJob."
+        },
+        {
+          "criterion": "CC8.1",
+          "principle": "change management",
+          "evidence": "Structural changes (create + reparent + archive) are notifiable to tenant admins (see `notifications.json`). The audit event fires ShouldDispatchAfterCommit so the notification never lands on a rolled-back write."
+        }
+      ]
+    },
+    "iso27001": {
+      "applicable": true,
+      "controls": [
+        {
+          "annex": "A.5.15",
+          "principle": "access control",
+          "evidence": "Organization is a scope-node **entity** (per `hierarchy.md` §5) — every access decision that cascades through the tenant tree walks its `tree_path`. Structural changes are treated as security-relevant because they change the effective access set for descendants."
+        }
+      ]
+    }
+  }
+}

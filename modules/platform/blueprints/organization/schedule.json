@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/organization/schedule",
+  "$version": 1,
+  "title": "organization — scheduled tasks",
+  "entries": [
+    {
+      "name": "organization-reconcile-defaults",
+      "command": "organization:reconcile-defaults",
+      "cron": "15 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 03:15 UTC: sweep every tenant for the is_default=true invariant. Zero → promote oldest active row; multiple → keep oldest, demote rest. Emits `academorix.organization.default_invariant.violations` counter."
+    },
+    {
+      "name": "organization-purge-archived",
+      "command": "organization:purge-archived --batch=100",
+      "cron": "45 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 03:45 UTC (after reconciliation): hard-delete archived Organizations past the 730-day hold IF no descendants + no branch references remain."
+    },
+    {
+      "name": "organization-slot-usage-warm",
+      "command": "organization:reconcile-defaults --slot-usage-only",
+      "cron": "0 4 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 04:00 UTC: recompute the organization_slot usage from source-of-truth for every tenant. Drift detected here indicates an entitlement observer bug — non-zero drift fires a compliance-critical alert."
+    },
+    {
+      "name": "organization-tree-path-consistency-probe",
+      "command": "organization:rebuild-tree-paths --dry-run --sample=0.01",
+      "cron": "30 2 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 02:30 UTC: dry-run the tree-path rebuild against a 1% sample of rows. Any drift emits `academorix.organization.tree_path_drift.count` non-zero + fires the readiness probe failure."
+    }
+  ]
+}

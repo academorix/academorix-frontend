@@ -1,0 +1,57 @@
+{
+  "id": "academorix://modules/facility/feature-flags",
+  "$version": 1,
+  "title": "facility — kill switches",
+  "engine": "laravel/pennant",
+  "description": "Operational kill switches distinct from the tier-based `features.json` gates. These are for emergency-off / staged rollout / per-tenant ops interventions. Every flag is ON in normal production; off flips are ops decisions.",
+  "flags": [
+    {
+      "key": "facility.booking_writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for booking-create routes. Off = every POST /bookings returns 503 with a maintenance banner. Emergency-only (used during DB migrations of the resource_bookings table)."
+    },
+    {
+      "key": "facility.overlap_detection_serializable",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Overlap check runs under SERIALIZABLE isolation. Off = REPEATABLE_READ (documented drift risk; the reconciler catches slippage). Test envs may flip off for concurrency benchmarks."
+    },
+    {
+      "key": "facility.pass_credit_consumption",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = pass credit consumption on booking-create is skipped (bookings still succeed, pass credits are not decremented). Emergency-only if the atomic increment is racing."
+    },
+    {
+      "key": "facility.blackout_cascade",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = FacilityBlackoutAdded does NOT cascade-cancel affected bookings. Admins must manually cancel. Test/staging only."
+    },
+    {
+      "key": "facility.reminders",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = SendBookingReminderJob no-ops. Used when notifications module is unstable to avoid backing up its queue."
+    },
+    {
+      "key": "facility.reconciler_jobs",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReconcileBookingOverlapsJob + ReconcileBookingsAgainstRetiredFacilitiesJob skip. Only flip off for maintenance windows."
+    },
+    {
+      "key": "facility.no_show_automation",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = MarkNoShowJob does NOT auto-transition. Admins mark manually via bookings.mark-no-show."
+    },
+    {
+      "key": "facility.day_pass_receipts",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReceiptNumberGenerator skips (day_passes stored without receipt_number). Emergency-only when the sequence collides."
+    }
+  ]
+}
