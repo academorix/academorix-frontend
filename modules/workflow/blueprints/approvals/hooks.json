@@ -1,0 +1,30 @@
+{
+  "id": "academorix://modules/workflow/approvals/hooks",
+  "$version": 1,
+  "title": "approvals — tenancy hooks",
+  "description": "Per-tenant lifecycle callbacks (`#[AsTenancyHook]`) this module contributes. Two hooks: warm the tenant's ApproverSelectorEngine delegation-substitution cache on tenant activation, purge the same cache on tenant deactivation. Distinct from listeners.json — hooks run on the tenancy-lifecycle dispatcher (not the event dispatcher), so they run BEFORE any downstream module's tenant-activation logic can query the engine.",
+  "contract": "Academorix\\ServiceProvider\\Contracts\\TenancyHookInterface",
+  "dispatcher": "Academorix\\ServiceProvider\\Dispatchers\\TenancyHookDispatcher",
+  "registry": "Academorix\\ServiceProvider\\Registry\\TenancyHookRegistry",
+  "hooks": [
+    {
+      "name": "WarmDelegationSubstitutionCache",
+      "class": "Academorix\\Approval\\TenancyHooks\\WarmDelegationSubstitutionCacheHook",
+      "phase": "tenant.activated",
+      "priority": 50,
+      "purpose": "On tenant activation (each request context), pre-load the tenant's active RoleDelegation index into the request-scoped ApproverSelectorEngine cache. Halves the latency of the first instance-create in the request. Read-only; no writes. Cost: 1 SELECT (a few ms). Guarded by `approvals.delegation_substitution_enabled` feature flag."
+    },
+    {
+      "name": "PurgeApprovalCaches",
+      "class": "Academorix\\Approval\\TenancyHooks\\PurgeApprovalCachesHook",
+      "phase": "tenant.deactivated",
+      "priority": 50,
+      "purpose": "On tenant deactivation (usually per-request cleanup or manual tenant-switch in support tooling), purges the request-scoped caches — delegation-substitution index, compiled expression AST cache-slice, tenant-scoped ApprovalPresenter memoisation. Prevents cross-tenant contamination in support-agent impersonation flows."
+    }
+  ],
+  "notes": [
+    "Both hooks are IDEMPOTENT — activating a tenant twice or deactivating an already-deactivated tenant is a no-op.",
+    "The delegation-substitution cache is REQUEST-SCOPED (per-Octane-request) — not persisted between requests. Warming on activation trades a small startup cost for consistent hot-path latency.",
+    "The Approvable Actions Registry is APPLICATION-WIDE (not per-tenant) — it's populated at BOOT from #[AsApprovableAction] discovery. No per-tenant warming needed. Every tenant sees the same registry."
+  ]
+}

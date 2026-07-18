@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/workflow/approvals/permissions",
+  "$version": 1,
+  "title": "approvals — permissions",
+  "seeder": "Academorix\\Approval\\Database\\Seeders\\ApprovalsPermissionSeeder",
+  "isSystem": true,
+  "description": "Permissions split across two guards. `sanctum` guard covers tenant users (viewers + admins + approvers). `platform_admin` guard covers Academorix ops staff (cross-tenant read + registry management). Approval decisions themselves use `approvals.instances.approve` — one permission covers both approve + reject because they're two sides of the same decision-authority.",
+  "permissions": [
+    { "name": "approvals.actions.viewAny", "guard": "sanctum", "seededOn": ["member", "admin", "owner"] },
+    { "name": "approvals.actions.view", "guard": "sanctum", "seededOn": ["member", "admin", "owner"] },
+    { "name": "approvals.templates.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "approvals.templates.view", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "approvals.templates.create", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "approvals.templates.update", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "approvals.templates.manage", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Activate + deactivate templates." },
+    { "name": "approvals.templates.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "approvals.instances.viewAny", "guard": "sanctum", "seededOn": ["member", "admin", "owner"] },
+    { "name": "approvals.instances.view", "guard": "sanctum", "seededOn": ["member", "admin", "owner"] },
+    { "name": "approvals.instances.withdraw", "guard": "sanctum", "seededOn": ["member", "admin", "owner"], "description": "Withdraw a pending instance the caller submitted." },
+    { "name": "approvals.instances.approve", "guard": "sanctum", "seededOn": ["approver", "admin", "owner"], "description": "Approve or reject an instance the caller is an approver on. NOT enough on its own — caller MUST additionally be in the specific requirement's resolved_approvers (enforced by caller_is_approver rule + approvals.enforce_approver middleware + ApprovalDecisionObserver)." },
+    { "name": "approvals.decisions.view", "guard": "sanctum", "seededOn": ["member", "admin", "owner"] },
+    { "name": "approvals.decisions.view_comments", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "See the decision comments on the timeline. Members see decisions but comments are redacted to preserve reviewer discretion." },
+    {
+      "name": "platform.approvals.actions.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "product", "security"]
+    },
+    {
+      "name": "platform.approvals.actions.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "product", "security"]
+    },
+    {
+      "name": "platform.approvals.actions.create",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "product"],
+      "description": "Break-glass — manually add a row to the approvable_actions registry. Rare; boot-time discovery handles the normal case."
+    },
+    {
+      "name": "platform.approvals.actions.update",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "product"]
+    },
+    {
+      "name": "platform.approvals.templates.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "security", "compliance"],
+      "description": "Cross-tenant template read. Compliance auditor use case."
+    },
+    {
+      "name": "platform.approvals.instances.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "security", "compliance", "support"]
+    },
+    {
+      "name": "platform.approvals.instances.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "security", "compliance", "support"]
+    },
+    {
+      "name": "platform.approvals.audit.generate",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "compliance", "security"],
+      "description": "Generate cross-tenant compliance snapshots. SOC 2 + ISO 27001 evidence path."
+    }
+  ]
+}

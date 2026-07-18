@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/workflow/approvals/macros",
+  "$version": 1,
+  "title": "approvals — published macros",
+  "description": "This module ships NO Blueprint macros. Approval-instance + approval-decision tables use plain columns declared via the standard `AsDatabaseBlueprint` conventions from foundation. No JSONB-composition macros needed. The `context_json` + `payload_json` columns on approval_instances are simple `jsonb` types written via straightforward `$table->jsonb('context_json')` calls in the migration — no helper required.",
+  "namespace_note": "The one macro this module could hypothetically ship — `Blueprint::approvableAction()` to auto-add `subject_type` + `subject_id` polymorphic pair — is intentionally skipped. Polymorphic FKs are cheap to hand-write (two columns + a composite index) and don't warrant a macro.",
+  "macros": [],
+  "registered_by": null,
+  "registration_order": null,
+  "notes": [
+    "If a future need surfaces for a common `has_approval_context()` polymorphic pair or a `has_expression()` column-pair, add the macro here + register in ApprovalServiceProvider::boot()."
+  ]
+}

@@ -1,0 +1,194 @@
+{
+  "id": "approvals.resources.approval-instance.pending-my-review",
+  "title": "Approvals pending my review",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/approvals/pending-my-review",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "workflow/approvals", "entity": "approval-instance", "action": "list" },
+  "requiresPermission": "approvals.instances.viewAny",
+  "notes": [
+    "Dedicated approver inbox — same underlying `/pending-my-review` endpoint as the tabbed list-screen view. This dedicated screen supports deep-linking + notification-click targeting (email links pointing to this route show the reviewer their queue directly). Real-time updates via `user.{userId}.approvals` channel."
+  ],
+  "dataSources": [
+    {
+      "name": "queue",
+      "kind": "http.get",
+      "url": "/api/v1/approvals/instances/pending-my-review",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": ["filter[urgency]", "filter[action_key]", "sort", "page", "per_page"],
+      "cache": { "ttlSeconds": 30, "staleWhileRevalidate": true },
+      "fallback": {
+        "kind": "mock.static",
+        "path": "modules/workflow/blueprints/approvals/data/approval-flow-samples.json"
+      }
+    }
+  ],
+  "subscriptions": [
+    {
+      "channel": "user.{userId}.approvals",
+      "kind": "private",
+      "onEvent": {
+        "kind": "data.mutateItem",
+        "source": "queue",
+        "keyBy": "id",
+        "expr": "event.data"
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Pending my review"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "propsExpr": "{ className: 'text-sm text-muted', children: queue.meta.total + ' approvals waiting for your decision' }"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Toolbar",
+          "children": [
+            {
+              "kind": "Toggle",
+              "props": {
+                "name": "filter[urgency]",
+                "label": "Expiring soon (< 24h)",
+                "valueOn": "expiring_soon",
+                "valueOff": "all"
+              }
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "name": "filter[action_key]",
+                "placeholder": "All actions",
+                "clearable": true
+              },
+              "optionsSource": "approvable-actions.available"
+            }
+          ]
+        },
+        {
+          "kind": "List",
+          "bindings": { "items": { "$ref": "queue" } },
+          "itemTemplate": {
+            "kind": "Card",
+            "props": { "clickable": true },
+            "actions": {
+              "onPress": {
+                "kind": "navigate",
+                "toExpr": "'/tenant/approvals/instances/' + item.id"
+              }
+            },
+            "children": [
+              {
+                "kind": "View",
+                "props": { "className": "flex items-start justify-between gap-4" },
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex flex-col gap-2 flex-1" },
+                    "children": [
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex items-center gap-2" },
+                        "children": [
+                          {
+                            "kind": "widget.reference",
+                            "widget": "approval-status-chip",
+                            "propsExpr": "{ status: item.status, size: 'xs' }"
+                          },
+                          {
+                            "kind": "Text",
+                            "propsExpr": "{ as: 'h3', className: 'font-semibold', children: item.action_label }"
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "Text",
+                        "propsExpr": "{ className: 'text-sm text-muted', children: 'Requested by ' + item.requester_summary.display_name + ' \\u00b7 ' + relativeTime(item.requested_at) }"
+                      },
+                      {
+                        "kind": "Text",
+                        "propsExpr": "{ className: 'text-sm', children: item.subject_summary.display_name || null }",
+                        "bindings": { "hidden": { "$expr": "!item.subject_summary" } }
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex flex-col items-end gap-2" },
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "propsExpr": "{ className: expiringSoon(item.expires_at) ? 'text-sm text-danger font-semibold' : 'text-sm text-muted', children: 'Expires ' + relativeTime(item.expires_at) }"
+                      },
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex items-center gap-1" },
+                        "children": [
+                          {
+                            "kind": "Button",
+                            "props": {
+                              "variant": "primary",
+                              "size": "xs",
+                              "children": "Approve"
+                            },
+                            "actions": {
+                              "onPress": {
+                                "kind": "modal.open",
+                                "modalId": "approve-modal",
+                                "dataExpr": "{ instance_id: item.id }"
+                              }
+                            }
+                          },
+                          {
+                            "kind": "Button",
+                            "props": {
+                              "variant": "danger",
+                              "size": "xs",
+                              "children": "Reject"
+                            },
+                            "actions": {
+                              "onPress": {
+                                "kind": "modal.open",
+                                "modalId": "reject-modal",
+                                "dataExpr": "{ instance_id: item.id }"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

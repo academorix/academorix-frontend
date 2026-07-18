@@ -1,0 +1,140 @@
+{
+  "id": "academorix://modules/workflow/approvals/schemas/approval-template-approver",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ApprovalTemplateApprover",
+  "description": "Approver group per template — design.md D-A7 rejected the single-JSON-column shortcut. Multiple rows per template. sort_order defines ordering: rows sharing a sort_order run in PARALLEL; distinct sort_orders run SEQUENTIALLY (a group's requirements start blocked until the previous sort_order group is satisfied).",
+  "type": "object",
+  "x-module": "approvals",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "approval_template_approvers",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "apg_",
+    "incrementing": false,
+    "model": "Academorix\\Approval\\Models\\ApprovalTemplateApprover",
+    "interface": "Academorix\\Approval\\Contracts\\Data\\ApprovalTemplateApproverInterface",
+    "implements": ["Academorix\\Approval\\Contracts\\Data\\ApprovalTemplateApproverInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasActivityLog",
+      "Filterable"
+    ],
+    "casts": {
+      "sort_order": "integer",
+      "quorum_type": "QuorumType",
+      "quorum_n": "integer",
+      "allows_self_approve": "boolean",
+      "metadata": "array"
+    },
+    "appends": [],
+    "observers": [],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `apg_<26>`." },
+      "approval_template_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "approval_templates", "column": "id", "onDelete": "cascade" }
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" },
+        "description": "Denormalised from parent template for FK-integrity + query-plan efficiency."
+      },
+      "group_name": {
+        "type": "string",
+        "length": 100,
+        "nullable": false,
+        "description": "Human-readable label. E.g. 'Finance managers', 'Compliance officer', 'Security team'."
+      },
+      "sort_order": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Rows sharing sort_order run in parallel; distinct sort_orders run sequentially."
+      },
+      "selector_expression": {
+        "type": "text",
+        "nullable": false,
+        "description": "symfony/expression-language source. Must return User[] | User | user_id. E.g. `role('finance_manager')`, `any(role('security'), user(resource.owner_id))`."
+      },
+      "quorum_type": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'any'",
+        "description": "Enum: all | any | n_of_m. 'all' = every resolved approver must approve. 'any' = one approve suffices. 'n_of_m' = at least quorum_n approves."
+      },
+      "quorum_n": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Required when quorum_type='n_of_m'. Null otherwise."
+      },
+      "allows_self_approve": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "When false, requester can't be their own approver if the selector resolves to include them."
+      },
+      "description": {
+        "type": "text",
+        "nullable": true,
+        "description": "Optional operator-facing note about this group's purpose."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["approval_template_id", "sort_order"],
+        "unique": false,
+        "name": "approval_template_approvers_template_sort_idx"
+      },
+      {
+        "columns": ["tenant_id"],
+        "unique": false,
+        "name": "approval_template_approvers_tenant_idx"
+      }
+    ]
+  },
+  "required": ["id", "approval_template_id", "tenant_id", "group_name", "sort_order", "selector_expression", "quorum_type", "allows_self_approve", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^apg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "approval_template_id": { "type": "string", "pattern": "^apt_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "group_name": { "type": "string", "maxLength": 100 },
+    "sort_order": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "selector_expression": { "type": "string" },
+    "quorum_type": { "type": "string", "enum": ["all", "any", "n_of_m"] },
+    "quorum_n": { "type": ["integer", "null"], "minimum": 1 },
+    "allows_self_approve": { "type": "boolean" },
+    "description": { "type": ["string", "null"] },
+    "metadata": { "type": ["object", "null"] },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper"
+  }
+}

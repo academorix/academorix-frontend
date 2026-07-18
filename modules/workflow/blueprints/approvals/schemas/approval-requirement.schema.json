@@ -1,0 +1,160 @@
+{
+  "id": "academorix://modules/workflow/approvals/schemas/approval-requirement",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ApprovalRequirement",
+  "description": "One row per approver group per instance. Materialised at instance-create time by ApprovalInstanceProvisioner — the selector_expression is evaluated against the snapshotted context, resolved_approvers[] is baked with delegation substitutions applied, and the group's quorum + sort_order copied. Frozen post-materialisation (no updates to selector/quorum/approvers). Sequential ordering via sort_order: rows sharing a value run parallel; distinct values run sequentially.",
+  "type": "object",
+  "x-module": "approvals",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "approval_requirements",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "apr_",
+    "incrementing": false,
+    "model": "Academorix\\Approval\\Models\\ApprovalRequirement",
+    "interface": "Academorix\\Approval\\Contracts\\Data\\ApprovalRequirementInterface",
+    "implements": ["Academorix\\Approval\\Contracts\\Data\\ApprovalRequirementInterface"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "Filterable"],
+    "casts": {
+      "sort_order": "integer",
+      "resolved_approvers": "array",
+      "selector_snapshot_json": "array",
+      "quorum_type": "QuorumType",
+      "quorum_n": "integer",
+      "status": "ApprovalRequirementStatus",
+      "satisfied_at": "datetime",
+      "metadata": "array"
+    },
+    "appends": ["approval_count", "reject_count", "quorum_progress_ratio"],
+    "observers": ["ApprovalRequirementObserver"],
+    "hidden": ["selector_snapshot_json"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `apr_<26>`." },
+      "approval_instance_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "approval_instances", "column": "id", "onDelete": "cascade" }
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" },
+        "description": "Denormalised from parent instance for FK-integrity + query-plan."
+      },
+      "template_approver_group_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "approval_template_approvers", "column": "id", "onDelete": "restrict" }
+      },
+      "sort_order": {
+        "type": "integer",
+        "nullable": false,
+        "description": "Copied from the template approver group. Drives sequential-vs-parallel ordering across sibling requirements."
+      },
+      "selector_expression": {
+        "type": "text",
+        "nullable": false,
+        "description": "Copied from the template group at materialisation time (frozen for audit)."
+      },
+      "selector_snapshot_json": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "Compiled expression AST — engine-internal, never wire-projected. Preserved for reproducibility during audit replay."
+      },
+      "resolved_approvers": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Array of user_id strings — the flesh-and-blood approvers computed at instance-time. DELEGATION-AWARE. Frozen post-materialisation."
+      },
+      "quorum_type": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Copied from the template group. Enum: all | any | n_of_m."
+      },
+      "quorum_n": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Copied from the template group when quorum_type='n_of_m'."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "Enum: pending | blocked | satisfied | failed. 'blocked' when a lower sort_order predecessor is still pending."
+      },
+      "satisfied_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set on transition to satisfied."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["approval_instance_id", "template_approver_group_id"],
+        "unique": true,
+        "name": "approval_requirements_composite_unique"
+      },
+      {
+        "columns": ["approval_instance_id", "sort_order"],
+        "unique": false,
+        "name": "approval_requirements_instance_sort_idx"
+      },
+      {
+        "columns": ["resolved_approvers"],
+        "unique": false,
+        "name": "approval_requirements_resolved_approvers_gin",
+        "type": "gin",
+        "description": "GIN index for the pending-my-review JSONB containment query (`resolved_approvers @> to_jsonb(caller_id)`)."
+      },
+      {
+        "columns": ["status", "tenant_id"],
+        "unique": false,
+        "name": "approval_requirements_status_scan_idx"
+      }
+    ]
+  },
+  "required": ["id", "approval_instance_id", "tenant_id", "template_approver_group_id", "sort_order", "selector_expression", "selector_snapshot_json", "resolved_approvers", "quorum_type", "status", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^apr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "approval_instance_id": { "type": "string", "pattern": "^api_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "template_approver_group_id": { "type": "string", "pattern": "^apg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "sort_order": { "type": "integer", "minimum": 0 },
+    "selector_expression": { "type": "string" },
+    "selector_snapshot_json": { "type": "object", "description": "Never wire-projected." },
+    "resolved_approvers": { "type": "array", "items": { "type": "string" } },
+    "quorum_type": { "type": "string", "enum": ["all", "any", "n_of_m"] },
+    "quorum_n": { "type": ["integer", "null"], "minimum": 1 },
+    "status": { "type": "string", "enum": ["pending", "blocked", "satisfied", "failed"] },
+    "satisfied_at": { "type": ["string", "null"], "format": "date-time" },
+    "approval_count": { "type": "integer", "description": "Computed." },
+    "reject_count": { "type": "integer", "description": "Computed." },
+    "quorum_progress_ratio": { "type": "number", "description": "Computed. approval_count / needed_count." },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["approval_count", "reject_count", "quorum_progress_ratio"],
+    "never_projected": ["selector_snapshot_json"]
+  }
+}

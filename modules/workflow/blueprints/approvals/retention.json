@@ -1,0 +1,93 @@
+{
+  "id": "academorix://modules/workflow/approvals/retention",
+  "$version": 1,
+  "title": "approvals — retention windows",
+  "description": "Retention aligns with SOC 2 CC6.3 (7-year evidence retention on executed approvals) + GDPR Art. 5(1)(e) storage limitation (90-day hold on non-executed flows). Approval templates are governance artefacts retained indefinitely (old versions preserved, never hard-deleted except on tenant erasure). Approval decisions are retained forever — decisions are the audit event and never redacted or purged.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(e) (storage limitation)",
+    "gdpr Art. 17 (right to erasure — supersedes retention on tenant/user erasure)",
+    "soc2 CC6.3 (7-year evidence retention on executed approvals)",
+    "iso27001 A.9.2 (user access management audit trail)",
+    "pci-dss 10.7 (audit trail retention — approvals containing regulated_financial context serve as PCI-DSS evidence)"
+  ],
+  "retention": [
+    {
+      "entity": "ApprovableAction",
+      "hot": { "days": "indefinite" },
+      "purge": {
+        "trigger": "manual archive by platform admin AND zero references from approval_templates OR approval_instances",
+        "action": "soft delete only",
+        "notes": "The registry row is preserved indefinitely because it's a schema-level artefact — retiring an action_key breaks historical approval_instances that reference it. Set is_active=false to hide from template authors; never hard-delete."
+      }
+    },
+    {
+      "entity": "ApprovalTemplate (any version)",
+      "hot": { "days": "indefinite while tenant active" },
+      "purge": {
+        "trigger": "tenancy::TenantErased (GDPR Art. 17)",
+        "action": "hard delete via FK cascade",
+        "notes": "Old template versions are NEVER hard-deleted while their tenant is active — audit reports need to reproduce past decisions. The daily reconciler enforces max_versions_retained (default 20) by hard-deleting the OLDEST is_active=false versions past the cap — this is the ONLY non-erasure hard-delete path for a template row."
+      }
+    },
+    {
+      "entity": "ApprovalTemplateApprover",
+      "hot": { "days": "indefinite while parent template exists" },
+      "purge": { "trigger": "parent template hard-delete (retention-purge or tenant-erasure)", "action": "hard delete via FK cascade" }
+    },
+    {
+      "entity": "ApprovalInstance (executed)",
+      "hot": { "days": 730 },
+      "cold": { "days": 1825 },
+      "total": { "days": 2555 },
+      "purge": {
+        "trigger": "executed_at older than 7 years (SOC 2 CC6.3 evidence-retention floor)",
+        "action": "hard delete via PurgeExpiredApprovalsJob",
+        "notes": "Hot 2 years covers auditor Q1/Q4 sweep; cold 5 years covers evidence-archive requirement. PCI-DSS 10.7 requires 1-year hot; SOC 2 supersedes with the 7-year total."
+      }
+    },
+    {
+      "entity": "ApprovalInstance (rejected | expired | cancelled)",
+      "hot": { "days": 90 },
+      "purge": {
+        "trigger": "updated_at older than 90 days AND status IN (rejected, expired, cancelled)",
+        "action": "hard delete via PurgeExpiredApprovalsJob",
+        "notes": "Non-executed flows retain 90 days for DPO investigation window + Data Subject Access Request response. GDPR Art. 5(1)(e) supports the shorter window."
+      }
+    },
+    {
+      "entity": "ApprovalRequirement",
+      "hot": { "days": "matches parent ApprovalInstance retention" },
+      "purge": { "trigger": "parent instance hard-delete", "action": "hard delete via FK cascade" }
+    },
+    {
+      "entity": "ApprovalDecision",
+      "hot": { "days": "matches parent ApprovalRequirement retention" },
+      "purge": {
+        "trigger": "parent requirement hard-delete",
+        "action": "hard delete via FK cascade",
+        "notes": "Decisions are audit-event rows — they NEVER redact or truncate. Comment content persists intact. Deletion only via the parent cascade (retention-purge or tenant-erasure)."
+      }
+    },
+    {
+      "entity": "ApprovalReminder",
+      "hot": { "days": "matches parent ApprovalRequirement retention" },
+      "purge": { "trigger": "parent requirement hard-delete", "action": "hard delete via FK cascade" }
+    },
+    {
+      "entity": "Auditable audit records (owen-it/laravel-auditing)",
+      "hot": { "days": 2555 },
+      "purge": {
+        "trigger": "audit_row_created_at older than 7 years",
+        "action": "hard delete via the audit module's separate purger",
+        "notes": "Audit rows OUTLIVE their subject's hard-delete — retention is on the audit row's own timestamp, not the subject's. Applies to approval_templates + approval_instances audits."
+      }
+    }
+  ],
+  "erasure_flow": [
+    "tenancy::TenantErased → PurgeApprovalsForErasedTenant listener runs",
+    "Cascade: approval_templates → approval_template_approvers → approval_instances → approval_requirements → approval_decisions → approval_reminders (all hard-delete via FK)",
+    "Audit rows for the erased tenant's approval_templates + approval_instances are ALSO purged (audit module's cascade path)",
+    "Emit tenancy-erasure-completed metric with count of purged rows per table",
+    "Retention holds do NOT apply — GDPR Art. 17 (right to erasure) supersedes SOC 2 CC6.3 (retention) for tenants that formally invoke erasure"
+  ]
+}

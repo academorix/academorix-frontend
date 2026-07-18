@@ -1,0 +1,81 @@
+{
+  "id": "academorix://modules/workflow/approvals/analytics",
+  "$version": 1,
+  "title": "approvals — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Approval Requested",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "requester_role", "action_key", "action_namespace", "template_version"],
+      "description": "Requester triggered an approvable action + engine created an instance. Feeds approval-flow funnel + tenant governance-adoption dashboards."
+    },
+    {
+      "name": "Approval Decided",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "action_key", "decision", "was_delegated", "time_to_decision_hours"],
+      "description": "An approver decided (approve or reject). was_delegated=true when the approver is acting under an active RoleDelegation."
+    },
+    {
+      "name": "Approval Executed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "action_key", "time_to_execution_hours", "requirement_count"],
+      "description": "The final approval kicked off the underlying action + it ran successfully."
+    },
+    {
+      "name": "Approval Rejected",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "action_key", "time_to_rejection_hours"]
+    },
+    {
+      "name": "Approval Expired",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "action_key", "on_timeout_behaviour", "final_status"]
+    },
+    {
+      "name": "Approval Withdrawn",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "action_key", "time_pending_hours"]
+    },
+    {
+      "name": "Approval Template Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "action_key", "priority", "group_count", "on_timeout"],
+      "description": "Tenant admin authored a new template. Feeds governance-adoption metrics + product-marketing benchmarks."
+    },
+    {
+      "name": "Approval Template Version Bumped",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "action_key", "new_version"]
+    },
+    {
+      "name": "Approval Template Preflight",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "action_key", "expression_parses", "resolved_approver_count"],
+      "description": "Template author dry-ran an expression + selector via the preflight endpoint. Adoption signal for the authoring UI."
+    },
+    {
+      "name": "Approval Reminder Dispatched",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "action_key", "reminder_number"]
+    },
+    {
+      "name": "Approval Delegation Substitution",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "action_key"],
+      "description": "DelegationSubstitutedApprover fired — a delegate replaced their delegator in resolved_approvers. Aggregated only; specific delegator/delegate ids NOT sent to Segment."
+    }
+  ]
+}

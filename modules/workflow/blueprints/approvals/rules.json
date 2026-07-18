@@ -1,0 +1,88 @@
+{
+  "id": "academorix://modules/workflow/approvals/rules",
+  "$version": 1,
+  "title": "approvals — validation rules",
+  "description": "Six custom Laravel validation rules exported by ApprovalServiceProvider::boot(). Two are format-validators (valid_action_key, valid_expression, valid_selector_expression). Two are business-invariant guards (template_active_uniqueness, caller_is_approver). Two are constraint validators (min_reject_comment_length). Every rule is FormRequest-composable AND used internally by the observers as a defense-in-depth check.",
+  "namespace": "Academorix\\Approval\\Rules",
+  "rules": [
+    {
+      "name": "valid_action_key",
+      "class": "Academorix\\Approval\\Rules\\ValidActionKey",
+      "signature": "valid_action_key",
+      "description": "Validates a string as an approvable-action key: (a) matches `^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_]*)+$`, (b) exists in approvable_actions.action_key with is_active=true. Fails with `INVALID_ACTION_KEY_FORMAT` on regex mismatch OR `PLATFORM_ACTION_NOT_ACTIVE` on registry miss.",
+      "params": [],
+      "example_field_rule": "action_key: [required, valid_action_key]",
+      "error_message_key": "approvals::validation.valid_action_key",
+      "default_message": "The :attribute must be a valid, registered approvable action key."
+    },
+    {
+      "name": "valid_expression",
+      "class": "Academorix\\Approval\\Rules\\ValidExpression",
+      "signature": "valid_expression[:context_schema_id]",
+      "description": "Validates a string as a parseable ExpressionLanguage source. Runs via ExpressionLanguageAdapter::compile() with the built-in variable set + selector functions loaded. Fails with `INVALID_EXPRESSION` on parse error (returns the offending token position for template-authoring UI to highlight). Optional context_schema_id argument names an approvable-action's context_variables_schema — when present, the rule ADDITIONALLY validates that every variable referenced in the expression is declared in the schema (returns `UNKNOWN_EXPRESSION_VARIABLE`).",
+      "params": [
+        {
+          "name": "context_schema_id",
+          "type": "string",
+          "default": null,
+          "description": "Optional. When present, references an approvable_actions.context_variables_schema_json to validate referenced variable names."
+        }
+      ],
+      "example_field_rule": "when_expression: [required, valid_expression:billing.refunds.issue]",
+      "error_message_key": "approvals::validation.valid_expression",
+      "default_message": "The :attribute must be a valid expression. Parse error: :error at position :position."
+    },
+    {
+      "name": "valid_selector_expression",
+      "class": "Academorix\\Approval\\Rules\\ValidSelectorExpression",
+      "signature": "valid_selector_expression[:tenant_id]",
+      "description": "Same as valid_expression BUT additionally validates the expression's return type is User[] OR User OR string (user_id). Rejects boolean-returning expressions (that's a when_expression, not a selector). Fails with `INVALID_SELECTOR_RETURN_TYPE`. Optional tenant_id arg is used at preflight — passes the caller's tenant so the parser resolves role() / user() references against the correct tenant scope.",
+      "params": [
+        {
+          "name": "tenant_id",
+          "type": "string",
+          "default": null
+        }
+      ],
+      "example_field_rule": "selector_expression: [required, valid_selector_expression]",
+      "error_message_key": "approvals::validation.valid_selector_expression",
+      "default_message": "The :attribute must be a valid approver selector expression returning User[]."
+    },
+    {
+      "name": "template_active_uniqueness",
+      "class": "Academorix\\Approval\\Rules\\TemplateActiveUniqueness",
+      "signature": "template_active_uniqueness:tenant_id,application_id,action_key,name[,except_id]",
+      "description": "Guards the one-is-active invariant on ApprovalTemplate. When is_active=true is being submitted, verifies no other row exists with is_active=true AND matching (tenant_id, application_id, action_key, name). Optional except_id excludes the row being updated (self-check). Fails with `TEMPLATE_ACTIVE_UNIQUENESS_VIOLATION`. Defense-in-depth alongside ApprovalTemplateObserver which enforces the invariant at write-time.",
+      "params": [
+        { "name": "tenant_id", "type": "string" },
+        { "name": "application_id", "type": "string" },
+        { "name": "action_key", "type": "string" },
+        { "name": "name", "type": "string" },
+        { "name": "except_id", "type": "string", "default": null }
+      ],
+      "example_field_rule": "is_active: [boolean, template_active_uniqueness:{tenant_id},{application_id},{action_key},{name}]",
+      "error_message_key": "approvals::validation.template_active_uniqueness",
+      "default_message": "Another active template already exists for this tenant + application + action + name."
+    },
+    {
+      "name": "caller_is_approver",
+      "class": "Academorix\\Approval\\Rules\\CallerIsApprover",
+      "signature": "caller_is_approver:approval_requirement_id",
+      "description": "Security-critical. Validates that the current auth()->user()->id is in the approval_requirement.resolved_approvers array. Fails with `CALLER_NOT_APPROVER`. Runs BEFORE the ApprovalInstancePolicy check on approve/reject actions AND is enforced by the approvals.enforce_approver middleware AND is enforced by the ApprovalDecisionObserver. Three independent layers protect the same invariant — a policy misconfiguration can't open a forgery seam.",
+      "params": [{ "name": "approval_requirement_id", "type": "string" }],
+      "example_field_rule": "approval_requirement_id: [required, caller_is_approver:{approval_requirement_id}]",
+      "error_message_key": "approvals::validation.caller_is_approver",
+      "default_message": "You are not authorised to decide this approval requirement."
+    },
+    {
+      "name": "min_reject_comment_length",
+      "class": "Academorix\\Approval\\Rules\\MinRejectCommentLength",
+      "signature": "min_reject_comment_length[:min]",
+      "description": "Enforces the minimum comment length on reject decisions (default 10 chars — from approvals.security.min_reject_reason_length). SOC 2 CC6.3 evidence requirement — every rejection must have a rationale attributable to a specific reviewer. Fails with `REJECT_COMMENT_TOO_SHORT`. Only applied when the parent form's `decision === 'reject'`.",
+      "params": [{ "name": "min", "type": "int", "default": null }],
+      "example_field_rule": "comment: [required_if:decision,reject, min_reject_comment_length]",
+      "error_message_key": "approvals::validation.min_reject_comment_length",
+      "default_message": "The rejection reason must be at least :min characters (SOC 2 evidence requirement)."
+    }
+  ]
+}

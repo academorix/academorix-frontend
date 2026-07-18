@@ -1,0 +1,41 @@
+{
+  "id": "academorix://modules/workflow/approvals/entitlements",
+  "$version": 1,
+  "title": "approvals — declared entitlements",
+  "description": "Five entitlement keys. `approvals_enabled` is the core boolean gate (all tiers). Slot cap on max active templates per tenant scales with plan tier. Custom-template authoring + advanced expressions are feature-gated. Cross-tenant audit report generation is enterprise + compliance-module co-active only.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "boolean" }, { "kind": "slot" }],
+  "entitlements": [
+    {
+      "key": "approvals_enabled",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 1, "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Core feature gate. Always on. Small-tier tenants get the engine + shipped defaults; custom-template authoring is separately gated by approval_templates_custom."
+    },
+    {
+      "key": "approval_templates_custom",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Write custom approval templates. Small-tier tenants can only use system-shipped defaults (the seeder inserts a handful of common templates on tenant provisioning — refund-over-500, grant-issuance, impersonation-extension). Medium+ tier tenants can author their own."
+    },
+    {
+      "key": "approval_templates_max_active",
+      "kind": "slot",
+      "unit": "templates",
+      "defaultsByPlan": { "free": 5, "small": 5, "medium": 25, "enterprise": null },
+      "description": "Cap on is_active=true approval_templates rows per tenant across all applications. Enterprise = unlimited. Enforced by ApprovalTemplateObserver on create + activate; hard-refuses with TENANT_TEMPLATE_QUOTA_EXCEEDED past the cap."
+    },
+    {
+      "key": "approval_advanced_expressions",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Access to advanced selector functions: manager_of(), except(), chain_up_to(), and multi-line expressions with intermediate variables. Medium-tier gets the basic set (role, user, permission, owner_of, any, all). Enterprise-tier unlocks manager_of + except + chain_up_to. Enforced by ExpressionLanguageAdapter at template-save time."
+    },
+    {
+      "key": "approval_audit_report",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Generate cross-tenant compliance snapshots. Requires enterprise tier AND compliance module co-active for the tenant. Applied at the POST /platform/approvals/audit-report endpoint level."
+    }
+  ]
+}

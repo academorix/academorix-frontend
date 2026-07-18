@@ -1,0 +1,492 @@
+{
+  "id": "academorix://modules/workflow/approvals/events",
+  "$version": 1,
+  "title": "approvals — published events",
+  "namespace": "Academorix\\Approval\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event is a readonly value object dispatched afterCommit unless the trigger requires synchronous downstream work (execution, security). ApprovalGranted → ApprovalInstanceExecutor listener runs SYNCHRONOUSLY in the same request to preserve the caller's transaction context; every OTHER downstream listener is queued so a slow email dispatch doesn't block state transitions.",
+  "events": [
+    {
+      "name": "ApprovableActionRegistered",
+      "class": "Academorix\\Approval\\Events\\ApprovableActionRegistered",
+      "trigger": "Boot-time discovery pass upserted a new `approvable_actions` row from an #[AsApprovableAction] decorator on an action class. Fires once per new registration per boot. Not fired on unchanged rows.",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog (platform-level activity feed — new capability visible)"
+      ],
+      "payload": {
+        "approvable_action_id": "ULID (`aac_...`)",
+        "action_key": "string",
+        "namespace": "string",
+        "action_class_fqcn": "string",
+        "registered_at": "ISO-8601"
+      }
+    },
+    {
+      "name": "ApprovalTemplateCreated",
+      "class": "Academorix\\Approval\\Events\\ApprovalTemplateCreated",
+      "trigger": "Tenant admin authored a new template. Version = 1 always.",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRecord",
+        "notifications::DispatchApprovalTemplateChangedNotification (opt-in to tenant admins)"
+      ],
+      "payload": {
+        "approval_template_id": "ULID (`apt_...`)",
+        "tenant_id": "ULID",
+        "application_id": "ULID",
+        "action_key": "string",
+        "name": "string",
+        "version": "integer (always 1 on create)",
+        "priority": "integer",
+        "author_user_id": "ULID"
+      }
+    },
+    {
+      "name": "ApprovalTemplateUpdated",
+      "class": "Academorix\\Approval\\Events\\ApprovalTemplateUpdated",
+      "trigger": "Tenant admin edited a template's IMMUTABLE-post-instance fields (name, priority, description) — no version bump. Distinct from ApprovalTemplateVersionBumped which fires on when_expression / group changes.",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications",
+      "consumers": ["activity::WriteToActivityLog", "audit::WriteAuditRecord"],
+      "payload": {
+        "approval_template_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_fields": "string[] (fields that changed)",
+        "editor_user_id": "ULID"
+      }
+    },
+    {
+      "name": "ApprovalTemplateVersionBumped",
+      "class": "Academorix\\Approval\\Events\\ApprovalTemplateVersionBumped",
+      "trigger": "Tenant admin edited a template's semantic-behaviour fields (when_expression, groups[].selector_expression, groups[].quorum, groups[].sort_order, on_timeout, allows_recall) — the template's version column increments AND a new row is written (old row preserved for audit).",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRecord (P0 — governance change)",
+        "notifications::DispatchApprovalTemplateChangedNotification"
+      ],
+      "payload": {
+        "approval_template_id": "ULID (the NEW row's id)",
+        "prior_approval_template_id": "ULID (the OLD row's id, is_active=false now)",
+        "tenant_id": "ULID",
+        "application_id": "ULID",
+        "action_key": "string",
+        "name": "string",
+        "prior_version": "integer",
+        "new_version": "integer",
+        "changed_fields": "string[]",
+        "editor_user_id": "ULID"
+      }
+    },
+    {
+      "name": "ApprovalTemplateActivated",
+      "class": "Academorix\\Approval\\Events\\ApprovalTemplateActivated",
+      "trigger": "Tenant admin flipped is_active=true on an inactive template row. The one-is-active invariant enforced by ApprovalTemplateObserver deactivates any peer row with the same (tenant, application, action_key, name).",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications",
+      "consumers": ["activity::WriteToActivityLog", "audit::WriteAuditRecord"],
+      "payload": {
+        "approval_template_id": "ULID",
+        "tenant_id": "ULID",
+        "action_key": "string",
+        "name": "string",
+        "version": "integer",
+        "deactivated_peer_id": "ULID | null (the row previously carrying is_active=true for the same key)",
+        "actor_user_id": "ULID"
+      }
+    },
+    {
+      "name": "ApprovalTemplateDeactivated",
+      "class": "Academorix\\Approval\\Events\\ApprovalTemplateDeactivated",
+      "trigger": "Tenant admin flipped is_active=false OR peer activation deactivated this row via the observer. Distinct from soft-delete (still-active-but-hidden vs archived-permanently).",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications",
+      "consumers": ["activity::WriteToActivityLog", "audit::WriteAuditRecord"],
+      "payload": {
+        "approval_template_id": "ULID",
+        "tenant_id": "ULID",
+        "action_key": "string",
+        "name": "string",
+        "trigger": "'explicit' | 'peer_activation'",
+        "actor_user_id": "ULID"
+      }
+    },
+    {
+      "name": "ApprovalTemplateGroupsUpdated",
+      "class": "Academorix\\Approval\\Events\\ApprovalTemplateGroupsUpdated",
+      "trigger": "A group was added/edited/removed on a template. Batched — one event per admin edit session (multiple group mutations coalesce to one event with `changed_groups[]`). ALWAYS accompanied by ApprovalTemplateVersionBumped in the same transaction.",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications",
+      "consumers": ["activity::WriteToActivityLog", "audit::WriteAuditRecord"],
+      "payload": {
+        "approval_template_id": "ULID",
+        "tenant_id": "ULID",
+        "added_group_ids": "ULID[]",
+        "updated_group_ids": "ULID[]",
+        "removed_group_ids": "ULID[]",
+        "editor_user_id": "ULID"
+      }
+    },
+    {
+      "name": "ApprovalRequested",
+      "class": "Academorix\\Approval\\Events\\ApprovalRequested",
+      "trigger": "The `approve` middleware intercepted a decorated action + resolved a matching template + created an `approval_instances` row with status='pending'. This is the fanout signal for NotifyApproversJob.",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::NotifyApproversJob (dispatches ApprovalRequestedNotification to each resolved approver)",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRecord",
+        "observability::MetricsCollector (increments academorix.approvals.instances.total)"
+      ],
+      "payload": {
+        "approval_instance_id": "ULID (`api_...`)",
+        "tenant_id": "ULID",
+        "application_id": "ULID",
+        "action_key": "string",
+        "approval_template_id": "ULID",
+        "template_version": "integer",
+        "requester_id": "ULID",
+        "subject_type": "string | null",
+        "subject_id": "ULID | null",
+        "requested_at": "ISO-8601",
+        "expires_at": "ISO-8601",
+        "requirement_count": "integer (how many groups matched)",
+        "total_resolved_approver_count": "integer (union across all groups; delegation-substituted)"
+      }
+    },
+    {
+      "name": "ApprovalRequirementResolved",
+      "class": "Academorix\\Approval\\Events\\ApprovalRequirementResolved",
+      "trigger": "Per-requirement fanout of ApprovalRequested. Fires ONCE per requirement at instance-create time after the ApproverSelectorEngine materialised `resolved_approvers`. Consumers use this to build per-approver notification recipients without re-querying.",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications",
+      "consumers": ["activity::WriteToActivityLog"],
+      "payload": {
+        "approval_requirement_id": "ULID (`apr_...`)",
+        "approval_instance_id": "ULID",
+        "tenant_id": "ULID",
+        "template_approver_group_id": "ULID",
+        "group_name": "string",
+        "sort_order": "integer",
+        "resolved_approvers": "ULID[]",
+        "quorum_type": "'all' | 'any' | 'n_of_m'",
+        "quorum_n": "integer | null",
+        "starts_pending": "boolean (false = requirement starts as blocked pending a lower sort_order group)"
+      }
+    },
+    {
+      "name": "ApprovalDecisionRecorded",
+      "class": "Academorix\\Approval\\Events\\ApprovalDecisionRecorded",
+      "trigger": "An approver POSTed approve OR reject and the ApprovalDecisionRecorder wrote a new `approval_decisions` row. Fires BEFORE quorum evaluation runs.",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRecord",
+        "observability::MetricsCollector",
+        "broadcast::PublishToApprovalChannels (real-time approver-inbox refresh)"
+      ],
+      "payload": {
+        "approval_decision_id": "ULID (`apd_...`)",
+        "approval_requirement_id": "ULID",
+        "approval_instance_id": "ULID",
+        "tenant_id": "ULID",
+        "approver_id": "ULID",
+        "delegated_from_id": "ULID | null",
+        "decision": "'approve' | 'reject'",
+        "decided_at": "ISO-8601"
+      }
+    },
+    {
+      "name": "ApprovalRequirementSatisfied",
+      "class": "Academorix\\Approval\\Events\\ApprovalRequirementSatisfied",
+      "trigger": "Quorum reached on one requirement (after ApprovalDecisionRecorded's quorum-recompute). Downstream requirements with next sort_order may unblock.",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "broadcast::PublishToApprovalChannels"
+      ],
+      "payload": {
+        "approval_requirement_id": "ULID",
+        "approval_instance_id": "ULID",
+        "tenant_id": "ULID",
+        "group_name": "string",
+        "satisfied_at": "ISO-8601",
+        "unblocked_requirement_ids": "ULID[] (requirements transitioned pending→blocked→pending because this satisfied their sort_order predecessor)"
+      }
+    },
+    {
+      "name": "ApprovalRequirementFailed",
+      "class": "Academorix\\Approval\\Events\\ApprovalRequirementFailed",
+      "trigger": "A reject decision was recorded on a requirement whose quorum demands unanimous approval (`quorum_type='all'`) OR the reject-with-quorum-any short-circuits the group. Consequence: the requirement transitions to failed AND the instance transitions to rejected.",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRecord",
+        "broadcast::PublishToApprovalChannels"
+      ],
+      "payload": {
+        "approval_requirement_id": "ULID",
+        "approval_instance_id": "ULID",
+        "tenant_id": "ULID",
+        "group_name": "string",
+        "failed_at": "ISO-8601",
+        "rejecting_approver_id": "ULID",
+        "rejection_comment": "string"
+      }
+    },
+    {
+      "name": "ApprovalGranted",
+      "class": "Academorix\\Approval\\Events\\ApprovalGranted",
+      "trigger": "Every requirement has status='satisfied'. Instance transitions pending→approved. THIS IS THE ONLY EVENT DISPATCHED SYNCHRONOUSLY — the ApprovalInstanceExecutor listener runs in the same request context to preserve the caller's transaction. Downstream listeners (notifications, activity) queue as normal.",
+      "dispatchMode": "synchronous",
+      "queue": null,
+      "consumers": [
+        "approvals::ApprovalInstanceExecutor (dispatches the underlying action with scoped('approvals.executing') flag)",
+        "notifications::NotifyRequesterOfDecisionJob → ApprovalGrantedNotification",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRecord (P0)",
+        "observability::MetricsCollector",
+        "broadcast::PublishToApprovalChannels"
+      ],
+      "payload": {
+        "approval_instance_id": "ULID",
+        "tenant_id": "ULID",
+        "application_id": "ULID",
+        "action_key": "string",
+        "requester_id": "ULID",
+        "final_decider_id": "ULID (the approver whose decision tipped the last requirement to satisfied)",
+        "decided_at": "ISO-8601",
+        "requirement_count": "integer",
+        "decision_count": "integer (total approves + rejects that happened; usually equals requirement_count when all groups quorum=all)"
+      }
+    },
+    {
+      "name": "ApprovalRejected",
+      "class": "Academorix\\Approval\\Events\\ApprovalRejected",
+      "trigger": "At least one requirement failed. Instance transitions pending→rejected. Distinct from ApprovalExpired (past expires_at) and ApprovalCancelled (requester withdraw).",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::NotifyRequesterOfDecisionJob → ApprovalRejectedNotification",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRecord (P0)",
+        "observability::MetricsCollector",
+        "broadcast::PublishToApprovalChannels"
+      ],
+      "payload": {
+        "approval_instance_id": "ULID",
+        "tenant_id": "ULID",
+        "application_id": "ULID",
+        "action_key": "string",
+        "requester_id": "ULID",
+        "final_decider_id": "ULID (the approver whose reject tipped the flow)",
+        "rejection_reason": "string (comment from the rejecting decision)",
+        "rejected_at": "ISO-8601"
+      }
+    },
+    {
+      "name": "ApprovalExecuted",
+      "class": "Academorix\\Approval\\Events\\ApprovalExecuted",
+      "trigger": "ApprovalInstanceExecutor successfully dispatched the underlying action + captured its return value. Instance transitions approved→executed AND `executed_at` is set. THIS IS THE HANDOFF SIGNAL to downstream cross-module bridges (access/grants materialization, billing charge processing, identity impersonation extension).",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications",
+      "consumers": [
+        "access/requests::AccessRequestGrantMaterializer (when action_key='access.grants.create')",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRecord (P0 — this is the moment tenant state actually changed)",
+        "observability::MetricsCollector",
+        "broadcast::PublishToApprovalChannels"
+      ],
+      "payload": {
+        "approval_instance_id": "ULID",
+        "tenant_id": "ULID",
+        "application_id": "ULID",
+        "action_key": "string",
+        "requester_id": "ULID",
+        "subject_type": "string | null",
+        "subject_id": "ULID | null",
+        "executed_at": "ISO-8601",
+        "execution_result_summary": "Record<string, mixed> (the action's return value's PUBLIC-tier projection — never the full payload)"
+      }
+    },
+    {
+      "name": "ApprovalExecutionFailed",
+      "class": "Academorix\\Approval\\Events\\ApprovalExecutionFailed",
+      "trigger": "ApprovalInstanceExecutor dispatched the underlying action but the action threw. The instance is in a WEDGED state: status='approved' but executed_at IS NULL. Human intervention required — retry via `approvals:remediate-failed-executions`.",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications-critical",
+      "consumers": [
+        "notifications::NotifyPlatformOpsOfExecutionFailure → ApprovalExecutionFailedNotification",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRecord (P0)",
+        "observability::MetricsCollector"
+      ],
+      "payload": {
+        "approval_instance_id": "ULID",
+        "tenant_id": "ULID",
+        "action_key": "string",
+        "error_class": "string (FQCN of the exception)",
+        "error_message": "string (redacted — no secrets)",
+        "error_trace_fingerprint": "string (SHA-256 of stack trace; correlate to Sentry)",
+        "failed_at": "ISO-8601",
+        "attempt_count": "integer"
+      }
+    },
+    {
+      "name": "ApprovalCancelled",
+      "class": "Academorix\\Approval\\Events\\ApprovalCancelled",
+      "trigger": "Requester POSTed withdraw. Instance transitions pending→cancelled AND every pending requirement transitions to failed.",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::NotifyPendingApproversJob → ApprovalCancelledNotification (to the pending approvers, so they don't waste time deciding a withdrawn request)",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRecord",
+        "observability::MetricsCollector",
+        "broadcast::PublishToApprovalChannels"
+      ],
+      "payload": {
+        "approval_instance_id": "ULID",
+        "tenant_id": "ULID",
+        "requester_id": "ULID",
+        "cancelled_at": "ISO-8601",
+        "withdraw_reason": "string | null"
+      }
+    },
+    {
+      "name": "ApprovalExpired",
+      "class": "Academorix\\Approval\\Events\\ApprovalExpired",
+      "trigger": "The ExpireOverdueApprovalsJob sweeper found an instance past expires_at with status='pending'. Final status depends on template.on_timeout: expire → status='expired'; approve → treats as unanimous approve + fires ApprovalGranted; escalate → new approvers added + expires_at extended.",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::NotifyRequesterOfDecisionJob → ApprovalExpiredNotification",
+        "notifications::NotifyPendingApproversJob → ApprovalExpiredNotification",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRecord",
+        "observability::MetricsCollector"
+      ],
+      "payload": {
+        "approval_instance_id": "ULID",
+        "tenant_id": "ULID",
+        "action_key": "string",
+        "requester_id": "ULID",
+        "expired_at": "ISO-8601",
+        "on_timeout_behaviour": "'expire' | 'approve' | 'escalate'",
+        "final_status": "'expired' | 'approved'"
+      }
+    },
+    {
+      "name": "ApprovalEscalated",
+      "class": "Academorix\\Approval\\Events\\ApprovalEscalated",
+      "trigger": "template.on_timeout='escalate' AND the sweeper hit the timeout. New escalation approvers were resolved via template.escalation_selector + appended to the pending requirement's resolved_approvers. expires_at extended by template.expires_after_hours / 2.",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::NotifyApproversJob → ApprovalRequestedNotification to the new escalation targets",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRecord"
+      ],
+      "payload": {
+        "approval_instance_id": "ULID",
+        "tenant_id": "ULID",
+        "escalated_at": "ISO-8601",
+        "prior_expires_at": "ISO-8601",
+        "new_expires_at": "ISO-8601",
+        "added_approver_ids": "ULID[]"
+      }
+    },
+    {
+      "name": "ApprovalReminderDispatched",
+      "class": "Academorix\\Approval\\Events\\ApprovalReminderDispatched",
+      "trigger": "DispatchApprovalRemindersJob wrote a new `approval_reminders` row AND dispatched an ApprovalReminderNotification to a specific approver. Fires ONCE per reminder — de-duplicated by the (requirement, approver, reminder_number) composite unique.",
+      "dispatchMode": "afterCommit",
+      "queue": null,
+      "consumers": ["observability::MetricsCollector"],
+      "payload": {
+        "approval_reminder_id": "ULID (`apn_...`)",
+        "approval_requirement_id": "ULID",
+        "approval_instance_id": "ULID",
+        "tenant_id": "ULID",
+        "approver_id": "ULID",
+        "reminder_number": "integer (1, 2, 3, ...)",
+        "sent_at": "ISO-8601"
+      }
+    },
+    {
+      "name": "ApproverSelectorEvaluationFailed",
+      "class": "Academorix\\Approval\\Events\\ApproverSelectorEvaluationFailed",
+      "trigger": "ExpressionLanguageAdapter caught a parse error OR runtime error OR timeout evaluating a selector_expression at instance-create time. THE INSTANCE FAILS TO CREATE — the action itself refuses with 500 approval.selector_evaluation_failed. Operators + template author notified so they fix the template.",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications-critical",
+      "consumers": [
+        "notifications::NotifyTemplateAuthorOfFailure (opt-in — the author of the template gets an email)",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRecord (P1)",
+        "observability::MetricsCollector (feeds academorix.approvals.selector.evaluation_failures counter)"
+      ],
+      "payload": {
+        "approval_template_id": "ULID",
+        "approval_template_approver_id": "ULID",
+        "tenant_id": "ULID",
+        "action_key": "string",
+        "selector_expression": "string (the raw source that failed)",
+        "failure_reason": "'parse_error' | 'runtime_error' | 'timeout' | 'invalid_return_type'",
+        "error_message": "string (redacted — no secrets, no context values)",
+        "failed_at": "ISO-8601"
+      }
+    },
+    {
+      "name": "DelegationSubstitutedApprover",
+      "class": "Academorix\\Approval\\Events\\DelegationSubstitutedApprover",
+      "trigger": "During ApproverSelectorEngine::resolve(), an approver in the resolved set was substituted for their delegate because an active `access/delegation::RoleDelegation` covers the role/time-window. Fires PER substitution — a single instance-create with 3 delegated approvers fires 3 events.",
+      "dispatchMode": "afterCommit",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRecord (audit-only — no ops action)"
+      ],
+      "payload": {
+        "approval_requirement_id": "ULID",
+        "approval_instance_id": "ULID",
+        "tenant_id": "ULID",
+        "delegator_id": "ULID (the original resolved user)",
+        "delegate_id": "ULID (the substitute)",
+        "role_delegation_id": "ULID (the access/delegation::RoleDelegation row that authorised this substitution)",
+        "substituted_at": "ISO-8601"
+      }
+    },
+    {
+      "name": "ApprovalSecurityViolation",
+      "class": "Academorix\\Approval\\Events\\ApprovalSecurityViolation",
+      "trigger": "One of several P0 security signals: (1) someone POSTed approve/reject with a user_id NOT in the requirement's resolved_approvers (attempted forgery via bypass); (2) an ApprovalDecisionObserver caught a direct-DB write that would violate the resolved_approvers invariant; (3) an action's approvalContext() included regulated_secret / PCI-DSS PAN data (via downstream scanner). Fires ONCE per detected violation — de-dup at the (violation_type, source) level.",
+      "dispatchMode": "synchronous",
+      "queue": "notifications-critical",
+      "consumers": [
+        "notifications::NotifySecurityOfViolation (to Academorix security team)",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRecord (P0)",
+        "observability::MetricsCollector (feeds academorix.approvals.security.violations counter → alerts)"
+      ],
+      "payload": {
+        "violation_type": "'forged_decision' | 'direct_db_write' | 'restricted_context_leak' | 'quorum_evaluation_bypass'",
+        "approval_instance_id": "ULID | null",
+        "approval_requirement_id": "ULID | null",
+        "tenant_id": "ULID | null",
+        "actor_user_id": "ULID | null (attempted approver)",
+        "detected_at": "ISO-8601",
+        "detection_source": "'http_middleware' | 'observer' | 'scanner' | 'reconciliation'",
+        "details_fingerprint": "string (SHA-256 hash for correlation without leaking specifics)"
+      }
+    }
+  ]
+}

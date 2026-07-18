@@ -1,0 +1,35 @@
+{
+  "id": "approvals.widgets.approval-status-chip",
+  "title": "Approval status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "notes": [
+    "Colored HeroUI Chip for approval instance status. Consumed by the list screen (row-level) and show screen (header-level). Never uses raw class strings — variant is chosen from the closed 'variant' prop set.",
+    "Icon comes from heroicons via @academorix/ui/icons — no icon in the props means no leading icon."
+  ],
+  "props_schema": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": ["pending", "approved", "rejected", "executed", "expired", "cancelled"]
+      },
+      "size": { "type": "string", "enum": ["xs", "sm", "md"], "default": "sm" }
+    },
+    "required": ["status"]
+  },
+  "root": {
+    "kind": "Chip",
+    "propsExpr": "{ size: props.size || 'sm', variant: mapping[props.status].variant, leadingIcon: mapping[props.status].icon, children: mapping[props.status].label }",
+    "helpers": {
+      "mapping": {
+        "pending": { "variant": "warning", "icon": "clock", "label": "Pending" },
+        "approved": { "variant": "info", "icon": "check-circle", "label": "Approved" },
+        "executed": { "variant": "success", "icon": "check-badge", "label": "Executed" },
+        "rejected": { "variant": "danger", "icon": "x-circle", "label": "Rejected" },
+        "expired": { "variant": "neutral", "icon": "clock", "label": "Expired" },
+        "cancelled": { "variant": "neutral", "icon": "no-symbol", "label": "Cancelled" }
+      }
+    }
+  }
+}

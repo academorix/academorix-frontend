@@ -1,0 +1,92 @@
+{
+  "id": "academorix://modules/workflow/approvals/schemas/approval-reminder",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ApprovalReminder",
+  "description": "Reminder-dispatch audit rows. One row per reminder sent to one approver on one requirement. The composite unique (requirement_id, approver_id, reminder_number) is the de-dup seatbelt — even if DispatchApprovalRemindersJob double-runs, INSERT ON CONFLICT DO NOTHING keeps the dispatch idempotent. Zero domain semantics beyond 'we sent reminder N to approver X at time Y'.",
+  "type": "object",
+  "x-module": "approvals",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "approval_reminders",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "apn_",
+    "incrementing": false,
+    "model": "Academorix\\Approval\\Models\\ApprovalReminder",
+    "interface": "Academorix\\Approval\\Contracts\\Data\\ApprovalReminderInterface",
+    "implements": ["Academorix\\Approval\\Contracts\\Data\\ApprovalReminderInterface"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToTenant"],
+    "casts": {
+      "reminder_number": "integer",
+      "sent_at": "datetime"
+    },
+    "appends": [],
+    "observers": [],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `apn_<26>`." },
+      "approval_requirement_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "approval_requirements", "column": "id", "onDelete": "cascade" }
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "approver_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "cascade" }
+      },
+      "reminder_number": {
+        "type": "integer",
+        "nullable": false,
+        "description": "1, 2, 3, ... increments per send. Capped by template.reminder_config.max_reminders (default 3)."
+      },
+      "sent_at": { "type": "timestamptz", "nullable": false },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["approval_requirement_id", "approver_id", "reminder_number"],
+        "unique": true,
+        "name": "approval_reminders_composite_unique",
+        "description": "De-dup seatbelt — INSERT ON CONFLICT DO NOTHING guarantees idempotent dispatch."
+      },
+      {
+        "columns": ["approver_id", "sent_at"],
+        "unique": false,
+        "name": "approval_reminders_by_approver_idx",
+        "description": "Fast lookup for 'my reminders' page + reminder-cadence analytics."
+      }
+    ]
+  },
+  "required": ["id", "approval_requirement_id", "tenant_id", "approver_id", "reminder_number", "sent_at", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^apn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "approval_requirement_id": { "type": "string", "pattern": "^apr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "approver_id": { "type": "string" },
+    "reminder_number": { "type": "integer", "minimum": 1, "maximum": 10 },
+    "sent_at": { "type": "string", "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper"
+  }
+}

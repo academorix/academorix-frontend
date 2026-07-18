@@ -1,0 +1,70 @@
+{
+  "id": "academorix://modules/workflow/approvals/drivers",
+  "$version": 1,
+  "title": "approvals — reminder channel driver specifications",
+  "description": "The approval engine's `ApprovalReminderNotification` delivers via one of the notifications module's registered channels — mail, in_app, push, slack. This module doesn't ship its own reminder drivers; it delegates to the notifications module's DriverManager. This file documents the CONTRACT the notifications module's channels must honour to serve reminder dispatch correctly, and any approvals-specific channel resolution logic.",
+  "contract": {
+    "note": "The channels themselves live in the notifications module. Approvals only stipulates the shape of the notification payload + the resolution priority.",
+    "payload_shape": {
+      "recipient_user_id": "ULID",
+      "notification_class": "Academorix\\Approval\\Notifications\\ApprovalReminderNotification",
+      "context": {
+        "approval_instance_id": "ULID",
+        "approval_requirement_id": "ULID",
+        "reminder_number": "integer (1, 2, 3, ...)",
+        "action_key": "string",
+        "action_label": "string (localised)",
+        "requester_summary": "UserSummaryData (redacted)",
+        "subject_summary": "SubjectSummaryData (redacted per caller-tier)",
+        "expires_at": "ISO-8601",
+        "review_url": "deep-link to approval-instance detail"
+      }
+    }
+  },
+  "channel_resolution": {
+    "note": "How approvals picks channels for the reminder dispatch. Consulted in DispatchApprovalRemindersJob AND for manual dispatches.",
+    "priority": [
+      "1) User's approvals_user.reminder_channels setting (per user_settings.approvals_user.reminder_channels)",
+      "2) Tenant's approvals.default_reminder_channels setting (rare — tenants usually leave this at default)",
+      "3) System default: [mail, in_app, push]"
+    ]
+  },
+  "drivers": [
+    {
+      "name": "mail",
+      "provided_by": "notifications module (owns SMTP/SendGrid/Postmark drivers)",
+      "usage": "Primary reminder channel — most human approvers rely on inbox notifications.",
+      "template_key": "approvals.reminder.mail",
+      "supports_batching": true,
+      "notes": "Digest-mode users bundle N reminders into a single digest email dispatched daily."
+    },
+    {
+      "name": "in_app",
+      "provided_by": "notifications module (owns DatabaseChannel + BroadcastChannel drivers)",
+      "usage": "Secondary — surfaces in the SPA notification-bell dropdown + the pending-my-review inbox.",
+      "template_key": "approvals.reminder.in_app",
+      "supports_batching": false
+    },
+    {
+      "name": "push",
+      "provided_by": "notifications module (owns FCM/APN drivers)",
+      "usage": "Mobile app users. Opt-in per user_settings.",
+      "template_key": "approvals.reminder.push",
+      "supports_batching": false,
+      "notes": "Push payload is minimal (action label + expires_at). Tapping opens the mobile app to the approval detail view."
+    },
+    {
+      "name": "slack",
+      "provided_by": "notifications module (owns Slack driver)",
+      "usage": "Team-approval flows where approvers work in a shared Slack channel. Opt-in via tenant integration + per-user linking.",
+      "template_key": "approvals.reminder.slack",
+      "supports_batching": true,
+      "notes": "Slack-native buttons on the message let approvers approve/reject inline WITHOUT leaving Slack — the button POSTs to the tenant plane approve/reject endpoint via Slack's slash-command bridge. Deferred to Wave 2."
+    }
+  ],
+  "notes": [
+    "The reminder cadence is APPROVAL-owned (template.reminder_config); the channel routing is NOTIFICATIONS-owned. Two axes, one dispatch.",
+    "ApprovalRequestedNotification uses the same channel-resolution path — reminders are just repeated dispatches with an incrementing reminder_number.",
+    "If a channel dispatch fails, the notifications module's retry policy applies (exponential backoff, tries=3). Approvals does not orchestrate per-channel retry — that's the notifications module's contract."
+  ]
+}

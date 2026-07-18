@@ -1,0 +1,74 @@
+{
+  "id": "academorix://modules/workflow/approvals/caches",
+  "$version": 1,
+  "title": "approvals — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["approvals", "approval-templates", "approval-instances", "approval-expressions"],
+  "keys": [
+    {
+      "pattern": "apv:expr:ast:{expression_hash}",
+      "description": "Compiled expression AST from symfony/expression-language. Keyed on SHA-256 of the raw expression source so identical expressions across templates share a cache entry. Read on every template.when_expression evaluation + selector_expression resolution. Bypasses per approvals.expression_cache_enabled feature flag.",
+      "ttlSeconds": 60,
+      "tags": ["approvals", "approval-expressions"],
+      "invalidatedBy": ["approvals.expression_cache_enabled kill-switch flip", "manual cache clear via `approvals:cache-clear`"]
+    },
+    {
+      "pattern": "apv:tpl:active:{tenant_id}:{application_id}:{action_key}",
+      "description": "The active approval_templates row for (tenant, application, action_key) — priority-ordered array of template ids ready for the ApprovalTemplateResolver to walk. Read on every approve middleware invocation. TTL short to catch template edits quickly.",
+      "ttlSeconds": 60,
+      "tags": ["approvals", "approval-templates", "tenant"],
+      "invalidatedBy": ["ApprovalTemplateObserver.created / .updated / .deleted"]
+    },
+    {
+      "pattern": "apv:tpl:approver_groups:{template_id}:{version}",
+      "description": "Approver groups + resolved selector expressions per template version. Immutable (frozen by version pin), so aggressive TTL. Used by ApprovalInstanceProvisioner to materialise approval_requirements + resolved_approvers on instance-create.",
+      "ttlSeconds": 3600,
+      "tags": ["approvals", "approval-templates"],
+      "invalidatedBy": ["ApprovalTemplateObserver — but only for the specific version key"]
+    },
+    {
+      "pattern": "apv:delegation:sub:{tenant_id}",
+      "description": "Delegation-substitution index — map of `{ delegator_id: delegate_id }` for every ACTIVE RoleDelegation in the tenant. Consulted by ApproverSelectorEngine::resolve() at instance-create time to substitute delegators. Warmed on tenant.activated hook.",
+      "ttlSeconds": 300,
+      "tags": ["approvals", "tenant"],
+      "invalidatedBy": [
+        "InvalidateDelegationSubstitutionCache listener on access/delegation::RoleDelegationActivated + RoleDelegationRevoked"
+      ]
+    },
+    {
+      "pattern": "apv:presenter:instance:{instance_id}:{caller_tier_hash}",
+      "description": "ApprovalPresenter's per-instance projection. Keyed on (instance_id, caller's classifications-visible list hash) so different tenants of the same admin dashboard get correctly-redacted views without recomputing. TTL short — instance state changes need to be visible quickly.",
+      "ttlSeconds": 30,
+      "tags": ["approvals", "approval-instances"],
+      "invalidatedBy": ["ApprovalInstanceObserver.updated / .deleted", "ApprovalRequirementObserver.updated", "ApprovalDecisionObserver.created"]
+    },
+    {
+      "pattern": "apv:approver:index:{user_id}:pending",
+      "description": "Per-user pending-approvals count. Powers the 'inbox' badge in the SPA navbar without a JSONB containment query per navbar-render. TTL short — new approvals need to surface quickly.",
+      "ttlSeconds": 30,
+      "tags": ["approvals", "approval-instances", "user"],
+      "invalidatedBy": ["ApprovalRequirementObserver.created / .updated"]
+    },
+    {
+      "pattern": "apv:action:registry:list",
+      "description": "Full approvable_actions catalogue (is_active=true) for the tenant-plane action picker. Warmed at boot; invalidated on registry updates.",
+      "ttlSeconds": 3600,
+      "tags": ["approvals", "platform"],
+      "invalidatedBy": ["ApprovableActionObserver.created / .updated"]
+    },
+    {
+      "pattern": "apv:reminder:sent:{requirement_id}:{approver_id}:{hour}",
+      "description": "Reminder-throttle counter for approvals.throttle_reminders middleware. Prevents manual dispatch storm. Auto-expires each hour.",
+      "ttlSeconds": 3600,
+      "tags": ["approvals"],
+      "invalidatedBy": ["auto-expires; no explicit invalidation"]
+    }
+  ],
+  "commands": [
+    {
+      "signature": "approvals:cache-clear {--all} {--tag=*} {--pattern=}",
+      "class": "Academorix\\Approval\\Console\\Commands\\CacheClearCommand",
+      "purpose": "Support-tooling. --all flushes every apv:* key; --tag flushes tag(s); --pattern flushes matching keys. Used during template-import + delegation-corruption remediation."
+    }
+  ]
+}

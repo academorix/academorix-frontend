@@ -1,0 +1,68 @@
+{
+  "id": "academorix://modules/workflow/approvals/feature-flags",
+  "$version": 1,
+  "title": "approvals — kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "approvals.engine_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle. Off = approve middleware always passes through, no instances created. Emergency-only — turning off during an outage bypasses the governance layer for every action decorated with #[AsApprovableAction]."
+    },
+    {
+      "key": "approvals.executor_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ApprovalGranted event listener no-ops. Approved instances DON'T re-dispatch the underlying action — they wait wedged for manual remediation. Emergency-only when the executor path is a suspect."
+    },
+    {
+      "key": "approvals.reminders_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = DispatchApprovalRemindersJob no-ops. Approvers miss reminder cadence. Emergency-only during notification-vendor outages."
+    },
+    {
+      "key": "approvals.expression_cache_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ExpressionLanguageAdapter recompiles every expression per evaluation (no AST cache). Performance-degraded but correctness-preserved. Emergency-only when the cache is a suspect."
+    },
+    {
+      "key": "approvals.delegation_substitution_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ApproverSelectorEngine::resolve() does NOT consult access/delegation for OOF substitutions. Approvers who ARE delegating still receive notifications (missing the OOF handoff). Emergency-only when the delegation-index is corrupted."
+    },
+    {
+      "key": "approvals.pci_scanner_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = the PCI-DSS regex scanner on context_json doesn't run. Actions COULD (via bug or malicious decorator) leak card data into approval contexts. Emergency-only when the scanner is a suspect."
+    },
+    {
+      "key": "approvals.security_violation_alerting",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ApprovalSecurityViolation events still fire + write to the audit log, but no Slack + email alert dispatched. Emergency-only during known-incident cleanups where the alerts are duplicating existing on-call tickets."
+    },
+    {
+      "key": "approvals.audit_report_generation_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = the platform-plane audit-report endpoint returns 503 service_unavailable. Emergency-only during compliance-report pipeline maintenance."
+    },
+    {
+      "key": "approvals.template_versioning_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = template edits directly UPDATE the row (no version bump). Version history stops growing. Emergency-only during version-history storage-exhaustion incidents."
+    },
+    {
+      "key": "approvals.expiration_sweep_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ExpireOverdueApprovalsJob no-ops. Overdue instances DON'T transition. Emergency-only during known-issue windows to prevent mass auto-approval/rejection cascades."
+    }
+  ]
+}

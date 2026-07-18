@@ -1,0 +1,70 @@
+{
+  "id": "academorix://modules/workflow/approvals/listeners",
+  "$version": 1,
+  "title": "approvals — subscribed events",
+  "description": "This module both PUBLISHES events (see events.json — 23 events) AND SUBSCRIBES to events from other modules. Subscriptions fall into three categories: (1) discovery — boot-time scan of #[AsApprovableAction] decorators to populate the approvable_actions registry, (2) delegation-awareness — react to access/delegation lifecycle events so cache the delegation-substitution map used by ApproverSelectorEngine, (3) cross-module bridges — react to grant-materialization outcomes on the access side to update approval_instances.context_json.",
+  "listeners": [
+    {
+      "event": "foundation::ApplicationBooted",
+      "listener": "Academorix\\Approval\\Listeners\\RegisterApprovableActionsOnBoot",
+      "queue": null,
+      "purpose": "Boot-time discovery pass. Scans every module's Http/Actions + Application/Actions namespaces for classes carrying #[AsApprovableAction], upserts approvable_actions rows keyed on action_key. Runs once per boot. Fires ApprovableActionRegistered per new/updated row (afterCommit). Runs BEFORE any request handling — synchronous during boot.",
+      "notes": "Discovery-loader pattern per discovery-vs-loader.md — the loader uses the framework-primitive IDiscoveryService (metadata scan) instead of walking every class manually. Idempotent — re-running produces zero new rows if no new attributes were shipped."
+    },
+    {
+      "event": "access/delegation::RoleDelegationActivated",
+      "listener": "Academorix\\Approval\\Listeners\\InvalidateDelegationSubstitutionCache",
+      "queue": "notifications",
+      "purpose": "When a new RoleDelegation activates, the ApproverSelectorEngine's per-tenant delegation-substitution index becomes stale. This listener invalidates the affected cache slice + optionally re-materialises resolved_approvers on PENDING approval_requirements where the delegator appears (so an approver going on OOF mid-flow correctly hands off to their delegate — logged as delegation_drift by the reconciler)."
+    },
+    {
+      "event": "access/delegation::RoleDelegationRevoked",
+      "listener": "Academorix\\Approval\\Listeners\\InvalidateDelegationSubstitutionCache",
+      "queue": "notifications",
+      "purpose": "Symmetric with RoleDelegationActivated. When a delegation ends early (revocation), the delegate should stop receiving approval notifications + the delegator becomes visible again in resolved_approvers snapshots on future instance-creates. Existing instance requirements' resolved_approvers are NOT retroactively edited (freeze-at-instance-create semantics) — but the reconciler's supplementary-reminder logic re-materialises the effective approver list nightly."
+    },
+    {
+      "event": "access/grants::GrantIssued",
+      "listener": "Academorix\\Approval\\Listeners\\PropagateGrantMaterializationOutcome",
+      "queue": "notifications",
+      "purpose": "Cross-module bridge — bidirectional feedback. When access/grants materialises a grant that traces back to an approval_instance (source_reference='approval:api_...'), this listener updates approval_instances.metadata with materialised_grant_id + fires nothing further (the analytics + audit trail lives on the grant + on the ApprovalExecuted event already)."
+    },
+    {
+      "event": "access/grants::GrantRevoked",
+      "listener": "Academorix\\Approval\\Listeners\\PropagateGrantMaterializationOutcome",
+      "queue": "notifications",
+      "purpose": "Symmetric. When a materialised grant is later revoked, updates approval_instances.metadata.grant_revoked_at for the audit-report reconciliation."
+    },
+    {
+      "event": "user::UserSuspended",
+      "listener": "Academorix\\Approval\\Listeners\\HandleApproverUnavailable",
+      "queue": "notifications",
+      "purpose": "When a User is suspended, they can no longer decide pending approvals. This listener walks the PENDING approval_requirements where the suspended user appears in resolved_approvers → recomputes quorum feasibility (if the suspension makes quorum unreachable, transitions the requirement to failed → instance to rejected with reason='APPROVER_UNAVAILABLE'). Fires an ApprovalTemplateChangedNotification-style advisory to the template author when the pattern recurs."
+    },
+    {
+      "event": "user::UserDeleted",
+      "listener": "Academorix\\Approval\\Listeners\\HandleApproverUnavailable",
+      "queue": "notifications",
+      "purpose": "Same logic as UserSuspended — a user hard-delete makes the user permanently unavailable. Runs synchronously with the user-delete event to avoid a race between the delete and pending-decision UI showing a ghost approver."
+    },
+    {
+      "event": "tenancy::TenantProvisioned",
+      "listener": "Academorix\\Approval\\Listeners\\SeedSystemApprovalTemplates",
+      "queue": "notifications",
+      "purpose": "On new tenant provisioning, seed a small set of platform-shipped default approval_templates from `data/system-approval-templates.json` (refund-over-500, grant-issuance, impersonation-extension). Templates are seeded with is_active=true but priority=100 so tenants can override with their own custom templates at priority=1..50."
+    },
+    {
+      "event": "tenancy::TenantErased",
+      "listener": "Academorix\\Approval\\Listeners\\PurgeApprovalsForErasedTenant",
+      "queue": "approvals-retention",
+      "purpose": "Cascade delete via FK; this listener writes the compliance audit trail entry + emits count metric. Includes: approval_templates, approval_template_approvers, approval_instances, approval_requirements, approval_decisions, approval_reminders. Retention holds do NOT apply to tenant-erasure (GDPR Art. 17 right-to-erasure supersedes).",
+      "runs_after": "The `access/grants` module's own PurgeGrantsForErasedTenant listener — grant purges cascade first so approval_instances.metadata.materialised_grant_id refs are already dead."
+    },
+    {
+      "event": "compliance::PolicyChanged",
+      "listener": "Academorix\\Approval\\Listeners\\ReevaluatePendingInstancesOnPolicyChange",
+      "queue": "notifications",
+      "purpose": "When a tenant's compliance policy changes (e.g. a data-residency policy shift that upgrades an action's context classification tier), this listener re-evaluates PENDING approval_instances against the new policy. Instances that would now fail policy-checks are flagged for template author review — not automatically transitioned (governance safeguard)."
+    }
+  ]
+}

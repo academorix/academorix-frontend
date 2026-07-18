@@ -1,0 +1,273 @@
+{
+  "$version": 1,
+  "title": "ApprovalInstance flow samples",
+  "description": "Realistic approval-flow examples covering the six status states + edge cases (delegation substitution, escalation, sequential vs parallel groups). Consumed by test fixtures + documentation + SDUI screen mocks. Every id uses the prefix scheme documented in the schemas — api_ for instances, apr_ for requirements, apd_ for decisions, apg_ for approver groups, apt_ for templates.",
+  "samples": [
+    {
+      "title": "Pending refund approval (>$500) — single approver, quorum=any",
+      "instance": {
+        "id": "api_01K5APVREFUND500PENDING001",
+        "tenant_id": "ten_01J5R7V3A4N7D6Q8K5B2C9E1X1",
+        "application_id": "app_01J5R7V3A4N7D6Q8K5B2C9E001",
+        "action_key": "billing.refunds.issue",
+        "approval_template_id": "apt_01K5REFUNDS_OVER_500_V1",
+        "template_version": 1,
+        "requester_id": "usr_riverside_cashier_01",
+        "status": "pending",
+        "subject_type": "Academorix\\Billing\\Models\\Invoice",
+        "subject_id": "inv_01H8KX2P3R4S5T6U7V8W9X0Y1Z",
+        "context_json": {
+          "invoice_id": "inv_01H8KX2P3R4S5T6U7V8W9X0Y1Z",
+          "amount_cents": 75000,
+          "currency": "USD",
+          "requester_role": "cashier",
+          "is_chargeback": false
+        },
+        "requested_at": "2026-08-01T10:15:23Z",
+        "expires_at": "2026-08-08T10:15:23Z",
+        "decided_at": null,
+        "executed_at": null,
+        "final_decider_id": null
+      },
+      "requirements": [
+        {
+          "id": "apr_01K5APVREQ01FIN_MGR",
+          "template_approver_group_id": "apg_01K5REFUNDS_OVER_500_FIN",
+          "sort_order": 0,
+          "selector_expression": "role('finance_manager')",
+          "resolved_approvers": ["usr_riverside_finance_mgr_01"],
+          "quorum_type": "any",
+          "status": "pending"
+        }
+      ],
+      "decisions": []
+    },
+    {
+      "title": "Approved + executed grant — sequential approver groups",
+      "instance": {
+        "id": "api_01K5APVGRANTAPPROVED_002",
+        "tenant_id": "ten_01J5R7V3A4N7D6Q8K5B2C9E1X1",
+        "application_id": "app_01J5R7V3A4N7D6Q8K5B2C9E001",
+        "action_key": "access.grants.create",
+        "approval_template_id": "apt_01K5GRANTS_HIGH_PRIV_V2",
+        "template_version": 2,
+        "requester_id": "usr_riverside_coach_01",
+        "status": "executed",
+        "subject_type": "Academorix\\AccessGrant\\Models\\AccessGrant",
+        "subject_id": "grn_01K5MATERIALISED_GRANT_001",
+        "context_json": {
+          "resource_type": "invoice",
+          "resource_id": "inv_01H8KX2P3R4S5T6U7V8W9X0Y1Z",
+          "permissions_wanted": ["invoices.view"],
+          "requester_id": "usr_riverside_coach_01",
+          "resource_owner_id": "usr_riverside_finance_lead_01"
+        },
+        "requested_at": "2026-07-30T14:00:00Z",
+        "expires_at": "2026-08-06T14:00:00Z",
+        "decided_at": "2026-07-30T18:22:11Z",
+        "executed_at": "2026-07-30T18:22:12Z",
+        "final_decider_id": "usr_riverside_tenant_admin_02",
+        "rejection_reason": null,
+        "execution_result_summary": {
+          "grant_id": "grn_01K5MATERIALISED_GRANT_001",
+          "grant_expires_at": "2026-09-30T14:00:00Z"
+        }
+      },
+      "requirements": [
+        {
+          "id": "apr_01K5APVREQ01_OWNER",
+          "template_approver_group_id": "apg_01K5GRANTS_OWNER_LEVEL",
+          "sort_order": 0,
+          "selector_expression": "user(context.resource_owner_id)",
+          "resolved_approvers": ["usr_riverside_finance_lead_01"],
+          "quorum_type": "any",
+          "status": "satisfied",
+          "satisfied_at": "2026-07-30T16:44:03Z"
+        },
+        {
+          "id": "apr_01K5APVREQ02_ADMIN_LEVEL",
+          "template_approver_group_id": "apg_01K5GRANTS_TENANT_ADMIN",
+          "sort_order": 1,
+          "selector_expression": "role('tenant_admin')",
+          "resolved_approvers": ["usr_riverside_tenant_admin_01", "usr_riverside_tenant_admin_02"],
+          "quorum_type": "any",
+          "status": "satisfied",
+          "satisfied_at": "2026-07-30T18:22:11Z"
+        }
+      ],
+      "decisions": [
+        {
+          "id": "apd_01K5DECISIONS_OWNER_APPR",
+          "approval_requirement_id": "apr_01K5APVREQ01_OWNER",
+          "approver_id": "usr_riverside_finance_lead_01",
+          "delegated_from_id": null,
+          "decision": "approve",
+          "comment": "Legitimate quarterly-close use case; grant approved.",
+          "decided_at": "2026-07-30T16:44:03Z"
+        },
+        {
+          "id": "apd_01K5DECISIONS_ADMIN_APPR",
+          "approval_requirement_id": "apr_01K5APVREQ02_ADMIN_LEVEL",
+          "approver_id": "usr_riverside_tenant_admin_02",
+          "delegated_from_id": null,
+          "decision": "approve",
+          "comment": "Second-tier sign-off confirmed.",
+          "decided_at": "2026-07-30T18:22:11Z"
+        }
+      ]
+    },
+    {
+      "title": "Rejected refund with SOC 2 comment",
+      "instance": {
+        "id": "api_01K5APVREFUND_REJECTED_003",
+        "tenant_id": "ten_01J5R7V3A4N7D6Q8K5B2C9E1X1",
+        "application_id": "app_01J5R7V3A4N7D6Q8K5B2C9E001",
+        "action_key": "billing.refunds.issue",
+        "approval_template_id": "apt_01K5REFUNDS_OVER_500_V1",
+        "template_version": 1,
+        "requester_id": "usr_riverside_cashier_01",
+        "status": "rejected",
+        "subject_type": "Academorix\\Billing\\Models\\Invoice",
+        "subject_id": "inv_01H8KX2P3R4S5T6U7V8W9X0Y2A",
+        "context_json": {
+          "invoice_id": "inv_01H8KX2P3R4S5T6U7V8W9X0Y2A",
+          "amount_cents": 350000,
+          "currency": "USD",
+          "requester_role": "cashier",
+          "is_chargeback": false
+        },
+        "requested_at": "2026-07-28T09:00:00Z",
+        "expires_at": "2026-08-04T09:00:00Z",
+        "decided_at": "2026-07-28T14:30:00Z",
+        "rejected_at": "2026-07-28T14:30:00Z",
+        "final_decider_id": "usr_riverside_finance_mgr_01",
+        "rejection_reason": "Refund exceeds tenant refund policy §4.2: refunds >$2000 require original invoice attribution AND vendor confirmation."
+      },
+      "requirements": [
+        {
+          "id": "apr_01K5APVREQ_REJECTED_FIN",
+          "template_approver_group_id": "apg_01K5REFUNDS_OVER_500_FIN",
+          "sort_order": 0,
+          "selector_expression": "role('finance_manager')",
+          "resolved_approvers": ["usr_riverside_finance_mgr_01"],
+          "quorum_type": "any",
+          "status": "failed"
+        }
+      ],
+      "decisions": [
+        {
+          "id": "apd_01K5DECISIONS_REJECT_FIN",
+          "approval_requirement_id": "apr_01K5APVREQ_REJECTED_FIN",
+          "approver_id": "usr_riverside_finance_mgr_01",
+          "decision": "reject",
+          "comment": "Refund exceeds tenant refund policy §4.2: refunds >$2000 require original invoice attribution AND vendor confirmation.",
+          "decided_at": "2026-07-28T14:30:00Z"
+        }
+      ]
+    },
+    {
+      "title": "Delegation-substituted approver (OOF handoff)",
+      "instance": {
+        "id": "api_01K5APVDELEGATION_004",
+        "tenant_id": "ten_01J5R7V3A4N7D6Q8K5B2C9E1X1",
+        "application_id": "app_01J5R7V3A4N7D6Q8K5B2C9E001",
+        "action_key": "billing.refunds.issue",
+        "approval_template_id": "apt_01K5REFUNDS_OVER_500_V1",
+        "template_version": 1,
+        "requester_id": "usr_riverside_cashier_01",
+        "status": "pending",
+        "context_json": {
+          "invoice_id": "inv_01H8KX2P3R4S5T6U7V8W9X0Y3B",
+          "amount_cents": 90000,
+          "currency": "USD",
+          "requester_role": "cashier"
+        },
+        "requested_at": "2026-08-02T09:00:00Z",
+        "expires_at": "2026-08-09T09:00:00Z"
+      },
+      "requirements": [
+        {
+          "id": "apr_01K5APVREQ_DELEGATION",
+          "template_approver_group_id": "apg_01K5REFUNDS_OVER_500_FIN",
+          "sort_order": 0,
+          "selector_expression": "role('finance_manager')",
+          "resolved_approvers": ["usr_riverside_finance_delegate_02"],
+          "quorum_type": "any",
+          "status": "pending"
+        }
+      ],
+      "delegation_substitutions": [
+        {
+          "delegator_id": "usr_riverside_finance_mgr_01",
+          "delegate_id": "usr_riverside_finance_delegate_02",
+          "role_delegation_id": "dlg_01K5FIN_MGR_OOF_JULY_AUG",
+          "substituted_at": "2026-08-02T09:00:01Z"
+        }
+      ],
+      "decisions": []
+    },
+    {
+      "title": "Expired instance — on_timeout=expire",
+      "instance": {
+        "id": "api_01K5APVEXPIRED_005",
+        "tenant_id": "ten_01J5R7V3A4N7D6Q8K5B2C9E1X1",
+        "application_id": "app_01J5R7V3A4N7D6Q8K5B2C9E001",
+        "action_key": "identity.impersonation.extend",
+        "approval_template_id": "apt_01K5IMPERSONATION_EXTEND_V1",
+        "template_version": 1,
+        "requester_id": "usr_academorix_support_01",
+        "status": "expired",
+        "context_json": {
+          "session_id": "imp_01K5IMPSESSION_XYZ",
+          "target_user_id": "usr_riverside_owner_01",
+          "extend_by_seconds": 7200,
+          "reason": "Complex customer-support investigation"
+        },
+        "requested_at": "2026-07-15T10:00:00Z",
+        "expires_at": "2026-07-15T13:00:00Z",
+        "decided_at": "2026-07-15T13:00:05Z",
+        "rejected_at": null,
+        "rejection_reason": "Instance expired before approvers decided (on_timeout=expire)."
+      },
+      "requirements": [
+        {
+          "id": "apr_01K5APVREQ_EXPIRED",
+          "sort_order": 0,
+          "selector_expression": "role('security_officer')",
+          "resolved_approvers": ["usr_academorix_security_01"],
+          "quorum_type": "any",
+          "status": "failed"
+        }
+      ],
+      "decisions": []
+    },
+    {
+      "title": "Requester-withdrew instance",
+      "instance": {
+        "id": "api_01K5APVWITHDRAWN_006",
+        "tenant_id": "ten_01J5R7V3A4N7D6Q8K5B2C9E1X1",
+        "action_key": "billing.refunds.issue",
+        "approval_template_id": "apt_01K5REFUNDS_OVER_500_V1",
+        "requester_id": "usr_riverside_cashier_01",
+        "status": "cancelled",
+        "requested_at": "2026-07-25T12:00:00Z",
+        "expires_at": "2026-08-01T12:00:00Z",
+        "cancelled_at": "2026-07-25T12:15:00Z",
+        "metadata": {
+          "withdraw_reason": "Customer resolved dispute; refund no longer needed."
+        }
+      },
+      "requirements": [
+        {
+          "id": "apr_01K5APVREQ_WITHDRAWN",
+          "sort_order": 0,
+          "selector_expression": "role('finance_manager')",
+          "resolved_approvers": ["usr_riverside_finance_mgr_01"],
+          "quorum_type": "any",
+          "status": "failed"
+        }
+      ],
+      "decisions": []
+    }
+  ]
+}

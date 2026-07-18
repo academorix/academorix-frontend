@@ -1,0 +1,69 @@
+{
+  "id": "academorix://modules/workflow/approvals/features",
+  "$version": 1,
+  "title": "approvals — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "approvals.core",
+      "displayName": "Approval workflows",
+      "description": "Base multi-party approval engine. Always on for every tier. Every action decorated with #[AsApprovableAction] routes through the engine when a template matches.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "small", "medium", "enterprise"]
+    },
+    {
+      "key": "approvals.custom_templates",
+      "displayName": "Custom approval templates",
+      "description": "Tenants can author their own approval templates via the workflow-approval-templates surface. Small-tier tenants use the platform-shipped defaults (seeded on tenant provisioning). Medium+ tier unlocks custom authoring.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "approvals.advanced_expressions",
+      "displayName": "Advanced approver selectors",
+      "description": "Access to advanced selector functions: manager_of, except, chain_up_to. Basic selectors (role, user, permission, owner_of, any, all) available to all tiers with custom templates.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "approvals.audit_reports",
+      "displayName": "Compliance audit reports",
+      "description": "Generate cross-tenant approval-flow snapshots as SOC 2 CC6.3 + ISO 27001 A.9.2 evidence. Requires enterprise tier + compliance module co-active.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"],
+      "requires_co_active_modules": ["compliance"]
+    },
+    {
+      "key": "approvals.delegation_awareness",
+      "displayName": "Delegation-aware approvers",
+      "description": "Approver selectors automatically substitute delegates for OOF delegators. Reads access/delegation::role_delegations. Off = approvers on OOF still receive notifications (no OOF handoff).",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "approvals.escalation_on_timeout",
+      "displayName": "Escalation on timeout",
+      "description": "template.on_timeout='escalate' unlocks a second-tier approver pool via template.escalation_selector when the primary approvers don't decide in time. Deferred to Wave 2 — Wave 1b ships expire + approve only.",
+      "defaultEnabled": false,
+      "planTiers": [],
+      "notes": "Blueprint declares the feature for forward-compat; the engine does not yet implement it."
+    },
+    {
+      "key": "approvals.template_import_export",
+      "displayName": "Template import/export",
+      "description": "Bulk-import approval templates from a shipped catalogue OR export a tenant's templates as a JSON blob for backup + migration. Deferred to Wave 2.",
+      "defaultEnabled": false,
+      "planTiers": []
+    },
+    {
+      "key": "approvals.approver_analytics",
+      "displayName": "Per-approver analytics",
+      "description": "Dashboard showing each approver's decision timeliness, approve/reject ratios, average time-to-decision. Deferred to Wave 2 pending privacy review.",
+      "defaultEnabled": false,
+      "planTiers": []
+    }
+  ]
+}

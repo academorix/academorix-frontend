@@ -1,0 +1,71 @@
+{
+  "id": "academorix://modules/workflow/approvals/broadcasts",
+  "$version": 1,
+  "title": "approvals — broadcast channels",
+  "description": "Real-time broadcast channels for approval-lifecycle events. Three channels serve three audiences: tenant-wide feed for admin dashboards, per-user feed for requester + approver inboxes, per-instance feed for detail-view live updates.",
+  "driver": "reverb",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.approvals",
+      "kind": "private",
+      "description": "Tenant-wide approval-lifecycle feed. Every event on any instance in the tenant broadcasts here so admin dashboards can live-update the list of open + recently-decided approvals. Batched — a burst of decisions in bulk-approve coalesces to one broadcast per second per instance.",
+      "authorize": "User belongs to the tenant AND has `approvals.instances.viewAny`",
+      "authCallback": "fn (User $user, string $tenantId) => $user->tenant_id === $tenantId && $user->can('approvals.instances.viewAny')",
+      "events": [
+        "ApprovalRequested",
+        "ApprovalDecisionRecorded",
+        "ApprovalRequirementSatisfied",
+        "ApprovalRequirementFailed",
+        "ApprovalGranted",
+        "ApprovalRejected",
+        "ApprovalExecuted",
+        "ApprovalCancelled",
+        "ApprovalExpired",
+        "ApprovalTemplateVersionBumped",
+        "ApprovalTemplateActivated",
+        "ApprovalTemplateDeactivated"
+      ]
+    },
+    {
+      "name": "user.{userId}.approvals",
+      "kind": "private",
+      "description": "Per-user approval feed. Requesters subscribe to see status updates on their own instances; approvers subscribe to see new incoming approvals they need to review. Auth: caller IS the user.",
+      "authorize": "User is themselves",
+      "authCallback": "fn (User $user, string $userId) => $user->id === $userId",
+      "events": [
+        "ApprovalRequested (for approvers only — filtered on payload.resolved_approvers)",
+        "ApprovalReminderDispatched (for the recipient approver)",
+        "ApprovalGranted (for the requester)",
+        "ApprovalRejected (for the requester)",
+        "ApprovalExpired (for the requester + any pending approvers)",
+        "ApprovalCancelled (for pending approvers)",
+        "ApprovalExecuted (for the requester)"
+      ]
+    },
+    {
+      "name": "approval-instance.{instanceId}",
+      "kind": "private",
+      "description": "Per-instance feed. Powers the approval-detail live view — when a decision is made on one requirement, everyone with the detail page open sees the timeline update without polling. Auth: caller can view the specific instance (requester, current-or-past approver, tenant admin).",
+      "authorize": "ApprovalInstancePolicy::view($user, $instance)",
+      "authCallback": "fn (User $user, string $instanceId) => (new ApprovalInstancePolicy())->view($user, ApprovalInstance::findOrFail($instanceId))",
+      "events": [
+        "ApprovalDecisionRecorded",
+        "ApprovalRequirementResolved",
+        "ApprovalRequirementSatisfied",
+        "ApprovalRequirementFailed",
+        "ApprovalGranted",
+        "ApprovalRejected",
+        "ApprovalExecuted",
+        "ApprovalCancelled",
+        "ApprovalExpired",
+        "ApprovalEscalated",
+        "DelegationSubstitutedApprover"
+      ]
+    }
+  ],
+  "notes": [
+    "The `approval-instance.{instanceId}` channel replaces detail-page polling — when an approver is watching a request they submitted, decisions land in the timeline in real-time.",
+    "ApprovalSecurityViolation is deliberately NOT broadcast. It writes to the audit log + fires ApprovalExecutionFailedNotification to platform-ops but never surfaces on tenant channels — the tenant should not learn from a real-time feed that a forgery attempt was made against them.",
+    "ApprovalExecutionFailed fires on `tenant.{tenantId}.approvals` only when the executing action's namespace is tenant-visible (billing.*, access.*). Platform-internal action failures (identity.*.internal) stay on platform-ops channels."
+  ]
+}

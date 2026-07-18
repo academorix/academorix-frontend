@@ -1,0 +1,118 @@
+{
+  "id": "academorix://modules/workflow/approvals/webhooks",
+  "$version": 1,
+  "title": "approvals — outbound webhooks",
+  "description": "This module dispatches a security-relevant + compliance-relevant subset of approval lifecycle events as outbound webhooks for tenants that opt in (SIEM integrations, custom governance pipelines, on-prem audit ingestors). Payloads are minimally-redacted — approver + requester fingerprints (SHA-256 of user_id), action metadata, timestamps. No PII, no context_json field values, no decision comments. Tenants configure endpoint URLs + secrets via the notifications module's outbound-webhook subscription surface.",
+  "outbound_webhook_kinds": [
+    {
+      "kind": "approvals.instance_requested",
+      "trigger_event": "ApprovalRequested",
+      "payload": {
+        "event_kind": "approvals.instance_requested",
+        "occurred_at": "ISO-8601 timestamp",
+        "tenant_id": "ULID",
+        "application_id": "ULID",
+        "instance_id": "ULID",
+        "action_key": "string",
+        "action_namespace": "string",
+        "requester_fingerprint": "string (SHA-256 of requester_id)",
+        "subject_type": "string | null",
+        "subject_id_fingerprint": "string | null (SHA-256 of subject_id)",
+        "expires_at": "ISO-8601 timestamp",
+        "requirement_count": "integer",
+        "total_resolved_approver_count": "integer"
+      },
+      "notes": "Sanitised for SIEM ingest. Tenant policies that need a per-request full-fidelity feed use the internal audit-report endpoint instead (authenticated + rate-limited)."
+    },
+    {
+      "kind": "approvals.decision_recorded",
+      "trigger_event": "ApprovalDecisionRecorded",
+      "payload": {
+        "event_kind": "approvals.decision_recorded",
+        "occurred_at": "ISO-8601 timestamp",
+        "tenant_id": "ULID",
+        "instance_id": "ULID",
+        "requirement_id": "ULID",
+        "approver_fingerprint": "string (SHA-256 of approver_id)",
+        "delegated_from_fingerprint": "string | null (SHA-256 of delegated_from_id when the decider was acting under a delegation)",
+        "decision": "'approve' | 'reject'",
+        "action_key": "string"
+      }
+    },
+    {
+      "kind": "approvals.instance_granted",
+      "trigger_event": "ApprovalGranted",
+      "payload": {
+        "event_kind": "approvals.instance_granted",
+        "occurred_at": "ISO-8601 timestamp",
+        "tenant_id": "ULID",
+        "instance_id": "ULID",
+        "action_key": "string",
+        "requester_fingerprint": "string",
+        "final_decider_fingerprint": "string",
+        "decision_count": "integer"
+      }
+    },
+    {
+      "kind": "approvals.instance_rejected",
+      "trigger_event": "ApprovalRejected",
+      "payload": {
+        "event_kind": "approvals.instance_rejected",
+        "occurred_at": "ISO-8601 timestamp",
+        "tenant_id": "ULID",
+        "instance_id": "ULID",
+        "action_key": "string",
+        "requester_fingerprint": "string",
+        "final_decider_fingerprint": "string"
+      },
+      "notes": "The rejection reason (approval_decisions.comment) is NEVER included in the webhook — comments can carry internal-tier context that shouldn't cross the SIEM boundary. Consumers who need reasons pull them through the authenticated /approvals/instances/{id} endpoint."
+    },
+    {
+      "kind": "approvals.instance_executed",
+      "trigger_event": "ApprovalExecuted",
+      "payload": {
+        "event_kind": "approvals.instance_executed",
+        "occurred_at": "ISO-8601 timestamp",
+        "tenant_id": "ULID",
+        "instance_id": "ULID",
+        "action_key": "string",
+        "requester_fingerprint": "string",
+        "executed_at": "ISO-8601 timestamp"
+      },
+      "notes": "P0-priority — this is the compliance-critical event marking when tenant state actually changed. SOC 2 auditors treat this webhook as evidence of change-control enforcement."
+    },
+    {
+      "kind": "approvals.instance_expired",
+      "trigger_event": "ApprovalExpired",
+      "payload": {
+        "event_kind": "approvals.instance_expired",
+        "occurred_at": "ISO-8601 timestamp",
+        "tenant_id": "ULID",
+        "instance_id": "ULID",
+        "action_key": "string",
+        "on_timeout_behaviour": "'expire' | 'approve' | 'escalate'",
+        "final_status": "'expired' | 'approved'"
+      }
+    },
+    {
+      "kind": "approvals.security_violation_detected",
+      "trigger_event": "ApprovalSecurityViolation",
+      "payload": {
+        "event_kind": "approvals.security_violation_detected",
+        "occurred_at": "ISO-8601 timestamp",
+        "tenant_id": "ULID | null",
+        "instance_id": "ULID | null",
+        "violation_type": "'forged_decision' | 'direct_db_write' | 'restricted_context_leak' | 'quorum_evaluation_bypass'",
+        "detection_source": "'http_middleware' | 'observer' | 'scanner' | 'reconciliation'",
+        "note": "P0 security signal — tenant SIEM MUST trigger investigation"
+      },
+      "notes": "Fingerprints intentionally omitted here — a forgery attempt should trigger a full-fidelity manual investigation, not surface an attacker's identity via a payload. The internal audit log holds the specifics."
+    }
+  ],
+  "inbound_webhook_kinds": [],
+  "rationale": [
+    "Approval-lifecycle webhooks are appropriate at this level — the payload contains only fingerprints + coarse event metadata. No PII, no context_json field values, no decision comments.",
+    "ApprovalTemplate* events are deliberately NOT webhooked — template edits are governance-configuration changes; tenants pulling those via a webhook subscribe to the tenant.{id}.approvals broadcast channel instead.",
+    "Every webhook is signed via HMAC-SHA256 with the tenant's shared secret (rotated via the notifications module's endpoint-management UI)."
+  ]
+}

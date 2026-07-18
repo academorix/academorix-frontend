@@ -1,0 +1,150 @@
+{
+  "id": "academorix://modules/workflow/approvals/traits",
+  "$version": 1,
+  "title": "approvals — trait composition",
+  "description": "Two owned traits. `HasApprovalHistory` is mixed into the `User` model — exposes convenience relations for the caller's approvals-requested, approvals-pending-review, approvals-decided history without pulling in the whole ApprovalPresenter. `IsApprovable` is a MARKER trait on subject types that CAN be the subject of an approval instance (any resource type an action targets — e.g. Invoice, Grant, Athlete). Optional: most callers don't need it — the `approve` middleware works off the action's `#[AsApprovableAction]` attribute, not the subject. The trait is only used when a subject wants a first-class `->approvals()` inverse relation for admin UIs.",
+  "owned": [
+    {
+      "trait": "Academorix\\Approval\\Concerns\\HasApprovalHistory",
+      "description": "Mixed into the `User` model (via user module composition) to expose three convenience relations without materialising the ApprovalPresenter. Read-only accessors — never writes. Every method scopes by tenant + application via the composing model's `BelongsToTenant` global scope so cross-tenant leakage is impossible.",
+      "public": true,
+      "usedBy": [
+        "user::User (exposes approval-history relations on the caller model)"
+      ],
+      "provides_methods": [
+        {
+          "signature": "approvalsRequested(): HasMany<ApprovalInstance>",
+          "description": "The caller's own submitted requests — every `approval_instances` row where `requester_id = user.id`. Ordered `requested_at DESC` by default. Filtered via composing model's BelongsToTenant + application scope."
+        },
+        {
+          "signature": "approvalsPendingReview(): Builder<ApprovalInstance>",
+          "description": "Instances where the caller sits in `approval_requirements.resolved_approvers` on at least one pending requirement (status='pending'). Backed by a JSONB containment query (`resolved_approvers @> to_jsonb(user.id)`) so it uses the GIN index on the column. Returns a Builder (not a HasMany) because the join relationship is polymorphic on the JSONB payload."
+        },
+        {
+          "signature": "approvalsDecided(): HasMany<ApprovalDecision>",
+          "description": "Every `approval_decisions` row where `approver_id = user.id`. Includes both approves + rejects. Used by 'my activity' feed. Ordered `decided_at DESC`."
+        }
+      ],
+      "conflicts_with": []
+    },
+    {
+      "trait": "Academorix\\Approval\\Concerns\\IsApprovable",
+      "description": "Marker trait on subject types (Invoice, AccessGrant, Athlete, RoleAssignment) that can be referenced by an `approval_instances.subject_type + subject_id` pair. Adds a polymorphic inverse `->approvals()` relation. OPTIONAL — the approval engine doesn't require the subject to compose this trait (subject is just a polymorphic tuple in the DB). Compose only when a subject-type-specific admin UI needs to render 'all approvals touching this resource' without a bespoke query.",
+      "public": true,
+      "usedBy": [],
+      "provides_methods": [
+        {
+          "signature": "approvals(): MorphMany<ApprovalInstance>",
+          "description": "Reverse polymorphic relation matching `approval_instances.subject_type = static::class + approval_instances.subject_id = this->id`. Ordered `requested_at DESC`."
+        },
+        {
+          "signature": "activeApproval(): ApprovalInstance|null",
+          "description": "Convenience accessor for `approvals()->where('status', 'pending')->first()` — used by policy checks that need to short-circuit 'this resource is currently locked pending an approval flow' without duplicating the query."
+        }
+      ],
+      "conflicts_with": []
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "ApprovableAction, ApprovalTemplate, ApprovalInstance. NOT ApprovalRequirement, ApprovalDecision, ApprovalReminder (append-only + high-volume; hard-purged on retention)."
+      }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }],
+    "audit": [{ "trait": "OwenIt\\Auditing\\Auditable" }]
+  },
+  "composition": {
+    "approvable_action": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasSystemFlag",
+        "HasMetadata",
+        "HasUserstamps",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "NO BelongsToTenant — approvable_actions is a PLATFORM-level registry (populated at boot by discovery scanning `#[AsApprovableAction]` decorators). Every tenant sees the same registry; per-tenant enable/disable is done via approval_templates.is_active, not by cutting rows here."
+    },
+    "approval_template": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasActivityLog",
+        "Auditable",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "Tenant-scoped. Auditable because template edits are governance-critical (someone changed the refund-approval rules → auditor needs to see the diff). SoftDeletes because template deletion is a rare + reversible admin action; hard delete only via cascade on tenant erasure. Ordering of traits: BelongsToTenant FIRST so subsequent trait booted() hooks observe tenant context."
+    },
+    "approval_template_approver": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasActivityLog",
+        "Filterable"
+      ],
+      "notes": "Tenant-scoped via parent template's tenant_id (denormalised on the row for FK integrity + query-plan). NO SoftDeletes — template group edits bump the parent template's version so history lives at the template level, not per-group."
+    },
+    "approval_instance": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasActivityLog",
+        "Auditable",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "Tenant-scoped. Auditable + HasActivityLog BOTH — compliance signal (field-level diffs via Auditable) + product feed (human-readable events via HasActivityLog). SoftDeletes retains rejected/expired/cancelled instances for the 90-day compliance hold; hard delete via `approvals:purge-expired`."
+    },
+    "approval_requirement": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "Filterable"
+      ],
+      "notes": "Tenant-scoped. NO SoftDeletes / HasUserstamps / HasActivityLog / Auditable — requirements are internal engine state (materialised at instance-create time; frozen after decision). Cascade deletes with the parent instance. High-volume table (N requirements per instance × N instances per tenant) — traits kept minimal to hold row writes at ~1KB."
+    },
+    "approval_decision": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "Filterable"
+      ],
+      "notes": "Tenant-scoped. Decisions are effectively write-once (no updates, no soft-delete — a bad decision is retracted via a NEW approve/reject flow, not by editing the row). NO Auditable because the row IS the audit event (the decision is the record). Retained forever per compliance."
+    },
+    "approval_reminder": {
+      "traits": ["HasFactory", "HasUlids", "BelongsToTenant"],
+      "notes": "Tenant-scoped. Append-only reminder-dispatch audit. Zero domain semantics beyond 'we sent reminder N to approver X at time Y'. NO SoftDeletes / HasUserstamps / HasActivityLog. Purged with the parent instance on retention hold."
+    }
+  }
+}

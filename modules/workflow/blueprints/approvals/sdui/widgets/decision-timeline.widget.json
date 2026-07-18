@@ -1,0 +1,81 @@
+{
+  "id": "approvals.widgets.decision-timeline",
+  "title": "Decision timeline",
+  "version": 1,
+  "kind": "SduiWidget",
+  "notes": [
+    "Vertical timeline of approve/reject decisions across all requirements on an instance. Chronologically sorted (decided_at ASC). Delegation-substituted decisions render a 'delegated' badge.",
+    "Comments render inline for callers with approvals.decisions.view_comments; without the permission, comments show '[hidden]' placeholder."
+  ],
+  "props_schema": {
+    "type": "object",
+    "properties": {
+      "decisions": { "type": "array" },
+      "requirements": { "type": "array" }
+    },
+    "required": ["decisions"]
+  },
+  "root": {
+    "kind": "View",
+    "props": { "className": "flex flex-col gap-3" },
+    "children": [
+      {
+        "kind": "List",
+        "bindings": { "items": { "$expr": "sortByDate(props.decisions, 'decided_at')" } },
+        "itemTemplate": {
+          "kind": "View",
+          "props": { "className": "flex gap-3 border-l-2 pl-3" },
+          "propsExpr": "{ className: 'flex gap-3 border-l-2 pl-3 ' + (item.decision === 'approve' ? 'border-success' : 'border-danger') }",
+          "children": [
+            {
+              "kind": "Avatar",
+              "propsExpr": "{ src: item.approver_summary.avatar_url, size: 'sm' }"
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col gap-1" },
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-center gap-2" },
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "propsExpr": "{ className: 'font-semibold text-sm', children: item.approver_summary.display_name }"
+                    },
+                    {
+                      "kind": "Chip",
+                      "propsExpr": "{ size: 'xs', variant: item.decision === 'approve' ? 'success' : 'danger', children: item.decision }"
+                    },
+                    {
+                      "kind": "Chip",
+                      "propsExpr": "{ size: 'xs', variant: 'neutral', children: 'delegated' }",
+                      "bindings": { "hidden": { "$expr": "!item.delegated_from_summary" } }
+                    }
+                  ]
+                },
+                {
+                  "kind": "Text",
+                  "propsExpr": "{ className: 'text-xs text-muted', children: relativeTime(item.decided_at) }"
+                },
+                {
+                  "kind": "Text",
+                  "propsExpr": "{ className: 'text-sm', children: item.comment || null }",
+                  "bindings": { "hidden": { "$expr": "!item.comment" } }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "kind": "Text",
+        "props": {
+          "className": "text-sm text-muted italic",
+          "children": "No decisions yet."
+        },
+        "bindings": { "hidden": { "$expr": "props.decisions.length > 0" } }
+      }
+    ]
+  }
+}

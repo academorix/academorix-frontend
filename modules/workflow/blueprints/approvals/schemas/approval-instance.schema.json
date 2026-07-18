@@ -1,0 +1,236 @@
+{
+  "id": "academorix://modules/workflow/approvals/schemas/approval-instance",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ApprovalInstance",
+  "description": "One row per triggered approval flow. Created by the `approve` middleware when a template matches an approvable action's inputs. Polymorphic subject (subject_type + subject_id) references the resource the action operates on. Immutable-once-created except for lifecycle status transitions. context_json + payload_json are snapshots — frozen at instance-create time so subsequent template edits don't change historical decisions.",
+  "type": "object",
+  "x-module": "approvals",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "approval_instances",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "api_",
+    "incrementing": false,
+    "model": "Academorix\\Approval\\Models\\ApprovalInstance",
+    "interface": "Academorix\\Approval\\Contracts\\Data\\ApprovalInstanceInterface",
+    "implements": ["Academorix\\Approval\\Contracts\\Data\\ApprovalInstanceInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasActivityLog",
+      "Auditable",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "status": "ApprovalInstanceStatus",
+      "template_version": "integer",
+      "context_json": "array",
+      "payload_json": "encrypted:array",
+      "requested_at": "datetime",
+      "expires_at": "datetime",
+      "decided_at": "datetime",
+      "executed_at": "datetime",
+      "rejected_at": "datetime",
+      "cancelled_at": "datetime",
+      "metadata": "array"
+    },
+    "appends": ["time_to_decision_hours", "is_terminal"],
+    "observers": ["ApprovalInstanceObserver"],
+    "hidden": ["payload_json"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `api_<26>`." },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "application_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "applications", "column": "id", "onDelete": "restrict" }
+      },
+      "action_key": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "foreign": { "table": "approvable_actions", "column": "action_key", "onDelete": "restrict" }
+      },
+      "approval_template_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "approval_templates", "column": "id", "onDelete": "restrict" }
+      },
+      "template_version": {
+        "type": "integer",
+        "nullable": false,
+        "description": "Snapshotted at instance-create — subsequent template edits don't retroactively change this instance."
+      },
+      "requester_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "Enum: pending | approved | rejected | executed | expired | cancelled."
+      },
+      "subject_type": {
+        "type": "string",
+        "length": 200,
+        "nullable": true,
+        "description": "Polymorphic type — the FQCN of the resource being acted upon."
+      },
+      "subject_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Polymorphic id."
+      },
+      "context_json": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Snapshotted approval context at request time. The variables the expression engine sees for approver resolution + reminder computation. Immutable post-create."
+      },
+      "payload_json": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Action input, replayed on approve. Encrypted at rest (Laravel encrypted-cast) — never wire-projected. Engine-internal."
+      },
+      "requester_ip_hash": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "SHA-256(request()->ip()) at request time. Never plaintext."
+      },
+      "requested_at": { "type": "timestamptz", "nullable": false },
+      "expires_at": { "type": "timestamptz", "nullable": false, "description": "= requested_at + template.expires_after_hours" },
+      "decided_at": { "type": "timestamptz", "nullable": true },
+      "executed_at": { "type": "timestamptz", "nullable": true },
+      "rejected_at": { "type": "timestamptz", "nullable": true },
+      "cancelled_at": { "type": "timestamptz", "nullable": true },
+      "final_decider_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "The approver whose decision tipped the quorum. Set exactly once on transition to approved/rejected."
+      },
+      "rejection_reason": {
+        "type": "text",
+        "nullable": true,
+        "description": "Copied from the rejecting decision's comment for wire projection."
+      },
+      "execution_result_json": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Return value of the executed action (public-tier projection). Set on ApprovalExecuted."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "status", "expires_at"],
+        "unique": false,
+        "name": "approval_instances_pending_sweep_idx",
+        "description": "ExpireOverdueApprovalsJob's scan path. Covers pending instances past expires_at."
+      },
+      {
+        "columns": ["tenant_id", "requester_id", "requested_at"],
+        "unique": false,
+        "name": "approval_instances_requester_recent_idx"
+      },
+      {
+        "columns": ["subject_type", "subject_id", "status"],
+        "unique": false,
+        "name": "approval_instances_subject_idx",
+        "description": "Polymorphic lookup for IsApprovable::approvals() relation + activeApproval() accessor."
+      },
+      {
+        "columns": ["approval_template_id"],
+        "unique": false,
+        "name": "approval_instances_template_idx",
+        "description": "Template.approval_instances() relation + delete-refusal integrity check."
+      },
+      {
+        "columns": ["tenant_id", "action_key", "status"],
+        "unique": false,
+        "name": "approval_instances_reporting_idx",
+        "description": "Audit-report aggregation."
+      }
+    ]
+  },
+  "required": ["id", "tenant_id", "application_id", "action_key", "approval_template_id", "template_version", "requester_id", "status", "context_json", "payload_json", "requested_at", "expires_at", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^api_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "application_id": { "type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "action_key": { "type": "string", "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_]*)+$" },
+    "approval_template_id": { "type": "string", "pattern": "^apt_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "template_version": { "type": "integer", "minimum": 1 },
+    "requester_id": { "type": "string" },
+    "status": { "type": "string", "enum": ["pending", "approved", "rejected", "executed", "expired", "cancelled"] },
+    "subject_type": { "type": ["string", "null"] },
+    "subject_id": { "type": ["string", "null"] },
+    "context_json": { "type": "object" },
+    "payload_json": { "type": "object", "description": "Never wire-projected." },
+    "requester_ip_hash": { "type": ["string", "null"] },
+    "requested_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "decided_at": { "type": ["string", "null"], "format": "date-time" },
+    "executed_at": { "type": ["string", "null"], "format": "date-time" },
+    "rejected_at": { "type": ["string", "null"], "format": "date-time" },
+    "cancelled_at": { "type": ["string", "null"], "format": "date-time" },
+    "final_decider_id": { "type": ["string", "null"] },
+    "rejection_reason": { "type": ["string", "null"] },
+    "execution_result_json": { "type": ["object", "null"] },
+    "time_to_decision_hours": {
+      "type": ["number", "null"],
+      "description": "Computed. (decided_at - requested_at) in hours; null while pending."
+    },
+    "is_terminal": {
+      "type": "boolean",
+      "description": "Computed. status IN (approved, rejected, executed, expired, cancelled)."
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["time_to_decision_hours", "is_terminal"],
+    "never_projected": ["payload_json", "requester_ip_hash"]
+  }
+}

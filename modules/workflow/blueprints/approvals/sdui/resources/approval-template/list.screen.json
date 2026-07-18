@@ -1,0 +1,170 @@
+{
+  "id": "approvals.resources.approval-template.list",
+  "title": "Approval templates",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/approvals/templates",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "workflow/approvals", "entity": "approval-template", "action": "list" },
+  "requiresPermission": "approvals.templates.viewAny",
+  "notes": [
+    "Tenant admin surface for authoring + managing approval templates. Filterable by action_key + is_active. Every row links to the template editor. New-template button gated by approvals.templates.create + entitlement (approval_templates_custom for medium+ tier).",
+    "The 'New template' button is disabled for tenants without approval_templates_custom entitlement — shows an upgrade CTA on hover."
+  ],
+  "dataSources": [
+    {
+      "name": "templates",
+      "kind": "http.get",
+      "url": "/api/v1/approvals/templates",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": ["filter[action_key]", "filter[is_active]", "sort", "page", "per_page"],
+      "cache": { "ttlSeconds": 60, "staleWhileRevalidate": true }
+    },
+    {
+      "name": "actions",
+      "kind": "http.get",
+      "url": "/api/v1/approvals/actions",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 3600 }
+    }
+  ],
+  "subscriptions": [
+    {
+      "channel": "tenant.{tenantId}.approvals",
+      "kind": "private",
+      "eventFilter": {
+        "$expr": "['ApprovalTemplateVersionBumped', 'ApprovalTemplateActivated', 'ApprovalTemplateDeactivated', 'ApprovalTemplateCreated'].includes(event.type)"
+      },
+      "onEvent": { "kind": "data.refresh", "sources": ["templates"] }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Approval templates"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Governance rules that gate actions across your tenant."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "plus",
+                "children": "New template"
+              },
+              "bindings": {
+                "isDisabled": {
+                  "$expr": "!identity.entitlements.approval_templates_custom || !identity.permissions.includes('approvals.templates.create')"
+                }
+              },
+              "tooltipExpr": "!identity.entitlements.approval_templates_custom ? 'Upgrade to Medium tier or higher to author custom templates' : null",
+              "actions": {
+                "onPress": { "kind": "navigate", "to": "/tenant/approvals/templates/new" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Toolbar",
+          "children": [
+            {
+              "kind": "Select",
+              "props": {
+                "name": "filter[action_key]",
+                "placeholder": "All actions",
+                "clearable": true
+              },
+              "bindings": { "options": { "$ref": "actions" } }
+            },
+            {
+              "kind": "Toggle",
+              "props": {
+                "name": "filter[is_active]",
+                "label": "Active only",
+                "valueOn": "true",
+                "valueOff": ""
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "columns": [
+            {
+              "key": "is_active",
+              "header": "",
+              "cell": {
+                "kind": "Chip",
+                "propsExpr": "{ size: 'xs', variant: row.is_active ? 'success' : 'neutral', children: row.is_active ? 'Active' : 'Inactive' }"
+              }
+            },
+            {
+              "key": "name",
+              "header": "Name",
+              "cell": {
+                "kind": "Link",
+                "propsExpr": "{ to: '/tenant/approvals/templates/' + row.id, children: row.name, className: 'font-medium' }"
+              }
+            },
+            { "key": "action_key", "header": "Action", "cell": { "kind": "Text", "propsExpr": "{ className: 'font-mono text-xs', children: row.action_key }" } },
+            { "key": "version", "header": "Version", "cell": { "kind": "Text", "propsExpr": "{ children: 'v' + row.version }" } },
+            { "key": "priority", "header": "Priority" },
+            { "key": "on_timeout", "header": "On timeout" },
+            {
+              "key": "actions",
+              "header": "",
+              "cell": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-1" },
+                "children": [
+                  {
+                    "kind": "Button",
+                    "propsExpr": "{ variant: 'ghost', size: 'xs', children: row.is_active ? 'Deactivate' : 'Activate' }",
+                    "bindings": {
+                      "isDisabled": {
+                        "$expr": "!identity.permissions.includes('approvals.templates.manage')"
+                      }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "urlExpr": "'/api/v1/approvals/templates/' + row.id + (row.is_active ? '/deactivate' : '/activate')",
+                        "onSuccess": { "kind": "data.refresh", "sources": ["templates"] }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "bindings": { "rows": { "$ref": "templates" } }
+        }
+      ]
+    }
+  ]
+}

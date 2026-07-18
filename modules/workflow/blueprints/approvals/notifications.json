@@ -1,0 +1,134 @@
+{
+  "id": "academorix://modules/workflow/approvals/notifications",
+  "$version": 1,
+  "title": "approvals — notification classes + categories",
+  "namespace": "Academorix\\Approval\\Notifications",
+  "description": "Eight notification classes serve three audiences: approvers (requested + reminder + cancelled), requesters (granted + rejected + expired), and admins (execution-failed + template-changed). Every notification is templated per (tenant, action_key) via the localization::NotificationTemplate mechanism so tenant admins can tune copy without redeploying. Consent tiers follow the compliance module's four-tier model: `transactional_required` (mandatory; no opt-out) for lifecycle-critical notifications, `functional_optional` (opt-out allowed) for reminders + template-change awareness.",
+  "notifications": [
+    "ApprovalRequestedNotification",
+    "ApprovalReminderNotification",
+    "ApprovalGrantedNotification",
+    "ApprovalRejectedNotification",
+    "ApprovalExpiredNotification",
+    "ApprovalCancelledNotification",
+    "ApprovalExecutionFailedNotification",
+    "ApprovalTemplateChangedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "approvals.requested",
+      "display_name": "Approval requested",
+      "description": "You have been asked to approve or reject a request. Includes the action label, requester, subject summary, and a link to the review page.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true,
+      "audience": "approver",
+      "notes": "Cannot be opted out — an approver who has been assigned a pending decision MUST receive the notification. SOC 2 CC6.3 evidence."
+    },
+    {
+      "slug": "approvals.reminder",
+      "display_name": "Approval reminder",
+      "description": "Nudge for a pending request approaching its expires_at deadline. Cadence controlled by template.reminder_config.intervals_hours (default: 24h, 48h, 72h).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true,
+      "audience": "approver",
+      "notes": "Reminders are transactional_required for the same reason as the initial request notification. Approvers who ignore reminders and let requests expire are what template.on_timeout is FOR."
+    },
+    {
+      "slug": "approvals.granted",
+      "display_name": "Approval granted",
+      "description": "Your request was approved. Includes the final decider, decision comments (if any), and the outcome of the executed action.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true,
+      "audience": "requester"
+    },
+    {
+      "slug": "approvals.rejected",
+      "display_name": "Approval rejected",
+      "description": "Your request was rejected. Includes the rejecting approver's identity + comment (SOC 2 requires the reason).",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true,
+      "audience": "requester"
+    },
+    {
+      "slug": "approvals.expired",
+      "display_name": "Approval expired",
+      "description": "Your request expired before approvers decided. Consult the tenant's approval policy for next steps. Final state depends on template.on_timeout — the notification names the outcome.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true,
+      "audience": "requester + pending_approvers",
+      "notes": "Dual-audience: both the requester AND any approvers who hadn't yet decided receive this so no one wastes time reviewing an expired request."
+    },
+    {
+      "slug": "approvals.cancelled",
+      "display_name": "Approval cancelled",
+      "description": "A pending request was withdrawn by its requester (or, rarely, cancelled by a tenant admin on the requester's behalf). Sent to any pending approvers.",
+      "default_channels": ["in_app", "push"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true,
+      "audience": "pending_approvers"
+    },
+    {
+      "slug": "approvals.execution_failed",
+      "display_name": "Approval execution failed",
+      "description": "P0 — an approved request's underlying action threw during execution. The instance is in a wedged state; platform-ops must intervene via `approvals:remediate-failed-executions`.",
+      "default_channels": ["mail", "in_app", "slack"],
+      "priority": "critical",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true,
+      "audience": "platform_ops",
+      "notes": "Slack channel is #approvals-alerts (platform-owned; not tenant-configurable). Mail goes to the standard ops distribution list."
+    },
+    {
+      "slug": "approvals.template_changed",
+      "display_name": "Approval template changed",
+      "description": "A tenant admin edited an approval template's semantic-behaviour fields (when_expression, groups, on_timeout). Governance-change awareness for other admins in the tenant. Opt-in by default — admins can disable for high-churn tenants.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true,
+      "audience": "tenant_admins",
+      "notes": "Fires on ApprovalTemplateVersionBumped, NOT on ApprovalTemplateUpdated (label-only edits don't warrant a notification)."
+    }
+  ],
+  "template_hooks": [
+    {
+      "note": "Every approval notification is templated per-action-key so tenants can customise per-flow. The localization::NotificationTemplate resolver looks up (tenant_id, category_slug, action_key, locale) → falls back to (tenant_id, category_slug, NULL, locale) → falls back to (NULL, category_slug, NULL, locale). Only the last (platform-shipped default) is guaranteed to exist.",
+      "context_variables": [
+        "approval_instance (id, status, requested_at, expires_at, decided_at, executed_at)",
+        "action (action_key, label, description)",
+        "requester (user id, display_name, email)",
+        "approvers (user summary array — the resolved approvers on pending requirements)",
+        "subject (subject_type, subject_id, display_name — via ApprovalPresenter)",
+        "context_summary (redacted context_json per classification tags)",
+        "review_url (deep-link to the pending-my-review page for approvers, my-requests for requesters)"
+      ]
+    }
+  ]
+}

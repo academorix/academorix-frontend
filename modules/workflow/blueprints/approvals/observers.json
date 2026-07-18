@@ -1,0 +1,94 @@
+{
+  "id": "academorix://modules/workflow/approvals/observers",
+  "$version": 1,
+  "title": "approvals — Eloquent observers",
+  "description": "Five observers enforce the engine's write-time invariants: action-key format + registry integrity, template versioning + one-active constraint, instance status-machine, requirement quorum evaluation, and decision integrity (the security-critical one). Every observer refuses writes that violate its invariant AND fires the appropriate event or ApprovalSecurityViolation.",
+  "observers": [
+    {
+      "model": "ApprovableAction",
+      "observer": "Academorix\\Approval\\Observers\\ApprovableActionObserver",
+      "handles": [
+        "creating → populate ULID prefix `aac_`",
+        "creating → validate action_key matches `^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_]*)+$` (refused otherwise with `INVALID_ACTION_KEY_FORMAT`)",
+        "creating → validate namespace matches `^[a-z][a-z0-9_]*$`",
+        "creating → derive action_class_fqcn is a real class implementing ApprovableActionInterface (integrity guard beyond the seeder)",
+        "creating → fire ApprovableActionRegistered",
+        "updating → refuse updates to action_key (immutable — action_key is the natural key for FK from approval_templates)",
+        "updating → refuse updates to action_class_fqcn while any approval_instances reference this action_key (breaking the executor's replay path)",
+        "updating (is_active flipped false) → warn if any active templates reference this action_key (does NOT refuse — the templates go dormant when the action is deactivated)",
+        "deleting → refuse hard-delete while any approval_templates reference this action_key (RESTRICT FK also enforces at DB level)"
+      ]
+    },
+    {
+      "model": "ApprovalTemplate",
+      "observer": "Academorix\\Approval\\Observers\\ApprovalTemplateObserver",
+      "handles": [
+        "creating → populate ULID prefix `apt_`",
+        "creating → set version=1 always",
+        "creating → validate action_key resolves to an approvable_actions row with is_active=true (returns `PLATFORM_ACTION_NOT_ACTIVE` otherwise)",
+        "creating → enforce one-is-active invariant: if is_active=true, deactivate any peer row matching (tenant_id, application_id, action_key, name); dispatch ApprovalTemplateDeactivated for each peer",
+        "creating → consume 1 unit of approval_templates_max_active entitlement (throws `TENANT_TEMPLATE_QUOTA_EXCEEDED` when cap reached)",
+        "creating → validate when_expression compiles via ExpressionLanguageAdapter::compile() (returns `INVALID_EXPRESSION` on parse error)",
+        "creating → fire ApprovalTemplateCreated",
+        "updating → intercept semantic-behaviour field changes (when_expression, on_timeout, allows_recall, expires_after_hours): PREVENT direct update — instead insert a NEW row with version+1, set is_active=true on the new row, set is_active=false on this row; fire ApprovalTemplateVersionBumped (design.md D-A4 — old versions preserved for audit)",
+        "updating → non-semantic-field changes (name, description, priority, reminder_config): allow direct update; fire ApprovalTemplateUpdated",
+        "updating (is_active flipped true) → deactivate peer + fire ApprovalTemplateActivated + ApprovalTemplateDeactivated",
+        "updating (is_active flipped false) → fire ApprovalTemplateDeactivated (trigger='explicit')",
+        "deleting → refuse when approval_instances references this template with status='pending' (`TEMPLATE_HAS_ACTIVE_INSTANCES`); allow otherwise (soft-delete preserves audit trail)"
+      ]
+    },
+    {
+      "model": "ApprovalInstance",
+      "observer": "Academorix\\Approval\\Observers\\ApprovalInstanceObserver",
+      "handles": [
+        "creating → populate ULID prefix `api_`",
+        "creating → snapshot template_version from approval_templates.version (immutable pin — subsequent template edits don't change this instance's semantics)",
+        "creating → compute expires_at = requested_at + template.expires_after_hours",
+        "creating → REFUSE if tenant hasn't consumed approvals_enabled entitlement (should never happen — Wave 1b ships all-tiers-on)",
+        "creating → fire ApprovalRequested AFTER the requirements have been materialised (dispatched afterCommit)",
+        "updating → enforce status-transition matrix: pending→(approved | rejected | expired | cancelled); approved→(executed | rejected_via_execution_failure_remediation); rejected/expired/cancelled/executed are TERMINAL — any transition off them fires ApprovalSecurityViolation + refuses",
+        "updating → refuse subject_type/subject_id changes post-create (the subject is pinned at instance-time)",
+        "updating → refuse context_json changes post-create (context is the snapshot; edits break audit)",
+        "updating → refuse approval_template_id/template_version changes post-create (immutable pin)",
+        "updating (status → approved) → set decided_at = now(), set final_decider_id = the last decider on the last requirement; fire ApprovalGranted (SYNCHRONOUS dispatch)",
+        "updating (status → rejected) → set decided_at = now() + rejected_at = now(), set final_decider_id + rejection_reason; fire ApprovalRejected",
+        "updating (status → executed) → set executed_at = now(); fire ApprovalExecuted",
+        "updating (status → expired) → set decided_at = now() + rejected_at IS NULL, set expiry-context in metadata; fire ApprovalExpired",
+        "updating (status → cancelled) → set cancelled_at = now(); fire ApprovalCancelled",
+        "deleting (soft) → allow when status IN terminal states (rejected, expired, cancelled, executed); refuse when status='pending' or 'approved'"
+      ]
+    },
+    {
+      "model": "ApprovalRequirement",
+      "observer": "Academorix\\Approval\\Observers\\ApprovalRequirementObserver",
+      "handles": [
+        "creating → populate ULID prefix `apr_`",
+        "creating → snapshot selector_expression + quorum_type + quorum_n + sort_order from the parent approval_template_approvers row (frozen for audit — subsequent template edits don't change these snapshots)",
+        "creating → invoke ApproverSelectorEngine::resolve() to compute resolved_approvers (delegation-aware); on failure fire ApproverSelectorEvaluationFailed + REFUSE requirement creation (the parent instance is then rolled back and returns 500 approval.selector_evaluation_failed to the caller)",
+        "creating → save selector_snapshot_json = compiled AST for audit",
+        "creating → set status='pending' if sort_order = MIN(sort_order) across siblings; else 'blocked'",
+        "creating → fire ApprovalRequirementResolved",
+        "updating (status → satisfied) → set satisfied_at = now(); fire ApprovalRequirementSatisfied; unblock siblings with next-higher sort_order (status blocked → pending); recompute parent instance's aggregate status (if all requirements satisfied → transition instance to approved)",
+        "updating (status → failed) → fire ApprovalRequirementFailed; transition parent instance to rejected",
+        "updating → refuse changes to selector_expression / selector_snapshot_json / resolved_approvers / quorum_type / quorum_n / sort_order (all immutable post-materialisation)"
+      ]
+    },
+    {
+      "model": "ApprovalDecision",
+      "observer": "Academorix\\Approval\\Observers\\ApprovalDecisionObserver",
+      "handles": [
+        "creating → populate ULID prefix `apd_`",
+        "creating → REFUSE if approver_id NOT IN parent requirement.resolved_approvers → fire ApprovalSecurityViolation(violation_type='forged_decision') → refuse the write with 403 approval.caller_not_approver (P0 audit — closes the direct-DB forgery seam)",
+        "creating → REFUSE if parent instance.status != 'pending' (already-decided flows can't accept new decisions) → fire ApprovalSecurityViolation(violation_type='quorum_evaluation_bypass') if the caller reached this observer past an accepted decision (indicates a race + policy failure)",
+        "creating → REFUSE if parent requirement.status != 'pending' (blocked/satisfied/failed requirements can't accept new decisions)",
+        "creating → REFUSE duplicate decisions from the same approver on the same requirement (composite unique enforces at DB; the observer surfaces `APPROVER_ALREADY_DECIDED`)",
+        "creating → capture delegated_from_id if the approver was substituted via active RoleDelegation (looked up by ApproverSelectorEngine's substitution index for this instance)",
+        "creating → capture request_ip_hash = SHA-256(request()->ip()); never store the plaintext IP",
+        "creating → fire ApprovalDecisionRecorded",
+        "created (after commit) → QuorumEvaluator::evaluate(requirement) → if quorum reached: transition requirement.status → satisfied; if quorum blocked by reject: transition requirement.status → failed",
+        "updating → REFUSE ALL — decisions are write-once → fire ApprovalSecurityViolation(violation_type='direct_db_write') on attempted update",
+        "deleting → REFUSE ALL — same reason"
+      ]
+    }
+  ]
+}

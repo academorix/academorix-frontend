@@ -1,0 +1,48 @@
+{
+  "id": "approvals.widgets.quorum-progress-bar",
+  "title": "Quorum progress bar",
+  "version": 1,
+  "kind": "SduiWidget",
+  "notes": [
+    "Progress bar showing 'X of N approved' for a requirement. Handles the three quorum types (all, any, n_of_m) with appropriate needed_count computation."
+  ],
+  "props_schema": {
+    "type": "object",
+    "properties": {
+      "quorum_type": { "type": "string", "enum": ["all", "any", "n_of_m"] },
+      "quorum_n": { "type": ["integer", "null"] },
+      "resolved_approver_count": { "type": "integer" },
+      "approval_count": { "type": "integer" },
+      "reject_count": { "type": "integer" }
+    },
+    "required": ["quorum_type", "resolved_approver_count", "approval_count", "reject_count"]
+  },
+  "root": {
+    "kind": "View",
+    "props": { "className": "flex flex-col gap-1" },
+    "children": [
+      {
+        "kind": "View",
+        "props": { "className": "flex items-center justify-between" },
+        "children": [
+          {
+            "kind": "Text",
+            "propsExpr": "{ className: 'text-xs text-muted', children: label(props) }"
+          },
+          {
+            "kind": "Text",
+            "propsExpr": "{ className: 'text-xs font-medium', children: props.approval_count + ' of ' + neededCount(props) + ' approved' }"
+          }
+        ]
+      },
+      {
+        "kind": "ProgressBar",
+        "propsExpr": "{ value: (props.approval_count / neededCount(props)) * 100, variant: props.reject_count > 0 ? 'warning' : 'primary' }"
+      }
+    ],
+    "helpers": {
+      "neededCount": "props.quorum_type === 'all' ? props.resolved_approver_count : (props.quorum_type === 'n_of_m' ? props.quorum_n : 1)",
+      "label": "props.quorum_type === 'any' ? 'One approver' : (props.quorum_type === 'all' ? 'All ' + props.resolved_approver_count + ' must approve' : props.quorum_n + ' of ' + props.resolved_approver_count)"
+    }
+  }
+}

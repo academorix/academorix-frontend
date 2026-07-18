@@ -1,0 +1,160 @@
+{
+  "id": "academorix://modules/workflow/approvals/schemas/approvable-action",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ApprovableAction",
+  "description": "Platform-level registry of actions gated by the approval engine. Populated at boot by discovery scanning `#[AsApprovableAction]` decorators across every module. NO tenant scoping — every tenant sees the same registry. Tenants opt into approval flows by authoring `approval_templates` targeting rows here.",
+  "type": "object",
+  "x-module": "approvals",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "approvable_actions",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "aac_",
+    "incrementing": false,
+    "model": "Academorix\\Approval\\Models\\ApprovableAction",
+    "interface": "Academorix\\Approval\\Contracts\\Data\\ApprovableActionInterface",
+    "implements": ["Academorix\\Approval\\Contracts\\Data\\ApprovableActionInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "HasSystemFlag",
+      "HasMetadata",
+      "HasUserstamps",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "is_active": "boolean",
+      "is_system": "boolean",
+      "payload_schema_json": "array",
+      "context_variables_schema_json": "array",
+      "metadata": "array"
+    },
+    "appends": ["has_active_templates"],
+    "observers": ["ApprovableActionObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `aac_<26>`."
+      },
+      "action_key": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "description": "Natural key. Format: `<namespace>.<domain>.<verb>` — e.g. `billing.refunds.issue`. Immutable post-creation (used as FK from approval_templates)."
+      },
+      "namespace": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Owning module namespace slug. Powers filter-by-namespace in the template-authoring UI + audit reports."
+      },
+      "action_class_fqcn": {
+        "type": "string",
+        "length": 512,
+        "nullable": false,
+        "description": "Fully-qualified class name of the invokable action. MUST implement ApprovableActionInterface."
+      },
+      "label": {
+        "type": "string",
+        "length": 200,
+        "nullable": true,
+        "description": "Admin-facing display name. Null = humanised action_key."
+      },
+      "description": {
+        "type": "text",
+        "nullable": true,
+        "description": "Long-form operator-facing description."
+      },
+      "payload_schema_json": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "JSON Schema for the action's input DTO. Used by docs + downstream validation."
+      },
+      "context_variables_schema_json": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "JSON Schema declaring the shape returned by approvalContext() — powers the rule builder + validates when_expression variable references."
+      },
+      "is_active": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "Platform-level enable toggle. False → templates targeting this key are dormant."
+      },
+      "is_system": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "From HasSystemFlag. Boot-discovered rows are system; break-glass manual inserts default to false."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["action_key"],
+        "unique": true,
+        "name": "approvable_actions_action_key_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "Natural-key uniqueness. Referenced as FK from approval_templates.action_key + approval_instances.action_key."
+      },
+      {
+        "columns": ["namespace", "is_active"],
+        "unique": false,
+        "name": "approvable_actions_namespace_active_idx",
+        "description": "Fast filter for the template-authoring UI's action-picker."
+      }
+    ]
+  },
+  "required": ["id", "action_key", "namespace", "action_class_fqcn", "is_active", "is_system", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^aac_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "action_key": { "type": "string", "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_]*)+$", "maxLength": 200 },
+    "namespace": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$", "maxLength": 64 },
+    "action_class_fqcn": { "type": "string", "maxLength": 512 },
+    "label": { "type": ["string", "null"], "maxLength": 200 },
+    "description": { "type": ["string", "null"] },
+    "payload_schema_json": { "type": ["object", "null"] },
+    "context_variables_schema_json": { "type": ["object", "null"] },
+    "is_active": { "type": "boolean" },
+    "is_system": { "type": "boolean" },
+    "has_active_templates": {
+      "type": "boolean",
+      "description": "Computed. True when at least one approval_templates row references this action_key with is_active=true."
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["has_active_templates"]
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`aac_<26>`)", "action_key (matches action_key column)"]
+  }
+}

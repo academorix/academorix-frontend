@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/workflow/approvals/schedule",
+  "$version": 1,
+  "title": "approvals — scheduled tasks",
+  "entries": [
+    {
+      "name": "approvals-expire-overdue",
+      "command": "approvals:expire-overdue",
+      "cron": "*/5 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 5 minutes: sweep approval_instances past expires_at with status='pending'. Transition per template.on_timeout (expire / approve / escalate). Match to config('approvals.expiration.sweep_frequency_minutes')."
+    },
+    {
+      "name": "approvals-dispatch-reminders",
+      "command": "approvals:dispatch-reminders",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly at :00: check every pending approval_requirement against its template's reminder_config.intervals_hours + dispatch missing reminders. De-duplicates via approval_reminders composite unique."
+    },
+    {
+      "name": "approvals-reconcile-template-versions",
+      "command": "approvals:reconcile-template-versions",
+      "cron": "30 2 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 02:30 UTC: enforce defensive invariants — one-is-active constraint, template-version cap, delegation-drift on pending requirements, orphan-instance detection. Dispatches supplementary reminders for delegation-drifted requirements."
+    },
+    {
+      "name": "approvals-purge-expired",
+      "command": "approvals:reconcile-template-versions",
+      "cron": "0 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 03:00 UTC: hard-delete instances past retention (90-day for rejected/expired/cancelled; 7-year for executed). Cascades requirements + decisions + reminders."
+    },
+    {
+      "name": "approvals-compliance-metrics-snapshot",
+      "command": "approvals:audit-report --from=yesterday --to=today --format=json --out=/tmp/approvals-daily-metrics.json",
+      "cron": "10 4 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 04:10 UTC: generate a compact daily metrics snapshot as JSON. Consumed by the compliance dashboards + monthly-aggregated into the tenant's SOC 2 evidence roll-up."
+    }
+  ]
+}

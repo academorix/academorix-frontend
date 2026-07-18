@@ -1,0 +1,175 @@
+{
+  "id": "academorix://modules/workflow/approvals/metrics",
+  "$version": 1,
+  "title": "approvals — OpenTelemetry metrics",
+  "instrumentation": "self via telemetry",
+  "namespace": "academorix.approvals",
+  "labelConventions": {
+    "always": [],
+    "commonlyAvailable": ["action_key", "namespace", "template_version", "status", "outcome", "on_timeout", "quorum_type", "violation_type"],
+    "forbiddenAsLabels": ["tenant_id", "instance_id", "requester_id", "approver_id", "resolved_approvers", "context_json", "when_expression"]
+  },
+  "metrics": [
+    {
+      "name": "academorix.approvals.instances.total",
+      "kind": "counter",
+      "unit": "instances",
+      "labels": ["action_key", "status"],
+      "description": "Total approval instances created + transitioned. Status labels: pending → increment on ApprovalRequested; approved → increment on ApprovalGranted; executed → increment on ApprovalExecuted; rejected → ApprovalRejected; expired → ApprovalExpired; cancelled → ApprovalCancelled."
+    },
+    {
+      "name": "academorix.approvals.instances.pending_count",
+      "kind": "gauge",
+      "unit": "instances",
+      "labels": ["action_key"],
+      "description": "Current count of pending instances. Feeds capacity + SLA dashboards."
+    },
+    {
+      "name": "academorix.approvals.decisions.total",
+      "kind": "counter",
+      "unit": "decisions",
+      "labels": ["action_key", "decision", "was_delegated"],
+      "description": "Total approve + reject decisions. `was_delegated` labels distinguish direct decisions from delegate-substituted ones."
+    },
+    {
+      "name": "academorix.approvals.decisions.time_to_first_decision_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [60000, 300000, 900000, 3600000, 14400000, 86400000, 259200000, 604800000],
+      "labels": ["action_key"],
+      "description": "ApprovalRequested → first ApprovalDecisionRecorded. 60s → 7 days buckets. P50 target < 4h; P95 target < 24h. Above the target = approval-flow bottleneck."
+    },
+    {
+      "name": "academorix.approvals.decisions.time_to_final_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [60000, 300000, 900000, 3600000, 14400000, 86400000, 259200000, 604800000],
+      "labels": ["action_key", "status"],
+      "description": "ApprovalRequested → status transition to approved/rejected/expired. P50 approved < 8h; P95 < 3 days. Approval-SLA report metric."
+    },
+    {
+      "name": "academorix.approvals.instances.expiry_rate",
+      "kind": "gauge",
+      "unit": "ratio",
+      "labels": ["action_key"],
+      "description": "Rolling 7-day ratio: expired / (approved + rejected + expired + cancelled). High expiry_rate signals under-resourced approver pool OR mis-set expires_after_hours. Alert at > 0.10."
+    },
+    {
+      "name": "academorix.approvals.instances.approval_rate",
+      "kind": "gauge",
+      "unit": "ratio",
+      "labels": ["action_key"],
+      "description": "Rolling 30-day ratio: approved / (approved + rejected). Sanity metric — extreme values (near 0 or 1) hint at over-restrictive templates or missing approver oversight."
+    },
+    {
+      "name": "academorix.approvals.executor.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [10, 50, 200, 1000, 5000, 30000, 120000],
+      "labels": ["action_key", "outcome"],
+      "description": "ApprovalInstanceExecutor::dispatch() duration. outcome: success | failed. Feeds ApprovalExecutionFailedNotification P0 alerts when duration > 30s or outcome=failed."
+    },
+    {
+      "name": "academorix.approvals.executor.wedged_count",
+      "kind": "gauge",
+      "unit": "instances",
+      "labels": [],
+      "description": "Current count of status='approved' AND executed_at IS NULL AND updated_at > 1h ago instances. Alert immediately at > 0 — human intervention required."
+    },
+    {
+      "name": "academorix.approvals.expression.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [1, 5, 25, 100, 250, 1000],
+      "labels": ["type"],
+      "description": "Expression evaluation timing. type: when_expression | selector_expression. Enforce hard timeout at 250ms (config approvals.expression.timeout_ms) — histogram surfaces the tail."
+    },
+    {
+      "name": "academorix.approvals.expression.evaluation_total",
+      "kind": "counter",
+      "unit": "evaluations",
+      "labels": ["type", "outcome"],
+      "description": "Expression evaluation counter. outcome: success | parse_error | runtime_error | timeout | invalid_return_type."
+    },
+    {
+      "name": "academorix.approvals.expression.cache_hit_ratio",
+      "kind": "gauge",
+      "unit": "ratio",
+      "labels": [],
+      "description": "Rolling ratio of expression evaluations that hit the compiled-AST cache vs recompiled. Target > 0.95 in steady state."
+    },
+    {
+      "name": "academorix.approvals.selector.evaluation_failures",
+      "kind": "counter",
+      "unit": "failures",
+      "labels": ["action_key", "failure_reason"],
+      "description": "Cumulative ApproverSelectorEvaluationFailed events. Alert at > 5 in 15 minutes — template misconfiguration or delegation-index corruption."
+    },
+    {
+      "name": "academorix.approvals.selector.resolved_approver_count",
+      "kind": "histogram",
+      "unit": "approvers",
+      "buckets": [1, 2, 5, 10, 25, 50, 100],
+      "labels": ["action_key", "group_name"],
+      "description": "Histogram of resolved_approver counts per group. Extremes surface template design issues (1 → single point of failure; 100 → over-broad selector)."
+    },
+    {
+      "name": "academorix.approvals.reminders.dispatched_total",
+      "kind": "counter",
+      "unit": "reminders",
+      "labels": ["reminder_number", "channel"],
+      "description": "Total reminders sent. channel: mail | in_app | push. reminder_number: 1 | 2 | 3 (or max_reminders)."
+    },
+    {
+      "name": "academorix.approvals.jobs.sweep.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [100, 500, 2000, 10000, 60000, 300000],
+      "labels": ["job"],
+      "description": "Sweep-job durations. job: expire_overdue | dispatch_reminders | reconcile_versions | purge_expired. Alert at duration > job's cron interval (job can't keep up)."
+    },
+    {
+      "name": "academorix.approvals.jobs.sweep.processed_total",
+      "kind": "counter",
+      "unit": "rows",
+      "labels": ["job", "outcome"],
+      "description": "Rows the sweep-job touched. outcome: transitioned | skipped | errored."
+    },
+    {
+      "name": "academorix.approvals.templates.total",
+      "kind": "gauge",
+      "unit": "templates",
+      "labels": ["is_active"],
+      "description": "Current active + inactive templates across all tenants. Feeds capacity planning for the platform-level template-versioning storage."
+    },
+    {
+      "name": "academorix.approvals.templates.version_bumps_total",
+      "kind": "counter",
+      "unit": "bumps",
+      "labels": ["action_key"],
+      "description": "Version-bumps per action_key. Governance-change velocity metric — a spike may indicate a tenant iterating a template."
+    },
+    {
+      "name": "academorix.approvals.security.violations",
+      "kind": "counter",
+      "unit": "violations",
+      "labels": ["violation_type"],
+      "description": "Cumulative ApprovalSecurityViolation events. Any non-zero increment alerts to #security-alerts. Types: forged_decision | direct_db_write | restricted_context_leak | quorum_evaluation_bypass."
+    },
+    {
+      "name": "academorix.approvals.delegation.substitutions_total",
+      "kind": "counter",
+      "unit": "substitutions",
+      "labels": ["action_key"],
+      "description": "Cumulative DelegationSubstitutedApprover events. Baseline metric — spikes correlate with OOF season for a tenant."
+    },
+    {
+      "name": "academorix.approvals.presenter.projection_duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [1, 5, 25, 100, 500],
+      "labels": ["projection_shape"],
+      "description": "ApprovalPresenter projection latency. shape: instance | template | audit_report. Bottleneck surface for the tenant admin dashboard."
+    }
+  ]
+}

@@ -1,0 +1,182 @@
+{
+  "$version": 1,
+  "title": "QuorumEvaluator — case matrix",
+  "description": "Exhaustive test cases for QuorumEvaluator::evaluate(requirement). Consumed by the module's integration tests + documentation. Every case names the input state + expected transition. QuorumEvaluator is called on every ApprovalDecisionRecorded event to decide whether the requirement should transition (pending → satisfied | failed) + whether the parent instance should transition.",
+  "quorum_type_matrix": [
+    {
+      "quorum_type": "any",
+      "description": "One approve suffices. One reject fails IF no more approvers can still approve (queue drained).",
+      "cases": [
+        {
+          "resolved_approvers": ["u1", "u2", "u3"],
+          "decisions": [{ "approver_id": "u1", "decision": "approve" }],
+          "expected_status": "satisfied",
+          "notes": "1 approve → immediate satisfied. u2 + u3 don't need to decide."
+        },
+        {
+          "resolved_approvers": ["u1", "u2", "u3"],
+          "decisions": [
+            { "approver_id": "u1", "decision": "reject" },
+            { "approver_id": "u2", "decision": "reject" }
+          ],
+          "expected_status": "pending",
+          "notes": "Only u3 left. Still could approve — stay pending."
+        },
+        {
+          "resolved_approvers": ["u1", "u2", "u3"],
+          "decisions": [
+            { "approver_id": "u1", "decision": "reject" },
+            { "approver_id": "u2", "decision": "reject" },
+            { "approver_id": "u3", "decision": "reject" }
+          ],
+          "expected_status": "failed",
+          "notes": "All three rejected. No one left to approve."
+        }
+      ]
+    },
+    {
+      "quorum_type": "all",
+      "description": "Every resolved approver must approve. One reject fails immediately.",
+      "cases": [
+        {
+          "resolved_approvers": ["u1", "u2", "u3"],
+          "decisions": [
+            { "approver_id": "u1", "decision": "approve" },
+            { "approver_id": "u2", "decision": "approve" }
+          ],
+          "expected_status": "pending",
+          "notes": "u3 still hasn't decided. Stay pending."
+        },
+        {
+          "resolved_approvers": ["u1", "u2", "u3"],
+          "decisions": [
+            { "approver_id": "u1", "decision": "approve" },
+            { "approver_id": "u2", "decision": "approve" },
+            { "approver_id": "u3", "decision": "approve" }
+          ],
+          "expected_status": "satisfied",
+          "notes": "All three approved."
+        },
+        {
+          "resolved_approvers": ["u1", "u2", "u3"],
+          "decisions": [
+            { "approver_id": "u1", "decision": "approve" },
+            { "approver_id": "u2", "decision": "reject" }
+          ],
+          "expected_status": "failed",
+          "notes": "u2's reject blocks unanimous approve. Fail immediately (don't wait for u3)."
+        }
+      ]
+    },
+    {
+      "quorum_type": "n_of_m",
+      "description": "At least quorum_n approves; reject fails IF the remaining approver count can't reach quorum_n.",
+      "cases": [
+        {
+          "resolved_approvers": ["u1", "u2", "u3", "u4", "u5"],
+          "quorum_n": 3,
+          "decisions": [
+            { "approver_id": "u1", "decision": "approve" },
+            { "approver_id": "u2", "decision": "approve" },
+            { "approver_id": "u3", "decision": "approve" }
+          ],
+          "expected_status": "satisfied",
+          "notes": "3 approves ≥ quorum_n=3. Satisfied."
+        },
+        {
+          "resolved_approvers": ["u1", "u2", "u3", "u4", "u5"],
+          "quorum_n": 3,
+          "decisions": [
+            { "approver_id": "u1", "decision": "reject" },
+            { "approver_id": "u2", "decision": "reject" },
+            { "approver_id": "u3", "decision": "reject" }
+          ],
+          "expected_status": "failed",
+          "notes": "3 rejects. Only u4 + u5 left (max 2 more approves) — cannot reach quorum_n=3."
+        },
+        {
+          "resolved_approvers": ["u1", "u2", "u3", "u4", "u5"],
+          "quorum_n": 3,
+          "decisions": [
+            { "approver_id": "u1", "decision": "reject" },
+            { "approver_id": "u2", "decision": "approve" },
+            { "approver_id": "u3", "decision": "approve" }
+          ],
+          "expected_status": "pending",
+          "notes": "2 approves + 1 reject. u4 + u5 still can push to 4 approves ≥ quorum_n=3."
+        },
+        {
+          "resolved_approvers": ["u1", "u2", "u3", "u4", "u5"],
+          "quorum_n": 3,
+          "decisions": [
+            { "approver_id": "u1", "decision": "approve" },
+            { "approver_id": "u2", "decision": "reject" },
+            { "approver_id": "u3", "decision": "approve" },
+            { "approver_id": "u4", "decision": "reject" }
+          ],
+          "expected_status": "pending",
+          "notes": "2 approves + 2 rejects. u5 remaining — could push approves to 3, hits quorum_n=3."
+        },
+        {
+          "resolved_approvers": ["u1", "u2", "u3", "u4", "u5"],
+          "quorum_n": 3,
+          "decisions": [
+            { "approver_id": "u1", "decision": "approve" },
+            { "approver_id": "u2", "decision": "reject" },
+            { "approver_id": "u3", "decision": "approve" },
+            { "approver_id": "u4", "decision": "reject" },
+            { "approver_id": "u5", "decision": "reject" }
+          ],
+          "expected_status": "failed",
+          "notes": "2 approves + 3 rejects. All decisions in. approves=2 < quorum_n=3 → failed."
+        }
+      ]
+    }
+  ],
+  "instance_transitions": [
+    {
+      "description": "All requirements satisfied → instance transitions to approved.",
+      "requirements_status": ["satisfied", "satisfied", "satisfied"],
+      "expected_instance_status": "approved",
+      "expected_events": ["ApprovalGranted"]
+    },
+    {
+      "description": "One requirement failed → instance transitions to rejected (regardless of other requirements' status).",
+      "requirements_status": ["satisfied", "failed"],
+      "expected_instance_status": "rejected",
+      "expected_events": ["ApprovalRequirementFailed", "ApprovalRejected"]
+    },
+    {
+      "description": "One requirement pending + others satisfied → instance stays pending.",
+      "requirements_status": ["satisfied", "satisfied", "pending"],
+      "expected_instance_status": "pending",
+      "expected_events": ["ApprovalRequirementSatisfied"]
+    },
+    {
+      "description": "Sequential ordering — group at sort_order=0 satisfies → group at sort_order=1 unblocks.",
+      "before_decision": {
+        "requirements": [
+          { "id": "apr_A", "sort_order": 0, "status": "pending" },
+          { "id": "apr_B", "sort_order": 1, "status": "blocked" }
+        ]
+      },
+      "decision": "apr_A satisfied",
+      "after_decision": {
+        "requirements": [
+          { "id": "apr_A", "sort_order": 0, "status": "satisfied" },
+          { "id": "apr_B", "sort_order": 1, "status": "pending" }
+        ]
+      },
+      "expected_events": [
+        "ApprovalRequirementSatisfied (apr_A)",
+        "NotifyApproversJob dispatches ApprovalRequestedNotification to apr_B's resolved_approvers"
+      ]
+    }
+  ],
+  "notes": [
+    "'Cannot reach quorum_n' is a projection — QuorumEvaluator checks IF (approve_count + remaining_approvers_count) < quorum_n → fail immediately even before every approver decides.",
+    "Blocked requirements don't accept decisions. If a caller POSTs approve on a blocked requirement, the observer refuses with REQUIREMENT_NOT_PENDING.",
+    "Withdraw / cancel transitions ALL pending + blocked requirements to failed (short-circuits the whole flow).",
+    "The reconciler recomputes quorum on delegation-drift — if a delegation activates mid-flow, the delegate is ADDED to the pending requirement's resolved_approvers (via supplementary reminders — not by retroactive substitution)."
+  ]
+}

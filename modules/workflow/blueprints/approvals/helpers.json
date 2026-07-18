@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/workflow/approvals/helpers",
+  "$version": 1,
+  "title": "approvals — helper functions",
+  "description": "Two lightweight helpers to keep call sites terse — `approve_scope()` for the middleware bypass flag + `approval_for()` for the polymorphic subject lookup. Both are tenant-scope-aware.",
+  "namespace": "Academorix\\Approval\\Support",
+  "helpers": [
+    {
+      "signature": "approve_scope(string $instanceId, callable $callback): mixed",
+      "purpose": "Runs a callback inside a Laravel Context::scoped where the 'approvals.executing' flag equals $instanceId. Used by ApprovalInstanceExecutor to signal the approve middleware to pass through. Prefer this over manual Context manipulation — the helper guarantees correct cleanup + prevents nested-context leaks.",
+      "behaviours": [
+        "Set scoped('approvals.executing') = $instanceId",
+        "Invoke $callback()",
+        "Clear the scoped variable on closure exit (even on exception)"
+      ],
+      "flow": "1) Push context. 2) Call closure. 3) Return closure's return value OR rethrow. 4) Pop context via try/finally."
+    },
+    {
+      "signature": "approval_for(mixed $subject): ?ApprovalInstance",
+      "purpose": "Convenience lookup: returns the ACTIVE approval_instance for a polymorphic subject (Invoice, AccessGrant, Athlete, ...), or null. Uses the IsApprovable trait's `activeApproval()` accessor when the model composes it; otherwise runs the polymorphic query directly. Tenant-scoped via the composing model's BelongsToTenant.",
+      "behaviours": [
+        "$subject implements IsApprovable → return $subject->activeApproval()",
+        "$subject is a plain Model → query approval_instances WHERE subject_type=$subject::class AND subject_id=$subject->id AND status='pending' → return first()",
+        "$subject is null → return null (no-op safe accessor)"
+      ]
+    }
+  ],
+  "notes": [
+    "We intentionally DON'T publish a `t()`-style translation helper here — approval-flow messaging goes through the localization module's helpers.",
+    "There's no `approval_pending($subject)` boolean helper — call sites should use `approval_for($subject) !== null` explicitly so the intent is readable."
+  ],
+  "examples": [
+    {
+      "title": "approve_scope — used by ApprovalInstanceExecutor",
+      "code": "public function execute(ApprovalInstance $instance): mixed\n{\n    return approve_scope($instance->id, function () use ($instance) {\n        $action = app($instance->action_class_fqcn);\n        $args = $this->hydratePayload($instance->payload_json);\n        return $action(...$args);\n    });\n}"
+    },
+    {
+      "title": "approval_for — used by a policy check",
+      "code": "public function update(User $user, Invoice $invoice): bool\n{\n    if (approval_for($invoice) !== null) {\n        return false;  // locked pending approval\n    }\n    return $user->can('invoices.update');\n}"
+    }
+  ]
+}

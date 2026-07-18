@@ -1,0 +1,240 @@
+{
+  "id": "approvals.resources.approval-instance.list",
+  "title": "My approvals",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/approvals/instances",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "workflow/approvals", "entity": "approval-instance", "action": "list" },
+  "requiresPermission": "approvals.instances.viewAny",
+  "notes": [
+    "Two tabs: 'My requests' (the caller's submitted approvals) and 'Pending my review' (approvals waiting for the caller's decision). The active tab persists to the URL as ?tab=my_requests|pending_review."
+  ],
+  "dataSources": [
+    {
+      "name": "myApprovals",
+      "kind": "http.get",
+      "url": "/api/v1/approvals/instances",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": ["filter[status]", "filter[action_key]", "sort", "page", "per_page"],
+      "cache": { "ttlSeconds": 60, "staleWhileRevalidate": true },
+      "fallback": {
+        "kind": "mock.static",
+        "path": "modules/workflow/blueprints/approvals/data/approval-flow-samples.json"
+      }
+    },
+    {
+      "name": "pendingMyReview",
+      "kind": "http.get",
+      "url": "/api/v1/approvals/instances/pending-my-review",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": ["filter[urgency]", "filter[action_key]", "sort", "page", "per_page"],
+      "cache": { "ttlSeconds": 30, "staleWhileRevalidate": true }
+    }
+  ],
+  "subscriptions": [
+    {
+      "channel": "tenant.{tenantId}.approvals",
+      "kind": "private",
+      "onEvent": {
+        "kind": "data.mutateItem",
+        "source": "myApprovals",
+        "keyBy": "id",
+        "expr": "event.data"
+      }
+    },
+    {
+      "channel": "user.{userId}.approvals",
+      "kind": "private",
+      "onEvent": {
+        "kind": "data.mutateItem",
+        "source": "pendingMyReview",
+        "keyBy": "id",
+        "expr": "event.data"
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Approvals"
+              }
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "ghost",
+                "size": "sm",
+                "leadingIcon": "arrow-path",
+                "children": "Refresh"
+              },
+              "actions": {
+                "onPress": { "kind": "data.refresh", "sources": ["myApprovals", "pendingMyReview"] }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Tabs",
+          "props": { "defaultTab": "my_requests" },
+          "children": [
+            {
+              "kind": "Tab",
+              "props": { "key": "my_requests", "title": "My requests" },
+              "bindings": { "badge": { "$expr": "myApprovals.meta.filter_matches" } },
+              "children": [
+                {
+                  "kind": "Toolbar",
+                  "children": [
+                    {
+                      "kind": "Select",
+                      "props": {
+                        "name": "filter[status]",
+                        "placeholder": "All statuses",
+                        "clearable": true
+                      },
+                      "options": [
+                        { "key": "pending", "label": "Pending" },
+                        { "key": "approved", "label": "Approved" },
+                        { "key": "rejected", "label": "Rejected" },
+                        { "key": "executed", "label": "Executed" },
+                        { "key": "expired", "label": "Expired" },
+                        { "key": "cancelled", "label": "Cancelled" }
+                      ]
+                    },
+                    {
+                      "kind": "Select",
+                      "props": {
+                        "name": "filter[action_key]",
+                        "placeholder": "All actions",
+                        "clearable": true
+                      },
+                      "optionsSource": "approvable-actions.available"
+                    }
+                  ]
+                },
+                {
+                  "kind": "Table",
+                  "columns": [
+                    {
+                      "key": "status",
+                      "header": "",
+                      "cell": {
+                        "kind": "widget.reference",
+                        "widget": "approval-status-chip",
+                        "propsExpr": "{ status: row.status }"
+                      }
+                    },
+                    {
+                      "key": "action_label",
+                      "header": "Action",
+                      "cell": {
+                        "kind": "Link",
+                        "propsExpr": "{ to: '/tenant/approvals/instances/' + row.id, children: row.action_label, className: 'font-medium' }"
+                      }
+                    },
+                    { "key": "subject_summary.display_name", "header": "Subject" },
+                    {
+                      "key": "requested_at",
+                      "header": "Requested",
+                      "cell": {
+                        "kind": "Text",
+                        "propsExpr": "{ children: relativeTime(row.requested_at), className: 'text-sm text-muted' }"
+                      }
+                    },
+                    {
+                      "key": "expires_at",
+                      "header": "Expires",
+                      "cell": {
+                        "kind": "Text",
+                        "propsExpr": "{ children: relativeTime(row.expires_at), className: row.status === 'pending' && expiringSoon(row.expires_at) ? 'text-sm text-warning font-semibold' : 'text-sm text-muted' }"
+                      }
+                    }
+                  ],
+                  "bindings": { "rows": { "$ref": "myApprovals" } }
+                }
+              ]
+            },
+            {
+              "kind": "Tab",
+              "props": { "key": "pending_review", "title": "Pending my review" },
+              "bindings": { "badge": { "$expr": "pendingMyReview.meta.total" } },
+              "children": [
+                {
+                  "kind": "Toolbar",
+                  "children": [
+                    {
+                      "kind": "Toggle",
+                      "props": {
+                        "name": "filter[urgency]",
+                        "label": "Expiring soon (< 24h)",
+                        "valueOn": "expiring_soon",
+                        "valueOff": "all"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "Table",
+                  "columns": [
+                    {
+                      "key": "status",
+                      "header": "",
+                      "cell": {
+                        "kind": "widget.reference",
+                        "widget": "approval-status-chip",
+                        "propsExpr": "{ status: row.status }"
+                      }
+                    },
+                    {
+                      "key": "action_label",
+                      "header": "Action",
+                      "cell": {
+                        "kind": "Link",
+                        "propsExpr": "{ to: '/tenant/approvals/instances/' + row.id, children: row.action_label, className: 'font-medium' }"
+                      }
+                    },
+                    { "key": "requester_summary.display_name", "header": "Requester" },
+                    { "key": "subject_summary.display_name", "header": "Subject" },
+                    {
+                      "key": "requested_at",
+                      "header": "Requested",
+                      "cell": {
+                        "kind": "Text",
+                        "propsExpr": "{ children: relativeTime(row.requested_at), className: 'text-sm text-muted' }"
+                      }
+                    },
+                    {
+                      "key": "expires_at",
+                      "header": "Expires",
+                      "cell": {
+                        "kind": "Text",
+                        "propsExpr": "{ children: relativeTime(row.expires_at), className: expiringSoon(row.expires_at) ? 'text-sm text-danger font-semibold' : 'text-sm text-muted' }"
+                      }
+                    }
+                  ],
+                  "bindings": { "rows": { "$ref": "pendingMyReview" } }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

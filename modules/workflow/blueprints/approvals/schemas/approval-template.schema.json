@@ -1,0 +1,190 @@
+{
+  "id": "academorix://modules/workflow/approvals/schemas/approval-template",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ApprovalTemplate",
+  "description": "Tenant-authored approval rules. Multiple templates per action_key; ApprovalTemplateResolver walks them ordered by priority ASC, first `when_expression` match wins. Versioned — semantic-behaviour edits insert a new row with version+1; old row stays with is_active=false for audit. Exactly one is_active=true per (tenant, application, action_key, name).",
+  "type": "object",
+  "x-module": "approvals",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "approval_templates",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "apt_",
+    "incrementing": false,
+    "model": "Academorix\\Approval\\Models\\ApprovalTemplate",
+    "interface": "Academorix\\Approval\\Contracts\\Data\\ApprovalTemplateInterface",
+    "implements": ["Academorix\\Approval\\Contracts\\Data\\ApprovalTemplateInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasActivityLog",
+      "Auditable",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "priority": "integer",
+      "expires_after_hours": "integer",
+      "on_timeout": "OnTimeoutBehaviour",
+      "reminder_config": "array",
+      "allows_recall": "boolean",
+      "version": "integer",
+      "is_active": "boolean",
+      "metadata": "array"
+    },
+    "appends": ["has_active_instances", "instance_count"],
+    "observers": ["ApprovalTemplateObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `apt_<26>`." },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "application_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "applications", "column": "id", "onDelete": "restrict" }
+      },
+      "action_key": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "foreign": { "table": "approvable_actions", "column": "action_key", "onDelete": "restrict" },
+        "description": "FK by natural key."
+      },
+      "name": { "type": "string", "length": 200, "nullable": false },
+      "description": { "type": "text", "nullable": true },
+      "when_expression": {
+        "type": "text",
+        "nullable": false,
+        "default": "''",
+        "description": "symfony/expression-language source. Empty string = always matches. Editing triggers version bump."
+      },
+      "priority": {
+        "type": "integer",
+        "nullable": false,
+        "default": 100,
+        "description": "Lower priorities evaluated first (ASC ORDER BY). Ties broken by created_at."
+      },
+      "expires_after_hours": {
+        "type": "integer",
+        "nullable": false,
+        "default": 168,
+        "description": "Instance expires_at = requested_at + this hours. Default 168 = 7 days."
+      },
+      "on_timeout": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'expire'",
+        "description": "Enum: expire | approve | escalate. Wave 1b: expire + approve only."
+      },
+      "reminder_config": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{\"intervals_hours\":[24,48,72],\"max_reminders\":3}'::jsonb"
+      },
+      "allows_recall": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "When false, requesters cannot withdraw pending instances."
+      },
+      "version": {
+        "type": "integer",
+        "nullable": false,
+        "default": 1,
+        "description": "Version counter. Immutable-post-create; version bumps insert a new row."
+      },
+      "is_active": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "At most one is_active=true per (tenant, application, action_key, name). Enforced by observer + unique index."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "application_id", "action_key", "name", "version"],
+        "unique": true,
+        "name": "approval_templates_composite_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["tenant_id", "application_id", "action_key", "name"],
+        "unique": true,
+        "name": "approval_templates_one_active_unique",
+        "predicate": "deleted_at IS NULL AND is_active = true",
+        "description": "Enforces the one-is-active invariant at the DB level (defense-in-depth alongside the observer)."
+      },
+      {
+        "columns": ["tenant_id", "application_id", "action_key", "is_active", "priority"],
+        "unique": false,
+        "name": "approval_templates_resolution_idx",
+        "predicate": "deleted_at IS NULL",
+        "description": "ApprovalTemplateResolver's hot-path lookup: for a tenant+app+action, get all active templates ordered by priority."
+      }
+    ]
+  },
+  "required": ["id", "tenant_id", "application_id", "action_key", "name", "when_expression", "priority", "expires_after_hours", "on_timeout", "reminder_config", "allows_recall", "version", "is_active", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^apt_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "application_id": { "type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "action_key": { "type": "string", "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_]*)+$" },
+    "name": { "type": "string", "maxLength": 200 },
+    "description": { "type": ["string", "null"] },
+    "when_expression": { "type": "string" },
+    "priority": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "expires_after_hours": { "type": "integer", "minimum": 1, "maximum": 8760 },
+    "on_timeout": { "type": "string", "enum": ["expire", "approve", "escalate"] },
+    "reminder_config": {
+      "type": "object",
+      "properties": {
+        "intervals_hours": { "type": "array", "items": { "type": "integer", "minimum": 1 } },
+        "max_reminders": { "type": "integer", "minimum": 0, "maximum": 10 }
+      },
+      "required": ["intervals_hours", "max_reminders"]
+    },
+    "allows_recall": { "type": "boolean" },
+    "version": { "type": "integer", "minimum": 1 },
+    "is_active": { "type": "boolean" },
+    "has_active_instances": { "type": "boolean", "description": "Computed." },
+    "instance_count": { "type": "integer", "description": "Computed." },
+    "metadata": { "type": ["object", "null"] },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["has_active_instances", "instance_count"]
+  }
+}

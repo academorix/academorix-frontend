@@ -1,0 +1,260 @@
+{
+  "id": "academorix://modules/workflow/approvals/errors",
+  "$version": 1,
+  "title": "approvals — error codes",
+  "namespace": "approvals",
+  "errors": [
+    {
+      "code": "PLATFORM_ACTION_NOT_ACTIVE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.platform_action_not_active",
+      "description": "The referenced approvable_actions.action_key exists but is_active=false. Templates cannot target inactive actions."
+    },
+    {
+      "code": "INVALID_ACTION_KEY_FORMAT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.invalid_action_key_format",
+      "description": "action_key does not match `^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_]*)+$`."
+    },
+    {
+      "code": "INVALID_EXPRESSION",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.invalid_expression",
+      "description": "The when_expression or selector_expression failed to parse via symfony/expression-language. Response includes the offending token position for the authoring UI to highlight."
+    },
+    {
+      "code": "INVALID_SELECTOR_RETURN_TYPE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.invalid_selector_return_type",
+      "description": "Selector expression parsed but returns a type that isn't User[] / User / user_id string. E.g. an accidental when-expression saved as a selector."
+    },
+    {
+      "code": "UNKNOWN_EXPRESSION_VARIABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.unknown_expression_variable",
+      "description": "The expression references a variable NOT declared in the action's context_variables_schema. Response names the offending variable."
+    },
+    {
+      "code": "TEMPLATE_ACTIVE_UNIQUENESS_VIOLATION",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.template_active_uniqueness_violation",
+      "description": "Another active template exists for the same (tenant, application, action_key, name). Deactivate the peer first OR pick a different name."
+    },
+    {
+      "code": "TEMPLATE_HAS_ACTIVE_INSTANCES",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.template_has_active_instances",
+      "description": "Attempted to delete a template with approval_instances in status='pending'. Wait for instances to resolve OR withdraw them first."
+    },
+    {
+      "code": "TENANT_TEMPLATE_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.tenant_template_quota_exceeded",
+      "description": "Reached approval_templates_max_active slot cap. Response includes upgrade path."
+    },
+    {
+      "code": "ENTITLEMENT_UNAVAILABLE_CUSTOM_TEMPLATES",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.entitlement_unavailable_custom_templates",
+      "description": "approval_templates_custom entitlement is false (small-tier tenant). Response includes upgrade path."
+    },
+    {
+      "code": "ENTITLEMENT_UNAVAILABLE_ADVANCED_EXPRESSIONS",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.entitlement_unavailable_advanced_expressions",
+      "description": "Expression references a function gated by approval_advanced_expressions (manager_of, except, chain_up_to)."
+    },
+    {
+      "code": "REQUEST_NOT_PENDING",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.request_not_pending",
+      "description": "Attempted to approve/reject/withdraw an instance not in status='pending'."
+    },
+    {
+      "code": "REQUIREMENT_NOT_PENDING",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.requirement_not_pending",
+      "description": "Attempted to approve/reject a specific requirement not in status='pending' (already satisfied, failed, or still blocked by a sort_order predecessor)."
+    },
+    {
+      "code": "APPROVER_ALREADY_DECIDED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.approver_already_decided",
+      "description": "Caller has an approval_decisions row on this requirement. Duplicate decisions refused by composite unique + observer."
+    },
+    {
+      "code": "CALLER_NOT_APPROVER",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "approvals.errors.caller_not_approver",
+      "description": "Caller not in the requirement's resolved_approvers. Fires ApprovalSecurityViolation(violation_type='forged_decision') as a side-effect."
+    },
+    {
+      "code": "CALLER_NOT_REQUESTER",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "approvals.errors.caller_not_requester",
+      "description": "Attempted to withdraw an instance NOT submitted by the caller. Admin cannot withdraw on the requester's behalf (govern via reject with comment instead)."
+    },
+    {
+      "code": "RECALL_NOT_ALLOWED_BY_TEMPLATE",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.recall_not_allowed_by_template",
+      "description": "Template.allows_recall=false. Requesters cannot withdraw once submitted."
+    },
+    {
+      "code": "REJECT_COMMENT_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.reject_comment_required",
+      "description": "Reject decisions require a comment. SOC 2 CC6.3 evidence."
+    },
+    {
+      "code": "REJECT_COMMENT_TOO_SHORT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.reject_comment_too_short",
+      "description": "Reject comment shorter than approvals.security.min_reject_reason_length (default 10)."
+    },
+    {
+      "code": "SELF_APPROVAL_REFUSED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "approvals.errors.self_approval_refused",
+      "description": "Caller matches requester_id AND template group.allows_self_approve=false (default). SOC 2 segregation-of-duties evidence."
+    },
+    {
+      "code": "APPROVAL_SELECTOR_EVALUATION_FAILED",
+      "http": 500,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "approvals.errors.selector_evaluation_failed",
+      "description": "ExpressionLanguageAdapter caught a parse/runtime/timeout error evaluating a selector at instance-create time. The instance IS NOT CREATED — the action refuses. Ops must fix the template."
+    },
+    {
+      "code": "APPROVAL_TIMEOUT_MS_EXCEEDED",
+      "http": 500,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "approvals.errors.timeout_ms_exceeded",
+      "description": "Expression evaluation exceeded approvals.expression.timeout_ms wall-clock deadline. Usually indicates an over-complex expression or an infinite-loop bug in a custom selector function."
+    },
+    {
+      "code": "RESTRICTED_CONTEXT_LEAK",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "approvals.errors.restricted_context_leak",
+      "description": "PCI-DSS scanner detected a regex match for cardholder data in context_json. Fires ApprovalSecurityViolation. The instance IS NOT CREATED — the action MUST strip cardholder data from approvalContext() output."
+    },
+    {
+      "code": "QUORUM_EVALUATION_BYPASS_ATTEMPT",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "approvals.errors.quorum_evaluation_bypass_attempt",
+      "description": "A decision landed on an already-decided instance/requirement — indicates a race that policy checks + observer both missed. Fires ApprovalSecurityViolation."
+    },
+    {
+      "code": "APPROVAL_EXECUTION_FAILED",
+      "http": 500,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "approvals.errors.execution_failed",
+      "description": "ApprovalInstanceExecutor dispatched the underlying action but the action threw. Instance is WEDGED (status='approved' AND executed_at IS NULL). Manual intervention via approvals:remediate-failed-executions."
+    },
+    {
+      "code": "PREFLIGHT_CONTEXT_TOO_LARGE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.preflight_context_too_large",
+      "description": "PreflightTemplateInput.context_variables JSON exceeds approvals.templates.preflight_context_max_bytes."
+    },
+    {
+      "code": "PREFLIGHT_EXPRESSION_TOO_LONG",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.preflight_expression_too_long",
+      "description": "Expression exceeds approvals.expression.max_expression_length."
+    },
+    {
+      "code": "REMINDER_RATE_LIMIT",
+      "http": 429,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "approvals.errors.reminder_rate_limit",
+      "description": "Manual reminder-dispatch endpoint hit the throttle guard (> 3 reminders/hour to the same approver-requirement)."
+    },
+    {
+      "code": "APPROVER_UNAVAILABLE",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "approvals.errors.approver_unavailable",
+      "description": "A user in resolved_approvers was suspended/deleted mid-flow AND their absence makes quorum unreachable. The instance transitions to rejected with this reason."
+    }
+  ]
+}

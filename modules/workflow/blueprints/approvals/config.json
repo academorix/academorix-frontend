@@ -1,0 +1,214 @@
+{
+  "id": "academorix://modules/workflow/approvals/config",
+  "$version": 1,
+  "title": "approvals — developer configuration",
+  "configFile": "config/approvals.php",
+  "envPrefix": "APPROVALS_",
+  "sections": {
+    "expression": {
+      "description": "Symfony ExpressionLanguage adapter — sandbox + performance guards.",
+      "keys": [
+        {
+          "path": "approvals.expression.timeout_ms",
+          "type": "int",
+          "env": "APPROVALS_EXPRESSION_TIMEOUT_MS",
+          "default": 250,
+          "description": "Hard wall-clock deadline per expression evaluation. Passed to ExpressionLanguageAdapter as a max-execution-time guard. Failures fire ApproverSelectorEvaluationFailed(failure_reason='timeout')."
+        },
+        {
+          "path": "approvals.expression.cache_ttl_seconds",
+          "type": "int",
+          "default": 60,
+          "description": "TTL for the compiled-expression AST cache. Keyed on SHA-256(expression_source). Bypasses on template edits via ApprovalTemplateObserver's cache invalidation."
+        },
+        {
+          "path": "approvals.expression.max_expression_length",
+          "type": "int",
+          "default": 2000,
+          "description": "Refuse expressions longer than this at template-authoring time (returns INVALID_EXPRESSION). Guards against DoS via pathologically-long expressions that would slow parsing."
+        }
+      ]
+    },
+    "reminders": {
+      "description": "Reminder cadence defaults + max-send guards.",
+      "keys": [
+        {
+          "path": "approvals.reminders.default_intervals_hours",
+          "type": "array<int>",
+          "default": [24, 48, 72],
+          "description": "Default reminder cadence when a template's reminder_config.intervals_hours is omitted. Each element = hours since instance.requested_at (OR last reminder, whichever is later) before dispatching the next reminder."
+        },
+        {
+          "path": "approvals.reminders.max_reminders",
+          "type": "int",
+          "default": 3,
+          "description": "Hard cap on reminders per approver per instance. Overridable per template via reminder_config.max_reminders."
+        },
+        {
+          "path": "approvals.reminders.sweep_batch_size",
+          "type": "int",
+          "default": 500,
+          "description": "How many pending requirements the DispatchApprovalRemindersJob processes per invocation. Higher = fewer job invocations but longer per-run duration."
+        }
+      ]
+    },
+    "expiration": {
+      "description": "Timeout sweeper cadence + defaults.",
+      "keys": [
+        {
+          "path": "approvals.expiration.default_expires_after_hours",
+          "type": "int",
+          "default": 168,
+          "description": "Fallback when a template's expires_after_hours is unspecified. 168 = 7 days."
+        },
+        {
+          "path": "approvals.expiration.sweep_frequency_minutes",
+          "type": "int",
+          "default": 5,
+          "description": "Horizon schedule cadence for ExpireOverdueApprovalsJob. Match the Schedule::everyFiveMinutes() entry."
+        },
+        {
+          "path": "approvals.expiration.sweep_batch_size",
+          "type": "int",
+          "default": 100,
+          "description": "How many overdue instances the sweeper processes per invocation. A backlog drains across multiple invocations."
+        }
+      ]
+    },
+    "retention": {
+      "description": "Retention windows per instance final-state.",
+      "keys": [
+        {
+          "path": "approvals.retention.revoked_and_rejected_instances_days",
+          "type": "int",
+          "default": 90,
+          "description": "Hold-period for rejected + expired + cancelled instances before hard-delete."
+        },
+        {
+          "path": "approvals.retention.executed_instances_days",
+          "type": "int",
+          "default": 2555,
+          "description": "7 years — SOC 2 CC6.3 evidence-retention requirement for executed approvals."
+        },
+        {
+          "path": "approvals.retention.audit_records_days",
+          "type": "int",
+          "default": 2555,
+          "description": "Approval-adjacent audit records (Auditable::audits rows) retained separately from instance rows so a purge doesn't lose the audit trail."
+        }
+      ]
+    },
+    "templates": {
+      "description": "Template authoring + versioning.",
+      "keys": [
+        {
+          "path": "approvals.templates.versioning_enabled",
+          "type": "bool",
+          "default": true,
+          "description": "Master toggle. When false, template edits directly UPDATE the row (no version bump). Off only for dev/testing — production leaves versioning on for audit."
+        },
+        {
+          "path": "approvals.templates.max_versions_retained",
+          "type": "int",
+          "default": 20,
+          "description": "Per-template version-history cap. Beyond this, oldest is_active=false versions are hard-deleted on the daily reconciler pass."
+        },
+        {
+          "path": "approvals.templates.preflight_context_max_bytes",
+          "type": "int",
+          "default": 8192,
+          "description": "Max size of PreflightTemplateInput.context_variables JSON blob. Guards against DoS on the preflight endpoint."
+        }
+      ]
+    },
+    "security": {
+      "description": "Security invariants — governance-critical defaults.",
+      "keys": [
+        {
+          "path": "approvals.security.require_reject_reason",
+          "type": "bool",
+          "default": true,
+          "description": "When true, reject decisions require a comment (min 10 chars). SOC 2 CC6.3 evidence."
+        },
+        {
+          "path": "approvals.security.min_reject_reason_length",
+          "type": "int",
+          "default": 10,
+          "description": "Enforced by min_reject_comment_length rule + ApprovalDecisionObserver."
+        },
+        {
+          "path": "approvals.security.max_reject_reason_length",
+          "type": "int",
+          "default": 1000,
+          "description": "Hard cap to prevent DB row bloat."
+        },
+        {
+          "path": "approvals.security.refuse_self_approval_by_default",
+          "type": "bool",
+          "default": true,
+          "description": "When true, an approver_id matching the instance's requester_id is refused UNLESS the template group's allows_self_approve=true. Guards against social-engineering seams."
+        },
+        {
+          "path": "approvals.security.max_context_json_bytes",
+          "type": "int",
+          "default": 16384,
+          "description": "Max size of an instance's context_json. Guards against actions passing massive payloads through the engine."
+        },
+        {
+          "path": "approvals.security.pci_dss_scanner_enabled",
+          "type": "bool",
+          "env": "APPROVALS_PCI_SCAN",
+          "default": true,
+          "description": "Enables the regex-based PAN-detection scan on context_json at instance-create time. Detected patterns fire ApprovalSecurityViolation(violation_type='restricted_context_leak') + refuse the instance creation."
+        }
+      ]
+    },
+    "queues": {
+      "description": "Queue-name overrides.",
+      "keys": [
+        {
+          "path": "approvals.queues.critical",
+          "type": "string",
+          "env": "APPROVALS_QUEUE_CRITICAL",
+          "default": "approvals-critical",
+          "description": "Sweepers + P0 notifications go here. Isolated from tenant-provisioning queues so a template misconfiguration can't stall onboarding."
+        },
+        {
+          "path": "approvals.queues.notifications",
+          "type": "string",
+          "default": "notifications",
+          "description": "Approval-lifecycle notifications share the standard notifications queue."
+        },
+        {
+          "path": "approvals.queues.reports",
+          "type": "string",
+          "default": "approvals-reports",
+          "description": "Compliance-report generation is CPU-heavy + latency-tolerant — isolated queue with different worker sizing."
+        },
+        {
+          "path": "approvals.queues.retention",
+          "type": "string",
+          "default": "approvals-retention",
+          "description": "Purger + reconciler go here — low-priority, run overnight."
+        }
+      ]
+    },
+    "presenter": {
+      "description": "Wire-projection redaction knobs.",
+      "keys": [
+        {
+          "path": "approvals.presenter.include_delegation_substitutions",
+          "type": "bool",
+          "default": true,
+          "description": "When true, ApprovalPresenter includes DelegationSubstitutedApprover events in the projected decision timeline. Off for tenants where delegation is a security concern."
+        },
+        {
+          "path": "approvals.presenter.max_context_summary_fields",
+          "type": "int",
+          "default": 20,
+          "description": "Cap on number of context_json fields projected onto the wire (avoids leaking large payloads to admin UIs)."
+        }
+      ]
+    }
+  }
+}

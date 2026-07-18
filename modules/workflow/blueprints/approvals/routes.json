@@ -1,0 +1,355 @@
+{
+  "id": "academorix://modules/workflow/approvals/routes",
+  "$version": 1,
+  "title": "approvals — HTTP routes",
+  "description": "Two route groups cover the full CRUD + decision + preflight + audit surface. Tenant-plane routes serve four sub-audiences: (1) any tenant user (viewing approvable-actions), (2) tenant admins (template CRUD + preflight), (3) requesters (instance list + view + withdraw), (4) approvers (pending-my-review + approve + reject). Platform-plane routes are read-only cross-tenant compliance + registry-management surfaces — decisions stay on the tenant plane.",
+  "prefixes": {
+    "api": "/api",
+    "v1": "/api/v1",
+    "platform": "/api/v1/platform"
+  },
+  "groups": [
+    {
+      "id": "tenant-authenticated",
+      "host": "tenant",
+      "middleware": [
+        "api",
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "resolve.application",
+        "resolve.tenant",
+        "auth:sanctum",
+        "tenant.user",
+        "throttle:approvals",
+        "response.envelope"
+      ],
+      "description": "Tenant-plane approval-engine surface. `X-Application-Id` header required on every route; middleware refuses 400/404/403 on missing/unknown/disabled application.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/v1/approvals/actions",
+          "name": "tenant.approvals.actions.index",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovableActionController@index",
+          "policy": "ApprovableActionPolicy@viewAny",
+          "returns": "PaginatedResource<ApprovableActionData>",
+          "description": "Lists approvable_actions the caller's tenant has active templates on. Used by (a) the requester UI to explain 'why did this need approval?' and (b) the template-authoring UI to pick which action a new template gates.",
+          "queryParams": [
+            { "name": "filter[namespace]", "type": "string", "example": "billing" },
+            { "name": "filter[is_active]", "type": "boolean" },
+            { "name": "sort", "type": "string", "example": "action_key" },
+            { "name": "per_page", "type": "integer", "default": 25 }
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/approvals/templates",
+          "name": "tenant.approvals.templates.index",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovalTemplateController@index",
+          "policy": "ApprovalTemplatePolicy@viewAny",
+          "returns": "PaginatedResource<ApprovalTemplateData>",
+          "queryParams": [
+            { "name": "filter[action_key]", "type": "string" },
+            { "name": "filter[is_active]", "type": "boolean" },
+            { "name": "sort", "type": "string", "example": "-updated_at,priority" },
+            { "name": "per_page", "type": "integer", "default": 25 }
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/approvals/templates",
+          "name": "tenant.approvals.templates.store",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovalTemplateController@store",
+          "policy": "ApprovalTemplatePolicy@create",
+          "accepts": "CreateApprovalTemplateInput",
+          "returns": "ApprovalTemplateData",
+          "status": 201,
+          "description": "Author a new approval template. Body includes the template's basic fields + a groups[] array of CreateApprovalTemplateApproverInput (each with selector_expression + quorum). Body validated via valid_expression + valid_selector_expression + template_active_uniqueness. Consumes 1 unit of approval_templates_max_active entitlement.",
+          "errors": [
+            "INVALID_ACTION_KEY_FORMAT (422)",
+            "PLATFORM_ACTION_NOT_ACTIVE (422)",
+            "INVALID_EXPRESSION (422)",
+            "INVALID_SELECTOR_RETURN_TYPE (422)",
+            "TEMPLATE_ACTIVE_UNIQUENESS_VIOLATION (409)",
+            "TENANT_TEMPLATE_QUOTA_EXCEEDED (402)",
+            "ENTITLEMENT_UNAVAILABLE_CUSTOM_TEMPLATES (402 — small tier)"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/approvals/templates/{id}",
+          "name": "tenant.approvals.templates.show",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovalTemplateController@show",
+          "policy": "ApprovalTemplatePolicy@view",
+          "returns": "ApprovalTemplateData",
+          "includes": ["groups", "action", "version_history"]
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/v1/approvals/templates/{id}",
+          "name": "tenant.approvals.templates.update",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovalTemplateController@update",
+          "policy": "ApprovalTemplatePolicy@update",
+          "accepts": "UpdateApprovalTemplateInput",
+          "returns": "ApprovalTemplateData",
+          "description": "Update a template. Semantic-behaviour field changes (when_expression, on_timeout, allows_recall, expires_after_hours) trigger a version bump — the returned row is the NEW row (version+1); the caller's original row is now is_active=false. Non-semantic field changes update in place."
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/approvals/templates/{id}/activate",
+          "name": "tenant.approvals.templates.activate",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovalTemplateController@activate",
+          "policy": "ApprovalTemplatePolicy@activate",
+          "returns": "ApprovalTemplateData",
+          "description": "Flip is_active=true. The observer deactivates any peer with same (tenant, application, action_key, name)."
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/approvals/templates/{id}/deactivate",
+          "name": "tenant.approvals.templates.deactivate",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovalTemplateController@deactivate",
+          "policy": "ApprovalTemplatePolicy@deactivate",
+          "returns": "ApprovalTemplateData"
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/v1/approvals/templates/{id}",
+          "name": "tenant.approvals.templates.destroy",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovalTemplateController@destroy",
+          "policy": "ApprovalTemplatePolicy@delete",
+          "returns": "204 No Content",
+          "description": "Soft-delete. Refused when approval_instances references this template with status='pending'.",
+          "errors": ["TEMPLATE_HAS_ACTIVE_INSTANCES (409)"]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/approvals/templates/{id}/groups",
+          "name": "tenant.approvals.templates.groups.index",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovalTemplateApproverController@index",
+          "policy": "ApprovalTemplatePolicy@view",
+          "returns": "ApprovalTemplateApproverData[]",
+          "description": "List approver groups on the template ordered by sort_order ASC."
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/approvals/templates/{id}/groups",
+          "name": "tenant.approvals.templates.groups.store",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovalTemplateApproverController@store",
+          "policy": "ApprovalTemplatePolicy@update",
+          "accepts": "CreateApprovalTemplateApproverInput",
+          "returns": "ApprovalTemplateApproverData",
+          "description": "Add a group. Triggers ApprovalTemplateGroupsUpdated + ApprovalTemplateVersionBumped in the parent template's transaction."
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/v1/approvals/templates/{id}/groups/{group_id}",
+          "name": "tenant.approvals.templates.groups.update",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovalTemplateApproverController@update",
+          "policy": "ApprovalTemplatePolicy@update",
+          "returns": "ApprovalTemplateApproverData"
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/v1/approvals/templates/{id}/groups/{group_id}",
+          "name": "tenant.approvals.templates.groups.destroy",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovalTemplateApproverController@destroy",
+          "policy": "ApprovalTemplatePolicy@update",
+          "returns": "204 No Content"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/approvals/templates/preflight",
+          "name": "tenant.approvals.templates.preflight",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\PreflightController@__invoke",
+          "policy": "ApprovalTemplatePolicy@preflight",
+          "accepts": "PreflightTemplateInput",
+          "returns": "ApprovalPreflightResultData",
+          "description": "Dry-run a template's expression + selector groups against a synthetic context. NEVER persists — this is a compile + evaluate pass only. Powers the template-authoring UI's 'preview approvers' + 'test rule' features.",
+          "errors": ["PREFLIGHT_CONTEXT_TOO_LARGE (422)"]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/approvals/instances",
+          "name": "tenant.approvals.instances.index",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovalInstanceController@index",
+          "policy": "ApprovalInstancePolicy@viewAny",
+          "returns": "PaginatedResource<ApprovalInstanceData>",
+          "description": "List the caller's own submitted requests. Default filter: requester_id=caller.id (admin can drop with filter[requester_id]=*).",
+          "queryParams": [
+            { "name": "filter[status]", "type": "string|string[]", "enum": ["pending", "approved", "rejected", "executed", "expired", "cancelled"] },
+            { "name": "filter[action_key]", "type": "string" },
+            { "name": "filter[requester_id]", "type": "string" },
+            { "name": "filter[submitted_since]", "type": "date-time" },
+            { "name": "sort", "type": "string", "example": "-requested_at" },
+            { "name": "per_page", "type": "integer", "default": 25 }
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/approvals/instances/{id}",
+          "name": "tenant.approvals.instances.show",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovalInstanceController@show",
+          "policy": "ApprovalInstancePolicy@view",
+          "returns": "ApprovalInstanceData",
+          "includes": ["requirements", "decisions", "requester", "final_decider", "template", "subject"]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/approvals/instances/{id}/withdraw",
+          "name": "tenant.approvals.instances.withdraw",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovalInstanceController@withdraw",
+          "policy": "ApprovalInstancePolicy@withdraw",
+          "accepts": "WithdrawInstanceInput",
+          "returns": "ApprovalInstanceData",
+          "description": "Requester withdraws their own pending instance. Refused on terminal states + when template.allows_recall=false.",
+          "errors": [
+            "REQUEST_NOT_PENDING (409)",
+            "RECALL_NOT_ALLOWED_BY_TEMPLATE (403)",
+            "CALLER_NOT_REQUESTER (403)"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/approvals/instances/pending-my-review",
+          "name": "tenant.approvals.instances.pending-my-review",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovalInstanceController@pendingMyReview",
+          "policy": "ApprovalInstancePolicy@viewAny",
+          "returns": "PaginatedResource<ApprovalInstanceData>",
+          "description": "Approvers' inbox — instances where the caller is in resolved_approvers on at least one PENDING requirement. Backed by a JSONB containment query (`resolved_approvers @> to_jsonb(auth_user.id)`) using the GIN index on approval_requirements.resolved_approvers.",
+          "queryParams": [
+            { "name": "filter[urgency]", "type": "string", "enum": ["all", "expiring_soon"], "default": "all", "description": "'expiring_soon' filters to instances with expires_at within 24h." },
+            { "name": "filter[action_key]", "type": "string" },
+            { "name": "sort", "type": "string", "example": "expires_at" },
+            { "name": "per_page", "type": "integer", "default": 25 }
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/approvals/instances/{id}/requirements/{req_id}/approve",
+          "name": "tenant.approvals.instances.requirements.approve",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovalDecisionController@approve",
+          "middleware": ["approvals.enforce_approver"],
+          "policy": "ApprovalInstancePolicy@approve",
+          "accepts": "ApproveInstanceInput",
+          "returns": "ApprovalInstanceData",
+          "description": "Approver's approve decision. Body: comment (optional, max 1000). Fires ApprovalDecisionRecorded → QuorumEvaluator → possibly ApprovalRequirementSatisfied → possibly ApprovalGranted (which SYNC-dispatches ApprovalInstanceExecutor).",
+          "errors": [
+            "CALLER_NOT_APPROVER (403)",
+            "REQUEST_NOT_PENDING (409)",
+            "REQUIREMENT_NOT_PENDING (409)",
+            "APPROVER_ALREADY_DECIDED (409)",
+            "SELF_APPROVAL_REFUSED (403 — when requester === approver AND template group.allows_self_approve=false)"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/approvals/instances/{id}/requirements/{req_id}/reject",
+          "name": "tenant.approvals.instances.requirements.reject",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Tenant\\ApprovalDecisionController@reject",
+          "middleware": ["approvals.enforce_approver"],
+          "policy": "ApprovalInstancePolicy@reject",
+          "accepts": "RejectInstanceInput",
+          "returns": "ApprovalInstanceData",
+          "description": "Approver's reject decision. Body: comment (required, min 10 chars — SOC 2 evidence).",
+          "errors": [
+            "CALLER_NOT_APPROVER (403)",
+            "REQUEST_NOT_PENDING (409)",
+            "REQUIREMENT_NOT_PENDING (409)",
+            "APPROVER_ALREADY_DECIDED (409)",
+            "REJECT_COMMENT_REQUIRED (422)",
+            "REJECT_COMMENT_TOO_SHORT (422)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "platform-admin",
+      "host": "platform-admin",
+      "middleware": [
+        "api",
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "platform.user",
+        "throttle:approvals-platform",
+        "response.envelope"
+      ],
+      "description": "Platform-plane read + registry-management surface. No decision endpoints — approve/reject stay on the tenant plane where the caller's tenant + guard are unambiguous.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/v1/platform/approvals/instances",
+          "name": "platform.approvals.instances.index",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Platform\\ApprovalInstanceController@index",
+          "policy": "ApprovalInstancePolicy@platformViewAny",
+          "returns": "PaginatedResource<ApprovalInstanceData>",
+          "description": "Cross-tenant instance list. Compliance auditor + support tooling. Never mutates.",
+          "queryParams": [
+            { "name": "filter[tenant_id]", "type": "string" },
+            { "name": "filter[application_id]", "type": "string" },
+            { "name": "filter[status]", "type": "string|string[]" },
+            { "name": "filter[action_key]", "type": "string" },
+            { "name": "filter[requester_id]", "type": "string" },
+            { "name": "filter[submitted_between]", "type": "string", "example": "2026-06-01,2026-07-01" }
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/platform/approvals/instances/{id}",
+          "name": "platform.approvals.instances.show",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Platform\\ApprovalInstanceController@show",
+          "policy": "ApprovalInstancePolicy@platformView",
+          "returns": "ApprovalInstanceData",
+          "includes": ["requirements", "decisions", "requester", "final_decider", "template", "subject", "tenant", "application"]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/platform/approvals/audit-report",
+          "name": "platform.approvals.audit-report",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Platform\\AuditReportController@store",
+          "policy": "ApprovalInstancePolicy@platformViewAny",
+          "accepts": "GenerateAuditReportInput",
+          "returns": "{ report_generation_job_id: string, download_url_when_ready: string }",
+          "status": 202,
+          "description": "Async — dispatches AuditReportGenerationJob. SOC 2 CC6.3 + ISO 27001 A.9.2 evidence. Consumer polls the job or waits for the completion notification with the signed URL."
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/platform/approvals/actions",
+          "name": "platform.approvals.actions.index",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Platform\\ApprovableActionController@index",
+          "policy": "ApprovableActionPolicy@platformViewAny",
+          "returns": "PaginatedResource<ApprovableActionData>",
+          "description": "Full registry read — every approvable_action row across all namespaces."
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/platform/approvals/actions",
+          "name": "platform.approvals.actions.store",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Platform\\ApprovableActionController@store",
+          "policy": "ApprovableActionPolicy@platformCreate",
+          "returns": "ApprovableActionData",
+          "description": "Manual registry-entry creation. Break-glass for actions NOT discovered at boot (e.g. a hot-loaded module). Normally the seeder + discovery pass covers this."
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/v1/platform/approvals/actions/{action_key}",
+          "name": "platform.approvals.actions.update",
+          "action": "Academorix\\Approval\\Http\\Controllers\\Platform\\ApprovableActionController@update",
+          "policy": "ApprovableActionPolicy@platformUpdate",
+          "returns": "ApprovableActionData",
+          "description": "Toggle is_active + edit label/description. action_key is immutable (natural key)."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Every tenant-plane route requires the `X-Application-Id` header (missing → 400 missing_application, unknown → 404 unknown_application, disabled → 403 application_disabled). Enforced by resolve.application middleware.",
+    "The `approve` middleware is NOT applied at this route-group level — it's applied to routes ON OTHER MODULES that carry #[AsApprovableAction] (billing.refunds.issue, access.grants.create, etc). This module's routes work directly on already-existing approval_instances.",
+    "No public host — approval-engine surfaces are strictly authenticated. The webhook subscription mechanism (for tenant SIEM feeds) publishes at broadcast + webhook layers, not HTTP-poll.",
+    "Rate limits: tenant plane `approvals` limiter = 60 requests/minute per user; platform plane `approvals-platform` = 300/minute per platform admin. Both configured in foundation::rate-limits.php.",
+    "The pending-my-review query hits a GIN index on approval_requirements.resolved_approvers — the query plan uses `resolved_approvers @> ?::jsonb` containment which the GIN supports natively.",
+    "Wire response envelope: every non-204 response is wrapped `{ data: ..., meta?: paginated_meta }`. The 202 responses for withdraw / async job dispatch return `{ data: { instance_id, status } }` / `{ data: { report_generation_job_id, ... } }`."
+  ]
+}

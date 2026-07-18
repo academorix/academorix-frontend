@@ -1,0 +1,174 @@
+{
+  "id": "academorix://modules/workflow/approvals/settings",
+  "$version": 1,
+  "title": "approvals — settings",
+  "description": "Tenant-scope approval-engine preferences that supplement template-level config. Two groups: tenant-wide reminder defaults + per-user 'my inbox' preferences.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "approvals",
+      "class": "Academorix\\Approval\\Settings\\ApprovalSettings",
+      "label": "Approvals",
+      "description": "Tenant-wide approval-engine preferences. Governance defaults + delegation policy + reminder cadence.",
+      "icon": "check-badge",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 20,
+      "permission": "approvals.templates.manage",
+      "sections": [
+        {
+          "label": "Governance defaults",
+          "description": "Applied when a template omits the field.",
+          "icon": "shield-check",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "default_expires_after_hours",
+              "controlType": "number",
+              "label": "Default expiration (hours)",
+              "defaultValue": 168,
+              "min": 1,
+              "max": 8760,
+              "helpText": "Applied to templates that don't specify expires_after_hours. 168 = 7 days.",
+              "sortOrder": 1
+            },
+            {
+              "name": "default_on_timeout",
+              "controlType": "select",
+              "label": "Default on-timeout behaviour",
+              "defaultValue": "expire",
+              "options": {
+                "expire": "Expire (final state)",
+                "approve": "Auto-approve (extreme — audit-flagged)",
+                "escalate": "Escalate to next approver group"
+              },
+              "helpText": "Applied to templates that don't specify on_timeout. Auto-approve is discouraged — SOC 2 auditors treat it as a policy exception.",
+              "sortOrder": 2
+            },
+            {
+              "name": "refuse_self_approval_by_default",
+              "controlType": "toggle",
+              "label": "Refuse self-approval by default",
+              "defaultValue": true,
+              "helpText": "When on, an approver_id matching the requester_id is refused unless the template's allows_self_approve=true. SOC 2 segregation-of-duties evidence.",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Reminder cadence",
+          "description": "How often approvers are nudged before expiration.",
+          "icon": "clock",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "default_reminder_intervals_hours",
+              "controlType": "text",
+              "label": "Reminder cadence (comma-separated hours)",
+              "defaultValue": "24,48,72",
+              "helpText": "Applied to templates that don't specify reminder_config. Each number = hours since request time (or last reminder) before the next reminder.",
+              "sortOrder": 1
+            },
+            {
+              "name": "default_max_reminders",
+              "controlType": "number",
+              "label": "Max reminders per approver",
+              "defaultValue": 3,
+              "min": 0,
+              "max": 10,
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Delegation",
+          "description": "Out-of-office handoff behaviour.",
+          "icon": "user-group",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "delegation_substitution_enabled",
+              "controlType": "toggle",
+              "label": "Substitute delegated approvers automatically",
+              "defaultValue": true,
+              "helpText": "When on, approvers who are OOF via a RoleDelegation are auto-replaced by their delegate in resolved_approvers. Turn off for tenants with strict delegated-approval controls (SOC 2 CC6.3 alt-path).",
+              "sortOrder": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "approvals_user",
+      "class": "Academorix\\Approval\\Settings\\ApprovalUserSettings",
+      "label": "My approvals",
+      "description": "Personal approval-inbox preferences.",
+      "icon": "inbox",
+      "scope": "user",
+      "public": true,
+      "sortOrder": 25,
+      "sections": [
+        {
+          "label": "Notification preferences",
+          "icon": "bell",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "reminder_channels",
+              "controlType": "checkbox_group",
+              "label": "Reminder channels",
+              "defaultValue": ["mail", "in_app", "push"],
+              "options": {
+                "mail": "Email",
+                "in_app": "In-app",
+                "push": "Push notification"
+              },
+              "sortOrder": 1
+            },
+            {
+              "name": "digest_frequency",
+              "controlType": "select",
+              "label": "Pending approvals digest",
+              "defaultValue": "off",
+              "options": {
+                "off": "Off (real-time only)",
+                "daily": "Daily at 9am",
+                "twice_daily": "Twice daily (9am + 3pm)"
+              },
+              "helpText": "In addition to real-time notifications, receive a periodic digest of your pending approvals.",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Inbox display",
+          "icon": "view-columns",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "default_inbox_sort",
+              "controlType": "select",
+              "label": "Default sort",
+              "defaultValue": "expires_at",
+              "options": {
+                "expires_at": "Expiring soonest first",
+                "-requested_at": "Newest first",
+                "action_key": "By action type"
+              },
+              "sortOrder": 1
+            },
+            {
+              "name": "show_delegation_badge",
+              "controlType": "toggle",
+              "label": "Show 'delegate' badge on delegated approvals",
+              "defaultValue": true,
+              "helpText": "When on, approvals you were substituted into via delegation show a badge on the row.",
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

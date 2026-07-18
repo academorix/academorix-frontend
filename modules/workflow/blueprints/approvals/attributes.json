@@ -1,0 +1,111 @@
+{
+  "id": "academorix://modules/workflow/approvals/attributes",
+  "$version": 1,
+  "title": "approvals — PHP attribute contracts",
+  "description": "Three attributes. `#[AsApprovableAction]` marks an invokable action class as gated by the approval engine — the `approve` middleware reads this attribute at request time to decide whether to defer execution or pass through. `#[AsApprovalListener]` marks a service as a consumer of approval-lifecycle events for the discovery loader. `#[RegistersApprovableAction]` is a boot-time discovery marker on service providers so a provider can bulk-declare approvable actions in a small footprint (rare — most modules put the attribute on the action class itself). Rejected alternative: `#[RequiresApproval(template:, when:)]` static attribute carrying rule config (design.md D-A4 — templates as code force a deploy to change approver rules; runtime data is the whole point).",
+  "namespace": "Academorix\\Approval\\Attributes",
+  "attributes": [
+    {
+      "name": "AsApprovableAction",
+      "class": "Academorix\\Approval\\Attributes\\AsApprovableAction",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Applied to an invokable action class (`__invoke()` handler) whose execution is gated by the approval engine. The `approve` middleware reads the attribute via reflection, looks up matching approval_templates for `(tenant, action_key)`, and either passes through (no matching template) or defers execution (template matches → creates approval_instance → 202 Accepted). At execute-time the same action is dispatched by ApprovalInstanceExecutor with the `scoped('approvals.executing')` flag set, and the middleware passes through to prevent infinite loops.",
+      "params": [
+        {
+          "name": "actionKey",
+          "type": "string",
+          "required": true,
+          "description": "Stable dot-separated identifier that names the action. Format: `<namespace>.<domain>.<verb>`. Examples: `access.grants.create`, `billing.refunds.issue`, `identity.impersonation.extend`, `compliance.data.export`, `sports.rosters.delete`. MUST match `^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_]*)+$`. The registry (`approvable_actions.action_key`) is populated at boot from discovery of every class carrying this attribute."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "default": null,
+          "description": "Admin-facing display name shown in the tenant template-authoring UI. Null falls back to a humanised `actionKey` (`billing.refunds.issue` → 'Billing / Refunds / Issue'). Prefer explicit labels for shipping-critical actions."
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "default": null,
+          "description": "Long-form operator-facing description of what this action does + why approvals matter. Rendered on the template-authoring UI + on approver-inbox rows. Null falls back to the class-level PHPDoc `@description` block."
+        },
+        {
+          "name": "contextSchemaJson",
+          "type": "string | array | null",
+          "default": null,
+          "description": "JSON Schema (or a path to one) describing the shape returned by the action's `approvalContext()` method. Used by (a) the template-authoring UI to power the rule builder, (b) the ExpressionLanguageAdapter to validate `when_expression` compilation against known keys, (c) audit reports to render context values consistently. Missing → the engine treats the context as untyped `Record<string, mixed>` and skips schema-validation."
+        }
+      ],
+      "example": "#[AsApprovableAction(actionKey: 'billing.refunds.issue', label: 'Issue refund', description: 'Refunds money to the customer\\u2019s original payment method. Refunds > $500 require manager approval; refunds > $5000 require director + compliance sign-off.')]\nfinal class IssueRefundAction {\n    public function __invoke(IssueRefundData $data, Invoice $invoice): Refund {\n        /* ... */\n    }\n\n    public function approvalContext(IssueRefundData $data, Invoice $invoice): array {\n        return [\n            'invoice_id' => $invoice->id,\n            'amount_cents' => $data->amount_cents,\n            'currency' => $invoice->currency,\n            'requester_role' => auth()->user()->getRoleNames()->first(),\n            'is_chargeback' => $data->reason === 'chargeback',\n        ];\n    }\n\n    public function approvalLabel(IssueRefundData $data, Invoice $invoice): string {\n        return sprintf('Refund #%s for %s %s', $invoice->number, $data->amount_cents / 100, $invoice->currency);\n    }\n}"
+    },
+    {
+      "name": "AsApprovalListener",
+      "class": "Academorix\\Approval\\Attributes\\AsApprovalListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service class as an approval-lifecycle listener. The discovery loader scans classes carrying this attribute at boot + wires them to the `Illuminate\\Events\\Dispatcher` for the declared events. Prefer this to Laravel's static `$listen` array so listener registration stays co-located with the listener class itself.",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<class-string>",
+          "required": true,
+          "description": "FQCN list of `Academorix\\Approval\\Events\\*` classes this listener reacts to. Ordering within the array is not significant. Example: `[ApprovalGranted::class, ApprovalRejected::class]`."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue name for async listener dispatch. Null → runs synchronously in the caller's process (appropriate for critical bridges like `AccessRequestGrantMaterializer`)."
+        },
+        {
+          "name": "priority",
+          "type": "int",
+          "default": 0,
+          "description": "Higher priority listeners run first. Bridging listeners (`AccessRequestGrantMaterializer`, `PropagateGrantMaterializationOutcome`) declare priority 100 so they run before analytics + notifications sinks."
+        }
+      ],
+      "example": "#[AsApprovalListener(events: [ApprovalExecuted::class], queue: null, priority: 100)]\nfinal class AccessRequestGrantMaterializer {\n    public function __construct(\n        private readonly GrantIssuer $grantIssuer,\n    ) {}\n\n    public function __invoke(ApprovalExecuted $event): void {\n        if ($event->actionKey !== 'access.grants.create') return;\n        $this->grantIssuer->issue(/* materialise the access_grants row */);\n    }\n}"
+    },
+    {
+      "name": "RegistersApprovableAction",
+      "class": "Academorix\\Approval\\Attributes\\RegistersApprovableAction",
+      "targets": ["class"],
+      "isRepeatable": true,
+      "description": "Applied to a service provider class to bulk-declare approvable actions at boot. Used ONLY when a module has a dozen+ approvable actions whose registration would clutter each action class with a per-class attribute (e.g. finance module registering 15 different money-movement actions). The typical case is one `#[AsApprovableAction]` per action class — this attribute is the exception, not the norm.",
+      "params": [
+        {
+          "name": "actionKey",
+          "type": "string",
+          "required": true,
+          "description": "Same format as `AsApprovableAction::actionKey`. The registered entry appears in `approvable_actions.action_key`."
+        },
+        {
+          "name": "namespace",
+          "type": "string",
+          "required": true,
+          "description": "Owning module namespace slug (e.g. `access`, `finance`, `identity`). Powers filter-by-namespace in the template-authoring UI + audit reports."
+        },
+        {
+          "name": "actionClassFqcn",
+          "type": "string",
+          "required": true,
+          "description": "Fully-qualified class name of the invokable action. MUST implement `Academorix\\Approval\\Contracts\\ApprovableActionInterface` (declares `approvalContext()` + `approvalLabel()`)."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "default": null,
+          "description": "Same semantics as `AsApprovableAction::label`."
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "default": null,
+          "description": "Same semantics as `AsApprovableAction::description`."
+        }
+      ],
+      "example": "#[RegistersApprovableAction(actionKey: 'finance.refunds.issue', namespace: 'finance', actionClassFqcn: IssueRefundAction::class, label: 'Issue refund')]\n#[RegistersApprovableAction(actionKey: 'finance.credit_memos.issue', namespace: 'finance', actionClassFqcn: IssueCreditMemoAction::class, label: 'Issue credit memo')]\n#[RegistersApprovableAction(actionKey: 'finance.chargebacks.contest', namespace: 'finance', actionClassFqcn: ContestChargebackAction::class, label: 'Contest chargeback')]\nfinal class FinanceServiceProvider extends ServiceProvider { /* ... */ }"
+    }
+  ]
+}

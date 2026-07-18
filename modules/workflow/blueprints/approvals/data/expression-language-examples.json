@@ -1,0 +1,109 @@
+{
+  "$version": 1,
+  "title": "Symfony ExpressionLanguage — canonical examples",
+  "description": "Sample expressions covering common approval-flow patterns. Consumed by the template-authoring UI's 'starter templates' picker + integration tests. Every expression parses via ExpressionLanguageAdapter without error + evaluates against the sample context to the given expected result.",
+  "when_expressions": [
+    {
+      "purpose": "Refunds over $500 need approval; smaller refunds pass through.",
+      "expression": "context.amount_cents > 50000",
+      "context_example": { "amount_cents": 75000, "currency": "USD" },
+      "expected": true,
+      "notes": "Numeric comparison. Empty when_expression = always matches."
+    },
+    {
+      "purpose": "High-value refunds initiated by non-manager users",
+      "expression": "context.amount_cents > 500000 and requester.role != 'finance_manager'",
+      "context_example": { "amount_cents": 750000, "requester_role": "cashier" },
+      "expected": true
+    },
+    {
+      "purpose": "Cross-branch access requests (compliance-review required)",
+      "expression": "context.resource_owner_branch_id != requester.branch_id",
+      "context_example": { "resource_owner_branch_id": "brn_...", "requester_branch_id": "brn_..." },
+      "expected": true
+    },
+    {
+      "purpose": "Minor-touching action (COPPA gate)",
+      "expression": "context.is_minor == true",
+      "context_example": { "is_minor": true, "athlete_id": "ath_..." },
+      "expected": true
+    },
+    {
+      "purpose": "Weekend + after-hours privileged actions require additional approval",
+      "expression": "context.impersonation_duration_seconds > 3600 or now.format('N') > 5 or now.format('H') > 18",
+      "context_example": { "impersonation_duration_seconds": 7200 },
+      "expected": true
+    },
+    {
+      "purpose": "PII-touching bulk exports (GDPR Art. 6(1)(f))",
+      "expression": "context.export_row_count > 1000 and context.contains_pii == true",
+      "context_example": { "export_row_count": 5000, "contains_pii": true },
+      "expected": true
+    }
+  ],
+  "selector_expressions": [
+    {
+      "purpose": "Every finance manager in the tenant (delegation-aware)",
+      "expression": "role('finance_manager')",
+      "returns": "User[]",
+      "notes": "Basic set — available in all tiers. Delegation substitution happens automatically."
+    },
+    {
+      "purpose": "A specific user",
+      "expression": "user('usr_compliance_lead_01')",
+      "returns": "User | null"
+    },
+    {
+      "purpose": "Every user holding a specific permission",
+      "expression": "permission('refunds.approve.high_value')",
+      "returns": "User[]"
+    },
+    {
+      "purpose": "Owner of the resource being acted upon",
+      "expression": "owner_of('invoice', context.invoice_id)",
+      "returns": "User | null",
+      "notes": "Resolves via the resource's created_by column."
+    },
+    {
+      "purpose": "Union — security team OR the resource owner",
+      "expression": "any(role('security_officer'), owner_of('invoice', context.invoice_id))",
+      "returns": "User[]"
+    },
+    {
+      "purpose": "Intersection — must be BOTH a finance manager AND in the requester's branch",
+      "expression": "all(role('finance_manager'), permission('branch.review'))",
+      "returns": "User[]",
+      "notes": "Returns users satisfying both selectors."
+    },
+    {
+      "purpose": "Everyone except the requester (self-approval refusal)",
+      "expression": "except(role('finance_manager'), requester.id)",
+      "returns": "User[]",
+      "notes": "except takes a user_id string or an array of user_ids."
+    },
+    {
+      "purpose": "Direct manager of the requester (enterprise tier)",
+      "expression": "manager_of(requester)",
+      "returns": "User | null",
+      "notes": "Requires approval_advanced_expressions entitlement. Resolves via user_metadata.manager_id."
+    },
+    {
+      "purpose": "Chain upward to the first CFO in the org tree (enterprise tier — deferred to Wave 2)",
+      "expression": "chain_up_to(role('cfo'))",
+      "returns": "User[]",
+      "notes": "Walk from requester upward through user_metadata.manager_id chain, stop at first user matching selector."
+    },
+    {
+      "purpose": "Every tenant admin except OOF-delegating ones (avoid double-hop)",
+      "expression": "except(role('tenant_admin'), context.oof_delegator_ids)",
+      "returns": "User[]"
+    }
+  ],
+  "compilation_notes": [
+    "Every expression is compiled to an AST once + cached in Redis keyed on SHA-256 of the source. Cache TTL 60s.",
+    "Runtime errors + parse errors + wall-clock timeouts (250ms hard deadline) all fire ApproverSelectorEvaluationFailed events + refuse the parent operation.",
+    "The grammar is CLOSED — no dynamic PHP method calls, no user-defined function loading. Only the whitelisted selector functions (`role`, `user`, `permission`, `owner_of`, `manager_of`, `any`, `all`, `except`, `chain_up_to`) are available.",
+    "Available variables in when_expression: action_key, subject_type, subject_id, context (spread as top-level too), requester (User), tenant (Tenant), now (DateTime), today (Date).",
+    "Available variables in selector_expression: same as when_expression PLUS `resource` (the polymorphic subject shorthand)."
+  ]
+}

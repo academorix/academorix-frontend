@@ -1,0 +1,136 @@
+{
+  "id": "academorix://modules/workflow/approvals/compliance",
+  "$version": 1,
+  "title": "approvals — compliance evidence",
+  "description": "This module is a load-bearing compliance-evidence surface. Every SOC 2 CC6.3 access-review control, ISO 27001 A.9.2 user-access-management control, and PCI-DSS 8.5 privileged-access control ties an audit trail requirement to an approval_instance. Retention windows align with SOC 2's 7-year evidence retention on executed approvals and 90-day hold on rejected + expired flows. Subprocessors: NONE — the module runs entirely on Academorix-owned infra + delegates notification transports to the notifications module (which handles subprocessor DPAs at that layer).",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(e)",
+          "principle": "storage limitation",
+          "evidence": "PurgeExpiredApprovalsJob enforces 90-day hold on rejected/expired/cancelled; 7-year hold on executed (evidence requirement); template rows preserved indefinitely (governance audit); approval_decisions retained forever."
+        },
+        {
+          "article": "Art. 6(1)(f)",
+          "principle": "legitimate interest",
+          "evidence": "The 7-year retention on executed instances is anchored to legitimate-interest for SOC 2 auditor-required retention windows. Tenants using the module inherit the retention contract in their DPA."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "Approval contexts inherit the strictest classification tier of any nested field; presenter redacts before wire projection. Approver identities + decision comments are `confidential` tier by default. PCI-DSS scanner refuses instance-create when regulated_financial data leaks into context (fires ApprovalSecurityViolation)."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security of processing",
+          "evidence": "Caller_is_approver invariant enforced by three independent layers (validation rule + middleware + observer). Direct DB writes on approval_decisions refused via observer + fire ApprovalSecurityViolation. request_ip stored as SHA-256 (never plaintext) to prevent leaked-dump correlation."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical access controls",
+          "evidence": "Every access-mutation action decorated with #[AsApprovableAction] routes through the engine when a template matches. approval_instances table is the canonical logical-access-change ledger; audit reports (POST /platform/approvals/audit-report) surface the full history."
+        },
+        {
+          "criterion": "CC6.3",
+          "principle": "role-based access + segregation of duties",
+          "evidence": "Approval templates encode segregation-of-duties rules via when_expression + selector_expression. E.g. `requester != resource_owner` + `role('finance_manager') and branch_of(requester)` enforces that no one approves their own refund + refunds are decided by an in-branch manager. approval_advanced_expressions entitlement grants access to the full expression set."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "restrict data transmission",
+          "evidence": "All approval-lifecycle events are broadcast over TLS 1.2+ channels. approval_decisions.request_ip_hash never persists plaintext. `payload_json` never wire-projected."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "MetricsCollector emits academorix.approvals.* counters (instances by status, decisions by outcome, expression evaluation timings, selector failures). Health probes check queue-depth + reminder-cadence + template-integrity. ReconcileTemplateVersionsJob nightly enforces defensive invariants."
+        }
+      ]
+    },
+    "iso_27001": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "A.9.2 (user access management)",
+          "principle": "formal user access provisioning process",
+          "evidence": "Every access grant (via access/requests → this module) is an approval_instance with SOC 2 evidence: requester_id, resolved_approvers snapshot, decision timeline with comments, final_decider_id, executed_at. Access reviews query the module's audit report."
+        },
+        {
+          "criterion": "A.9.4 (system application access control)",
+          "principle": "secure log-on procedures",
+          "evidence": "Impersonation-session extension is an approvable action. Extending beyond default 60m ttl requires a director + compliance approval flow."
+        }
+      ]
+    },
+    "pci_dss_3_2_1": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "3.4",
+          "principle": "PAN storage protection",
+          "evidence": "The PCI-DSS scanner runs at instance-create time on context_json — any regex match for cardholder-data patterns (PAN, CVV, expiry) fires ApprovalSecurityViolation(violation_type='restricted_context_leak') AND refuses instance creation. Actions decorated with #[AsApprovableAction] are contractually required to strip cardholder data from their approvalContext() output; violations are treated as a P0 security signal."
+        },
+        {
+          "criterion": "8.5",
+          "principle": "privileged access approval",
+          "evidence": "Privileged actions (identity.impersonation.start, identity.impersonation.extend, access.grants.create with admin permissions) are decorated with #[AsApprovableAction]. Approval flows create the audit trail evidence PCI-DSS auditors require."
+        },
+        {
+          "criterion": "10.2.5",
+          "principle": "audit user access to cardholder data",
+          "evidence": "Every ApprovalGranted / ApprovalRejected / ApprovalExecuted event is written to the audit log with actor_id + final_decider_id + subject reference. Retention is 7 years (executed) which satisfies PCI-DSS 10.7's 1-year hot requirement + audit-friendly cold storage."
+        }
+      ]
+    },
+    "coppa": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "verifiable parental consent",
+          "evidence": "Actions touching minor's data (e.g. sports.athletes.enroll where athlete_age < 13) decorate with #[AsApprovableAction] pointing at templates that require parent-user selector matching. approval_instances.context_json.is_minor=true triggers the platform-level classification uplift to regulated_minor tier."
+        }
+      ]
+    },
+    "hipaa": {
+      "applicable": false,
+      "notes": "HIPAA support deferred to Wave 3+. When a healthcare-adjacent tenant adopts, PHI-touching actions decorate with #[AsApprovableAction] pointing at templates that require credentialed-provider selectors. approval_instances.context_json inherits regulated_health tier via action's context_variables_schema declaration."
+    },
+    "ccpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "consumer request tracking",
+          "evidence": "Data-deletion requests (compliance.data.delete_by_subject) route through the engine when tenant policy requires a Data Protection Officer approval. approval_instances audit-log answers CCPA 1798.130 subject-request-tracking evidence."
+        }
+      ]
+    }
+  },
+  "audit_retention": {
+    "executed_instances": {
+      "hot_days": 730,
+      "cold_days": 1825,
+      "total_days": 2555,
+      "notes": "7 years total; hot 2 years for auditor Q1/Q4 sweep + cold 5 years for evidence archive."
+    },
+    "rejected_expired_cancelled_instances": {
+      "hot_days": 90,
+      "total_days": 90,
+      "notes": "SOC 2 evidence typically only needs the completed-flow audit trail; rejections retained for the DPO investigation window."
+    },
+    "template_versions": {
+      "hot_days": "indefinite while tenant active",
+      "notes": "Templates + template_approvers preserved indefinitely; deletion only via cascade on tenant erasure. Old versions retained to reproduce past decisions."
+    },
+    "audit_records": {
+      "hot_days": 2555,
+      "notes": "owen-it/laravel-auditing audit rows retained 7 years for the executed flow. Rows survive their subject's hard-delete via the audit module's separate retention chain."
+    }
+  }
+}

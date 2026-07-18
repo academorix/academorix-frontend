@@ -1,0 +1,143 @@
+{
+  "id": "academorix://modules/workflow/approvals/policies",
+  "$version": 1,
+  "title": "approvals — authorization policies",
+  "description": "Four policies gate the module's write paths. Approvable-action management is platform-only (Academorix defines the registry — tenants don't add new action types). Template CRUD is tenant-admin. Instance abilities are per-role: viewAny + view + withdraw for requesters + admins, approve + reject for approvers only (with a deeper defense — the caller MUST be in the requirement's resolved_approvers). Decisions are effectively write-once — no update, no delete.",
+  "policies": [
+    {
+      "model": "ApprovableAction",
+      "class": "Academorix\\Approval\\Policies\\ApprovableActionPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "approvals.actions.viewAny",
+          "scope": "tenant plane: any authenticated user in the tenant can list approvable-actions their tenant has active templates on (used by requester UI to explain 'why did this need approval?'). platform plane: platform_admin only."
+        },
+        {
+          "action": "view",
+          "permission": "approvals.actions.view",
+          "scope": "same as viewAny"
+        },
+        {
+          "action": "platformCreate",
+          "permission": "platform.approvals.actions.create",
+          "scope": "platform_admin only — usually the seeder does the writes; manual creation is a break-glass for actions registered outside the boot-time discovery pass."
+        },
+        {
+          "action": "platformUpdate",
+          "permission": "platform.approvals.actions.update",
+          "scope": "platform_admin only — mostly toggles is_active."
+        }
+      ]
+    },
+    {
+      "model": "ApprovalTemplate",
+      "class": "Academorix\\Approval\\Policies\\ApprovalTemplatePolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "approvals.templates.viewAny",
+          "scope": "tenant admin + owner"
+        },
+        {
+          "action": "view",
+          "permission": "approvals.templates.view",
+          "scope": "tenant admin + owner"
+        },
+        {
+          "action": "create",
+          "permission": "approvals.templates.create",
+          "scope": "tenant admin + owner + entitlement approval_templates_custom (small-tier tenants can't author custom templates)"
+        },
+        {
+          "action": "update",
+          "permission": "approvals.templates.update",
+          "scope": "tenant admin + owner — triggers version-bump on immutable-field changes"
+        },
+        {
+          "action": "activate",
+          "permission": "approvals.templates.manage",
+          "scope": "tenant admin + owner — deactivates the peer active row per one-is-active invariant"
+        },
+        {
+          "action": "deactivate",
+          "permission": "approvals.templates.manage",
+          "scope": "tenant admin + owner"
+        },
+        {
+          "action": "delete",
+          "permission": "approvals.templates.delete",
+          "scope": "tenant admin + owner + no active instances (Observer refuses)"
+        },
+        {
+          "action": "preflight",
+          "permission": "approvals.templates.create",
+          "scope": "same as create — preflight is a dry-run against an untouched DB, but authors need the same authorship permission to test their expression syntax"
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.approvals.templates.viewAny",
+          "scope": "platform_admin cross-tenant"
+        }
+      ]
+    },
+    {
+      "model": "ApprovalInstance",
+      "class": "Academorix\\Approval\\Policies\\ApprovalInstancePolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "approvals.instances.viewAny",
+          "scope": "any authenticated tenant user — the listing endpoint already scopes to `requester_id=caller OR caller IN resolved_approvers`"
+        },
+        {
+          "action": "view",
+          "permission": "approvals.instances.view",
+          "scope": "requester + any approver (in any requirement's resolved_approvers, past or present) + tenant admin"
+        },
+        {
+          "action": "withdraw",
+          "permission": "approvals.instances.withdraw",
+          "scope": "requester ONLY, when status='pending' AND template.allows_recall=true — admin cannot withdraw on the requester's behalf (that would be a governance bypass; use reject with a comment instead)"
+        },
+        {
+          "action": "approve",
+          "permission": "approvals.instances.approve",
+          "scope": "caller MUST be in requirement.resolved_approvers AND requirement.status='pending' AND caller has NOT already decided on this requirement. Enforced by ApprovalDecisionObserver AND caller_is_approver validation rule AND approvals.enforce_approver middleware (defense-in-depth: three layers, so a policy misconfiguration doesn't open a forgery seam)."
+        },
+        {
+          "action": "reject",
+          "permission": "approvals.instances.approve",
+          "scope": "same as approve (uses the same permission — approve/reject are two sides of the same decision-authority)"
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.approvals.instances.viewAny",
+          "scope": "platform_admin cross-tenant"
+        },
+        {
+          "action": "platformView",
+          "permission": "platform.approvals.instances.view",
+          "scope": "platform_admin cross-tenant"
+        }
+      ]
+    },
+    {
+      "model": "ApprovalDecision",
+      "class": "Academorix\\Approval\\Policies\\ApprovalDecisionPolicy",
+      "abilities": [
+        {
+          "action": "view",
+          "permission": "approvals.decisions.view",
+          "scope": "requester + any current-or-past approver on the parent requirement + tenant admin. Comment visibility gated separately by approvals.decisions.view_comments."
+        },
+        {
+          "note": "No `update`, `create`, `delete` — decisions are recorded via the parent instance's approve/reject endpoints AND are write-once. Any attempt to mutate a decision row fires ApprovalSecurityViolation.",
+          "action": "create",
+          "permission": null,
+          "scope": "REFUSED — direct decision writes not supported by any endpoint"
+        }
+      ]
+    }
+  ]
+}

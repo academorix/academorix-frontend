@@ -1,0 +1,137 @@
+{
+  "id": "academorix://modules/workflow/approvals/jobs",
+  "$version": 1,
+  "title": "approvals — background jobs",
+  "description": "Seven jobs cover the async surface of the engine. Two sweepers (ExpireOverdueApprovalsJob, DispatchApprovalRemindersJob) run on Horizon cron cadences to enforce the timeout + reminder contract. Two dispatchers (NotifyApproversJob, NotifyRequesterOfDecisionJob) fan out notifications on lifecycle events. One purger + one reconciler + one report-generator round out the schedule.",
+  "jobs": [
+    {
+      "class": "Academorix\\Approval\\Jobs\\ExpireOverdueApprovalsJob",
+      "queue": "approvals-critical",
+      "purpose": "Sweeper — every 5 minutes finds `approval_instances` past expires_at with status='pending' and transitions each per its template's on_timeout behaviour. This is the ONLY code path that transitions a pending instance to a terminal state without a human approve/reject/withdraw.",
+      "steps": [
+        "SELECT approval_instances WHERE status='pending' AND expires_at < now() ORDER BY expires_at ASC LIMIT config('approvals.expiration.sweep_batch_size', 100)",
+        "For each row: BEGIN transaction",
+        "  Load approval_templates.on_timeout (via approval_template_id FK; template_version resolves to the pinned version)",
+        "  Case 'expire': set status='expired' + fire ApprovalExpired(final_status='expired')",
+        "  Case 'approve': synthesise a system-decision on every pending requirement (approver_id = ApprovalSystemUser); set status='approved' + executed_at=null + fire ApprovalGranted",
+        "  Case 'escalate': resolve template.escalation_selector → new approver ids; append to each pending requirement.resolved_approvers; set expires_at = now() + template.expires_after_hours / 2; fire ApprovalEscalated",
+        "COMMIT",
+        "Fire ApprovalExpired event with final_status = 'expired' | 'approved'"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "'approvals-expire-sweep'",
+      "tries": 3,
+      "backoff": [30, 120, 600],
+      "notes": "Runs unconditionally under the platform-wide sweep — no per-tenant batching (would leave a small tenant's overdue instance stuck if the batch loop stopped early). Batch size configurable; a spike of overdue instances processes across multiple invocations until drained."
+    },
+    {
+      "class": "Academorix\\Approval\\Jobs\\DispatchApprovalRemindersJob",
+      "queue": "notifications",
+      "purpose": "Sweeper — hourly finds `approval_requirements` in status='pending' where the elapsed time since instance.requested_at (OR the last reminder for this approver, whichever is later) crosses a threshold from template.reminder_config.intervals_hours AND we haven't hit max_reminders. Dispatches ApprovalReminderNotification + writes approval_reminders row (dedup via composite unique).",
+      "steps": [
+        "SELECT approval_requirements WHERE status='pending' JOIN approval_instances WHERE status='pending' AND expires_at > now()",
+        "For each pending requirement:",
+        "  Load approval_templates.reminder_config",
+        "  For each user_id in resolved_approvers:",
+        "    SELECT COUNT(*) FROM approval_reminders WHERE approval_requirement_id=? AND approver_id=?",
+        "    IF count >= max_reminders: SKIP (throttle guard)",
+        "    Compute next_threshold_hours = reminder_config.intervals_hours[count]",
+        "    IF NOW() - MAX(instance.requested_at, last_reminder.sent_at) >= next_threshold_hours:",
+        "      INSERT approval_reminders (approver_id, requirement_id, reminder_number=count+1)",
+        "      Dispatch ApprovalReminderNotification (mail + in_app + push per approver's notification prefs)",
+        "      Fire ApprovalReminderDispatched"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "'approvals-reminders-sweep'",
+      "tries": 2,
+      "backoff": [300, 900],
+      "notes": "The composite-unique constraint on `approval_reminders(requirement_id, approver_id, reminder_number)` is the de-dup seatbelt — even if this job double-runs, INSERT ON CONFLICT DO NOTHING keeps the dispatch idempotent. `approvals.throttle_reminders` middleware provides the same guard for on-demand test dispatches."
+    },
+    {
+      "class": "Academorix\\Approval\\Jobs\\PurgeExpiredApprovalsJob",
+      "queue": "approvals-retention",
+      "purpose": "Daily — hard-deletes `approval_instances` in terminal states past the 90-day retention hold (rejected + expired + cancelled) OR past the 7-year executed hold (SOC 2 evidence). Cascades approval_requirements + approval_decisions + approval_reminders via FK.",
+      "steps": [
+        "SELECT approval_instances WHERE (status IN ('rejected','expired','cancelled') AND updated_at < now() - INTERVAL '90 days') OR (status='executed' AND executed_at < now() - INTERVAL '2555 days')",
+        "For each: hard-delete (cascade)",
+        "Fire nothing — audit records already exist"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "'approvals-purge'",
+      "tries": 2,
+      "backoff": [3600, 7200],
+      "notes": "Never touches approval_templates or approval_template_approvers or approvable_actions — those are governance rows retained indefinitely."
+    },
+    {
+      "class": "Academorix\\Approval\\Jobs\\NotifyApproversJob",
+      "queue": "notifications",
+      "purpose": "Synchronous fanout listener on ApprovalRequested. Loads the instance's requirements, unions resolved_approvers across pending requirements (only sort_order=min groups initially), dispatches one ApprovalRequestedNotification per approver. Idempotent — the notification's dedup key is `(instance_id, approver_id)`.",
+      "steps": [
+        "Load approval_instance",
+        "Load pending approval_requirements (sort_order = minimum sort_order across the instance's requirements)",
+        "Union resolved_approvers[]",
+        "For each approver_id: Notification::send(User::find(approver_id), new ApprovalRequestedNotification($instance))"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 60,
+      "uniqueVia": "approval_instance_id",
+      "tries": 3,
+      "backoff": [10, 60, 300]
+    },
+    {
+      "class": "Academorix\\Approval\\Jobs\\NotifyRequesterOfDecisionJob",
+      "queue": "notifications",
+      "purpose": "Fires on ApprovalGranted / ApprovalRejected / ApprovalExpired / ApprovalCancelled. Dispatches the appropriate notification to the original requester.",
+      "steps": [
+        "Load approval_instance + requester User",
+        "Pick notification class by status: approved → ApprovalGrantedNotification; rejected → ApprovalRejectedNotification; expired → ApprovalExpiredNotification; cancelled → ApprovalCancelledNotification (rare — this fires when an ADMIN cancels a pending flow on behalf of the requester)",
+        "Notification::send"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 60,
+      "uniqueVia": "(approval_instance_id, status_at_dispatch)",
+      "tries": 3,
+      "backoff": [10, 60, 300]
+    },
+    {
+      "class": "Academorix\\Approval\\Jobs\\ReconcileTemplateVersionsJob",
+      "queue": "approvals-retention",
+      "purpose": "Nightly — verifies invariants that observers enforce at write-time (defensive drift detection). (1) Exactly one is_active=true per (tenant, application, action_key, name). (2) Every approval_instance.approval_template_id resolves to an existing row. (3) resolved_approvers[] contains user_ids that still exist + are not soft-deleted. (4) Delegation-touched instances re-evaluated → dispatches supplementary reminders if a delegate changed since instance-create.",
+      "steps": [
+        "Check invariant (1) — SELECT ... GROUP BY (tenant_id, application_id, action_key, name) HAVING SUM(is_active::int) > 1 → email platform-ops",
+        "Check invariant (2) — LEFT JOIN approval_templates ON instance.approval_template_id=template.id WHERE template.id IS NULL → email platform-ops (this is a corrupted-state signal)",
+        "Check invariant (3) — resolved_approvers contains user_ids ← LATERAL join to users; missing users get logged as 'approver_orphaned'",
+        "Delegation drift — for every pending requirement, re-run ApproverSelectorEngine::resolve() with today's delegations → if resolved_approvers[] differs, log 'delegation_drift' + dispatch ApprovalReminderNotification to the new delegate"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "'approvals-reconcile'",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Approval\\Jobs\\AuditReportGenerationJob",
+      "queue": "approvals-reports",
+      "purpose": "On-demand — generates a compliance snapshot (SOC 2 CC6.3 + ISO 27001 A.9.2 evidence) for a period + filter set. Streams result to a signed URL via S3-compatible storage; email link to the requester when complete.",
+      "steps": [
+        "Aggregate metrics per the GenerateAuditReportInput filters: totals_by_status, totals_by_action_key, approval_rate, median/p95 time_to_decision_hours, expired_rate, security_violations_count",
+        "Serialise to json OR csv per input.format",
+        "Upload to filesystem 'reports' disk with 7-day signed URL",
+        "Notify requester with the download link"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "(period_start, period_end, filter_hash)",
+      "tries": 2
+    }
+  ]
+}

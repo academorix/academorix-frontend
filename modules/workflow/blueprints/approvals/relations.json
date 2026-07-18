@@ -1,0 +1,232 @@
+{
+  "id": "academorix://modules/workflow/approvals/relations",
+  "$version": 1,
+  "title": "approvals — model relationships",
+  "description": "Seven owned entities. `ApprovableAction` is a platform-level registry (no tenant scope). `ApprovalTemplate` is tenant-scoped + application-scoped + versioned. `ApprovalTemplateApprover` normalises the approver-group set per template (design.md D-A7 rejected the single-JSON-column shortcut). `ApprovalInstance` is one row per triggered flow; `ApprovalRequirement` is one row per approver-group per instance; `ApprovalDecision` is one row per approver's decision. `ApprovalReminder` audits every reminder-dispatch to avoid duplicate sends. Outbound relations reach tenants, applications, users, and the polymorphic subject (Invoice / AccessGrant / Athlete / etc).",
+  "internal": [
+    {
+      "from": "ApprovableAction",
+      "kind": "hasMany",
+      "to": "ApprovalTemplate",
+      "foreignKey": "action_key",
+      "foreignReferencedKey": "action_key",
+      "description": "Multiple tenants author multiple templates targeting the same approvable action. RESTRICT on delete of ApprovableAction while any template references it."
+    },
+    {
+      "from": "ApprovalTemplate",
+      "kind": "belongsTo",
+      "to": "ApprovableAction",
+      "foreignKey": "action_key",
+      "foreignReferencedKey": "action_key",
+      "onDelete": "restrict",
+      "description": "Every template targets exactly one approvable action. FK is by natural key (`action_key`) not surrogate id — this lets the seeder upsert action rows without breaking existing templates."
+    },
+    {
+      "from": "ApprovalTemplate",
+      "kind": "hasMany",
+      "to": "ApprovalTemplateApprover",
+      "foreignKey": "approval_template_id",
+      "onDelete": "cascade",
+      "description": "Approver groups are owned by the template. Cascade on template hard-delete (retention-purge only)."
+    },
+    {
+      "from": "ApprovalTemplateApprover",
+      "kind": "belongsTo",
+      "to": "ApprovalTemplate",
+      "foreignKey": "approval_template_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "ApprovalTemplate",
+      "kind": "hasMany",
+      "to": "ApprovalInstance",
+      "foreignKey": "approval_template_id",
+      "onDelete": "restrict",
+      "description": "Instances reference the template that spawned them. RESTRICT on delete — retention-purge requires all instances to be purged first."
+    },
+    {
+      "from": "ApprovalInstance",
+      "kind": "belongsTo",
+      "to": "ApprovalTemplate",
+      "foreignKey": "approval_template_id",
+      "onDelete": "restrict",
+      "description": "The template snapshot at instance-create time. `template_version` column on the instance row pins the semantic version — subsequent template edits do not retroactively change existing instances."
+    },
+    {
+      "from": "ApprovalInstance",
+      "kind": "hasMany",
+      "to": "ApprovalRequirement",
+      "foreignKey": "approval_instance_id",
+      "onDelete": "cascade",
+      "description": "Requirements are materialised at instance-create time. Cascade on instance hard-delete (retention-purge). Ordered by sort_order ASC."
+    },
+    {
+      "from": "ApprovalRequirement",
+      "kind": "belongsTo",
+      "to": "ApprovalInstance",
+      "foreignKey": "approval_instance_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "ApprovalRequirement",
+      "kind": "belongsTo",
+      "to": "ApprovalTemplateApprover",
+      "foreignKey": "template_approver_group_id",
+      "onDelete": "restrict",
+      "description": "The template approver group the requirement was materialised from. RESTRICT so a group edit doesn't corrupt in-flight instances."
+    },
+    {
+      "from": "ApprovalTemplateApprover",
+      "kind": "hasMany",
+      "to": "ApprovalRequirement",
+      "foreignKey": "template_approver_group_id"
+    },
+    {
+      "from": "ApprovalRequirement",
+      "kind": "hasMany",
+      "to": "ApprovalDecision",
+      "foreignKey": "approval_requirement_id",
+      "onDelete": "cascade",
+      "description": "Decisions attach to a requirement. Cascade on requirement hard-delete (only via instance cascade)."
+    },
+    {
+      "from": "ApprovalDecision",
+      "kind": "belongsTo",
+      "to": "ApprovalRequirement",
+      "foreignKey": "approval_requirement_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "ApprovalRequirement",
+      "kind": "hasMany",
+      "to": "ApprovalReminder",
+      "foreignKey": "approval_requirement_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "ApprovalReminder",
+      "kind": "belongsTo",
+      "to": "ApprovalRequirement",
+      "foreignKey": "approval_requirement_id",
+      "onDelete": "cascade"
+    }
+  ],
+  "outbound": [
+    {
+      "from": "ApprovalTemplate",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Tenant-scoped. Every template belongs to exactly one tenant."
+    },
+    {
+      "from": "ApprovalTemplate",
+      "kind": "belongsTo",
+      "to": "application::Application",
+      "foreignKey": "application_id",
+      "onDelete": "restrict",
+      "description": "Application-scoped. A Sports refund template doesn't apply to Marketplace. RESTRICT so application-disable doesn't corrupt tenant governance rules."
+    },
+    {
+      "from": "ApprovalTemplateApprover",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Denormalised from parent template's tenant_id for query-plan + FK integrity."
+    },
+    {
+      "from": "ApprovalInstance",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "ApprovalInstance",
+      "kind": "belongsTo",
+      "to": "application::Application",
+      "foreignKey": "application_id",
+      "onDelete": "restrict"
+    },
+    {
+      "from": "ApprovalInstance",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "requester_id",
+      "onDelete": "restrict",
+      "description": "The tenant User who triggered the action. RESTRICT so an approval's audit trail can't be orphaned by a user-hard-delete (compliance retention outlives users)."
+    },
+    {
+      "from": "ApprovalInstance",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "final_decider_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "The approver whose decision tipped the quorum. Null while status='pending'. Set exactly once at transition to approved/rejected. RESTRICT for the same audit-integrity reason as `requester_id`."
+    },
+    {
+      "from": "ApprovalInstance",
+      "kind": "morphTo",
+      "to": "Subject (polymorphic)",
+      "morphType": "subject_type",
+      "morphKey": "subject_id",
+      "nullable": true,
+      "description": "The resource the action operates on. Polymorphic — could be Invoice, AccessGrant, Athlete, RoleAssignment, ImpersonationSession, etc. Nullable when the action doesn't have a well-defined subject (e.g. bulk-operation approvals). The IsApprovable trait on the subject-side provides the inverse `->approvals()` relation."
+    },
+    {
+      "from": "ApprovalRequirement",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "ApprovalDecision",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "ApprovalDecision",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "approver_id",
+      "onDelete": "restrict",
+      "description": "The User who made the decision. RESTRICT for audit-integrity."
+    },
+    {
+      "from": "ApprovalDecision",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "delegated_from_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Set when the approver was acting under an active `access/delegation::RoleDelegation`. Null when the approver was the resolved user directly (no delegation involved). RESTRICT for audit-integrity."
+    },
+    {
+      "from": "ApprovalReminder",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "approver_id",
+      "onDelete": "cascade",
+      "description": "The reminded approver. Cascade on user-hard-delete — reminder rows have no independent audit value beyond the underlying requirement + decision."
+    }
+  ],
+  "inbound": {
+    "description": "Two categories of inbound relations. (1) The IsApprovable marker trait on subject models (Invoice, AccessGrant, Athlete, RoleAssignment, ImpersonationSession, ...) provides a polymorphic inverse `->approvals()` to their referencing `approval_instances` rows — subject models are NOT stored with a hard FK; the relation is polymorphic via `subject_type + subject_id`. (2) The HasApprovalHistory trait on the `User` model exposes `->approvalsRequested()` / `->approvalsPendingReview()` / `->approvalsDecided()` relations. Neither category adds any FK to this module's tables — the relations are read-side only."
+  },
+  "cross_module_write_paths": {
+    "description": "The engine WRITES rows in this module via the middleware + observer chain; it does NOT reach into other modules' tables. Cross-module state transitions happen exclusively via events + listener bridges — see events.json + listeners.json for the full flow.",
+    "flow": [
+      "action decorated with #[AsApprovableAction] is invoked → approve middleware intercepts → ApprovalInstanceProvisioner writes approval_instances + approval_requirements rows",
+      "approver POSTs approve → ApprovalDecisionRecorder writes approval_decisions row → ApprovalRequirementObserver recomputes quorum → transitions requirement + instance",
+      "quorum satisfied on all requirements → ApprovalGranted event fires → ApprovalInstanceExecutor dispatches the underlying action with `scoped('approvals.executing')=$instance_id` flag set → approve middleware sees the flag and passes through",
+      "action completes → ApprovalInstanceExecutor updates approval_instances.status='executed' + executed_at → ApprovalExecuted event fires",
+      "cross-module bridges listen for ApprovalExecuted with matching action_key (e.g. AccessRequestGrantMaterializer for access.grants.create) → they call the DOWNSTREAM module's public API (e.g. access/grants::GrantIssuer::issue()) — never a direct DB write"
+    ]
+  }
+}

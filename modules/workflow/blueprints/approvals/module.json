@@ -1,0 +1,270 @@
+{
+  "$version": 1,
+  "name": "approvals",
+  "alias": "approvals",
+  "namespace": "Academorix\\Approval",
+  "description": "The multi-party approval workflow engine. Every action across the platform that needs 'N humans must approve before this executes' traverses this module — from access grants (via access/requests) to money movements (refunds >$500), configuration changes, sensitive data access, platform-staff impersonation session extensions. Ships the `#[AsApprovableAction]` attribute for domain modules to decorate their actions, the `approve` middleware that intercepts execution and routes through the engine, the `symfony/expression-language`-backed rule engine that evaluates template `when_expression` conditions + approver selectors, seven owned tables that persist templates + instances + decisions, sequential + parallel approver groups via `sort_order` on template_approvers, OOF-aware approver resolution via access/delegation, quorum evaluation per requirement + AND-across-requirements per instance, recall/withdraw before decision, hard timeout via `expires_at` + configurable `on_timeout` behavior (expire vs approve vs escalate), automated reminders per approver, comprehensive audit trail. Templates are RUNTIME DATA — tenant admins author + version them via the workflow-approval-templates surface without deployment. This is the load-bearing module for governance: SOC 2 + ISO 27001 + PCI-DSS access-review controls all rely on it. Rejected: `#[RequiresApproval(template:, when:)]` static attribute (D-A4 — templates as code would require deploy to change approver rules). Rejected: `HasApprovals` trait intercepting `__invoke()` (D-A5 — PHP mechanics don't support it; middleware is the seam). Rejected: json-logic-php + custom DSL + OPA/Cerbos (D-A6 — expression-language is PHP-native + sandbox-friendly + cache-compilable). Rejected: single-JSON approver-groups column (D-A7 — normalized `approval_template_approvers` table keeps quorum evaluation SQL-queryable).",
+  "keywords": [
+    "approval-engine",
+    "approval-workflow",
+    "multi-party-approval",
+    "governance",
+    "quorum",
+    "approver-selector",
+    "expression-language",
+    "symfony-expression-language",
+    "n-of-m",
+    "template-versioning",
+    "sequential-approvers",
+    "parallel-approvers",
+    "delegation-aware",
+    "oof-aware",
+    "recall",
+    "withdraw",
+    "expiration",
+    "escalation",
+    "reminders",
+    "soc2",
+    "iso27001",
+    "pci-dss",
+    "gdpr",
+    "hipaa",
+    "audit-trail",
+    "runtime-templates",
+    "as-approvable-action",
+    "approvable-actions-registry"
+  ],
+  "priority": 34,
+  "providers": [
+    "Academorix\\Approval\\Providers\\ApprovalServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "identity",
+    "user",
+    "platform-user",
+    "application",
+    "tenancy",
+    "notifications",
+    "rbac",
+    "delegation",
+    "entitlements"
+  ],
+  "extendedBy": [
+    "requests",
+    "grants"
+  ],
+  "consumedIndirectlyBy": {
+    "description": "Every module that has an action requiring multi-party approval decorates the action with `#[AsApprovableAction('<action_key>')]`. The `approve` middleware intercepts, resolves a template, and defers execution. Consumers NEVER inject this module's services directly — they compose via the attribute + middleware seam.",
+    "modules": [
+      "access/grants (via access/requests bridge)",
+      "billing (refunds > $500, credit memos, chargebacks)",
+      "identity/auth (impersonation session extensions)",
+      "compliance (data export approvals, retention override approvals)",
+      "subscription (plan-tier downgrades, cancellation-with-refund)",
+      "tenants (tenant creation on regulated business_type, provider verification)",
+      "settings (regulated-tier config changes)",
+      "notifications (bulk unsubscribe overrides, per-tenant channel disabling)",
+      "sports (season/roster deletes, coach role revocations)"
+    ]
+  },
+  "contributes": {
+    "traits": [
+      "HasApprovalHistory",
+      "IsApprovable"
+    ],
+    "attributes": [
+      "AsApprovableAction",
+      "AsApprovalListener",
+      "RegistersApprovableAction"
+    ],
+    "blueprints": [
+      "approvable_actions",
+      "approval_templates",
+      "approval_template_approvers",
+      "approval_instances",
+      "approval_requirements",
+      "approval_decisions",
+      "approval_reminders"
+    ],
+    "middleware": [
+      "approve",
+      "approvals.enforce_approver",
+      "approvals.throttle_reminders"
+    ],
+    "events": [
+      "ApprovableActionRegistered",
+      "ApprovalTemplateCreated",
+      "ApprovalTemplateUpdated",
+      "ApprovalTemplateVersionBumped",
+      "ApprovalTemplateActivated",
+      "ApprovalTemplateDeactivated",
+      "ApprovalTemplateGroupsUpdated",
+      "ApprovalRequested",
+      "ApprovalRequirementResolved",
+      "ApprovalDecisionRecorded",
+      "ApprovalRequirementSatisfied",
+      "ApprovalRequirementFailed",
+      "ApprovalGranted",
+      "ApprovalRejected",
+      "ApprovalExecuted",
+      "ApprovalExecutionFailed",
+      "ApprovalCancelled",
+      "ApprovalExpired",
+      "ApprovalEscalated",
+      "ApprovalReminderDispatched",
+      "ApproverSelectorEvaluationFailed",
+      "DelegationSubstitutedApprover",
+      "ApprovalSecurityViolation"
+    ],
+    "policies": [
+      "ApprovableActionPolicy",
+      "ApprovalTemplatePolicy",
+      "ApprovalInstancePolicy",
+      "ApprovalDecisionPolicy"
+    ],
+    "hooks": [],
+    "commands": [
+      "approvals:list-instances",
+      "approvals:describe-instance",
+      "approvals:list-templates",
+      "approvals:activate-template",
+      "approvals:deactivate-template",
+      "approvals:list-actions",
+      "approvals:test-expression",
+      "approvals:test-selector",
+      "approvals:approve",
+      "approvals:reject",
+      "approvals:withdraw",
+      "approvals:expire-overdue",
+      "approvals:dispatch-reminders",
+      "approvals:audit-report",
+      "approvals:remediate-failed-executions",
+      "approvals:reconcile-template-versions"
+    ],
+    "jobs": [
+      "ExpireOverdueApprovalsJob",
+      "DispatchApprovalRemindersJob",
+      "PurgeExpiredApprovalsJob",
+      "NotifyApproversJob",
+      "NotifyRequesterOfDecisionJob",
+      "ReconcileTemplateVersionsJob",
+      "AuditReportGenerationJob"
+    ],
+    "notifications": [
+      "ApprovalRequestedNotification",
+      "ApprovalReminderNotification",
+      "ApprovalGrantedNotification",
+      "ApprovalRejectedNotification",
+      "ApprovalExpiredNotification",
+      "ApprovalCancelledNotification",
+      "ApprovalExecutionFailedNotification",
+      "ApprovalTemplateChangedNotification"
+    ],
+    "broadcasts": [
+      "tenant.{tenantId}.approvals",
+      "user.{userId}.approvals",
+      "approval-instance.{instanceId}"
+    ],
+    "observers": [
+      "ApprovableActionObserver",
+      "ApprovalTemplateObserver",
+      "ApprovalInstanceObserver",
+      "ApprovalRequirementObserver",
+      "ApprovalDecisionObserver"
+    ],
+    "rules": [
+      "valid_action_key",
+      "valid_expression",
+      "valid_selector_expression",
+      "template_active_uniqueness",
+      "caller_is_approver",
+      "min_reject_comment_length"
+    ],
+    "casts": [
+      "ApprovalInstanceStatus",
+      "ApprovalRequirementStatus",
+      "ApprovalDecisionType",
+      "QuorumType",
+      "OnTimeoutBehaviour",
+      "ExpressionAst"
+    ],
+    "views": [],
+    "lang": [
+      "approvals"
+    ],
+    "config": [
+      "approvals"
+    ],
+    "macros": [],
+    "bindings": [
+      "ApprovableActionRegistry",
+      "ApprovalTemplateResolver",
+      "ApproverSelectorEngine",
+      "ApprovalInstanceProvisioner",
+      "ApprovalInstanceExecutor",
+      "ApprovalDecisionRecorder",
+      "QuorumEvaluator",
+      "ReminderScheduler",
+      "ExpressionLanguageAdapter",
+      "TemplateVersioner",
+      "ApprovalAuditReporter",
+      "ApprovalPresenter"
+    ],
+    "resources": [
+      "approvable-action",
+      "approval-template",
+      "approval-template-approver-group",
+      "approval-instance",
+      "approval-requirement",
+      "approval-decision"
+    ]
+  },
+  "wraps": {
+    "packages": [
+      "symfony/expression-language ^7.0 (rule engine for `when_expression` + approver selectors)"
+    ],
+    "rationale": "Symfony's ExpressionLanguage gives us a battle-tested, cache-compilable, sandbox-safe expression grammar out of the box. We WRAP it in `ExpressionLanguageAdapter` which (a) registers the custom selector functions (`role()`, `user()`, `permission()`, `manager_of()`, `owner_of()`, `any()`, `all()`, `except()`), (b) enforces a hard 250ms per-evaluation timeout via a wall-clock deadline check, (c) caches compiled expression ASTs in Redis keyed on the expression source SHA-256, (d) captures parse failures + runtime failures as `ApproverSelectorEvaluationFailed` events instead of letting them propagate as uncaught PHP exceptions. Tenant admins cannot ship arbitrary PHP through the field — the grammar is closed."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing approval-engine surface. Every route below carries the `sanctum` guard + `X-Application-Id` header. Two sub-audiences: (1) tenant admins who author + manage approval templates, (2) every tenant user who is a requester or approver on individual instances.",
+      "routes": [
+        "GET /api/v1/approvals/actions",
+        "GET /api/v1/approvals/templates",
+        "POST /api/v1/approvals/templates",
+        "GET /api/v1/approvals/templates/{id}",
+        "PATCH /api/v1/approvals/templates/{id}",
+        "POST /api/v1/approvals/templates/{id}/activate",
+        "POST /api/v1/approvals/templates/{id}/deactivate",
+        "DELETE /api/v1/approvals/templates/{id}",
+        "GET /api/v1/approvals/templates/{id}/groups",
+        "POST /api/v1/approvals/templates/{id}/groups",
+        "PATCH /api/v1/approvals/templates/{id}/groups/{group_id}",
+        "DELETE /api/v1/approvals/templates/{id}/groups/{group_id}",
+        "POST /api/v1/approvals/templates/preflight",
+        "GET /api/v1/approvals/instances",
+        "GET /api/v1/approvals/instances/{id}",
+        "POST /api/v1/approvals/instances/{id}/withdraw",
+        "GET /api/v1/approvals/instances/pending-my-review",
+        "POST /api/v1/approvals/instances/{id}/requirements/{req_id}/approve",
+        "POST /api/v1/approvals/instances/{id}/requirements/{req_id}/reject"
+      ]
+    },
+    "platform-admin": {
+      "description": "Platform-admin cross-tenant read + approvable-action registry management. Compliance-report generation (SOC 2 CC6.3 + ISO 27001 A.9.2 evidence). Never mutates tenant approval decisions — that stays on the tenant plane.",
+      "routes": [
+        "GET /api/v1/platform/approvals/instances",
+        "GET /api/v1/platform/approvals/instances/{id}",
+        "POST /api/v1/platform/approvals/audit-report",
+        "GET /api/v1/platform/approvals/actions",
+        "POST /api/v1/platform/approvals/actions",
+        "PATCH /api/v1/platform/approvals/actions/{action_key}"
+      ]
+    }
+  },
+  "planned_consumers": [
+    "every domain module decorating an action with #[AsApprovableAction]"
+  ]
+}

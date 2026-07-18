@@ -1,0 +1,50 @@
+{
+  "id": "academorix://modules/workflow/approvals/middleware",
+  "$version": 1,
+  "title": "approvals — HTTP middleware",
+  "description": "Three middleware alii. `approve` is the LOAD-BEARING piece — every action decorated with `#[AsApprovableAction]` routes through it (design.md D-A5 rejected the trait approach because PHP mechanics don't support intercepting `__invoke()` after args have been resolved). `approvals.enforce_approver` sits in front of approve/reject endpoints as a deep-defense layer. `approvals.throttle_reminders` prevents template misconfiguration from spamming approvers.",
+  "middleware": [
+    {
+      "alias": "approve",
+      "class": "Academorix\\Approval\\Http\\Middleware\\ApproveMiddleware",
+      "priority": 60,
+      "description": "The load-bearing middleware. Runs AFTER auth + tenant.resolve + permission gates. Intercepts routes whose action class carries `#[AsApprovableAction]`. Flow: (1) Read attribute via reflection on the resolved controller/action. (2) If no attribute → no-op pass-through. (3) Check scoped('approvals.executing') flag — if set to this instance_id, we're in the executor's replay path — pass through (prevents infinite loops). (4) Load approval_templates WHERE tenant_id=current AND application_id=current AND action_key=matched AND is_active=true. (5) Call action->approvalContext(...) to snapshot the context. (6) For each template ordered by priority ASC: evaluate template.when_expression via ExpressionLanguageAdapter against the snapshot — FIRST match wins. (7) If no template matches → pass through (no approval required for this action's current inputs). (8) Match found → ApprovalInstanceProvisioner creates approval_instance + requirements + resolves approvers → RETURNS 202 Accepted with { instance_id, status: 'pending', approvers[] } — the underlying action DOES NOT run yet. (9) When the flow later transitions to approved, ApprovalInstanceExecutor SETS the scoped flag + re-dispatches the action → this middleware sees the flag → passes through.",
+      "auto_applied": false,
+      "auto_applied_to": [],
+      "notes": [
+        "The action's `approvalContext()` method MUST be pure — no DB writes, no side effects. It's called at least twice per approved flow (once at request time, once at execute time) and MUST return the same shape both times.",
+        "The scoped flag mechanism uses Laravel's `Context::scoped(fn () => ...)` API — flag is set in ApprovalInstanceExecutor's dispatch closure + auto-cleared on closure exit. Nested action calls inside the executed action DO NOT inherit the flag (Laravel's Context::scoped ends at the closure boundary), so nested approvals correctly re-trigger the middleware.",
+        "This middleware NEVER creates instances for GET/HEAD requests. Approval flows are for state-mutating actions only."
+      ]
+    },
+    {
+      "alias": "approvals.enforce_approver",
+      "class": "Academorix\\Approval\\Http\\Middleware\\EnforceApproverMiddleware",
+      "priority": 65,
+      "description": "Attached to approve + reject endpoints. Validates the caller is in the target requirement's resolved_approvers[] BEFORE the policy check runs. Rejects with 403 approval.caller_not_approver + fires ApprovalSecurityViolation(violation_type='forged_decision') on failure. This is the FIRST of THREE independent enforcement layers for the caller_is_approver invariant (the other two: caller_is_approver validation rule on the FormRequest + ApprovalDecisionObserver's creating hook). Defense-in-depth against a policy misconfiguration opening a forgery seam.",
+      "auto_applied": false,
+      "auto_applied_to": [],
+      "route_binding": "Applied only to POST /approvals/instances/{id}/requirements/{req_id}/approve|reject routes"
+    },
+    {
+      "alias": "approvals.throttle_reminders",
+      "class": "Academorix\\Approval\\Http\\Middleware\\ThrottleRemindersMiddleware",
+      "priority": 70,
+      "description": "Prevents template misconfiguration from spamming approvers via ad-hoc reminder-dispatch endpoints (e.g. admin 'send reminder now' button). Checks the (requirement, approver, current_hour) triple against a Redis counter — refuses when > 3 reminders sent this hour to the same approver-requirement pair. Refuses with 429 approval.reminder_rate_limit. The scheduled DispatchApprovalRemindersJob has its own composite-unique de-dup and doesn't hit this middleware; this covers only manual dispatches.",
+      "auto_applied": false,
+      "auto_applied_to": [],
+      "route_binding": "Applied to any POST /approvals/instances/{id}/dispatch-reminder-now route (admin-only)"
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "identity::auth:sanctum" },
+    { "middleware": "application::resolve.application" },
+    { "middleware": "tenancy::resolve.tenant" },
+    { "middleware": "access/rbac::permission" },
+    { "middleware": "entitlements::entitlement.enforce" }
+  ]
+}

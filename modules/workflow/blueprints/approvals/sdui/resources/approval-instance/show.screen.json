@@ -1,0 +1,230 @@
+{
+  "id": "approvals.resources.approval-instance.show",
+  "title": "Approval instance detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/approvals/instances/{id}",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "workflow/approvals", "entity": "approval-instance", "action": "show" },
+  "requiresPermission": "approvals.instances.view",
+  "notes": [
+    "Detail view for one approval instance. Timeline of decisions + requirement state + subject summary + approve/reject affordances (contextually shown when the caller is in a pending requirement's resolved_approvers). Subscribes to `approval-instance.{instanceId}` for real-time updates."
+  ],
+  "dataSources": [
+    {
+      "name": "instance",
+      "kind": "http.get",
+      "url": "/api/v1/approvals/instances/{id}",
+      "unwrap": "data",
+      "queryParams": {
+        "include": "requirements,decisions,requester,final_decider,template,subject"
+      },
+      "cache": { "ttlSeconds": 30, "staleWhileRevalidate": true }
+    }
+  ],
+  "subscriptions": [
+    {
+      "channel": "approval-instance.{instance.id}",
+      "kind": "private",
+      "onEvent": { "kind": "data.replace", "source": "instance", "expr": "event.data" }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "grid grid-cols-3 gap-6 p-6" },
+      "children": [
+        {
+          "id": "main",
+          "kind": "View",
+          "props": { "className": "col-span-2 flex flex-col gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex items-start justify-between" },
+              "children": [
+                {
+                  "kind": "View",
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "propsExpr": "{ as: 'h1', className: 'text-2xl font-semibold', children: instance.action_label }"
+                    },
+                    {
+                      "kind": "Text",
+                      "propsExpr": "{ className: 'text-sm text-muted', children: 'Requested by ' + instance.requester_summary.display_name + ' \\u00b7 ' + relativeTime(instance.requested_at) }"
+                    }
+                  ]
+                },
+                {
+                  "kind": "widget.reference",
+                  "widget": "approval-status-chip",
+                  "propsExpr": "{ status: instance.status, size: 'md' }"
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "title": "Subject" },
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-center gap-3" },
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "propsExpr": "{ className: 'text-sm text-muted', children: instance.subject_type + ' ' + instance.subject_id }"
+                    }
+                  ],
+                  "bindings": { "hidden": { "$expr": "!instance.subject_summary" } }
+                },
+                {
+                  "kind": "Text",
+                  "propsExpr": "{ children: instance.subject_summary?.display_name || '(No subject — bulk operation)' }"
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "title": "Requirements" },
+              "children": [
+                {
+                  "kind": "List",
+                  "bindings": { "items": { "$ref": "instance.requirements" } },
+                  "itemTemplate": {
+                    "kind": "View",
+                    "props": { "className": "flex flex-col gap-2 border-b py-3 last:border-0" },
+                    "children": [
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex items-center justify-between" },
+                        "children": [
+                          {
+                            "kind": "Text",
+                            "propsExpr": "{ as: 'h3', className: 'font-semibold', children: item.group_name }"
+                          },
+                          {
+                            "kind": "widget.reference",
+                            "widget": "approval-status-chip",
+                            "propsExpr": "{ status: item.status, size: 'sm' }"
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "widget.reference",
+                        "widget": "quorum-progress-bar",
+                        "propsExpr": "{ quorum_type: item.quorum_type, quorum_n: item.quorum_n, resolved_approver_count: item.resolved_approvers.length, approval_count: item.approval_count, reject_count: item.reject_count }"
+                      },
+                      {
+                        "kind": "widget.reference",
+                        "widget": "approver-avatar-stack",
+                        "propsExpr": "{ approvers: item.resolved_approvers, decisions: item.decisions }"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "title": "Decision timeline" },
+              "children": [
+                {
+                  "kind": "widget.reference",
+                  "widget": "decision-timeline",
+                  "propsExpr": "{ decisions: instance.decisions, requirements: instance.requirements }"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sidebar",
+          "kind": "View",
+          "props": { "className": "col-span-1 flex flex-col gap-4" },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "title": "Actions" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "size": "sm",
+                    "children": "Approve",
+                    "leadingIcon": "check"
+                  },
+                  "bindings": { "isDisabled": { "$expr": "!instance.can_approve" } },
+                  "actions": {
+                    "onPress": {
+                      "kind": "modal.open",
+                      "modalId": "approve-modal",
+                      "data": { "instance_id": "{instance.id}" }
+                    }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "danger",
+                    "size": "sm",
+                    "children": "Reject",
+                    "leadingIcon": "x-mark"
+                  },
+                  "bindings": { "isDisabled": { "$expr": "!instance.can_reject" } },
+                  "actions": {
+                    "onPress": {
+                      "kind": "modal.open",
+                      "modalId": "reject-modal",
+                      "data": { "instance_id": "{instance.id}" }
+                    }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "ghost",
+                    "size": "sm",
+                    "children": "Withdraw",
+                    "leadingIcon": "arrow-uturn-left"
+                  },
+                  "bindings": { "isDisabled": { "$expr": "!instance.can_withdraw" } },
+                  "actions": {
+                    "onPress": {
+                      "kind": "modal.open",
+                      "modalId": "withdraw-modal",
+                      "data": { "instance_id": "{instance.id}" }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "title": "Details" },
+              "children": [
+                {
+                  "kind": "DescriptionList",
+                  "items": [
+                    { "label": "Action", "value": { "$ref": "instance.action_key" } },
+                    {
+                      "label": "Template",
+                      "value": { "$expr": "instance.template_summary.name + ' v' + instance.template_summary.version" }
+                    },
+                    { "label": "Requested at", "value": { "$ref": "instance.requested_at" } },
+                    { "label": "Expires at", "value": { "$ref": "instance.expires_at" } },
+                    { "label": "Decided at", "value": { "$ref": "instance.decided_at" } },
+                    { "label": "Executed at", "value": { "$ref": "instance.executed_at" } }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

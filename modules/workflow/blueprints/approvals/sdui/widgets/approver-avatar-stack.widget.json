@@ -1,0 +1,45 @@
+{
+  "id": "approvals.widgets.approver-avatar-stack",
+  "title": "Approver avatar stack",
+  "version": 1,
+  "kind": "SduiWidget",
+  "notes": [
+    "Compact avatar-stack showing a requirement's resolved_approvers with decision badges. Approved = green checkmark, Rejected = red X, Pending = no badge. Max 5 avatars shown; overflow renders '+N more'."
+  ],
+  "props_schema": {
+    "type": "object",
+    "properties": {
+      "approvers": { "type": "array", "items": { "type": "object" } },
+      "decisions": { "type": "array", "items": { "type": "object" } }
+    },
+    "required": ["approvers"]
+  },
+  "root": {
+    "kind": "View",
+    "props": { "className": "flex items-center gap-1" },
+    "children": [
+      {
+        "kind": "AvatarGroup",
+        "propsExpr": "{ max: 5 }",
+        "children": [
+          {
+            "kind": "List",
+            "bindings": { "items": { "$expr": "props.approvers.slice(0, 5)" } },
+            "itemTemplate": {
+              "kind": "Avatar",
+              "propsExpr": "{ src: item.avatar_url, name: item.display_name, size: 'sm', decorator: decisionFor(item.id, props.decisions) }",
+              "helpers": {
+                "decisionFor": "(userId, decisions) => { const d = decisions.find(x => x.approver_id === userId); return d ? (d.decision === 'approve' ? { icon: 'check', variant: 'success' } : { icon: 'x-mark', variant: 'danger' }) : null; }"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "kind": "Text",
+        "propsExpr": "{ className: 'text-xs text-muted', children: '+' + (props.approvers.length - 5) + ' more' }",
+        "bindings": { "hidden": { "$expr": "props.approvers.length <= 5" } }
+      }
+    ]
+  }
+}

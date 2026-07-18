@@ -1,0 +1,144 @@
+{
+  "$version": 1,
+  "title": "System-shipped approval templates",
+  "description": "Platform-shipped default templates. Seeded on tenant provisioning by the SeedSystemApprovalTemplates listener. Every entry is UPSERT keyed on (tenant_id, application_id, action_key, name) — re-seeding an existing tenant is a no-op unless a new template is added to this file. Templates seed with is_active=true + priority=100 so tenant custom templates (priority 1..50) override them. Small-tier tenants (approval_templates_custom=false) get ONLY these templates.",
+  "templates": [
+    {
+      "action_key": "billing.refunds.issue",
+      "name": "Refunds over $500",
+      "description": "Every refund with amount ≥ $500 requires manager approval before dispatch. SOC 2 CC6.3 evidence.",
+      "when_expression": "context.amount_cents >= 50000",
+      "priority": 100,
+      "expires_after_hours": 168,
+      "on_timeout": "expire",
+      "reminder_config": { "intervals_hours": [24, 48, 72], "max_reminders": 3 },
+      "allows_recall": true,
+      "groups": [
+        {
+          "group_name": "Finance managers",
+          "sort_order": 0,
+          "selector_expression": "role('finance_manager')",
+          "quorum_type": "any",
+          "allows_self_approve": false,
+          "description": "One finance manager approves; rejection blocks the refund."
+        }
+      ]
+    },
+    {
+      "action_key": "billing.refunds.issue",
+      "name": "Refunds over $5000 — director sign-off",
+      "description": "High-value refunds require director + compliance approval. SOC 2 CC6.3 + PCI-DSS 8.5 evidence.",
+      "when_expression": "context.amount_cents >= 500000",
+      "priority": 90,
+      "expires_after_hours": 72,
+      "on_timeout": "expire",
+      "reminder_config": { "intervals_hours": [12, 24, 48], "max_reminders": 3 },
+      "allows_recall": true,
+      "groups": [
+        {
+          "group_name": "Finance managers",
+          "sort_order": 0,
+          "selector_expression": "role('finance_manager')",
+          "quorum_type": "any",
+          "allows_self_approve": false
+        },
+        {
+          "group_name": "Finance director",
+          "sort_order": 1,
+          "selector_expression": "role('finance_director')",
+          "quorum_type": "any",
+          "allows_self_approve": false,
+          "description": "Sequential — kicks in only after finance manager approves."
+        }
+      ]
+    },
+    {
+      "action_key": "access.grants.create",
+      "name": "Admin-scope grant requests",
+      "description": "Grants that include 'admin' or 'manage_*' permissions require both the resource owner AND a tenant admin. SOC 2 CC6.1 + ISO 27001 A.9.2 evidence.",
+      "when_expression": "'admin' in context.permissions_wanted or any(context.permissions_wanted matches '/^manage_/')",
+      "priority": 100,
+      "expires_after_hours": 168,
+      "on_timeout": "expire",
+      "reminder_config": { "intervals_hours": [24, 72], "max_reminders": 2 },
+      "allows_recall": true,
+      "groups": [
+        {
+          "group_name": "Resource owner",
+          "sort_order": 0,
+          "selector_expression": "owner_of(context.resource_type, context.resource_id)",
+          "quorum_type": "any",
+          "allows_self_approve": false
+        },
+        {
+          "group_name": "Tenant admins",
+          "sort_order": 1,
+          "selector_expression": "role('tenant_admin')",
+          "quorum_type": "any",
+          "allows_self_approve": false
+        }
+      ]
+    },
+    {
+      "action_key": "access.grants.create",
+      "name": "Standard grant requests",
+      "description": "Non-admin grants — resource owner OR tenant admin can approve. Small-tier tenant baseline.",
+      "when_expression": "",
+      "priority": 100,
+      "expires_after_hours": 168,
+      "on_timeout": "expire",
+      "reminder_config": { "intervals_hours": [24, 48, 72], "max_reminders": 3 },
+      "allows_recall": true,
+      "groups": [
+        {
+          "group_name": "Resource owner or tenant admin",
+          "sort_order": 0,
+          "selector_expression": "any(owner_of(context.resource_type, context.resource_id), role('tenant_admin'))",
+          "quorum_type": "any",
+          "allows_self_approve": false
+        }
+      ]
+    },
+    {
+      "action_key": "identity.impersonation.extend",
+      "name": "Extended impersonation sessions",
+      "description": "Impersonation session extensions beyond 1 hour require security officer approval. PCI-DSS 8.5 + SOC 2 CC6.7 evidence.",
+      "when_expression": "context.extend_by_seconds > 3600",
+      "priority": 100,
+      "expires_after_hours": 4,
+      "on_timeout": "expire",
+      "reminder_config": { "intervals_hours": [1, 2, 3], "max_reminders": 3 },
+      "allows_recall": true,
+      "groups": [
+        {
+          "group_name": "Security team",
+          "sort_order": 0,
+          "selector_expression": "role('security_officer')",
+          "quorum_type": "any",
+          "allows_self_approve": false,
+          "description": "Sensitive — short window, aggressive reminder cadence."
+        }
+      ]
+    },
+    {
+      "action_key": "compliance.data.export",
+      "name": "Bulk-export requests",
+      "description": "Data exports touching more than 1000 rows OR any row classified regulated_minor require Data Protection Officer approval. GDPR Art. 5(1)(c) + COPPA evidence.",
+      "when_expression": "context.export_row_count > 1000 or context.contains_regulated_minor == true",
+      "priority": 100,
+      "expires_after_hours": 72,
+      "on_timeout": "expire",
+      "reminder_config": { "intervals_hours": [12, 24, 48], "max_reminders": 3 },
+      "allows_recall": true,
+      "groups": [
+        {
+          "group_name": "Data Protection Officer",
+          "sort_order": 0,
+          "selector_expression": "role('data_protection_officer')",
+          "quorum_type": "any",
+          "allows_self_approve": false
+        }
+      ]
+    }
+  ]
+}

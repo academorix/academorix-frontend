@@ -1,0 +1,354 @@
+{
+  "id": "academorix://modules/workflow/approvals/data-classes",
+  "$version": 1,
+  "title": "approvals — field classification",
+  "description": "Approval instances carry two categories of sensitive data: (1) `context_json` + `payload_json` blobs which are polymorphic and may contain fields at any classification tier (a refund's `amount_cents`, an access request's `resource_owner_id`, an impersonation-extension's target user id). Both blobs inherit the STRICTEST classification tier of any nested field — the presenter redacts before wire projection. (2) Approver identities + decision comments are `confidential` — a decision comment on a compliance-approval flow may reveal internal-only rationale. Every template's `when_expression` + `selector_expression` are `internal` (they encode business rules that tenants author, but the strings themselves have no PII).",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "ApprovableAction.id",
+      "ApprovableAction.action_key",
+      "ApprovableAction.namespace",
+      "ApprovableAction.label",
+      "ApprovableAction.description",
+      "ApprovableAction.is_active",
+      "ApprovalTemplate.id",
+      "ApprovalTemplate.action_key",
+      "ApprovalTemplate.name",
+      "ApprovalTemplate.description",
+      "ApprovalTemplate.priority",
+      "ApprovalTemplate.expires_after_hours",
+      "ApprovalTemplate.on_timeout",
+      "ApprovalTemplate.allows_recall",
+      "ApprovalTemplate.version",
+      "ApprovalTemplate.is_active",
+      "ApprovalTemplateApprover.id",
+      "ApprovalTemplateApprover.group_name",
+      "ApprovalTemplateApprover.sort_order",
+      "ApprovalTemplateApprover.quorum_type",
+      "ApprovalTemplateApprover.quorum_n",
+      "ApprovalTemplateApprover.allows_self_approve",
+      "ApprovalTemplateApprover.description",
+      "ApprovalInstance.id",
+      "ApprovalInstance.action_key",
+      "ApprovalInstance.status",
+      "ApprovalInstance.requested_at",
+      "ApprovalInstance.expires_at",
+      "ApprovalInstance.decided_at",
+      "ApprovalInstance.executed_at",
+      "ApprovalInstance.rejected_at",
+      "ApprovalInstance.cancelled_at",
+      "ApprovalRequirement.id",
+      "ApprovalRequirement.sort_order",
+      "ApprovalRequirement.quorum_type",
+      "ApprovalRequirement.quorum_n",
+      "ApprovalRequirement.status",
+      "ApprovalRequirement.satisfied_at",
+      "ApprovalDecision.id",
+      "ApprovalDecision.decision",
+      "ApprovalDecision.decided_at",
+      "ApprovalReminder.id",
+      "ApprovalReminder.reminder_number",
+      "ApprovalReminder.sent_at"
+    ],
+    "internal": [
+      "ApprovableAction.action_class_fqcn",
+      "ApprovableAction.payload_schema_json",
+      "ApprovableAction.context_variables_schema_json",
+      "ApprovalTemplate.tenant_id",
+      "ApprovalTemplate.application_id",
+      "ApprovalTemplate.when_expression",
+      "ApprovalTemplate.reminder_config",
+      "ApprovalTemplate.metadata",
+      "ApprovalTemplateApprover.approval_template_id",
+      "ApprovalTemplateApprover.tenant_id",
+      "ApprovalTemplateApprover.selector_expression",
+      "ApprovalInstance.tenant_id",
+      "ApprovalInstance.application_id",
+      "ApprovalInstance.approval_template_id",
+      "ApprovalInstance.template_version",
+      "ApprovalInstance.subject_type",
+      "ApprovalInstance.subject_id",
+      "ApprovalInstance.metadata",
+      "ApprovalRequirement.tenant_id",
+      "ApprovalRequirement.approval_instance_id",
+      "ApprovalRequirement.template_approver_group_id",
+      "ApprovalRequirement.selector_expression",
+      "ApprovalRequirement.selector_snapshot_json",
+      "ApprovalDecision.tenant_id",
+      "ApprovalDecision.approval_requirement_id",
+      "ApprovalReminder.tenant_id",
+      "ApprovalReminder.approval_requirement_id"
+    ],
+    "confidential": [
+      "ApprovalInstance.requester_id",
+      "ApprovalInstance.final_decider_id",
+      "ApprovalInstance.rejection_reason",
+      "ApprovalRequirement.resolved_approvers",
+      "ApprovalDecision.approver_id",
+      "ApprovalDecision.comment",
+      "ApprovalDecision.delegated_from_id",
+      "ApprovalDecision.request_ip_hash",
+      "ApprovalReminder.approver_id"
+    ],
+    "restricted": [
+      "ApprovalInstance.context_json (INHERITS STRICTEST tier of nested fields — may carry regulated_financial for money flows, regulated_health for HIPAA flows, regulated_minor for COPPA-adjacent flows)",
+      "ApprovalInstance.payload_json (INHERITS STRICTEST tier — the action's replay payload)"
+    ],
+    "regulated_minor": [
+      "ApprovalInstance.context_json[*] — WHEN the action's context includes a minor's dob / consent-scope / guardian-link (e.g. `sports.athletes.enroll` where athlete is under 18). The action's schema declares the flag; the presenter applies redaction on wire projection to platform-plane admins who don't hold `access.minor_pii`."
+    ],
+    "regulated_health": [
+      "ApprovalInstance.context_json[*] — WHEN the action's context includes HIPAA-adjacent PHI (e.g. `compliance.medical_records.export`). Presenter refuses wire projection outside the caller's HIPAA-covered access chain."
+    ],
+    "regulated_financial": [
+      "ApprovalInstance.context_json[*] — WHEN the action's context includes PCI-DSS-adjacent card data or amount fields. PCI-DSS requires cardholder data NEVER appear in an approval context — the action's own `approvalContext()` implementation MUST strip PAN / CVV / expiry before returning. The engine trusts the action to comply; violations fire `ApprovalSecurityViolation`."
+    ],
+    "regulated_secret": [],
+    "audit_log": [
+      "ApprovableActionRegistered",
+      "ApprovalTemplateCreated + Updated + VersionBumped + Activated + Deactivated",
+      "ApprovalRequested",
+      "ApprovalDecisionRecorded",
+      "ApprovalGranted",
+      "ApprovalRejected",
+      "ApprovalExecuted (P0 — this is the moment the tenant state actually changed)",
+      "ApprovalExecutionFailed (P0 — signals a downstream bug caused a state drift)",
+      "ApprovalCancelled",
+      "ApprovalExpired",
+      "ApprovalSecurityViolation (P0 — a forged approval attempt)",
+      "ApproverSelectorEvaluationFailed (P1 — a template rule is broken)"
+    ]
+  },
+  "wire_projection": {
+    "description": "Every wire response goes through `ApprovalPresenter`. The presenter (a) applies per-tier redaction based on the CALLER's classifications-visible list from `me.classifications`, (b) resolves the `subject_type + subject_id` polymorphic tuple to a caller-viewable projection (or a redacted stub when the caller lacks access to the underlying resource), (c) redacts `context_json` per the action's `context_variables_schema_json` field-level classification tags, (d) NEVER returns `payload_json` on the tenant plane (that blob is engine-internal — only ApprovalInstanceExecutor reads it), (e) resolves approver_id lists to UserSummaryData for the caller's tenant.",
+    "ApprovalInstanceData": {
+      "id": "string (`api_<26>`)",
+      "action_key": "string",
+      "action_label": "string (from approvable_actions.label; localised)",
+      "subject_type": "string (polymorphic type — projected to a caller-viewable stub)",
+      "subject_id": "string | null",
+      "subject_summary": "SubjectSummaryData | null (redacted stub when the caller can't view the underlying resource)",
+      "context_summary": "Record<string, mixed> (redacted view of context_json per field-level classification tags — key set constrained by action.context_variables_schema_json)",
+      "requester_summary": "UserSummaryData",
+      "status": "'pending' | 'approved' | 'rejected' | 'executed' | 'expired' | 'cancelled'",
+      "requested_at": "ISO-8601",
+      "expires_at": "ISO-8601",
+      "decided_at": "ISO-8601 | null",
+      "executed_at": "ISO-8601 | null",
+      "template_summary": "ApprovalTemplateSummaryData (name + version + priority + on_timeout)",
+      "requirements": "ApprovalRequirementData[] (per-group state)",
+      "decisions": "ApprovalDecisionData[] (chronological)",
+      "can_withdraw": "boolean (true when caller is requester AND status='pending' AND template.allows_recall)",
+      "can_approve": "boolean (true when caller is in any pending requirement's resolved_approvers)",
+      "can_reject": "boolean (same as can_approve)"
+    },
+    "ApprovalRequirementData": {
+      "id": "string (`apr_<26>`)",
+      "group_name": "string (from template approver group)",
+      "sort_order": "int",
+      "quorum_type": "'all' | 'any' | 'n_of_m'",
+      "quorum_n": "int | null",
+      "status": "'pending' | 'satisfied' | 'failed'",
+      "resolved_approvers": "UserSummaryData[]",
+      "satisfied_at": "ISO-8601 | null",
+      "decisions": "ApprovalDecisionData[] (chronological, this requirement only)"
+    },
+    "ApprovalDecisionData": {
+      "id": "string (`apd_<26>`)",
+      "approver_summary": "UserSummaryData",
+      "delegated_from_summary": "UserSummaryData | null (present when the approver was acting under an active delegation)",
+      "decision": "'approve' | 'reject'",
+      "comment": "string | null (redacted stub when the caller lacks `approvals.decisions.view_comments`)",
+      "decided_at": "ISO-8601"
+    },
+    "ApprovalTemplateData": {
+      "id": "string (`apt_<26>`)",
+      "action_key": "string",
+      "action_label": "string",
+      "name": "string",
+      "description": "string | null",
+      "when_expression": "string (the raw ExpressionLanguage source — visible to admins on the authoring UI)",
+      "priority": "int",
+      "expires_after_hours": "int",
+      "on_timeout": "'expire' | 'approve' | 'escalate'",
+      "reminder_config": "{ intervals_hours: int[], max_reminders: int }",
+      "allows_recall": "boolean",
+      "version": "int",
+      "is_active": "boolean",
+      "groups": "ApprovalTemplateApproverData[]"
+    },
+    "ApprovalTemplateApproverData": {
+      "id": "string (`apg_<26>`)",
+      "group_name": "string",
+      "sort_order": "int",
+      "selector_expression": "string",
+      "quorum_type": "'all' | 'any' | 'n_of_m'",
+      "quorum_n": "int | null",
+      "allows_self_approve": "boolean",
+      "description": "string | null"
+    },
+    "ApprovalPreflightResultData": {
+      "note": "Returned by POST /approvals/templates/preflight — dry-run of an expression + selector against a synthetic context. Never persists.",
+      "expression_parses": "boolean",
+      "expression_parse_error": "string | null",
+      "expression_would_match": "boolean | null",
+      "selectors": "ApprovalPreflightSelectorResult[]"
+    },
+    "ApprovalPreflightSelectorResult": {
+      "group_name": "string",
+      "selector_expression": "string",
+      "parses": "boolean",
+      "parse_error": "string | null",
+      "resolved_approvers": "UserSummaryData[] (post-delegation substitution)",
+      "resolved_approver_count": "int",
+      "delegation_substitutions": "{ from_user_id: string, to_user_id: string, delegation_id: string }[]"
+    },
+    "ApprovalAuditReportData": {
+      "note": "Returned by POST /platform/approvals/audit-report. SOC 2 CC6.3 + ISO 27001 A.9.2 evidence.",
+      "period_start": "ISO-8601",
+      "period_end": "ISO-8601",
+      "totals_by_status": "Record<'pending' | 'approved' | 'rejected' | 'executed' | 'expired' | 'cancelled', int>",
+      "totals_by_action_key": "Record<action_key, int>",
+      "approval_rate": "number (approved / (approved + rejected))",
+      "median_time_to_decision_hours": "number",
+      "p95_time_to_decision_hours": "number",
+      "expired_rate": "number",
+      "security_violations_count": "int",
+      "selector_evaluation_failures_count": "int"
+    },
+    "never_returned": [
+      "ApprovalInstance.payload_json (engine-internal replay payload)",
+      "ApprovalRequirement.selector_snapshot_json (compiled AST — engine-internal)",
+      "ApprovalDecision.request_ip_hash (audit-only)"
+    ]
+  },
+  "input_dtos": [
+    {
+      "class": "Academorix\\Approval\\Data\\CreateApprovalTemplateInput",
+      "shape": {
+        "action_key": "string (validated via valid_action_key rule)",
+        "name": "string (max 200)",
+        "description": "string | null",
+        "when_expression": "string (validated via valid_expression rule)",
+        "priority": "int (0..100)",
+        "expires_after_hours": "int (1..8760)",
+        "on_timeout": "'expire' | 'approve' | 'escalate'",
+        "reminder_config": "{ intervals_hours: int[], max_reminders: int }",
+        "allows_recall": "boolean",
+        "groups": "CreateApprovalTemplateApproverInput[]"
+      }
+    },
+    {
+      "class": "Academorix\\Approval\\Data\\CreateApprovalTemplateApproverInput",
+      "shape": {
+        "group_name": "string (max 100)",
+        "sort_order": "int (0..100)",
+        "selector_expression": "string (validated via valid_selector_expression rule)",
+        "quorum_type": "'all' | 'any' | 'n_of_m'",
+        "quorum_n": "int | null (required when quorum_type='n_of_m')",
+        "allows_self_approve": "boolean",
+        "description": "string | null"
+      }
+    },
+    {
+      "class": "Academorix\\Approval\\Data\\UpdateApprovalTemplateInput",
+      "shape": {
+        "name": "string | null",
+        "description": "string | null",
+        "when_expression": "string | null (version bump triggered when non-null and different)",
+        "priority": "int | null",
+        "expires_after_hours": "int | null",
+        "on_timeout": "'expire' | 'approve' | 'escalate' | null",
+        "reminder_config": "{...} | null",
+        "allows_recall": "boolean | null"
+      }
+    },
+    {
+      "class": "Academorix\\Approval\\Data\\PreflightTemplateInput",
+      "shape": {
+        "action_key": "string",
+        "when_expression": "string | null",
+        "groups": "PreflightGroupInput[]",
+        "context_variables": "Record<string, mixed> (synthetic context — the caller supplies values)"
+      }
+    },
+    {
+      "class": "Academorix\\Approval\\Data\\PreflightGroupInput",
+      "shape": {
+        "group_name": "string",
+        "selector_expression": "string"
+      }
+    },
+    {
+      "class": "Academorix\\Approval\\Data\\ApproveInstanceInput",
+      "shape": {
+        "comment": "string | null (max 1000)"
+      }
+    },
+    {
+      "class": "Academorix\\Approval\\Data\\RejectInstanceInput",
+      "shape": {
+        "comment": "string (required; min 10 chars — SOC 2 evidence; max 1000)"
+      }
+    },
+    {
+      "class": "Academorix\\Approval\\Data\\WithdrawInstanceInput",
+      "shape": {
+        "reason": "string | null (max 500 — optional withdrawal rationale)"
+      }
+    },
+    {
+      "class": "Academorix\\Approval\\Data\\GenerateAuditReportInput",
+      "shape": {
+        "period_start": "ISO-8601",
+        "period_end": "ISO-8601",
+        "tenant_ids": "string[] | null",
+        "action_keys": "string[] | null",
+        "format": "'json' | 'csv'"
+      }
+    }
+  ],
+  "output_dtos": [
+    {
+      "class": "Academorix\\Approval\\Data\\ApprovalInstanceData",
+      "purpose": "Tenant + platform-plane instance projection. See wire_projection.ApprovalInstanceData."
+    },
+    {
+      "class": "Academorix\\Approval\\Data\\ApprovalRequirementData",
+      "purpose": "Per-group requirement projection."
+    },
+    {
+      "class": "Academorix\\Approval\\Data\\ApprovalDecisionData",
+      "purpose": "Per-decision projection."
+    },
+    {
+      "class": "Academorix\\Approval\\Data\\ApprovalTemplateData",
+      "purpose": "Template projection for the authoring UI."
+    },
+    {
+      "class": "Academorix\\Approval\\Data\\ApprovalTemplateApproverData",
+      "purpose": "Approver group projection."
+    },
+    {
+      "class": "Academorix\\Approval\\Data\\ApprovableActionData",
+      "purpose": "Registry entry projection (approvable-actions list)."
+    },
+    {
+      "class": "Academorix\\Approval\\Data\\ApprovalPreflightResultData",
+      "purpose": "Dry-run result for template authoring."
+    },
+    {
+      "class": "Academorix\\Approval\\Data\\ApprovalAuditReportData",
+      "purpose": "Compliance report projection."
+    }
+  ],
+  "notes": [
+    "The `context_json` blob's classification is DERIVED — its strictest nested field's tier propagates to the whole column. `ApprovalPresenter` computes the effective tier at read time by intersecting `approvable_actions.context_variables_schema_json` (which declares each variable's tier) with `context_json`'s actual keys. Missing schema → treated as `internal` (safe default).",
+    "PCI-DSS 3.2.1 Req 3.4: PANs / cardholder data MUST NEVER pass through an approval context. The action's `approvalContext()` implementation is responsible for stripping; the engine trusts the action. Violations detected via a downstream scanner fire `ApprovalSecurityViolation` (P0 audit event).",
+    "COPPA / GDPR Art. 6(1)(a) — minor consent tracking: the action's `approvalContext()` MUST NOT include a minor's raw dob or full name; it may include a boolean `is_minor` flag + tenant-scoped athlete_id + consent_scope_id. Guardian identity is referenced by user_id only, never inlined.",
+    "The `resolved_approvers` JSONB column on `approval_requirements` is intentionally denormalised — resolving the selector at query time on every read would kill performance on 'pending-my-review' inbox pages. The tradeoff: a delegation activated AFTER the requirement was resolved doesn't retroactively re-materialise; approvers see the snapshot as of instance-create time. `ReconcileTemplateVersionsJob` runs nightly to re-check delegation-touched instances and dispatch supplementary reminders where needed.",
+    "`ApprovalDecision.approver_id` MUST match a user_id present in the requirement's `resolved_approvers`. `ApprovalDecisionObserver` refuses inserts that fail this invariant AND fires `ApprovalSecurityViolation` — this closes the direct-DB-write forge attack (someone else's decision recorded against a different user).",
+    "`request_ip_hash` is stored as SHA-256 (never plaintext IP) — SOC 2 evidence requires the decision be attributable to a specific origin without persisting the raw address that could reveal the approver's location."
+  ]
+}
