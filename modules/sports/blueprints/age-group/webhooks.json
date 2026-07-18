@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/age-group/webhooks",
+  "$version": 1,
+  "title": "age-group — outbound webhooks",
+  "description": "Tenant admins can subscribe to age-group-lifecycle events via the webhook module (shared/webhooks, Wave 4). This blueprint declares the event types this module publishes. Payload shapes mirror the corresponding entries in `events.json` — the webhook module wraps them in the standard envelope.",
+  "reference": {
+    "publishedBy": "webhooks",
+    "resolvedBy": "GET /api/v1/webhooks/event-types"
+  },
+  "event_types": [
+    {
+      "type": "age_group.created",
+      "description": "New AgeGroup row created. Payload includes name, slug, sport_key, min_age, max_age, cutoff_date_kind, is_youth, is_default, is_seeded, source.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "age_group.updated",
+      "description": "AgeGroup mutated (excluding the four dedicated events below). Payload lists `changed_fields`.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "age_group.bounds_changed",
+      "description": "min_age_inclusive OR max_age_inclusive mutated. Audit-critical. Payload includes { min_age: {before, after}, max_age: {before, after}, is_youth_flip }.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "age_group.cutoff_changed",
+      "description": "cutoff_date_kind / cutoff_month / cutoff_day mutated. Audit-critical.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "age_group.sport_key_changed",
+      "description": "sport_key mutated (including null ↔ non-null).",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "age_group.default_changed",
+      "description": "The is_default flag flipped within a (tenant, organization, sport_key) tuple. Payload includes from_age_group_id + to_age_group_id.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "age_group.archived",
+      "description": "AgeGroup soft-deleted (archived). Payload includes reason + hard_delete_scheduled_for.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "age_group.restored",
+      "description": "Archived AgeGroup transitioned back to active.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "age_group.deleted",
+      "description": "AgeGroup soft-deleted OR hard-deleted (payload carries mode).",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "age_group.catalog_seeded",
+      "description": "The tenant's default catalog was seeded on TenantProvisioned. Fires exactly once per tenant lifetime under normal operations. Payload includes { tenant_id, age_group_ids: [10 IDs], default_age_group_id, seeded_by, catalog_version }.",
+      "since_version": "1.0.0"
+    }
+  ],
+  "notes": [
+    "Every payload is signed with the tenant's webhook secret (HMAC-SHA256) per the shared webhook contract.",
+    "AgeGroup rows carry no PII — payloads are safe to route to any tenant-approved webhook destination.",
+    "The bounds_changed + cutoff_changed events do NOT include the count of affected Athletes in the payload — that count is a downstream module concern (Wave 3+). Consumers who need it should call the Athlete module's own API."
+  ]
+}

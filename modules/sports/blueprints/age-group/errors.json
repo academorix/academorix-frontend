@@ -1,0 +1,214 @@
+{
+  "id": "academorix://modules/age-group/errors",
+  "$version": 1,
+  "title": "age-group — error codes",
+  "namespace": "age_group",
+  "errors": [
+    {
+      "code": "AGE_GROUP_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "age_group.errors.age_group_not_found"
+    },
+    {
+      "code": "AGE_GROUP_ALREADY_EXISTS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "age_group.errors.age_group_already_exists",
+      "description": "Attempted to create an AgeGroup with a (tenant_id, organization_id, sport_key, slug) tuple that already exists. If the existing row is soft-deleted, response includes the restore path."
+    },
+    {
+      "code": "AGE_GROUP_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "age_group.errors.age_group_quota_exceeded",
+      "description": "Reached the `age_group_slot` entitlement cap for this tenant (Small=0, Medium=20, Enterprise=unlimited). Response includes tier + upgrade path."
+    },
+    {
+      "code": "AGE_GROUP_CUSTOM_DISABLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "age_group.errors.age_group_custom_disabled",
+      "description": "Tenant does not carry the `age_group_custom` entitlement (Small tier). Small tier is locked to the seeded catalog — no customs. Response includes upgrade path."
+    },
+    {
+      "code": "AGE_GROUP_SPORT_SPECIFIC_DISABLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "age_group.errors.age_group_sport_specific_disabled",
+      "description": "Attempted to set sport_key on an AgeGroup but the tenant lacks the `age_group_sport_specific` entitlement (Enterprise-only). Response includes upgrade path + the option to leave sport_key null (generic group)."
+    },
+    {
+      "code": "AGE_GROUP_IN_USE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "age_group.errors.age_group_in_use",
+      "description": "Attempted to archive or delete an AgeGroup that has active inbound references (Team.age_group_id, EventDivision.age_group_id — AthleteEnrollment.age_group_snapshot_id does NOT count because snapshots are self-contained copies). Response includes the reference counts + suggests archiving the referring rows first or transferring them to another AgeGroup."
+    },
+    {
+      "code": "CANNOT_DELETE_DEFAULT_AGE_GROUP",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "age_group.errors.cannot_delete_default_age_group",
+      "description": "The AgeGroup is is_default=true within its (tenant, organization, sport_key) tuple. Every tuple must have exactly one default. Promote another AgeGroup to default first, then retry."
+    },
+    {
+      "code": "CANNOT_DELETE_SEEDED_AGE_GROUP",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "age_group.errors.cannot_delete_seeded_age_group",
+      "description": "The AgeGroup is is_seeded=true (part of the platform's default catalog). Seeded rows may be edited (rename, recolour, bounds edits when entitled) but not deleted — deletion would break the reference baseline the platform ships to every tenant."
+    },
+    {
+      "code": "AGE_GROUP_MISSING_DEFAULT",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "age_group.errors.age_group_missing_default",
+      "description": "Attempted to flip is_default=false without a sibling AgeGroup in the same (tenant, organization, sport_key) tuple carrying is_default=true. System invariant refuses. Warn-severity because the invariant should have been guarded by the observer chain."
+    },
+    {
+      "code": "AGE_GROUP_BOUNDS_INVALIDATE_ATHLETES",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "age_group.errors.age_group_bounds_invalidate_athletes",
+      "description": "Attempted to change min_age_inclusive or max_age_inclusive on an AgeGroup that currently has enrolled Athletes whose new age would fall outside the new bounds (Wave 3+). Response includes the count of affected Athletes + the option to force the change (with an explicit `force=true` param + audit-critical logging)."
+    },
+    {
+      "code": "AGE_GROUP_CUTOFF_INVALIDATE_ATHLETES",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "age_group.errors.age_group_cutoff_invalidate_athletes",
+      "description": "Same as AGE_GROUP_BOUNDS_INVALIDATE_ATHLETES but for cutoff_date_kind / cutoff_month / cutoff_day changes."
+    },
+    {
+      "code": "AGE_GROUP_SPORT_KEY_IN_USE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "age_group.errors.age_group_sport_key_in_use",
+      "description": "Attempted to mutate sport_key on an AgeGroup with active downstream references. Response includes reference counts + suggests creating a NEW AgeGroup with the new sport_key + migrating consumers."
+    },
+    {
+      "code": "AGE_GROUP_IS_SEEDED_IMMUTABLE",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "age_group.errors.age_group_is_seeded_immutable",
+      "description": "Attempted to mutate the is_seeded flag. This flag is set once by the platform seeder + never mutated by tenant callers. Security-relevant — surfacing this error means someone tried to promote a custom row to platform-baseline status."
+    },
+    {
+      "code": "AGE_GROUP_IS_SEEDED_RESERVED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "age_group.errors.age_group_is_seeded_reserved",
+      "description": "Attempted to create an AgeGroup with is_seeded=true from a non-seeder call site. Same reasoning as AGE_GROUP_IS_SEEDED_IMMUTABLE."
+    },
+    {
+      "code": "AGE_GROUP_ORG_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "age_group.errors.age_group_org_immutable",
+      "description": "Attempted to change organization_id post-create. Moving an AgeGroup between organizations reshapes its scoping tuple + would silently reassign downstream references. Create a new AgeGroup under the target Organization + migrate consumers instead."
+    },
+    {
+      "code": "INVALID_AGE_BOUNDS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "age_group.errors.invalid_age_bounds",
+      "description": "min_age_inclusive > max_age_inclusive OR both outside the platform floor/ceiling [3, 100]. The rule catches it before the observer; this code surfaces on direct service calls."
+    },
+    {
+      "code": "PLATFORM_AGE_BOUNDS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "age_group.errors.platform_age_bounds",
+      "description": "One of min_age_inclusive < 3 OR max_age_inclusive > 100. The platform floor + ceiling exist to guard against typo entries + to bound the invariant space; tenants who genuinely need broader bounds should file a support ticket."
+    },
+    {
+      "code": "INVALID_CUTOFF_CONFIG",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "age_group.errors.invalid_cutoff_config",
+      "description": "The combination of cutoff_date_kind + cutoff_month + cutoff_day is inconsistent. `academic_year` requires cutoff_month (day defaults to 1). `custom_date` requires both cutoff_month + cutoff_day. `calendar_year` + `rolling_from_birthday` accept neither (any supplied values are refused as noise)."
+    },
+    {
+      "code": "AGE_GROUP_SLUG_RESERVED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "age_group.errors.age_group_slug_reserved",
+      "description": "The slug is one of the platform-reserved values (default, system, seeded, admin, platform). Reserved slugs are used by the seeder + admin tooling; tenants must pick a different slug."
+    },
+    {
+      "code": "AGE_GROUP_INVALID_SPORT_KEY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "age_group.errors.age_group_invalid_sport_key",
+      "description": "The supplied sport_key is not a valid registered sport identifier. The registry hardens in Wave 3c; before then, sport_key accepts any string matching /^[a-z][a-z0-9_]*$/."
+    },
+    {
+      "code": "AGE_GROUP_DEFAULT_DUPLICATE_ON_RESTORE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "age_group.errors.age_group_default_duplicate_on_restore",
+      "description": "Attempted to restore an archived AgeGroup where is_default=true, but the scoping tuple already has an active row with is_default=true. Demote the current default first, then retry the restore."
+    },
+    {
+      "code": "AGE_GROUP_SLUG_DUPLICATE_ON_RESTORE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "age_group.errors.age_group_slug_duplicate_on_restore",
+      "description": "Attempted to restore an archived AgeGroup where the slug now collides with an active row. Rename the active row or rename the archived row before restoring."
+    },
+    {
+      "code": "AGE_GROUP_RESOLVE_INDETERMINATE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "age_group.errors.age_group_resolve_indeterminate",
+      "description": "The resolver couldn't find a single matching AgeGroup for the given (DOB, sport_key, on_date). Response includes the candidate list — tenants may have overlapping groups (e.g. an athlete aged 12 might qualify for both U12 and U14 depending on cutoff semantics). Callers must disambiguate explicitly."
+    }
+  ]
+}

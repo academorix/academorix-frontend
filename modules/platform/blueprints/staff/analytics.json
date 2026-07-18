@@ -1,0 +1,111 @@
+{
+  "id": "academorix://modules/staff/analytics",
+  "$version": 1,
+  "title": "staff — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Staff Hired",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "employment_type", "position_bucket", "has_probation", "is_branch_manager", "has_coach_profile_at_hire"],
+      "description": "Admin hired a staff member. position_bucket is pre-computed (coaching / reception / management / support / other) to avoid high-cardinality free-text labels."
+    },
+    {
+      "name": "Staff Promoted To Manager",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "was_prior_manager_demoted", "days_since_hire_bucket"]
+    },
+    {
+      "name": "Staff Put On Leave",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "leave_type", "expected_duration_days_bucket"]
+    },
+    {
+      "name": "Staff Suspended",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "branch_id", "duration_bucket"],
+      "description": "Consent tier: essential (compliance signal for discrimination-pattern detection). Never carries the suspension_reason string."
+    },
+    {
+      "name": "Staff Offboarded",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "termination_reason", "days_of_service_bucket", "was_branch_manager", "was_coach", "cascade_used"]
+    },
+    {
+      "name": "Staff Reactivated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "days_since_offboarding_bucket"]
+    },
+    {
+      "name": "Compensation Changed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "branch_id", "changed_fields_count", "was_within_max_delta_percent", "compensation_type"],
+      "description": "PRIVATE-TIER analytics — payload NEVER carries the amount. Only the FACT that a change happened + which fields + the compensation_type category (hourly / salary / stipend / volunteer / commission). Powers HR-compliance dashboards for pay-transparency audits. Consent tier: essential (compensation-change frequency is a discrimination-pattern signal that cannot be opted out)."
+    },
+    {
+      "name": "Coach Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "sport_key", "coaching_level", "additional_sports_count", "certifications_at_create_count"]
+    },
+    {
+      "name": "Coach Sport Changed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "from_sport_key", "to_sport_key"]
+    },
+    {
+      "name": "Coach Certification Added",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "coach_id_bucket", "requires_verification", "has_expiry", "years_until_expiry_bucket"]
+    },
+    {
+      "name": "Coach Certification Expired",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "was_verified", "days_since_added_bucket"]
+    },
+    {
+      "name": "Coach Rating Updated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "rating_bucket", "rating_count_bucket", "delta_direction"],
+      "description": "delta_direction: `up_significant` (>=0.5), `up_minor` (<0.5), `flat`, `down_minor`, `down_significant`. Prevents high-cardinality rating labels."
+    },
+    {
+      "name": "Coach Status Changed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "from_status", "to_status", "reason_category"],
+      "description": "reason_category bucketed: `staff_leave_cascade`, `staff_offboarded_cascade`, `manual_pause`, `manual_archive`, `certification_lapsed`, `other`."
+    },
+    {
+      "name": "Probation Ending Soon Notification Sent",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "threshold_days"]
+    },
+    {
+      "name": "Branch Manager Invariant Violated",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id"],
+      "description": "P1 event — every fire indicates data-integrity concern. Consent tier: essential (safety + integrity)."
+    }
+  ],
+  "notes": [
+    "Analytics NEVER carry raw compensation_amount_cents — the Compensation Changed event uses only category + fact-of-change. Prevents accidental exposure via the analytics sink.",
+    "user_id + staff_id + coach_id are included as properties on functional-tier events for the tenant's own HR analytics. GDPR consent tier 'functional' covers first-party operational analytics per notifications::consent-tiers.json.",
+    "The 'essential' consent tier for Staff Suspended and Compensation Changed is deliberate — compliance signals (anti-discrimination pattern detection) cannot be opted out. Applies platform-side observability, not tenant-visible dashboards.",
+    "The Branch Manager Invariant Violated event fires from the reconciler job (not the observer) — the observer's SELECT ... FOR UPDATE should have prevented the invariant break. Every fire is a P1."
+  ]
+}

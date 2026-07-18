@@ -1,0 +1,110 @@
+{
+  "id": "academorix://modules/age-group/settings",
+  "$version": 1,
+  "title": "age-group — settings",
+  "description": "Tenant-scoped policy for age-group provisioning + retention + reconciliation behaviour + resolver strategy. Compliance floors clamp retention_days up when the tenant's regulatory profile requires it (minor-safeguarding retention floor: 730 days for the row; audit rows stay 2555 days regardless).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "age_group",
+      "class": "Academorix\\Sports\\AgeGroup\\Settings\\AgeGroupSettings",
+      "label": "Age groups",
+      "description": "Tenant-wide policy for age-group provisioning, resolution, and retention.",
+      "icon": "user-group",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 53,
+      "permission": "age_groups.manage",
+      "sections": [
+        {
+          "label": "Provisioning",
+          "description": "How the seeded catalog is created for new tenants.",
+          "icon": "plus-circle",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "async_seed",
+              "controlType": "toggle",
+              "label": "Seed the default catalog asynchronously",
+              "defaultValue": true,
+              "helpText": "When on, the 10-entry default catalog is provisioned on a background queue after tenant creation. Off = created inside the tenant-provisioning transaction (slower but the tenant is never briefly catalogless).",
+              "sortOrder": 1
+            }
+          ]
+        },
+        {
+          "label": "Reconciliation",
+          "description": "How the system heals default-group drift.",
+          "icon": "arrow-path",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "alert_on_drift",
+              "controlType": "toggle",
+              "label": "Alert on default-group drift",
+              "defaultValue": true,
+              "helpText": "When on, the reconciler pages ops on drift (a scoping tuple with 0 or 2+ defaults). Off = drift is only logged.",
+              "sortOrder": 1
+            },
+            {
+              "name": "auto_heal",
+              "controlType": "toggle",
+              "label": "Auto-heal drift",
+              "defaultValue": false,
+              "helpText": "When on, the reconciler auto-heals drift by promoting the oldest row in the tuple. Off by default — surface + acknowledge before healing.",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Resolution",
+          "description": "How the resolver picks an age group when multiple candidates match.",
+          "icon": "adjustments-horizontal",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "indeterminate_strategy",
+              "controlType": "select",
+              "label": "Indeterminate resolution strategy",
+              "defaultValue": "refuse",
+              "options": [
+                { "key": "refuse", "label": "Refuse — force the caller to disambiguate (safest)" },
+                { "key": "first_match", "label": "First match — return the first row by sort_order" },
+                { "key": "oldest_group", "label": "Oldest group — return the row with the smallest min_age" }
+              ],
+              "helpText": "How AgeGroupResolver::resolveFor(...) behaves when multiple candidates match.",
+              "sortOrder": 1
+            },
+            {
+              "name": "prefer_sport_specific",
+              "controlType": "toggle",
+              "label": "Prefer sport-specific groups over generic",
+              "defaultValue": true,
+              "helpText": "When resolving for an Athlete + sport_key, prefer the sport-specific override over the generic fallback. Off = always use the generic group; sport-specific groups become advisory-only.",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Retention",
+          "description": "How long archived age groups are kept.",
+          "icon": "archive-box",
+          "sortOrder": 4,
+          "fields": [
+            {
+              "name": "archived_age_groups_retention_days",
+              "controlType": "number",
+              "label": "Days to hold archived age groups",
+              "defaultValue": 1095,
+              "min": 730,
+              "max": 2555,
+              "helpText": "Days a soft-deleted age group stays recoverable. Compliance floor: 730 days. Default: 1095 (3 years — matches youth-development cohort windows). Enterprise tenants may extend up to 2555 (7 years matching audit retention).",
+              "sortOrder": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

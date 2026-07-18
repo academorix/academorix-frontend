@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/staff/retention",
+  "$version": 1,
+  "title": "staff — retention windows",
+  "description": "Active + on_leave + suspended staff never expire. Offboarded staff enter a two-phase retention: 90-day grace hold on emergency_contact_* + tax_id_last4 (GDPR Art. 5(1)(c) minimisation), then 7-year retention on the employment metadata (SOC 2 CC6.3 + national tax + labour law). Compensation history rows retain 7 years even after the parent Staff is hard-deleted — migrated to a compliance-archive table for the residual window. Coaches retain in lockstep with the parent Staff (a coach cannot outlive its parent).",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(c) — data minimisation (emergency contact + tax_id_last4 redaction at 90 days)",
+    "gdpr Art. 17 — right to erasure (with financial-retention Art. 17(3)(b) exception)",
+    "soc2 CC6.3 — segregation of duties audit trail retention",
+    "national tax law — 7-year employment-record retention (US, EU, UK, CA baselines)",
+    "national labour law — pay-equity + wrongful-termination claim windows (typically 3-6 years, we retain 7)"
+  ],
+  "retention": [
+    {
+      "entity": "Staff — active / pre_hire / on_leave / suspended / offboarding",
+      "hot": { "days": "indefinite — never expires while non-terminal" },
+      "purge": {
+        "trigger": "never (until transitioned to offboarded)",
+        "action": "no-op",
+        "notes": "Staff in non-terminal states are the living roster. Retention only applies once employment_status='offboarded'."
+      }
+    },
+    {
+      "entity": "Staff — emergency_contact_* + tax_id_last4 (post-offboarding)",
+      "hot": { "days": 90, "description": "emergency_contact_name + emergency_contact_phone + emergency_contact_relationship + tax_id_last4" },
+      "purge": {
+        "trigger": "employment_status='offboarded' + ended_at + 90 days",
+        "action": "field-level redaction (replace with [REDACTED]) via PurgeOffboardedStaffJob phase 1",
+        "notes": "Preserves the rest of the row for the 7-year employment record. Only the confidential PII sub-fields are redacted. The audit trail keeps the pre-redaction values in the audits table with 7-year retention (regulated-access only)."
+      }
+    },
+    {
+      "entity": "Staff — employment metadata (post-offboarding)",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years)" },
+      "purge": {
+        "trigger": "> 7 years past ended_at + no downstream references (Coach hard-purged, PayrollLine (Wave 4) hard-purged)",
+        "action": "hard delete via PurgeOffboardedStaffJob phase 2",
+        "notes": "RESTRICT FKs catch active references; the job records `retention_blocked` metric when hard-delete is refused. Retention runs against ended_at, not deleted_at, because the employment record's compliance significance is dated from termination."
+      }
+    },
+    {
+      "entity": "staff_compensation_history rows",
+      "hot": { "days": "co-terminous with Staff row" },
+      "cold": { "days": "2555 (7 years) — outlives the parent Staff hard-purge if necessary" },
+      "purge": {
+        "trigger": "> 7 years past history_row.created_at",
+        "action": "hard delete from staff_compensation_history table",
+        "notes": "PARENT-INDEPENDENT retention. When a tenant is erased (TenantErased), compensation_history rows migrate to a compliance-archive table (retained in encrypted form by ops for the residual 7-year window). This is a regulator-compliance requirement — pay-equity claims can look back up to 6-7 years even after the tenant has fully offboarded from Academorix."
+      }
+    },
+    {
+      "entity": "Coach — active / paused",
+      "hot": { "days": "indefinite — never expires while non-terminal" }
+    },
+    {
+      "entity": "Coach — archived",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years) — aligned with parent Staff" },
+      "purge": {
+        "trigger": "> 7 years past coach_ended_at + parent Staff hard-purged",
+        "action": "hard delete",
+        "notes": "A Coach cannot be hard-purged before its parent Staff. RESTRICT FK enforces this at the DB layer."
+      }
+    },
+    {
+      "entity": "Coach.certifications JSONB entries",
+      "hot": { "days": "co-terminous with coach" },
+      "purge": {
+        "trigger": "coach hard-delete",
+        "action": "cascaded via the coach row (certifications are a JSONB sub-field, not a separate table)",
+        "notes": "Historical certification data (add/remove/expire events) is inspectable via the audit trail's before/after snapshots on CoachCertificationAdded / CoachCertificationExpired / CoachCertificationRemoved events."
+      }
+    }
+  ],
+  "cross_reference": [
+    "The audit rows written by Auditable outlive the source rows per audit::retention.json — audit retention is 7 years regardless of source-row retention. This applies to normal audits + the dedicated staff_compensation_history stream.",
+    "TenantErased cascades hard-delete of every Staff + Coach row via FK CASCADE, but the audit rows + compensation_history rows survive the cascade (per audit module's outlives-source design + the compliance-archive migration for compensation)."
+  ]
+}

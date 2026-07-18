@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/teams/schedule",
+  "$version": 1,
+  "title": "teams — scheduled tasks",
+  "entries": [
+    {
+      "name": "teams-open-close-registrations",
+      "command": "queue:dispatch --job=Academorix\\Teams\\Jobs\\OpenClosePendingRegistrationsJob",
+      "cron": "*/5 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 5 min: flip registration_opens_at / registration_closes_at windows and fire TeamRegistrationOpened / TeamRegistrationClosed."
+    },
+    {
+      "name": "teams-close-expired-trials",
+      "command": "queue:dispatch --job=Academorix\\Teams\\Jobs\\CloseExpiredTrialsJob",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly: transition in_progress trials past ends_at + 24h to completed."
+    },
+    {
+      "name": "teams-reconcile-member-invariant",
+      "command": "queue:dispatch --job=Academorix\\Teams\\Jobs\\ReconcileTeamMemberActiveInvariantJob",
+      "cron": "0 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 03:00 UTC: sweep for (tenant_id, team_id, member_type, member_id) tuples with 2+ active roster rows. Every finding is a P1 incident."
+    },
+    {
+      "name": "teams-purge-archived",
+      "command": "queue:dispatch --job=Academorix\\Teams\\Jobs\\PurgeArchivedTeamsJob",
+      "cron": "0 4 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 04:00 UTC: hard-purge archived teams past the 730-day retention hold."
+    },
+    {
+      "name": "teams-redact-anonymous-trialists",
+      "command": "queue:dispatch --job=Academorix\\Teams\\Jobs\\RedactAnonymousTrialistProfileJob",
+      "cron": "0 5 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 05:00 UTC: GDPR minimisation. Redact anonymous trialist profile fields 90 days post-decision for rejected / no_show / cancelled trials."
+    }
+  ]
+}

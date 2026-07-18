@@ -1,0 +1,49 @@
+{
+  "id": "academorix://modules/season/listeners",
+  "$version": 1,
+  "title": "season — subscribed events",
+  "listeners": [
+    {
+      "event": "tenancy::TenantProvisioned",
+      "listener": "Academorix\\Sports\\Season\\Listeners\\SeedDefaultSeasonOnTenantProvisioned",
+      "queue": "notifications",
+      "purpose": "Fires when a new Tenant is created. Evaluates the seasonal business_type + entitlement gate; when eligible, dispatches SeedDefaultSeasonForTenantJob. Non-seasonal business_types (sports_center / gym) skip silently. Small-tier tenants skip regardless of business_type (per the `sports_seasons` entitlement master gate). Idempotent — a second dispatch for the same tenant is a no-op."
+    },
+    {
+      "event": "tenancy::TenantErased",
+      "listener": "Academorix\\Sports\\Season\\Listeners\\PreventSeasonOrphansOnTenantErased",
+      "queue": null,
+      "purpose": "Fires BEFORE tenancy's FK cascade drops the tenant. Verifies that every Season on this tenant has already lost its inbound references (Team, AthleteEnrollment, Event, Session have been erased first). When any inbound reference still exists, logs a telemetry counter + surfaces a diagnostic in the tenancy erasure report. Does NOT rehome Seasons to another tenant (cross-tenant seasons are forbidden per hierarchy.md §13). The actual DELETE fires afterward via the tenant_id FK CASCADE."
+    },
+    {
+      "event": "entitlements::EntitlementDowngrade",
+      "listener": "Academorix\\Sports\\Season\\Listeners\\FlagSeasonDriftOnDowngrade",
+      "queue": "low",
+      "purpose": "Fires when a tenant downgrades their plan + the new tier has fewer `season_slot` slots than the current active-year season count (e.g. Medium -> Small takes seasons from 4 to 0). Does NOT auto-archive — surfaces the drift in the tenant admin UI + logs a `academorix.season.slot_drift.total` counter. The tenant admin must manually complete + archive extra seasons OR upgrade back."
+    },
+    {
+      "event": "entitlements::EntitlementDowngrade",
+      "listener": "Academorix\\Sports\\Season\\Listeners\\FlagSportScopingDriftOnDowngrade",
+      "queue": "low",
+      "purpose": "Fires when a tenant downgrades from Enterprise + the new tier no longer includes `season_sport_scoping`. Scans for Seasons with sport_key IS NOT NULL + flags them in the admin UI. Does NOT null the sport_key (would corrupt downstream Team references). Admin action required to consolidate sport-specific seasons into sport-agnostic ones."
+    },
+    {
+      "event": "organization::OrganizationArchived",
+      "listener": "Academorix\\Sports\\Season\\Listeners\\ArchiveSeasonsOnOrganizationArchived",
+      "queue": "low",
+      "purpose": "Fires when an Organization is archived (Wave 2a organization module). Cascades: finds active Seasons scoped to this Organization + refuses the organization archive when any are active-status (in_progress / playoffs). Otherwise archives the completed ones alongside. Feeds SeasonArchived events per affected row so the notification consumers fire."
+    },
+    {
+      "event": "branch::BranchClosed",
+      "listener": "Academorix\\Sports\\Season\\Listeners\\HandleBranchClosureOnBranchScopedSeasons",
+      "queue": "low",
+      "purpose": "Fires when a Branch is closed (Wave 2b branch module). Finds Seasons scoped to this Branch + writes an audit warning per row (does NOT auto-archive — Season data is retained for reporting even when the branch closes). Tenants who want the seasons cleaned up must archive them explicitly."
+    },
+    {
+      "event": "audit::AuditFlushed",
+      "listener": "Academorix\\Sports\\Season\\Listeners\\CacheReconciliationLastRun",
+      "queue": null,
+      "purpose": "Fires when ReconcileCurrentSeasonInvariantJob completes + writes its report. Caches the timestamp in `sea:reconciler_last_run` so the health probe + ops dashboard can read the last-successful-run marker without querying `audit_events`."
+    }
+  ]
+}

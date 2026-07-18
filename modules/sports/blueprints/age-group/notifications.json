@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/age-group/notifications",
+  "$version": 1,
+  "title": "age-group — notification classes + categories",
+  "namespace": "Academorix\\Sports\\AgeGroup\\Notifications",
+  "notifications": [
+    "AgeGroupCreatedNotification",
+    "AgeGroupBoundsChangedNotification",
+    "AgeGroupDefaultChangedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "age_group.created",
+      "display_name": "Age group created",
+      "description": "Sent to tenant admins when a new custom AgeGroup is created. Distinct from AgeGroupCatalogSeeded — the seeded catalog fires silently (system invariant, not a purchase). Opt-in tier: functional_optional; default on for admins + owners.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "age_group.bounds_changed",
+      "display_name": "Age group bounds changed",
+      "description": "Sent to tenant admins when min_age_inclusive OR max_age_inclusive changes on any AgeGroup. Cannot opt out — bounds changes may invalidate the eligibility of every downstream Athlete + Team, so admins must know. Includes { name, min_age (before, after), max_age (before, after), is_youth_flip, affected_athlete_count } — the last field populated from Wave 3+.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "age_group.default_changed",
+      "display_name": "Default age group changed",
+      "description": "Sent to tenant admins when the is_default flag flips within a (tenant, organization, sport_key) tuple. Cannot opt out — the default drives tier-pricing defaults for downstream referring rows (Finance Wave 4).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "id": "staff.staff-picker",
+  "title": "Staff picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Searchable staff selector. Uses HeroUI ComboBox per the ui-components rule (always prefer ComboBox over Select for single-choice pickers). Emits the selected Staff.id.",
+  "props": {
+    "name": { "type": "string", "required": true, "description": "Form field name — the selected Staff.id lands under this key." },
+    "label": { "type": "string", "default": "Staff" },
+    "required": { "type": "boolean", "default": false },
+    "helpText": { "type": "string" },
+    "filter": { "type": "object", "description": "Extra filter object appended to /api/v1/staff query. Common: {employment_status: 'active', branch_id: '...'}." },
+    "excludeIds": { "type": "array", "description": "ULIDs to exclude from the results." }
+  },
+  "dataSources": [
+    {
+      "name": "staff_options",
+      "kind": "http.get",
+      "url": "/api/v1/staff",
+      "unwrap": "data",
+      "queryBindings": { "$ref": "props.filter" },
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "props": {
+        "menuTrigger": "focus",
+        "className": "w-full"
+      },
+      "bindings": {
+        "name": { "$ref": "props.name" },
+        "label": { "$ref": "props.label" },
+        "isRequired": { "$ref": "props.required" },
+        "description": { "$ref": "props.helpText" },
+        "items": {
+          "$expr": "staff_options.filter(s => !props.excludeIds || !props.excludeIds.includes(s.id))"
+        }
+      },
+      "children": [
+        { "kind": "Input", "props": { "placeholder": "Search staff by name or position..." } },
+        { "kind": "ComboBox.Trigger" },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "itemRenderer": {
+                "kind": "ListBox.Item",
+                "bindings": { "id": { "$ref": "item.id" }, "textValue": { "$ref": "item.display_name" } },
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2" },
+                    "children": [
+                      {
+                        "kind": "Avatar",
+                        "props": { "size": "xs" },
+                        "bindings": { "src": { "$ref": "item.avatar_url" }, "name": { "$ref": "item.display_name" } }
+                      },
+                      {
+                        "kind": "View",
+                        "children": [
+                          { "kind": "Text", "bindings": { "children": { "$ref": "item.display_name" } } },
+                          {
+                            "kind": "Text",
+                            "props": { "className": "text-xs text-muted" },
+                            "bindings": { "children": { "$expr": "item.position + ' — ' + item.employment_status" } }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  { "kind": "ListBox.ItemIndicator" }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

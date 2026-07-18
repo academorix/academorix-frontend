@@ -1,0 +1,190 @@
+{
+  "id": "academorix://modules/teams/relations",
+  "$version": 1,
+  "title": "teams — model relationships",
+  "description": "Four owned entities. Team is below Branch (which is under Region + Organization). TeamMember attaches to Team via team_id AND polymorphically to Athlete/Coach/Staff/User via member_type + member_id. TeamTrial attaches to Team via team_id AND polymorphically to Athlete/User via trialist_type + trialist_id (or fully anonymous with no FK). EventTeam attaches to Team via team_id AND to (Wave 3) Event via event_id (nullable pre-Wave-3). Every outbound FK stays same-tenant per tenancy-columns.md §5. NO organization_id / region_id / application_id / scope_node_id on any owned row.",
+  "internal": [
+    {
+      "from": "Team",
+      "kind": "hasMany",
+      "to": "TeamMember",
+      "foreignKey": "team_id",
+      "description": "Team's roster. RESTRICT on team hard-delete — member rows must be transitioned to inactive/graduated before their team can be purged."
+    },
+    {
+      "from": "TeamMember",
+      "kind": "belongsTo",
+      "to": "Team",
+      "foreignKey": "team_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT on delete. Roster rows anchor to their team for auditing; an archived team keeps its historic roster."
+    },
+    {
+      "from": "Team",
+      "kind": "hasMany",
+      "to": "TeamTrial",
+      "foreignKey": "team_id",
+      "description": "Trials for a team. RESTRICT on team hard-delete — trials survive as anti-discrimination defence records for 3 years past decision."
+    },
+    {
+      "from": "TeamTrial",
+      "kind": "belongsTo",
+      "to": "Team",
+      "foreignKey": "team_id",
+      "onDelete": "restrict"
+    },
+    {
+      "from": "Team",
+      "kind": "hasMany",
+      "to": "EventTeam",
+      "foreignKey": "team_id",
+      "description": "Team's event participations. RESTRICT on team hard-delete when result is populated."
+    },
+    {
+      "from": "EventTeam",
+      "kind": "belongsTo",
+      "to": "Team",
+      "foreignKey": "team_id",
+      "onDelete": "restrict"
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Team",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every team is tenant-scoped per tenancy-columns.md §3."
+    },
+    {
+      "from": "Team",
+      "kind": "belongsTo",
+      "to": "organization::Organization",
+      "foreignKey": "organization_id",
+      "onDelete": "restrict",
+      "description": "Immutable post-create. RESTRICT so archived orgs don't orphan teams."
+    },
+    {
+      "from": "Team",
+      "kind": "belongsTo",
+      "to": "branch::Branch",
+      "foreignKey": "branch_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT: branches cannot be hard-deleted while teams reference them. Branch close is blocked by PreventTeamOrphansOnBranchClosed hook when active teams exist."
+    },
+    {
+      "from": "Team",
+      "kind": "belongsTo",
+      "to": "sports::Season",
+      "foreignKey": "season_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Wave 3 FK — no constraint until Sports module lands. Nullable in Wave 2. When set, Wave 3 Season lifecycle events cascade to teams (season end → season_id null'd + team scheduled for archive)."
+    },
+    {
+      "from": "Team",
+      "kind": "belongsTo",
+      "to": "sports::AgeGroup",
+      "foreignKey": "age_group_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Wave 3 FK — no constraint until Sports module lands. Nullable in Wave 2. Used as a categorisation label; hard-side eligibility is on Team.min_age/max_age."
+    },
+    {
+      "from": "Team",
+      "kind": "belongsTo",
+      "to": "staff::Coach",
+      "foreignKey": "coach_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Wave 2b FK — no constraint until Staff module lands. Nullable. Every coach change fires TeamCoachChanged with is_minor_only flag."
+    },
+    {
+      "from": "TeamMember",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Denormalised tenant_id — cascades through team.tenant_id but explicit for query-plan + FK integrity + partial-unique-index scoping."
+    },
+    {
+      "from": "TeamTrial",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "TeamTrial",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "evaluated_by_user_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "The coach who ran the trial. RESTRICT for audit-integrity."
+    },
+    {
+      "from": "EventTeam",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "EventTeam",
+      "kind": "belongsTo",
+      "to": "sports::Event",
+      "foreignKey": "event_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Wave 3 FK — nullable + no constraint until Sports Event module lands. Wave 3 migration will make event_id required + FK-constrained."
+    }
+  ],
+  "inbound": {
+    "description": "Downstream modules will attach to Team in later waves:",
+    "examples": [
+      "sports::Session (Wave 3) — belongs to Team via BelongsToTeam trait. Practice sessions reserve a facility for the team's window.",
+      "sports::AthleteEnrollment (Wave 3) — polymorphic member on TeamMember (member_type='athlete'; member_id points at AthleteEnrollment.id when enrollment-scoped, or Athlete.id when team-scoped).",
+      "finance::Invoice (Wave 4) — line items reference TeamTrial.price_amount_cents for trial-fee attribution.",
+      "attendance::Visit (Wave 3) — belongs to Team via team_id; roster-filtered by Team.activeMembers()."
+    ],
+    "note": "TeamMember.member_type + member_id is POLYMORPHIC — no DB-level FK constraint. Observer + reconciler enforce integrity."
+  },
+  "morphs": [
+    {
+      "from": "TeamMember",
+      "morphKey": "member",
+      "typeColumn": "member_type",
+      "idColumn": "member_id",
+      "resolver": "PolymorphicTeamMemberResolver",
+      "types": {
+        "athlete": "sports::Athlete (Wave 3)",
+        "coach": "staff::Coach (Wave 2b)",
+        "staff": "staff::Staff (Wave 2b)",
+        "user": "user::User (Wave 1)"
+      },
+      "notes": "No DB-level FK constraint on member_id. Observer refuses on create when the target doesn't exist. Reconciler catches drift."
+    },
+    {
+      "from": "TeamTrial",
+      "morphKey": "trialist",
+      "typeColumn": "trialist_type",
+      "idColumn": "trialist_id",
+      "resolver": "PolymorphicTeamMemberResolver (shared resolver, filtered to trial-eligible types)",
+      "types": {
+        "athlete": "sports::Athlete (Wave 3)",
+        "user": "user::User",
+        "anonymous": "N/A — trialist_id is null; captured on trialist_first_name / _last_name / _phone / _email / _dob columns"
+      },
+      "notes": "trialist_id is nullable when trialist_type='anonymous'. Observer enforces the (type, id) combinations."
+    }
+  ],
+  "notes": [
+    "Teams cascade Organization + Region through Branch. `teams.region_id` DOES NOT EXIST — it's a forbidden column per tenancy-columns.md §5. Reach it via `$team->branch->region`. teams DOES carry organization_id directly (structural sub-brand context), but never as a Region shortcut.",
+    "TeamMember does not carry organization_id / branch_id / region_id — everything cascades through team_id.",
+    "TeamTrial does not carry organization_id / branch_id / region_id — everything cascades through team_id.",
+    "EventTeam does not carry organization_id / branch_id / region_id — everything cascades through team_id.",
+    "The `team_members` table is the WRITE-side of Wave 3+ attendance + enrollment. When AthleteEnrollment lands in Wave 3, it replaces the athlete-tuple in the polymorphic (member_type='athlete', member_id=…) with (member_type='athlete', member_id=enrollment_id) — a data migration event tracked in the changelog."
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "id": "age-group.age-group-badge",
+  "title": "Age group badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Compact chip showing `<name> · <bounds>` (e.g. `U12 · Ages 10-11`, `Adult · Ages 18-34`). Rendered in team detail + roster rows + enrollment previews + list-view age-group column. The chip's background color is driven by AgeGroup.color; when the group is is_youth=true, a subscript 'youth' chip renders in the safeguarding-yellow variant so the surrounding UI signals the minor-scoped downstream consequences.",
+  "notes": [
+    "Uses HeroUI `Chip` — no bespoke class-name literals per the ui-components rule.",
+    "The primary chip's background color comes from AgeGroup.color (hex). When color is null, falls back to a neutral variant.",
+    "The subscript 'youth' chip renders as `Chip variant='warning' size='xs'` — the tenant's standard youth-safeguarding accent.",
+    "The bounds summary is locale-neutral (numeric only). The 'Ages' prefix is i18n-keyed for RTL locales that render age ranges right-to-left.",
+    "When `showSportKey=true` AND the AgeGroup has a non-null sport_key, appends a third chip with the sport identifier (`football`, `basketball`, …)."
+  ],
+  "props": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "AgeGroup display name (e.g. `U12`, `Adult`)."
+    },
+    "minAgeInclusive": {
+      "type": "integer",
+      "required": true,
+      "description": "Bounds lower (inclusive)."
+    },
+    "maxAgeInclusive": {
+      "type": "integer",
+      "required": true,
+      "description": "Bounds upper (inclusive)."
+    },
+    "isYouth": {
+      "type": "boolean",
+      "default": false,
+      "description": "Renders the subscript 'youth' chip in safeguarding-yellow when true."
+    },
+    "color": {
+      "type": "string",
+      "default": null,
+      "description": "Hex color for the primary chip's background (e.g. `#3B82F6`). Nullable falls back to the neutral variant."
+    },
+    "sportKey": {
+      "type": "string",
+      "default": null,
+      "description": "Optional sport identifier (`football`, `basketball`, …). Renders a third chip when set + showSportKey=true."
+    },
+    "showSportKey": {
+      "type": "boolean",
+      "default": true,
+      "description": "When false, hides the sport_key chip even when the value is present."
+    },
+    "isDefault": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, renders a subscript 'default' chip (leading star icon)."
+    },
+    "size": {
+      "type": "string",
+      "default": "xs",
+      "enum": ["xs", "sm", "md"]
+    },
+    "showBounds": {
+      "type": "boolean",
+      "default": true,
+      "description": "When false, renders just the name (compact tables + roster rows where the bounds live in a separate column)."
+    }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "inline-flex items-center gap-1" },
+      "children": [
+        {
+          "kind": "Chip",
+          "bindings": {
+            "props": {
+              "size": { "$ref": "props.size" },
+              "variant": {
+                "$expr": "props.color ? 'custom' : 'neutral'"
+              },
+              "style": {
+                "$expr": "props.color ? { backgroundColor: props.color, borderColor: props.color } : {}"
+              },
+              "children": {
+                "$expr": "props.showBounds ? (props.name + ' · Ages ' + props.minAgeInclusive + '-' + props.maxAgeInclusive) : props.name"
+              }
+            }
+          }
+        },
+        {
+          "kind": "Chip",
+          "props": { "size": "xs", "variant": "warning", "children": "Youth" },
+          "bindings": {
+            "hidden": { "$expr": "!props.isYouth" }
+          }
+        },
+        {
+          "kind": "Chip",
+          "props": {
+            "size": "xs",
+            "variant": "accent",
+            "leadingIcon": "star-solid",
+            "children": "Default"
+          },
+          "bindings": {
+            "hidden": { "$expr": "!props.isDefault" }
+          }
+        },
+        {
+          "kind": "Chip",
+          "props": { "size": "xs", "variant": "info" },
+          "bindings": {
+            "hidden": { "$expr": "!props.showSportKey || !props.sportKey" },
+            "props": {
+              "children": { "$ref": "props.sportKey" }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

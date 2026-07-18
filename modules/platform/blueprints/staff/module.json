@@ -1,0 +1,264 @@
+{
+  "$version": 1,
+  "name": "staff",
+  "alias": "staff",
+  "namespace": "Academorix\\Staff",
+  "description": "Employed/engaged person operating within a Tenant Branch. Answers 'who works here?'. Ships two owned entities: (1) `Staff` — the employment record wrapping a User row with employment metadata (hire dates, position, department, employment_type, employment_status, wage/salary/hourly rate, emergency contact), and (2) `Coach` — a Staff-satellite adding a per-sport coaching profile (specialization, certifications, rating, availability_pattern) for the subset of Staff who coach. A tenant may run non-coach staff (receptionist, cafeteria worker, HR admin) which are Staff rows only, and coach-only setups where every Staff has a Coach row — the two aggregates are decoupled on purpose. Every Staff belongs to Tenant + Branch + User (RESTRICT on User — you can't archive a User row that still has an active Staff record; must offboard first). Coach belongs to Tenant + Staff (RESTRICT — coach-profile removal precedes staff-offboarding). Every write goes through observers that enforce: cross-tenant defense-in-depth, one-active-Staff-per-user-tenant, one-active-branch-manager-per-branch, coach-parent-staff-must-be-active, and compensation-write-permission (a distinct `staff.manage.compensation` capability separate from the general `staff.update`). Two sensitivity tiers on Staff: normal employment fields are internal-tier; compensation (compensation_amount_cents / compensation_type / pay_frequency) is regulated_financial-tier with 7-year retention and access gated behind `staff.view.compensation`; emergency contact + tax_id_last4 are confidential-tier gated behind `staff.view.emergency_contact`. Ships `staff_slot` entitlement (Small=5 / Medium=50 / Enterprise=null), `coach_slot` entitlement (Small=1 / Medium=10 / Enterprise=null), `staff_compensation_tracking` boolean gate (off by default, tenant opts in), `staff_org_chart` (Enterprise-only reports_to hierarchy), `coach_certifications_verified` (Enterprise-only compliance-verified certifications) and `coach_rating_display` (Medium+ public rating on tenant website). Lifecycle events: StaffHired / StaffPromotedToBranchManager / StaffOffboarded / CoachCertificationExpired / CompensationChanged (private-tier — never dispatched to tenant plane). Domain-agnostic: creates Staff for reception, HR, cafeteria workers, cleaners, coaches — the coach role is layered ON TOP via the Coach entity when the Staff acquires a per-sport profile.",
+  "keywords": [
+    "staff",
+    "employee",
+    "coach",
+    "hire",
+    "offboard",
+    "compensation",
+    "wage",
+    "salary",
+    "employment",
+    "employment-status",
+    "branch-manager",
+    "org-chart",
+    "reports-to",
+    "certification",
+    "specialization",
+    "sport-key",
+    "availability-pattern",
+    "coaching-level",
+    "probation",
+    "termination",
+    "hr",
+    "tenant",
+    "branch",
+    "wave-2"
+  ],
+  "priority": 51,
+  "providers": [
+    "Academorix\\Staff\\Providers\\StaffServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "organization",
+    "region",
+    "branch",
+    "user",
+    "entitlements"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "teams (Wave 3 — TeamMember with member_type='coach' polymorphically points at Coach; TeamMember with member_type='staff' points at Staff for non-coach assistants)",
+    "sports (Wave 3 — Session.head_coach_id + assistant_coach_ids reference Coach rows for practice assignment)",
+    "finance (Wave 4 — payroll integration reads compensation_amount_cents; Membership refund workflows write to compensation_history when a coach commission is reversed)",
+    "attendance (Wave 4 — clock-in/clock-out records reference Staff for shift management)",
+    "coaching (Wave 3 — session-rating aggregation writes back to Coach.rating via AggregateCoachRatingsJob)",
+    "scheduling (Wave 4 — shift-planning module reads Staff.weekly_hours + Coach.session_capacity_per_week for capacity)"
+  ],
+  "contributes": {
+    "traits": [
+      "BelongsToStaff",
+      "BelongsToCoach",
+      "WrapsUser",
+      "HasCoachProfile"
+    ],
+    "attributes": [
+      "AsStaffListener",
+      "AsCoachListener"
+    ],
+    "blueprints": [
+      "staff",
+      "coaches"
+    ],
+    "middleware": [
+      "staff.enforce_active",
+      "staff.enforce_compensation_permission"
+    ],
+    "events": [
+      "StaffHired",
+      "StaffUpdated",
+      "StaffPositionChanged",
+      "StaffDepartmentChanged",
+      "StaffBranchChanged",
+      "StaffPromotedToBranchManager",
+      "StaffDemotedFromBranchManager",
+      "StaffPutOnLeave",
+      "StaffReturnedFromLeave",
+      "StaffSuspended",
+      "StaffReinstated",
+      "StaffOffboardingStarted",
+      "StaffOffboarded",
+      "StaffReactivated",
+      "CompensationChanged",
+      "CoachCreated",
+      "CoachSportChanged",
+      "CoachCertificationAdded",
+      "CoachCertificationExpired",
+      "CoachCertificationRemoved",
+      "CoachRatingUpdated",
+      "CoachStatusChanged",
+      "CoachAvailabilityChanged"
+    ],
+    "policies": [
+      "StaffPolicy",
+      "CoachPolicy"
+    ],
+    "hooks": [
+      "PreventStaffOrphansOnBranchArchived",
+      "PreventUserArchiveWithActiveStaff",
+      "PurgeStaffDataForErasedTenant",
+      "CascadeCoachStatusOnStaffOffboarding"
+    ],
+    "commands": [
+      "staff:list",
+      "staff:describe",
+      "staff:hire",
+      "staff:promote-to-manager",
+      "staff:demote",
+      "staff:put-on-leave",
+      "staff:return-from-leave",
+      "staff:suspend",
+      "staff:reinstate",
+      "staff:offboard",
+      "staff:reactivate",
+      "staff:audit-compensation",
+      "coach:list",
+      "coach:describe",
+      "coach:create",
+      "coach:set-primary-sport",
+      "coach:add-certification",
+      "coach:remove-certification",
+      "coach:set-availability",
+      "coach:pause",
+      "coach:resume",
+      "coach:archive",
+      "coach:reconcile-ratings"
+    ],
+    "jobs": [
+      "CheckProbationEndingSoonJob",
+      "ExpireCoachCertificationsJob",
+      "ReconcileBranchManagerInvariantJob",
+      "PurgeOffboardedStaffJob",
+      "AggregateCoachRatingsJob"
+    ],
+    "notifications": [
+      "StaffWelcomeNotification",
+      "StaffOffboardingScheduledNotification",
+      "StaffOffboardedNotification",
+      "StaffPromotedToBranchManagerNotification",
+      "CoachCertificationExpiringNotification",
+      "ProbationEndingSoonNotification",
+      "CompensationChangedNotification",
+      "CoachOnLeaveNotification",
+      "StaffSuspendedNotification"
+    ],
+    "broadcasts": [
+      "tenant.{tenantId}.staff",
+      "branch.{branchId}.staff",
+      "user.{userId}.staff"
+    ],
+    "observers": [
+      "StaffObserver",
+      "CoachObserver"
+    ],
+    "rules": [
+      "valid_hex_color",
+      "valid_e164_phone",
+      "valid_url",
+      "valid_bcp47_locale",
+      "valid_iso4217_currency",
+      "valid_positive_int",
+      "valid_certifications_shape",
+      "valid_availability_pattern",
+      "probation_within_bounds",
+      "termination_reason_required_when_offboarded",
+      "one_active_staff_per_user_tenant",
+      "one_active_branch_manager_per_branch",
+      "coach_staff_active",
+      "certification_expiry_in_future_when_added"
+    ],
+    "casts": [
+      "EmploymentType",
+      "EmploymentStatus",
+      "CompensationType",
+      "PayFrequency",
+      "TerminationReason",
+      "CoachingLevel",
+      "CoachStatus",
+      "CertificationEntry",
+      "AvailabilityPattern"
+    ],
+    "views": [],
+    "lang": [
+      "staff"
+    ],
+    "config": [
+      "staff"
+    ],
+    "macros": [
+      "Request::activeStaff",
+      "Request::activeStaffId"
+    ],
+    "bindings": [
+      "StaffRepository",
+      "CoachRepository",
+      "StaffProvisioner",
+      "CoachProfileFactory",
+      "CompensationGate",
+      "CertificationValidator",
+      "AvailabilityEvaluator",
+      "OrgChartResolver",
+      "BranchManagerResolver"
+    ],
+    "resources": [
+      "staff",
+      "coach"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing staff CRUD, hire/offboard flows, promotion/demotion, compensation (permission-gated redacted egress), emergency contact (permission-gated), coach CRUD, certification management, availability. Every route requires the caller to be in the same tenant; branch scope narrows results.",
+      "routes": [
+        "GET /api/v1/staff",
+        "POST /api/v1/staff",
+        "GET /api/v1/staff/{staff}",
+        "PATCH /api/v1/staff/{staff}",
+        "DELETE /api/v1/staff/{staff}",
+        "POST /api/v1/staff/{staff}/promote-to-manager",
+        "POST /api/v1/staff/{staff}/demote",
+        "POST /api/v1/staff/{staff}/put-on-leave",
+        "POST /api/v1/staff/{staff}/return-from-leave",
+        "POST /api/v1/staff/{staff}/suspend",
+        "POST /api/v1/staff/{staff}/reinstate",
+        "POST /api/v1/staff/{staff}/offboard",
+        "POST /api/v1/staff/{staff}/reactivate",
+        "GET /api/v1/staff/{staff}/compensation",
+        "PATCH /api/v1/staff/{staff}/compensation",
+        "GET /api/v1/staff/{staff}/emergency-contact",
+        "PATCH /api/v1/staff/{staff}/emergency-contact",
+        "GET /api/v1/staff/{staff}/direct-reports",
+        "GET /api/v1/coaches",
+        "POST /api/v1/coaches",
+        "GET /api/v1/coaches/{coach}",
+        "PATCH /api/v1/coaches/{coach}",
+        "DELETE /api/v1/coaches/{coach}",
+        "POST /api/v1/coaches/{coach}/pause",
+        "POST /api/v1/coaches/{coach}/resume",
+        "POST /api/v1/coaches/{coach}/archive",
+        "GET /api/v1/coaches/{coach}/certifications",
+        "POST /api/v1/coaches/{coach}/certifications",
+        "DELETE /api/v1/coaches/{coach}/certifications/{certification}",
+        "GET /api/v1/coaches/{coach}/availability",
+        "PATCH /api/v1/coaches/{coach}/availability",
+        "POST /api/v1/coaches/{coach}/set-primary-sport"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant read for support tooling. Compensation columns are ALWAYS redacted at the platform plane (support staff never see tenant compensation figures). Compensation audit endpoint gated behind super_admin.",
+      "routes": [
+        "GET /api/v1/platform/staff",
+        "GET /api/v1/platform/staff/{staff}",
+        "GET /api/v1/platform/staff/audit-compensation"
+      ]
+    }
+  }
+}

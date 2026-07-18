@@ -1,0 +1,160 @@
+{
+  "id": "academorix://modules/teams/traits",
+  "$version": 1,
+  "title": "teams — trait composition",
+  "description": "Five owned traits. `BelongsToTeam` is the FK trait for downstream models (Wave 3 sports Session, Wave 3 attendance Visit). `HasTeamMembers` / `HasTeamTrials` / `HasEventParticipation` are inverse-side conveniences on the Team model. `PolymorphicTeamMember` is the reverse-polymorphic trait — mixed into Athlete / Coach / Staff / User so those models expose `->teams()` via a reverse-polymorphic query. Order matters when composed with `BelongsToTenant` / `BelongsToBranch` — tenant MUST come first so the scope chain observes the tenant context in their `booted()` hooks.",
+  "owned": [
+    {
+      "trait": "Academorix\\Teams\\Concerns\\BelongsToTeam",
+      "description": "Mixed into any domain model that carries a `team_id` FK. Adds the `team()` belongsTo relation, a `resolveInTeam(?Team)` query scope that filters `WHERE team_id = ?` (falling back to the caller's `Request::activeTeam()` when the arg is omitted), and a `booted()` hook that fills `team_id = active_team_id()` on `creating` when the field is null AND the current request carries a resolved active team. Refuses to save a row whose `team_id` points at a Team in a different tenant than the row itself (defense-in-depth against cross-tenant FK smuggling).",
+      "public": true,
+      "usedBy": [
+        "teams::TeamMember (required team_id)",
+        "teams::TeamTrial (required team_id)",
+        "teams::EventTeam (required team_id)",
+        "sports::Session (Wave 3 — practices book a Facility for a Team's slot)",
+        "attendance::Visit (Wave 3 — visit rows tie to team_id for roster filtering)"
+      ],
+      "conflicts_with": [],
+      "composition_notes": [
+        "Order: `BelongsToTenant` must appear BEFORE `BelongsToTeam` in the trait list so the tenant scope resolves first.",
+        "`BelongsToBranch` is implied by the team — do NOT compose `BelongsToBranch` on models that already carry `BelongsToTeam` (the branch cascades through team → branch_id in queries).",
+        "The `booted()` fill hook is off by default when the consumer's create-flow always specifies team_id explicitly (TeamMember, TeamTrial, EventTeam). Turn on per-model via `bool $fillTeamOnCreating = true`."
+      ]
+    },
+    {
+      "trait": "Academorix\\Teams\\Concerns\\HasTeamMembers",
+      "description": "Composed onto the Team model. Adds `->members()` (hasMany over TeamMember), `->activeMembers()` (scope filter status='active'), `->membersByType(string $type)` (filter member_type), `->athletes()` (shortcut for membersByType('athlete')), `->coaches()` (shortcut for membersByType('coach')), `->users()` (shortcut for membersByType('user')), `->rosterCount()` (cheap cached active-count read).",
+      "public": true,
+      "usedBy": ["teams::Team"]
+    },
+    {
+      "trait": "Academorix\\Teams\\Concerns\\HasTeamTrials",
+      "description": "Composed onto the Team model. Adds `->trials()` (hasMany over TeamTrial), `->scheduledTrials()` (scope filter status='scheduled'), `->completedTrials()` (scope filter status IN ('completed', 'converted', 'rejected')), `->pendingDecisionTrials()` (scope filter status='completed' — awaiting coach's convert/reject decision).",
+      "public": true,
+      "usedBy": ["teams::Team"]
+    },
+    {
+      "trait": "Academorix\\Teams\\Concerns\\HasEventParticipation",
+      "description": "Composed onto the Team model. Adds `->eventTeams()` (hasMany over EventTeam), `->upcomingEventTeams()` (scope filter withdrew_at IS NULL AND (event.starts_at > now() OR event.starts_at IS NULL for Wave 2)), `->pastEventTeams()`, `->currentSeasonEventTeams()` (Wave 3 addition).",
+      "public": true,
+      "usedBy": ["teams::Team"]
+    },
+    {
+      "trait": "Academorix\\Teams\\Concerns\\PolymorphicTeamMember",
+      "description": "The REVERSE-POLYMORPHIC trait. Mixed into any model that CAN be a team member (Athlete, Coach, Staff, User). Adds `->teams()` — a Collection<Team> resolved via a reverse-polymorphic query on team_members where (member_type = this model's polymorphism key, member_id = this.id, status='active'). Also adds `->historicTeams()` for the terminal-state variant. The trait consults `config('teams.polymorphism.member_type_registry')` for the reverse mapping — polymorphism registration is bi-directional.",
+      "public": true,
+      "usedBy": [
+        "user::User (immediate — Wave 1)",
+        "sports::Athlete (Wave 3 — added when Sports module lands)",
+        "staff::Coach (Wave 2b — added when Staff module lands)",
+        "staff::Staff (Wave 2b — added when Staff module lands)"
+      ],
+      "composition_notes": [
+        "This is the ONLY reverse-polymorphic trait in the teams module. Every consumer of 'give me the teams this person is on' goes through it — never through a bespoke query.",
+        "Adding a new member_type = adding a new consumer of this trait + registering in the polymorphism registry."
+      ]
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "Team, TeamMember, TeamTrial, EventTeam — all four. The retention pipeline governs hard-purge windows."
+      }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSlug", "reason": "Team only — unique per (tenant_id, branch_id)." }
+    ],
+    "tenants": [
+      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+    ],
+    "organization": [
+      { "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization", "reason": "Team carries organization_id directly (structural sub-brand context). Other rows cascade through team_id." }
+    ],
+    "branch": [
+      { "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch", "reason": "Team only — carries branch_id. Other owned rows cascade through team." }
+    ],
+    "audit": [
+      { "trait": "OwenIt\\Auditing\\Auditable", "reason": "Every write to teams / team_members / team_trials / event_teams is compliance-relevant (child-safety + anti-discrimination + financial when trial fees applied)." }
+    ],
+    "activity": [
+      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Roster changes + trial lifecycle + event participation feed the staff-visible activity feed." }
+    ]
+  },
+  "composition": {
+    "team": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToOrganization",
+        "BelongsToBranch",
+        "HasSlug",
+        "HasTeamMembers",
+        "HasTeamTrials",
+        "HasEventParticipation",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "Order matters: BelongsToTenant precedes every scope-observing trait. HasSlug generates the (tenant_id, branch_id)-unique slug on create. HasTeamMembers + HasTeamTrials + HasEventParticipation are inverse-side conveniences. NO BelongsToRegion — teams cascade region through branch (tenancy-columns.md §5)."
+    },
+    "team_member": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToTeam",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "NO BelongsToBranch / BelongsToOrganization traits — cascade through team. Auditable applies because child-safety + anti-discrimination retention requires audit trail on every state transition. The polymorphic `member` accessor is NOT a trait — it's a method on the model itself that delegates to PolymorphicTeamMemberResolver."
+    },
+    "team_trial": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToTeam",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "Auditable is critical — decision_notes is the anti-discrimination defence record. Same polymorphic delegation for `trialist` accessor."
+    },
+    "event_team": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToTeam",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "Auditable for result-tampering audit trail. SoftDeletes with 7-year hold when financial fields populated (Wave 4)."
+    }
+  }
+}

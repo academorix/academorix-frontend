@@ -1,0 +1,258 @@
+{
+  "id": "staff.resources.staff.list",
+  "title": "Staff",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/staff",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "staff", "entity": "staff", "action": "list" },
+  "requiresPermission": "staff.viewAny",
+  "dataSources": [
+    {
+      "name": "staff",
+      "kind": "http.get",
+      "url": "/api/v1/staff",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "branches",
+      "kind": "http.get",
+      "url": "/api/v1/branches?filter[status]=active",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "slot_entitlement",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/staff_slot",
+      "unwrap": "data"
+    },
+    {
+      "name": "features",
+      "kind": "http.get",
+      "url": "/api/v1/features",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Staff" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Employed and engaged people across your branches." }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "entitlements.entitlement-usage-bar",
+                  "props": {
+                    "cap": { "$ref": "slot_entitlement.value_cap" },
+                    "used": { "$ref": "slot_entitlement.value_used" },
+                    "size": "sm",
+                    "label": "Staff slots"
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "user-plus",
+                    "children": "Hire staff"
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "to": "/tenant/staff/hire"
+                    }
+                  },
+                  "bindings": { "disabled": { "$ref": "slot_entitlement.is_exceeded" } },
+                  "requiresPermission": "staff.hire"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": {
+                "label": "Branch",
+                "menuTrigger": "focus",
+                "className": "min-w-56"
+              },
+              "bindings": { "items": { "$ref": "branches" } },
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "branch_id",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "pre_hire", "label": "Pre-hire" },
+                { "id": "active", "label": "Active" },
+                { "id": "on_leave", "label": "On leave" },
+                { "id": "suspended", "label": "Suspended" },
+                { "id": "offboarding", "label": "Offboarding" },
+                { "id": "offboarded", "label": "Offboarded" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "employment_status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Employment type", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "full_time", "label": "Full-time" },
+                { "id": "part_time", "label": "Part-time" },
+                { "id": "contract", "label": "Contract" },
+                { "id": "volunteer", "label": "Volunteer" },
+                { "id": "intern", "label": "Intern" },
+                { "id": "seasonal", "label": "Seasonal" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "employment_type",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "Switch",
+              "props": { "label": "Managers only" },
+              "actions": {
+                "onChange": {
+                  "kind": "filter.set",
+                  "field": "is_branch_manager",
+                  "valueExpr": "$isSelected ? 'true' : null"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "props": { "aria-label": "Staff table", "className": "w-full" },
+          "bindings": {
+            "rows": { "$ref": "staff" },
+            "isLoading": { "$ref": "staff.isLoading" }
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "user-group", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No staff yet" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Hire your first staff member to get started." } }
+            ]
+          },
+          "columns": [
+            {
+              "key": "name",
+              "label": "Name",
+              "renderer": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-3" },
+                "children": [
+                  {
+                    "kind": "Avatar",
+                    "props": { "size": "sm" },
+                    "bindings": { "src": { "$ref": "row.avatar_url" }, "name": { "$ref": "row.full_name" } }
+                  },
+                  {
+                    "kind": "View",
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-medium" },
+                        "bindings": { "children": { "$ref": "row.display_name" } }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted" },
+                        "bindings": { "children": { "$ref": "row.email" } }
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            { "key": "position", "label": "Position" },
+            { "key": "department", "label": "Department" },
+            {
+              "key": "employment_type",
+              "label": "Type",
+              "renderer": {
+                "kind": "Chip",
+                "props": { "size": "sm", "variant": "neutral" },
+                "bindings": { "children": { "$ref": "row.employment_type" } }
+              }
+            },
+            {
+              "key": "status",
+              "label": "Status",
+              "renderer": {
+                "kind": "Widget",
+                "widget": "staff.employment-status-chip",
+                "bindings": { "status": { "$ref": "row.employment_status" } }
+              }
+            },
+            {
+              "key": "manager_flag",
+              "label": "Manager",
+              "renderer": {
+                "kind": "Icon",
+                "bindings": {
+                  "hidden": { "$expr": "!row.is_branch_manager" }
+                },
+                "props": { "name": "star", "className": "size-5 text-warning" }
+              }
+            },
+            { "key": "started_at", "label": "Started" }
+          ],
+          "rowActions": {
+            "onPress": {
+              "kind": "navigate",
+              "toExpr": "'/tenant/staff/' + row.id"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

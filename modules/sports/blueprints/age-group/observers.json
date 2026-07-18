@@ -1,0 +1,48 @@
+{
+  "id": "academorix://modules/age-group/observers",
+  "$version": 1,
+  "title": "age-group — Eloquent observers",
+  "observers": [
+    {
+      "model": "AgeGroup",
+      "observer": "Academorix\\Sports\\AgeGroup\\Observers\\AgeGroupObserver",
+      "handles": [
+        "creating → populate ULID prefix `age_`.",
+        "creating → refuse when min_age_inclusive > max_age_inclusive (INVALID_AGE_BOUNDS 422 — the rule catches it in FormRequests; the observer catches direct-service callers).",
+        "creating → refuse when min_age_inclusive < 3 OR max_age_inclusive > 100 (PLATFORM_AGE_BOUNDS 422 — sanity floor + ceiling).",
+        "creating → refuse when cutoff_date_kind='academic_year' AND cutoff_month IS NULL (INVALID_CUTOFF_CONFIG 422 — academic year needs the anchor month).",
+        "creating → refuse when cutoff_date_kind='custom_date' AND (cutoff_month IS NULL OR cutoff_day IS NULL) (INVALID_CUTOFF_CONFIG 422 — custom date needs both month + day).",
+        "creating → refuse when cutoff_date_kind='calendar_year' AND (cutoff_month IS NOT NULL OR cutoff_day IS NOT NULL) (INVALID_CUTOFF_CONFIG 422 — calendar_year is Jan 1 by definition; extra fields are noise).",
+        "creating → refuse when cutoff_date_kind='rolling_from_birthday' AND (cutoff_month IS NOT NULL OR cutoff_day IS NOT NULL) (INVALID_CUTOFF_CONFIG 422 — rolling uses the athlete's actual birthday).",
+        "creating → refuse when sport_key IS NOT NULL AND the tenant lacks `age_group_sport_specific` entitlement (AGE_GROUP_SPORT_SPECIFIC_DISABLED 402 — Enterprise-only).",
+        "creating → refuse when is_seeded=true AND the caller is not the platform seeder (AGE_GROUP_IS_SEEDED_RESERVED 403 — this flag is set only by SeedDefaultAgeGroupsForTenantJob).",
+        "creating → auto-derive is_youth = (max_age_inclusive < 18). Stored on the row for indexed filtering.",
+        "creating → auto-derive sort_order from min_age_inclusive when unset (sort_order = min_age_inclusive * 10 so seeded defaults sort by age ascending and tenants inserting mid-range groups get room to slot in).",
+        "creating → refuse when UNIQUE(tenant_id, organization_id, sport_key, slug) partial (WHERE deleted_at IS NULL) already exists (AGE_GROUP_ALREADY_EXISTS 409 — the DB partial unique index is the primary guard).",
+        "creating → refuse when the slug is in the reserved list ('default', 'system', 'seeded', 'admin', 'platform') (AGE_GROUP_SLUG_RESERVED 422).",
+        "creating → consume 1 unit of the `age_group_slot` entitlement when is_seeded=false (throws AGE_GROUP_QUOTA_EXCEEDED 402). Seeded rows bypass — they are a platform invariant, not a purchase.",
+        "creating (is_default=true) → set is_default=false on the previous default row for the SAME (tenant_id, organization_id, sport_key) tuple in same transaction (one default per tuple invariant). Fire AgeGroupDefaultChanged for the demoted row.",
+        "created → fire AgeGroupCreated (source='tenant_provisioning' when is_seeded=true, 'admin_created' otherwise).",
+        "created → invalidate the tenant's age-group cache keys (`age:list:{tenant_id}`, `age:catalog:{tenant_id}`).",
+        "saving (is_default=true flipped) → set is_default=false on every other AgeGroup for the same (tenant_id, organization_id, sport_key) tuple in same transaction. Fire AgeGroupDefaultChanged { from: previous, to: this }.",
+        "saving (is_default=false flipped) → refuse when no sibling AgeGroup in the same tuple carries is_default=true (AGE_GROUP_MISSING_DEFAULT 409). Tenants must always have exactly one default per tuple; the caller must promote another row first.",
+        "saving (min_age_inclusive OR max_age_inclusive changed) → refuse when active Athletes reference this age_group AND the change would make them ineligible (AGE_GROUP_BOUNDS_INVALIDATE_ATHLETES 409 — Wave 3+; Wave 3a skips this check because Athlete + AthleteEnrollment don't exist yet). Fire AgeGroupBoundsChanged with { min_age: {before, after}, max_age: {before, after}, is_youth_flip }.",
+        "saving (cutoff_date_kind OR cutoff_month OR cutoff_day changed) → refuse when active Athletes reference AND the change would reshape their eligibility (AGE_GROUP_CUTOFF_INVALIDATE_ATHLETES 409 — Wave 3+). Fire AgeGroupCutoffChanged.",
+        "saving (sport_key changed) → refuse when active Athletes reference this age_group with the OLD sport_key value (AGE_GROUP_SPORT_KEY_IN_USE 409 — changing sport_key on a row with existing consumers rewires the resolution chain). Fire AgeGroupSportKeyChanged.",
+        "saving (is_seeded changed) → REFUSE always (AGE_GROUP_IS_SEEDED_IMMUTABLE 403 — this flag is set once by the seeder and never mutated by tenant callers).",
+        "saving (organization_id changed) → refuse post-create (AGE_GROUP_ORG_IMMUTABLE 409 — moving an age group between organizations reshapes its scoping tuple).",
+        "saving (tenant_id changed) → refuse (SECURITY: cross-tenant FK smuggling — TENANT_IMMUTABLE 403).",
+        "saving (is_youth changed by the caller) → auto-recompute from max_age_inclusive; ignore the caller's value silently (is_youth is derived, not authored).",
+        "updating (any other tracked field) → fire AgeGroupUpdated with `changed_fields` populated from `$model->getDirty()->keys()`, excluding is_youth (auto-derived) + sort_order (recomputed on min_age change).",
+        "deleting → refuse when Team.age_group_id OR EventDivision.age_group_id references exist (AGE_GROUP_IN_USE 409). AthleteEnrollment.age_group_snapshot_id does NOT block delete — snapshots are self-contained copies. The FK RESTRICT is the DB fallback; the observer surfaces the clearer error.",
+        "deleting → refuse when is_default=true (CANNOT_DELETE_DEFAULT_AGE_GROUP 409).",
+        "deleting → refuse when is_seeded=true (CANNOT_DELETE_SEEDED_AGE_GROUP 409 — seeded defaults are the platform's baseline catalog; must customise via editing individual fields, never by deletion).",
+        "deleted (soft) → fire AgeGroupArchived + AgeGroupDeleted { mode: 'soft', was_default: false, was_seeded: bool }; the row surfaces to PurgeArchivedAgeGroupsJob after retention (1095 days).",
+        "forceDeleted → fire AgeGroupDeleted { mode: 'hard' }; audit rows survive per minor-safeguarding retention (7 years, outlives the row).",
+        "restoring → refuse when the scoping tuple already has an active row with is_default=true AND this row's is_default=true (would create a duplicate default — AGE_GROUP_DEFAULT_DUPLICATE_ON_RESTORE 409 — the caller must demote the other default first).",
+        "restoring → refuse when the scoping tuple already has an active row with the same slug (AGE_GROUP_SLUG_DUPLICATE_ON_RESTORE 409 — same reasoning).",
+        "restored → fire AgeGroupRestored."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "academorix://modules/age-group/entitlements",
+  "$version": 1,
+  "title": "age-group — declared entitlements",
+  "description": "Three entitlement keys. `age_group_slot` caps the number of tenant-custom (is_seeded=false) age groups per tenant. `age_group_custom` gates the ability to create any custom age group at all (Small tier locked to the seeded catalog). `age_group_sport_specific` gates the `sport_key` column — sport-specific overrides are Enterprise-only.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "age_group_custom",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables creating custom (is_seeded=false) age groups. Off (Small tier) = the tenant is locked to the 10-entry seeded catalog; POST /api/v1/age-groups returns AGE_GROUP_CUSTOM_DISABLED (402). Seeded rows may still be edited (renamed, recoloured, sort_order adjusted), but the bounds + cutoff + sport_key of a seeded row also refuse mutation on Small tier (the whole customisation surface is off, not just create). Medium + Enterprise carry this flag by default. Rationale: Small tier is designed for small academies that don't need to reshape the youth-development age progression."
+    },
+    {
+      "key": "age_group_slot",
+      "kind": "slot",
+      "defaultsByPlan": { "small": 0, "medium": 20, "enterprise": null },
+      "description": "Max number of CUSTOM (is_seeded=false) age groups per tenant. Small=0 (no customs — the seeded catalog IS the ceiling). Medium=20. Enterprise=unlimited (null). Consumed on create when is_seeded=false. The seeded default catalog (10 rows) does NOT consume slots — they are a platform invariant. Refuses further customs with AGE_GROUP_QUOTA_EXCEEDED (402) once exhausted. Downgrading (Medium → Small) does NOT auto-archive existing customs — the reconciler surfaces the drift + suggests manual archive. The observer returns the slot on hard-delete (soft-delete keeps the slot occupied per retention)."
+    },
+    {
+      "key": "age_group_sport_specific",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enables the `sport_key` field on AgeGroup rows. Off = sport_key must be NULL (all age groups are generic — U12 means U12 regardless of sport). On = tenants may create sport-specific overrides (e.g. football U12 with a Jan 1 European federation cutoff vs generic U12 with a rolling birthday). Enterprise-only because sport-specific rules add complexity to every downstream resolver — most tenants don't need it. When off, POST + PATCH with a non-null sport_key return AGE_GROUP_SPORT_SPECIFIC_DISABLED (402)."
+    }
+  ]
+}

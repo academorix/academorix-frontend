@@ -1,0 +1,28 @@
+{
+  "id": "academorix://modules/staff/subprocessors",
+  "$version": 1,
+  "title": "staff — subprocessors",
+  "description": "The Staff module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. The Notifications module dispatches staff lifecycle notifications via its own subprocessors (mail, SMS, push); those are declared in notifications::subprocessors.json. The Finance module (Wave 4) will engage payroll processors that consume compensation_amount_cents; those live in finance::subprocessors.json. This file lists ZERO active subprocessors to be explicit about the module's boundary — staff state is fully first-party.",
+  "subprocessors": [],
+  "downstream_subprocessors_referenced": [
+    {
+      "module": "notifications",
+      "reference": "notifications::subprocessors.json",
+      "used_for": "Dispatching StaffWelcome / StaffOffboarded / StaffPromoted / CoachCertificationExpiring / CompensationChanged / ProbationEndingSoon / StaffSuspended notifications via mail / SMS / push channels."
+    },
+    {
+      "module": "finance",
+      "reference": "finance::subprocessors.json (Wave 4)",
+      "used_for": "Payroll integration — 3rd-party payroll processors (Gusto / ADP / Deel / regional equivalents) consume compensation_amount_cents + pay_frequency for the tenant's chosen payroll flow. Those subprocessors own the full-tax-ID storage that we deliberately don't."
+    },
+    {
+      "module": "storage",
+      "reference": "storage::subprocessors.json",
+      "used_for": "Signed-document uploads for coach certification verification (when coach_certifications_verified entitlement is on). Storage module engages S3-compatible object storage subprocessors."
+    }
+  ],
+  "notes": [
+    "This file exists deliberately even with an empty subprocessors array. The GDPR Art. 30 record of processing activities requires per-module subprocessor lists; an empty list is the correct declaration for a module that engages none directly.",
+    "If a future Wave introduces a subprocessor into this module (e.g. an AI-based org-chart suggester or a certification-verification service that scans uploaded documents), add it here + update compliance.json Art. 28 evidence + refresh the tenant-facing subprocessor list."
+  ]
+}

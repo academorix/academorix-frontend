@@ -1,0 +1,187 @@
+{
+  "id": "academorix://modules/staff/schemas/staff",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Staff",
+  "description": "Employment record wrapping a User row. Carries tenant_id + branch_id + user_id — cascades organization + region through branch, application through tenant per hierarchy.md §2. NEVER carries application_id (cascades through tenant), organization_id (cascades through branch), or region_id (cascades through branch), or scope_node_id (staff is not a scope consumer per tenancy-columns.md §4).",
+  "type": "object",
+  "x-module": "staff",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "staff",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "stf_",
+    "incrementing": false,
+    "model": "Academorix\\Staff\\Models\\Staff",
+    "interface": "Academorix\\Staff\\Contracts\\Data\\StaffInterface",
+    "implements": ["Academorix\\Staff\\Contracts\\Data\\StaffInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToBranch",
+      "BelongsToUser",
+      "WrapsUser",
+      "HasCoachProfile",
+      "HasMetadata",
+      "HasUserstamps",
+      "Notifiable",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "employment_type": "EmploymentType",
+      "employment_status": "EmploymentStatus",
+      "compensation_type": "CompensationType",
+      "pay_frequency": "PayFrequency",
+      "termination_reason": "TerminationReason",
+      "is_branch_manager": "boolean",
+      "compensation_amount_cents": "integer",
+      "weekly_hours": "integer",
+      "started_at": "date",
+      "ended_at": "date",
+      "probation_ends_at": "date",
+      "metadata": "array"
+    },
+    "observers": ["StaffObserver"],
+    "appends": ["full_name", "display_name", "email", "avatar_url"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `stf_<26>`." },
+      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
+      "branch_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "branches", "column": "id", "onDelete": "restrict" }, "description": "Home branch. Immutable in Wave 2b." },
+      "user_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }, "description": "The login/identity side. RESTRICT — user cannot be archived while an active Staff row references it. Immutable post-create." },
+      "employee_number": { "type": "string", "length": 32, "nullable": true, "description": "External HR system integration ID. Unique per (tenant_id, employee_number) when non-null." },
+      "employment_type": { "type": "string", "length": 16, "nullable": false, "description": "Enum: full_time / part_time / contract / volunteer / intern / seasonal." },
+      "employment_status": { "type": "string", "length": 16, "nullable": false, "default": "'pre_hire'", "description": "Enum: pre_hire / active / on_leave / suspended / offboarding / offboarded." },
+      "position": { "type": "string", "length": 128, "nullable": false, "description": "Free-text job title. e.g. 'Head Coach', 'Receptionist', 'HR Manager'." },
+      "department": { "type": "string", "length": 64, "nullable": true, "description": "Free-text. e.g. 'Sports', 'Front Desk', 'Facilities', 'Admin'." },
+      "is_branch_manager": { "type": "boolean", "nullable": false, "default": "false", "description": "Exactly one active Staff per branch may hold this — enforced by partial unique index." },
+      "reports_to_staff_id": { "type": "string", "length": 64, "nullable": true, "foreign": { "table": "staff", "column": "id", "onDelete": "set null" }, "description": "Self-reference for the org chart. Available when staff_org_chart entitlement is on (Enterprise)." },
+      "started_at": { "type": "date", "nullable": false, "description": "Hire date. Locked once employment_status leaves pre_hire." },
+      "ended_at": { "type": "date", "nullable": true, "description": "Offboard date. Set on employment_status → offboarded." },
+      "termination_reason": { "type": "string", "length": 32, "nullable": true, "description": "Enum: resigned / terminated / retired / contract_ended / seasonal_end / other. Required when employment_status transitions to offboarding." },
+      "termination_notes": { "type": "text", "nullable": true, "description": "HR-visible internal notes on the termination. Confidential-tier." },
+      "probation_ends_at": { "type": "date", "nullable": true, "description": "For full_time/part_time hires. Max 365 days from started_at." },
+      "weekly_hours": { "type": "integer", "nullable": true, "description": "Contracted weekly hours. Helps schedule against capacity." },
+      "compensation_type": { "type": "string", "length": 16, "nullable": true, "description": "Enum: hourly / salary / stipend / volunteer / commission. REGULATED_FINANCIAL-tier. Requires staff_compensation_tracking entitlement + staff.manage.compensation permission." },
+      "compensation_amount_cents": { "type": "integer", "nullable": true, "description": "REGULATED_FINANCIAL-tier. Redacted unless caller carries staff.view.compensation." },
+      "compensation_currency": { "type": "string", "length": 3, "nullable": true, "description": "ISO 4217. REGULATED_FINANCIAL-tier." },
+      "pay_frequency": { "type": "string", "length": 16, "nullable": true, "description": "Enum: hourly / weekly / biweekly / monthly / per_session. REGULATED_FINANCIAL-tier." },
+      "emergency_contact_name": { "type": "string", "length": 128, "nullable": true, "description": "CONFIDENTIAL-tier. Redacted unless caller carries staff.view.emergency_contact. Hard-purged 90 days post-offboarding." },
+      "emergency_contact_phone": { "type": "string", "length": 20, "nullable": true, "description": "E.164 phone. CONFIDENTIAL-tier." },
+      "emergency_contact_relationship": { "type": "string", "length": 32, "nullable": true, "description": "Free-text: 'spouse', 'parent', etc. CONFIDENTIAL-tier." },
+      "tax_id_last4": { "type": "string", "length": 4, "nullable": true, "description": "Last 4 digits of SSN/national tax ID. CONFIDENTIAL-tier. Full ID NEVER stored." },
+      "notes": { "type": "text", "nullable": true, "description": "HR-visible internal notes. Confidential-tier." },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "user_id"],
+        "unique": true,
+        "name": "staff_tenant_user_active_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "One active Staff row per (tenant, user). Rehires must offboard the existing first."
+      },
+      {
+        "columns": ["tenant_id", "employee_number"],
+        "unique": true,
+        "name": "staff_tenant_employee_number_unique",
+        "predicate": "employee_number IS NOT NULL AND deleted_at IS NULL"
+      },
+      {
+        "columns": ["branch_id", "is_branch_manager"],
+        "unique": true,
+        "name": "staff_branch_manager_unique",
+        "predicate": "is_branch_manager = true AND employment_status = 'active' AND deleted_at IS NULL",
+        "description": "The load-bearing invariant: exactly one active manager per branch."
+      },
+      { "columns": ["tenant_id", "branch_id", "employment_status"], "name": "staff_status_idx" },
+      { "columns": ["tenant_id", "user_id"], "name": "staff_user_idx" },
+      { "columns": ["tenant_id", "position"], "name": "staff_position_idx" },
+      { "columns": ["tenant_id", "reports_to_staff_id"], "name": "staff_reports_to_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "branch_id",
+    "user_id",
+    "employment_type",
+    "employment_status",
+    "position",
+    "is_branch_manager",
+    "started_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^stf_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "branch_id": { "type": "string", "pattern": "^brn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "user_id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "employee_number": { "type": ["string", "null"], "maxLength": 32 },
+    "employment_type": {
+      "type": "string",
+      "enum": ["full_time", "part_time", "contract", "volunteer", "intern", "seasonal"]
+    },
+    "employment_status": {
+      "type": "string",
+      "enum": ["pre_hire", "active", "on_leave", "suspended", "offboarding", "offboarded"]
+    },
+    "position": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "department": { "type": ["string", "null"], "maxLength": 64 },
+    "is_branch_manager": { "type": "boolean" },
+    "reports_to_staff_id": { "type": ["string", "null"], "pattern": "^stf_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "started_at": { "type": "string", "format": "date" },
+    "ended_at": { "type": ["string", "null"], "format": "date" },
+    "termination_reason": {
+      "type": ["string", "null"],
+      "enum": ["resigned", "terminated", "retired", "contract_ended", "seasonal_end", "other", null]
+    },
+    "termination_notes": { "type": ["string", "null"] },
+    "probation_ends_at": { "type": ["string", "null"], "format": "date" },
+    "weekly_hours": { "type": ["integer", "null"], "minimum": 0, "maximum": 168 },
+    "compensation_type": {
+      "type": ["string", "null"],
+      "enum": ["hourly", "salary", "stipend", "volunteer", "commission", null]
+    },
+    "compensation_amount_cents": { "type": ["integer", "null"], "minimum": 0 },
+    "compensation_currency": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
+    "pay_frequency": {
+      "type": ["string", "null"],
+      "enum": ["hourly", "weekly", "biweekly", "monthly", "per_session", null]
+    },
+    "emergency_contact_name": { "type": ["string", "null"], "maxLength": 128 },
+    "emergency_contact_phone": { "type": ["string", "null"], "pattern": "^\\+[1-9]\\d{1,14}$" },
+    "emergency_contact_relationship": { "type": ["string", "null"], "maxLength": 32 },
+    "tax_id_last4": { "type": ["string", "null"], "pattern": "^\\d{4}$" },
+    "notes": { "type": ["string", "null"] },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "One active Staff row per (tenant_id, user_id) — enforced by partial unique index",
+    "One active branch_manager per branch — enforced by partial unique index",
+    "user_id is IMMUTABLE post-create",
+    "branch_id is IMMUTABLE post-create in Wave 2b",
+    "probation_ends_at, when set, <= started_at + 365 days",
+    "termination_reason MUST be set when employment_status transitions to offboarding",
+    "employment_status='offboarded' requires ended_at set",
+    "compensation_* fields refused unless staff_compensation_tracking entitlement is on AND caller has staff.manage.compensation permission",
+    "emergency_contact_* + tax_id_last4 refused unless caller has staff.manage.emergency_contact permission"
+  ]
+}

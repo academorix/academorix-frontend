@@ -1,0 +1,203 @@
+{
+  "id": "academorix://modules/teams/metrics",
+  "$version": 1,
+  "title": "teams — OpenTelemetry metrics",
+  "instrumentation": "self via telemetry",
+  "namespace": "academorix.teams",
+  "labelConventions": {
+    "always": [],
+    "commonlyAvailable": ["team_type", "sport_key", "status", "member_type", "role_on_team", "left_reason", "trial_type", "participation_type"],
+    "forbiddenAsLabels": ["tenant_id", "team_id", "team_member_id", "trial_id", "event_team_id", "member_id", "trialist_id", "user_id", "coach_id"]
+  },
+  "metrics": [
+    {
+      "name": "academorix.teams.catalogue.count",
+      "kind": "gauge",
+      "unit": "teams",
+      "labels": ["team_type", "status"],
+      "description": "Count of teams per (type, status). Sampled hourly. Powers capacity-planning dashboards."
+    },
+    {
+      "name": "academorix.teams.roster.active_size",
+      "kind": "histogram",
+      "unit": "members",
+      "buckets": [0, 5, 10, 20, 50, 100, 200, 500],
+      "labels": ["team_type"],
+      "description": "Distribution of active roster sizes across teams. Sampled hourly."
+    },
+    {
+      "name": "academorix.teams.created_total",
+      "kind": "counter",
+      "unit": "teams",
+      "labels": ["team_type", "sport_key"]
+    },
+    {
+      "name": "academorix.teams.archived_total",
+      "kind": "counter",
+      "unit": "teams",
+      "labels": ["team_type"]
+    },
+    {
+      "name": "academorix.teams.paused_total",
+      "kind": "counter",
+      "unit": "teams",
+      "labels": []
+    },
+    {
+      "name": "academorix.teams.coach_changed_total",
+      "kind": "counter",
+      "unit": "coach_changes",
+      "labels": ["is_minor_only"],
+      "description": "is_minor_only=true is the child-safety-sensitive branch."
+    },
+    {
+      "name": "academorix.teams.members.joined_total",
+      "kind": "counter",
+      "unit": "members",
+      "labels": ["member_type", "role_on_team", "joined_via_trial"]
+    },
+    {
+      "name": "academorix.teams.members.left_total",
+      "kind": "counter",
+      "unit": "members",
+      "labels": ["member_type", "left_reason"]
+    },
+    {
+      "name": "academorix.teams.members.role_changed_total",
+      "kind": "counter",
+      "unit": "changes",
+      "labels": ["from_role", "to_role"]
+    },
+    {
+      "name": "academorix.teams.members.suspended_total",
+      "kind": "counter",
+      "unit": "members",
+      "labels": []
+    },
+    {
+      "name": "academorix.teams.members.injured_total",
+      "kind": "counter",
+      "unit": "members",
+      "labels": []
+    },
+    {
+      "name": "academorix.teams.members.tenure_days",
+      "kind": "histogram",
+      "unit": "days",
+      "buckets": [30, 90, 180, 365, 730, 1825],
+      "labels": ["member_type"],
+      "description": "Distribution of active tenure at the time of left_at. Recorded on TeamMemberLeft events."
+    },
+    {
+      "name": "academorix.teams.trials.scheduled_total",
+      "kind": "counter",
+      "unit": "trials",
+      "labels": ["trial_type", "trialist_type"]
+    },
+    {
+      "name": "academorix.teams.trials.converted_total",
+      "kind": "counter",
+      "unit": "trials",
+      "labels": ["trial_type"]
+    },
+    {
+      "name": "academorix.teams.trials.rejected_total",
+      "kind": "counter",
+      "unit": "trials",
+      "labels": ["trial_type"],
+      "description": "No reason label — anti-discrimination inference protection."
+    },
+    {
+      "name": "academorix.teams.trials.no_show_total",
+      "kind": "counter",
+      "unit": "trials",
+      "labels": []
+    },
+    {
+      "name": "academorix.teams.trials.cancelled_total",
+      "kind": "counter",
+      "unit": "trials",
+      "labels": []
+    },
+    {
+      "name": "academorix.teams.trials.decision_latency_hours",
+      "kind": "histogram",
+      "unit": "hours",
+      "buckets": [1, 24, 72, 168, 336, 720],
+      "labels": ["decision"],
+      "description": "Hours from trial.ends_at to trial.decided_at. Powers the coach-follow-up dashboard."
+    },
+    {
+      "name": "academorix.teams.trials.conversion_rate",
+      "kind": "gauge",
+      "unit": "ratio",
+      "labels": ["team_type"],
+      "description": "Sampled daily. Converted / (converted + rejected). Team-level operator health signal."
+    },
+    {
+      "name": "academorix.teams.event_teams.registered_total",
+      "kind": "counter",
+      "unit": "event_teams",
+      "labels": ["participation_type"]
+    },
+    {
+      "name": "academorix.teams.event_teams.withdrew_total",
+      "kind": "counter",
+      "unit": "event_teams",
+      "labels": []
+    },
+    {
+      "name": "academorix.teams.event_teams.result_recorded_total",
+      "kind": "counter",
+      "unit": "event_teams",
+      "labels": ["participation_type"]
+    },
+    {
+      "name": "academorix.teams.capacity.exceeded_total",
+      "kind": "counter",
+      "unit": "attempts",
+      "labels": ["waitlist_configured"],
+      "description": "Every fire is an upsell impression — tier boundary hit."
+    },
+    {
+      "name": "academorix.teams.age_ineligible_total",
+      "kind": "counter",
+      "unit": "refusals",
+      "labels": []
+    },
+    {
+      "name": "academorix.teams.gender_ineligible_total",
+      "kind": "counter",
+      "unit": "refusals",
+      "labels": []
+    },
+    {
+      "name": "academorix.teams.member_invariant.violations",
+      "kind": "counter",
+      "unit": "violations",
+      "labels": ["detected_by"],
+      "description": "CRITICAL. Every increment indicates a (team, member_type, member_id) with 2+ active rows. Should stay at 0. detected_by: observer / reconciler_job."
+    },
+    {
+      "name": "academorix.teams.polymorphic_resolver.miss_total",
+      "kind": "counter",
+      "unit": "misses",
+      "labels": ["member_type"],
+      "description": "member_id doesn't resolve to a live row of the declared type. Should stay at 0 (except during Wave 3 sports rollout when older data may include orphaned athlete FKs)."
+    },
+    {
+      "name": "academorix.teams.entitlement.gate_refusals_total",
+      "kind": "counter",
+      "unit": "refusals",
+      "labels": ["entitlement_key"],
+      "description": "Number of route hits refused by the entitlement middleware. Product signal for upgrade-CTA impressions."
+    },
+    {
+      "name": "academorix.teams.child_safety.notifications_dispatched_total",
+      "kind": "counter",
+      "unit": "notifications",
+      "labels": [],
+      "description": "Count of safeguarding-lead notifications fired by TeamCoachChanged with is_minor_only=true. Auditable metric — every value must match the count of TeamCoachChanged-is_minor_only events (see health probe)."
+    }
+  ]
+}

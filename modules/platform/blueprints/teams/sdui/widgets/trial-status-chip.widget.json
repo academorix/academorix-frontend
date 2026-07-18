@@ -1,0 +1,43 @@
+{
+  "id": "teams.trial-status-chip",
+  "title": "Trial status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for team_trial.status. Never relies on colour alone — always carries a text label + optional icon.",
+  "props": {
+    "status": {
+      "type": "string",
+      "enum": ["scheduled", "in_progress", "completed", "converted", "rejected", "no_show", "cancelled"],
+      "required": true
+    },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showIcon": { "type": "boolean", "default": true }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "({ scheduled: 'info', in_progress: 'warning', completed: 'accent', converted: 'success', rejected: 'danger', no_show: 'neutral', cancelled: 'neutral' })[props.status]"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "props": {
+        "leadingIcon": {
+          "$expr": "props.showIcon ? ({ scheduled: 'calendar', in_progress: 'clock', completed: 'check-circle', converted: 'user-plus', rejected: 'x-circle', no_show: 'user-minus', cancelled: 'no-symbol' })[props.status] : null"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "({ scheduled: 'Scheduled', in_progress: 'In progress', completed: 'Completed', converted: 'Converted', rejected: 'Rejected', no_show: 'No-show', cancelled: 'Cancelled' })[props.status]"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

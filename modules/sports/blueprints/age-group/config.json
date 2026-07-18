@@ -1,0 +1,135 @@
+{
+  "id": "academorix://modules/age-group/config",
+  "$version": 1,
+  "title": "age-group — developer configuration",
+  "configFile": "config/age_group.php",
+  "envPrefix": "AGE_GROUP_",
+  "sections": {
+    "provisioning": {
+      "keys": [
+        {
+          "path": "age_group.provisioning.seed_default_catalog_on_tenant_create",
+          "type": "bool",
+          "env": "AGE_GROUP_SEED_ON_TENANT",
+          "default": true,
+          "description": "When true (default), tenancy::TenantProvisioned dispatches SeedDefaultAgeGroupsForTenantJob. Off = the tenant lands without a default catalog; callers must create groups before any Team can carry an age_group_id. Off is only safe in migration harnesses where a bespoke seed handles the invariant."
+        },
+        {
+          "path": "age_group.provisioning.default_catalog_version",
+          "type": "integer",
+          "default": 1,
+          "description": "Bumps when `data/default-age-groups.json` changes materially. Downstream consumers (Team picker cache, notification templates) compare against the cached copy + refetch when the numbers diverge."
+        },
+        {
+          "path": "age_group.provisioning.async",
+          "type": "bool",
+          "env": "AGE_GROUP_ASYNC_PROVISION",
+          "default": true,
+          "description": "When true, SeedDefaultAgeGroupsForTenantJob is dispatched to a queue. When false, AgeGroupCatalogSeeder runs synchronously in the tenant-provisioning transaction. Sync is safer (the tenant is never briefly catalogless) but slower. Async is the default because tenant onboarding must feel instant."
+        }
+      ]
+    },
+    "reconciliation": {
+      "keys": [
+        {
+          "path": "age_group.reconciliation.schedule",
+          "type": "string",
+          "env": "AGE_GROUP_RECONCILE_CRON",
+          "default": "30 3 * * *",
+          "description": "Cron expression for ReconcileAgeGroupDefaultInvariantJob. Daily 03:30 UTC by default (staggered from region reconciler at 03:15)."
+        },
+        {
+          "path": "age_group.reconciliation.alert_on_drift",
+          "type": "bool",
+          "default": true,
+          "description": "When true, drift (a (tenant, org, sport_key) tuple with 0 or 2+ default groups) fires the alert per `config('monitoring.channels.compliance')`. Off = drift is only logged; ops must poll audits."
+        },
+        {
+          "path": "age_group.reconciliation.auto_heal",
+          "type": "bool",
+          "env": "AGE_GROUP_AUTO_HEAL",
+          "default": false,
+          "description": "When true, the reconciler auto-heals drift (promote-oldest). Off by default — surface + acknowledge before healing. Turn on in production when ops has built confidence in the drift patterns."
+        }
+      ]
+    },
+    "validation": {
+      "keys": [
+        {
+          "path": "age_group.validation.platform_min_age_floor",
+          "type": "integer",
+          "default": 3,
+          "description": "Platform-wide minimum for min_age_inclusive. 3 is deliberate — real programmes rarely start younger + tighter bounds guard against typos. Support tickets can extend this per-tenant."
+        },
+        {
+          "path": "age_group.validation.platform_max_age_ceiling",
+          "type": "integer",
+          "default": 100,
+          "description": "Platform-wide maximum for max_age_inclusive. 100 is a sanity ceiling."
+        },
+        {
+          "path": "age_group.validation.enforce_athlete_eligibility_on_bounds_change",
+          "type": "bool",
+          "default": true,
+          "description": "When true (default from Wave 3+), bounds mutations refuse when any active Athlete would become ineligible. When false, bounds mutations succeed but fire an audit-critical AgeGroupBoundsChanged with the impacted-athlete count. Wave 3a: this check is a no-op regardless — Athlete + AthleteEnrollment don't exist yet."
+        }
+      ]
+    },
+    "resolution": {
+      "keys": [
+        {
+          "path": "age_group.resolution.indeterminate_strategy",
+          "type": "string",
+          "default": "refuse",
+          "enum": ["refuse", "first_match", "oldest_group"],
+          "description": "How AgeGroupResolver::resolveFor(...) behaves when multiple candidate AgeGroups match (a real risk when tenants overlap bounds across sport_key values or gender_categories). `refuse` = throw AGE_GROUP_RESOLVE_INDETERMINATE (the safe default; forces the caller to disambiguate). `first_match` = return the first row by sort_order. `oldest_group` = return the row with the smallest min_age_inclusive."
+        },
+        {
+          "path": "age_group.resolution.prefer_sport_specific",
+          "type": "bool",
+          "default": true,
+          "description": "When resolving for an Athlete + sport_key, prefer the sport-specific override (sport_key non-null) over the generic (sport_key null) fallback. Off = always use the generic group; sport-specific groups become editorial (advisory-only) rather than authoritative."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "age_group.retention.archived_age_groups_retention_days",
+          "type": "integer",
+          "env": "AGE_GROUP_ARCHIVE_RETENTION_DAYS",
+          "default": 1095,
+          "description": "Days a soft-deleted AgeGroup stays in the archived state before PurgeArchivedAgeGroupsJob hard-deletes it. Default 1095 (3 years) — matches rolling youth-development cohort windows. Compliance floor: 730 days (2 years). Enterprise tenants may extend up to 2555 (7 years matching audit retention)."
+        },
+        {
+          "path": "age_group.retention.audit_row_retention_days",
+          "type": "integer",
+          "default": 2555,
+          "description": "Days audit rows produced by this module survive after their source AgeGroup is hard-deleted. Default 2555 (7 years — minor-safeguarding retention floor). Read-only reference — actual retention is enforced by the audit module's retention policy."
+        }
+      ]
+    },
+    "cache": {
+      "keys": [
+        {
+          "path": "age_group.cache.list_ttl_seconds",
+          "type": "integer",
+          "default": 600,
+          "description": "TTL for `age:list:{tenant_id}` — cached active-group list used by the tenant admin UI + every Team edit form's age-group dropdown."
+        },
+        {
+          "path": "age_group.cache.catalog_ttl_seconds",
+          "type": "integer",
+          "default": 1800,
+          "description": "TTL for `age:catalog:{tenant_id}` — cached rollup by (organization, sport_key) tuple used by the picker widget."
+        },
+        {
+          "path": "age_group.cache.resolver_ttl_seconds",
+          "type": "integer",
+          "default": 300,
+          "description": "TTL for `age:resolve:{tenant_id}:{dob}:{sport_key}` — cached resolver answers. Short because the same DOB + sport_key answers may shift as the calendar rolls (rolling_from_birthday cutoffs)."
+        }
+      ]
+    }
+  }
+}

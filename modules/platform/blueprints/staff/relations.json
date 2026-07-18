@@ -1,0 +1,115 @@
+{
+  "id": "academorix://modules/staff/relations",
+  "$version": 1,
+  "title": "staff — model relationships",
+  "description": "Two owned entities. Staff wraps User (like Profile wraps User in the user module — 1:1 satellite with RESTRICT protecting the parent from premature delete). Coach satellites Staff (again 1:1 with RESTRICT — a Coach row must be archived before its Staff can be offboarded). No `application_id` on any row — cascades through `tenant_id → tenants.application_id`. No `organization_id` or `region_id` — cascades through `branch_id → branches.organization_id / branches.region_id`. Every outbound FK stays same-tenant per tenancy-columns.md §5.",
+  "internal": [
+    {
+      "from": "Staff",
+      "kind": "hasOne",
+      "to": "Coach",
+      "foreignKey": "staff_id",
+      "onDelete": "restrict",
+      "description": "1:1 coaching-profile satellite. RESTRICT so Staff cannot be soft-deleted while an active Coach row references it — the offboard flow (CascadeCoachStatusOnStaffOffboarding hook) archives the Coach first. Enforced by StaffObserver.deleting."
+    },
+    {
+      "from": "Coach",
+      "kind": "belongsTo",
+      "to": "Staff",
+      "foreignKey": "staff_id",
+      "onDelete": "restrict",
+      "description": "Inverse. Coach cascades every tenant / branch / organization / region attribution through this FK — Coach has no direct branch_id / organization_id / region_id."
+    },
+    {
+      "from": "Staff",
+      "kind": "belongsTo",
+      "to": "Staff",
+      "foreignKey": "reports_to_staff_id",
+      "onDelete": "set null",
+      "nullable": true,
+      "description": "Self-reference for the org chart (staff_org_chart entitlement — Enterprise). SET NULL on manager offboard so the reporting chain doesn't cascade-orphan; the manager's direct reports become unassigned until an admin reassigns."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Staff",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every Staff row is tenant-scoped per tenancy-columns.md §3."
+    },
+    {
+      "from": "Staff",
+      "kind": "belongsTo",
+      "to": "branch::Branch",
+      "foreignKey": "branch_id",
+      "onDelete": "restrict",
+      "description": "Home branch. RESTRICT: branches cannot be hard-deleted while Staff rows reference them. Branch archive is blocked by PreventStaffOrphansOnBranchArchived hook when active Staff exist."
+    },
+    {
+      "from": "Staff",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "user_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT: a User row cannot be soft-deleted or archived while an active Staff record references it. The offboard flow must run first — Staff.employment_status → offboarded — then the User archive is unblocked (PreventUserArchiveWithActiveStaff hook). This is the primary invariant of the module: no orphan employment records, no zombie logins for offboarded staff."
+    },
+    {
+      "from": "Coach",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Denormalised tenant_id — cascades through staff.tenant_id but explicit for query-plan + FK integrity. Every write goes through CoachObserver which refuses when coach.tenant_id != staff.tenant_id."
+    }
+  ],
+  "inbound": {
+    "description": "Downstream modules (Wave 3+) attach to Staff + Coach via the traits shipped here:",
+    "examples": [
+      "teams::TeamMember (Wave 3) — polymorphic pivot. When member_type='coach', member_id references Coach.id. When member_type='staff' (e.g. assistant manager on a team), member_id references Staff.id.",
+      "sports::Session (Wave 3) — head_coach_id + assistant_coach_ids reference Coach.id.",
+      "sports::EventBooking (Wave 3) — supervising_staff_id references Staff.id.",
+      "attendance::ShiftAssignment (Wave 4) — staff_id references Staff.id for shift-planning.",
+      "attendance::ClockEntry (Wave 4) — staff_id references Staff.id for clock-in/clock-out records.",
+      "finance::PayrollLine (Wave 4) — staff_id references Staff.id; reads compensation_amount_cents + pay_frequency for the payroll export.",
+      "scheduling::SessionRating (Wave 4) — coach_id references Coach.id; feeds the AggregateCoachRatingsJob."
+    ],
+    "onDelete": "RESTRICT by convention on domain FKs referencing staff.id / coaches.id — Staff and Coach offboarding cascade-checks live in StaffObserver.saving / CoachObserver.saving."
+  },
+  "morphs": [],
+  "accessor_chain": {
+    "description": "The Staff and Coach models expose delegated accessors so consumers rarely reach through to the User + Profile chain manually. This keeps the PII cluster behind one boundary and lets the redactor pipeline (from data-classes.json) apply uniformly.",
+    "Staff": {
+      "full_name": "user->profile->first_name + ' ' + user->profile->last_name",
+      "display_name": "user->profile->display_name ?? user->profile->first_name",
+      "email": "user->identity->email",
+      "phone": "user->profile->phone_e164",
+      "avatar_url": "user->profile->avatar_url",
+      "locale": "user->profile->locale",
+      "timezone": "user->profile->timezone ?? branch->region->timezone",
+      "compensation_amount_cents": "REDACTED unless caller carries `staff.view.compensation`",
+      "emergency_contact_name": "REDACTED unless caller carries `staff.view.emergency_contact`",
+      "tax_id_last4": "REDACTED unless caller carries `staff.view.emergency_contact`"
+    },
+    "Coach": {
+      "full_name": "staff->user->profile->first_name + ' ' + staff->user->profile->last_name",
+      "display_name": "staff->user->profile->display_name ?? staff->user->profile->first_name",
+      "avatar_url": "staff->user->profile->avatar_url",
+      "branch_id": "staff->branch_id",
+      "organization_id": "staff->branch->organization_id",
+      "region_id": "staff->branch->region_id",
+      "position": "staff->position",
+      "employment_status": "staff->employment_status"
+    }
+  },
+  "notes": [
+    "Staff carries `application_id` via its User (via User.application_id) — never as a direct column. Enforced by tenancy-compliance-auditor per tenancy-columns.md §2 (only the 8 named rows carry application_id directly).",
+    "Coach cascades organization + region through Staff → Branch. `coach.organization_id` and `coach.region_id` DO NOT EXIST — they are forbidden columns per tenancy-columns.md §5.",
+    "Staff.branch_id is IMMUTABLE post-create IN Wave 2b. Wave 3+ ships a StaffBranchChanged event + observer path when the branch-transfer flow lands (rare — most staff have one home branch for their tenure).",
+    "Staff.user_id is IMMUTABLE post-create. You never repoint a Staff row at a different User — that's a compliance smell (looks like an audit-trail launder). The correct path is offboard the old + hire the new.",
+    "Coach.staff_id is IMMUTABLE post-create. A Staff row's coaching career belongs to one Coach row; if a Staff promotes from receptionist to assistant coach then to head coach, the promotions are updates on the existing Coach row (coach_started_at + coaching_level), not new Coach rows.",
+    "The Staff module DOES NOT ship a multi-branch pivot in Wave 2b. `staff_branches` (many-to-many for staff who serve multiple branches operationally, e.g. a floating HR admin) lands in Wave 3+. Until then, one home branch per Staff.",
+    "There is NO `Employee` model. Staff IS the employee record — the naming reflects the domain-agnostic scope (a volunteer or intern is Staff too)."
+  ]
+}

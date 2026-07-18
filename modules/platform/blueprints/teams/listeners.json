@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/teams/listeners",
+  "$version": 1,
+  "title": "teams — subscribed events",
+  "listeners": [
+    {
+      "event": "branch::BranchClosed",
+      "listener": "Academorix\\Teams\\Listeners\\PreventTeamOrphansOnBranchClosed",
+      "queue": "teams",
+      "purpose": "Refuses the Branch close when any team referencing it still has status='active'. Fires a domain-level refusal event; the branch module surfaces the error as `BRANCH_HAS_ACTIVE_TEAMS` (409). Distinct from the FK CASCADE — we intentionally block, not cascade, because team archive is a deliberate ops decision."
+    },
+    {
+      "event": "teams::TeamArchived",
+      "listener": "Academorix\\Teams\\Listeners\\CascadeMembersOnTeamArchived",
+      "queue": "teams",
+      "priority": 50,
+      "purpose": "Cascades: finds every team_member with team_id = event.team_id AND status='active', transitions each to status='inactive' + left_reason='team_archived'. Fires TeamMemberLeft per member with cascade_trigger='team_archived'. Runs at priority 50 (before notification-tier listeners) so the notification fan-out sees the inactive state."
+    },
+    {
+      "event": "teams::TrialConvertedToMember",
+      "listener": "Academorix\\Teams\\Listeners\\ConvertConfirmedTrials",
+      "queue": "teams",
+      "priority": 40,
+      "purpose": "Dispatches ConvertConfirmedTrialsJob to run the atomic conversion. The listener runs FIRST (priority 40) because everything else on the event fan-out assumes the conversion has completed."
+    },
+    {
+      "event": "teams::TrialScheduled",
+      "listener": "Academorix\\Teams\\Listeners\\ScheduleTrialistReminders",
+      "queue": "notifications",
+      "purpose": "Schedules NotifyTrialistPreTrialJob for (trial.starts_at - 24h) and (trial.starts_at - 1h). Skips scheduling when starts_at is already past the reminder threshold (short-notice trials)."
+    },
+    {
+      "event": "teams::TeamCoachChanged",
+      "listener": "Academorix\\Teams\\Listeners\\NotifyOnCoachChanged",
+      "queue": "notifications-critical",
+      "purpose": "Fires TeamCoachChangedNotification to old + new coach + active members. When event.is_minor_only=true, additionally notifies the branch safeguarding lead + writes a critical-severity audit row. Child-safety notification chain."
+    },
+    {
+      "event": "user::UserDeleted",
+      "listener": "Academorix\\Teams\\Listeners\\RedactUserFromRosters",
+      "queue": "teams",
+      "purpose": "When a user hard-deletes (personal erasure), redact their PII fields on any team_members / team_trials row referencing them — preserve the structural fact (team X had a member for period Y) but strip name/email/phone. Same pattern as User module's redaction."
+    },
+    {
+      "event": "tenancy::TenantErased",
+      "listener": "Academorix\\Teams\\Listeners\\PurgeTeamsForErasedTenant",
+      "queue": "teams",
+      "purpose": "Cascade delete via FK; this listener writes the compliance audit trail entry + emits count metrics (teams purged, team_members purged, team_trials purged, event_teams purged). Financial + anti-discrimination retention still applies to the audit rows, which outlive the source rows."
+    },
+    {
+      "event": "branch::BranchPaused",
+      "listener": "Academorix\\Teams\\Listeners\\FreezeTeamsInBranch",
+      "queue": "teams",
+      "purpose": "When a branch pauses, transition every active team in that branch to status='paused' (soft-freeze — existing members survive, new trials + roster adds refused). Reverses on BranchResumed via ThawTeamsInBranch."
+    },
+    {
+      "event": "branch::BranchResumed",
+      "listener": "Academorix\\Teams\\Listeners\\ThawTeamsInBranch",
+      "queue": "teams",
+      "purpose": "Reverses FreezeTeamsInBranch. Only thaws teams that were frozen BY the BranchPaused cascade (checks metadata.frozen_by='branch_pause' to avoid re-activating explicitly-paused teams)."
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "id": "staff.resources.coach.create",
+  "title": "New coach profile",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/coaches/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "staff", "entity": "coach", "action": "create" },
+  "requiresPermission": "coach.create",
+  "dataSources": [
+    {
+      "name": "eligible_staff",
+      "kind": "http.get",
+      "url": "/api/v1/staff?filter[employment_status]=active&filter[has_coach_profile]=false",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Form",
+      "props": { "className": "max-w-2xl mx-auto p-6" },
+      "actions": {
+        "onSubmit": {
+          "kind": "http.post",
+          "url": "/api/v1/coaches",
+          "body": "$form",
+          "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/coaches/' + response.data.id" },
+          "onError": { "kind": "form.setErrors", "errorsFrom": "response.errors" }
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold mb-6", "children": "New coach profile" }
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "info",
+            "children": "A coach profile attaches to an existing active staff row. The staff picker below shows only active staff without a live coach row.",
+            "className": "mb-4"
+          }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-4" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "name": "staff_id", "label": "Staff", "required": true, "menuTrigger": "input" },
+              "bindings": { "items": { "$ref": "eligible_staff" } },
+              "itemRenderer": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2" },
+                "children": [
+                  {
+                    "kind": "Avatar",
+                    "props": { "size": "xs" },
+                    "bindings": { "src": { "$ref": "item.avatar_url" }, "name": { "$ref": "item.display_name" } }
+                  },
+                  {
+                    "kind": "View",
+                    "children": [
+                      { "kind": "Text", "bindings": { "children": { "$ref": "item.display_name" } } },
+                      { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$ref": "item.position" } } }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "kind": "TextField",
+              "props": { "name": "sport_key", "label": "Primary sport", "required": true, "helpText": "e.g. basketball, swimming, general_fitness. Lower-case snake_case." }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "name": "coaching_level", "label": "Coaching level", "required": true, "menuTrigger": "focus" },
+              "props_items": [
+                { "id": "assistant", "label": "Assistant" },
+                { "id": "head", "label": "Head" },
+                { "id": "senior", "label": "Senior" },
+                { "id": "director", "label": "Director" },
+                { "id": "consultant", "label": "Consultant" }
+              ]
+            },
+            {
+              "kind": "TextField",
+              "props": { "name": "specialization", "label": "Specialization", "placeholder": "youth development / elite prep / rehab / ..." }
+            },
+            {
+              "kind": "DatePicker",
+              "props": { "name": "coach_started_at", "label": "Coaching start date", "helpText": "Defaults to the staff's started_at." }
+            },
+            {
+              "kind": "TextField",
+              "props": { "name": "session_capacity_per_week", "type": "number", "label": "Max sessions per week", "min": 0 }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2 mt-6" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/coaches" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "type": "submit", "variant": "primary", "children": "Create coach" }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

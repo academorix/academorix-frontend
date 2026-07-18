@@ -1,0 +1,172 @@
+{
+  "id": "academorix://modules/season/config",
+  "$version": 1,
+  "title": "season — developer configuration",
+  "configFile": "config/season.php",
+  "envPrefix": "SEASON_",
+  "sections": {
+    "provisioning": {
+      "keys": [
+        {
+          "path": "season.provisioning.seed_default_on_tenant_provisioned",
+          "type": "bool",
+          "env": "SEASON_SEED_ON_TENANT",
+          "default": true,
+          "description": "When true (default), tenancy::TenantProvisioned dispatches SeedDefaultSeasonForTenantJob for tenants on seasonal business_types. Off = tenants land without a default season; every season is admin-created. Turn off in migration harnesses where a bespoke seed handles it."
+        },
+        {
+          "path": "season.provisioning.async",
+          "type": "bool",
+          "env": "SEASON_ASYNC_PROVISION",
+          "default": true,
+          "description": "When true, SeedDefaultSeasonForTenantJob is dispatched to a queue. When false, SeasonProvisioner runs synchronously in the tenant-provisioning transaction. Sync provisioning is safer (the tenant is never briefly season-less on eligible business_types) but slower — the async path is default because tenant onboarding must feel instant."
+        }
+      ]
+    },
+    "phase_roll": {
+      "keys": [
+        {
+          "path": "season.phase_roll.schedule",
+          "type": "string",
+          "env": "SEASON_ROLL_CRON",
+          "default": "0 * * * *",
+          "description": "Cron expression for RollSeasonPhaseJob. Hourly by default. Every hour on the hour."
+        },
+        {
+          "path": "season.phase_roll.batch_size",
+          "type": "int",
+          "default": 5000,
+          "description": "Max rows RollSeasonPhaseJob loads per run. Guards against a runaway scan when the seasons table grows large."
+        },
+        {
+          "path": "season.phase_roll.skip_seasons_older_than_days",
+          "type": "int",
+          "default": 730,
+          "description": "The job skips completed seasons whose end_date is more than N days in the past. Archive completed-and-old seasons manually or wait for the operator to archive them."
+        }
+      ]
+    },
+    "registration_windows": {
+      "keys": [
+        {
+          "path": "season.registration.close_expired_schedule",
+          "type": "string",
+          "env": "SEASON_CLOSE_REGISTRATION_CRON",
+          "default": "*/15 * * * *",
+          "description": "Cron expression for CloseExpiredRegistrationsJob. Every 15 minutes by default — fine-grained because registration_closes_at can fall anywhere in the hour and admins expect prompt closure."
+        },
+        {
+          "path": "season.registration.reminder_windows",
+          "type": "array<string>",
+          "default": ["T-24h", "T-1h"],
+          "description": "When to schedule opening-reminder notifications relative to registration_opens_at. Multi-shot per Season."
+        },
+        {
+          "path": "season.registration.closing_reminder_windows",
+          "type": "array<string>",
+          "default": ["T-48h", "T-24h", "T-2h"],
+          "description": "When to schedule closing-reminder notifications relative to registration_closes_at."
+        },
+        {
+          "path": "season.registration.max_grace_days",
+          "type": "int",
+          "default": 30,
+          "description": "Max days registration_closes_at may fall AFTER start_date. Rule `valid_registration_window` enforces this."
+        }
+      ]
+    },
+    "reconciliation": {
+      "keys": [
+        {
+          "path": "season.reconciliation.schedule",
+          "type": "string",
+          "env": "SEASON_RECONCILE_CRON",
+          "default": "30 3 * * *",
+          "description": "Cron expression for ReconcileCurrentSeasonInvariantJob. Daily 03:30 UTC by default."
+        },
+        {
+          "path": "season.reconciliation.alert_on_drift",
+          "type": "bool",
+          "default": true,
+          "description": "When true, drift (a tuple with 2+ current seasons) fires the alert per `config('monitoring.channels.compliance')`."
+        },
+        {
+          "path": "season.reconciliation.auto_heal",
+          "type": "bool",
+          "env": "SEASON_AUTO_HEAL",
+          "default": false,
+          "description": "When true, the reconciler auto-heals drift (keeps newest is_current, demotes older ones). Off by default — surface + acknowledge before healing (matches region + branch pattern)."
+        }
+      ]
+    },
+    "archive_dependency_checks": {
+      "keys": [
+        {
+          "path": "season.archive.dependency_checks",
+          "type": "array<string>",
+          "default": ["teams", "athlete_enrollments", "events", "sessions"],
+          "description": "Wave 3 dependency-registry — a table name in this list must have no active row referencing the Season for the archive path to proceed. New downstream modules opt in by appending their table name here (no observer edit required). Wave 3a only `teams` exists on disk (via the concurrent Wave 2b teams module); other tables are placeholders."
+        }
+      ]
+    },
+    "purge_dependency_checks": {
+      "keys": [
+        {
+          "path": "season.purge.dependency_checks",
+          "type": "array<string>",
+          "default": ["teams", "athlete_enrollments", "events", "sessions"],
+          "description": "Same list as archive.dependency_checks — reused by PurgeArchivedSeasonsJob to decide whether a soft-deleted Season can be hard-deleted. If ANY row remains in ANY listed table pointing at the Season, the job skips + tries again the next day."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "season.retention.archived_seasons_retention_days",
+          "type": "int",
+          "env": "SEASON_ARCHIVE_RETENTION_DAYS",
+          "default": 2555,
+          "description": "Days a soft-deleted Season stays in the archived state before PurgeArchivedSeasonsJob hard-deletes it. Default 2555 (7 years — financial retention floor). Compliance floor: 730 (2 years). Tenants may EXTEND per the tier matrix."
+        },
+        {
+          "path": "season.retention.completed_seasons_retention_days",
+          "type": "int",
+          "default": 2555,
+          "description": "Days a completed (non-archived) Season is retained without being purged. Read-only reference — the actual retention lives on the row via deleted_at (once archived); this documents the compliance floor for financial audit rows produced by the Season."
+        }
+      ]
+    },
+    "cache": {
+      "keys": [
+        {
+          "path": "season.cache.current_season_ttl_seconds",
+          "type": "int",
+          "default": 300,
+          "description": "TTL for `sea:current:{tenant_id}:{org_id?}:{branch_id?}:{sport_key?}` — the cached current-season lookup used by CurrentSeasonResolver on the high-traffic `/seasons/current` endpoint."
+        },
+        {
+          "path": "season.cache.list_ttl_seconds",
+          "type": "int",
+          "default": 300,
+          "description": "TTL for `sea:list:{tenant_id}` — cached season list used by the tenant admin UI + the X-Season-Id resolver."
+        },
+        {
+          "path": "season.cache.phase_calculator_ttl_seconds",
+          "type": "int",
+          "default": 60,
+          "description": "TTL for `sea:phase:{season_id}` — cached phase evaluation for a single Season. Short TTL because phase can transition at hour boundaries."
+        }
+      ]
+    },
+    "validation": {
+      "keys": [
+        {
+          "path": "season.validation.reject_overlapping_current_scope",
+          "type": "bool",
+          "default": false,
+          "description": "When true, refuses two non-archived Seasons with overlapping date ranges in the same (tenant, org, branch, sport_key) tuple. Off by default because legitimate 'late season + early season' patterns overlap (a season that starts before another ends). On is opt-in for tenants that want strict non-overlap."
+        }
+      ]
+    }
+  }
+}

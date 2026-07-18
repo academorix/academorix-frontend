@@ -1,0 +1,89 @@
+{
+  "id": "academorix://modules/age-group/policies",
+  "$version": 1,
+  "title": "age-group — authorization policies",
+  "description": "One policy — AgeGroupPolicy — narrows by scope suffix (`.any` / `.tenant`). Every tenant member can READ age groups in their active tenant (they are UI reference data every enrollment + roster + team form depends on). Only admins + owners can WRITE. Seeded rows have extra guardrails: they cannot be deleted (only edited); `is_seeded` cannot be flipped by any caller.",
+  "policies": [
+    {
+      "model": "AgeGroup",
+      "class": "Academorix\\Sports\\AgeGroup\\Policies\\AgeGroupPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "age_groups.viewAny",
+          "scope": "resolved via ScopeSuffixResolver — `.tenant` narrows to the caller's active tenant; `.any` unrestricted (platform_admin only). Every tenant role gets `.tenant` by default because age groups are UI reference data (every enrollment + roster form reads them)."
+        },
+        {
+          "action": "view",
+          "permission": "age_groups.view",
+          "scope": "single-row check by suffix. `.tenant` requires the AgeGroup's tenant_id to match the caller's active tenant."
+        },
+        {
+          "action": "create",
+          "permission": "age_groups.create",
+          "scope": "admin or owner in the active tenant. Also gated by the `age_group_slot` entitlement — the observer decrements on create + refuses with AGE_GROUP_QUOTA_EXCEEDED when the slot is exhausted. Also gated by `age_group_custom` — Small tier is locked to the seeded catalog entirely, so `age_groups.create` returns 402 AGE_GROUP_CUSTOM_DISABLED on that tier."
+        },
+        {
+          "action": "createSportSpecific",
+          "permission": "age_groups.create.sport_specific",
+          "scope": "admin or owner + tenant carries `age_group_sport_specific` entitlement (Enterprise-only). Guards the `sport_key` field on creation — when the caller omits sport_key (null = generic), any tier can create; when the caller sets sport_key, this permission + entitlement gate the write."
+        },
+        {
+          "action": "update",
+          "permission": "age_groups.update",
+          "scope": "admin or owner. Mutable fields: name, description, slug, color, gender_category, sort_order. Bounds + cutoff + sport_key edits require the higher-privilege `age_groups.update.bounds` + `age_groups.update.cutoff` + `age_groups.update.sport_key` permissions because they can invalidate downstream Athlete eligibility."
+        },
+        {
+          "action": "updateBounds",
+          "permission": "age_groups.update.bounds",
+          "scope": "admin or owner. Separated from base update — bounds changes fire AgeGroupBoundsChanged which is audit-critical (7-year retention) and may cascade to Athlete eligibility recomputation."
+        },
+        {
+          "action": "updateCutoff",
+          "permission": "age_groups.update.cutoff",
+          "scope": "admin or owner. Same reasoning as updateBounds — cutoff changes reshape eligibility outcomes without touching the bounds themselves."
+        },
+        {
+          "action": "updateSportKey",
+          "permission": "age_groups.update.sport_key",
+          "scope": "admin or owner + tenant carries `age_group_sport_specific` entitlement. Refused when the AgeGroup is currently referenced by active Athletes (Wave 3+ enforcement)."
+        },
+        {
+          "action": "setDefault",
+          "permission": "age_groups.set_default",
+          "scope": "admin or owner. Flip is_default within a (tenant, organization, sport_key) tuple. Auto-demotes the previous default in same transaction."
+        },
+        {
+          "action": "archive",
+          "permission": "age_groups.archive",
+          "scope": "admin or owner. Refused when is_default=true (CANNOT_DELETE_DEFAULT_AGE_GROUP), when is_seeded=true (CANNOT_DELETE_SEEDED_AGE_GROUP), OR when any inbound row references the AgeGroup (AGE_GROUP_IN_USE)."
+        },
+        {
+          "action": "restore",
+          "permission": "age_groups.restore",
+          "scope": "admin or owner. Only within the 1095-day archived retention window."
+        },
+        {
+          "action": "delete",
+          "permission": "age_groups.delete",
+          "scope": "owner only. Same guards as archive — plus hard-delete happens only via PurgeArchivedAgeGroupsJob after retention window."
+        },
+        {
+          "action": "resolveHypothetical",
+          "permission": "age_groups.resolve",
+          "scope": "every tenant role. Read-only endpoint that answers 'which age group does a hypothetical DOB + sport_key fall into?'. Widely used by enrollment previews + team-invite flows — hence broad access."
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.age_groups.viewAny",
+          "scope": "platform_admin only. Cross-tenant read for support tooling."
+        },
+        {
+          "action": "platformView",
+          "permission": "platform.age_groups.view",
+          "scope": "platform_admin only."
+        }
+      ]
+    }
+  ]
+}

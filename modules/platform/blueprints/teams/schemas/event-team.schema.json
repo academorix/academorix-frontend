@@ -1,0 +1,184 @@
+{
+  "id": "academorix://modules/teams/schemas/event-team",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "EventTeam",
+  "description": "Team's participation in an Event (Wave 3). Carries `tenant_id` + `team_id`. event_id is nullable pre-Wave-3 (placeholder rows); Wave 3 migration makes it required + FK-constrained. Cascades organization + region + branch through team_id.",
+  "type": "object",
+  "x-module": "teams",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "event_teams",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "evt_",
+    "incrementing": false,
+    "model": "Academorix\\Teams\\Models\\EventTeam",
+    "interface": "Academorix\\Teams\\Contracts\\Data\\EventTeamInterface",
+    "implements": ["Academorix\\Teams\\Contracts\\Data\\EventTeamInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToTeam",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "participation_type": "EventTeamParticipationType",
+      "result": "EventResult",
+      "attendance_count": "integer",
+      "registered_at": "datetime",
+      "withdrew_at": "datetime",
+      "checked_in_at": "datetime"
+    },
+    "observers": ["EventTeamObserver"],
+    "appends": ["days_since_registration", "is_withdrawn", "has_result"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `evt_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "team_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "teams", "column": "id", "onDelete": "restrict" }
+      },
+      "event_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Wave 3 FK to events.id — nullable + no constraint until Sports Event module lands. Wave 3 migration makes required + FK-constrained."
+      },
+      "participation_type": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'participant'",
+        "description": "Enum: home / away / host / guest / participant."
+      },
+      "registered_at": { "type": "timestamptz", "nullable": false },
+      "withdrew_at": { "type": "timestamptz", "nullable": true },
+      "withdrawal_reason": { "type": "text", "nullable": true },
+      "checked_in_at": { "type": "timestamptz", "nullable": true },
+      "result": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Sport-agnostic result blob. Validated against valid_result_shape rule. See data/roster-lifecycle-samples.json for common shapes."
+      },
+      "attendance_count": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Members who turned up at the event."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "event_id", "team_id"],
+        "unique": true,
+        "name": "event_teams_active_unique",
+        "predicate": "deleted_at IS NULL AND event_id IS NOT NULL",
+        "description": "(team, event) uniqueness — a team registers once per event. Skipped for pre-Wave-3 placeholder rows with event_id IS NULL."
+      },
+      { "columns": ["tenant_id", "team_id"], "name": "event_teams_team_idx" },
+      { "columns": ["tenant_id", "event_id"], "name": "event_teams_event_idx", "predicate": "event_id IS NOT NULL" },
+      { "columns": ["tenant_id", "registered_at"], "name": "event_teams_registered_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "team_id",
+    "participation_type",
+    "registered_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^evt_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "team_id": { "type": "string", "pattern": "^tea_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "event_id": {
+      "type": ["string", "null"],
+      "pattern": "^eve_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "participation_type": {
+      "type": "string",
+      "enum": ["home", "away", "host", "guest", "participant"]
+    },
+    "registered_at": { "type": "string", "format": "date-time" },
+    "withdrew_at": { "type": ["string", "null"], "format": "date-time" },
+    "withdrawal_reason": { "type": ["string", "null"] },
+    "checked_in_at": { "type": ["string", "null"], "format": "date-time" },
+    "result": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/resultShape" }
+      ]
+    },
+    "attendance_count": { "type": ["integer", "null"], "minimum": 0 },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "resultShape": {
+      "type": "object",
+      "description": "Sport-agnostic result. At least one of score / position / points must be present when result is non-null.",
+      "properties": {
+        "score": {
+          "type": "object",
+          "properties": {
+            "home": { "type": "integer" },
+            "away": { "type": "integer" }
+          },
+          "required": ["home", "away"]
+        },
+        "position": { "type": "integer", "minimum": 1 },
+        "points": { "type": "integer", "minimum": 0 },
+        "outcome": {
+          "type": "string",
+          "enum": ["win", "loss", "draw", "disqualified", "did_not_finish"]
+        },
+        "notes": { "type": "string", "maxLength": 500 }
+      },
+      "anyOf": [
+        { "required": ["score"] },
+        { "required": ["position"] },
+        { "required": ["points"] },
+        { "required": ["outcome"] }
+      ]
+    }
+  },
+  "x-invariants": [
+    "team.tenant_id must equal event_team.tenant_id",
+    "at most one active row per (tenant_id, event_id, team_id) when event_id is set",
+    "result may only be set when withdrew_at IS NULL",
+    "checked_in_at may only be set when withdrew_at IS NULL",
+    "event_id + team_id are immutable post-create",
+    "attendance_count required when result contains attendance-derived stats"
+  ]
+}

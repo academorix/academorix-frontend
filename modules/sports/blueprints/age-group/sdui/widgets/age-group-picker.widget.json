@@ -1,0 +1,207 @@
+{
+  "id": "age-group.age-group-picker",
+  "title": "Age group picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Reusable single-select for the caller's active AgeGroups. Renders as HeroUI `ComboBox` (per the ui-components rule) with age groups filtered by (tenant, sport_key optional, status). Consumed by the Team create/edit flow (age_group_id assignment), the AthleteEnrollment flow (age_group_snapshot_id resolution preview), and any downstream module that scopes writes by age group. Searches on name + slug + sport_key. Groups by youth/adult via `ListBox.Section`.",
+  "notes": [
+    "Uses `ComboBox` — catalogs may grow to 30+ entries on Enterprise tenants; free-text search is essential.",
+    "Filters to `filter[status]=active` by default. Callers may pass `filter=all` to include archived (rare — usually for admin editors).",
+    "When `sport_key` is passed, prefers sport-specific matches at the top of the list; generic (sport_key=null) matches follow below.",
+    "Every item renderer surfaces the bounds inline (e.g. 'U12 · Ages 10-11') so the caller can visually confirm the pick without opening a preview modal.",
+    "The `is_youth=true` chip is rendered on every youth group so the caller sees the safeguarding gate at pick time."
+  ],
+  "props": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "Form field name (e.g. `age_group_id`)."
+    },
+    "label": {
+      "type": "string",
+      "default": "Age group"
+    },
+    "required": {
+      "type": "boolean",
+      "default": false
+    },
+    "clearable": {
+      "type": "boolean",
+      "default": false
+    },
+    "placeholder": {
+      "type": "string",
+      "default": "Search age groups..."
+    },
+    "helpText": {
+      "type": "string",
+      "default": null
+    },
+    "size": {
+      "type": "string",
+      "default": "md",
+      "enum": ["sm", "md", "lg"]
+    },
+    "defaultValue": {
+      "type": "string",
+      "default": null,
+      "description": "Pre-selected age group ULID."
+    },
+    "sportKey": {
+      "type": "string",
+      "default": null,
+      "description": "When set, prefers sport-specific matches at the top of the list."
+    },
+    "organizationId": {
+      "type": "string",
+      "default": null,
+      "description": "When set, filters to age groups scoped to this organization + tenant-wide groups (organization_id=null)."
+    },
+    "filter": {
+      "type": "string",
+      "default": "active",
+      "enum": ["active", "all"],
+      "description": "`active` = include only rows without deleted_at set. `all` = include archived (for admin flows)."
+    },
+    "youthOnly": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, filters to `filter[is_youth]=true`. Used by minor-scoped flows (parental-consent forms, U18 team creation)."
+    }
+  },
+  "dataSources": [
+    {
+      "name": "ageGroups",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/age-groups?filter[status]=' + (props.filter === 'all' ? '' : 'active') + (props.sportKey ? '&filter[sport_key]=' + props.sportKey : '') + (props.organizationId ? '&filter[organization_id]=' + props.organizationId : '') + (props.youthOnly ? '&filter[is_youth]=true' : '') + '&sort=sort_order,name'",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "props": {
+        "menuTrigger": "focus"
+      },
+      "bindings": {
+        "props": {
+          "name": { "$ref": "props.name" },
+          "aria-label": { "$ref": "props.label" },
+          "placeholder": { "$ref": "props.placeholder" },
+          "size": { "$ref": "props.size" },
+          "clearable": { "$ref": "props.clearable" },
+          "isRequired": { "$ref": "props.required" },
+          "selectedKey": { "$ref": "props.defaultValue" }
+        }
+      },
+      "children": [
+        {
+          "kind": "Label",
+          "bindings": { "children": { "$ref": "props.label" } }
+        },
+        {
+          "kind": "ComboBox.InputGroup",
+          "children": [
+            {
+              "kind": "Input",
+              "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } }
+            },
+            { "kind": "ComboBox.Trigger" }
+          ]
+        },
+        {
+          "kind": "Description",
+          "bindings": {
+            "hidden": { "$expr": "!props.helpText" },
+            "children": { "$ref": "props.helpText" }
+          }
+        },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "props": { "className": "max-h-96 overflow-y-auto w-96" },
+              "bindings": { "items": { "$ref": "ageGroups" } },
+              "itemRenderer": {
+                "kind": "ListBox.Item",
+                "propsExpr": "{ key: item.id, id: item.id, textValue: item.name + ' ' + (item.sport_key || '') + ' ' + item.slug }",
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2 py-1" },
+                    "children": [
+                      {
+                        "kind": "View",
+                        "props": { "className": "size-3 rounded-full flex-shrink-0" },
+                        "bindings": {
+                          "props": {
+                            "style": {
+                              "$expr": "{ backgroundColor: item.color || '#94A3B8' }"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex flex-col flex-1 min-w-0" },
+                        "children": [
+                          {
+                            "kind": "View",
+                            "props": { "className": "flex items-center gap-1" },
+                            "children": [
+                              {
+                                "kind": "Text",
+                                "props": { "className": "font-medium truncate" },
+                                "bindings": { "children": { "$ref": "item.name" } }
+                              },
+                              {
+                                "kind": "Chip",
+                                "props": { "size": "xs", "variant": "warning", "children": "Youth" },
+                                "bindings": { "hidden": { "$expr": "!item.is_youth" } }
+                              },
+                              {
+                                "kind": "Chip",
+                                "props": { "size": "xs", "variant": "accent", "leadingIcon": "star-solid", "children": "Default" },
+                                "bindings": { "hidden": { "$expr": "!item.is_default" } }
+                              },
+                              {
+                                "kind": "Chip",
+                                "props": { "size": "xs", "variant": "info", "children": "Seeded" },
+                                "bindings": { "hidden": { "$expr": "!item.is_seeded" } }
+                              },
+                              {
+                                "kind": "Chip",
+                                "props": { "size": "xs", "variant": "neutral" },
+                                "bindings": {
+                                  "hidden": { "$expr": "!item.sport_key" },
+                                  "props": { "children": { "$ref": "item.sport_key" } }
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "kind": "Text",
+                            "props": { "className": "text-xs text-muted font-mono" },
+                            "bindings": {
+                              "children": {
+                                "$expr": "'Ages ' + item.min_age_inclusive + '-' + item.max_age_inclusive + ' · ' + item.cutoff_date_kind"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      { "kind": "ListBox.ItemIndicator", "props": { "className": "size-4 text-accent" } }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "id": "teams.resources.team.schedule",
+  "title": "Team schedule",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/teams/:teamId/schedule",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "teams", "entity": "team", "action": "manageSchedule" },
+  "requiresPermission": "teams.manage-schedule",
+  "requiresEntitlement": "teams",
+  "dataSources": [
+    {
+      "name": "team",
+      "kind": "http.get",
+      "url": "/api/v1/teams/{teamId}",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-4xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$expr": "team.name + ' — Schedule'" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Weekly recurring practice slots. Members receive a mandatory notification on save." }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "warning", "className": "text-sm" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "children": "Saving changes here fires a schedule-change notification to every active member — this notification cannot be opted out. Only make changes members need to react to." }
+            }
+          ]
+        },
+        {
+          "kind": "Form",
+          "bindings": { "initialValues.schedule_pattern": { "$ref": "team.schedule_pattern" } },
+          "actions": {
+            "onSubmit": {
+              "kind": "http.patch",
+              "url": "/api/v1/teams/{teamId}/schedule",
+              "onSuccess": {
+                "kind": "toast.success",
+                "message": "Schedule updated — members notified."
+              },
+              "onError": { "kind": "toast.error" }
+            }
+          },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "space-y-3" },
+              "children": [
+                { "kind": "SchedulePatternEditor", "props": { "name": "schedule_pattern", "helpText": "One or more time windows per day. Overlapping windows within a day are refused." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex justify-end gap-2 pt-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "children": "Cancel" },
+                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id" } }
+                },
+                { "kind": "Button", "props": { "type": "submit", "variant": "primary", "children": "Save + notify members" } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

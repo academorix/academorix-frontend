@@ -1,0 +1,91 @@
+{
+  "id": "teams.resources.event-team.register",
+  "title": "Register for event",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/teams/:teamId/event-teams/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "teams", "entity": "event-team", "action": "register" },
+  "requiresPermission": "event_teams.register",
+  "requiresEntitlement": "team_event_participation",
+  "dataSources": [
+    {
+      "name": "team",
+      "kind": "http.get",
+      "url": "/api/v1/teams/{teamId}",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-2xl mx-auto" },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold" },
+          "bindings": { "children": { "$expr": "'Register ' + team.name + ' for event'" } }
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "info", "className": "text-sm" },
+          "children": [
+            { "kind": "Text", "props": { "children": "The Sports Event module lands in Wave 3. Until then, event_id is optional — you can create placeholder participation rows and link them to events once available." } }
+          ]
+        },
+        {
+          "kind": "Form",
+          "actions": {
+            "onSubmit": {
+              "kind": "http.post",
+              "url": "/api/v1/teams/{teamId}/event-teams",
+              "onSuccess": {
+                "kind": "navigate",
+                "toExpr": "'/tenant/teams/' + team.id + '/event-teams'"
+              },
+              "onError": { "kind": "toast.error" }
+            }
+          },
+          "children": [
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Event", "className": "space-y-3" },
+              "children": [
+                {
+                  "kind": "ResourceSelect",
+                  "props": {
+                    "name": "event_id",
+                    "label": "Event",
+                    "helpText": "Optional pre-Wave-3. Wave 3 will populate the event catalogue.",
+                    "resource": "event"
+                  }
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": { "name": "participation_type", "label": "Participation type", "required": true, "menuTrigger": "focus", "defaultValue": "participant" },
+                  "props_items": [
+                    { "id": "home", "label": "Home (host)" },
+                    { "id": "away", "label": "Away (visitor)" },
+                    { "id": "host", "label": "Host (internal event)" },
+                    { "id": "guest", "label": "Guest (internal event)" },
+                    { "id": "participant", "label": "Participant (tournament / open)" }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex justify-end gap-2 pt-2" },
+              "children": [
+                { "kind": "Button", "props": { "variant": "ghost", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/event-teams'" } } },
+                { "kind": "Button", "props": { "type": "submit", "variant": "primary", "children": "Register" } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,358 @@
+{
+  "id": "academorix://modules/season/errors",
+  "$version": 1,
+  "title": "season — error codes",
+  "namespace": "season",
+  "errors": [
+    {
+      "code": "SEASON_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.season_not_found"
+    },
+    {
+      "code": "SEASON_FEATURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.feature_not_entitled",
+      "description": "Tenant does not hold `sports_seasons` entitlement. Small tier is locked out entirely; response includes tier + upgrade path."
+    },
+    {
+      "code": "SEASON_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.quota_exceeded",
+      "description": "Reached the `season_slot` per-calendar-year cap for this tenant (Small=0, Medium=4/year, Enterprise=null). Response includes tier + used + cap + suggested year to reallocate."
+    },
+    {
+      "code": "SEASON_PLAYOFFS_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.playoffs_not_entitled",
+      "description": "has_playoffs=true attempted without the `season_playoffs` entitlement (Enterprise-only). Response suggests either upgrading OR creating a second Season for the playoff period."
+    },
+    {
+      "code": "SEASON_LATE_REGISTRATION_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.late_registration_not_entitled",
+      "description": "allows_late_registration=true attempted without the `season_late_registration` entitlement (Medium + Enterprise)."
+    },
+    {
+      "code": "SEASON_SPORT_SCOPING_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.sport_scoping_not_entitled",
+      "description": "sport_key set on a tenant that lacks `season_sport_scoping` (Enterprise-only). Response suggests either upgrading OR leaving sport_key null (season is sport-agnostic)."
+    },
+    {
+      "code": "SEASON_INVALID_DATE_RANGE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.invalid_date_range",
+      "description": "start_date >= end_date. A Season must span at least one day."
+    },
+    {
+      "code": "SEASON_INVALID_REGISTRATION_WINDOW",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.invalid_registration_window",
+      "description": "registration_opens_at >= registration_closes_at. When both are set, opens must precede closes."
+    },
+    {
+      "code": "SEASON_REGISTRATION_TOO_LATE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.registration_too_late",
+      "description": "registration_closes_at > start_date + 30 days. Registration must close reasonably before the season begins (30-day grace covers legitimate late-start seasons; anything beyond is a data-entry error)."
+    },
+    {
+      "code": "SEASON_INVALID_LATE_WINDOW",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.invalid_late_window",
+      "description": "late_registration_ends_at <= registration_closes_at. The late window must open AFTER the standard registration_closes_at."
+    },
+    {
+      "code": "SEASON_LATE_REGISTRATION_FEE_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.late_registration_fee_required",
+      "description": "allows_late_registration=true supplied without late_registration_fee_cents > 0. Late registration must charge a surcharge (otherwise it's just… registration; the tenant should extend registration_closes_at instead)."
+    },
+    {
+      "code": "SEASON_PLAYOFF_START_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.playoff_start_required",
+      "description": "has_playoffs=true supplied without playoff_starts_at. When playoffs are enabled the start must be set (playoff_ends_at may remain null — unbounded)."
+    },
+    {
+      "code": "SEASON_PLAYOFF_OUTSIDE_SEASON",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.playoff_outside_season",
+      "description": "playoff_starts_at falls outside [start_date, end_date]. Playoffs are a sub-phase of the Season; they cannot extend past the Season boundary. (A tenant that legitimately wants a post-Season playoff period should model it as a separate Season with season_type='custom'.)"
+    },
+    {
+      "code": "SEASON_PLAYOFF_INVALID_END",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.playoff_invalid_end",
+      "description": "playoff_ends_at either precedes playoff_starts_at OR falls after Season.end_date."
+    },
+    {
+      "code": "SEASON_PLAYOFFS_NOT_ENABLED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.playoffs_not_enabled",
+      "description": "Attempted to transition Season.status to 'playoffs' when Season.has_playoffs=false. Enable playoffs first via PATCH /{season} with has_playoffs=true + playoff_starts_at."
+    },
+    {
+      "code": "SEASON_BRANCH_WITHOUT_ORGANIZATION",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.branch_without_organization",
+      "description": "branch_id set but organization_id null. A branch-scoped season must also carry the branch's organization_id — branches always belong to an org."
+    },
+    {
+      "code": "SEASON_BRANCH_ORGANIZATION_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.branch_organization_mismatch",
+      "description": "The supplied branch_id belongs to a different organization than the supplied organization_id."
+    },
+    {
+      "code": "SEASON_ORGANIZATION_TENANT_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "season.errors.organization_tenant_mismatch",
+      "description": "Cross-tenant FK smuggling attempt — the supplied organization_id belongs to a different tenant. Security-relevant, logged with actor + tenant + attempted org + IP."
+    },
+    {
+      "code": "SEASON_BRANCH_TENANT_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "season.errors.branch_tenant_mismatch",
+      "description": "Cross-tenant FK smuggling attempt — the supplied branch_id belongs to a different tenant. Security-relevant."
+    },
+    {
+      "code": "SEASON_ORGANIZATION_ARCHIVED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.organization_archived",
+      "description": "Cannot create or promote a season under an archived organization. Restore the org first or scope the season differently."
+    },
+    {
+      "code": "SEASON_BRANCH_NOT_ACTIVE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.branch_not_active",
+      "description": "Cannot create a season for a branch that is closed or archived."
+    },
+    {
+      "code": "SEASON_INITIAL_STATUS_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.initial_status_invalid",
+      "description": "Attempted to create a Season directly with status IN (in_progress, playoffs, completed, archived). Only planned + registration_open are valid initial states; every downstream transition is owned by RollSeasonPhaseJob or the explicit action route."
+    },
+    {
+      "code": "SEASON_STATUS_TRANSITION_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.status_transition_invalid",
+      "description": "Attempted a status transition that isn't in the state machine (e.g. archived -> in_progress directly; or completed -> registration_open). Response includes the valid transitions from the current status."
+    },
+    {
+      "code": "SEASON_LAST_CURRENT",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.last_current",
+      "description": "Cannot flip is_current=false when this is the only is_current=true row in its scope tuple. Promote another Season to current first, OR pass `--force-no-current` on the CLI / `?force_no_current=true` on the HTTP surface to intentionally leave the tuple current-less."
+    },
+    {
+      "code": "SEASON_CANNOT_PROMOTE_ARCHIVED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.cannot_promote_archived",
+      "description": "Cannot set is_current=true on an archived Season. Restore first."
+    },
+    {
+      "code": "CANNOT_ARCHIVE_CURRENT_SEASON",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.cannot_archive_current",
+      "description": "The Season is is_current=true in its scope tuple. Promote another Season to current first, then archive this one."
+    },
+    {
+      "code": "SEASON_ARCHIVE_REQUIRES_COMPLETED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.archive_requires_completed",
+      "description": "Attempted to archive a Season that hasn't been completed. Complete first via POST /{season}/complete OR wait for automated completion at end_date."
+    },
+    {
+      "code": "SEASON_HAS_ACTIVE_ENROLLMENTS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.has_active_enrollments",
+      "description": "Cannot archive a Season while active enrollments reference it. Response includes the reference counts (Team.season_id, AthleteEnrollment.season_id, Event.season_id, Session.season_id) + suggests re-enrolling to a different Season or waiting for the enrollments to complete."
+    },
+    {
+      "code": "SEASON_SPORT_KEY_LOCKED_AFTER_START",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "critical",
+      "i18n_key": "season.errors.sport_key_locked_after_start",
+      "description": "Attempted to change sport_key on a Season with status IN (in_progress, playoffs, completed, archived). Critical severity — a mid-season sport shift would corrupt downstream Team + Enrollment rows. Refused outright; no override."
+    },
+    {
+      "code": "SEASON_DATES_LOCKED_AFTER_COMPLETION",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "season.errors.dates_locked_after_completion",
+      "description": "Attempted to change start_date / end_date on a completed Season. Refused outright — completed seasons freeze their period attribution for financial reporting."
+    },
+    {
+      "code": "SEASON_DATE_SHIFT_EXCLUDES_ENROLLMENTS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "season.errors.date_shift_excludes_enrollments",
+      "description": "The new start_date / end_date range would exclude existing enrolled athletes' session bookings. Response includes the affected enrollment IDs + suggests re-scoping bookings first."
+    },
+    {
+      "code": "SEASON_TENANT_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "season.errors.tenant_immutable",
+      "description": "Attempted to change tenant_id on an existing Season. Never allowed — seasons don't cross tenants (tenancy isolation)."
+    },
+    {
+      "code": "SEASON_ORGANIZATION_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.organization_immutable",
+      "description": "Attempted to change organization_id on an existing Season. Scoping tuple is immutable post-create — create a new Season for the new org."
+    },
+    {
+      "code": "SEASON_BRANCH_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.branch_immutable",
+      "description": "Attempted to change branch_id on an existing Season. Scoping tuple is immutable post-create."
+    },
+    {
+      "code": "SEASON_REGISTRATION_NOT_OPEN",
+      "http": 409,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.registration_not_open",
+      "description": "The `season.enforce_registration_open` middleware refused an enrollment-adjacent request because now() < registration_opens_at. Retryable when the window opens. Response includes registration_opens_at as a hint."
+    },
+    {
+      "code": "SEASON_REGISTRATION_CLOSED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.registration_closed",
+      "description": "The `season.enforce_registration_open` middleware refused an enrollment-adjacent request because now() > registration_closes_at AND either allows_late_registration=false OR now() > late_registration_ends_at. Response includes the closest window + a hint about the late window when applicable."
+    },
+    {
+      "code": "SEASON_LATE_REGISTRATION_REQUIRES_PERMISSION",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "season.errors.late_registration_requires_permission",
+      "description": "Late-registration write attempt without the `season.enroll.late` permission. Late enrollments carry a surcharge + require admin approval per some tenants; the permission is off by default even on admin roles."
+    },
+    {
+      "code": "SEASON_CROSS_TENANT",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "season.errors.cross_tenant",
+      "description": "The `X-Season-Id` header points at a Season in a different tenant. Security-relevant — forged header attempting cross-tenant access. Logged with tenant + user + attempted season + IP."
+    },
+    {
+      "code": "SEASON_PUBLIC_HARD_DELETE_FORBIDDEN",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "season.errors.public_hard_delete_forbidden",
+      "description": "Attempted hard-delete via public API. Wave 3a public API never hard-deletes; the row's audit trail must survive. Hard-delete happens only via `season:hard-delete --platform-support` (two-person path) OR via PurgeArchivedSeasonsJob after retention window."
+    }
+  ]
+}

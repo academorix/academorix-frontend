@@ -1,0 +1,219 @@
+{
+  "id": "academorix://modules/teams/schemas/team-member",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "TeamMember",
+  "description": "Polymorphic roster row. member_type + member_id points at an Athlete / Coach / Staff / User depending on business shape. Carries `tenant_id` + `team_id`. Cascades organization + region + branch through team_id. NEVER carries organization_id / branch_id / region_id / application_id / scope_node_id as shortcut columns.",
+  "type": "object",
+  "x-module": "teams",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "team_members",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "trm_",
+    "incrementing": false,
+    "model": "Academorix\\Teams\\Models\\TeamMember",
+    "interface": "Academorix\\Teams\\Contracts\\Data\\TeamMemberInterface",
+    "implements": ["Academorix\\Teams\\Contracts\\Data\\TeamMemberInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToTeam",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "member_type": "TeamMemberType",
+      "role_on_team": "TeamMemberRole",
+      "status": "TeamMemberStatus",
+      "left_reason": "TeamMemberLeftReason",
+      "jersey_number": "integer",
+      "metadata": "array",
+      "joined_at": "datetime",
+      "left_at": "datetime"
+    },
+    "observers": ["TeamMemberObserver"],
+    "appends": ["days_on_team", "is_active"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `trm_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "team_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "teams", "column": "id", "onDelete": "restrict" }
+      },
+      "member_type": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: athlete / coach / staff / user. Polymorphic discriminator."
+      },
+      "member_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Polymorphic FK — NO constraint at DB level. Observer + reconciler enforce (member_type, member_id) points at a live row."
+      },
+      "role_on_team": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'player'",
+        "description": "Enum: player / captain / vice_captain / coach / assistant_coach / team_manager / medical / analyst / substitute."
+      },
+      "jersey_number": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Unique per active roster row on the team."
+      },
+      "position": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Free-text pre-Wave-3. Wave 3 sports registry constrains to sport-specific positions."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'active'",
+        "description": "Enum: active / inactive / injured / suspended / graduated."
+      },
+      "joined_at": {
+        "type": "timestamptz",
+        "nullable": false
+      },
+      "left_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set when status transitions to inactive/graduated."
+      },
+      "left_reason": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: transferred / graduated / withdrew / dropped / injury / disciplinary / team_archived / other."
+      },
+      "notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Coach-visible notes. Never surfaced to the member themselves in wire projection."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "team_id", "member_type", "member_id"],
+        "unique": true,
+        "name": "team_members_active_unique",
+        "predicate": "status = 'active' AND deleted_at IS NULL",
+        "description": "The load-bearing invariant: exactly one active roster row per (team, person). Historic inactive rows survive."
+      },
+      { "columns": ["tenant_id", "team_id", "status"], "name": "team_members_team_status_idx" },
+      { "columns": ["tenant_id", "team_id", "role_on_team"], "name": "team_members_role_idx" },
+      {
+        "columns": ["tenant_id", "member_type", "member_id"],
+        "name": "team_members_reverse_polymorphic_idx",
+        "description": "Reverse-polymorphic lookup — 'give me every team this person is on'."
+      },
+      {
+        "columns": ["tenant_id", "team_id", "jersey_number"],
+        "unique": true,
+        "name": "team_members_jersey_unique",
+        "predicate": "status = 'active' AND deleted_at IS NULL AND jersey_number IS NOT NULL",
+        "description": "Jersey uniqueness within an active roster."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "team_id",
+    "member_type",
+    "member_id",
+    "role_on_team",
+    "status",
+    "joined_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^trm_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "team_id": { "type": "string", "pattern": "^tea_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "member_type": {
+      "type": "string",
+      "enum": ["athlete", "coach", "staff", "user"]
+    },
+    "member_id": {
+      "type": "string",
+      "pattern": "^(ath|coa|stf|usr)_[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "ULID prefix must match member_type: athlete → ath_, coach → coa_, staff → stf_, user → usr_."
+    },
+    "role_on_team": {
+      "type": "string",
+      "enum": [
+        "player",
+        "captain",
+        "vice_captain",
+        "coach",
+        "assistant_coach",
+        "team_manager",
+        "medical",
+        "analyst",
+        "substitute"
+      ]
+    },
+    "jersey_number": { "type": ["integer", "null"], "minimum": 0, "maximum": 999 },
+    "position": { "type": ["string", "null"], "maxLength": 64 },
+    "status": {
+      "type": "string",
+      "enum": ["active", "inactive", "injured", "suspended", "graduated"]
+    },
+    "joined_at": { "type": "string", "format": "date-time" },
+    "left_at": { "type": ["string", "null"], "format": "date-time" },
+    "left_reason": {
+      "type": ["string", "null"],
+      "enum": ["transferred", "graduated", "withdrew", "dropped", "injury", "disciplinary", "team_archived", "other", null]
+    },
+    "notes": { "type": ["string", "null"] },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "team.tenant_id must equal member.tenant_id (defense-in-depth)",
+    "member's resolved model's tenant_id must equal member.tenant_id (cross-tenant FK smuggling guard)",
+    "at most one active row per (tenant_id, team_id, member_type, member_id) via partial unique index",
+    "jersey_number is unique per active roster on the team",
+    "team_id + member_type + member_id are immutable post-create",
+    "left_at + left_reason required when status = inactive OR graduated",
+    "role_on_team='coach' requires member_type='coach' AND tenant holds team_polymorphic_coach entitlement"
+  ]
+}

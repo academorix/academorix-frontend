@@ -1,0 +1,136 @@
+{
+  "id": "academorix://modules/age-group/metrics",
+  "$version": 1,
+  "title": "age-group — OpenTelemetry metrics",
+  "instrumentation": "self via telemetry",
+  "namespace": "academorix.age_group",
+  "labelConventions": {
+    "always": [],
+    "commonlyAvailable": ["sport_key", "cutoff_date_kind", "is_youth", "source", "outcome"],
+    "forbiddenAsLabels": ["age_group_id", "tenant_id", "organization_id"]
+  },
+  "metrics": [
+    {
+      "name": "academorix.age_group.created.total",
+      "kind": "counter",
+      "unit": "age_groups",
+      "labels": ["sport_key", "cutoff_date_kind", "is_youth", "source"],
+      "description": "source: tenant_provisioning / admin_created / legacy_backfill_command."
+    },
+    {
+      "name": "academorix.age_group.create.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [50, 200, 1000, 5000],
+      "labels": ["source"],
+      "description": "End-to-end provisioning latency (validate + write row + fire events)."
+    },
+    {
+      "name": "academorix.age_group.bounds_changed.total",
+      "kind": "counter",
+      "unit": "changes",
+      "labels": ["is_youth_flip"],
+      "description": "How often bounds change per tenant. High rate is a red flag — bounds changes may invalidate downstream athlete eligibility."
+    },
+    {
+      "name": "academorix.age_group.cutoff_changed.total",
+      "kind": "counter",
+      "unit": "changes",
+      "labels": ["cutoff_date_kind_before", "cutoff_date_kind_after"],
+      "description": "Cutoff-kind transitions. Feeds the safeguarding-drift dashboard."
+    },
+    {
+      "name": "academorix.age_group.default_changed.total",
+      "kind": "counter",
+      "unit": "changes",
+      "labels": ["has_organization_scope", "has_sport_key"],
+      "description": "How often the default flips per (tenant, org, sport_key) tuple."
+    },
+    {
+      "name": "academorix.age_group.archived.total",
+      "kind": "counter",
+      "unit": "archives",
+      "labels": ["outcome"],
+      "description": "outcome: soft (deleted_at set) / hard (PurgeArchivedAgeGroupsJob completed) / rejected_in_use / rejected_default / rejected_seeded."
+    },
+    {
+      "name": "academorix.age_group.active.count",
+      "kind": "gauge",
+      "unit": "age_groups",
+      "labels": ["is_youth", "is_seeded"],
+      "description": "Point-in-time count of AgeGroups per youth/seeded flag. Populated hourly by the metrics-snapshot task."
+    },
+    {
+      "name": "academorix.age_group.per_tenant.count",
+      "kind": "gauge",
+      "unit": "age_groups",
+      "labels": ["is_seeded"],
+      "description": "Global histogram of age-groups-per-tenant. Feeds the tier-adoption dashboard."
+    },
+    {
+      "name": "academorix.age_group.default_invariant_drift.count",
+      "kind": "gauge",
+      "unit": "tuples",
+      "labels": ["drift_kind"],
+      "description": "drift_kind: zero_default / multiple_default. Populated by ReconcileAgeGroupDefaultInvariantJob. Ideally always 0."
+    },
+    {
+      "name": "academorix.age_group.slot_exhaustion.total",
+      "kind": "counter",
+      "unit": "refusals",
+      "labels": ["tier"],
+      "description": "How often age_group_slot entitlement refuses a custom create. Feeds the upsell funnel."
+    },
+    {
+      "name": "academorix.age_group.custom_disabled_refusals.total",
+      "kind": "counter",
+      "unit": "refusals",
+      "labels": ["tier"],
+      "description": "How often a Small-tier tenant is refused with AGE_GROUP_CUSTOM_DISABLED. Signals a tenant that has outgrown the seeded catalog + is a Medium upgrade candidate."
+    },
+    {
+      "name": "academorix.age_group.sport_specific_refusals.total",
+      "kind": "counter",
+      "unit": "refusals",
+      "labels": ["tier"],
+      "description": "How often AGE_GROUP_SPORT_SPECIFIC_DISABLED fires. Signals a Medium-tier tenant that needs Enterprise's sport-specific features."
+    },
+    {
+      "name": "academorix.age_group.resolver.total",
+      "kind": "counter",
+      "unit": "resolutions",
+      "labels": ["outcome", "sport_key_present"],
+      "description": "outcome: matched / indeterminate / not_found. sport_key_present: bool."
+    },
+    {
+      "name": "academorix.age_group.resolver.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [1, 5, 20, 100],
+      "labels": ["cache_status"],
+      "description": "AgeGroupResolver latency. cache_status: hit / miss. P99 target < 20ms when cold, < 3ms when warm."
+    },
+    {
+      "name": "academorix.age_group.seed_catalog.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [100, 500, 2000, 10000],
+      "labels": ["source"],
+      "description": "SeedDefaultAgeGroupsForTenantJob end-to-end latency. source: tenant_provisioning / reconciler / legacy_backfill_command."
+    },
+    {
+      "name": "academorix.age_group.seed_catalog.retries",
+      "kind": "counter",
+      "unit": "retries",
+      "labels": ["attempt"],
+      "description": "attempt: 1..5. Feeds the queue-health dashboard."
+    },
+    {
+      "name": "academorix.age_group.purge_pending.count",
+      "kind": "gauge",
+      "unit": "age_groups",
+      "labels": [],
+      "description": "Archived AgeGroups past their 1095-day retention window that haven't been hard-deleted yet. Feeds the `age-group-purge-queue-drained` health probe."
+    }
+  ]
+}

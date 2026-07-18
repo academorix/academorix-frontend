@@ -1,0 +1,211 @@
+{
+  "id": "staff.resources.coach.list",
+  "title": "Coaches",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/coaches",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "staff", "entity": "coach", "action": "list" },
+  "requiresPermission": "coach.viewAny",
+  "dataSources": [
+    { "name": "coaches", "kind": "http.get", "url": "/api/v1/coaches", "unwrap": "data", "queryFromFilters": true },
+    { "name": "branches", "kind": "http.get", "url": "/api/v1/branches?filter[status]=active", "unwrap": "data" },
+    { "name": "slot_entitlement", "kind": "http.get", "url": "/api/v1/entitlements/coach_slot", "unwrap": "data" },
+    { "name": "features", "kind": "http.get", "url": "/api/v1/features", "unwrap": "data" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Coaches" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Staff members with an active coaching profile." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "entitlements.entitlement-usage-bar",
+                  "props": {
+                    "cap": { "$ref": "slot_entitlement.value_cap" },
+                    "used": { "$ref": "slot_entitlement.value_used" },
+                    "size": "sm",
+                    "label": "Coach slots"
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "leadingIcon": "plus", "children": "New coach" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/coaches/new" } },
+                  "bindings": { "disabled": { "$ref": "slot_entitlement.is_exceeded" } },
+                  "requiresPermission": "coach.create"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Branch", "menuTrigger": "focus", "className": "min-w-56" },
+              "bindings": { "items": { "$ref": "branches" } },
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "branch_id",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Coaching level", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "assistant", "label": "Assistant" },
+                { "id": "head", "label": "Head" },
+                { "id": "senior", "label": "Senior" },
+                { "id": "director", "label": "Director" },
+                { "id": "consultant", "label": "Consultant" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "coaching_level",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus", "className": "min-w-40" },
+              "props_items": [
+                { "id": "active", "label": "Active" },
+                { "id": "paused", "label": "Paused" },
+                { "id": "archived", "label": "Archived" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Grid",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" },
+          "bindings": {
+            "items": { "$ref": "coaches" },
+            "isLoading": { "$ref": "coaches.isLoading" }
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "col-span-full text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "megaphone", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No coaches yet" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Add a coach profile to an active staff member to get started." } }
+            ]
+          },
+          "itemRenderer": {
+            "kind": "Card",
+            "props": { "className": "p-4 hover:shadow-md transition-shadow cursor-pointer" },
+            "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coaches/' + row.id" } },
+            "children": [
+              {
+                "kind": "View",
+                "props": { "className": "flex items-start gap-3 mb-2" },
+                "children": [
+                  {
+                    "kind": "Avatar",
+                    "props": { "size": "md" },
+                    "bindings": { "src": { "$ref": "row.avatar_url" }, "name": { "$ref": "row.full_name" } }
+                  },
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex-1" },
+                    "children": [
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex items-center justify-between gap-2" },
+                        "children": [
+                          {
+                            "kind": "Text",
+                            "props": { "className": "font-medium" },
+                            "bindings": { "children": { "$ref": "row.display_name" } }
+                          },
+                          {
+                            "kind": "Chip",
+                            "props": { "size": "sm", "variant": "neutral" },
+                            "bindings": { "children": { "$ref": "row.coaching_level" } }
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-sm text-muted" },
+                        "bindings": { "children": { "$ref": "row.sport_key" } }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-3 mt-3" },
+                "children": [
+                  {
+                    "kind": "Widget",
+                    "widget": "staff.coach-rating",
+                    "bindings": {
+                      "rating": { "$ref": "row.rating" },
+                      "count": { "$ref": "row.rating_count" }
+                    }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "sm" },
+                    "bindings": {
+                      "variant": {
+                        "$expr": "row.status === 'active' ? 'success' : (row.status === 'paused' ? 'warning' : 'neutral')"
+                      },
+                      "children": { "$ref": "row.status" }
+                    }
+                  },
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-1 text-xs text-muted ml-auto" },
+                    "children": [
+                      { "kind": "Icon", "props": { "name": "check-badge", "className": "size-4" } },
+                      {
+                        "kind": "Text",
+                        "bindings": { "children": { "$expr": "row.certifications.length + ' certs'" } }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

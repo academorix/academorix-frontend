@@ -1,0 +1,146 @@
+{
+  "id": "staff.resources.staff.compensation",
+  "title": "Compensation",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/staff/{staffId}/compensation",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "staff", "entity": "staff", "action": "viewCompensation" },
+  "requiresPermission": "staff.view.compensation",
+  "requiresEntitlement": "staff_compensation_tracking",
+  "dataSources": [
+    { "name": "compensation", "kind": "http.get", "urlExpr": "'/api/v1/staff/' + params.staffId + '/compensation'", "unwrap": "data" },
+    { "name": "compensation_samples", "kind": "static", "src": "staff::data/compensation-frequency-samples.json" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-3xl mx-auto p-6 flex flex-col gap-6" },
+      "children": [
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "leadingIcon": "shield-check",
+            "children": "Compensation data is regulated financial information. Every change is retained 7 years in a separate audit stream. Access is logged."
+          }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h1", "className": "text-2xl font-semibold" },
+              "bindings": { "children": { "$expr": "'Compensation — ' + compensation.staff.display_name" } }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Current" }
+            },
+            {
+              "kind": "Form",
+              "bindings": { "initialValues": { "$ref": "compensation.current" } },
+              "actions": {
+                "onSubmit": {
+                  "kind": "http.patch",
+                  "urlExpr": "'/api/v1/staff/' + params.staffId + '/compensation'",
+                  "body": "$form",
+                  "onSuccess": { "kind": "data.refresh", "sources": ["compensation"] },
+                  "onError": { "kind": "form.setErrors", "errorsFrom": "response.errors" }
+                }
+              },
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "grid grid-cols-2 gap-4" },
+                  "children": [
+                    {
+                      "kind": "ComboBox",
+                      "props": { "name": "compensation_type", "label": "Type", "menuTrigger": "focus" },
+                      "props_items": [
+                        { "id": "hourly", "label": "Hourly" },
+                        { "id": "salary", "label": "Salary" },
+                        { "id": "stipend", "label": "Stipend" },
+                        { "id": "volunteer", "label": "Volunteer" },
+                        { "id": "commission", "label": "Commission" }
+                      ]
+                    },
+                    {
+                      "kind": "TextField",
+                      "props": { "name": "compensation_amount_cents", "type": "number", "label": "Amount (cents)", "min": 0 }
+                    },
+                    {
+                      "kind": "TextField",
+                      "props": { "name": "compensation_currency", "label": "Currency (ISO 4217)", "maxLength": 3 }
+                    },
+                    {
+                      "kind": "ComboBox",
+                      "props": { "name": "pay_frequency", "label": "Frequency", "menuTrigger": "focus" },
+                      "props_items": [
+                        { "id": "hourly", "label": "Hourly" },
+                        { "id": "weekly", "label": "Weekly" },
+                        { "id": "biweekly", "label": "Biweekly" },
+                        { "id": "monthly", "label": "Monthly" },
+                        { "id": "per_session", "label": "Per session" }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "kind": "DatePicker",
+                  "props": { "name": "effective_at", "label": "Effective date", "helpText": "Defaults to today.", "className": "mt-4" }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "flex justify-end mt-4" },
+                  "children": [
+                    {
+                      "kind": "Button",
+                      "props": { "type": "submit", "variant": "primary", "children": "Save change" },
+                      "requiresPermission": "staff.manage.compensation"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "History" }
+            },
+            {
+              "kind": "Table",
+              "props": { "aria-label": "Compensation history" },
+              "bindings": { "rows": { "$ref": "compensation.history" } },
+              "emptyState": {
+                "kind": "Text",
+                "props": { "className": "text-sm text-muted py-4 text-center", "children": "No prior changes recorded." }
+              },
+              "columns": [
+                { "key": "changed_at", "label": "Changed" },
+                { "key": "changed_by_name", "label": "Changed by" },
+                { "key": "before_summary", "label": "From" },
+                { "key": "after_summary", "label": "To" },
+                { "key": "effective_at", "label": "Effective" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

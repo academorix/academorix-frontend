@@ -1,0 +1,71 @@
+{
+  "id": "staff.resources.coach.availability",
+  "title": "Coach availability",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/coaches/{coachId}/availability",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "staff", "entity": "coach", "action": "manageAvailability" },
+  "requiresPermission": "coach.view",
+  "dataSources": [
+    { "name": "coach", "kind": "http.get", "urlExpr": "'/api/v1/coaches/' + params.coachId + '/availability'", "unwrap": "data" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Form",
+      "props": { "className": "max-w-4xl mx-auto p-6" },
+      "bindings": { "initialValues": { "availability_pattern": { "$ref": "coach.availability_pattern" } } },
+      "actions": {
+        "onSubmit": {
+          "kind": "http.patch",
+          "urlExpr": "'/api/v1/coaches/' + params.coachId + '/availability'",
+          "body": "$form",
+          "onSuccess": { "kind": "data.refresh", "sources": ["coach"] },
+          "onError": { "kind": "form.setErrors", "errorsFrom": "response.errors" }
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold mb-2" },
+          "bindings": { "children": { "$expr": "coach.display_name + ' — Availability'" } }
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-sm text-muted mb-6", "children": "Set the days and hours when this coach is available for sessions. Overrides the parent staff's weekly hours specifically for coaching assignments." }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-3" },
+          "children": [
+            { "kind": "Widget", "widget": "staff.day-availability-editor", "props": { "day": "monday", "name": "availability_pattern.monday" } },
+            { "kind": "Widget", "widget": "staff.day-availability-editor", "props": { "day": "tuesday", "name": "availability_pattern.tuesday" } },
+            { "kind": "Widget", "widget": "staff.day-availability-editor", "props": { "day": "wednesday", "name": "availability_pattern.wednesday" } },
+            { "kind": "Widget", "widget": "staff.day-availability-editor", "props": { "day": "thursday", "name": "availability_pattern.thursday" } },
+            { "kind": "Widget", "widget": "staff.day-availability-editor", "props": { "day": "friday", "name": "availability_pattern.friday" } },
+            { "kind": "Widget", "widget": "staff.day-availability-editor", "props": { "day": "saturday", "name": "availability_pattern.saturday" } },
+            { "kind": "Widget", "widget": "staff.day-availability-editor", "props": { "day": "sunday", "name": "availability_pattern.sunday" } }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2 mt-6" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coaches/' + params.coachId" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "type": "submit", "variant": "primary", "children": "Save availability" },
+              "requiresPermission": "coach.manage.availability"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

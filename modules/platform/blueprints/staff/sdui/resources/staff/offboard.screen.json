@@ -1,0 +1,115 @@
+{
+  "id": "staff.resources.staff.offboard",
+  "title": "Offboard staff",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/staff/{staffId}/offboard",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "staff", "entity": "staff", "action": "offboard" },
+  "requiresPermission": "staff.offboard",
+  "dataSources": [
+    { "name": "staff", "kind": "http.get", "urlExpr": "'/api/v1/staff/' + params.staffId", "unwrap": "data" },
+    { "name": "coach", "kind": "http.get", "urlExpr": "'/api/v1/coaches?filter[staff_id]=' + params.staffId", "unwrap": "data" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Form",
+      "props": { "className": "max-w-2xl mx-auto p-6" },
+      "actions": {
+        "onSubmit": {
+          "kind": "http.post",
+          "urlExpr": "'/api/v1/staff/' + params.staffId + '/offboard'",
+          "body": "$form",
+          "onSuccess": { "kind": "navigate", "to": "/tenant/staff" },
+          "onError": { "kind": "form.setErrors", "errorsFrom": "response.errors" }
+        }
+      },
+      "children": [
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "danger",
+            "children": "Offboarding is a two-phase transition. This flow moves the staff to `offboarding` state. Complete the offboard on the confirm step to fully transition to `offboarded`."
+          }
+        },
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold my-4" },
+          "bindings": { "children": { "$expr": "'Offboard ' + staff.display_name" } }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-4" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "name": "termination_reason", "label": "Termination reason", "required": true, "menuTrigger": "focus" },
+              "props_items": [
+                { "id": "resigned", "label": "Resigned (voluntary)" },
+                { "id": "terminated", "label": "Terminated (involuntary)" },
+                { "id": "retired", "label": "Retired" },
+                { "id": "contract_ended", "label": "Contract ended" },
+                { "id": "seasonal_end", "label": "Seasonal end" },
+                { "id": "other", "label": "Other" }
+              ]
+            },
+            {
+              "kind": "TextArea",
+              "props": { "name": "termination_notes", "label": "Termination notes (HR-visible)", "rows": 3 }
+            },
+            {
+              "kind": "DatePicker",
+              "props": { "name": "ended_at", "label": "End date", "helpText": "Defaults to today." }
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4 bg-warning-50" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm font-medium mb-2", "children": "Cascade options" }
+                },
+                {
+                  "kind": "Switch",
+                  "props": {
+                    "name": "cascade",
+                    "label": "Archive linked Coach + remove team memberships in one transaction",
+                    "helpText": "Requires `staff.offboard.cascade` permission. When off, you must archive the coach + remove team memberships manually first."
+                  },
+                  "requiresPermission": "staff.offboard.cascade"
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "mt-2 text-sm text-muted" },
+                  "bindings": {
+                    "hidden": { "$expr": "!coach || coach.length === 0" }
+                  },
+                  "children": [
+                    { "kind": "Text", "props": { "children": "This staff has a linked coach profile." } }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2 mt-6" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/staff/' + params.staffId" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "type": "submit", "variant": "danger", "children": "Start offboarding" }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

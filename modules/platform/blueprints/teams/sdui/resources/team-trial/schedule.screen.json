@@ -1,0 +1,137 @@
+{
+  "id": "teams.resources.team-trial.schedule",
+  "title": "Schedule trial",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/teams/:teamId/trials/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "teams", "entity": "team-trial", "action": "schedule" },
+  "requiresPermission": "trials.schedule",
+  "requiresEntitlement": "team_trials",
+  "dataSources": [
+    {
+      "name": "team",
+      "kind": "http.get",
+      "url": "/api/v1/teams/{teamId}",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-2xl mx-auto" },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold" },
+          "bindings": { "children": { "$expr": "'Schedule trial for ' + team.name" } }
+        },
+        {
+          "kind": "Form",
+          "actions": {
+            "onSubmit": {
+              "kind": "http.post",
+              "url": "/api/v1/teams/{teamId}/trials",
+              "onSuccess": {
+                "kind": "navigate",
+                "toExpr": "'/tenant/teams/' + team.id + '/trials'"
+              },
+              "onError": { "kind": "toast.error" }
+            }
+          },
+          "children": [
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Trialist", "className": "space-y-3" },
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": { "name": "trialist_type", "label": "Trialist type", "required": true, "menuTrigger": "focus" },
+                  "props_items": [
+                    { "id": "athlete", "label": "Athlete (registered)" },
+                    { "id": "user", "label": "User (registered adult)" },
+                    { "id": "anonymous", "label": "Anonymous (walk-in / phone inquiry)" }
+                  ]
+                },
+                {
+                  "kind": "ResourceSelect",
+                  "props": {
+                    "name": "trialist_id",
+                    "label": "Trialist",
+                    "resourceExpr": "form.trialist_type",
+                    "hidden": { "$expr": "form.trialist_type === 'anonymous'" }
+                  }
+                },
+                {
+                  "kind": "View",
+                  "props": { "hidden": { "$expr": "form.trialist_type !== 'anonymous'" }, "className": "space-y-3" },
+                  "children": [
+                    {
+                      "kind": "View",
+                      "props": { "className": "grid grid-cols-2 gap-3" },
+                      "children": [
+                        { "kind": "TextField", "props": { "name": "trialist_first_name", "label": "First name", "required": true, "maxLength": 128 } },
+                        { "kind": "TextField", "props": { "name": "trialist_last_name", "label": "Last name", "maxLength": 128 } }
+                      ]
+                    },
+                    {
+                      "kind": "View",
+                      "props": { "className": "grid grid-cols-2 gap-3" },
+                      "children": [
+                        { "kind": "TextField", "props": { "name": "trialist_phone", "label": "Phone", "required": true, "helpText": "E.164 format, e.g. +14155551234", "pattern": "^\\+[1-9]\\d{1,14}$" } },
+                        { "kind": "TextField", "props": { "name": "trialist_email", "label": "Email", "type": "email" } }
+                      ]
+                    },
+                    { "kind": "DateField", "props": { "name": "trialist_dob", "label": "Date of birth", "helpText": "Used for age-eligibility check + child-safety flags. Redacted 90 days post-decision for rejected/no-show/cancelled trials." } }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Trial details", "className": "space-y-3" },
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": { "name": "trial_type", "label": "Trial type", "required": true, "menuTrigger": "focus", "defaultValue": "individual" },
+                  "props_items": [
+                    { "id": "individual", "label": "Individual (1:1)" },
+                    { "id": "group", "label": "Group" },
+                    { "id": "one_day", "label": "One-day drop-in" },
+                    { "id": "multi_session", "label": "Multi-session (2-4 sessions)" }
+                  ]
+                },
+                { "kind": "NumberField", "props": { "name": "session_count", "label": "Session count", "min": 1, "max": 4, "defaultValue": 1 } },
+                {
+                  "kind": "View",
+                  "props": { "className": "grid grid-cols-2 gap-3" },
+                  "children": [
+                    { "kind": "DateTimeField", "props": { "name": "starts_at", "label": "Starts at", "required": true } },
+                    { "kind": "DateTimeField", "props": { "name": "ends_at", "label": "Ends at", "required": true } }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Fee (optional)", "className": "space-y-3" },
+              "children": [
+                { "kind": "NumberField", "props": { "name": "price_amount_cents", "label": "Trial fee (cents)", "min": 0, "defaultValue": 0, "helpText": "Wave 4 Finance integrates payment collection." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex justify-end gap-2 pt-2" },
+              "children": [
+                { "kind": "Button", "props": { "variant": "ghost", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/trials'" } } },
+                { "kind": "Button", "props": { "type": "submit", "variant": "primary", "children": "Schedule trial" } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

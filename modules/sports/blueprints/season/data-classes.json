@@ -1,0 +1,76 @@
+{
+  "id": "academorix://modules/season/data-classes",
+  "$version": 1,
+  "title": "season — field classification",
+  "description": "Season carries commercial + calendrical reference data. No PII. The bulk of compliance responsibility is around FINANCIAL-record retention (late_registration_fee_cents changes generate 7-year audit rows) + SOC 2 CC6.3 change tracking (SeasonCurrentChanged is audit-critical because year-over-year reports pivot on the current season). Domain rows below Season (Team, AthleteEnrollment, Event, Session) inherit their own classification per their owning module.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "Season.id",
+      "Season.tenant_id",
+      "Season.organization_id",
+      "Season.branch_id",
+      "Season.name",
+      "Season.slug",
+      "Season.sport_key",
+      "Season.season_type",
+      "Season.start_date",
+      "Season.end_date",
+      "Season.registration_opens_at",
+      "Season.registration_closes_at",
+      "Season.late_registration_ends_at",
+      "Season.competition_starts_at",
+      "Season.has_playoffs",
+      "Season.playoff_starts_at",
+      "Season.playoff_ends_at",
+      "Season.status",
+      "Season.is_current",
+      "Season.sort_order",
+      "Season.primary_color",
+      "Season.capacity_target",
+      "Season.max_enrollments_per_athlete",
+      "Season.allows_late_registration",
+      "Season.late_registration_fee_cents"
+    ],
+    "internal": [
+      "Season.description",
+      "Season.metadata",
+      "Season.created_by",
+      "Season.updated_by",
+      "Season.deleted_by",
+      "Season.created_at",
+      "Season.updated_at",
+      "Season.deleted_at"
+    ],
+    "confidential": [],
+    "restricted": [],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [
+      "Season.late_registration_fee_cents (drives invoice line items when a late enrollment triggers the surcharge; every change writes to the audit trail with financial-record retention)",
+      "Season.registration_opens_at (defines the enrollment-invoice creation window)",
+      "Season.registration_closes_at (defines the enrollment-invoice creation window)",
+      "Season.late_registration_ends_at (defines when late-fee invoicing stops)"
+    ],
+    "audit_log": [
+      "Season.status (every transition written to `audits`)",
+      "Season.is_current (every flip written to `audits` — year-over-year reports pivot on this; audit-critical)",
+      "Season.start_date (every change post-in_progress written to `audits` with warn severity — affects enrolled athletes' bookings)",
+      "Season.end_date (every change post-in_progress written to `audits` with warn severity)",
+      "Season.sport_key (every change written to `audits` with critical severity — should never happen post-in_progress)",
+      "Season.late_registration_fee_cents (every change written to `audits` — financial-record retention 7 years)",
+      "Season.capacity_target (every change written to `audits`)",
+      "Season.max_enrollments_per_athlete (every change written to `audits`)",
+      "Season.deleted_at (soft-delete + hard-delete written to `audits` + retained 7 years for financial records)"
+    ]
+  },
+  "notes": [
+    "Season carries NO PII. Names, slugs, colors are all tenant metadata. Season descriptions may reference programme + coach names (freeform text) — reviewers should treat them as internal-tier by default.",
+    "`sport_key` is a free-text opaque discriminator pre-Wave-3c sport registry. When the sport registry lands, sport_key changes will be gated additionally by an FK check + an is_active flag on the sport row.",
+    "`primary_color` is a hex string (`#RRGGBB`) — public, safe to render on invoices + PDFs alongside the tenant's branding.",
+    "The `capacity_target` field is informational only — the enrollment observer does NOT block enrollments when capacity_target is exceeded. It's a planning hint surfaced in dashboards.",
+    "`max_enrollments_per_athlete` is enforced downstream by the Wave 3 athlete-enrollment observer, not this module. This module ships the column; enrollment enforces the semantics.",
+    "SeasonCurrentChanged (audit event) is the highest-severity event on this row — YoY reporting queries pivot on `WHERE is_current=true`, so flipping the current season shifts the whole reporting frame. Every flip generates a mandatory audit row + a cannot-opt-out notification.",
+    "Season.description supports up to 4000 chars of freeform text — reviewers should NOT treat it as public because tenants sometimes paste operational notes into it. Response redactor keeps it internal-tier."
+  ]
+}

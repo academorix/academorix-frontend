@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/age-group/subprocessors",
+  "$version": 1,
+  "title": "age-group — subprocessors",
+  "description": "The age-group module engages ZERO third-party processors. Every field is stored in the tenant's own database. Age-group reference data feeds downstream Team + AthleteEnrollment modules; those modules engage their own subprocessors (Segment for analytics, S3 for cohort roster exports) — those are documented under their respective modules, not here.",
+  "subprocessors": [],
+  "notes": [
+    "The default catalog reference table (`data/default-age-groups.json`) is a static shipped artifact. It contains NO tenant data — just the platform's baseline 10-entry catalog (U6..Masters). Consumers may cache it at the edge without concern.",
+    "Sport-cutoff samples (`data/sport-cutoff-samples.json`) are the same — canonical per-sport cutoff patterns from public federation documentation.",
+    "The AgeGroup row's downstream consumers may emit Athlete data (Wave 3+) to third-party subprocessors — but that data flow originates in the Athlete + AthleteEnrollment modules, not here. The age-group module never sees an Athlete ID.",
+    "If a future feature adds automated cutoff sync with sport federations (e.g. querying FIFA / FIBA / FINA age-group registries via API), that integration will engage a new subprocessor + this file will grow. Not in scope for Wave 3a."
+  ]
+}

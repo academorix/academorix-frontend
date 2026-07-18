@@ -1,0 +1,91 @@
+{
+  "id": "academorix://modules/age-group/analytics",
+  "$version": 1,
+  "title": "age-group — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Age Group Created",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "age_group_id", "sport_key", "min_age_inclusive", "max_age_inclusive", "cutoff_date_kind", "is_youth", "is_default", "is_seeded", "source"],
+      "description": "New AgeGroup row created. `source` explains the entry point (tenant_provisioning / admin_created / legacy_backfill_command)."
+    },
+    {
+      "name": "Age Group Bounds Changed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "age_group_id", "min_age_delta", "max_age_delta", "is_youth_flip", "affected_athlete_count"],
+      "description": "Bounds mutation. Feeds the safeguarding-drift dashboard — bounds changes may invalidate athlete eligibility. `min_age_delta` + `max_age_delta` are numeric (post - pre); `is_youth_flip` signals whether the change crossed the 18-boundary. affected_athlete_count populated from Wave 3+ (Athlete module hooks)."
+    },
+    {
+      "name": "Age Group Cutoff Changed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "age_group_id", "cutoff_date_kind_before", "cutoff_date_kind_after"],
+      "description": "Cutoff mutation. Feeds the same safeguarding-drift dashboard."
+    },
+    {
+      "name": "Age Group Default Changed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "from_age_group_id", "to_age_group_id", "sport_key", "has_organization_scope"],
+      "description": "Default flag flipped within a (tenant, org, sport_key) tuple. Feeds the tier-pricing-impact dashboard."
+    },
+    {
+      "name": "Age Group Archived",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "age_group_id", "sport_key", "was_seeded", "had_inbound_rows"],
+      "description": "had_inbound_rows is boolean — signals whether the caller used --force to bypass the FK check."
+    },
+    {
+      "name": "Age Group Quota Exceeded",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "tier", "used", "cap"],
+      "description": "Attempt to create a custom AgeGroup beyond the slot cap. Feeds the upsell funnel — Medium-tier tenants filling the 20-group cap are prime Enterprise upgrade candidates."
+    },
+    {
+      "name": "Age Group Custom Disabled",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "tier"],
+      "description": "Small-tier tenant attempted to create a custom age group. Feeds the Small → Medium upsell funnel — signals a tenant that has outgrown the seeded catalog."
+    },
+    {
+      "name": "Age Group Sport Specific Disabled",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "tier", "attempted_sport_key"],
+      "description": "Non-Enterprise tenant attempted to set sport_key. Feeds the Medium → Enterprise upsell funnel."
+    },
+    {
+      "name": "Age Group Resolved",
+      "kind": "track",
+      "consent_required": "analytics",
+      "properties": ["tenant_id", "age_group_id", "sport_key", "outcome", "candidate_count"],
+      "description": "Resolver endpoint called. outcome: matched / indeterminate / not_found. candidate_count > 1 with outcome='indeterminate' signals a tenant catalog with overlapping bounds — a data-quality signal."
+    },
+    {
+      "name": "Age Group Catalog Seeded",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "seeded_by", "catalog_version", "age_group_count"],
+      "description": "Fires on TenantProvisioned + on legacy-backfill runs + on reconciler re-seeds. catalog_version helps distinguish catalog generations across the tenant fleet."
+    },
+    {
+      "name": "Age Group Reconciler Auto-Healed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "sport_key", "heal_action", "drift_kind"],
+      "description": "heal_action: promote_oldest / demote_extras. drift_kind: zero_default / multiple_default. Fed by ReconcileAgeGroupDefaultInvariantJob."
+    }
+  ],
+  "notes": [
+    "age_group_id is ULID (`age_*`) — an anonymised identifier. No PII risk.",
+    "The AgeGroup row carries no PII — bounds + cutoff are reference data. No `identify` calls happen in this module.",
+    "`affected_athlete_count` (Wave 3+) is a NUMERIC count only — never a list of athlete IDs. Athlete rows carry minor PII; this module never emits Athlete identifiers in analytics events."
+  ]
+}

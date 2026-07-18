@@ -1,0 +1,20 @@
+{
+  "id": "academorix://modules/age-group/middleware",
+  "$version": 1,
+  "title": "age-group — HTTP middleware",
+  "description": "The age-group module ships ZERO middleware of its own. Age groups are reference data, not a request-scoped scoping axis — there is no `X-Age-Group-Id` header, no active-age-group resolution, no per-request context. Every endpoint reads the age_group from a route parameter or from the request body; there is no cross-cutting middleware need. Contrast with region + branch which both ship active-resolver middleware because the caller's active region + branch legitimately vary per request.",
+  "middleware": [],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "auth:sanctum" },
+    { "middleware": "application::resolve.application" },
+    { "middleware": "user::user.resolve_active_tenant" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "user::user.enforce_tenant_membership" }
+  ],
+  "notes": [
+    "Downstream modules that scope by age_group (Team, EventDivision, TeamRegistration) filter their queries by age_group_id from the request body or route param — they don't consume an active-age-group context.",
+    "The AgeGroupResolver service accepts (dob, sport_key, on_date) as explicit arguments — never inferred from request state. This is deliberate: caller intent must be explicit for every eligibility resolution, especially given the compliance-critical downstream Athlete impact."
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/teams/entitlements",
+  "$version": 1,
+  "title": "teams — declared entitlements",
+  "description": "Five entitlement keys. `team_slot` caps the number of teams per tenant (per hierarchy.md §7). `team_capacity_gating` toggles capacity + waitlist enforcement. `team_trials` gates the whole Trials sub-module. `team_event_participation` gates the whole EventTeams sub-module. `team_polymorphic_coach` gates `member_type='coach'` on TeamMember rows (blocked until Wave 2b Staff module lands with the Coach model).",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "team_slot",
+      "kind": "slot",
+      "unit": "teams",
+      "defaultsByPlan": { "small": 10, "medium": 100, "enterprise": null },
+      "description": "How many teams a tenant can have. Small: 10. Medium: 100. Enterprise: unlimited (null cap). Consumed on team create; released on soft-delete/archive.",
+      "enforcedBy": [
+        "TeamObserver.creating consumes 1 unit via EntitlementGate::consume('team_slot')",
+        "TeamObserver.deleted (soft-delete / archive) releases 1 unit via EntitlementGate::release('team_slot')"
+      ]
+    },
+    {
+      "key": "team_capacity_gating",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enforce Team.capacity + Team.capacity_waitlist when set. Default off on Small (capacity is a UI hint only). Medium + Enterprise default on. Overrideable per-tenant by ops (tenants running open-enrollment classes with waivers).",
+      "enforcedBy": [
+        "TeamMemberObserver.creating skips the capacity check when this entitlement is off",
+        "CapacityGate::allowsAdditional() returns true unconditionally when off"
+      ]
+    },
+    {
+      "key": "team_trials",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "The whole Trials sub-module. Off = Trial CRUD returns 402 at the middleware. Small tenants cannot run trials — they add directly to the roster or don't at all.",
+      "enforcedBy": [
+        "team.enforce_entitlement:team_trials middleware on every /api/v1/teams/{team}/trials route",
+        "TrialObserver refuses create when the gate is closed",
+        "SDUI trial resource surfaces hidden when features array does not include 'teams.trials'"
+      ]
+    },
+    {
+      "key": "team_event_participation",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "The whole EventTeams sub-module. Off = EventTeam CRUD returns 402. Small tenants cannot register teams to events (their business shape doesn't include competitive participation).",
+      "enforcedBy": [
+        "team.enforce_entitlement:team_event_participation middleware on every /api/v1/teams/{team}/event-teams route",
+        "EventTeamObserver refuses create when the gate is closed",
+        "SDUI event-team resource surfaces hidden when features array does not include 'teams.event_participation'"
+      ]
+    },
+    {
+      "key": "team_polymorphic_coach",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 0 },
+      "description": "Enables member_type='coach' on TeamMember rows. Blocked until Wave 2b Staff module lands with the Coach model. Wave 2 ships with the entitlement key + observer wiring; Wave 2b flips the plan defaults to (medium: 1, enterprise: 1). Small stays 0 because coaches on Small are captured via member_type='user' + role_on_team='coach'.",
+      "enforcedBy": [
+        "TeamMemberObserver.creating refuses when member_type='coach' AND this entitlement is off (returns POLYMORPHIC_COACH_NOT_ENTITLED 402)"
+      ]
+    }
+  ]
+}

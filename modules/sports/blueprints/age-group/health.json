@@ -1,0 +1,87 @@
+{
+  "id": "academorix://modules/age-group/health",
+  "$version": 1,
+  "title": "age-group — health probes",
+  "probes": [
+    {
+      "name": "age-group-tables-migrated",
+      "class": "Academorix\\Sports\\AgeGroup\\Health\\Probes\\TablesMigratedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "The `age_groups` table exists + carries the latest schema version. Failure indicates a missed migration.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "age-group-default-catalog-loaded",
+      "class": "Academorix\\Sports\\AgeGroup\\Health\\Probes\\DefaultCatalogLoadedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "`data/default-age-groups.json` parses cleanly + contains the expected 10-entry baseline (U6, U8, U10, U12, U14, U16, U18, Adult, Senior, Masters). Failure indicates a corrupted deploy artifact.",
+      "timeoutMs": 100
+    },
+    {
+      "name": "age-group-tenant-fk-integrity",
+      "class": "Academorix\\Sports\\AgeGroup\\Health\\Probes\\TenantFkIntegrityProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Every `age_groups.tenant_id` resolves to a live `tenants` row. FK is CASCADE so the DB should never permit orphans; this probe catches direct SQL manipulation.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "age-group-organization-fk-integrity",
+      "class": "Academorix\\Sports\\AgeGroup\\Health\\Probes\\OrganizationFkIntegrityProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Every non-null `age_groups.organization_id` resolves to a live `organizations` row AND belongs to the same tenant. Catches cross-tenant FK smuggling attempts + orphaned rows after direct SQL manipulation.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "age-group-default-invariant",
+      "class": "Academorix\\Sports\\AgeGroup\\Health\\Probes\\DefaultAgeGroupInvariantProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Every non-empty (tenant, organization, sport_key) tuple has EXACTLY ONE row with `is_default = true`. Failure is a data-quality signal; the observer normally prevents this state, but the probe catches drift from bulk-imports + direct SQL.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "age-group-seeded-catalog-invariant",
+      "class": "Academorix\\Sports\\AgeGroup\\Health\\Probes\\SeededCatalogInvariantProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Every tenant with at least one User has the seeded 10-entry catalog (is_seeded=true). Missing seed rows indicate a legacy tenant that provisioned before the age-group module landed — fix via `age-group:seed-defaults-for-tenant --all`.",
+      "timeoutMs": 800
+    },
+    {
+      "name": "age-group-slug-uniqueness",
+      "class": "Academorix\\Sports\\AgeGroup\\Health\\Probes\\SlugUniquenessProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "No two active AgeGroups share (tenant_id, organization_id, sport_key, slug). Backed by the partial unique index; the probe verifies the index is in place + healthy.",
+      "timeoutMs": 300
+    },
+    {
+      "name": "age-group-bounds-consistency",
+      "class": "Academorix\\Sports\\AgeGroup\\Health\\Probes\\BoundsConsistencyProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Every AgeGroup satisfies min_age_inclusive <= max_age_inclusive AND is_youth = (max_age_inclusive < 18). Catches drift from raw SQL edits that bypass the observer.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "age-group-cutoff-consistency",
+      "class": "Academorix\\Sports\\AgeGroup\\Health\\Probes\\CutoffConsistencyProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Every AgeGroup has a cutoff_date_kind + cutoff_month + cutoff_day triple that satisfies the kind-specific constraints (see `rules.json` valid_cutoff_date).",
+      "timeoutMs": 500
+    },
+    {
+      "name": "age-group-purge-queue-drained",
+      "class": "Academorix\\Sports\\AgeGroup\\Health\\Probes\\PurgeQueueDrainedProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "No `PurgeArchivedAgeGroupsJob` has been pending for > 48h. Catches queue stalls that could push an archived AgeGroup past its 1095-day retention window.",
+      "timeoutMs": 300
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "id": "academorix://modules/teams/policies",
+  "$version": 1,
+  "title": "teams — authorization policies",
+  "description": "Four policies, one per owned model. Each policy composes the ResolveScope middleware's decision: a caller with scope 'branch:X' can only see/act on teams inside branch X. A caller with scope 'coach:Y' (Wave 3 scope key) can only see/act on teams they coach. Every ability defers to spatie/laravel-permission for the permission check, then layers scope narrowing.",
+  "policies": [
+    {
+      "model": "Team",
+      "class": "Academorix\\Teams\\Policies\\TeamPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "teams.viewAny", "scope": "member: teams they belong to (active TeamMember row); coach: teams they coach; branch_manager+: all in scoped branches" },
+        { "action": "view", "permission": "teams.view", "scope": "narrows to caller's active branch scope when set" },
+        { "action": "create", "permission": "teams.create", "scope": "branch_manager narrowed to their scoped branches" },
+        { "action": "update", "permission": "teams.update", "scope": "coach: only teams they coach; branch_manager+: their scoped branches" },
+        { "action": "delete", "permission": "teams.delete", "scope": "admin + owner only" },
+        { "action": "archive", "permission": "teams.archive" },
+        { "action": "pause", "permission": "teams.pause" },
+        { "action": "manageSchedule", "permission": "teams.manage-schedule" },
+        { "action": "manageRegistration", "permission": "teams.manage-registration" },
+        { "action": "assignCoach", "permission": "teams.assign-coach", "scope": "child-safety-audit-critical when team.min_age < 18 OR max_age < 18" },
+        { "action": "viewAuditUsage", "permission": "teams.view-audit-usage" },
+        { "action": "platformViewAny", "permission": "platform.teams.viewAny" },
+        { "action": "platformView", "permission": "platform.teams.view" },
+        { "action": "platformForceClose", "permission": "platform.teams.force-close", "scope": "audit-critical: every fire notifies the tenant admin and writes an audit row with retention 7 years" }
+      ]
+    },
+    {
+      "model": "TeamMember",
+      "class": "Academorix\\Teams\\Policies\\TeamMemberPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "team_members.viewAny",
+          "scope": "member: their own roster rows only (WHERE (member_type='user' AND member_id = auth()->id()) OR (member_type='athlete' AND member.guardian_user_id = auth()->id())); coach: rosters of teams they coach; branch_manager+: everything in scoped branches"
+        },
+        {
+          "action": "view",
+          "permission": "team_members.view",
+          "scope": "member: same as viewAny; admins: team_members.view-all"
+        },
+        {
+          "action": "create",
+          "permission": "team_members.create",
+          "scope": "coach: only for teams they coach; branch_manager+: their scoped branches"
+        },
+        {
+          "action": "update",
+          "permission": "team_members.update",
+          "scope": "same as create"
+        },
+        {
+          "action": "delete",
+          "permission": "team_members.delete",
+          "scope": "admin + owner only; must be a terminal roster row"
+        },
+        { "action": "changeRole", "permission": "team_members.change-role" },
+        { "action": "markInjured", "permission": "team_members.mark-injured" },
+        { "action": "markGraduated", "permission": "team_members.mark-graduated" },
+        { "action": "suspend", "permission": "team_members.suspend", "scope": "restricted to branch_manager+ — disciplinary decisions" }
+      ]
+    },
+    {
+      "model": "TeamTrial",
+      "class": "Academorix\\Teams\\Policies\\TrialPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "trials.viewAny",
+          "scope": "coach: only trials for teams they coach; branch_manager+: all in scoped branches"
+        },
+        {
+          "action": "view",
+          "permission": "trials.view",
+          "scope": "coach: same as viewAny; trialists themselves can see their own trials via trials.view-own (Wave 3 addition; not shipped here)"
+        },
+        { "action": "schedule", "permission": "trials.schedule", "scope": "requires team_trials entitlement" },
+        {
+          "action": "evaluate",
+          "permission": "trials.evaluate",
+          "scope": "must be the team's coach OR have trials.evaluate-any"
+        },
+        {
+          "action": "convert",
+          "permission": "trials.convert",
+          "scope": "same as evaluate — decision authority"
+        },
+        {
+          "action": "reject",
+          "permission": "trials.evaluate",
+          "scope": "same as evaluate; decision_notes required per observer"
+        },
+        { "action": "cancel", "permission": "trials.cancel" },
+        {
+          "action": "viewAnonymous",
+          "permission": "trials.view-anonymous",
+          "scope": "restricted to admin + owner — anonymous trialist PII"
+        }
+      ]
+    },
+    {
+      "model": "EventTeam",
+      "class": "Academorix\\Teams\\Policies\\EventTeamPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "event_teams.viewAny",
+          "scope": "member: participations of teams they belong to; coach: teams they coach; branch_manager+: all in scoped branches"
+        },
+        { "action": "view", "permission": "event_teams.view" },
+        { "action": "register", "permission": "event_teams.register", "scope": "requires team_event_participation entitlement" },
+        { "action": "update", "permission": "event_teams.update" },
+        { "action": "withdraw", "permission": "event_teams.withdraw" },
+        { "action": "checkIn", "permission": "event_teams.check-in" },
+        {
+          "action": "recordResult",
+          "permission": "event_teams.record-result",
+          "scope": "coach + branch_manager+ only — competitively sensitive data"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "id": "academorix://modules/staff/hooks",
+  "$version": 1,
+  "title": "staff — TenancyHook + lifecycle hooks",
+  "description": "Cross-module hook implementations. Staff does not register a bootstrapper (nothing to hydrate at tenant-boot). Registers four cascade hooks: branch-archive prevention, user-archive prevention, tenant-erasure cascade, and coach-status cascade on staff offboarding.",
+  "namespace": "Academorix\\Staff\\Hooks",
+  "hooks": [
+    {
+      "name": "PreventStaffOrphansOnBranchArchived",
+      "class": "Academorix\\Staff\\Hooks\\PreventStaffOrphansOnBranchArchived",
+      "kind": "cascade_prevention",
+      "listens_to": "branch::BranchArchived",
+      "purpose": "Refuse the archive when any Staff row referencing the branch still has employment_status IN ('pre_hire', 'active', 'on_leave', 'suspended', 'offboarding'). Distinct from the FK RESTRICT (which only blocks hard-delete) — this blocks the archive transition because staff need a target branch after their manager's branch closes.",
+      "returns": "BRANCH_HAS_ACTIVE_STAFF (409) with the staff count in the error payload"
+    },
+    {
+      "name": "PreventUserArchiveWithActiveStaff",
+      "class": "Academorix\\Staff\\Hooks\\PreventUserArchiveWithActiveStaff",
+      "kind": "cascade_prevention",
+      "listens_to": "user::UserSoftDeleted (pre-write hook)",
+      "purpose": "Refuse the User soft-delete when the User has an active (deleted_at IS NULL) Staff row. The offboard flow must run first — Staff.employment_status → offboarded — which fires StaffOffboarded → UnblockUserArchiveWhenLastStaffOffboarded lifts the block. Enforced BEFORE the RESTRICT FK kicks in (which would surface a less informative error).",
+      "returns": "USER_HAS_ACTIVE_STAFF (409) with the staff id + tenant id in the error payload",
+      "priority": 40,
+      "note": "Priority 40 — runs BEFORE PreventUserArchiveWithActiveTenantMembership (priority 50) so the staff-record message wins when both would fire (a staff always has a user membership)."
+    },
+    {
+      "name": "PurgeStaffDataForErasedTenant",
+      "class": "Academorix\\Staff\\Hooks\\PurgeStaffDataForErasedTenant",
+      "kind": "tenant_erasure",
+      "listens_to": "tenancy::TenantErased",
+      "purpose": "Cascade delete via FK; writes compliance audit trail entry + emits count metrics per entity family (staff purged, coaches purged, staff_compensation_history rows purged). Audit rows outlive the source rows per financial retention (compensation history in particular — retained 7 years even after the tenant is erased, per legal requirement).",
+      "compliance": "GDPR Art. 17 (right to erasure) + financial-retention exception. Compensation history rows are NOT purged with the tenant — they migrate to a compliance-archive table (retained in encrypted form by ops for the 7-year window, keyed to a tenant-anonymised id)."
+    },
+    {
+      "name": "CascadeCoachStatusOnStaffOffboarding",
+      "class": "Academorix\\Staff\\Hooks\\CascadeCoachStatusOnStaffOffboarding",
+      "kind": "cascade",
+      "listens_to": [
+        "staff::StaffPutOnLeave",
+        "staff::StaffSuspended",
+        "staff::StaffOffboardingStarted",
+        "staff::StaffOffboarded"
+      ],
+      "purpose": "Cascades: when the parent Staff enters leave / suspend / offboarding / offboarded, the linked Coach (if any) transitions along. Leave / suspend → coach.status='paused' (transient — will resume with the staff). Offboarding / offboarded → coach.status='archived' (terminal). Priority 40 so it runs BEFORE notification-tier listeners, giving the notification fan-out the correct coach state.",
+      "note": "This is the primary hook that connects the two owned aggregates. Without it, a Staff can offboard while their Coach row stays active — that would leave orphan coach references in future TeamMember rows."
+    }
+  ],
+  "no_bootstrapper": {
+    "reason": "Staff does not need a tenant-boot hydration path — everything is on-demand load from the DB. The BranchManagerResolver + OrgChartResolver bindings cache lazily on first query."
+  }
+}

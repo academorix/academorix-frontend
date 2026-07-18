@@ -1,0 +1,85 @@
+{
+  "id": "academorix://modules/season/middleware",
+  "$version": 1,
+  "title": "season — HTTP middleware",
+  "middleware": [
+    {
+      "alias": "season.resolve_active",
+      "class": "Academorix\\Sports\\Season\\Http\\Middleware\\ResolveActiveSeason",
+      "priority": 50,
+      "description": "Resolves the caller's active Season for THIS request. Reads (in order): (1) `X-Season-Id` header when the caller's active tenant has a Season on that slug or ULID AND the Season is not archived; (2) CurrentSeasonResolver -> the tenant's Season where is_current=true within the scope-tuple fallback chain (see readme.md §6); (3) null when no season matches (allowed — Small tier + always-on tenants operate here). Sets `Request::activeSeason()` + writes to the `RequestContext.season_id` slot that downstream middleware (season.enforce_registration_open) reads. Runs AFTER `tenant.resolve` but BEFORE any enrollment-adjacent middleware.",
+      "auto_applied": true,
+      "auto_applied_to": ["api"],
+      "responses": [
+        {
+          "condition": "X-Season-Id header points at a Season in a different tenant",
+          "http": 403,
+          "code": "SEASON_CROSS_TENANT",
+          "audit_severity": "warn",
+          "description": "Security-relevant — a forged header attempting to reach another tenant's Season. Logged with the tenant + user + attempted season + IP."
+        },
+        {
+          "condition": "X-Season-Id header points at an archived Season",
+          "http": 410,
+          "code": "SEASON_ARCHIVED",
+          "audit_severity": "info",
+          "description": "Season exists but has been archived. Response includes the current is_current=true Season's id as a hint (when one exists in the resolved tuple)."
+        },
+        {
+          "condition": "No X-Season-Id header AND no current season resolved AND Wave 3 enrollment-adjacent route",
+          "http": 200,
+          "code": null,
+          "audit_severity": "none",
+          "description": "Middleware sets Request::activeSeason() = null and lets the request proceed. Downstream `season.enforce_registration_open` middleware surfaces the specific error if it applies. Tenants with no active season legitimately use the always-on scheduling flow."
+        }
+      ]
+    },
+    {
+      "alias": "season.enforce_registration_open",
+      "class": "Academorix\\Sports\\Season\\Http\\Middleware\\EnforceRegistrationOpen",
+      "priority": 55,
+      "description": "Guards enrollment-adjacent write routes (Wave 3 athlete-enrollment surface — this module ships the middleware today so Wave 3 can compose it without a follow-up). Refuses when the resolved active Season's registration window is closed. Not auto-applied — Wave 3 enrollment routes attach it explicitly.",
+      "auto_applied": false,
+      "responses": [
+        {
+          "condition": "Request::activeSeason() is null (no season resolved AND route requires one)",
+          "http": 424,
+          "code": "SEASON_NO_ACTIVE_SEASON",
+          "audit_severity": "info",
+          "description": "Failed dependency — the route requires an active season and none is resolved for the caller's scope. Response includes suggestions to create a Season or promote an existing one to current."
+        },
+        {
+          "condition": "now() < season.registration_opens_at",
+          "http": 409,
+          "code": "SEASON_REGISTRATION_NOT_OPEN",
+          "audit_severity": "info",
+          "description": "Retryable when the window opens. Response includes registration_opens_at."
+        },
+        {
+          "condition": "now() > season.registration_closes_at AND (allows_late_registration=false OR now() > late_registration_ends_at)",
+          "http": 409,
+          "code": "SEASON_REGISTRATION_CLOSED",
+          "audit_severity": "info",
+          "description": "Response includes the closest window (season_id + registration_opens_at) when a future Season with an open window exists in the tuple."
+        },
+        {
+          "condition": "In late window AND caller lacks `seasons.enroll.late` permission",
+          "http": 403,
+          "code": "SEASON_LATE_REGISTRATION_REQUIRES_PERMISSION",
+          "audit_severity": "info",
+          "description": "Late enrollments require the explicit permission (typically granted to admin + reception roles who handle surcharge collection)."
+        }
+      ]
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "auth:sanctum" },
+    { "middleware": "application::resolve.application" },
+    { "middleware": "user::user.resolve_active_tenant" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "user::user.enforce_tenant_membership" },
+    { "middleware": "entitlements::entitlement.enforce" }
+  ]
+}

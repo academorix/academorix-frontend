@@ -1,0 +1,74 @@
+{
+  "id": "academorix://modules/staff/health",
+  "$version": 1,
+  "title": "staff — health probes",
+  "probes": [
+    {
+      "name": "staff-schema-migrations-applied",
+      "class": "Academorix\\Staff\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms every migration this module ships has run: staff, coaches, staff_compensation_history + their indexes (partial unique on (tenant_id, user_id, deleted_at IS NULL) + partial unique on (branch_id, is_branch_manager=true, employment_status='active', deleted_at IS NULL)).",
+      "timeoutMs": 500
+    },
+    {
+      "name": "staff-branch-manager-invariant-index-present",
+      "class": "Academorix\\Staff\\Health\\Probes\\BranchManagerInvariantIndexPresentProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms the partial unique index on (branch_id, is_branch_manager=true, employment_status='active', deleted_at IS NULL) exists. Without it, concurrent promotions could both succeed + violate the one-manager-per-branch invariant.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "staff-compensation-history-table-present",
+      "class": "Academorix\\Staff\\Health\\Probes\\CompensationHistoryTablePresentProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms the dedicated staff_compensation_history table exists (separate from the normal audits table). Missing this means every compensation write silently lands in the normal audits table + loses the 7-year financial-record retention guarantee."
+    },
+    {
+      "name": "staff-branch-manager-invariant-clean",
+      "class": "Academorix\\Staff\\Health\\Probes\\BranchManagerInvariantCleanProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Runs the same query as ReconcileBranchManagerInvariantJob. Any finding is a P1 signal (multiple active managers per branch, or a manager not in 'active' state).",
+      "timeoutMs": 2000
+    },
+    {
+      "name": "staff-orphan-staff-detection",
+      "class": "Academorix\\Staff\\Health\\Probes\\OrphanStaffDetectionProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Detects Staff rows with employment_status='active' referencing a User with deleted_at != NULL (would violate the PreventUserArchiveWithActiveStaff hook if it ran retroactively — indicates a historical drift).",
+      "timeoutMs": 1500
+    },
+    {
+      "name": "staff-pending-hire-backlog",
+      "class": "Academorix\\Staff\\Health\\Probes\\PendingHireBacklogProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Warns when > 50 Staff rows are stuck in employment_status='pre_hire' for > staff.hire.pre_hire_ttl_days (default 60 days). Indicates HR onboarding backlog OR a broken email-verification flow blocking activations."
+    },
+    {
+      "name": "staff-large-compensation-delta-frequency",
+      "class": "Academorix\\Staff\\Health\\Probes\\LargeCompensationDeltaFrequencyProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Counts `staff.manage.compensation.large-delta` bypass events in the last 24h. Elevated frequency is a signal — either a mass payroll adjustment (legitimate) or a permission being over-granted (drift)."
+    },
+    {
+      "name": "staff-compensation-history-write-latency",
+      "class": "Academorix\\Staff\\Health\\Probes\\CompensationHistoryWriteLatencyProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "P99 write latency on staff_compensation_history. Should be < 50ms — this is a small table with append-only writes; latency drift indicates disk pressure or lock contention."
+    },
+    {
+      "name": "staff-coach-certification-expiry-processing-lag",
+      "class": "Academorix\\Staff\\Health\\Probes\\CoachCertificationExpiryProcessingLagProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Detects Coach.certifications entries whose expires_at < today() - 24h but expired_at is still null (ExpireCoachCertificationsJob missed the transition). Any finding indicates the daily job has stalled."
+    }
+  ]
+}

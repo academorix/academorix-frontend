@@ -1,0 +1,89 @@
+{
+  "id": "staff.coach-rating",
+  "title": "Coach rating",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Star-rating renderer for Coach.rating + rating_count. Renders nothing when coach_rating_display entitlement is off OR rating is null (never rated).",
+  "props": {
+    "rating": { "type": "number", "description": "Rating between 0 and 5. Null = no rating." },
+    "count": { "type": "integer", "default": 0, "description": "Number of ratings that produced the average." },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showCount": { "type": "boolean", "default": true }
+  },
+  "dataSources": [
+    { "name": "features", "kind": "http.get", "url": "/api/v1/features", "unwrap": "data", "cache": { "ttlSeconds": 60 } }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex items-center gap-1" },
+      "bindings": {
+        "hidden": {
+          "$expr": "!features.includes('coach.rating_display') || props.rating === null || props.rating === undefined"
+        }
+      },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-0.5" },
+          "children": [
+            {
+              "kind": "Icon",
+              "props": { "name": "star" },
+              "bindings": {
+                "className": {
+                  "$expr": "'size-3.5 ' + (props.rating >= 1 ? 'text-warning' : 'text-muted opacity-30')"
+                }
+              }
+            },
+            {
+              "kind": "Icon",
+              "props": { "name": "star" },
+              "bindings": {
+                "className": {
+                  "$expr": "'size-3.5 ' + (props.rating >= 2 ? 'text-warning' : 'text-muted opacity-30')"
+                }
+              }
+            },
+            {
+              "kind": "Icon",
+              "props": { "name": "star" },
+              "bindings": {
+                "className": {
+                  "$expr": "'size-3.5 ' + (props.rating >= 3 ? 'text-warning' : 'text-muted opacity-30')"
+                }
+              }
+            },
+            {
+              "kind": "Icon",
+              "props": { "name": "star" },
+              "bindings": {
+                "className": {
+                  "$expr": "'size-3.5 ' + (props.rating >= 4 ? 'text-warning' : 'text-muted opacity-30')"
+                }
+              }
+            },
+            {
+              "kind": "Icon",
+              "props": { "name": "star" },
+              "bindings": {
+                "className": {
+                  "$expr": "'size-3.5 ' + (props.rating >= 5 ? 'text-warning' : 'text-muted opacity-30')"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs text-muted" },
+          "bindings": {
+            "hidden": { "$expr": "!props.showCount || !props.count" },
+            "children": { "$expr": "'(' + props.count + ')'" }
+          }
+        }
+      ]
+    }
+  ]
+}

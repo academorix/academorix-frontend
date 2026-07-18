@@ -1,0 +1,229 @@
+{
+  "id": "academorix://modules/teams/permissions",
+  "$version": 1,
+  "title": "teams — permissions",
+  "seeder": "Academorix\\Teams\\Database\\Seeders\\TeamsPermissionSeeder",
+  "isSystem": true,
+  "description": "Two audiences. Tenant plane (sanctum) — team catalogue CRUD by admin/owner/branch-manager; roster management by coach + branch-manager+; trial workflow by coach + branch-manager+; event-team participation by coach + branch-manager+. Members can see teams they're on. Platform plane (platform_admin) — cross-tenant read + force-close. All permissions carry the `teams.` prefix (or `platform.teams.` on the platform audience) to align with hierarchy.md §4 audience-boundary rules.",
+  "permissions": [
+    {
+      "name": "teams.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["member", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "teams.view",
+      "guard": "sanctum",
+      "seededOn": ["member", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "teams.create",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "teams.update",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"],
+      "note": "Coach can update teams they coach (own-only via policy scope)."
+    },
+    {
+      "name": "teams.delete",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "teams.archive",
+      "guard": "sanctum",
+      "description": "Transition team to archived status — terminal. Cascades members when combined with --cascade-members flag.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "teams.pause",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "teams.manage-schedule",
+      "guard": "sanctum",
+      "description": "Edit schedule_pattern.",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "teams.manage-registration",
+      "guard": "sanctum",
+      "description": "Open + close registration windows.",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "teams.assign-coach",
+      "guard": "sanctum",
+      "description": "Change coach_id — child-safety-audit-critical when team includes minors.",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "teams.view-audit-usage",
+      "guard": "sanctum",
+      "description": "See utilisation reports (roster retention, trial conversion rate, event participation).",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "team_members.viewAny",
+      "guard": "sanctum",
+      "description": "See team_members owned by the caller (as coach) or where they themselves are a member. Admins additionally see all via the TeamMemberPolicy scope hook.",
+      "seededOn": ["member", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "team_members.view-all",
+      "guard": "sanctum",
+      "description": "See EVERY roster row in the tenant. Distinct from team_members.viewAny (own-only).",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "team_members.view",
+      "guard": "sanctum",
+      "seededOn": ["member", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "team_members.create",
+      "guard": "sanctum",
+      "description": "Add a member to a team's roster.",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "team_members.update",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "team_members.delete",
+      "guard": "sanctum",
+      "description": "Soft-delete a terminal (inactive/graduated) roster row.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "team_members.change-role",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "team_members.mark-injured",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "team_members.mark-graduated",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "team_members.suspend",
+      "guard": "sanctum",
+      "description": "Disciplinary suspension. More sensitive than mark-injured — restricted to branch_manager+.",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "team_capacity_override",
+      "guard": "sanctum",
+      "description": "Bypass CapacityGate refusals on roster-add. Rarely granted; audit-critical.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "trials.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "trials.view",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "trials.view-anonymous",
+      "guard": "sanctum",
+      "description": "See anonymous trialist profile fields (name/phone/email/dob). Restricted to compliance + admin. Redacted from wire projection for callers lacking this permission.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "trials.schedule",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "trials.evaluate",
+      "guard": "sanctum",
+      "description": "Write evaluation_notes + complete / reject a trial. Restricted to the team's coach OR branch_manager+.",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "trials.evaluate-any",
+      "guard": "sanctum",
+      "description": "Evaluate trials for teams the caller doesn't coach. Cover-shift scenario.",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "trials.convert",
+      "guard": "sanctum",
+      "description": "Atomic conversion of a trial to a team member. Requires trials.evaluate too.",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "trials.cancel",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "event_teams.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["member", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "event_teams.view",
+      "guard": "sanctum",
+      "seededOn": ["member", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "event_teams.register",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "event_teams.update",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "event_teams.withdraw",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "event_teams.check-in",
+      "guard": "sanctum",
+      "description": "Mark team as checked in at the event.",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "event_teams.record-result",
+      "guard": "sanctum",
+      "description": "Record the result JSONB. Restricted to coaches + branch_manager+.",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "platform.teams.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.teams.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.teams.force-close",
+      "guard": "platform_admin",
+      "description": "Support intervention to force-archive a team bypassing every tenant-level guard. Every fire is audit-critical + notifies the tenant admin.",
+      "seededOn": ["super_admin", "ops"]
+    }
+  ]
+}

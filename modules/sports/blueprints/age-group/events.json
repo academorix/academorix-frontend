@@ -1,0 +1,201 @@
+{
+  "id": "academorix://modules/age-group/events",
+  "$version": 1,
+  "title": "age-group — published events",
+  "namespace": "Academorix\\Sports\\AgeGroup\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Safeguarding-adjacent events (bounds, cutoff, sport_key, default) fan out to the audit + notifications + downstream Team/AthleteEnrollment modules; lifecycle events (archived, restored, deleted) fan out to notifications + the tenant admin activity feed.",
+  "events": [
+    {
+      "name": "AgeGroupCreated",
+      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupCreated",
+      "trigger": "AgeGroupProvisioner completed successfully. Fires exactly once per (tenant_id, organization_id, sport_key, slug) tuple. Emits for both seeded defaults + tenant customs; consumers may filter on `source` in the payload to distinguish.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::MaybeDispatchAgeGroupCreatedNotification (skipped for source='tenant_provisioning' — seeded defaults are silent)",
+        "teams::InvalidateAgeGroupPickerCache (Wave 2b — Team edit form caches allowed age groups)"
+      ],
+      "payload": {
+        "age_group_id": "ULID (age_*)",
+        "tenant_id": "ULID (ten_*)",
+        "organization_id": "ULID (org_*) | null",
+        "name": "string",
+        "slug": "string",
+        "sport_key": "string | null",
+        "min_age_inclusive": "integer (3..100)",
+        "max_age_inclusive": "integer (3..100)",
+        "cutoff_date_kind": "'calendar_year' | 'academic_year' | 'rolling_from_birthday' | 'custom_date'",
+        "is_youth": "boolean (max_age_inclusive < 18)",
+        "is_default": "boolean",
+        "is_seeded": "boolean",
+        "created_by": "ULID (usr_*) | null (null = system-provisioned by the seeder)",
+        "source": "'tenant_provisioning' | 'admin_created' | 'legacy_seed'"
+      }
+    },
+    {
+      "name": "AgeGroupUpdated",
+      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupUpdated",
+      "trigger": "Any AgeGroup field mutated except the four dedicated events (bounds, cutoff, sport_key, default). Fires for renames, description edits, color changes, gender_category edits, sort_order.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "teams::InvalidateAgeGroupPickerCache"
+      ],
+      "payload": {
+        "age_group_id": "ULID",
+        "tenant_id": "ULID",
+        "updated_by": "ULID",
+        "changed_fields": "string[] (e.g. ['name', 'color', 'description', 'gender_category', 'sort_order'])"
+      }
+    },
+    {
+      "name": "AgeGroupBoundsChanged",
+      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupBoundsChanged",
+      "trigger": "min_age_inclusive OR max_age_inclusive mutated. Audit-CRITICAL — bounds changes may invalidate the eligibility of every Athlete currently enrolled in a Team that references this AgeGroup. Fires alongside AgeGroupUpdated (which does NOT include bounds).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — minor-safeguarding retention floor)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchAgeGroupBoundsChangedNotification (cannot-opt-out — eligibility impact)",
+        "teams::MaybeInvalidateTeamRoster (Wave 2b — recomputes eligibility flags for every athlete in every referring team)",
+        "athlete-enrollment::MaybeInvalidateEnrollment (Wave 3+ — flags enrollments where the Athlete's current age no longer fits)"
+      ],
+      "payload": {
+        "age_group_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_by": "ULID",
+        "min_age": "{ before: integer, after: integer }",
+        "max_age": "{ before: integer, after: integer }",
+        "is_youth_flip": "boolean (true when max_age crossing 18 caused is_youth to flip)",
+        "reason": "string | null (free-form; internal-tier)"
+      }
+    },
+    {
+      "name": "AgeGroupCutoffChanged",
+      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupCutoffChanged",
+      "trigger": "cutoff_date_kind OR cutoff_month OR cutoff_day mutated. Audit-CRITICAL for the same reasoning as AgeGroupBoundsChanged — changing how age is calculated may reshape eligibility outcomes without touching the bounds themselves. (Example: switching from calendar_year to rolling_from_birthday on the same U12 group re-scores every borderline athlete.)",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "teams::MaybeInvalidateTeamRoster",
+        "athlete-enrollment::MaybeInvalidateEnrollment"
+      ],
+      "payload": {
+        "age_group_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_by": "ULID",
+        "cutoff_date_kind": "{ before: string, after: string }",
+        "cutoff_month": "{ before: integer|null, after: integer|null }",
+        "cutoff_day": "{ before: integer|null, after: integer|null }"
+      }
+    },
+    {
+      "name": "AgeGroupSportKeyChanged",
+      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupSportKeyChanged",
+      "trigger": "sport_key mutated (including null → non-null and non-null → null). Audit-warn severity — the sport-specific override chain reshapes on this change; downstream resolvers switch their answers.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "age_group_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_by": "ULID",
+        "sport_key": "{ before: string|null, after: string|null }"
+      }
+    },
+    {
+      "name": "AgeGroupDefaultChanged",
+      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupDefaultChanged",
+      "trigger": "The is_default flag flipped within a (tenant_id, organization_id, sport_key) tuple. Fires with the previous default's ID + the new default's ID. Downstream tier-pricing defaults (Finance Wave 4) key off this flag.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchAgeGroupDefaultChangedNotification (cannot-opt-out — tier-pricing impact)"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "organization_id": "ULID | null",
+        "sport_key": "string | null",
+        "from_age_group_id": "ULID | null (null when this is the first default — AgeGroupCatalogSeeded fires that path)",
+        "to_age_group_id": "ULID",
+        "changed_by": "ULID"
+      }
+    },
+    {
+      "name": "AgeGroupArchived",
+      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupArchived",
+      "trigger": "AgeGroup soft-deleted (deleted_at set). Refused when is_default=true (observer catches it). Refused when is_seeded=true (seeded defaults cannot be deleted). Refused when any inbound row (Team, AthleteEnrollment via non-snapshot column, EventDivision) still references this AgeGroup (AGE_GROUP_IN_USE). Archived AgeGroups vanish from selectors but existing rows stay valid.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "age_group_id": "ULID",
+        "tenant_id": "ULID",
+        "archived_by": "ULID",
+        "reason": "string | null",
+        "hard_delete_scheduled_for": "ISO 8601 timestamp"
+      }
+    },
+    {
+      "name": "AgeGroupRestored",
+      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupRestored",
+      "trigger": "Archived AgeGroup transitioned back to active (deleted_at cleared). Restoration allowed within the 1095-day (3-year) retention window before PurgeArchivedAgeGroupsJob hard-deletes it.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "age_group_id": "ULID",
+        "tenant_id": "ULID",
+        "restored_by": "ULID",
+        "was_archived_at": "ISO 8601 timestamp"
+      }
+    },
+    {
+      "name": "AgeGroupDeleted",
+      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupDeleted",
+      "trigger": "AgeGroup soft-deleted OR hard-deleted. Distinct events not needed — the payload carries the mode.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "age_group_id": "ULID",
+        "tenant_id": "ULID",
+        "deleted_by": "ULID",
+        "mode": "'soft' | 'hard'",
+        "was_default": "boolean",
+        "was_seeded": "boolean"
+      }
+    },
+    {
+      "name": "AgeGroupCatalogSeeded",
+      "class": "Academorix\\Sports\\AgeGroup\\Events\\AgeGroupCatalogSeeded",
+      "trigger": "SeedDefaultAgeGroupsForTenantJob completed for a freshly-provisioned tenant. Fires exactly once per tenant lifetime (unless the tenant loses every default + the reconciler re-seeds — that path fires a fresh event).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "teams::PopulateAgeGroupPickerCacheOnFirstSeed"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "age_group_ids": "ULID[] (10 by default — U6..Adult..Masters)",
+        "default_age_group_id": "ULID (the row with is_default=true, usually 'Adult')",
+        "seeded_by": "'tenant_provisioning' | 'reconciler' | 'legacy_backfill_command'",
+        "catalog_version": "integer (bumps when data/default-age-groups.json changes; consumers may compare vs their cached copy)"
+      }
+    }
+  ]
+}

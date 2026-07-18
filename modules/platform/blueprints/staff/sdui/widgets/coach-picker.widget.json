@@ -1,0 +1,85 @@
+{
+  "id": "staff.coach-picker",
+  "title": "Coach picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Searchable coach selector. Uses HeroUI ComboBox per the ui-components rule. Emits the selected Coach.id. Consumed by Wave 3+ session-scheduling + team-assignment surfaces.",
+  "props": {
+    "name": { "type": "string", "required": true },
+    "label": { "type": "string", "default": "Coach" },
+    "required": { "type": "boolean", "default": false },
+    "helpText": { "type": "string" },
+    "filter": { "type": "object", "description": "Extra filter object. Common: {sport_key: 'basketball', status: 'active', branch_id: '...'}." },
+    "excludeIds": { "type": "array" }
+  },
+  "dataSources": [
+    {
+      "name": "coach_options",
+      "kind": "http.get",
+      "url": "/api/v1/coaches",
+      "unwrap": "data",
+      "queryBindings": { "$ref": "props.filter" },
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "props": {
+        "menuTrigger": "focus",
+        "className": "w-full"
+      },
+      "bindings": {
+        "name": { "$ref": "props.name" },
+        "label": { "$ref": "props.label" },
+        "isRequired": { "$ref": "props.required" },
+        "description": { "$ref": "props.helpText" },
+        "items": {
+          "$expr": "coach_options.filter(c => !props.excludeIds || !props.excludeIds.includes(c.id))"
+        }
+      },
+      "children": [
+        { "kind": "Input", "props": { "placeholder": "Search coach by name or sport..." } },
+        { "kind": "ComboBox.Trigger" },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "itemRenderer": {
+                "kind": "ListBox.Item",
+                "bindings": { "id": { "$ref": "item.id" }, "textValue": { "$ref": "item.display_name" } },
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2" },
+                    "children": [
+                      {
+                        "kind": "Avatar",
+                        "props": { "size": "xs" },
+                        "bindings": { "src": { "$ref": "item.avatar_url" }, "name": { "$ref": "item.display_name" } }
+                      },
+                      {
+                        "kind": "View",
+                        "children": [
+                          { "kind": "Text", "bindings": { "children": { "$ref": "item.display_name" } } },
+                          {
+                            "kind": "Text",
+                            "props": { "className": "text-xs text-muted" },
+                            "bindings": { "children": { "$expr": "item.sport_key + ' — ' + item.coaching_level" } }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  { "kind": "ListBox.ItemIndicator" }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

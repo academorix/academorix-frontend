@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/age-group/relations",
+  "$version": 1,
+  "title": "age-group — model relationships",
+  "description": "AgeGroup is a leaf reference-data aggregate below Tenant with no children of its own inside this module. Optional FK to Organization (nullable — when null the row is tenant-wide; when set the row is scoped to one Organization's brand). Inbound relations arrive from Team (Wave 2b, nullable FK) and AthleteEnrollment (Wave 3+, snapshotted at enrollment time so the enrollment survives athlete birthday drift). Every FK from an AgeGroup to another aggregate is same-tenant — cross-tenant FKs are forbidden per `.kiro/steering/tenancy-columns.md` §5. `age_groups` NEVER carries `application_id` (hierarchy.md §2 forbids it — Application cascades through `tenants.application_id`), NEVER carries `region_id` (age groups don't scope to regions; the same U12 group applies across every region of a tenant), NEVER carries `branch_id` (same — U12 applies across every branch), NEVER carries `scope_node_id` (age groups are not a scope consumer).",
+  "internal": [],
+  "outbound": [
+    {
+      "from": "AgeGroup",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "The tenant that owns this age group. CASCADE aligns with tenancy's TenantErased contract — every age group is same-tenant scoped. The tenant-erasure hook (`PreventAgeGroupOrphansOnTenantErased`) does NOT rehome age groups to another tenant (cross-tenant age groups are forbidden); it just lets the cascade fire after every dependent row (Team, AthleteEnrollment) has already been erased."
+    },
+    {
+      "from": "AgeGroup",
+      "kind": "belongsTo",
+      "to": "organization::Organization",
+      "foreignKey": "organization_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "OPTIONAL — nullable = tenant-wide age group (applies to every Organization). Non-null = scoped to one Organization (a tenant running multiple brands may define different U12 rules per brand — e.g. 'Elite U12' vs 'Recreational U12'). RESTRICT because deleting an Organization while it owns non-tenant-wide age groups is a data-quality error; the Organization module's own erasure flow rehomes or archives them first."
+    }
+  ],
+  "inbound": {
+    "description": "Domain models that reference an age group compose the `BelongsToAgeGroup` trait shipped here. They store the linkage as an `age_group_id` FK. FKs are nullable at Wave 2a (before Team + AthleteEnrollment land); Wave 2b will start populating Team.age_group_id, Wave 3+ will start snapshotting AthleteEnrollment.age_group_snapshot_id.",
+    "examples": [
+      "teams::Team.age_group_id — nullable (Wave 2b). A Team may or may not carry an age-group classifier; teams for open-age competitions may leave it null.",
+      "athlete-enrollment::AthleteEnrollment.age_group_snapshot_id — nullable (Wave 3+). SNAPSHOTTED at enrollment time so the enrollment survives athlete birthday drift + age-group bounds changes. The snapshot column stores the age_group_id + a JSONB copy of the bounds so if the underlying AgeGroup is edited or deleted, the enrollment's original eligibility posture stays intact.",
+      "event::EventDivision.age_group_id — nullable (Wave 3+). Competition divisions filter Team registration by age group.",
+      "team-registration::TeamRegistration.eligibility_age_group_id — nullable (Wave 3+). Enforces registrant eligibility at signup time."
+    ],
+    "onDelete": "RESTRICT by convention on domain FKs referencing age_groups.id — the AgeGroupObserver refuses to delete an AgeGroup while ANY inbound row (Team, AthleteEnrollment, EventDivision) still references it. The user-facing error is `AGE_GROUP_IN_USE` (409). Snapshotted references (AthleteEnrollment.age_group_snapshot_id) do NOT block delete — snapshots are self-contained copies + do not RESTRICT the source row."
+  },
+  "morphs": [
+    {
+      "name": "scopeNode",
+      "type": "MorphOne",
+      "target": {
+        "module": "scope",
+        "model": "ScopeNode",
+        "class": "Academorix\\Scope\\Models\\ScopeNode"
+      },
+      "morphType": "entity_type",
+      "morphId": "entity_id",
+      "description": "Every AgeGroup projects into the scope substrate as a node under the tenant root — enabling per-AgeGroup configuration overrides on the config-consumer modules (settings, notifications, entitlements). NOT a scope consumer itself: AgeGroup rows never carry `scope_node_id` (per `.kiro/steering/tenancy-columns.md` §4). The scope node references the AgeGroup via `entity_id`; the reverse lookup happens through this morph."
+    }
+  ],
+  "notes": [
+    "AgeGroup is orthogonal to Region + Branch. It carries neither FK. An age group like 'U12' applies uniformly across every region + every branch of a tenant — the eligibility rule is the same whether the athlete plays in Dubai or Riyadh, and whether they train at the Downtown branch or the Marina branch.",
+    "Age groups may be scoped by Organization (nullable FK) because tenants running multiple sub-brands sometimes need different eligibility rules per brand — e.g. 'Elite Academy U12' with a tighter age cutoff for high-performance streams vs 'Community Program U12' with a broader window. Region + branch scoping was considered but rejected — those axes carry commercial/venue concerns, not sport-eligibility concerns.",
+    "The forbidden columns per `tenancy-columns.md` §5 are ENFORCED at review + by the tenancy-compliance-auditor: `application_id` on age_groups is a schema violation; `region_id` on age_groups is a schema violation; `branch_id` on age_groups is a schema violation; `scope_node_id` on age_groups is a schema violation.",
+    "AgeGroup does not carry `parent_id` — age groups are flat per (tenant, organization, sport_key) tuple. There's no 'U12 is a child of Junior' hierarchy; the numeric bounds already establish the ordering. Age-group programmes that legitimately nest (e.g. 'Junior Program' → 'U12', 'U14') live in a future `programme` aggregate that owns its own hierarchy + references age groups by FK."
+  ]
+}

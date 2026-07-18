@@ -33,6 +33,11 @@
       "entity": "EmailVerification",
       "description": "24-hour TTL email verification token. Hashed at rest."
     },
+    "age_": {
+      "module": "age-group",
+      "entity": "AgeGroup",
+      "description": "Age-bucket classifier (U6/U8/…/U18/Adult/Senior/Masters) for athlete-team eligibility. Sport-agnostic at the base; sport-specific overrides via sport_key. Cutoff kinds: calendar_year / academic_year / rolling_from_birthday / custom_date. Every tenant gets a default 10-entry catalog on TenantProvisioned."
+    },
     "agr_": {
       "module": "grants",
       "entity": "AccessGrant",
@@ -141,6 +146,11 @@
       "entity": "ConsentRecord",
       "description": "Immutable subject x category x decision snapshot. Withdrawal writes a new row rather than mutating an existing one."
     },
+    "coa_": {
+      "module": "staff",
+      "entity": "Coach",
+      "description": "Staff-satellite adding per-sport coaching profile (specialization, certifications, rating, availability_pattern). One Coach per Staff at a time. Cascades everything through staff_id → branch."
+    },
     "cup_": {
       "module": "storage",
       "entity": "ChunkedUpload",
@@ -197,6 +207,11 @@
       "module": "entitlements",
       "entity": "Entitlement",
       "description": "Resolved (tenant, key) quota row."
+    },
+    "evt_": {
+      "module": "teams",
+      "entity": "EventTeam",
+      "description": "Team's participation in an Event (Wave 3+). Records participation_type, registered_at, checked_in_at, result JSONB, attendance_count."
     },
     "fac_": {
       "module": "facility",
@@ -366,6 +381,11 @@
       "entity": "SearchAliasEntry",
       "description": "Synonym / alias entry for a search index."
     },
+    "sea_": {
+      "module": "season",
+      "entity": "Season",
+      "description": "Time-bounded competition/training cycle. Lifecycle planned → registration_open → in_progress → playoffs → completed → archived. Belongs to Tenant + Organization (optional) + Branch (optional) with an optional sport_key for sport-scoped seasons. Exactly one is_current=true per scoping tuple."
+    },
     "set_": {
       "module": "settings",
       "entity": "SettingValue",
@@ -410,6 +430,11 @@
       "grandfathered": true,
       "note": "5 chars — breaks the max-4 rule; grandfathered until refactor. Rename target: `sst_` (SearchSyncState) once the schema is v2."
     },
+    "stf_": {
+      "module": "staff",
+      "entity": "Staff",
+      "description": "Employment record wrapping a User row with employment metadata (position, department, employment_type, employment_status, compensation, emergency contact). Belongs to Tenant + Branch + User (RESTRICT). Compensation is regulated-financial tier with 7-year retention."
+    },
     "sua_": {
       "module": "storage",
       "entity": "SignedUrlAudit",
@@ -435,6 +460,12 @@
       "entity": "SearchSynonym",
       "description": "Explicit synonym row."
     },
+    "tea_": {
+      "module": "teams",
+      "entity": "Team",
+      "description": "Group of humans practicing/playing/attending under a Branch. Sport-agnostic — squad / class / cohort / group / crew. Belongs to Tenant + Organization + Branch. Optional Season + AgeGroup (Wave 3 FKs, nullable pre-Wave-3).",
+      "promoted_from_reserved": true
+    },
     "ten_": {
       "module": "tenancy",
       "entity": "Tenant",
@@ -455,10 +486,20 @@
       "entity": "NotificationTemplate",
       "description": "Versioned reusable template (one row per locale + version)."
     },
+    "trm_": {
+      "module": "teams",
+      "entity": "TeamMember",
+      "description": "Polymorphic roster row — points at Athlete / Coach / Staff / User via (member_type, member_id). Partial unique per (team, member_type, member_id) WHERE status=active."
+    },
     "trn_": {
       "module": "localization",
       "entity": "Translation",
       "description": "UI-string translation row keyed on (tenant_id?, namespace, group, key, locale)."
+    },
+    "ttr_": {
+      "module": "teams",
+      "entity": "TeamTrial",
+      "description": "Probationary tryout for a prospective team member. Polymorphic trialist (athlete / user / anonymous). Atomically convertible to a TeamMember row."
     },
     "use_": {
       "module": "entitlements",
@@ -525,11 +566,6 @@
     }
   },
   "reserved_for_future": {
-    "tea_": {
-      "module": "teams (planned)",
-      "entity": "Team",
-      "description": "Reserved."
-    },
     "spo_": {
       "module": "sports (planned)",
       "entity": "Sport",
@@ -626,6 +662,12 @@
       "to": "fac_ (active)",
       "date": "2026-07-18",
       "reason": "Wave 2a facility module blueprint landed; prefix promoted from reserved_for_future to active."
+    },
+    {
+      "from": "tea_ (reserved)",
+      "to": "tea_ (active)",
+      "date": "2026-07-18",
+      "reason": "Wave 2b teams module blueprint landed; prefix promoted from reserved_for_future to active."
     }
   ],
   "validation": {

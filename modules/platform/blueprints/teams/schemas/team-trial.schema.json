@@ -1,0 +1,257 @@
+{
+  "id": "academorix://modules/teams/schemas/team-trial",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "TeamTrial",
+  "description": "Probationary tryout for a prospective member. Polymorphic trialist (athlete / user / anonymous). Atomically convertible to a TeamMember row on the decision path. Carries `tenant_id` + `team_id`. Cascades organization + region + branch through team_id.",
+  "type": "object",
+  "x-module": "teams",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "team_trials",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "ttr_",
+    "incrementing": false,
+    "model": "Academorix\\Teams\\Models\\TeamTrial",
+    "interface": "Academorix\\Teams\\Contracts\\Data\\TeamTrialInterface",
+    "implements": ["Academorix\\Teams\\Contracts\\Data\\TeamTrialInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToTeam",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "trialist_type": "TrialistType",
+      "trial_type": "TrialType",
+      "session_count": "integer",
+      "status": "TrialStatus",
+      "payment_status": "TrialPaymentStatus",
+      "price_amount_cents": "integer",
+      "starts_at": "datetime",
+      "ends_at": "datetime",
+      "trialist_dob": "date",
+      "decided_at": "datetime",
+      "started_at": "datetime",
+      "completed_at": "datetime"
+    },
+    "observers": ["TrialObserver"],
+    "appends": ["trialist_display_name", "days_until_start", "hours_since_decision"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `ttr_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "team_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "teams", "column": "id", "onDelete": "restrict" }
+      },
+      "trialist_type": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: athlete / user / anonymous."
+      },
+      "trialist_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Required when trialist_type IN (athlete, user); null when trialist_type='anonymous'."
+      },
+      "trialist_first_name": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Anonymous trialist first name. Required when trialist_type='anonymous'. Redacted 90 days post-decision for terminal rejected/no_show/cancelled trials."
+      },
+      "trialist_last_name": {
+        "type": "string",
+        "length": 128,
+        "nullable": true
+      },
+      "trialist_phone": {
+        "type": "string",
+        "length": 20,
+        "nullable": true,
+        "description": "E.164 format. Required when trialist_type='anonymous'. Redacted 90 days post-decision."
+      },
+      "trialist_email": {
+        "type": "string",
+        "length": 254,
+        "nullable": true
+      },
+      "trialist_dob": {
+        "type": "date",
+        "nullable": true,
+        "description": "Age-eligibility helper for anonymous trialists. Redacted 90 days post-decision."
+      },
+      "trial_type": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'individual'",
+        "description": "Enum: individual / group / one_day / multi_session."
+      },
+      "session_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 1,
+        "description": "1-4 (config('teams.trials.max_session_count'))."
+      },
+      "starts_at": { "type": "timestamptz", "nullable": false },
+      "ends_at": { "type": "timestamptz", "nullable": false },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'scheduled'",
+        "description": "Enum: scheduled / in_progress / completed / converted / rejected / no_show / cancelled."
+      },
+      "started_at": { "type": "timestamptz", "nullable": true },
+      "completed_at": { "type": "timestamptz", "nullable": true },
+      "decided_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set when status transitions to converted/rejected."
+      },
+      "evaluated_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "The coach who ran the trial. RESTRICT for audit-integrity."
+      },
+      "evaluation_notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Coach's written assessment during the trial. Confidential."
+      },
+      "decision_notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Coach's rationale for accept/reject. Required for rejected trials (anti-discrimination retention). Never surfaced to trialist."
+      },
+      "price_amount_cents": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Trial fee if any. Wave 4 Finance integrates payment collection."
+      },
+      "price_currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": true,
+        "description": "ISO 4217. Required when price_amount_cents > 0."
+      },
+      "payment_status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'none'",
+        "description": "Enum: none / pending / paid / refunded / waived."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "team_id", "starts_at"], "name": "team_trials_team_starts_idx" },
+      { "columns": ["tenant_id", "status"], "name": "team_trials_status_idx" },
+      { "columns": ["tenant_id", "trialist_type", "trialist_id"], "name": "team_trials_trialist_idx", "predicate": "trialist_id IS NOT NULL" },
+      { "columns": ["tenant_id", "team_id", "status"], "name": "team_trials_pipeline_idx", "description": "Powers the trial-pipeline board." }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "team_id",
+    "trialist_type",
+    "trial_type",
+    "session_count",
+    "starts_at",
+    "ends_at",
+    "status",
+    "payment_status",
+    "price_amount_cents",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^ttr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "team_id": { "type": "string", "pattern": "^tea_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "trialist_type": {
+      "type": "string",
+      "enum": ["athlete", "user", "anonymous"]
+    },
+    "trialist_id": {
+      "type": ["string", "null"],
+      "pattern": "^(ath|usr)_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "trialist_first_name": { "type": ["string", "null"], "maxLength": 128 },
+    "trialist_last_name": { "type": ["string", "null"], "maxLength": 128 },
+    "trialist_phone": { "type": ["string", "null"], "pattern": "^\\+[1-9]\\d{1,14}$" },
+    "trialist_email": { "type": ["string", "null"], "format": "email", "maxLength": 254 },
+    "trialist_dob": { "type": ["string", "null"], "format": "date" },
+    "trial_type": {
+      "type": "string",
+      "enum": ["individual", "group", "one_day", "multi_session"]
+    },
+    "session_count": { "type": "integer", "minimum": 1, "maximum": 4 },
+    "starts_at": { "type": "string", "format": "date-time" },
+    "ends_at": { "type": "string", "format": "date-time" },
+    "status": {
+      "type": "string",
+      "enum": ["scheduled", "in_progress", "completed", "converted", "rejected", "no_show", "cancelled"]
+    },
+    "started_at": { "type": ["string", "null"], "format": "date-time" },
+    "completed_at": { "type": ["string", "null"], "format": "date-time" },
+    "decided_at": { "type": ["string", "null"], "format": "date-time" },
+    "evaluated_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "evaluation_notes": { "type": ["string", "null"] },
+    "decision_notes": { "type": ["string", "null"] },
+    "price_amount_cents": { "type": "integer", "minimum": 0 },
+    "price_currency": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
+    "payment_status": {
+      "type": "string",
+      "enum": ["none", "pending", "paid", "refunded", "waived"]
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "ends_at > starts_at",
+    "trialist_id required when trialist_type IN (athlete, user)",
+    "trialist_first_name + trialist_phone required when trialist_type='anonymous'",
+    "decision_notes required when status='rejected'",
+    "price_currency required when price_amount_cents > 0",
+    "starts_at + ends_at immutable once status != 'scheduled'",
+    "status transitions: scheduled → in_progress → completed → converted/rejected; scheduled/in_progress → no_show/cancelled",
+    "team.tenant_id must equal trial.tenant_id"
+  ]
+}

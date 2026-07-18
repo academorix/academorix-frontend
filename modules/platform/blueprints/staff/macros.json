@@ -1,0 +1,43 @@
+{
+  "id": "academorix://modules/staff/macros",
+  "$version": 1,
+  "title": "staff — published macros",
+  "description": "Two request-level macros that surface the resolved active staff from the RequestContext. Rare — only /me/staff routes load this. Also two Blueprint macros for shared column families across future staff-related tables.",
+  "namespace_note": "Macros extend Illuminate\\Http\\Request. Middleware-set context bleeds through the Request accessor without needing to plumb it through service constructors.",
+  "macros": [
+    {
+      "name": "Request::activeStaff",
+      "signature": "Request::activeStaff(): ?Staff",
+      "adds": "A single accessor on the framework Request class that returns the resolved Staff model (or null when no staff context).",
+      "description": "Reads from RequestContext::staff() set by the /me/staff endpoints. Lazy-loads the model on first access.",
+      "registered_by": "Academorix\\Staff\\Providers\\StaffServiceProvider::boot()",
+      "example": "public function show(Request $request): JsonResponse\n{\n    $staff = $request->activeStaff();\n    if ($staff === null) throw new NoActiveStaffException();\n}"
+    },
+    {
+      "name": "Request::activeStaffId",
+      "signature": "Request::activeStaffId(): ?string",
+      "adds": "Convenience accessor returning just the ID.",
+      "example": "$coach = Coach::create([\n    'staff_id' => $request->activeStaffId(),\n    // ...\n]);"
+    }
+  ],
+  "blueprint_macros": [
+    {
+      "name": "Blueprint::staffTimestamps",
+      "signature": "Blueprint::staffTimestamps(): void",
+      "adds": "Adds the shared column family for staff-lifecycle-adjacent tables: started_at (date) + ended_at (date, nullable). Used by future staff_branches (Wave 3+ multi-branch pivot) + attendance::ShiftAssignment (Wave 4).",
+      "columns": [
+        "started_at: date NOT NULL",
+        "ended_at: date NULL"
+      ]
+    },
+    {
+      "name": "Blueprint::terminationFields",
+      "signature": "Blueprint::terminationFields(): void",
+      "adds": "Adds the termination-reason column family: termination_reason (enum, nullable) + termination_notes (text, nullable). Used by Staff + any future termination-tracking table.",
+      "columns": [
+        "termination_reason: enum('resigned','terminated','retired','contract_ended','seasonal_end','other') NULL",
+        "termination_notes: text NULL"
+      ]
+    }
+  ]
+}

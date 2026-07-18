@@ -1,0 +1,60 @@
+{
+  "id": "academorix://modules/age-group/features",
+  "$version": 1,
+  "title": "age-group — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "age_group.core",
+      "displayName": "Age groups",
+      "description": "Base capability. Every tenant has the seeded 10-entry catalog (U6..Masters). Always on across every tier.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "age_group.custom",
+      "displayName": "Custom age groups",
+      "description": "Tenant can create custom (non-seeded) age groups beyond the platform default catalog. Off on Small tier (locked to seeded catalog); Medium up to 20 customs; Enterprise unlimited. Backed by the `age_group_custom` entitlement + the `age_group_slot` slot.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "age_group.edit_seeded",
+      "displayName": "Edit seeded groups",
+      "description": "Tenant can edit fields on seeded (platform-baseline) age groups: rename, recolour, adjust sort_order + description + gender_category. Bounds + cutoff + sport_key edits still require the more restrictive per-field entitlements. Off on Small tier — Small tenants get the platform baseline verbatim. Medium + Enterprise carry this flag.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "age_group.sport_specific",
+      "displayName": "Sport-specific age groups",
+      "description": "Tenant can attach a sport_key to an AgeGroup, defining sport-specific overrides (e.g. football U12 with Jan 1 European federation cutoff). Enterprise-only. Backed by the `age_group_sport_specific` entitlement.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "age_group.organization_scope",
+      "displayName": "Per-organization age groups",
+      "description": "Tenant can scope AgeGroups to a specific Organization (nullable organization_id — non-null = brand-specific). Medium + Enterprise (Small tier has 1 org by default so this is a no-op there).",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "age_group.archive_restore",
+      "displayName": "Archive + restore",
+      "description": "Tenant can archive a custom age group + restore it within 1095 days. Small tier cannot archive because they cannot create customs; Medium + Enterprise can archive their customs (never seeded rows).",
+      "defaultEnabled": true,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "age_group.resolver_api",
+      "displayName": "Hypothetical resolver endpoint",
+      "description": "Tenant can call GET /api/v1/age-groups/resolve to preview which age group a DOB + sport_key falls into. All tiers — the resolver is safeguarding-critical for every enrollment flow.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    }
+  ]
+}

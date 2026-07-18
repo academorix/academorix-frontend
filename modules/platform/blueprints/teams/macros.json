@@ -1,0 +1,27 @@
+{
+  "id": "academorix://modules/teams/macros",
+  "$version": 1,
+  "title": "teams — published macros",
+  "description": "Two request-level macros that surface the resolved active team from the RequestContext (set by team.resolve_active middleware). Registered by TeamsServiceProvider::boot(). No Blueprint macros — the team-owned tables use standard column shapes.",
+  "namespace_note": "Macros extend Illuminate\\Http\\Request. Middleware-set context bleeds through the Request accessor without needing to plumb it through service constructors.",
+  "macros": [
+    {
+      "name": "Request::activeTeam",
+      "signature": "Request::activeTeam(): ?Team",
+      "adds": "A single accessor on the framework Request class that returns the resolved Team model (or null when no team context).",
+      "description": "Reads from RequestContext::team() set by the team.resolve_active middleware. Lazy-loads the model on first access — subsequent calls in the same request return the cached instance.",
+      "registered_by": "Academorix\\Teams\\Providers\\TeamsServiceProvider::boot()",
+      "example": "public function store(Request $request): JsonResponse\n{\n    $team = $request->activeTeam();\n    // $team is the resolved Team model, already tenant-scoped by the middleware\n}"
+    },
+    {
+      "name": "Request::activeTeamId",
+      "signature": "Request::activeTeamId(): ?string",
+      "adds": "Convenience accessor returning just the ID.",
+      "description": "Returns the id string without triggering the model load. Useful for creators that just need the FK.",
+      "example": "$member = TeamMember::create([\n    'team_id' => $request->activeTeamId(),\n    // ...\n]);"
+    }
+  ],
+  "no_blueprint_macros": {
+    "reason": "The teams module's owned tables (teams, team_members, team_trials, event_teams) use standard column shapes — no repeated JSONB blobs or shared column families that would justify a Blueprint macro."
+  }
+}

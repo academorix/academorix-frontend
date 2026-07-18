@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/age-group/feature-flags",
+  "$version": 1,
+  "title": "age-group — kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "age_group.crud_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle. Off = every write path in the age-group module returns 503. Emergency-only — flips down when the identity-service must freeze AgeGroup mutations (e.g. mid-migration or during a compliance-motivated freeze)."
+    },
+    {
+      "key": "age_group.default_reconciler",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReconcileAgeGroupDefaultInvariantJob no-ops. Used during scheduled migrations that intentionally leave tenants in a temporary invariant-violating state (e.g. a bulk catalog reshuffle)."
+    },
+    {
+      "key": "age_group.auto_heal",
+      "kind": "kill-switch",
+      "default": "off",
+      "description": "Independent of `age_group.reconciliation.auto_heal` config — when this flag is off, no auto-heal happens even if the config is on. Two layers of guard because auto-heal changes eligibility-attribution behaviour + must never surprise ops."
+    },
+    {
+      "key": "age_group.purge_execution",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PurgeArchivedAgeGroupsJob no-ops. Archived AgeGroups sit past their 1095-day retention window. Rare — used during legal holds when age-group evidence must be preserved."
+    },
+    {
+      "key": "age_group.bounds_edit_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PATCH /{age_group} refuses any change to min_age_inclusive OR max_age_inclusive with 503. Used during safeguarding-audit windows when bounds must remain frozen while investigators reconstruct historical eligibility."
+    },
+    {
+      "key": "age_group.cutoff_edit_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PATCH /{age_group} refuses any change to cutoff_date_kind / cutoff_month / cutoff_day with 503. Same use case as bounds_edit_enabled."
+    },
+    {
+      "key": "age_group.set_default",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = POST /{age_group}/set-default returns 503. Used during scheduled tier-pricing recomputation runs when the default must not flip mid-batch."
+    },
+    {
+      "key": "age_group.resolver_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = GET /api/v1/age-groups/resolve returns 503. Used when a resolver bug is producing wrong answers — the read path is frozen while a fix is deployed."
+    },
+    {
+      "key": "age_group.async_seed",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = SeedDefaultAgeGroupsForTenantJob runs synchronously inside the tenancy provisioning transaction. Slower but safer (tenant is never briefly catalogless). On is the default because tenant onboarding must feel instant."
+    }
+  ]
+}

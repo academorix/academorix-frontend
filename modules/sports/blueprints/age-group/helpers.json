@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/age-group/helpers",
+  "$version": 1,
+  "title": "age-group — helper functions",
+  "description": "Three published helpers for common age-group-flavoured lookups from any layer (controller, action, listener, blade template, artisan command). Age groups are NOT a request-scoped context axis (there is no `X-Age-Group-Id` header), so the helpers accept explicit arguments rather than reading from request state.",
+  "namespace": "Academorix\\Sports\\AgeGroup\\Support",
+  "helpers": [
+    {
+      "signature": "resolve_age_group(string $dob, ?string $sport_key = null, ?string $organization_id = null, ?string $on_date = null): ?AgeGroup",
+      "purpose": "Returns the AgeGroup a hypothetical athlete with the given DOB (+ optional sport_key + optional organization scope) falls into on the given date (default today). Delegates to `AgeGroupResolver::resolveFor(...)`. Returns null when no group matches; throws AgeGroupResolveIndeterminate when multiple groups match + `age_group.resolution.indeterminate_strategy` = 'refuse'.",
+      "behaviours": [
+        "Cheap — resolution is cached at `age:resolve:{tenant_id}:{dob}:{sport_key}:{organization_id}` for 5 minutes.",
+        "Sport-specific groups win over generic when both match + `prefer_sport_specific=true` (default).",
+        "Organization-scoped groups win over tenant-wide when both match."
+      ],
+      "usage_example": "$group = resolve_age_group('2013-05-14', 'football');\n// → 'U12' (assuming athlete is currently 12 by football-federation cutoff)"
+    },
+    {
+      "signature": "default_age_group(?string $sport_key = null, ?string $organization_id = null): ?AgeGroup",
+      "purpose": "Returns the current tenant's default AgeGroup for the given (sport_key, organization_id) tuple. Shortcut for `$tenant->defaultAgeGroup($sport_key, $organization_id)`.",
+      "behaviours": [
+        "Reads from `age:default:{tenant_id}:{organization_id}:{sport_key}` cache (600s TTL).",
+        "Returns null when no default is set for the tuple (Wave 3a: the seeded 'Adult' group is the default for the (tenant, null, null) tuple; other tuples may lack a default until the tenant creates + defaults a row).",
+        "Never queries the DB unless the cache is cold."
+      ],
+      "usage_example": "$default = default_age_group();\n// → 'Adult' (the seeded default for most tenants)"
+    },
+    {
+      "signature": "age_group_bounds_summary(AgeGroup $ageGroup): string",
+      "purpose": "Formats an AgeGroup's bounds + cutoff into a human-readable summary string. Locale-aware via the caller's active locale.",
+      "behaviours": [
+        "Examples: 'Ages 10-11 (calendar year cutoff)', 'Ages 12-13 (academic year — Aug 1 cutoff)', 'Ages 3-5 (rolling from birthday)'.",
+        "Used in the AgeGroup picker + team-form summary chips + parent-facing enrollment previews.",
+        "Not `is_youth`-aware — that's a downstream rendering decision (banners + consent flows)."
+      ],
+      "usage_example": "$summary = age_group_bounds_summary($u12);\n// → 'Ages 10-11 (calendar year cutoff)'"
+    }
+  ],
+  "notes": [
+    "Every helper here is a thin wrapper. Prefer container-injected services (`AgeGroupRepository`, `AgeGroupResolver`, `CutoffDateCalculator`) for anything more complex — helpers are a convenience for readable one-liners in view + controller code.",
+    "No `active_age_group()` helper — age groups are NOT a request-scoped context. Callers must pass the ULID or resolve via DOB explicitly.",
+    "No `is_youth_group()` helper — access `AgeGroup->is_youth` directly; it's a denormalised column."
+  ],
+  "examples": [
+    {
+      "title": "Preview an athlete's group during enrollment",
+      "code": "$group = resolve_age_group($form->dob, $team->sport_key);\nif ($group === null) throw new NoMatchingAgeGroup();\nabort_unless($group->id === $team->age_group_id, 422, 'AGE_MISMATCH');"
+    },
+    {
+      "title": "Render the tenant's default group in a form",
+      "code": "$default = default_age_group();\n$label = $default?->name ?? 'No default configured';"
+    },
+    {
+      "title": "Show a group's bounds to a parent",
+      "code": "$summary = age_group_bounds_summary($u12);\n// 'Your child qualifies for {$u12->name}: ' . $summary"
+    }
+  ]
+}

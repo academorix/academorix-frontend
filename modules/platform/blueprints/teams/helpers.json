@@ -1,0 +1,60 @@
+{
+  "id": "academorix://modules/teams/helpers",
+  "$version": 1,
+  "title": "teams — helper functions",
+  "description": "Ergonomic helpers for accessing the active team from the request context, resolving polymorphic members, checking eligibility, computing capacity + waitlist availability. All helpers are thin wrappers around bound services — never business logic.",
+  "namespace": "Academorix\\Teams\\Support",
+  "helpers": [
+    {
+      "signature": "active_team(): ?Team",
+      "purpose": "Returns the resolved Team for the current request (set by team.resolve_active middleware). Null when no team context.",
+      "example": "$team = active_team();\nif ($team === null) throw new NoActiveTeamException();",
+      "delegates_to": "Request::activeTeam() macro"
+    },
+    {
+      "signature": "active_team_id(): ?string",
+      "purpose": "Returns the resolved Team.id or null. Convenience for creators that need the ID without loading the model.",
+      "delegates_to": "Request::activeTeamId() macro"
+    },
+    {
+      "signature": "resolve_team_member(string $memberType, string $memberId): ?Model",
+      "purpose": "Given a polymorphic (member_type, member_id) pair, returns the resolved Eloquent model (Athlete / Coach / Staff / User) or null. Consults the polymorphism registry from config('teams.polymorphism.member_type_registry').",
+      "delegates_to": "PolymorphicTeamMemberResolver::resolve()"
+    },
+    {
+      "signature": "team_capacity_available(Team $team, int $delta = 1): bool",
+      "purpose": "Returns true when the team has capacity for `delta` more active members (respecting capacity + capacity_waitlist). Skipped when team_capacity_gating entitlement is off (always true).",
+      "delegates_to": "CapacityGate::allowsAdditional()"
+    },
+    {
+      "signature": "team_member_age_eligible(Team $team, DateTimeInterface $dob): bool",
+      "purpose": "Check whether an athlete born on the given DOB fits within team.min_age/max_age. Returns true when the check is skipped (missing bounds, missing DOB).",
+      "delegates_to": "AgeEligibilityGate::isEligible()"
+    },
+    {
+      "signature": "team_member_gender_eligible(Team $team, ?string $gender): bool",
+      "purpose": "Check whether a gender matches team.gender_category. `any` accepts everything. Missing gender = skipped (returns true).",
+      "delegates_to": "GenderEligibilityGate::isEligible()"
+    },
+    {
+      "signature": "team_current_roster_count(Team $team): int",
+      "purpose": "Cached active-roster count for a team (WHERE status='active' AND deleted_at IS NULL). Cheap read for capacity + eligibility gating.",
+      "delegates_to": "TeamMemberRepository::countActive()"
+    },
+    {
+      "signature": "team_is_minor_only(Team $team): bool",
+      "purpose": "True when team.min_age < 18 OR max_age < 18 (minors on the roster). Consulted by the child-safety notification chain.",
+      "delegates_to": "TeamRepository::isMinorOnly()"
+    },
+    {
+      "signature": "convert_trial_to_member(TeamTrial $trial): TeamMember",
+      "purpose": "Atomic conversion of a trial to a team member inside a DB transaction. Refuses on uniqueness violation or capacity exceeded (rolls back). Fires TrialConvertedToMember + TeamMemberJoined in the afterCommit hook.",
+      "delegates_to": "TrialToMemberConverter::convert()"
+    }
+  ],
+  "notes": [
+    "Helpers deliberately delegate — testing swaps the bound service to a stub, and every helper follows.",
+    "No helper directly touches the DB — everything routes through repositories or services. Keeps the boundary clean.",
+    "resolve_team_member is the ONLY helper that reaches into the polymorphism registry. Every consumer of TeamMember.member goes through it — never through a bespoke switch statement."
+  ]
+}

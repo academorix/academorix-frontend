@@ -1,0 +1,47 @@
+{
+  "id": "academorix://modules/age-group/commands",
+  "$version": 1,
+  "title": "age-group — Artisan commands",
+  "commands": [
+    {
+      "signature": "age-group:list {--tenant=} {--organization=} {--sport-key=} {--status=} {--default} {--seeded} {--youth} {--limit=100}",
+      "class": "Academorix\\Sports\\AgeGroup\\Console\\Commands\\ListAgeGroupsCommand",
+      "purpose": "Enumerate AgeGroups. Filter by tenant / organization / sport_key / status / is_default / is_seeded / is_youth. Prints a table with id, tenant, organization, name, slug, sport_key, bounds, cutoff_kind, is_default, is_seeded, sort_order, referring_count. Ops tooling."
+    },
+    {
+      "signature": "age-group:describe {age_group : ULID or slug} {--tenant=} {--include-audit-history} {--include-refs}",
+      "class": "Academorix\\Sports\\AgeGroup\\Console\\Commands\\DescribeAgeGroupCommand",
+      "purpose": "Print the resolution trace for one AgeGroup: full row + resolved eligibility for a few sample DOBs (via AgeGroupResolver + CutoffDateCalculator) + inbound reference counts (Team, EventDivision, TeamRegistration) when --include-refs + last 10 audit rows when --include-audit-history. Useful for debugging why an Athlete does/doesn't fall into a group."
+    },
+    {
+      "signature": "age-group:create {tenant : ULID or slug} {name} {min_age} {max_age} {--slug=} {--sport-key=} {--organization=} {--description=} {--color=} {--gender=any} {--cutoff-kind=calendar_year} {--cutoff-month=} {--cutoff-day=} {--default} {--seeded}",
+      "class": "Academorix\\Sports\\AgeGroup\\Console\\Commands\\CreateAgeGroupCommand",
+      "purpose": "CLI create with defaults auto-fill. Required: tenant + name + min_age + max_age. Every other field defaults sensibly (slug auto-derived from name; sort_order auto-derived from min_age * 10; is_youth auto-derived from max_age < 18). --default sets is_default=true (auto-demotes the previous default). --seeded is RESERVED — only the platform seeder may set it (CLI callers get AGE_GROUP_IS_SEEDED_RESERVED unless run with SUPERUSER env var). Consumes 1 age_group_slot entitlement unless --seeded is set."
+    },
+    {
+      "signature": "age-group:set-default {age_group : ULID or slug}",
+      "class": "Academorix\\Sports\\AgeGroup\\Console\\Commands\\SetDefaultAgeGroupCommand",
+      "purpose": "Flip is_default=true on the given AgeGroup within its (tenant, organization, sport_key) tuple + auto-demote the previous default in same transaction. Fires AgeGroupDefaultChanged."
+    },
+    {
+      "signature": "age-group:archive {age_group : ULID or slug} {--reason=} {--force}",
+      "class": "Academorix\\Sports\\AgeGroup\\Console\\Commands\\ArchiveAgeGroupCommand",
+      "purpose": "Soft-archive the AgeGroup + fire AgeGroupArchived. Refused when is_default=true OR is_seeded=true. Refused when any inbound row references this AgeGroup (unless --force is set + operator confirms; --force bypasses the FK check but does NOT delete referring rows)."
+    },
+    {
+      "signature": "age-group:restore {age_group : ULID or slug}",
+      "class": "Academorix\\Sports\\AgeGroup\\Console\\Commands\\RestoreAgeGroupCommand",
+      "purpose": "Un-archive the AgeGroup (clears deleted_at). Only within the 1095-day retention window. Refused when the restoration would create a duplicate default or slug within the scoping tuple."
+    },
+    {
+      "signature": "age-group:reconcile-defaults {--tenant=} {--auto-heal} {--dry-run}",
+      "class": "Academorix\\Sports\\AgeGroup\\Console\\Commands\\ReconcileDefaultsCommand",
+      "purpose": "Force-run the ReconcileAgeGroupDefaultInvariantJob. --tenant scopes to a single tenant; without it, scans every tenant. --auto-heal enables the healing step (promote-oldest); without it, the command just reports drift. --dry-run reports planned actions without persisting."
+    },
+    {
+      "signature": "age-group:seed-defaults-for-tenant {tenant : ULID or slug} {--chunk=100} {--dry-run}",
+      "class": "Academorix\\Sports\\AgeGroup\\Console\\Commands\\SeedDefaultsForTenantCommand",
+      "purpose": "One-shot: dispatch SeedDefaultAgeGroupsForTenantJob for the given tenant. Idempotent — safe to re-run. When called at Wave 3a deploy time (via the `age-group:seed-defaults-for-tenant --all` variant), iterates every existing tenant that lacks a seeded catalog. --dry-run reports the target list without dispatching. Used to backfill legacy tenants that provisioned before the age-group module landed."
+    }
+  ]
+}

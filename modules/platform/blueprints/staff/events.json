@@ -1,0 +1,475 @@
+{
+  "id": "academorix://modules/staff/events",
+  "$version": 1,
+  "title": "staff — published events",
+  "namespace": "Academorix\\Staff\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Staff lifecycle events (hire / offboard / branch-change / manager-promotion) fan out to notifications + activity + audit. CompensationChanged is a PRIVATE-TIER event — it dispatches to a dedicated `compensation-audit` queue and the payload is NEVER logged in the ActivityLog (only in the separate staff_compensation_history audit table). CoachCertificationExpired is a scheduled-job event that fires on the day a certification lapses — consumers include the notification module (30/14/7-day pre-expiry reminders + the day-of expiry notice).",
+  "events": [
+    {
+      "name": "StaffHired",
+      "class": "Academorix\\Staff\\Events\\StaffHired",
+      "trigger": "StaffObserver.updating detected employment_status transition `pre_hire → active`. Also fires when a Staff is created directly at `active` status (the same-tenant admin-driven hire path). Fires exactly once per Staff row.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchStaffWelcomeNotification (cannot-opt-out to the new hire's User)",
+        "cache::InvalidateBranchStaffListCache",
+        "cache::InvalidateBranchManagerCache (if is_branch_manager=true on hire)"
+      ],
+      "payload": {
+        "staff_id": "ULID (stf_*)",
+        "tenant_id": "ULID (ten_*)",
+        "branch_id": "ULID (brn_*)",
+        "user_id": "ULID (usr_*)",
+        "employment_type": "string (full_time / part_time / contract / volunteer / intern / seasonal)",
+        "position": "string",
+        "department": "string | null",
+        "started_at": "YYYY-MM-DD",
+        "probation_ends_at": "YYYY-MM-DD | null",
+        "hired_by_user_id": "ULID (usr_*)"
+      }
+    },
+    {
+      "name": "StaffUpdated",
+      "class": "Academorix\\Staff\\Events\\StaffUpdated",
+      "trigger": "Any Staff scalar field mutated except employment_status (dedicated transition events), position (StaffPositionChanged), department (StaffDepartmentChanged), branch_id (StaffBranchChanged), is_branch_manager (StaffPromotedToBranchManager / StaffDemotedFromBranchManager), and compensation_* (CompensationChanged). Umbrella event for name-of-record changes, employee_number edits, weekly_hours tweaks, reports_to reassignments, probation_ends_at edits.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "staff_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_fields": "string[]",
+        "updated_by": "ULID (usr_*)"
+      }
+    },
+    {
+      "name": "StaffPositionChanged",
+      "class": "Academorix\\Staff\\Events\\StaffPositionChanged",
+      "trigger": "Staff.position mutated. A dedicated event because position changes drive downstream notifications (the branch manager wants to know when their receptionist is promoted to assistant coach).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchPositionChangedNotification"
+      ],
+      "payload": {
+        "staff_id": "ULID",
+        "tenant_id": "ULID",
+        "from_position": "string",
+        "to_position": "string",
+        "changed_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "StaffDepartmentChanged",
+      "class": "Academorix\\Staff\\Events\\StaffDepartmentChanged",
+      "trigger": "Staff.department mutated. Feeds the org-chart cache invalidator + activity feed.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateDepartmentRosterCache"
+      ],
+      "payload": {
+        "staff_id": "ULID",
+        "tenant_id": "ULID",
+        "from_department": "string | null",
+        "to_department": "string | null",
+        "changed_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "StaffBranchChanged",
+      "class": "Academorix\\Staff\\Events\\StaffBranchChanged",
+      "trigger": "Staff.branch_id mutated. RARE — most staff have one home branch for their entire tenure. When it changes, notifies old + new branch managers. Wave 2b marks Staff.branch_id immutable post-create; this event fires only via the Wave 3+ branch-transfer flow.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchStaffBranchChangedNotification (to old + new branch managers)",
+        "cache::InvalidateBranchStaffListCache (both source + dest branches)"
+      ],
+      "payload": {
+        "staff_id": "ULID",
+        "tenant_id": "ULID",
+        "from_branch_id": "ULID (brn_*)",
+        "to_branch_id": "ULID (brn_*)",
+        "effective_at": "YYYY-MM-DD",
+        "reason": "string | null",
+        "transferred_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "StaffPromotedToBranchManager",
+      "class": "Academorix\\Staff\\Events\\StaffPromotedToBranchManager",
+      "trigger": "Staff.is_branch_manager transitioned false → true. Observer refuses when another active manager exists for the same branch AND does NOT auto-demote — the observer requires the caller to explicitly demote the previous manager first (avoids silent org-chart rewrites).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchStaffPromotedToBranchManagerNotification (to the branch's staff — cannot-opt-out)",
+        "cache::InvalidateBranchManagerCache"
+      ],
+      "payload": {
+        "staff_id": "ULID",
+        "tenant_id": "ULID",
+        "branch_id": "ULID",
+        "promoted_by_user_id": "ULID",
+        "effective_at": "YYYY-MM-DD"
+      }
+    },
+    {
+      "name": "StaffDemotedFromBranchManager",
+      "class": "Academorix\\Staff\\Events\\StaffDemotedFromBranchManager",
+      "trigger": "Staff.is_branch_manager transitioned true → false. Distinct from StaffOffboarded — a demotion keeps the Staff row active.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateBranchManagerCache"
+      ],
+      "payload": {
+        "staff_id": "ULID",
+        "tenant_id": "ULID",
+        "branch_id": "ULID",
+        "demoted_by_user_id": "ULID",
+        "reason": "string | null"
+      }
+    },
+    {
+      "name": "StaffPutOnLeave",
+      "class": "Academorix\\Staff\\Events\\StaffPutOnLeave",
+      "trigger": "Staff.employment_status transitioned active → on_leave. Non-terminal. Consumers pause the coach's future session assignments + shift assignments.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchStaffPutOnLeaveNotification (to branch manager + HR)",
+        "staff::CascadeCoachStatusOnStaffOffboarding (pauses linked Coach — the same listener handles leave + offboard since the coach-side effect is identical)"
+      ],
+      "payload": {
+        "staff_id": "ULID",
+        "tenant_id": "ULID",
+        "leave_type": "string (medical / parental / sabbatical / bereavement / other)",
+        "expected_return_at": "YYYY-MM-DD | null",
+        "put_on_leave_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "StaffReturnedFromLeave",
+      "class": "Academorix\\Staff\\Events\\StaffReturnedFromLeave",
+      "trigger": "Staff.employment_status transitioned on_leave → active. Cascades: resume linked Coach if it was paused as a side-effect of the leave.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchStaffReturnedFromLeaveNotification"
+      ],
+      "payload": {
+        "staff_id": "ULID",
+        "tenant_id": "ULID",
+        "returned_at": "YYYY-MM-DD",
+        "returned_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "StaffSuspended",
+      "class": "Academorix\\Staff\\Events\\StaffSuspended",
+      "trigger": "Staff.employment_status transitioned active/on_leave → suspended. AUDIT-CRITICAL — suspensions are disciplinary and every fire is retained 7 years.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchStaffSuspendedNotification (to branch manager — cannot-opt-out; the suspended staff themselves are notified via HR channel)",
+        "staff::CascadeCoachStatusOnStaffOffboarding (pauses linked Coach)"
+      ],
+      "payload": {
+        "staff_id": "ULID",
+        "tenant_id": "ULID",
+        "suspended_at": "ISO 8601",
+        "suspension_reason": "string",
+        "suspension_expires_at": "YYYY-MM-DD | null",
+        "suspended_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "StaffReinstated",
+      "class": "Academorix\\Staff\\Events\\StaffReinstated",
+      "trigger": "Staff.employment_status transitioned suspended → active. Distinct from StaffReturnedFromLeave.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchStaffReinstatedNotification"
+      ],
+      "payload": {
+        "staff_id": "ULID",
+        "tenant_id": "ULID",
+        "reinstated_at": "ISO 8601",
+        "reinstated_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "StaffOffboardingStarted",
+      "class": "Academorix\\Staff\\Events\\StaffOffboardingStarted",
+      "trigger": "Staff.employment_status transitioned active/on_leave/suspended → offboarding. Intermediate state — the actual offboard (with cascade to TeamMember + Coach + ShiftAssignment) happens on the offboarding → offboarded transition. This event is the SIGNAL that HR should start the cascade cleanup + reminder dispatch.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchStaffOffboardingScheduledNotification (to HR + branch manager)",
+        "notifications::ScheduleOffboardingReminderCascade (1-day / 3-day / 7-day reminders if the offboarding lingers)"
+      ],
+      "payload": {
+        "staff_id": "ULID",
+        "tenant_id": "ULID",
+        "planned_ended_at": "YYYY-MM-DD",
+        "termination_reason": "string",
+        "initiated_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "StaffOffboarded",
+      "class": "Academorix\\Staff\\Events\\StaffOffboarded",
+      "trigger": "Staff.employment_status transitioned offboarding → offboarded. Terminal. The Staff row is soft-deleted; ended_at is set; the ReleaseSlot side-effect fires on the same transaction (releases 1 unit of staff_slot entitlement).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — employment record)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchStaffOffboardedNotification (to team members if the staff was a coach — cannot-opt-out)",
+        "staff::CascadeCoachStatusOnStaffOffboarding (archives the linked Coach)",
+        "user::UnblockUserArchiveWhenLastStaffOffboarded (removes the block that prevents User archive while active Staff exists)"
+      ],
+      "payload": {
+        "staff_id": "ULID",
+        "tenant_id": "ULID",
+        "branch_id": "ULID",
+        "user_id": "ULID",
+        "ended_at": "YYYY-MM-DD",
+        "termination_reason": "string (resigned / terminated / retired / contract_ended / seasonal_end / other)",
+        "termination_notes": "string | null",
+        "offboarded_by_user_id": "ULID",
+        "days_of_service": "integer (started_at → ended_at)"
+      }
+    },
+    {
+      "name": "StaffReactivated",
+      "class": "Academorix\\Staff\\Events\\StaffReactivated",
+      "trigger": "Staff.employment_status transitioned offboarded → active (rehire). RARE — most rehires happen as new Staff rows; the reactivation path preserves the original employment history for tax / seniority calculations. Observer consumes 1 unit of staff_slot entitlement + resets ended_at to null.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchStaffWelcomeNotification (as re-onboarding)"
+      ],
+      "payload": {
+        "staff_id": "ULID",
+        "tenant_id": "ULID",
+        "reactivated_at": "ISO 8601",
+        "reactivated_by_user_id": "ULID",
+        "was_offboarded_at": "YYYY-MM-DD",
+        "days_since_offboarding": "integer"
+      }
+    },
+    {
+      "name": "CompensationChanged",
+      "class": "Academorix\\Staff\\Events\\CompensationChanged",
+      "trigger": "Any of Staff.compensation_type / compensation_amount_cents / compensation_currency / pay_frequency mutated. PRIVATE-TIER event — the payload is NEVER routed through the activity feed and the audit row lands in the dedicated `staff_compensation_history` table with 7-year retention. Consumers include the Finance module (Wave 4 payroll re-computation) and the HR audit trail.",
+      "queue": "compensation-audit",
+      "consumers": [
+        "audit::WriteToCompensationHistoryLog (retention: 7 years; NOT the normal audits table)",
+        "notifications::DispatchCompensationChangedNotification (to affected staff ONLY, via HR channel — never in-app default)",
+        "finance::RecomputePayroll (Wave 4)"
+      ],
+      "payload": {
+        "staff_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_by_user_id": "ULID",
+        "before": {
+          "compensation_type": "string | null",
+          "compensation_amount_cents": "integer | null",
+          "compensation_currency": "string | null",
+          "pay_frequency": "string | null"
+        },
+        "after": {
+          "compensation_type": "string | null",
+          "compensation_amount_cents": "integer | null",
+          "compensation_currency": "string | null",
+          "pay_frequency": "string | null"
+        },
+        "changed_fields": "string[]",
+        "effective_at": "YYYY-MM-DD"
+      }
+    },
+    {
+      "name": "CoachCreated",
+      "class": "Academorix\\Staff\\Events\\CoachCreated",
+      "trigger": "CoachRepository committed a new coaches row. Fires when a Staff first assumes a coaching role — either at Staff hire (admin sets up the coach profile alongside the Staff row) OR later (a receptionist promoted to assistant coach gets a Coach row attached).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateBranchCoachListCache",
+        "notifications::DispatchCoachWelcomeNotification (opt-in to the coach's User)"
+      ],
+      "payload": {
+        "coach_id": "ULID (coa_*)",
+        "staff_id": "ULID (stf_*)",
+        "tenant_id": "ULID",
+        "sport_key": "string",
+        "coaching_level": "string (assistant / head / senior / director / consultant)",
+        "specialization": "string | null",
+        "coach_started_at": "YYYY-MM-DD",
+        "created_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "CoachSportChanged",
+      "class": "Academorix\\Staff\\Events\\CoachSportChanged",
+      "trigger": "Coach.sport_key mutated. Rare — a coach's primary sport is typically career-defining. When it happens, notifies the branch manager + invalidates the sport-directory cache.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateSportCoachDirectoryCache"
+      ],
+      "payload": {
+        "coach_id": "ULID",
+        "tenant_id": "ULID",
+        "from_sport_key": "string",
+        "to_sport_key": "string",
+        "changed_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "CoachCertificationAdded",
+      "class": "Academorix\\Staff\\Events\\CoachCertificationAdded",
+      "trigger": "A new entry was appended to Coach.certifications. Fires per certification added — batch updates emit N events. When coach_certifications_verified entitlement is on (Enterprise), the certification enters pending-verification state and HR gets a review notification.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCertificationAddedNotification (to HR when coach_certifications_verified is on)"
+      ],
+      "payload": {
+        "coach_id": "ULID",
+        "tenant_id": "ULID",
+        "certification": {
+          "organization": "string",
+          "certification": "string",
+          "certified_at": "YYYY-MM-DD",
+          "expires_at": "YYYY-MM-DD | null",
+          "certificate_url": "string | null"
+        },
+        "added_by_user_id": "ULID",
+        "requires_verification": "boolean"
+      }
+    },
+    {
+      "name": "CoachCertificationExpired",
+      "class": "Academorix\\Staff\\Events\\CoachCertificationExpired",
+      "trigger": "ExpireCoachCertificationsJob detected a certification past its expires_at. The certification stays in the array but is tagged with `expired_at`. Fires per expired certification.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCoachCertificationExpiringNotification (final — the 30/14/7-day pre-expiry reminders fired earlier from ExpiringSoon jobs)"
+      ],
+      "payload": {
+        "coach_id": "ULID",
+        "tenant_id": "ULID",
+        "certification": {
+          "organization": "string",
+          "certification": "string",
+          "certified_at": "YYYY-MM-DD",
+          "expires_at": "YYYY-MM-DD"
+        },
+        "expired_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "CoachCertificationRemoved",
+      "class": "Academorix\\Staff\\Events\\CoachCertificationRemoved",
+      "trigger": "A certification entry was removed from Coach.certifications. Fires per certification removed.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "coach_id": "ULID",
+        "tenant_id": "ULID",
+        "certification": {
+          "organization": "string",
+          "certification": "string",
+          "certified_at": "YYYY-MM-DD",
+          "expires_at": "YYYY-MM-DD | null"
+        },
+        "removed_by_user_id": "ULID",
+        "reason": "string | null"
+      }
+    },
+    {
+      "name": "CoachRatingUpdated",
+      "class": "Academorix\\Staff\\Events\\CoachRatingUpdated",
+      "trigger": "AggregateCoachRatingsJob recomputed Coach.rating + rating_count from the last batch of session-rating rows (Wave 3+ scheduling module). AGGREGATED event — fires once per job invocation per Coach, not per individual rating write.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateBranchCoachDirectoryCache",
+        "notifications::DispatchCoachRatingUpdatedNotification (opt-in — only when the delta is > 0.5 stars)"
+      ],
+      "payload": {
+        "coach_id": "ULID",
+        "tenant_id": "ULID",
+        "from_rating": "decimal | null",
+        "to_rating": "decimal",
+        "from_rating_count": "integer",
+        "to_rating_count": "integer"
+      }
+    },
+    {
+      "name": "CoachStatusChanged",
+      "class": "Academorix\\Staff\\Events\\CoachStatusChanged",
+      "trigger": "Coach.status transitioned. Values: active / paused / archived. Distinct from Staff.employment_status — a Staff may be active while their Coach is paused (temporary coaching hiatus during a busy admin period).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCoachOnLeaveNotification (when to_status='paused' or 'archived' — to active team members, cannot-opt-out)"
+      ],
+      "payload": {
+        "coach_id": "ULID",
+        "tenant_id": "ULID",
+        "from_status": "'active' | 'paused' | 'archived'",
+        "to_status": "'active' | 'paused' | 'archived'",
+        "reason": "string | null",
+        "changed_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "CoachAvailabilityChanged",
+      "class": "Academorix\\Staff\\Events\\CoachAvailabilityChanged",
+      "trigger": "Coach.availability_pattern mutated. Feeds the scheduling module's shift-suggester cache invalidation.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateCoachAvailabilityCache"
+      ],
+      "payload": {
+        "coach_id": "ULID",
+        "tenant_id": "ULID",
+        "updated_by_user_id": "ULID",
+        "before": "object (previous availability_pattern) | null",
+        "after": "object (new availability_pattern) | null"
+      }
+    }
+  ]
+}

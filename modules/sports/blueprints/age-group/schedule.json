@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/age-group/schedule",
+  "$version": 1,
+  "title": "age-group — scheduled tasks",
+  "entries": [
+    {
+      "name": "age-group-reconcile-defaults",
+      "command": "age-group:reconcile-defaults",
+      "cron": "30 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 03:30 UTC. Verifies every (tenant, organization, sport_key) tuple has exactly one is_default=true AgeGroup. Reports drift + optionally auto-heals per `age_group.reconciliation.auto_heal` config. Feeds the `academorix.age_group.default_invariant_drift.count` gauge."
+    },
+    {
+      "name": "age-group-purge-archived",
+      "command": "queue:work --queue=low --once --job=PurgeArchivedAgeGroupsJob",
+      "cron": "30 4 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 04:30 UTC. Hard-delete AgeGroup rows past their 1095-day retention window IF no inbound FK still references them (snapshots don't count)."
+    },
+    {
+      "name": "age-group-metrics-snapshot",
+      "command": "age-group:metrics:snapshot",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly. Compute `academorix.age_group.active.count` per (is_youth, is_seeded) + `academorix.age_group.per_tenant.count` histogram + `academorix.age_group.purge_pending.count`. Publishes to the OpenTelemetry endpoint."
+    },
+    {
+      "name": "age-group-cache-warm-default-catalog",
+      "command": "age-group:cache:warm-default-catalog",
+      "cron": "0 5 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 05:00 UTC. Re-parses `data/default-age-groups.json` + writes `age:default_catalog:v{version}`. Cheap idempotent task — mostly a safety net in case the file changed between deploys."
+    },
+    {
+      "name": "age-group-invalidate-rolling-cutoffs",
+      "command": "age-group:cache:invalidate-rolling-cutoffs",
+      "cron": "5 0 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 00:05 UTC. Invalidates every `age:resolve:*` cache key. The rolling_from_birthday cutoff kind changes eligibility answers as the calendar rolls (an athlete becomes 13 today and moves out of U12); this task keeps cached answers fresh. Cheap — resolver cache TTL is 300s so at most 12 stale minutes per day even without this task."
+    }
+  ]
+}

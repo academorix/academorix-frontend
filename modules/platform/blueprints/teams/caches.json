@@ -1,0 +1,86 @@
+{
+  "id": "academorix://modules/teams/caches",
+  "$version": 1,
+  "title": "teams — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["teams", "teams.roster", "teams.trials", "teams.event_teams", "teams.schedule"],
+  "keys": [
+    {
+      "pattern": "teams:catalogue:{tenant_id}:{branch_id}",
+      "description": "Per-branch team catalogue (list of team rows for a branch, filtered by status='active'). Read by SDUI list screens + the roster picker widget.",
+      "ttlSeconds": 300,
+      "tags": ["teams", "tenant"],
+      "invalidatedBy": ["TeamObserver.created", "TeamObserver.updated", "TeamObserver.deleted", "TeamStatusChanged", "TeamArchived", "TeamRestored"]
+    },
+    {
+      "pattern": "teams:catalogue:{tenant_id}",
+      "description": "Cross-branch team catalogue for tenant-wide reports.",
+      "ttlSeconds": 600,
+      "tags": ["teams", "tenant"],
+      "invalidatedBy": ["TeamObserver.*"]
+    },
+    {
+      "pattern": "teams:roster:{team_id}",
+      "description": "Active roster for a team — the list of TeamMember rows with status='active'. Read hot by the team detail screen + attendance flows.",
+      "ttlSeconds": 300,
+      "tags": ["teams", "teams.roster"],
+      "invalidatedBy": ["TeamMemberJoined", "TeamMemberLeft", "TeamMemberStatusChanged", "TeamMemberRoleChanged"]
+    },
+    {
+      "pattern": "teams:roster:{team_id}:count",
+      "description": "Active roster count (for capacity gate). Cheap read to compute occupancy without loading the whole roster.",
+      "ttlSeconds": 60,
+      "tags": ["teams", "teams.roster"],
+      "invalidatedBy": ["TeamMemberJoined", "TeamMemberLeft", "TeamMemberStatusChanged"]
+    },
+    {
+      "pattern": "teams:schedule:{team_id}",
+      "description": "Team.schedule_pattern JSONB. Read by ScheduleEvaluator on session-scheduling flows.",
+      "ttlSeconds": 300,
+      "tags": ["teams", "teams.schedule"],
+      "invalidatedBy": ["TeamScheduleChanged"]
+    },
+    {
+      "pattern": "teams:trials:pipeline:{team_id}",
+      "description": "Active + upcoming trials for a team (status IN scheduled / in_progress / completed). Feeds the trial-pipeline board.",
+      "ttlSeconds": 300,
+      "tags": ["teams", "teams.trials"],
+      "invalidatedBy": ["TrialScheduled", "TrialStarted", "TrialCompleted", "TrialConvertedToMember", "TrialRejected", "TrialNoShow", "TrialCancelled"]
+    },
+    {
+      "pattern": "teams:member:{tenant_id}:{member_type}:{member_id}",
+      "description": "Reverse index — every team the given (member_type, member_id) has an active roster row on. Used by the polymorphic member's team-list view.",
+      "ttlSeconds": 300,
+      "tags": ["teams", "teams.roster"],
+      "invalidatedBy": ["TeamMemberJoined", "TeamMemberLeft", "TeamMemberStatusChanged"]
+    },
+    {
+      "pattern": "teams:coach:{coach_id}:teams",
+      "description": "Teams coached by a specific coach (Team.coach_id = ?). Read by the coach dashboard.",
+      "ttlSeconds": 300,
+      "tags": ["teams"],
+      "invalidatedBy": ["TeamCreated", "TeamCoachChanged", "TeamArchived"]
+    },
+    {
+      "pattern": "teams:event-teams:upcoming:{tenant_id}",
+      "description": "Upcoming event participations for the tenant. Feeds the event calendar widget.",
+      "ttlSeconds": 300,
+      "tags": ["teams", "teams.event_teams"],
+      "invalidatedBy": ["EventTeamRegistered", "EventTeamWithdrew", "EventTeamCheckedIn", "EventTeamResultRecorded"]
+    },
+    {
+      "pattern": "teams:eligibility:{team_id}",
+      "description": "Team eligibility snapshot — (min_age, max_age, gender_category). Read by AgeEligibilityGate + GenderEligibilityGate on every roster-add attempt.",
+      "ttlSeconds": 600,
+      "tags": ["teams"],
+      "invalidatedBy": ["TeamObserver.updated (age/gender fields)"]
+    },
+    {
+      "pattern": "teams:audit-usage:{tenant_id}:{window}",
+      "description": "Roster + trial-conversion + participation rollup per team per (day/week/month) window. Powers audit-usage dashboards on both tenant + platform planes.",
+      "ttlSeconds": 3600,
+      "tags": ["teams", "tenant"],
+      "invalidatedBy": ["TeamMemberJoined", "TeamMemberLeft", "TrialConvertedToMember", "TrialRejected", "EventTeamResultRecorded"]
+    }
+  ]
+}

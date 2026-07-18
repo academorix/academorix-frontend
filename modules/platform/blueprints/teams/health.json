@@ -1,0 +1,79 @@
+{
+  "id": "academorix://modules/teams/health",
+  "$version": 1,
+  "title": "teams — health probes",
+  "probes": [
+    {
+      "name": "teams-schema-migrations-applied",
+      "class": "Academorix\\Teams\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms every migration this module ships has run: teams, team_members, team_trials, event_teams, plus their indexes.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "teams-member-uniqueness-index-present",
+      "class": "Academorix\\Teams\\Health\\Probes\\MemberUniquenessIndexPresentProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms the partial unique index (tenant_id, team_id, member_type, member_id) WHERE status='active' AND deleted_at IS NULL exists on team_members. Missing this index makes the roster invariant check O(N) per team — a latency + correctness blowup.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "teams-polymorphism-registry-resolved",
+      "class": "Academorix\\Teams\\Health\\Probes\\PolymorphismRegistryResolvedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms the polymorphism registry (config('teams.polymorphism.member_type_registry')) resolves every declared member_type to a loadable class. Fails when Wave 3 sports fails to load its Athlete/Coach models or Wave 2b Staff fails.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "teams-member-invariant-clean",
+      "class": "Academorix\\Teams\\Health\\Probes\\MemberInvariantCleanProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Reads academorix.teams.member_invariant.violations counter. Any non-zero value in the last 24h is a P1 signal.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "teams-pending-registration-backlog",
+      "class": "Academorix\\Teams\\Health\\Probes\\PendingRegistrationBacklogProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Warns when > 50 teams have registration_opens_at in the past AND status != 'active' (registration should have flipped open). Indicates OpenClosePendingRegistrationsJob has stalled.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "teams-stale-in-progress-trials",
+      "class": "Academorix\\Teams\\Health\\Probes\\StaleInProgressTrialsProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Warns when > 20 trials are stuck in status='in_progress' with ends_at + 48h past. Indicates coaches aren't completing trials + CloseExpiredTrialsJob has stalled.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "teams-reconciler-recent",
+      "class": "Academorix\\Teams\\Health\\Probes\\ReconcilerRecentProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Confirms ReconcileTeamMemberActiveInvariantJob completed within the last 36h (nightly cadence + 12h slop). Stale reconciler indicates scheduler drift.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "teams-orphan-event-teams",
+      "class": "Academorix\\Teams\\Health\\Probes\\OrphanEventTeamsProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Counts EventTeam rows whose parent Team has status='archived' AND withdrew_at IS NULL. Should be 0 — cascade should have withdrew each participation. Wave 3 addition; harmless pre-Wave-3.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "teams-child-safety-audit-recent",
+      "class": "Academorix\\Teams\\Health\\Probes\\ChildSafetyAuditRecentProbe",
+      "category": "readiness",
+      "critical": true,
+      "description": "Confirms every TeamCoachChanged with is_minor_only=true in the last 7 days has a matching critical-severity audit row + safeguarding notification dispatch. Missing pair = child-safety chain broke — CRITICAL alert.",
+      "timeoutMs": 1000
+    }
+  ]
+}

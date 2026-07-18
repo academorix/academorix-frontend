@@ -1,0 +1,282 @@
+{
+  "id": "teams.resources.team.list",
+  "title": "Teams",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/teams",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "teams", "entity": "team", "action": "list" },
+  "requiresPermission": "teams.viewAny",
+  "requiresEntitlement": "teams",
+  "dataSources": [
+    {
+      "name": "teams",
+      "kind": "http.get",
+      "url": "/api/v1/teams",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "branches",
+      "kind": "http.get",
+      "url": "/api/v1/branches?filter[status]=active",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "slot_entitlement",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/team_slot",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Teams"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Squads, classes, cohorts, and groups across your branches."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "entitlements.entitlement-usage-bar",
+                  "props": {
+                    "cap": { "$ref": "slot_entitlement.value_cap" },
+                    "used": { "$ref": "slot_entitlement.value_used" },
+                    "size": "sm",
+                    "label": "Team slots"
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "plus",
+                    "children": "New team"
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "to": "/tenant/teams/new"
+                    }
+                  },
+                  "bindings": { "disabled": { "$ref": "slot_entitlement.is_exceeded" } },
+                  "requiresPermission": "teams.create"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-wrap items-center gap-2 py-2" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Branch", "menuTrigger": "focus", "className": "min-w-64" },
+              "bindings": { "items": { "$ref": "branches" } },
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "branch_id",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Team type", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "squad", "label": "Squad" },
+                { "id": "class", "label": "Class" },
+                { "id": "cohort", "label": "Cohort" },
+                { "id": "group", "label": "Group" },
+                { "id": "crew", "label": "Crew" },
+                { "id": "other", "label": "Other" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "team_type",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus", "className": "min-w-40" },
+              "props_items": [
+                { "id": "active", "label": "Active" },
+                { "id": "paused", "label": "Paused" },
+                { "id": "archived", "label": "Archived" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Level", "menuTrigger": "focus", "className": "min-w-40" },
+              "props_items": [
+                { "id": "recreational", "label": "Recreational" },
+                { "id": "beginner", "label": "Beginner" },
+                { "id": "intermediate", "label": "Intermediate" },
+                { "id": "advanced", "label": "Advanced" },
+                { "id": "elite", "label": "Elite" },
+                { "id": "competition", "label": "Competition" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "competitive_level",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Grid",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" },
+          "bindings": {
+            "items": { "$ref": "teams" },
+            "isLoading": { "$ref": "teams.isLoading" }
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "col-span-full text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "user-group", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No teams yet" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Create your first team to start managing rosters." } }
+            ]
+          },
+          "itemRenderer": {
+            "kind": "Card",
+            "props": { "className": "p-4 hover:shadow-md transition-shadow cursor-pointer" },
+            "actions": {
+              "onPress": {
+                "kind": "navigate",
+                "toExpr": "'/tenant/teams/' + row.id"
+              }
+            },
+            "children": [
+              {
+                "kind": "View",
+                "props": { "className": "flex items-start justify-between gap-2 mb-2" },
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2" },
+                    "children": [
+                      {
+                        "kind": "Avatar",
+                        "props": { "size": "md" },
+                        "bindings": {
+                          "src": { "$ref": "row.logo_url" },
+                          "fallback": { "$expr": "row.name.charAt(0).toUpperCase()" }
+                        }
+                      },
+                      {
+                        "kind": "View",
+                        "children": [
+                          {
+                            "kind": "Text",
+                            "props": { "className": "font-medium text-lg" },
+                            "bindings": { "children": { "$ref": "row.name" } }
+                          },
+                          {
+                            "kind": "Text",
+                            "props": { "className": "text-xs text-muted" },
+                            "bindings": { "children": { "$ref": "row.branch.name" } }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "sm" },
+                    "bindings": {
+                      "variant": { "$expr": "row.status === 'active' ? 'success' : (row.status === 'paused' ? 'warning' : 'neutral')" },
+                      "children": { "$ref": "row.status" }
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2 text-sm mb-3" },
+                "children": [
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "neutral" },
+                    "bindings": { "children": { "$ref": "row.team_type" } }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "info" },
+                    "bindings": {
+                      "hidden": { "$expr": "!row.sport_key" },
+                      "children": { "$ref": "row.sport_key" }
+                    }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "accent" },
+                    "bindings": {
+                      "hidden": { "$expr": "!row.competitive_level" },
+                      "children": { "$ref": "row.competitive_level" }
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "Widget",
+                "widget": "teams.capacity-usage-bar",
+                "props": { "size": "sm" },
+                "bindings": {
+                  "active_count": { "$ref": "row.active_roster_count" },
+                  "capacity": { "$ref": "row.capacity" },
+                  "waitlist_size": { "$ref": "row.capacity_waitlist" }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

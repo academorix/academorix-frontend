@@ -1,0 +1,113 @@
+{
+  "id": "teams.team-picker",
+  "title": "Team picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Filterable team select. Loads /api/v1/teams filtered by the caller's active branch scope. Renders as a HeroUI ComboBox for a11y + keyboard nav (per ui-components.md — always ComboBox over Select). Emits onSelectionChange with the resolved team_id.",
+  "props": {
+    "selectedTeamId": { "type": "string", "required": false },
+    "branchId": { "type": "string", "required": false, "description": "Filter narrowing. When omitted, uses the caller's active branch scope." },
+    "statuses": {
+      "type": "array",
+      "required": false,
+      "default": ["active"],
+      "description": "Which team statuses to include. Default filters to active teams."
+    },
+    "label": { "type": "string", "default": "Team" },
+    "placeholder": { "type": "string", "default": "Search teams..." },
+    "requiredPermission": { "type": "string", "default": "teams.viewAny" }
+  },
+  "dataSources": [
+    {
+      "name": "teams",
+      "kind": "http.get",
+      "url": "/api/v1/teams",
+      "unwrap": "data",
+      "queryFromProps": {
+        "filter[branch_id]": "props.branchId",
+        "filter[status]": "props.statuses"
+      },
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "bindings": {
+        "selectedKey": { "$ref": "props.selectedTeamId" }
+      },
+      "props": {
+        "menuTrigger": "focus"
+      },
+      "actions": {
+        "onSelectionChange": {
+          "kind": "emit",
+          "event": "onSelectionChange",
+          "valueExpr": "$selectedKey"
+        }
+      },
+      "children": [
+        {
+          "kind": "Label",
+          "bindings": { "children": { "$ref": "props.label" } }
+        },
+        {
+          "kind": "ComboBox.InputGroup",
+          "children": [
+            {
+              "kind": "Input",
+              "bindings": { "placeholder": { "$ref": "props.placeholder" } }
+            },
+            { "kind": "ComboBox.Trigger" }
+          ]
+        },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "bindings": { "items": { "$ref": "teams" } },
+              "itemRenderer": {
+                "kind": "ListBox.Item",
+                "bindings": {
+                  "key": { "$ref": "row.id" },
+                  "id": { "$ref": "row.id" },
+                  "textValue": { "$ref": "row.name" }
+                },
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2" },
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "bindings": { "children": { "$ref": "row.name" } }
+                      },
+                      {
+                        "kind": "Chip",
+                        "props": { "size": "xs", "variant": "neutral" },
+                        "bindings": { "children": { "$ref": "row.team_type" } }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted ml-auto" },
+                        "bindings": {
+                          "hidden": { "$expr": "!row.active_roster_count && row.capacity == null" },
+                          "children": {
+                            "$expr": "row.capacity ? row.active_roster_count + '/' + row.capacity : row.active_roster_count + ' active'"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  { "kind": "ListBox.ItemIndicator" }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

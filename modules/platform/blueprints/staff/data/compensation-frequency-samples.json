@@ -1,0 +1,159 @@
+{
+  "$version": 1,
+  "title": "Staff compensation — sample profiles per employment_type",
+  "description": "Reference profiles pairing employment_type + compensation_type + pay_frequency. Consumed by the SDUI compensation-edit form to pre-fill common combinations. Every sample represents a legitimate real-world configuration; the compensation_amount_cents values are illustrative baselines only (representative for the sample's currency band).",
+  "note": "Actual tenant compensation figures are set at the individual staff level; these samples inform UI defaults, never the observer's write path.",
+  "profiles": [
+    {
+      "id": "full_time_salary_monthly_usd",
+      "name": "Full-time salaried employee (monthly, USD)",
+      "employment_type": "full_time",
+      "compensation_type": "salary",
+      "pay_frequency": "monthly",
+      "compensation_currency": "USD",
+      "compensation_amount_cents_hint": 400000,
+      "compensation_amount_display_hint": "$4,000/month",
+      "typical_weekly_hours": 40,
+      "typical_probation_days": 90
+    },
+    {
+      "id": "full_time_salary_biweekly_usd",
+      "name": "Full-time salaried (biweekly pay period, USD)",
+      "employment_type": "full_time",
+      "compensation_type": "salary",
+      "pay_frequency": "biweekly",
+      "compensation_currency": "USD",
+      "compensation_amount_cents_hint": 200000,
+      "compensation_amount_display_hint": "$2,000/biweekly",
+      "typical_weekly_hours": 40
+    },
+    {
+      "id": "full_time_hourly_weekly_usd",
+      "name": "Full-time hourly (weekly, USD)",
+      "employment_type": "full_time",
+      "compensation_type": "hourly",
+      "pay_frequency": "hourly",
+      "compensation_currency": "USD",
+      "compensation_amount_cents_hint": 2500,
+      "compensation_amount_display_hint": "$25/hour",
+      "typical_weekly_hours": 40
+    },
+    {
+      "id": "part_time_hourly_usd",
+      "name": "Part-time hourly (USD)",
+      "employment_type": "part_time",
+      "compensation_type": "hourly",
+      "pay_frequency": "hourly",
+      "compensation_currency": "USD",
+      "compensation_amount_cents_hint": 2000,
+      "compensation_amount_display_hint": "$20/hour",
+      "typical_weekly_hours": 20,
+      "typical_probation_days": 30
+    },
+    {
+      "id": "part_time_salary_monthly_usd",
+      "name": "Part-time salaried (monthly, USD)",
+      "employment_type": "part_time",
+      "compensation_type": "salary",
+      "pay_frequency": "monthly",
+      "compensation_currency": "USD",
+      "compensation_amount_cents_hint": 200000,
+      "compensation_amount_display_hint": "$2,000/month",
+      "typical_weekly_hours": 20
+    },
+    {
+      "id": "contract_per_session_usd",
+      "name": "Contract coach paid per session (USD)",
+      "employment_type": "contract",
+      "compensation_type": "hourly",
+      "pay_frequency": "per_session",
+      "compensation_currency": "USD",
+      "compensation_amount_cents_hint": 5000,
+      "compensation_amount_display_hint": "$50/session",
+      "typical_weekly_hours": null,
+      "notes": "Session-based contractors typically don't have a fixed weekly_hours cap."
+    },
+    {
+      "id": "contract_commission_only_usd",
+      "name": "Commission-only contract (personal trainer, USD)",
+      "employment_type": "contract",
+      "compensation_type": "commission",
+      "pay_frequency": "monthly",
+      "compensation_currency": "USD",
+      "compensation_amount_cents_hint": 0,
+      "compensation_amount_display_hint": "Commission-based (0 base + % of client revenue)",
+      "notes": "Commission-only rows should have compensation_amount_cents=0 as a baseline; the commission percentage lives in a separate Wave 4 Finance module row (CommissionAgreement)."
+    },
+    {
+      "id": "volunteer",
+      "name": "Volunteer (no compensation)",
+      "employment_type": "volunteer",
+      "compensation_type": "volunteer",
+      "pay_frequency": null,
+      "compensation_currency": null,
+      "compensation_amount_cents_hint": 0,
+      "compensation_amount_display_hint": "$0 (volunteer)",
+      "notes": "Volunteer entries have all compensation_* fields at 0 / null. The volunteer type exists so we retain the option to log stipends later if the tenant switches from pure volunteer to volunteer-with-stipend."
+    },
+    {
+      "id": "intern_stipend_monthly_usd",
+      "name": "Intern with monthly stipend (USD)",
+      "employment_type": "intern",
+      "compensation_type": "stipend",
+      "pay_frequency": "monthly",
+      "compensation_currency": "USD",
+      "compensation_amount_cents_hint": 100000,
+      "compensation_amount_display_hint": "$1,000/month stipend",
+      "typical_weekly_hours": 30,
+      "typical_probation_days": 0,
+      "notes": "Intern probation is typically 0 — the whole internship is the trial period."
+    },
+    {
+      "id": "seasonal_hourly_usd",
+      "name": "Seasonal coach (hourly, USD)",
+      "employment_type": "seasonal",
+      "compensation_type": "hourly",
+      "pay_frequency": "weekly",
+      "compensation_currency": "USD",
+      "compensation_amount_cents_hint": 2200,
+      "compensation_amount_display_hint": "$22/hour, weekly pay",
+      "typical_weekly_hours": 30,
+      "notes": "Seasonal rows typically have started_at + ended_at set at hire (e.g. summer camp Jun–Aug)."
+    },
+
+    {
+      "id": "full_time_salary_monthly_gbp",
+      "name": "Full-time salaried employee (monthly, GBP)",
+      "employment_type": "full_time",
+      "compensation_type": "salary",
+      "pay_frequency": "monthly",
+      "compensation_currency": "GBP",
+      "compensation_amount_cents_hint": 300000,
+      "compensation_amount_display_hint": "£3,000/month",
+      "typical_weekly_hours": 40
+    },
+    {
+      "id": "full_time_salary_monthly_eur",
+      "name": "Full-time salaried employee (monthly, EUR)",
+      "employment_type": "full_time",
+      "compensation_type": "salary",
+      "pay_frequency": "monthly",
+      "compensation_currency": "EUR",
+      "compensation_amount_cents_hint": 350000,
+      "compensation_amount_display_hint": "€3,500/month",
+      "typical_weekly_hours": 40
+    },
+    {
+      "id": "full_time_salary_monthly_aed",
+      "name": "Full-time salaried employee (monthly, AED)",
+      "employment_type": "full_time",
+      "compensation_type": "salary",
+      "pay_frequency": "monthly",
+      "compensation_currency": "AED",
+      "compensation_amount_cents_hint": 1200000,
+      "compensation_amount_display_hint": "AED 12,000/month",
+      "typical_weekly_hours": 48,
+      "notes": "AED tenant profile — 48-hour standard workweek per UAE labor law."
+    }
+  ]
+}

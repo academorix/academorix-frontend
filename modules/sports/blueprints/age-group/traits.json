@@ -1,0 +1,83 @@
+{
+  "id": "academorix://modules/age-group/traits",
+  "$version": 1,
+  "title": "age-group — trait composition",
+  "description": "Two owned traits — `BelongsToAgeGroup` for downstream models that carry an `age_group_id` FK (Team Wave 2b, EventDivision Wave 3+, TeamRegistration Wave 3+, AthleteEnrollment via snapshot Wave 3+), and `HasAgeGroupCatalog` on the Tenant model exposing per-tenant sibling accessors + catalog rollups. Trait ordering matters when `BelongsToAgeGroup` is composed with `BelongsToTenant` / `BelongsToOrganization` / `BelongsToRegion`: tenant → organization → region → age-group, so each hook observes the resolved scope from every prior trait.",
+  "owned": [
+    {
+      "trait": "Academorix\\Sports\\AgeGroup\\Concerns\\BelongsToAgeGroup",
+      "description": "Mixed into any domain model that carries an age-group FK (Team, EventDivision, TeamRegistration; AthleteEnrollment uses a distinct SNAPSHOTTED variant — see `HasAgeGroupSnapshot` below). Adds the `ageGroup()` belongsTo relation, a `resolveInAgeGroup(?AgeGroup $ageGroup = null)` query scope that filters `WHERE age_group_id = ?` (falling back to a caller-supplied resolver when the arg is omitted), and a `booted()` hook that refuses to save a row whose `age_group_id` points at an AgeGroup in a different tenant than the row itself (defense-in-depth against cross-tenant FK smuggling — the compliance-auditor would catch a bad schema, this catches a bad write).",
+      "public": true,
+      "usedBy": [
+        "teams::Team (nullable age_group_id — Wave 2b; open-age competitions may leave it null)",
+        "event::EventDivision (nullable age_group_id — Wave 3+; competition divisions filter Team registration by age group)",
+        "team-registration::TeamRegistration (nullable eligibility_age_group_id — Wave 3+; enforces registrant eligibility at signup)"
+      ],
+      "conflicts_with": [],
+      "composition_notes": [
+        "Order: `BelongsToTenant` must appear BEFORE `BelongsToAgeGroup` so the tenant scope resolves first and the age-group scope observes it.",
+        "The `booted()` fill hook is OFF by default — age_group_id is never auto-inferred from request context because the answer depends on the athlete's DOB, not on a URL header. Set `bool $fillAgeGroupOnCreating = true` per-model if the model has a clear default source (e.g. Team wants the tenant's default AgeGroup when the caller omits it).",
+        "Query scope naming: `resolveInAgeGroup(?AgeGroup)` mirrors tenancy's `resolveInTenant(?Tenant)` — same shape, same nullable-arg behaviour."
+      ]
+    },
+    {
+      "trait": "Academorix\\Sports\\AgeGroup\\Concerns\\HasAgeGroupCatalog",
+      "description": "Mixed into the Tenant model. Adds sibling accessors + catalog rollups: `ageGroups()` (hasMany), `activeAgeGroups()` (hasMany filtered by status), `defaultAgeGroup(?sport_key = null, ?organization_id = null)` (first row where is_default=true for the given tuple), `seededAgeGroups()` (is_seeded=true rows), `customAgeGroups()` (is_seeded=false rows — subject to the age_group_slot entitlement), `resolveAgeGroupFor(dob, sport_key = null, on_date = today)` (delegates to AgeGroupResolver — returns the group the athlete falls into). Read-only accessors; every write goes through AgeGroupProvisioner.",
+      "public": true,
+      "usedBy": [
+        "tenancy::Tenant (exposes the age-group catalog to every consumer holding the Tenant model)"
+      ],
+      "conflicts_with": [],
+      "composition_notes": [
+        "This trait lives on Tenant; downstream consumers reach the catalog via `$tenant->ageGroups()->...` or the injected `AgeGroupRepository` (preferred in Actions + Services).",
+        "The `resolveAgeGroupFor(...)` accessor is a convenience over `app(AgeGroupResolver::class)->resolveFor(...)` — DI-injected callers should reach for the resolver directly."
+      ]
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSlug" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "tenants": [
+      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }
+    ],
+    "organization": [
+      { "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization", "reason": "Optional (nullable FK). When set, the age group is scoped to one Organization; when null, it is tenant-wide. The trait must run AFTER `BelongsToTenant` so its scope observes the resolved tenant." }
+    ],
+    "audit": [
+      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "AgeGroup mutations (bounds, cutoff, sport_key, default, status) write to the `audits` table — bounds + cutoff changes are audit-CRITICAL for minor-safeguarding compliance (7-year retention floor)." }
+    ],
+    "activity": [
+      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "AgeGroup lifecycle events feed the tenant admin's product-facing activity feed." }
+    ]
+  },
+  "composition": {
+    "ageGroup": {
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "BelongsToTenant",
+        "BelongsToOrganization",
+        "HasSlug",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "Order matters. BelongsToTenant precedes BelongsToOrganization (organization must resolve within tenant scope). NO BelongsToApplication trait — AgeGroups do NOT carry application_id (tenancy-columns.md §2). NO BelongsToRegion trait — AgeGroups are region-agnostic. NO BelongsToBranch trait — same U12 group applies across every branch of a tenant."
+    }
+  }
+}

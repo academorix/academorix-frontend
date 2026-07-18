@@ -1,0 +1,88 @@
+{
+  "id": "academorix://modules/season/compliance",
+  "$version": 1,
+  "title": "season — compliance evidence",
+  "description": "Season is a calendrical + commercial container. No PII on the row itself. The bulk of compliance responsibility is around FINANCIAL-record retention (late_registration_fee_cents changes generate 7-year audit rows) + SOC 2 CC6.3 change tracking (SeasonCurrentChanged is audit-critical because year-over-year reports pivot on the current-season flag). Minor-safeguarding regulator interest applies to date-shift events on programs serving under-18s (families need advance notice of schedule changes).",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(b)",
+          "principle": "purpose limitation",
+          "evidence": "Season fields are used only for calendrical scoping (start / end / registration / playoff dates) + entitlement enforcement + reporting frame. Never resold, never joined with third-party enrichment."
+        },
+        {
+          "article": "Art. 5(1)(e)",
+          "principle": "storage limitation",
+          "evidence": "Archived Seasons retained 2555 days (7 years — financial-record retention floor). Financial audit rows outlive their source Season per that floor. Retention lives in `retention.json`."
+        },
+        {
+          "article": "Art. 30",
+          "principle": "records of processing activities",
+          "evidence": "Every Season mutation is `Auditable`; every status transition + is_current flip + date shift + sport_key change writes to `audits` with actor, timestamp, changed_fields, request_id, before + after snapshots (for financial-relevant fields). 7-year retention for financial-record entries."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical access controls",
+          "evidence": "Every write path is behind SeasonPolicy. Lifecycle transitions (open-registration, start, complete, archive) each carry a distinct permission. `seasons.set_current` is owner-only because current-season changes shift YoY reporting frames — narrowest privilege in the module."
+        },
+        {
+          "criterion": "CC6.3",
+          "principle": "authorisation of changes to system components",
+          "evidence": "SeasonCurrentChanged is the top audit-critical event — every flip writes to `audits` with 7-year retention + fires a cannot-opt-out notification to owner + admin. SeasonDatesShifted post-in_progress writes with warn severity. SeasonSportKeyChanged writes with critical severity + is refused outright post-in_progress."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "Health probes cover FK integrity + current-season invariant + date consistency + slug uniqueness + phase-roll heartbeat + purge queue drain. The `CurrentSeasonInvariantProbe` catches drift the observer normally prevents; failure pages ops."
+        }
+      ]
+    },
+    "financial_regulation": {
+      "applicable": true,
+      "controls": [
+        {
+          "provision": "invoice period attribution integrity",
+          "principle": "historical financial integrity",
+          "evidence": "Season.start_date + end_date changes on COMPLETED Seasons are refused outright (SEASON_DATES_LOCKED_AFTER_COMPLETION — 409). Historical Invoices attribute to a season's fiscal period; retroactive edits would corrupt reconciliation. The `seasons.dates.shift` permission (owner-only) permits in-progress shifts but every shift writes to `audits` with 7-year retention + fires SeasonDatesShifted (cannot-opt-out notification to enrolled athletes)."
+        },
+        {
+          "provision": "late-registration surcharge integrity",
+          "principle": "financial fee integrity",
+          "evidence": "Season.late_registration_fee_cents changes generate `financial-record` classified audit rows retained 7 years. The `regulated_financial` field classification in `data-classes.json` documents this explicitly."
+        }
+      ]
+    },
+    "child_safeguarding": {
+      "applicable": true,
+      "controls": [
+        {
+          "provision": "advance-notice for schedule changes on minors' programs",
+          "principle": "safeguarding by design",
+          "evidence": "SeasonDatesShifted fires a cannot-opt-out `season.dates_shifted` notification to enrolled athletes + coaches. When the enrolled athletes are minors (Wave 3 athlete-enrollment carries the age-band), the notification additionally CC's the athlete's guardian per the Wave 3 guardian-relationships module. Regulators (US state childcare regs, UK Ofsted) treat sudden schedule changes on minors' programs as an audit event."
+        },
+        {
+          "provision": "roster-integrity during in-flight season",
+          "principle": "safeguarding by design",
+          "evidence": "SeasonSportKeyChanged is refused post-in_progress (SEASON_SPORT_KEY_LOCKED_AFTER_START — 409, critical severity). A mid-season sport shift would drift downstream Team + Enrollment references — for a football program that suddenly becomes basketball, the safeguarding-adjacent risk assessments (coach ratios, equipment safety) would silently become invalid."
+        }
+      ]
+    },
+    "ccpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "provision": "§1798.105",
+          "principle": "right to delete",
+          "evidence": "Aliased to the GDPR Art. 17 erasure flow. Season rows themselves are not PII; the cascade on TenantErased cleans them up when the tenant is erased. Individual athlete deletion requests are handled by the Wave 3 athlete-enrollment module — those deletions leave the Season row intact but remove the athlete's enrollment."
+        }
+      ]
+    }
+  }
+}

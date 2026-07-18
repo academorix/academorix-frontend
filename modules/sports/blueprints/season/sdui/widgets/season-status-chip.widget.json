@@ -1,0 +1,32 @@
+{
+  "id": "season.season-status-chip",
+  "title": "Season status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Compact HeroUI `Chip` showing a Season's lifecycle status with color-coded variant. Rendered in the season list, season-picker inline row, and season-summary widget. Variant map: planned=neutral, registration_open=info, in_progress=accent, playoffs=warning, completed=success, archived=neutral.",
+  "props": {
+    "status": {
+      "type": "string",
+      "required": true,
+      "enum": ["planned", "registration_open", "in_progress", "playoffs", "completed", "archived"]
+    },
+    "size": { "type": "string", "default": "xs", "enum": ["xs", "sm", "md"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "props": {
+          "size": { "$ref": "props.size" },
+          "variant": {
+            "$expr": "({ planned: 'neutral', registration_open: 'info', in_progress: 'accent', playoffs: 'warning', completed: 'success', archived: 'neutral' })[props.status]"
+          },
+          "children": {
+            "$expr": "({ planned: 'Planned', registration_open: 'Registration open', in_progress: 'In progress', playoffs: 'Playoffs', completed: 'Completed', archived: 'Archived' })[props.status]"
+          }
+        }
+      }
+    }
+  ]
+}

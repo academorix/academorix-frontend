@@ -1,0 +1,129 @@
+{
+  "id": "staff.resources.staff.edit",
+  "title": "Edit staff",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/staff/{staffId}/edit",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "staff", "entity": "staff", "action": "update" },
+  "requiresPermission": "staff.update",
+  "dataSources": [
+    { "name": "staff", "kind": "http.get", "urlExpr": "'/api/v1/staff/' + params.staffId", "unwrap": "data" },
+    { "name": "positions_catalog", "kind": "static", "src": "staff::data/position-catalog.json" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Form",
+      "props": { "className": "max-w-3xl mx-auto p-6" },
+      "bindings": { "initialValues": { "$ref": "staff" } },
+      "actions": {
+        "onSubmit": {
+          "kind": "http.patch",
+          "urlExpr": "'/api/v1/staff/' + params.staffId",
+          "body": "$form",
+          "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/staff/' + params.staffId" },
+          "onError": { "kind": "form.setErrors", "errorsFrom": "response.errors" }
+        }
+      },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4 mb-6" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$expr": "'Edit ' + staff.display_name" } }
+                },
+                {
+                  "kind": "Widget",
+                  "widget": "staff.employment-status-chip",
+                  "bindings": { "status": { "$ref": "staff.employment_status" } }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "children": "Compensation" },
+                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/staff/' + params.staffId + '/compensation'" } },
+                  "requiresPermission": "staff.view.compensation"
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "danger", "children": "Offboard" },
+                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/staff/' + params.staffId + '/offboard'" } },
+                  "requiresPermission": "staff.offboard",
+                  "bindings": {
+                    "hidden": { "$expr": "['offboarding', 'offboarded'].includes(staff.employment_status)" }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-4" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "name": "position", "label": "Position", "menuTrigger": "input", "allowCustomValue": true },
+              "bindings": { "items": { "$ref": "positions_catalog.positions" } }
+            },
+            {
+              "kind": "TextField",
+              "props": { "name": "department", "label": "Department" }
+            },
+            {
+              "kind": "TextField",
+              "props": { "name": "weekly_hours", "type": "number", "label": "Weekly hours", "min": 0, "max": 168 }
+            },
+            {
+              "kind": "TextField",
+              "props": { "name": "employee_number", "label": "Employee number" }
+            },
+            {
+              "kind": "DatePicker",
+              "props": { "name": "probation_ends_at", "label": "Probation ends" }
+            },
+            {
+              "kind": "Alert",
+              "props": {
+                "variant": "warning",
+                "children": "Home branch is immutable in Wave 2b. Branch transfer lands in Wave 3+.",
+                "className": "mt-4"
+              },
+              "bindings": {
+                "hidden": { "$expr": "staff.employment_status === 'offboarded'" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2 mt-6" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/staff/' + params.staffId" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "type": "submit", "variant": "primary", "children": "Save" }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

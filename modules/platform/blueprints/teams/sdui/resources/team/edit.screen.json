@@ -1,0 +1,168 @@
+{
+  "id": "teams.resources.team.edit",
+  "title": "Edit team",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/teams/:teamId/edit",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "teams", "entity": "team", "action": "update" },
+  "requiresPermission": "teams.update",
+  "requiresEntitlement": "teams",
+  "dataSources": [
+    {
+      "name": "team",
+      "kind": "http.get",
+      "url": "/api/v1/teams/{teamId}",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h1", "className": "text-2xl font-semibold" },
+              "bindings": { "children": { "$expr": "'Edit ' + team.name" } }
+            },
+            {
+              "kind": "Widget",
+              "widget": "teams.capacity-usage-bar",
+              "props": { "size": "sm" },
+              "bindings": {
+                "active_count": { "$ref": "team.active_roster_count" },
+                "capacity": { "$ref": "team.capacity" },
+                "waitlist_size": { "$ref": "team.capacity_waitlist" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "info", "className": "text-sm" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "children": "Organization and branch are immutable. To move this team, archive it and create a new one under the target branch." }
+            }
+          ]
+        },
+        {
+          "kind": "Form",
+          "bindings": { "initialValues": { "$ref": "team" } },
+          "actions": {
+            "onSubmit": {
+              "kind": "http.patch",
+              "url": "/api/v1/teams/{teamId}",
+              "onSuccess": {
+                "kind": "navigate",
+                "toExpr": "'/tenant/teams/' + $response.data.id"
+              },
+              "onError": { "kind": "toast.error" }
+            }
+          },
+          "children": [
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Basics", "className": "space-y-3" },
+              "children": [
+                {
+                  "kind": "TextField",
+                  "props": { "name": "name", "label": "Team name", "required": true, "maxLength": 128 }
+                },
+                {
+                  "kind": "TextArea",
+                  "props": { "name": "description", "label": "Description", "rows": 3 }
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": { "name": "competitive_level", "label": "Competitive level", "menuTrigger": "focus" },
+                  "props_items": [
+                    { "id": "recreational", "label": "Recreational" },
+                    { "id": "beginner", "label": "Beginner" },
+                    { "id": "intermediate", "label": "Intermediate" },
+                    { "id": "advanced", "label": "Advanced" },
+                    { "id": "elite", "label": "Elite" },
+                    { "id": "competition", "label": "Competition" }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Eligibility", "className": "space-y-3" },
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": { "name": "gender_category", "label": "Gender category", "menuTrigger": "focus" },
+                  "props_items": [
+                    { "id": "any", "label": "Any" },
+                    { "id": "male", "label": "Male" },
+                    { "id": "female", "label": "Female" },
+                    { "id": "mixed", "label": "Mixed" }
+                  ]
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "grid grid-cols-2 gap-3" },
+                  "children": [
+                    { "kind": "NumberField", "props": { "name": "min_age", "label": "Minimum age", "min": 3, "max": 100 } },
+                    { "kind": "NumberField", "props": { "name": "max_age", "label": "Maximum age", "min": 3, "max": 100 } }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Capacity", "className": "space-y-3" },
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "grid grid-cols-2 gap-3" },
+                  "children": [
+                    { "kind": "NumberField", "props": { "name": "capacity", "label": "Roster capacity", "min": 1, "max": 500 } },
+                    { "kind": "NumberField", "props": { "name": "capacity_waitlist", "label": "Waitlist size", "min": 0, "max": 100 } }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Branding", "className": "space-y-3" },
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "grid grid-cols-2 gap-3" },
+                  "children": [
+                    { "kind": "TextField", "props": { "name": "primary_color", "label": "Primary colour", "pattern": "^#[0-9A-Fa-f]{6}$" } },
+                    { "kind": "TextField", "props": { "name": "secondary_color", "label": "Secondary colour", "pattern": "^#[0-9A-Fa-f]{6}$" } }
+                  ]
+                },
+                { "kind": "TextField", "props": { "name": "logo_url", "label": "Logo URL", "type": "url" } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex justify-end gap-2 pt-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "children": "Cancel" },
+                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id" } }
+                },
+                { "kind": "Button", "props": { "type": "submit", "variant": "primary", "children": "Save changes" } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "id": "academorix://modules/teams/attributes",
+  "$version": 1,
+  "title": "teams — PHP attribute contracts",
+  "description": "Three class-level attributes for listener discovery. No property-level attributes: the four owned rows (Team, TeamMember, TeamTrial, EventTeam) use ordinary Eloquent + spatie/laravel-data class attributes shipped by foundation. `#[AsTeamListener]` subscribes to team-catalogue events (create / archive / pause / resume / schedule / coach / registration). `#[AsTeamMemberListener]` subscribes to roster-lifecycle events (join / leave / role / status / jersey / injury / suspension). `#[AsTrialListener]` subscribes to trial-workflow events (scheduled / started / completed / converted / rejected / no-show / cancelled). Discovery loader picks up each class at boot + wires the declared events.",
+  "namespace": "Academorix\\Teams\\Attributes",
+  "attributes": [
+    {
+      "name": "AsTeamListener",
+      "class": "Academorix\\Teams\\Attributes\\AsTeamListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to team-catalogue lifecycle events (TeamCreated / TeamUpdated / TeamStatusChanged / TeamCapacityChanged / TeamScheduleChanged / TeamCoachChanged / TeamRegistrationOpened / TeamRegistrationClosed / TeamArchived / TeamRestored / TeamDeleted).",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Array of event short names (`TeamCreated`, `TeamArchived`, `TeamCoachChanged`, …). Empty = subscribe to every `Academorix\\Teams\\Events\\Team*` event. Names resolve against events.json at boot; typos abort boot with a discovery error."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue override. Falls back to the event's default queue (see events.json). Use to route cascades / notifications onto dedicated queues."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Handler ordering within a single event. Lower runs first. Cascade listeners (CascadeMembersOnTeamArchived) declare priority 50 so they run before notification listeners."
+        }
+      ],
+      "example": "#[AsTeamListener(events: ['TeamArchived'], queue: 'teams', priority: 50)]\nfinal class CascadeMembersOnTeamArchived\n{\n    public function __construct(private readonly TeamMemberRepository $members) {}\n\n    public function __invoke(TeamArchived $event): void\n    {\n        // …\n    }\n}"
+    },
+    {
+      "name": "AsTeamMemberListener",
+      "class": "Academorix\\Teams\\Attributes\\AsTeamMemberListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to roster-lifecycle events (TeamMemberJoined / TeamMemberLeft / TeamMemberRoleChanged / TeamMemberStatusChanged / TeamMemberJerseyChanged / TeamMemberPositionChanged / TeamMemberSuspended / TeamMemberInjured).",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Empty = subscribe to every `Academorix\\Teams\\Events\\TeamMember*` event."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100
+        }
+      ],
+      "example": "#[AsTeamMemberListener(events: ['TeamMemberJoined', 'TeamMemberLeft'], queue: 'notifications', priority: 100)]\nfinal class NotifyCoachOnRosterChange\n{\n    public function __invoke(TeamMemberJoined|TeamMemberLeft $event): void\n    {\n        // Ping the assigned coach.\n    }\n}"
+    },
+    {
+      "name": "AsTrialListener",
+      "class": "Academorix\\Teams\\Attributes\\AsTrialListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to Trial + EventTeam lifecycle events (TrialScheduled / TrialStarted / TrialCompleted / TrialConvertedToMember / TrialRejected / TrialNoShow / TrialCancelled / EventTeamRegistered / EventTeamWithdrew / EventTeamCheckedIn / EventTeamResultRecorded). The two entity families share this attribute because most bridging consumers (Finance for trial fees, Notifications for reminders) care about the union.",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Empty = subscribe to every `Academorix\\Teams\\Events\\Trial*` AND `Academorix\\Teams\\Events\\EventTeam*` event."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100
+        }
+      ],
+      "example": "#[AsTrialListener(events: ['TrialConvertedToMember'], queue: 'teams', priority: 50)]\nfinal class ProvisionMemberOnTrialConversion\n{\n    public function __invoke(TrialConvertedToMember $event): void\n    {\n        // Atomic conversion happens in the observer;\n        // this listener handles bridging concerns like notifying the new member.\n    }\n}"
+    }
+  ]
+}

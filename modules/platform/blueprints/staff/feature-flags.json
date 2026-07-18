@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/staff/feature-flags",
+  "$version": 1,
+  "title": "staff — kill switches",
+  "engine": "laravel/pennant",
+  "description": "Operational kill switches distinct from the tier-based entitlements. These are for emergency-off / staged rollout / per-tenant ops interventions. Every flag is ON in normal production; off flips are ops decisions.",
+  "flags": [
+    {
+      "key": "staff.hire_writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for staff hire routes. Off = POST /staff returns 503 with a maintenance banner. Emergency-only (used during DB migrations of the staff table or staff_slot entitlement)."
+    },
+    {
+      "key": "staff.compensation_writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PATCH /staff/{staff}/compensation returns 503. Emergency-only if the compensation-audit queue is unstable + we need to freeze writes to preserve audit integrity."
+    },
+    {
+      "key": "staff.compensation_reads",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = GET /staff/{staff}/compensation returns 503. Rarely used — reads don't create data integrity risk — but exists for compliance-freeze scenarios (regulator investigation with a hold order)."
+    },
+    {
+      "key": "staff.offboarding_cascade",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = the /offboard cascade=true flag is refused. Admin must archive coach + remove team memberships manually. Test/staging only."
+    },
+    {
+      "key": "staff.coach_certification_verification",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = pending certifications remain in pending state; the verify endpoint refuses. Used when the coach_certifications_verified compliance workflow is under scrutiny."
+    },
+    {
+      "key": "staff.branch_manager_invariant_check",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReconcileBranchManagerInvariantJob skips. Emergency-only if the reconciler is misbehaving."
+    },
+    {
+      "key": "staff.probation_reminders",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = CheckProbationEndingSoonJob no-ops. Used when notifications module is unstable to avoid backing up its queue."
+    },
+    {
+      "key": "staff.certification_expiry_notifications",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ExpireCoachCertificationsJob still transitions expired state (data integrity) but the 30/14/7-day pre-expiry reminders don't fire."
+    },
+    {
+      "key": "staff.retention_purge",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PurgeOffboardedStaffJob no-ops. Only flip off for maintenance windows or regulator-hold scenarios where retention pause is legally mandated."
+    }
+  ]
+}

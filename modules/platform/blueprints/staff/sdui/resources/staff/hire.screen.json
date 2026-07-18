@@ -1,0 +1,190 @@
+{
+  "id": "staff.resources.staff.hire",
+  "title": "Hire staff",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/staff/hire",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "staff", "entity": "staff", "action": "create" },
+  "requiresPermission": "staff.hire",
+  "dataSources": [
+    { "name": "branches", "kind": "http.get", "url": "/api/v1/branches?filter[status]=active", "unwrap": "data" },
+    { "name": "features", "kind": "http.get", "url": "/api/v1/features", "unwrap": "data" },
+    { "name": "positions_catalog", "kind": "static", "src": "staff::data/position-catalog.json" },
+    { "name": "compensation_samples", "kind": "static", "src": "staff::data/compensation-frequency-samples.json" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Form",
+      "props": { "className": "max-w-3xl mx-auto p-6" },
+      "actions": {
+        "onSubmit": {
+          "kind": "http.post",
+          "url": "/api/v1/staff",
+          "body": "$form",
+          "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/staff/' + response.data.id" },
+          "onError": { "kind": "form.setErrors", "errorsFrom": "response.errors" }
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold mb-6", "children": "Hire staff" }
+        },
+        {
+          "kind": "Stepper",
+          "props": { "orientation": "horizontal" },
+          "steps": [
+            {
+              "id": "step_1",
+              "label": "Who",
+              "content": {
+                "kind": "View",
+                "props": { "className": "flex flex-col gap-4" },
+                "children": [
+                  {
+                    "kind": "Widget",
+                    "widget": "user.user-picker",
+                    "props": { "name": "user_id", "label": "User", "required": true, "helpText": "The user who will become staff. If they don't have a user account yet, create one first via the users module." }
+                  },
+                  {
+                    "kind": "ComboBox",
+                    "props": { "name": "branch_id", "label": "Home branch", "required": true, "menuTrigger": "focus" },
+                    "bindings": { "items": { "$ref": "branches" } }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "step_2",
+              "label": "Role",
+              "content": {
+                "kind": "View",
+                "props": { "className": "flex flex-col gap-4" },
+                "children": [
+                  {
+                    "kind": "ComboBox",
+                    "props": { "name": "position", "label": "Position", "required": true, "menuTrigger": "input", "allowCustomValue": true, "helpText": "Pick a common position or type your own." },
+                    "bindings": { "items": { "$ref": "positions_catalog.positions" } }
+                  },
+                  {
+                    "kind": "TextField",
+                    "props": { "name": "department", "label": "Department", "placeholder": "Sports, Front Desk, Admin, ..." }
+                  },
+                  {
+                    "kind": "Switch",
+                    "props": { "name": "is_branch_manager", "label": "This person is the branch manager", "helpText": "Refused if another manager already exists on the selected branch." }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "step_3",
+              "label": "Terms",
+              "content": {
+                "kind": "View",
+                "props": { "className": "flex flex-col gap-4" },
+                "children": [
+                  {
+                    "kind": "ComboBox",
+                    "props": { "name": "employment_type", "label": "Employment type", "required": true, "menuTrigger": "focus" },
+                    "props_items": [
+                      { "id": "full_time", "label": "Full-time" },
+                      { "id": "part_time", "label": "Part-time" },
+                      { "id": "contract", "label": "Contract" },
+                      { "id": "volunteer", "label": "Volunteer" },
+                      { "id": "intern", "label": "Intern" },
+                      { "id": "seasonal", "label": "Seasonal" }
+                    ]
+                  },
+                  {
+                    "kind": "DatePicker",
+                    "props": { "name": "started_at", "label": "Start date", "required": true }
+                  },
+                  {
+                    "kind": "DatePicker",
+                    "props": { "name": "probation_ends_at", "label": "Probation ends", "helpText": "Optional. Max 365 days from start date." }
+                  },
+                  {
+                    "kind": "TextField",
+                    "props": { "name": "weekly_hours", "type": "number", "label": "Weekly hours", "min": 0, "max": 168 }
+                  },
+                  {
+                    "kind": "TextField",
+                    "props": { "name": "employee_number", "label": "Employee number", "helpText": "Optional external HR-system ID. Unique per tenant." }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "step_4",
+              "label": "Compensation",
+              "requiresFeature": "staff.compensation",
+              "requiresPermission": "staff.manage.compensation",
+              "content": {
+                "kind": "View",
+                "props": { "className": "flex flex-col gap-4" },
+                "children": [
+                  {
+                    "kind": "Alert",
+                    "props": {
+                      "variant": "info",
+                      "children": "Compensation is regulated financial data. Every write is retained 7 years in a separate audit stream. Fields left blank stay unset."
+                    }
+                  },
+                  {
+                    "kind": "ComboBox",
+                    "props": { "name": "compensation_type", "label": "Compensation type", "menuTrigger": "focus" },
+                    "props_items": [
+                      { "id": "hourly", "label": "Hourly" },
+                      { "id": "salary", "label": "Salary" },
+                      { "id": "stipend", "label": "Stipend" },
+                      { "id": "volunteer", "label": "Volunteer (no compensation)" },
+                      { "id": "commission", "label": "Commission" }
+                    ]
+                  },
+                  {
+                    "kind": "TextField",
+                    "props": { "name": "compensation_amount_cents", "type": "number", "label": "Amount (cents)", "min": 0 }
+                  },
+                  {
+                    "kind": "TextField",
+                    "props": { "name": "compensation_currency", "label": "Currency", "helpText": "ISO 4217 (USD, EUR, GBP, AED, ...)", "maxLength": 3 }
+                  },
+                  {
+                    "kind": "ComboBox",
+                    "props": { "name": "pay_frequency", "label": "Pay frequency", "menuTrigger": "focus" },
+                    "props_items": [
+                      { "id": "hourly", "label": "Hourly" },
+                      { "id": "weekly", "label": "Weekly" },
+                      { "id": "biweekly", "label": "Biweekly" },
+                      { "id": "monthly", "label": "Monthly" },
+                      { "id": "per_session", "label": "Per session" }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2 mt-6" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/staff" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "type": "submit", "variant": "primary", "children": "Hire" }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

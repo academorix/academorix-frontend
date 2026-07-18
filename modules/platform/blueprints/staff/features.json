@@ -1,0 +1,65 @@
+{
+  "id": "academorix://modules/staff/features",
+  "$version": 1,
+  "title": "staff — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "staff.core",
+      "displayName": "Staff & coaches",
+      "description": "Staff catalogue + coach profiles. Available on every tier — every tenant needs staff.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "staff.compensation",
+      "displayName": "Compensation tracking",
+      "description": "Enables the compensation_* columns on Staff rows + the /staff/{staff}/compensation sub-resource. Opt-in per tenant — the HR settings toggle turns on the `staff_compensation_tracking` entitlement.",
+      "defaultEnabled": false,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "staff.emergency_contact",
+      "displayName": "Emergency contact tracking",
+      "description": "Enables the emergency_contact_* + tax_id_last4 fields. On by default because most tenants need this for legal + safety reasons.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "staff.org_chart",
+      "displayName": "Org chart",
+      "description": "Enables the reports_to_staff_id column + the direct-reports endpoint + the SDUI org-chart visualisation. Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "coach.certifications_verified",
+      "displayName": "Verified certifications",
+      "description": "Enterprise-only compliance feature. New certifications land in pending_verification state; HR uploads a signed document + invokes the verify action; only then is the certification tagged verified. Compliance-sensitive tenants (medical rehab clinics, government-contract sports academies) enable this.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "coach.rating_display",
+      "displayName": "Public coach ratings",
+      "description": "Toggles the public rating badge on the tenant's coach directory. When off, coach.rating is still computed for internal HR review but never rendered publicly. Small: off; Medium + Enterprise: on.",
+      "defaultEnabled": true,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "staff.branch_manager_promotion",
+      "displayName": "Branch manager promotion flow",
+      "description": "Enables the atomic /promote-to-manager route + the branch-manager badge in the UI. Always on.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "staff.probation_tracking",
+      "displayName": "Probation tracking",
+      "description": "Enables the probation_ends_at column + the reminder cadence. Always on — most jurisdictions require probation documentation."
+    }
+  ]
+}

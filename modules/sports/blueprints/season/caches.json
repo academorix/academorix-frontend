@@ -1,0 +1,86 @@
+{
+  "id": "academorix://modules/season/caches",
+  "$version": 1,
+  "title": "season — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["season", "current-season", "season-phase"],
+  "keys": [
+    {
+      "pattern": "sea:current:{tenant_id}:{org_id?}:{branch_id?}:{sport_key?}",
+      "description": "The current-season ULID + summary for one scope tuple. Read by CurrentSeasonResolver on every `/seasons/current` request + by every enrollment surface that needs the active season. 5-minute TTL because it's high-traffic + the invariant flips are rare but audit-critical (missing an invalidation would return a stale current season for up to 5 minutes).",
+      "ttlSeconds": 300,
+      "tags": ["season", "current-season"],
+      "invalidatedBy": [
+        "SeasonObserver.updated (is_current changed)",
+        "SeasonObserver.updated (status transitioned to/from archived)",
+        "SeasonObserver.deleted (was_current in tuple)",
+        "TenantDefaultSeasonSeeded"
+      ]
+    },
+    {
+      "pattern": "sea:list:{tenant_id}",
+      "description": "The full active-season list for one tenant. Read by the tenant admin UI + by the `season.resolve_active` middleware when validating an X-Season-Id header. Small payload (id, name, slug, status, is_current, scope tuple).",
+      "ttlSeconds": 300,
+      "tags": ["season"],
+      "invalidatedBy": [
+        "SeasonObserver.created",
+        "SeasonObserver.updated",
+        "SeasonObserver.deleted",
+        "SeasonObserver.restored"
+      ]
+    },
+    {
+      "pattern": "sea:full:{season_id}",
+      "description": "One Season row (full). Read by the SeasonPhaseCalculator + RegistrationWindowEvaluator on hot paths.",
+      "ttlSeconds": 300,
+      "tags": ["season"],
+      "invalidatedBy": [
+        "SeasonObserver.updated",
+        "SeasonObserver.deleted"
+      ]
+    },
+    {
+      "pattern": "sea:phase:{season_id}",
+      "description": "Cached phase evaluation for one Season (planned / registration_open / registration_closed / in_progress / playoffs / completed). Read by SeasonPhaseCalculator to avoid recomputing from scratch on every phase-adjacent request. Short 60-second TTL because phase can transition at hour boundaries.",
+      "ttlSeconds": 60,
+      "tags": ["season", "season-phase"],
+      "invalidatedBy": [
+        "SeasonObserver.updated (status changed)",
+        "SeasonObserver.updated (registration_opens_at / registration_closes_at / late_registration_ends_at / start_date / end_date / playoff_starts_at / playoff_ends_at changed)",
+        "RollSeasonPhaseJob per-row transition"
+      ]
+    },
+    {
+      "pattern": "sea:registration_window:{season_id}",
+      "description": "Precomputed registration-window state (is_open / opens_at / closes_at / late_ends_at / is_in_late_window). Read by the `season.enforce_registration_open` middleware on every Wave-3 enrollment-adjacent request. Short 60-second TTL to keep close to real-time.",
+      "ttlSeconds": 60,
+      "tags": ["season"],
+      "invalidatedBy": [
+        "SeasonObserver.updated (any registration timestamp changed)",
+        "SeasonObserver.updated (allows_late_registration changed)",
+        "SeasonObserver.updated (status changed)"
+      ]
+    },
+    {
+      "pattern": "sea:reconciler_last_run",
+      "description": "Timestamp of the last successful ReconcileCurrentSeasonInvariantJob run. Read by the health probe + the ops dashboard.",
+      "ttlSeconds": 172800,
+      "tags": ["season"],
+      "invalidatedBy": ["ReconcileCurrentSeasonInvariantJob completion"]
+    },
+    {
+      "pattern": "sea:business_type_defaults",
+      "description": "The full `data/business-type-defaults.json` mapping. Static artifact — parsed once, cached indefinitely. Invalidated on deploy (the cache key includes a hash of the file).",
+      "ttlSeconds": 604800,
+      "tags": ["season"],
+      "invalidatedBy": ["deploy artifact fingerprint change"]
+    },
+    {
+      "pattern": "sea:type_catalog",
+      "description": "The full `data/season-type-catalog.json` mapping. Static artifact.",
+      "ttlSeconds": 604800,
+      "tags": ["season"],
+      "invalidatedBy": ["deploy artifact fingerprint change"]
+    }
+  ]
+}

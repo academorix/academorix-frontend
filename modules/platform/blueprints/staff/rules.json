@@ -1,0 +1,107 @@
+{
+  "id": "academorix://modules/staff/rules",
+  "$version": 1,
+  "title": "staff — validation rules",
+  "description": "Custom Laravel validation rules published by StaffServiceProvider::boot(). All rules are used both by the observer chain (for authoritative refusal on write) AND by FormRequest data classes (for early request-time validation with clear error surfaces). The compensation + emergency-contact permission checks live in policies + observers, not in rules — rules validate shape, not authorization.",
+  "namespace": "Academorix\\Staff\\Rules",
+  "rules": [
+    {
+      "name": "valid_hex_color",
+      "class": "Academorix\\Foundation\\Rules\\ValidHexColor",
+      "signature": "valid_hex_color",
+      "description": "Standard hex color validator. Used for any UI-provided colour field on Coach.head_shot_url metadata (badge tint on the coach profile card).",
+      "reference": "foundation-owned; consumed by staff via aliasing"
+    },
+    {
+      "name": "valid_e164_phone",
+      "class": "Academorix\\Foundation\\Rules\\ValidE164Phone",
+      "signature": "valid_e164_phone",
+      "description": "E.164 phone number (`+CC-NNN-NNN-NNNN` shape without the dashes). Used on Staff.emergency_contact_phone + Coach.public_phone.",
+      "reference": "foundation-owned; consumed by staff via aliasing"
+    },
+    {
+      "name": "valid_url",
+      "class": "Academorix\\Foundation\\Rules\\ValidUrl",
+      "signature": "valid_url",
+      "description": "URL validator. Used on Coach.head_shot_url + Coach.certifications[].certificate_url + Coach.public_email (email variant).",
+      "reference": "foundation-owned; consumed by staff via aliasing"
+    },
+    {
+      "name": "valid_bcp47_locale",
+      "class": "Academorix\\Foundation\\Rules\\ValidBcp47Locale",
+      "signature": "valid_bcp47_locale",
+      "description": "BCP-47 language tag (e.g. `en-US`, `fr`, `ar-EG`). Used on Coach.languages[].",
+      "reference": "foundation-owned; consumed by staff via aliasing"
+    },
+    {
+      "name": "valid_iso4217_currency",
+      "class": "Academorix\\Foundation\\Rules\\ValidIso4217Currency",
+      "signature": "valid_iso4217_currency",
+      "description": "ISO 4217 currency code (three-letter uppercase). Used on Staff.compensation_currency.",
+      "reference": "foundation-owned; consumed by staff via aliasing"
+    },
+    {
+      "name": "valid_positive_int",
+      "class": "Academorix\\Foundation\\Rules\\ValidPositiveInt",
+      "signature": "valid_positive_int",
+      "description": "Non-negative integer. Used on Staff.weekly_hours + Staff.compensation_amount_cents + Coach.session_capacity_per_week + Coach.rating_count.",
+      "reference": "foundation-owned; consumed by staff via aliasing"
+    },
+    {
+      "name": "valid_certifications_shape",
+      "class": "Academorix\\Staff\\Rules\\ValidCertificationsShape",
+      "signature": "valid_certifications_shape",
+      "description": "Validates the Coach.certifications JSONB blob against schemas/coach.schema.json.certifications. Every entry is a strict object with { organization: string (required, max 128), certification: string (required, max 128), certified_at: YYYY-MM-DD (required), expires_at: YYYY-MM-DD | null, certificate_url: URL | null, verified_at: ISO 8601 | null (only when coach_certifications_verified entitlement is on), verified_by_user_id: ULID | null }. Refuses when: any required field is missing, expires_at < certified_at, certified_at > today() + 30 days (rejects nonsense future certifications), or when the entry contains keys outside the closed shape.",
+      "default_message": "The :attribute contains an invalid certification entry. Each entry must include organization, certification, and certified_at; expires_at must be after certified_at."
+    },
+    {
+      "name": "valid_availability_pattern",
+      "class": "Academorix\\Staff\\Rules\\ValidAvailabilityPattern",
+      "signature": "valid_availability_pattern",
+      "description": "Validates Coach.availability_pattern JSONB against schemas/availability-pattern.schema.json. Same day-shape as facility.availability_json ({monday: [{starts: 'HH:MM', ends: 'HH:MM'}], ...}) but expresses when this Coach is available for coaching (a subset of when their Staff is scheduled on the branch). Non-overlapping windows within a day; ends > starts.",
+      "default_message": "The :attribute is not a valid availability pattern. Each day must have non-overlapping HH:MM–HH:MM windows."
+    },
+    {
+      "name": "probation_within_bounds",
+      "class": "Academorix\\Staff\\Rules\\ProbationWithinBounds",
+      "signature": "probation_within_bounds",
+      "description": "Staff.probation_ends_at, when set, MUST be at most 365 days after started_at. Rejects nonsense probation windows that would violate common labour-law caps.",
+      "default_message": "Probation cannot exceed 365 days from the start date."
+    },
+    {
+      "name": "termination_reason_required_when_offboarded",
+      "class": "Academorix\\Staff\\Rules\\TerminationReasonRequiredWhenOffboarded",
+      "signature": "termination_reason_required_when_offboarded",
+      "description": "When Staff.employment_status transitions to offboarding OR offboarded, termination_reason MUST be non-null. Rejects offboards without documented reason (compliance signal — anti-discrimination pattern detection depends on this).",
+      "default_message": "A termination reason is required when offboarding a staff member."
+    },
+    {
+      "name": "one_active_staff_per_user_tenant",
+      "class": "Academorix\\Staff\\Rules\\OneActiveStaffPerUserTenant",
+      "signature": "one_active_staff_per_user_tenant",
+      "description": "Enforces the partial unique index (tenant_id, user_id, deleted_at IS NULL). One active Staff row per (tenant, user). Rehires must first offboard the existing.",
+      "default_message": "This user already has an active staff record in this tenant."
+    },
+    {
+      "name": "one_active_branch_manager_per_branch",
+      "class": "Academorix\\Staff\\Rules\\OneActiveBranchManagerPerBranch",
+      "signature": "one_active_branch_manager_per_branch",
+      "description": "Enforces the partial unique index (branch_id, is_branch_manager=true, employment_status='active', deleted_at IS NULL). Exactly one active branch_manager per branch.",
+      "default_message": "This branch already has an active manager. Demote the existing manager first, or use /promote-to-manager for the atomic swap."
+    },
+    {
+      "name": "coach_staff_active",
+      "class": "Academorix\\Staff\\Rules\\CoachStaffActive",
+      "signature": "coach_staff_active",
+      "description": "Coach.staff_id MUST reference a Staff whose employment_status='active'. Applied on Coach.create + Coach.update paths.",
+      "default_message": "The parent Staff must be active to attach a Coach profile."
+    },
+    {
+      "name": "certification_expiry_in_future_when_added",
+      "class": "Academorix\\Staff\\Rules\\CertificationExpiryInFutureWhenAdded",
+      "signature": "certification_expiry_in_future_when_added",
+      "description": "When appending a new certification via /coaches/{coach}/certifications, expires_at (if set) MUST be > today(). Rejects retroactive-expiry entries; the ExpireCoachCertificationsJob owns the transition to expired state.",
+      "default_message": "Certification expiry must be in the future. Set expires_at to a future date, or leave it null for indefinite certifications."
+    }
+  ]
+}

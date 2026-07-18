@@ -1,0 +1,103 @@
+{
+  "$version": 1,
+  "title": "Roster lifecycle samples",
+  "description": "Concrete narrative examples of TeamMember lifecycle transitions. Consumed by the SDUI documentation panel + test fixtures. Illustrates the state machine + the left_reason enum + the child-safety + capacity + eligibility observer paths.",
+  "state_machine": {
+    "states": ["active", "inactive", "injured", "suspended", "graduated"],
+    "transitions": {
+      "created": "active",
+      "active_to_inactive": "voluntary leave — set left_at + left_reason",
+      "active_to_injured": "medical fact — reversible",
+      "active_to_suspended": "disciplinary — reversible",
+      "active_to_graduated": "season-end + 18+ (Wave 3 season sweep)",
+      "injured_to_active": "recovery — clears status but preserves audit trail",
+      "suspended_to_active": "suspension expires or is lifted",
+      "inactive_to_(new active row)": "member returns — new TeamMember row created; historic row preserved",
+      "graduated_to_(new active row)": "graduate returns as coach or staff — different member_type + role_on_team"
+    },
+    "terminal_for_team": ["inactive", "graduated"],
+    "note": "Historic terminal-state rows are NEVER hard-deleted (compliance material). Personal-erasure request redacts PII in place, preserves the structural fact."
+  },
+  "samples": [
+    {
+      "id": "academy_junior_player_lifecycle",
+      "name": "Academy junior — 3-year lifecycle",
+      "narrative": [
+        "2024-09-01 — Athlete Marco Rossi (age 11) trials for the U-13 squad. Trial converts.",
+        "2024-09-08 — TeamMember created (member_type='athlete', role_on_team='player', jersey=7, status='active').",
+        "2025-02-15 — Injured during match. TeamMemberInjured event fires. status='injured'.",
+        "2025-03-30 — Recovered. status='active'. TeamMemberStatusChanged event fires.",
+        "2025-08-31 — U-13 season ends. Wave 3 season sweep transitions Marco (now age 13) to inactive with left_reason='season_ended'. Historic row preserved.",
+        "2025-09-01 — New TeamMember row created on the U-14 squad. Different team_id, same member_id.",
+        "2026-08-31 — Marco (age 14) advances to U-15. Historic row preserved; new row on U-15."
+      ]
+    },
+    {
+      "id": "gym_class_recurring_member",
+      "name": "Gym class — recurring adult member",
+      "narrative": [
+        "2026-06-01 — User Sarah Chen (age 34) joins the Monday 7am Spin Class. TeamMember (member_type='user', role_on_team='player', status='active').",
+        "2026-08-20 — Sarah loses interest. TeamMember transitions to status='inactive' with left_reason='withdrew'. Historic row preserved.",
+        "2027-01-15 — Sarah returns. New TeamMember row created (same member_id, same team_id, different created_at). Historic 'inactive' row survives — participation lineage preserved."
+      ]
+    },
+    {
+      "id": "school_cohort_graduation",
+      "name": "School cohort — graduation",
+      "narrative": [
+        "2026-09-01 — Student Amir Al-Sabah (age 17) enrolled in Grade 12. TeamMember (member_type='user', role_on_team='player', status='active').",
+        "2027-06-01 — Amir graduates. TeamMember transitions to status='graduated' with left_reason='graduated'. Historic row preserved as academic record — never hard-deleted.",
+        "Downstream: Wave 5 alumni module reads graduated TeamMember rows to build alumni-network directory."
+      ]
+    },
+    {
+      "id": "capacity_refusal_upsell",
+      "name": "Capacity refusal → upsell",
+      "narrative": [
+        "2026-07-15 — Tenant (Medium tier) has a class with capacity=20, capacity_waitlist=0. Roster is at 20 active.",
+        "Admin attempts to add member #21. TeamMemberObserver runs CapacityGate::allowsAdditional — returns false.",
+        "Observer returns TEAM_CAPACITY_EXCEEDED (402) with upgrade CTA in meta.upgrade_url.",
+        "SDUI form displays the upgrade prompt. Analytics fires `Team Capacity Exceeded` event with tier + capacity — signals upsell impression."
+      ]
+    },
+    {
+      "id": "age_ineligible_refusal",
+      "name": "Age eligibility refusal",
+      "narrative": [
+        "Team U-13 has min_age=11, max_age=13. Coach attempts to add Athlete Sofia (age 14).",
+        "AgeEligibilityGate::isEligible returns false (14 > max_age=13).",
+        "Observer returns TEAM_AGE_INELIGIBLE (422) with a clear message.",
+        "Coach sees the error inline on the roster-add form + suggests the U-14 squad instead (SDUI cross-suggestion widget)."
+      ]
+    },
+    {
+      "id": "cross_tenant_smuggling_refusal",
+      "name": "Cross-tenant polymorphic FK smuggling — defense-in-depth",
+      "narrative": [
+        "Adversarial API call: POST /teams/{teamA in tenant Alpha}/members with body { member_type: 'user', member_id: 'usr_userB_in_tenant_Beta' }.",
+        "TeamMemberObserver resolves user_userB, checks user.tenant_id (Beta) against team.tenant_id (Alpha). Mismatch.",
+        "Observer returns TEAM_MEMBER_TENANT_MISMATCH (422). warn-severity audit row written (attempted breach).",
+        "Every occurrence is a signal for security review — should stay at 0 in normal operation."
+      ]
+    },
+    {
+      "id": "child_safety_coach_change",
+      "name": "Coach change on minor-only team",
+      "narrative": [
+        "Team U-13 (min_age=11, max_age=13). coach_id changed from Coach A → Coach B.",
+        "TeamCoachChanged event fires with is_minor_only=true.",
+        "Downstream: critical-severity audit row written (retention 7 years). Notifications dispatched to Coach A + Coach B + branch safeguarding lead (cannot-opt-out).",
+        "academorix.teams.coach_changed_total counter increments with label is_minor_only=true — dashboard alerts if the rate spikes."
+      ]
+    },
+    {
+      "id": "polymorphic_coach_blocked",
+      "name": "member_type='coach' blocked pre-Wave-2b",
+      "narrative": [
+        "Wave 2 tenant attempts to add a member with member_type='coach'. Their tenant lacks team_polymorphic_coach entitlement.",
+        "TeamMemberObserver returns POLYMORPHIC_COACH_NOT_ENTITLED (402).",
+        "The tenant's workaround: add the coach as member_type='user' with role_on_team='coach'. Once Wave 2b staff module lands, the tenant's coaches migrate to member_type='coach' via a Wave 2b data-migration flow."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "id": "academorix://modules/season/entitlements",
+  "$version": 1,
+  "title": "season — declared entitlements",
+  "description": "Five entitlement keys. `sports_seasons` is the boolean master gate for the whole module (OFF on Small tier per hierarchy.md §7). `season_slot` caps seasons per year (Medium=4, Enterprise=null). `season_playoffs` gates the has_playoffs=true code path (Medium+). `season_late_registration` gates the allows_late_registration+fee combo (Medium+). `season_sport_scoping` gates the sport_key column (Enterprise-only — multi-sport tenants that run different seasons per sport).",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "sports_seasons",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Master feature gate. Off = the whole module is invisible: no season CRUD, no routes reachable, no `season.enforce_registration_open` middleware fires (because enrollments are always-on), the seed listener no-ops. Small tier is locked out entirely per hierarchy.md §7 — Small tenants run 'always-on' scheduling without seasonal boundaries. When a Medium+ tenant downgrades to Small, existing Season rows survive (the entitlement reconciler surfaces the drift) but new writes refuse.",
+      "enforcedBy": [
+        "season.enforce_entitlement middleware on every /api/v1/seasons + /api/v1/seasons/{season}/* route",
+        "SeasonObserver.creating refuses when the gate is closed (SEASON_FEATURE_NOT_ENTITLED, 402)",
+        "SDUI resource surfaces hidden when features array does not include 'sports_seasons.core'",
+        "SeedDefaultSeasonForTenantJob checks the gate before dispatching the create"
+      ]
+    },
+    {
+      "key": "season_slot",
+      "kind": "slot",
+      "unit": "seasons per calendar year",
+      "defaultsByPlan": { "small": 0, "medium": 4, "enterprise": null },
+      "description": "How many Seasons a tenant can have IN ONE CALENDAR YEAR that the season overlaps. Small: 0 (feature off; slot is 0 for compliance with the master gate). Medium: 4 (covers a quarterly / trimester cadence with a spare + a summer camp). Enterprise: unlimited (null cap). Consumed on Season create; the accounting window is any calendar year that the season overlaps (a season crossing Dec-Feb counts against both years). Slot resets on Jan 1 UTC per year. Non-current + non-active-window seasons still count — an archived season keeps its slot occupied per financial retention.",
+      "enforcedBy": [
+        "SeasonObserver.creating consumes 1 unit via EntitlementGate::consume('season_slot', { calendar_years: overlapping })",
+        "SeasonObserver.deleted (hard-delete only — post-retention) releases the slot; soft-delete keeps it",
+        "SeasonProvisioner sets is_system_provisioned=true on the tenant-default seed path so it does NOT consume a slot (matches the region default-region pattern — system-provisioned invariants don't consume tenant slots)"
+      ]
+    },
+    {
+      "key": "season_playoffs",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enables `has_playoffs=true` + the `playoff_starts_at` / `playoff_ends_at` columns + the `playoffs` state in the lifecycle machine. Enterprise-only because the multi-phase competition flow is a higher-tier feature. Medium tenants that want a playoff can approximate by creating a second Season for the playoff period.",
+      "enforcedBy": [
+        "SeasonObserver.creating refuses when has_playoffs=true and gate is closed (SEASON_PLAYOFFS_NOT_ENTITLED, 402)",
+        "SDUI create + edit screens hide the playoff fields when features array does not include 'sports_seasons.playoffs'"
+      ]
+    },
+    {
+      "key": "season_late_registration",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables `allows_late_registration=true` + the `late_registration_ends_at` column + the `late_registration_fee_cents` surcharge column. Medium + Enterprise. Small tenants have no season feature so this doesn't apply. The finance module (Wave 4) will consume the fee amount when generating enrollment invoices in the late window.",
+      "enforcedBy": [
+        "SeasonObserver.creating refuses when allows_late_registration=true and gate is closed (SEASON_LATE_REGISTRATION_NOT_ENTITLED, 402)",
+        "SDUI create + edit screens hide the late-registration fields when features array does not include 'sports_seasons.late_registration'"
+      ]
+    },
+    {
+      "key": "season_sport_scoping",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enables the `sport_key` column — the multi-sport tenant flow where different seasons run for different sports (football Sep-Jun, basketball Nov-Apr, swimming perpetual). Enterprise-only. Off = every Season is sport-agnostic within its (tenant, org, branch) tuple; the observer refuses non-null sport_key writes.",
+      "enforcedBy": [
+        "SeasonObserver.creating refuses when sport_key IS NOT NULL and gate is closed (SEASON_SPORT_SCOPING_NOT_ENTITLED, 402)",
+        "SeasonObserver.saving refuses sport_key changes when the gate is closed",
+        "SDUI create + edit screens hide the sport_key picker when features array does not include 'sports_seasons.sport_scoping'"
+      ]
+    }
+  ]
+}

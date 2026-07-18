@@ -1,0 +1,109 @@
+{
+  "id": "academorix://modules/season/policies",
+  "$version": 1,
+  "title": "season — authorization policies",
+  "description": "One policy — SeasonPolicy — narrows by scope suffix (`.any` / `.tenant`). Every tenant member can READ seasons in their active tenant (they are base UI reference data every enrollment + team dropdown needs). Only admins + owners can WRITE. The `is_current` flag has extra guardrails: `seasons.set_current` is owner-only because current-season changes shift year-over-year reporting frames.",
+  "policies": [
+    {
+      "model": "Season",
+      "class": "Academorix\\Sports\\Season\\Policies\\SeasonPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "seasons.viewAny",
+          "scope": "resolved via ScopeSuffixResolver — `.tenant` narrows to the caller's active tenant; `.any` unrestricted (platform_admin only). Every tenant role gets `.tenant` by default because seasons are UI reference data."
+        },
+        {
+          "action": "view",
+          "permission": "seasons.view",
+          "scope": "single-row check by suffix. `.tenant` requires the Season's tenant_id to match the caller's active tenant."
+        },
+        {
+          "action": "create",
+          "permission": "seasons.create",
+          "scope": "admin or owner in the active tenant. Also gated by the `sports_seasons` entitlement + the `season_slot` per-year cap — the observer refuses with SEASON_QUOTA_EXCEEDED when the slot is exhausted."
+        },
+        {
+          "action": "update",
+          "permission": "seasons.update",
+          "scope": "admin or owner. Mutable fields listed in routes.json PATCH endpoint. Immutable-after-create: tenant_id, organization_id, branch_id. sport_key mutable only pre-in_progress. start_date/end_date mutable in-progress with `seasons.dates.shift`."
+        },
+        {
+          "action": "shiftDates",
+          "permission": "seasons.dates.shift",
+          "scope": "owner only. Permits start_date / end_date / playoff timestamp changes on Seasons with status IN (in_progress, playoffs). Never permitted on completed seasons (would corrupt financial-period attribution)."
+        },
+        {
+          "action": "delete",
+          "permission": "seasons.delete",
+          "scope": "owner only. Refused when is_current=true or active enrollments reference. Soft-delete only — hard-delete via PurgeArchivedSeasonsJob after retention window."
+        },
+        {
+          "action": "setCurrent",
+          "permission": "seasons.set_current",
+          "scope": "owner only. Changing the current season affects year-over-year reporting queries."
+        },
+        {
+          "action": "openRegistration",
+          "permission": "seasons.open_registration",
+          "scope": "admin or owner. Refused when now() < registration_opens_at unless caller holds seasons.registration.open-early (owner-only)."
+        },
+        {
+          "action": "openRegistrationEarly",
+          "permission": "seasons.registration.open-early",
+          "scope": "owner only. Bypasses the scheduled-open guardrail."
+        },
+        {
+          "action": "closeRegistration",
+          "permission": "seasons.close_registration",
+          "scope": "admin or owner."
+        },
+        {
+          "action": "start",
+          "permission": "seasons.start",
+          "scope": "admin or owner. Refused when now() < start_date unless caller holds seasons.start.early (owner-only)."
+        },
+        {
+          "action": "startEarly",
+          "permission": "seasons.start.early",
+          "scope": "owner only."
+        },
+        {
+          "action": "beginPlayoffs",
+          "permission": "seasons.begin_playoffs",
+          "scope": "admin or owner. Refused when has_playoffs=false OR now() < playoff_starts_at unless caller holds seasons.playoffs.begin-early (owner-only)."
+        },
+        {
+          "action": "beginPlayoffsEarly",
+          "permission": "seasons.playoffs.begin-early",
+          "scope": "owner only."
+        },
+        {
+          "action": "complete",
+          "permission": "seasons.complete",
+          "scope": "admin or owner. Manual completion from in_progress or playoffs."
+        },
+        {
+          "action": "archive",
+          "permission": "seasons.archive",
+          "scope": "admin or owner. Refused when is_current=true (`CANNOT_ARCHIVE_CURRENT_SEASON`) OR when active downstream enrollments reference (`SEASON_HAS_ACTIVE_ENROLLMENTS`)."
+        },
+        {
+          "action": "restore",
+          "permission": "seasons.restore",
+          "scope": "admin or owner. Only within the retention window."
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.seasons.viewAny",
+          "scope": "platform_admin only. Cross-tenant read for support tooling."
+        },
+        {
+          "action": "platformView",
+          "permission": "platform.seasons.view",
+          "scope": "platform_admin only."
+        }
+      ]
+    }
+  ]
+}

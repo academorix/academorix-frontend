@@ -1,0 +1,194 @@
+{
+  "$version": 1,
+  "name": "season",
+  "alias": "season",
+  "namespace": "Academorix\\Sports\\Season",
+  "description": "Time-bounded competition / training cycle. Answers 'which competitive year are we in?'. A tenant running a football academy typically has one Season per calendar year (Sep-Jun); a summer sports camp has three per year (May-Aug); a school runs one Season per academic year (Sep-Jul). Every Team, AthleteEnrollment, Event, and Session references a Season for temporal scoping - reports filter by Season for year-over-year comparisons. Small tier has this feature DISABLED entirely (Small tenants run 'always-on' scheduling without seasonal boundaries - every roster is perpetual). Medium tier allows up to 4 seasons per year; Enterprise unlimited. Exactly one is_current=true per (tenant_id, organization_id nullable, branch_id nullable, sport_key nullable) tuple - the 'active' season for that scope. Ships: Season model with lifecycle (planned -> registration_open -> in_progress -> playoffs -> completed -> archived), automatic transitions via scheduled job (RollSeasonPhaseJob), registration window enforcement middleware, one-current-per-scope-tuple invariant, plus a `TenantDefaultSeasonSeeded` listener when TenantProvisioned fires and the tenant subscribes to a business_type that uses seasonal scheduling (sports_academy / school / federation / club). Downstream: Team.season_id, AthleteEnrollment.season_id, Event.season_id, Session.season_id - all FK-referenced but only sports rows require Season; Wave 2 Team.season_id is nullable while the domain modules land.",
+  "keywords": [
+    "season",
+    "seasons",
+    "sports-season",
+    "academic-year",
+    "camp",
+    "term",
+    "trimester",
+    "quarter",
+    "half-year",
+    "playoffs",
+    "registration",
+    "registration-window",
+    "current-season",
+    "year-over-year",
+    "roster",
+    "enrollment",
+    "sport-key",
+    "tenant",
+    "organization",
+    "branch",
+    "wave-3a"
+  ],
+  "priority": 52,
+  "providers": [
+    "Academorix\\Sports\\Season\\Providers\\SeasonServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "organization",
+    "region",
+    "branch",
+    "entitlements"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "athlete",
+    "athlete-enrollment",
+    "event",
+    "session",
+    "teams",
+    "finance",
+    "notifications",
+    "attendance"
+  ],
+  "contributes": {
+    "traits": [
+      "BelongsToSeason",
+      "HasSeasonScope"
+    ],
+    "attributes": [
+      "AsSeasonListener"
+    ],
+    "blueprints": [],
+    "middleware": [
+      "season.resolve_active",
+      "season.enforce_registration_open"
+    ],
+    "events": [
+      "SeasonCreated",
+      "SeasonUpdated",
+      "SeasonStatusChanged",
+      "SeasonRegistrationOpened",
+      "SeasonRegistrationClosed",
+      "SeasonStarted",
+      "SeasonPlayoffsBegun",
+      "SeasonCompleted",
+      "SeasonArchived",
+      "SeasonRestored",
+      "SeasonDeleted",
+      "SeasonCurrentChanged",
+      "SeasonDatesShifted",
+      "SeasonSportKeyChanged",
+      "SeasonCapacityTargetChanged",
+      "SeasonRegistrationCapReached",
+      "SeasonLateRegistrationOpened",
+      "TenantDefaultSeasonSeeded"
+    ],
+    "policies": [
+      "SeasonPolicy"
+    ],
+    "hooks": [
+      "SeedDefaultSeasonOnTenantProvisioned",
+      "PreventSeasonOrphansOnTenantErased"
+    ],
+    "commands": [
+      "season:list",
+      "season:describe",
+      "season:create",
+      "season:set-current",
+      "season:open-registration",
+      "season:close-registration",
+      "season:start",
+      "season:begin-playoffs",
+      "season:complete",
+      "season:archive",
+      "season:restore",
+      "season:reconcile-current",
+      "season:roll-phase",
+      "season:seed-defaults-for-legacy-tenants"
+    ],
+    "jobs": [
+      "RollSeasonPhaseJob",
+      "SeedDefaultSeasonForTenantJob",
+      "ReconcileCurrentSeasonInvariantJob",
+      "CloseExpiredRegistrationsJob",
+      "PurgeArchivedSeasonsJob"
+    ],
+    "notifications": [
+      "SeasonRegistrationOpeningNotification",
+      "SeasonRegistrationClosingNotification",
+      "SeasonStartingSoonNotification",
+      "SeasonCompletedNotification",
+      "SeasonCurrentChangedNotification",
+      "SeasonDatesShiftedNotification"
+    ],
+    "broadcasts": [],
+    "observers": [
+      "SeasonObserver"
+    ],
+    "rules": [
+      "valid_hex_color",
+      "valid_date_range",
+      "valid_registration_window",
+      "valid_playoff_window",
+      "valid_season_scoping",
+      "one_current_per_scope_tuple",
+      "valid_sport_key"
+    ],
+    "casts": [
+      "SeasonStatus",
+      "SeasonType"
+    ],
+    "views": [],
+    "lang": [
+      "season"
+    ],
+    "config": [
+      "season"
+    ],
+    "macros": [
+      "Request::activeSeason",
+      "Request::activeSeasonId"
+    ],
+    "bindings": [
+      "SeasonRepository",
+      "SeasonProvisioner",
+      "CurrentSeasonResolver",
+      "SeasonPhaseCalculator",
+      "SeasonSeedingStrategy",
+      "RegistrationWindowEvaluator"
+    ],
+    "resources": [
+      "season"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing season CRUD + lifecycle transitions (set-current / open-registration / close-registration / start / begin-playoffs / complete / archive / restore) + the heavy-traffic current-season lookup.",
+      "routes": [
+        "GET /api/v1/seasons",
+        "POST /api/v1/seasons",
+        "GET /api/v1/seasons/{season}",
+        "PATCH /api/v1/seasons/{season}",
+        "DELETE /api/v1/seasons/{season}",
+        "POST /api/v1/seasons/{season}/set-current",
+        "POST /api/v1/seasons/{season}/open-registration",
+        "POST /api/v1/seasons/{season}/close-registration",
+        "POST /api/v1/seasons/{season}/start",
+        "POST /api/v1/seasons/{season}/begin-playoffs",
+        "POST /api/v1/seasons/{season}/complete",
+        "POST /api/v1/seasons/{season}/archive",
+        "POST /api/v1/seasons/{season}/restore",
+        "GET /api/v1/seasons/current"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant read for support tooling + a per-tenant seasons-summary dashboard endpoint for platform ops.",
+      "routes": [
+        "GET /api/v1/platform/seasons",
+        "GET /api/v1/platform/seasons/{season}"
+      ]
+    }
+  }
+}

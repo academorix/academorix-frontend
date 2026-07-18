@@ -1,0 +1,46 @@
+{
+  "id": "staff.employment-status-chip",
+  "title": "Employment status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for Staff.employment_status. Values: pre_hire (blue) / active (green) / on_leave (yellow) / suspended (orange) / offboarding (grey) / offboarded (grey with strikethrough).",
+  "props": {
+    "status": {
+      "type": "string",
+      "enum": ["pre_hire", "active", "on_leave", "suspended", "offboarding", "offboarded"],
+      "required": true
+    },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showIcon": { "type": "boolean", "default": true }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "props.status === 'active' ? 'success' : (props.status === 'pre_hire' ? 'info' : (props.status === 'on_leave' ? 'warning' : (props.status === 'suspended' ? 'danger' : 'neutral')))"
+        },
+        "size": { "$ref": "props.size" },
+        "className": {
+          "$expr": "props.status === 'offboarded' ? 'line-through opacity-70' : ''"
+        }
+      },
+      "props": {
+        "leadingIcon": {
+          "$expr": "props.showIcon ? (props.status === 'active' ? 'check-circle' : (props.status === 'pre_hire' ? 'clock' : (props.status === 'on_leave' ? 'pause-circle' : (props.status === 'suspended' ? 'no-symbol' : (props.status === 'offboarding' ? 'arrow-right-circle' : 'archive-box'))))) : null"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "props.status === 'active' ? 'Active' : (props.status === 'pre_hire' ? 'Pre-hire' : (props.status === 'on_leave' ? 'On leave' : (props.status === 'suspended' ? 'Suspended' : (props.status === 'offboarding' ? 'Offboarding' : 'Offboarded'))))"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

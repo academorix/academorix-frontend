@@ -1,0 +1,82 @@
+{
+  "id": "academorix://modules/season/rules",
+  "$version": 1,
+  "title": "season — validation rules",
+  "description": "Seven custom Laravel validation rules published by SeasonServiceProvider::boot() so any FormRequest / Data class can validate Season-adjacent fields. Named after their intent so they read cleanly at the composition site.",
+  "namespace": "Academorix\\Sports\\Season\\Rules",
+  "rules": [
+    {
+      "name": "valid_hex_color",
+      "class": "Academorix\\Sports\\Season\\Rules\\ValidHexColor",
+      "signature": "valid_hex_color",
+      "description": "Ensures the value is a hex color literal (`#RRGGBB` or `#RGB`, case-insensitive). Used on Season.primary_color. Same-shape rule as the sibling in branch.rules — both share the underlying HexColorValidator utility from foundation.",
+      "params": [],
+      "example_field_rule": "primary_color: ['nullable', 'valid_hex_color']",
+      "error_message_key": "season::validation.valid_hex_color",
+      "default_message": "The :attribute must be a hex color like #RRGGBB or #RGB."
+    },
+    {
+      "name": "valid_date_range",
+      "class": "Academorix\\Sports\\Season\\Rules\\ValidDateRange",
+      "signature": "valid_date_range:min_days,max_days",
+      "description": "Ensures `end_date > start_date` with an optional minimum + maximum span in days. Used at the Data-class layer (SeasonCreateData) to check start_date + end_date fields together. Field-level rule; must be attached to the composite object, not a single field.",
+      "params": [
+        { "name": "min_days", "type": "int", "default": 1, "description": "Minimum span in days (default 1 — a Season must span at least one day)." },
+        { "name": "max_days", "type": "int", "default": 3653, "description": "Maximum span in days (default 3653 = 10 years — an upper bound to catch mis-parsed dates)." }
+      ],
+      "example_field_rule": "rule('valid_date_range:1,3653')",
+      "error_message_key": "season::validation.valid_date_range",
+      "default_message": "The :attribute's date range must be between :min_days and :max_days days."
+    },
+    {
+      "name": "valid_registration_window",
+      "class": "Academorix\\Sports\\Season\\Rules\\ValidRegistrationWindow",
+      "signature": "valid_registration_window",
+      "description": "Composite rule ensuring the registration timestamps form a coherent window: `registration_opens_at < registration_closes_at`, `registration_closes_at <= start_date + max_grace_days` (default 30), `late_registration_ends_at > registration_closes_at` (when set), `late_registration_ends_at <= end_date`. Field-level rule attached to the SeasonCreateData / SeasonUpdateData class-level.",
+      "params": [],
+      "example_field_rule": "rule('valid_registration_window')",
+      "error_message_key": "season::validation.valid_registration_window",
+      "default_message": "The registration window is invalid: opens must precede closes, closes must land within :max_grace_days of start, and the late window (when set) must open after closes and end by end_date."
+    },
+    {
+      "name": "valid_playoff_window",
+      "class": "Academorix\\Sports\\Season\\Rules\\ValidPlayoffWindow",
+      "signature": "valid_playoff_window",
+      "description": "Composite rule ensuring the playoff timestamps are internally consistent: when `has_playoffs=true`, `playoff_starts_at` MUST be set + fall within [start_date, end_date]; `playoff_ends_at` (when set) MUST fall in [playoff_starts_at, end_date]. Field-level rule.",
+      "params": [],
+      "example_field_rule": "rule('valid_playoff_window')",
+      "error_message_key": "season::validation.valid_playoff_window",
+      "default_message": "The playoff window is invalid: has_playoffs requires playoff_starts_at, and both playoff dates must fall within the season's date range."
+    },
+    {
+      "name": "valid_season_scoping",
+      "class": "Academorix\\Sports\\Season\\Rules\\ValidSeasonScoping",
+      "signature": "valid_season_scoping",
+      "description": "Composite rule ensuring the scoping tuple (tenant_id, organization_id?, branch_id?) is coherent: when branch_id is set, organization_id must be set; branch.organization_id must match organization_id; branch.tenant_id + organization.tenant_id must match tenant_id. Field-level rule.",
+      "params": [],
+      "example_field_rule": "rule('valid_season_scoping')",
+      "error_message_key": "season::validation.valid_season_scoping",
+      "default_message": "The scoping is invalid: a branch-scoped season must include the branch's organization, and both must belong to the same tenant."
+    },
+    {
+      "name": "one_current_per_scope_tuple",
+      "class": "Academorix\\Sports\\Season\\Rules\\OneCurrentPerScopeTuple",
+      "signature": "one_current_per_scope_tuple",
+      "description": "Ensures the caller isn't attempting to set is_current=true when another Season with the same (tenant_id, organization_id, branch_id, sport_key) tuple already has is_current=true — the SAME rule the observer enforces, exposed as a validation rule so form-level errors surface before the transaction (better UX). The observer stays as the enforcement floor.",
+      "params": [],
+      "example_field_rule": "is_current: ['boolean', 'one_current_per_scope_tuple']",
+      "error_message_key": "season::validation.one_current_per_scope_tuple",
+      "default_message": "Another Season in this scope tuple is already marked current. Setting this Season current will demote the other automatically — confirm the operation on the review screen."
+    },
+    {
+      "name": "valid_sport_key",
+      "class": "Academorix\\Sports\\Season\\Rules\\ValidSportKey",
+      "signature": "valid_sport_key",
+      "description": "Ensures sport_key matches `^[a-z][a-z0-9_]*$` (lowercase, alphanumeric + underscore, starts with a letter). Wave 3a treats sport_key as a free-text discriminator with format validation only. Wave 3c will introduce a sport registry + this rule will additionally check the key against `sports.is_active=true`.",
+      "params": [],
+      "example_field_rule": "sport_key: ['nullable', 'valid_sport_key']",
+      "error_message_key": "season::validation.valid_sport_key",
+      "default_message": "The :attribute must match the pattern lowercase-letter followed by lowercase-alphanumeric-or-underscore (e.g. football, basketball, swimming_freestyle)."
+    }
+  ]
+}

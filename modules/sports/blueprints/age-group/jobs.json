@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/age-group/jobs",
+  "$version": 1,
+  "title": "age-group — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Sports\\AgeGroup\\Jobs\\SeedDefaultAgeGroupsForTenantJob",
+      "queue": "notifications",
+      "purpose": "Dispatched on tenancy::TenantProvisioned. Creates the tenant's default 10-entry age-group catalog from `data/default-age-groups.json`. Idempotent — a second dispatch for the same tenant no-ops.",
+      "steps": [
+        "Resolve tenant + verify no existing seeded AgeGroup rows (idempotency check by (tenant_id, is_seeded=true)).",
+        "Parse `data/default-age-groups.json` — 10 entries: U6, U8, U10, U12, U14, U16, U18, Adult (is_default=true), Senior, Masters.",
+        "For each entry: invoke AgeGroupProvisioner with { tenant, is_seeded=true, sport_key=null, organization_id=null, ...entry }.",
+        "The AgeGroupProvisioner skips age_group_slot consumption for seeded rows (is_seeded=true bypass).",
+        "Fire AgeGroupCatalogSeeded with { tenant_id, age_group_ids: [10 IDs], default_age_group_id: <Adult's ID>, seeded_by: 'tenant_provisioning', catalog_version: <int from data file> }.",
+        "Do NOT fire per-row AgeGroupCreatedNotification — the catalog-seed notification is a single roll-up event (silent by default since it's a system invariant, not a purchase)."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "(tenant_id)",
+      "tries": 5,
+      "backoff": [10, 60, 300, 1200, 3600],
+      "note": "Runs on the notifications queue because it's part of the tenant-onboarding path — its latency is user-visible (the tenant admin lands in a UI that expects the age-group dropdown to have entries)."
+    },
+    {
+      "class": "Academorix\\Sports\\AgeGroup\\Jobs\\ReconcileAgeGroupDefaultInvariantJob",
+      "queue": "low",
+      "purpose": "Nightly at 03:30 UTC. Verifies the invariant `every (tenant, organization, sport_key) tuple with at least one active AgeGroup has EXACTLY ONE row with is_default=true`. Alerts on drift; when configured, auto-heals by promoting the oldest active row to default.",
+      "steps": [
+        "SELECT tenant_id, organization_id, sport_key, COUNT(*) FILTER (WHERE is_default=true) AS default_count FROM age_groups WHERE deleted_at IS NULL GROUP BY tenant_id, organization_id, sport_key HAVING default_count != 1.",
+        "For each drifted tuple: log a telemetry counter (`academorix.age_group.default_invariant_drift.count`) + fire the alert per `config('age_group.reconciliation.alert_on_drift')`.",
+        "When `config('age_group.reconciliation.auto_heal')` = true:",
+        "  a. default_count = 0 AND >= 1 active row exists → promote the oldest active AgeGroup in the tuple to is_default=true.",
+        "  b. default_count = 0 AND no active row exists → skip (the tuple is empty; no invariant to hold).",
+        "  c. default_count > 1 → keep the newest is_default row; flip the older ones to is_default=false. Fire AgeGroupDefaultChanged for each demotion.",
+        "Write a reconciliation report row to `audit_events`."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2,
+      "note": "Auto-heal is off by default even in production — surface + acknowledge before healing. Turn on when ops has built confidence in the drift patterns."
+    },
+    {
+      "class": "Academorix\\Sports\\AgeGroup\\Jobs\\PurgeArchivedAgeGroupsJob",
+      "queue": "low",
+      "purpose": "Daily at 04:30 UTC. Hard-deletes soft-deleted (archived) AgeGroup rows past `age_group.retention.archived_age_groups_retention_days` (default 1095 days — 3 years to match rolling youth-development cohort windows) IF no inbound FK row still references them.",
+      "steps": [
+        "SELECT id, tenant_id FROM age_groups WHERE deleted_at IS NOT NULL AND deleted_at < NOW() - INTERVAL 'age_group.retention.archived_age_groups_retention_days days'.",
+        "For each: verify NO inbound row references (teams.age_group_id, event_divisions.age_group_id, team_registrations.eligibility_age_group_id). AthleteEnrollment.age_group_snapshot_id does NOT count — snapshots are self-contained.",
+        "When clear: hard-delete the row + fire AgeGroupDeleted with mode='hard'.",
+        "The audit row survives per minor-safeguarding retention (7 years — the audit outlives the AgeGroup)."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2,
+      "note": "Conservative — even at 1095 days, a single lingering inbound FK keeps the row alive indefinitely. Explicit tenant-admin action via `age-group:archive --force` bypasses the FK check (requires ops sign-off) but does NOT delete referring rows — it leaves them pointing at a now-archived AgeGroup which they survive for the retention window."
+    }
+  ]
+}

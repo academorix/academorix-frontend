@@ -1,0 +1,128 @@
+{
+  "id": "academorix://modules/teams/compliance",
+  "$version": 1,
+  "title": "teams — compliance evidence",
+  "description": "Teams is child-safety-critical (rosters commonly contain minors) + anti-discrimination-sensitive (trial rejections must be defensible) + financial-record-adjacent (trial fees + Wave 4 team-related invoicing). SOC 2 CC6.3, GDPR minimisation on trialist PII, WCAG 2.2 AA on the roster + trial-decision surfaces, anti-discrimination retention on rejected trials (3 years for defence against future claims).",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "Anonymous trialist profile fields (trialist_first_name + last_name + phone + email + dob) captured at trial-scheduling for operational necessity (coach follow-up, safety incidents, age-eligibility verification). When the trial is REJECTED or NO_SHOW, the profile is redacted 90 days post-decision unless a live TeamMember row references the same person. When CONVERTED, the profile migrates into the resulting Athlete/User row and the trialist profile is cleared."
+        },
+        {
+          "article": "Art. 6(1)(b)",
+          "principle": "lawful basis: contract",
+          "evidence": "Trial scheduling implies a contract of assessment. Team roster membership implies a contract of participation. No separate consent flag required for team-membership PII beyond the ordinary tenant-signup consent."
+        },
+        {
+          "article": "Art. 8",
+          "principle": "children's consent",
+          "evidence": "When team.min_age < 18 OR trialist_dob < 18 years ago, roster + trial writes require verified guardian consent per the child-safety module (Wave 3 sports)."
+        },
+        {
+          "article": "Art. 15",
+          "principle": "right of access",
+          "evidence": "Members see their own roster history via /api/v1/teams/{team}/members?filter[member_id]=self. Trialists (registered users) see their own trials via /api/v1/teams/{team}/trials?filter[trialist_id]=self."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "TenantErased cascades hard-delete of every teams / team_members / team_trials / event_teams row via FK CASCADE. Audit trail rows survive per financial + anti-discrimination retention. Personal-user erasure (member requests deletion) redacts their personal fields in place but preserves the roster row's structural fact (team X had N members in period Y) for statistical + compliance purposes — same pattern as the User module's redaction."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "Trial rejection reasons live ONLY in decision_notes on the row (audited) — never propagated to analytics, activity feed, or broadcast payloads. Reason: exposure aggregates discriminatory-inference risk. The team member's `notes` field is staff-visible only; never surfaced in wire projections to the member themselves."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.3",
+          "principle": "restricted access + segregation of duties",
+          "evidence": "team-members.change-role + team-members.mark-graduated + trial.convert + trial.reject are seeded to coach + branch_manager + admin + owner only. Reception cannot approve trials or change roles. Platform.teams.force-close is ops-only + emits a notification to the tenant admin (segregation)."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "restrict data transmission",
+          "evidence": "All /api/v1/teams routes are TLS-only + require auth:sanctum + tenant.resolve + entitlement.enforce:teams. Platform routes additionally require auth:platform_admin."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "TeamMemberInvariantViolation event is a P1 signal + tracked via academorix.teams.member_invariant.violations counter (should stay at 0). The reconciler runs nightly."
+        },
+        {
+          "criterion": "CC9.1",
+          "principle": "risk mitigation",
+          "evidence": "The atomic trial-to-member conversion inside a single DB transaction is the mitigation for the partial-commit risk. The nightly reconciler catches drift. TeamCoachChanged fires a critical-severity audit + notification when the team includes minors, mitigating unauthorised-coach-swap risk."
+        }
+      ]
+    },
+    "anti_discrimination": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "Retention of trial-rejection defence records",
+          "principle": "3-year hold on rejected trials",
+          "evidence": "TeamTrial rows with status='rejected' are retained 3 years (per retention.json). decision_notes captures the coach's rationale. Analytics NEVER carry rejection reasons. In the event of a discrimination claim, the audit trail + decision_notes are the defence record."
+        },
+        {
+          "requirement": "Age + gender eligibility transparency",
+          "principle": "no invisible rejection",
+          "evidence": "AgeEligibilityGate + GenderEligibilityGate refuse loudly with clear error codes (TEAM_AGE_INELIGIBLE 422, TEAM_GENDER_INELIGIBLE 422). Members see the reason in the response. No silent filtering."
+        }
+      ]
+    },
+    "child_safety": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "Coach change notification chain",
+          "principle": "adults working with minors must be tracked",
+          "evidence": "TeamCoachChanged fires a critical-severity audit row + notification to team.branch's admin + safeguarding lead when team.min_age < 18 OR team.max_age < 18. Notification cannot be opted out. Audit retention 7 years."
+        },
+        {
+          "requirement": "Adult-only team gating",
+          "principle": "no accidental mixed rosters",
+          "evidence": "Team.gender_category='mixed' + min_age < 18 requires an explicit tenant configuration (settings.teams.allow_mixed_youth) — off by default. Attempted mixed-youth writes without the setting fail with a 402."
+        }
+      ]
+    },
+    "wcag_2_2_aa": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "1.4.3 (Contrast Minimum)",
+          "principle": "readable text",
+          "evidence": "Roster grid + trial-pipeline board + member-role chip use HeroUI's design tokens which meet AA contrast by default. Status chips (active / paused / injured / suspended / archived) do not rely on colour alone — each carries a text label + icon."
+        },
+        {
+          "criterion": "1.4.1 (Use of Color)",
+          "principle": "color is not the only visual means",
+          "evidence": "Team.primary_color / secondary_color (jersey colours) are decorative only. Team identity in every UI surface uses name + branch + coach text, not jersey colour."
+        },
+        {
+          "criterion": "2.1.1 (Keyboard)",
+          "principle": "keyboard operable",
+          "evidence": "Roster + trial forms use HeroUI ComboBox + Table semantics — fully keyboard-navigable."
+        },
+        {
+          "criterion": "3.3.4 (Error Prevention)",
+          "principle": "reversible or confirmed",
+          "evidence": "Trial-reject action opens a confirmation modal with the decision_notes field before commit. Team-archive requires two-step confirm when active members exist."
+        },
+        {
+          "criterion": "4.1.3 (Status Messages)",
+          "principle": "aria-live regions",
+          "evidence": "Trial-convert response uses aria-live=polite. Capacity-exceeded refusals return an inline error at the roster-add form."
+        }
+      ]
+    }
+  }
+}

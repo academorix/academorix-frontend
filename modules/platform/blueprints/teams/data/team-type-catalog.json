@@ -1,0 +1,84 @@
+{
+  "$version": 1,
+  "title": "Team type catalogue",
+  "description": "Sport-agnostic classification for teams. Each `team_type` value is a broad category chosen by the tenant's business shape. Not a hard constraint — the observer accepts any of the enum values on any tenant. The catalogue exists to inform tenant onboarding + SDUI form defaults.",
+  "types": [
+    {
+      "team_type": "squad",
+      "display_name": "Squad",
+      "description": "Competitive sports team. Roster centred on athletes; coach + assistant_coach + team_manager staff roles. Common in academies, clubs, federations.",
+      "typical_business_types": ["Academy", "Club", "Federation"],
+      "typical_min_age": 6,
+      "typical_max_age": null,
+      "typical_capacity": 25,
+      "typical_gender_category": "any",
+      "example_sport_keys": ["football", "basketball", "swimming", "tennis", "rugby"],
+      "example_names": ["Under-14 Boys Squad", "Senior Women's Team", "First XI"]
+    },
+    {
+      "team_type": "class",
+      "display_name": "Class",
+      "description": "Recurring instructional session for adults. Roster centred on users; coach + assistant_coach roles. Common in gyms, sports centres, fitness studios.",
+      "typical_business_types": ["Gym", "SportsCenter"],
+      "typical_min_age": 18,
+      "typical_max_age": null,
+      "typical_capacity": 20,
+      "typical_gender_category": "any",
+      "example_sport_keys": ["yoga", "pilates", "spinning", "boxing", "aerobics", "swimming"],
+      "example_names": ["Monday 7am Spin Class", "Vinyasa Yoga", "HIIT Circuit"]
+    },
+    {
+      "team_type": "cohort",
+      "display_name": "Cohort",
+      "description": "Academic or seasonal group. Common in schools + academies that ship an academic curriculum alongside sports.",
+      "typical_business_types": ["School", "Academy"],
+      "typical_min_age": 5,
+      "typical_max_age": 18,
+      "typical_capacity": 30,
+      "typical_gender_category": "any",
+      "example_sport_keys": [],
+      "example_names": ["Grade 7", "Year 10", "Class of 2028", "Summer 2026 Intake"]
+    },
+    {
+      "team_type": "group",
+      "display_name": "Group",
+      "description": "General-purpose grouping. Use when nothing more specific fits. Catch-all category.",
+      "typical_business_types": ["Academy", "SportsCenter", "Gym", "School", "Club"],
+      "typical_min_age": null,
+      "typical_max_age": null,
+      "typical_capacity": 15,
+      "typical_gender_category": "any",
+      "example_sport_keys": [],
+      "example_names": ["Beginners Group", "Support Group", "Study Group"]
+    },
+    {
+      "team_type": "crew",
+      "display_name": "Crew",
+      "description": "Informal or recurring social group. Not competitively rostered. Common in adult community sports + informal training bands.",
+      "typical_business_types": ["SportsCenter", "Club"],
+      "typical_min_age": 18,
+      "typical_max_age": null,
+      "typical_capacity": 12,
+      "typical_gender_category": "any",
+      "example_sport_keys": ["running", "cycling", "hiking", "sailing"],
+      "example_names": ["Sunday Ride Crew", "Trail Runners", "Rowing Crew Alpha"]
+    },
+    {
+      "team_type": "other",
+      "display_name": "Other",
+      "description": "Fallback when the tenant's shape doesn't fit any of the above.",
+      "typical_business_types": [],
+      "typical_min_age": null,
+      "typical_max_age": null,
+      "typical_capacity": null,
+      "typical_gender_category": null,
+      "example_sport_keys": [],
+      "example_names": []
+    }
+  ],
+  "notes": [
+    "The `team_type` value is used for filtering + defaults + display. It is NOT a hard constraint — the observer accepts any enum value on any tenant.",
+    "New business types shipping in future waves may prefer to extend this catalogue rather than reuse a mismatched value. Extension = adding an enum value on the TeamType cast + a row here + a i18n label.",
+    "The `typical_*` fields inform SDUI form defaults on the create-team wizard — they're not enforced."
+  ]
+}

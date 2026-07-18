@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/season/notifications",
+  "$version": 1,
+  "title": "season — notification classes + categories",
+  "namespace": "Academorix\\Sports\\Season\\Notifications",
+  "notifications": [
+    "SeasonRegistrationOpeningNotification",
+    "SeasonRegistrationClosingNotification",
+    "SeasonStartingSoonNotification",
+    "SeasonCompletedNotification",
+    "SeasonCurrentChangedNotification",
+    "SeasonDatesShiftedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "season.registration_opening",
+      "display_name": "Registration opening",
+      "description": "Multi-shot reminder to tenant members that a Season's registration is about to open. Fires T-24h + T-1h before registration_opens_at. Audience filtered to eligible members (when the Season has sport_key set, only members whose profile matches — Wave 3 audience filter; Wave 3a fires to every tenant member). Skipped for members who already enrolled to a matching Season in the same tuple.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "season.registration_closing",
+      "display_name": "Registration closing",
+      "description": "Multi-shot reminder that a Season's registration is about to close. Fires T-48h + T-24h + T-2h before registration_closes_at. Audience: tenant members who have NOT yet enrolled to this Season (Wave 3 subscription filter — Wave 3a assumes all-member fanout with a client-side dismiss). Skipped when late_registration_ends_at exists (the T-2h notification is redundant with the late-window UX).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "season.starting_soon",
+      "display_name": "Season starting soon",
+      "description": "Fires T-48h before Season.start_date. Audience: enrolled athletes + coaches referencing this Season (Wave 3 enrollment filter — Wave 3a fanout to every tenant member with a client-side dismiss). Includes reminder of first-session date + venue.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "season.completed",
+      "display_name": "Season completed",
+      "description": "Fires on SeasonCompleted. Audience: enrolled athletes referencing this Season. Season-summary notification — includes final enrollment count, standout stats (Wave 3 stats module integration), and thank-you copy. Opt-in because it's non-actionable (past events).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": false,
+      "is_system": true
+    },
+    {
+      "slug": "season.current_changed",
+      "display_name": "Current season changed",
+      "description": "Sent to tenant owner + admin when the is_current flag flips on a Season within a scope tuple. Cannot opt out — year-over-year reporting queries pivot on the current season; admins MUST know when the reporting frame shifts. Includes the outgoing + incoming Season names + the scope tuple.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "season.dates_shifted",
+      "display_name": "Season dates shifted",
+      "description": "Sent to enrolled athletes + coaches when a Season with status IN (in_progress, playoffs) has its start_date or end_date changed. Cannot opt out — the shift affects their bookings + coach schedules. Includes the before + after date range + a link to reschedule any affected sessions.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

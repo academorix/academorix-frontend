@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/teams/subprocessors",
+  "$version": 1,
+  "title": "teams — subprocessors",
+  "description": "The Teams module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. The Notifications module dispatches team + trial + coach-change notifications via its own subprocessors (mail, SMS, push); those are declared in notifications::subprocessors.json. The Finance module (Wave 4) will engage payment processors for trial fees + event registration fees. This file lists ZERO active subprocessors to be explicit about the module's boundary — team state is fully first-party.",
+  "subprocessors": [],
+  "downstream_subprocessors_referenced": [
+    {
+      "module": "notifications",
+      "reference": "notifications::subprocessors.json",
+      "used_for": "Dispatching TeamMemberJoined / TeamMemberLeft / TeamRegistrationOpening / TeamScheduleChanged / TrialScheduled / TrialDecision / TeamCoachChanged notifications via mail / SMS / push channels."
+    },
+    {
+      "module": "finance",
+      "reference": "finance::subprocessors.json (Wave 4)",
+      "used_for": "Payment processing for trial fees (TeamTrial.price_amount_cents) + Wave 3+ event registration fees (EventTeam-associated invoicing). Stripe / Paddle / Adyen depending on region."
+    }
+  ],
+  "notes": [
+    "This file exists deliberately even with an empty subprocessors array. The GDPR Art. 30 record of processing activities requires per-module subprocessor lists; an empty list is the correct declaration for a module that engages none directly.",
+    "If a future Wave introduces a subprocessor into this module (e.g. an AI-driven talent-evaluation service that receives trial data), add it here + update compliance.json Art. 28 evidence + refresh the tenant-facing subprocessor list."
+  ]
+}

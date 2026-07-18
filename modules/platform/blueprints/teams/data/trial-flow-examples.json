@@ -1,0 +1,110 @@
+{
+  "$version": 1,
+  "title": "Trial workflow — narrative examples",
+  "description": "Concrete examples of the trial lifecycle for each trial_type + trialist_type combination. Consumed by SDUI documentation panels + test fixtures. Illustrates the atomic conversion path + rejection defence-record path + anonymous PII redaction schedule.",
+  "state_machine": {
+    "states": ["scheduled", "in_progress", "completed", "converted", "rejected", "no_show", "cancelled"],
+    "transitions": {
+      "created": "scheduled",
+      "scheduled_to_in_progress": "coach starts the first session",
+      "in_progress_to_completed": "coach explicitly completes OR CloseExpiredTrialsJob (ends_at + 24h)",
+      "completed_to_converted": "coach's decision — atomic conversion (TeamMember row created same transaction)",
+      "completed_to_rejected": "coach's decision — decision_notes required",
+      "scheduled_or_in_progress_to_no_show": "trialist didn't turn up",
+      "scheduled_or_in_progress_to_cancelled": "voluntary cancel by trialist or admin"
+    },
+    "terminal_states": ["converted", "rejected", "no_show", "cancelled"]
+  },
+  "examples": [
+    {
+      "id": "individual_trial_athlete_converted",
+      "name": "Individual trial — athlete → converted",
+      "narrative": [
+        "2026-06-01 09:00 — Parent schedules a trial for Athlete Aisha (age 9). trialist_type='athlete', trialist_id='ath_...'. trial_type='individual', session_count=1, starts_at=2026-06-08T16:00, ends_at=2026-06-08T17:00.",
+        "TrialScheduled fires. NotifyTrialistPreTrialJob scheduled at 24h + 1h.",
+        "2026-06-07 16:00 — 24h reminder dispatched.",
+        "2026-06-08 15:00 — 1h reminder dispatched.",
+        "2026-06-08 16:00 — Coach marks status='in_progress'. Trial session runs.",
+        "2026-06-08 17:00 — Coach marks status='completed' + writes evaluation_notes.",
+        "2026-06-09 10:00 — Coach clicks convert. Body: { notes: 'Excellent basics + attitude. Add to U-10 squad.', role_on_team: 'player', jersey_number: 12 }.",
+        "TrialObserver runs the atomic conversion INSIDE a transaction: UPDATE team_trials SET status='converted' + INSERT team_members (member_type='athlete', member_id='ath_...').",
+        "TrialConvertedToMember + TeamMemberJoined fire in the same afterCommit.",
+        "TrialDecisionNotification (accepted variant) dispatched to Aisha's parent."
+      ]
+    },
+    {
+      "id": "individual_trial_athlete_rejected",
+      "name": "Individual trial — athlete → rejected",
+      "narrative": [
+        "Same setup as above.",
+        "2026-06-09 10:00 — Coach clicks reject. Body: { notes: 'Not meeting the age-appropriate skill benchmarks for U-10 competition. Recommend recreational-tier gym program instead.' }.",
+        "TrialObserver refuses if decision_notes is empty (returns TRIAL_DECISION_NOTES_REQUIRED).",
+        "status → rejected. TrialRejected event fires.",
+        "Audit row written with 3-year retention (anti-discrimination defence record).",
+        "TrialDecisionNotification (rejected variant) dispatched — fixed template, does NOT surface decision_notes.",
+        "Analytics fires 'Trial Rejected' with team_id + trial_type — NO reason label."
+      ]
+    },
+    {
+      "id": "multi_session_trial_user_converted",
+      "name": "Multi-session trial — adult user (gym class) → converted",
+      "narrative": [
+        "2026-07-01 — User Michael Torres schedules a multi-session trial for a Boxing class. trial_type='multi_session', session_count=3, starts_at=2026-07-06, ends_at=2026-07-13.",
+        "Sessions run on the 6th, 8th, 10th, 13th. Coach transitions to in_progress after session 1, completed after session 3.",
+        "2026-07-15 — Coach converts. TeamMember created (member_type='user', member_id='usr_...', role_on_team='player'). Michael joins the recurring class."
+      ]
+    },
+    {
+      "id": "one_day_trial_anonymous_converted",
+      "name": "One-day drop-in trial — anonymous walk-in → converted",
+      "narrative": [
+        "2026-07-20 15:00 — A parent walks in with their 8-year-old asking about swimming lessons. Reception schedules a trial: trialist_type='anonymous', trialist_first_name='James', trialist_last_name='Wilson', trialist_phone='+14155551234', trialist_dob='2018-04-12'. trial_type='one_day', session_count=1, starts_at=2026-07-20T16:00, ends_at=2026-07-20T17:00.",
+        "TrialObserver refuses if trialist_first_name or trialist_phone is missing (data-quality mandate).",
+        "Coach runs the trial. Marks completed at 17:00 with positive evaluation_notes.",
+        "2026-07-20 18:00 — Admin creates an Athlete + User account for James (offline flow — Wave 3 Sports module owns Athlete creation). Then invokes trial:convert with the newly-created athlete_id.",
+        "Trial converts. TeamMember created. Anonymous PII fields (trialist_first_name/last_name/phone/dob) migrated into the Athlete row; cleared on the trial."
+      ]
+    },
+    {
+      "id": "anonymous_trial_rejected_redaction",
+      "name": "Anonymous trial — rejected → 90-day PII redaction",
+      "narrative": [
+        "Anonymous trial captured at 2026-06-01 for a parent inquiring on behalf of a child. trial_type='one_day', trialist_dob='2015-03-14'.",
+        "Coach rejects with decision_notes. Trial in rejected state, decided_at=2026-06-08.",
+        "2026-09-06 (90 days later) — RedactAnonymousTrialistProfileJob sweep. Field-level redaction: trialist_first_name = '[REDACTED]', trialist_last_name = '[REDACTED]', trialist_phone = '[REDACTED]', trialist_email = '[REDACTED]', trialist_dob = null.",
+        "The trial row survives with decision_notes intact (anti-discrimination defence). Only the anonymous PII sub-fields are redacted per GDPR Art. 5(1)(c).",
+        "3 years after decided_at — retention pipeline hard-deletes the row entirely."
+      ]
+    },
+    {
+      "id": "trial_no_show",
+      "name": "Trial → no-show",
+      "narrative": [
+        "Trial scheduled for 2026-06-20 15:00. Trialist doesn't turn up.",
+        "2026-06-20 15:30 — Coach marks status='no_show'. TrialNoShow fires.",
+        "Retention: 1 year (shorter than rejected — no decision was actually made).",
+        "PII redaction: 90 days post-decided_at for anonymous trialists."
+      ]
+    },
+    {
+      "id": "trial_cancelled_by_trialist",
+      "name": "Trial → cancelled by trialist",
+      "narrative": [
+        "Trial scheduled for 2026-07-05 10:00. Trialist calls in 48h before to cancel.",
+        "2026-07-03 10:00 — Reception cancels the trial. TrialCancelled fires with cancelled_by=receptionist + cancellation_reason='trialist_requested'.",
+        "Retention: 1 year."
+      ]
+    },
+    {
+      "id": "atomic_conversion_race",
+      "name": "Atomic conversion race — trial converts but capacity fills first",
+      "narrative": [
+        "Trial completes. Team has capacity=20; 19 active roster rows.",
+        "Two coaches simultaneously click convert on two different completed trials for the same team.",
+        "First convert: transaction acquires row-lock, inserts TeamMember row 20. Team is now at capacity.",
+        "Second convert: transaction acquires row-lock on the OTHER trial, tries to insert TeamMember row 21. CapacityGate refuses. WHOLE TRANSACTION ROLLS BACK.",
+        "Trial 2 stays in status='completed' (not 'converted'). Coach 2 sees TRIAL_CONVERSION_CAPACITY_EXCEEDED (402) with 'retry after freeing a slot' guidance."
+      ]
+    }
+  ]
+}

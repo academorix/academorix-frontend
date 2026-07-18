@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/staff/entitlements",
+  "$version": 1,
+  "title": "staff — declared entitlements",
+  "description": "Six entitlement keys. `staff_slot` + `coach_slot` cap headcount per tenant per tier. `staff_compensation_tracking` is an OPT-IN boolean (off by default even on Enterprise — tenants explicitly enable HR-tier features so we don't accidentally collect regulated_financial data). `staff_org_chart` gates the reports_to hierarchy (Enterprise-only — mid-market tenants don't need reporting chains). `coach_certifications_verified` gates HR-verified certifications for compliance-sensitive tenants (medical, insurance, government contracts). `coach_rating_display` toggles the public rating badge on the tenant website.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "staff_slot",
+      "kind": "slot",
+      "unit": "staff",
+      "defaultsByPlan": { "small": 5, "medium": 50, "enterprise": null },
+      "description": "How many active Staff rows a tenant can have. Small: 5 (owner + 4 employees — small gym / studio profile). Medium: 50 (typical academy). Enterprise: unlimited (null cap). Consumed on Staff.creating + on employment_status offboarded → active (rehire). Released on employment_status → offboarded + on soft-delete.",
+      "enforcedBy": [
+        "StaffObserver.creating consumes 1 unit via EntitlementGate::consume('staff_slot')",
+        "StaffObserver.updating (employment_status offboarded→active) consumes 1 unit",
+        "StaffObserver.updating (employment_status →offboarded) releases 1 unit via EntitlementGate::release('staff_slot')",
+        "StaffObserver.deleted (soft-delete) is a no-op on entitlement (release already fired on the transition)"
+      ]
+    },
+    {
+      "key": "coach_slot",
+      "kind": "slot",
+      "unit": "coaches",
+      "defaultsByPlan": { "small": 1, "medium": 10, "enterprise": null },
+      "description": "How many active Coach rows a tenant can have. Small: 1 (owner-coach — the classic single-instructor micro-gym). Medium: 10. Enterprise: unlimited. Consumed on Coach.creating; released on Coach.status → archived + Coach soft-delete.",
+      "enforcedBy": [
+        "CoachObserver.creating consumes 1 unit via EntitlementGate::consume('coach_slot')",
+        "CoachObserver.updating (status → archived) releases 1 unit",
+        "CoachObserver.deleted (soft-delete) is a no-op (release already fired)"
+      ]
+    },
+    {
+      "key": "staff_compensation_tracking",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 0 },
+      "description": "Opt-in gate for the compensation_type / compensation_amount_cents / compensation_currency / pay_frequency columns. OFF BY DEFAULT on every tier — tenants explicitly enable this via the HR settings surface. When off, the columns MUST be NULL; the observer refuses writes. When on, the columns become writable but still require `staff.manage.compensation` permission on every write path (permission is separate from entitlement — the gate says the FEATURE is available; the permission says WHO can use it).",
+      "enforcedBy": [
+        "StaffObserver.creating refuses compensation_* writes when gate is off",
+        "StaffObserver.updating refuses compensation_* writes when gate is off",
+        "SDUI compensation edit surface hidden when features array does not include 'staff.compensation'"
+      ],
+      "compliance_note": "This gate exists so tenants that don't track compensation in Academorix (they use an external HRIS) never accidentally have regulated_financial data collected. Turning the gate ON is a compliance-relevant tenant decision — the ops team logs the toggle in the compliance audit trail."
+    },
+    {
+      "key": "staff_org_chart",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Enables the reports_to_staff_id column write path + the /staff/{staff}/direct-reports endpoint + the org-chart visualisation in the SDUI. Small + Medium tenants have flat org structures; the entitlement gates the hierarchy feature entirely.",
+      "enforcedBy": [
+        "StaffObserver.creating refuses reports_to_staff_id writes when gate is off",
+        "StaffObserver.updating refuses reports_to_staff_id writes when gate is off",
+        "OrgChartResolver returns empty when gate is off",
+        "SDUI org-chart surface hidden when features array does not include 'staff.org_chart'"
+      ]
+    },
+    {
+      "key": "coach_certifications_verified",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 0 },
+      "description": "Enterprise-only opt-in. Enables the HR-verified certification workflow: new coach certifications land in `pending_verification` state; HR must upload the signed document (via storage::File) + invoke the verify action; only then does the certification enter `verified` state (surfaced with a badge on the coach's public profile). Compliance-sensitive tenants (medical rehab clinics, government-contract sports academies) enable this; typical tenants don't need it.",
+      "enforcedBy": [
+        "CoachObserver.updating on certifications: when gate is on, new entries default to `pending_verification`",
+        "CoachController@verifyCertification refuses when gate is off",
+        "SDUI verify-certification button hidden when features array does not include 'coach.certifications_verified'"
+      ]
+    },
+    {
+      "key": "coach_rating_display",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Toggles the public rating badge on the tenant's coach directory. When off, coach.rating is still computed by AggregateCoachRatingsJob (for internal HR review) but never rendered on public-facing surfaces. Small tier defaults off because owner-coaches don't self-rate; Medium+ defaults on.",
+      "enforcedBy": [
+        "CoachController@publicShow strips rating from the response envelope when the gate is off",
+        "SDUI coach-rating widget hidden when features array does not include 'coach.rating_display'"
+      ]
+    }
+  ]
+}

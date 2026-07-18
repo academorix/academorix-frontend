@@ -1,0 +1,149 @@
+{
+  "id": "academorix://modules/age-group/data/sport-cutoff-samples",
+  "$version": 1,
+  "title": "age-group — canonical per-sport cutoff samples",
+  "description": "Reference material — canonical cutoff patterns per sport, sourced from public federation documentation. NOT loaded at runtime — this file exists as a copy-paste starter for tenants creating sport-specific age groups (age_group_sport_specific entitlement, Enterprise-only). The tenant's actual overrides are stored as regular AgeGroup rows with the appropriate sport_key + cutoff_date_kind + cutoff_month + cutoff_day fields set.",
+  "as_of": "2026-07-15",
+  "notes": [
+    "Federation rules change. This file is a starter, not a source of truth — tenants must confirm their federation's current cutoff with the governing body before shipping to production.",
+    "The `cutoff_date_kind='custom_date'` samples use cutoff_month + cutoff_day; academic_year samples use only cutoff_month (day defaults to 1); calendar_year and rolling_from_birthday use neither.",
+    "This module does NOT ship a runtime sport-registry — sport_key values in this file are informative. Wave 3c will introduce a registered sports catalogue + tighten valid_sport_key validation."
+  ],
+  "sports": {
+    "football_european": {
+      "sport_key": "football",
+      "region": "Europe / FIFA / UEFA",
+      "cutoff_date_kind": "custom_date",
+      "cutoff_month": 1,
+      "cutoff_day": 1,
+      "description": "European football (soccer) youth categories cutoff at 1 January. An athlete's competitive age for a season = year_of_season - year_of_birth. UEFA + most national FAs follow this.",
+      "example_bounds": {
+        "U8": { "min": 6, "max": 7 },
+        "U10": { "min": 8, "max": 9 },
+        "U12": { "min": 10, "max": 11 },
+        "U14": { "min": 12, "max": 13 },
+        "U16": { "min": 14, "max": 15 },
+        "U18": { "min": 16, "max": 17 }
+      }
+    },
+    "football_american_us_soccer": {
+      "sport_key": "football",
+      "region": "United States (US Soccer)",
+      "cutoff_date_kind": "custom_date",
+      "cutoff_month": 8,
+      "cutoff_day": 1,
+      "description": "US Soccer aligned with the 1 August calendar cutoff in 2015. Some state associations still use 1 January; check locally before shipping.",
+      "example_bounds": {
+        "U8": { "min": 6, "max": 7 },
+        "U10": { "min": 8, "max": 9 },
+        "U12": { "min": 10, "max": 11 },
+        "U14": { "min": 12, "max": 13 }
+      }
+    },
+    "basketball_fiba": {
+      "sport_key": "basketball",
+      "region": "International (FIBA)",
+      "cutoff_date_kind": "calendar_year",
+      "cutoff_month": null,
+      "cutoff_day": null,
+      "description": "FIBA uses calendar year (1 January) for its international youth categories.",
+      "example_bounds": {
+        "U14": { "min": 12, "max": 13 },
+        "U16": { "min": 14, "max": 15 },
+        "U18": { "min": 16, "max": 17 }
+      }
+    },
+    "swimming_fina": {
+      "sport_key": "swimming",
+      "region": "International (World Aquatics — formerly FINA)",
+      "cutoff_date_kind": "rolling_from_birthday",
+      "cutoff_month": null,
+      "cutoff_day": null,
+      "description": "Swimming uses age-on-day-of-event (rolling from birthday). An athlete's competitive category is decided by their actual age on the first day of competition — a swimmer who turns 13 during a meet remains in the 12-and-under age group for the whole meet.",
+      "example_bounds": {
+        "10U": { "min": 8, "max": 10 },
+        "12U": { "min": 11, "max": 12 },
+        "14U": { "min": 13, "max": 14 }
+      }
+    },
+    "tennis_itf": {
+      "sport_key": "tennis",
+      "region": "International (ITF)",
+      "cutoff_date_kind": "custom_date",
+      "cutoff_month": 1,
+      "cutoff_day": 1,
+      "description": "ITF junior categories cut at 1 January.",
+      "example_bounds": {
+        "U12": { "min": 10, "max": 11 },
+        "U14": { "min": 12, "max": 13 },
+        "U16": { "min": 14, "max": 15 },
+        "U18": { "min": 16, "max": 18 }
+      }
+    },
+    "rugby_world_rugby": {
+      "sport_key": "rugby",
+      "region": "International (World Rugby)",
+      "cutoff_date_kind": "custom_date",
+      "cutoff_month": 1,
+      "cutoff_day": 1,
+      "description": "World Rugby age-grade cuts at 1 January. Some national unions use 1 September for school-year alignment (see rugby_england_school).",
+      "example_bounds": {
+        "U16": { "min": 14, "max": 15 },
+        "U18": { "min": 16, "max": 17 },
+        "U20": { "min": 18, "max": 19 }
+      }
+    },
+    "cricket_icc": {
+      "sport_key": "cricket",
+      "region": "International (ICC)",
+      "cutoff_date_kind": "custom_date",
+      "cutoff_month": 9,
+      "cutoff_day": 1,
+      "description": "ICC age-grade cuts at 1 September (aligned with the northern-hemisphere school year, which is when most cricket-playing nations schedule their youth calendars).",
+      "example_bounds": {
+        "U15": { "min": 13, "max": 14 },
+        "U17": { "min": 15, "max": 16 },
+        "U19": { "min": 17, "max": 18 }
+      }
+    },
+    "athletics_wa": {
+      "sport_key": "athletics",
+      "region": "International (World Athletics)",
+      "cutoff_date_kind": "calendar_year",
+      "cutoff_month": null,
+      "cutoff_day": null,
+      "description": "World Athletics youth + junior categories use calendar year (1 January). Masters use rolling_from_birthday (rolling from birthday) for competitive divisions above 35.",
+      "example_bounds": {
+        "U18": { "min": 16, "max": 17 },
+        "U20": { "min": 18, "max": 19 },
+        "M35": { "min": 35, "max": 39, "gender_category": "male" },
+        "W35": { "min": 35, "max": 39, "gender_category": "female" }
+      }
+    },
+    "gymnastics_fig": {
+      "sport_key": "gymnastics",
+      "region": "International (FIG)",
+      "cutoff_date_kind": "calendar_year",
+      "cutoff_month": null,
+      "cutoff_day": null,
+      "description": "FIG uses calendar year. Elite-development ranges are narrow: junior (13-15) precedes senior (16+); women's artistic gymnastics has been 16+ for senior competition since 1997 (raised from 15).",
+      "example_bounds": {
+        "junior": { "min": 13, "max": 15 },
+        "senior": { "min": 16, "max": 100 }
+      }
+    },
+    "school_program": {
+      "sport_key": "school_program",
+      "region": "Academic institutions (US / UK / IE / AU)",
+      "cutoff_date_kind": "academic_year",
+      "cutoff_month": 9,
+      "cutoff_day": null,
+      "description": "Schools + academic programmes typically align age groups with the academic year (September cutoff). Athletes born September onward are 'one year older' for programme purposes.",
+      "example_bounds": {
+        "grade_1_2": { "min": 6, "max": 7 },
+        "grade_3_4": { "min": 8, "max": 9 },
+        "grade_5_6": { "min": 10, "max": 11 }
+      }
+    }
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "id": "teams.resources.team-trial.list",
+  "title": "Trial pipeline",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/teams/:teamId/trials",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "teams", "entity": "team-trial", "action": "list" },
+  "requiresPermission": "trials.viewAny",
+  "requiresEntitlement": "team_trials",
+  "realtime": {
+    "channel": "team.{teamId}.trials",
+    "events": ["TrialScheduled", "TrialStarted", "TrialCompleted", "TrialConvertedToMember", "TrialRejected", "TrialNoShow", "TrialCancelled"],
+    "onEvent": { "kind": "refetch", "sources": ["trials"] }
+  },
+  "dataSources": [
+    {
+      "name": "team",
+      "kind": "http.get",
+      "url": "/api/v1/teams/{teamId}",
+      "unwrap": "data"
+    },
+    {
+      "name": "trials",
+      "kind": "http.get",
+      "url": "/api/v1/teams/{teamId}/trials",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$expr": "team.name + ' — Trials'" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Probationary tryouts for prospective members." }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "leadingIcon": "plus", "children": "Schedule trial" },
+              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/trials/new'" } },
+              "requiresPermission": "trials.schedule"
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-4 gap-3" },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Scheduled" } },
+                { "kind": "Text", "props": { "className": "text-2xl font-semibold mt-1" }, "bindings": { "children": { "$ref": "trials.meta.scheduled_count" } } }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "In progress" } },
+                { "kind": "Text", "props": { "className": "text-2xl font-semibold mt-1" }, "bindings": { "children": { "$ref": "trials.meta.in_progress_count" } } }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Awaiting decision" } },
+                { "kind": "Text", "props": { "className": "text-2xl font-semibold mt-1" }, "bindings": { "children": { "$ref": "trials.meta.completed_count" } } }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Converted (30d)" } },
+                { "kind": "Text", "props": { "className": "text-2xl font-semibold mt-1" }, "bindings": { "children": { "$ref": "trials.meta.converted_30d_count" } } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "scheduled", "label": "Scheduled" },
+                { "id": "in_progress", "label": "In progress" },
+                { "id": "completed", "label": "Awaiting decision" },
+                { "id": "converted", "label": "Converted" },
+                { "id": "rejected", "label": "Rejected" },
+                { "id": "no_show", "label": "No-show" },
+                { "id": "cancelled", "label": "Cancelled" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Type", "menuTrigger": "focus", "className": "min-w-40" },
+              "props_items": [
+                { "id": "individual", "label": "Individual" },
+                { "id": "group", "label": "Group" },
+                { "id": "one_day", "label": "One-day" },
+                { "id": "multi_session", "label": "Multi-session" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "trial_type",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "props": { "className": "w-full" },
+          "bindings": {
+            "items": { "$ref": "trials" },
+            "isLoading": { "$ref": "trials.isLoading" }
+          },
+          "columns": [
+            { "field": "trialist_display_name", "label": "Trialist" },
+            { "field": "trial_type", "label": "Type" },
+            { "field": "starts_at", "label": "Starts", "format": "datetime", "sortable": true },
+            { "field": "session_count", "label": "Sessions", "align": "right" },
+            { "field": "status", "label": "Status", "renderer": { "kind": "Widget", "widget": "teams.trial-status-chip", "bindings": { "status": { "$ref": "row.status" } } } },
+            {
+              "field": "actions",
+              "label": "",
+              "renderer": {
+                "kind": "Dropdown",
+                "children": [
+                  { "kind": "Dropdown.Item", "props": { "children": "View" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/trials/' + row.id" } } },
+                  { "kind": "Dropdown.Item", "props": { "children": "Complete", "hidden": { "$expr": "row.status !== 'in_progress' && row.status !== 'scheduled'" } }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/trials/' + row.id + '/evaluate'" } }, "requiresPermission": "trials.evaluate" },
+                  { "kind": "Dropdown.Item", "props": { "children": "Convert / Reject", "hidden": { "$expr": "row.status !== 'completed'" } }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/trials/' + row.id + '/decision'" } }, "requiresPermission": "trials.convert" },
+                  { "kind": "Dropdown.Item", "props": { "children": "Cancel", "hidden": { "$expr": "!(row.status === 'scheduled' || row.status === 'in_progress')" } }, "actions": { "onPress": { "kind": "modal.open", "modal": "cancel-trial", "context": { "trial_id": "row.id" } } }, "requiresPermission": "trials.cancel" }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

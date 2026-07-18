@@ -1,0 +1,57 @@
+{
+  "$version": 1,
+  "title": "Coach certification — organization catalog",
+  "description": "Reference catalog of common coach-certification organizations. Coach.certifications[].organization is FREE-TEXT (up to 128 chars) but this catalog is offered as autocomplete suggestions in the SDUI + used to enrich the public coach profile (verified organization → logo lookup). Tenants add custom organizations freely; this catalog is a starting library, not a validation whitelist.",
+  "regions_note": "Organizations are tagged by their primary region_of_authority. Some (WADA, IOC) are international; most are national-authority bodies.",
+  "organizations": [
+    { "organization": "NASM", "full_name": "National Academy of Sports Medicine", "region_of_authority": "US", "sports": ["general_fitness", "strength_training", "personal_training"] },
+    { "organization": "ACE", "full_name": "American Council on Exercise", "region_of_authority": "US", "sports": ["general_fitness", "personal_training", "group_fitness"] },
+    { "organization": "ACSM", "full_name": "American College of Sports Medicine", "region_of_authority": "US", "sports": ["general_fitness", "clinical_exercise"] },
+    { "organization": "NSCA", "full_name": "National Strength and Conditioning Association", "region_of_authority": "US", "sports": ["strength_training", "sports_performance"] },
+    { "organization": "ISSA", "full_name": "International Sports Sciences Association", "region_of_authority": "US", "sports": ["general_fitness", "personal_training"] },
+    { "organization": "AASP", "full_name": "Association for Applied Sport Psychology", "region_of_authority": "US", "sports": ["sports_psychology"] },
+    { "organization": "USA Swimming", "full_name": "USA Swimming (National Governing Body)", "region_of_authority": "US", "sports": ["swimming"] },
+    { "organization": "PGA of America", "full_name": "Professional Golfers' Association of America", "region_of_authority": "US", "sports": ["golf"] },
+    { "organization": "USPTA", "full_name": "United States Professional Tennis Association", "region_of_authority": "US", "sports": ["tennis"] },
+    { "organization": "US Soccer", "full_name": "United States Soccer Federation", "region_of_authority": "US", "sports": ["football", "soccer"] },
+    { "organization": "USA Basketball", "full_name": "USA Basketball National Coaching Program", "region_of_authority": "US", "sports": ["basketball"] },
+
+    { "organization": "REPs", "full_name": "Register of Exercise Professionals (UK)", "region_of_authority": "UK", "sports": ["general_fitness"] },
+    { "organization": "CIMSPA", "full_name": "Chartered Institute for the Management of Sport and Physical Activity", "region_of_authority": "UK", "sports": ["general_fitness", "management"] },
+    { "organization": "FA", "full_name": "The Football Association (English FA)", "region_of_authority": "UK", "sports": ["football"] },
+    { "organization": "LTA", "full_name": "Lawn Tennis Association", "region_of_authority": "UK", "sports": ["tennis"] },
+    { "organization": "British Swimming", "full_name": "British Swimming Coaching Framework", "region_of_authority": "UK", "sports": ["swimming"] },
+    { "organization": "England Athletics", "full_name": "England Athletics", "region_of_authority": "UK", "sports": ["athletics", "running"] },
+    { "organization": "UK Coaching", "full_name": "UK Coaching (formerly SCUK)", "region_of_authority": "UK", "sports": ["general_coaching"] },
+    { "organization": "British Cycling", "full_name": "British Cycling", "region_of_authority": "UK", "sports": ["cycling"] },
+    { "organization": "British Gymnastics", "full_name": "British Gymnastics", "region_of_authority": "UK", "sports": ["gymnastics"] },
+    { "organization": "England Rugby", "full_name": "Rugby Football Union", "region_of_authority": "UK", "sports": ["rugby"] },
+    { "organization": "ECB", "full_name": "England and Wales Cricket Board", "region_of_authority": "UK", "sports": ["cricket"] },
+
+    { "organization": "Coaching Association of Canada", "full_name": "Coaching Association of Canada / NCCP", "region_of_authority": "CA", "sports": ["general_coaching"] },
+    { "organization": "canfitpro", "full_name": "Canadian Fitness Professionals", "region_of_authority": "CA", "sports": ["general_fitness"] },
+    { "organization": "Soccer Canada", "full_name": "Canada Soccer Coaching Certification", "region_of_authority": "CA", "sports": ["football", "soccer"] },
+
+    { "organization": "AUSTSWIM", "full_name": "AUSTSWIM (Australian Council for the Teaching of Swimming and Water Safety)", "region_of_authority": "AU", "sports": ["swimming"] },
+    { "organization": "Fitness Australia", "full_name": "Fitness Australia", "region_of_authority": "AU", "sports": ["general_fitness"] },
+    { "organization": "AFL Coaching", "full_name": "Australian Football League Coaching Accreditation", "region_of_authority": "AU", "sports": ["australian_rules_football"] },
+
+    { "organization": "FIFA", "full_name": "Fédération Internationale de Football Association", "region_of_authority": "INTERNATIONAL", "sports": ["football", "soccer"] },
+    { "organization": "UEFA", "full_name": "Union of European Football Associations", "region_of_authority": "EU", "sports": ["football", "soccer"] },
+    { "organization": "FIBA", "full_name": "International Basketball Federation", "region_of_authority": "INTERNATIONAL", "sports": ["basketball"] },
+    { "organization": "FINA", "full_name": "Fédération Internationale de Natation", "region_of_authority": "INTERNATIONAL", "sports": ["swimming", "water_polo", "diving"] },
+    { "organization": "ITF", "full_name": "International Tennis Federation", "region_of_authority": "INTERNATIONAL", "sports": ["tennis"] },
+    { "organization": "IAAF / World Athletics", "full_name": "World Athletics", "region_of_authority": "INTERNATIONAL", "sports": ["athletics", "track_and_field"] },
+    { "organization": "WADA", "full_name": "World Anti-Doping Agency (Anti-Doping Education)", "region_of_authority": "INTERNATIONAL", "sports": ["anti_doping_certification"] },
+    { "organization": "Yoga Alliance", "full_name": "Yoga Alliance (RYT 200/500 registrations)", "region_of_authority": "INTERNATIONAL", "sports": ["yoga"] },
+
+    { "organization": "First Aid", "full_name": "Red Cross / Local Equivalent First Aid Certification", "region_of_authority": "INTERNATIONAL", "sports": ["safety"] },
+    { "organization": "CPR", "full_name": "CPR / AED Certification", "region_of_authority": "INTERNATIONAL", "sports": ["safety"] },
+    { "organization": "Safeguarding", "full_name": "Local Safeguarding Certification (child protection)", "region_of_authority": "INTERNATIONAL", "sports": ["safeguarding"] }
+  ],
+  "notes": [
+    "Every organization has a `region_of_authority` — used by the SDUI to suggest region-relevant certifications first when the coach's tenant.region is known.",
+    "The `sports` array is descriptive — helps the SDUI show relevant certs when the coach.sport_key is set.",
+    "Custom organizations (a local gym's in-house certification) are welcome — they just won't have a logo lookup on the public profile."
+  ]
+}

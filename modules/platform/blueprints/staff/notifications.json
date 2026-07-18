@@ -1,0 +1,110 @@
+{
+  "id": "academorix://modules/staff/notifications",
+  "$version": 1,
+  "title": "staff — notification classes + categories",
+  "namespace": "Academorix\\Staff\\Notifications",
+  "notifications": [
+    "StaffWelcomeNotification",
+    "StaffOffboardingScheduledNotification",
+    "StaffOffboardedNotification",
+    "StaffPromotedToBranchManagerNotification",
+    "CoachCertificationExpiringNotification",
+    "ProbationEndingSoonNotification",
+    "CompensationChangedNotification",
+    "CoachOnLeaveNotification",
+    "StaffSuspendedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "staff.welcome",
+      "display_name": "Welcome — new hire",
+      "description": "Sent to the new hire when their Staff row transitions pre_hire → active. Includes onboarding checklist link + first-day details + emergency contact from branch manager.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "staff.offboarding_scheduled",
+      "display_name": "Offboarding started",
+      "description": "Sent to HR + branch manager when a staff enters offboarding state. Includes the termination reason (redacted to non-HR recipients), planned ended_at, and a checklist link.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "staff.offboarded",
+      "display_name": "Colleague offboarded",
+      "description": "Sent to team members (Wave 3+ Teams module) when a coach or team-assigned staff is offboarded. Cannot-opt-out because the team needs to know who their new point-of-contact is.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "staff.promoted_to_branch_manager",
+      "display_name": "New branch manager",
+      "description": "Sent to every active staff of a branch when a new branch manager is promoted. Cannot-opt-out — org-chart transparency.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "staff.coach_certification_expiring",
+      "display_name": "Coach certification expiring",
+      "description": "Sent to the coach + their branch manager at 30, 14, 7-day pre-expiry thresholds. Includes the certification details + renewal-lookup link.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "staff.probation_ending_soon",
+      "display_name": "Probation ending soon",
+      "description": "Sent to HR at 14 / 7 / 1-day pre-expiry thresholds. HR reviews performance + decides whether to promote to permanent, extend, or terminate.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "staff.compensation_changed",
+      "display_name": "Compensation change",
+      "description": "PRIVATE-TIER. Sent to the affected staff ONLY (never to peers or branch manager). Includes the effective_at date + the new pay_frequency. Delivered through the HR channel — never renders in the tenant activity feed or in-app default inbox.",
+      "default_channels": ["mail"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "notes": "Delivered on the compensation-audit queue, not the normal notifications queue. Compliance audit row written on every dispatch."
+    },
+    {
+      "slug": "staff.coach_on_leave",
+      "display_name": "Coach on leave",
+      "description": "Sent to active team members (Wave 3+) when their coach transitions to on_leave OR paused. Cannot-opt-out — team members need to know who to reach for cover.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "staff.suspended",
+      "display_name": "Staff suspended",
+      "description": "Sent to the branch manager when a staff is suspended (audit-critical). Distinct from the notification to the suspended staff themselves (which is delivered through the HR channel as a formal letter — not this category).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

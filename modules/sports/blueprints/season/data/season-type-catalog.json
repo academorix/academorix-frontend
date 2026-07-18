@@ -1,0 +1,71 @@
+{
+  "$version": 1,
+  "title": "Season type catalog",
+  "description": "Reference table of the eight season_type enum values with typical durations + which business_types commonly use each. Loaded by the SeasonSeedingStrategy binding at boot to pick a sensible default for the auto-seeded Season on TenantProvisioned.",
+  "types": {
+    "annual": {
+      "label": "Annual season",
+      "typical_duration_months": 12,
+      "typical_registration_lead_days": 30,
+      "business_types": ["sports_academy", "gym", "sports_center"],
+      "description": "One long season per year. Registration opens once, competition runs the full calendar year."
+    },
+    "academic_year": {
+      "label": "Academic year",
+      "typical_duration_months": 10,
+      "typical_registration_lead_days": 60,
+      "business_types": ["school", "sports_academy"],
+      "description": "Sep-Jun in the Northern hemisphere, Feb-Nov in the Southern. Registration opens in the previous May."
+    },
+    "summer_camp": {
+      "label": "Summer camp",
+      "typical_duration_months": 3,
+      "typical_registration_lead_days": 45,
+      "business_types": ["sports_academy", "school", "sports_center"],
+      "description": "May-Aug intensive camp. Multiple weekly cohorts within the season."
+    },
+    "winter_camp": {
+      "label": "Winter camp",
+      "typical_duration_months": 2,
+      "typical_registration_lead_days": 30,
+      "business_types": ["sports_academy", "school"],
+      "description": "Dec-Jan intensive camp. Shorter than summer; sometimes ski/board oriented."
+    },
+    "half_year": {
+      "label": "Half-year season",
+      "typical_duration_months": 6,
+      "typical_registration_lead_days": 30,
+      "business_types": ["sports_academy", "federation", "club"],
+      "description": "Two 6-month blocks per year. Common in adult recreational leagues."
+    },
+    "quarter": {
+      "label": "Quarterly season",
+      "typical_duration_months": 3,
+      "typical_registration_lead_days": 21,
+      "business_types": ["sports_center", "gym"],
+      "description": "Four 3-month cycles per year. Common in fitness class scheduling."
+    },
+    "trimester": {
+      "label": "Trimester",
+      "typical_duration_months": 4,
+      "typical_registration_lead_days": 30,
+      "business_types": ["school", "sports_academy"],
+      "description": "Three 4-month cycles per year. Common in European school sports."
+    },
+    "custom": {
+      "label": "Custom",
+      "typical_duration_months": null,
+      "typical_registration_lead_days": null,
+      "business_types": ["federation", "club"],
+      "description": "Tenant-defined start/end dates. Use when standard patterns don't fit (tournament seasons, event-driven windows)."
+    }
+  },
+  "business_type_defaults": {
+    "sports_academy": "academic_year",
+    "sports_center": "quarter",
+    "school": "academic_year",
+    "gym": "quarter",
+    "federation": "annual",
+    "club": "half_year"
+  }
+}

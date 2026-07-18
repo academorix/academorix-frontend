@@ -1,0 +1,402 @@
+{
+  "id": "academorix://modules/age-group/schemas/age-group",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AgeGroup",
+  "description": "Age-bucket classifier for Athletes + Teams. Answers 'is this Athlete eligible for this Team's age category?'. Carries `tenant_id` (CASCADE) + optionally `organization_id` (RESTRICT, nullable — null = tenant-wide). NEVER `application_id` (cascades through tenants), NEVER `region_id` (age groups apply uniformly across regions), NEVER `branch_id` (same U12 across every branch), NEVER `scope_node_id` (AgeGroup is a scope-node entity, not a scope consumer), NEVER `parent_id` (age groups are flat; numeric bounds establish ordering). Exactly one `is_default=true` per (tenant_id, organization_id, sport_key) tuple, seeded on TenantProvisioned. `is_seeded` is IMMUTABLE — set once by the platform seeder + never mutated by tenants. `organization_id` is IMMUTABLE post-create — moving an AgeGroup between organizations reshapes its scoping tuple.",
+  "type": "object",
+  "x-module": "age-group",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "age_groups",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "age_",
+    "incrementing": false,
+    "model": "Academorix\\Sports\\AgeGroup\\Models\\AgeGroup",
+    "interface": "Academorix\\Sports\\AgeGroup\\Contracts\\Data\\AgeGroupInterface",
+    "implements": ["Academorix\\Sports\\AgeGroup\\Contracts\\Data\\AgeGroupInterface"],
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToOrganization",
+      "HasSlug",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasActivityLog",
+      "Auditable",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "min_age_inclusive": "integer",
+      "max_age_inclusive": "integer",
+      "cutoff_month": "integer",
+      "cutoff_day": "integer",
+      "sort_order": "integer",
+      "is_youth": "boolean",
+      "is_default": "boolean",
+      "is_seeded": "boolean",
+      "cutoff_date_kind": "Academorix\\Sports\\AgeGroup\\Enums\\CutoffDateKind",
+      "gender_category": "Academorix\\Sports\\AgeGroup\\Enums\\GenderCategory",
+      "color": "Academorix\\Sports\\AgeGroup\\Casts\\HexColor",
+      "metadata": "array"
+    },
+    "appends": [
+      "display_label",
+      "bounds_summary",
+      "is_in_use",
+      "inbound_reference_count"
+    ],
+    "observers": ["AgeGroupObserver"],
+    "relations_note": "`tenant()` belongsTo tenancy::Tenant via tenant_id (CASCADE). `organization()` belongsTo organization::Organization via organization_id (RESTRICT, nullable). Downstream: hasMany teams::Team via team.age_group_id (Wave 2b, RESTRICT), hasMany event::EventDivision via event_division.age_group_id (Wave 3+, RESTRICT); AthleteEnrollment references via age_group_snapshot_id (snapshotted; does NOT create a live FK).",
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "description": "One first-party table. Composite scoping via (tenant_id, organization_id nullable, sport_key nullable). Two partial-unique indexes guard the two hard invariants: (tenant_id, organization_id, sport_key, slug) live-only, and (tenant_id, organization_id, sport_key) live-and-default-true.",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `age_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "Every AgeGroup belongs to a Tenant. Cascade delete on TenantErased — hooked via `PreventAgeGroupOrphansOnTenantErased` for a graceful pre-delete audit pass."
+      },
+      "organization_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "organizations",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "OPTIONAL. Null = tenant-wide age group; non-null = scoped to one Organization (a tenant running multiple brands may define per-brand rules). RESTRICT because deleting an Organization while it owns age groups is a data-quality error."
+      },
+      "name": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Display name (e.g. 'U12', 'Adult', 'Masters 50+', 'Girls U14'). Not unique — multiple sport_key variants may share a display name."
+      },
+      "slug": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "URL-safe identifier. Unique per (tenant_id, organization_id, sport_key, slug) partial WHERE deleted_at IS NULL. Regex `^[a-z][a-z0-9-]*[a-z0-9]$`. Reserved: default, system, seeded, admin, platform."
+      },
+      "sport_key": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Optional sport identifier. Null = generic (applies across every sport for the tenant). Non-null = sport-specific override (e.g. 'football' U12 with a Jan 1 European federation cutoff). Enterprise-only via `age_group_sport_specific` entitlement. Pattern: `^[a-z][a-z0-9_]*$`."
+      },
+      "description": {
+        "type": "text",
+        "nullable": true,
+        "description": "Free-form description for the tenant admin UI + parent-facing enrollment previews."
+      },
+      "min_age_inclusive": {
+        "type": "integer",
+        "nullable": false,
+        "description": "Inclusive lower bound. 3-100 (platform floor + ceiling). Bounds mutations fire AgeGroupBoundsChanged (audit-critical, 7-year retention)."
+      },
+      "max_age_inclusive": {
+        "type": "integer",
+        "nullable": false,
+        "description": "Inclusive upper bound. Must be >= min_age_inclusive. 3-100."
+      },
+      "cutoff_date_kind": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: calendar_year / academic_year / rolling_from_birthday / custom_date. Determines how the CutoffDateCalculator resolves an athlete's effective age for eligibility on a given resolution date."
+      },
+      "cutoff_month": {
+        "type": "integer",
+        "nullable": true,
+        "description": "1-12. Required when cutoff_date_kind = academic_year OR custom_date. Ignored (must be NULL) for calendar_year + rolling_from_birthday."
+      },
+      "cutoff_day": {
+        "type": "integer",
+        "nullable": true,
+        "description": "1-31. Required when cutoff_date_kind = custom_date. Ignored (must be NULL) for other kinds."
+      },
+      "gender_category": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "Enum: male / female / mixed / any. Nullable defaults to 'any'. For gender-segregated divisions (e.g. 'Girls U12', 'Boys U14', 'Mixed U8')."
+      },
+      "is_youth": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Denormalised. Auto-derived by the observer from `max_age_inclusive < 18`. Stored for indexed filtering (safeguarding queries, minor-consent gating). Attempted caller mutation is silently overridden."
+      },
+      "is_default": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Exactly one is_default=true per (tenant_id, organization_id, sport_key) tuple. Auto-demote on flip. Enforced by partial unique index + observer + reconciler."
+      },
+      "is_seeded": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "True when the row was created by SeedDefaultAgeGroupsForTenantJob. IMMUTABLE — set once + never mutated by tenant callers. Cannot be deleted (only edited)."
+      },
+      "sort_order": {
+        "type": "integer",
+        "nullable": false,
+        "default": 100,
+        "description": "Ascending sort in AgeGroup-picker UI. Auto-derived from min_age_inclusive * 10 when unset."
+      },
+      "color": {
+        "type": "string",
+        "length": 7,
+        "nullable": true,
+        "description": "Visualisation color as a CSS hex (#RGB or #RRGGBB, case-insensitive)."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form metadata bag (from HasMetadata trait). Never exposed on the wire without `?include=metadata` + metadata-read permission."
+      },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "organization_id", "sport_key", "slug"],
+        "unique": true,
+        "name": "age_groups_scope_slug_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "One live slug per (tenant, organization, sport_key) tuple. Soft-deleted rows do not collide. Nullable columns treated per Postgres' UNIQUE nulls-distinct semantics; the partial index handles the ambiguity explicitly."
+      },
+      {
+        "columns": ["tenant_id", "organization_id", "sport_key"],
+        "unique": true,
+        "name": "age_groups_scope_default_unique",
+        "predicate": "is_default = true AND deleted_at IS NULL",
+        "description": "Enforces exactly-one-default per scoping tuple at the DB level. Belt-and-braces on top of the observer's auto-demote logic."
+      },
+      {
+        "columns": ["tenant_id", "sport_key", "min_age_inclusive", "max_age_inclusive"],
+        "unique": false,
+        "name": "age_groups_bounds_lookup_idx",
+        "description": "Resolver query: 'find the group with matching bounds for this DOB + sport_key'."
+      },
+      {
+        "columns": ["tenant_id", "is_youth"],
+        "unique": false,
+        "name": "age_groups_youth_idx",
+        "description": "Safeguarding query: 'list every youth group for this tenant'."
+      },
+      {
+        "columns": ["tenant_id", "is_seeded"],
+        "unique": false,
+        "name": "age_groups_seeded_idx",
+        "description": "Catalog query: 'list every seeded (or custom) row for this tenant'. Feeds the entitlement drift dashboard."
+      },
+      {
+        "columns": ["deleted_at"],
+        "unique": false,
+        "name": "age_groups_deleted_at_idx",
+        "description": "PurgeArchivedAgeGroupsJob sweeps by deleted_at."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "name",
+    "slug",
+    "min_age_inclusive",
+    "max_age_inclusive",
+    "cutoff_date_kind",
+    "is_youth",
+    "is_default",
+    "is_seeded",
+    "sort_order",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^age_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "tenant_id": {
+      "type": "string",
+      "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "organization_id": {
+      "type": ["string", "null"],
+      "pattern": "^org_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 64
+    },
+    "slug": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 32,
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$"
+    },
+    "sport_key": {
+      "type": ["string", "null"],
+      "minLength": 2,
+      "maxLength": 32,
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "description": {
+      "type": ["string", "null"],
+      "maxLength": 500
+    },
+    "min_age_inclusive": {
+      "type": "integer",
+      "minimum": 3,
+      "maximum": 100
+    },
+    "max_age_inclusive": {
+      "type": "integer",
+      "minimum": 3,
+      "maximum": 100
+    },
+    "cutoff_date_kind": {
+      "type": "string",
+      "enum": ["calendar_year", "academic_year", "rolling_from_birthday", "custom_date"]
+    },
+    "cutoff_month": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "maximum": 12
+    },
+    "cutoff_day": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "maximum": 31
+    },
+    "gender_category": {
+      "type": ["string", "null"],
+      "enum": ["male", "female", "mixed", "any", null]
+    },
+    "is_youth": {
+      "type": "boolean"
+    },
+    "is_default": {
+      "type": "boolean"
+    },
+    "is_seeded": {
+      "type": "boolean"
+    },
+    "sort_order": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9999
+    },
+    "color": {
+      "type": ["string", "null"],
+      "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+    },
+    "metadata": {
+      "type": ["object", "null"]
+    },
+    "display_label": {
+      "type": "string",
+      "description": "Computed. `<name>` when sport_key is null, `<name> (<sport_key>)` otherwise."
+    },
+    "bounds_summary": {
+      "type": "string",
+      "description": "Computed. Human-readable bounds + cutoff (e.g. 'Ages 10-11 (calendar year cutoff)')."
+    },
+    "is_in_use": {
+      "type": "boolean",
+      "description": "Computed. True when any non-snapshot inbound row (Team, EventDivision) references this AgeGroup."
+    },
+    "inbound_reference_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Computed via inbound-count aggregate. Included on show responses; suppressed on list responses unless `?include=inbound_reference_count` (list computation is N+1 without a rollup cache)."
+    },
+    "created_by": {
+      "type": ["string", "null"]
+    },
+    "updated_by": {
+      "type": ["string", "null"]
+    },
+    "deleted_by": {
+      "type": ["string", "null"]
+    },
+    "deleted_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["display_label", "bounds_summary", "is_in_use", "inbound_reference_count"],
+    "hidden_from_tenant_plane": []
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": [
+      "ULID (`age_<26>`)",
+      "slug (case-insensitive, matches slug column within the resolved tenant + resolved scoping tuple when disambiguating parameters supplied via query string)"
+    ]
+  },
+  "invariants": [
+    "min_age_inclusive <= max_age_inclusive (enforced by rule + observer + BoundsConsistencyProbe).",
+    "min_age_inclusive >= 3 AND max_age_inclusive <= 100 (platform floor + ceiling).",
+    "is_youth = (max_age_inclusive < 18) — DERIVED by the observer; caller mutations silently overridden.",
+    "cutoff_date_kind='calendar_year' → cutoff_month IS NULL AND cutoff_day IS NULL.",
+    "cutoff_date_kind='rolling_from_birthday' → cutoff_month IS NULL AND cutoff_day IS NULL.",
+    "cutoff_date_kind='academic_year' → cutoff_month IS NOT NULL (1..12); cutoff_day IS NULL (defaults to 1 at resolution time).",
+    "cutoff_date_kind='custom_date' → cutoff_month IS NOT NULL (1..12) AND cutoff_day IS NOT NULL (1..31, month-appropriate).",
+    "sport_key IS NULL OR sport_key MATCHES /^[a-z][a-z0-9_]*$/.",
+    "sport_key IS NULL UNLESS the tenant carries `age_group_sport_specific` entitlement (enforced by observer — refuses at write time).",
+    "COUNT(*) FILTER (WHERE is_default=true) = 1 per (tenant_id, organization_id, sport_key) tuple (enforced by unique index + observer + reconciler).",
+    "is_seeded IS IMMUTABLE post-create (AGE_GROUP_IS_SEEDED_IMMUTABLE — enforced by observer).",
+    "organization_id IS IMMUTABLE post-create (AGE_GROUP_ORG_IMMUTABLE — enforced by observer).",
+    "tenant_id IS IMMUTABLE post-create (TENANT_IMMUTABLE — enforced by observer + defense against cross-tenant FK smuggling).",
+    "is_default=true rows CANNOT be deleted or archived (CANNOT_DELETE_DEFAULT_AGE_GROUP — 409).",
+    "is_seeded=true rows CANNOT be deleted or archived (CANNOT_DELETE_SEEDED_AGE_GROUP — 409). Seeded rows may still be edited within entitlements.",
+    "AgeGroups in use CANNOT be archived or deleted (AGE_GROUP_IN_USE 409 — enforced by observer; Team.age_group_id + EventDivision.age_group_id references count; AthleteEnrollment.age_group_snapshot_id does NOT count).",
+    "Non-seeded (is_seeded=false) rows count against the tenant's `age_group_slot` entitlement; seeded rows do NOT (they are a platform invariant, not a purchase).",
+    "gender_category defaults to 'any' when null-on-write; explicit null saves as 'any'."
+  ]
+}

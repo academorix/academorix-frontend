@@ -1,0 +1,91 @@
+{
+  "id": "academorix://modules/age-group/caches",
+  "$version": 1,
+  "title": "age-group — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["age-group", "age-group-catalog", "age-group-resolver"],
+  "keys": [
+    {
+      "pattern": "age:list:{tenant_id}",
+      "description": "Full active-group list for one tenant (all organizations + sport_keys). Read by the tenant admin UI + by the age-group-picker widget. Small payload (id, name, slug, sport_key, min_age, max_age, cutoff_date_kind, is_default, is_seeded, sort_order, color).",
+      "ttlSeconds": 600,
+      "tags": ["age-group"],
+      "invalidatedBy": [
+        "AgeGroupObserver.created",
+        "AgeGroupObserver.updated",
+        "AgeGroupObserver.deleted",
+        "AgeGroupObserver.restored"
+      ]
+    },
+    {
+      "pattern": "age:catalog:{tenant_id}:{organization_id}:{sport_key}",
+      "description": "Catalog rollup keyed by (tenant, organization, sport_key). Used by the picker widget to filter to the caller's scoping context. `organization_id` uses the literal `_` for null (tenant-wide); `sport_key` uses `_` for null (generic).",
+      "ttlSeconds": 1800,
+      "tags": ["age-group", "age-group-catalog"],
+      "invalidatedBy": [
+        "AgeGroupObserver.created",
+        "AgeGroupObserver.updated (organization_id / sport_key changed)",
+        "AgeGroupObserver.deleted"
+      ]
+    },
+    {
+      "pattern": "age:default:{tenant_id}:{organization_id}:{sport_key}",
+      "description": "The is_default=true row for one (tenant, organization, sport_key) tuple. Read on every eligibility resolution when the resolver falls back to the default. Same null-encoding as `age:catalog:*`.",
+      "ttlSeconds": 600,
+      "tags": ["age-group"],
+      "invalidatedBy": [
+        "AgeGroupObserver.updated (is_default changed)",
+        "AgeGroupDefaultChanged",
+        "AgeGroupCatalogSeeded"
+      ]
+    },
+    {
+      "pattern": "age:resolve:{tenant_id}:{dob}:{sport_key}:{organization_id}",
+      "description": "Cached resolver answer for a (DOB, sport_key, organization_id) triple against the tenant's catalog. Short TTL because rolling_from_birthday cutoffs shift as the calendar rolls.",
+      "ttlSeconds": 300,
+      "tags": ["age-group", "age-group-resolver"],
+      "invalidatedBy": [
+        "AgeGroupObserver.updated (any resolution-relevant field: min_age, max_age, cutoff_*, sport_key, gender_category, is_default)",
+        "AgeGroupBoundsChanged",
+        "AgeGroupCutoffChanged",
+        "AgeGroupSportKeyChanged",
+        "AgeGroupDefaultChanged"
+      ]
+    },
+    {
+      "pattern": "age:full:{age_group_id}",
+      "description": "One AgeGroup row. Read by every consumer that needs the full field set (bounds + cutoff config).",
+      "ttlSeconds": 600,
+      "tags": ["age-group"],
+      "invalidatedBy": [
+        "AgeGroupObserver.updated",
+        "AgeGroupObserver.deleted"
+      ]
+    },
+    {
+      "pattern": "age:default_catalog:v{version}",
+      "description": "The parsed `data/default-age-groups.json` shipped catalog for a specific version. Static artifact — parsed once, cached indefinitely. Invalidated on deploy (the version suffix advances when the JSON file changes materially).",
+      "ttlSeconds": 604800,
+      "tags": ["age-group-catalog"],
+      "invalidatedBy": ["deploy artifact fingerprint change (version advances)"]
+    },
+    {
+      "pattern": "age:reconciler_last_run",
+      "description": "Timestamp of the last successful ReconcileAgeGroupDefaultInvariantJob run. Read by the health probe + the ops dashboard.",
+      "ttlSeconds": 172800,
+      "tags": ["age-group"],
+      "invalidatedBy": ["ReconcileAgeGroupDefaultInvariantJob completion"]
+    },
+    {
+      "pattern": "age:inbound_refs:{age_group_id}",
+      "description": "Aggregated inbound reference counts for one AgeGroup (Team + EventDivision + TeamRegistration). Read by the archive-preview UI + the observer's is_in_use check. Recomputed on every write to the referring tables.",
+      "ttlSeconds": 300,
+      "tags": ["age-group"],
+      "invalidatedBy": [
+        "Team.age_group_id INSERT/UPDATE/DELETE (Wave 2b)",
+        "EventDivision.age_group_id INSERT/UPDATE/DELETE (Wave 3+)",
+        "TeamRegistration.eligibility_age_group_id INSERT/UPDATE/DELETE (Wave 3+)"
+      ]
+    }
+  ]
+}

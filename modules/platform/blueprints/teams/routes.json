@@ -1,0 +1,405 @@
+{
+  "id": "academorix://modules/teams/routes",
+  "$version": 1,
+  "title": "teams — HTTP routes",
+  "description": "Tenant-facing team + member + trial + event-team CRUD (~40 routes) + platform-admin cross-tenant support routes. Every tenant-plane route carries `entitlement.enforce:teams` at minimum; trial routes additionally require `entitlement.enforce:team_trials` (Medium+); event-team routes require `entitlement.enforce:team_event_participation` (Medium+). Team-scoped write routes attach the `team.resolve_active` middleware which sets RequestContext::team() from the route parameter.",
+  "groups": [
+    {
+      "name": "tenant-teams",
+      "prefix": "/api/v1/teams",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "entitlement.enforce:teams",
+        "throttle:teams-tenant",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Team catalogue CRUD + lifecycle actions + schedule + registration windows. Small-tier tenants CAN use core team routes (default entitlement on). Trial + event-team sub-routes require additional entitlements per tier.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamController@index",
+          "permission": "teams.viewAny",
+          "description": "filter[branch_id], filter[organization_id], filter[team_type], filter[sport_key], filter[status], filter[competitive_level], filter[gender_category], filter[min_age.gte], filter[max_age.lte]. Scope: caller's active branch narrows results when set."
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamController@store",
+          "permission": "teams.create",
+          "description": "Body: TeamCreateData. Consumes 1 unit of team_slot entitlement."
+        },
+        {
+          "method": "GET",
+          "path": "/{team}",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamController@show",
+          "permission": "teams.view",
+          "middleware_add": ["team.resolve_active"]
+        },
+        {
+          "method": "PATCH",
+          "path": "/{team}",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamController@update",
+          "permission": "teams.update",
+          "middleware_add": ["team.resolve_active"]
+        },
+        {
+          "method": "DELETE",
+          "path": "/{team}",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamController@destroy",
+          "permission": "teams.delete",
+          "middleware_add": ["team.resolve_active"],
+          "description": "Soft-delete. Refused when team.status != 'archived'. Archive first via POST /{team}/archive."
+        },
+        {
+          "method": "POST",
+          "path": "/{team}/set-default",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamController@setDefault",
+          "permission": "teams.update",
+          "middleware_add": ["team.resolve_active"]
+        },
+        {
+          "method": "POST",
+          "path": "/{team}/pause",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamController@pause",
+          "permission": "teams.pause",
+          "middleware_add": ["team.resolve_active"],
+          "description": "Body: { reason? }. Transitions team to paused; new trials + roster adds refused."
+        },
+        {
+          "method": "POST",
+          "path": "/{team}/resume",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamController@resume",
+          "permission": "teams.pause",
+          "middleware_add": ["team.resolve_active"]
+        },
+        {
+          "method": "POST",
+          "path": "/{team}/archive",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamController@archive",
+          "permission": "teams.archive",
+          "middleware_add": ["team.resolve_active"],
+          "description": "Body: { reason?, cascade_members? }. When cascade_members=true, transitions every active member to inactive; otherwise refused when active members exist."
+        },
+        {
+          "method": "POST",
+          "path": "/{team}/reopen-registration",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamController@reopenRegistration",
+          "permission": "teams.manage-registration",
+          "middleware_add": ["team.resolve_active"],
+          "description": "Body: { opens_at, closes_at? }."
+        },
+        {
+          "method": "POST",
+          "path": "/{team}/close-registration",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamController@closeRegistration",
+          "permission": "teams.manage-registration",
+          "middleware_add": ["team.resolve_active"]
+        },
+        {
+          "method": "GET",
+          "path": "/{team}/schedule",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamScheduleController@show",
+          "permission": "teams.view",
+          "middleware_add": ["team.resolve_active"]
+        },
+        {
+          "method": "PATCH",
+          "path": "/{team}/schedule",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamScheduleController@update",
+          "permission": "teams.manage-schedule",
+          "middleware_add": ["team.resolve_active"],
+          "description": "Body: { schedule_pattern }. Fires TeamScheduleChanged; notifies active members (cannot-opt-out)."
+        },
+        {
+          "method": "GET",
+          "path": "/{team}/roster",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamRosterController@index",
+          "permission": "team_members.viewAny",
+          "middleware_add": ["team.resolve_active"],
+          "description": "Convenience endpoint that returns active roster (status='active' filter pre-applied) grouped by role_on_team."
+        }
+      ]
+    },
+    {
+      "name": "tenant-team-members",
+      "prefix": "/api/v1/teams/{team}/members",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "entitlement.enforce:teams",
+        "team.resolve_active",
+        "throttle:teams-tenant",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Roster CRUD + lifecycle actions.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamMemberController@index",
+          "permission": "team_members.viewAny",
+          "description": "filter[status], filter[role_on_team], filter[member_type]. Default status=active."
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamMemberController@store",
+          "permission": "team_members.create",
+          "description": "Body: TeamMemberCreateData. Runs the full observer check chain (uniqueness, capacity, age, gender, polymorphism)."
+        },
+        {
+          "method": "GET",
+          "path": "/{member}",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamMemberController@show",
+          "permission": "team_members.view"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{member}",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamMemberController@update",
+          "permission": "team_members.update",
+          "description": "Editable fields: jersey_number, position, notes, metadata. Role transitions use action route below."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{member}",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamMemberController@destroy",
+          "permission": "team_members.delete",
+          "description": "Alias for POST /{member}/remove with left_reason='withdrew'."
+        },
+        {
+          "method": "POST",
+          "path": "/{member}/change-role",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamMemberController@changeRole",
+          "permission": "team_members.change-role",
+          "description": "Body: { role_on_team }."
+        },
+        {
+          "method": "POST",
+          "path": "/{member}/mark-injured",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamMemberController@markInjured",
+          "permission": "team_members.mark-injured",
+          "description": "Body: { notes? }."
+        },
+        {
+          "method": "POST",
+          "path": "/{member}/mark-graduated",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TeamMemberController@markGraduated",
+          "permission": "team_members.mark-graduated"
+        }
+      ]
+    },
+    {
+      "name": "tenant-team-trials",
+      "prefix": "/api/v1/teams/{team}/trials",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "entitlement.enforce:team_trials",
+        "team.resolve_active",
+        "throttle:teams-tenant",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Trial workflow. Medium+ via team_trials entitlement.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TrialController@index",
+          "permission": "trials.viewAny",
+          "description": "filter[status], filter[trialist_type], filter[starts_at.gte], filter[starts_at.lte]."
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TrialController@store",
+          "permission": "trials.schedule",
+          "description": "Body: TrialScheduleData. Refuses anonymous trialists without name+phone."
+        },
+        {
+          "method": "GET",
+          "path": "/{trial}",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TrialController@show",
+          "permission": "trials.view",
+          "description": "Anonymous PII redacted when caller lacks trials.view-anonymous."
+        },
+        {
+          "method": "PATCH",
+          "path": "/{trial}",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TrialController@update",
+          "permission": "trials.schedule",
+          "description": "Editable: starts_at, ends_at (only while status='scheduled'); evaluation_notes."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{trial}",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TrialController@destroy",
+          "permission": "trials.cancel",
+          "description": "Alias for POST /{trial}/cancel."
+        },
+        {
+          "method": "POST",
+          "path": "/{trial}/complete",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TrialController@complete",
+          "permission": "trials.evaluate",
+          "description": "Body: { notes? }."
+        },
+        {
+          "method": "POST",
+          "path": "/{trial}/convert",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TrialController@convert",
+          "permission": "trials.convert",
+          "description": "Atomic conversion. Body: { notes?, role_on_team?, jersey_number?, position? }. Returns 201 with the newly-created TeamMember row. Refuses on uniqueness / capacity conflict (rolls back)."
+        },
+        {
+          "method": "POST",
+          "path": "/{trial}/reject",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TrialController@reject",
+          "permission": "trials.evaluate",
+          "description": "Body: { notes }. decision_notes is REQUIRED for anti-discrimination retention."
+        },
+        {
+          "method": "POST",
+          "path": "/{trial}/cancel",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\TrialController@cancel",
+          "permission": "trials.cancel"
+        }
+      ]
+    },
+    {
+      "name": "tenant-event-teams",
+      "prefix": "/api/v1/teams/{team}/event-teams",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "entitlement.enforce:team_event_participation",
+        "team.resolve_active",
+        "throttle:teams-tenant",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Event participation. Medium+ via team_event_participation entitlement.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\EventTeamController@index",
+          "permission": "event_teams.viewAny",
+          "description": "filter[event_id], filter[participation_type], filter[status]."
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\EventTeamController@store",
+          "permission": "event_teams.register",
+          "description": "Body: EventTeamRegisterData. event_id nullable pre-Wave-3."
+        },
+        {
+          "method": "GET",
+          "path": "/{eventTeam}",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\EventTeamController@show",
+          "permission": "event_teams.view"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{eventTeam}",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\EventTeamController@update",
+          "permission": "event_teams.update",
+          "description": "Editable: participation_type (only pre-check-in)."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{eventTeam}",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\EventTeamController@destroy",
+          "permission": "event_teams.withdraw",
+          "description": "Alias for POST /{eventTeam}/withdraw."
+        },
+        {
+          "method": "POST",
+          "path": "/{eventTeam}/register",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\EventTeamController@register",
+          "permission": "event_teams.register",
+          "description": "Idempotent re-register. Sets registered_at, clears withdrew_at if previously withdrawn."
+        },
+        {
+          "method": "POST",
+          "path": "/{eventTeam}/withdraw",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\EventTeamController@withdraw",
+          "permission": "event_teams.withdraw",
+          "description": "Body: { reason? }. Cascades cancel-attendance for members (Wave 3 hook)."
+        },
+        {
+          "method": "POST",
+          "path": "/{eventTeam}/check-in",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\EventTeamController@checkIn",
+          "permission": "event_teams.check-in",
+          "description": "Body: { attendance_count? }."
+        },
+        {
+          "method": "POST",
+          "path": "/{eventTeam}/record-result",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Tenant\\EventTeamController@recordResult",
+          "permission": "event_teams.record-result",
+          "description": "Body: { result }. Validated against valid_result_shape rule."
+        }
+      ]
+    },
+    {
+      "name": "platform-teams",
+      "prefix": "/api/v1/platform/teams",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "throttle:teams-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "Cross-tenant read for support tooling.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Platform\\TeamController@index",
+          "permission": "platform.teams.viewAny",
+          "description": "filter[tenant_id], filter[team_type], filter[status]. Cross-tenant scan."
+        },
+        {
+          "method": "GET",
+          "path": "/{team}",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Platform\\TeamController@show",
+          "permission": "platform.teams.view"
+        },
+        {
+          "method": "POST",
+          "path": "/{team}/force-close",
+          "controller": "Academorix\\Teams\\Http\\Controllers\\Platform\\TeamController@forceClose",
+          "permission": "platform.teams.force-close",
+          "description": "Support-only escape hatch. Bypasses tenant guards. Notifies tenant admin + writes audit row with 7-year retention. Body: { reason }."
+        }
+      ]
+    }
+  ]
+}

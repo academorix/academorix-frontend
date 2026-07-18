@@ -1,0 +1,151 @@
+{
+  "$version": 1,
+  "name": "age-group",
+  "alias": "age_group",
+  "namespace": "Academorix\\Sports\\AgeGroup",
+  "description": "Age-bucket classifier for Athletes + Teams. Answers 'is this Athlete eligible for this Team's age category?'. Sport-agnostic at the base level — an AgeGroup like 'U12' means 'under 12 as of the cutoff date' regardless of sport. Sport-specific overrides exist: many federations use different cutoff dates per sport (football uses Jan 1 in Europe, Aug 1 in the US; swimming uses birthdate exact). Every tenant seeds a standard age-group catalog on TenantProvisioned covering U6..U18 + Adult + Senior + Masters; tenants may add custom groups per entitlement. Ships: AgeGroup model with (min_age_inclusive, max_age_inclusive) + cutoff_date_kind (calendar_year / academic_year / rolling_from_birthday / custom_date) + sport_key (optional — for sport-specific groups) + is_default + is_seeded (distinguishes platform-provisioned defaults from tenant customs); a default 10-entry catalog seeded at TenantProvisioned; membership resolver `AgeGroupResolver::resolveFor(athlete, sport_key?, on_date=today)` returns the AgeGroup an athlete falls into. Downstream: Team.age_group_id (Wave 2b nullable), AthleteEnrollment.age_group_snapshot_id (Wave 3+ — snapshotted at enrollment time so the enrollment survives athlete birthday drift). Small tier auto-seeded catalog only; Medium+ can customise; Enterprise can define sport-specific overrides.",
+  "keywords": [
+    "age-group",
+    "age-bucket",
+    "athlete",
+    "team",
+    "eligibility",
+    "cutoff-date",
+    "under-age",
+    "youth",
+    "safeguarding",
+    "sport-agnostic",
+    "sport-specific",
+    "calendar-year",
+    "academic-year",
+    "rolling-from-birthday"
+  ],
+  "priority": 53,
+  "providers": [
+    "Academorix\\Sports\\AgeGroup\\Providers\\AgeGroupServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "organization",
+    "region",
+    "entitlements"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "athlete",
+    "athlete-enrollment",
+    "teams",
+    "event",
+    "notifications"
+  ],
+  "contributes": {
+    "traits": [
+      "BelongsToAgeGroup",
+      "HasAgeGroupCatalog"
+    ],
+    "attributes": [
+      "AsAgeGroupListener"
+    ],
+    "blueprints": [],
+    "middleware": [],
+    "events": [
+      "AgeGroupCreated",
+      "AgeGroupUpdated",
+      "AgeGroupBoundsChanged",
+      "AgeGroupCutoffChanged",
+      "AgeGroupSportKeyChanged",
+      "AgeGroupDefaultChanged",
+      "AgeGroupArchived",
+      "AgeGroupRestored",
+      "AgeGroupDeleted",
+      "AgeGroupCatalogSeeded"
+    ],
+    "policies": [
+      "AgeGroupPolicy"
+    ],
+    "hooks": [
+      "SeedDefaultAgeGroupsOnTenantProvisioned",
+      "PreventAgeGroupOrphansOnTenantErased"
+    ],
+    "commands": [
+      "age-group:list",
+      "age-group:describe",
+      "age-group:create",
+      "age-group:set-default",
+      "age-group:archive",
+      "age-group:restore",
+      "age-group:reconcile-defaults",
+      "age-group:seed-defaults-for-tenant"
+    ],
+    "jobs": [
+      "SeedDefaultAgeGroupsForTenantJob",
+      "ReconcileAgeGroupDefaultInvariantJob",
+      "PurgeArchivedAgeGroupsJob"
+    ],
+    "notifications": [
+      "AgeGroupCreatedNotification",
+      "AgeGroupBoundsChangedNotification",
+      "AgeGroupDefaultChangedNotification"
+    ],
+    "broadcasts": [],
+    "observers": [
+      "AgeGroupObserver"
+    ],
+    "rules": [
+      "valid_hex_color",
+      "valid_age_bounds",
+      "valid_cutoff_date",
+      "valid_sport_key",
+      "age_group_slug_reserved"
+    ],
+    "casts": [
+      "CutoffDateKind",
+      "GenderCategory",
+      "HexColor"
+    ],
+    "views": [],
+    "lang": [
+      "age-group"
+    ],
+    "config": [
+      "age_group"
+    ],
+    "macros": [],
+    "bindings": [
+      "AgeGroupRepository",
+      "AgeGroupProvisioner",
+      "AgeGroupResolver",
+      "CutoffDateCalculator",
+      "AgeGroupCatalogSeeder"
+    ],
+    "resources": [
+      "age-group"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing age-group CRUD + lifecycle (set-default / archive / restore) + a hypothetical-resolve endpoint that shows which age group a DOB + sport_key falls into. Read is open to every tenant member (age groups are UI reference data every enrollment + roster form needs); write is admin/owner-only.",
+      "routes": [
+        "GET /api/v1/age-groups",
+        "POST /api/v1/age-groups",
+        "GET /api/v1/age-groups/{age_group}",
+        "PATCH /api/v1/age-groups/{age_group}",
+        "DELETE /api/v1/age-groups/{age_group}",
+        "POST /api/v1/age-groups/{age_group}/set-default",
+        "POST /api/v1/age-groups/{age_group}/archive",
+        "POST /api/v1/age-groups/{age_group}/restore",
+        "GET /api/v1/age-groups/resolve"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant read for support tooling.",
+      "routes": [
+        "GET /api/v1/platform/age-groups",
+        "GET /api/v1/platform/age-groups/{age_group}"
+      ]
+    }
+  }
+}

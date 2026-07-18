@@ -1,0 +1,52 @@
+{
+  "id": "academorix://modules/season/relations",
+  "$version": 1,
+  "title": "season — model relationships",
+  "description": "Season sits below Tenant + optionally under Organization + Branch. Its outbound relations reach up to those parents; its inbound relations arrive from Team (Wave 2b) + AthleteEnrollment / Event / Session (Wave 3) via the `BelongsToSeason` trait shipped here. Every FK from a Season to another aggregate is same-tenant — cross-tenant FKs are forbidden per `.kiro/steering/tenancy-columns.md` §5. `season_id` NEVER carries `application_id` (hierarchy.md §2 forbids it — Application cascades through tenants.application_id).",
+  "internal": [],
+  "outbound": [
+    {
+      "from": "Season",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "The tenant that owns this Season. CASCADE aligns with tenancy's TenantErased contract — every season is same-tenant scoped. The tenant-erasure hook (`PreventSeasonOrphansOnTenantErased`) does NOT rehome seasons to another tenant (cross-tenant seasons are forbidden); it lets the cascade fire after every dependent row (Team, AthleteEnrollment, Event, Session) has already been erased."
+    },
+    {
+      "from": "Season",
+      "kind": "belongsTo",
+      "to": "organization::Organization",
+      "foreignKey": "organization_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Optional. When set, the Season only applies to teams/enrollments/events belonging to this Organization. RESTRICT because archiving an Organization with active org-scoped seasons must fail loudly (the org archive listener refuses the org archive when any active seasons scoped to it exist)."
+    },
+    {
+      "from": "Season",
+      "kind": "belongsTo",
+      "to": "branch::Branch",
+      "foreignKey": "branch_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Optional. When set, the Season only applies to teams/enrollments/events at this Branch. RESTRICT — closing a branch doesn't cascade the season (Season data is retained for reporting even when the branch closes). The branch-closure listener writes an audit warning + prompts admin action instead."
+    }
+  ],
+  "inbound": {
+    "description": "Domain models with a per-season attribution key compose the `BelongsToSeason` trait shipped here. They store the linkage as a `season_id` FK. FK is nullable ONLY on Team Wave 2b (per the two-module concurrent-authoring pattern); Wave 3 downstream models carry required season_id.",
+    "examples": [
+      "teams::Team.season_id — nullable in Wave 2b (Team + Season authored concurrently; some teams are perpetual + never scope to a season). Wave 3 will migrate to required for team types that DO scope.",
+      "athlete-enrollment::AthleteEnrollment.season_id — required. Every enrollment is a per-season row (Wave 3).",
+      "event::Event.season_id — required. Every match/event belongs to a season (Wave 3).",
+      "session::Session.season_id — required. Every practice/training session belongs to a season (Wave 3)."
+    ],
+    "onDelete": "RESTRICT by convention on domain FKs referencing seasons.id — the SeasonObserver refuses to archive a Season while ANY inbound row (Team, AthleteEnrollment, Event, Session) still references it. The user-facing error is `SEASON_HAS_ACTIVE_ENROLLMENTS` (409). The FK RESTRICT at the DB level is the fallback; the observer surfaces the clearer error."
+  },
+  "morphs": [],
+  "notes": [
+    "Season is a leaf below Tenant / Organization / Branch. It does NOT project into the scope substrate — Season is a temporal scoping mechanism of its own, not a scope consumer. `scope_node_id` on seasons is forbidden per tenancy-columns.md §4.",
+    "The forbidden columns per `tenancy-columns.md` §5 are ENFORCED at review + by the tenancy-compliance-auditor: `application_id` on seasons is a schema violation, `region_id` on seasons is a schema violation, `scope_node_id` on seasons is a schema violation.",
+    "Season does not carry `parent_id` — seasons are flat. A three-term academic year is three Season rows (autumn-term, spring-term, summer-term); a season with playoffs is ONE row with `has_playoffs=true` + timestamps.",
+    "The (organization_id, branch_id, sport_key) scoping tuple + the is_current invariant together give tenants fine-grained control over 'which Season is current in which context' without introducing hierarchy: a tenant with 3 branches + 4 sports can run 12 concurrent current seasons, each in a distinct tuple."
+  ]
+}

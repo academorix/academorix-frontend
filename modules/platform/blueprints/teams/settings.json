@@ -1,0 +1,247 @@
+{
+  "id": "academorix://modules/teams/settings",
+  "$version": 1,
+  "title": "teams — settings",
+  "description": "Tenant-facing preferences (team defaults + mixed-youth policy + trial defaults) + user-level preferences (team notifications).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "teams",
+      "class": "Academorix\\Teams\\Settings\\TeamsSettings",
+      "label": "Teams",
+      "description": "Tenant-wide defaults for team creation + trial workflow + eligibility policy.",
+      "icon": "users",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 40,
+      "permission": "teams.viewAny",
+      "requiresEntitlement": "teams",
+      "sections": [
+        {
+          "label": "Team defaults",
+          "description": "Default values applied to newly-created teams. Can be overridden per-team.",
+          "icon": "user-group",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "default_team_type",
+              "controlType": "select",
+              "label": "Default team type",
+              "defaultValue": "squad",
+              "options": {
+                "squad": "Squad (sports team)",
+                "class": "Class (gym / fitness)",
+                "cohort": "Cohort (school)",
+                "group": "Group (general)",
+                "crew": "Crew (informal)",
+                "other": "Other"
+              },
+              "sortOrder": 1
+            },
+            {
+              "name": "default_capacity",
+              "controlType": "number",
+              "label": "Default team capacity",
+              "defaultValue": null,
+              "min": 1,
+              "max": 500,
+              "helpText": "Leave blank for no cap. Overrides per-team available on the team detail screen.",
+              "sortOrder": 2
+            },
+            {
+              "name": "default_capacity_waitlist",
+              "controlType": "number",
+              "label": "Default waitlist size",
+              "defaultValue": null,
+              "min": 0,
+              "max": 100,
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Eligibility policy",
+          "icon": "shield-check",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "enforce_age_eligibility",
+              "controlType": "toggle",
+              "label": "Enforce age eligibility on roster-add",
+              "defaultValue": true,
+              "helpText": "When on, athletes outside team's min/max age are refused with a clear error.",
+              "sortOrder": 1
+            },
+            {
+              "name": "enforce_gender_eligibility",
+              "controlType": "toggle",
+              "label": "Enforce gender eligibility on roster-add",
+              "defaultValue": true,
+              "sortOrder": 2
+            },
+            {
+              "name": "allow_mixed_youth",
+              "controlType": "toggle",
+              "label": "Allow mixed-gender youth teams",
+              "defaultValue": false,
+              "helpText": "Off by default (child-safety mandate). When off, teams with gender_category='mixed' AND min_age<18 are refused at create-time.",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Capacity policy",
+          "icon": "chart-bar",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "enforce_capacity",
+              "controlType": "toggle",
+              "label": "Enforce team capacity",
+              "defaultValue": true,
+              "helpText": "When off, capacity is a UI hint only. Rare — used only when overbook + waiver flow is in place.",
+              "requiresEntitlement": "team_capacity_gating",
+              "sortOrder": 1
+            }
+          ]
+        },
+        {
+          "label": "Trials",
+          "icon": "clipboard-check",
+          "sortOrder": 4,
+          "requiresEntitlement": "team_trials",
+          "fields": [
+            {
+              "name": "default_trial_type",
+              "controlType": "select",
+              "label": "Default trial type",
+              "defaultValue": "individual",
+              "options": {
+                "individual": "Individual",
+                "group": "Group",
+                "one_day": "One-day",
+                "multi_session": "Multi-session"
+              },
+              "sortOrder": 1
+            },
+            {
+              "name": "default_trial_fee_cents",
+              "controlType": "currency",
+              "label": "Default trial fee (cents)",
+              "defaultValue": 0,
+              "min": 0,
+              "helpText": "Wave 4 Finance module wires payment collection. Wave 2 accepts the value + records payment_status='none'.",
+              "sortOrder": 2
+            },
+            {
+              "name": "trial_reminder_offsets_hours",
+              "controlType": "multi-select",
+              "label": "Trial reminder offsets",
+              "defaultValue": [24, 1],
+              "options": {
+                "48": "48 hours before",
+                "24": "24 hours before",
+                "4": "4 hours before",
+                "1": "1 hour before",
+                "0": "Do not send reminders"
+              },
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Notifications",
+          "icon": "bell",
+          "sortOrder": 5,
+          "fields": [
+            {
+              "name": "coach_change_notify_minors_only",
+              "controlType": "toggle",
+              "label": "Notify safeguarding lead on coach changes for adult teams",
+              "defaultValue": false,
+              "helpText": "Default off — only minor-only teams route to safeguarding by default. Turning on notifies for every coach change.",
+              "sortOrder": 1
+            },
+            {
+              "name": "schedule_change_notify_channels",
+              "controlType": "multi-select",
+              "label": "Schedule-change notification channels",
+              "defaultValue": ["mail", "in_app", "push"],
+              "options": {
+                "mail": "Email",
+                "push": "Push notification",
+                "in_app": "In-app",
+                "sms": "SMS (usage charged)"
+              },
+              "helpText": "Schedule changes cannot be opted out by members. This chooses the delivery channels.",
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "teams_user",
+      "class": "Academorix\\Teams\\Settings\\TeamsUserSettings",
+      "label": "My teams",
+      "description": "Per-user team preferences.",
+      "icon": "user-circle",
+      "scope": "user",
+      "public": true,
+      "sortOrder": 35,
+      "sections": [
+        {
+          "label": "Team notifications",
+          "icon": "bell",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "receive_team_registration_notifications",
+              "controlType": "toggle",
+              "label": "Notify me when registration opens for teams I'm eligible for",
+              "defaultValue": true,
+              "sortOrder": 1
+            },
+            {
+              "name": "receive_team_member_updates",
+              "controlType": "toggle",
+              "label": "Notify me when someone joins or leaves my team",
+              "defaultValue": true,
+              "helpText": "Only applies to teams you coach or captain.",
+              "sortOrder": 2
+            },
+            {
+              "name": "notification_channels",
+              "controlType": "multi-select",
+              "label": "Team notification channels",
+              "defaultValue": ["in_app", "push"],
+              "options": {
+                "mail": "Email",
+                "push": "Push notification",
+                "in_app": "In-app",
+                "sms": "SMS (usage charged)"
+              },
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Preferences",
+          "icon": "adjustments-horizontal",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "default_team_id",
+              "controlType": "resource-select",
+              "label": "My default team",
+              "helpText": "Pre-selected on the team dashboard when you have multiple.",
+              "resource": "team",
+              "sortOrder": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

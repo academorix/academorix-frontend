@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/teams/middleware",
+  "$version": 1,
+  "title": "teams — HTTP middleware",
+  "middleware": [
+    {
+      "alias": "team.resolve_active",
+      "class": "Academorix\\Teams\\Http\\Middleware\\ResolveActiveTeam",
+      "priority": 42,
+      "description": "Reads team_id from the route parameter ({team}), the request body (create-child-resource flows), or the X-Team-Id header. Loads the Team model, checks tenant scoping (refuses when team.tenant_id != request tenant), and stores it on RequestContext::team() so downstream services can call `Request::activeTeam()` without re-fetching. Publishes the `activeTeam` + `activeTeamId` macros on the Request class. Auto-applied on every /api/v1/teams/{team}/** route.",
+      "auto_applied": true,
+      "auto_applied_to": ["tenant-teams-detail", "tenant-team-members", "tenant-team-trials", "tenant-team-event-teams"]
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "application::application.resolve" },
+    { "middleware": "tenancy::tenant.resolve" },
+    {
+      "middleware": "entitlements::entitlement.enforce",
+      "note": "Applied per-route with the required entitlement key: `teams` (all routes), `team_trials` (trial routes), `team_event_participation` (event-team routes)."
+    },
+    {
+      "middleware": "access::authorize",
+      "note": "The permission-based authorize middleware wraps the ability checks defined in policies.json + permissions.json. Route-level `permission` metadata resolves through this middleware."
+    },
+    {
+      "middleware": "scope::resolve_scope",
+      "note": "ResolveScope narrows queries by the caller's active branch/organization scope. Applied globally to authenticated tenant routes; team routes rely on it for the branch narrowing described in policies.json."
+    }
+  ]
+}

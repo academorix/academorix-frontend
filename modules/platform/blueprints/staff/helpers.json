@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/staff/helpers",
+  "$version": 1,
+  "title": "staff — helper functions",
+  "description": "Ergonomic helpers for accessing the active staff from the request context, resolving branch managers, walking the org chart, and rendering compensation with permission checks. All helpers are thin wrappers around bound services — never business logic.",
+  "namespace": "Academorix\\Staff\\Support",
+  "helpers": [
+    {
+      "signature": "active_staff(): ?Staff",
+      "purpose": "Returns the resolved Staff for the current request. Null when no staff context (most requests). Rare — the /me/staff surface loads this.",
+      "delegates_to": "Request::activeStaff() macro"
+    },
+    {
+      "signature": "active_staff_id(): ?string",
+      "purpose": "Returns the resolved Staff.id without the model load.",
+      "delegates_to": "Request::activeStaffId() macro"
+    },
+    {
+      "signature": "current_branch_manager(Branch $branch): ?Staff",
+      "purpose": "Returns the active branch manager for a branch (Staff where is_branch_manager=true AND employment_status='active'). Cached; feeds the sidebar's manager badge.",
+      "delegates_to": "BranchManagerResolver::resolve()"
+    },
+    {
+      "signature": "direct_reports_of(Staff $staff): Collection<Staff>",
+      "purpose": "Returns the direct reports (Staff where reports_to_staff_id = staff.id AND employment_status='active'). Empty when staff_org_chart entitlement is off for the tenant.",
+      "delegates_to": "OrgChartResolver::directReports()"
+    },
+    {
+      "signature": "reporting_chain(Staff $staff): Collection<Staff>",
+      "purpose": "Returns the chain of managers from staff up to the root (an owner, or the branch manager, or whoever sits at the top). Empty when reports_to_staff_id is null. Cycle-safe — refuses to loop indefinitely on a corrupt chain.",
+      "delegates_to": "OrgChartResolver::reportingChain()"
+    },
+    {
+      "signature": "can_view_compensation(User $viewer, Staff $target): bool",
+      "purpose": "True when the viewer carries `staff.view.compensation` (any staff) OR `staff.view.compensation.own` AND viewer.id === target.user_id. Consumed by the redactor pipeline + by SDUI display logic.",
+      "delegates_to": "CompensationGate::canView()"
+    },
+    {
+      "signature": "can_manage_compensation(User $viewer, Staff $target): bool",
+      "purpose": "True when the viewer carries `staff.manage.compensation`. Checks include the staff_compensation_tracking entitlement (returns false when off). Consumed by the observer write path.",
+      "delegates_to": "CompensationGate::canManage()"
+    },
+    {
+      "signature": "coach_of(Staff $staff): ?Coach",
+      "purpose": "Returns the linked Coach row (hasOne) or null. Convenience for the .isCoach() check + .activeCoach() variant."
+    },
+    {
+      "signature": "certification_is_expired(array $certification): bool",
+      "purpose": "True when the certification's expires_at is set AND < today(). Used by the CoachCertificationExpired listener + the public coach profile rendering."
+    },
+    {
+      "signature": "certification_is_verified(array $certification): bool",
+      "purpose": "True when the certification has verified_at set (only meaningful when coach_certifications_verified entitlement is on)."
+    }
+  ],
+  "notes": [
+    "Helpers deliberately delegate — testing swaps the bound service to a stub, and every helper follows.",
+    "The compensation-gate helpers (can_view_compensation, can_manage_compensation) centralise the permission-checking logic so every caller (observer, controller, SDUI redactor) uses the same source of truth. Divergent checks would create audit gaps.",
+    "No helper directly reads the DB — everything routes through repositories + services. Keeps the boundary clean."
+  ]
+}

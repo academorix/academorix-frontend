@@ -1,0 +1,80 @@
+{
+  "id": "staff.resources.staff.org_chart",
+  "title": "Org chart",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/staff/org-chart",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "staff", "entity": "staff", "action": "viewDirectReports" },
+  "requiresPermission": "staff.view.direct-reports",
+  "requiresEntitlement": "staff_org_chart",
+  "dataSources": [
+    { "name": "org_chart", "kind": "http.get", "url": "/api/v1/staff/org-chart", "unwrap": "data" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Org chart" }
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-sm text-muted", "children": "Reporting hierarchy across your active staff." }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Tree",
+              "props": { "aria-label": "Reporting hierarchy" },
+              "bindings": { "nodes": { "$ref": "org_chart.tree" } },
+              "itemRenderer": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-3 py-2" },
+                "children": [
+                  {
+                    "kind": "Avatar",
+                    "props": { "size": "sm" },
+                    "bindings": { "src": { "$ref": "node.avatar_url" }, "name": { "$ref": "node.display_name" } }
+                  },
+                  {
+                    "kind": "View",
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-medium" },
+                        "bindings": { "children": { "$ref": "node.display_name" } }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted" },
+                        "bindings": { "children": { "$ref": "node.position" } }
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "Icon",
+                    "bindings": { "hidden": { "$expr": "!node.is_branch_manager" } },
+                    "props": { "name": "star", "className": "size-4 text-warning" }
+                  }
+                ],
+                "actions": {
+                  "onPress": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/staff/' + node.id"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

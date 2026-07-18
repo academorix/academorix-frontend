@@ -1,0 +1,181 @@
+{
+  "id": "academorix://modules/teams/config",
+  "$version": 1,
+  "title": "teams — developer configuration",
+  "configFile": "config/teams.php",
+  "envPrefix": "TEAMS_",
+  "sections": {
+    "capacity": {
+      "keys": [
+        {
+          "path": "teams.capacity.default",
+          "type": "int|null",
+          "env": "TEAMS_CAPACITY_DEFAULT",
+          "default": null,
+          "description": "Default value for Team.capacity when the create path doesn't set it explicitly. Null = no cap."
+        },
+        {
+          "path": "teams.capacity.default_waitlist",
+          "type": "int|null",
+          "env": "TEAMS_CAPACITY_DEFAULT_WAITLIST",
+          "default": null,
+          "description": "Default value for Team.capacity_waitlist. Null = no waitlist."
+        },
+        {
+          "path": "teams.capacity.max_configurable",
+          "type": "int",
+          "default": 500,
+          "description": "Hard ceiling on Team.capacity — a tenant cannot configure a team of more than 500 members even on Enterprise. Guards against unrealistic values that would break roster + attendance UI."
+        },
+        {
+          "path": "teams.capacity.max_waitlist_configurable",
+          "type": "int",
+          "default": 100,
+          "description": "Hard ceiling on Team.capacity_waitlist."
+        }
+      ]
+    },
+    "registration": {
+      "keys": [
+        {
+          "path": "teams.registration.default_window_days",
+          "type": "int",
+          "default": 30,
+          "description": "Default (registration_closes_at - registration_opens_at) window when the caller doesn't specify."
+        },
+        {
+          "path": "teams.registration.auto_flip_frequency_minutes",
+          "type": "int",
+          "default": 5,
+          "description": "OpenClosePendingRegistrationsJob runs every N minutes. Lowering below 5 stresses the scheduler; raising above 15 causes UI drift where the team status shows 'closing at HH:MM' after the moment."
+        },
+        {
+          "path": "teams.registration.notify_eligible_on_open",
+          "type": "bool",
+          "default": true,
+          "description": "When true, TeamRegistrationOpened fires TeamRegistrationOpeningNotification to age + gender-matched members. When false, only the roster admin sees the state change."
+        }
+      ]
+    },
+    "trials": {
+      "keys": [
+        {
+          "path": "teams.trials.default_type",
+          "type": "string",
+          "default": "individual",
+          "enum": ["individual", "group", "one_day", "multi_session"],
+          "description": "Default trial_type when the schedule path doesn't specify."
+        },
+        {
+          "path": "teams.trials.expire_completed_after_hours",
+          "type": "int",
+          "default": 24,
+          "description": "CloseExpiredTrialsJob transitions in_progress trials past ends_at + this many hours to completed. Coaches get a nudge notification 24h before the auto-complete."
+        },
+        {
+          "path": "teams.trials.max_session_count",
+          "type": "int",
+          "default": 4,
+          "description": "Hard cap on TeamTrial.session_count. Values above this suggest the tenant should model this as a team membership, not a trial."
+        },
+        {
+          "path": "teams.trials.reminder_offsets_hours",
+          "type": "array",
+          "default": [24, 1],
+          "description": "How many hours before starts_at to dispatch trialist reminders. Two-shot default (24h + 1h). Set to [] to disable."
+        },
+        {
+          "path": "teams.trials.anonymous_redaction_days",
+          "type": "int",
+          "default": 90,
+          "description": "For trial rows that resolved to rejected/no_show/cancelled AND the trialist is anonymous: redact first/last name + phone + email + dob this many days after decided_at."
+        },
+        {
+          "path": "teams.trials.rejected_retention_years",
+          "type": "int",
+          "default": 3,
+          "description": "Rejected trials retained this many years for anti-discrimination defence records."
+        }
+      ]
+    },
+    "reconciliation": {
+      "keys": [
+        {
+          "path": "teams.reconciliation.member_invariant_batch_size",
+          "type": "int",
+          "default": 500,
+          "description": "ReconcileTeamMemberActiveInvariantJob scans this many team rows per pass."
+        },
+        {
+          "path": "teams.reconciliation.expected_violations",
+          "type": "int",
+          "default": 0,
+          "description": "Baseline for the reconciler alerts. Any finding above this is a P1 signal."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "teams.retention.archived_hold_days",
+          "type": "int",
+          "default": 730,
+          "description": "PurgeArchivedTeamsJob hard-deletes archived teams past this many days IF no downstream row references them."
+        }
+      ]
+    },
+    "polymorphism": {
+      "keys": [
+        {
+          "path": "teams.polymorphism.member_type_registry",
+          "type": "array",
+          "default": {
+            "athlete": "Academorix\\Sports\\Models\\Athlete",
+            "coach": "Academorix\\Staff\\Models\\Coach",
+            "staff": "Academorix\\Staff\\Models\\Staff",
+            "user": "Academorix\\User\\Models\\User"
+          },
+          "description": "Static registry for PolymorphicTeamMemberResolver. Wave 3 sports + Wave 2b staff modules ADD entries here at boot — the Wave 2 default only wires the `user` binding; the others are placeholders that raise a clear error until the owning module lands."
+        },
+        {
+          "path": "teams.polymorphism.allow_unresolved_types",
+          "type": "bool",
+          "default": false,
+          "description": "In production: false — the observer refuses roster creates whose member_type has no registered resolver. In testing: true — allows fixtures for future waves without loading the whole platform."
+        }
+      ]
+    },
+    "eligibility": {
+      "keys": [
+        {
+          "path": "teams.eligibility.enforce_age",
+          "type": "bool",
+          "default": true,
+          "description": "When true, AgeEligibilityGate refuses roster-add for athletes outside team.min_age/max_age. Skipped when the athlete has no dob."
+        },
+        {
+          "path": "teams.eligibility.enforce_gender",
+          "type": "bool",
+          "default": true,
+          "description": "When true, GenderEligibilityGate refuses roster-add when member.gender doesn't match team.gender_category (unless team.gender_category='any')."
+        },
+        {
+          "path": "teams.eligibility.allow_mixed_youth",
+          "type": "bool",
+          "default": false,
+          "description": "When false, teams with min_age<18 AND gender_category='mixed' are refused at create-time. Explicit opt-in via tenant settings."
+        }
+      ]
+    },
+    "notifications": {
+      "keys": [
+        {
+          "path": "teams.notifications.coach_change_notify_minors_only",
+          "type": "bool",
+          "default": true,
+          "description": "When true, TeamCoachChangedNotification fires only when team.min_age < 18 OR max_age < 18. When false, every coach change notifies. Default is true — adult-only teams get quieter coach transitions."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,158 @@
+{
+  "id": "staff.resources.coach.certifications",
+  "title": "Coach certifications",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/coaches/{coachId}/certifications",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "staff", "entity": "coach", "action": "manageCertifications" },
+  "requiresPermission": "coach.view",
+  "dataSources": [
+    { "name": "coach", "kind": "http.get", "urlExpr": "'/api/v1/coaches/' + params.coachId", "unwrap": "data" },
+    { "name": "certification_orgs", "kind": "static", "src": "staff::data/certification-organization-catalog.json" },
+    { "name": "features", "kind": "http.get", "url": "/api/v1/features", "unwrap": "data" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-3xl mx-auto p-6 flex flex-col gap-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$expr": "coach.display_name + ' — Certifications'" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted" },
+                  "bindings": { "children": { "$expr": "coach.certifications.length + ' certifications on record'" } }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "leadingIcon": "plus", "children": "Add certification" },
+              "actions": {
+                "onPress": { "kind": "modal.open", "modalId": "add_certification_modal" }
+              },
+              "requiresPermission": "coach.manage.certifications"
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-2" },
+          "bindings": { "items": { "$ref": "coach.certifications" } },
+          "itemRenderer": {
+            "kind": "Card",
+            "props": { "className": "p-4 flex items-start justify-between gap-4" },
+            "children": [
+              {
+                "kind": "View",
+                "props": { "className": "flex-1" },
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2" },
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-medium" },
+                        "bindings": { "children": { "$ref": "row.certification" } }
+                      },
+                      {
+                        "kind": "Widget",
+                        "widget": "staff.certification-badge",
+                        "bindings": {
+                          "certification": { "$ref": "row" }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-sm text-muted" },
+                    "bindings": { "children": { "$ref": "row.organization" } }
+                  },
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-3 text-xs text-muted mt-1" },
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "bindings": { "children": { "$expr": "'Certified ' + row.certified_at" } }
+                      },
+                      {
+                        "kind": "Text",
+                        "bindings": {
+                          "hidden": { "$expr": "!row.expires_at" },
+                          "children": { "$expr": "'Expires ' + row.expires_at" }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2" },
+                "children": [
+                  {
+                    "kind": "Button",
+                    "props": { "variant": "ghost", "size": "sm", "children": "Verify" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "modal.open",
+                        "modalId": "verify_certification_modal",
+                        "propsFrom": "row"
+                      }
+                    },
+                    "requiresPermission": "coach.verify.certifications",
+                    "requiresFeature": "coach.certifications_verified",
+                    "bindings": {
+                      "hidden": { "$expr": "row.verified_at !== null" }
+                    }
+                  },
+                  {
+                    "kind": "Button",
+                    "props": { "variant": "danger-ghost", "size": "sm", "leadingIcon": "trash" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.delete",
+                        "urlExpr": "'/api/v1/coaches/' + params.coachId + '/certifications/' + row.id",
+                        "confirm": {
+                          "title": "Remove certification?",
+                          "message": "This is audited. Removing does not undo a certification's history — it removes the entry from the coach's profile going forward."
+                        },
+                        "onSuccess": { "kind": "data.refresh", "sources": ["coach"] }
+                      }
+                    },
+                    "requiresPermission": "coach.manage.certifications"
+                  }
+                ]
+              }
+            ]
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "check-badge", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No certifications yet" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Add one to showcase this coach's credentials on their public profile." } }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

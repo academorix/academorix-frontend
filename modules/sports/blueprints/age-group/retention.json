@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/age-group/retention",
+  "$version": 1,
+  "title": "age-group — retention windows",
+  "description": "AgeGroup rows follow a soft-delete → archived → hard-delete lifecycle. The hold window is 1095 days (3 years) matching rolling youth-development cohort windows so an archived age group stays recoverable across a full cohort's lifetime. Audit rows produced by this module outlive their source AgeGroup for 7 years (minor-safeguarding retention floor).",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(e) (storage limitation)",
+    "gdpr Art. 8 (children's data)",
+    "COPPA (US)",
+    "FERPA (US)",
+    "SOC 2 CC7.2 (system monitoring)"
+  ],
+  "retention": [
+    {
+      "entity": "AgeGroup",
+      "hot": { "days": "while deleted_at IS NULL (active)" },
+      "cold": {
+        "days": "age_group.retention.archived_age_groups_retention_days (default 1095 — 3 years; up to 2555 per Enterprise tenant setting)",
+        "state": "deleted_at set (soft-deleted); hidden from tenant selectors + resolver; readable by admins via `?include_archived=true`; inbound rows continue to point at it during the window (Team + EventDivision may hold FKs, AthleteEnrollment snapshots continue to work regardless)."
+      },
+      "purge": {
+        "trigger": "deleted_at + age_group.retention.archived_age_groups_retention_days past AND no inbound row references (Team, EventDivision; snapshots don't count)",
+        "action": "hard delete",
+        "job": "PurgeArchivedAgeGroupsJob",
+        "cascades": [],
+        "note": "IF any inbound row (Team, EventDivision, TeamRegistration) still references the AgeGroup past the retention window, the job SKIPS the row + logs a telemetry counter (`academorix.age_group.purge_pending.count`). The row survives another day. Explicit `age-group:archive --force` bypasses the FK check but does NOT delete referring rows."
+      }
+    },
+    {
+      "entity": "audits (from Auditable trait, age-group-scoped rows)",
+      "hot": { "days": "365 (default retention)" },
+      "cold": { "days": "up to 2555 (7 years — minor-safeguarding retention floor)" },
+      "purge": {
+        "trigger": "audit-module retention policy",
+        "action": "audit rows OUTLIVE their AgeGroup — that's the compliance signal for minor-safeguarding replays. Retention is set by `audit::config.retention_days` clamped up by the compliance floor for minor-safeguarding records (7 years)."
+      }
+    },
+    {
+      "entity": "activity_log (from HasActivityLog trait)",
+      "hot": { "days": "90 (tenant retention_days, per hierarchy.md §7 tier matrix)" },
+      "purge": {
+        "trigger": "activity-module retention policy",
+        "action": "hard purge"
+      }
+    },
+    {
+      "entity": "cache keys (age:*)",
+      "hot": { "days": "seconds — TTL-driven (list_ttl_seconds=600, catalog_ttl_seconds=1800, resolver_ttl_seconds=300)" },
+      "purge": {
+        "trigger": "TTL expiry OR invalidation on AgeGroup mutation",
+        "action": "Redis EXPIRE"
+      }
+    }
+  ],
+  "notes": [
+    "The 1095-day hold window is the DEFAULT. Enterprise tenants may extend up to 2555 days (7 years) via the tenant setting — matching the audit-row retention so archived AgeGroups and their audits both stay recoverable through the same window.",
+    "Hard-delete of an in-use AgeGroup is IMPOSSIBLE by design. The AgeGroupObserver + FK RESTRICT combine to keep the AgeGroup alive as long as any Team / EventDivision references it. This is intentional — an AgeGroup hard-delete would invalidate the eligibility trail on every enrollment that transited through it.",
+    "AthleteEnrollment references via `age_group_snapshot_id` do NOT block delete. Snapshots are self-contained copies of the bounds + cutoff at enrollment time; the source AgeGroup can be safely deleted once no non-snapshot references remain.",
+    "The compliance floor for minor-safeguarding audit rows is 7 years (2555 days) regardless of tenant tier. This is the compliance floor, not a tenant setting — every AgeGroup mutation audit row survives at least 7 years past its source AgeGroup's hard-delete."
+  ]
+}

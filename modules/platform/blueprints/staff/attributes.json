@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/staff/attributes",
+  "$version": 1,
+  "title": "staff — PHP attribute contracts",
+  "description": "Two class-level attributes for listener discovery. `#[AsStaffListener]` subscribes to Staff lifecycle events (hire / offboard / branch-change / promote / suspend / compensation-changed). `#[AsCoachListener]` subscribes to Coach lifecycle events (create / sport-change / certification / status / availability). The Coach listener attribute is distinct because the Coach entity has its own cadence + priority conventions (coach ratings are aggregated nightly; certification expiries are compliance-critical; sport-changes invalidate directory caches).",
+  "namespace": "Academorix\\Staff\\Attributes",
+  "attributes": [
+    {
+      "name": "AsStaffListener",
+      "class": "Academorix\\Staff\\Attributes\\AsStaffListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to Staff lifecycle events (StaffHired / StaffUpdated / StaffPositionChanged / StaffDepartmentChanged / StaffBranchChanged / StaffPromotedToBranchManager / StaffDemotedFromBranchManager / StaffPutOnLeave / StaffReturnedFromLeave / StaffSuspended / StaffReinstated / StaffOffboardingStarted / StaffOffboarded / StaffReactivated). NOTE: CompensationChanged is NOT included in the default event set — subscribers to compensation events must opt in explicitly via `events: ['CompensationChanged']` because that event routes on the compensation-audit queue and has private-tier payload.",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Array of event short names (`StaffHired`, `StaffOffboarded`, ...). Empty = subscribe to every `Academorix\\Staff\\Events\\Staff*` event EXCEPT CompensationChanged (which requires explicit opt-in). Names resolve against events.json at boot; typos abort boot with a discovery error."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue override. Falls back to the event's default queue. Cascade listeners typically override to `staff`."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Handler ordering within a single event. Lower runs first. Cascade listeners (CascadeCoachStatusOnStaffOffboarding) declare priority 40 so they run before notification listeners."
+        }
+      ],
+      "example": "#[AsStaffListener(events: ['StaffOffboarded', 'StaffSuspended', 'StaffPutOnLeave', 'StaffOffboardingStarted'], queue: 'staff', priority: 40)]\nfinal class CascadeCoachStatusOnStaffOffboarding\n{\n    public function __construct(private readonly CoachRepository $coaches) {}\n\n    public function __invoke(StaffOffboarded|StaffSuspended|StaffPutOnLeave|StaffOffboardingStarted $event): void\n    {\n        // Transition the linked coach.\n    }\n}"
+    },
+    {
+      "name": "AsCoachListener",
+      "class": "Academorix\\Staff\\Attributes\\AsCoachListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to Coach lifecycle events (CoachCreated / CoachSportChanged / CoachCertificationAdded / CoachCertificationExpired / CoachCertificationRemoved / CoachRatingUpdated / CoachStatusChanged / CoachAvailabilityChanged).",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Empty = subscribe to every `Academorix\\Staff\\Events\\Coach*` event."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100
+        }
+      ],
+      "example": "#[AsCoachListener(events: ['CoachCertificationExpired'], queue: 'notifications-critical', priority: 30)]\nfinal class DispatchCoachCertificationExpiredNotification\n{\n    public function __invoke(CoachCertificationExpired $event): void\n    {\n        // ...\n    }\n}"
+    }
+  ]
+}

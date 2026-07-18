@@ -1,0 +1,59 @@
+{
+  "$version": 1,
+  "title": "Competitive level samples",
+  "description": "Coach's rating of a team's skill/intensity level. Consumed by the SDUI create-team wizard's competitive_level select field. Not tied to age or sport — a `beginner` under-8 team is different from a `beginner` senior team, but the level captures the internal coach's rating.",
+  "levels": [
+    {
+      "competitive_level": "recreational",
+      "display_name": "Recreational",
+      "description": "Casual participation. No formal competition. Members join for enjoyment, fitness, or social connection. Sessions focus on fun, not skill progression.",
+      "typical_frequency": "1-2 sessions per week",
+      "typical_time_commitment_hours_per_week": "1-3",
+      "example_context": "Adult Sunday football pickup, gym HIIT class, community yoga."
+    },
+    {
+      "competitive_level": "beginner",
+      "display_name": "Beginner",
+      "description": "New to the sport / activity. Focus on fundamental skills + rules + safe technique. Progression is measured, not fast.",
+      "typical_frequency": "1-2 sessions per week",
+      "typical_time_commitment_hours_per_week": "2-4",
+      "example_context": "Intro-to-tennis class for adults, kids' first swimming lessons, Learn-to-Skate."
+    },
+    {
+      "competitive_level": "intermediate",
+      "display_name": "Intermediate",
+      "description": "Comfortable with basics. Building tactical + technical depth. May play in local leagues at a low tier.",
+      "typical_frequency": "2-3 sessions per week + occasional match",
+      "typical_time_commitment_hours_per_week": "4-8",
+      "example_context": "Junior club team, adult local-league team, high-school JV squad."
+    },
+    {
+      "competitive_level": "advanced",
+      "display_name": "Advanced",
+      "description": "Serious about improvement. Plays in competitive leagues, prepares for tournaments. Structured training + video review + fitness testing.",
+      "typical_frequency": "3-5 sessions per week + weekend match",
+      "typical_time_commitment_hours_per_week": "8-15",
+      "example_context": "Academy senior squad, high-school varsity, regional-league team, elite age-group swim squad."
+    },
+    {
+      "competitive_level": "elite",
+      "display_name": "Elite",
+      "description": "Top of local/regional pyramid. National-league or national-team pathway. Dedicated strength + conditioning + performance analysis + nutrition support.",
+      "typical_frequency": "5-6 sessions per week + weekend match + tournaments",
+      "typical_time_commitment_hours_per_week": "15-25",
+      "example_context": "National academy squad, professional-club under-18, elite performance program."
+    },
+    {
+      "competitive_level": "competition",
+      "display_name": "Competition team",
+      "description": "Explicitly organised for competition entry — tournaments, championships, invitational events. Distinct roster + training block per competition cycle. May overlap with elite when the competition team is composed of an academy's top performers.",
+      "typical_frequency": "5-7 sessions per week during competition cycle; 3-4 out of season",
+      "typical_time_commitment_hours_per_week": "15-30",
+      "example_context": "Regional championship squad, national tournament team, elite competition group."
+    }
+  ],
+  "notes": [
+    "The `competitive_level` field is nullable — teams may skip it when the tenant's shape doesn't warrant it (a gym class is recreational by default; explicit setting is optional).",
+    "The catalogue is descriptive, not prescriptive. Tenants may use levels differently across their teams — the audit trail captures the intent."
+  ]
+}

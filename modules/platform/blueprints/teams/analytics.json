@@ -1,0 +1,176 @@
+{
+  "id": "academorix://modules/teams/analytics",
+  "$version": 1,
+  "title": "teams — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Team Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "team_type", "sport_key", "competitive_level", "capacity_bucket"],
+      "description": "Admin created a team. Powers onboarding funnel + team-mix insight."
+    },
+    {
+      "name": "Team Archived",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "cascaded_member_count", "days_active"]
+    },
+    {
+      "name": "Team Paused",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "reason_bucket"]
+    },
+    {
+      "name": "Team Resumed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "days_paused"]
+    },
+    {
+      "name": "Team Schedule Changed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id", "days_of_week_touched", "affected_member_count"]
+    },
+    {
+      "name": "Team Coach Changed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id", "had_previous_coach", "team_is_minor_only"],
+      "description": "team_is_minor_only=true means team.max_age < 18 — child-safety-sensitive event."
+    },
+    {
+      "name": "Team Registration Opened",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id", "capacity_bucket", "days_open_window"]
+    },
+    {
+      "name": "Team Registration Closed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id", "reason", "final_roster_count"]
+    },
+    {
+      "name": "Team Member Joined",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id", "member_type", "role_on_team", "joined_via_trial"],
+      "description": "member_type ∈ {athlete, coach, staff, user}. joined_via_trial=true when the member came from a converted trial."
+    },
+    {
+      "name": "Team Member Left",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id", "left_reason", "days_on_team_bucket"]
+    },
+    {
+      "name": "Team Member Role Changed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id", "from_role", "to_role"]
+    },
+    {
+      "name": "Team Member Suspended",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id", "days_on_team_bucket"]
+    },
+    {
+      "name": "Team Member Injured",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id"]
+    },
+    {
+      "name": "Trial Scheduled",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id", "trial_type", "trialist_type", "session_count", "days_ahead_bucket"]
+    },
+    {
+      "name": "Trial Completed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id", "trial_type"]
+    },
+    {
+      "name": "Trial Converted",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id", "trial_type", "days_to_decision_bucket"]
+    },
+    {
+      "name": "Trial Rejected",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id", "trial_type"],
+      "description": "No `reason` property — rejection reasons are recorded in decision_notes only, never propagated to analytics to protect against anti-discrimination inference."
+    },
+    {
+      "name": "Trial No-Show Recorded",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id"]
+    },
+    {
+      "name": "Trial Cancelled",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id", "cancelled_by", "hours_before_starts_at_bucket"]
+    },
+    {
+      "name": "Event Team Registered",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id", "participation_type", "days_ahead_bucket"]
+    },
+    {
+      "name": "Event Team Withdrew",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id", "hours_before_event_bucket"]
+    },
+    {
+      "name": "Event Team Checked In",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id", "attendance_count_bucket"]
+    },
+    {
+      "name": "Event Team Result Recorded",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id", "participation_type", "has_score", "has_position"]
+    },
+    {
+      "name": "Team Capacity Exceeded",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "team_id", "capacity", "waitlist_configured"],
+      "description": "Every fire is an upsell impression — tier boundary hit."
+    },
+    {
+      "name": "Team Member Invariant Violation",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "team_id", "detected_by"],
+      "description": "P1 event — same (team, person) has 2+ active roster rows. Reconciler finding. Consent tier: essential (data integrity)."
+    }
+  ],
+  "notes": [
+    "Analytics NEVER carry raw member_id / trialist_id / user_id / athlete_id. Buckets are pre-computed at the reporter.",
+    "capacity_bucket: 0-9 / 10-24 / 25-49 / 50+ — coarse enough to prevent competitor cross-inference on class sizes.",
+    "days_ahead_bucket: 0-6 / 7-13 / 14-30 / 30+ — trial + event lead-time distribution.",
+    "hours_before_starts_at_bucket: 0-1 / 1-6 / 6-24 / 24-72 / 72+ — cancellation lead-time distribution.",
+    "days_on_team_bucket: 0-29 / 30-179 / 180-364 / 365-729 / 730+ — retention distribution.",
+    "days_to_decision_bucket: 0-6 / 7-13 / 14-30 / 30+ — trial-decision latency.",
+    "Trial Rejected DELIBERATELY omits reason — anti-discrimination auditing lives in the audit table, not analytics.",
+    "TeamCoachChanged carries team_is_minor_only as a first-class property because child-safety notification chains hang off it.",
+    "The Team Member Invariant Violation event is `essential` consent tier — data-integrity signals cannot be opted out."
+  ]
+}

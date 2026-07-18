@@ -1,0 +1,206 @@
+{
+  "id": "teams.resources.team.create",
+  "title": "Create team",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/teams/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "teams", "entity": "team", "action": "create" },
+  "requiresPermission": "teams.create",
+  "requiresEntitlement": "teams",
+  "dataSources": [
+    {
+      "name": "branches",
+      "kind": "http.get",
+      "url": "/api/v1/branches?filter[status]=active",
+      "unwrap": "data"
+    },
+    {
+      "name": "organizations",
+      "kind": "http.get",
+      "url": "/api/v1/organizations",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Create team" }
+        },
+        {
+          "kind": "Form",
+          "actions": {
+            "onSubmit": {
+              "kind": "http.post",
+              "url": "/api/v1/teams",
+              "onSuccess": {
+                "kind": "navigate",
+                "toExpr": "'/tenant/teams/' + $response.data.id"
+              },
+              "onError": { "kind": "toast.error" }
+            }
+          },
+          "children": [
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Basics", "className": "space-y-3" },
+              "children": [
+                {
+                  "kind": "TextField",
+                  "props": { "name": "name", "label": "Team name", "required": true, "maxLength": 128 }
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "name": "slug", "label": "Slug", "helpText": "URL-friendly identifier. Auto-generated if omitted.", "maxLength": 128 }
+                },
+                {
+                  "kind": "TextArea",
+                  "props": { "name": "description", "label": "Description", "rows": 3 }
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": { "name": "team_type", "label": "Team type", "required": true, "menuTrigger": "focus" },
+                  "props_items": [
+                    { "id": "squad", "label": "Squad" },
+                    { "id": "class", "label": "Class" },
+                    { "id": "cohort", "label": "Cohort" },
+                    { "id": "group", "label": "Group" },
+                    { "id": "crew", "label": "Crew" },
+                    { "id": "other", "label": "Other" }
+                  ]
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "name": "sport_key", "label": "Sport", "helpText": "e.g. football, basketball, swimming. Free-text pre-Wave-3.", "maxLength": 32 }
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Location", "className": "space-y-3" },
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": { "name": "organization_id", "label": "Organization", "required": true, "menuTrigger": "focus" },
+                  "bindings": { "items": { "$ref": "organizations" } }
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": { "name": "branch_id", "label": "Branch", "required": true, "menuTrigger": "focus", "helpText": "Immutable after create." },
+                  "bindings": { "items": { "$ref": "branches" } }
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Eligibility", "className": "space-y-3" },
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": { "name": "gender_category", "label": "Gender category", "menuTrigger": "focus" },
+                  "props_items": [
+                    { "id": "any", "label": "Any (open enrollment)" },
+                    { "id": "male", "label": "Male" },
+                    { "id": "female", "label": "Female" },
+                    { "id": "mixed", "label": "Mixed (both genders)" }
+                  ]
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "grid grid-cols-2 gap-3" },
+                  "children": [
+                    {
+                      "kind": "NumberField",
+                      "props": { "name": "min_age", "label": "Minimum age", "min": 3, "max": 100 }
+                    },
+                    {
+                      "kind": "NumberField",
+                      "props": { "name": "max_age", "label": "Maximum age", "min": 3, "max": 100 }
+                    }
+                  ]
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": { "name": "competitive_level", "label": "Competitive level", "menuTrigger": "focus" },
+                  "props_items": [
+                    { "id": "recreational", "label": "Recreational" },
+                    { "id": "beginner", "label": "Beginner" },
+                    { "id": "intermediate", "label": "Intermediate" },
+                    { "id": "advanced", "label": "Advanced" },
+                    { "id": "elite", "label": "Elite" },
+                    { "id": "competition", "label": "Competition" }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Capacity", "className": "space-y-3" },
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "grid grid-cols-2 gap-3" },
+                  "children": [
+                    {
+                      "kind": "NumberField",
+                      "props": { "name": "capacity", "label": "Roster capacity", "min": 1, "max": 500, "helpText": "Leave blank for no cap." }
+                    },
+                    {
+                      "kind": "NumberField",
+                      "props": { "name": "capacity_waitlist", "label": "Waitlist size", "min": 0, "max": 100 }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Branding", "className": "space-y-3" },
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "grid grid-cols-2 gap-3" },
+                  "children": [
+                    {
+                      "kind": "TextField",
+                      "props": { "name": "primary_color", "label": "Primary colour", "helpText": "Hex, e.g. #1a2b3c", "pattern": "^#[0-9A-Fa-f]{6}$" }
+                    },
+                    {
+                      "kind": "TextField",
+                      "props": { "name": "secondary_color", "label": "Secondary colour", "pattern": "^#[0-9A-Fa-f]{6}$" }
+                    }
+                  ]
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "name": "logo_url", "label": "Logo URL", "type": "url" }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex justify-end gap-2 pt-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "children": "Cancel" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/teams" } }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "type": "submit", "variant": "primary", "children": "Create team" }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

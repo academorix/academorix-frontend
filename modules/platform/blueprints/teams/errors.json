@@ -1,0 +1,388 @@
+{
+  "id": "academorix://modules/teams/errors",
+  "$version": 1,
+  "title": "teams — error codes",
+  "namespace": "teams",
+  "errors": [
+    {
+      "code": "TEAM_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.team_not_found"
+    },
+    {
+      "code": "TEAM_FEATURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.team_feature_not_entitled",
+      "description": "Tenant lacks the `teams` entitlement (unusual — every tier defaults on). Response includes upgrade CTA in meta.upgrade_url."
+    },
+    {
+      "code": "TEAM_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.team_quota_exceeded",
+      "description": "Reached team_slot cap. Small: 10 / Medium: 100 / Enterprise: unlimited. Response includes upgrade path."
+    },
+    {
+      "code": "TEAM_ORGANIZATION_TENANT_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "teams.errors.team_organization_tenant_mismatch",
+      "description": "Attempted to create a team whose organization.tenant_id differs from the team's tenant_id. Cross-tenant FK smuggling attempt."
+    },
+    {
+      "code": "TEAM_BRANCH_NOT_ACTIVE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.team_branch_not_active",
+      "description": "Attempted to create or modify a team whose parent branch is paused or closed."
+    },
+    {
+      "code": "TEAM_ORGANIZATION_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "teams.errors.team_organization_immutable",
+      "description": "Attempted to change organization_id post-create. Teams don't move between orgs (would orphan historic roster + audit)."
+    },
+    {
+      "code": "TEAM_BRANCH_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "teams.errors.team_branch_immutable",
+      "description": "Attempted to change branch_id post-create."
+    },
+    {
+      "code": "TEAM_HAS_ACTIVE_MEMBERS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.team_has_active_members",
+      "description": "Archive refused because active members reference the team. Pass cascade_members=true to force-inactive them."
+    },
+    {
+      "code": "TEAM_HAS_PENDING_TRIALS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.team_has_pending_trials",
+      "description": "Archive refused because pending trials reference the team. Cancel or complete each trial first."
+    },
+    {
+      "code": "TEAM_SUCCESSOR_EXISTS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.team_successor_exists",
+      "description": "Restore refused because a successor team was created under the same (tenant, organization, branch) after the archive event."
+    },
+    {
+      "code": "TEAM_INVALID_AGE_RANGE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.team_invalid_age_range",
+      "description": "min_age > max_age, or a value outside [3, 100]."
+    },
+    {
+      "code": "TEAM_INVALID_CAPACITY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.team_invalid_capacity",
+      "description": "capacity < 1, or capacity > config('teams.capacity.max_configurable') = 500."
+    },
+    {
+      "code": "TEAM_MIXED_YOUTH_NOT_ALLOWED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "teams.errors.team_mixed_youth_not_allowed",
+      "description": "Attempted to create a mixed-gender team with min_age < 18 while tenant setting teams.allow_mixed_youth is off. Child-safety mandate."
+    },
+    {
+      "code": "TEAM_INVALID_SCHEDULE_PATTERN",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.team_invalid_schedule_pattern",
+      "description": "schedule_pattern JSONB does not match schemas/team.schema.json shape."
+    },
+    {
+      "code": "TEAM_MEMBER_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.team_member_not_found"
+    },
+    {
+      "code": "TEAM_MEMBER_TEAM_NOT_ACTIVE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.team_member_team_not_active",
+      "description": "Cannot add a member to a paused / archived team."
+    },
+    {
+      "code": "TEAM_MEMBER_ALREADY_ACTIVE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.team_member_already_active",
+      "description": "(team, member_type, member_id) already has an active row. Historic terminal rows are permitted; only one active row at a time."
+    },
+    {
+      "code": "TEAM_MEMBER_TENANT_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "teams.errors.team_member_tenant_mismatch",
+      "description": "Resolved member's tenant_id differs from team.tenant_id. Cross-tenant FK smuggling attempt."
+    },
+    {
+      "code": "TEAM_CAPACITY_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.team_capacity_exceeded",
+      "description": "Active roster count reached team.capacity AND no waitlist space. Admins with team_capacity_override permission bypass."
+    },
+    {
+      "code": "TEAM_AGE_INELIGIBLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.team_age_ineligible",
+      "description": "Athlete's DOB puts them outside team.min_age/max_age."
+    },
+    {
+      "code": "TEAM_GENDER_INELIGIBLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.team_gender_ineligible",
+      "description": "Member's gender doesn't match team.gender_category."
+    },
+    {
+      "code": "TEAM_MEMBER_POLYMORPHIC_UNRESOLVED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "teams.errors.team_member_polymorphic_unresolved",
+      "description": "member_type has no registered resolver in the polymorphism registry (typically because the owning module hasn't landed yet — e.g. athlete pre-Wave-3)."
+    },
+    {
+      "code": "TEAM_MEMBER_POLYMORPHIC_TARGET_MISSING",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "teams.errors.team_member_polymorphic_target_missing",
+      "description": "member_id doesn't resolve to a live row of the declared type."
+    },
+    {
+      "code": "TEAM_MEMBER_JERSEY_TAKEN",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.team_member_jersey_taken",
+      "description": "Another active member on this team already wears that jersey_number."
+    },
+    {
+      "code": "POLYMORPHIC_COACH_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.polymorphic_coach_not_entitled",
+      "description": "member_type='coach' requires the team_polymorphic_coach entitlement — blocked until Wave 2b Staff module lands."
+    },
+    {
+      "code": "TRIAL_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.trial_not_found"
+    },
+    {
+      "code": "TRIAL_FEATURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.trial_feature_not_entitled",
+      "description": "Trials are Medium+. Small tenants hit this at the entitlement middleware."
+    },
+    {
+      "code": "TRIAL_TEAM_NOT_ACTIVE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.trial_team_not_active",
+      "description": "Cannot schedule a trial for a paused / archived team."
+    },
+    {
+      "code": "TRIAL_STARTS_IN_PAST",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.trial_starts_in_past"
+    },
+    {
+      "code": "TRIAL_INVALID_WINDOW",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.trial_invalid_window",
+      "description": "ends_at <= starts_at."
+    },
+    {
+      "code": "TRIAL_ANONYMOUS_REQUIRES_NAME",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.trial_anonymous_requires_name",
+      "description": "Anonymous trialists must have trialist_first_name AND trialist_phone captured. Data-quality mandate."
+    },
+    {
+      "code": "TRIAL_SESSION_COUNT_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.trial_session_count_invalid",
+      "description": "session_count < 1 or > config('teams.trials.max_session_count') = 4."
+    },
+    {
+      "code": "TRIAL_DECISION_ALREADY_MADE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.trial_decision_already_made",
+      "description": "Trial is already in a terminal state (converted / rejected / cancelled / no_show). No further transitions permitted."
+    },
+    {
+      "code": "TRIAL_DECISION_NOTES_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.trial_decision_notes_required",
+      "description": "decision_notes required for reject transition (anti-discrimination defence record)."
+    },
+    {
+      "code": "TRIAL_CONVERSION_MEMBER_EXISTS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.trial_conversion_member_exists",
+      "description": "Cannot convert — the trialist already has an active TeamMember row on this team."
+    },
+    {
+      "code": "TRIAL_CONVERSION_CAPACITY_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.trial_conversion_capacity_exceeded",
+      "description": "Team hit capacity between the trial's decision and the member-create. Retry after freeing a slot."
+    },
+    {
+      "code": "EVENT_TEAM_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.event_team_not_found"
+    },
+    {
+      "code": "EVENT_TEAM_FEATURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.event_team_feature_not_entitled"
+    },
+    {
+      "code": "EVENT_TEAM_TEAM_NOT_ACTIVE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.event_team_team_not_active"
+    },
+    {
+      "code": "EVENT_TEAM_ALREADY_REGISTERED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.event_team_already_registered",
+      "description": "(team_id, event_id) already registered. Uniqueness violation."
+    },
+    {
+      "code": "EVENT_TEAM_ALREADY_WITHDREW",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.event_team_already_withdrew",
+      "description": "Cannot record result / check-in for a withdrawn participation."
+    },
+    {
+      "code": "EVENT_TEAM_INVALID_RESULT_SHAPE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "teams.errors.event_team_invalid_result_shape",
+      "description": "result JSONB doesn't match the sport-agnostic patterns validated by valid_result_shape rule."
+    },
+    {
+      "code": "TEAM_MEMBER_INVARIANT_VIOLATED",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "teams.errors.team_member_invariant_violated",
+      "description": "Reconciler discovered a (team, member_type, member_id) with 2+ active rows. Every occurrence is a P1 incident."
+    }
+  ]
+}

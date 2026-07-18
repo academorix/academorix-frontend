@@ -1,0 +1,52 @@
+{
+  "id": "staff.certification-badge",
+  "title": "Certification badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Chip per certification. Colour + icon variants: verified (green + check-badge), pending_verification (yellow + clock — visible when coach_certifications_verified entitlement is on), expiring_soon (orange + exclamation), expired (red + strikethrough), normal (neutral + shield-check).",
+  "props": {
+    "certification": {
+      "type": "object",
+      "required": true,
+      "description": "One entry from Coach.certifications[]. Must include: organization, certification, certified_at, expires_at?, verified_at?, expired_at?."
+    },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showOrganization": { "type": "boolean", "default": false }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "size": { "$ref": "props.size" },
+        "variant": {
+          "$expr": "props.certification.expired_at ? 'danger' : (props.certification.verified_at ? 'success' : (props.certification.verified_at === null && features.includes('coach.certifications_verified') ? 'warning' : (isExpiringSoon(props.certification.expires_at) ? 'warning' : 'neutral')))"
+        },
+        "className": {
+          "$expr": "props.certification.expired_at ? 'line-through opacity-70' : ''"
+        }
+      },
+      "props": {
+        "leadingIcon": {
+          "$expr": "props.certification.expired_at ? 'x-circle' : (props.certification.verified_at ? 'check-badge' : (props.certification.verified_at === null && features.includes('coach.certifications_verified') ? 'clock' : (isExpiringSoon(props.certification.expires_at) ? 'exclamation-triangle' : 'shield-check')))"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "props.showOrganization ? (props.certification.organization + ' — ' + props.certification.certification) : props.certification.certification"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "helpers": {
+    "isExpiringSoon": {
+      "description": "Returns true when the certification expires within 30 days.",
+      "expr": "cert.expires_at && daysBetween(today, cert.expires_at) <= 30"
+    }
+  }
+}

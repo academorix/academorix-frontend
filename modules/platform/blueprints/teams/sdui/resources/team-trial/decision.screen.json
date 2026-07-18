@@ -1,0 +1,147 @@
+{
+  "id": "teams.resources.team-trial.decision",
+  "title": "Trial decision",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/teams/:teamId/trials/:trialId/decision",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "teams", "entity": "team-trial", "action": "convert" },
+  "requiresPermission": "trials.convert",
+  "requiresEntitlement": "team_trials",
+  "dataSources": [
+    {
+      "name": "team",
+      "kind": "http.get",
+      "url": "/api/v1/teams/{teamId}",
+      "unwrap": "data"
+    },
+    {
+      "name": "trial",
+      "kind": "http.get",
+      "url": "/api/v1/teams/{teamId}/trials/{trialId}",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-2xl mx-auto" },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold" },
+          "bindings": { "children": { "$expr": "'Decide: ' + trial.trialist_display_name" } }
+        },
+        {
+          "kind": "Widget",
+          "widget": "teams.capacity-usage-bar",
+          "props": { "size": "sm" },
+          "bindings": {
+            "active_count": { "$ref": "team.active_roster_count" },
+            "capacity": { "$ref": "team.capacity" },
+            "waitlist_size": { "$ref": "team.capacity_waitlist" }
+          }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4 space-y-2" },
+          "children": [
+            { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Evaluation notes" } },
+            { "kind": "Text", "bindings": { "children": { "$ref": "trial.evaluation_notes" } } }
+          ]
+        },
+        {
+          "kind": "Tabs",
+          "children": [
+            {
+              "kind": "Tabs.Tab",
+              "props": { "id": "convert", "title": "Convert to member" },
+              "children": [
+                {
+                  "kind": "Form",
+                  "actions": {
+                    "onSubmit": {
+                      "kind": "http.post",
+                      "url": "/api/v1/teams/{teamId}/trials/{trialId}/convert",
+                      "onSuccess": {
+                        "kind": "toast.success",
+                        "message": "Converted. New member added to roster.",
+                        "then": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id" }
+                      },
+                      "onError": { "kind": "toast.error" }
+                    }
+                  },
+                  "children": [
+                    {
+                      "kind": "Alert",
+                      "props": { "variant": "info", "className": "text-sm mb-3" },
+                      "children": [
+                        { "kind": "Text", "props": { "children": "Confirming will atomically create a TeamMember row and mark this trial converted. If capacity is exceeded or the person is already on the team, the whole transaction rolls back." } }
+                      ]
+                    },
+                    {
+                      "kind": "ComboBox",
+                      "props": { "name": "role_on_team", "label": "Role on team", "menuTrigger": "focus", "defaultValue": "player" },
+                      "props_items": [
+                        { "id": "player", "label": "Player" },
+                        { "id": "captain", "label": "Captain" },
+                        { "id": "substitute", "label": "Substitute" }
+                      ]
+                    },
+                    {
+                      "kind": "View",
+                      "props": { "className": "grid grid-cols-2 gap-3" },
+                      "children": [
+                        { "kind": "NumberField", "props": { "name": "jersey_number", "label": "Jersey number", "min": 0, "max": 999 } },
+                        { "kind": "TextField", "props": { "name": "position", "label": "Position", "maxLength": 64 } }
+                      ]
+                    },
+                    { "kind": "TextArea", "props": { "name": "notes", "label": "Decision notes (audit-only)", "rows": 3 } },
+                    { "kind": "Button", "props": { "type": "submit", "variant": "success", "children": "Convert to member" } }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Tabs.Tab",
+              "props": { "id": "reject", "title": "Reject" },
+              "children": [
+                {
+                  "kind": "Form",
+                  "actions": {
+                    "onSubmit": {
+                      "kind": "http.post",
+                      "url": "/api/v1/teams/{teamId}/trials/{trialId}/reject",
+                      "onSuccess": {
+                        "kind": "toast.success",
+                        "message": "Trial rejected. Trialist notified with standard template.",
+                        "then": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/trials'" }
+                      },
+                      "onError": { "kind": "toast.error" }
+                    }
+                  },
+                  "children": [
+                    {
+                      "kind": "Alert",
+                      "props": { "variant": "warning", "className": "text-sm mb-3" },
+                      "children": [
+                        { "kind": "Text", "props": { "children": "Decision notes are required. They are the audit + anti-discrimination defence record (retained 3 years). The trialist receives a fixed-template notification — decision_notes is NEVER surfaced to them." } }
+                      ]
+                    },
+                    {
+                      "kind": "TextArea",
+                      "props": { "name": "notes", "label": "Decision notes", "required": true, "rows": 6, "helpText": "Clear, professional rationale. Describe skill / fit / age-eligibility observations. Never invoke protected characteristics as the basis." }
+                    },
+                    { "kind": "Button", "props": { "type": "submit", "variant": "danger", "children": "Reject trial" } }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

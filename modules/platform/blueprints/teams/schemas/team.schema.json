@@ -1,0 +1,316 @@
+{
+  "id": "academorix://modules/teams/schemas/team",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Team",
+  "description": "Group of humans practicing / playing / attending under a Branch. Sport-agnostic. Carries `tenant_id` + `organization_id` + `branch_id` — cascades region through branch per hierarchy.md §2. NEVER carries `application_id` (cascades through tenant), `region_id` (cascades through branch), or `scope_node_id`.",
+  "type": "object",
+  "x-module": "teams",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "teams",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "tea_",
+    "incrementing": false,
+    "model": "Academorix\\Teams\\Models\\Team",
+    "interface": "Academorix\\Teams\\Contracts\\Data\\TeamInterface",
+    "implements": ["Academorix\\Teams\\Contracts\\Data\\TeamInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToOrganization",
+      "BelongsToBranch",
+      "HasSlug",
+      "HasTeamMembers",
+      "HasTeamTrials",
+      "HasEventParticipation",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "team_type": "TeamType",
+      "status": "TeamStatus",
+      "competitive_level": "CompetitiveLevel",
+      "gender_category": "GenderCategory",
+      "min_age": "integer",
+      "max_age": "integer",
+      "capacity": "integer",
+      "capacity_waitlist": "integer",
+      "sort_order": "integer",
+      "is_default": "boolean",
+      "schedule_pattern": "SchedulePattern",
+      "metadata": "array",
+      "registration_opens_at": "datetime",
+      "registration_closes_at": "datetime"
+    },
+    "observers": ["TeamObserver"],
+    "appends": ["active_roster_count", "is_registration_open", "is_minor_only"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `tea_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "organization_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "organizations", "column": "id", "onDelete": "restrict" }
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "branches", "column": "id", "onDelete": "restrict" }
+      },
+      "season_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Wave 3 FK to seasons.id — no constraint until Sports module lands."
+      },
+      "age_group_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Wave 3 FK to age_groups.id — no constraint until Sports module lands."
+      },
+      "coach_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Wave 2b FK to coaches.id — no constraint until Staff module lands."
+      },
+      "name": { "type": "string", "length": 128, "nullable": false },
+      "slug": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Unique per (tenant_id, branch_id, deleted_at IS NULL)."
+      },
+      "description": { "type": "text", "nullable": true },
+      "team_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: squad / class / cohort / group / crew / other."
+      },
+      "sport_key": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Free-text pre-Wave-3. Wave 3 constrains to sports registry."
+      },
+      "competitive_level": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: recreational / beginner / intermediate / advanced / elite / competition."
+      },
+      "gender_category": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "Enum: male / female / mixed / any. Null = unspecified (treated as any)."
+      },
+      "min_age": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Minimum enrollment age (3-100)."
+      },
+      "max_age": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Maximum enrollment age (3-100)."
+      },
+      "capacity": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Max active roster size. Null = no cap. Enforced when team_capacity_gating entitlement is on."
+      },
+      "capacity_waitlist": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Additional waitlist size beyond capacity. Null = no waitlist."
+      },
+      "primary_color": {
+        "type": "string",
+        "length": 7,
+        "nullable": true,
+        "description": "Hex color (jersey primary)."
+      },
+      "secondary_color": {
+        "type": "string",
+        "length": 7,
+        "nullable": true
+      },
+      "logo_url": {
+        "type": "string",
+        "length": 512,
+        "nullable": true
+      },
+      "schedule_pattern": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Recurring weekly practice slots per-day. Shape: { monday: [{starts, ends}], ..., sunday: [...] }. Validated against schedulePattern sub-shape below."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'active'",
+        "description": "Enum: active / paused / archived."
+      },
+      "is_default": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Exactly one is_default=true per (tenant_id, branch_id) — invariant enforced by observer."
+      },
+      "sort_order": { "type": "integer", "nullable": false, "default": 100 },
+      "registration_opens_at": { "type": "timestamptz", "nullable": true },
+      "registration_closes_at": { "type": "timestamptz", "nullable": true },
+      "last_registration_opened_notification": { "type": "timestamptz", "nullable": true, "description": "Deduplication cursor for OpenClosePendingRegistrationsJob." },
+      "last_registration_closed_notification": { "type": "timestamptz", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "branch_id", "slug"],
+        "unique": true,
+        "name": "teams_tenant_branch_slug_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      { "columns": ["tenant_id", "branch_id", "status"], "name": "teams_status_idx" },
+      { "columns": ["tenant_id", "team_type"], "name": "teams_type_idx" },
+      { "columns": ["tenant_id", "sport_key"], "name": "teams_sport_idx" },
+      { "columns": ["tenant_id", "coach_id"], "name": "teams_coach_idx" },
+      { "columns": ["tenant_id", "season_id"], "name": "teams_season_idx", "predicate": "season_id IS NOT NULL" },
+      { "columns": ["tenant_id", "registration_opens_at"], "name": "teams_registration_opens_idx", "predicate": "status = 'active' AND registration_opens_at IS NOT NULL" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "organization_id",
+    "branch_id",
+    "name",
+    "slug",
+    "team_type",
+    "status",
+    "is_default",
+    "sort_order",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^tea_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "organization_id": { "type": "string", "pattern": "^org_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "branch_id": { "type": "string", "pattern": "^brn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "season_id": { "type": ["string", "null"], "pattern": "^sea_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "age_group_id": { "type": ["string", "null"], "pattern": "^age_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "coach_id": { "type": ["string", "null"], "pattern": "^coa_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "name": { "type": "string", "minLength": 2, "maxLength": 128 },
+    "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "maxLength": 128 },
+    "description": { "type": ["string", "null"] },
+    "team_type": {
+      "type": "string",
+      "enum": ["squad", "class", "cohort", "group", "crew", "other"]
+    },
+    "sport_key": { "type": ["string", "null"], "maxLength": 32 },
+    "competitive_level": {
+      "type": ["string", "null"],
+      "enum": ["recreational", "beginner", "intermediate", "advanced", "elite", "competition", null]
+    },
+    "gender_category": {
+      "type": ["string", "null"],
+      "enum": ["male", "female", "mixed", "any", null]
+    },
+    "min_age": { "type": ["integer", "null"], "minimum": 3, "maximum": 100 },
+    "max_age": { "type": ["integer", "null"], "minimum": 3, "maximum": 100 },
+    "capacity": { "type": ["integer", "null"], "minimum": 1, "maximum": 500 },
+    "capacity_waitlist": { "type": ["integer", "null"], "minimum": 0, "maximum": 100 },
+    "primary_color": { "type": ["string", "null"], "pattern": "^#[0-9A-Fa-f]{6}$" },
+    "secondary_color": { "type": ["string", "null"], "pattern": "^#[0-9A-Fa-f]{6}$" },
+    "logo_url": { "type": ["string", "null"], "format": "uri", "maxLength": 512 },
+    "schedule_pattern": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/schedulePattern" }
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "paused", "archived"]
+    },
+    "is_default": { "type": "boolean" },
+    "sort_order": { "type": "integer", "minimum": 0 },
+    "registration_opens_at": { "type": ["string", "null"], "format": "date-time" },
+    "registration_closes_at": { "type": ["string", "null"], "format": "date-time" },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "schedulePattern": {
+      "type": "object",
+      "description": "Weekly practice schedule. Each key is a day-of-week; the value is an ordered array of practice windows.",
+      "properties": {
+        "monday": { "$ref": "#/$defs/dayWindows" },
+        "tuesday": { "$ref": "#/$defs/dayWindows" },
+        "wednesday": { "$ref": "#/$defs/dayWindows" },
+        "thursday": { "$ref": "#/$defs/dayWindows" },
+        "friday": { "$ref": "#/$defs/dayWindows" },
+        "saturday": { "$ref": "#/$defs/dayWindows" },
+        "sunday": { "$ref": "#/$defs/dayWindows" }
+      },
+      "additionalProperties": false
+    },
+    "dayWindows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "starts": { "type": "string", "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$" },
+          "ends": { "type": "string", "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$" }
+        },
+        "required": ["starts", "ends"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "x-invariants": [
+    "min_age <= max_age when both set",
+    "capacity >= 1 when set, <= 500 (platform limit)",
+    "gender_category='mixed' + min_age<18 requires tenant setting teams.allow_mixed_youth=true",
+    "exactly one is_default=true per (tenant_id, branch_id)",
+    "status='archived' + hard-delete refused while any team_members / team_trials / event_teams row references (RESTRICT FKs enforce)",
+    "organization.tenant_id must equal team.tenant_id",
+    "branch.tenant_id must equal team.tenant_id",
+    "organization_id + branch_id are immutable post-create"
+  ]
+}

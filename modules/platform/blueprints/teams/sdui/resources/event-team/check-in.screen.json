@@ -1,0 +1,105 @@
+{
+  "id": "teams.resources.event-team.check-in",
+  "title": "Check in at event",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/teams/:teamId/event-teams/:eventTeamId/check-in",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "teams", "entity": "event-team", "action": "checkIn" },
+  "requiresPermission": "event_teams.check-in",
+  "requiresEntitlement": "team_event_participation",
+  "dataSources": [
+    {
+      "name": "team",
+      "kind": "http.get",
+      "url": "/api/v1/teams/{teamId}",
+      "unwrap": "data"
+    },
+    {
+      "name": "event_team",
+      "kind": "http.get",
+      "url": "/api/v1/teams/{teamId}/event-teams/{eventTeamId}",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-lg mx-auto" },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold" },
+          "bindings": { "children": { "$expr": "'Check in ' + team.name" } }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4 space-y-2" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex justify-between" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Event" } },
+                { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "event_team.event.name" } } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex justify-between" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Role" } },
+                { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "event_team.participation_type" } } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex justify-between" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Active roster" } },
+                { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$expr": "team.active_roster_count + ' members'" } } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Form",
+          "actions": {
+            "onSubmit": {
+              "kind": "http.post",
+              "url": "/api/v1/teams/{teamId}/event-teams/{eventTeamId}/check-in",
+              "onSuccess": {
+                "kind": "toast.success",
+                "message": "Checked in.",
+                "then": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/event-teams'" }
+              },
+              "onError": { "kind": "toast.error" }
+            }
+          },
+          "children": [
+            {
+              "kind": "NumberField",
+              "props": {
+                "name": "attendance_count",
+                "label": "Members present",
+                "required": true,
+                "min": 0,
+                "helpText": "How many members turned up? Used for attendance stats."
+              }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex justify-end gap-2 pt-2" },
+              "children": [
+                { "kind": "Button", "props": { "variant": "ghost", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/event-teams'" } } },
+                { "kind": "Button", "props": { "type": "submit", "variant": "primary", "children": "Check in" } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

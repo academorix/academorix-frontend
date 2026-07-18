@@ -1,0 +1,57 @@
+{
+  "id": "academorix://modules/teams/feature-flags",
+  "$version": 1,
+  "title": "teams — kill switches",
+  "engine": "laravel/pennant",
+  "description": "Operational kill switches distinct from the tier-based `features.json` gates. These are for emergency-off / staged rollout / per-tenant ops interventions. Every flag is ON in normal production; off flips are ops decisions.",
+  "flags": [
+    {
+      "key": "teams.roster_writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for roster mutation routes. Off = every POST/PATCH /teams/{team}/members returns 503 with a maintenance banner. Emergency-only (used during DB migrations of the team_members table)."
+    },
+    {
+      "key": "teams.trial_conversion",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = trial:convert action is refused (503). Trials can still be scheduled/completed/rejected but cannot become TeamMember rows. Emergency-only for atomic-conversion race investigations."
+    },
+    {
+      "key": "teams.age_eligibility",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = AgeEligibilityGate always allows. Used during data-quality investigations when athlete DOBs are being cleaned."
+    },
+    {
+      "key": "teams.gender_eligibility",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = GenderEligibilityGate always allows. Rarely used."
+    },
+    {
+      "key": "teams.member_invariant_reconciler",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReconcileTeamMemberActiveInvariantJob skips. Only flip off for maintenance windows."
+    },
+    {
+      "key": "teams.trial_reminders",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = NotifyTrialistPreTrialJob no-ops. Used when notifications module is unstable to avoid backing up its queue."
+    },
+    {
+      "key": "teams.registration_auto_flip",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = OpenClosePendingRegistrationsJob skips. Registration windows must be flipped manually by admins."
+    },
+    {
+      "key": "teams.child_safety_notifications",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = TeamCoachChanged with is_minor_only=true does NOT fire the safeguarding-lead notification. TESTING-ONLY toggle; production must stay on."
+    }
+  ]
+}

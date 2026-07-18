@@ -1,0 +1,206 @@
+{
+  "id": "academorix://modules/staff/settings",
+  "$version": 1,
+  "title": "staff — settings",
+  "description": "Tenant-facing preferences (staff-lifecycle defaults, notification cadences, compensation feature opt-in) + user-level preferences (staff-view display preferences).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "staff",
+      "class": "Academorix\\Staff\\Settings\\StaffSettings",
+      "label": "Staff & Coaches",
+      "description": "Tenant-wide staff lifecycle defaults + feature opt-ins.",
+      "icon": "user-group",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 40,
+      "permission": "staff.viewAny",
+      "sections": [
+        {
+          "label": "Hire defaults",
+          "description": "Defaults applied to new Staff rows. Can be overridden per hire.",
+          "icon": "user-plus",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "default_employment_type",
+              "controlType": "select",
+              "label": "Default employment type",
+              "defaultValue": "full_time",
+              "options": {
+                "full_time": "Full-time",
+                "part_time": "Part-time",
+                "contract": "Contract",
+                "volunteer": "Volunteer",
+                "intern": "Intern",
+                "seasonal": "Seasonal"
+              },
+              "sortOrder": 1
+            },
+            {
+              "name": "default_probation_days",
+              "controlType": "number",
+              "label": "Default probation period (days)",
+              "defaultValue": 90,
+              "min": 0,
+              "max": 365,
+              "helpText": "0 = no probation.",
+              "sortOrder": 2
+            },
+            {
+              "name": "default_weekly_hours",
+              "controlType": "number",
+              "label": "Default weekly hours",
+              "defaultValue": 40,
+              "min": 0,
+              "max": 168,
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Compensation tracking",
+          "description": "Opt-in to compensation tracking. When enabled, HR + owner can record compensation_* fields; the observer refuses writes without the compensation permission.",
+          "icon": "banknotes",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "enable_compensation_tracking",
+              "controlType": "toggle",
+              "label": "Track compensation in Academorix",
+              "defaultValue": false,
+              "helpText": "Enable this to track wage/salary/hourly rate on staff. Data is regulated_financial-tier, retained 7 years. Turning this on writes a compliance audit row + requires re-consent by the tenant admin.",
+              "requiresPermission": "owner",
+              "requiresEntitlement": "staff_compensation_tracking",
+              "sortOrder": 1
+            },
+            {
+              "name": "compensation_max_delta_percent",
+              "controlType": "number",
+              "label": "Compensation change threshold (%)",
+              "defaultValue": 50,
+              "min": 5,
+              "max": 200,
+              "helpText": "Compensation changes above this percent require the large-delta bypass permission. Guards against payroll fat-finger errors.",
+              "requiresEntitlement": "staff_compensation_tracking",
+              "sortOrder": 2
+            },
+            {
+              "name": "default_currency",
+              "controlType": "select",
+              "label": "Default compensation currency",
+              "defaultValue": "USD",
+              "options": {
+                "USD": "US Dollar",
+                "EUR": "Euro",
+                "GBP": "Pound Sterling",
+                "AED": "UAE Dirham",
+                "CAD": "Canadian Dollar",
+                "AUD": "Australian Dollar"
+              },
+              "helpText": "Falls back to the branch region's currency when unset.",
+              "requiresEntitlement": "staff_compensation_tracking",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Org chart",
+          "icon": "share",
+          "sortOrder": 3,
+          "requiresEntitlement": "staff_org_chart",
+          "fields": [
+            {
+              "name": "enable_org_chart",
+              "controlType": "toggle",
+              "label": "Track reporting hierarchy",
+              "defaultValue": false,
+              "helpText": "Enterprise feature. When on, staff can be assigned a reports_to_staff_id and the org-chart visualisation appears in the SDUI.",
+              "sortOrder": 1
+            }
+          ]
+        },
+        {
+          "label": "Notifications",
+          "icon": "bell",
+          "sortOrder": 4,
+          "fields": [
+            {
+              "name": "probation_reminder_thresholds_days",
+              "controlType": "multi-select",
+              "label": "Probation reminder cadence",
+              "defaultValue": [14, 7, 1],
+              "options": {
+                "30": "30 days before",
+                "14": "14 days before",
+                "7": "7 days before",
+                "3": "3 days before",
+                "1": "1 day before"
+              },
+              "sortOrder": 1
+            },
+            {
+              "name": "certification_expiring_thresholds_days",
+              "controlType": "multi-select",
+              "label": "Coach certification expiring cadence",
+              "defaultValue": [30, 14, 7],
+              "options": {
+                "60": "60 days before",
+                "30": "30 days before",
+                "14": "14 days before",
+                "7": "7 days before"
+              },
+              "sortOrder": 2
+            },
+            {
+              "name": "offboarding_reminder_cadence_days",
+              "controlType": "multi-select",
+              "label": "Offboarding-in-progress reminder cadence",
+              "defaultValue": [1, 3, 7],
+              "options": {
+                "1": "1 day",
+                "3": "3 days",
+                "7": "7 days"
+              },
+              "sortOrder": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "staff_user",
+      "class": "Academorix\\Staff\\Settings\\StaffUserSettings",
+      "label": "My staff record",
+      "description": "Per-user preferences for how staff-lifecycle events appear in their inbox.",
+      "icon": "user-circle",
+      "scope": "user",
+      "public": true,
+      "sortOrder": 55,
+      "sections": [
+        {
+          "label": "Reminders",
+          "icon": "bell",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "receive_probation_reminders",
+              "controlType": "toggle",
+              "label": "Send me probation reminders",
+              "defaultValue": true,
+              "sortOrder": 1
+            },
+            {
+              "name": "receive_certification_reminders",
+              "controlType": "toggle",
+              "label": "Send me certification expiring reminders",
+              "defaultValue": true,
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

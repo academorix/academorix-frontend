@@ -1,0 +1,307 @@
+{
+  "id": "academorix://modules/staff/routes",
+  "$version": 1,
+  "title": "staff — HTTP routes",
+  "description": "Tenant-facing Staff + Coach CRUD + lifecycle actions (~30 routes) + platform-admin cross-tenant support routes. Every tenant-plane route carries `auth:sanctum` + `tenant.resolve` + policy check via the route-level `permission` metadata. The `/staff/{staff}/compensation` and `/staff/{staff}/emergency-contact` sub-resources are separate endpoints (not fields on the parent) so we can attach dedicated middleware (`staff.enforce_compensation_permission`) that refuses the whole endpoint when the caller lacks the field-level permission — cleaner than embedded redaction on the parent read.",
+  "groups": [
+    {
+      "name": "tenant-staff",
+      "prefix": "/api/v1/staff",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "throttle:staff-tenant",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Staff CRUD + lifecycle. The `staff` feature has no tier gate (every tier has staff); tier-gated capabilities (compensation, org-chart) are enforced at the sub-resource + field level.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\StaffController@index",
+          "permission": "staff.viewAny",
+          "description": "filter[branch_id], filter[employment_status], filter[employment_type], filter[position], filter[department], filter[is_branch_manager], filter[reports_to_staff_id]. Scope: caller's active branch narrows results when set."
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\StaffController@store",
+          "permission": "staff.hire",
+          "description": "Body: StaffHireData. Consumes 1 unit of staff_slot entitlement. Compensation fields REFUSED unless caller also carries `staff.manage.compensation`. Emergency contact fields REFUSED unless caller carries `staff.manage.emergency_contact`."
+        },
+        {
+          "method": "GET",
+          "path": "/{staff}",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\StaffController@show",
+          "permission": "staff.view",
+          "description": "Compensation + emergency contact fields REDACTED unless caller carries the respective `.view.compensation` / `.view.emergency_contact` permissions. Self-view via .own suffix returns own row unredacted."
+        },
+        {
+          "method": "PATCH",
+          "path": "/{staff}",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\StaffController@update",
+          "permission": "staff.update",
+          "description": "Body: StaffUpdateData (excludes user_id, started_at [when status != pre_hire], branch_id [Wave 2b immutable], compensation_*, emergency_contact_*). Compensation + emergency contact updates use their dedicated sub-resource endpoints."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{staff}",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\StaffController@destroy",
+          "permission": "staff.delete",
+          "description": "Soft-delete. Refused unless employment_status='offboarded'."
+        },
+        {
+          "method": "POST",
+          "path": "/{staff}/promote-to-manager",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\StaffController@promoteToManager",
+          "permission": "staff.promote-to-manager",
+          "description": "Body: { demote_current_manager: bool = true }. When true, the current active branch_manager is demoted in the same transaction; when false, refuses if another manager exists."
+        },
+        {
+          "method": "POST",
+          "path": "/{staff}/demote",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\StaffController@demote",
+          "permission": "staff.promote-to-manager",
+          "description": "Body: { reason? }. Warns when this leaves the branch without a manager."
+        },
+        {
+          "method": "POST",
+          "path": "/{staff}/put-on-leave",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\StaffController@putOnLeave",
+          "permission": "staff.put-on-leave",
+          "description": "Body: { leave_type, expected_return_at? }. Cascades: pauses linked Coach if any."
+        },
+        {
+          "method": "POST",
+          "path": "/{staff}/return-from-leave",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\StaffController@returnFromLeave",
+          "permission": "staff.put-on-leave"
+        },
+        {
+          "method": "POST",
+          "path": "/{staff}/suspend",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\StaffController@suspend",
+          "permission": "staff.suspend",
+          "description": "Body: { suspension_reason, suspension_expires_at? }. Audit-critical. Cascades: pauses linked Coach."
+        },
+        {
+          "method": "POST",
+          "path": "/{staff}/reinstate",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\StaffController@reinstate",
+          "permission": "staff.suspend"
+        },
+        {
+          "method": "POST",
+          "path": "/{staff}/offboard",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\StaffController@offboard",
+          "permission": "staff.offboard",
+          "description": "Body: { termination_reason, termination_notes?, ended_at?, cascade: bool = false }. When cascade=true, archives linked Coach + removes team memberships (requires `staff.offboard.cascade`). Two-phase transition: active/on_leave/suspended → offboarding (fires StaffOffboardingStarted) → offboarded (fires StaffOffboarded). Caller must confirm offboarding→offboarded via a second POST or via ?complete=true on the first call."
+        },
+        {
+          "method": "POST",
+          "path": "/{staff}/reactivate",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\StaffController@reactivate",
+          "permission": "staff.hire",
+          "description": "Body: { started_at?: date }. Rehire path — consumes 1 unit of staff_slot; resets ended_at + termination_reason. Rare; audit-critical."
+        },
+        {
+          "method": "GET",
+          "path": "/{staff}/compensation",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\StaffCompensationController@show",
+          "permission": "staff.view.compensation",
+          "middleware_add": ["staff.enforce_compensation_permission"],
+          "description": "Dedicated sub-resource so the compensation-permission middleware can refuse the whole endpoint. Returns compensation_* fields + a paginated history from staff_compensation_history."
+        },
+        {
+          "method": "PATCH",
+          "path": "/{staff}/compensation",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\StaffCompensationController@update",
+          "permission": "staff.manage.compensation",
+          "middleware_add": ["staff.enforce_compensation_permission"],
+          "description": "Body: CompensationUpdateData. Fires CompensationChanged event (private-tier). Writes to staff_compensation_history audit table (7-year retention). Refuses when delta exceeds config.staff.compensation.max_delta_percent unless caller carries `staff.manage.compensation.large-delta`."
+        },
+        {
+          "method": "GET",
+          "path": "/{staff}/emergency-contact",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\StaffEmergencyContactController@show",
+          "permission": "staff.view.emergency_contact",
+          "description": "Emergency contact + tax_id_last4."
+        },
+        {
+          "method": "PATCH",
+          "path": "/{staff}/emergency-contact",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\StaffEmergencyContactController@update",
+          "permission": "staff.manage.emergency_contact"
+        },
+        {
+          "method": "GET",
+          "path": "/{staff}/direct-reports",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\StaffOrgChartController@directReports",
+          "permission": "staff.view.direct-reports",
+          "description": "Returns the direct reports (staff with reports_to_staff_id = this). Requires staff_org_chart entitlement — refused with 402 otherwise."
+        }
+      ]
+    },
+    {
+      "name": "tenant-coaches",
+      "prefix": "/api/v1/coaches",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "throttle:staff-tenant",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Coach CRUD + certification + availability management.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\CoachController@index",
+          "permission": "coach.viewAny",
+          "description": "filter[branch_id] (via join through staff), filter[sport_key], filter[coaching_level], filter[status], filter[rating.gte]"
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\CoachController@store",
+          "permission": "coach.create",
+          "description": "Body: CoachCreateData with staff_id (required — the parent Staff must exist and be active). Consumes 1 unit of coach_slot."
+        },
+        {
+          "method": "GET",
+          "path": "/{coach}",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\CoachController@show",
+          "permission": "coach.view"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{coach}",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\CoachController@update",
+          "permission": "coach.update",
+          "description": "Body: CoachUpdateData (excludes staff_id [immutable], rating [job-only], sport_key [dedicated endpoint])."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{coach}",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\CoachController@destroy",
+          "permission": "coach.delete",
+          "description": "Soft-delete. Refused unless status='archived'."
+        },
+        {
+          "method": "POST",
+          "path": "/{coach}/pause",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\CoachController@pause",
+          "permission": "coach.pause",
+          "description": "Body: { reason? }. Coach.status active → paused."
+        },
+        {
+          "method": "POST",
+          "path": "/{coach}/resume",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\CoachController@resume",
+          "permission": "coach.pause"
+        },
+        {
+          "method": "POST",
+          "path": "/{coach}/archive",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\CoachController@archive",
+          "permission": "coach.archive",
+          "description": "Body: { reason? }. Terminal. Removes future team assignments."
+        },
+        {
+          "method": "GET",
+          "path": "/{coach}/certifications",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\CoachCertificationController@index",
+          "permission": "coach.view"
+        },
+        {
+          "method": "POST",
+          "path": "/{coach}/certifications",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\CoachCertificationController@store",
+          "permission": "coach.manage.certifications",
+          "description": "Body: CertificationEntry. When coach_certifications_verified entitlement is on, enters `pending_verification` state; HR verifies via /certifications/{certification}/verify."
+        },
+        {
+          "method": "POST",
+          "path": "/{coach}/certifications/{certification}/verify",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\CoachCertificationController@verify",
+          "permission": "coach.verify.certifications",
+          "description": "Body: { document_file_id: ULID }. Uploads signed document + promotes certification pending_verification → verified. Requires coach_certifications_verified entitlement."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{coach}/certifications/{certification}",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\CoachCertificationController@destroy",
+          "permission": "coach.manage.certifications",
+          "description": "Body: { reason? }. Fires CoachCertificationRemoved."
+        },
+        {
+          "method": "GET",
+          "path": "/{coach}/availability",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\CoachAvailabilityController@show",
+          "permission": "coach.view"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{coach}/availability",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\CoachAvailabilityController@update",
+          "permission": "coach.manage.availability",
+          "description": "Body: { availability_pattern }. Fires CoachAvailabilityChanged."
+        },
+        {
+          "method": "POST",
+          "path": "/{coach}/set-primary-sport",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Tenant\\CoachController@setPrimarySport",
+          "permission": "coach.set-primary-sport",
+          "description": "Body: { sport_key }. Fires CoachSportChanged. Coaches CANNOT self-reclassify — HR + admin + owner only."
+        }
+      ]
+    },
+    {
+      "name": "platform-staff",
+      "prefix": "/api/v1/platform/staff",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "throttle:staff-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "Cross-tenant read + compensation audit for support tooling. Compensation ALWAYS redacted at this plane — support staff never see tenant compensation figures. The audit-compensation endpoint is super_admin-only.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Platform\\StaffController@index",
+          "permission": "platform.staff.viewAny",
+          "description": "filter[tenant_id], filter[employment_status], filter[branch_id]. Cross-tenant scan. Compensation fields always stripped."
+        },
+        {
+          "method": "GET",
+          "path": "/{staff}",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Platform\\StaffController@show",
+          "permission": "platform.staff.view",
+          "description": "Compensation ALWAYS redacted at platform plane regardless of caller permissions. Emergency contact stripped except for super_admin."
+        },
+        {
+          "method": "GET",
+          "path": "/audit-compensation",
+          "controller": "Academorix\\Staff\\Http\\Controllers\\Platform\\StaffCompensationAuditController@export",
+          "permission": "platform.staff.audit-compensation",
+          "description": "Compliance-only export. Emits a signed audit CSV of every compensation change in the last N days. Every invocation is P1 audit-logged + super_admin-gated. Two-person approval required (audit critical)."
+        }
+      ]
+    }
+  ]
+}

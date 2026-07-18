@@ -1,0 +1,90 @@
+{
+  "id": "academorix://modules/teams/notifications",
+  "$version": 1,
+  "title": "teams — notification classes + categories",
+  "namespace": "Academorix\\Teams\\Notifications",
+  "notifications": [
+    "TeamMemberJoinedNotification",
+    "TeamMemberLeftNotification",
+    "TeamRegistrationOpeningNotification",
+    "TeamScheduleChangedNotification",
+    "TrialScheduledNotification",
+    "TrialDecisionNotification",
+    "TeamCoachChangedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "teams.member_joined",
+      "display_name": "New team member",
+      "description": "A new member has joined a team you coach or captain. Includes member name + role + jersey.",
+      "default_channels": ["in_app", "push"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "teams.member_left",
+      "display_name": "Team member left",
+      "description": "A member left a team you coach. Includes departure reason.",
+      "default_channels": ["in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "teams.registration_opening",
+      "display_name": "Team registration open",
+      "description": "A team you're eligible for is now accepting registrations. Includes team name + registration window + capacity.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "teams.schedule_changed",
+      "display_name": "Team schedule changed",
+      "description": "Your team's practice schedule has changed. Details of the new schedule included. Cannot be opted out — critical operational information.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "teams.trial_scheduled",
+      "display_name": "Trial scheduled",
+      "description": "Your trial with a team has been scheduled. Includes team name + coach + date/time + venue. Also fires reminder variants at T-24h and T-1h.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "teams.trial_decision",
+      "display_name": "Trial decision",
+      "description": "The coach has made a decision on your trial. Includes outcome (accepted / rejected) — never the coach's decision_notes. Fixed template; no personalisation.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "teams.coach_changed",
+      "display_name": "Team coach changed",
+      "description": "Your team's coach has changed. Includes new coach name + effective date. When the team includes minors, additionally routed to the branch safeguarding lead. Cannot be opted out for minor-only teams.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

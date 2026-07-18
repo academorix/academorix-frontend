@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/age-group/data-classes",
+  "$version": 1,
+  "title": "age-group — field classification",
+  "description": "AgeGroup carries commercial + safeguarding reference data. No PII on the row itself (Athletes reference it, but the AgeGroup row never carries an Athlete's DOB). The safeguarding-critical fields are `min_age_inclusive` + `max_age_inclusive` + `is_youth` — mutations to these can invalidate downstream Athlete eligibility for their currently-enrolled Teams. Bounds + cutoff changes are financial-adjacent (invoice pricing sometimes ties to age-tier tuition rates) and audit-critical for child-safety compliance (COPPA + FERPA + GDPR-child).",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "AgeGroup.id",
+      "AgeGroup.tenant_id",
+      "AgeGroup.organization_id",
+      "AgeGroup.name",
+      "AgeGroup.slug",
+      "AgeGroup.sport_key",
+      "AgeGroup.description",
+      "AgeGroup.min_age_inclusive",
+      "AgeGroup.max_age_inclusive",
+      "AgeGroup.cutoff_date_kind",
+      "AgeGroup.cutoff_month",
+      "AgeGroup.cutoff_day",
+      "AgeGroup.gender_category",
+      "AgeGroup.is_youth",
+      "AgeGroup.is_default",
+      "AgeGroup.is_seeded",
+      "AgeGroup.sort_order",
+      "AgeGroup.color"
+    ],
+    "internal": [
+      "AgeGroup.metadata",
+      "AgeGroup.created_by",
+      "AgeGroup.updated_by",
+      "AgeGroup.deleted_by",
+      "AgeGroup.created_at",
+      "AgeGroup.updated_at",
+      "AgeGroup.deleted_at"
+    ],
+    "confidential": [],
+    "restricted": [],
+    "regulated_minor": [
+      "AgeGroup.is_youth (drives minor-safeguarding rules for every downstream Team + Athlete row)",
+      "AgeGroup.min_age_inclusive (mutations may invalidate Athlete eligibility; audit-critical)",
+      "AgeGroup.max_age_inclusive (same)"
+    ],
+    "regulated_health": [],
+    "regulated_financial": [
+      "AgeGroup.is_default (per-tuple default drives tier-pricing defaults in Finance module Wave 4)"
+    ],
+    "audit_log": [
+      "AgeGroup.min_age_inclusive (every change written to `audits`; downstream Athlete eligibility depends on it — audit-critical for compliance replays)",
+      "AgeGroup.max_age_inclusive (same)",
+      "AgeGroup.cutoff_date_kind (same — eligibility computed against this)",
+      "AgeGroup.cutoff_month (same)",
+      "AgeGroup.cutoff_day (same)",
+      "AgeGroup.sport_key (mutation reshapes the sport-specific override chain; audit-warn)",
+      "AgeGroup.is_default (per-tuple default flip; downstream tier-pricing consequences)",
+      "AgeGroup.gender_category (safeguarding + accessibility relevant)",
+      "AgeGroup.deleted_at (archive + restore + hard-delete all written; the audit row outlives the AgeGroup for compliance replay)"
+    ]
+  },
+  "notes": [
+    "AgeGroup rows themselves carry NO PII. Athletes reference AgeGroups; the Athlete row carries the DOB; the AgeGroup row carries only the min/max bounds and cutoff rule. This separation is deliberate — the AgeGroup catalogue is tenant reference data that can be cached indefinitely per-tenant, while Athlete PII stays scoped by tenant + branch + guardian permission.",
+    "`is_youth` is a DENORMALISED boolean set by the observer from `max_age_inclusive < 18`. It's stored on the row so downstream safeguarding filters (which permissions to require, which parental-consent banners to render, which retention window to apply to logs referencing this AgeGroup) index cleanly instead of re-parsing the bounds on every read.",
+    "`is_default` and `is_seeded` are two distinct flags. `is_default=true` is one per scoping tuple (tenant, organization, sport_key) and marks the tenant's preferred/fallback group. `is_seeded=true` marks rows created by the platform's default catalog seeder — those cannot be deleted (only edited / archived), which distinguishes them from tenant customs.",
+    "Compliance retention on audit rows: 7 years for minor-safeguarding financial records (matches Finance retention). Even after an AgeGroup is hard-deleted, its bounds-change audit rows survive so a subsequent COPPA / FERPA / GDPR-child compliance replay can reconstruct which Athletes qualified for which groups at any past point in time.",
+    "Cross-referenced sport-specific overrides: when `sport_key IS NOT NULL`, the row represents an override for that sport (e.g. `sport_key='football', name='U12'` uses Jan 1 cutoff; `sport_key='swimming', name='U12'` uses birthdate exact). Multiple AgeGroups with the same `name` but different `sport_key` values are the normal shape — they answer the same eligibility question different ways per sport."
+  ]
+}

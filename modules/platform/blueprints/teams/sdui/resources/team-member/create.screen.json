@@ -1,0 +1,130 @@
+{
+  "id": "teams.resources.team-member.create",
+  "title": "Add team member",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/teams/:teamId/members/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "teams", "entity": "team-member", "action": "create" },
+  "requiresPermission": "team_members.create",
+  "requiresEntitlement": "teams",
+  "dataSources": [
+    {
+      "name": "team",
+      "kind": "http.get",
+      "url": "/api/v1/teams/{teamId}",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-2xl mx-auto" },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold" },
+          "bindings": { "children": { "$expr": "'Add member to ' + team.name" } }
+        },
+        {
+          "kind": "Widget",
+          "widget": "teams.capacity-usage-bar",
+          "props": { "size": "sm" },
+          "bindings": {
+            "active_count": { "$ref": "team.active_roster_count" },
+            "capacity": { "$ref": "team.capacity" },
+            "waitlist_size": { "$ref": "team.capacity_waitlist" }
+          }
+        },
+        {
+          "kind": "Form",
+          "actions": {
+            "onSubmit": {
+              "kind": "http.post",
+              "url": "/api/v1/teams/{teamId}/members",
+              "onSuccess": {
+                "kind": "navigate",
+                "toExpr": "'/tenant/teams/' + team.id"
+              },
+              "onError": { "kind": "toast.error" }
+            }
+          },
+          "children": [
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Member", "className": "space-y-3" },
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": { "name": "member_type", "label": "Member type", "required": true, "menuTrigger": "focus", "helpText": "Athletes + Coaches are Wave 3+ (may be unavailable on your tier)." },
+                  "props_items": [
+                    { "id": "athlete", "label": "Athlete" },
+                    { "id": "coach", "label": "Coach" },
+                    { "id": "staff", "label": "Staff" },
+                    { "id": "user", "label": "User" }
+                  ]
+                },
+                {
+                  "kind": "ResourceSelect",
+                  "props": {
+                    "name": "member_id",
+                    "label": "Person",
+                    "required": true,
+                    "helpText": "Search across the applicable directory for the selected type.",
+                    "resourceExpr": "form.member_type"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Role on team", "className": "space-y-3" },
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": { "name": "role_on_team", "label": "Role", "required": true, "menuTrigger": "focus", "defaultValue": "player" },
+                  "props_items": [
+                    { "id": "player", "label": "Player" },
+                    { "id": "captain", "label": "Captain" },
+                    { "id": "vice_captain", "label": "Vice-captain" },
+                    { "id": "coach", "label": "Coach" },
+                    { "id": "assistant_coach", "label": "Assistant coach" },
+                    { "id": "team_manager", "label": "Team manager" },
+                    { "id": "medical", "label": "Medical" },
+                    { "id": "analyst", "label": "Analyst" },
+                    { "id": "substitute", "label": "Substitute" }
+                  ]
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "grid grid-cols-2 gap-3" },
+                  "children": [
+                    { "kind": "NumberField", "props": { "name": "jersey_number", "label": "Jersey number", "min": 0, "max": 999 } },
+                    { "kind": "TextField", "props": { "name": "position", "label": "Position", "maxLength": 64, "helpText": "e.g. striker, goalkeeper, forward" } }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Notes", "className": "space-y-3" },
+              "children": [
+                { "kind": "TextArea", "props": { "name": "notes", "label": "Coach-visible notes", "rows": 3, "helpText": "Staff-only. Never surfaced to the member themselves." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex justify-end gap-2 pt-2" },
+              "children": [
+                { "kind": "Button", "props": { "variant": "ghost", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id" } } },
+                { "kind": "Button", "props": { "type": "submit", "variant": "primary", "children": "Add member" } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

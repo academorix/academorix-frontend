@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/age-group/broadcasts",
+  "$version": 1,
+  "title": "age-group — realtime broadcasts",
+  "description": "The age-group module does NOT broadcast on realtime channels directly. AgeGroup mutations fire domain events (see `events.json`) which downstream modules (notifications, activity, teams) may republish over their own broadcast channels — but this module ships zero channels of its own. Broadcast surfaces belong to the domain that owns the read side (team-picker UI, enrollment UI), not the write side.",
+  "channels": [],
+  "notes": [
+    "If the SPA needs live updates when an age group's bounds change (a team roster preview needs to recompute eligibility flags), it subscribes to the standard settings-changed channel + the tenant-scoped cache-invalidation broadcast the settings module already ships.",
+    "The Team module (Wave 2b) will ship a broadcast channel for age-group-picker updates when its cache invalidates — but that channel lives with Team, not here, because Team owns the read UI + the SPA subscription lifecycle.",
+    "Bounds + cutoff changes are audit-critical + fire AgeGroupBoundsChangedNotification / AgeGroupCutoffChangedNotification via the notifications module — those notifications are the tenant-admin-facing realtime signal, not a raw broadcast."
+  ]
+}

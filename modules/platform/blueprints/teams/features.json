@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/teams/features",
+  "$version": 1,
+  "title": "teams — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "teams.core",
+      "displayName": "Teams",
+      "description": "Team catalogue + roster management. On for every tier by default.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "teams.trials",
+      "displayName": "Trials",
+      "description": "Probationary tryout workflow — schedule, evaluate, convert to member.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "teams.event_participation",
+      "displayName": "Event participation",
+      "description": "Register teams to events, track attendance, record results. Fully wired in Wave 3 when the Sports Event module lands.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "teams.capacity_gating",
+      "displayName": "Capacity enforcement",
+      "description": "Refuse roster-add when team is at capacity. Off means capacity is a UI hint only.",
+      "defaultEnabled": true,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "teams.polymorphic_coach",
+      "displayName": "Coaches on the roster",
+      "description": "Allow member_type='coach' on TeamMember. Wave 2b unlocks once Staff module lands with the Coach model.",
+      "defaultEnabled": false,
+      "planTiers": []
+    },
+    {
+      "key": "teams.jersey_numbers",
+      "displayName": "Jersey numbers",
+      "description": "Assign jersey_number to team members with uniqueness check per team. Off means jersey_number is unused.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "teams.custom_schedule_pattern",
+      "displayName": "Custom schedule pattern",
+      "description": "Free-form weekly practice schedule per team. Feeds Wave 3 Sports session-scheduling. Off = simple weekly-cadence text field.",
+      "defaultEnabled": true,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "teams.branding_colors",
+      "displayName": "Team branding colours",
+      "description": "SDUI surface for editing team primary/secondary colours + logo. When off, teams use tenant-wide branding.",
+      "defaultEnabled": true,
+      "planTiers": ["medium", "enterprise"]
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "id": "teams.member-role-chip",
+  "title": "Team member role chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for team_member.role_on_team. Never relies on colour alone — always carries a text label + optional icon.",
+  "props": {
+    "role": {
+      "type": "string",
+      "enum": ["player", "captain", "vice_captain", "coach", "assistant_coach", "team_manager", "medical", "analyst", "substitute"],
+      "required": true
+    },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showIcon": { "type": "boolean", "default": true }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "({ player: 'neutral', captain: 'accent', vice_captain: 'info', coach: 'success', assistant_coach: 'success', team_manager: 'info', medical: 'warning', analyst: 'neutral', substitute: 'neutral' })[props.role]"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "props": {
+        "leadingIcon": {
+          "$expr": "props.showIcon ? ({ player: 'user', captain: 'star', vice_captain: 'star', coach: 'academic-cap', assistant_coach: 'academic-cap', team_manager: 'clipboard', medical: 'heart', analyst: 'chart-bar', substitute: 'user' })[props.role] : null"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "({ player: 'Player', captain: 'Captain', vice_captain: 'Vice-captain', coach: 'Coach', assistant_coach: 'Asst. Coach', team_manager: 'Manager', medical: 'Medical', analyst: 'Analyst', substitute: 'Substitute' })[props.role]"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

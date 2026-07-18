@@ -1,0 +1,224 @@
+{
+  "id": "academorix://modules/staff/schemas/coach",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Coach",
+  "description": "Staff-satellite adding a per-sport coaching profile. Carries tenant_id + staff_id. Cascades branch + organization + region through staff → branch. Cascades user through staff → user. NEVER carries application_id, branch_id, organization_id, region_id, or user_id directly — all cascade. One Coach per Staff at a time (partial unique index on staff_id).",
+  "type": "object",
+  "x-module": "staff",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "coaches",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "coa_",
+    "incrementing": false,
+    "model": "Academorix\\Staff\\Models\\Coach",
+    "interface": "Academorix\\Staff\\Contracts\\Data\\CoachInterface",
+    "implements": ["Academorix\\Staff\\Contracts\\Data\\CoachInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToStaff",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "coaching_level": "CoachingLevel",
+      "status": "CoachStatus",
+      "rating": "decimal:2",
+      "rating_count": "integer",
+      "session_capacity_per_week": "integer",
+      "additional_sports": "array",
+      "certifications": "array",
+      "languages": "array",
+      "availability_pattern": "array",
+      "metadata": "array",
+      "coach_started_at": "date",
+      "coach_ended_at": "date"
+    },
+    "observers": ["CoachObserver"],
+    "appends": ["full_name", "display_name", "avatar_url", "branch_id", "is_active"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `coa_<26>`." },
+      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
+      "staff_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "staff", "column": "id", "onDelete": "restrict" }, "description": "The underlying Staff row. RESTRICT — coach cannot be created against an offboarded staff; must archive before parent Staff can be soft-deleted. Immutable post-create." },
+      "sport_key": { "type": "string", "length": 32, "nullable": false, "description": "Primary sport (Wave 3+ sports registry key). e.g. basketball / swimming / general_fitness." },
+      "additional_sports": { "type": "jsonb", "nullable": false, "default": "'[]'::jsonb", "description": "Array of sport_keys the coach also teaches. Empty = only primary." },
+      "specialization": { "type": "string", "length": 128, "nullable": true, "description": "Free-text: 'youth development', 'elite competition prep', 'return-to-play rehab'." },
+      "coaching_level": { "type": "string", "length": 16, "nullable": false, "description": "Enum: assistant / head / senior / director / consultant." },
+      "certifications": { "type": "jsonb", "nullable": false, "default": "'[]'::jsonb", "description": "Array of certification entries. Shape validated by valid_certifications_shape rule + schemas/coach-certification.schema.json." },
+      "rating": { "type": "decimal", "precision": 3, "scale": 2, "nullable": true, "description": "0-5 rating from athlete/parent session ratings. Written EXCLUSIVELY by AggregateCoachRatingsJob (Wave 3+; Wave 2b remains null)." },
+      "rating_count": { "type": "integer", "nullable": false, "default": 0, "description": "Number of ratings that produced the average. Written EXCLUSIVELY by the job." },
+      "bio": { "type": "text", "nullable": true, "description": "Public-facing bio. When null, coach hidden from public directories." },
+      "head_shot_url": { "type": "string", "length": 512, "nullable": true, "description": "Public-facing head-shot URL. Distinct from user.profile.avatar_url (that's the user's own avatar; this is coach-specific)." },
+      "availability_pattern": { "type": "jsonb", "nullable": true, "description": "Per-day windows. Overrides staff.weekly_hours for the coaching function specifically. Shape validated by valid_availability_pattern rule." },
+      "session_capacity_per_week": { "type": "integer", "nullable": true, "description": "Max sessions per week this coach will accept." },
+      "languages": { "type": "jsonb", "nullable": false, "default": "'[]'::jsonb", "description": "Array of BCP-47 codes. Languages the coach coaches in." },
+      "public_email": { "type": "string", "length": 255, "nullable": true, "description": "Tenant-facing 'message this coach' address. Distinct from user.email." },
+      "public_phone": { "type": "string", "length": 20, "nullable": true, "description": "E.164 phone. Optional public contact." },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'active'", "description": "Enum: active / paused / archived." },
+      "coach_started_at": { "type": "date", "nullable": true, "description": "When this Staff assumed the coaching role. May differ from staff.started_at when a Staff promotes from receptionist to assistant coach." },
+      "coach_ended_at": { "type": "date", "nullable": true, "description": "When the coaching role ended. Set on status → archived." },
+      "notes": { "type": "text", "nullable": true, "description": "Internal coach-development notes. Private-tier." },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["staff_id"],
+        "unique": true,
+        "name": "coaches_staff_active_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "One Coach per Staff at a time."
+      },
+      { "columns": ["tenant_id", "sport_key", "status"], "name": "coaches_sport_status_idx" },
+      { "columns": ["tenant_id", "coaching_level"], "name": "coaches_level_idx" }
+    ],
+    "check_constraints": [
+      {
+        "name": "coach_tenant_matches_staff_tenant",
+        "description": "coach.tenant_id must equal (SELECT tenant_id FROM staff WHERE id = coach.staff_id) — defense-in-depth against cross-tenant FK smuggling. Enforced at DB layer via trigger."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "staff_id",
+    "sport_key",
+    "additional_sports",
+    "coaching_level",
+    "certifications",
+    "rating_count",
+    "languages",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^coa_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "staff_id": { "type": "string", "pattern": "^stf_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "sport_key": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$", "maxLength": 32 },
+    "additional_sports": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$", "maxLength": 32 },
+      "uniqueItems": true
+    },
+    "specialization": { "type": ["string", "null"], "maxLength": 128 },
+    "coaching_level": {
+      "type": "string",
+      "enum": ["assistant", "head", "senior", "director", "consultant"]
+    },
+    "certifications": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/certificationEntry" }
+    },
+    "rating": { "type": ["number", "null"], "minimum": 0, "maximum": 5 },
+    "rating_count": { "type": "integer", "minimum": 0 },
+    "bio": { "type": ["string", "null"] },
+    "head_shot_url": { "type": ["string", "null"], "format": "uri", "maxLength": 512 },
+    "availability_pattern": { "type": ["object", "null"] },
+    "session_capacity_per_week": { "type": ["integer", "null"], "minimum": 0 },
+    "languages": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z]{2,3}(-[A-Z]{2})?$" },
+      "uniqueItems": true
+    },
+    "public_email": { "type": ["string", "null"], "format": "email", "maxLength": 255 },
+    "public_phone": { "type": ["string", "null"], "pattern": "^\\+[1-9]\\d{1,14}$" },
+    "status": { "type": "string", "enum": ["active", "paused", "archived"] },
+    "coach_started_at": { "type": ["string", "null"], "format": "date" },
+    "coach_ended_at": { "type": ["string", "null"], "format": "date" },
+    "notes": { "type": ["string", "null"] },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "certificationEntry": {
+      "type": "object",
+      "description": "One certification entry inside the certifications array.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Opaque handle for the array element. Auto-generated on add; stable across updates."
+        },
+        "organization": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "The certifying body. e.g. 'NASM', 'ACSM', 'FA (English Football Association)', 'AASP'."
+        },
+        "certification": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "The certification title. e.g. 'Level 2 Coaching', 'CPT', 'Youth Coaching Level 3'."
+        },
+        "certified_at": {
+          "type": "string",
+          "format": "date",
+          "description": "Date the certification was awarded."
+        },
+        "expires_at": {
+          "type": ["string", "null"],
+          "format": "date",
+          "description": "Expiry date, null for indefinite. When set, must be > certified_at."
+        },
+        "certificate_url": {
+          "type": ["string", "null"],
+          "format": "uri",
+          "description": "Public or private link to the certificate document."
+        },
+        "verified_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Only meaningful when coach_certifications_verified entitlement is on. Set by HR via /verify endpoint."
+        },
+        "verified_by_user_id": {
+          "type": ["string", "null"],
+          "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$",
+          "description": "The HR user who verified. Only set when verified_at is set."
+        },
+        "verified_document_file_id": {
+          "type": ["string", "null"],
+          "pattern": "^fil_[0-9A-HJKMNP-TV-Z]{26}$",
+          "description": "storage::File reference to the signed proof document. Only set when verified_at is set."
+        },
+        "expired_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Set by ExpireCoachCertificationsJob when expires_at is crossed. Post-expiry the entry stays in the array (auditability) but is filtered out of public renderings."
+        }
+      },
+      "required": ["organization", "certification", "certified_at"],
+      "additionalProperties": false
+    }
+  },
+  "x-invariants": [
+    "One Coach per Staff at a time — enforced by partial unique index on staff_id",
+    "coach.tenant_id == staff.tenant_id — enforced by trigger check constraint",
+    "staff_id is IMMUTABLE post-create",
+    "sport_key must be a valid registered sport (Wave 3+; Wave 2b: soft-validate as free-text)",
+    "additional_sports must not contain the primary sport_key (dedup)",
+    "coach_started_at, when set, must be >= staff.started_at",
+    "certifications entries: expires_at > certified_at when set; certified_at <= today() + 30 days (rejects nonsense future certs)",
+    "rating is written EXCLUSIVELY by AggregateCoachRatingsJob — manual writes refused",
+    "status='archived' + rows may have coach_ended_at set; other statuses have coach_ended_at NULL",
+    "Coach cannot transition to non-archived when parent Staff.employment_status != 'active'"
+  ]
+}

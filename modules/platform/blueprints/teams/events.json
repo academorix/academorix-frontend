@@ -1,0 +1,539 @@
+{
+  "id": "academorix://modules/teams/events",
+  "$version": 1,
+  "title": "teams — published events",
+  "namespace": "Academorix\\Teams\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Team lifecycle events fan out to notifications + activity + audit; roster-changing events additionally fan out to attendance (Wave 3) for session-roster synchronisation. TeamCoachChanged is the CHILD-SAFETY-SENSITIVE event of the module — when team.min_age < 18 OR max_age < 18, it fires critical-severity audit + notification.",
+  "events": [
+    {
+      "name": "TeamCreated",
+      "class": "Academorix\\Teams\\Events\\TeamCreated",
+      "trigger": "TeamRepository finished a successful create. Fires exactly once per (tenant_id, branch_id, slug) tuple.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateBranchTeamListCache"
+      ],
+      "payload": {
+        "team_id": "ULID (tea_*)",
+        "tenant_id": "ULID (ten_*)",
+        "branch_id": "ULID (brn_*)",
+        "organization_id": "ULID (org_*)",
+        "name": "string",
+        "slug": "string",
+        "team_type": "string (squad / class / cohort / group / crew / other)",
+        "sport_key": "string | null",
+        "competitive_level": "string | null",
+        "gender_category": "string | null",
+        "min_age": "int | null",
+        "max_age": "int | null",
+        "capacity": "int | null",
+        "coach_id": "ULID | null (Wave 2b Coach FK)",
+        "created_by": "ULID (usr_*)"
+      }
+    },
+    {
+      "name": "TeamUpdated",
+      "class": "Academorix\\Teams\\Events\\TeamUpdated",
+      "trigger": "Any Team scalar field mutated except status (TeamStatusChanged), capacity/capacity_waitlist (TeamCapacityChanged), schedule_pattern (TeamScheduleChanged), coach_id (TeamCoachChanged), registration_opens_at/closes_at (TeamRegistrationOpened / TeamRegistrationClosed). Umbrella event for renames, description edits, colour/logo changes, sort_order tweaks, min_age/max_age edits.",
+      "queue": "notifications",
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
+      "payload": {
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_fields": "string[]",
+        "updated_by": "ULID"
+      }
+    },
+    {
+      "name": "TeamStatusChanged",
+      "class": "Academorix\\Teams\\Events\\TeamStatusChanged",
+      "trigger": "Team.status transitioned. Values: active / paused / archived. Fires alongside TeamArchived / TeamRestored on specific transitions.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateBranchTeamListCache"
+      ],
+      "payload": {
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "from_status": "'active' | 'paused' | 'archived'",
+        "to_status": "'active' | 'paused' | 'archived'",
+        "changed_by": "ULID",
+        "reason": "string | null"
+      }
+    },
+    {
+      "name": "TeamCapacityChanged",
+      "class": "Academorix\\Teams\\Events\\TeamCapacityChanged",
+      "trigger": "Team.capacity or Team.capacity_waitlist changed. Distinct event because downstream capacity-gated flows (roster, waitlist, notifications) invalidate their caches on it.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateEligibilitySnapshot"
+      ],
+      "payload": {
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "was_capacity": "int | null",
+        "new_capacity": "int | null",
+        "was_capacity_waitlist": "int | null",
+        "new_capacity_waitlist": "int | null",
+        "updated_by": "ULID"
+      }
+    },
+    {
+      "name": "TeamScheduleChanged",
+      "class": "Academorix\\Teams\\Events\\TeamScheduleChanged",
+      "trigger": "Team.schedule_pattern JSONB mutated. Wave 3 Sports module listens to this to recompute ResourceBooking suggestions.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchTeamScheduleChangedNotification (cannot-opt-out to active members)",
+        "cache::InvalidateTeamScheduleCache"
+      ],
+      "payload": {
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "days_of_week_touched": "string[]",
+        "updated_by": "ULID"
+      }
+    },
+    {
+      "name": "TeamCoachChanged",
+      "class": "Academorix\\Teams\\Events\\TeamCoachChanged",
+      "trigger": "Team.coach_id changed. Fires with `is_minor_only` flag when team.min_age < 18 OR max_age < 18 — CHILD-SAFETY-SENSITIVE. Downstream: notifies old + new coach; when is_minor_only=true, additionally notifies the branch's safeguarding lead + fires critical-severity audit.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (severity=critical when is_minor_only=true)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchTeamCoachChangedNotification (to old + new coach; safeguarding lead when is_minor_only=true)"
+      ],
+      "payload": {
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "was_coach_id": "ULID | null",
+        "new_coach_id": "ULID | null",
+        "changed_by": "ULID",
+        "is_minor_only": "boolean (team.min_age < 18 OR team.max_age < 18 — hooks the child-safety notification chain)"
+      }
+    },
+    {
+      "name": "TeamRegistrationOpened",
+      "class": "Academorix\\Teams\\Events\\TeamRegistrationOpened",
+      "trigger": "Team.registration_opens_at reached the current moment (auto-flipped by OpenClosePendingRegistrationsJob) OR admin manually set an already-past registration_opens_at.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchTeamRegistrationOpeningNotification (to eligible members based on age + gender)"
+      ],
+      "payload": {
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "opens_at": "ISO 8601",
+        "closes_at": "ISO 8601 | null",
+        "capacity": "int | null"
+      }
+    },
+    {
+      "name": "TeamRegistrationClosed",
+      "class": "Academorix\\Teams\\Events\\TeamRegistrationClosed",
+      "trigger": "Team.registration_closes_at reached (auto-flipped) OR admin manually closed early.",
+      "queue": "notifications",
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
+      "payload": {
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "closed_at": "ISO 8601",
+        "reason": "'scheduled' | 'manual' | 'capacity_full'",
+        "final_roster_count": "int"
+      }
+    },
+    {
+      "name": "TeamArchived",
+      "class": "Academorix\\Teams\\Events\\TeamArchived",
+      "trigger": "Team.status transitioned to `archived` OR soft-delete with --cascade-members flag. Terminal.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "teams::CascadeMembersOnTeamArchived (cascades: transitions every active member to inactive with left_reason='team_archived')",
+        "notifications::DispatchTeamMemberLeftNotification (per cascaded member)"
+      ],
+      "payload": {
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "archived_at": "ISO 8601",
+        "archived_by": "ULID",
+        "reason": "string | null",
+        "cascaded_member_count": "int",
+        "hard_delete_scheduled_for": "ISO 8601"
+      }
+    },
+    {
+      "name": "TeamRestored",
+      "class": "Academorix\\Teams\\Events\\TeamRestored",
+      "trigger": "Archived team's status flipped back to active. Rare — guarded against by TEAM_SUCCESSOR_EXISTS check.",
+      "queue": "notifications",
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
+      "payload": {
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "restored_at": "ISO 8601",
+        "restored_by": "ULID",
+        "days_archived": "int"
+      }
+    },
+    {
+      "name": "TeamDeleted",
+      "class": "Academorix\\Teams\\Events\\TeamDeleted",
+      "trigger": "Team hard-deleted (PurgeArchivedTeamsJob past 730-day hold). Cascade FK removes downstream rows.",
+      "queue": "teams",
+      "consumers": ["audit::WriteToAuditLog (retention: 7 years)"],
+      "payload": {
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "deleted_at": "ISO 8601",
+        "cascaded_member_count": "int",
+        "cascaded_trial_count": "int",
+        "cascaded_event_team_count": "int"
+      }
+    },
+    {
+      "name": "TeamMemberJoined",
+      "class": "Academorix\\Teams\\Events\\TeamMemberJoined",
+      "trigger": "TeamMember row created with status='active'. Also fires as the target of a Trial conversion (fired from within the atomic conversion transaction's afterCommit).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchTeamMemberJoinedNotification (to team coach + captain)",
+        "cache::InvalidateTeamRosterCache"
+      ],
+      "payload": {
+        "team_member_id": "ULID (trm_*)",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "member_type": "'athlete' | 'coach' | 'staff' | 'user'",
+        "member_id": "ULID",
+        "role_on_team": "string",
+        "jersey_number": "int | null",
+        "position": "string | null",
+        "joined_via_trial_id": "ULID | null (trial conversion source when applicable)",
+        "joined_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TeamMemberLeft",
+      "class": "Academorix\\Teams\\Events\\TeamMemberLeft",
+      "trigger": "TeamMember.status transitioned to `inactive` OR `graduated`. Fires from voluntary leave OR cascade (team archived).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchTeamMemberLeftNotification (to coach)"
+      ],
+      "payload": {
+        "team_member_id": "ULID",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "member_type": "string",
+        "member_id": "ULID",
+        "left_at": "ISO 8601",
+        "left_reason": "'transferred' | 'graduated' | 'withdrew' | 'dropped' | 'injury' | 'disciplinary' | 'team_archived' | 'other'",
+        "cascade_trigger": "'user' | 'admin' | 'team_archived'"
+      }
+    },
+    {
+      "name": "TeamMemberRoleChanged",
+      "class": "Academorix\\Teams\\Events\\TeamMemberRoleChanged",
+      "trigger": "TeamMember.role_on_team mutated.",
+      "queue": "notifications",
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
+      "payload": {
+        "team_member_id": "ULID",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "was_role": "string",
+        "new_role": "string",
+        "changed_by": "ULID"
+      }
+    },
+    {
+      "name": "TeamMemberStatusChanged",
+      "class": "Academorix\\Teams\\Events\\TeamMemberStatusChanged",
+      "trigger": "TeamMember.status transitioned but not to `inactive` OR `graduated` (those fire TeamMemberLeft). Non-terminal transitions: injured / suspended / recovery-to-active.",
+      "queue": "notifications",
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
+      "payload": {
+        "team_member_id": "ULID",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "was_status": "string",
+        "new_status": "string",
+        "changed_by": "ULID"
+      }
+    },
+    {
+      "name": "TeamMemberJerseyChanged",
+      "class": "Academorix\\Teams\\Events\\TeamMemberJerseyChanged",
+      "trigger": "TeamMember.jersey_number mutated. Refused when the new number is already worn by another active member.",
+      "queue": "notifications",
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
+      "payload": {
+        "team_member_id": "ULID",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "was_jersey": "int | null",
+        "new_jersey": "int | null"
+      }
+    },
+    {
+      "name": "TeamMemberPositionChanged",
+      "class": "Academorix\\Teams\\Events\\TeamMemberPositionChanged",
+      "trigger": "TeamMember.position mutated.",
+      "queue": "notifications",
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
+      "payload": {
+        "team_member_id": "ULID",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "was_position": "string | null",
+        "new_position": "string | null"
+      }
+    },
+    {
+      "name": "TeamMemberSuspended",
+      "class": "Academorix\\Teams\\Events\\TeamMemberSuspended",
+      "trigger": "TeamMember.status transitioned to `suspended` (disciplinary). Fires alongside TeamMemberStatusChanged.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (severity=warn)",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "team_member_id": "ULID",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "suspended_at": "ISO 8601",
+        "suspended_by": "ULID",
+        "reason": "string | null"
+      }
+    },
+    {
+      "name": "TeamMemberInjured",
+      "class": "Academorix\\Teams\\Events\\TeamMemberInjured",
+      "trigger": "TeamMember.status transitioned to `injured` (medical). Fires alongside TeamMemberStatusChanged.",
+      "queue": "notifications",
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
+      "payload": {
+        "team_member_id": "ULID",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "injured_at": "ISO 8601",
+        "recorded_by": "ULID"
+      }
+    },
+    {
+      "name": "TrialScheduled",
+      "class": "Academorix\\Teams\\Events\\TrialScheduled",
+      "trigger": "TrialRepository committed a new team_trials row.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchTrialScheduledNotification (to trialist + coach)",
+        "teams::ScheduleTrialistReminders (dispatches NotifyTrialistPreTrialJob at 24h + 1h before starts_at)"
+      ],
+      "payload": {
+        "trial_id": "ULID (ttr_*)",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "trialist_type": "'athlete' | 'user' | 'anonymous'",
+        "trialist_id": "ULID | null",
+        "trial_type": "'individual' | 'group' | 'one_day' | 'multi_session'",
+        "session_count": "int",
+        "starts_at": "ISO 8601",
+        "ends_at": "ISO 8601",
+        "scheduled_by": "ULID"
+      }
+    },
+    {
+      "name": "TrialStarted",
+      "class": "Academorix\\Teams\\Events\\TrialStarted",
+      "trigger": "TeamTrial.status transitioned scheduled → in_progress. Fires when the first session begins (coach marks it started).",
+      "queue": "notifications",
+      "consumers": ["activity::WriteToActivityLog"],
+      "payload": {
+        "trial_id": "ULID",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "started_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TrialCompleted",
+      "class": "Academorix\\Teams\\Events\\TrialCompleted",
+      "trigger": "TeamTrial.status transitioned in_progress → completed. Fires from coach's explicit action OR from CloseExpiredTrialsJob when ends_at + 24h has passed.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "trial_id": "ULID",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "completed_at": "ISO 8601",
+        "completed_by": "ULID | null (null = automated CloseExpiredTrialsJob)"
+      }
+    },
+    {
+      "name": "TrialConvertedToMember",
+      "class": "Academorix\\Teams\\Events\\TrialConvertedToMember",
+      "trigger": "TeamTrial.status transitioned completed → converted. Fires from within the atomic conversion transaction's afterCommit. Companion event TeamMemberJoined fires in the same afterCommit.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchTrialDecisionNotification (to trialist — accepted)"
+      ],
+      "payload": {
+        "trial_id": "ULID",
+        "team_member_id": "ULID (newly-created — see companion TeamMemberJoined event)",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "converted_at": "ISO 8601",
+        "converted_by": "ULID"
+      }
+    },
+    {
+      "name": "TrialRejected",
+      "class": "Academorix\\Teams\\Events\\TrialRejected",
+      "trigger": "TeamTrial.status transitioned completed → rejected. decision_notes is required per the observer (anti-discrimination retention).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 3 years — anti-discrimination defence)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchTrialDecisionNotification (to trialist — rejected; fixed template, never surfaces decision_notes)"
+      ],
+      "payload": {
+        "trial_id": "ULID",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "rejected_at": "ISO 8601",
+        "rejected_by": "ULID"
+      }
+    },
+    {
+      "name": "TrialNoShow",
+      "class": "Academorix\\Teams\\Events\\TrialNoShow",
+      "trigger": "TeamTrial.status transitioned to `no_show`. Coach records that the trialist didn't turn up.",
+      "queue": "notifications",
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
+      "payload": {
+        "trial_id": "ULID",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "marked_at": "ISO 8601",
+        "marked_by": "ULID"
+      }
+    },
+    {
+      "name": "TrialCancelled",
+      "class": "Academorix\\Teams\\Events\\TrialCancelled",
+      "trigger": "TeamTrial.status transitioned to `cancelled` from scheduled or in_progress. Voluntary cancel by trialist OR admin.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchTrialCancelledNotification (to trialist + coach)"
+      ],
+      "payload": {
+        "trial_id": "ULID",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "cancelled_at": "ISO 8601",
+        "cancelled_by": "ULID | null",
+        "cancellation_reason": "string | null"
+      }
+    },
+    {
+      "name": "EventTeamRegistered",
+      "class": "Academorix\\Teams\\Events\\EventTeamRegistered",
+      "trigger": "EventTeamRepository committed a new event_teams row.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "event_team_id": "ULID (evt_*)",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "event_id": "ULID | null (Wave 3 FK, nullable pre-Wave-3)",
+        "participation_type": "'home' | 'away' | 'host' | 'guest' | 'participant'",
+        "registered_at": "ISO 8601",
+        "registered_by": "ULID"
+      }
+    },
+    {
+      "name": "EventTeamWithdrew",
+      "class": "Academorix\\Teams\\Events\\EventTeamWithdrew",
+      "trigger": "event_teams.withdrew_at set from null → now(). Cascades: cancel attendance for members.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchEventTeamWithdrewNotification (to members)"
+      ],
+      "payload": {
+        "event_team_id": "ULID",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "withdrew_at": "ISO 8601",
+        "withdrew_by": "ULID | null",
+        "withdrawal_reason": "string | null"
+      }
+    },
+    {
+      "name": "EventTeamCheckedIn",
+      "class": "Academorix\\Teams\\Events\\EventTeamCheckedIn",
+      "trigger": "event_teams.checked_in_at set from null → now().",
+      "queue": "notifications",
+      "consumers": ["activity::WriteToActivityLog"],
+      "payload": {
+        "event_team_id": "ULID",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "checked_in_at": "ISO 8601",
+        "checked_in_by": "ULID",
+        "attendance_count": "int | null"
+      }
+    },
+    {
+      "name": "EventTeamResultRecorded",
+      "class": "Academorix\\Teams\\Events\\EventTeamResultRecorded",
+      "trigger": "event_teams.result JSONB written. Refused when the team has withdrew_at set OR participation_type='participant' AND result claims a position (invalid combination — clarified in valid_result_shape rule).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "event_team_id": "ULID",
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "result": "object (sport-specific, validated against valid_result_shape rule)",
+        "recorded_at": "ISO 8601",
+        "recorded_by": "ULID"
+      }
+    }
+  ]
+}

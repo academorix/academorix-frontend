@@ -1,0 +1,194 @@
+{
+  "id": "teams.resources.team.roster",
+  "title": "Team roster",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/teams/:teamId",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "teams", "entity": "team", "action": "view" },
+  "requiresPermission": "teams.view",
+  "requiresEntitlement": "teams",
+  "realtime": {
+    "channel": "team.{teamId}.members",
+    "events": [
+      "TeamMemberJoined",
+      "TeamMemberLeft",
+      "TeamMemberRoleChanged",
+      "TeamMemberStatusChanged"
+    ],
+    "onEvent": { "kind": "refetch", "sources": ["members"] }
+  },
+  "dataSources": [
+    {
+      "name": "team",
+      "kind": "http.get",
+      "url": "/api/v1/teams/{teamId}",
+      "unwrap": "data"
+    },
+    {
+      "name": "members",
+      "kind": "http.get",
+      "url": "/api/v1/teams/{teamId}/members",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "Avatar",
+                  "props": { "size": "lg" },
+                  "bindings": {
+                    "src": { "$ref": "team.logo_url" },
+                    "fallback": { "$expr": "team.name.charAt(0).toUpperCase()" }
+                  }
+                },
+                {
+                  "kind": "View",
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                      "bindings": { "children": { "$ref": "team.name" } }
+                    },
+                    {
+                      "kind": "View",
+                      "props": { "className": "flex items-center gap-2 mt-1" },
+                      "children": [
+                        { "kind": "Chip", "props": { "size": "sm", "variant": "neutral" }, "bindings": { "children": { "$ref": "team.team_type" } } },
+                        {
+                          "kind": "Chip",
+                          "props": { "size": "sm" },
+                          "bindings": {
+                            "variant": { "$expr": "team.status === 'active' ? 'success' : (team.status === 'paused' ? 'warning' : 'neutral')" },
+                            "children": { "$ref": "team.status" }
+                          }
+                        },
+                        {
+                          "kind": "Text",
+                          "props": { "className": "text-sm text-muted" },
+                          "bindings": { "children": { "$ref": "team.branch.name" } }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "leadingIcon": "plus", "children": "Add member" },
+                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/members/new'" } },
+                  "requiresPermission": "team_members.create"
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "leadingIcon": "pencil", "children": "Edit" },
+                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/teams/' + team.id + '/edit'" } },
+                  "requiresPermission": "teams.update"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Widget",
+          "widget": "teams.capacity-usage-bar",
+          "props": { "size": "md" },
+          "bindings": {
+            "active_count": { "$ref": "team.active_roster_count" },
+            "capacity": { "$ref": "team.capacity" },
+            "waitlist_size": { "$ref": "team.capacity_waitlist" }
+          }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Role", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "player", "label": "Player" },
+                { "id": "captain", "label": "Captain" },
+                { "id": "coach", "label": "Coach" },
+                { "id": "assistant_coach", "label": "Assistant coach" },
+                { "id": "team_manager", "label": "Manager" },
+                { "id": "medical", "label": "Medical" },
+                { "id": "analyst", "label": "Analyst" },
+                { "id": "substitute", "label": "Substitute" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "role_on_team",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus", "className": "min-w-40" },
+              "props_items": [
+                { "id": "active", "label": "Active" },
+                { "id": "inactive", "label": "Inactive" },
+                { "id": "injured", "label": "Injured" },
+                { "id": "suspended", "label": "Suspended" },
+                { "id": "graduated", "label": "Graduated" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "props": { "className": "w-full" },
+          "bindings": {
+            "items": { "$ref": "members" },
+            "isLoading": { "$ref": "members.isLoading" }
+          },
+          "columns": [
+            { "field": "member.name", "label": "Member", "sortable": true },
+            { "field": "role_on_team", "label": "Role", "renderer": { "kind": "Widget", "widget": "teams.member-role-chip", "bindings": { "role": { "$ref": "row.role_on_team" } } } },
+            { "field": "jersey_number", "label": "#", "align": "right" },
+            { "field": "position", "label": "Position" },
+            { "field": "joined_at", "label": "Joined", "format": "date" },
+            { "field": "status", "label": "Status", "renderer": { "kind": "Chip", "bindings": { "variant": { "$expr": "row.status === 'active' ? 'success' : (row.status === 'injured' ? 'warning' : (row.status === 'suspended' ? 'danger' : 'neutral'))" }, "children": { "$ref": "row.status" } } } }
+          ],
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "text-center py-8" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "user-plus", "className": "size-10 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-3 text-lg font-medium", "children": "Roster is empty" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Add members to build the roster." } }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

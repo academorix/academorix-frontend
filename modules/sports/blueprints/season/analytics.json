@@ -1,0 +1,116 @@
+{
+  "id": "academorix://modules/season/analytics",
+  "$version": 1,
+  "title": "season — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Season Created",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "season_id", "season_type", "source", "is_current", "business_type", "has_playoffs", "days_span"],
+      "description": "New Season row created. days_span = end_date - start_date; feeds tier-usage analytics on typical season lengths."
+    },
+    {
+      "name": "Season Current Changed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "from_season_id", "to_season_id", "days_since_last_change", "was_year_boundary_crossed"],
+      "description": "The current-flag flipped. Audit-critical + feeds the reporting-integrity dashboard — YoY reports pivot on this event."
+    },
+    {
+      "name": "Season Registration Opened",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "season_id", "season_type", "trigger", "days_before_start"],
+      "description": "trigger: automated_phase_roll / manual_admin. days_before_start = start_date - opened_at (how far ahead the registration opens; negative if opened after start)."
+    },
+    {
+      "name": "Season Registration Closed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "season_id", "season_type", "trigger", "enrolled_count_snapshot"],
+      "description": "enrolled_count_snapshot is aggregate (not PII) — count of active enrollments at close time."
+    },
+    {
+      "name": "Season Started",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "season_id", "season_type", "trigger"]
+    },
+    {
+      "name": "Season Playoffs Begun",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "season_id", "trigger"]
+    },
+    {
+      "name": "Season Completed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "season_id", "season_type", "trigger", "final_enrolled_count", "had_playoffs"],
+      "description": "final_enrolled_count feeds capacity-target-vs-actual analytics."
+    },
+    {
+      "name": "Season Archived",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "season_id", "had_active_enrollments"],
+      "description": "had_active_enrollments = true when the caller passed --force (bypassed the FK check)."
+    },
+    {
+      "name": "Season Restored",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "season_id", "days_archived"]
+    },
+    {
+      "name": "Season Dates Shifted",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "season_id", "status_at_shift", "days_delta_start", "days_delta_end", "affected_enrollment_count"],
+      "description": "days_delta_* is the signed delta from the previous date. Feeds an audit-worthy signal — frequent shifts are a red flag."
+    },
+    {
+      "name": "Season Sport Key Changed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "season_id", "status_at_change"],
+      "description": "sport_key ITSELF is NEVER an analytics property — it's opaque tenant-scoped taxonomy. Just the fact of the change is tracked."
+    },
+    {
+      "name": "Season Quota Exceeded",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "tier", "calendar_year", "attempted_season_type"],
+      "description": "Attempt to create a Season beyond the season_slot per-calendar-year cap. Feeds the upsell funnel — Medium-tier tenants hitting the 4-per-year cap are prime Enterprise upgrade candidates."
+    },
+    {
+      "name": "Default Season Auto-Seeded",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "business_type", "season_id", "seeded_by"],
+      "description": "seeded_by: tenant_provisioning / legacy_backfill_command."
+    },
+    {
+      "name": "Season Registration Cap Reached",
+      "kind": "track",
+      "consent_required": "analytics",
+      "properties": ["tenant_id", "season_id", "capacity_target"],
+      "description": "Enrolled count crossed capacity_target for the first time on this Season. Informational — enrollments continue past this signal."
+    },
+    {
+      "name": "Current Season Cache Miss",
+      "kind": "track",
+      "consent_required": "analytics",
+      "properties": ["tenant_id", "scope_tuple_specificity"],
+      "description": "scope_tuple_specificity: exact (4/4) / partial (2-3/4) / tenant_only (1/4). Feeds cache-warming decisions on the /seasons/current hot path."
+    }
+  ],
+  "notes": [
+    "sport_key is NEVER a Segment property — it's opaque tenant-scoped taxonomy that could leak the tenant's programming.",
+    "season_id (ULID sea_*) is anonymised — safe to send.",
+    "Financial + audit-critical events (Season Current Changed, Season Dates Shifted, Season Sport Key Changed) use consent_required=essential because they feed compliance dashboards that operate independently of tenant consent."
+  ]
+}

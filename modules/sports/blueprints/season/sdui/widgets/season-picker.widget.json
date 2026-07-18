@@ -1,0 +1,132 @@
+{
+  "id": "season.season-picker",
+  "title": "Season picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Searchable single-select for Seasons filtered by scoping tuple. Renders as HeroUI `ComboBox` (per the ui-components rule). Consumed by athlete + event + session create flows + any admin surface that needs a season pick. Filters by tenant (implicit from auth), optional organization, optional branch, optional sport_key. Groups by status (active first: in_progress → registration_open → planned; then completed; then archived hidden by default).",
+  "notes": [
+    "Uses `ComboBox` — Enterprise tenants may run many concurrent seasons across scopes.",
+    "Hides `archived` status by default; caller can pass `showArchived=true` for admin flows.",
+    "Sets the current season as the default `selectedKey` when `defaultToCurrent=true` (default).",
+    "Displays `Current` chip on the is_current=true row.",
+    "Displays a status chip inline (see season-status-chip widget)."
+  ],
+  "props": {
+    "name": { "type": "string", "required": true },
+    "label": { "type": "string", "default": "Season" },
+    "required": { "type": "boolean", "default": false },
+    "clearable": { "type": "boolean", "default": false },
+    "placeholder": { "type": "string", "default": "Search seasons..." },
+    "helpText": { "type": "string", "default": null },
+    "size": { "type": "string", "default": "md", "enum": ["sm", "md", "lg"] },
+    "defaultValue": { "type": "string", "default": null },
+    "defaultToCurrent": { "type": "boolean", "default": true },
+    "organizationId": { "type": "string", "default": null },
+    "branchId": { "type": "string", "default": null },
+    "sportKey": { "type": "string", "default": null },
+    "showArchived": { "type": "boolean", "default": false }
+  },
+  "dataSources": [
+    {
+      "name": "seasons",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/seasons?' + qs({ 'filter[organization_id]': props.organizationId, 'filter[branch_id]': props.branchId, 'filter[sport_key]': props.sportKey, 'filter[status]': (props.showArchived ? null : 'planned,registration_open,in_progress,playoffs,completed'), 'sort': '-is_current,-status,-start_date' })",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "props": { "menuTrigger": "focus" },
+      "bindings": {
+        "props": {
+          "name": { "$ref": "props.name" },
+          "aria-label": { "$ref": "props.label" },
+          "placeholder": { "$ref": "props.placeholder" },
+          "size": { "$ref": "props.size" },
+          "clearable": { "$ref": "props.clearable" },
+          "isRequired": { "$ref": "props.required" },
+          "selectedKey": { "$expr": "props.defaultValue || (props.defaultToCurrent ? (seasons.find(s => s.is_current) || {}).id : null)" }
+        }
+      },
+      "children": [
+        { "kind": "Label", "bindings": { "children": { "$ref": "props.label" } } },
+        {
+          "kind": "ComboBox.InputGroup",
+          "children": [
+            { "kind": "Input", "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } } },
+            { "kind": "ComboBox.Trigger" }
+          ]
+        },
+        {
+          "kind": "Description",
+          "bindings": {
+            "hidden": { "$expr": "!props.helpText" },
+            "children": { "$ref": "props.helpText" }
+          }
+        },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "props": { "className": "max-h-96 overflow-y-auto w-96" },
+              "bindings": { "items": { "$ref": "seasons" } },
+              "itemRenderer": {
+                "kind": "ListBox.Item",
+                "propsExpr": "{ key: item.id, id: item.id, textValue: item.name + ' ' + item.slug }",
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2 py-1" },
+                    "children": [
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex flex-col flex-1 min-w-0" },
+                        "children": [
+                          {
+                            "kind": "View",
+                            "props": { "className": "flex items-center gap-1" },
+                            "children": [
+                              {
+                                "kind": "Text",
+                                "props": { "className": "font-medium truncate" },
+                                "bindings": { "children": { "$ref": "item.name" } }
+                              },
+                              {
+                                "kind": "Chip",
+                                "props": { "size": "xs", "variant": "accent", "leadingIcon": "star-solid", "children": "Current" },
+                                "bindings": { "hidden": { "$expr": "!item.is_current" } }
+                              },
+                              {
+                                "kind": "Widget",
+                                "props": { "id": "season.season-status-chip" },
+                                "bindings": { "props": { "status": { "$ref": "item.status" }, "size": "xs" } }
+                              }
+                            ]
+                          },
+                          {
+                            "kind": "Text",
+                            "props": { "className": "text-xs text-muted font-mono" },
+                            "bindings": {
+                              "children": {
+                                "$expr": "item.start_date + ' → ' + item.end_date + (item.sport_key ? ' · ' + item.sport_key : '')"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      { "kind": "ListBox.ItemIndicator", "props": { "className": "size-4 text-accent" } }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

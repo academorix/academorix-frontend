@@ -1,0 +1,158 @@
+{
+  "id": "academorix://modules/season/routes",
+  "$version": 1,
+  "title": "season — HTTP routes",
+  "description": "Tenant-facing season CRUD + lifecycle actions (set-current, open/close-registration, start, begin-playoffs, complete, archive, restore) + the heavy-traffic current-season lookup. Platform-admin cross-tenant read. Every tenant route carries `entitlement.enforce:sports_seasons` at minimum; Small tier is blocked at that middleware.",
+  "groups": [
+    {
+      "name": "tenant-seasons",
+      "prefix": "/api/v1/seasons",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "resolve.application",
+        "user.resolve_active_tenant",
+        "tenant.resolve",
+        "user.enforce_tenant_membership",
+        "entitlement.enforce:sports_seasons",
+        "season.resolve_active",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Admin-facing Season CRUD scoped to the active tenant. Every tenant member can READ; WRITE gated by seasons.create / update / delete + specific lifecycle permissions.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Sports\\Season\\Http\\Controllers\\Tenant\\SeasonController@index",
+          "permission": "seasons.viewAny",
+          "description": "filter[status], filter[is_current], filter[organization_id], filter[branch_id], filter[sport_key], filter[season_type], filter[start_date.gte], filter[end_date.lte], filter[has_playoffs], sort[]=start_date,end_date,sort_order,name,created_at, include=organization,branch,active_enrollment_count. Default sort: start_date desc, sort_order asc, name asc. include_archived=true opts into archived rows."
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Sports\\Season\\Http\\Controllers\\Tenant\\SeasonController@store",
+          "permission": "seasons.create",
+          "description": "Admin-triggered creation. Body: SeasonCreateData — name (required), start_date (required), end_date (required), season_type (required), organization_id (nullable), branch_id (nullable), sport_key (nullable, entitlement-gated), registration_opens_at, registration_closes_at, late_registration_ends_at, competition_starts_at, has_playoffs, playoff_starts_at, playoff_ends_at, is_current, sort_order, primary_color, capacity_target, max_enrollments_per_athlete, allows_late_registration, late_registration_fee_cents, description. Consumes 1 `season_slot` per overlapping calendar year."
+        },
+        {
+          "method": "GET",
+          "path": "/current",
+          "controller": "Academorix\\Sports\\Season\\Http\\Controllers\\Tenant\\CurrentSeasonController@show",
+          "permission": "seasons.viewAny",
+          "description": "The high-traffic endpoint every frontend page + every enrollment surface calls. Query params (all optional): organization_id, branch_id, sport_key. Returns the most-specific `is_current=true` Season matching the scope tuple per the fallback chain in readme.md §6. Cached per (tenant, organization, branch, sport_key) with 5-minute TTL. 404 when NO Season is current in any resolved tuple (matches the 'always-on scheduling' case for tenants with no active season)."
+        },
+        {
+          "method": "GET",
+          "path": "/{season}",
+          "controller": "Academorix\\Sports\\Season\\Http\\Controllers\\Tenant\\SeasonController@show",
+          "permission": "seasons.view",
+          "description": "Full Season row. include=organization,branch,phase_summary,active_enrollment_count,current_phase_metadata."
+        },
+        {
+          "method": "PATCH",
+          "path": "/{season}",
+          "controller": "Academorix\\Sports\\Season\\Http\\Controllers\\Tenant\\SeasonController@update",
+          "permission": "seasons.update",
+          "description": "Update mutable fields. Body: SeasonUpdateData — name, slug, description, season_type, registration_opens_at, registration_closes_at, late_registration_ends_at, competition_starts_at, has_playoffs, playoff_starts_at, playoff_ends_at, sort_order, primary_color, capacity_target, max_enrollments_per_athlete, allows_late_registration, late_registration_fee_cents. Immutable-post-create: tenant_id, organization_id, branch_id. sport_key mutable only pre-in_progress. start_date / end_date mutable in-progress only with `seasons.dates.shift` permission (audit-warn)."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{season}",
+          "controller": "Academorix\\Sports\\Season\\Http\\Controllers\\Tenant\\SeasonController@destroy",
+          "permission": "seasons.delete",
+          "description": "Soft-delete (archive path). Requires Season.status='completed' first. Refused when is_current=true OR when active downstream enrollments reference. Hard-delete via PurgeArchivedSeasonsJob after retention window."
+        },
+        {
+          "method": "POST",
+          "path": "/{season}/set-current",
+          "controller": "Academorix\\Sports\\Season\\Http\\Controllers\\Tenant\\SeasonController@setCurrent",
+          "permission": "seasons.set_current",
+          "description": "Flip is_current=true (auto-demotes the previous current in same scope tuple in the same transaction). Fires SeasonCurrentChanged (audit-critical). Refused when Season.status='archived'."
+        },
+        {
+          "method": "POST",
+          "path": "/{season}/open-registration",
+          "controller": "Academorix\\Sports\\Season\\Http\\Controllers\\Tenant\\SeasonController@openRegistration",
+          "permission": "seasons.open_registration",
+          "description": "Manual transition planned -> registration_open. Refused when now() < registration_opens_at UNLESS caller has `seasons.registration.open-early`. Body: { reason? }. Fires SeasonRegistrationOpened."
+        },
+        {
+          "method": "POST",
+          "path": "/{season}/close-registration",
+          "controller": "Academorix\\Sports\\Season\\Http\\Controllers\\Tenant\\SeasonController@closeRegistration",
+          "permission": "seasons.close_registration",
+          "description": "Manual transition registration_open -> registration_closed. Body: { reason? }. Fires SeasonRegistrationClosed. Does NOT block the late-registration window — that's independent."
+        },
+        {
+          "method": "POST",
+          "path": "/{season}/start",
+          "controller": "Academorix\\Sports\\Season\\Http\\Controllers\\Tenant\\SeasonController@start",
+          "permission": "seasons.start",
+          "description": "Manual transition (registration_open OR registration_closed) -> in_progress. Body: { reason? }. Fires SeasonStarted. Refused when now() < start_date UNLESS caller has `seasons.start.early`."
+        },
+        {
+          "method": "POST",
+          "path": "/{season}/begin-playoffs",
+          "controller": "Academorix\\Sports\\Season\\Http\\Controllers\\Tenant\\SeasonController@beginPlayoffs",
+          "permission": "seasons.begin_playoffs",
+          "description": "Manual transition in_progress -> playoffs. Refused when has_playoffs=false OR when now() < playoff_starts_at UNLESS caller has `seasons.playoffs.begin-early`. Body: { reason? }. Fires SeasonPlayoffsBegun."
+        },
+        {
+          "method": "POST",
+          "path": "/{season}/complete",
+          "controller": "Academorix\\Sports\\Season\\Http\\Controllers\\Tenant\\SeasonController@complete",
+          "permission": "seasons.complete",
+          "description": "Manual transition (in_progress OR playoffs) -> completed. Body: { reason? }. Fires SeasonCompleted."
+        },
+        {
+          "method": "POST",
+          "path": "/{season}/archive",
+          "controller": "Academorix\\Sports\\Season\\Http\\Controllers\\Tenant\\SeasonController@archive",
+          "permission": "seasons.archive",
+          "description": "Manual transition completed -> archived. Body: { reason }. Refused when is_current=true OR when active downstream enrollments reference. Fires SeasonArchived."
+        },
+        {
+          "method": "POST",
+          "path": "/{season}/restore",
+          "controller": "Academorix\\Sports\\Season\\Http\\Controllers\\Tenant\\SeasonController@restore",
+          "permission": "seasons.restore",
+          "description": "Archived -> completed. Only within the retention window (default 2555 days = 7 years). Fires SeasonRestored."
+        }
+      ]
+    },
+    {
+      "name": "platform-seasons",
+      "prefix": "/api/v1/platform/seasons",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "Cross-tenant read for support tooling. Writes stay on the tenant surface — platform ops must impersonate an admin (via `access::delegation`) to write.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Sports\\Season\\Http\\Controllers\\Platform\\SeasonController@index",
+          "permission": "platform.seasons.viewAny",
+          "description": "Cross-tenant filterable list. filter[tenant_id], filter[status], filter[is_current], filter[sport_key], filter[season_type], filter[start_date.gte], filter[end_date.lte]."
+        },
+        {
+          "method": "GET",
+          "path": "/{season}",
+          "controller": "Academorix\\Sports\\Season\\Http\\Controllers\\Platform\\SeasonController@show",
+          "permission": "platform.seasons.view",
+          "description": "Single-season cross-tenant read with full metadata + phase history."
+        }
+      ]
+    }
+  ]
+}

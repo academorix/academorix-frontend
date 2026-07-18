@@ -1,0 +1,166 @@
+{
+  "id": "teams.resources.event-team.list",
+  "title": "Event participations",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/teams/:teamId/event-teams",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "teams", "entity": "event-team", "action": "list" },
+  "requiresPermission": "event_teams.viewAny",
+  "requiresEntitlement": "team_event_participation",
+  "dataSources": [
+    {
+      "name": "team",
+      "kind": "http.get",
+      "url": "/api/v1/teams/{teamId}",
+      "unwrap": "data"
+    },
+    {
+      "name": "event_teams",
+      "kind": "http.get",
+      "url": "/api/v1/teams/{teamId}/event-teams",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$expr": "team.name + ' — Events'" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Team's registered event participations. Wave 3 Sports Event module wires the event catalogue."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "plus",
+                "children": "Register for event"
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/teams/' + team.id + '/event-teams/new'"
+                }
+              },
+              "requiresPermission": "event_teams.register"
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "props": { "className": "w-full" },
+          "bindings": {
+            "items": { "$ref": "event_teams" },
+            "isLoading": { "$ref": "event_teams.isLoading" }
+          },
+          "columns": [
+            { "field": "event.name", "label": "Event", "sortable": true },
+            { "field": "participation_type", "label": "Role" },
+            { "field": "registered_at", "label": "Registered", "format": "date", "sortable": true },
+            { "field": "checked_in_at", "label": "Checked in", "format": "datetime" },
+            { "field": "attendance_count", "label": "Attended", "align": "right" },
+            {
+              "field": "status",
+              "label": "Status",
+              "renderer": {
+                "kind": "Chip",
+                "bindings": {
+                  "variant": {
+                    "$expr": "row.withdrew_at ? 'neutral' : (row.checked_in_at ? 'success' : 'info')"
+                  },
+                  "children": {
+                    "$expr": "row.withdrew_at ? 'Withdrew' : (row.checked_in_at ? 'Checked in' : 'Registered')"
+                  }
+                }
+              }
+            },
+            {
+              "field": "actions",
+              "label": "",
+              "renderer": {
+                "kind": "Dropdown",
+                "children": [
+                  {
+                    "kind": "Dropdown.Item",
+                    "props": { "children": "View" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/teams/' + team.id + '/event-teams/' + row.id"
+                      }
+                    }
+                  },
+                  {
+                    "kind": "Dropdown.Item",
+                    "props": {
+                      "children": "Check in",
+                      "hidden": { "$expr": "row.checked_in_at || row.withdrew_at" }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/teams/' + team.id + '/event-teams/' + row.id + '/check-in'"
+                      }
+                    },
+                    "requiresPermission": "event_teams.check-in"
+                  },
+                  {
+                    "kind": "Dropdown.Item",
+                    "props": {
+                      "children": "Record result",
+                      "hidden": { "$expr": "!row.checked_in_at || row.result" }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/teams/' + team.id + '/event-teams/' + row.id + '/record-result'"
+                      }
+                    },
+                    "requiresPermission": "event_teams.record-result"
+                  },
+                  {
+                    "kind": "Dropdown.Item",
+                    "props": {
+                      "children": "Withdraw",
+                      "hidden": { "$expr": "row.withdrew_at || row.checked_in_at" }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "modal.open",
+                        "modal": "withdraw-event-team",
+                        "context": { "event_team_id": "row.id" }
+                      }
+                    },
+                    "requiresPermission": "event_teams.withdraw"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

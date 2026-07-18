@@ -1,0 +1,97 @@
+{
+  "id": "academorix://modules/teams/retention",
+  "$version": 1,
+  "title": "teams — retention windows",
+  "description": "Active teams are permanent while any tenant references them. Team members are permanent as historic roster (compliance material — participation lineage). Trials are retained 3 years post-decision (anti-discrimination defence records for rejected trials; audit trail for converted trials). Event teams retained 7 years when payment_status is set (financial), 3 years otherwise (participation record). Anonymous trialist PII redacted 90 days post-decision.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(c) — data minimisation (anonymous trialist redaction)",
+    "gdpr Art. 17 — right to erasure (with financial-retention + anti-discrimination-retention carve-outs)",
+    "soc2 CC6.3 — audit trail retention",
+    "anti-discrimination — 3-year hold on rejected trials for defence records",
+    "national tax law — 7-year financial-record retention when trial fees paid"
+  ],
+  "retention": [
+    {
+      "entity": "Team",
+      "hot": { "days": "while status='active' or 'paused'" },
+      "cold": { "days": "730 (archived hold)" },
+      "purge": {
+        "trigger": "archived + 730 days elapsed + zero downstream references",
+        "action": "hard delete via PurgeArchivedTeamsJob",
+        "notes": "The observer refuses hard-delete while any team_members / team_trials / event_teams row exists (RESTRICT FK). Retention window aligns with the longest-lived downstream row (trials at 3 years for rejected + 7 years for financial)."
+      }
+    },
+    {
+      "entity": "TeamMember",
+      "hot": { "days": "while status='active'" },
+      "cold": { "days": "unbounded — historic roster is compliance material", "description": "Terminal-state rows (inactive / graduated / suspended / injured) retained indefinitely as participation lineage. This is deliberate — reversing a hard-delete of a former-member row is impossible + destroys the historic roster." },
+      "purge": {
+        "trigger": "personal-erasure request (user delete themselves) → REDACT in place (name/phone/email cleared to [REDACTED]) but preserve the structural fact",
+        "action": "field-level redaction",
+        "notes": "GDPR Art. 17 vs anti-discrimination + compliance carve-out: the structural fact (team X had a member during period Y) is retained; the personal identifiers are redacted. Same pattern as User module."
+      }
+    },
+    {
+      "entity": "TeamTrial (converted)",
+      "hot": { "days": 365 },
+      "cold": { "days": "1095 (3 years)" },
+      "purge": {
+        "trigger": "> 3 years past decided_at",
+        "action": "hard delete",
+        "notes": "Converted trials survive as TeamMember rows (which never expire). The trial row itself can be purged after 3 years — the audit trail continues to reference it."
+      }
+    },
+    {
+      "entity": "TeamTrial (rejected)",
+      "hot": { "days": 365 },
+      "cold": { "days": "1095 (3 years)", "description": "Anti-discrimination defence records" },
+      "purge": {
+        "trigger": "> 3 years past decided_at",
+        "action": "hard delete",
+        "notes": "Rejected trials are the primary defence record against discrimination claims. Retention is deliberately long. decision_notes is the material fact — clear, contemporaneous rationale."
+      }
+    },
+    {
+      "entity": "TeamTrial (no_show / cancelled)",
+      "hot": { "days": 90 },
+      "cold": { "days": 365 },
+      "purge": {
+        "trigger": "> 1 year past decided_at",
+        "action": "hard delete",
+        "notes": "No decision was actually made — retention window shorter than rejected."
+      }
+    },
+    {
+      "entity": "TeamTrial — anonymous trialist profile fields",
+      "hot": { "days": 90, "description": "trialist_first_name + last_name + phone + email + dob" },
+      "purge": {
+        "trigger": "decided_at + 90 days for terminal-state trials (rejected / no_show / cancelled)",
+        "action": "field-level redaction (replace with [REDACTED]) via RedactAnonymousTrialistProfileJob",
+        "notes": "Preserves the trial row's structural fact (a trial happened, decision was X) + the price/payment fields for financial retention. Only the anonymous PII sub-fields are redacted. For CONVERTED trials the profile migrates into the resulting Athlete/User row + is cleared on the trial."
+      }
+    },
+    {
+      "entity": "EventTeam (with payment_status set)",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years)", "description": "Financial-audit retention" },
+      "purge": {
+        "trigger": "> 7 years past registered_at",
+        "action": "hard delete",
+        "notes": "When event participation involves a trial fee OR (Wave 4) an event registration fee, financial retention applies."
+      }
+    },
+    {
+      "entity": "EventTeam (no payment)",
+      "hot": { "days": 365 },
+      "cold": { "days": "1095 (3 years)" },
+      "purge": {
+        "trigger": "> 3 years past registered_at",
+        "action": "hard delete"
+      }
+    }
+  ],
+  "cross_reference": [
+    "The audit rows written by Auditable outlive the source rows per audit::retention.json — audit retention is 7 years regardless of source-row retention.",
+    "TenantErased cascades hard-delete of every teams / team_members / team_trials / event_teams row (FK cascade), but the audit rows written during those events survive the cascade (per audit module's outlives-source design)."
+  ]
+}

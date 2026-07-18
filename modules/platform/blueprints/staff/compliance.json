@@ -1,0 +1,98 @@
+{
+  "id": "academorix://modules/staff/compliance",
+  "$version": 1,
+  "title": "staff — compliance evidence",
+  "description": "Staff module is employment-record adjacent. Every hire, offboard, suspension, and compensation change is a compliance-relevant event. SOC 2 CC6.3 (segregation of duties — HR + owner separate from branch_manager for compensation + suspension), CC6.7 (offboarding SLA — user access revoked within 24h of StaffOffboarded per the user module's cascade), GDPR data-minimisation (emergency contact + tax_id_last4 redacted 90 days post-offboard), anti-discrimination compliance (all suspension + termination reasons audited to detect patterns; not exposed to tenants but analysed platform-side).",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "Emergency contact (name + phone + relationship) and tax_id_last4 are HR-only operational necessity. Redacted to [REDACTED] 90 days post-offboarding (Staff.ended_at + 90 days) by PurgeOffboardedStaffJob. Employment metadata (position, dates, termination_reason) retained 7 years for legal record."
+        },
+        {
+          "article": "Art. 6(1)(b)",
+          "principle": "lawful basis: contract",
+          "evidence": "Employment relationship is contractual — the Staff row IS the artefact of that contract. No separate consent flag required for the employment record itself; the underlying User's identity + PII is governed by the user module's consent flow."
+        },
+        {
+          "article": "Art. 9",
+          "principle": "special-category data",
+          "evidence": "The staff module DOES NOT store special-category data (no health data, no ethnic origin, no political views, no biometric data). Leave_type is a category enum (medical / parental / sabbatical / bereavement / other) — the reason detail is out-of-scope and lives in an external HRIS or paper record."
+        },
+        {
+          "article": "Art. 15",
+          "principle": "right of access",
+          "evidence": "Staff see their own row via /me/staff endpoints with full field visibility (including own compensation + own emergency contact via the .own permission suffixes). Downstream Wave 5 DSAR flow surfaces the full history including staff_compensation_history rows."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure — with financial-retention exception",
+          "evidence": "GDPR Art. 17(3)(b) explicitly permits retention where required by law (financial record retention is a national tax + labour law requirement across every deployment region). Confidential PII (emergency_contact_*, tax_id_last4) hard-purged at 90-day mark; employment metadata (dates, position, termination_reason) retained 7 years; compensation history retained 7 years even after tenant erasure (migrated to compliance-archive table)."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "The `tax_id_last4` field stores exactly 4 digits — the full tax ID (SSN, national tax ID) is NEVER stored. Full-ID storage would put us in expanded PII-protection scope we deliberately avoid. Payroll integration (Wave 4 Finance) forwards to a 3rd-party payroll processor which owns the full-ID storage."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.3",
+          "principle": "restricted access + segregation of duties",
+          "evidence": "`staff.manage.compensation` is HR + owner only. `staff.suspend` is HR + admin + owner — branch_manager CANNOT unilaterally suspend (retaliation safeguard). `staff.hire` and `staff.offboard` are HR-admin-owner only. `platform.staff.audit-compensation` is super_admin only with two-person approval."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "access revocation SLA",
+          "evidence": "Staff offboarding fires StaffOffboarded → UnblockUserArchiveWhenLastStaffOffboarded (staff module) → cascades to user module's Sanctum PAT revocation. Full path completes within 24h SLA. The user module's ReconcileOffboardingSlaJob monitors + emits P1 signal for breaches."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "ReconcileBranchManagerInvariantJob is the P1 signal for org-chart data-integrity issues. academorix.staff.branch_manager.invariant_violations counter should stay at 0. academorix.staff.compensation.large_delta_bypass_total counter should be low (large-delta bypass permissions are for approved exceptions only)."
+        },
+        {
+          "criterion": "CC9.1",
+          "principle": "risk mitigation — payroll fat-finger",
+          "evidence": "The staff.compensation.max_delta_percent config (default 50%) refuses compensation changes exceeding a percent-delta threshold. Requires explicit `staff.manage.compensation.large-delta` permission to bypass. Fat-finger errors (typo added a zero, e.g. 1000 → 10000) are caught at the observer."
+        }
+      ]
+    },
+    "anti_discrimination": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "audit + pattern detection",
+          "evidence": "Every StaffSuspended + StaffOffboarded event carries termination_reason + suspension_reason. Payload NOT exposed to tenant analytics dashboards; retained in the audits table + fed into the platform-side compliance dashboard for pattern detection (unusual clustering of terminations by protected characteristic — computed OUT of the tenant's view for regulator-compliance)."
+        },
+        {
+          "principle": "pay equity signal",
+          "evidence": "Compensation Changed analytics event carries fact-of-change (never the amount). Powers the tenant's own pay-transparency audits + the platform-side pay-equity signal. Compensation history rows retain 7 years for pay-equity claims (some jurisdictions require 3-year lookback, some require 6, we retain 7)."
+        }
+      ]
+    },
+    "labour_law": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "probation caps",
+          "evidence": "The `probation_within_bounds` rule refuses probation windows exceeding 365 days (config: staff.probation.max_days). Aligns with common national labour-law caps (EU: 6 months max, US: at-will typically no cap, UK: no cap by law but tribunal-tested at 12 months)."
+        },
+        {
+          "principle": "termination reason documentation",
+          "evidence": "The `termination_reason_required_when_offboarded` rule refuses offboards without a documented reason. Aligns with wrongful-termination jurisprudence — an undocumented offboard is presumptively unfair."
+        },
+        {
+          "principle": "employment record retention",
+          "evidence": "7-year retention on the whole Staff row post-offboarding aligns with national tax + labour law requirements (US: 3 years FLSA + 4 years IRS = 7 total; UK: 6 years HMRC; EU: varies but 5-7 years standard)."
+        }
+      ]
+    }
+  }
+}

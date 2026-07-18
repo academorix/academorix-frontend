@@ -1,0 +1,65 @@
+{
+  "id": "academorix://modules/staff/broadcasts",
+  "$version": 1,
+  "title": "staff — realtime broadcast channels",
+  "description": "Three broadcast channel families for live UI updates. Tenant-level channel for cross-branch HR dashboards; branch-level channel for the branch-manager's daily roster view; user-level channel for a staff's own updates (probation reminders, compensation-changed nudges). Reverb driver (Laravel Reverb) is the default transport. Compensation events are DELIBERATELY NOT broadcast on any channel — they route through the notifications module's HR channel only.",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.staff",
+      "class": "Academorix\\Staff\\Broadcasts\\TenantStaffChannel",
+      "description": "Tenant-wide staff + coach lifecycle stream. Sink for HR dashboards showing cross-branch activity.",
+      "authorization": "sanctum::authed AND tenant_matches AND (permission `staff.viewAny` OR `coach.viewAny`)",
+      "events": [
+        "StaffHired",
+        "StaffOffboarded",
+        "StaffPromotedToBranchManager",
+        "StaffDemotedFromBranchManager",
+        "StaffSuspended",
+        "StaffReinstated",
+        "CoachCreated",
+        "CoachStatusChanged",
+        "CoachCertificationAdded",
+        "CoachCertificationExpired"
+      ],
+      "throttle": "50 events/minute per channel",
+      "notes": "Payload is trimmed to non-confidential fields (see data-classes.json). Compensation changes NEVER broadcast on this channel."
+    },
+    {
+      "name": "branch.{branchId}.staff",
+      "class": "Academorix\\Staff\\Broadcasts\\BranchStaffChannel",
+      "description": "Branch-scoped staff activity. Powers the branch manager's live roster view.",
+      "authorization": "sanctum::authed AND (permission `staff.viewAny` scoped to branch_id OR branch_manager for this branch OR platform_admin)",
+      "events": [
+        "StaffHired",
+        "StaffPutOnLeave",
+        "StaffReturnedFromLeave",
+        "StaffOffboarded",
+        "StaffPositionChanged",
+        "CoachCreated",
+        "CoachStatusChanged",
+        "CoachAvailabilityChanged"
+      ],
+      "throttle": "30 events/minute per channel"
+    },
+    {
+      "name": "user.{userId}.staff",
+      "class": "Academorix\\Staff\\Broadcasts\\UserStaffChannel",
+      "description": "Per-user staff-lifecycle stream. Powers the my-staff-record live-updates widget in the user dashboard (probation reminder, promotion notice, offboarding scheduled).",
+      "authorization": "sanctum::authed AND user_matches",
+      "events": [
+        "StaffHired (where staff.user_id = userId)",
+        "StaffPositionChanged (where staff.user_id = userId)",
+        "StaffPromotedToBranchManager (where staff.user_id = userId)",
+        "StaffPutOnLeave (where staff.user_id = userId)",
+        "StaffReturnedFromLeave (where staff.user_id = userId)",
+        "StaffSuspended (where staff.user_id = userId)",
+        "StaffOffboardingStarted (where staff.user_id = userId)",
+        "StaffOffboarded (where staff.user_id = userId)",
+        "CoachCreated (where linked staff.user_id = userId)",
+        "CoachCertificationExpired (where linked staff.user_id = userId)"
+      ],
+      "throttle": "10 events/minute per channel",
+      "notes": "CompensationChanged is dispatched through a separate HR-channel mechanism — never on the realtime channel (private-tier)."
+    }
+  ]
+}

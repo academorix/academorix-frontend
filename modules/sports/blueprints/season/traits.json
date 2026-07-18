@@ -1,0 +1,88 @@
+{
+  "id": "academorix://modules/season/traits",
+  "$version": 1,
+  "title": "season — trait composition",
+  "description": "Two owned traits — `BelongsToSeason` for downstream models that carry a `season_id` FK (Team via Wave 2b, AthleteEnrollment / Event / Session via Wave 3), and `HasSeasonScope` for the Season model itself. Order matters when composed with `BelongsToTenant` + `BelongsToBranch`: tenant MUST come first so subsequent traits observe the tenant context; branch precedes season so season fills against a resolved branch when relevant.",
+  "owned": [
+    {
+      "trait": "Academorix\\Sports\\Season\\Concerns\\BelongsToSeason",
+      "description": "Mixed into any downstream model that carries a Season FK (planned consumers: Team, AthleteEnrollment, Event, Session). Adds the `season()` belongsTo relation, a `resolveInSeason(?Season $season = null)` query scope that filters `WHERE season_id = ?` (falling back to `Request::activeSeason()` when the arg is omitted), and a `booted()` hook that fills `season_id = active_season_id()` on `creating` when the field is null AND the current request carries a resolved active season. Refuses to save a row whose `season_id` points at a Season in a different tenant than the row itself (defense-in-depth against cross-tenant FK smuggling — the compliance-auditor would catch a bad schema, this catches a bad write).",
+      "public": true,
+      "usedBy": [
+        "teams::Team (nullable season_id in Wave 2b — teams may or may not be season-scoped; the trait provides the plumbing when they are)",
+        "athlete-enrollment::AthleteEnrollment (required season_id — every enrollment is season-scoped; Wave 3)",
+        "event::Event (required season_id — every match/event belongs to a season; Wave 3)",
+        "session::Session (required season_id — every practice/training session belongs to a season; Wave 3)"
+      ],
+      "conflicts_with": [],
+      "composition_notes": [
+        "Order: `BelongsToTenant` must appear BEFORE `BelongsToBranch` which must appear BEFORE `BelongsToSeason` in the trait list. Tenant scope resolves first, branch fills against the resolved tenant, season fills against the resolved branch (when relevant).",
+        "The `booted()` fill hook is off by default for models where the season may legitimately be null (Team Wave 2b). Turn on per-model via a `bool $fillSeasonOnCreating = true` property.",
+        "Query scope naming: `resolveInSeason(?Season)` mirrors tenancy's `resolveInTenant(?Tenant)` — same shape, same nullable-arg-defaults-to-active behaviour.",
+        "The trait publishes an additional scope `currentSeasonOnly()` — filter to rows in the current season for the caller's scope tuple. Used by list surfaces that want to default to 'this year only'."
+      ]
+    },
+    {
+      "trait": "Academorix\\Sports\\Season\\Concerns\\HasSeasonScope",
+      "description": "Mixed into the Season model itself (not into downstream models). Exposes reverse accessors — `teams()`, `enrollments()`, `events()`, `sessions()` — that hasMany-through the downstream tables in Wave 3+. Wave 3a ships the trait with the accessor stubs pre-wired to the eventual Wave-3 model class names; each accessor returns an empty collection until the corresponding module lands. When Wave 3 modules deploy their models, the accessor's target class resolves via the container + returns real data — no Season-side change needed. Also publishes the `currentEnrollmentCount()` computed accessor + `hasActiveDownstreamRefs()` bool helper the archive observer uses.",
+      "public": true,
+      "usedBy": ["season::Season"],
+      "conflicts_with": [],
+      "composition_notes": [
+        "This trait is ONLY for the Season model. Composing it on a downstream model is a bug — downstream models compose BelongsToSeason instead.",
+        "The reverse accessors use the container binding `SeasonDownstreamResolver` — a small service that looks up planned model class names by string key. Wave 3a ships the resolver returning an empty collection for every key; Wave 3 modules override the binding to point at their real classes."
+      ]
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSlug" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "tenancy": [
+      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }
+    ],
+    "organization": [
+      { "trait": "Academorix\\Organization\\Concerns\\BelongsToOrganization", "reason": "Optional FK — Season may be org-scoped." }
+    ],
+    "branch": [
+      { "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch", "reason": "Optional FK — Season may be branch-scoped." }
+    ],
+    "audit": [
+      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Season mutations (rename, status transitions, is_current flip, date shifts, sport_key changes) write to the `audits` table — every one of them is compliance-relevant." }
+    ],
+    "activity": [
+      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Season lifecycle events feed the tenant admin's product-facing activity feed." }
+    ]
+  },
+  "composition": {
+    "season": {
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "BelongsToTenant",
+        "BelongsToOrganization",
+        "BelongsToBranch",
+        "HasSeasonScope",
+        "HasSlug",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "Order matters. BelongsToTenant precedes every scope trait. BelongsToOrganization + BelongsToBranch are optional-nullable-FK traits — the Season model composes them because the columns exist on the row, and the traits handle same-tenant validation. HasSeasonScope is the Season-side accessor bundle. HasSlug generates the tuple-unique slug on create. NO BelongsToApplication trait — Seasons do NOT carry application_id (tenancy-columns.md §2)."
+    }
+  }
+}
