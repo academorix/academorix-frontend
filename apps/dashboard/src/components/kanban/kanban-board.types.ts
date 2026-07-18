@@ -24,7 +24,7 @@ import type { ReactNode } from "react";
 /**
  * The HeroUI Chip color palette we let feature modules pipe into a column
  * header. Kept narrow to match the tokens the design system exposes — anything
- * outside this list would break `<Chip color=...>` in `@academorix/ui/react`.
+ * outside this list would break `<Chip color=...>` in `@stackra/ui/react`.
  */
 export type KanbanColumnColor = "default" | "success" | "warning" | "danger";
 
@@ -91,10 +91,7 @@ export type KanbanMoveHandler<TColumnId extends string = string> = (
  * @typeParam TCard - The card record type. Must extend {@link KanbanCard}.
  * @typeParam TColumnId - The union of allowed column ids for this board.
  */
-export interface KanbanBoardProps<
-  TCard extends KanbanCard,
-  TColumnId extends string = string,
-> {
+export interface KanbanBoardProps<TCard extends KanbanCard, TColumnId extends string = string> {
   /** Accessible label for the whole board (announced by screen readers). */
   ariaLabel: string;
   /**

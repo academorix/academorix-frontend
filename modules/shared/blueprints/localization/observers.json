@@ -1,0 +1,55 @@
+{
+  "id": "academorix://modules/localization/observers",
+  "$version": 1,
+  "title": "localization \u2014 Eloquent observers",
+  "observers": [
+    {
+      "model": "PlatformLanguage",
+      "observer": "Academorix\\Localization\\Observers\\PlatformLanguageObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `lng_`",
+        "creating \u2192 validate geography_language_id resolves to a real geography::Language row (integrity guard beyond the FK)",
+        "creating \u2192 when geography_country_id is set, verify the bcp47_code region subtag matches geography::Country.iso2 (e.g. bcp47_code='fr-CA' must pair with a country row iso2='CA')",
+        "creating \u2192 derive bcp47_code default when not explicit: `{geographyLanguage.code}{-script_code?}{-geographyCountry.iso2?}`",
+        "creating \u2192 refuse when the (geography_language_id, geography_country_id, script_code) triple already exists (defends against the composite unique index race)",
+        "deleting \u2192 refuse when any TenantLocale references this row (soft delete only via archive)"
+      ]
+    },
+    {
+      "model": "TenantLocale",
+      "observer": "Academorix\\Localization\\Observers\\TenantLocaleObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `wsl_`",
+        "creating \u2192 consume 1 unit of localization.locales.count entitlement (throws QuotaExceeded when cap reached)",
+        "creating \u2192 fire LanguageEnabledForTenant",
+        "updating (is_default flipped) \u2192 set is_default=false on other rows for this tenant (invariant: exactly one default)",
+        "updating (is_fallback flipped) \u2192 same invariant for at most one fallback",
+        "deleting \u2192 refuse when is_default=true (must promote another locale first)",
+        "deleted \u2192 fire LanguageDisabledForTenant + optionally cascade delete tenant-specific Translation rows when ?purge=true"
+      ]
+    },
+    {
+      "model": "Translation",
+      "observer": "Academorix\\Localization\\Observers\\TranslationObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `trn_`",
+        "creating \u2192 denormalise locale_code from PlatformLanguage.bcp47_code",
+        "creating \u2192 refuse when quality_score < tenant_locale.min_quality_score (returns null; caller records failure)",
+        "created \u2192 invalidate in-memory LRU cache for (tenant_id, locale_code, namespace, key)",
+        "updating (source='human' + verified_at=now()) \u2192 fire TranslationOverridden",
+        "updating (source_hash mismatch detected) \u2192 set is_stale=true"
+      ]
+    },
+    {
+      "model": "TranslationJob",
+      "observer": "Academorix\\Localization\\Observers\\TranslationJobObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `tjb_`",
+        "creating \u2192 refuse when tenant has an in-flight job for the same (kind, target_locale_codes) unless force flag",
+        "created \u2192 fire TranslationJobStarted",
+        "updating (state \u2192 completed) \u2192 fire TranslationJobCompleted",
+        "updating (state \u2192 failed) \u2192 fire TranslationJobFailedNotification"
+      ]
+    }
+  ]
+}

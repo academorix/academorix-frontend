@@ -3,48 +3,25 @@
  * @module modules/dashboard/widgets/widget.catalogue
  *
  * @description
- * The complete inventory of widgets available on the overview page. Every
- * entry conforms to {@link WidgetDefinition}; renderers are registered
- * separately in {@link "@/modules/dashboard/widgets/widget.registry"} so a
- * widget can be listed in the picker before its renderer ships (the picker
- * disables it with a "Coming soon" label when `isAvailable` is `false`).
+ * The legacy grid-oriented widget catalogue that drives the
+ * `WidgetGrid` component (react-grid-layout). Kept in the app because
+ * the catalogue is app-specific data — HeroUI-heavy renderers live in
+ * `@/components/dashboard/*`, and this file's `defaultLayout` blocks
+ * are tuned to those renderers' visual shape.
  *
- * See `DASHBOARD_UX_PLAN.md` §4.5 for the full catalogue and its rationale.
- * Grouping in the picker is driven by `category`; ordering within a category
- * is the array order below.
- *
- * ## Grid-layout defaults
- *
- * The overview page renders every widget inside a `react-grid-layout`
- * `Responsive` grid at 12 columns wide (breakpoint `lg` — see
- * `components/widget-grid.tsx`). Each `defaultLayout` entry below states
- * width / height in **12-col grid cells** and **60px row units**:
- *
- *   - KPI cards: `{ w: 3, h: 1 }` — four fit across at `lg`, two at `md`,
- *     one at `sm`. They can shrink to 2×1 and grow to 6×2 for owners who
- *     want a single "hero" number card.
- *   - List widgets (recent registrations, upcoming events): `{ w: 6, h: 2 }`
- *     — a half-width panel that lists 4–5 entities without scrolling.
- *   - Chart widgets: `{ w: 6, h: 2 }` — same footprint as lists so charts and
- *     lists interleave on the grid without users having to think about it.
- *   - Onboarding checklist: `{ w: 12, h: 2 }` — full-width so it sits above
- *     the KPI strip when active.
- *   - Agenda widgets: `{ w: 9, h: 3 }` (today) and `{ w: 12, h: 4 }` (week)
- *     — read a lot of vertical space to render an actual calendar.
- *
- * The `minW`/`minH`/`maxW`/`maxH` bounds are the constraints `react-grid-
- * layout` enforces at drag / resize time. They exist to stop users from
- * shrinking a chart to 1×1 (unreadable) or expanding a KPI card past its
- * container (breaks the visual rhythm).
+ * The type shapes now come from `@stackra/dashboard` under their
+ * `I`-prefixed names; this file re-exports them under the historical
+ * (unprefixed) aliases for consumers that pre-date the package split.
  */
 
-import type { WidgetDefinition } from "@/modules/dashboard/widgets/widget.types";
+import type { IWidgetDefinition } from "@stackra/dashboard";
 
 /**
- * The full widget catalogue. Order matters: the picker renders categories in
- * the order they first appear, and widgets in the order they are defined.
+ * The full widget catalogue for the legacy overview page. Order
+ * matters: the picker renders categories in the order they first
+ * appear, and widgets in the order they are defined.
  */
-export const widgetCatalogue: readonly WidgetDefinition[] = [
+export const widgetCatalogue: readonly IWidgetDefinition[] = [
   // -- Onboarding -----------------------------------------------------------
   {
     key: "onboarding-checklist",
@@ -54,17 +31,11 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "dashboard",
     defaultWidth: 3,
     defaultHeight: 2,
-    // Full-width banner: 12/12 cols by 2 row units (~120px). Height stays
-    // fixed because the checklist has a known step count. Users cannot
-    // shrink below 6 cols — narrower and the copy wraps illegibly.
     defaultLayout: { w: 12, h: 2, minW: 6, minH: 2, maxW: 12, maxH: 3 },
     isAvailable: true,
   },
 
   // -- Numbers (KPIs) -------------------------------------------------------
-  // KPIs share a common footprint (3×1) so the KPI strip lines up naturally
-  // at every breakpoint. Users can shrink to 2×1 to fit six KPIs across, or
-  // grow to 6×2 to emphasise one number.
   {
     key: "kpi-athletes",
     title: "Athletes",
@@ -168,131 +139,8 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     defaultLayout: { w: 3, h: 1, minW: 2, minH: 1, maxW: 6, maxH: 2 },
     isAvailable: true,
   },
-  {
-    key: "kpi-refunds-mtd",
-    title: "Refunds this month",
-    description: "Payments refunded since the first of the month.",
-    category: "money",
-    sourceResource: "invoices",
-    requiredPermission: "invoices.viewAny",
-    defaultWidth: 1,
-    defaultHeight: 1,
-    defaultLayout: { w: 3, h: 1, minW: 2, minH: 1, maxW: 6, maxH: 2 },
-    isAvailable: false,
-  },
-  {
-    key: "finance-forecast",
-    title: "Cash flow forecast",
-    description: "Expected revenue over the next 30 days.",
-    category: "money",
-    sourceResource: "invoices",
-    requiredPermission: "invoices.viewAny",
-    defaultWidth: 2,
-    defaultHeight: 1,
-    // Forecast is a chart, so it wants width for the axis but only one row
-    // for the line itself. Users can grow it to 12×3 to see it "full screen".
-    defaultLayout: { w: 6, h: 2, minW: 4, minH: 2, maxW: 12, maxH: 3 },
-    isAvailable: false,
-  },
-
-  // -- Charts ---------------------------------------------------------------
-  // Every chart shares a 6×2 default so a two-chart row fills the grid and a
-  // three-chart row wraps cleanly.
-  {
-    key: "chart-revenue-90d",
-    title: "Revenue trend",
-    description: "Daily revenue over the last 90 days.",
-    category: "charts",
-    sourceResource: "invoices",
-    defaultWidth: 2,
-    defaultHeight: 1,
-    defaultLayout: { w: 6, h: 2, minW: 4, minH: 2, maxW: 12, maxH: 4 },
-    isAvailable: false,
-  },
-  {
-    key: "chart-registrations-30d",
-    title: "Registrations (30 days)",
-    description: "New registrations over the last 30 days.",
-    category: "charts",
-    sourceResource: "registrations",
-    defaultWidth: 2,
-    defaultHeight: 1,
-    defaultLayout: { w: 6, h: 2, minW: 4, minH: 2, maxW: 12, maxH: 4 },
-    isAvailable: false,
-  },
-  {
-    key: "chart-attendance-30d",
-    title: "Attendance (30 days)",
-    description: "Attendance rate over the last 30 days.",
-    category: "charts",
-    sourceResource: "attendance",
-    defaultWidth: 2,
-    defaultHeight: 1,
-    defaultLayout: { w: 6, h: 2, minW: 4, minH: 2, maxW: 12, maxH: 4 },
-    isAvailable: false,
-  },
-  {
-    key: "chart-lead-sources",
-    title: "Lead sources",
-    description: "Breakdown of leads by acquisition source.",
-    category: "charts",
-    sourceResource: "leads",
-    defaultWidth: 1,
-    defaultHeight: 1,
-    // Pie chart: half-width narrower footprint since it's a donut, not a
-    // time-series that benefits from long horizontal space.
-    defaultLayout: { w: 4, h: 2, minW: 3, minH: 2, maxW: 8, maxH: 4 },
-    isAvailable: false,
-  },
-  {
-    key: "chart-coach-utilisation",
-    title: "Coach utilisation",
-    description: "Percentage of coach hours booked this week.",
-    category: "charts",
-    sourceResource: "coaches",
-    defaultWidth: 1,
-    defaultHeight: 1,
-    defaultLayout: { w: 4, h: 2, minW: 3, minH: 2, maxW: 8, maxH: 4 },
-    isAvailable: false,
-  },
-  {
-    key: "chart-membership-retention",
-    title: "Membership retention",
-    description: "Cohort retention across the last 12 months.",
-    category: "charts",
-    sourceResource: "memberships",
-    defaultWidth: 2,
-    defaultHeight: 1,
-    defaultLayout: { w: 6, h: 2, minW: 4, minH: 2, maxW: 12, maxH: 4 },
-    isAvailable: false,
-  },
 
   // -- Calendar -------------------------------------------------------------
-  {
-    key: "agenda-today",
-    title: "Today's schedule",
-    description: "Sessions, matches, and events happening today.",
-    category: "calendar",
-    sourceResource: "events",
-    defaultWidth: 2,
-    defaultHeight: 2,
-    // A day-view agenda: tall so the hour rail stays legible.
-    defaultLayout: { w: 6, h: 3, minW: 4, minH: 2, maxW: 12, maxH: 6 },
-    isAvailable: false,
-  },
-  {
-    key: "agenda-week",
-    title: "This week",
-    description: "Sessions, matches, and events for the next seven days.",
-    category: "calendar",
-    sourceResource: "events",
-    defaultWidth: 3,
-    defaultHeight: 2,
-    // A week view: full width so all seven columns fit; four row units for
-    // the day/hour grid at readable density.
-    defaultLayout: { w: 12, h: 4, minW: 6, minH: 3, maxW: 12, maxH: 6 },
-    isAvailable: false,
-  },
   {
     key: "list-upcoming-events",
     title: "Upcoming events",
@@ -301,8 +149,6 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     sourceResource: "events",
     defaultWidth: 2,
     defaultHeight: 1,
-    // List widget footprint — matches recent registrations for visual
-    // symmetry when both are on the grid.
     defaultLayout: { w: 6, h: 2, minW: 3, minH: 2, maxW: 12, maxH: 4 },
     isAvailable: true,
   },
@@ -319,88 +165,18 @@ export const widgetCatalogue: readonly WidgetDefinition[] = [
     defaultLayout: { w: 6, h: 2, minW: 3, minH: 2, maxW: 12, maxH: 4 },
     isAvailable: true,
   },
-  {
-    key: "list-recent-athletes",
-    title: "New athletes",
-    description: "Athletes added in the last 30 days.",
-    category: "people",
-    sourceResource: "athletes",
-    defaultWidth: 2,
-    defaultHeight: 1,
-    defaultLayout: { w: 6, h: 2, minW: 3, minH: 2, maxW: 12, maxH: 4 },
-    isAvailable: false,
-  },
-  {
-    key: "people-birthdays",
-    title: "Birthdays this week",
-    description: "Athletes and staff with birthdays in the next seven days.",
-    category: "people",
-    sourceResource: "athletes",
-    defaultWidth: 1,
-    defaultHeight: 1,
-    // Compact list: short and half-narrow so it sits next to a KPI strip.
-    defaultLayout: { w: 4, h: 2, minW: 3, minH: 2, maxW: 8, maxH: 4 },
-    isAvailable: false,
-  },
-  {
-    key: "people-recent-check-ins",
-    title: "Recent check-ins",
-    description: "Athletes checked in through reception in the last 24 hours.",
-    category: "people",
-    sourceResource: "attendance",
-    defaultWidth: 2,
-    defaultHeight: 1,
-    defaultLayout: { w: 6, h: 2, minW: 3, minH: 2, maxW: 12, maxH: 4 },
-    isAvailable: false,
-  },
-
-  // -- Compliance -----------------------------------------------------------
-  {
-    key: "compliance-credentials-expiring",
-    title: "Credentials expiring",
-    description: "Credentials that expire in the next 60 days.",
-    category: "compliance",
-    sourceResource: "credentials",
-    defaultWidth: 2,
-    defaultHeight: 1,
-    defaultLayout: { w: 6, h: 2, minW: 3, minH: 2, maxW: 12, maxH: 4 },
-    isAvailable: false,
-  },
-  {
-    key: "compliance-safeguarding-open",
-    title: "Open safeguarding cases",
-    description: "Safeguarding cases that are not yet resolved.",
-    category: "compliance",
-    sourceResource: "safeguarding",
-    requiredPermission: "safeguarding.viewAny",
-    defaultWidth: 1,
-    defaultHeight: 1,
-    defaultLayout: { w: 4, h: 2, minW: 3, minH: 2, maxW: 8, maxH: 4 },
-    isAvailable: false,
-  },
-  {
-    key: "compliance-documents-missing",
-    title: "Documents missing",
-    description: "Athletes with required documents not yet uploaded.",
-    category: "compliance",
-    sourceResource: "documents",
-    defaultWidth: 2,
-    defaultHeight: 1,
-    defaultLayout: { w: 6, h: 2, minW: 3, minH: 2, maxW: 12, maxH: 4 },
-    isAvailable: false,
-  },
 ] as const;
 
-/** Fast lookup for the picker and layout resolver. */
-export const widgetCatalogueByKey: ReadonlyMap<string, WidgetDefinition> = new Map(
+/**
+ * Fast lookup for the picker and layout resolver.
+ */
+export const widgetCatalogueByKey: ReadonlyMap<string, IWidgetDefinition> = new Map(
   widgetCatalogue.map((widget) => [widget.key, widget]),
 );
 
 /**
- * Default layout for a fresh workspace. Referenced by the overview page when
- * no personal layout has been saved yet. Keeps the first-run experience
- * predictable and permission-safe: every widget listed here is either
- * always-enabled or gated on a permission that most operators hold.
+ * Default layout for a fresh workspace. Referenced by the overview
+ * page when no personal layout has been saved yet.
  */
 export const defaultLayoutWidgetKeys: readonly string[] = [
   "onboarding-checklist",

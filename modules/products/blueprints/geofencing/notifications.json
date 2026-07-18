@@ -1,0 +1,45 @@
+{
+  "id": "academorix://modules/geofencing/notifications",
+  "$version": 1,
+  "title": "geofencing \u2014 notification classes + categories",
+  "namespace": "Academorix\\Geofencing\\Notifications",
+  "notifications": [
+    "GeofenceOverrideRequestedNotification",
+    "GeofenceOverrideAppliedNotification",
+    "GeofenceOverrideRejectedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "geofence.override_requested",
+      "display_name": "Override requested",
+      "description": "Notifies tenant admins when a user requests an override on a rejected check.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true,
+      "audience": "admin"
+    },
+    {
+      "slug": "geofence.override_applied",
+      "display_name": "Override applied",
+      "description": "Notifies the requester when an admin approved their override request.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "geofence.override_rejected",
+      "display_name": "Override rejected",
+      "description": "Notifies the requester when an admin rejected their override request.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

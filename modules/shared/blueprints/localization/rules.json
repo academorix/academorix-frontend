@@ -1,0 +1,50 @@
+{
+  "id": "academorix://modules/localization/rules",
+  "$version": 1,
+  "title": "localization \u2014 validation rules",
+  "description": "Custom Laravel validation rules published by LocalizationServiceProvider::boot() so any FormRequest / Data class can validate translation blobs. All three rules operate on the JSONB shape `{ locale_code: { field: value } }` written by the `HasTranslations` trait.",
+  "namespace": "Academorix\\Localization\\Rules",
+  "rules": [
+    {
+      "name": "translatable_required",
+      "class": "Academorix\\Localization\\Rules\\TranslatableRequired",
+      "signature": "translatable_required:<locale_codes>",
+      "description": "Ensures the JSONB blob contains a NON-EMPTY value for every locale in the argument list. Argument is either a comma-joined list of BCP-47 codes or the sentinel `tenant_required` (resolved at runtime from `TenantLocale where is_required=true`).",
+      "params": [
+        {
+          "name": "locales",
+          "type": "string",
+          "description": "Comma-joined BCP-47 codes or `tenant_required` sentinel."
+        }
+      ],
+      "example_field_rule": "translations: [required, translatable_required:en,fr-CA]",
+      "sentinel_example": "translations: [required, translatable_required:tenant_required]",
+      "error_message_key": "localization::validation.translatable_required",
+      "default_message": "The :attribute must have a non-empty value for locale :locale.",
+      "consumes": ["#[Translatable]::required_locales"]
+    },
+    {
+      "name": "translatable_locale_available",
+      "class": "Academorix\\Localization\\Rules\\TranslatableLocaleAvailable",
+      "signature": "translatable_locale_available[:scope]",
+      "description": "Ensures every locale key in the JSONB blob is (a) a valid BCP-47 tag AND (b) enabled on the current scope. Scope defaults to `tenant` (rejects locales not enabled on the caller's TenantLocale); `platform` allows any `PlatformLanguage.locale_code` (used by platform-admin surfaces).",
+      "params": [{ "name": "scope", "type": "'tenant' | 'platform'", "default": "tenant" }],
+      "example_field_rule": "translations: [array, translatable_locale_available]",
+      "platform_example": "translations: [array, translatable_locale_available:platform]",
+      "error_message_key": "localization::validation.translatable_locale_available",
+      "default_message": "The :attribute contains a translation for locale :locale which is not enabled for this tenant."
+    },
+    {
+      "name": "translatable_length_per_locale",
+      "class": "Academorix\\Localization\\Rules\\TranslatableLengthPerLocale",
+      "signature": "translatable_length_per_locale:<max>",
+      "description": "Enforces per-locale character length limits on the JSONB blob. Rejects the whole request when ANY locale value exceeds `<max>`. Validates against multibyte character counts (mb_strlen), not raw bytes, so `\u00e9` counts as 1 character not 2.",
+      "params": [{ "name": "max", "type": "integer" }],
+      "example_field_rule": "translations: [array, translatable_length_per_locale:255]",
+      "error_message_key": "localization::validation.translatable_length_per_locale",
+      "default_message": "The :attribute for locale :locale may not be longer than :max characters (got :length).",
+      "consumes": ["#[Translatable]::max_length"]
+    }
+  ],
+  "usage_from_data_class": "The HasTranslations trait's Rules() method auto-generates the FormRequest rule set from #[Translatable] attributes on the model, so most callers never write these rules manually. This file is the canonical registry for the underlying rule implementations."
+}

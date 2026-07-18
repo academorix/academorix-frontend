@@ -1,0 +1,5 @@
+allowBuilds:
+  "@heroui-pro/react": true
+  "@swc/core": true
+  "@zowe/secrets-for-zowe-sdk": true
+  esbuild: true

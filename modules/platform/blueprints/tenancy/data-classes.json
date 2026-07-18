@@ -1,0 +1,118 @@
+{
+  "id": "academorix://modules/tenancy/data-classes",
+  "$version": 1,
+  "title": "tenants — field-level data classification",
+  "description": "Every column on every schema in this module classified by sensitivity tier. Drives DSAR (GDPR Art. 15) exportable-field selection, right-to-erasure (Art. 17) scope, encryption-at-rest policy, minor-data handling, and search-index eviction. Field paths use `Model.field` — dotted paths reference JSONB inner properties.",
+  "tiers": {
+    "public": "May appear in URLs, page titles, public search indexes. No consent required.",
+    "internal": "Platform-internal state. Never surfaced to end users. Not personally identifiable.",
+    "confidential": "PII that is exportable on DSAR and erasable on request. Standard controls: TLS + AES-256 at rest.",
+    "restricted": "Sensitive PII or credential-adjacent. Encrypted at rest with KMS key destruction on erasure (crypto-shredding). Access logged.",
+    "regulated_minor": "PII of a subject under the age of consent (COPPA §312.2 = 13; GDPR Art. 8 varies by member state 13-16). Enhanced consent + guardian-verification required before any processing.",
+    "regulated_health": "Safeguarding / medical / physical-clearance data. Never present on tenants models but the tier is declared here for downstream modules.",
+    "regulated_financial": "Payment / banking / tax data. Never present on tenants models (Stripe scope); tier declared for downstream billing module."
+  },
+  "classes": {
+    "public": [
+      "Application.slug",
+      "Application.name",
+      "Application.description",
+      "Application.central_host",
+      "Application.platform_admin_host",
+      "Tenant.slug",
+      "Tenant.name",
+      "Tenant.business_type",
+      "Tenant.status",
+      "Tenant.branding.logo_url",
+      "Tenant.branding.favicon_url",
+      "Tenant.branding.primary_color",
+      "Tenant.branding.secondary_color",
+      "Tenant.branding.accent_color",
+      "BusinessType.*",
+      "Domain.host",
+      "Domain.kind",
+      "Domain.is_primary",
+      "Branding.name",
+      "Branding.theme",
+      "Branding.logo_url",
+      "Branding.favicon_url",
+      "Branding.primary_color",
+      "Branding.secondary_color",
+      "Branding.accent_color",
+      "Branding.background_color",
+      "Branding.font_stack"
+    ],
+    "internal": [
+      "Application.config",
+      "Application.metadata",
+      "Application.is_default",
+      "Application.is_system",
+      "Tenant.metadata",
+      "Tenant.is_default",
+      "Tenant.is_system",
+      "Tenant.provisioning",
+      "Tenant.trial_ends_at",
+      "Tenant.suspended_at",
+      "Tenant.grace_ends_at",
+      "Domain.verification_token",
+      "Domain.verification_method",
+      "Domain.verification_attempts",
+      "Domain.verification_last_error",
+      "Domain.ssl_status",
+      "Domain.ssl_issued_at",
+      "Domain.ssl_expires_at",
+      "DomainRecord.*",
+      "Branding.is_default",
+      "Branding.custom_font_url",
+      "Branding.css_variables",
+      "TenantIntegration.kind",
+      "TenantIntegration.provider",
+      "TenantIntegration.name",
+      "TenantIntegration.is_active",
+      "TenantIntegration.last_sync_at",
+      "TenantIntegration.last_sync_status",
+      "TenantIntegration.next_sync_at"
+    ],
+    "confidential": [
+      "Identity.email",
+      "Identity.given_name",
+      "Identity.family_name",
+      "Identity.display_name",
+      "Identity.avatar_url",
+      "Identity.locale",
+      "Identity.timezone",
+      "Identity.last_seen_at",
+      "TenantContact.email",
+      "TenantContact.phone",
+      "TenantContact.name",
+      "TenantContact.job_title",
+      "TenantContact.address",
+      "TenantContact.notes"
+    ],
+    "restricted": [
+      "Identity.metadata",
+      "TenantIntegration.config",
+      "TenantIntegration.sync_cursor",
+      "TenantIntegration.last_sync_error"
+    ],
+    "regulated_minor": [
+      "Not applicable — tenants models do not persist any data subject to age-based special protection. Downstream (athletes / users) applies this tier."
+    ],
+    "regulated_health": ["Not applicable to tenants."],
+    "regulated_financial": ["Not applicable to tenants. Billing module owns Stripe references."]
+  },
+  "dsar": {
+    "exportableTiers": ["public", "internal", "confidential", "restricted"],
+    "exportExclusions": [
+      "Domain.verification_token (secret)",
+      "TenantIntegration.config (secret pointer)",
+      "TenantIntegration.sync_cursor (opaque state)"
+    ],
+    "erasureBehaviour": {
+      "confidential": "purge-with-audit-record — row anonymised, audit trail entry retains the original for legal-hold period.",
+      "restricted": "crypto-shred — KMS key destroyed, ciphertext left in place (irreversibly unreadable).",
+      "internal": "left-in-place — not personal data.",
+      "public": "left-in-place — not personal data."
+    }
+  }
+}

@@ -1,0 +1,86 @@
+[
+  {
+    "id": 1,
+    "name": "Open house · Downtown",
+    "type": "Community",
+    "date": "2025-03-22T15:00:00Z",
+    "location": "Downtown academy",
+    "capacity": 120,
+    "registered": 78,
+    "status": { "text": "Scheduled", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-01-10T10:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Regional swim meet",
+    "type": "Competition",
+    "date": "2025-04-05T09:00:00Z",
+    "location": "Aquatic center",
+    "capacity": 60,
+    "registered": 42,
+    "status": { "text": "Scheduled", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-01-14T11:20:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Gymnastics showcase",
+    "type": "Showcase",
+    "date": "2025-05-17T13:00:00Z",
+    "location": "Gym hall",
+    "capacity": 200,
+    "registered": 88,
+    "status": { "text": "Scheduled", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-01-20T14:15:00Z"
+  },
+  {
+    "id": 4,
+    "name": "Parents evening",
+    "type": "Community",
+    "date": "2025-03-14T18:00:00Z",
+    "location": "Downtown academy",
+    "capacity": 80,
+    "registered": 62,
+    "status": { "text": "Scheduled", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-02-01T09:45:00Z"
+  },
+  {
+    "id": 5,
+    "name": "Winter cup finals",
+    "type": "Competition",
+    "date": "2025-03-30T14:00:00Z",
+    "location": "Pitch B",
+    "capacity": 400,
+    "registered": 312,
+    "status": { "text": "Scheduled", "color": "success" },
+    "isActive": true,
+    "createdAt": "2024-11-01T10:00:00Z"
+  },
+  {
+    "id": 6,
+    "name": "Coaching workshop",
+    "type": "Training",
+    "date": "2025-04-12T10:00:00Z",
+    "location": "Downtown academy",
+    "capacity": 30,
+    "registered": 22,
+    "status": { "text": "Scheduled", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-02-05T11:00:00Z"
+  },
+  {
+    "id": 7,
+    "name": "Family fun day",
+    "type": "Community",
+    "date": "2025-06-08T10:00:00Z",
+    "location": "Riverside academy",
+    "capacity": 300,
+    "registered": 8,
+    "status": { "text": "Draft", "color": "warning" },
+    "isActive": false,
+    "createdAt": "2025-02-14T13:20:00Z"
+  }
+]

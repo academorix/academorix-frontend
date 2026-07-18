@@ -1,0 +1,11 @@
+{
+  "name": "@academorix/retention",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Turborepo shim for the retention package — the actual code lives in the composer package.",
+  "scripts": {
+    "install:composer": "composer install --no-interaction --prefer-dist",
+    "test": "vendor/bin/pest --colors=always",
+    "analyse": "vendor/bin/phpstan analyse --memory-limit=1G"
+  }
+}

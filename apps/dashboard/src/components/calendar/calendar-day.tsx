@@ -162,7 +162,7 @@ export function CalendarDay<TMeta>({
             <li key={hour} className="flex gap-3 px-4 py-3">
               {/* Hour label — pinned to the left so the eye can scan
                   vertically. */}
-              <div className="w-16 shrink-0 pt-0.5 text-xs tabular-nums text-muted">
+              <div className="w-16 shrink-0 pt-0.5 text-xs text-muted tabular-nums">
                 {formatHourLabel(hour)}
               </div>
 
@@ -171,7 +171,7 @@ export function CalendarDay<TMeta>({
                 {bucket.length === 0 ? (
                   <button
                     aria-label={`Create session at ${formatHourLabel(hour)}`}
-                    className="w-full rounded-md border border-dashed border-border/50 px-2 py-1 text-left text-xs text-muted hover:border-accent/60 hover:text-accent focus:outline-none focus:ring-2 focus:ring-accent"
+                    className="w-full rounded-md border border-dashed border-border/50 px-2 py-1 text-left text-xs text-muted hover:border-accent/60 hover:text-accent focus:ring-2 focus:ring-accent focus:outline-none"
                     type="button"
                     onClick={() => {
                       if (!onSlotClick) {
@@ -188,21 +188,20 @@ export function CalendarDay<TMeta>({
                   </button>
                 ) : (
                   bucket.map((event) => {
-                    const colorClass =
-                      CALENDAR_EVENT_COLOR_CLASSES[event.colorKey ?? "neutral"];
+                    const colorClass = CALENDAR_EVENT_COLOR_CLASSES[event.colorKey ?? "neutral"];
                     const isCancelled = event.status === "cancelled";
 
                     return (
                       <button
                         key={event.id}
                         aria-label={`${event.title} at ${formatEventRange(event)}`}
-                        className={`calendar-day__event flex flex-col gap-0.5 rounded-md border px-3 py-2 text-left text-sm hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-accent ${colorClass} ${
+                        className={`calendar-day__event flex flex-col gap-0.5 rounded-md border px-3 py-2 text-left text-sm hover:brightness-105 focus:ring-2 focus:ring-accent focus:outline-none ${colorClass} ${
                           isCancelled ? "line-through opacity-70" : ""
                         }`}
                         type="button"
                         onClick={() => onEventClick?.(event)}
                       >
-                        <span className="font-medium leading-tight">{event.title}</span>
+                        <span className="leading-tight font-medium">{event.title}</span>
                         <span className="text-xs tabular-nums opacity-80">
                           {formatEventRange(event)}
                         </span>

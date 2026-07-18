@@ -1,0 +1,29 @@
+{
+  "id": "academorix://modules/activity/policies",
+  "$version": 1,
+  "title": "activity \u2014 authorization policies",
+  "policies": [
+    {
+      "model": "Activity",
+      "class": "Academorix\\Activity\\Policies\\ActivityPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "activity.viewAny",
+          "scope": "any authenticated user \u2014 users see their own causer feed via query scope"
+        },
+        {
+          "action": "view",
+          "permission": "activity.view",
+          "scope": "row.causer_id === auth OR row.tenant_id === auth.tenant AND admin permission"
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.activity.viewAny",
+          "scope": "platform admin cross-tenant"
+        },
+        { "action": "platformView", "permission": "platform.activity.view" }
+      ]
+    }
+  ]
+}

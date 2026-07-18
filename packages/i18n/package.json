@@ -1,44 +1,138 @@
 {
-  "name": "@academorix/i18n",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
+  "name": "@stackra/i18n",
+  "version": "0.1.0",
+  "description": "Unified internationalization runtime for the Stackra framework — translation engine, locale management, RTL/LTR direction, Intl formatting, pluggable loaders + resolvers, a Vite plugin for auto-discovery, and React / React Native bindings.",
   "license": "MIT",
-  "description": "Locale primitives + React runtime (LocaleProvider, useLocale, RTL detection, Intl formatters, MessageCatalog contract) for the Academorix workspace. Each app instantiates a typed kit bound to its concrete locale tuple via createLocaleContext<T>().",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
-  "exports": {
-    ".": "./src/index.ts",
-    "./config": "./src/config/index.ts",
-    "./context": "./src/context/index.ts",
-    "./format": "./src/format/index.ts",
-    "./messages": "./src/messages/index.ts",
-    "./package.json": "./package.json"
+  "author": {
+    "name": "Stackra L.L.C",
+    "email": "dev@stackra.com",
+    "url": "https://stackra.com"
   },
+  "keywords": [
+    "stackra",
+    "i18n",
+    "translation",
+    "locale",
+    "rtl",
+    "intl",
+    "react",
+    "react-native",
+    "vite"
+  ],
+  "homepage": "https://github.com/stackra-inc/core/tree/main/i18n#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stackra-inc/core.git",
+    "directory": "i18n"
+  },
+  "bugs": {
+    "url": "https://github.com/stackra-inc/core/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.mjs",
+      "require": "./dist/react.js"
+    },
+    "./native": {
+      "types": "./dist/native.d.ts",
+      "import": "./dist/native.mjs",
+      "require": "./dist/native.js"
+    },
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "import": "./dist/vite.mjs",
+      "require": "./dist/vite.js"
+    },
+    "./vite/client": {
+      "types": "./client.d.ts"
+    },
+    "./testing": {
+      "types": "./dist/testing.d.ts",
+      "import": "./dist/testing.mjs",
+      "require": "./dist/testing.js"
+    }
+  },
+  "files": [
+    "client.d.ts",
+    "config",
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run",
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rimraf dist .turbo",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "clean": "rm -rf .turbo"
+    "test:coverage": "vitest run --coverage --passWithNoTests"
   },
   "dependencies": {
-    "@academorix/core": "workspace:*"
+    "@vivtel/metadata": "catalog:"
   },
   "peerDependencies": {
-    "react": ">=19"
+    "@stackra/container": "workspace:^",
+    "@stackra/contracts": "workspace:^",
+    "@stackra/storage": "workspace:^",
+    "@stackra/support": "workspace:^",
+    "@stackra/testing": "workspace:^",
+    "@stackra/ui": "workspace:^",
+    "react": "*",
+    "react-native": "*",
+    "reflect-metadata": "*",
+    "vite": ">=5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@stackra/storage": {
+      "optional": true
+    },
+    "@stackra/testing": {
+      "optional": true
+    },
+    "@stackra/ui": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "vite": {
+      "optional": true
+    }
   },
   "devDependencies": {
-    "@academorix/eslint-config": "workspace:*",
-    "@academorix/typescript-config": "workspace:*",
-    "@testing-library/react": "catalog:",
-    "@testing-library/user-event": "catalog:",
+    "@stackra/container": "workspace:*",
+    "@stackra/contracts": "workspace:*",
+    "@stackra/storage": "workspace:*",
+    "@stackra/support": "workspace:*",
+    "@stackra/testing": "workspace:*",
+    "@stackra/ui": "workspace:*",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "eslint": "catalog:",
-    "jsdom": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:",
+    "reflect-metadata": "catalog:",
+    "rimraf": "catalog:",
+    "tsup": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

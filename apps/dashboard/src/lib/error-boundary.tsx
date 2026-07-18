@@ -73,8 +73,8 @@
  * @related main.tsx — the mount point.
  */
 
-import { AcademicCapIcon, ExclamationTriangleIcon } from "@academorix/ui/icons/outline";
-import { Button } from "@academorix/ui/react";
+import { AcademicCapIcon, ExclamationTriangleIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button } from "@stackra/ui/react";
 import { Component } from "react";
 
 import type { ErrorInfo, ReactNode } from "react";

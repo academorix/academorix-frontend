@@ -1,0 +1,82 @@
+{
+  "id": "academorix://modules/notifications-push/compliance",
+  "$version": 1,
+  "title": "notifications-push \u2014 compliance evidence",
+  "description": "Primary enforcement point for COPPA VPC on push to minors + GDPR Art. 32 encryption of device tokens.",
+  "regimes": {
+    "coppa": {
+      "applicable": true,
+      "controls": [
+        {
+          "section": "\u00a7312.5",
+          "principle": "verifiable parental consent (VPC)",
+          "evidence": "Marketing-priority pushes refused for recipients with consent_age_gate=minor_under_consent_age until VPC captured by compliance module. Every gate decision metric-tracked (academorix.notifications.push.coppa_gates.total)."
+        },
+        {
+          "section": "\u00a7312.10",
+          "principle": "retention limitation for children's data",
+          "evidence": "retention.json applies 30d reduced hot window for minor subscriptions vs 90d for adults."
+        },
+        {
+          "section": "\u00a7312.8",
+          "principle": "confidentiality + integrity",
+          "evidence": "device_token encrypted at rest via AWS KMS. Never returned by API. Fingerprint (SHA-256) used for admin listings."
+        }
+      ]
+    },
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 6",
+          "principle": "lawful basis",
+          "evidence": "Consent for push notifications captured at OS-level (user granted app push permission) + at platform-level (marketing categories opt-in via preferences)."
+        },
+        {
+          "article": "Art. 8",
+          "principle": "child's consent",
+          "evidence": "Same COPPA VPC gate applies for EU minors under consent age (16 by default; per-tenant override for member states)."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "PurgeSubscriptionsForErasedUser listener cascades on UserErased."
+        },
+        {
+          "article": "Art. 28",
+          "principle": "processor arrangement",
+          "evidence": "subprocessors.json lists FCM (Google) + APNs (Apple) + Expo + OneSignal as processors."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security",
+          "evidence": "device_token AES-256 encrypted via KMS. TLS 1.3 for provider requests. JWT/OAuth 2.0 for provider auth. Signature verification on inbound webhooks via webhook module."
+        }
+      ]
+    },
+    "wcag_2_2_aa": {
+      "applicable": true,
+      "note": "Push notifications rendered by the OS \u2014 accessibility is OS-provided. Client SDK ensures alert.title + alert.body are populated + not empty (which would violate SC 1.3.1 info + relationships)."
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.6",
+          "principle": "encryption in transit",
+          "evidence": "TLS 1.3 to all providers."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "encryption at rest",
+          "evidence": "device_token KMS-encrypted."
+        },
+        {
+          "criterion": "CC7.3",
+          "principle": "incident response",
+          "evidence": "Per-provider kill switches."
+        }
+      ]
+    }
+  }
+}

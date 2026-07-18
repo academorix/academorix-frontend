@@ -4,15 +4,35 @@ inclusion: manual
 
 # Academorix — Module Dependency Graph
 
-The canonical view of how the 22 backend modules relate. This steering doc is
-the human-readable index; the machine-readable source of truth lives at
-`modules/foundation/data/module-graph.dot`, and the CI check that keeps them in
-sync lives at `modules/foundation/scripts/validate-module-graph.py`.
+The canonical view of how the 24 backend blueprint modules relate. This steering
+doc is the human-readable index; the machine-readable source of truth lives at
+`modules/shared/foundation/data/module-graph.dot`, and the CI check that keeps
+them in sync lives at
+`modules/shared/foundation/scripts/validate-module-graph.py`.
+
+Modules are grouped under `modules/<tier>/<name>/` where `<tier>` matches the
+deployable service the module lands in (see
+`.kiro/specs/platform-architecture/DECISION.md` §4):
+
+- `shared/` — consumed by every service (foundation, telemetry, audit, activity,
+  versioning, transfer, search, geography, localization).
+- `identity/` — the identity-service (empty until identity + auth land).
+- `platform/` — the platform-service (workspaces, settings, webhook, storage).
+- `access/` — the access-service (invitations; roles/permissions land later).
+- `billing/` — the billing-service (entitlements + subscription).
+- `notifications/` — the notifications-service (core + four transports +
+  newsletter).
+- `compliance/` — the compliance-service (compliance).
+- `products/` — product-scoped modules (geofencing; sports/… land later).
+
+Module identity is the folder's own basename, not its path — every dependency,
+`extendedBy`, and `relations.json` target across the graph is a bare module name
+that resolves regardless of tier.
 
 Render the graph locally:
 
 ```
-dot -Tsvg modules/foundation/data/module-graph.dot -o module-graph.svg
+dot -Tsvg modules/shared/foundation/data/module-graph.dot -o module-graph.svg
 ```
 
 ## Wave layering
@@ -89,10 +109,13 @@ refuses to accept an edge A→B where B.priority ≥ A.priority. See
 
 ## Reading the graph file
 
-`modules/foundation/data/module-graph.dot` is a Graphviz DOT file. Every node is
-a module; every arrow is a dependency (A→B means A depends on B, so B boots
-first). Colours match the wave taxonomy above. The `cluster_legend` subgraph
-documents the colour scheme in-graph.
+`modules/shared/foundation/data/module-graph.dot` is a Graphviz DOT file. Every
+node is a module; every arrow is a dependency (A→B means A depends on B, so B
+boots first). **Cluster boxes** group modules by service tier (`shared/`,
+`platform/`, `billing/`, ...); **node colours** encode boot wave independently,
+so a Wave-3 module in the platform cluster reads the same colour as a Wave-3
+module in the billing cluster. The `cluster_legend` subgraph documents the
+colour scheme in-graph.
 
 ## Real vs planned consumers
 
@@ -113,8 +136,9 @@ The validator enforces the invariant strictly. When adding a new module or
 adjusting priorities:
 
 1. Update the module's `priority` in `module.json`.
-2. Add the new module (or updated dependency) in `module-graph.dot`.
-3. Run `python3 modules/foundation/scripts/validate-module-graph.py`.
+2. Add the new module (or updated dependency) in `module-graph.dot`, placing the
+   node inside its service-tier cluster.
+3. Run `python3 modules/shared/foundation/scripts/validate-module-graph.py`.
 4. Fix any surfaced violations before merging.
 
 See `priority-ordering.md` for the priority convention itself.

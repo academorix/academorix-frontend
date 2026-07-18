@@ -1,0 +1,158 @@
+{
+  "id": "newsletter.resources.newsletter.create",
+  "title": "New newsletter",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/newsletters/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "newsletter", "entity": "newsletter", "action": "create" },
+  "requiresPermission": "newsletters.create",
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "Cancel",
+            "className": "text-sm text-muted"
+          },
+          "actions": { "onPress": { "kind": "navigate", "to": "/tenant/newsletters" } }
+        },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "New newsletter"
+          }
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "submitUrl": "/api/v1/newsletters",
+            "submitMethod": "POST",
+            "onSuccess": [
+              { "kind": "toast.success", "message": "Newsletter created" },
+              { "kind": "navigateExpr", "expr": "'/tenant/newsletters/' + response.data.id" }
+            ]
+          },
+          "children": [
+            {
+              "kind": "TextField",
+              "props": {
+                "label": "Name",
+                "name": "name",
+                "isRequired": true,
+                "placeholder": "Weekly Digest"
+              }
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "label": "Slug",
+                "name": "slug",
+                "isRequired": true,
+                "placeholder": "weekly-digest",
+                "description": "URL-safe. Used in subscribe links."
+              }
+            },
+            {
+              "kind": "TextArea",
+              "props": { "label": "Description", "name": "description", "rows": 3 }
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "label": "Cadence",
+                "name": "cadence",
+                "isRequired": true,
+                "defaultValue": "weekly"
+              },
+              "options": [
+                { "key": "daily", "label": "Daily" },
+                { "key": "weekly", "label": "Weekly" },
+                { "key": "biweekly", "label": "Biweekly" },
+                { "key": "monthly", "label": "Monthly" },
+                { "key": "quarterly", "label": "Quarterly" },
+                { "key": "adhoc", "label": "Ad-hoc" }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                    "children": "Sender identity"
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "label": "From email",
+                    "name": "sender_config.from_email",
+                    "isRequired": true,
+                    "type": "email"
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "label": "From name",
+                    "name": "sender_config.from_name",
+                    "isRequired": true
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "label": "Reply-to",
+                    "name": "sender_config.reply_to",
+                    "type": "email"
+                  }
+                },
+                {
+                  "kind": "TextArea",
+                  "props": {
+                    "label": "Postal address",
+                    "name": "sender_config.postal_address",
+                    "isRequired": true,
+                    "rows": 2,
+                    "description": "CAN-SPAM requirement. Displayed in every issue footer."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Switch",
+              "props": {
+                "label": "Double opt-in confirmation",
+                "name": "confirmation_required",
+                "defaultValue": true,
+                "description": "Best practice. Recipients confirm via signed link before receiving issues."
+              }
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "size": "md",
+                "type": "submit",
+                "children": "Create newsletter"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

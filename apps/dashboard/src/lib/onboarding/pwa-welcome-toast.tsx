@@ -35,7 +35,7 @@
  * landed on.
  */
 
-import { toast } from "@academorix/ui/react";
+import { toast } from "@stackra/ui/react";
 import { useGetIdentity } from "@refinedev/core";
 import { useEffect, useRef } from "react";
 

@@ -137,10 +137,9 @@ describe("usePeopleSearch", () => {
   });
 
   it("respects a custom minLength", () => {
-    const { rerender } = renderHook(
-      ({ query }) => usePeopleSearch({ query, minLength: 4 }),
-      { initialProps: { query: "ada" } },
-    );
+    const { rerender } = renderHook(({ query }) => usePeopleSearch({ query, minLength: 4 }), {
+      initialProps: { query: "ada" },
+    });
 
     act(() => {
       vi.advanceTimersByTime(500);

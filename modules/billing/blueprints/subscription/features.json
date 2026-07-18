@@ -1,0 +1,55 @@
+{
+  "id": "academorix://modules/subscription/features",
+  "$version": 1,
+  "title": "subscription \u2014 feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me \u2192 data.features",
+    "seededFrom": "BusinessType.default_config.features"
+  },
+  "features": [
+    {
+      "key": "subscription.self_serve",
+      "displayName": "Self-serve subscription",
+      "description": "Tenant owner can upgrade / downgrade / cancel via UI.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "business", "enterprise"]
+    },
+    {
+      "key": "subscription.trial",
+      "displayName": "Free trial",
+      "description": "New tenants get N days of trial. N configurable per plan.",
+      "defaultEnabled": true,
+      "planTiers": ["team", "business"]
+    },
+    {
+      "key": "subscription.annual_billing",
+      "displayName": "Annual billing",
+      "description": "Annual plans (discount vs monthly). Hidden from businesses that only offer monthly.",
+      "defaultEnabled": true,
+      "planTiers": ["team", "business"]
+    },
+    {
+      "key": "subscription.usage_based_billing",
+      "displayName": "Usage-based billing",
+      "description": "Overages on metered entitlements invoiced at period end.",
+      "defaultEnabled": false,
+      "planTiers": ["business", "enterprise"]
+    },
+    {
+      "key": "subscription.enterprise_contract",
+      "displayName": "Enterprise offline billing",
+      "description": "PO invoices, NET-30, custom contract terms.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"],
+      "gated_by_role": "platform_admin"
+    },
+    {
+      "key": "subscription.plan_swap_prorate",
+      "displayName": "Prorated plan swaps",
+      "description": "Mid-period upgrades prorate the difference. Downgrades take effect at period end.",
+      "defaultEnabled": true,
+      "planTiers": ["team", "business", "enterprise"]
+    }
+  ]
+}

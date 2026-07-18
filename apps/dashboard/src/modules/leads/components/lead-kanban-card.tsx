@@ -12,7 +12,7 @@
  * layout is lead-specific — safeguarding cards have their own body component.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 
 import type { Lead } from "@/modules/leads/leads.types";
 import type { ReactNode } from "react";

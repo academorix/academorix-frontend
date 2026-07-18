@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/foundation/macros",
+  "$version": 1,
+  "title": "foundation \u2014 published macros",
+  "description": "Framework-level macros registered by FoundationServiceProvider::boot() so every downstream module + migration can rely on them without an explicit dependency. Blueprint macros add columns / indexes via a single call; Str + Collection macros add ergonomics used across model + service code.",
+  "namespace_note": "Blueprint macros extend `Illuminate\\Database\\Schema\\Blueprint`. Str + Collection macros extend Laravel's respective facades / classes.",
+  "macros": [
+    {
+      "name": "Blueprint::foundationConventions",
+      "signature": "Blueprint::foundationConventions(): void",
+      "description": "Applies the tenant-boundary + userstamps + metadata + audit + versionable + softDeletes + timestamps in canonical order. Convenience macro replacing 8 chained calls.",
+      "adds_by_composition": [
+        "tenantable",
+        "userstampable",
+        "metadata",
+        "auditable",
+        "versionable",
+        "softDeletes",
+        "timestamps"
+      ]
+    },
+    {
+      "name": "Str::slugify",
+      "signature": "Str::slugify(string $input, string $separator = '-'): string",
+      "description": "Wraps Illuminate\\Support\\Str::slug with our diacritic map (Arabic / Cyrillic / CJK transliteration) so \u0627\u0644\u0639\u0631\u0628\u064a\u0629 \u2192 al-arabiyya (not empty)."
+    },
+    {
+      "name": "Collection::orderBySortable",
+      "signature": "Collection::orderBySortable(): self",
+      "description": "Sorts collection by the `sort_order` column of the underlying model (falls back to `created_at` when sort_order is null)."
+    }
+  ],
+  "registered_by": "Academorix\\Foundation\\Providers\\FoundationServiceProvider::boot()",
+  "registration_order": "AFTER all foundation service bindings are resolved (deferred registration) so migrations run during other providers' boot phase can call the macros safely."
+}

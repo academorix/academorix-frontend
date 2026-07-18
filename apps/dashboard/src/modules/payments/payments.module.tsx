@@ -9,7 +9,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §16.3 "Billing & Payments"
  */
 
-import { BanknotesIcon } from "@academorix/ui/icons/outline";
+import { BanknotesIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

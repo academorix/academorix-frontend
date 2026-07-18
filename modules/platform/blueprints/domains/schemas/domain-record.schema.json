@@ -1,0 +1,180 @@
+{
+  "id": "academorix://modules/domains/schemas/domain-record",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "DomainRecord",
+  "description": "DNS record we expect a custom Domain to have. Populated by DomainObserver on Domain create (e.g. one CNAME + one TXT verification), then diffed by VerifyDomainDnsJob against real DNS to drive the Domain.verified_at + ssl_status transitions. NOT the authoritative DNS record — we do not run authoritative DNS ourselves. This is our expected-vs-observed diff.",
+  "type": "object",
+  "x-module": "domains",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "domain_records",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "drc_",
+    "incrementing": false,
+    "model": "Academorix\\Domains\\Models\\DomainRecord",
+    "interface": "Academorix\\Domains\\Contracts\\Data\\DomainRecordInterface",
+    "implements": ["Academorix\\Domains\\Contracts\\Data\\DomainRecordInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable"
+    ],
+    "casts": {
+      "last_check_at": "datetime",
+      "last_matched_at": "datetime",
+      "ttl_seconds": "integer",
+      "metadata": "array"
+    },
+    "appends": ["is_matching"],
+    "observers": ["DomainRecordObserver"],
+    "hidden": ["metadata"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `drc_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "domain_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "FK to the owning Domain row.",
+        "foreign": {
+          "table": "domains",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "kind": {
+        "type": "string",
+        "length": 8,
+        "nullable": false,
+        "description": "DNS record type: A, AAAA, CNAME, TXT, MX, CAA."
+      },
+      "name": {
+        "type": "string",
+        "length": 253,
+        "nullable": false,
+        "description": "Fully-qualified name for the record (e.g. `_acme-challenge.academy.example.com`, or `@` for the apex)."
+      },
+      "expected_value": {
+        "type": "text",
+        "nullable": false,
+        "description": "What we expect DNS to return. For TXT verification: our verification token. For CNAME: our public host. For MX: our mail exchanger."
+      },
+      "last_seen_value": {
+        "type": "text",
+        "nullable": true,
+        "description": "What we actually got on the last check. NULL until first check."
+      },
+      "ttl_seconds": {
+        "type": "integer",
+        "nullable": true,
+        "description": "TTL observed on the record. Null until first successful lookup."
+      },
+      "priority": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Only for MX records. Null otherwise."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "unknown",
+        "description": "Enum: `unknown`, `matches`, `missing`, `mismatch`, `error`."
+      },
+      "last_check_at": { "type": "timestamptz", "nullable": true },
+      "last_matched_at": { "type": "timestamptz", "nullable": true },
+      "last_error": { "type": "text", "nullable": true },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form platform notes on this record — provisioner tag, migration source. From HasMetadata."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["domain_id", "kind", "name"],
+        "unique": true,
+        "name": "domain_records_unique"
+      },
+      {
+        "columns": ["tenant_id", "domain_id"],
+        "unique": false,
+        "name": "domain_records_tenant_domain_index"
+      },
+      {
+        "columns": ["status", "last_check_at"],
+        "unique": false,
+        "name": "domain_records_status_last_check_index"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "domain_id",
+    "kind",
+    "name",
+    "expected_value",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^drc_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "domain_id": { "type": "string", "pattern": "^dom_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "kind": { "type": "string", "enum": ["A", "AAAA", "CNAME", "TXT", "MX", "CAA"] },
+    "name": { "type": "string", "maxLength": 253 },
+    "expected_value": { "type": "string" },
+    "last_seen_value": { "type": ["string", "null"] },
+    "ttl_seconds": { "type": ["integer", "null"], "minimum": 0 },
+    "priority": { "type": ["integer", "null"], "minimum": 0 },
+    "status": { "type": "string", "enum": ["unknown", "matches", "missing", "mismatch", "error"] },
+    "is_matching": { "type": "boolean", "description": "Computed. `status === 'matches'`." },
+    "last_check_at": { "type": ["string", "null"], "format": "date-time" },
+    "last_matched_at": { "type": ["string", "null"], "format": "date-time" },
+    "last_error": { "type": ["string", "null"] },
+    "metadata": { "type": ["object", "null"], "additionalProperties": true },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["metadata", "created_by", "updated_by"],
+    "computed": ["is_matching"]
+  }
+}

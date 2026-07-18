@@ -9,7 +9,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §14.4 "Development Plans (IDPs)"
  */
 
-import { MapIcon } from "@academorix/ui/icons/outline";
+import { MapIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

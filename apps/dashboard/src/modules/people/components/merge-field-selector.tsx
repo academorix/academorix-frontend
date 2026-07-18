@@ -10,8 +10,8 @@
  * through {@link MergeSelectorProps.onChange}.
  */
 
-import { CheckIcon } from "@academorix/ui/icons/outline";
-import { Button, Card } from "@academorix/ui/react";
+import { CheckIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Card } from "@stackra/ui/react";
 
 import type { Person } from "@/modules/people/people.types";
 import type { ReactNode } from "react";

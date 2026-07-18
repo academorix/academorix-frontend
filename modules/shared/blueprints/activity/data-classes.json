@@ -1,0 +1,32 @@
+{
+  "id": "academorix://modules/activity/data-classes",
+  "$version": 1,
+  "title": "activity \u2014 field classification",
+  "description": "Activity rows may include PII via description + properties JSONB. HasActivityLog contracts require model authors to declare which fields to log; sensitive fields opt out via spatie's `logExcept`.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "Activity.id",
+      "Activity.log_name",
+      "Activity.event",
+      "Activity.subject_type",
+      "Activity.causer_type",
+      "Activity.batch_uuid",
+      "Activity.retention_tier",
+      "Activity.created_at",
+      "Activity.updated_at"
+    ],
+    "internal": ["Activity.tenant_id", "Activity.subject_id", "Activity.causer_id"],
+    "confidential": ["Activity.description", "Activity.properties"],
+    "restricted": [],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "audit_log": ["Activity rows themselves function as an audit_log light-tier record."]
+  },
+  "notes": [
+    "Activity.description may include user names / labels / entity titles. Confidential.",
+    "Activity.properties is spatie's arbitrary JSONB. Model authors MUST use spatie's `logExcept()` to prevent restricted-tier fields (device tokens, passwords, secrets) from ever landing here.",
+    "Model authors also MUST use spatie's `logOnly()` allow-list rather than log-everything by default."
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "id": "academorix://modules/geofencing/features",
+  "$version": 1,
+  "title": "geofencing \u2014 feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me \u2192 data.features"
+  },
+  "features": [
+    {
+      "key": "feature_geofence_enforcement",
+      "displayName": "Geofence Enforcement",
+      "description": "Geofenced attendance + clock-in gates. When off, evaluations still record on the audit log but consumers ignore the OUTSIDE verdict.",
+      "defaultEnabled": false,
+      "planTiers": ["team", "business", "enterprise"]
+    },
+    {
+      "key": "geofence.preflight",
+      "displayName": "Mobile pre-flight",
+      "description": "The /preflight endpoint used by mobile clients before submitting a real check-in.",
+      "defaultEnabled": true,
+      "planTiers": ["*"]
+    },
+    {
+      "key": "geofence.overrides",
+      "displayName": "Manual overrides",
+      "description": "Admins can approve overrides on rejected checks via the Approvals surface.",
+      "defaultEnabled": true,
+      "planTiers": ["team", "business", "enterprise"]
+    },
+    {
+      "key": "geofence.polygon_mode",
+      "displayName": "Polygon fences",
+      "description": "Branch fences drawn as polygons. When off, radius-mode only.",
+      "defaultEnabled": true,
+      "planTiers": ["business", "enterprise"]
+    },
+    {
+      "key": "geofence.radius_mode",
+      "displayName": "Radius fences",
+      "description": "Simple radius fallback around branch centroid. Always available.",
+      "defaultEnabled": true,
+      "planTiers": ["*"]
+    }
+  ]
+}

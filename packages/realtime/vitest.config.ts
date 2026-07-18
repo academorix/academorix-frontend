@@ -1,24 +1,28 @@
 /**
  * @file vitest.config.ts
- * @module @academorix/realtime/vitest.config
- *
- * @description
- * Vitest configuration for `@academorix/realtime`. jsdom is required
- * because the hooks + provider are React runtime code and the client
- * factory guards SSR via `typeof window === "undefined"` — we need a
- * real `window` in the default test environment to exercise the
- * primary code path.
- *
- * `globals: true` matches the workspace convention so
- * `@testing-library/react`'s auto-cleanup finds the `afterEach` hook.
+ * @module @stackra/realtime/test
+ * @description Vitest configuration for @stackra/realtime.
  */
 
-import { defineConfig } from "vitest/config";
+import { defineConfig, mergeConfig } from 'vitest/config';
+import path from 'node:path';
+import preset from '@stackra/testing/preset';
 
-export default defineConfig({
-  test: {
-    environment: "jsdom",
-    globals: true,
-    include: ["src/**/*.{test,spec}.{ts,tsx}"],
-  },
-});
+export default mergeConfig(
+  preset,
+  defineConfig({
+    // Explicitly re-declare to survive mergeConfig — vitest 4's default OXC
+    // transformer breaks decorator metadata emission.
+    oxc: false,
+    esbuild: false,
+    test: {
+      environment: 'node',
+      setupFiles: ['./__tests__/vitest.setup.ts'],
+    },
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
+    },
+  })
+);

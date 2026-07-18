@@ -1,0 +1,6 @@
+{
+  "sync.status.synced": "Synced ✓",
+  "sync.status.syncing": "Syncing...",
+  "sync.status.pending": "{{count}} pending",
+  "sync.status.offline": "Offline"
+}

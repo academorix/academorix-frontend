@@ -1,0 +1,244 @@
+{
+  "id": "versioning.resources.deprecation-notice.list",
+  "title": "Deprecation notices",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/versioning/deprecation-notices",
+  "host": "central-admin",
+  "audience": "authenticated",
+  "resource": { "module": "versioning", "entity": "deprecation-notice", "action": "list" },
+  "requiresPermission": "platform.versioning.notices.viewAny",
+  "dataSources": [
+    {
+      "name": "notices",
+      "kind": "http.get",
+      "url": "/api/v1/platform/versioning/deprecation-notices",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": [
+        "filter[state]",
+        "filter[notice_type]",
+        "filter[api_version_slug]",
+        "sort",
+        "page",
+        "per_page"
+      ]
+    },
+    {
+      "name": "apiVersions",
+      "kind": "http.get",
+      "url": "/api/v1/platform/versioning/api-versions?per_page=100",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "id": "header",
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Deprecation notices"
+              }
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "size": "sm",
+                "leadingIcon": "plus",
+                "children": "Draft notice"
+              },
+              "bindings": {
+                "isDisabled": {
+                  "$expr": "!identity.permissions.includes('platform.versioning.notices.create')"
+                }
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "to": "/platform/versioning/deprecation-notices/new"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "filters",
+          "kind": "View",
+          "props": { "className": "flex flex-wrap gap-3" },
+          "children": [
+            {
+              "kind": "Select",
+              "props": { "label": "State", "name": "filter[state]", "placeholder": "All" },
+              "options": [
+                { "key": "draft", "label": "Draft" },
+                { "key": "published", "label": "Published" },
+                { "key": "archived", "label": "Archived" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "notices" } }
+            },
+            {
+              "kind": "Select",
+              "props": { "label": "Type", "name": "filter[notice_type]", "placeholder": "All" },
+              "options": [
+                { "key": "deprecation", "label": "Deprecation" },
+                { "key": "sunset_reminder", "label": "Sunset reminder" },
+                { "key": "sunset_final", "label": "Sunset final" },
+                { "key": "partial_deprecation", "label": "Partial deprecation" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "notices" } }
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "label": "Version",
+                "name": "filter[api_version_slug]",
+                "placeholder": "All"
+              },
+              "optionsSource": {
+                "$ref": "apiVersions",
+                "valueField": "slug",
+                "labelField": "slug"
+              },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "notices" } }
+            }
+          ]
+        },
+        {
+          "id": "table",
+          "kind": "DataGrid",
+          "bindings": {
+            "items": { "$ref": "notices" },
+            "isLoading": { "$ref": "notices.isLoading" }
+          },
+          "columns": [
+            {
+              "id": "title",
+              "header": "Title",
+              "cell": {
+                "kind": "View",
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-medium" },
+                    "bindings": { "children": { "$ref": "row.title" } }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.notice_type + ' \u00b7 version ' + row.api_version_slug"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "state",
+              "header": "State",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "sm" },
+                "bindings": {
+                  "variant": {
+                    "$expr": "row.state === 'published' ? 'success' : (row.state === 'draft' ? 'neutral' : 'warning')"
+                  },
+                  "children": { "$ref": "row.state" }
+                }
+              }
+            },
+            {
+              "id": "notify",
+              "header": "Notify",
+              "cell": {
+                "kind": "Icon",
+                "bindings": {
+                  "icon": { "$expr": "row.notify_customers ? 'envelope' : 'envelope-open-x'" },
+                  "className": { "$expr": "row.notify_customers ? 'text-info' : 'text-muted'" }
+                }
+              }
+            },
+            {
+              "id": "published_at",
+              "header": "Published",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm" },
+                "bindings": {
+                  "children": {
+                    "$expr": "row.published_at ? formatDate(row.published_at) : '\u2014'"
+                  }
+                }
+              }
+            },
+            {
+              "id": "actions",
+              "header": "",
+              "align": "end",
+              "cell": {
+                "kind": "Menu",
+                "props": {
+                  "trigger": {
+                    "kind": "Button",
+                    "props": {
+                      "variant": "ghost",
+                      "isIconOnly": true,
+                      "leadingIcon": "ellipsis-horizontal",
+                      "ariaLabel": "Actions"
+                    }
+                  }
+                },
+                "items": [
+                  {
+                    "id": "view",
+                    "label": "View",
+                    "leadingIcon": "eye",
+                    "action": {
+                      "kind": "navigate",
+                      "toExpr": "'/platform/versioning/deprecation-notices/' + row.id"
+                    }
+                  },
+                  {
+                    "id": "publish",
+                    "label": "Publish",
+                    "leadingIcon": "arrow-up-tray",
+                    "bindings": {
+                      "isDisabled": {
+                        "$expr": "row.state !== 'draft' || !identity.permissions.includes('platform.versioning.notices.publish')"
+                      }
+                    },
+                    "action": {
+                      "kind": "http.post",
+                      "urlExpr": "'/api/v1/platform/versioning/deprecation-notices/' + row.id + '/publish'",
+                      "confirm": {
+                        "title": "Publish this notice?",
+                        "description": "Fires customer notifications (mail + in-app) to affected tenants. This action is irreversible via UI \u2014 edits after publish require super_admin."
+                      },
+                      "onSuccess": [
+                        { "kind": "toast.success", "message": "Published" },
+                        { "kind": "data.refresh", "source": "notices" }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "id": "academorix://modules/localization/feature-flags",
+  "$version": 1,
+  "title": "localization \u2014 kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "localization.decorator_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle. Off = fall back to Laravel's stock Translator (file-based only). Emergency-only."
+    },
+    {
+      "key": "localization.auto_translate",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = MaybeDispatchAutoTranslate listener no-ops. Cache misses return the raw key."
+    },
+    { "key": "localization.driver_openai", "kind": "kill-switch", "default": "on" },
+    { "key": "localization.driver_google", "kind": "kill-switch", "default": "on" },
+    { "key": "localization.driver_deepl", "kind": "kill-switch", "default": "on" },
+    { "key": "localization.driver_aws_translate", "kind": "kill-switch", "default": "on" },
+    { "key": "localization.driver_azure_translator", "kind": "kill-switch", "default": "on" },
+    {
+      "key": "localization.cache_warm",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "WarmTranslationCacheJob execution."
+    },
+    {
+      "key": "localization.persist_user_preference",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "PersistLocalePreference middleware. Off during identity-service migrations."
+    }
+  ]
+}

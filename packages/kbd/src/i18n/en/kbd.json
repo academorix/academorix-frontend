@@ -1,0 +1,12 @@
+{
+  "kbd.palette.no_results": "No results found",
+  "kbd.palette.no_results_hint": "Try a different search term",
+  "kbd.palette.result_count_one": "{{count}} result",
+  "kbd.palette.result_count_other": "{{count}} results",
+  "kbd.palette.search_placeholder": "Search commands...",
+  "kbd.palette.close": "Close",
+  "kbd.catalog.title": "Keyboard Shortcuts",
+  "kbd.catalog.scope_label": "scope · {{scope}}",
+  "kbd.catalog.or_separator": "or",
+  "kbd.catalog.search_placeholder": "Search shortcuts..."
+}

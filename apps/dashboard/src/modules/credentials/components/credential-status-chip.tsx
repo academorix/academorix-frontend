@@ -7,7 +7,7 @@
  * list and detail screens.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 
 import type { Credential } from "@/modules/credentials/credentials.types";
 import type { ReactNode } from "react";

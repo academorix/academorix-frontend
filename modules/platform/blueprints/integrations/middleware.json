@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/integrations/middleware",
+  "$version": 1,
+  "title": "integrations — HTTP middleware",
+  "description": "Middleware aliases this module contributes.",
+  "middleware": []
+}

@@ -34,7 +34,7 @@
  * minimal `{ columns, ariaLabel }` shape and get the same layout as before.
  */
 
-import { XMarkIcon } from "@academorix/ui/icons/outline";
+import { XMarkIcon } from "@stackra/ui/icons/heroicon/outline";
 import {
   ActionBar,
   Button,
@@ -45,17 +45,17 @@ import {
   Separator,
   Spinner,
   Tooltip,
-} from "@academorix/ui/react";
+} from "@stackra/ui/react";
 import { useResourceParams, useTable } from "@refinedev/core";
 import { useMemo, useState } from "react";
 
 import type { AppResourceMeta } from "@/lib/module";
-import type { IconType } from "@academorix/ui/icons";
+import type { IconType } from "@stackra/ui/icons";
 import type {
   DataGridColumn,
   DataGridSelection,
   DataGridSortDescriptor,
-} from "@academorix/ui/react";
+} from "@stackra/ui/react";
 import type { BaseRecord, CrudSort } from "@refinedev/core";
 import type { ReactNode } from "react";
 

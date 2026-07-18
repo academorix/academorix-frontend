@@ -1,0 +1,138 @@
+{
+  "name": "@stackra/settings",
+  "version": "0.1.0",
+  "description": "Unified settings framework for the Stackra platform — registry-based with @Setting()/@Field()/@Group()/@Section() decorators, multi-driver persistence over @stackra/storage + @stackra/http, sync-cache + async-hydrate + debounced persist, real-time broadcast via @stackra/realtime, and HeroUI-driven admin UI.",
+  "license": "MIT",
+  "author": {
+    "name": "Stackra L.L.C",
+    "email": "dev@stackra.com",
+    "url": "https://stackra.com"
+  },
+  "keywords": [
+    "stackra",
+    "settings",
+    "configuration",
+    "registry",
+    "dto",
+    "decorators",
+    "react",
+    "cross-platform"
+  ],
+  "homepage": "https://github.com/stackra-inc/core/tree/main/settings#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stackra-inc/core.git",
+    "directory": "settings"
+  },
+  "bugs": {
+    "url": "https://github.com/stackra-inc/core/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.mjs",
+      "require": "./dist/react.js"
+    },
+    "./testing": {
+      "types": "./dist/testing.d.ts",
+      "import": "./dist/testing.mjs",
+      "require": "./dist/testing.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rimraf dist .turbo",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage --passWithNoTests"
+  },
+  "dependencies": {
+    "@vivtel/metadata": "catalog:"
+  },
+  "peerDependencies": {
+    "@stackra/container": "workspace:^",
+    "@stackra/contracts": "workspace:^",
+    "@stackra/http": "workspace:^",
+    "@stackra/logger": "workspace:^",
+    "@stackra/realtime": "workspace:^",
+    "@stackra/storage": "workspace:^",
+    "@stackra/support": "workspace:^",
+    "@stackra/query": "workspace:^",
+    "@stackra/testing": "workspace:^",
+    "@stackra/ui": "workspace:^",
+    "@tanstack/react-query": "catalog:",
+    "react": "*",
+    "reflect-metadata": "*"
+  },
+  "peerDependenciesMeta": {
+    "@stackra/query": {
+      "optional": true
+    },
+    "@tanstack/react-query": {
+      "optional": true
+    },
+    "@stackra/logger": {
+      "optional": true
+    },
+    "@stackra/realtime": {
+      "optional": true
+    },
+    "@stackra/testing": {
+      "optional": true
+    },
+    "@stackra/ui": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@stackra/container": "workspace:*",
+    "@stackra/contracts": "workspace:*",
+    "@stackra/http": "workspace:*",
+    "@stackra/logger": "workspace:*",
+    "@stackra/realtime": "workspace:*",
+    "@stackra/storage": "workspace:*",
+    "@stackra/support": "workspace:*",
+    "@stackra/query": "workspace:*",
+    "@stackra/testing": "workspace:*",
+    "@stackra/ui": "workspace:*",
+    "@tanstack/query-core": "catalog:",
+    "@tanstack/react-query": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "jsdom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "reflect-metadata": "catalog:",
+    "rimraf": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "academorix://modules/localization/schedule",
+  "$version": 1,
+  "title": "localization \u2014 scheduled tasks",
+  "entries": [
+    {
+      "name": "localization-warm-cache",
+      "command": "localization:warm-cache",
+      "cron": "*/30 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 30 minutes: refresh Redis LRU cache with top-N hit keys per tenant + locale."
+    },
+    {
+      "name": "localization-prune-stale-translations",
+      "command": "localization:reconcile-cache --prune",
+      "cron": "0 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 03:00 UTC: delete source='ai' Translation rows past TTL + rows with is_stale=true and no recent access."
+    },
+    {
+      "name": "localization-reconcile-cache",
+      "command": "localization:reconcile-cache",
+      "cron": "15 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly at :15: reconcile Redis LRU cache against DB counts + fix drift."
+    }
+  ]
+}

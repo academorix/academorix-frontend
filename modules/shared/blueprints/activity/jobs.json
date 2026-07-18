@@ -1,0 +1,37 @@
+{
+  "id": "academorix://modules/activity/jobs",
+  "$version": 1,
+  "title": "activity \u2014 background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Activity\\Jobs\\PruneActivityLogJob",
+      "queue": "notifications",
+      "purpose": "Hard-delete activity_log rows past their retention tier. Three passes per run (one per tier).",
+      "steps": [
+        "For each retention_tier (short / medium / long):",
+        "  Resolve tier-days from config('activity.retention.tier_days.{tier}').",
+        "  Query: SELECT id FROM activity_log WHERE retention_tier = tier AND created_at < now() - tier_days LIMIT prune_chunk_size.",
+        "  Delete in transactional batches.",
+        "  Loop until no rows returned for the tier.",
+        "  Emit ActivityPruned event with count.",
+        "  Emit metric: academorix.activity.pruned_total by tier."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2,
+      "notes": "Runs daily 03:15 UTC. Idempotent \u2014 no-op when caught up."
+    },
+    {
+      "class": "Academorix\\Activity\\Jobs\\ReconcileRetentionTierJob",
+      "queue": "notifications",
+      "purpose": "Recompute retention_tier for existing rows when a tenant's plan changes. Bulk UPDATE + emit an anonymised metric row.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "tenant_id",
+      "tries": 2,
+      "notes": "Dispatched by subscription::SubscriptionUpgraded / SubscriptionDowngraded listeners."
+    }
+  ]
+}

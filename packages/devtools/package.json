@@ -1,0 +1,159 @@
+{
+  "name": "@stackra/devtools",
+  "version": "0.1.0",
+  "description": "Enterprise developer overlay for the Stackra framework — launcher pill, drawer/panel shell, DI-driven panel contribution via @DevtoolsPanel + forFeature, inspector overlay, keyboard shortcut, HeroUI Pro (web) + HeroUI Native Pro (native) UI, testing subpath with in-memory mocks. Tree-shakes to zero bytes in production.",
+  "license": "MIT",
+  "author": {
+    "name": "Stackra L.L.C",
+    "email": "dev@stackra.com",
+    "url": "https://stackra.com"
+  },
+  "keywords": [
+    "stackra",
+    "devtools",
+    "developer-tools",
+    "debugger",
+    "inspector",
+    "overlay",
+    "react",
+    "react-native",
+    "heroui",
+    "heroui-pro",
+    "dependency-injection"
+  ],
+  "homepage": "https://github.com/stackra-inc/core/tree/main/devtools#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stackra-inc/core.git",
+    "directory": "devtools"
+  },
+  "bugs": {
+    "url": "https://github.com/stackra-inc/core/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.mjs",
+      "require": "./dist/react.js"
+    },
+    "./native": {
+      "types": "./dist/native.d.ts",
+      "import": "./dist/native.mjs",
+      "require": "./dist/native.js"
+    },
+    "./testing": {
+      "types": "./dist/testing.d.ts",
+      "import": "./dist/testing.mjs",
+      "require": "./dist/testing.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rimraf dist .turbo",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage --passWithNoTests"
+  },
+  "peerDependencies": {
+    "@heroicons/react": ">=2",
+    "@stackra/analytics": "workspace:^",
+    "@stackra/container": "workspace:^",
+    "@stackra/contracts": "workspace:^",
+    "@stackra/events": "workspace:^",
+    "@stackra/logger": "workspace:^",
+    "@stackra/storage": "workspace:^",
+    "@stackra/support": "workspace:^",
+    "@stackra/testing": "workspace:^",
+    "@stackra/ui": "workspace:^",
+    "heroui-native-pro": "*",
+    "react": "*",
+    "react-dom": "*",
+    "react-native": "*",
+    "reflect-metadata": "*"
+  },
+  "peerDependenciesMeta": {
+    "@heroicons/react": {
+      "optional": true
+    },
+    "@stackra/analytics": {
+      "optional": true
+    },
+    "@stackra/events": {
+      "optional": true
+    },
+    "@stackra/logger": {
+      "optional": true
+    },
+    "@stackra/storage": {
+      "optional": true
+    },
+    "@stackra/testing": {
+      "optional": true
+    },
+    "@stackra/ui": {
+      "optional": true
+    },
+    "heroui-native-pro": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@heroicons/react": "catalog:",
+    "@stackra/analytics": "workspace:*",
+    "@stackra/container": "workspace:*",
+    "@stackra/contracts": "workspace:*",
+    "@stackra/events": "workspace:*",
+    "@stackra/logger": "workspace:*",
+    "@stackra/storage": "workspace:*",
+    "@stackra/support": "workspace:*",
+    "@stackra/testing": "workspace:*",
+    "@stackra/ui": "workspace:*",
+    "@testing-library/react": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vivtel/metadata": "catalog:",
+    "heroui-native-pro": "catalog:",
+    "jsdom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "reflect-metadata": "catalog:",
+    "rimraf": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

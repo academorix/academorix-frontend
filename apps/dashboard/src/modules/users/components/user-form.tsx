@@ -7,7 +7,7 @@
  * assignment is managed by the Access module, not here.
  */
 
-import { Button, Card, Form, Input, Label, ListBox, Select, TextField } from "@academorix/ui/react";
+import { Button, Card, Form, Input, Label, ListBox, Select, TextField } from "@stackra/ui/react";
 import { useState } from "react";
 
 import type { User, UserStatus } from "@/types";

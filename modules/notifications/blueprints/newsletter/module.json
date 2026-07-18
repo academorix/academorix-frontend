@@ -1,0 +1,141 @@
+{
+  "$version": 1,
+  "name": "newsletter",
+  "alias": "newsletter",
+  "namespace": "Academorix\\Newsletter",
+  "description": "Editorial publication + audience management. Distinct from notifications (transactional / event-driven). Ships five entities: Newsletter (the publication), NewsletterIssue (an individual issue with content + schedule), NewsletterSubscription (audience membership), NewsletterCampaign (a send event), NewsletterAudience (segment definition). Reuses notifications-mail for the actual dispatch. CAN-SPAM + CASL enforcement, one-click unsubscribe via signed URL, per-issue open + click tracking, subscriber-growth analytics, sender-reputation guardrails.",
+  "keywords": [
+    "newsletter",
+    "email-marketing",
+    "publications",
+    "audience",
+    "campaigns",
+    "can-spam",
+    "casl",
+    "subscribers",
+    "segments"
+  ],
+  "priority": 30,
+  "providers": ["Academorix\\Newsletter\\Providers\\NewsletterServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "notifications",
+    "notifications-mail",
+    "activity",
+    "audit",
+    "settings"
+  ],
+  "extendedBy": [],
+  "contributes": {
+    "traits": [],
+    "blueprints": [],
+    "middleware": [],
+    "events": [
+      "NewsletterCreated",
+      "NewsletterUpdated",
+      "NewsletterArchived",
+      "NewsletterIssueDrafted",
+      "NewsletterIssueScheduled",
+      "NewsletterIssuePublished",
+      "NewsletterIssueCancelled",
+      "NewsletterSubscriptionAdded",
+      "NewsletterSubscriptionConfirmed",
+      "NewsletterSubscriptionRemoved",
+      "NewsletterSubscriptionBounced",
+      "NewsletterCampaignScheduled",
+      "NewsletterCampaignStarted",
+      "NewsletterCampaignCompleted",
+      "NewsletterCampaignFailed",
+      "NewsletterAudienceCreated",
+      "NewsletterAudienceRefreshed",
+      "NewsletterOpenRecorded",
+      "NewsletterClickRecorded"
+    ],
+    "policies": [
+      "NewsletterPolicy",
+      "NewsletterIssuePolicy",
+      "NewsletterSubscriptionPolicy",
+      "NewsletterCampaignPolicy",
+      "NewsletterAudiencePolicy"
+    ],
+    "hooks": [],
+    "commands": [
+      "newsletter:send-scheduled",
+      "newsletter:refresh-audiences",
+      "newsletter:import-subscribers",
+      "newsletter:export-subscribers",
+      "newsletter:reputation-report"
+    ],
+    "jobs": [
+      "SendNewsletterCampaignJob",
+      "SendNewsletterIssueBatchJob",
+      "BuildAudienceSegmentJob",
+      "ImportSubscribersJob",
+      "ExportSubscribersJob",
+      "TrackNewsletterEngagementJob",
+      "GenerateReputationReportJob",
+      "PruneUnengagedSubscribersJob",
+      "ConfirmSubscriptionJob"
+    ],
+    "notifications": [
+      "NewsletterCampaignCompletedNotification",
+      "NewsletterReputationAlertNotification",
+      "NewsletterSubscribeConfirmationNotification"
+    ],
+    "broadcasts": [],
+    "observers": [
+      "NewsletterObserver",
+      "NewsletterIssueObserver",
+      "NewsletterSubscriptionObserver",
+      "NewsletterCampaignObserver",
+      "NewsletterAudienceObserver"
+    ],
+    "attributes": [],
+    "rules": ["valid_double_opt_in_token", "supported_newsletter_cadence"],
+    "casts": ["NewsletterCadenceCast", "AudienceExpressionCast"],
+    "views": [],
+    "lang": ["newsletter"],
+    "config": ["newsletter"],
+    "macros": [],
+    "bindings": [
+      "NewsletterService",
+      "AudienceEvaluator",
+      "SubscriberGrowthTracker",
+      "ReputationMonitor"
+    ],
+    "resources": [
+      "newsletter",
+      "newsletter-issue",
+      "newsletter-subscription",
+      "newsletter-campaign",
+      "newsletter-audience"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant admin newsletter management.",
+      "routes": [
+        "GET/POST/PATCH/DELETE /api/v1/newsletters",
+        "GET/POST/PATCH/DELETE /api/v1/newsletters/{newsletter}/issues",
+        "GET/POST/PATCH/DELETE /api/v1/newsletters/{newsletter}/subscriptions",
+        "GET/POST/PATCH/DELETE /api/v1/newsletters/{newsletter}/campaigns",
+        "GET/POST/PATCH/DELETE /api/v1/newsletters/{newsletter}/audiences"
+      ]
+    },
+    "central": {
+      "description": "Public subscribe / unsubscribe endpoints. No auth required (double-opt-in confirmation via signed token).",
+      "routes": [
+        "POST /newsletters/{newsletter}/subscribe",
+        "GET /newsletters/{newsletter}/confirm/{token}",
+        "GET /newsletters/{newsletter}/unsubscribe/{token}",
+        "POST /newsletters/{newsletter}/unsubscribe/{token}"
+      ]
+    }
+  },
+  "reuses": {
+    "notifications-mail": "The actual outbound send flows through notifications-mail's SendMailJob. Newsletter builds on top: manages the audience list, produces the issue body, dispatches per-recipient send jobs referencing the mail suppression + user preference layers before hitting the provider.",
+    "notifications": "Admin notifications (campaign completed, reputation alert) go through the core notifications module."
+  }
+}

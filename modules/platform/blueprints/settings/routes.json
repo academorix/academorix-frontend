@@ -1,0 +1,66 @@
+{
+  "id": "academorix://modules/settings/routes",
+  "$version": 1,
+  "title": "settings \u2014 HTTP routes",
+  "description": "REST-style per-group surface. Actions declared via #[AsAction] on controllers so no `routes/*.php` file is needed at the app level.",
+  "groups": [
+    {
+      "name": "tenant-settings",
+      "prefix": "/api/v1/settings",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Tenant + user settings surface. Public groups (AsSetting.public=true) skip the auth middleware via route-level exclusion.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Settings\\Http\\Controllers\\SettingsController@index",
+          "permission": "settings.read",
+          "description": "List every registered group + resolved values for the caller. Paginated."
+        },
+        {
+          "method": "GET",
+          "path": "/schema",
+          "controller": "Academorix\\Settings\\Http\\Controllers\\SettingsController@schema",
+          "permission": "settings.read",
+          "description": "Full schema for admin UI rendering. Returns groups + sections + fields + control types + validation."
+        },
+        {
+          "method": "GET",
+          "path": "/{group}",
+          "controller": "Academorix\\Settings\\Http\\Controllers\\SettingsController@show",
+          "permission": "AsSetting.permission per group (registry-resolved)",
+          "description": "Read one group's resolved values. Sensitive fields masked."
+        },
+        {
+          "method": "GET",
+          "path": "/{group}/schema",
+          "controller": "Academorix\\Settings\\Http\\Controllers\\SettingsController@groupSchema",
+          "permission": "AsSetting.permission per group"
+        },
+        {
+          "method": "PUT",
+          "path": "/{group}",
+          "controller": "Academorix\\Settings\\Http\\Controllers\\SettingsController@update",
+          "permission": "settings.update.{group}",
+          "description": "Partial update. Fires SettingsChangeEvent per changed field. Non-listed fields untouched."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{group}/{name}",
+          "controller": "Academorix\\Settings\\Http\\Controllers\\SettingsController@clearOverride",
+          "permission": "settings.update.{group}",
+          "description": "Clear an override at the caller's scope \u2014 falls through to lower scope on next read."
+        }
+      ]
+    }
+  ]
+}

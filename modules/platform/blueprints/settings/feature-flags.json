@@ -1,0 +1,38 @@
+{
+  "id": "academorix://modules/settings/feature-flags",
+  "$version": 1,
+  "title": "settings \u2014 kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "settings.writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for PUT / DELETE routes. Off = read-only mode (incident response)."
+    },
+    {
+      "key": "settings.discovery",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Attribute discovery at boot. Off falls back to cached registry from last successful boot."
+    },
+    {
+      "key": "settings.dual_write_activity",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "activity::WriteSettingsChangeToActivity listener."
+    },
+    {
+      "key": "settings.dual_write_audit",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "audit::WriteSettingsChangeToAudit listener. NEVER OFF in production."
+    },
+    {
+      "key": "settings.sensitive_reveal",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "?reveal=true query parameter behaviour. Off forces mask regardless of permission."
+    }
+  ]
+}

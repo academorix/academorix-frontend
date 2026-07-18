@@ -1,0 +1,72 @@
+{
+    "name": "academorix/laravel-nightwatch",
+    "description": "Laravel Nightwatch production monitoring with attribute-driven context discovery, sampling, filtering, and redaction for Academorix applications",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Academorix Team",
+            "email": "dev@academorix.com"
+        }
+    ],
+    "homepage": "https://github.com/academorix-inc/laravel-telemetry/nightwatch",
+    "support": {
+        "issues": "https://github.com/academorix-inc/laravel-telemetry/nightwatch/-/issues",
+        "source": "https://github.com/academorix-inc/laravel-telemetry/nightwatch"
+    },
+    "keywords": [
+        "academorix",
+        "telemetry",
+        "nightwatch",
+        "monitoring",
+        "observability",
+        "production",
+        "laravel"
+    ],
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "require": {
+        "laravel/nightwatch": "^1.0",
+        "php": "^8.4|^8.5",
+        "academorix/laravel-support": "@dev"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.6",
+        "orchestra/testbench": "^10.0",
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Academorix\\Nightwatch\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Academorix\\Nightwatch\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Academorix\\Nightwatch\\Providers\\NightwatchServiceProvider"
+            ],
+            "aliases": {
+                "Nightwatch": "Academorix\\Nightwatch\\Facades\\Nightwatch"
+            }
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../../../framework/src/support",
+            "options": {
+                "symlink": true
+            }
+        }
+    ]
+}

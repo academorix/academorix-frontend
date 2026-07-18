@@ -1,0 +1,21 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Academorix\Storage\Exceptions;
+
+use Academorix\Exceptions\AcademorixException;
+
+/**
+ * Raised when a File referenced by id or signature does not exist.
+ *
+ * @category Storage
+ *
+ * @since    0.1.0
+ */
+final class FileNotFoundException extends AcademorixException
+{
+    public const CODE = 'storage.not_found';
+
+    public const TRANSLATION_KEY = 'storage::errors.not_found';
+}

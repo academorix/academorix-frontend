@@ -1,0 +1,73 @@
+{
+  "id": "academorix://modules/geography/schemas/currency",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Currency",
+  "description": "ISO-4217 currency row. Vendor-owned schema. Route binding accepts numeric PK OR ISO-4217 code (uppercase). Precision + minor_unit fields feed the price / money formatters across the app.",
+  "type": "object",
+  "x-module": "geography",
+  "x-vendor": {
+    "package": "nnjeim/world",
+    "vendor_model": "Nnjeim\\World\\Models\\Currency",
+    "we_own_migration": false,
+    "we_own_seeder": false
+  },
+  "x-eloquent": {
+    "baseClass": "Nnjeim\\World\\Models\\Currency",
+    "table": "currencies",
+    "primaryKey": "id",
+    "keyType": "int",
+    "incrementing": true,
+    "timestamps": false,
+    "model": "Academorix\\Geography\\Models\\Currency",
+    "interface": "Academorix\\Geography\\Contracts\\Data\\CurrencyInterface",
+    "implements": ["Academorix\\Geography\\Contracts\\Data\\CurrencyInterface"],
+    "traits": ["HasFactory", "Filterable"],
+    "observers": ["CurrencyObserver"]
+  },
+  "x-database": {
+    "engine": "any (vendor-supported)",
+    "vendor_owned": true,
+    "columns_summary": {
+      "id": { "type": "integer", "primary": true },
+      "country_id": { "type": "integer" },
+      "name": { "type": "string", "description": "English currency name (e.g. 'Euro')." },
+      "code": { "type": "string", "length": 3, "description": "ISO-4217 alpha code (e.g. EUR)." },
+      "symbol": {
+        "type": "string",
+        "nullable": true,
+        "description": "Currency symbol (e.g. \u20ac). May be multi-char (kr for SEK)."
+      },
+      "symbol_native": {
+        "type": "string",
+        "nullable": true,
+        "description": "Native-script symbol (\u00a5 vs \uffe5)."
+      },
+      "precision": {
+        "type": "integer",
+        "description": "Decimal places (2 for EUR/USD, 0 for JPY, 3 for BHD)."
+      }
+    }
+  },
+  "required": ["id", "country_id", "name", "code"],
+  "properties": {
+    "id": { "type": "integer" },
+    "country_id": { "type": "integer" },
+    "name": { "type": "string" },
+    "code": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "symbol": { "type": ["string", "null"] },
+    "symbol_native": { "type": ["string", "null"] },
+    "precision": { "type": "integer", "minimum": 0, "maximum": 8 }
+  },
+  "additionalProperties": true,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "resource_class": "Academorix\\Geography\\Data\\Resources\\CurrencyResourceData"
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["numeric PK", "ISO-4217 alpha (case-insensitive)"]
+  }
+}

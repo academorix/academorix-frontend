@@ -1,0 +1,13 @@
+{
+  "offlineBanner": {
+    "title": "أنت غير متصل بالإنترنت"
+  },
+  "networkStatus": {
+    "offline": "غير متصل",
+    "slow": "اتصال بطيء",
+    "wifi": "Wi-Fi",
+    "cellular": "بيانات الجوّال",
+    "ethernet": "Ethernet",
+    "unknown": "متصل"
+  }
+}

@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "athlete": "Lina Al-Sadeq",
+    "goal": "Compete regional 50m freestyle",
+    "milestone": "Sub-33 second target",
+    "progress": 0.68,
+    "status": { "text": "On track", "color": "success" },
+    "isActive": true,
+    "targetDate": "2025-05-15",
+    "createdAt": "2024-11-01T09:00:00Z"
+  },
+  {
+    "id": 2,
+    "athlete": "Isabella Rossi",
+    "goal": "Master beam routine C",
+    "milestone": "Full run-through",
+    "progress": 0.42,
+    "status": { "text": "Behind", "color": "warning" },
+    "isActive": true,
+    "targetDate": "2025-06-01",
+    "createdAt": "2024-12-01T09:00:00Z"
+  },
+  {
+    "id": 3,
+    "athlete": "Priya Nair",
+    "goal": "Break 13-second 100m",
+    "milestone": "Consistent under 13.5",
+    "progress": 0.71,
+    "status": { "text": "On track", "color": "success" },
+    "isActive": true,
+    "targetDate": "2025-05-31",
+    "createdAt": "2024-10-15T09:00:00Z"
+  },
+  {
+    "id": 4,
+    "athlete": "Yusuf Chowdhury",
+    "goal": "Captain U16 squad",
+    "milestone": "Leadership training",
+    "progress": 0.55,
+    "status": { "text": "On track", "color": "success" },
+    "isActive": true,
+    "targetDate": "2025-08-01",
+    "createdAt": "2024-09-01T09:00:00Z"
+  },
+  {
+    "id": 5,
+    "athlete": "Marcus Lee",
+    "goal": "First-serve percentage above 60%",
+    "milestone": "Serve mechanics",
+    "progress": 0.34,
+    "status": { "text": "Behind", "color": "warning" },
+    "isActive": true,
+    "targetDate": "2025-07-15",
+    "createdAt": "2025-01-20T09:00:00Z"
+  }
+]

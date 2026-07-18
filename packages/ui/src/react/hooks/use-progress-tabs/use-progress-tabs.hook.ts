@@ -6,6 +6,7 @@
 
 import { useContext } from "react";
 
+// Relative imports — see the note in `progress-tabs.component.tsx`.
 import { ProgressTabsContext } from "../../contexts/progress-tabs";
 
 import type { IProgressTabsContextValue } from "../../components/progress-tabs/progress-tabs.interface";

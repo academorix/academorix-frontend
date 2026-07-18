@@ -1,0 +1,81 @@
+{
+  "id": "academorix://modules/transfer/policies",
+  "$version": 1,
+  "title": "transfer \u2014 authorization policies",
+  "policies": [
+    {
+      "model": "XferJob",
+      "class": "Academorix\\Transfer\\Policies\\XferJobPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "transfer.viewAny",
+          "scope": "Authenticated user \u2014 sees own xfer_jobs via query scope (initiator = auth OR platform.transfer.viewAny)."
+        },
+        {
+          "action": "view",
+          "permission": "transfer.view",
+          "scope": "row.causer_id === auth OR platform admin."
+        },
+        {
+          "action": "cancel",
+          "permission": "transfer.cancel",
+          "scope": "row.causer_id === auth AND row.status IN ('queued','running'). Platform admin may cancel any state with --force."
+        },
+        {
+          "action": "retryShard",
+          "permission": "transfer.retryShard",
+          "scope": "row.causer_id === auth AND row.status IN ('failed','partially_succeeded') AND target shard is failed."
+        },
+        {
+          "action": "download",
+          "permission": "transfer.download",
+          "scope": "row.causer_id === auth. Signed URL check happens in transfer.signed-artifact middleware."
+        },
+        {
+          "action": "downloadErrors",
+          "permission": "transfer.download",
+          "scope": "Same as download but errors_artifact_id must be non-null."
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.transfer.viewAny",
+          "scope": "Platform admin cross-tenant."
+        },
+        { "action": "platformView", "permission": "platform.transfer.view" }
+      ]
+    },
+    {
+      "model": "XferMappingProfile",
+      "class": "Academorix\\Transfer\\Policies\\XferMappingProfilePolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "transfer.mapping-profiles.viewAny",
+          "scope": "Caller sees own profiles + any is_shared=true in the tenant."
+        },
+        {
+          "action": "view",
+          "permission": "transfer.mapping-profiles.view",
+          "scope": "row.owner_id === auth OR (row.is_shared AND same tenant)."
+        },
+        { "action": "create", "permission": "transfer.mapping-profiles.create" },
+        {
+          "action": "update",
+          "permission": "transfer.mapping-profiles.update",
+          "scope": "row.owner_id === auth."
+        },
+        {
+          "action": "share",
+          "permission": "transfer.mapping-profiles.share",
+          "scope": "row.owner_id === auth AND entitlement `transfer.can_share_mapping_profiles`. Sets is_shared=true."
+        },
+        {
+          "action": "delete",
+          "permission": "transfer.mapping-profiles.delete",
+          "scope": "row.owner_id === auth. Historical XferJob referencing this profile keep working (soft-delete)."
+        }
+      ]
+    }
+  ]
+}

@@ -16,17 +16,14 @@
  * want a click-to-open interaction wrap the content in their own `<Link>`.
  */
 
-import { cn } from "@academorix/ui/react";
+import { cn } from "@stackra/ui/react";
 import { forwardRef } from "react";
 
-import type {
-  KanbanCardDragProps,
-} from "@/components/kanban/use-kanban-drag";
+import type { KanbanCardDragProps } from "@/components/kanban/use-kanban-drag";
 import type { HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, ReactNode } from "react";
 
 /** Props for {@link KanbanCard}. */
-export interface KanbanCardProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "onKeyDown"> {
+export interface KanbanCardProps extends Omit<HTMLAttributes<HTMLDivElement>, "onKeyDown"> {
   /** The card body — usually a small stack of chips and meta rows. */
   children: ReactNode;
   /**

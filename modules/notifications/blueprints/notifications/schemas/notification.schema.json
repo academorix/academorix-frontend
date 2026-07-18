@@ -1,0 +1,314 @@
+{
+  "id": "academorix://modules/notifications/schemas/notification",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Notification",
+  "description": "The universal delivery record. One row per logical notification a user should receive. Fans out to N NotificationDelivery rows (one per resolved channel). Addressee is polymorphic \u2014 typically a User but can be an anonymous email/phone (invitations before user creation). Payload + recipient snapshot travel with the row so DSAR export and audit trails don't require joins into User at query time. State machine advances via observers on NotificationDelivery state changes (aggregate projection).",
+  "type": "object",
+  "x-module": "notifications",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "notifications",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "not_",
+    "incrementing": false,
+    "model": "Academorix\\Notifications\\Models\\Notification",
+    "interface": "Academorix\\Notifications\\Contracts\\Data\\NotificationInterface",
+    "implements": ["Academorix\\Notifications\\Contracts\\Data\\NotificationInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "HasStates",
+      "BelongsToTenant",
+      "BelongsToApplication",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable",
+      "Filterable",
+      "Searchable",
+      "Exportable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "state": "NotificationState",
+      "priority": "NotificationPriority",
+      "priority_channels_requested": "array",
+      "payload": "NotificationPayloadCast",
+      "metadata": "array",
+      "seen_at": "datetime",
+      "archived_at": "datetime"
+    },
+    "appends": ["is_seen", "is_archived", "is_terminal"],
+    "observers": ["NotificationObserver"],
+    "hidden": ["addressee_email", "addressee_phone", "payload", "metadata"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `not_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "application_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": {
+          "table": "applications",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "Null when the notification is tenant-global (not tied to a specific Application). Rare \u2014 typically set."
+      },
+      "category_slug": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Module-namespaced (`invitations.invitation_sent`). References notification_categories.slug.",
+        "foreign": {
+          "table": "notification_categories",
+          "column": "slug",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        }
+      },
+      "template_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Resolved template at dispatch time. Null on template-resolution failure (fallback used).",
+        "foreign": {
+          "table": "notification_templates",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        }
+      },
+      "priority": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "transactional",
+        "description": "Enum: `critical`, `transactional`, `product`, `marketing`."
+      },
+      "priority_channels_requested": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "Array of channel slugs resolved from preferences. Snapshot at dispatch \u2014 preference changes after don't re-shape delivery."
+      },
+      "state": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "queued",
+        "description": "Aggregate state projected from NotificationDelivery. Enum: `queued`, `sending`, `sent`, `delivered`, `failed`, `opened`, `clicked`, `archived`."
+      },
+      "addressee_type": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "user",
+        "description": "Polymorphic. Enum: `user`, `platform_user`, `anonymous` (invite-by-email before user creation)."
+      },
+      "addressee_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Polymorphic. Null when addressee_type=anonymous."
+      },
+      "addressee_email": {
+        "type": "string",
+        "length": 320,
+        "nullable": true,
+        "description": "Snapshotted at dispatch. Lowercased on write. Null when the recipient has no email (SMS-only recipients on push-only categories are rare)."
+      },
+      "addressee_phone": {
+        "type": "string",
+        "length": 20,
+        "nullable": true,
+        "description": "E.164 format. Snapshotted at dispatch."
+      },
+      "addressee_name": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "description": "Display name for salutation. Snapshotted at dispatch."
+      },
+      "actor_type": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "Polymorphic. Enum: `user`, `platform_user`, `system`."
+      },
+      "actor_id": { "type": "string", "length": 64, "nullable": true },
+      "subject": {
+        "type": "string",
+        "length": 300,
+        "nullable": true,
+        "description": "Rendered subject (mail + in-app). Snapshotted after template render."
+      },
+      "payload": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "{}",
+        "description": "Template variables + tenant branding block + recipient block. Event-carried state \u2014 self-contained. Confidential tier (may contain PII)."
+      },
+      "seen_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "First time the user marked seen (explicit or auto-on-view)."
+      },
+      "archived_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When archived by user OR by retention job."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "addressee_type", "addressee_id", "state", "created_at"],
+        "unique": false,
+        "name": "notifications_inbox_index",
+        "description": "Powers the per-user inbox query: `SELECT ... WHERE tenant_id=? AND addressee_id=? AND state\u2260archived ORDER BY created_at DESC`. Composite index tuned for this specific access."
+      },
+      {
+        "columns": ["tenant_id", "category_slug", "created_at"],
+        "unique": false,
+        "name": "notifications_category_index",
+        "description": "Admin sends dashboard: aggregate by category over time."
+      },
+      {
+        "columns": ["tenant_id", "state", "created_at"],
+        "unique": false,
+        "name": "notifications_state_index",
+        "description": "Retention scan + failure-spike diagnostics."
+      },
+      {
+        "columns": ["template_id"],
+        "unique": false,
+        "name": "notifications_template_id_index",
+        "description": "Refuse-delete-when-live-sends-reference query."
+      },
+      {
+        "columns": ["addressee_email"],
+        "unique": false,
+        "name": "notifications_addressee_email_index",
+        "predicate": "addressee_email IS NOT NULL",
+        "description": "DSAR aggregation queries by email."
+      },
+      {
+        "columns": ["addressee_phone"],
+        "unique": false,
+        "name": "notifications_addressee_phone_index",
+        "predicate": "addressee_phone IS NOT NULL"
+      },
+      {
+        "columns": ["created_at"],
+        "unique": false,
+        "name": "notifications_created_at_index",
+        "description": "Retention scan (BRIN when at scale)."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "category_slug",
+    "priority",
+    "priority_channels_requested",
+    "state",
+    "addressee_type",
+    "addressee_name",
+    "payload",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^not_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "application_id": { "type": ["string", "null"], "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "category_slug": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$",
+      "maxLength": 128
+    },
+    "template_id": { "type": ["string", "null"], "maxLength": 64 },
+    "priority": { "type": "string", "enum": ["critical", "transactional", "product", "marketing"] },
+    "priority_channels_requested": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["mail", "sms", "push", "in_app"] },
+      "minItems": 1
+    },
+    "state": {
+      "type": "string",
+      "enum": ["queued", "sending", "sent", "delivered", "failed", "opened", "clicked", "archived"]
+    },
+    "addressee_type": { "type": "string", "enum": ["user", "platform_user", "anonymous"] },
+    "addressee_id": { "type": ["string", "null"], "maxLength": 64 },
+    "addressee_email": { "type": ["string", "null"], "format": "email", "maxLength": 320 },
+    "addressee_phone": {
+      "type": ["string", "null"],
+      "pattern": "^\\+[1-9][0-9]{1,14}$",
+      "maxLength": 20
+    },
+    "addressee_name": { "type": "string", "maxLength": 200 },
+    "actor_type": { "type": ["string", "null"], "enum": ["user", "platform_user", "system", null] },
+    "actor_id": { "type": ["string", "null"], "maxLength": 64 },
+    "subject": { "type": ["string", "null"], "maxLength": 300 },
+    "payload": { "type": "object", "additionalProperties": true },
+    "seen_at": { "type": ["string", "null"], "format": "date-time" },
+    "archived_at": { "type": ["string", "null"], "format": "date-time" },
+    "is_seen": { "type": "boolean", "description": "Computed. seen_at IS NOT NULL." },
+    "is_archived": { "type": "boolean", "description": "Computed. archived_at IS NOT NULL." },
+    "is_terminal": {
+      "type": "boolean",
+      "description": "Computed. state IN delivered/failed/opened/clicked/archived."
+    },
+    "metadata": { "type": ["object", "null"], "additionalProperties": true },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": [
+      "addressee_email",
+      "addressee_phone",
+      "payload",
+      "metadata",
+      "created_by",
+      "updated_by",
+      "deleted_by"
+    ],
+    "computed": ["is_seen", "is_archived", "is_terminal"]
+  }
+}

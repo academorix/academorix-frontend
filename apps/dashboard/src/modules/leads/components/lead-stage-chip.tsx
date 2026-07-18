@@ -7,7 +7,7 @@
  * stays consistent across the list and detail screens.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 
 import type { LeadStage } from "@/modules/leads/leads.types";
 import type { ReactNode } from "react";

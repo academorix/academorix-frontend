@@ -34,10 +34,10 @@
  * @see onboarding module — Onboarding checklist.
  */
 
-import { CheckCircleIcon, EyeSlashIcon, XMarkIcon } from "@academorix/ui/icons/outline";
-import { Button, Chip, Link, ProgressBar, Widget } from "@academorix/ui/react";
+import { CheckCircleIcon, EyeSlashIcon, XMarkIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Chip, Link, ProgressBar, Widget } from "@stackra/ui/react";
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "@stackra/routing/react";
 
 import type { ReactNode } from "react";
 

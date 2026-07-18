@@ -1,0 +1,94 @@
+#
+# phpstan-extension.neon
+#
+# Extension registration for the Academorix Architecture package.
+# Consumers pick this up via `extra.phpstan.includes` in the
+# root composer.json — see phpstan/extension-installer for the
+# machinery. Each rule below is exposed to PHPStan through the
+# `phpstan.rules.rule` service tag, which is how PHPStan
+# discovers third-party rules at boot.
+#
+# The `arguments` map for each rule mirrors the constructor of
+# the corresponding class. Autowired services (like
+# `ReflectionProvider`) are omitted — PHPStan resolves those
+# automatically.
+#
+# Keep the argument shape identical to the constructor
+# signature. When a rule gains a constructor argument, add the
+# matching key here.
+#
+services:
+
+    # ---------------------------------------------------------
+    # architecture.phpstan.no_facades_in_services
+    # ---------------------------------------------------------
+    -
+        class: Academorix\Architecture\PhpStan\NoFacadesInServicesRule
+        tags:
+            - phpstan.rules.rule
+        arguments:
+            serviceNamespaces:
+                - App\Services\
+                - App\Actions\
+                - Academorix\
+            allowedFacades: []
+
+    # ---------------------------------------------------------
+    # architecture.phpstan.no_query_builder_in_services
+    # ---------------------------------------------------------
+    -
+        class: Academorix\Architecture\PhpStan\NoQueryBuilderInServicesRule
+        tags:
+            - phpstan.rules.rule
+        arguments:
+            serviceNamespaces:
+                - App\Services\
+                - App\Actions\
+                - Academorix\
+            modelBaseClass: Illuminate\Database\Eloquent\Model
+
+    # ---------------------------------------------------------
+    # architecture.phpstan.no_app_make_in_constructor
+    # ---------------------------------------------------------
+    #
+    # `serviceNamespaces: []` = fire on EVERY class's ctor.
+    # Narrow the scope per project by populating the list.
+    -
+        class: Academorix\Architecture\PhpStan\NoAppMakeInConstructorRule
+        tags:
+            - phpstan.rules.rule
+        arguments:
+            serviceNamespaces: []
+
+    # ---------------------------------------------------------
+    # architecture.phpstan.singleton_no_scoped_deps
+    # ---------------------------------------------------------
+    -
+        class: Academorix\Architecture\PhpStan\SingletonNoScopedDepsRule
+        tags:
+            - phpstan.rules.rule
+        arguments:
+            singletonAttributes:
+                - Illuminate\Container\Attributes\Singleton
+            scopedAttributes:
+                - Illuminate\Container\Attributes\CurrentUser
+                - Illuminate\Container\Attributes\Authenticated
+                - Illuminate\Container\Attributes\RouteParameter
+                - Illuminate\Container\Attributes\Context
+
+    # ---------------------------------------------------------
+    # architecture.phpstan.sensitive_parameter_required
+    # ---------------------------------------------------------
+    -
+        class: Academorix\Architecture\PhpStan\SensitiveParameterRequiredRule
+        tags:
+            - phpstan.rules.rule
+        arguments:
+            sensitivePatterns:
+                - password
+                - secret
+                - token
+                - apiKey
+                - accessKey
+                - refreshToken
+            sensitiveAttribute: SensitiveParameter

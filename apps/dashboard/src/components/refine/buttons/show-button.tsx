@@ -7,7 +7,7 @@
  * `useShowButton` (hidden/disabled reflect the `accessControlProvider`).
  */
 
-import { EyeIcon } from "@academorix/ui/icons/outline";
+import { EyeIcon } from "@stackra/ui/icons/heroicon/outline";
 import { useShowButton } from "@refinedev/core";
 
 import type { RecordActionButtonProps } from "@/components/refine/buttons/nav-button";

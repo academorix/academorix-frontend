@@ -20,7 +20,7 @@
  * behind a `TODO(kanban-order)` in the drag hook.
  */
 
-import { cn } from "@academorix/ui/react";
+import { cn } from "@stackra/ui/react";
 import { useMemo } from "react";
 
 import type {
@@ -76,10 +76,7 @@ function bucketCards<TCard extends KanbanCardShape, TColumnId extends string>(
  * @typeParam TCard - The card record shape.
  * @typeParam TColumnId - Union of allowed column ids on this board.
  */
-export function KanbanBoard<
-  TCard extends KanbanCardShape,
-  TColumnId extends string = string,
->({
+export function KanbanBoard<TCard extends KanbanCardShape, TColumnId extends string = string>({
   ariaLabel,
   columns,
   cards,

@@ -1,0 +1,116 @@
+{
+  "id": "academorix://modules/transfer/permissions",
+  "$version": 1,
+  "title": "transfer \u2014 permissions",
+  "seeder": "Academorix\\Transfer\\Database\\Seeders\\TransferPermissionSeeder",
+  "isSystem": true,
+  "description": "Operational permissions on the transfer surface itself. Per-ENTITY import / export permissions (e.g. `athletes.import`) are declared by each domain module \u2014 they compose with these via `requiredPermission` on the #[Importable] / #[Exportable] attribute.",
+  "permissions": [
+    {
+      "name": "transfer.viewAny",
+      "guard": "sanctum",
+      "description": "List xfer_jobs. Regular users see own; scope applied at query.",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "transfer.view",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "transfer.imports.run",
+      "guard": "sanctum",
+      "description": "Initiate imports. Composed with per-entity `<entity>.import` at policy time.",
+      "seededOn": ["admin", "owner", "coach"]
+    },
+    {
+      "name": "transfer.exports.run",
+      "guard": "sanctum",
+      "description": "Initiate exports. Composed with per-entity `<entity>.export`.",
+      "seededOn": ["member", "admin", "owner", "coach"]
+    },
+    {
+      "name": "transfer.samples.generate",
+      "guard": "sanctum",
+      "description": "Generate sample data. Dev / demo only \u2014 seeded on admin roles only.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "transfer.cancel",
+      "guard": "sanctum",
+      "description": "Cancel own queued / running job.",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "transfer.retryShard",
+      "guard": "sanctum",
+      "description": "Retry a failed shard against a persisted source file.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "transfer.download",
+      "guard": "sanctum",
+      "description": "Download result / errors artifact via signed URL.",
+      "seededOn": ["member", "admin", "owner", "coach"]
+    },
+    {
+      "name": "transfer.entities.viewAny",
+      "guard": "sanctum",
+      "description": "List available entities in the capabilities manifest.",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "transfer.entities.view",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "transfer.templates.download",
+      "guard": "sanctum",
+      "description": "Download empty templates.",
+      "seededOn": ["member", "admin", "owner", "coach"]
+    },
+    {
+      "name": "transfer.mapping-profiles.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner", "coach"]
+    },
+    {
+      "name": "transfer.mapping-profiles.view",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner", "coach"]
+    },
+    {
+      "name": "transfer.mapping-profiles.create",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner", "coach"]
+    },
+    {
+      "name": "transfer.mapping-profiles.update",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner", "coach"]
+    },
+    {
+      "name": "transfer.mapping-profiles.delete",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner", "coach"]
+    },
+    {
+      "name": "transfer.mapping-profiles.share",
+      "guard": "sanctum",
+      "description": "Mark a mapping profile as tenant-wide shared. Gated additionally by entitlement `transfer.can_share_mapping_profiles`.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "platform.transfer.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant xfer_jobs list for support triage.",
+      "seededOn": ["super_admin", "support", "ops"]
+    },
+    {
+      "name": "platform.transfer.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "support", "ops"]
+    }
+  ]
+}

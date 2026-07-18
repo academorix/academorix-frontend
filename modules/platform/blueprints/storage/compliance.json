@@ -1,0 +1,118 @@
+{
+  "id": "academorix://modules/storage/compliance",
+  "$version": 1,
+  "title": "storage \u2014 compliance evidence",
+  "description": "Storage handles user-supplied content \u2014 the most PII-heavy surface in the platform. Compliance obligations centre on: (a) data minimisation via kind-level MIME + size caps, (b) storage limitation via retention windows + tenant cascade, (c) integrity + confidentiality via signed URLs + antivirus, (d) DSAR support via cross-tenant erasure orchestration, (e) subprocessor management for the S3 / CDN / AV vendor chain.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "Every #[FileKind] declares allowed_mimes + max_size_mb. Uploads outside the allowlist are rejected at the storage.mime.validate middleware \u2014 the byte never reaches disk. sha256 dedup ensures we never persist the same content twice within the same tenant boundary."
+        },
+        {
+          "article": "Art. 5(1)(e)",
+          "principle": "storage limitation",
+          "evidence": "Retention windows declared per kind (see retention.json) + enforced by PurgeExpiredFilesJob nightly. Tenant erasure cascades via storage::CascadeStorageErasure listener \u2014 blob refcount decremented, physical byte removed on last-referrer."
+        },
+        {
+          "article": "Art. 5(1)(f)",
+          "principle": "integrity + confidentiality",
+          "evidence": "Every upload passes through the antivirus pipeline (ScanFileForVirusesJob). Infected files quarantined + never served. Every read requires a signed URL with per-issuance audit trail (SignedUrlAudit)."
+        },
+        {
+          "article": "Art. 15 + 20",
+          "principle": "right of access + portability",
+          "evidence": "storage::ExportFileMetadataForSubject listener aggregates every file's metadata referencing the DSAR subject into the compliance export ZIP. Physical byte inclusion requires tenant admin approval + is handled by a separate flow."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "storage::HandleDsarErasureForSubject listener iterates every File where the subject appears in owner_id / issued_to_user_id / metadata references. Emits FileErased with erasure_reason=dsar_erasure. Audit trail persists the erasure evidence for the DSAR completion report."
+        },
+        {
+          "article": "Art. 28",
+          "principle": "processor obligations",
+          "evidence": "Third-party storage backends (AWS S3, GCS, Azure Blob), CDN vendors (CloudFront, Cloudflare), image-processor vendors (Cloudinary if used) are subprocessors. See subprocessors.json."
+        },
+        {
+          "article": "Art. 30",
+          "principle": "records of processing",
+          "evidence": "Every SignedUrlAudit row is a processing record. Retained 90 days minimum."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security of processing",
+          "evidence": "All storage backends require TLS 1.2+. S3 buckets use SSE-S3 or SSE-KMS at rest. Signed URL signatures are HMAC-SHA256. Client-Side Encryption is available for enterprise tiers requiring end-to-end confidentiality (feature-flag guarded)."
+        },
+        {
+          "article": "Art. 33 + 34",
+          "principle": "breach notification",
+          "evidence": "FileVirusFound + StorageQuotaExceeded events feed the audit + activity + notification pipelines. Compliance module aggregates virus incidents into the daily security report."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical + physical access",
+          "evidence": "Every file access via signed URL with issuer + TTL + audit. Tenant scope enforced at middleware layer AND at the FilePolicy AND at the disk-path prefix layer. Three defence lines against cross-tenant leaks."
+        },
+        {
+          "criterion": "CC6.6",
+          "principle": "logical access + IAM",
+          "evidence": "S3 IAM roles rotated quarterly. Signed URL signing keys rotated per config('storage.signing_key_rotation_days'). Redis-cached signature keys expire on rotation, forcing a re-sign for in-flight sessions."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "data-in-transit protection",
+          "evidence": "TLS everywhere. Signed URLs on HTTPS only \u2014 HTTP scheme rejected at the redemption middleware. Chunked uploads use TLS + optional client cert (mTLS for enterprise)."
+        },
+        {
+          "criterion": "CC6.8",
+          "principle": "restricting unauthorized access",
+          "evidence": "FilePolicy + tenant scope enforcement. `restricted` visibility files require owner or admin. Infected files hidden from every tenant-facing route."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "Health probes on S3 reachability + AV scanner heartbeat + variant queue depth. Alerts on FileVirusFound + StorageQuotaExceeded + PurgeExpiredFiles cycle failure."
+        }
+      ]
+    },
+    "pci_dss": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "Requirement 3",
+          "principle": "never store cardholder data",
+          "evidence": "The `#[FileKind(allowed_mimes)]` allowlist per kind rejects arbitrary uploads. Payment-integration flows route card data through the payment provider's tokenised endpoints and NEVER through our storage module. Explicit denylist middleware refuses any file whose sniffed content matches card-number regex patterns."
+        }
+      ]
+    },
+    "coppa": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "verifiable parental consent for minor uploads",
+          "evidence": "When a File's owner_id resolves to a minor (via user::User.age_gate context), the upload requires a parental consent record from the compliance module. Enforced at the FilePolicy::upload level. Files uploaded by minors receive `visibility=restricted` by default."
+        }
+      ]
+    }
+  },
+  "audit_events": {
+    "written_to_audit_log": [
+      "FileUploaded (via audit::WriteAuditEntry listener)",
+      "FileErased (via audit::WriteAuditEntry listener)",
+      "FileVirusFound",
+      "SignedUrlIssued (share reason only \u2014 other reasons too high-volume)",
+      "SignedUrlRevoked (bulk_revoke reason)",
+      "Platform-admin quarantine actions",
+      "Platform-admin hard-delete actions"
+    ]
+  }
+}

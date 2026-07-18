@@ -24,10 +24,10 @@
  * comes online.
  */
 
-import { CheckIcon, Cog6ToothIcon, TrashIcon } from "@academorix/ui/icons/outline";
-import { Button, Chip, Drawer, Label } from "@academorix/ui/react";
+import { CheckIcon, Cog6ToothIcon, TrashIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Chip, Drawer, Label } from "@stackra/ui/react";
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "@stackra/routing/react";
 
 import type {
   NotificationDrawerCategoryFilter,

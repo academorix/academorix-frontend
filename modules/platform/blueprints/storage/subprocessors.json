@@ -1,0 +1,107 @@
+{
+  "id": "academorix://modules/storage/subprocessors",
+  "$version": 1,
+  "title": "storage \u2014 subprocessors",
+  "description": "Third-party vendors that receive or process file data on our behalf. Self-hosted deployments of any of these components move them out of the subprocessor list (they become transport, not processing) but require the deployment-specific compliance record to be updated.",
+  "subprocessors": [
+    {
+      "name": "Amazon Web Services (S3)",
+      "role": "primary_storage_backend",
+      "purpose": "Object storage for file bytes + variants. Multi-region deployment.",
+      "data_processed": [
+        "file bytes (encrypted at rest via SSE-S3 or SSE-KMS)",
+        "file metadata (Content-Type, Content-Length)",
+        "signed URL request logs (S3 access logs)"
+      ],
+      "location": "US East / US West / EU (Ireland) / EU (Frankfurt) / AP (Singapore) / AP (Sydney) \u2014 tenant-selected via `storage.eu_data_residency` feature",
+      "legal_basis": "contract",
+      "dpa_url": "https://aws.amazon.com/service-terms/",
+      "when_engaged": "Default backend. config('storage.default_disk') = 's3'."
+    },
+    {
+      "name": "Google Cloud Storage (GCS)",
+      "role": "alternate_storage_backend",
+      "purpose": "Object storage. Used when tenant opts into GCP hosting.",
+      "data_processed": ["file bytes", "file metadata", "access logs"],
+      "location": "US / EU / Asia / Australia (tenant-selected)",
+      "legal_basis": "contract",
+      "dpa_url": "https://cloud.google.com/terms/data-processing-addendum",
+      "when_engaged": "config('storage.disks.gcs.enabled') = true AND tenant disk assignment = 'gcs'."
+    },
+    {
+      "name": "Microsoft Azure Blob Storage",
+      "role": "alternate_storage_backend",
+      "purpose": "Object storage for Azure-hosted tenants.",
+      "data_processed": ["file bytes", "file metadata", "access logs"],
+      "location": "US / EU / Asia / Australia",
+      "legal_basis": "contract",
+      "dpa_url": "https://azure.microsoft.com/en-us/support/legal/",
+      "when_engaged": "config('storage.disks.azure.enabled') = true AND tenant disk assignment = 'azure'."
+    },
+    {
+      "name": "AWS CloudFront",
+      "role": "cdn",
+      "purpose": "Edge caching + delivery for signed URL redemptions. Cached content served from edge locations to reduce latency + S3 egress cost.",
+      "data_processed": [
+        "file bytes (cached, encrypted in-transit)",
+        "IP addresses of downloaders (access logs)"
+      ],
+      "location": "Global edge network",
+      "legal_basis": "contract",
+      "dpa_url": "https://aws.amazon.com/service-terms/",
+      "when_engaged": "storage.cdn_delivery feature enabled AND config('storage.cdn.provider') = 'cloudfront'."
+    },
+    {
+      "name": "Cloudflare (R2 + CDN)",
+      "role": "cdn_alternate",
+      "purpose": "Alternate CDN vendor. R2 for storage (S3-compatible; tenant opts in) + Cloudflare CDN for edge delivery.",
+      "data_processed": ["file bytes (cached)", "IP addresses (access logs)"],
+      "location": "Global edge network",
+      "legal_basis": "contract",
+      "dpa_url": "https://www.cloudflare.com/cloudflare-customer-dpa/",
+      "when_engaged": "config('storage.cdn.provider') = 'cloudflare' OR tenant disk assignment = 'r2'."
+    },
+    {
+      "name": "ClamAV (self-hosted)",
+      "role": "antivirus_scanner",
+      "purpose": "Open-source AV scanning. Runs as a sidecar or on-premise appliance.",
+      "data_processed": [
+        "file bytes (scanned in-memory or via streaming; not persisted by ClamAV itself)"
+      ],
+      "location": "Same infrastructure as the Academorix workers",
+      "legal_basis": "NOT A SUBPROCESSOR when self-hosted \u2014 we control it entirely.",
+      "when_engaged": "config('storage.antivirus.driver') = 'clamav'. Default in dev + production self-hosted deployments."
+    },
+    {
+      "name": "Cloudmersive Antivirus API",
+      "role": "antivirus_scanner_hosted",
+      "purpose": "Hosted AV scanning API. Alternative when self-hosted ClamAV is not viable (e.g. serverless deployments).",
+      "data_processed": [
+        "file bytes (submitted to API; retained per Cloudmersive's own retention policy)"
+      ],
+      "location": "US (Cloudmersive US endpoint)",
+      "legal_basis": "contract",
+      "dpa_url": "https://cloudmersive.com/data-processing-addendum",
+      "when_engaged": "config('storage.antivirus.driver') = 'cloudmersive'."
+    },
+    {
+      "name": "Cloudinary",
+      "role": "image_processor",
+      "purpose": "OPTIONAL image variant generation offload. Only engaged when the tenant opts into remote image processing (e.g. animated WebP output).",
+      "data_processed": ["file bytes for image uploads", "variant metadata"],
+      "location": "Global (multi-region)",
+      "legal_basis": "contract",
+      "dpa_url": "https://cloudinary.com/legal/dpa",
+      "when_engaged": "config('storage.variants.driver') = 'cloudinary'. Default is 'intervention-image' (local)."
+    }
+  ],
+  "self_hosted_components": [
+    "Laravel Reverb (broadcast for storage.file.variants_ready) \u2014 our infrastructure",
+    "Redis (variant queue + entitlement cache) \u2014 our infrastructure",
+    "PostgreSQL (file + variant + audit + chunked-upload tables) \u2014 our infrastructure"
+  ],
+  "notes": [
+    "Every tenant's chosen backend is stored in `tenants.storage_disk_assignment`. Cross-region moves require a data-migration operation + DPA update.",
+    "The AV driver choice is deployment-wide, not per-tenant. Enterprise tenants requiring hosted AV can request a deployment tier change."
+  ]
+}

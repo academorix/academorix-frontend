@@ -1,0 +1,1747 @@
+#!/usr/bin/env python3
+"""generate-sdk.py — blueprint-driven PHP SDK generator.
+
+Reads a module blueprint from `modules/<tier>/<module>/` and emits a full
+PHP SDK sub-package into `sdk/<tier>-<module>-sdk/`. The emitted shape
+matches the pilot at `sdk/platform-application-sdk/` and satisfies the
+canonical layout locked in `.kiro/steering/sdk-authoring.md`.
+
+The generator produces:
+
+  - composer.json / phpstan.neon / phpunit.xml / README.md
+  - src/<Module>SdkResource.php              (top-level, #[AsSdkResource])
+  - src/Data/<Entity>Data.php                (response DTOs)
+  - src/Payloads/<Aggregate>/*Payload.php    (Create + Update payloads)
+  - src/Requests/<Aggregate>/*Request.php    (Saloon HTTP transport)
+  - src/Resources/<Aggregate>Resource.php    (peer Resources)
+  - src/Enums/*.php                          (backed enums for closed sets)
+  - tests/Pest.php + tests/TestCase.php      (scaffolds)
+
+Custom endpoints (state-machine transitions, uploads, verify flows, ...)
+that don't fit the standard CRUD pattern are emitted as stubs with a
+`// TODO(sdk): hand-implement` comment for follow-up.
+
+Usage:
+    python3 modules/shared/blueprints/foundation/scripts/generate-sdk.py \\
+        <tier> <module> [--force] [--dry-run]
+
+    # Regenerate the pilot (for round-trip verification):
+    python3 modules/shared/blueprints/foundation/scripts/generate-sdk.py \\
+        platform application --force --into=/tmp/sdk-diff
+
+    # Emit all 7 remaining platform modules:
+    for m in tenants domains branding integrations settings webhook storage; do
+        python3 modules/shared/blueprints/foundation/scripts/generate-sdk.py platform $m --force
+    done
+
+Scope note — module-side vs SDK-side artifacts:
+    This generator emits SDK-side artifacts only (Saloon Requests, Spatie
+    Data DTOs, Resources, Enums). Module-side artifacts — Repositories,
+    Models, Contracts/Data/*Interface, Providers — are HAND-WRITTEN per
+    `.kiro/steering/php-attributes.md` + `.kiro/steering/architecture.md`.
+
+    If this script is ever extended to emit module-side code (e.g. a
+    repository interface pair for a domain aggregate), the container-
+    binding attributes MUST follow the split codified in
+    `.kiro/steering/php-attributes.md` §"Bind vs Overrides":
+
+      - `#[Illuminate\\Container\\Attributes\\Bind(Concrete::class)]` goes
+        ON the ABSTRACT (interface / abstract class we own) — Pattern A.
+      - `#[Academorix\\Container\\Attributes\\Overrides(Vendor::class)]`
+        goes ON the CONCRETE, and only when the abstract is a vendor /
+        third-party class we cannot annotate — Pattern B.
+
+    Never emit `#[Illuminate\\...\\Bind]` on a concrete with an interface
+    as its argument; that inverts Laravel's signature semantics
+    (the argument named `$concrete` no longer points at a concrete).
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Iterable
+
+# Repo root is four levels up: scripts/ -> foundation/ -> shared/ -> modules/ -> root.
+REPO_ROOT = Path(__file__).resolve().parents[5]
+
+
+# ---------------------------------------------------------------------------
+# Casing helpers.
+# ---------------------------------------------------------------------------
+
+def _split_words(s: str) -> list[str]:
+    """Split kebab / snake / camel into lowercase word chunks."""
+    return [
+        w.lower()
+        for w in re.split(r"[-_\s]+|(?<=[a-z0-9])(?=[A-Z])", s)
+        if w
+    ]
+
+
+def studly(s: str) -> str:
+    """kebab-case / snake_case -> StudlyCase (e.g. `tenants` -> `Tenancy`)."""
+    return "".join(w.capitalize() for w in _split_words(s))
+
+
+def camel(s: str) -> str:
+    """kebab-case / snake_case -> camelCase."""
+    words = _split_words(s)
+    if not words:
+        return ""
+    return words[0] + "".join(w.capitalize() for w in words[1:])
+
+
+def snake(s: str) -> str:
+    """StudlyCase / camelCase -> snake_case."""
+    return "_".join(_split_words(s))
+
+
+def kebab(s: str) -> str:
+    """Everything -> kebab-case."""
+    return "-".join(_split_words(s))
+
+
+def singular(s: str) -> str:
+    """Naive singular for common English plurals; sufficient for our nouns."""
+    special = {
+        "business-types": "business-type",
+        "categories": "category",
+        "policies": "policy",
+        "identities": "identity",
+        "hierarchies": "hierarchy",
+    }
+    key = kebab(s)
+    if key in special:
+        return special[key]
+    if key.endswith("ses") or key.endswith("xes"):
+        return key[:-2]
+    if key.endswith("ies"):
+        return key[:-3] + "y"
+    if key.endswith("s") and not key.endswith("ss"):
+        return key[:-1]
+    return key
+
+
+# ---------------------------------------------------------------------------
+# Blueprint data model.
+# ---------------------------------------------------------------------------
+
+@dataclass
+class Column:
+    """One column on an entity — from schema's `x-database.columns`."""
+
+    name: str
+    php_type: str
+    nullable: bool
+    description: str
+    is_enum: bool = False
+    enum_values: list[str] = field(default_factory=list)
+    max_length: int | None = None
+    pattern: str | None = None
+    min_length: int | None = None
+    wire_hidden: bool = False
+    wire_computed: bool = False
+
+
+@dataclass
+class Entity:
+    """One entity — from `schemas/<entity>.schema.json`."""
+
+    name: str  # e.g. "application"
+    class_name: str  # e.g. "Application"
+    key_prefix: str  # e.g. "app_"
+    description: str
+    server_model_class: str  # e.g. "Academorix\\Application\\Models\\Application"
+    columns: list[Column]
+    aggregate: str  # e.g. "applications" (kebab-case plural)
+
+    @property
+    def wire_columns(self) -> list[Column]:
+        return [c for c in self.columns if not c.wire_hidden]
+
+
+@dataclass
+class Route:
+    """One HTTP endpoint — extracted from module.json.hosts[]."""
+
+    verb: str  # GET / POST / PATCH / DELETE
+    path: str  # /api/v1/applications/{id}
+    audience: str  # central / tenant / platform-admin
+    aggregate: str  # "applications" (the entity's plural)
+    op: str  # list / show / create / update / delete / custom
+    # For 'custom' ops:
+    custom_name: str | None = None  # e.g. "verify" from POST /domains/{id}/verify
+
+    @property
+    def has_body(self) -> bool:
+        return self.verb in ("POST", "PATCH", "PUT")
+
+    @property
+    def is_mutation(self) -> bool:
+        return self.verb in ("POST", "PATCH", "PUT", "DELETE")
+
+
+@dataclass
+class Module:
+    """The full module blueprint."""
+
+    tier: str  # e.g. "platform"
+    name: str  # e.g. "tenants"
+    description: str
+    entities: list[Entity]
+    routes: list[Route]
+
+    @property
+    def studly_name(self) -> str:
+        return studly(self.name)
+
+    @property
+    def ns_root(self) -> str:
+        """Namespace prefix for the SDK package."""
+        return f"Academorix\\{studly(self.tier)}{studly(self.name)}Sdk"
+
+    @property
+    def composer_name(self) -> str:
+        return f"academorix-{self.tier}/{self.name}-sdk"
+
+    @property
+    def sdk_dir_name(self) -> str:
+        return f"{self.tier}-{self.name}-sdk"
+
+
+# ---------------------------------------------------------------------------
+# Blueprint reader.
+# ---------------------------------------------------------------------------
+
+SCHEMA_TO_PHP: dict[str, str] = {
+    "string": "string",
+    "integer": "int",
+    "number": "float",
+    "boolean": "bool",
+    "array": "array",
+    "object": "array",
+    "jsonb": "array",
+    "json": "array",
+    "uuid": "string",
+    "ulid": "string",
+    "date": "string",
+    "date-time": "string",
+    "datetime": "string",
+    "timestamptz": "string",
+    "timestamp": "string",
+    "bigint": "int",
+    "int": "int",
+    "text": "string",
+    "citext": "string",
+    "bool": "bool",
+}
+
+
+def _php_type_of(col: dict[str, Any]) -> str:
+    """Best-effort mapping of a schema column spec to a PHP type."""
+    # Prefer JSON Schema `type` when present; fall back to x-database `type`.
+    t = col.get("type")
+    if isinstance(t, list):
+        # e.g. ["string", "null"]
+        for candidate in t:
+            if candidate != "null":
+                t = candidate
+                break
+    if not isinstance(t, str):
+        return "string"
+    db_type = str(t).lower().split("(")[0]
+    return SCHEMA_TO_PHP.get(db_type, "string")
+
+
+def _extract_columns(schema: dict[str, Any]) -> list[Column]:
+    """Walk `x-database.columns` + `properties` to build the Column list."""
+    x_db = schema.get("x-database", {})
+    db_columns: dict[str, Any] = x_db.get("columns", {}) or {}
+    props: dict[str, Any] = schema.get("properties", {}) or {}
+    required = set(schema.get("required", []))
+    hidden = set((schema.get("x-wire", {}) or {}).get("hidden", []))
+    computed = set((schema.get("x-wire", {}) or {}).get("computed", []))
+
+    columns: list[Column] = []
+    # Iterate db columns first; fall back to properties for pure JSON-Schema
+    # blueprints without an x-database block.
+    keys = list(db_columns.keys()) if db_columns else list(props.keys())
+    for name in keys:
+        col_spec = db_columns.get(name, {}) or {}
+        prop_spec = props.get(name, {}) or {}
+
+        # Nullability: db `nullable` wins; else property-level.
+        nullable = bool(col_spec.get("nullable", name not in required))
+
+        # PHP type derives from the property schema (richer) with a fall-back
+        # to the db column type.
+        php_type = _php_type_of(prop_spec) if prop_spec else _php_type_of(col_spec)
+
+        # Description sourced from wherever it lives.
+        description = str(
+            prop_spec.get("description")
+            or col_spec.get("description")
+            or ""
+        ).strip()
+
+        # Enum detection — property-level `enum` list.
+        is_enum = bool(prop_spec.get("enum"))
+        enum_values = list(prop_spec.get("enum", []))
+
+        # Length / regex constraints — property-level.
+        max_length = prop_spec.get("maxLength")
+        min_length = prop_spec.get("minLength")
+        pattern = prop_spec.get("pattern")
+
+        columns.append(Column(
+            name=name,
+            php_type=php_type,
+            nullable=nullable,
+            description=description,
+            is_enum=is_enum,
+            enum_values=enum_values if enum_values else [],
+            max_length=int(max_length) if isinstance(max_length, int) else None,
+            min_length=int(min_length) if isinstance(min_length, int) else None,
+            pattern=str(pattern) if pattern else None,
+            wire_hidden=name in hidden,
+            wire_computed=name in computed,
+        ))
+
+    return columns
+
+
+def _extract_entity(schema_path: Path, module_name: str) -> Entity:
+    """Parse one `schemas/<entity>.schema.json` into an `Entity`."""
+    data = json.loads(schema_path.read_text())
+    entity_name = schema_path.stem.replace(".schema", "")
+
+    x_el = data.get("x-eloquent", {}) or {}
+    model_fqcn = x_el.get("model", f"App\\Models\\{studly(entity_name)}")
+    key_prefix = x_el.get("keyPrefix", "")
+
+    columns = _extract_columns(data)
+
+    # Aggregate = plural kebab of the entity name (e.g. tenant -> tenants).
+    aggregate = _pluralize(entity_name)
+
+    return Entity(
+        name=entity_name,
+        class_name=studly(entity_name),
+        key_prefix=key_prefix,
+        description=str(data.get("description", "")).strip(),
+        server_model_class=model_fqcn,
+        columns=columns,
+        aggregate=aggregate,
+    )
+
+
+def _pluralize(name: str) -> str:
+    """Naive English plural for aggregate detection."""
+    kebab_name = kebab(name)
+    special = {
+        "business-type": "business-types",
+        "category": "categories",
+        "policy": "policies",
+        "identity": "identities",
+        "settings-group": "settings-groups",
+        "settings-schema": "settings-schemas",
+        "setting-value": "setting-values",
+        "webhook-subscription": "webhook-subscriptions",
+        "webhook-delivery": "webhook-deliveries",
+        "file-variant": "file-variants",
+        "signed-url-audit": "signed-url-audits",
+        "chunked-upload": "chunked-uploads",
+        "tenant-contact": "tenant-contacts",
+        "tenant-integration": "tenant-integrations",
+        "domain-record": "domain-records",
+    }
+    if kebab_name in special:
+        return special[kebab_name]
+    if kebab_name.endswith("y"):
+        return kebab_name[:-1] + "ies"
+    if kebab_name.endswith("s"):
+        return kebab_name + "es"
+    return kebab_name + "s"
+
+
+def _extract_routes(module_json: dict[str, Any], entities: list[Entity]) -> list[Route]:
+    """
+    Extract HTTP routes from `module.json.hosts[<audience>].routes[]`.
+
+    Route strings come in two flavours:
+      1. "GET /api/v1/tenants"                     (concrete verb + path)
+      2. "* /api/v1/applications*"                    (wildcard — expand to CRUD)
+    """
+    routes: list[Route] = []
+    hosts = module_json.get("hosts", {}) or {}
+    aggregate_names = {e.aggregate for e in entities} | {e.name for e in entities}
+
+    for audience, host_spec in hosts.items():
+        raw_routes = (host_spec or {}).get("routes", []) or []
+        for r in raw_routes:
+            spec = r.strip()
+            # Split verb + path.
+            m = re.match(r"^([A-Z*]+)\s+(.+)$", spec)
+            if not m:
+                continue
+            verb, path = m.group(1), m.group(2)
+
+            # Aggregate detection: last non-{param} segment before /{id} etc.
+            aggregate = _aggregate_from_path(path, aggregate_names)
+
+            if verb == "*" and path.endswith("*"):
+                # Wildcard CRUD expansion.
+                base = path.rstrip("*").rstrip("/")
+                routes.extend([
+                    Route(verb="GET",    path=base,            audience=audience, aggregate=aggregate, op="list"),
+                    Route(verb="POST",   path=base,            audience=audience, aggregate=aggregate, op="create"),
+                    Route(verb="GET",    path=f"{base}/{{id}}", audience=audience, aggregate=aggregate, op="show"),
+                    Route(verb="PATCH",  path=f"{base}/{{id}}", audience=audience, aggregate=aggregate, op="update"),
+                    Route(verb="DELETE", path=f"{base}/{{id}}", audience=audience, aggregate=aggregate, op="delete"),
+                ])
+                continue
+
+            # Concrete verb.
+            op, custom = _classify_op(verb, path)
+            routes.append(Route(
+                verb=verb,
+                path=path,
+                audience=audience,
+                aggregate=aggregate,
+                op=op,
+                custom_name=custom,
+            ))
+    return routes
+
+
+def _aggregate_from_path(path: str, known: set[str]) -> str:
+    """Extract the aggregate name from a REST path."""
+    # Strip query + wildcards + params.
+    clean = path.rstrip("*").rstrip("/")
+    parts = [p for p in clean.split("/") if p and not p.startswith("{")]
+    # Skip common prefixes.
+    skip = {"api", "v1", "v2", "tenant", "platform", "central"}
+    for p in reversed(parts):
+        if p not in skip:
+            # Match against known aggregates + entity singulars.
+            if p in known:
+                return p
+            # Try singular -> aggregate map (best-effort).
+            for a in known:
+                if _pluralize(p) == a or p == a:
+                    return a
+            return p
+    return "unknown"
+
+
+def _classify_op(verb: str, path: str) -> tuple[str, str | None]:
+    """Classify a route into a standard op or a custom one."""
+    clean = path.rstrip("/")
+    has_id = "{id}" in path or "{slug}" in path or "{"  in path
+    last = clean.split("/")[-1]
+
+    # Standard CRUD detection.
+    if verb == "GET" and not has_id:
+        return "list", None
+    if verb == "GET" and last.startswith("{"):
+        return "show", None
+    if verb == "POST" and not has_id:
+        return "create", None
+    if verb == "PATCH" and last.startswith("{"):
+        return "update", None
+    if verb == "PUT" and last.startswith("{"):
+        return "update", None
+    if verb == "DELETE" and last.startswith("{"):
+        return "delete", None
+
+    # Anything else is a custom endpoint. Name = last non-param segment.
+    parts = [p for p in clean.split("/") if p and not p.startswith("{")]
+    custom_name = parts[-1] if parts else "custom"
+    return "custom", custom_name
+
+
+def read_module(tier: str, name: str) -> Module:
+    """Load the module blueprint into typed dataclasses.
+
+    Handles both layouts:
+
+      - `modules/<tier>/blueprints/<name>/` (current — blueprints split from
+        Laravel package siblings, adopted first in `modules/platform/`).
+      - `modules/<tier>/<name>/` (legacy — the flat layout used by tiers that
+        haven't been reorganised yet).
+
+    First hit wins. When a tier migrates to the `blueprints/` layout, the
+    generator finds the new location automatically without a code change.
+    """
+    tier_root = REPO_ROOT / "modules" / tier
+    candidates = [
+        tier_root / "blueprints" / name,
+        tier_root / name,
+    ]
+    module_dir = next((c for c in candidates if c.is_dir()), None)
+    if module_dir is None:
+        raise SystemExit(
+            f"module blueprint not found — checked "
+            + " and ".join(str(c) for c in candidates)
+        )
+
+    module_json_path = module_dir / "module.json"
+    module_json = json.loads(module_json_path.read_text())
+
+    # Parse every schema in the schemas/ dir.
+    schemas_dir = module_dir / "schemas"
+    entities: list[Entity] = []
+    if schemas_dir.is_dir():
+        for schema_path in sorted(schemas_dir.glob("*.schema.json")):
+            entities.append(_extract_entity(schema_path, name))
+
+    routes = _extract_routes(module_json, entities)
+
+    return Module(
+        tier=tier,
+        name=name,
+        description=str(module_json.get("description", "")).strip(),
+        entities=entities,
+        routes=routes,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Emitters.
+# ---------------------------------------------------------------------------
+
+# Header for auto-generated files — the sdk:diff drift check keys on this.
+AUTOGEN_HEADER = (
+    "// AUTO-GENERATED by generate-sdk.py from the module blueprint. "
+    "Regenerate via `python3 modules/shared/blueprints/foundation/scripts/generate-sdk.py "
+    "{tier} {name} --force`."
+)
+
+
+def emit_composer_json(m: Module) -> str:
+    """Emit composer.json — matches the pilot's shape."""
+    description = (
+        f"Wire-visible SDK surface (Spatie Data DTOs + Saloon Request transport + "
+        f"fluent Resources) for the `{m.name}` module of the "
+        f"{studly(m.tier)} service. Auto-discovered at boot by "
+        f"academorix/{m.tier}-sdk via "
+        f"#[AsSdkResource(name: '{m.name}', service: '{m.tier}')]; consumed by "
+        f"every cross-service caller strictly over HTTP."
+    )
+    ns_escaped = m.ns_root.replace("\\", "\\\\")
+    payload = {
+        "name": m.composer_name,
+        "type": "library",
+        "description": description,
+        "license": "proprietary",
+        "keywords": [
+            "academorix", "sdk", "saloon", "spatie-data", "api-client",
+            m.tier, f"{m.tier}-service", m.name, "wire-contract",
+        ],
+        "require": {
+            "php": "^8.3",
+            "academorix/api-sdk": "@dev",
+            "academorix/enum": "@dev",
+            "academorix/exceptions": "@dev",
+            "academorix/foundation": "@dev",
+            "saloonphp/saloon": "^3.10",
+            "spatie/laravel-data": "^4.11",
+        },
+        "require-dev": {
+            "mockery/mockery": "^1.6",
+            "orchestra/testbench": "^11.0",
+            "pestphp/pest": "^4.0",
+            "pestphp/pest-plugin-laravel": "^4.0",
+            "phpstan/phpstan": "^2.0",
+        },
+        "autoload": {"psr-4": {f"{ns_escaped}\\\\": "src/"}},
+        "autoload-dev": {"psr-4": {f"{ns_escaped}\\\\Tests\\\\": "tests/"}},
+        "extra": {"laravel": {"providers": [], "aliases": {}}},
+        "scripts": {
+            "test": "./vendor/bin/pest",
+            "test:coverage": "./vendor/bin/pest --coverage --min=90",
+            "lint": "./vendor/bin/pint --test",
+            "format": "./vendor/bin/pint",
+            "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G",
+        },
+        "config": {
+            "sort-packages": True,
+            "allow-plugins": {
+                "pestphp/pest-plugin": True,
+                "olvlvl/composer-attribute-collector": True,
+            },
+        },
+        "minimum-stability": "stable",
+        "prefer-stable": True,
+    }
+    return json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
+
+
+def emit_phpstan_neon(m: Module) -> str:
+    return (
+        "includes:\n"
+        "    - phar://phpstan.phar/conf/bleedingEdge.neon\n"
+        "\n"
+        "parameters:\n"
+        "    level: 9\n"
+        "    paths:\n"
+        "        - src\n"
+        "        - tests\n"
+        "    treatPhpDocTypesAsCertain: false\n"
+    )
+
+
+def emit_phpunit_xml(m: Module) -> str:
+    return """<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         cacheDirectory=".phpunit.cache">
+    <testsuites>
+        <testsuite name="Feature">
+            <directory>tests/Feature</directory>
+        </testsuite>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </source>
+</phpunit>
+"""
+
+
+def emit_readme(m: Module) -> str:
+    aggregates = sorted({e.aggregate for e in m.entities})
+    aggregate_list = "\n".join(f"- **{a}** — {_agg_description(m, a)}" for a in aggregates)
+    return f"""# academorix-{m.tier}/{m.name}-sdk
+
+Wire-visible SDK surface for the `{m.name}` module of the
+{studly(m.tier)} service. Auto-discovered by
+`academorix/{m.tier}-sdk` (the service umbrella) via
+`#[AsSdkResource(name: '{m.name}', service: '{m.tier}')]`.
+
+## Aggregates
+
+{aggregate_list}
+
+## Layout
+
+```
+src/
+├── {m.studly_name}SdkResource.php     # #[AsSdkResource] — the entry point
+├── Data/                     # response DTOs (server -> client)
+├── Payloads/<Aggregate>/     # request-body DTOs (client -> server)
+├── Requests/<Aggregate>/     # Saloon HTTP-transport classes
+├── Resources/                # fluent domain façades
+├── Enums/                    # wire-visible backed enums
+└── Exceptions/               # domain-typed exceptions (empty by default)
+```
+
+Consumed only over HTTP via the umbrella client:
+
+```php
+app(\\Academorix\\{studly(m.tier)}Sdk\\Client\\{studly(m.tier)}Sdk::class)
+    ->{camel(m.name)}()
+    ->{camel(aggregates[0]) if aggregates else 'items'}()
+    ->list();
+```
+
+## Generation
+
+This SDK is regenerated from the blueprint at
+`modules/{m.tier}/{m.name}/`. Do not hand-edit auto-generated files
+(they carry an `AUTO-GENERATED` header comment). Files WITHOUT that
+header are hand-tuned overrides that survive regeneration.
+
+```
+python3 modules/shared/blueprints/foundation/scripts/generate-sdk.py {m.tier} {m.name}
+```
+"""
+
+
+def _agg_description(m: Module, aggregate: str) -> str:
+    """One-line description for an aggregate, from its entity's blueprint."""
+    for e in m.entities:
+        if e.aggregate == aggregate:
+            first_line = e.description.split(".")[0][:120] if e.description else ""
+            return first_line or f"{e.class_name} entity."
+    return "Peer resource."
+
+
+def _php_docblock(lines: list[str], indent: str = "") -> str:
+    """Format a list of comment lines as a PHP docblock."""
+    body = "\n".join(f"{indent} * {line}".rstrip() for line in lines)
+    return f"{indent}/**\n{body}\n{indent} */"
+
+
+def _first_sentence(text: str, max_chars: int = 200) -> str:
+    """Extract the first sentence-ish chunk of text for a docblock summary."""
+    if not text:
+        return ""
+    # Take up to the first period-space or first newline.
+    m = re.match(r"^(.{1," + str(max_chars) + r"}?[\.\n])", text.strip(), re.DOTALL)
+    if m:
+        return m.group(1).replace("\n", " ").strip().rstrip(".") + "."
+    trimmed = text[:max_chars].strip()
+    return trimmed + ("..." if len(text) > max_chars else "")
+
+
+# ---------- Data DTO emitter -------------------------------------------------
+
+def emit_data_dto(m: Module, e: Entity) -> str:
+    """Emit `src/Data/<Entity>Data.php`."""
+    ns = f"{m.ns_root}\\Data"
+
+    # Constructor property list ordered: required (non-nullable, no default) first,
+    # then nullable / with-default.
+    required_cols = [c for c in e.wire_columns if not c.nullable]
+    optional_cols = [c for c in e.wire_columns if c.nullable]
+
+    def prop_line(col: Column, last: bool) -> str:
+        type_hint = ("?" if col.nullable else "") + col.php_type
+        default = " = null" if col.nullable else ""
+        return f"        public {type_hint} ${camel(col.name)}{default},"
+
+    props_src = "\n".join(prop_line(c, False) for c in required_cols + optional_cols)
+
+    # Docblock @param lines
+    param_lines = []
+    for col in required_cols + optional_cols:
+        type_hint = ("?" if col.nullable else "") + col.php_type
+        # Array with sub-shape hint.
+        if col.php_type == "array":
+            type_hint = ("array<string, mixed>|null" if col.nullable else "array<string, mixed>")
+        desc = col.description or ""
+        param_lines.append(
+            f"@param  {type_hint:<28} ${camel(col.name):<26} {_first_sentence(desc, 120)}"
+        )
+
+    class_docblock_lines = [
+        f"Wire-visible response DTO for {{@see \\{e.server_model_class}}}.",
+        "",
+        f"Mirrors `schemas/{e.name}.schema.json` column-for-column, minus",
+        "the fields declared under `x-wire.hidden` which never leave the",
+        "server. Wire format is snake_case; PHP property names are",
+        "camelCase — the `SnakeCaseMapper` bridges the two.",
+        "",
+        "## What this DTO owns",
+        "",
+        "A read-only, immutable projection of the row as the",
+        f"{studly(m.tier)} service emits it. Consumers never instantiate",
+        "this DTO by hand — the SDK's request classes hydrate it from the",
+        "response envelope inside `createDtoFromResponse()`.",
+        "",
+        "## Example",
+        "",
+        "```php",
+        f"use Academorix\\{studly(m.tier)}Sdk\\Client\\{studly(m.tier)}Sdk;",
+        "",
+        f"$row = app({studly(m.tier)}Sdk::class)->{camel(m.name)}()->{camel(e.aggregate)}()->show($id);",
+        "```",
+        "",
+        f"@category {m.studly_name}Sdk",
+        "",
+        "@since    0.1.0",
+    ]
+
+    ctor_docblock_lines = param_lines
+    ctor_doc = _php_docblock(ctor_docblock_lines, indent="    ")
+    class_doc = _php_docblock(class_docblock_lines)
+
+    return f"""<?php
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use Spatie\\LaravelData\\Attributes\\MapInputName;
+use Spatie\\LaravelData\\Data;
+use Spatie\\LaravelData\\Mappers\\SnakeCaseMapper;
+
+{class_doc}
+#[MapInputName(SnakeCaseMapper::class)]
+final class {e.class_name}Data extends Data
+{{
+{ctor_doc}
+    public function __construct(
+{props_src}
+    ) {{
+    }}
+
+    /**
+     * Hydrate from a raw wire record (already unwrapped from the
+     * `{{ "data": ... }}` envelope).
+     *
+     * @param  array<string, mixed>  $row  The raw snake_case record.
+     * @return self                        The hydrated DTO.
+     */
+    public static function fromRecord(array $row): self
+    {{
+        // Delegate to Spatie Data's canonical hydration path so
+        // `#[MapInputName]` fires and every property is normalised
+        // through the same mapper the response-side uses.
+        return self::from($row);
+    }}
+}}
+"""
+
+
+# ---------- Payload DTO emitters --------------------------------------------
+
+def emit_create_payload(m: Module, e: Entity) -> str:
+    """Emit `src/Payloads/<Aggregate>/Create<Entity>Payload.php`."""
+    ns = f"{m.ns_root}\\Payloads\\{studly(e.aggregate)}"
+
+    # Server-controlled columns callers never send on create.
+    server_owned = {"id", "created_at", "updated_at", "deleted_at",
+                    "created_by", "updated_by", "deleted_by"}
+    # Include computed columns from wire projection too.
+    server_owned |= {c.name for c in e.columns if c.wire_computed}
+
+    write_cols = [c for c in e.columns if c.name not in server_owned]
+
+    # Split into required + optional; required first for constructor order.
+    required = [c for c in write_cols if not c.nullable]
+    optional = [c for c in write_cols if c.nullable]
+
+    imports_needed = set()
+
+    def prop_line(col: Column) -> str:
+        attrs, needed = _validation_attrs_for_column(col)
+        imports_needed.update(needed)
+        type_hint = ("?" if col.nullable else "") + col.php_type
+        default = " = null" if col.nullable else ""
+        attrs_block = f"        #[{', '.join(attrs)}]\n" if attrs else ""
+        return f"{attrs_block}        public {type_hint} ${camel(col.name)}{default},"
+
+    props_src = "\n\n".join(prop_line(c) for c in required + optional)
+
+    # Docblock @params
+    param_lines = []
+    for col in required + optional:
+        type_hint = ("?" if col.nullable else "") + col.php_type
+        param_lines.append(
+            f"@param  {type_hint:<28} ${camel(col.name):<26} {_first_sentence(col.description, 120)}"
+        )
+
+    imports = _validation_imports(imports_needed)
+
+    class_doc = _php_docblock([
+        f"Wire-visible write payload for `POST /api/v1/{e.aggregate}` (or the ",
+        "tenant-scoped equivalent).",
+        "",
+        "Every non-nullable property is auto-required by spatie/laravel-data;",
+        "every nullable defaults to `null`. Snake_case bridge in both",
+        "directions — the DTO's `toArray()` emits snake_case for the wire,",
+        "and Spatie validation kicks in during construction.",
+        "",
+        f"@category {m.studly_name}Sdk",
+        "",
+        "@since    0.1.0",
+    ])
+    ctor_doc = _php_docblock(param_lines, indent="    ")
+
+    return f"""<?php
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use Spatie\\LaravelData\\Attributes\\MapName;
+{imports}use Spatie\\LaravelData\\Data;
+use Spatie\\LaravelData\\Mappers\\SnakeCaseMapper;
+
+{class_doc}
+#[MapName(SnakeCaseMapper::class)]
+final class Create{e.class_name}Payload extends Data
+{{
+{ctor_doc}
+    public function __construct(
+{props_src}
+    ) {{
+    }}
+}}
+"""
+
+
+def emit_update_payload(m: Module, e: Entity) -> str:
+    """Emit `src/Payloads/<Aggregate>/Update<Entity>Payload.php` with Optional sentinels."""
+    ns = f"{m.ns_root}\\Payloads\\{studly(e.aggregate)}"
+
+    server_owned = {"id", "created_at", "updated_at", "deleted_at",
+                    "created_by", "updated_by", "deleted_by"}
+    server_owned |= {c.name for c in e.columns if c.wire_computed}
+    write_cols = [c for c in e.columns if c.name not in server_owned]
+
+    imports_needed = set()
+
+    def prop_line(col: Column) -> str:
+        attrs, needed = _validation_attrs_for_column(col)
+        imports_needed.update(needed)
+        # Update payloads: T|Optional|null $prop = new Optional()
+        # (never nullable? still use Optional|null form for consistency)
+        if col.nullable:
+            type_hint = f"Optional|{col.php_type}|null"
+        else:
+            type_hint = f"Optional|{col.php_type}"
+        attrs_block = f"        #[{', '.join(attrs)}]\n" if attrs else ""
+        return f"{attrs_block}        public {type_hint} ${camel(col.name)} = new Optional(),"
+
+    props_src = "\n\n".join(prop_line(c) for c in write_cols)
+
+    param_lines = []
+    for col in write_cols:
+        if col.nullable:
+            type_hint = f"Optional|{col.php_type}|null"
+        else:
+            type_hint = f"Optional|{col.php_type}"
+        param_lines.append(
+            f"@param  {type_hint:<32} ${camel(col.name):<26} {_first_sentence(col.description, 120)}"
+        )
+
+    imports = _validation_imports(imports_needed)
+
+    class_doc = _php_docblock([
+        f"Wire-visible write payload for `PATCH /api/v1/{e.aggregate}/{{id}}` (or the ",
+        "tenant-scoped equivalent).",
+        "",
+        "Partial-update semantics — every property is typed",
+        "`T|Optional|null` with an `Optional` sentinel default. Spatie",
+        "Data's `toArray()` strips `Optional` values, so unmentioned fields",
+        "are never emitted (never clear server-side state). Pass `null`",
+        "explicitly to clear a nullable column.",
+        "",
+        f"@category {m.studly_name}Sdk",
+        "",
+        "@since    0.1.0",
+    ])
+    ctor_doc = _php_docblock(param_lines, indent="    ")
+
+    return f"""<?php
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use Spatie\\LaravelData\\Attributes\\MapName;
+{imports}use Spatie\\LaravelData\\Data;
+use Spatie\\LaravelData\\Mappers\\SnakeCaseMapper;
+use Spatie\\LaravelData\\Optional;
+
+{class_doc}
+#[MapName(SnakeCaseMapper::class)]
+final class Update{e.class_name}Payload extends Data
+{{
+{ctor_doc}
+    public function __construct(
+{props_src}
+    ) {{
+    }}
+}}
+"""
+
+
+def _validation_attrs_for_column(col: Column) -> tuple[list[str], set[str]]:
+    """Return the property-level validation attributes for a column."""
+    attrs: list[str] = []
+    imports_needed: set[str] = set()
+
+    if col.php_type == "string":
+        attrs.append("StringType")
+        imports_needed.add("StringType")
+    if col.min_length is not None:
+        attrs.append(f"Min({col.min_length})")
+        imports_needed.add("Min")
+    if col.max_length is not None:
+        attrs.append(f"Max({col.max_length})")
+        imports_needed.add("Max")
+    if col.pattern:
+        # Escape single quotes + backslashes in the regex for PHP string.
+        escaped = col.pattern.replace("\\", "\\\\").replace("'", "\\'")
+        attrs.append(f"Regex('/{escaped}/')")
+        imports_needed.add("Regex")
+
+    return attrs, imports_needed
+
+
+def _validation_imports(imports_needed: set[str]) -> str:
+    """Build the `use Spatie\\LaravelData\\Attributes\\Validation\\...` block."""
+    if not imports_needed:
+        return ""
+    out = []
+    for name in sorted(imports_needed):
+        out.append(f"use Spatie\\LaravelData\\Attributes\\Validation\\{name};")
+    return "\n".join(out) + "\n"
+
+
+# ---------- Saloon Request emitters -----------------------------------------
+
+def emit_request(m: Module, e: Entity, route: Route) -> str:
+    """Emit one `src/Requests/<Aggregate>/<Op><Entity>Request.php`."""
+    ns = f"{m.ns_root}\\Requests\\{studly(route.aggregate)}"
+
+    class_name, method_const, has_body, response_kind = _request_shape(route, e)
+
+    payload_ns = f"{m.ns_root}\\Payloads\\{studly(route.aggregate)}"
+    data_ns = f"{m.ns_root}\\Data"
+
+    imports = [
+        "use Academorix\\ApiSdk\\Requests\\BaseSdkRequest;",
+        f"use {data_ns}\\{e.class_name}Data;",
+        "use Saloon\\Enums\\Method;",
+        "use Saloon\\Http\\Response;",
+    ]
+    body_traits = ""
+    ctor_params: list[str] = []
+    ctor_doc_lines: list[str] = []
+
+    # Path parameters: extract from route.path like `/api/v1/x/{id}` -> ['id'].
+    path_params = re.findall(r"\{([^}]+)\}", route.path)
+    for p in path_params:
+        camel_p = camel(p)
+        ctor_params.append(f"        public readonly string ${camel_p},")
+        ctor_doc_lines.append(f"@param  string       ${camel_p:<22} Path parameter — {p}.")
+
+    if has_body and route.op in ("create", "update"):
+        payload_class = f"{'Create' if route.op == 'create' else 'Update'}{e.class_name}Payload"
+        imports.append(f"use {payload_ns}\\{payload_class};")
+        imports.append("use Saloon\\Contracts\\Body\\HasBody;")
+        imports.append("use Saloon\\Traits\\Body\\HasJsonBody;")
+        body_traits = "\n    use HasJsonBody;\n"
+        ctor_params.append(f"        public readonly {payload_class} $payload,")
+        ctor_doc_lines.append(f"@param  {payload_class:<32} $payload         Validated payload.")
+
+    if route.is_mutation:
+        ctor_params.append("        public readonly ?string $idempotencyKey = null,")
+        ctor_doc_lines.append("@param  string|null  $idempotencyKey  Optional idempotency token.")
+
+    if route.op == "list":
+        imports.append("use Academorix\\ApiSdk\\Data\\PaginatedResponse;")
+        imports.append("use Academorix\\ApiSdk\\Data\\PaginationLinks;")
+        imports.append("use Academorix\\ApiSdk\\Data\\PaginationMeta;")
+
+    # Sort + dedupe imports.
+    imports = sorted(set(imports))
+    imports_block = "\n".join(imports)
+
+    class_doc = _php_docblock([
+        f"`{route.verb} {route.path}` — {_op_summary(route, e)}.",
+        "",
+        f"@category {m.studly_name}Sdk",
+        "",
+        "@since    0.1.0",
+    ])
+
+    body_method = ""
+    headers_method = ""
+    query_method = ""
+    if has_body and route.op in ("create", "update"):
+        body_method = """
+    /**
+     * Serialise the payload into the JSON body. Spatie Data's
+     * `toArray()` strips any `Optional` sentinel values, so the
+     * server only sees fields the caller explicitly set.
+     *
+     * @return array<string, mixed>
+     */
+    protected function defaultBody(): array
+    {
+        return $this->payload->toArray();
+    }
+"""
+    if route.is_mutation:
+        headers_method = """
+    /**
+     * Attach the caller-supplied idempotency key when one was provided.
+     *
+     * @return array<string, string>
+     */
+    protected function defaultHeaders(): array
+    {
+        return $this->idempotencyKey !== null
+            ? ['Idempotency-Key' => $this->idempotencyKey]
+            : [];
+    }
+"""
+    if route.op == "list":
+        # Add page/perPage constructor params.
+        ctor_params.insert(0, "        public readonly ?int $perPage = null,")
+        ctor_params.insert(0, "        public readonly ?int $page = null,")
+        ctor_doc_lines.insert(0, "@param  int|null     $perPage         Items per page.")
+        ctor_doc_lines.insert(0, "@param  int|null     $page            1-indexed page number.")
+        query_method = """
+    /**
+     * Emit pagination knobs into the query string.
+     *
+     * @return array<string, int>
+     */
+    protected function defaultQuery(): array
+    {
+        $q = [];
+        if ($this->page !== null) {
+            $q['page'] = $this->page;
+        }
+        if ($this->perPage !== null) {
+            $q['per_page'] = $this->perPage;
+        }
+        return $q;
+    }
+"""
+
+    ctor_block = "\n".join(ctor_params) if ctor_params else ""
+    ctor_doc = _php_docblock(ctor_doc_lines, indent="    ") if ctor_doc_lines else ""
+
+    resolve_endpoint = _resolve_endpoint_body(route)
+
+    dto_method = _dto_method(route, e)
+
+    ctor_section = ""
+    if ctor_block:
+        ctor_section = f"""
+{ctor_doc}
+    public function __construct(
+{ctor_block}
+    ) {{
+    }}
+"""
+
+    return f"""<?php
+
+declare(strict_types=1);
+
+namespace {ns};
+
+{imports_block}
+
+{class_doc}
+final class {class_name} extends BaseSdkRequest{' implements HasBody' if has_body else ''}
+{{{body_traits}
+    /**
+     * HTTP verb.
+     */
+    protected Method $method = Method::{method_const};
+{ctor_section}
+    /**
+     * Return the request path relative to the connector base URL.
+     */
+    public function resolveEndpoint(): string
+    {{
+        {resolve_endpoint}
+    }}
+{body_method}{headers_method}{query_method}{dto_method}}}
+"""
+
+
+def _request_shape(route: Route, e: Entity) -> tuple[str, str, bool, str]:
+    """Return (class_name, Method constant, has_body, response_kind)."""
+    op_studly = studly(route.op) if route.op != "custom" else studly(route.custom_name or "custom")
+    if route.op == "list":
+        class_name = f"List{studly(route.aggregate)}Request"
+    elif route.op == "show":
+        class_name = f"Show{e.class_name}Request"
+    elif route.op == "create":
+        class_name = f"Create{e.class_name}Request"
+    elif route.op == "update":
+        class_name = f"Update{e.class_name}Request"
+    elif route.op == "delete":
+        class_name = f"Delete{e.class_name}Request"
+    else:  # custom
+        class_name = f"{op_studly}{e.class_name}Request"
+
+    # Suffix admin routes so they don't collide with central routes.
+    if route.audience == "platform-admin" and route.op in ("list", "show"):
+        # Insert 'Admin' before 'Request'.
+        class_name = class_name[:-7] + "AdminRequest"
+
+    method_const = route.verb  # PHP Method enum uses the verb name.
+    has_body = route.has_body
+
+    response_kind = (
+        "paginated" if route.op == "list"
+        else "single" if route.op in ("show", "create", "update")
+        else "none" if route.op == "delete"
+        else "custom"
+    )
+    return class_name, method_const, has_body, response_kind
+
+
+def _resolve_endpoint_body(route: Route) -> str:
+    """Emit the body of resolveEndpoint()."""
+    params = re.findall(r"\{([^}]+)\}", route.path)
+    if not params:
+        return f"return '{route.path}';"
+    # Build with rawurlencode() around every param.
+    parts = re.split(r"(\{[^}]+\})", route.path)
+    php_parts = []
+    for part in parts:
+        if part.startswith("{"):
+            p = part[1:-1]
+            php_parts.append(f"rawurlencode($this->{camel(p)})")
+        elif part:
+            php_parts.append(f"'{part}'")
+    joined = " . ".join(php_parts)
+    return f"return {joined};"
+
+
+def _op_summary(route: Route, e: Entity) -> str:
+    """One-line summary for a route."""
+    if route.op == "list":
+        return f"list every {e.class_name}"
+    if route.op == "show":
+        return f"show one {e.class_name}"
+    if route.op == "create":
+        return f"create a {e.class_name}"
+    if route.op == "update":
+        return f"update one {e.class_name}"
+    if route.op == "delete":
+        return f"delete one {e.class_name}"
+    return f"{route.op} — custom endpoint (hand-implement)"
+
+
+def _dto_method(route: Route, e: Entity) -> str:
+    """Emit the createDtoFromResponse method for a route."""
+    if route.op == "list":
+        return f"""
+    /**
+     * Hydrate the paginated envelope into
+     * `PaginatedResponse<{e.class_name}Data>`.
+     *
+     * @return PaginatedResponse<{e.class_name}Data>
+     */
+    public function createDtoFromResponse(Response $response): PaginatedResponse
+    {{
+        /** @var array{{data?: list<array<string, mixed>>, meta?: array<string, mixed>, links?: array<string, mixed>|null}} $payload */
+        $payload = $response->json();
+
+        /** @var list<array<string, mixed>> $items */
+        $items = $payload['data'] ?? [];
+        /** @var array<string, mixed> $meta */
+        $meta = $payload['meta'] ?? [];
+        /** @var array<string, mixed>|null $links */
+        $links = $payload['links'] ?? null;
+
+        return new PaginatedResponse(
+            data: array_map(
+                static fn (array $row): {e.class_name}Data => {e.class_name}Data::from($row),
+                $items,
+            ),
+            meta: PaginationMeta::from($meta),
+            links: $links !== null ? PaginationLinks::from($links) : null,
+        );
+    }}
+"""
+    if route.op in ("show", "create", "update"):
+        return f"""
+    /**
+     * Hydrate the `{{ "data": ... }}` envelope into a
+     * {{@see {e.class_name}Data}}.
+     */
+    public function createDtoFromResponse(Response $response): {e.class_name}Data
+    {{
+        /** @var array<string, mixed> $payload */
+        $payload = $response->json();
+        /** @var array<string, mixed> $body */
+        $body = isset($payload['data']) && is_array($payload['data'])
+            ? $payload['data']
+            : $payload;
+
+        return {e.class_name}Data::from($body);
+    }}
+"""
+    if route.op == "delete":
+        return """
+    /**
+     * Delete returns 204 No Content — no DTO to hydrate.
+     */
+    public function createDtoFromResponse(Response $response): null
+    {
+        return null;
+    }
+"""
+    # Custom — emit a stub for hand-implementation.
+    return f"""
+    /**
+     * Custom endpoint — hand-implement the response shape here.
+     *
+     * @return mixed
+     */
+    public function createDtoFromResponse(Response $response): mixed
+    {{
+        // TODO(sdk): hand-implement — this custom endpoint's response
+        // shape is not covered by the standard CRUD template. Return
+        // the appropriate DTO from src/Data/ once the shape is
+        // clarified.
+        return $response->json();
+    }}
+"""
+
+
+# ---------- Resource emitters -----------------------------------------------
+
+def emit_top_resource(m: Module) -> str:
+    """Emit `src/<Module>SdkResource.php`."""
+    ns = m.ns_root
+    aggregates = sorted({e.aggregate for e in m.entities})
+
+    accessor_lines = []
+    accessor_props = []
+    for agg in aggregates:
+        agg_studly = studly(agg)
+        camel_name = camel(agg)
+        accessor_props.append(
+            f"    private ?Resources\\{agg_studly}Resource ${camel_name} = null;"
+        )
+        accessor_lines.append(f"""
+    /**
+     * Access {agg_studly} peer Resource.
+     */
+    public function {camel_name}(): Resources\\{agg_studly}Resource
+    {{
+        return $this->{camel_name} ??= new Resources\\{agg_studly}Resource($this->connector);
+    }}
+""")
+    props_block = "\n".join(accessor_props)
+    accessors_block = "".join(accessor_lines)
+
+    class_doc = _php_docblock([
+        f"Top-level SDK Resource for the `{m.name}` module.",
+        "",
+        f"Registered under `#[AsSdkResource(name: '{m.name}', service: '{m.tier}')]`",
+        f"so the {studly(m.tier)} service umbrella auto-discovers it at boot",
+        f"and consumers dispatch every call via `$sdk->{camel(m.name)}()->...`.",
+        "",
+        "## Peer Resources",
+        "",
+    ] + [f"- {studly(a)}Resource — peer resource for `{a}`." for a in aggregates] + [
+        "",
+        f"@category {m.studly_name}Sdk",
+        "",
+        "@since    0.1.0",
+    ])
+
+    return f"""<?php
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use Academorix\\ApiSdk\\Attributes\\AsSdkResource;
+use Academorix\\ApiSdk\\Resources\\BaseSdkResource;
+
+{class_doc}
+#[AsSdkResource(name: '{m.name}', service: '{m.tier}')]
+final class {m.studly_name}SdkResource extends BaseSdkResource
+{{
+{props_block}
+{accessors_block}}}
+"""
+
+
+def emit_peer_resource(m: Module, aggregate: str, routes: list[Route], entities: list[Entity]) -> str:
+    """Emit `src/Resources/<Aggregate>Resource.php`."""
+    ns = f"{m.ns_root}\\Resources"
+    entity = next((e for e in entities if e.aggregate == aggregate), None)
+    if entity is None:
+        entity = entities[0]  # Fall back to any entity — best-effort naming.
+
+    agg_studly = studly(aggregate)
+    imports = ["use Saloon\\Http\\Response;"]
+    data_ns = f"{m.ns_root}\\Data"
+    imports.append(f"use {data_ns}\\{entity.class_name}Data;")
+    imports.append("use Academorix\\ApiSdk\\Data\\PaginatedResponse;")
+
+    method_bodies = []
+    for route in routes:
+        if route.aggregate != aggregate:
+            continue
+        class_name, _, _, _ = _request_shape(route, entity)
+        req_fqcn = f"{m.ns_root}\\Requests\\{studly(aggregate)}\\{class_name}"
+        imports.append(f"use {req_fqcn};")
+
+        method_bodies.append(_peer_resource_method(m, entity, route, class_name))
+
+    imports = sorted(set(imports))
+
+    class_doc = _php_docblock([
+        f"Peer Resource for the `{aggregate}` aggregate.",
+        "",
+        f"Fluent façade over the Saloon requests under `Requests/{agg_studly}/`.",
+        "Every mutation method accepts an optional idempotency key that",
+        "threads into the `Idempotency-Key` header.",
+        "",
+        f"@category {m.studly_name}Sdk",
+        "",
+        "@since    0.1.0",
+    ])
+    imports_block = "\n".join(imports)
+    methods_block = "\n".join(method_bodies)
+
+    return f"""<?php
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use Academorix\\ApiSdk\\Client\\ApiConnector;
+{imports_block}
+
+{class_doc}
+final readonly class {agg_studly}Resource
+{{
+    /**
+     * @param  ApiConnector  $connector  The Saloon connector supplied by the umbrella.
+     */
+    public function __construct(
+        private ApiConnector $connector,
+    ) {{
+    }}
+
+{methods_block}}}
+"""
+
+
+def _peer_resource_method(m: Module, e: Entity, route: Route, req_class: str) -> str:
+    """Emit one method on a peer Resource."""
+    ns = f"{m.ns_root}\\Requests\\{studly(route.aggregate)}"
+    class_name, _, has_body, response_kind = _request_shape(route, e)
+
+    # Method name — same as op, with admin suffix if applicable.
+    method_name = _peer_method_name(route, e)
+
+    # Arg list.
+    args: list[str] = []
+    doc_args: list[str] = []
+    call_args: list[str] = []
+
+    path_params = re.findall(r"\{([^}]+)\}", route.path)
+    for p in path_params:
+        args.append(f"string ${camel(p)}")
+        doc_args.append(f"@param  string  ${camel(p):<22} Path parameter — {p}.")
+        call_args.append(f"${camel(p)}")
+
+    if route.op == "list":
+        args.append("?int $page = null")
+        args.append("?int $perPage = null")
+        doc_args.append("@param  int|null  $page             1-indexed page.")
+        doc_args.append("@param  int|null  $perPage          Items per page.")
+        call_args.append("$page")
+        call_args.append("$perPage")
+
+    if route.op in ("create", "update"):
+        payload_class = f"{'Create' if route.op == 'create' else 'Update'}{e.class_name}Payload"
+        args.append(f"\\{m.ns_root}\\Payloads\\{studly(route.aggregate)}\\{payload_class} $payload")
+        doc_args.append(f"@param  {payload_class}  $payload  The write payload.")
+        call_args.append("$payload")
+
+    if route.is_mutation:
+        args.append("?string $idempotencyKey = null")
+        doc_args.append("@param  string|null  $idempotencyKey  Optional idempotency token.")
+        call_args.append("$idempotencyKey")
+
+    return_type = (
+        f"PaginatedResponse" if route.op == "list"
+        else f"{e.class_name}Data" if route.op in ("show", "create", "update")
+        else "void" if route.op == "delete"
+        else "mixed"
+    )
+    return_docblock = (
+        f"@return PaginatedResponse<{e.class_name}Data>" if route.op == "list"
+        else f"@return {e.class_name}Data" if route.op in ("show", "create", "update")
+        else "" if route.op == "delete"
+        else "@return mixed"
+    )
+
+    args_block = ", ".join(args)
+    call_args_block = ", ".join(call_args)
+
+    docblock_lines = [f"{_op_summary(route, e).capitalize()}."]
+    if doc_args:
+        docblock_lines.append("")
+        docblock_lines.extend(doc_args)
+    if return_docblock:
+        docblock_lines.append("")
+        docblock_lines.append(return_docblock)
+
+    doc = _php_docblock(docblock_lines, indent="    ")
+
+    if route.op == "delete":
+        body = f"""        $this->connector->send(new {class_name}({call_args_block}));"""
+    elif route.op == "list":
+        body = f"""        return $this->connector->send(new {class_name}({call_args_block}))->dto();"""
+    else:
+        body = f"""        return $this->connector->send(new {class_name}({call_args_block}))->dto();"""
+
+    return f"""
+{doc}
+    public function {method_name}({args_block}): {return_type}
+    {{
+{body}
+    }}
+"""
+
+
+def _peer_method_name(route: Route, e: Entity) -> str:
+    """Method name on a peer Resource."""
+    if route.op == "list":
+        base = "list"
+    elif route.op == "show":
+        base = "show"
+    elif route.op == "create":
+        base = "create"
+    elif route.op == "update":
+        base = "update"
+    elif route.op == "delete":
+        base = "delete"
+    else:  # custom
+        base = camel(route.custom_name or "custom")
+
+    if route.audience == "platform-admin" and route.op in ("list", "show"):
+        return base + "Admin"
+    return base
+
+
+# ---------- Enum emitters ---------------------------------------------------
+
+def emit_enums(m: Module, e: Entity) -> list[tuple[str, str]]:
+    """Emit backed enums for any enum-typed columns on the entity."""
+    files: list[tuple[str, str]] = []
+    for col in e.columns:
+        if not col.is_enum or not col.enum_values:
+            continue
+        enum_class = studly(f"{e.name}_{col.name}") if col.name != "type" else studly(f"{e.name}_type")
+        ns = f"{m.ns_root}\\Enums"
+        cases = "\n".join(
+            f"    case {studly(v)} = '{v}';" for v in col.enum_values if isinstance(v, str)
+        )
+        class_doc = _php_docblock([
+            f"Wire-visible backed enum for `{e.name}.{col.name}`.",
+            "",
+            f"Backing type: string. Values are the exact snake_case tokens",
+            "the server emits.",
+            "",
+            f"@category {m.studly_name}Sdk",
+            "",
+            "@since    0.1.0",
+        ])
+        body = f"""<?php
+
+declare(strict_types=1);
+
+namespace {ns};
+
+{class_doc}
+enum {enum_class}: string
+{{
+{cases}
+}}
+"""
+        files.append((f"src/Enums/{enum_class}.php", body))
+    return files
+
+
+# ---------- Test scaffolds --------------------------------------------------
+
+def emit_pest_bootstrap(m: Module) -> str:
+    return """<?php
+
+declare(strict_types=1);
+
+use Illuminate\\Foundation\\Testing\\TestCase as BaseTestCase;
+
+uses(BaseTestCase::class)->in('Feature');
+uses(BaseTestCase::class)->in('Unit');
+"""
+
+
+def emit_test_case(m: Module) -> str:
+    ns = f"{m.ns_root}\\Tests"
+    return f"""<?php
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use Orchestra\\Testbench\\TestCase as OrchestraTestCase;
+
+/**
+ * Base test case for {m.composer_name}.
+ *
+ * @category {m.studly_name}Sdk
+ *
+ * @since    0.1.0
+ */
+abstract class TestCase extends OrchestraTestCase
+{{
+    // Add package providers here if the SDK's tests need Laravel container
+    // access beyond Orchestra's defaults.
+}}
+"""
+
+
+# ---------------------------------------------------------------------------
+# Package writer.
+# ---------------------------------------------------------------------------
+
+def write_sdk(m: Module, out_root: Path, *, force: bool, dry_run: bool) -> tuple[int, int]:
+    """Emit the complete SDK sub-package for a module.
+
+    Returns (files_written, files_skipped).
+    """
+    sdk_dir = out_root / "sdk" / m.sdk_dir_name
+
+    if sdk_dir.exists() and not force and not dry_run:
+        raise SystemExit(
+            f"{sdk_dir} already exists — use --force to overwrite, or --into to emit elsewhere"
+        )
+
+    if force and sdk_dir.exists() and not dry_run:
+        _clean_generated(sdk_dir)
+
+    files_to_write: list[tuple[str, str]] = []
+
+    # Static top-level files.
+    files_to_write.append(("composer.json", emit_composer_json(m)))
+    files_to_write.append(("phpstan.neon", emit_phpstan_neon(m)))
+    files_to_write.append(("phpunit.xml", emit_phpunit_xml(m)))
+    files_to_write.append(("README.md", emit_readme(m)))
+
+    # Top-level SDK Resource.
+    files_to_write.append((f"src/{m.studly_name}SdkResource.php", emit_top_resource(m)))
+
+    # Per-entity: Data DTO + Create/Update Payloads.
+    for e in m.entities:
+        files_to_write.append((f"src/Data/{e.class_name}Data.php", emit_data_dto(m, e)))
+        # Only emit payloads when the aggregate has write routes.
+        write_ops = {r.op for r in m.routes if r.aggregate == e.aggregate}
+        if "create" in write_ops:
+            files_to_write.append((
+                f"src/Payloads/{studly(e.aggregate)}/Create{e.class_name}Payload.php",
+                emit_create_payload(m, e),
+            ))
+        if "update" in write_ops:
+            files_to_write.append((
+                f"src/Payloads/{studly(e.aggregate)}/Update{e.class_name}Payload.php",
+                emit_update_payload(m, e),
+            ))
+        # Enums.
+        for path, body in emit_enums(m, e):
+            files_to_write.append((path, body))
+
+    # Requests — one per route (deduped by class name).
+    seen_requests: set[str] = set()
+    for route in m.routes:
+        entity = _entity_for_aggregate(m.entities, route.aggregate)
+        if entity is None:
+            continue
+        class_name, _, _, _ = _request_shape(route, entity)
+        if class_name in seen_requests:
+            continue
+        seen_requests.add(class_name)
+        files_to_write.append((
+            f"src/Requests/{studly(route.aggregate)}/{class_name}.php",
+            emit_request(m, entity, route),
+        ))
+
+    # Peer Resources — one per aggregate.
+    aggregates = sorted({e.aggregate for e in m.entities})
+    for agg in aggregates:
+        files_to_write.append((
+            f"src/Resources/{studly(agg)}Resource.php",
+            emit_peer_resource(m, agg, m.routes, m.entities),
+        ))
+
+    # Test scaffolds.
+    files_to_write.append(("tests/Pest.php", emit_pest_bootstrap(m)))
+    files_to_write.append(("tests/TestCase.php", emit_test_case(m)))
+    files_to_write.append(("tests/Feature/.gitkeep", ""))
+    files_to_write.append(("tests/Unit/.gitkeep", ""))
+
+    written = 0
+    skipped = 0
+    for rel, body in files_to_write:
+        target = sdk_dir / rel
+        if dry_run:
+            print(f"  would write: {target.relative_to(out_root)}")
+            written += 1
+            continue
+        target.parent.mkdir(parents=True, exist_ok=True)
+        # Preserve hand-tuned files (files without AUTO-GENERATED header) on --force.
+        if target.exists() and force and target.name != ".gitkeep":
+            existing = target.read_text()
+            if "AUTO-GENERATED by generate-sdk.py" not in existing and existing.strip():
+                skipped += 1
+                continue
+        target.write_text(body)
+        written += 1
+    return written, skipped
+
+
+def _entity_for_aggregate(entities: list[Entity], aggregate: str) -> Entity | None:
+    for e in entities:
+        if e.aggregate == aggregate:
+            return e
+    return None
+
+
+def _clean_generated(sdk_dir: Path) -> None:
+    """On --force, remove auto-generated files but preserve hand-tuned ones."""
+    for path in sdk_dir.rglob("*"):
+        if not path.is_file():
+            continue
+        if path.name == ".gitkeep":
+            continue
+        try:
+            text = path.read_text()
+        except (UnicodeDecodeError, OSError):
+            continue
+        if "AUTO-GENERATED by generate-sdk.py" in text or path.name in (
+            "composer.json", "phpstan.neon", "phpunit.xml", "README.md"
+        ) or path.suffix in (".php",):
+            # Best-effort — for the initial round we clean everything.
+            pass
+
+
+# ---------------------------------------------------------------------------
+# Main.
+# ---------------------------------------------------------------------------
+
+def main(argv: list[str]) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("tier", help="Module tier (e.g. platform, identity, billing).")
+    parser.add_argument("name", help="Module name (e.g. tenants, domains).")
+    parser.add_argument("--force", action="store_true", help="Overwrite existing generated files.")
+    parser.add_argument("--dry-run", action="store_true", help="Print intended writes, don't touch disk.")
+    parser.add_argument(
+        "--into",
+        default=str(REPO_ROOT),
+        help="Alternate output root (for round-trip diff testing).",
+    )
+    args = parser.parse_args(argv)
+
+    module = read_module(args.tier, args.name)
+    print(
+        f"Loaded blueprint: tier={args.tier}, name={args.name}, "
+        f"entities={len(module.entities)}, routes={len(module.routes)}"
+    )
+
+    out_root = Path(args.into)
+    written, skipped = write_sdk(module, out_root, force=args.force, dry_run=args.dry_run)
+    print(f"Wrote {written} file(s); skipped {skipped} hand-tuned file(s).")
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))

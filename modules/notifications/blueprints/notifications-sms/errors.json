@@ -1,0 +1,105 @@
+{
+  "id": "academorix://modules/notifications-sms/errors",
+  "$version": 1,
+  "title": "notifications-sms \u2014 error codes",
+  "namespace": "notifications-sms",
+  "errors": [
+    {
+      "code": "NOTIFICATIONS_SMS_OPTED_OUT",
+      "http": 200,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "notifications.sms.errors.opted_out",
+      "description": "Recipient opted out. Not surfaced as error. Delivery marked permanently_failed."
+    },
+    {
+      "code": "NOTIFICATIONS_SMS_COST_CAP_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "notifications.sms.errors.cost_cap_exceeded",
+      "description": "Tenant would exceed monthly cost cap. Refused. Admin sees upgrade path."
+    },
+    {
+      "code": "NOTIFICATIONS_SMS_PER_MESSAGE_COST_EXCEEDED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "notifications.sms.errors.per_message_cost_exceeded",
+      "description": "Estimated cost for this recipient exceeds notifications.sms.per-message-max-cost. Typical for very-remote-country destinations."
+    },
+    {
+      "code": "NOTIFICATIONS_SMS_COUNTRY_BLOCKED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "notifications.sms.errors.country_blocked",
+      "description": "Destination country not in tenant's allowed_country_codes."
+    },
+    {
+      "code": "NOTIFICATIONS_SMS_INVALID_PHONE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "notifications.sms.errors.invalid_phone",
+      "description": "Phone number not valid E.164."
+    },
+    {
+      "code": "NOTIFICATIONS_SMS_UNDELIVERABLE",
+      "http": 200,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "notifications.sms.errors.undeliverable",
+      "description": "Carrier reported permanent failure. Number added to opt-out with reason=invalid_number + 30d recheck."
+    },
+    {
+      "code": "NOTIFICATIONS_SMS_PROVIDER_ERROR",
+      "http": 502,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "notifications.sms.errors.provider_error",
+      "description": "Provider returned 5xx or network error."
+    },
+    {
+      "code": "NOTIFICATIONS_SMS_PROVIDER_DISABLED",
+      "http": 503,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "notifications.sms.errors.provider_disabled"
+    },
+    {
+      "code": "NOTIFICATIONS_SMS_RATE_LIMITED",
+      "http": 429,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "notifications.sms.errors.rate_limited"
+    },
+    {
+      "code": "NOTIFICATIONS_SMS_MESSAGE_TOO_LONG",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "notifications.sms.errors.message_too_long",
+      "description": "Message would exceed max_segments (default 3, ~450 GSM chars). Truncate or use email instead."
+    },
+    {
+      "code": "NOTIFICATIONS_SMS_STOP_KEYWORD_PROCESSING_FAILED",
+      "http": 500,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "notifications.sms.errors.stop_keyword_processing_failed",
+      "description": "Failed to record STOP opt-out. Retried immediately \u2014 CRITICAL because failure = regulatory violation."
+    }
+  ]
+}

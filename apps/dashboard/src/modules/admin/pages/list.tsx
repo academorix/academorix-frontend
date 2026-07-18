@@ -14,8 +14,8 @@
  * `requiredPermission`, so an operator sees only what they can actually use.
  */
 
-import { Cog6ToothIcon } from "@academorix/ui/icons/outline";
-import { EmptyState } from "@academorix/ui/react";
+import { Cog6ToothIcon } from "@stackra/ui/icons/heroicon/outline";
+import { EmptyState } from "@stackra/ui/react";
 import { useGetIdentity } from "@refinedev/core";
 import { useMemo } from "react";
 
@@ -26,10 +26,7 @@ import type { ReactNode } from "react";
 import { ResourceAccessGuard } from "@/components/access";
 import { ViewHeader } from "@/components/refine/views/view-header";
 import { AdminSurfaceCard } from "@/modules/admin/components/admin-surface-card";
-import {
-  ADMIN_SURFACE_GROUP_LABELS,
-  ADMIN_SURFACE_GROUP_ORDER,
-} from "@/modules/admin/admin.types";
+import { ADMIN_SURFACE_GROUP_LABELS, ADMIN_SURFACE_GROUP_ORDER } from "@/modules/admin/admin.types";
 import { groupVisibleSurfaces } from "@/modules/admin/admin-surfaces.config";
 
 /**

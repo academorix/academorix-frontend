@@ -8,7 +8,7 @@
  * surface — coaches mark present/absent/late/excused directly in the grid.
  */
 
-import { Label, ListBox, Select } from "@academorix/ui/react";
+import { Label, ListBox, Select } from "@stackra/ui/react";
 import { useUpdate } from "@refinedev/core";
 
 import type { Attendance } from "@/types";

@@ -9,7 +9,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §10.19 "Finance — Expenses"
  */
 
-import { ArrowTrendingDownIcon } from "@academorix/ui/icons/outline";
+import { ArrowTrendingDownIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

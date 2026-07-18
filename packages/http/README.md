@@ -1,92 +1,129 @@
-# @academorix/http
+# @stackra/http
 
-Framework-agnostic HTTP client for the Academorix workspace. Native `fetch` with
-an observable token store, single-flight token refresh, device-fingerprint
-headers, Foundation envelope helpers, and `HttpError` normalization.
+Multi-driver HTTP client for the Stackra framework — axios/fetch connectors, middleware + interceptor pipelines, streaming (SSE/NDJSON/JSON/text/binary), circuit breaker, rate limiting, metrics, uploads, and React hooks.
 
-Depends on `@academorix/core` (for the `HttpError` class). Zero React in this
-package — used by `@academorix/query`, `@academorix/notifications`, both apps,
-and Refine's data provider on the dashboard.
+## Quick start
 
-## Public API
+```typescript
+import { Module } from '@stackra/container';
+import { HttpModule } from '@stackra/http';
 
-| Subpath                     | Exports                                                                                                      |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `@academorix/http/client`   | `createHttpClient(config)`, `HttpClient`, `HttpClientConfig`, `HttpMethod`, `RequestOptions`                 |
-| `@academorix/http/tokens`   | `TokenStore`, `TokenListener`, `TokenStoreOptions`                                                           |
-| `@academorix/http/refresh`  | `createRefreshCoordinator({ client, tokens, path? })`, `RefreshCoordinator`                                  |
-| `@academorix/http/errors`   | `toHttpError`, `toNetworkError`, `HttpError` + `isHttpError` (re-exported from core)                         |
-| `@academorix/http/envelope` | `unwrapEnvelope`, `extractPaginationMeta`, `isFoundationEnvelope`, `FoundationEnvelope<T>`, `FoundationMeta` |
-| `@academorix/http/device`   | `createDeviceHeadersReader(options)`, `deviceLabel`, `getDeviceLocale`                                       |
-
-Root barrel re-exports everything for one-line imports.
-
-## Design principles
-
-- **Fetch, not axios.** Native `fetch` covers every need; the interceptor chain
-  is done via `HttpClient` methods. Zero runtime deps.
-- **Observable token store.** Auth changes propagate to every consumer (HTTP
-  client, React hooks via subscribe) without a shared React context.
-- **Single-flight refresh.** Concurrent 401s coalesce onto one refresh attempt,
-  then retry the original request once. If refresh fails, the token is cleared
-  and `onUnauthorized` fires so the auth provider can redirect.
-- **Device fingerprint headers as opt-in.** Apps pass their build's version to
-  `createDeviceHeadersReader` — the package doesn't reach for build-time defines
-  like `__ACADEMORIX_VERSION__` itself.
-- **SSR-safe.** Every browser global (`window`, `navigator`, `document`,
-  `localStorage`) is guarded. Server-side calls produce sensible defaults.
-
-## Wiring the app singleton
-
-```ts
-// apps/dashboard/src/lib/http/index.ts
-import {
-  createDeviceHeadersReader,
-  createHttpClient,
-  createRefreshCoordinator,
-  TokenStore,
-} from "@academorix/http";
-
-import { resolveHostContext } from "@/lib/http/host";
-
-// Injected by Vite at build time.
-declare const __ACADEMORIX_VERSION__: string;
-
-export const tokenStore = new TokenStore();
-
-const host = resolveHostContext();
-
-export const httpClient = createHttpClient({
-  baseUrl: host.apiOrigin,
-  tokens: tokenStore,
-  onUnauthorized: () => window.location.assign("/login"),
-  deviceHeaders: createDeviceHeadersReader({
-    clientName: "academorix-dashboard",
-    clientVersion:
-      typeof __ACADEMORIX_VERSION__ !== "undefined"
-        ? __ACADEMORIX_VERSION__
-        : "dev",
-  }),
-});
-
-httpClient.attachRefreshCoordinator(
-  createRefreshCoordinator({ client: httpClient, tokens: tokenStore }),
-);
+@Module({
+  imports: [
+    HttpModule.forRoot({
+      default: 'api',
+      connections: {
+        api: { baseURL: 'https://api.example.com', timeout: 10_000 },
+        auth: { baseURL: 'https://auth.example.com', timeout: 5_000 },
+      },
+    }),
+  ],
+})
+export class AppModule {}
 ```
 
-## Foundation envelope
+```typescript
+import { Injectable, Inject } from '@stackra/container';
+import { HTTP_CLIENT, type IHttpClient } from '@stackra/contracts';
 
-Backend controllers extending `Academorix\Foundation\Controllers\Controller`
-return `{ message, status, data, meta? }`. Auth DTOs (`AuthTokenData` etc.) are
-returned as the bare DTO at the root.
+@Injectable()
+class UserService {
+  public constructor(@Inject(HTTP_CLIENT) private readonly api: IHttpClient) {}
 
-```ts
-import {
-  unwrapEnvelope,
-  extractPaginationMeta,
-} from "@academorix/http/envelope";
-
-const rawBody = await httpClient.get("/v1/athletes?per_page=50");
-const athletes = unwrapEnvelope<Athlete[]>(rawBody);
-const { total, meta } = extractPaginationMeta(rawBody);
+  public async getUsers() {
+    const res = await this.api.get<IUser[]>('/users');
+    return res.data;
+  }
+}
 ```
+
+## Feature modules — `forFeature`
+
+A single `forFeature(options)` entry registers custom drivers and/or extra
+connections and/or per-connection middleware / interceptors. Post-wire
+registration runs through a lifecycle-hook seeder (`OnApplicationBootstrap`)
+resolved via `ModuleRef` — no bootstrap marker tokens.
+
+```typescript
+import { FetchConnector } from '@stackra/http/fetch';
+
+@Module({
+  imports: [
+    // Register a custom driver:
+    HttpModule.forFeature({ driver: 'fetch', connector: FetchConnector }),
+
+    // Add a connection + scoped middleware/interceptors:
+    HttpModule.forFeature({
+      connections: {
+        billing: { baseURL: 'https://billing.example.com', timeout: 15_000 },
+      },
+      middleware: [{ use: AuditMiddleware, connection: 'billing' }],
+      interceptors: [{ use: TraceInterceptor, connection: ['api', 'billing'] }],
+    }),
+  ],
+})
+export class BillingModule {}
+```
+
+## Streaming
+
+```typescript
+// Server-Sent Events
+for await (const event of client.sse<Ticker>('/prices/stream')) {
+  store.update(event.data);
+}
+
+// RxJS adapter (optional)
+import { fromHttpStream } from '@stackra/http/rxjs';
+const prices$ = fromHttpStream(client.sse<Ticker>('/prices/stream'));
+```
+
+## React bindings — `@stackra/http/react`
+
+```tsx
+import { useHttp, useStream, useSse } from '@stackra/http/react';
+
+function Prices() {
+  const { values, open } = useStream<Ticker>('/prices/stream');
+  return <PriceList prices={values} live={open} />;
+}
+```
+
+## Testing helper — `@stackra/http/testing`
+
+```typescript
+import { createMockHttp } from '@stackra/http/testing';
+
+const http = createMockHttp();
+const api = http.client();
+api.stubResponse('GET', '/users/42', { data: { id: 42, name: 'Ada' } });
+
+await userService.load(42); // internally: api.get('/users/42')
+
+api.$.assertCalled('get').with('/users/42').once();
+expect(api.requestsFor('GET')).toHaveLength(1);
+```
+
+Both `MockHttpManager` and `MockHttpClient` implement the full `IHttpManager` /
+`IHttpClient` contracts, record every request, and support response + stream
+stubbing.
+
+## Configuration
+
+```bash
+cp node_modules/@stackra/http/config/http.config.ts src/config/http.config.ts
+```
+
+## Subpaths
+
+| Import                  | Purpose                                                                 |
+| ----------------------- | ----------------------------------------------------------------------- |
+| `@stackra/http`         | `HttpModule`, `HttpManager`, `AxiosConnector`, middleware, interceptors |
+| `@stackra/http/fetch`   | `FetchConnector` (fetch driver for browsers/edge/RN)                    |
+| `@stackra/http/rxjs`    | `fromHttpStream()` — `IHttpStream` → RxJS `Observable`                  |
+| `@stackra/http/react`   | `useHttp`, `useHttpManager`, `useHttpConnection`, `useStream`, `useSse` |
+| `@stackra/http/testing` | `createMockHttp()`, `createMockHttpClient()`                            |
+
+## License
+
+MIT © Stackra L.L.C

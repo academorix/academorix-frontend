@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/geography/schemas/city",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "City",
+  "description": "City row. Vendor-owned schema. High-volume (~150k rows). Repository enforces `country_id` OR `state_id` scoping on every read to prevent full-table scans.",
+  "type": "object",
+  "x-module": "geography",
+  "x-vendor": {
+    "package": "nnjeim/world",
+    "vendor_model": "Nnjeim\\World\\Models\\City",
+    "we_own_migration": false,
+    "we_own_seeder": false
+  },
+  "x-eloquent": {
+    "baseClass": "Nnjeim\\World\\Models\\City",
+    "table": "cities",
+    "primaryKey": "id",
+    "keyType": "int",
+    "incrementing": true,
+    "timestamps": false,
+    "model": "Academorix\\Geography\\Models\\City",
+    "interface": "Academorix\\Geography\\Contracts\\Data\\CityInterface",
+    "implements": ["Academorix\\Geography\\Contracts\\Data\\CityInterface"],
+    "traits": ["HasFactory", "Filterable"],
+    "observers": ["CityObserver"]
+  },
+  "x-database": {
+    "engine": "any (vendor-supported)",
+    "vendor_owned": true,
+    "columns_summary": {
+      "id": { "type": "integer", "primary": true },
+      "country_id": { "type": "integer" },
+      "state_id": { "type": "integer" },
+      "name": { "type": "string" },
+      "country_code": { "type": "string", "length": 2 },
+      "state_code": { "type": "string", "nullable": true },
+      "latitude": { "type": "string", "nullable": true },
+      "longitude": { "type": "string", "nullable": true }
+    }
+  },
+  "required": ["id", "country_id", "state_id", "name", "country_code"],
+  "properties": {
+    "id": { "type": "integer" },
+    "country_id": { "type": "integer" },
+    "state_id": { "type": "integer" },
+    "name": { "type": "string" },
+    "country_code": { "type": "string", "pattern": "^[A-Z]{2}$" },
+    "state_code": { "type": ["string", "null"] },
+    "latitude": { "type": ["string", "null"] },
+    "longitude": { "type": ["string", "null"] }
+  },
+  "additionalProperties": true,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "resource_class": "Academorix\\Geography\\Data\\Resources\\CityResourceData"
+  },
+  "x-scoping": "Repository refuses index() calls without a country_id OR state_id filter. Prevents full-table scans across 150k rows."
+}

@@ -1,0 +1,90 @@
+{
+  "id": "academorix://modules/subscription/traits",
+  "$version": 1,
+  "title": "subscription \u2014 trait composition",
+  "description": "Two owned traits. HasSubscription mixed into Tenant exposes ->subscription() + ->plan() helpers. IsBillable is the union wrapper over Cashier's Billable variants \u2014 tenants get whichever variant matches their Application's payment_provider.",
+  "owned": [
+    {
+      "trait": "Academorix\\Subscription\\Concerns\\HasSubscription",
+      "description": "Mixed into `Tenant`. Adds `subscription()` hasOne (active), `subscriptions()` hasMany (history), `plan()` accessor, `onTrial()` / `subscribed()` / `subscribedToPlan($key)` helpers matching Cashier's semantics.",
+      "public": true,
+      "usedBy": ["tenancy::Tenant"],
+      "conflicts_with": []
+    },
+    {
+      "trait": "Academorix\\Subscription\\Concerns\\IsBillable",
+      "description": "Union wrapper. Depending on Application.payment_provider, dynamically composes `\\Laravel\\Cashier\\Billable` (Stripe) or `\\Laravel\\Paddle\\Billable` (Paddle). Provides a uniform surface (`createCheckoutSession()`, `redirectToBillingPortal()`, `reportUsage()`) regardless of underlying provider.",
+      "public": true,
+      "usedBy": ["tenancy::Tenant"],
+      "conflicts_with": [],
+      "notes": "Cashier's traits add ~15 columns to the tenants table (stripe_id, pm_type, trial_ends_at, etc). Migration authored in tenancy module extends this into a bridge migration."
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "Plan + Subscription. NOT SubscriptionEvent \u2014 append-only."
+      }
+    ],
+    "cashier": [
+      { "trait": "Laravel\\Cashier\\Billable", "usedBy": ["tenancy::Tenant via IsBillable"] },
+      {
+        "trait": "Laravel\\Paddle\\Billable",
+        "usedBy": ["tenancy::Tenant via IsBillable when payment_provider='paddle'"]
+      }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }],
+    "audit": [
+      {
+        "trait": "Academorix\\Audit\\Concerns\\HasAudit",
+        "reason": "Subscription state changes are compliance-material \u2014 SOX 404 requires auditable history for revenue recognition."
+      }
+    ]
+  },
+  "composition": {
+    "plan": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasSystemFlag",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAudit",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "NO BelongsToTenant \u2014 Plans are Application-scoped, not tenant-scoped."
+    },
+    "subscription": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasActivityLog",
+        "HasAudit",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "HasAudit critical for SOX. NO Searchable (subscription rows are internal + high-cardinality)."
+    },
+    "subscription_event": {
+      "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "Filterable"],
+      "notes": "Append-only. NO SoftDeletes, NO HasUserstamps (event carries actor_id), NO HasAudit (event IS the audit)."
+    }
+  }
+}

@@ -9,7 +9,9 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §18 "AI & Assistants"
  */
 
-import { SparklesIcon } from "@academorix/ui/icons/outline";
+// SparklesIcon import removed — the icon is now specified as the
+// Iconify string token `"sparkles"` in the resource meta (matches
+// the rest of the workspace convention).
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";
@@ -25,7 +27,11 @@ const aiModule: AppModule = {
       list: "/ai",
       meta: {
         label: "AI Assistant",
-        icon: SparklesIcon,
+        // Icon tokens follow the rest of the workspace convention
+        // (Iconify string). SparklesIcon (a component) doesn't match
+        // AppResourceMeta.icon's string type — Iconify handles the
+        // renderer at the call site.
+        icon: "sparkles",
         featureKey: "ai",
         requiredPermission: "ai.use",
         order: 52,

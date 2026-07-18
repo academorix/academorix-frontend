@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/branding/schedule",
+  "$version": 1,
+  "title": "branding — scheduled tasks",
+  "description": "Artisan / cron entries this module registers.",
+  "schedule": []
+}

@@ -7,7 +7,7 @@
  * (tags), and a full coaching description.
  */
 
-import { Card, Chip, Spinner } from "@academorix/ui/react";
+import { Card, Chip, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 
 import type { Drill } from "@/types";

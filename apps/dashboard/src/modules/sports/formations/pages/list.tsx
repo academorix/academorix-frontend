@@ -10,7 +10,7 @@
 import { useMemo } from "react";
 
 import type { Formation } from "@/modules/sports/formations/formation.types";
-import type { DataGridColumn } from "@academorix/ui/react";
+import type { DataGridColumn } from "@stackra/ui/react";
 import type { ReactNode } from "react";
 
 import { EditButton, ListView, ResourceDataGrid, ShowButton } from "@/components/refine";

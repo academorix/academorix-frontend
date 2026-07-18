@@ -21,7 +21,7 @@
  *   `{ quiet_hours: { start, end, timezone } | {} }`.
  */
 
-import { Input, Label, TextField } from "@academorix/ui/react";
+import { Input, Label, TextField } from "@stackra/ui/react";
 
 import type { QuietHoursWindow } from "@academorix/notifications";
 import type { ChangeEvent, ReactNode } from "react";

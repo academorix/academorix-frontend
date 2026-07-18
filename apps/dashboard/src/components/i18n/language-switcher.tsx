@@ -9,14 +9,14 @@
  * {@link "@/lib/i18n/locale-context".LocaleProvider}.
  */
 
-import { LanguageIcon } from "@academorix/ui/icons/outline";
-import { Button, Dropdown, Label } from "@academorix/ui/react";
+import { LanguageIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Dropdown, Label } from "@stackra/ui/react";
 
 import type { Locale } from "@/config/i18n.config";
 import type { Key, ReactNode } from "react";
 
 import { LOCALE_LABELS, LOCALES } from "@/config/i18n.config";
-import { useLocale } from "@/lib/i18n";
+import { useLocale } from "@/hooks/use-locale";
 
 /** Props for {@link LanguageSwitcher}. */
 interface LanguageSwitcherProps {

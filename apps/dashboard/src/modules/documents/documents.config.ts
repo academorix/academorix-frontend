@@ -19,14 +19,14 @@ import {
   IdentificationIcon,
   ShieldCheckIcon,
   TrashIcon,
-} from "@academorix/ui/icons/outline";
+} from "@stackra/ui/icons/heroicon/outline";
 
 import type {
   DocumentOwnerType,
   DocumentScanStatus,
   DocumentType,
 } from "@/modules/documents/documents.types";
-import type { IconType } from "@academorix/ui/icons";
+import type { IconType } from "@stackra/ui/icons";
 
 /**
  * Maximum accepted upload size per file — 25 MB. The upload page rejects

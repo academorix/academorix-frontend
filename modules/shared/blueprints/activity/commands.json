@@ -1,0 +1,22 @@
+{
+  "id": "academorix://modules/activity/commands",
+  "$version": 1,
+  "title": "activity \u2014 Artisan commands",
+  "commands": [
+    {
+      "signature": "activity:prune {--dry-run} {--tenant=} {--tier=}",
+      "class": "Academorix\\Activity\\Console\\Commands\\PruneCommand",
+      "purpose": "Retention prune. --dry-run reports counts without deleting. --tenant scopes to one tenant; --tier scopes to one tier."
+    },
+    {
+      "signature": "activity:seed {--tenant=} {--count=1000}",
+      "class": "Academorix\\Activity\\Console\\Commands\\SeedCommand",
+      "purpose": "Dev-only: generate synthetic activity rows for testing the feed UI. Refused in production."
+    },
+    {
+      "signature": "activity:describe",
+      "class": "Academorix\\Activity\\Console\\Commands\\DescribeCommand",
+      "purpose": "Print the ActivityRegistry contents: every #[LoggableActivity] model with retention_tier + log_name."
+    }
+  ]
+}

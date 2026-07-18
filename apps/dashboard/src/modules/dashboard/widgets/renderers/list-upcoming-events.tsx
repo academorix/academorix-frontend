@@ -8,8 +8,8 @@
  * endpoint lands; the shape is a plain `useList` sorted by `start_at`.
  */
 
-import { CalendarIcon } from "@academorix/ui/icons/outline";
-import { Chip, Link, Skeleton, Widget } from "@academorix/ui/react";
+import { CalendarIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Chip, Link, Skeleton, Widget } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 
 import type { BaseRecord } from "@refinedev/core";

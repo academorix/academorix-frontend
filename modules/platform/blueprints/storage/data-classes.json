@@ -1,0 +1,91 @@
+{
+  "id": "academorix://modules/storage/data-classes",
+  "$version": 1,
+  "title": "storage \u2014 field classification",
+  "description": "Every column across the four owned entities classified per foundation's five-tier taxonomy. File bytes themselves are treated as `restricted` by default \u2014 their content is user-supplied and can contain any tier of PII.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "File.kind",
+      "File.mime_type",
+      "File.size_bytes",
+      "File.visibility",
+      "File.virus_scan_state",
+      "File.created_at",
+      "FileVariant.variant_key",
+      "FileVariant.width",
+      "FileVariant.height",
+      "FileVariant.size_bytes",
+      "FileVariant.mime_type",
+      "ChunkedUpload.state",
+      "ChunkedUpload.protocol",
+      "SignedUrlAudit.reason",
+      "SignedUrlAudit.expires_at"
+    ],
+    "internal": [
+      "File.tenant_id",
+      "File.fileable_type",
+      "File.fileable_id",
+      "File.collection",
+      "File.reference_count",
+      "File.generated_variant_keys",
+      "FileVariant.tenant_id",
+      "FileVariant.file_id",
+      "FileVariant.generated_by_conversion",
+      "ChunkedUpload.tenant_id",
+      "ChunkedUpload.chunks",
+      "SignedUrlAudit.tenant_id",
+      "SignedUrlAudit.file_id",
+      "SignedUrlAudit.hit_count"
+    ],
+    "confidential": [
+      "File.owner_id",
+      "File.filename (may reveal user intent or subject via naming)",
+      "File.name",
+      "File.custom_properties (arbitrary bag \u2014 may include EXIF geolocation + author info)",
+      "File.metadata",
+      "File.sha256 (content hash; a colliding upload confirms possession of the content)",
+      "ChunkedUpload.owner_id",
+      "ChunkedUpload.filename",
+      "ChunkedUpload.declared_sha256",
+      "SignedUrlAudit.issued_to_user_id",
+      "SignedUrlAudit.issued_by_user_id"
+    ],
+    "restricted": [
+      "File byte content (the actual bytes on disk \u2014 user-supplied, can contain anything)",
+      "File.path (tenant-scoped storage key; revealing it enables path-guessing attacks even though signed URLs remain required)",
+      "File.disk",
+      "ChunkedUpload.upload_url (a live upload URL is a temporary write credential)",
+      "ChunkedUpload.provider_upload_id (server-side handle for the provider)",
+      "SignedUrlAudit.signature_hash (revealing the hash enables replay-attack analysis of the signature scheme)",
+      "SignedUrlAudit.ip_lock (leaks intended-reader IP)",
+      "SignedUrlAudit.user_lock (leaks intended-reader user id)"
+    ],
+    "regulated_minor": [
+      "Any File where owner_id resolves to a minor (via user::User.age_gate=minor_under_consent_age). Files inherit their owner's regulatory context. Also captures Files fileable_type=Academorix\\User\\Models\\Minor when that submodel exists."
+    ],
+    "regulated_health": [
+      "Files uploaded to a health-classified fileable (e.g. medical_record kinds when we implement HIPAA support). Not currently applicable; reserved."
+    ],
+    "regulated_financial": [
+      "Files of kind `receipt`, `invoice`, `contract`, `tax_document` when tenant is in a tax jurisdiction (JP, DE, FR) requiring 7-year retention. Byte-level content classified as restricted."
+    ],
+    "audit_log": [
+      "Every SignedUrlAudit row \u2014 by design an audit record.",
+      "FileUploaded + FileErased events written to audit::AuditLog."
+    ],
+    "always_redacted": [
+      "File.path is HIDDEN on the wire (x-wire.hidden). Never surfaces on any tenant-facing endpoint. Platform-admin endpoints require ?include=storage_internals to opt in.",
+      "File.sha256 is HIDDEN on the wire.",
+      "File.disk is HIDDEN.",
+      "File.reference_count is HIDDEN.",
+      "ChunkedUpload.upload_url appears ONLY on the initiate-response body, then HIDDEN on subsequent reads.",
+      "SignedUrlAudit.signature_hash is HIDDEN even from tenant admins."
+    ]
+  },
+  "notes": [
+    "File bytes themselves are NOT stored in the database \u2014 they live on the storage backend. Byte content classification is a policy declaration about what can be uploaded (governed by the #[FileKind] allowed_mimes list + tenant's data-classification policy for user-supplied content) \u2014 not a column classification.",
+    "PDF metadata + EXIF exposure: `File.custom_properties` may contain EXIF GPS coordinates from photo uploads. The FileObserver::created hook is configured to strip GPS EXIF by default; tenants can opt in via `storage.preserve_exif_gps` setting.",
+    "Ownership drift: when `File.owner_id` becomes null (owner user deleted), the file inherits tenant-level ownership. Compliance queries treat the tenant as the residual data controller."
+  ]
+}

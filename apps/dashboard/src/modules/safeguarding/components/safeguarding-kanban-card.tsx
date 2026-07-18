@@ -12,7 +12,7 @@
  * safeguarding-specific — leads cards render a different body.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 
 import type { SafeguardingCase } from "@/modules/safeguarding/safeguarding.types";
 import type { ReactNode } from "react";

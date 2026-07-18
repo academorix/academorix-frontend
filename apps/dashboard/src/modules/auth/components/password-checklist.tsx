@@ -9,7 +9,7 @@
  * predicates already pass and 422s are rare.
  */
 
-import { CheckCircleIcon, XCircleIcon } from "@academorix/ui/icons/outline";
+import { CheckCircleIcon, XCircleIcon } from "@stackra/ui/icons/heroicon/outline";
 
 import type { ReactNode } from "react";
 

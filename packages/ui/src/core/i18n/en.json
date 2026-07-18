@@ -1,0 +1,45 @@
+{
+  "confirmDialog": {
+    "confirmLabel": "Confirm",
+    "cancelLabel": "Cancel"
+  },
+  "fileUpload": {
+    "label": "Drop files here or click to upload",
+    "uploadingAriaLabel": "Uploading {{name}}",
+    "removeAriaLabel": "Remove {{name}}"
+  },
+  "inlineTip": {
+    "dismissAriaLabel": "Dismiss tip"
+  },
+  "jsonViewSection": {
+    "title": "Raw Data",
+    "copyLabel": "Copy",
+    "copiedLabel": "Copied!",
+    "copyAriaLabel": "Copy JSON",
+    "copiedAriaLabel": "Copied"
+  },
+  "moneyAmountCell": {
+    "originalPriceAriaLabel": "Original price"
+  },
+  "pageProgress": {
+    "ariaLabel": "Page loading"
+  },
+  "patternLock": {
+    "ariaLabel": "Pattern lock input"
+  },
+  "phoneInput": {
+    "placeholder": "Enter phone number",
+    "ariaLabel": "Phone number",
+    "countryButtonAriaLabel": "Selected country: {{country}}, +{{callingCode}}"
+  },
+  "pinLock": {
+    "biometricAriaLabel": "Biometric authentication",
+    "deleteAriaLabel": "Delete last digit",
+    "dotsProgressAriaLabel": "{{entered}} of {{total}} digits entered"
+  },
+  "progressAccordion": {
+    "notStarted": "Not started",
+    "inProgress": "In progress",
+    "completed": "Completed"
+  }
+}

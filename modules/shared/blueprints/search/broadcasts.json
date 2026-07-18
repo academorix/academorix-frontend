@@ -1,0 +1,41 @@
+{
+  "id": "academorix://modules/search/broadcasts",
+  "$version": 1,
+  "title": "search \u2014 broadcast channels",
+  "description": "Two private channels. Per-user for sync-job lifecycle (own jobs). Per-tenant for admin dashboards watching cross-user reindex activity + engine health.",
+  "driver": "reverb",
+  "channels": [
+    {
+      "name": "user.{userId}.search",
+      "kind": "private",
+      "description": "Lifecycle stream for SearchSyncJobs where causer_id = userId. Powers the SPA's real-time reindex progress bar.",
+      "authorize": "User is the addressed user (auth()->id() === userId).",
+      "authCallback": "fn (User $user, string $userId) => $user->getKey() === $userId",
+      "events": [
+        "SearchSyncJobQueued",
+        "SearchSyncJobStarted",
+        "SearchSyncJobProgress",
+        "SearchSyncJobShardCompleted",
+        "SearchSyncJobCompleted",
+        "SearchSyncJobFailed",
+        "SearchSyncJobCancelled",
+        "SearchIndexAliasSwapped"
+      ]
+    },
+    {
+      "name": "tenant.{tenantId}.search",
+      "kind": "private",
+      "description": "Tenant-admin dashboard channel. Any user with search.indexes.viewAny may subscribe. Powers cross-user reindex activity + engine reachability + config-drift banners.",
+      "authorize": "User belongs to the tenant AND has `search.indexes.viewAny`.",
+      "authCallback": "fn (User $user, string $tenantId) => $user->tenant_id === $tenantId && $user->can('search.indexes.viewAny')",
+      "events": [
+        "SearchIndexRegistered",
+        "SearchIndexUnregistered",
+        "SearchIndexAliasSwapped",
+        "SearchSyncJobStarted",
+        "SearchSyncJobCompleted",
+        "SearchSyncJobFailed"
+      ]
+    }
+  ]
+}

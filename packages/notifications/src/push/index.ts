@@ -1,17 +1,20 @@
 /**
  * @file index.ts
- * @module @academorix/notifications/push
+ * @module @stackra/notifications/push
+ * @description Public API for the Web Push subpath.
  *
- * @description
- * Public barrel for the Web Push subscription helpers.
+ *   Exports the module, the platform adapter, the OS-notification
+ *   channel driver, the config token, and the wire-friendly types.
+ *   The shared `PushSubscriptionManager` lives in the core subpath —
+ *   consumers who want push access it through
+ *   `@stackra/notifications` (`PUSH_SUBSCRIPTION_MANAGER`).
  */
 
-export {
-  getExistingPushSubscription,
-  isPushSupported,
-  serializePushSubscription,
-  subscribeToPush,
-  unsubscribeFromPush,
-} from "./push-subscription.util";
-export type { SerializedPushSubscription, SubscribeToPushOptions } from "./push-subscription.util";
-export { urlBase64ToUint8Array } from "./vapid.util";
+import 'reflect-metadata';
+
+export { PushModule } from './push.module';
+export { WebPushAdapter } from './adapters';
+export { WebNotificationChannelDriver } from './channels';
+export { WEB_PUSH_CONFIG } from './constants';
+export { urlB64ToUint8Array } from './utils';
+export type { IWebPushConfig, IWebPushSubscription } from './interfaces';

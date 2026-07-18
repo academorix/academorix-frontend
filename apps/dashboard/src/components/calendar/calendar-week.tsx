@@ -214,7 +214,7 @@ export function CalendarWeek<TMeta>({
               }`}
               role="columnheader"
             >
-              <div className="text-xs font-medium uppercase tracking-wide text-muted">
+              <div className="text-xs font-medium tracking-wide text-muted uppercase">
                 {date.toLocaleDateString(undefined, { weekday: "short" })}
               </div>
               <div
@@ -241,7 +241,7 @@ export function CalendarWeek<TMeta>({
           {hourRows.map((hour) => (
             <div
               key={hour}
-              className="flex items-start justify-end px-2 pt-1 text-[10px] tabular-nums text-muted"
+              className="flex items-start justify-end px-2 pt-1 text-[10px] text-muted tabular-nums"
               style={{ height: HOUR_ROW_HEIGHT }}
             >
               {formatHourLabel(hour)}
@@ -291,8 +291,7 @@ export function CalendarWeek<TMeta>({
             {layouts
               .filter((layout) => layout.columnIndex === columnIndex)
               .map((layout) => {
-                const colorClass =
-                  CALENDAR_EVENT_COLOR_CLASSES[layout.event.colorKey ?? "neutral"];
+                const colorClass = CALENDAR_EVENT_COLOR_CLASSES[layout.event.colorKey ?? "neutral"];
                 const isCancelled = layout.event.status === "cancelled";
 
                 return (
@@ -304,7 +303,7 @@ export function CalendarWeek<TMeta>({
                       hour: "2-digit",
                       minute: "2-digit",
                     })}`}
-                    className={`calendar-week__event absolute left-1 right-1 flex flex-col gap-0.5 overflow-hidden rounded-md border px-2 py-1 text-left text-xs leading-tight shadow-sm hover:z-10 hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-accent ${colorClass} ${
+                    className={`calendar-week__event absolute right-1 left-1 flex flex-col gap-0.5 overflow-hidden rounded-md border px-2 py-1 text-left text-xs leading-tight shadow-sm hover:z-10 hover:brightness-105 focus:ring-2 focus:ring-accent focus:outline-none ${colorClass} ${
                       isCancelled ? "line-through opacity-70" : ""
                     }`}
                     style={{

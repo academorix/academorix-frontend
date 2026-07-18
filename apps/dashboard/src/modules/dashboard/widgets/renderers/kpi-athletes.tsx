@@ -8,8 +8,8 @@
  * tenant's terminology (an academy sees "Students", a club sees "Members").
  */
 
-import { AcademicCapIcon } from "@academorix/ui/icons/outline";
-import { KPI, Skeleton } from "@academorix/ui/react";
+import { AcademicCapIcon } from "@stackra/ui/icons/heroicon/outline";
+import { KPI, Skeleton } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 
 import type { ReactNode } from "react";

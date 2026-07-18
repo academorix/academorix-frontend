@@ -1,0 +1,378 @@
+{
+  "id": "academorix://modules/invitations/schemas/invitation",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Invitation",
+  "description": "One invitation. Polymorphic `target` (what the invitation grants access to — Tenant, Team, Athlete, Federation, ...) and polymorphic `inviter` (who sent it — User, ServiceAccount, System). Token is hashed at rest — the raw token is only ever known to the invitee, delivered through the chosen channel. State machine advances via the send / delivery / interaction / acceptance jobs and the inbound mail-transport webhook; every transition emits a row on `invitation_events`.",
+  "type": "object",
+  "x-module": "invitations",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "invitations",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "inv_",
+    "incrementing": false,
+    "model": "Academorix\\Invitations\\Models\\Invitation",
+    "interface": "Academorix\\Invitations\\Contracts\\Data\\InvitationInterface",
+    "implements": ["Academorix\\Invitations\\Contracts\\Data\\InvitationInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToApplication",
+      "BelongsToTenantOptional",
+      "HasMetadata",
+      "HasStates",
+      "HasUserstamps",
+      "HasAuditable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "state": "InvitationState",
+      "grants": "array",
+      "metadata": "array",
+      "expires_at": "datetime",
+      "sent_at": "datetime",
+      "delivered_at": "datetime",
+      "opened_at": "datetime",
+      "clicked_at": "datetime",
+      "accepted_at": "datetime",
+      "declined_at": "datetime",
+      "expired_at": "datetime",
+      "revoked_at": "datetime",
+      "last_resent_at": "datetime"
+    },
+    "appends": ["is_pending", "is_terminal", "public_accept_url"],
+    "observers": ["InvitationObserver"],
+    "hidden": ["token_hash", "metadata"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `inv_<26 chars>`."
+      },
+      "application_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "applications",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        }
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Owning tenant. NULL for platform-scope invites (Academorix staff onboarding). Filtered by BelongsToTenantOptional global scope when a tenant context is present; unfiltered on the central + platform-admin hosts.",
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "target_type": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Polymorphic target key registered via InvitationTargetRegistry (e.g. `tenant`, `team`, `athlete`, `federation`, `trial_session`). Enforced by the `invitation_target_registered` validation rule."
+      },
+      "target_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "ID of the target row. Not FK-constrained at DB level (polymorphic); target existence enforced at write time by the accept-handler preflight."
+      },
+      "inviter_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Polymorphic inviter key: `user`, `service_account`, `system`."
+      },
+      "inviter_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "ID of the inviter row. NULL when inviter_type=`system` (platform-initiated invitations)."
+      },
+      "email": {
+        "type": "string",
+        "length": 320,
+        "nullable": false,
+        "description": "Invitee email. Lowercased on write. RFC 5321 max 320 chars."
+      },
+      "channel": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "email",
+        "description": "Delivery channel: `email`, `sms`, `slack`, `link` (link-only — no message sent, admin copies the URL manually)."
+      },
+      "role_key": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Optional role key to assign on acceptance. Resolved by the accept handler against the `access` module's per-guard role tree."
+      },
+      "grants": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Additional per-target grants applied at accept time. Shape is target-specific (e.g. for `athlete` target: `{ athlete_id, relationship: 'guardian' }`; for `team` target: `{ team_id, position: 'goalkeeper' }`). Validated by the accept handler."
+      },
+      "message": {
+        "type": "text",
+        "nullable": true,
+        "description": "Free-text personal note from the inviter. Rendered in the invitation email / SMS body. Max 2000 chars."
+      },
+      "token_hash": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "SHA-256 hex digest of the raw token. Raw token is NEVER persisted — it exists only in the email / SMS body. Lookup: hash the incoming token and match this column."
+      },
+      "token_prefix": {
+        "type": "string",
+        "length": 12,
+        "nullable": false,
+        "description": "First 8 hex chars of token_hash. Non-secret. Powers admin UX ('token starting with abc12345...') without revealing the full hash."
+      },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Hard expiry. Default `now() + 14 days`, configurable per tenant via settings."
+      },
+      "state": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "pending",
+        "description": "Enum: `pending` (created, not yet delivered), `delivered` (mail transport confirmed), `opened` (invitee opened the email — tracked pixel), `clicked` (invitee clicked the accept link), `accepted` (invitee completed accept flow — terminal), `declined` (invitee declined — terminal), `expired` (past expires_at — terminal), `revoked` (inviter revoked — terminal), `bounced` (mail transport rejected — retryable up to N)."
+      },
+      "sent_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When SendInvitationJob completed. NULL until then."
+      },
+      "delivered_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "First inbound `delivered` signal from the mail transport webhook."
+      },
+      "opened_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "First inbound `open` signal (or first click, whichever comes first)."
+      },
+      "clicked_at": {
+        "type": "timestamptz",
+        "nullable": true
+      },
+      "accepted_at": {
+        "type": "timestamptz",
+        "nullable": true
+      },
+      "accepted_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "The `users.id` of the User created (or promoted) by the accept flow. Set atomically with `state=accepted`.",
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        }
+      },
+      "declined_at": { "type": "timestamptz", "nullable": true },
+      "declined_reason": { "type": "string", "length": 200, "nullable": true },
+      "expired_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set by ExpireInvitationsJob when it observes `now > expires_at`. Distinct from `expires_at` itself (the wall-clock cutoff)."
+      },
+      "revoked_at": { "type": "timestamptz", "nullable": true },
+      "revoked_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        }
+      },
+      "revoked_reason": { "type": "string", "length": 200, "nullable": true },
+      "bounce_reason": {
+        "type": "text",
+        "nullable": true,
+        "description": "Mail-transport reason string (deliverability failure). Populated on transitions into `bounced`."
+      },
+      "bounce_kind": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "Enum: `hard` (permanent — email invalid), `soft` (transient — retryable), `complaint` (recipient marked as spam)."
+      },
+      "resend_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "How many times the invitation has been resent (via `POST .../resend`). Hard cap enforced per settings (default 3)."
+      },
+      "last_resent_at": { "type": "timestamptz", "nullable": true },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "From HasMetadata. Free-form platform notes."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["token_hash"],
+        "unique": true,
+        "name": "invitations_token_hash_unique",
+        "description": "Primary read path — the /api/invitations/{token} endpoint hashes the incoming token and looks up here."
+      },
+      {
+        "columns": ["application_id", "tenant_id", "email", "state"],
+        "unique": true,
+        "name": "invitations_pending_unique",
+        "predicate": "state = 'pending' AND deleted_at IS NULL",
+        "description": "Prevents duplicate pending invites for the same (tenant, email) tuple. Enforced by the `unique_pending_invitation` validation rule."
+      },
+      {
+        "columns": ["target_type", "target_id"],
+        "unique": false,
+        "name": "invitations_target_index"
+      },
+      {
+        "columns": ["inviter_type", "inviter_id"],
+        "unique": false,
+        "name": "invitations_inviter_index"
+      },
+      {
+        "columns": ["tenant_id", "state", "created_at"],
+        "unique": false,
+        "name": "invitations_tenant_state_created_index"
+      },
+      {
+        "columns": ["expires_at"],
+        "unique": false,
+        "name": "invitations_expires_at_index",
+        "predicate": "state IN ('pending', 'delivered', 'opened', 'clicked')",
+        "description": "Powers the daily `ExpireInvitationsJob` sweep."
+      },
+      {
+        "columns": ["email", "created_at"],
+        "unique": false,
+        "name": "invitations_email_created_index",
+        "description": "Rate-limiting queries — 'has this email been invited > N times today'."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "application_id",
+    "target_type",
+    "target_id",
+    "inviter_type",
+    "email",
+    "channel",
+    "token_hash",
+    "token_prefix",
+    "expires_at",
+    "state",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^inv_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "application_id": { "type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "target_type": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$", "maxLength": 64 },
+    "target_id": { "type": "string", "maxLength": 64 },
+    "inviter_type": { "type": "string", "enum": ["user", "service_account", "system"] },
+    "inviter_id": { "type": ["string", "null"], "maxLength": 64 },
+    "email": { "type": "string", "format": "email", "maxLength": 320 },
+    "channel": { "type": "string", "enum": ["email", "sms", "slack", "link"] },
+    "role_key": { "type": ["string", "null"], "pattern": "^[a-z][a-z0-9_.]*$", "maxLength": 64 },
+    "grants": { "type": ["object", "null"], "additionalProperties": true },
+    "message": { "type": ["string", "null"], "maxLength": 2000 },
+    "token_hash": { "type": "string", "minLength": 64, "maxLength": 128 },
+    "token_prefix": { "type": "string", "minLength": 8, "maxLength": 12 },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "state": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "delivered",
+        "opened",
+        "clicked",
+        "accepted",
+        "declined",
+        "expired",
+        "revoked",
+        "bounced"
+      ]
+    },
+    "sent_at": { "type": ["string", "null"], "format": "date-time" },
+    "delivered_at": { "type": ["string", "null"], "format": "date-time" },
+    "opened_at": { "type": ["string", "null"], "format": "date-time" },
+    "clicked_at": { "type": ["string", "null"], "format": "date-time" },
+    "accepted_at": { "type": ["string", "null"], "format": "date-time" },
+    "accepted_by_user_id": { "type": ["string", "null"], "maxLength": 64 },
+    "declined_at": { "type": ["string", "null"], "format": "date-time" },
+    "declined_reason": { "type": ["string", "null"], "maxLength": 200 },
+    "expired_at": { "type": ["string", "null"], "format": "date-time" },
+    "revoked_at": { "type": ["string", "null"], "format": "date-time" },
+    "revoked_by_user_id": { "type": ["string", "null"], "maxLength": 64 },
+    "revoked_reason": { "type": ["string", "null"], "maxLength": 200 },
+    "bounce_reason": { "type": ["string", "null"] },
+    "bounce_kind": { "type": ["string", "null"], "enum": ["hard", "soft", "complaint", null] },
+    "resend_count": { "type": "integer", "minimum": 0 },
+    "last_resent_at": { "type": ["string", "null"], "format": "date-time" },
+    "is_pending": {
+      "type": "boolean",
+      "description": "Computed. state IN pending/delivered/opened/clicked/bounced."
+    },
+    "is_terminal": {
+      "type": "boolean",
+      "description": "Computed. state IN accepted/declined/expired/revoked."
+    },
+    "public_accept_url": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "Computed. `https://{application.central_host}/invitations/{token}` — only present at issue time when the raw token is known."
+    },
+    "metadata": { "type": ["object", "null"], "additionalProperties": true },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["token_hash", "metadata", "created_by", "updated_by", "deleted_by"],
+    "computed": ["is_pending", "is_terminal", "public_accept_url"]
+  }
+}

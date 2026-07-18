@@ -10,7 +10,7 @@
  * without any per-sport frontend code.
  */
 
-import { Card, Chip, Spinner } from "@academorix/ui/react";
+import { Card, Chip, Spinner } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 
 import type { AthleteEnrollment } from "@/types";

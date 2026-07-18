@@ -6,7 +6,7 @@
  * Training session detail — title, schedule, coach, focus, and status.
  */
 
-import { Card, Spinner } from "@academorix/ui/react";
+import { Card, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 
 import type { TrainingSession } from "@/types";

@@ -1,0 +1,78 @@
+{
+  "id": "academorix://modules/geofencing/compliance",
+  "$version": 1,
+  "title": "geofencing \u2014 compliance evidence",
+  "description": "Location data is personal data under GDPR + often regulated by local employment law. The audit log is compliance-material for disputed clock-ins (wage claims). Immutability enforced in code + verified hourly.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 4(1)",
+          "principle": "location is personal data",
+          "evidence": "Precise lat/lng stored in captured_location column. Access gated to tenant admin + audit-reviewer role."
+        },
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "Preflight endpoint does NOT persist coordinates. Full evaluation persists coordinates only when strictly necessary for audit (rejected clock-ins may be disputed)."
+        },
+        {
+          "article": "Art. 5(1)(e)",
+          "principle": "storage limitation",
+          "evidence": "7-year retention default; tenant-configurable. Anonymisation window 3 years after soft-delete. See retention.json."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "TenantErased cascades hard-delete. Individual subject erasure via platform.geofence.checks.purge endpoint with audit-logged reason."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "Cross-tenant assertion in the repository collapses 'not found' and 'wrong tenant' into a single null return \u2014 no branch existence enumeration possible."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security of processing",
+          "evidence": "Immutability guard at the model layer + hourly reconciliation job. Any mutation attempt raises RuntimeException + emits a critical metric."
+        }
+      ]
+    },
+    "employment_law_us_flsa": {
+      "applicable": true,
+      "controls": [
+        {
+          "regulation": "US Fair Labor Standards Act 29 CFR 516.5",
+          "principle": "wage + hour records retention 3 years",
+          "evidence": "7-year default retention exceeds the 3-year floor. When attendance drives payroll, override rows carry evidence of disputed-clock-in intent."
+        }
+      ]
+    },
+    "sox_404": {
+      "applicable": true,
+      "controls": [
+        {
+          "section": "ITGC internal controls",
+          "principle": "immutable audit trail",
+          "evidence": "GeofenceCheck rows are insert-only. Immutability guard at the model layer prevents update. Hourly ReconcileGeofenceCheckImmutabilityJob verifies via audit-log cross-check."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.6",
+          "principle": "restrict access",
+          "evidence": "Precise coordinates gated to tenant admin + audit-reviewer permissions. Platform admins see aggregate metrics; individual rows require the platform.geofence.checks.view permission audit-logged."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "5 Spatie Health probes covering PostGIS availability + write path + activity + override rate + aggregate. Immutability-violations metric alerts on any non-zero value."
+        }
+      ]
+    }
+  }
+}

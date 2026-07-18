@@ -1,0 +1,168 @@
+{
+  "id": "versioning.resources.deprecation-notice.create",
+  "title": "Draft deprecation notice",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/versioning/deprecation-notices/new",
+  "host": "central-admin",
+  "audience": "authenticated",
+  "resource": { "module": "versioning", "entity": "deprecation-notice", "action": "create" },
+  "requiresPermission": "platform.versioning.notices.create",
+  "dataSources": [
+    {
+      "name": "apiVersions",
+      "kind": "http.get",
+      "url": "/api/v1/platform/versioning/api-versions?filter[state]=released,deprecated&per_page=100",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "Cancel",
+            "className": "text-sm text-muted"
+          },
+          "actions": {
+            "onPress": { "kind": "navigate", "to": "/platform/versioning/deprecation-notices" }
+          }
+        },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Draft deprecation notice"
+          }
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "info",
+            "children": "Drafts are private until published. Publishing dispatches customer notifications when the toggle is on."
+          }
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "submitUrl": "/api/v1/platform/versioning/deprecation-notices",
+            "submitMethod": "POST",
+            "onSuccess": [
+              { "kind": "toast.success", "message": "Draft created" },
+              {
+                "kind": "navigateExpr",
+                "expr": "'/platform/versioning/deprecation-notices/' + response.data.id"
+              }
+            ]
+          },
+          "children": [
+            {
+              "kind": "Select",
+              "props": {
+                "label": "API version",
+                "name": "api_version_id",
+                "isRequired": true,
+                "placeholder": "Pick a released or deprecated version"
+              },
+              "optionsSource": { "$ref": "apiVersions", "valueField": "id", "labelField": "slug" }
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "label": "Notice type",
+                "name": "notice_type",
+                "isRequired": true,
+                "defaultValue": "deprecation"
+              },
+              "options": [
+                { "key": "deprecation", "label": "Deprecation \u2014 announces upcoming sunset" },
+                { "key": "sunset_reminder", "label": "Sunset reminder \u2014 30d/7d/3d/1d before" },
+                {
+                  "key": "sunset_final",
+                  "label": "Sunset final \u2014 fired on transition to sunset"
+                },
+                {
+                  "key": "partial_deprecation",
+                  "label": "Partial \u2014 specific endpoints/events only"
+                }
+              ]
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "label": "Title",
+                "name": "title",
+                "isRequired": true,
+                "placeholder": "API v1 will be deprecated on ...",
+                "description": "Short. Used as email subject + admin heading."
+              }
+            },
+            {
+              "kind": "TextArea",
+              "props": {
+                "label": "Notice body (markdown)",
+                "name": "notice_markdown",
+                "isRequired": true,
+                "rows": 12,
+                "description": "Full text of the notice. Rendered on the public docs page + in customer emails."
+              }
+            },
+            {
+              "kind": "TagInput",
+              "props": {
+                "label": "Affected endpoints",
+                "name": "affected_endpoints",
+                "placeholder": "/api/v1/legacy-invitations",
+                "description": "Leave empty to indicate the entire version is affected."
+              }
+            },
+            {
+              "kind": "TagInput",
+              "props": {
+                "label": "Affected webhook events",
+                "name": "affected_events",
+                "placeholder": "invitation.sent",
+                "description": "Leave empty to indicate all webhook events on the version are affected."
+              }
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "label": "Migration guide URL",
+                "name": "migration_guide_url",
+                "type": "url",
+                "placeholder": "https://docs.academorix.com/migration/v1-to-v2",
+                "description": "Optional. Falls back to parent version's sunset_notice_url."
+              }
+            },
+            {
+              "kind": "Switch",
+              "props": {
+                "label": "Notify affected customers on publish",
+                "name": "notify_customers",
+                "defaultValue": true,
+                "description": "When on, publishing fires ApiDeprecationNotification (or ApiSunsetNotification) via mail + in-app to every affected tenant admin."
+              }
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "size": "md",
+                "type": "submit",
+                "children": "Create draft"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

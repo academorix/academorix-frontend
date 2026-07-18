@@ -14,10 +14,10 @@ import {
   HeartIcon,
   UserGroupIcon,
   UsersIcon,
-} from "@academorix/ui/icons/outline";
+} from "@stackra/ui/icons/heroicon/outline";
 
 import type { ProfileStatus, RoleInTenant } from "@/modules/people/people.types";
-import type { IconType } from "@academorix/ui/icons";
+import type { IconType } from "@stackra/ui/icons";
 
 /**
  * Icon glyph per role-in-tenant. Falls back to the generic {@link UsersIcon}
@@ -50,10 +50,7 @@ export const ROLE_IN_TENANT_CHIP_COLORS: Record<
  * Chip colour per profile status. `active` is green, `inactive` is neutral —
  * an offboarded projection should not scream.
  */
-export const PROFILE_STATUS_CHIP_COLORS: Record<
-  ProfileStatus,
-  "default" | "success" | "danger"
-> = {
+export const PROFILE_STATUS_CHIP_COLORS: Record<ProfileStatus, "default" | "success" | "danger"> = {
   active: "success",
   inactive: "default",
 };

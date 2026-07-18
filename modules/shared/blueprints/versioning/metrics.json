@@ -1,0 +1,86 @@
+{
+  "id": "academorix://modules/versioning/metrics",
+  "$version": 1,
+  "title": "versioning \u2014 OpenTelemetry metrics",
+  "description": "Version resolution + transformer usage metrics.",
+  "instrumentation": "open-telemetry/sdk",
+  "namespace": "academorix.versioning",
+  "labelConventions": {
+    "always": ["tenant_id"],
+    "commonlyAvailable": ["version_slug", "surface", "resolver", "state"],
+    "forbiddenAsLabels": ["user_id", "email"]
+  },
+  "metrics": [
+    {
+      "name": "academorix.versioning.resolution.total",
+      "kind": "counter",
+      "unit": "resolutions",
+      "labels": ["surface", "resolver", "version_slug", "hit"],
+      "description": "surface: rest/webhook/graphql. hit: true when resolver returned a version; false when fell through to next resolver."
+    },
+    {
+      "name": "academorix.versioning.resolution.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [1, 5, 25, 100, 500],
+      "labels": ["surface"],
+      "description": "End-to-end resolution time. Should stay < 5ms P99 (cached lookups)."
+    },
+    {
+      "name": "academorix.versioning.deprecated_version.usage_total",
+      "kind": "counter",
+      "unit": "requests",
+      "labels": ["version_slug", "surface"],
+      "description": "Every request that resolved to a deprecated version. This is the SIGNAL for migration progress \u2014 falling to zero means the version is safe to sunset."
+    },
+    {
+      "name": "academorix.versioning.sunset_version.hits_total",
+      "kind": "counter",
+      "unit": "requests",
+      "labels": ["version_slug", "surface"],
+      "description": "Every request that hit a sunset version + received 410 Gone. Anomalously non-zero means customers didn't get the memo."
+    },
+    {
+      "name": "academorix.versioning.transformers.applied_total",
+      "kind": "counter",
+      "unit": "transformations",
+      "labels": ["surface", "event", "from_version", "to_version"],
+      "description": "Each transformer application in a chain. Chain of 3 transformers = 3 increments."
+    },
+    {
+      "name": "academorix.versioning.transformers.chain_length",
+      "kind": "histogram",
+      "unit": "hops",
+      "buckets": [1, 2, 3, 5, 10],
+      "labels": ["surface", "event"],
+      "description": "Distribution of chain lengths applied. Long chains signal drift \u2014 need to consolidate versions."
+    },
+    {
+      "name": "academorix.versioning.transformers.missing_total",
+      "kind": "counter",
+      "unit": "failures",
+      "labels": ["surface", "event", "from_version", "to_version"],
+      "description": "Every failed chain resolution. Pages ops when > 0 for released \u2192 deprecated version pairs with active subscribers."
+    },
+    {
+      "name": "academorix.versioning.subscriptions.by_version_gauge",
+      "kind": "gauge",
+      "unit": "subscriptions",
+      "labels": ["version_slug"],
+      "description": "How many active WebhookSubscriptions pin each version. Sampled hourly. Drives the sunset-readiness dashboard."
+    },
+    {
+      "name": "academorix.versioning.deprecation_notices.published_total",
+      "kind": "counter",
+      "unit": "notices",
+      "labels": ["notice_type", "version_slug"]
+    },
+    {
+      "name": "academorix.versioning.sunset.upgrade_total",
+      "kind": "counter",
+      "unit": "upgrades",
+      "labels": ["from_version", "to_version", "outcome"],
+      "description": "outcome: upgraded / paused. Auto-upgrade success + fallback pauses."
+    }
+  ]
+}

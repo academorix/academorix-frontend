@@ -1,0 +1,155 @@
+{
+  "id": "academorix://modules/tenancy/errors",
+  "$version": 1,
+  "title": "tenants — error catalogue",
+  "description": "Error codes this module can emit, with their HTTP status, i18n key, and support-runbook classification. `user_facing=true` means the message renders to end users (i18n key must exist in every supported locale). `retryable=true` signals the client should retry with backoff. `audit_severity` routes the error to the correct log channel — `alert` events page on-call.",
+  "namespace": "tenants",
+  "errors": [
+    {
+      "code": "TENANCY_TENANT_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tenants.errors.tenant_not_found",
+      "thrown_by": "ResolveTenant middleware",
+      "description": "Host header did not resolve to a Tenant on the current Application."
+    },
+    {
+      "code": "TENANCY_APPLICATION_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "tenants.errors.application_not_found",
+      "thrown_by": "ResolveTenant middleware",
+      "description": "Host header did not match any Application. Usually a misconfigured DNS record or a request to an unmapped host."
+    },
+    {
+      "code": "TENANCY_TENANT_SUSPENDED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tenants.errors.tenant_suspended",
+      "thrown_by": "TenantSuspendedException, checked in EnsureUserBelongsToTenant"
+    },
+    {
+      "code": "TENANCY_TENANT_ARCHIVED",
+      "http": 410,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tenants.errors.tenant_archived"
+    },
+    {
+      "code": "TENANCY_CROSS_TENANT_ACCESS",
+      "http": 400,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "tenants.errors.cross_tenant_access",
+      "thrown_by": "TenantException::crossTenantAccess() — BelongsToTenant saving hook, tenant.user middleware",
+      "description": "Attempt to read or write across tenant boundaries. Always a bug OR an attack — pages on-call."
+    },
+    {
+      "code": "TENANCY_SLUG_TAKEN",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tenants.errors.slug_taken",
+      "description": "Attempt to register a tenant with a slug already in use in the target Application."
+    },
+    {
+      "code": "TENANCY_SLUG_RESERVED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tenants.errors.slug_reserved",
+      "description": "Reserved word (www, api, admin, mail, blog, platform, app). Enforced by the reserved_slug validation rule."
+    },
+    {
+      "code": "TENANCY_INVALID_BUSINESS_TYPE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tenants.errors.invalid_business_type",
+      "description": "business_type not present in the BusinessType catalogue."
+    },
+    {
+      "code": "TENANCY_DOMAIN_NOT_VERIFIED",
+      "http": 400,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tenants.errors.domain_not_verified",
+      "description": "Attempt to promote a Domain to primary before it is verified."
+    },
+    {
+      "code": "TENANCY_DOMAIN_VERIFICATION_EXHAUSTED",
+      "http": 400,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "tenants.errors.domain_verification_exhausted",
+      "description": "verification_attempts hit the 100 cap. Requires manual replay."
+    },
+    {
+      "code": "TENANCY_DOMAIN_HOST_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tenants.errors.domain_host_invalid",
+      "description": "Enforced by the valid_domain_host validation rule. Rejects IP addresses, sub-of-sub without a suffix, and RFC-1035-non-compliant labels."
+    },
+    {
+      "code": "TENANCY_BRANDING_LAST_PRIMARY",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tenants.errors.branding_last_primary",
+      "description": "Attempt to delete the tenant's primary Branding without promoting another first."
+    },
+    {
+      "code": "TENANCY_CONTACT_VERIFICATION_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tenants.errors.contact_verification_required",
+      "description": "kind=dpo or kind=legal contact promoted to primary before verified_at is set."
+    },
+    {
+      "code": "TENANCY_CONTACT_LAST_DPO",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "tenants.errors.contact_last_dpo",
+      "description": "Attempt to delete the last remaining DPO contact for a GDPR-subject tenant."
+    },
+    {
+      "code": "TENANCY_INTEGRATION_NOT_IMPLEMENTED",
+      "http": 501,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tenants.errors.integration_not_implemented",
+      "description": "v1 stub. Returned by the integration controllers until v2 wires the provider adapters."
+    },
+    {
+      "code": "TENANCY_SYSTEM_ROW_REFUSED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "tenants.errors.system_row_refused",
+      "description": "Attempt to update or delete a row with is_system=true."
+    }
+  ]
+}

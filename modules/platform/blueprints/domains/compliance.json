@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/domains/compliance",
+  "$version": 1,
+  "title": "domains — self-compliance posture",
+  "description": "Regulatory regimes this module's data touches + how each is discharged.",
+  "regimes": []
+}

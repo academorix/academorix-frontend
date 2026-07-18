@@ -1,0 +1,35 @@
+{
+  "id": "search.search-index-status-chip",
+  "title": "Search index status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colored status pill for SearchIndex.status. Palette: active=success, reindexing=info, disabled=neutral, error=danger. Auto-detects `needs_reindex` metadata flag and appends a warning variant.",
+  "props": {
+    "status": { "type": "string", "description": "One of active / reindexing / disabled / error." },
+    "needsReindex": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, appends a warning indicator regardless of status."
+    },
+    "size": { "type": "string", "default": "sm", "description": "Chip size: xs / sm / md." }
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "chip",
+      "kind": "Chip",
+      "bindings": {
+        "size": { "$ref": "props.size" },
+        "variant": {
+          "$expr": "props.needsReindex ? 'warning' : ({active: 'success', reindexing: 'info', disabled: 'neutral', error: 'danger'})[props.status]"
+        },
+        "startIcon": {
+          "$expr": "props.needsReindex ? 'exclamation-triangle' : ({active: 'check-circle', reindexing: 'arrow-path', disabled: 'pause-circle', error: 'x-circle'})[props.status]"
+        },
+        "children": {
+          "$expr": "props.needsReindex ? t('search.status.needs_reindex') : t('search.status.' + props.status)"
+        }
+      }
+    }
+  ]
+}

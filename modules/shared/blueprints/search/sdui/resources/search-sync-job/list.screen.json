@@ -1,0 +1,192 @@
+{
+  "id": "search.resources.search-sync-job.list",
+  "title": "Search sync jobs",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/search/sync-jobs",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "search", "entity": "search-sync-job", "action": "list" },
+  "requiresPermission": "search.sync-jobs.viewAny",
+  "requiresFeature": "search.enabled",
+  "dataSources": [
+    {
+      "name": "jobs",
+      "kind": "http.get",
+      "url": "/api/v1/search/sync-jobs",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": [
+        "filter[status]",
+        "filter[kind]",
+        "filter[created_at]",
+        "sort",
+        "page",
+        "per_page"
+      ]
+    },
+    {
+      "name": "indexes",
+      "kind": "http.get",
+      "url": "/api/v1/search/indexes",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-6xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-1" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Search sync jobs"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm text-muted" },
+              "bindings": { "children": { "$expr": "t('search.sync_jobs.description')" } }
+            }
+          ]
+        },
+
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-wrap gap-3" },
+          "children": [
+            {
+              "kind": "Select",
+              "props": { "label": "Status", "name": "filter[status]", "placeholder": "All" },
+              "options": [
+                { "key": "queued", "label": "Queued" },
+                { "key": "running", "label": "Running" },
+                { "key": "succeeded", "label": "Succeeded" },
+                { "key": "partially_succeeded", "label": "Partial" },
+                { "key": "failed", "label": "Failed" },
+                { "key": "cancelled", "label": "Cancelled" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "jobs" } }
+            },
+            {
+              "kind": "Select",
+              "props": { "label": "Kind", "name": "filter[kind]", "placeholder": "All" },
+              "options": [
+                { "key": "reindex", "label": "Reindex" },
+                { "key": "backfill", "label": "Backfill" },
+                { "key": "flush", "label": "Flush" },
+                { "key": "alias_swap", "label": "Alias swap" },
+                { "key": "single_document", "label": "Single document" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "jobs" } }
+            },
+            {
+              "kind": "DateRange",
+              "props": { "label": "Created", "name": "filter[created_at]" },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "jobs" } }
+            }
+          ]
+        },
+
+        {
+          "kind": "Table",
+          "props": {
+            "columns": [
+              { "key": "kind", "label": "Kind" },
+              {
+                "key": "search_index_id",
+                "label": "Index",
+                "valueFormatter": {
+                  "$expr": "(v) => indexes.find(i => i.id === v)?.index_name ?? v"
+                }
+              },
+              {
+                "key": "status",
+                "label": "Status",
+                "cellRenderer": {
+                  "kind": "Chip",
+                  "bindings": {
+                    "variant": {
+                      "$expr": "({queued:'neutral',running:'info',succeeded:'success',partially_succeeded:'warning',failed:'danger',cancelling:'warning',cancelled:'neutral'})[row.status]"
+                    },
+                    "children": { "$expr": "t('search.status.' + row.status)" },
+                    "size": "xs"
+                  }
+                }
+              },
+              {
+                "key": "progress",
+                "label": "Progress",
+                "cellRenderer": {
+                  "kind": "Widget",
+                  "widget": "search.search-sync-job-progress",
+                  "props": { "compact": true, "subscribeBroadcast": true },
+                  "bindings": { "job": { "$ref": "row" } }
+                }
+              },
+              { "key": "counters.total", "label": "Docs" },
+              { "key": "started_at", "label": "Started", "valueFormatter": "formatRelativeOrDash" },
+              {
+                "key": "duration_seconds",
+                "label": "Duration",
+                "valueFormatter": "formatDurationOrDash"
+              },
+              {
+                "key": "actions",
+                "label": "",
+                "cellRenderer": {
+                  "kind": "Menu",
+                  "props": {
+                    "trigger": {
+                      "kind": "IconButton",
+                      "props": { "icon": "ellipsis-vertical", "aria-label": "Row actions" }
+                    }
+                  },
+                  "children": [
+                    {
+                      "kind": "MenuItem",
+                      "props": { "children": { "$expr": "t('search.actions.view')" } },
+                      "actions": {
+                        "onPress": {
+                          "kind": "navigateExpr",
+                          "expr": "'/tenant/search/sync-jobs/' + row.id"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "MenuItem",
+                      "props": {
+                        "children": { "$expr": "t('search.actions.cancel')" },
+                        "hidden": { "$expr": "!['queued','running'].includes(row.status)" }
+                      },
+                      "actions": {
+                        "onPress": {
+                          "kind": "http.post",
+                          "url": { "$expr": "'/api/v1/search/sync-jobs/' + row.id + '/cancel'" },
+                          "confirm": {
+                            "title": { "$expr": "t('search.confirm.cancel.title')" },
+                            "message": { "$expr": "t('search.confirm.cancel.message')" }
+                          },
+                          "onSuccess": { "kind": "data.refresh", "source": "jobs" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "bindings": { "rows": { "$ref": "jobs" }, "isLoading": { "$ref": "jobs.isLoading" } }
+        }
+      ]
+    }
+  ]
+}

@@ -11,8 +11,8 @@
  * local `URL.createObjectURL` blobs used by the upload flow.
  */
 
-import { DocumentTextIcon } from "@academorix/ui/icons/outline";
-import { EmptyState } from "@academorix/ui/react";
+import { DocumentTextIcon } from "@stackra/ui/icons/heroicon/outline";
+import { EmptyState } from "@stackra/ui/react";
 
 import type { ReactNode } from "react";
 

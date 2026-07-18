@@ -9,7 +9,7 @@
  * that shape so the surface is ready to swap.
  */
 
-import { Card, Separator } from "@academorix/ui/react";
+import { Card, Separator } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 import { useMemo } from "react";
 

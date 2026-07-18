@@ -1,0 +1,55 @@
+{
+  "id": "academorix://modules/activity/metrics",
+  "$version": 1,
+  "title": "activity \u2014 OpenTelemetry metrics",
+  "instrumentation": "open-telemetry/sdk",
+  "namespace": "academorix.activity",
+  "labelConventions": {
+    "always": ["tenant_id"],
+    "commonlyAvailable": ["log_name", "event", "retention_tier"],
+    "forbiddenAsLabels": ["subject_id", "causer_id", "description"]
+  },
+  "metrics": [
+    {
+      "name": "academorix.activity.rows_recorded.total",
+      "kind": "counter",
+      "unit": "rows",
+      "labels": ["tenant_id", "log_name", "event"]
+    },
+    {
+      "name": "academorix.activity.rows_pruned.total",
+      "kind": "counter",
+      "unit": "rows",
+      "labels": ["retention_tier"]
+    },
+    {
+      "name": "academorix.activity.row_count_gauge",
+      "kind": "gauge",
+      "unit": "rows",
+      "labels": ["tenant_id"],
+      "description": "Sampled hourly. Anomaly detection when tenant volume spikes 10x."
+    },
+    {
+      "name": "academorix.activity.oldest_row_age_seconds",
+      "kind": "gauge",
+      "unit": "seconds",
+      "labels": ["retention_tier"],
+      "description": "Sampled every 5min. Feeds oldest-row-age health probe."
+    },
+    {
+      "name": "academorix.activity.recording_duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [1, 5, 25, 100, 500],
+      "labels": ["log_name"],
+      "description": "spatie's LogsActivity persistence latency. Should stay < 25ms P99."
+    },
+    {
+      "name": "academorix.activity.prune_duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [100, 1000, 10000, 60000, 300000],
+      "labels": ["retention_tier"]
+    }
+  ]
+}

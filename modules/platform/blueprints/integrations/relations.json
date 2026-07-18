@@ -1,0 +1,28 @@
+{
+  "id": "academorix://modules/integrations/relations",
+  "$version": 1,
+  "title": "integrations — model relationships",
+  "description": "Single-entity module; only relation is Tenant -> TenantIntegration (1:N — one tenant can configure many integrations across different providers).",
+  "internal": [],
+  "outbound": [
+    {
+      "from": "TenantIntegration",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onUpdate": "cascade",
+      "onDelete": "cascade",
+      "description": "Applied via the BelongsToTenant trait. Unique(tenant_id, provider) at v0.3 — one instance per (tenant, provider)."
+    }
+  ],
+  "inbound_expected": [
+    {
+      "from": "subscription::TenantSubscription",
+      "via": "tenant_integration_id (planned: link a Stripe integration to a subscription)"
+    },
+    {
+      "from": "compliance::Subprocessor",
+      "via": "provider_key (planned: audit which subprocessors a tenant has active)"
+    }
+  ]
+}

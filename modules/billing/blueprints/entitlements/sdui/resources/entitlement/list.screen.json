@@ -1,0 +1,176 @@
+{
+  "id": "entitlements.resources.entitlement.list",
+  "title": "Quotas + usage",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/entitlements",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "entitlements", "entity": "entitlement", "action": "list" },
+  "requiresPermission": "entitlements.viewAny",
+  "requiresFeature": "entitlements.usage_visible",
+  "dataSources": [
+    { "name": "entitlements", "kind": "http.get", "url": "/api/v1/entitlements", "unwrap": "data" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-1" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Quotas + usage"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "How much of each metered feature you've used this period. Upgrade your plan to raise a cap."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "List",
+          "props": {
+            "className": "flex flex-col gap-3",
+            "emptyState": {
+              "title": "No entitlements resolved",
+              "description": "This usually means tenant provisioning didn't complete. Contact support.",
+              "icon": "chart-bar-square"
+            }
+          },
+          "bindings": {
+            "items": { "$ref": "entitlements" },
+            "isLoading": { "$ref": "entitlements.isLoading" }
+          },
+          "itemRenderer": {
+            "kind": "Card",
+            "props": { "className": "p-4" },
+            "children": [
+              {
+                "kind": "View",
+                "props": { "className": "flex items-start justify-between gap-4" },
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex flex-col flex-1 min-w-0" },
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-medium font-mono text-sm" },
+                        "bindings": { "children": { "$ref": "row.key" } }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted" },
+                        "bindings": {
+                          "children": {
+                            "$expr": "row.kind === 'unlimited' ? 'Unlimited' : (row.kind === 'boolean' ? (row.value_cap ? 'Enabled' : 'Disabled') : (row.value_used.toLocaleString() + ' / ' + row.value_cap.toLocaleString() + (row.period ? ' this ' + row.period : '')))"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2" },
+                    "children": [
+                      {
+                        "kind": "Chip",
+                        "props": { "size": "xs", "variant": "neutral" },
+                        "bindings": { "children": { "$ref": "row.kind" } }
+                      },
+                      {
+                        "kind": "Chip",
+                        "props": { "size": "xs", "variant": "info" },
+                        "bindings": {
+                          "hidden": { "$expr": "!row.is_platform_overridden" },
+                          "children": "Custom"
+                        }
+                      },
+                      {
+                        "kind": "Chip",
+                        "props": { "size": "xs", "variant": "success" },
+                        "bindings": {
+                          "hidden": { "$expr": "!row.is_unlimited" },
+                          "children": "\u221e"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "View",
+                "props": { "className": "mt-3" },
+                "bindings": { "hidden": { "$expr": "!['slot', 'pool'].includes(row.kind)" } },
+                "children": [
+                  {
+                    "kind": "Widget",
+                    "widget": "entitlements.entitlement-usage-bar",
+                    "props": {
+                      "cap": { "$ref": "row.value_cap" },
+                      "used": { "$ref": "row.value_used" },
+                      "isUnlimited": { "$ref": "row.is_unlimited" }
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "View",
+                "props": {
+                  "className": "flex items-center justify-between mt-2 text-xs text-muted"
+                },
+                "children": [
+                  {
+                    "kind": "Text",
+                    "bindings": {
+                      "hidden": { "$expr": "!row.resets_at" },
+                      "children": { "$expr": "'Resets ' + formatRelative(row.resets_at)" }
+                    }
+                  },
+                  {
+                    "kind": "Link",
+                    "props": { "size": "xs", "children": "View history \u2192" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/entitlements/' + row.key"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "Alert",
+                "props": { "variant": "warning", "className": "mt-3" },
+                "bindings": {
+                  "hidden": { "$expr": "!row.is_approaching_cap || row.is_exceeded" },
+                  "children": "Approaching cap. Consider upgrading your plan."
+                }
+              },
+              {
+                "kind": "Alert",
+                "props": { "variant": "danger", "className": "mt-3" },
+                "bindings": {
+                  "hidden": { "$expr": "!row.is_exceeded" },
+                  "children": "Cap reached. Some operations are refused until the next reset or plan upgrade."
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

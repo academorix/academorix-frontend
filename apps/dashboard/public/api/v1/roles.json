@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "name": "Director",
+    "permissions": 42,
+    "assignees": 1,
+    "status": { "text": "Active", "color": "success" },
+    "isActive": true,
+    "createdAt": "2019-01-01T09:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Coach",
+    "permissions": 18,
+    "assignees": 8,
+    "status": { "text": "Active", "color": "success" },
+    "isActive": true,
+    "createdAt": "2019-01-01T09:00:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Reception",
+    "permissions": 12,
+    "assignees": 3,
+    "status": { "text": "Active", "color": "success" },
+    "isActive": true,
+    "createdAt": "2019-01-01T09:00:00Z"
+  },
+  {
+    "id": 4,
+    "name": "Safeguarding officer",
+    "permissions": 22,
+    "assignees": 2,
+    "status": { "text": "Active", "color": "success" },
+    "isActive": true,
+    "createdAt": "2020-01-01T09:00:00Z"
+  },
+  {
+    "id": 5,
+    "name": "Finance",
+    "permissions": 16,
+    "assignees": 1,
+    "status": { "text": "Active", "color": "success" },
+    "isActive": true,
+    "createdAt": "2020-01-01T09:00:00Z"
+  },
+  {
+    "id": 6,
+    "name": "Parent / guardian",
+    "permissions": 6,
+    "assignees": 218,
+    "status": { "text": "Active", "color": "success" },
+    "isActive": true,
+    "createdAt": "2019-01-01T09:00:00Z"
+  }
+]

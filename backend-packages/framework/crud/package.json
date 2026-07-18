@@ -1,0 +1,13 @@
+{
+  "name": "@academorix/crud",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Turborepo shim for the PHP `academorix/crud` package. Attribute-driven repository / service / controller layer with boot-time attribute collection via olvlvl/composer-attribute-collector. NOTE: composer install is exposed as `install:composer` — never plain `install` — so pnpm's lifecycle does not run it during a root `pnpm install`.",
+  "scripts": {
+    "install:composer": "composer install --no-interaction --prefer-dist",
+    "lint": "../../apps/ai-service/vendor/bin/pint --test --config=../../config/pint.json src",
+    "lint:fix": "../../apps/ai-service/vendor/bin/pint --config=../../config/pint.json src",
+    "analyse": "../../apps/ai-service/vendor/bin/phpstan analyse -c ../../config/phpstan-base.neon src",
+    "test": "./vendor/bin/pest"
+  }
+}

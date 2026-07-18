@@ -1,0 +1,190 @@
+{
+  "id": "academorix://modules/notifications/traits",
+  "$version": 1,
+  "title": "notifications core \u2014 trait composition per model",
+  "description": "Notifications core owns zero new traits \u2014 it consumes foundation's cross-cutting traits + tenants's boundary traits. This file documents (a) the framework + foundation + tenants traits every core model composes, and (b) the canonical compose-order per model so CI's trait-order linter can verify. Push subscriptions live in `notifications-push` (not this module); mail suppression in `notifications-mail`; SMS opt-outs in `notifications-sms`.",
+  "owned": [],
+  "consumed": {
+    "framework": [
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory",
+        "reason": "seeder + test factories."
+      },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids",
+        "reason": "ULID primary keys \u2014 time-ordered, URL-safe, tenant-neutral."
+      },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "Retention windows enforced by soft-delete + scheduled hard-purge job (see retention.json)."
+      },
+      {
+        "trait": "Spatie\\ModelStates\\HasStates",
+        "reason": "NotificationDelivery + Notification carry state machines (queued/sending/sent/delivered/failed/opened/clicked/archived)."
+      }
+    ],
+    "foundation": [
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag",
+        "reason": "NotificationTemplate + NotificationCategory carry is_system=true for platform defaults; Policy@update refuses on system rows unless the actor is super_admin."
+      },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps",
+        "reason": "created_by / updated_by / deleted_by auto-populated from auth actor."
+      },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasAuditable",
+        "reason": "Preference / template / delivery changes audit-logged; audit rows classify as audit_log tier."
+      },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasMetadata",
+        "reason": "Universal metadata JSONB \u2014 channel modules emit metadata fields the core schema doesn't need to model."
+      },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\Sortable",
+        "reason": "NotificationTemplate ordered by (key, locale, channel, version DESC)."
+      },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\Filterable",
+        "reason": "Every model exposes filterable() for spatie/laravel-query-builder integration."
+      },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\Sluggable",
+        "reason": "NotificationCategory carries a slug (module-namespaced: `invitations.invitation_sent`)."
+      },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\Searchable",
+        "reason": "Notification indexed for admin diagnostics; template indexed for admin template browsing."
+      },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\Importable",
+        "reason": "NotificationTemplate + NotificationPreference importable via CSV/JSON for tenant onboarding + backup restore."
+      },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\Exportable",
+        "reason": "Notification exportable for DSAR (Art. 15); NotificationPreference exportable for user-driven backup."
+      }
+    ],
+    "tenants": [
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Every model except NotificationCategory carries tenant_id; auto-scope on read queries."
+      },
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToApplication",
+        "reason": "Notification carries application_id (a coach's inbox is per-app)."
+      },
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenantOptional",
+        "reason": "NotificationTemplate + NotificationCategory: tenant_id NULLABLE. NULL = platform default; row with tenant_id set = tenant override."
+      }
+    ]
+  },
+  "composition": {
+    "notification": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasStates",
+        "BelongsToTenant",
+        "BelongsToApplication",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAuditable",
+        "Filterable",
+        "Searchable",
+        "Exportable",
+        "SoftDeletes"
+      ],
+      "notes": "Root of the notifications record. State machine on delivery status. Auditable for consent + delivery evidence. NOT Importable (notifications are emitted by the system, not imported)."
+    },
+    "notification_delivery": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasStates",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAuditable",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "Per-channel attempt. Belongs to a Notification (which carries tenant+application). Not Searchable (aggregate metrics preferred over full-text)."
+    },
+    "notification_template": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasSystemFlag",
+        "BelongsToTenantOptional",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAuditable",
+        "Sortable",
+        "Filterable",
+        "Sluggable",
+        "Searchable",
+        "Importable",
+        "Exportable",
+        "SoftDeletes"
+      ],
+      "notes": "Full monty. is_system distinguishes platform defaults from tenant overrides. Sortable by (key, locale, channel, version DESC). Importable / Exportable for tenant onboarding backup + change management (SOC 2 CC8.1 evidence). Body cached as pre-rendered HTML with Blade placeholders \u2014 rendering happens at CI build time via the emails renderer package, not runtime."
+    },
+    "notification_preference": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAuditable",
+        "Filterable",
+        "Importable",
+        "Exportable"
+      ],
+      "notes": "User opt-in per (category, channel). NOT SoftDeletes \u2014 preferences are hard-deleted on user erasure per GDPR Art. 17. Importable / Exportable for tenant-driven preference backup + user-driven preference export."
+    },
+    "notification_digest": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasStates",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "Filterable"
+      ],
+      "notes": "Batching state. Not Auditable (transient \u2014 30d retention). Not SoftDeletes (30d hard-purge). State machine: pending / delivered / skipped / failed."
+    },
+    "notification_category": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasSystemFlag",
+        "BelongsToTenantOptional",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAuditable",
+        "Sortable",
+        "Filterable",
+        "Sluggable",
+        "Searchable"
+      ],
+      "notes": "Registry seeded from every module's notifications.json. Sluggable with module-namespaced slugs; is_system=true on platform-owned categories. tenant_id NULL for platform categories; tenants can override display_name + default_channels via same-slug row with their tenant_id."
+    }
+  },
+  "traitOrderContract": {
+    "rule": "Every model in every module composes traits in this canonical order (foundation traits.json enforces + CI lints).",
+    "order": [
+      "framework/factories/casts (HasFactory)",
+      "framework/keys (HasUlids)",
+      "framework/state-machines (HasStates)",
+      "boundary (BelongsToTenant \u2192 BelongsToApplication \u2192 BelongsToTenantOptional)",
+      "foundation/lifecycle (HasSystemFlag \u2192 HasMetadata \u2192 HasUserstamps \u2192 HasAuditable)",
+      "foundation/indexers (Sortable, Filterable, Sluggable, Searchable)",
+      "foundation/extraction (Importable, Exportable)",
+      "framework/lifecycle-tail (SoftDeletes \u2014 must be last so its booted() runs after every observer)"
+    ]
+  }
+}

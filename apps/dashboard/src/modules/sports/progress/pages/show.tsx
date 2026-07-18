@@ -9,7 +9,7 @@
  * frontend code.
  */
 
-import { Card, Spinner } from "@academorix/ui/react";
+import { Card, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 
 import type { Progress } from "@/types";

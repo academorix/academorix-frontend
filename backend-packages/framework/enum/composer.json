@@ -1,0 +1,42 @@
+{
+  "name": "academorix/enum",
+  "description": "Modern PHP 8.1+ enum system with metadata, attributes, and helper traits",
+  "type": "library",
+  "license": "proprietary",
+  "keywords": [
+    "enum",
+    "php81",
+    "attributes",
+    "metadata",
+    "laravel",
+    "academorix"
+  ],
+  "require": {
+    "php": "^8.4|^8.5"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^11.0",
+    "orchestra/testbench": "^10.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Academorix\\Enum\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Academorix\\Enum\\Tests\\": "tests/"
+    }
+  },
+  "homepage": "https://github.com/academorix-inc/laravel-framework/enum",
+  "support": {
+    "issues": "https://github.com/academorix-inc/laravel-framework/enum/-/issues",
+    "source": "https://github.com/academorix-inc/laravel-framework/enum"
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {}
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

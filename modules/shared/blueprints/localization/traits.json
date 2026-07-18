@@ -1,0 +1,97 @@
+{
+  "id": "academorix://modules/localization/traits",
+  "$version": 1,
+  "title": "localization \u2014 trait composition",
+  "description": "Two owned traits. HasTranslations for Eloquent models with translated columns \u2014 pairs with #[Translatable] property attributes to declare which columns are localised. IsLocaleAware for lightweight consumers that need the current locale + fallback chain without model bindings.",
+  "owned": [
+    {
+      "trait": "Academorix\\Localization\\Concerns\\HasTranslations",
+      "description": "Mixed into Eloquent models with translated columns. Adds ->translate($locale) scope + magic accessors that return the active-locale value for #[Translatable] properties. Storage strategy: JSONB column `translations` on the model with shape `{ locale: { field: value } }` so the model row remains one physical row.",
+      "public": true,
+      "usedBy": [
+        "subscription::Plan (name, description)",
+        "notifications::NotificationCategory (display_name, description)",
+        "notifications::NotificationTemplate (subject, body)",
+        "newsletter::Newsletter (name, description)",
+        "newsletter::NewsletterCampaign (name)",
+        "newsletter::NewsletterAudience (name, description)",
+        "newsletter::NewsletterIssue (subject)",
+        "tenancy::BusinessType (label, description)",
+        "tenancy::Branding (name)"
+      ],
+      "underlying_package": "spatie/laravel-translatable ^6.0",
+      "wraps": "The trait EXTENDS Spatie\\Translatable\\HasTranslations \u2014 we do not reimplement JSONB accessor/mutator/fallback semantics. Our subclass adds (a) #[Translatable] attribute discovery so the property list is inferred (no getTranslatable()) method), (b) `TranslationWritten` event dispatch, (c) TenantLocale-aware fallback chain, (d) integration with the `translatable_*` validation rules.",
+      "conflicts_with": []
+    },
+    {
+      "trait": "Academorix\\Localization\\Concerns\\IsLocaleAware",
+      "description": "Lightweight trait. Adds `locale()` accessor pulling from LocaleResolver + `resolveFallbackChain()` for constructors that need the full chain (used by view composers + notification classes).",
+      "public": true,
+      "usedBy": [],
+      "conflicts_with": []
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "PlatformLanguage + TenantLocale. NOT Translation (high volume; hard-purged on retention) or TranslationJob (append-only)."
+      }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+  },
+  "composition": {
+    "platform_language": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasSystemFlag",
+        "HasMetadata",
+        "HasUserstamps",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "NO BelongsToTenant \u2014 PlatformLanguages are platform-scoped catalogue (renamed from `Language` in the Wave 5 dedupe against geography::Language)."
+    },
+    "tenant_locale": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "Per-tenant association of PlatformLanguage + preferences. FK column stays `language_id` (Laravel FK-column vs target-table decoupled); wire shape exposes the nested resource under the key `language` for backward-compatible client consumption."
+    },
+    "translation": {
+      "traits": ["HasFactory", "HasUlids", "HasMetadata", "Filterable"],
+      "notes": "tenant_id nullable (null = platform default). NO BelongsToTenant enforcement \u2014 the trait presumes non-null. High-volume table; NO SoftDeletes / HasUserstamps / HasActivityLog to keep row writes cheap."
+    },
+    "translation_job": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "Filterable"
+      ],
+      "notes": "Append-only job audit rows. NO SoftDeletes; retention by hard purge."
+    }
+  }
+}

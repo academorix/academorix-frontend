@@ -10,10 +10,10 @@
  * server-side, then returns to `?next=…`.
  */
 
-import { LockClosedIcon } from "@academorix/ui/icons/outline";
-import { Button, Description, Form, Input, Label, TextField } from "@academorix/ui/react";
+import { LockClosedIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Description, Form, Input, Label, TextField } from "@stackra/ui/react";
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "@stackra/routing/react";
 
 import type { ApiError } from "@/lib/http";
 import type { FormEvent, ReactNode } from "react";

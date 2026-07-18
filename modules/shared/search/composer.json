@@ -1,0 +1,97 @@
+{
+  "name": "academorix/search",
+  "type": "library",
+  "description": "Enterprise search engine. Thin wrapper around laravel/scout with attribute-driven registration (#[Searchable] / #[SearchField] / #[SearchFacet] / #[SearchSynonym] / #[SearchBoost]), pluggable engine adapters (Meilisearch, Postgres FTS, pgvector, Elasticsearch stub), a unified query API, zero-downtime reindex via alias swap, per-tenant + per-language synonym registry, saved queries + smart lists, user-facing autocomplete, and full analytics (query volume, no-results, click-through).",
+  "license": "proprietary",
+  "keywords": [
+    "academorix",
+    "laravel",
+    "search",
+    "scout",
+    "meilisearch",
+    "pgvector",
+    "postgres-fts",
+    "tsvector",
+    "elasticsearch",
+    "autocomplete",
+    "faceted-search",
+    "synonyms",
+    "analytics",
+    "multi-tenant",
+    "semantic-search"
+  ],
+  "require": {
+    "php": "^8.3",
+    "academorix/activity": "@dev",
+    "academorix/audit": "@dev",
+    "academorix/authorization": "@dev",
+    "academorix/console": "@dev",
+    "academorix/crud": "@dev",
+    "academorix/database": "@dev",
+    "academorix/enum": "@dev",
+    "academorix/events": "@dev",
+    "academorix/exceptions": "@dev",
+    "academorix/foundation": "@dev",
+    "academorix/notifications": "@dev",
+    "academorix/retention": "@dev",
+    "academorix/routing": "@dev",
+    "academorix/serializer": "@dev",
+    "academorix/service-provider": "@dev",
+    "academorix/settings": "@dev",
+    "academorix/support": "@dev",
+    "academorix/tenancy": "@dev",
+    "illuminate/bus": "^13.0",
+    "illuminate/contracts": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/events": "^13.0",
+    "illuminate/http": "^13.0",
+    "illuminate/queue": "^13.0",
+    "illuminate/routing": "^13.0",
+    "illuminate/support": "^13.0",
+    "laravel/scout": "^10.0",
+    "mattiverse/userstamps": "^1.0",
+    "olvlvl/composer-attribute-collector": "^2.0",
+    "owen-it/laravel-auditing": "^13.0",
+    "spatie/laravel-data": "^4.11"
+  },
+  "suggest": {
+    "devnoiseconsulting/laravel-scout-postgres-tsvector": "Required by PostgresFtsEngine when the `search.engines.postgres_fts` driver is used.",
+    "benbjurstrom/pgvector-scout": "Required by PgvectorEngine when the `search.can_use_pgvector` entitlement is granted."
+  },
+  "require-dev": {
+    "mockery/mockery": "^1.6",
+    "orchestra/testbench": "^11.0",
+    "pestphp/pest": "^4.0",
+    "pestphp/pest-plugin-laravel": "^4.0",
+    "phpstan/phpstan": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Academorix\\Search\\": "src/",
+      "Academorix\\Search\\Database\\Factories\\": "database/factories/",
+      "Academorix\\Search\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Academorix\\Search\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Academorix\\Search\\Providers\\SearchServiceProvider"
+      ],
+      "aliases": {}
+    }
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "olvlvl/composer-attribute-collector": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

@@ -1,0 +1,64 @@
+<%#
+/**
+ * @file command.ejs
+ * @module @stackra/console/stubs
+ * @description Template for `make:command` — renders a new `BaseCommand`
+ *   subclass wired with `@Command({...})` metadata.
+ *
+ *   Rendered by `StubRenderer.render({ stub: 'command', variables })`.
+ *   Every make-command stub in the workspace follows this shape (JSDoc
+ *   docblock header + JSDoc on every emitted export). Copy this file as
+ *   the canonical starting point when authoring a new stub — see
+ *   `stubs/README.md`.
+ *
+ * @template name         Command name (colon-separated, e.g. `cache:clear`).
+ * @template className    PascalCase class name (e.g. `CacheClearCommand`).
+ * @template description  Human-readable command description (imperative).
+ * @template fileName     Emitted filename (e.g. `cache-clear.command.ts`).
+ * @template moduleName   Package scope (e.g. `@stackra/cache`).
+ * @template Str          `@stackra/support` string utilities auto-injected
+ *                        by `StubRenderer` (available inside the stub as
+ *                        `Str.kebab(...)`, `Str.studly(...)`, ...).
+ *
+ * @example
+ * ```bash
+ * stackra make:command cache:clear --description "Clear the cache"
+ * ```
+ */
+-%>
+/**
+ * @file <%= fileName %>
+ * @module <%= moduleName %>/commands
+ * @description <%= description %>
+ */
+
+import { Command, BaseCommand } from '@stackra/console';
+
+/**
+ * <%= description %>
+ *
+ * @example
+ * ```bash
+ * stackra <%= name %>
+ * ```
+ */
+@Command({
+  name: '<%= name %>',
+  description: '<%= description %>',
+  arguments: [],
+  options: [],
+})
+export class <%= className %> extends BaseCommand {
+  /**
+   * Execute the `<%= name %>` command.
+   *
+   * @returns Void (exit code 0) or a numeric exit code.
+   */
+  public async handle(): Promise<void | number> {
+    this.output.info('Executing <%= name %>...');
+
+    // TODO: implement command logic here.
+
+    this.output.success('Done.');
+  }
+}

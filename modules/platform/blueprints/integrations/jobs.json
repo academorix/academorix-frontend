@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/integrations/jobs",
+  "$version": 1,
+  "title": "integrations — queued jobs",
+  "description": "Queued jobs this module dispatches.",
+  "jobs": []
+}

@@ -1,0 +1,196 @@
+/**
+ * @file index.ts
+ * @module @stackra/contracts/tokens
+ * @description Barrel export for every DI token shipped by contracts.
+ */
+
+export {
+  AI_CONFIG,
+  AI_CLIENT,
+  AI_TRANSPORT,
+  AI_STREAM_DECODER,
+  AI_CONNECTION_MANAGER,
+  AI_ORCHESTRATOR,
+  AI_TOOL_REGISTRY,
+  AI_TOOL_CONVERTER,
+  AI_TOOL_EXECUTOR,
+  AI_CONTEXT_REGISTRY,
+  AI_CONTEXT_COLLECTOR,
+  AI_CONTEXT_MANAGER,
+  AI_PII_REDACTOR,
+  AI_AGENT_REGISTRY,
+  AI_DRAFT_SERVICE,
+  AI_CONVERSATION_STORE,
+  AI_AUTH_PROVIDER,
+  AI_AGENT_METADATA,
+} from "./ai.tokens";
+export { APPLICATION } from "./application.token";
+export { APP_CONFIG } from "./app-config.token";
+export {
+  ANALYTICS_MANAGER,
+  ANALYTICS_CONFIG,
+  ANALYTICS_PROVIDER_METADATA_KEY,
+} from "./analytics.tokens";
+export {
+  AUTH_CONFIG,
+  AUTH_SERVICE,
+  SESSION_SERVICE,
+  SECURITY_SERVICE,
+  ACCESS_CONTROL_SERVICE,
+  TOKEN_STORAGE,
+  GUARDS_METADATA_KEY,
+  REQUIRED_ROLES_METADATA,
+  ROLE_OPERATOR_METADATA,
+  PERMISSION_RESOURCE_METADATA,
+  PERMISSION_ACTION_METADATA,
+  PERMISSIONS_METADATA,
+  PERMISSION_OPERATOR_METADATA,
+} from "./auth.tokens";
+export { CACHE_MANAGER, CACHE_STORE_METADATA_KEY } from "./cache.tokens";
+export { APP_VERSION_SERVICE, APP_VERSION_CONFIG } from "./pwa.tokens";
+export {
+  SETTINGS_CONFIG,
+  SETTINGS_SERVICE,
+  SETTINGS_REGISTRY,
+  SETTINGS_MANAGER,
+  SETTING_METADATA_KEY,
+  FIELD_METADATA_KEY,
+  GROUP_METADATA_KEY,
+  SECTION_METADATA_KEY,
+} from "./settings.tokens";
+export { COLLABORATION_ROOM_MANAGER, COLLABORATION_CONFIG } from "./collaboration.tokens";
+export { CONSENT_MANAGER, CONSENT_CONFIG, CONSENT_STORAGE_ADAPTER } from "./consent.tokens";
+export {
+  COORDINATOR_CONFIG,
+  TAB_COORDINATOR,
+  TAB_LOCK_MANAGER,
+  TAB_TRANSPORT_MANAGER,
+} from "./coordinator.tokens";
+export { CSP_CONFIG, CSP_SERVICE, CSP_REGISTRY } from "./csp.tokens";
+export {
+  DEVTOOLS_REGISTRY,
+  DEVTOOLS_INSPECTOR_REGISTRY,
+  DEVTOOLS_PANEL_METADATA_KEY,
+  DEVTOOLS_INSPECTOR_SOURCE_METADATA_KEY,
+} from "./devtools.tokens";
+export { CONFIGURATION_TOKEN } from "./configuration.token";
+export { CONFIGURATION_SERVICE_TOKEN } from "./configuration-service.token";
+export { CONFIGURATION_LOADER } from "./configuration-loader.token";
+export { VALIDATED_ENV_LOADER } from "./validated-env-loader.token";
+export { DISCOVERY_SERVICE } from "./discovery-service.token";
+export {
+  EVENT_EMITTER,
+  EVENT_LISTENER_METADATA_KEY,
+  EVENT_TRANSPORT_METADATA_KEY,
+  EVENT_SUBSCRIBER_METADATA_KEY,
+} from "./events.tokens";
+export {
+  // NOTE: HTTP event names live in ../events/http.events.ts (HTTP_EVENTS).
+  HTTP_MANAGER,
+  HTTP_CLIENT,
+  HTTP_CONFIG,
+  DEFAULT_HTTP_CONNECTION_TOKEN,
+  HTTP_TOKEN_PROVIDER,
+  getHttpConnectionToken,
+} from "./http.tokens";
+export {
+  // NOTE: I18N event names live in ../events/i18n.events.ts (I18N_EVENTS).
+  // I18N_CONFIG stays in @stackra/i18n — it's module-internal.
+  I18N_MANAGER,
+  I18N_LOCALE_SERVICE,
+  I18N_DIRECTION_SERVICE,
+  I18N_DIRECTION_ADAPTER,
+  I18N_LOCALE_STORAGE,
+  I18N_TRANSLATION_PROVIDER,
+} from "./i18n.tokens";
+export { LOGGER_MANAGER, LOGGER_REPORTER_METADATA_KEY } from "./logger.tokens";
+export { MIDDLEWARE_REGISTRY, MIDDLEWARE_RESOLVER, MIDDLEWARE_CONFIG } from "./middleware.tokens";
+export {
+  MONITORING_MANAGER,
+  MONITORING_CONFIG,
+  MONITORING_PROVIDER_METADATA_KEY,
+} from "./monitoring.tokens";
+export { NETWORK_DETECTOR, NETWORK_SERVICE } from "./network.tokens";
+export {
+  THEME_BINDINGS,
+  THEMING_CONFIG,
+  THEME_REGISTRY,
+  THEME_SERVICE,
+  THEMES_STORE,
+  ACTIVE_THEME_STORE,
+} from "./theming.tokens";
+export { QUEUE_MANAGER, PROCESSOR_METADATA_KEY, ON_JOB_EVENT_METADATA_KEY } from "./queue.tokens";
+export { REALTIME_MANAGER, REALTIME_CONFIG } from "./realtime.tokens";
+export {
+  SCHEDULER_SERVICE,
+  SCHEDULER_CONFIG,
+  TASK_RUNNER,
+  SCHEDULED_METADATA_KEY,
+} from "./scheduler.tokens";
+export {
+  ROUTING_CONFIG,
+  ROUTE_REGISTRY,
+  ROUTE_MATCHER,
+  AI_ROUTE_CONTEXT,
+  SEO_SERVICE,
+  SEO_CONFIG,
+  ROUTE_METADATA_KEY,
+  LAYOUT_METADATA_KEY,
+  PAGE_METADATA_KEY,
+  GUARD_METADATA_KEY,
+  MIDDLEWARE_METADATA_KEY,
+  REQUIRE_ROLE_METADATA_KEY,
+  REQUIRE_PERMISSION_METADATA_KEY,
+  REQUIRE_ANY_METADATA_KEY,
+} from "./routing.tokens";
+export { CONSOLE_OUTPUT } from "./console-output.token";
+export { CONSOLE_CONFIG } from "./console-config.token";
+export {
+  SCOPE_SERVICE,
+  SCOPE_CACHE,
+  SCOPE_CONTEXT_STORE,
+  SCOPE_REGISTRY,
+  SCOPE_EMULATOR,
+  SCOPE_MODULE_OPTIONS,
+  SCOPE_PERSIST_ADAPTER,
+} from "./scope.tokens";
+export { STATE_REGISTRY } from "./state.tokens";
+export { SDUI_RUNTIME_STORE } from "./state-store.tokens";
+export { STORAGE_MANAGER, STORAGE_CONFIG, STORAGE } from "./storage.tokens";
+export {
+  SDUI_CONFIG,
+  SDUI_SERVICE,
+  SDUI_PAGES_SERVICE,
+  SDUI_PAGE_RESOLVER,
+  SDUI_PAGE_REGISTRY,
+  SDUI_ROUTE_SYNC,
+  SDUI_SCHEMA_CACHE,
+  SDUI_COMPONENT_REGISTRY,
+  SDUI_LAYOUT_REGISTRY,
+  SDUI_ACTION_ADAPTER,
+  SDUI_DATA_SOURCE_RESOLVER,
+  SDUI_CLIENT,
+} from "./sdui.tokens";
+export { QUERY_CONFIG, QUERY_CLIENT, UNDOABLE_QUEUE } from "./query.tokens";
+export { TOAST_SERVICE, DIALOG_SERVICE, OVERLAY_REGISTRY } from "./ui.tokens";
+export {
+  ACTION_CONFIG,
+  ACTION_REGISTRY,
+  ACTION_DISPATCHER,
+  ACTION_HANDLER_METADATA,
+  PERMISSION_RESOLVER,
+} from "./actions.tokens";
+export {
+  SYNC_CONFIG,
+  SYNC_ENGINE,
+  PULL_SERVICE,
+  PUSH_SERVICE,
+  MERGE_SERVICE,
+  OPERATION_QUEUE,
+  CONFLICT_RESOLVER,
+  LOCAL_STORAGE_ADAPTER,
+  CHECKPOINT_SERVICE,
+  CONFLICT_RESOLVER_CONFIG,
+  NETWORK_DETECTOR_CONFIG,
+  OPERATION_QUEUE_CONFIG,
+} from "./sync.tokens";

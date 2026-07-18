@@ -1,0 +1,20 @@
+{
+  "id": "academorix://modules/geography/notifications",
+  "$version": 1,
+  "title": "geography \u2014 notification classes + categories",
+  "namespace": "Academorix\\Geography\\Notifications",
+  "notifications": ["MaxMindRefreshFailedNotification"],
+  "categories": [
+    {
+      "slug": "geography.maxmind_refresh_failed",
+      "display_name": "MaxMind refresh failed",
+      "description": "Weekly MaxMind DB refresh failed after retries. Only sent to platform-ops mailbox, not tenant users.",
+      "default_channels": ["mail"],
+      "priority": "critical",
+      "consent_tier": "system_ops",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "platform_admin"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Steering change suggests re-audit",
+      "trigger": "PostFileSave",
+      "description": "Reminds the assistant that when a steering rule changes, consumers of that rule likely drift. Suggests invoking standards-steward on the affected modules.",
+      "matcher": "^\\.kiro/steering/.+\\.md$",
+      "action": {
+        "type": "agent",
+        "prompt": "A steering file at .kiro/steering/ was just saved.\n\nIf the change is a genuine rule change (new invariant, tightened constraint, renamed concept, removed exception) rather than a trivial edit (typo fix, reformat, prose polish), consider whether existing consumers now drift from the new rule.\n\nThe right handoff:\n\n- Invoke standards-steward (.kiro/agents/standards-steward.md) on the modules that consume this rule to surface drift.\n- If the drift is mechanical (docblocks, attribute migrations, folder placement, column constants), hand the steward's findings to codebase-housekeeper (.kiro/agents/codebase-housekeeper.md).\n- If the rule change deserves an ADR, invoke docs-adr-steward (.kiro/agents/docs-adr-steward.md) to author it.\n\nSkip this reminder for trivial edits. Match the response depth to the change's scope."
+      }
+    }
+  ]
+}

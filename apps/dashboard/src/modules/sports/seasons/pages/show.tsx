@@ -6,7 +6,7 @@
  * Season detail — status, date range, current flag, and age cut-off.
  */
 
-import { Card, Chip, Spinner } from "@academorix/ui/react";
+import { Card, Chip, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 
 import type { Season } from "@/types";

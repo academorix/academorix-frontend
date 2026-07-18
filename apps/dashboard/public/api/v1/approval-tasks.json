@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "name": "Refund request · Family Chen",
+    "kind": "Refund",
+    "amount": 340,
+    "openedAt": "2025-03-17T14:20:00Z",
+    "status": { "text": "Pending", "color": "warning" },
+    "isActive": true,
+    "assignedTo": "Alex Morgan",
+    "createdAt": "2025-03-17T14:20:00Z"
+  },
+  {
+    "id": 2,
+    "name": "New family registration · Yang",
+    "kind": "Registration",
+    "amount": 0,
+    "openedAt": "2025-03-17T10:22:00Z",
+    "status": { "text": "Pending", "color": "warning" },
+    "isActive": true,
+    "assignedTo": "Amelia Ford",
+    "createdAt": "2025-03-17T10:22:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Coach hire · Elena Marsh",
+    "kind": "HR",
+    "amount": 0,
+    "openedAt": "2025-01-14T09:00:00Z",
+    "status": { "text": "Approved", "color": "success" },
+    "isActive": false,
+    "assignedTo": "Alex Morgan",
+    "createdAt": "2025-01-14T09:00:00Z"
+  },
+  {
+    "id": 4,
+    "name": "Discount override · 12%",
+    "kind": "Billing",
+    "amount": 21.6,
+    "openedAt": "2025-03-15T09:00:00Z",
+    "status": { "text": "Rejected", "color": "danger" },
+    "isActive": false,
+    "assignedTo": "Diego Alvarez",
+    "createdAt": "2025-03-15T09:00:00Z"
+  },
+  {
+    "id": 5,
+    "name": "Session cancellation · Beam",
+    "kind": "Roster",
+    "amount": 0,
+    "openedAt": "2025-03-18T07:00:00Z",
+    "status": { "text": "Pending", "color": "warning" },
+    "isActive": true,
+    "assignedTo": "Amelia Ford",
+    "createdAt": "2025-03-18T07:00:00Z"
+  }
+]

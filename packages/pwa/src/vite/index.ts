@@ -1,10 +1,10 @@
 /**
  * @file index.ts
- * @module @academorix/pwa/vite
- *
- * @description
- * Public barrel for the Vite (vite-plugin-pwa) adapter factory.
+ * @module @stackra/pwa/vite
+ * @description Public API for the Vite build-time adapters —
+ *   `vite-plugin-pwa` and `@vite-pwa/assets-generator` config builders.
  */
 
-export { DEFAULT_NAVIGATE_FALLBACK_DENYLIST, getVitePwaOptions } from "./get-vite-pwa-options";
-export type { GetVitePwaOptionsInput } from "./get-vite-pwa-options";
+export { DEFAULT_NAVIGATE_FALLBACK_DENYLIST } from './constants';
+export { getVitePwaOptions, getAssetsGeneratorConfig } from './utils';
+export type { IGetVitePwaOptionsInput, IGetAssetsGeneratorConfigInput } from './interfaces';

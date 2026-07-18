@@ -1,0 +1,84 @@
+{
+  "id": "academorix://modules/transfer/entitlements",
+  "$version": 1,
+  "title": "transfer \u2014 entitlements",
+  "reference": {
+    "publishedBy": "entitlements",
+    "resolvedBy": "GET /api/auth/me \u2192 data.quota_summary",
+    "seededFrom": "BusinessType.default_config.entitlements"
+  },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "transfer.max_concurrent_jobs",
+      "kind": "slot",
+      "unit": "jobs",
+      "defaultsByPlan": { "free": 3, "team": 10, "enterprise": 25 },
+      "description": "Cap on xfer_jobs in `queued` or `running` per tenant. Additional job creation returns TRANSFER_CONCURRENCY_LIMIT_EXCEEDED (429)."
+    },
+    {
+      "key": "transfer.max_file_size_bytes",
+      "kind": "slot",
+      "unit": "bytes",
+      "defaultsByPlan": { "free": 5242880, "team": 52428800, "enterprise": 524288000 },
+      "description": "Cap on uploaded file size. Enforced at the ImportController before storage."
+    },
+    {
+      "key": "transfer.max_rows_per_import",
+      "kind": "slot",
+      "unit": "rows",
+      "defaultsByPlan": { "free": 10000, "team": 250000, "enterprise": 5000000 },
+      "description": "Cap on row count in a single import. Enforced at file-open time (Laravel Excel's header + limited scan)."
+    },
+    {
+      "key": "transfer.max_rows_per_export",
+      "kind": "slot",
+      "unit": "rows",
+      "defaultsByPlan": { "free": 25000, "team": 500000, "enterprise": 10000000 },
+      "description": "Cap on row count in a single export. Query.count() checked before dispatch."
+    },
+    {
+      "key": "transfer.retention_tier",
+      "kind": "slot",
+      "unit": "enum",
+      "defaultsByPlan": { "free": "short", "team": "medium", "enterprise": "long" },
+      "description": "Retention tier assigned to xfer_jobs at insert. Controls when rows are pruned. See retention.json."
+    },
+    {
+      "key": "transfer.artifact_ttl_days.multiplier",
+      "kind": "slot",
+      "unit": "float",
+      "defaultsByPlan": { "free": 1.0, "team": 1.5, "enterprise": 3.0 },
+      "description": "Multiplier on default artifact TTLs. Enterprise gets 3\u00d7 the artifact retention window."
+    },
+    {
+      "key": "transfer.can_run_replace_mode",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "team": true, "enterprise": true },
+      "description": "Allow the `replace` import mode (destructive)."
+    },
+    {
+      "key": "transfer.can_run_delete_mode",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "team": true, "enterprise": true },
+      "description": "Allow the `delete` import mode (destructive)."
+    },
+    {
+      "key": "transfer.can_share_mapping_profiles",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "team": true, "enterprise": true }
+    },
+    {
+      "key": "transfer.can_use_workbook",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "team": true, "enterprise": true },
+      "description": "Access to multi-sheet workbook imports / exports."
+    },
+    {
+      "key": "transfer.can_use_sharded",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "team": false, "enterprise": true },
+      "description": "Access to sharded imports / exports for very large files. Enterprise-only \u2014 heavy worker cost."
+    }
+  ]
+}

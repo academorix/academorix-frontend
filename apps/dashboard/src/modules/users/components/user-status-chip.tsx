@@ -6,7 +6,7 @@
  * Color-coded chip for a {@link UserStatus}, reused by the users list and detail.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 
 import type { UserStatus } from "@/types";
 import type { ReactNode } from "react";

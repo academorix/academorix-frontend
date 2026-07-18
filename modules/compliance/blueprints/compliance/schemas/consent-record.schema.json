@@ -1,0 +1,192 @@
+{
+  "id": "academorix://modules/compliance/schemas/consent-record",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ConsentRecord",
+  "description": "Immutable subject \u00d7 category \u00d7 decision snapshot. Withdrawal writes a NEW row with decision=withdrawn; never mutates. The current decision for a subject is the latest row per (subject_type, subject_id, consent_category_id). ConsentRecordObserver refuses UPDATE on every column except `metadata` (append-only merge).",
+  "type": "object",
+  "x-module": "compliance",
+  "x-eloquent": {
+    "table": "consent_records",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "cns_",
+    "incrementing": false,
+    "model": "Academorix\\Compliance\\Models\\ConsentRecord",
+    "interface": "Academorix\\Compliance\\Contracts\\Data\\ConsentRecordInterface",
+    "implements": ["Academorix\\Compliance\\Contracts\\Data\\ConsentRecordInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable",
+      "Filterable"
+    ],
+    "casts": {
+      "decision": "ConsentDecision",
+      "source": "array",
+      "evidence": "array",
+      "metadata": "array"
+    },
+    "appends": ["is_current"],
+    "observers": ["ConsentRecordObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true, "description": "`cns_<26>`" },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "subject_type": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Polymorphic subject class \u2014 e.g. `Academorix\\User\\Models\\User`."
+      },
+      "subject_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Subject primary key."
+      },
+      "consent_category_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "consent_categories",
+          "column": "id",
+          "onDelete": "restrict"
+        }
+      },
+      "decision": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: granted / withdrawn / pending."
+      },
+      "source": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Evidence of the origin: ip, user_agent, method (form / api / import / migration), locale, referrer."
+      },
+      "guardian_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" },
+        "description": "Set when the ConsentCategory has requires_guardian=true. NULL otherwise."
+      },
+      "evidence": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Verification evidence for minor consent: verification_method (email_link / phone_otp / paper_form / bank_micro_deposit), verified_at, verifier_reference."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "APPEND-ONLY. Observer refuses to remove keys \u2014 only merges new keys atop existing."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "subject_type", "subject_id", "consent_category_id", "created_at"],
+        "unique": false,
+        "name": "consent_records_current_lookup_idx",
+        "description": "Primary read path: 'latest decision for subject S on category C'. Reverse-ordered by created_at for LIMIT 1 queries."
+      },
+      {
+        "columns": ["subject_type", "subject_id"],
+        "unique": false,
+        "name": "consent_records_subject_idx",
+        "description": "DSAR contributor lookup \u2014 'all consent records for subject S'."
+      },
+      {
+        "columns": ["consent_category_id", "created_at"],
+        "unique": false,
+        "name": "consent_records_category_recency_idx",
+        "description": "Compliance report: 'how many withdrawals of category X in the past N days?'"
+      },
+      {
+        "columns": ["guardian_user_id"],
+        "unique": false,
+        "name": "consent_records_guardian_idx",
+        "predicate": "guardian_user_id IS NOT NULL",
+        "description": "Partial index for the minor-consent audit query."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "subject_type",
+    "subject_id",
+    "consent_category_id",
+    "decision",
+    "source",
+    "created_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^cns_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "subject_type": { "type": "string" },
+    "subject_id": { "type": "string" },
+    "consent_category_id": { "type": "string", "pattern": "^ccg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "decision": { "type": "string", "enum": ["granted", "withdrawn", "pending"] },
+    "source": {
+      "type": "object",
+      "properties": {
+        "ip": { "type": "string" },
+        "user_agent": { "type": "string" },
+        "method": {
+          "type": "string",
+          "enum": ["form", "api", "import", "migration", "admin_override", "sso_grant"]
+        },
+        "locale": { "type": "string" },
+        "referrer": { "type": ["string", "null"] }
+      }
+    },
+    "guardian_user_id": { "type": ["string", "null"] },
+    "evidence": {
+      "type": ["object", "null"],
+      "properties": {
+        "verification_method": {
+          "type": "string",
+          "enum": ["email_link", "phone_otp", "paper_form", "bank_micro_deposit", "id_document"]
+        },
+        "verified_at": { "type": "string", "format": "date-time" },
+        "verifier_reference": { "type": "string" }
+      }
+    },
+    "metadata": { "type": ["object", "null"] },
+    "is_current": {
+      "type": "boolean",
+      "description": "Computed. True iff this is the latest row for (tenant, subject, category)."
+    },
+    "created_by": { "type": ["string", "null"] },
+    "created_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["created_by", "source.ip", "source.user_agent"],
+    "computed": ["is_current"],
+    "notes": [
+      "source.ip + source.user_agent hidden on the tenant-facing wire (leaks PII of the recorder). Platform-admin surfaces reveal with `?include=source_pii`.",
+      "ConsentRecord is IMMUTABLE \u2014 no PATCH / DELETE routes. Withdrawal writes a new row."
+    ]
+  }
+}

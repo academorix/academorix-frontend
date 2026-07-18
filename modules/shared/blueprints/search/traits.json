@@ -1,0 +1,124 @@
+{
+  "id": "academorix://modules/search/traits",
+  "$version": 1,
+  "title": "search \u2014 trait composition",
+  "description": "Owns `HasSearchable` \u2014 the opt-in trait models pull in alongside their #[Searchable] attribute. Wraps laravel/scout's own `Searchable` trait and layers our conventions (tenant scope on push, permission-scoped toSearchableArray, restricted-tier field filtering, alias-aware routing). Also owns the trait composition on our own SearchIndex + SearchSyncJob + SearchSynonym + SearchSavedQuery + SearchAnalyticsEvent models.",
+  "owned": [
+    {
+      "trait": "Academorix\\Search\\Concerns\\HasSearchable",
+      "description": "Opt-in trait for models registering with the search pipeline. Wraps scout's `Searchable` + adds our defaults: tenant-scoped push, permission-scoped `toSearchableArray()`, restricted-tier field filtering (never indexes those columns), alias-aware routing (`Model::search()` hits `{index}_live`), and integration with the SearchIndex registry.",
+      "public": true,
+      "usedBy": [
+        "any domain module opting a model into search (athletes, teams, invitations, newsletter subscribers, courses, ...)"
+      ],
+      "conflicts_with": [],
+      "notes": [
+        "Also registers a `resolveSearchableFields()` static method the compiler calls to merge attribute discovery with an optional dynamic escape hatch.",
+        "Composes with domain traits \u2014 BelongsToTenant + HasUlids + HasActivityLog + HasAudit as needed by the model.",
+        "The model may still override scout's `toSearchableArray()` per its contract for finer control; our trait supplies a sensible default from #[SearchField] declarations.",
+        "Adds a `search()` static (delegates to scout's) + a `searchableAs()` implementation returning the live alias name.",
+        "Automatic push on `saved` + purge on `deleted` via scout's observers \u2014 no manual dispatching needed."
+      ]
+    }
+  ],
+  "consumed": {
+    "framework": [
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids",
+        "usedBy": [
+          "SearchIndex",
+          "SearchSyncJob",
+          "SearchSynonym",
+          "SearchSavedQuery",
+          "SearchAnalyticsEvent"
+        ]
+      },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "usedBy": ["SearchIndex", "SearchSyncJob", "SearchSynonym", "SearchSavedQuery"]
+      }
+    ],
+    "foundation": [
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasMetadata",
+        "usedBy": ["SearchIndex", "SearchSavedQuery"],
+        "reason": "Free-form platform notes on the operation record + saved query."
+      },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag",
+        "usedBy": ["SearchSynonym"],
+        "reason": "Platform-seeded synonym rows carry is_system=true \u2014 they can be disabled but not deleted by tenants."
+      }
+    ],
+    "tenancy": [
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "usedBy": [
+          "SearchIndex",
+          "SearchSyncJob",
+          "SearchSynonym",
+          "SearchSavedQuery",
+          "SearchAnalyticsEvent"
+        ],
+        "reason": "Tenant scoping across the module."
+      }
+    ],
+    "activity": [
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "usedBy": ["SearchIndex", "SearchSyncJob", "SearchSynonym", "SearchSavedQuery"],
+        "reason": "Every mutation writes a product-feed row. Analytics events do NOT dual-write (query volume would drown the feed)."
+      }
+    ],
+    "audit": [
+      {
+        "trait": "Academorix\\Audit\\Concerns\\HasAudit",
+        "usedBy": ["SearchIndex", "SearchSyncJob"],
+        "reason": "Every index registration / unregistration + sync-job transition writes a compliance-grade audit row. Synonym / saved-query / analytics do NOT audit (product concerns, not compliance)."
+      }
+    ],
+    "laravel_scout": [
+      {
+        "trait": "Laravel\\Scout\\Searchable",
+        "usedBy": ["HasSearchable wraps this internally"],
+        "reason": "The raw Scout trait we compose on. Applied to CONSUMER models (via our HasSearchable), NOT to search's own models."
+      }
+    ]
+  },
+  "composition": {
+    "search_index": {
+      "traits": [
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasActivityLog",
+        "HasAudit",
+        "SoftDeletes"
+      ],
+      "notes": "Full lifecycle stack \u2014 dual-write to both activity and audit on registration / unregistration / alias swap."
+    },
+    "search_sync_job": {
+      "traits": ["HasUlids", "BelongsToTenant", "HasActivityLog", "HasAudit", "SoftDeletes"],
+      "notes": "Same operational-record stack as XferJob."
+    },
+    "search_synonym": {
+      "traits": [
+        "HasUlids",
+        "BelongsToTenant",
+        "HasSystemFlag",
+        "HasMetadata",
+        "HasActivityLog",
+        "SoftDeletes"
+      ],
+      "notes": "HasSystemFlag marks platform-seeded rows. HasActivityLog covers CRUD (create / update / disable / delete) so tenant admins see 'Alice added synonym flu \u2194 influenza'. No HasAudit \u2014 synonym mutations are tenant business decisions, not compliance material."
+    },
+    "search_saved_query": {
+      "traits": ["HasUlids", "BelongsToTenant", "HasMetadata", "HasActivityLog", "SoftDeletes"],
+      "notes": "Same rationale as SearchSynonym on the auditing decision."
+    },
+    "search_analytics_event": {
+      "traits": ["HasUlids", "BelongsToTenant"],
+      "notes": "Lightweight, append-only. NO SoftDeletes (hard-pruned on retention). NO HasActivityLog (would drown the feed \u2014 every query fires one). NO HasAudit (query volume is telemetry, not evidence)."
+    }
+  }
+}

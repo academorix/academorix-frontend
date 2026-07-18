@@ -1,0 +1,103 @@
+{
+  "id": "academorix://modules/foundation/routes",
+  "$version": 1,
+  "title": "foundation — HTTP routes",
+  "description": "Three route groups. Central-public serves the platform-wide health + ping surface (no auth, minimal information disclosure). Platform-admin exposes module registry inspection + detailed health + search-index management. Tenant hosts get the same public ping/health so tenant-side load balancers can probe them.",
+  "prefixes": {
+    "api": "/api",
+    "v1": "/api/v1",
+    "platform": "/api/v1/platform"
+  },
+  "groups": [
+    {
+      "id": "central-public",
+      "host": ["central", "platform-admin", "tenant"],
+      "middleware": ["api", "throttle:foundation-health"],
+      "description": "Public health probes reachable on every host. Load balancers + Kubernetes liveness/readiness probes hit these. Never leak internal state — the /api/health endpoint returns aggregate status only; detailed probe output lives on platform-admin.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/ping",
+          "name": "foundation.ping",
+          "action": "Academorix\\Foundation\\Http\\PublicHealthController@ping",
+          "returns": "{ pong: true, timestamp: ISO-8601 }",
+          "description": "Simple liveness — the app booted and can respond. No dependencies checked. Used by fast health probes (kubelet, external monitors)."
+        },
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "name": "foundation.health",
+          "action": "Academorix\\Foundation\\Http\\PublicHealthController@aggregate",
+          "returns": "{ status: healthy|degraded|unhealthy, checks: { name: status }[] }",
+          "description": "Aggregate health. Walks every registered probe from every module + returns pass/fail per probe name (no probe internals leaked). SLA target: <200ms for 95% of calls. Cached 5s to avoid stampedes."
+        },
+        {
+          "method": "GET",
+          "path": "/up",
+          "name": "foundation.up",
+          "action": "Academorix\\Foundation\\Http\\PublicHealthController@up",
+          "returns": "text/plain: OK (200) or FAIL (503)",
+          "description": "Ultra-lightweight liveness. Plain text response. Kubernetes-style liveness probe target."
+        }
+      ]
+    },
+    {
+      "id": "platform-admin",
+      "host": "platform-admin",
+      "middleware": ["api", "auth:sanctum", "platform.user", "api.version"],
+      "description": "Platform diagnostics + module registry inspection. Behind auth — leaks structural information about the deployment.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/v1/platform/modules",
+          "name": "platform.foundation.modules.index",
+          "action": "Academorix\\Foundation\\Http\\Platform\\ModuleController@index",
+          "returns": "DataCollection<ModuleData>",
+          "description": "List every module discovered by ModuleRegistry, in dependency order. Fields per module: name, alias, priority, dependencies, contributes[]."
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/platform/modules/{module}",
+          "name": "platform.foundation.modules.show",
+          "action": "Academorix\\Foundation\\Http\\Platform\\ModuleController@show",
+          "returns": "ModuleData",
+          "description": "Detailed module descriptor. Includes runtime health of the module's registered probes."
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/platform/health/detail",
+          "name": "platform.foundation.health.detail",
+          "action": "Academorix\\Foundation\\Http\\Platform\\HealthController@detail",
+          "returns": "{ status, checks: [{ name, module, category, critical, status, message, duration_ms, last_success_at, last_failure_at }] }",
+          "description": "Detailed probe output. Includes error messages and last-success/failure timestamps. Restricted to platform admins because probe messages may leak internals."
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/platform/search/reindex",
+          "name": "platform.foundation.search.reindex",
+          "action": "Academorix\\Foundation\\Http\\Platform\\SearchController@reindex",
+          "accepts": "{ models?: string[], engine?: string }",
+          "returns": "{ dispatched: integer, models: string[] }",
+          "description": "Dispatches IndexSearchableJob for every Searchable model (or the subset given). Rate-limited per platform-admin user. Async — returns immediately with job dispatch count."
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/platform/search/flush",
+          "name": "platform.foundation.search.flush",
+          "action": "Academorix\\Foundation\\Http\\Platform\\SearchController@flush",
+          "accepts": "{ model: string }",
+          "returns": "{ flushed: integer }",
+          "description": "Flushes a single model's search index. Requires reason parameter. Rare — usually only during index-schema migrations. Audited."
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/platform/config/reload",
+          "name": "platform.foundation.config.reload",
+          "action": "Academorix\\Foundation\\Http\\Platform\\ConfigController@reload",
+          "returns": "{ modules_reloaded: string[] }",
+          "description": "Fires ConfigReloaded event across every module. Modules with cached config drop their caches. Rare — usually part of an ops runbook after Doppler/config change."
+        }
+      ]
+    }
+  ]
+}

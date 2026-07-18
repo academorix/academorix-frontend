@@ -120,10 +120,7 @@ describe("toFacilityPayload", () => {
   });
 
   it("maps empty nullable fields to null", () => {
-    const payload = toFacilityPayload(
-      baseValues({ notes: "", unit_of_capacity: "" }),
-      scope,
-    );
+    const payload = toFacilityPayload(baseValues({ notes: "", unit_of_capacity: "" }), scope);
 
     expect(payload.notes).toBeNull();
     expect(payload.unit_of_capacity).toBeNull();
@@ -167,10 +164,7 @@ describe("toFacilityPayload", () => {
   });
 
   it("passes through the indoor + active toggles", () => {
-    const payload = toFacilityPayload(
-      baseValues({ indoor: true, is_active: false }),
-      scope,
-    );
+    const payload = toFacilityPayload(baseValues({ indoor: true, is_active: false }), scope);
 
     expect(payload.indoor).toBe(true);
     expect(payload.is_active).toBe(false);

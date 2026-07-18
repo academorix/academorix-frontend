@@ -1,0 +1,140 @@
+{
+  "id": "academorix://modules/foundation/data-classes",
+  "$version": 1,
+  "title": "foundation — data classification taxonomy (THE reference)",
+  "description": "The 8-tier data classification taxonomy every downstream module's `data-classes.json` references. Foundation defines the tier semantics; downstream modules classify their fields against these tiers. Tiers drive DSAR export scope, right-to-erasure behaviour, encryption-at-rest policy, audit trail depth, and search-index eligibility. Every persistent column in every schema in every module MUST be classified — CI fails on unclassified fields.",
+  "referenceOnly": true,
+  "tiers": {
+    "public": {
+      "name": "Public",
+      "definition": "Non-identifying, safe to expose in URLs, response bodies, cache keys, log lines. Never subject to erasure or DSAR redaction.",
+      "encryption": "TLS in transit is sufficient. No at-rest encryption required beyond disk-level defaults.",
+      "dsar": "Included in exports. Never subject to erasure.",
+      "erasure": "Left in place.",
+      "searchable": "Yes.",
+      "loggable": "Yes.",
+      "cacheable": "Yes.",
+      "examples": [
+        "id, slug, name (of non-personal entities like Tenant, BusinessType, Team)",
+        "state / status enum values",
+        "created_at, updated_at (rarely PII by themselves)",
+        "public settings"
+      ]
+    },
+    "internal": {
+      "name": "Internal",
+      "definition": "Platform-internal state. Not personally identifiable. May include operational metadata (rollout flags, feature toggles, denormalised state).",
+      "encryption": "TLS in transit + disk-level at rest. No column-level encryption.",
+      "dsar": "Included in exports where relevant to the subject; excluded when it describes system state (e.g. is_system flag).",
+      "erasure": "Left in place; not personal data.",
+      "searchable": "Sometimes (for admin diagnostics).",
+      "loggable": "Yes.",
+      "cacheable": "Yes.",
+      "examples": [
+        "metadata JSONB (typically)",
+        "provisioning JSONB",
+        "verification_attempts counters",
+        "internal timestamps not tied to a subject (last_check_at, expires_at)"
+      ]
+    },
+    "confidential": {
+      "name": "Confidential PII",
+      "definition": "Personally identifiable information — email, name, phone, address, IP address, avatar URL, timezone, locale. DSAR-exportable + erasable on subject request.",
+      "encryption": "TLS in transit + AES-256 at rest. Encryption keys managed by AWS KMS.",
+      "dsar": "Fully included in DSAR exports.",
+      "erasure": "Purge-with-audit-record — value replaced with `erased-<hash>@invalid.local` or NULL; audit trail entry retains the original for legal-hold period.",
+      "searchable": "Yes, but the search index MUST be pruned on erasure.",
+      "loggable": "No — never in application logs. Structured audit logs (via HasAuditable) are allowed with per-tenant retention.",
+      "cacheable": "Yes, but cache invalidation triggers on erasure.",
+      "examples": [
+        "User.email, User.first_name, User.last_name, User.phone",
+        "Identity.email, Identity.given_name, Identity.family_name, Identity.avatar_url",
+        "TenantContact.email, TenantContact.phone, TenantContact.address",
+        "Invitation.email, Invitation.message",
+        "AuthenticationEvent.ip_address, .user_agent",
+        "InvitationEvent.ip_address, .user_agent"
+      ]
+    },
+    "restricted": {
+      "name": "Restricted / Credential-Adjacent",
+      "definition": "Secrets and credential-adjacent material — password hashes, MFA secrets, API tokens, SSO configuration, integration credentials, verification tokens. NEVER included in DSAR exports.",
+      "encryption": "TLS in transit + AES-256-GCM at rest. Encryption keys managed by AWS KMS. Column-level encryption via KMS envelope pattern.",
+      "dsar": "NEVER included in DSAR exports (they're secrets, not user data).",
+      "erasure": "Crypto-shred — the KMS key wrapping the ciphertext is destroyed. Row remains but ciphertext is unreadable.",
+      "searchable": "No, never.",
+      "loggable": "No, never — the base logger has redaction rules for known restricted field names.",
+      "cacheable": "No — every read hits the DB + KMS decrypt.",
+      "auditRule": "Every read AND every write is audit-logged with actor + timestamp + reason.",
+      "examples": [
+        "User.password (via ProviderIdentity.provider_metadata.hashed_password)",
+        "MFAFactor.secret (encrypted TOTP secret)",
+        "ProviderIdentity.provider_metadata (encrypted OAuth refresh tokens, SAML assertions)",
+        "TenantIntegration.config (encrypted SSO/SCIM config)",
+        "Invitation.token_hash (not encrypted — it's already a one-way hash, but never surfaced)",
+        "PersonalAccessToken.token (Sanctum PATs are stored hashed)"
+      ]
+    },
+    "regulated_minor": {
+      "name": "Regulated Minor",
+      "definition": "PII of a data subject under the age of consent (13 in US per COPPA; 13-16 in EU per GDPR Art. 8 depending on member state). Requires verifiable parental consent (VPC) before collection.",
+      "encryption": "Same as confidential — TLS + AES-256.",
+      "dsar": "Included in DSAR exports available to the guardian (not the minor themselves under 13).",
+      "erasure": "Purge-with-audit-record + guardian notification.",
+      "searchable": "Restricted — indexing gated by VPC status.",
+      "loggable": "No.",
+      "auditRule": "Every access is audit-logged.",
+      "vpcRequired": "Before ANY collection.",
+      "behaviouralMarketing": "FORBIDDEN under COPPA §312.5(b).",
+      "examples": [
+        "Athlete.date_of_birth when age < 13 (US) or < member-state age (EU)",
+        "AthleteGuardian.consent_captured_at",
+        "any per-athlete progress / performance / attendance data for regulated-minor athletes"
+      ]
+    },
+    "regulated_health": {
+      "name": "Regulated Health / Safeguarding",
+      "definition": "Health-related data + safeguarding records (medical clearance, injury reports, safeguarding disclosure log, DBS/WwCC verification status). HIPAA-adjacent in the US; safeguarding statute in UK/AU/IE.",
+      "encryption": "TLS + AES-256-GCM at rest + FIPS 140-2 Level 2 key material (v2 aspiration).",
+      "dsar": "Included but with medical-record redaction rules per jurisdiction.",
+      "erasure": "Anonymise-in-place — medical notes replaced with `[erased at YYYY-MM-DD per data subject request]`, structured fields NULLed.",
+      "searchable": "No, never.",
+      "loggable": "No, never.",
+      "auditRule": "Every read + write audit-logged. Access requires an explicit purpose-of-use annotation.",
+      "retentionRule": "Safeguarding statute governs — typically 6 years post-last-contact in UK; consult per jurisdiction.",
+      "reservedForV2": "Not present in v1 schemas. Athletes module will introduce these fields in v2 when the safeguarding vertical lands. HIPAA covered-entity status intentionally NOT pursued in v1."
+    },
+    "regulated_financial": {
+      "name": "Regulated Financial",
+      "definition": "Payment card data, banking details, tax IDs. PCI-DSS scope. Deliberately kept OUT of our infrastructure — all card data lives in Stripe Elements iframes.",
+      "encryption": "N/A — we don't hold this data. Only tokenised references (Stripe customer_id, subscription_id).",
+      "dsar": "Tokenised references included; underlying card data is Stripe's DSAR concern.",
+      "erasure": "Delete the token; Stripe handles the underlying data per their DPA.",
+      "strategicPosition": "Stay SAQ-A. Never accept raw card data.",
+      "examples": [
+        "Subscription.stripe_customer_id, .stripe_subscription_id",
+        "TenantContact.address for billing purposes (but this is confidential, not regulated_financial — addresses aren't in PCI scope)"
+      ]
+    },
+    "audit_log": {
+      "name": "Audit Log",
+      "definition": "Immutable audit records. Records of who did what when, retained for compliance evidence.",
+      "encryption": "TLS + AES-256 at rest. Optional column-level encryption for the diff payload.",
+      "dsar": "Metadata (occurred_at, event, actor_id) included; personal data in the diff payload redacted or anonymised.",
+      "erasure": "Anonymise-not-delete — the audit row is retained (auditors + regulators require the trail) but PII within it is anonymised (ip_address, user_agent, city → NULL; event + occurred_at + actor_type preserved for aggregate).",
+      "searchable": "By occurred_at + event + actor_type only; never by PII content.",
+      "loggable": "The audit rows ARE the log.",
+      "retentionRule": "Regime-specific: SOC 2 wants 1y minimum; UK safeguarding wants 6y; GDPR wants 'no longer than necessary'. Foundation default: P1Y hot + cold-archive to P7Y.",
+      "examples": [
+        "audit module's `audits` table entries",
+        "AuthenticationEvent (auth module)",
+        "InvitationEvent (dropped — see invitations module refactor)",
+        "NotificationDelivery (notifications module)"
+      ]
+    }
+  },
+  "downstreamConvention": {
+    "eachModuleDeclares": "A `data-classes.json` file with a `classes` object mapping each tier name → array of `Model.field` strings.",
+    "ciRule": "Every persistent column in every schema in every module MUST appear in exactly ONE tier in that module's data-classes.json. Unclassified fields fail the build. Fields in multiple tiers fail the build.",
+    "example": "In modules/user/data-classes.json → `\"confidential\": [\"User.email\", \"User.first_name\", ...]`, `\"restricted\": [\"User.password\", \"User.remember_token\"]`, ..."
+  }
+}

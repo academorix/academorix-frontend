@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/integrations/health",
+  "$version": 1,
+  "title": "integrations — health probes",
+  "description": "Health checks aggregated by foundation's /api/health.",
+  "checks": []
+}

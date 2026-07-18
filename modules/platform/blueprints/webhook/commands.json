@@ -1,0 +1,48 @@
+{
+  "id": "academorix://modules/webhook/commands",
+  "$version": 1,
+  "title": "webhook \u2014 Artisan commands",
+  "description": "8 commands total (7 from stackra reference + rotation-grace-cleanup).",
+  "commands": [
+    {
+      "signature": "webhook:list {--state=} {--tenant=} {--destination=}",
+      "class": "Academorix\\Webhook\\Console\\Commands\\ListCommand",
+      "purpose": "Print WebhookSubscription rows. Filterable by state, tenant, destination."
+    },
+    {
+      "signature": "webhook:destinations",
+      "class": "Academorix\\Webhook\\Console\\Commands\\DestinationsCommand",
+      "purpose": "Print the WebhookDestinationRegistry contents. Shows registered drivers + their requiresConfig schemas."
+    },
+    {
+      "signature": "webhook:retry {delivery_id}",
+      "class": "Academorix\\Webhook\\Console\\Commands\\RetryCommand",
+      "purpose": "Force-retry a WebhookDelivery. Refused when state=delivered (already delivered) or state=cancelled (subscription paused/disabled). Increments attempt_number."
+    },
+    {
+      "signature": "webhook:rotate-secret {subscription_id} {--grace-seconds=}",
+      "class": "Academorix\\Webhook\\Console\\Commands\\RotateSecretCommand",
+      "purpose": "CLI equivalent of the tenant rotate-secret endpoint. Prints the NEW secret to stdout once (never stored plaintext). Ops-only \u2014 requires super_admin permission."
+    },
+    {
+      "signature": "webhook:test {subscription_id}",
+      "class": "Academorix\\Webhook\\Console\\Commands\\TestCommand",
+      "purpose": "Send a synthetic webhook.test event to the subscription's destination. Useful for smoke-testing configuration."
+    },
+    {
+      "signature": "webhook:probe {--tenant=} {--subscription=}",
+      "class": "Academorix\\Webhook\\Console\\Commands\\ProbeCommand",
+      "purpose": "Health probe. Runs WebhookProbeJob synchronously or dispatches for background execution. --tenant / --subscription scope the probe."
+    },
+    {
+      "signature": "webhook:prune {--dry-run} {--chunk-size=}",
+      "class": "Academorix\\Webhook\\Console\\Commands\\PruneCommand",
+      "purpose": "Hard-delete deliveries older than prune_after_days. --dry-run reports counts without deleting."
+    },
+    {
+      "signature": "webhook:rotation-grace-cleanup",
+      "class": "Academorix\\Webhook\\Console\\Commands\\RotationGraceCleanupCommand",
+      "purpose": "Clear expired secret_previous columns. Runs from schedule hourly + can be invoked manually after mass-rotation events."
+    }
+  ]
+}

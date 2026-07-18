@@ -9,7 +9,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §16.1 "Messaging"
  */
 
-import { ChatBubbleLeftRightIcon } from "@academorix/ui/icons/outline";
+import { ChatBubbleLeftRightIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

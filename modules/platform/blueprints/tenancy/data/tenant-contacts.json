@@ -1,0 +1,128 @@
+[
+  {
+    "id": "wct_01J5R7V3A4N7D6Q8K5B2C9C0X00",
+    "tenant_id": "ten_01J5R7V3A4N7D6Q8K5B2C9E1X0",
+    "kind": "owner",
+    "name": "Aisha Rahman",
+    "email": "aisha@academorix.dev",
+    "phone": "+966501234567",
+    "job_title": "Founder",
+    "address": null,
+    "notes": null,
+    "is_primary": true,
+    "verified_at": "2019-01-01T09:00:00Z",
+    "full_address": null,
+    "metadata": {
+      "linked_identity_id": "ide_01J5R7V3A4N7D6Q8K5B2C9I0X00",
+      "review_frequency": "annual",
+      "last_reviewed_at": "2026-01-15T00:00:00Z"
+    },
+    "created_at": "2019-01-01T09:00:00Z",
+    "updated_at": "2019-01-01T09:00:00Z",
+    "deleted_at": null
+  },
+  {
+    "id": "wct_01J5R7V3A4N7D6Q8K5B2C9C0X01",
+    "tenant_id": "ten_01J5R7V3A4N7D6Q8K5B2C9E1X0",
+    "kind": "billing",
+    "name": "Finance Team",
+    "email": "billing@academorix.dev",
+    "phone": null,
+    "job_title": null,
+    "address": {
+      "line1": "12 King Fahd Rd",
+      "line2": null,
+      "city": "Riyadh",
+      "region": "Riyadh Province",
+      "postal_code": "11564",
+      "country_code": "SA"
+    },
+    "notes": null,
+    "is_primary": true,
+    "verified_at": "2019-01-05T09:00:00Z",
+    "full_address": "12 King Fahd Rd, Riyadh, Riyadh Province, 11564, SA",
+    "metadata": {
+      "invoice_delivery": "email",
+      "stripe_customer_id": "cus_seedplaceholder00",
+      "vat_id": null
+    },
+    "created_at": "2019-01-05T09:00:00Z",
+    "updated_at": "2019-01-05T09:00:00Z",
+    "deleted_at": null
+  },
+  {
+    "id": "wct_01J5R7V3A4N7D6Q8K5B2C9C0X02",
+    "tenant_id": "ten_01J5R7V3A4N7D6Q8K5B2C9E1X2",
+    "kind": "dpo",
+    "name": "Northgate DPO Office",
+    "email": "dpo@northgate.uk",
+    "phone": "+441234567890",
+    "job_title": "Data Protection Officer",
+    "address": {
+      "line1": "45 High Street",
+      "line2": null,
+      "city": "Manchester",
+      "region": "Greater Manchester",
+      "postal_code": "M1 1AA",
+      "country_code": "GB"
+    },
+    "notes": "Independent DPO retained per UK GDPR Art. 37. Contract renewed annually.",
+    "is_primary": true,
+    "verified_at": "2023-04-16T09:00:00Z",
+    "full_address": "45 High Street, Manchester, Greater Manchester, M1 1AA, GB",
+    "metadata": {
+      "retention_hold_expires_at": "2030-04-16T00:00:00Z",
+      "compliance_regime": "uk_gdpr",
+      "consent_captured": true,
+      "review_frequency": "annual",
+      "last_reviewed_at": "2026-04-16T00:00:00Z"
+    },
+    "created_at": "2023-04-16T09:00:00Z",
+    "updated_at": "2023-04-16T09:00:00Z",
+    "deleted_at": null
+  },
+  {
+    "id": "wct_01J5R7V3A4N7D6Q8K5B2C9C0X03",
+    "tenant_id": "ten_01J5R7V3A4N7D6Q8K5B2C9E1X2",
+    "kind": "legal",
+    "name": "Northgate Legal Counsel",
+    "email": "legal@northgate.uk",
+    "phone": "+441234567891",
+    "job_title": "General Counsel",
+    "address": null,
+    "notes": null,
+    "is_primary": true,
+    "verified_at": "2023-04-16T09:00:00Z",
+    "full_address": null,
+    "metadata": {
+      "retention_hold_expires_at": "2030-04-16T00:00:00Z",
+      "compliance_regime": "uk_gdpr",
+      "consent_captured": true,
+      "dpa_signed_at": "2023-04-16T09:00:00Z"
+    },
+    "created_at": "2023-04-16T09:00:00Z",
+    "updated_at": "2023-04-16T09:00:00Z",
+    "deleted_at": null
+  },
+  {
+    "id": "wct_01J5R7V3A4N7D6Q8K5B2C9C0X04",
+    "tenant_id": "ten_01J5R7V3A4N7D6Q8K5B2C9E1X2",
+    "kind": "technical",
+    "name": "IT Team",
+    "email": "it@northgate.uk",
+    "phone": null,
+    "job_title": null,
+    "address": null,
+    "notes": null,
+    "is_primary": true,
+    "verified_at": null,
+    "full_address": null,
+    "metadata": {
+      "on_call_schedule": null,
+      "escalation_route": "email-only"
+    },
+    "created_at": "2023-04-16T09:00:00Z",
+    "updated_at": "2023-04-16T09:00:00Z",
+    "deleted_at": null
+  }
+]

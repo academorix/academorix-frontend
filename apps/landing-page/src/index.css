@@ -1,0 +1,132 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;450;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+@import "@heroui/styles";
+@import "@heroui-pro/react/css";
+/* heroui-chat-theme-imports:start */
+@import "@heroui-pro/react/themes/glass";
+/* heroui-chat-theme-imports:end */
+@import "./heroui-theme.css";
+@import "./brand/tokens.css";
+
+:root {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --brand-font-heading: "Archivo", ui-sans-serif, system-ui, sans-serif;
+
+  --accent: oklch(0.87 0.212 132);
+  --accent-foreground: oklch(0.24 0.04 155);
+  --accent-hover: oklch(0.83 0.205 132);
+
+  --foreground: oklch(0.19 0.028 258);
+  --muted: oklch(0.47 0.024 258);
+  --link: var(--foreground);
+
+  --brand-ink: oklch(0.17 0.03 260);
+  --brand-secondary: oklch(0.62 0.16 245);
+
+  --sport-soccer: oklch(0.68 0.17 150);
+  --sport-swimming: oklch(0.66 0.15 232);
+  --sport-gymnastics: oklch(0.66 0.19 350);
+  --sport-tennis: oklch(0.85 0.2 118);
+  --sport-athletics: oklch(0.66 0.2 38);
+  --sport-martial-arts: oklch(0.57 0.21 22);
+
+  --background: oklch(0.98 0.014 150);
+  --background-gradient: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--accent) 30%, transparent) 0%,
+    color-mix(in oklab, var(--brand-secondary) 12%, transparent) 32%,
+    transparent 70%
+  );
+
+  /* Border Radius */
+  --radius: 0.25rem;
+  --field-radius: 0.125rem;
+}
+
+[data-theme="glass-dark"] {
+  --foreground: oklch(0.96 0.006 258);
+  --muted: oklch(0.72 0.02 258);
+  --background: oklch(0.16 0.02 260);
+  --background-gradient: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--accent) 16%, transparent) 0%,
+    color-mix(in oklab, var(--brand-secondary) 10%, transparent) 36%,
+    transparent 72%
+  );
+}
+
+html,
+body {
+  min-height: 100dvh;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: "cv02", "cv03", "cv04", "ss01";
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--background);
+  background-image: var(--background-gradient);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+html[dir="rtl"] body {
+  font-family: "IBM Plex Sans Arabic", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+html[dir="rtl"] .font-display {
+  font-family: "IBM Plex Sans Arabic", var(--brand-font-heading);
+  letter-spacing: 0;
+}
+
+@layer components {
+  .font-display {
+    font-family: var(--brand-font-heading);
+    letter-spacing: -0.02em;
+  }
+
+  .button {
+    font-family: var(--brand-font-heading);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .navbar {
+    background: color-mix(in oklab, var(--background) 66%, transparent);
+    backdrop-filter: saturate(1.6) blur(16px);
+    -webkit-backdrop-filter: saturate(1.6) blur(16px);
+    border-bottom: 1px solid var(--separator);
+  }
+}
+
+.loading-shimmer {
+  background: linear-gradient(
+    110deg,
+    color-mix(in oklab, var(--muted) 76%, transparent),
+    var(--foreground),
+    color-mix(in oklab, var(--muted) 76%, transparent)
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: loading-shimmer 1.8s ease-in-out infinite;
+}
+
+@keyframes loading-shimmer {
+  from {
+    background-position: 100% 50%;
+  }
+
+  to {
+    background-position: -120% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-shimmer {
+    animation: none;
+    background: none;
+    color: var(--muted);
+  }
+}

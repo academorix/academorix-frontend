@@ -1,0 +1,38 @@
+{
+  "id": "academorix://modules/audit/feature-flags",
+  "$version": 1,
+  "title": "audit \u2014 kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "audit.recording",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle. Off = HasAudit becomes no-op. NEVER OFF in production \u2014 regulatory violation."
+    },
+    {
+      "key": "audit.kms_encryption",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Encrypt restricted-tier fields in old_values / new_values. NEVER OFF unless KMS incident + super_admin approval."
+    },
+    {
+      "key": "audit.chain_verification",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "VerifyAuditChainJob execution."
+    },
+    {
+      "key": "audit.cold_rotation",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "RotateAuditColdStorageJob execution."
+    },
+    {
+      "key": "audit.settings_dual_write",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "WriteSettingsChangeToAudit listener. NEVER OFF in production."
+    }
+  ]
+}

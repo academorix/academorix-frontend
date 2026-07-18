@@ -15,9 +15,9 @@
  * tenant-settings resource (see `DASHBOARD_UX_PLAN.md` §9.3).
  */
 
-import { Cog6ToothIcon } from "@academorix/ui/icons/outline";
+import { Cog6ToothIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
-import { Navigate } from "react-router";
+import { Navigate } from "@stackra/routing/react";
 
 import type { AppModule } from "@/lib/module";
 

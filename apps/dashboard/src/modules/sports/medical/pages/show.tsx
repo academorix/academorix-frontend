@@ -7,7 +7,7 @@
  * restricted clinical summary. Sensitive data, gated by the `medical` permission.
  */
 
-import { Card, Chip, Spinner } from "@academorix/ui/react";
+import { Card, Chip, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 
 import type { MedicalRecord } from "@/types";

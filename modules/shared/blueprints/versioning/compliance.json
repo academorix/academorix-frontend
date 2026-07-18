@@ -1,0 +1,93 @@
+{
+  "id": "academorix://modules/versioning/compliance",
+  "$version": 1,
+  "title": "versioning \u2014 compliance evidence",
+  "description": "Versioning is the direct enforcement point for RFC 8594 (Sunset header) + surfaces GDPR Art. 5 / Art. 30 evidence (records of processing). Customer notifications on deprecation provide GDPR Art. 13/14 informing-of-processing-changes coverage.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(b)",
+          "principle": "purpose limitation",
+          "evidence": "API versions declare their surface (rest/webhook/graphql) + affected endpoints/events in DeprecationNotice. When we deprecate an endpoint that processes PII, the notice + migration guide document what the successor endpoint does with the same data."
+        },
+        {
+          "article": "Art. 5(1)(d)",
+          "principle": "accuracy",
+          "evidence": "Notice text edits produce HasVersions snapshots \u2014 the exact text customers saw at each point in time is recoverable."
+        },
+        {
+          "article": "Art. 13",
+          "principle": "info at collection",
+          "evidence": "When an API version changes what data it collects (via a new endpoint), the deprecation notice + migration guide informs affected customers before the change."
+        },
+        {
+          "article": "Art. 14",
+          "principle": "info from third parties",
+          "evidence": "Webhook payload transformations may reshape what fields a subscriber receives. Deprecation notices declare `affected_events` so subscribers know their integrations will change."
+        },
+        {
+          "article": "Art. 30",
+          "principle": "records of processing",
+          "evidence": "ApiVersion + DeprecationNotice + all lifecycle events audit-logged + retained 7y cold. Full trail of what changed, when, and why."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security",
+          "evidence": "Version resolution + transformer chains happen server-side; consumers never see raw v-current payloads when pinned. Data-shape confidentiality preserved across version bumps."
+        }
+      ]
+    },
+    "rfc_8594": {
+      "applicable": true,
+      "controls": [
+        {
+          "section": "\u00a72 Sunset header",
+          "principle": "graceful deprecation",
+          "evidence": "SunsetHeaderEmitter emits `Sunset: <RFC 7231 date>` on every response from a deprecated version. Enforced by versioning.resolve middleware."
+        },
+        {
+          "section": "\u00a73 Deprecation header",
+          "principle": "advance notice",
+          "evidence": "Emits `Deprecation: true` alongside Sunset. Per RFC 8594bis (draft)."
+        },
+        {
+          "section": "\u00a74 Link header with rel=sunset",
+          "principle": "migration guide link",
+          "evidence": "Emits `Link: <migration-guide-url>; rel=\"successor-version\"` when the ApiVersion has migration_target_slug + migration_guide_url set."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC7.3",
+          "principle": "incident response",
+          "evidence": "feature-flags.json ships kill switches per resolver, per transformer chain, per sunset enforcement. Every kill-switch flip audit-logged."
+        },
+        {
+          "criterion": "CC8.1",
+          "principle": "change management",
+          "evidence": "ApiVersion + DeprecationNotice both compose HasVersions \u2014 every text edit produces a rollback-capable snapshot. Every state transition audit-logged with actor + timestamp. Complete change management trail for version lifecycle."
+        }
+      ]
+    },
+    "iso_27001": {
+      "applicable": true,
+      "controls": [
+        {
+          "annex": "A.5.15",
+          "principle": "access control policy",
+          "evidence": "policies.json restricts lifecycle transitions (release/deprecate/sunset) to super_admin. Notice publishing to super_admin. Regular platform admins cannot alter version state."
+        },
+        {
+          "annex": "A.8.9",
+          "principle": "configuration management",
+          "evidence": "Version catalog IS configuration \u2014 changes tracked in audit + HasVersions snapshots."
+        }
+      ]
+    }
+  }
+}

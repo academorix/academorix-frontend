@@ -1,0 +1,101 @@
+<%#
+/**
+ * @file module.ejs
+ * @module @stackra/console/stubs
+ * @description Template for `make:module` — renders a new `@Module`-
+ *   decorated class with `forRoot(...)` + a package-conventions-compliant
+ *   configurePublishables hook wired up front so publishing works out of
+ *   the box.
+ *
+ * @template name         Kebab-case module name (e.g. `routing`).
+ * @template className    PascalCase class name (e.g. `RoutingModule`).
+ * @template description  One-line description of the module.
+ * @template fileName     Emitted filename (e.g. `routing.module.ts`).
+ * @template moduleName   Package scope (e.g. `@stackra/routing/core`).
+ * @template Str          `@stackra/support` string utilities auto-injected.
+ *
+ * @example
+ * ```bash
+ * stackra make:module notifications \
+ *   --module @stackra/notifications/core \
+ *   --description "Push notification module."
+ * ```
+ */
+-%>
+/**
+ * @file <%= fileName %>
+ * @module <%= moduleName %>
+ * @description <%= description %>
+ */
+
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { Module, type DynamicModule } from '@stackra/container';
+import type { IPublishableConsumer } from '@stackra/contracts';
+
+/**
+ * Absolute path to the package root. Resolved once at module load from
+ * `import.meta.url` so `configurePublishables()` can hand it to the
+ * CLI's `PublishableRegistry`.
+ */
+const PACKAGE_ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../../..',
+);
+
+/**
+ * <%= description %>
+ *
+ * @example
+ * ```typescript
+ * @Module({
+ *   imports: [
+ *     <%= className %>.forRoot({}),
+ *   ],
+ * })
+ * export class AppModule {}
+ * ```
+ */
+@Module({})
+export class <%= className %> {
+  /**
+   * Declare every publishable resource this module owns.
+   *
+   * Discovered at CLI boot by `@stackra/console`'s `PublishableLoader`.
+   *
+   * @param consumer - Fluent builder that accepts `.publish(entry)` calls.
+   */
+  public static configurePublishables(consumer: IPublishableConsumer): void {
+    // Uncomment when the module ships a config file:
+    // consumer.publish({
+    //   tag: '<%= name %>-config',
+    //   description: 'Reference <%= moduleName %> config file for the app.',
+    //   packageRoot: PACKAGE_ROOT,
+    //   files: [
+    //     { from: 'config/<%= name %>.config.ts', to: 'config/<%= name %>.config.ts' },
+    //   ],
+    // });
+    void PACKAGE_ROOT;
+    void consumer;
+  }
+
+  /**
+   * Register the module globally.
+   *
+   * @param options - Optional configuration overrides.
+   * @returns Dynamic module definition.
+   */
+  public static forRoot(options: Record<string, unknown> = {}): DynamicModule {
+    // Deliberately silences the unused-parameter warning while the
+    // module is a skeleton — remove `void options` once real options
+    // are wired in.
+    void options;
+    return {
+      module: <%= className %>,
+      global: true,
+      providers: [],
+      exports: [],
+    };
+  }
+}

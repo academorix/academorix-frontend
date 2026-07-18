@@ -1,0 +1,261 @@
+{
+  "id": "notifications-sms.resources.sms-opt-out.list",
+  "title": "SMS opt-out list",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/sms-opt-outs",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "notifications-sms", "entity": "sms-opt-out", "action": "list" },
+  "requiresPermission": "notifications.sms.opt-outs.viewAny",
+  "dataSources": [
+    {
+      "name": "optOuts",
+      "kind": "http.get",
+      "url": "/api/v1/tenant/sms-opt-outs",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": [
+        "filter[reason]",
+        "filter[provider]",
+        "filter[phone_country_code]",
+        "sort",
+        "page",
+        "per_page"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "SMS opt-out list"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Phone numbers filtered from SMS delivery. STOP replies + admin blocks + carrier-reported invalid numbers + DNC entries."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "size": "sm",
+                "leadingIcon": "plus",
+                "children": "Block phone"
+              },
+              "bindings": {
+                "isDisabled": {
+                  "$expr": "!identity.permissions.includes('notifications.sms.opt-outs.create')"
+                }
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "openDialog",
+                  "dialog": "notifications-sms.dialogs.add-opt-out"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-wrap gap-3" },
+          "children": [
+            {
+              "kind": "Select",
+              "props": { "label": "Reason", "name": "filter[reason]", "placeholder": "All" },
+              "options": [
+                { "key": "stop_keyword", "label": "STOP keyword" },
+                { "key": "manual", "label": "Manual" },
+                { "key": "do_not_call_registry", "label": "DNC" },
+                { "key": "invalid_number", "label": "Invalid number" },
+                { "key": "spam_trap", "label": "Spam trap" },
+                { "key": "complaint", "label": "Complaint" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "optOuts" } }
+            },
+            {
+              "kind": "Select",
+              "props": { "label": "Provider", "name": "filter[provider]", "placeholder": "All" },
+              "options": [
+                { "key": "twilio", "label": "Twilio" },
+                { "key": "messagebird", "label": "MessageBird" },
+                { "key": "vonage", "label": "Vonage" },
+                { "key": "plivo", "label": "Plivo" },
+                { "key": "aws-sns", "label": "AWS SNS" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "optOuts" } }
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "label": "Country code",
+                "name": "filter[phone_country_code]",
+                "placeholder": "1"
+              },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "optOuts" } }
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "props": {
+            "emptyState": {
+              "title": "No opt-outs",
+              "description": "Opt-outs appear when recipients reply STOP or carriers report invalid numbers.",
+              "icon": "no-symbol"
+            }
+          },
+          "bindings": {
+            "items": { "$ref": "optOuts" },
+            "isLoading": { "$ref": "optOuts.isLoading" }
+          },
+          "columns": [
+            {
+              "id": "phone",
+              "header": "Phone",
+              "cell": {
+                "kind": "View",
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-mono text-sm" },
+                    "bindings": { "children": { "$ref": "row.phone" } }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "'+' + row.phone_country_code + (row.provider ? ' \u00b7 via ' + row.provider : '')"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "reason",
+              "header": "Reason",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "sm" },
+                "bindings": {
+                  "variant": {
+                    "$expr": "['stop_keyword', 'complaint', 'spam_trap', 'do_not_call_registry'].includes(row.reason) ? 'danger' : (row.reason === 'invalid_number' ? 'warning' : 'info')"
+                  },
+                  "children": { "$ref": "row.reason" }
+                }
+              }
+            },
+            {
+              "id": "opted_out",
+              "header": "Opted out",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm" },
+                "bindings": { "children": { "$expr": "formatRelative(row.opted_out_at)" } }
+              }
+            },
+            {
+              "id": "expires",
+              "header": "Expires",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm text-muted" },
+                "bindings": {
+                  "children": { "$expr": "row.expires_at ? formatDate(row.expires_at) : 'Never'" }
+                }
+              }
+            },
+            {
+              "id": "system",
+              "header": "",
+              "cell": {
+                "kind": "Icon",
+                "bindings": {
+                  "hidden": { "$expr": "!row.is_system" },
+                  "icon": "shield-check",
+                  "className": "text-info size-4"
+                }
+              }
+            },
+            {
+              "id": "actions",
+              "header": "",
+              "align": "end",
+              "cell": {
+                "kind": "Menu",
+                "props": {
+                  "trigger": {
+                    "kind": "Button",
+                    "props": {
+                      "variant": "ghost",
+                      "isIconOnly": true,
+                      "leadingIcon": "ellipsis-horizontal",
+                      "ariaLabel": "Actions"
+                    }
+                  }
+                },
+                "items": [
+                  {
+                    "id": "view",
+                    "label": "View",
+                    "leadingIcon": "eye",
+                    "action": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/sms-opt-outs/' + row.id"
+                    }
+                  },
+                  {
+                    "id": "revoke",
+                    "label": "Revoke",
+                    "leadingIcon": "arrow-uturn-left",
+                    "bindings": {
+                      "isDisabled": {
+                        "$expr": "row.is_system || (row.reason === 'stop_keyword' && !identity.roles.includes('super_admin'))"
+                      }
+                    },
+                    "action": {
+                      "kind": "http.delete",
+                      "urlExpr": "'/api/v1/tenant/sms-opt-outs/' + row.id",
+                      "confirm": {
+                        "title": "Revoke this opt-out?",
+                        "description": "The phone number will be eligible to receive SMS again. STOP-keyword opt-outs refuse revocation without super_admin + re-consent evidence."
+                      },
+                      "onSuccess": [
+                        { "kind": "toast.success", "message": "Revoked" },
+                        { "kind": "data.refresh", "source": "optOuts" }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "id": "academorix://modules/compliance/schemas/consent-category",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ConsentCategory",
+  "description": "Config-backed catalogue of consent categories. Platform-default rows carry tenant_id=NULL and are visible to every tenant. Tenant overrides carry a tenant_id and shadow the platform default (matched on `key`). Categories are seeded by `compliance:seed-consent-categories`; tenants override by copying a platform default and mutating fields.",
+  "type": "object",
+  "x-module": "compliance",
+  "x-eloquent": {
+    "table": "consent_categories",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "ccg_",
+    "incrementing": false,
+    "model": "Academorix\\Compliance\\Models\\ConsentCategory",
+    "interface": "Academorix\\Compliance\\Contracts\\Data\\ConsentCategoryInterface",
+    "implements": ["Academorix\\Compliance\\Contracts\\Data\\ConsentCategoryInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "HasSystemFlag",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable",
+      "Filterable"
+    ],
+    "casts": {
+      "is_default_granted": "boolean",
+      "requires_guardian": "boolean",
+      "is_system": "boolean",
+      "allowed_channels": "array",
+      "metadata": "array"
+    },
+    "appends": ["is_platform_default"],
+    "observers": ["ConsentCategoryObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true, "description": "`ccg_<26>`" },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" },
+        "description": "NULL = platform default. Non-null = tenant override."
+      },
+      "key": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Stable snake_case identifier used by ConsentGate + #[ConsentRequired(category:)]. Examples: essential, functional, marketing, analytics, ai_training, minor_parental."
+      },
+      "display_name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Human-readable label shown in consent UI. Translatable via localization module."
+      },
+      "description": {
+        "type": "text",
+        "nullable": true,
+        "description": "Long-form explanation displayed on the consent surface. Translatable."
+      },
+      "is_default_granted": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "When true, new subjects auto-receive a granted ConsentRecord. `essential` is default_granted=true; every other category defaults to false."
+      },
+      "requires_guardian": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "COPPA / FERPA gate. When true, ConsentRecord.creating requires a non-null guardian_user_id + evidence.metadata."
+      },
+      "is_system": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Seeded platform defaults are system=true \u2014 cannot be hard-deleted; can be superseded by a tenant override."
+      },
+      "allowed_channels": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Array of notification channels this category gates: mail, sms, push, in_app. Marketing gates all four; analytics gates none (analytics is passive)."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "key"],
+        "unique": true,
+        "name": "consent_categories_tenant_key_uidx",
+        "description": "Unique per (tenant, key). Platform default has tenant_id=NULL; tenant override has tenant_id=<uuid>. Postgres treats NULL as distinct, so both can coexist."
+      },
+      {
+        "columns": ["is_system", "tenant_id"],
+        "unique": false,
+        "name": "consent_categories_system_idx",
+        "description": "Fast scan for the seeded defaults during tenant override resolution."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "key",
+    "display_name",
+    "is_default_granted",
+    "requires_guardian",
+    "is_system",
+    "allowed_channels",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^ccg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": {
+      "type": ["string", "null"],
+      "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "NULL for platform defaults."
+    },
+    "key": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,62}$" },
+    "display_name": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "description": { "type": ["string", "null"] },
+    "is_default_granted": { "type": "boolean" },
+    "requires_guardian": { "type": "boolean" },
+    "is_system": { "type": "boolean" },
+    "allowed_channels": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["mail", "sms", "push", "in_app"] }
+    },
+    "is_platform_default": {
+      "type": "boolean",
+      "description": "Computed. True iff tenant_id is null."
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_by": { "type": ["string", "null"] },
+    "updated_by": { "type": ["string", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["created_by", "updated_by"],
+    "computed": ["is_platform_default"],
+    "notes": [
+      "Every tenant-facing read merges platform defaults with the tenant's overrides at the query layer. The wire shape stays flat \u2014 consumers see ONE row per key."
+    ]
+  }
+}

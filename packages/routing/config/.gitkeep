@@ -1,0 +1,3 @@
+# F.1 has no ships-with-package config file — the config trio is defined in
+# `src/core/{constants, utils}/`. This folder mirrors the queue package layout
+# so future config files (`routing.config.ts`) have a home.

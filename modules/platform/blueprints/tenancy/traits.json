@@ -1,0 +1,151 @@
+{
+  "id": "academorix://modules/tenancy/traits",
+  "$version": 1,
+  "title": "tenants — model traits",
+  "description": "Owned traits + consumed traits for the slimmed tenancy module (post platform v0.3 split). BelongsToApplication moved to `application`; tenants retains BelongsToTenant + BelongsToTenantOptional as the tenant-scope substrate every downstream module composes.",
+  "owned": [
+    {
+      "trait": "BelongsToTenant",
+      "class": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+      "schemaRef": "academorix://modules/tenancy/schemas/tenant",
+      "description": "Every domain row below Tenant on the hierarchy uses this. Adds a `tenant_id` column contract, an auto-fill saving hook, and a global scope that filters reads to the resolved tenant.",
+      "pairedBlueprint": "tenantable",
+      "adds": {
+        "columns": [
+          {
+            "name": "tenant_id",
+            "type": "string",
+            "length": 64,
+            "nullable": false,
+            "indexed": true,
+            "foreign": {
+              "table": "tenants",
+              "column": "id",
+              "onUpdate": "cascade",
+              "onDelete": "restrict"
+            }
+          }
+        ],
+        "compositeIndexes": [{ "columns": ["tenant_id", "created_at"] }],
+        "scopes": {
+          "global": [
+            {
+              "name": "TenantScope",
+              "class": "Academorix\\Tenancy\\Scopes\\TenantScope",
+              "description": "Filters every read to the tenant resolved by `resolve.tenant` middleware. Bypass via `Model::withoutGlobalScope(TenantScope::class)` \u2014 permitted only inside platform-admin contexts."
+            }
+          ]
+        },
+        "eventHooks": [
+          {
+            "event": "saving",
+            "description": "Auto-fills `tenant_id` on new rows. Refuses cross-tenant writes with `TenantException::crossTenantAccess()` (400)."
+          }
+        ],
+        "relations": [
+          {
+            "name": "tenant",
+            "type": "BelongsTo",
+            "target": "Academorix\\Tenancy\\Models\\Tenant"
+          }
+        ]
+      },
+      "appliedBy": [
+        "domains::Domain",
+        "domains::DomainRecord",
+        "branding::Branding",
+        "integrations::TenantIntegration",
+        "settings::SettingValue (tenant scope)",
+        "webhook::WebhookSubscription",
+        "webhook::WebhookDelivery",
+        "storage::File",
+        "storage::FileVariant",
+        "storage::SignedUrlAudit",
+        "storage::ChunkedUpload",
+        "audit::Audit",
+        "activity::ActivityLog",
+        "notifications::Notification",
+        "notifications::NotificationDelivery",
+        "entitlements::EntitlementLicense",
+        "subscription::TenantSubscription",
+        "invitations::Invitation",
+        "compliance::ConsentRecord",
+        "compliance::Dsar",
+        "compliance::DsarArtefact",
+        "compliance::LegalHold",
+        "compliance::RetentionRun",
+        "compliance::SafeguardingIncident",
+        "user (planned)",
+        "access (planned)",
+        "organization (planned)",
+        "region (planned)",
+        "branch (planned)"
+      ],
+      "notAppliedBy": [
+        "application::Application",
+        "application::BusinessType",
+        "identity::Identity (future \u2014 cross-tenant)",
+        "PlatformUser (platform admin, cross-tenant)"
+      ]
+    },
+    {
+      "trait": "BelongsToTenantOptional",
+      "class": "Academorix\\Tenancy\\Concerns\\BelongsToTenantOptional",
+      "schemaRef": "academorix://modules/tenancy/schemas/tenant",
+      "description": "Sibling of BelongsToTenant for rows where `tenant_id` may legitimately be NULL (platform-wide catalogue rows + system-level audit / suppression rows).",
+      "pairedBlueprint": "tenantable_optional",
+      "adds": {
+        "columns": [
+          {
+            "name": "tenant_id",
+            "type": "string",
+            "length": 64,
+            "nullable": true,
+            "indexed": true,
+            "foreign": {
+              "table": "tenants",
+              "column": "id",
+              "onUpdate": "cascade",
+              "onDelete": "cascade"
+            }
+          }
+        ],
+        "scopes": {
+          "global": [
+            {
+              "name": "TenantOptionalScope",
+              "class": "Academorix\\Tenancy\\Scopes\\TenantOptionalScope",
+              "description": "`WHERE tenant_id = ? OR tenant_id IS NULL`. Platform-wide rows are visible to every tenant."
+            }
+          ]
+        }
+      },
+      "appliedBy": [
+        "audit::Audit (platform-level rows)",
+        "notifications-mail::MailSuppression",
+        "notifications-sms::SmsOptOut",
+        "settings::SettingValue (system scope)",
+        "notifications::NotificationCategory"
+      ]
+    }
+  ],
+  "consumed": [
+    { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory", "source": "framework" },
+    { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids", "source": "framework" },
+    { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag", "source": "foundation" },
+    { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata", "source": "foundation" },
+    { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps", "source": "foundation" },
+    { "trait": "Academorix\\Foundation\\Concerns\\HasAuditable", "source": "foundation" },
+    { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes", "source": "framework" },
+    {
+      "trait": "Academorix\\Application\\Concerns\\BelongsToApplication",
+      "source": "application",
+      "usedBy": ["Tenant"],
+      "note": "Moved to `application` at v0.3; consumed here for the Tenant \u2192 Application boundary."
+    }
+  ],
+  "composition_example": {
+    "language": "php",
+    "code": "final class Tenant extends Model implements TenantInterface\n{\n    use HasFactory;\n    use HasUlids;\n    use BelongsToApplication;    // application boundary\n    use HasSystemFlag;\n    use HasMetadata;\n    use HasUserstamps;\n    use HasAuditable;\n    use SoftDeletes;\n}\n\nfinal class TenantContact extends Model implements TenantContactInterface\n{\n    use HasFactory;\n    use HasUlids;\n    use BelongsToTenant;      // tenant scope\n    use HasMetadata;\n    use HasUserstamps;\n    use HasAuditable;\n    use SoftDeletes;\n}"
+  }
+}

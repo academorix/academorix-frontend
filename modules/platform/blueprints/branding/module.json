@@ -1,0 +1,49 @@
+{
+  "$version": 1,
+  "name": "branding",
+  "alias": "branding",
+  "namespace": "Academorix\\Branding",
+  "description": "White-label branding profile per Tenant — theme, palette, logo variants, typography, and OG-image seeds. Extracted from tenants at v0.3 for two reasons: (1) Branding has a high read/write ratio (every render path reads it; tenant owners mutate frequently) and warrants its own cache pattern; (2) the BrandingPayload cast + BrandingPolicy + BrandingObserver have their own tight coupling and don't belong in the tenants core.",
+  "keywords": ["branding", "theme", "logo", "palette", "typography", "white-label", "og-image"],
+  "priority": 12,
+  "providers": ["Academorix\\Branding\\Providers\\BrandingServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "tenancy"],
+  "extendedBy": [],
+  "planned_consumers": ["compliance", "audit", "activity"],
+  "contributes": {
+    "traits": [],
+    "blueprints": [],
+    "middleware": [],
+    "events": ["BrandingCreated", "BrandingUpdated", "BrandingReset", "BrandingArchived"],
+    "policies": ["BrandingPolicy"],
+    "hooks": [],
+    "commands": ["branding:regenerate-og-images", "branding:seed-defaults"],
+    "jobs": ["SyncBrandingJob", "RegenerateOgImageJob"],
+    "notifications": ["BrandingUpdatedNotification"],
+    "broadcasts": ["tenant.{id}.branding"],
+    "observers": ["BrandingObserver"],
+    "rules": ["valid_hex_color"],
+    "casts": ["BrandingPayload"],
+    "views": [],
+    "lang": ["branding"],
+    "config": ["branding"],
+    "macros": [],
+    "bindings": ["BrandingResolver", "OgImageRenderer"],
+    "resources": ["branding"]
+  },
+  "hosts": {
+    "platform-admin": {
+      "description": "Academorix staff surface. Full CRUD.",
+      "routes": ["* /api/v1/brandings*"]
+    },
+    "tenant": {
+      "description": "Tenant-scoped branding management.",
+      "routes": [
+        "GET /api/v1/tenant/branding",
+        "PATCH /api/v1/tenant/branding",
+        "POST /api/v1/tenant/branding/reset"
+      ]
+    }
+  }
+}

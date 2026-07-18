@@ -1,0 +1,188 @@
+{
+  "id": "academorix://modules/notifications-mail/schemas/mail-suppression",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "MailSuppression",
+  "description": "Suppressed email addresses. Reasons: `hard_bounce` (permanent delivery failure, retained forever), `complaint` (recipient marked as spam, retained P5Y for CAN-SPAM evidence), `unsubscribed` (soft \u2014 same as preference disable but kept here for provider-side filtering), `manual` (admin blocklist entry), `spam_trap` (known spam-trap domain). Global blocklist (tenant_id=NULL, is_system=true) covers known bounce farms + platform-wide protection.",
+  "type": "object",
+  "x-module": "notifications-mail",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "mail_suppressions",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "supp_",
+    "incrementing": false,
+    "model": "Academorix\\Notifications\\Mail\\Models\\MailSuppression",
+    "interface": "Academorix\\Notifications\\Mail\\Contracts\\Data\\MailSuppressionInterface",
+    "implements": ["Academorix\\Notifications\\Mail\\Contracts\\Data\\MailSuppressionInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "HasSystemFlag",
+      "BelongsToTenantOptional",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "reason": "MailSuppressionReason",
+      "is_system": "boolean",
+      "metadata": "array",
+      "expires_at": "datetime"
+    },
+    "appends": ["is_permanent"],
+    "observers": ["MailSuppressionObserver"],
+    "hidden": ["metadata"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `supp_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "NULL = platform-wide suppression."
+      },
+      "email": {
+        "type": "string",
+        "length": 320,
+        "nullable": false,
+        "description": "Lowercased on write. RFC 5321 max 320 chars."
+      },
+      "email_domain": {
+        "type": "string",
+        "length": 255,
+        "nullable": false,
+        "description": "Denormalised domain part. Powers `is this whole domain suppressed?` queries."
+      },
+      "reason": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "description": "Enum: `hard_bounce`, `complaint`, `unsubscribed`, `manual`, `spam_trap`."
+      },
+      "provider": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Provider that reported the bounce/complaint. Null for manual entries."
+      },
+      "source_delivery_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": {
+          "table": "notification_deliveries",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        }
+      },
+      "bounce_reason": {
+        "type": "text",
+        "nullable": true,
+        "description": "Provider-reported error text. Confidential."
+      },
+      "is_system": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "True for platform-wide entries (known bounce farms, spam-trap domains). Regular tenant admins cannot delete these."
+      },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Soft-bounces auto-expire (default 7d) so re-tries after recovery. Hard-bounces + complaints never expire (NULL)."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "email"],
+        "unique": true,
+        "name": "mail_suppressions_tenant_email_unique",
+        "description": "Primary lookup. One row per (tenant, email). NULL tenant_id treated as distinct key."
+      },
+      {
+        "columns": ["email"],
+        "unique": false,
+        "name": "mail_suppressions_email_index",
+        "description": "Cross-tenant lookup for platform blocks (tenant_id IS NULL)."
+      },
+      { "columns": ["email_domain"], "unique": false, "name": "mail_suppressions_domain_index" },
+      {
+        "columns": ["reason", "created_at"],
+        "unique": false,
+        "name": "mail_suppressions_reason_index"
+      },
+      {
+        "columns": ["expires_at"],
+        "unique": false,
+        "name": "mail_suppressions_expires_at_index",
+        "predicate": "expires_at IS NOT NULL AND deleted_at IS NULL",
+        "description": "ReconcileSuppressionsJob scan for expired soft entries."
+      }
+    ]
+  },
+  "required": ["id", "email", "email_domain", "reason", "is_system", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^supp_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "email": { "type": "string", "format": "email", "maxLength": 320 },
+    "email_domain": { "type": "string", "maxLength": 255 },
+    "reason": {
+      "type": "string",
+      "enum": ["hard_bounce", "complaint", "unsubscribed", "manual", "spam_trap"]
+    },
+    "provider": { "type": ["string", "null"], "maxLength": 32 },
+    "source_delivery_id": {
+      "type": ["string", "null"],
+      "pattern": "^delv_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "bounce_reason": { "type": ["string", "null"] },
+    "is_system": { "type": "boolean" },
+    "is_permanent": {
+      "type": "boolean",
+      "description": "Computed. reason IN hard_bounce/complaint/spam_trap OR is_system."
+    },
+    "expires_at": { "type": ["string", "null"], "format": "date-time" },
+    "metadata": { "type": ["object", "null"], "additionalProperties": true },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["metadata", "created_by", "updated_by", "deleted_by"],
+    "computed": ["is_permanent"]
+  }
+}

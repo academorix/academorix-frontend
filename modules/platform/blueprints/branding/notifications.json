@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/branding/notifications",
+  "$version": 1,
+  "title": "branding — user-facing notifications",
+  "description": "Laravel notifications (mail / database / broadcast / vonage / slack).",
+  "notifications": []
+}

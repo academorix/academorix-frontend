@@ -12,10 +12,10 @@
  * Rendered inside the CRUD view headers ({@link "@/components/refine/views"}).
  */
 
-import { HomeIcon } from "@academorix/ui/icons/outline";
-import { Breadcrumbs as HeroBreadcrumbs } from "@academorix/ui/react";
+import { HomeIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Breadcrumbs as HeroBreadcrumbs } from "@stackra/ui/react";
 import { useBreadcrumb } from "@refinedev/core";
-import { Link } from "react-router";
+import { Link } from "@stackra/routing/react";
 
 import type { ReactNode } from "react";
 

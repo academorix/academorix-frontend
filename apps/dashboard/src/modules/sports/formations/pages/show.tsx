@@ -9,7 +9,7 @@
  * {@link FormationSlot}).
  */
 
-import { Card, Spinner } from "@academorix/ui/react";
+import { Card, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 
 import type { Formation } from "@/modules/sports/formations/formation.types";

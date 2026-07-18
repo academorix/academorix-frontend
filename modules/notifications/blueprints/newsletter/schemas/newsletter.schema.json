@@ -1,0 +1,343 @@
+{
+  "id": "academorix://modules/newsletter/schemas/newsletter",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Newsletter",
+  "description": "A publication. Editorial concept: sender identity, brand, cadence, default audience. Has many issues + subscribers + campaigns + audiences.",
+  "type": "object",
+  "x-module": "newsletter",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "newsletters",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "nlp_",
+    "incrementing": false,
+    "model": "Academorix\\Newsletter\\Models\\Newsletter",
+    "interface": "Academorix\\Newsletter\\Contracts\\Data\\NewsletterInterface",
+    "implements": ["Academorix\\Newsletter\\Contracts\\Data\\NewsletterInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "HasSystemFlag",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasVersions",
+      "HasAuditable",
+      "HasTranslations",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "cadence": "NewsletterCadence",
+      "state": "NewsletterState",
+      "sender_config": "array",
+      "brand": "array",
+      "reputation_thresholds": "array",
+      "is_system": "boolean",
+      "archived_at": "datetime",
+      "metadata": "array",
+      "translations": "array"
+    },
+    "appends": ["public_subscribe_url", "subscriber_count"],
+    "observers": ["NewsletterObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `nlp_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onDelete": "cascade"
+        }
+      },
+      "slug": {
+        "type": "string",
+        "length": 100,
+        "nullable": false,
+        "description": "URL-safe unique identifier within tenant. Used in public subscribe URLs."
+      },
+      "name": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "description": "Translated via `HasTranslations`."
+      },
+      "description": {
+        "type": "text",
+        "nullable": true,
+        "description": "Translated via `HasTranslations`."
+      },
+      "cadence": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'weekly'",
+        "description": "Enum: daily / weekly / biweekly / monthly / quarterly / adhoc."
+      },
+      "state": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'draft'",
+        "description": "Enum: draft / active / paused / throttled / archived."
+      },
+      "sender_config": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "{ from_email, from_name, reply_to, postal_address }. Overlays tenant sender_identity."
+      },
+      "brand": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "{ logo_url, primary_color, footer_html_override }. Overlays tenant brand."
+      },
+      "reputation_thresholds": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "{ min_open_rate, min_click_rate, max_bounce_rate, max_complaint_rate }. Defaults from config."
+      },
+      "confirmation_required": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "Double-opt-in when true."
+      },
+      "confirmation_ttl_hours": {
+        "type": "integer",
+        "nullable": false,
+        "default": 720,
+        "description": "30 days."
+      },
+      "is_system": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false
+      },
+      "archived_at": {
+        "type": "timestamptz",
+        "nullable": true
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true
+      },
+      "translations": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Per-locale content-translation blob. Shape: `{ locale_code: { field: value } }`. Managed by the `HasTranslations` trait (wraps `spatie/laravel-translatable`). Column added via `localization::Blueprint::translations()`."
+      },
+      "created_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "updated_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "deleted_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "deleted_at": {
+        "type": "timestamptz",
+        "nullable": true
+      },
+      "created_at": {
+        "type": "timestamptz",
+        "nullable": false
+      },
+      "updated_at": {
+        "type": "timestamptz",
+        "nullable": false
+      }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "slug"],
+        "unique": true,
+        "name": "newsletters_tenant_slug_unique"
+      },
+      {
+        "columns": ["tenant_id", "state"],
+        "unique": false,
+        "name": "newsletters_tenant_state_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "slug",
+    "name",
+    "cadence",
+    "state",
+    "sender_config",
+    "reputation_thresholds",
+    "confirmation_required",
+    "confirmation_ttl_hours",
+    "is_system",
+    "translations",
+    "created_at",
+    "updated_at"
+  ],
+  "x-translatable": {
+    "trait": "Academorix\\Localization\\Concerns\\HasTranslations",
+    "column": "translations",
+    "fields": ["name", "description"],
+    "underlying_package": "spatie/laravel-translatable ^6.0",
+    "migration_macro": "localization::Blueprint::translations()",
+    "wire_convention": "Active-locale projection onto the field name by default. Full JSONB blob under `data.translations` when the request carries `?include=translations`.",
+    "auto_translate": "opt-in via TenantLocale.auto_translate=true per target locale"
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^nlp_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "tenant_id": {
+      "type": "string",
+      "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,99}$",
+      "maxLength": 100
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 200,
+      "x-translatable": true,
+      "description": "Active-locale projection. Full blob available via `?include=translations`."
+    },
+    "description": {
+      "type": ["string", "null"],
+      "x-translatable": true,
+      "description": "Active-locale projection. Full blob available via `?include=translations`."
+    },
+    "translations": {
+      "type": "object",
+      "description": "Per-locale content translations. Wire-included only when `?include=translations`. Shape: `{ locale_code: { field: value } }`.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "cadence": {
+      "type": "string",
+      "enum": ["daily", "weekly", "biweekly", "monthly", "quarterly", "adhoc"]
+    },
+    "state": {
+      "type": "string",
+      "enum": ["draft", "active", "paused", "throttled", "archived"]
+    },
+    "sender_config": {
+      "type": "object",
+      "required": ["from_email", "from_name", "postal_address"],
+      "properties": {
+        "from_email": {
+          "type": "string",
+          "format": "email"
+        },
+        "from_name": {
+          "type": "string"
+        },
+        "reply_to": {
+          "type": "string",
+          "format": "email"
+        },
+        "postal_address": {
+          "type": "string"
+        }
+      }
+    },
+    "brand": {
+      "type": ["object", "null"]
+    },
+    "reputation_thresholds": {
+      "type": "object",
+      "properties": {
+        "min_open_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "min_click_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "max_bounce_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "max_complaint_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "confirmation_required": {
+      "type": "boolean"
+    },
+    "confirmation_ttl_hours": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 8760
+    },
+    "is_system": {
+      "type": "boolean"
+    },
+    "archived_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "public_subscribe_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Computed."
+    },
+    "subscriber_count": {
+      "type": "integer",
+      "description": "Computed. Active subscriptions only."
+    },
+    "metadata": {
+      "type": ["object", "null"]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["public_subscribe_url", "subscriber_count"]
+  }
+}

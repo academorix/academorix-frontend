@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/webhook/notifications",
+  "$version": 1,
+  "title": "webhook \u2014 notification classes + categories",
+  "description": "3 Notification classes + 3 categories registered with the notifications core. Fired on subscription lifecycle events + probe failures. All transactional \u2014 admins can't opt out.",
+  "namespace": "Academorix\\Webhook\\Notifications",
+  "notifications": [
+    "WebhookSubscriptionDisabledNotification",
+    "WebhookSubscriptionUpgradedNotification",
+    "WebhookProbeFailedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "webhook.subscription_disabled",
+      "display_name": "Webhook subscription disabled",
+      "description": "Notifies tenant admins when a webhook subscription auto-disables (410 Gone, consecutive failure threshold, api version sunset, tenant suspension). Includes reason + last delivery detail + re-enable link.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "webhook.subscription_upgraded",
+      "display_name": "Webhook subscription version upgraded",
+      "description": "Notifies tenant admins when a pinned subscription auto-upgrades due to api version sunset. Includes from/to version + payload change summary + migration guide URL.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "webhook.probe_failed",
+      "display_name": "Webhook probe failing",
+      "description": "Notifies tenant admins when a subscription fails N consecutive probes. Warning-level \u2014 subscription not yet auto-disabled but integration health degraded.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

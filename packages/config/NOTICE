@@ -1,0 +1,16 @@
+@stackra/config
+Copyright (c) 2025 Stackra L.L.C.
+
+This product includes software derived from @nestjs/config
+(https://github.com/nestjs/config, Copyright (c) 2018-present Kamil Myśliwiec, MIT).
+
+Divergences from upstream:
+- @nestjs/common → @stackra/container swap for DI foundation
+- rxjs removed (dropped changes$ observable for v0.1; deferred to v0.2)
+- es-toolkit/compat removed (hand-rolled nested-value helpers)
+- fs / dotenv / dotenv-expand loaded only when isNode() → browser-safe
+- Added typed env() helpers (wraps @stackra/support.Env class)
+- Added ConfigService.describe() introspection API
+- Files split per code-standards.md one-export-per-file rule
+
+Full changes: /Users/akouta/Projects/academorix-frontend/.kiro/specs/stackra-config-package/PLAN.md

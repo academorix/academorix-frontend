@@ -18,7 +18,7 @@
  * responsible for rendering the fallback message.
  */
 
-import { useDebounce } from "@academorix/ui";
+import { useDebounce } from "@stackra/ui";
 import { useList } from "@refinedev/core";
 
 import type { Person } from "@/modules/people/people.types";

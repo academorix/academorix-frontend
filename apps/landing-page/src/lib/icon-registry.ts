@@ -4,13 +4,13 @@
  *
  * @description
  * String-keyed registry that maps icon names in JSON fixtures to the actual
- * React icon components from `@academorix/ui/icons/outline`. JSON files can't
+ * React icon components from `@stackra/ui/icons/heroicon/outline`. JSON files can't
  * carry React nodes, so we encode icons as stable string keys ("UserGroupIcon",
  * "CreditCardIcon", …) and resolve them here at render time.
  *
  * ## Adding a new icon
  *
- *   1. Import it from `@academorix/ui/icons/outline` (or `/solid`).
+ *   1. Import it from `@stackra/ui/icons/heroicon/outline` (or `/solid`).
  *   2. Add it to `ICON_REGISTRY` under its exact export name.
  *   3. Reference it from any `public/data/*.json` file by that string key.
  *
@@ -79,13 +79,13 @@ import {
   UserGroupIcon,
   UsersIcon,
   WrenchScrewdriverIcon,
-} from "@academorix/ui/icons/outline";
+} from "@stackra/ui/icons/heroicon/outline";
 
-import type { IconType } from "@academorix/ui/icons";
+import type { IconType } from "@stackra/ui/icons";
 
 /**
  * Every icon that can appear in a JSON fixture. Keys are the exact export
- * names from `@academorix/ui/icons/outline` so contributors don't have to
+ * names from `@stackra/ui/icons/heroicon/outline` so contributors don't have to
  * memorise a mapping.
  */
 export const ICON_REGISTRY: Readonly<Record<string, IconType>> = {

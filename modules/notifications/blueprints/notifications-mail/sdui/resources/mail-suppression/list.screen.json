@@ -1,0 +1,256 @@
+{
+  "id": "notifications-mail.resources.mail-suppression.list",
+  "title": "Mail suppression list",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/mail-suppressions",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "notifications-mail", "entity": "mail-suppression", "action": "list" },
+  "requiresPermission": "notifications.mail.suppressions.viewAny",
+  "dataSources": [
+    {
+      "name": "suppressions",
+      "kind": "http.get",
+      "url": "/api/v1/tenant/mail-suppressions",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": [
+        "filter[reason]",
+        "filter[provider]",
+        "filter[email_domain]",
+        "sort",
+        "page",
+        "per_page"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Mail suppression list"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Email addresses filtered from delivery. Hard bounces + complaints + manual blocks + spam-trap domains."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "size": "sm",
+                "leadingIcon": "plus",
+                "children": "Block address"
+              },
+              "bindings": {
+                "isDisabled": {
+                  "$expr": "!identity.permissions.includes('notifications.mail.suppressions.create')"
+                }
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "openDialog",
+                  "dialog": "notifications-mail.dialogs.add-suppression"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-wrap gap-3" },
+          "children": [
+            {
+              "kind": "Select",
+              "props": { "label": "Reason", "name": "filter[reason]", "placeholder": "All" },
+              "options": [
+                { "key": "hard_bounce", "label": "Hard bounce" },
+                { "key": "complaint", "label": "Complaint" },
+                { "key": "unsubscribed", "label": "Unsubscribed" },
+                { "key": "manual", "label": "Manual" },
+                { "key": "spam_trap", "label": "Spam trap" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "suppressions" } }
+            },
+            {
+              "kind": "Select",
+              "props": { "label": "Provider", "name": "filter[provider]", "placeholder": "All" },
+              "options": [
+                { "key": "mailgun", "label": "Mailgun" },
+                { "key": "sendgrid", "label": "SendGrid" },
+                { "key": "aws-ses", "label": "AWS SES" },
+                { "key": "postmark", "label": "Postmark" },
+                { "key": "resend", "label": "Resend" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "suppressions" } }
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "label": "Email domain",
+                "name": "filter[email_domain]",
+                "placeholder": "example.com"
+              },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "suppressions" } }
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "props": {
+            "emptyState": {
+              "title": "No suppressions",
+              "description": "Suppressions appear when providers report hard bounces or complaints.",
+              "icon": "envelope-x-mark"
+            }
+          },
+          "bindings": {
+            "items": { "$ref": "suppressions" },
+            "isLoading": { "$ref": "suppressions.isLoading" }
+          },
+          "columns": [
+            {
+              "id": "email",
+              "header": "Email",
+              "cell": {
+                "kind": "View",
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-mono text-sm" },
+                    "bindings": { "children": { "$ref": "row.email" } }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.email_domain + (row.provider ? ' \u00b7 via ' + row.provider : '')"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "reason",
+              "header": "Reason",
+              "cell": {
+                "kind": "Widget",
+                "widget": "notifications-mail.mail-suppression-reason-chip",
+                "props": { "reason": { "$ref": "row.reason" }, "size": "sm" }
+              }
+            },
+            {
+              "id": "added",
+              "header": "Added",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm" },
+                "bindings": { "children": { "$expr": "formatRelative(row.created_at)" } }
+              }
+            },
+            {
+              "id": "expires",
+              "header": "Expires",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm text-muted" },
+                "bindings": {
+                  "children": { "$expr": "row.expires_at ? formatDate(row.expires_at) : 'Never'" }
+                }
+              }
+            },
+            {
+              "id": "system",
+              "header": "",
+              "cell": {
+                "kind": "Icon",
+                "bindings": {
+                  "hidden": { "$expr": "!row.is_system" },
+                  "icon": "shield-check",
+                  "className": "text-info size-4"
+                },
+                "props": { "title": "Platform-wide suppression" }
+              }
+            },
+            {
+              "id": "actions",
+              "header": "",
+              "align": "end",
+              "cell": {
+                "kind": "Menu",
+                "props": {
+                  "trigger": {
+                    "kind": "Button",
+                    "props": {
+                      "variant": "ghost",
+                      "isIconOnly": true,
+                      "leadingIcon": "ellipsis-horizontal",
+                      "ariaLabel": "Actions"
+                    }
+                  }
+                },
+                "items": [
+                  {
+                    "id": "view",
+                    "label": "View",
+                    "leadingIcon": "eye",
+                    "action": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/mail-suppressions/' + row.id"
+                    }
+                  },
+                  {
+                    "id": "revoke",
+                    "label": "Revoke",
+                    "leadingIcon": "arrow-uturn-left",
+                    "bindings": {
+                      "isDisabled": {
+                        "$expr": "row.is_system || (['hard_bounce', 'complaint'].includes(row.reason) && !identity.roles.includes('super_admin'))"
+                      }
+                    },
+                    "action": {
+                      "kind": "http.delete",
+                      "urlExpr": "'/api/v1/tenant/mail-suppressions/' + row.id",
+                      "confirm": {
+                        "title": "Revoke this suppression?",
+                        "description": "The address will be eligible to receive mail again. Hard bounces + complaints are refused for revocation unless super_admin."
+                      },
+                      "onSuccess": [
+                        { "kind": "toast.success", "message": "Revoked" },
+                        { "kind": "data.refresh", "source": "suppressions" }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

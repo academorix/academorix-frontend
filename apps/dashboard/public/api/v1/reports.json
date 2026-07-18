@@ -1,0 +1,152 @@
+[
+  {
+    "id": "rpt-001",
+    "name": "Monthly revenue summary",
+    "kind": "saved",
+    "owner": {
+      "name": "Priya Patel",
+      "avatar": "https://img.heroui.chat/image/avatar?w=80&h=80&u=priya"
+    },
+    "lastRunAt": "2025-10-28T08:30:00Z",
+    "schedule": { "text": "Weekly", "color": "accent" },
+    "share": { "text": "Shared", "color": "success" },
+    "template": "revenue-analysis",
+    "description": "A rolling look at gross revenue, refunds, and net revenue across every branch. Refreshed every Monday at 08:00.",
+    "createdAt": "2025-06-14T09:12:00Z"
+  },
+  {
+    "id": "rpt-002",
+    "name": "Attendance rate — under-14",
+    "kind": "saved",
+    "owner": {
+      "name": "Marcus Chen",
+      "avatar": "https://img.heroui.chat/image/avatar?w=80&h=80&u=marcus"
+    },
+    "lastRunAt": "2025-10-27T15:04:00Z",
+    "schedule": { "text": "Not scheduled", "color": "default" },
+    "share": { "text": "Private", "color": "default" },
+    "template": "attendance-rate",
+    "description": "Session attendance for the under-14 cohort, sliced by team and coach.",
+    "createdAt": "2025-07-02T11:45:00Z"
+  },
+  {
+    "id": "rpt-003",
+    "name": "Coach utilisation — Q4",
+    "kind": "saved",
+    "owner": {
+      "name": "Elena Rodriguez",
+      "avatar": "https://img.heroui.chat/image/avatar?w=80&h=80&u=elena"
+    },
+    "lastRunAt": "2025-10-25T07:12:00Z",
+    "schedule": { "text": "Monthly", "color": "accent" },
+    "share": { "text": "Shared", "color": "success" },
+    "template": "coach-utilisation",
+    "description": "Hours coached versus contracted hours, per coach, over the quarter.",
+    "createdAt": "2025-05-19T13:30:00Z"
+  },
+  {
+    "id": "rpt-004",
+    "name": "Lead funnel snapshot",
+    "kind": "saved",
+    "owner": {
+      "name": "Sofia Andersson",
+      "avatar": "https://img.heroui.chat/image/avatar?w=80&h=80&u=sofia"
+    },
+    "lastRunAt": "2025-10-29T06:00:00Z",
+    "schedule": { "text": "Daily", "color": "accent" },
+    "share": { "text": "Private", "color": "default" },
+    "template": "lead-conversion-funnel",
+    "description": "Leads by stage with conversion rates between each step of the funnel.",
+    "createdAt": "2025-08-11T10:00:00Z"
+  },
+  {
+    "id": "rpt-005",
+    "name": "Payments overdue — 30d+",
+    "kind": "saved",
+    "owner": {
+      "name": "James O'Brien",
+      "avatar": "https://img.heroui.chat/image/avatar?w=80&h=80&u=james"
+    },
+    "lastRunAt": "2025-10-29T04:45:00Z",
+    "schedule": { "text": "Weekly", "color": "accent" },
+    "share": { "text": "Shared", "color": "success" },
+    "template": "payments-overdue",
+    "description": "Invoices past due by 30 days or more, grouped by family and total exposure.",
+    "createdAt": "2025-04-22T14:20:00Z"
+  },
+  {
+    "id": "rpt-006",
+    "name": "Facility utilisation — Newton hall",
+    "kind": "saved",
+    "owner": {
+      "name": "Isabella Ferrari",
+      "avatar": "https://img.heroui.chat/image/avatar?w=80&h=80&u=isabella"
+    },
+    "lastRunAt": "2025-10-21T18:20:00Z",
+    "schedule": { "text": "Not scheduled", "color": "default" },
+    "share": { "text": "Private", "color": "default" },
+    "template": "facility-utilisation",
+    "description": "Booking density and utilisation percentage for the Newton hall facility.",
+    "createdAt": "2025-09-05T16:00:00Z"
+  },
+  {
+    "id": "rpt-007",
+    "name": "Credential compliance",
+    "kind": "saved",
+    "owner": {
+      "name": "Noah Harris",
+      "avatar": "https://img.heroui.chat/image/avatar?w=80&h=80&u=noah"
+    },
+    "lastRunAt": "2025-10-26T09:00:00Z",
+    "schedule": { "text": "Monthly", "color": "accent" },
+    "share": { "text": "Shared", "color": "success" },
+    "template": "credential-compliance",
+    "description": "Coaches whose safeguarding, first-aid, or DBS credentials are expiring in the next 90 days.",
+    "createdAt": "2025-03-30T08:00:00Z"
+  },
+  {
+    "id": "rpt-008",
+    "name": "Membership cohort — 2025 spring intake",
+    "kind": "saved",
+    "owner": {
+      "name": "Yuki Tanaka",
+      "avatar": "https://img.heroui.chat/image/avatar?w=80&h=80&u=yuki"
+    },
+    "lastRunAt": "2025-10-19T12:15:00Z",
+    "schedule": { "text": "Not scheduled", "color": "default" },
+    "share": { "text": "Private", "color": "default" },
+    "template": "membership-cohort",
+    "description": "Retention curve for athletes who joined during the 2025 spring intake window.",
+    "createdAt": "2025-05-01T09:30:00Z"
+  },
+  {
+    "id": "rpt-009",
+    "name": "Safeguarding incidents log",
+    "kind": "saved",
+    "owner": {
+      "name": "Amara Okafor",
+      "avatar": "https://img.heroui.chat/image/avatar?w=80&h=80&u=amara"
+    },
+    "lastRunAt": "2025-10-28T21:10:00Z",
+    "schedule": { "text": "Weekly", "color": "accent" },
+    "share": { "text": "Shared", "color": "success" },
+    "template": "safeguarding-incidents",
+    "description": "All logged safeguarding incidents in the current period with severity breakdown.",
+    "createdAt": "2025-02-14T12:00:00Z"
+  },
+  {
+    "id": "rpt-010",
+    "name": "Registrations by sport",
+    "kind": "saved",
+    "owner": {
+      "name": "Liam Williams",
+      "avatar": "https://img.heroui.chat/image/avatar?w=80&h=80&u=liam"
+    },
+    "lastRunAt": "2025-10-24T10:00:00Z",
+    "schedule": { "text": "Monthly", "color": "accent" },
+    "share": { "text": "Private", "color": "default" },
+    "template": "registration-by-sport",
+    "description": "New registrations split by sport, with comparison to the same window last year.",
+    "createdAt": "2025-01-08T11:00:00Z"
+  }
+]

@@ -13,8 +13,8 @@
  * incrementally.
  */
 
-import { MagnifyingGlassIcon } from "@academorix/ui/icons/outline";
-import { Input, SearchField } from "@academorix/ui/react";
+import { MagnifyingGlassIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Input, SearchField } from "@stackra/ui/react";
 
 import type { ReactNode } from "react";
 

@@ -1,0 +1,138 @@
+{
+  "id": "academorix://modules/transfer/retention",
+  "$version": 1,
+  "title": "transfer \u2014 retention windows",
+  "description": "Two independent retention clocks. Files (heavy) purge fast; DB rows (light) linger longer for history. Tier-based per plan for the DB row \u2014 files are uniformly short-lived regardless of plan.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5 (storage limitation)",
+    "gdpr Art. 17 (right to erasure)",
+    "soc2 CC7.3 (operations monitoring feed)"
+  ],
+  "retention": [
+    {
+      "entity": "XferJob (retention_tier = 'short')",
+      "hot": { "days": 90 },
+      "purge": {
+        "trigger": "created_at < now() - 90d AND status IN ('succeeded','partially_succeeded','failed','cancelled')",
+        "action": "hard delete",
+        "job": "PruneXferArtifactsJob"
+      }
+    },
+    {
+      "entity": "XferJob (retention_tier = 'medium')",
+      "hot": { "days": 180 },
+      "purge": {
+        "trigger": "created_at < now() - 180d AND status IN ('succeeded','partially_succeeded','failed','cancelled')",
+        "action": "hard delete",
+        "job": "PruneXferArtifactsJob"
+      }
+    },
+    {
+      "entity": "XferJob (retention_tier = 'long')",
+      "hot": { "days": 365 },
+      "purge": {
+        "trigger": "created_at < now() - 365d AND status IN ('succeeded','partially_succeeded','failed','cancelled')",
+        "action": "hard delete",
+        "job": "PruneXferArtifactsJob"
+      }
+    },
+    {
+      "entity": "XferJob (stale queued / running)",
+      "hot": { "hours": 24 },
+      "purge": {
+        "trigger": "status IN ('queued','running') AND last_progress_at < now() - 24h",
+        "action": "auto-transition to cancelled with cancel_reason = 'stalled', emit XferJobCancelled",
+        "job": "PruneXferArtifactsJob (stale sweep pass)"
+      }
+    },
+    {
+      "entity": "XferShard",
+      "purge": { "trigger": "cascade with parent XferJob", "action": "cascade hard delete" }
+    },
+    {
+      "entity": "XferArtifact (kind = 'source')",
+      "hot": { "days": 7 },
+      "purge": {
+        "trigger": "retention_expires_at < now() AND purged_at IS NULL",
+        "action": "delete file from disk, set purged_at, set path = NULL. Ledger row survives until parent XferJob purges.",
+        "job": "PruneXferArtifactsJob"
+      }
+    },
+    {
+      "entity": "XferArtifact (kind = 'result')",
+      "hot": { "days": 7 },
+      "purge": {
+        "trigger": "retention_expires_at < now() AND purged_at IS NULL",
+        "action": "delete file, null path, set purged_at + XferJob.artifact_purged_at",
+        "job": "PruneXferArtifactsJob"
+      }
+    },
+    {
+      "entity": "XferArtifact (kind = 'errors')",
+      "hot": { "days": 14 },
+      "purge": {
+        "trigger": "retention_expires_at < now() AND purged_at IS NULL",
+        "action": "delete file, null path, set purged_at",
+        "job": "PruneXferArtifactsJob",
+        "notes": "Errors artifacts get 14d not 7d \u2014 users need more time to review + re-import a fixed file."
+      }
+    },
+    {
+      "entity": "XferArtifact (kind = 'template')",
+      "hot": { "days": 30 },
+      "purge": {
+        "trigger": "retention_expires_at < now() AND purged_at IS NULL",
+        "action": "delete file, null path, set purged_at",
+        "job": "PruneXferArtifactsJob",
+        "notes": "Templates are downloaded then regenerated on demand; 30d cache covers repeat downloads."
+      }
+    },
+    {
+      "entity": "XferArtifact (kind = 'workbook')",
+      "hot": { "days": 7 },
+      "purge": {
+        "trigger": "retention_expires_at < now() AND purged_at IS NULL",
+        "action": "delete file, null path, set purged_at",
+        "job": "PruneXferArtifactsJob"
+      }
+    },
+    {
+      "entity": "XferMappingProfile (user delete)",
+      "purge": {
+        "trigger": "user deletes the profile",
+        "action": "soft delete (retain for FK integrity with historical XferJob rows referencing mapping_profile_id)"
+      }
+    },
+    {
+      "entity": "XferMappingProfile (past soft-delete grace)",
+      "hot": { "days": 365 },
+      "purge": {
+        "trigger": "deleted_at < now() - 365d",
+        "action": "hard delete",
+        "job": "PruneXferArtifactsJob"
+      }
+    },
+    {
+      "entity": "* (TenantErased cascade)",
+      "purge": {
+        "trigger": "tenancy::TenantErased event",
+        "action": "immediate hard delete via FK cascade + file purge orchestrated by PruneXferArtifactsJob(force=true) for the tenant scope"
+      }
+    },
+    {
+      "entity": "* (UserErased anonymisation)",
+      "purge": {
+        "trigger": "user::UserErased event",
+        "action": "replace causer_id / created_by_id / owner_id with anonymised placeholder + hash of original for chain continuity. Row retained \u2014 xfer_jobs are operational evidence."
+      }
+    }
+  ],
+  "tier_assignment": {
+    "description": "XferJob.retention_tier column value set at row creation. Precedence: explicit request override (only allowed for platform-admin) > tenant plan default > global config default.",
+    "defaults": { "free": "short", "team": "medium", "enterprise": "long" }
+  },
+  "artifact_ttl_config": {
+    "description": "Artifact TTLs are configured in config/transfer.php under `retention.artifact_ttl_days` and overridable per environment.",
+    "defaults": { "source": 7, "result": 7, "errors": 14, "template": 30, "workbook": 7 }
+  }
+}

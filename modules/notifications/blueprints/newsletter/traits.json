@@ -1,0 +1,108 @@
+{
+  "id": "academorix://modules/newsletter/traits",
+  "$version": 1,
+  "title": "newsletter \u2014 trait composition",
+  "owned": [],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasVersions",
+        "reason": "Content changes on Newsletter + NewsletterIssue tracked. Rollback issue drafts."
+      },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "activity": [
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "reason": "Every issue publish + campaign send surfaces in the tenant activity feed."
+      }
+    ],
+    "audit": [
+      {
+        "trait": "Academorix\\Audit\\Concerns\\HasAudit",
+        "reason": "Subscription state changes + campaign sends carry CAN-SPAM + CASL evidence."
+      }
+    ]
+  },
+  "composition": {
+    "newsletter": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasSystemFlag",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasVersions",
+        "HasAuditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ]
+    },
+    "newsletter_issue": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasVersions",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ]
+    },
+    "newsletter_subscription": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAuditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "HasAuditable critical for CAN-SPAM + CASL consent evidence."
+    },
+    "newsletter_campaign": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ]
+    },
+    "newsletter_audience": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasVersions",
+        "Filterable",
+        "SoftDeletes"
+      ]
+    }
+  }
+}

@@ -9,8 +9,8 @@
  * (idempotent + throttled backend-side).
  */
 
-import { EnvelopeOpenIcon } from "@academorix/ui/icons/outline";
-import { Button, Description } from "@academorix/ui/react";
+import { EnvelopeOpenIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Description } from "@stackra/ui/react";
 import { useState } from "react";
 
 import type { ReactNode } from "react";

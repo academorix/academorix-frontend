@@ -1,0 +1,30 @@
+{
+  "id": "academorix://modules/activity/permissions",
+  "$version": 1,
+  "title": "activity \u2014 permissions",
+  "seeder": "Academorix\\Activity\\Database\\Seeders\\ActivityPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "activity.viewAny",
+      "guard": "sanctum",
+      "description": "List activity feed. Regular users see own causer feed; admins see tenant-wide.",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "activity.view",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "platform.activity.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "support", "ops"]
+    },
+    {
+      "name": "platform.activity.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "support", "ops"]
+    }
+  ]
+}

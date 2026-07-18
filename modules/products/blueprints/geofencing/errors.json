@@ -1,0 +1,143 @@
+{
+  "id": "academorix://modules/geofencing/errors",
+  "$version": 1,
+  "title": "geofencing \u2014 error codes",
+  "namespace": "geofencing",
+  "errors": [
+    {
+      "code": "GEOFENCE_FENCEABLE_NOT_IN_TENANT",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "geofencing.errors.fenceable_not_in_tenant",
+      "description": "Cross-tenant assertion collapsed 'not found' + 'wrong tenant' + 'unknown fenceable_type alias' to prevent enumeration. Returns 404 uniformly."
+    },
+    {
+      "code": "GEOFENCE_FENCEABLE_ALIAS_UNREGISTERED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "geofencing.errors.fenceable_alias_unregistered",
+      "description": "The submitted fenceable_type is not in the morph map. Model owner needs to declare #[Geofenceable(alias: 'xxx')] on the model class."
+    },
+    {
+      "code": "GEOFENCE_FENCEABLE_NOT_GEOFENCEABLE",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "geofencing.errors.fenceable_not_geofenceable",
+      "description": "The resolved class does not implement the Geofenceable interface. #[Geofenceable] attribute is present but the class is missing the trait or the interface. Startup validation should catch this."
+    },
+    {
+      "code": "GEOFENCE_ACCURACY_TOO_LOW",
+      "http": 200,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "geofencing.errors.accuracy_too_low",
+      "description": "GPS accuracy exceeds fenceable tolerance. NOT actually an error \u2014 SKIPPED verdict returned with HTTP 200. Client typically prompts user to retry."
+    },
+    {
+      "code": "GEOFENCE_POLYGON_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "geofencing.errors.polygon_invalid",
+      "description": "Polygon fails PolygonValidator (not closed / self-intersecting / too large / invalid WKT/GeoJSON). Body carries PolygonValidationReason."
+    },
+    {
+      "code": "GEOFENCE_FENCEABLE_NO_GEOMETRY",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "geofencing.errors.fenceable_no_geometry",
+      "description": "The fenceable model has neither geofencePolygon() nor locationPoint(). Evaluator refuses to guess. Configuration bug \u2014 fence not drawn yet."
+    },
+    {
+      "code": "GEOFENCE_OVERRIDE_REASON_TOO_SHORT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "geofencing.errors.override_reason_too_short",
+      "description": "Reason < 10 characters. Service raises InvalidArgumentException; controller catches + returns 422."
+    },
+    {
+      "code": "GEOFENCE_OVERRIDE_ALREADY_APPLIED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "geofencing.errors.override_already_applied",
+      "description": "The original check already has an override row that supersedes it. Refuse duplicate requests."
+    },
+    {
+      "code": "GEOFENCE_OVERRIDE_ORIGINAL_INSIDE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "geofencing.errors.override_original_inside",
+      "description": "Cannot request override on an INSIDE check \u2014 nothing to override."
+    },
+    {
+      "code": "GEOFENCE_IMMUTABILITY_VIOLATION",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "geofencing.errors.immutability_violation",
+      "description": "Application code attempted to update a persisted GeofenceCheck. Saving hook threw. Alerts + pages ops."
+    },
+    {
+      "code": "GEOFENCE_POSTGIS_UNAVAILABLE",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "geofencing.errors.postgis_unavailable",
+      "description": "Health probe caught missing extension. Startup-critical."
+    },
+    {
+      "code": "GEOFENCE_PREFLIGHT_RATE_LIMITED",
+      "http": 429,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "geofencing.errors.preflight_rate_limited",
+      "description": "60 req/min exceeded. Retry-After header set."
+    },
+    {
+      "code": "GEOFENCE_EVALUATION_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "geofencing.errors.evaluation_quota_exceeded",
+      "description": "geofence.evaluations.month entitlement quota exhausted."
+    },
+    {
+      "code": "GEOFENCE_SUBJECT_TYPE_UNREGISTERED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "geofencing.errors.subject_type_unregistered",
+      "description": "The submitted subject_type is not in the morph map. Consuming module needs to register the alias via #[GeofenceSubjectAlias] on the model class."
+    },
+    {
+      "code": "GEOFENCE_DUPLICATE_ALIAS_AT_BOOT",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "geofencing.errors.duplicate_alias_at_boot",
+      "description": "Two classes registered the same #[Geofenceable] or #[GeofenceSubjectAlias] value. Startup fails."
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/subscription/permissions",
+  "$version": 1,
+  "title": "subscription \u2014 permissions",
+  "seeder": "Academorix\\Subscription\\Database\\Seeders\\SubscriptionPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    { "name": "plans.viewAny", "guard": "sanctum", "seededOn": ["member", "admin", "owner"] },
+    { "name": "plans.view", "guard": "sanctum", "seededOn": ["member", "admin", "owner"] },
+    { "name": "subscription.view", "guard": "sanctum", "seededOn": ["admin", "owner", "billing"] },
+    { "name": "subscription.view.invoices", "guard": "sanctum", "seededOn": ["owner", "billing"] },
+    { "name": "subscription.manage", "guard": "sanctum", "seededOn": ["owner"] },
+    { "name": "subscription.events.viewAny", "guard": "sanctum", "seededOn": ["owner", "billing"] },
+    {
+      "name": "platform.plans.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "billing", "sales"]
+    },
+    {
+      "name": "platform.plans.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "billing", "sales"]
+    },
+    {
+      "name": "platform.plans.create",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "billing"]
+    },
+    {
+      "name": "platform.plans.update",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "billing"]
+    },
+    { "name": "platform.plans.archive", "guard": "platform_admin", "seededOn": ["super_admin"] },
+    {
+      "name": "platform.subscriptions.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support", "billing", "sales"]
+    },
+    {
+      "name": "platform.subscriptions.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support", "billing", "sales"]
+    },
+    {
+      "name": "platform.subscriptions.enterprise",
+      "guard": "platform_admin",
+      "description": "Create offline PO subscriptions. Every use audit-logged.",
+      "seededOn": ["super_admin", "billing", "sales"]
+    },
+    {
+      "name": "platform.subscriptions.force-state",
+      "guard": "platform_admin",
+      "description": "Emergency state override. Every use audit-logged.",
+      "seededOn": ["super_admin"]
+    },
+    {
+      "name": "platform.subscription.events.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "billing"]
+    }
+  ]
+}

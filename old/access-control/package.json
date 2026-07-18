@@ -1,0 +1,58 @@
+{
+  "name": "@academorix/access-control",
+  "version": "0.1.0",
+  "description": "Roles, permissions, and abilities for the Academorix frontend stack. Full sync with academorix-backend/packages/authorization + apps/api/src/modules/access — mirrors every DTO, endpoint, and enum. Ships hot-path useHasPermission / useHasRole (boot-payload-driven, no HTTP) plus the admin CRUD surface via React Query, and Resource-provider adapters for @academorix/data.",
+  "private": true,
+  "license": "MIT",
+  "author": {
+    "name": "Academorix L.L.C",
+    "email": "dev@academorix.com",
+    "url": "https://academorix.com"
+  },
+  "keywords": [
+    "academorix",
+    "access-control",
+    "roles",
+    "permissions",
+    "spatie",
+    "dependency-injection"
+  ],
+  "sideEffects": false,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./config": "./config/access-control.config.ts",
+    "./schemas": "./src/schemas/index.ts",
+    "./testing": "./src/testing/index.ts"
+  },
+  "files": [
+    "config",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "echo \"⚡ JIT mode\"",
+    "clean": "rm -rf dist .turbo",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@academorix/http": "workspace:*",
+    "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "catalog:",
+    "react": "catalog:",
+    "reflect-metadata": "catalog:"
+  },
+  "devDependencies": {
+    "@tanstack/react-query": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "react": "catalog:",
+    "reflect-metadata": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

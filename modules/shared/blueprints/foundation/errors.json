@@ -1,0 +1,227 @@
+{
+  "id": "academorix://modules/foundation/errors",
+  "$version": 1,
+  "title": "foundation — base error envelope contract + universal codes",
+  "description": "The error envelope shape every controller returns, plus the universal codes that don't belong to any specific module (401, 403, 404, 429, 500, ...). Downstream modules extend by adding module-specific codes with a namespace prefix (INVITATIONS_*, TENANCY_*, NOTIFICATIONS_*).",
+  "namespace": "foundation",
+  "envelopeContract": {
+    "successResponse": {
+      "shape": "{ data: <resource>, meta?: <paginator>, links?: <hateoas>, message?: <optional success toast> }",
+      "notes": "Success responses always wrap data. Empty responses use { data: null } rather than an empty body."
+    },
+    "errorResponse": {
+      "shape": "{ message: string, error: { code: string, http: integer, retryable: boolean, i18n_key: string }, errors?: { field: [strings] } }",
+      "notes": [
+        "`message` — human-readable summary in the caller's locale (falls back to English).",
+        "`error.code` — machine-readable module-namespaced code. Always uppercase snake_case.",
+        "`error.http` — HTTP status echoed for clients that only see the body.",
+        "`error.retryable` — true if the client should retry with backoff (e.g. rate limits, transient failures).",
+        "`error.i18n_key` — dot-notation i18n key for FE translation lookup.",
+        "`errors` — per-field validation errors. Only present on 422."
+      ]
+    },
+    "producedBy": "Every ApiException subclass in every module → automatically wrapped by the `response.envelope` middleware."
+  },
+  "errors": [
+    {
+      "code": "FOUNDATION_UNAUTHENTICATED",
+      "http": 401,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "foundation.errors.unauthenticated",
+      "description": "No valid token OR the token has expired. FE should redirect to sign-in."
+    },
+    {
+      "code": "FOUNDATION_FORBIDDEN",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "foundation.errors.forbidden",
+      "description": "Authenticated but lacks the required permission. FE should show a permission-denied panel."
+    },
+    {
+      "code": "FOUNDATION_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "foundation.errors.not_found",
+      "description": "Resource does not exist OR the caller does not have visibility to it (deliberate — do not distinguish to prevent enumeration)."
+    },
+    {
+      "code": "FOUNDATION_METHOD_NOT_ALLOWED",
+      "http": 405,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "foundation.errors.method_not_allowed"
+    },
+    {
+      "code": "FOUNDATION_NOT_ACCEPTABLE",
+      "http": 406,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "foundation.errors.not_acceptable",
+      "description": "Missing or invalid Accept header — api.version middleware rejects."
+    },
+    {
+      "code": "FOUNDATION_CONFLICT",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "foundation.errors.conflict",
+      "description": "Optimistic-lock conflict or state-transition-forbidden. Module-specific codes should prefer their own."
+    },
+    {
+      "code": "FOUNDATION_GONE",
+      "http": 410,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "foundation.errors.gone",
+      "description": "Resource existed but is permanently removed."
+    },
+    {
+      "code": "FOUNDATION_PAYLOAD_TOO_LARGE",
+      "http": 413,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "foundation.errors.payload_too_large"
+    },
+    {
+      "code": "FOUNDATION_UNSUPPORTED_MEDIA_TYPE",
+      "http": 415,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "foundation.errors.unsupported_media_type"
+    },
+    {
+      "code": "FOUNDATION_UNPROCESSABLE_ENTITY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "foundation.errors.unprocessable_entity",
+      "description": "Base validation failure. The `errors` field carries per-field messages."
+    },
+    {
+      "code": "FOUNDATION_LOCKED",
+      "http": 423,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "foundation.errors.locked",
+      "description": "Resource locked (e.g. account-lockout, tenant-suspended override). Module-specific codes preferred."
+    },
+    {
+      "code": "FOUNDATION_TOO_MANY_REQUESTS",
+      "http": 429,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "foundation.errors.too_many_requests",
+      "description": "Rate limit exceeded. `Retry-After` header + `X-RateLimit-*` headers present. Module-specific codes (INVITATIONS_RATE_LIMIT_EXCEEDED, etc.) preferred where the counter is specific."
+    },
+    {
+      "code": "FOUNDATION_INTERNAL_ERROR",
+      "http": 500,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "alert",
+      "i18n_key": "foundation.errors.internal_error",
+      "description": "Unhandled exception. Pages on-call. Response body never leaks stack trace or internals; the request_id is echoed so support can correlate with Sentry."
+    },
+    {
+      "code": "FOUNDATION_NOT_IMPLEMENTED",
+      "http": 501,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "foundation.errors.not_implemented",
+      "description": "Route reserved for v2 (integrations, MFA on tenant guard, etc.). Deliberate to prevent probing."
+    },
+    {
+      "code": "FOUNDATION_BAD_GATEWAY",
+      "http": 502,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "foundation.errors.bad_gateway",
+      "description": "Upstream (Stripe, SendGrid, SAML IdP) returned an error we can't recover from."
+    },
+    {
+      "code": "FOUNDATION_SERVICE_UNAVAILABLE",
+      "http": 503,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "foundation.errors.service_unavailable",
+      "description": "Kill-switch fired OR maintenance window active. `Retry-After` header set."
+    },
+    {
+      "code": "FOUNDATION_GATEWAY_TIMEOUT",
+      "http": 504,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "foundation.errors.gateway_timeout"
+    },
+    {
+      "code": "FOUNDATION_MODULE_NOT_DISCOVERED",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "foundation.errors.module_not_discovered",
+      "description": "The ModuleRegistry expected a module that didn't discover. Deploy misconfiguration. Pages on-call."
+    },
+    {
+      "code": "FOUNDATION_MODULE_DEPENDENCY_CYCLE",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "foundation.errors.module_dependency_cycle",
+      "description": "Cycle detected in module dependency graph at boot. Fails startup."
+    },
+    {
+      "code": "FOUNDATION_HEALTH_PROBE_TIMEOUT",
+      "http": 503,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "foundation.errors.health_probe_timeout",
+      "description": "A probe exceeded its declared timeout. HealthAggregator returned degraded/unhealthy."
+    },
+    {
+      "code": "FOUNDATION_SEARCH_ENGINE_UNAVAILABLE",
+      "http": 503,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "foundation.errors.search_engine_unavailable",
+      "description": "The configured Scout engine (Meilisearch by default) is unreachable. Callers should degrade gracefully to filtered DB queries."
+    },
+    {
+      "code": "FOUNDATION_CONFIG_INVALID",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "foundation.errors.config_invalid",
+      "description": "ConfigReloaded event fired with invalid config; downstream module rejected the reload. Rollback the config change."
+    }
+  ],
+  "downstreamConvention": {
+    "codeFormat": "MODULE_PREFIX_ERROR_KEY — uppercase snake_case with a module prefix (INVITATIONS_TOKEN_EXPIRED, TENANCY_CROSS_TENANT_ACCESS, NOTIFICATIONS_TEMPLATE_MISSING).",
+    "unique": "Every code across every module is globally unique — the CI check flags duplicates.",
+    "audit_severity": "info (nothing surprising), warn (unusual but expected — user error, transient failure), alert (pages on-call — indicates a bug or attack).",
+    "i18n_key": "Must exist in every supported locale's message catalogue (en, ar, ...). Missing translations fall back to English."
+  }
+}

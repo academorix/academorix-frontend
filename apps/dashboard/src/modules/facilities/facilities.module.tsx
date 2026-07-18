@@ -10,7 +10,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §13.6 "Facility & Resource Booking"
  */
 
-import { Squares2X2Icon } from "@academorix/ui/icons/outline";
+import { Squares2X2Icon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

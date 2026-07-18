@@ -10,6 +10,10 @@
 import { Stepper } from "@heroui-pro/react";
 import React, { useState, useMemo, useCallback } from "react";
 
+// Relative imports intentionally — the `@/*` tsconfig alias works
+// for tsc / tsup / vitest but the app's Vite dev server hits a
+// resolve error when it walks the workspace source directly.
+// Relative paths resolve identically in every tool.
 import { ProgressTabsContext } from "../../contexts/progress-tabs";
 import { useProgressTabs } from "../../hooks/use-progress-tabs/use-progress-tabs.hook";
 

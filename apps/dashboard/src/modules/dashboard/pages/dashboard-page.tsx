@@ -35,14 +35,14 @@ import {
   AdjustmentsHorizontalIcon,
   ArrowPathIcon,
   Squares2X2Icon,
-} from "@academorix/ui/icons/outline";
-import { Button, Segment } from "@academorix/ui/react";
+} from "@stackra/ui/icons/heroicon/outline";
+import { Button, Segment } from "@stackra/ui/react";
 import { useGetIdentity } from "@refinedev/core";
 import { useState } from "react";
-import { useSearchParams } from "react-router";
+import { useSearchParams } from "@stackra/routing/react";
 
 import type { Identity } from "@/types/platform";
-import type { Key } from "@academorix/ui/react";
+import type { Key } from "@stackra/ui/react";
 import type { ReactNode } from "react";
 
 import { WidgetGrid } from "@/modules/dashboard/components/widget-grid";

@@ -1,32 +1,28 @@
 /**
  * @file vitest.config.ts
- * @module @academorix/query/vitest.config
- *
- * @description
- * Vitest configuration for `@academorix/query`. Runs the co-located
- * `__tests__/*` files with the following environment split:
- *
- *  - **jsdom** — the whole suite runs under jsdom because
- *    `defineResource` exercises React Query hooks with
- *    `@testing-library/react`. Non-React modules (`serializeLaravelQuery`,
- *    `serializeListParams`, `buildQueryKey`, `createRefineRestDataProvider`)
- *    happily execute under jsdom too — the environment is a superset
- *    of Node's globals plus a DOM.
- *  - **globals: false** — tests use explicit `describe` / `it` /
- *    `expect` / `vi` imports to stay grep-able.
- *  - **unstubGlobals + clearMocks** — after every test, any
- *    `vi.stubGlobal` / mock function is reset so cases don't leak
- *    into each other.
+ * @module @stackra/query/test
+ * @description Vitest configuration for @stackra/query.
  */
 
-import { defineConfig } from "vitest/config";
+import { defineConfig, mergeConfig } from 'vitest/config';
+import path from 'node:path';
+import preset from '@stackra/testing/preset';
 
-export default defineConfig({
-  test: {
-    environment: "jsdom",
-    globals: false,
-    include: ["src/**/__tests__/**/*.test.{ts,tsx}"],
-    unstubGlobals: true,
-    clearMocks: true,
-  },
-});
+export default mergeConfig(
+  preset,
+  defineConfig({
+    // Explicitly re-declare to survive mergeConfig — vitest 4's default OXC
+    // transformer breaks decorator metadata emission.
+    oxc: false,
+    esbuild: false,
+    test: {
+      environment: 'node',
+      setupFiles: ['./__tests__/vitest.setup.ts'],
+    },
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
+    },
+  })
+);

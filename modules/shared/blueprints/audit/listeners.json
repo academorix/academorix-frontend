@@ -1,0 +1,31 @@
+{
+  "id": "academorix://modules/audit/listeners",
+  "$version": 1,
+  "title": "audit \u2014 subscribed events",
+  "listeners": [
+    {
+      "event": "foundation::ApplicationBooted",
+      "listener": "Academorix\\Audit\\Listeners\\WarmAuditRegistry",
+      "queue": null,
+      "purpose": "Hydrate AuditRegistry with #[Auditable]-decorated models at boot via foundation's DiscoversAttributes seam."
+    },
+    {
+      "event": "tenancy::TenantErased",
+      "listener": "Academorix\\Audit\\Listeners\\AnonymiseAuditForErasedTenant",
+      "queue": "notifications",
+      "purpose": "Replace tenant_id with anonymised placeholder + retain audit rows for cross-tenant compliance evidence. Never hard delete."
+    },
+    {
+      "event": "user::UserErased",
+      "listener": "Academorix\\Audit\\Listeners\\AnonymiseAuditForErasedUser",
+      "queue": "notifications",
+      "purpose": "GDPR Art. 17 \u2014 replace user_id + user_type + PII in values with anonymised placeholders. Row retained."
+    },
+    {
+      "event": "settings::SettingsChangeEvent",
+      "listener": "Academorix\\Audit\\Listeners\\WriteSettingsChangeToAudit",
+      "queue": "notifications",
+      "purpose": "Dual-write leg #2 of the settings audit contract. Writes each changed setting field to audits via HasAudit on the settings group class."
+    }
+  ]
+}

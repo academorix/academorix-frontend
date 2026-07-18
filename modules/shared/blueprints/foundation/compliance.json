@@ -1,0 +1,286 @@
+{
+  "id": "academorix://modules/foundation/compliance",
+  "$version": 1,
+  "title": "foundation — base compliance regime taxonomy",
+  "description": "The regime taxonomy every downstream module's `compliance.json` references. Foundation itself produces no compliance evidence (it holds no personal data) — this file DEFINES the regimes + the control-language conventions, then every downstream module cites specific articles + evidence artefacts under these regimes.",
+  "aggregatedBy": "compliance",
+  "referenceOnly": true,
+  "regimes": {
+    "gdpr": {
+      "name": "General Data Protection Regulation",
+      "regulation": "Regulation (EU) 2016/679",
+      "jurisdiction": "EU + EEA",
+      "applicableWhen": "Any EU/EEA data subject in the tenant's user base OR any processing that targets EU residents.",
+      "commonArticles": [
+        {
+          "article": "Art. 5",
+          "principle": "storage limitation — data kept no longer than necessary"
+        },
+        {
+          "article": "Art. 6",
+          "principle": "lawful basis — one of consent / contract / legal obligation / vital interest / public task / legitimate interest"
+        },
+        {
+          "article": "Art. 7",
+          "principle": "conditions for consent — freely given, specific, informed, unambiguous, withdrawable"
+        },
+        {
+          "article": "Art. 8",
+          "principle": "child's consent — parental consent required when subject is under member-state age of consent (13-16)"
+        },
+        { "article": "Art. 15", "principle": "right of access — DSAR export within 1 month" },
+        { "article": "Art. 17", "principle": "right to erasure — 'right to be forgotten'" },
+        {
+          "article": "Art. 20",
+          "principle": "right to data portability — machine-readable export"
+        },
+        {
+          "article": "Art. 21",
+          "principle": "right to object — especially for legitimate-interest basis"
+        },
+        {
+          "article": "Art. 22",
+          "principle": "automated decision-making — no solely-automated decisions with significant effect without human review"
+        },
+        { "article": "Art. 25", "principle": "data protection by design + default" },
+        { "article": "Art. 28", "principle": "processor obligations — DPA + subprocessor list" },
+        { "article": "Art. 30", "principle": "records of processing — including DPO contact" },
+        {
+          "article": "Art. 32",
+          "principle": "security — encryption, access control, breach detection"
+        },
+        { "article": "Art. 33", "principle": "breach notification — 72h to supervisory authority" },
+        { "article": "Art. 34", "principle": "breach notification to data subjects — undue delay" },
+        {
+          "article": "Art. 35",
+          "principle": "DPIA — for high-risk processing (minors, biometrics, systematic monitoring)"
+        },
+        {
+          "article": "Art. 37",
+          "principle": "DPO designation — required for public authorities + large-scale processing"
+        }
+      ],
+      "commonEvidencePatterns": [
+        "TOS acceptance timestamp on User creation → Art. 6(1)(b) lawful basis: contract",
+        "Compliance module's DSAR orchestrator aggregating across modules → Art. 15",
+        "retention.json + Compliance.PurgeSubjectJob → Art. 17",
+        "subprocessors.json aggregation + weekly snapshot → Art. 28",
+        "TenantContact where kind=dpo + P7Y retention hold → Art. 30",
+        "data-classes.json restricted tier + KMS encryption → Art. 32",
+        "notifications.SecurityBreachNotification runbook → Art. 33"
+      ]
+    },
+    "uk_gdpr": {
+      "name": "UK GDPR",
+      "regulation": "UK Data Protection Act 2018 + retained GDPR",
+      "jurisdiction": "United Kingdom",
+      "applicableWhen": "Same as GDPR but for UK data subjects. Post-Brexit variant with substantially identical controls.",
+      "commonArticles": [{ "article": "n/a", "principle": "mirror of GDPR articles" }],
+      "commonEvidencePatterns": ["See GDPR — evidence artefacts are identical"]
+    },
+    "coppa": {
+      "name": "Children's Online Privacy Protection Act",
+      "regulation": "16 CFR Part 312",
+      "jurisdiction": "United States",
+      "applicableWhen": "Any child under 13 processed as a tenant user.",
+      "commonArticles": [
+        { "article": "§312.4", "principle": "notice to parents" },
+        { "article": "§312.4(c)", "principle": "storage limitation for children's data" },
+        { "article": "§312.5", "principle": "verifiable parental consent (VPC) before collection" },
+        { "article": "§312.6", "principle": "parental review + deletion right" },
+        {
+          "article": "§312.8",
+          "principle": "confidentiality, security, integrity of children's PII"
+        },
+        { "article": "§312.10", "principle": "safe-harbor program participation (recommended)" }
+      ],
+      "commonEvidencePatterns": [
+        "Registration flow age gate + VPC flow before minor User creation",
+        "Guardian consent notification via safeguarding module",
+        "No behavioural marketing to under-13 users (feature-flag gated)"
+      ]
+    },
+    "ferpa": {
+      "name": "Family Educational Rights and Privacy Act",
+      "regulation": "34 CFR Part 99",
+      "jurisdiction": "United States (schools receiving federal education funds)",
+      "applicableWhen": "Tenant is a school or higher-ed institution + processes student records.",
+      "commonArticles": [
+        { "article": "§99.10", "principle": "parent inspection right — 45 days" },
+        { "article": "§99.30", "principle": "written consent before disclosure" },
+        {
+          "article": "§99.31(a)(1)",
+          "principle": "school official exception — vendors under direct control"
+        },
+        { "article": "§99.32", "principle": "record of disclosures" }
+      ],
+      "commonEvidencePatterns": [
+        "DPA template establishing Academorix as a school official under direct control",
+        "Disclosure log per athlete → parent inspection view",
+        "Written parental consent flow for cross-tenant disclosures (rare)"
+      ]
+    },
+    "ccpa_cpra": {
+      "name": "California Consumer Privacy Act + California Privacy Rights Act",
+      "regulation": "Cal. Civ. Code §1798.100 et seq.",
+      "jurisdiction": "California residents",
+      "applicableWhen": "Business collecting personal information of California residents (nearly all tenants have some Californians).",
+      "commonArticles": [
+        { "article": "§1798.100", "principle": "notice at collection" },
+        { "article": "§1798.105", "principle": "right to delete" },
+        { "article": "§1798.110", "principle": "right to know categories collected" },
+        { "article": "§1798.120", "principle": "right to opt-out of sale/sharing" },
+        { "article": "§1798.135", "principle": "Do Not Sell or Share toggle" },
+        {
+          "article": "§1798.140(ae)",
+          "principle": "sensitive personal information — additional restrictions"
+        }
+      ]
+    },
+    "pci_dss": {
+      "name": "Payment Card Industry Data Security Standard",
+      "regulation": "PCI-DSS v4.0",
+      "jurisdiction": "wherever payment cards are processed",
+      "applicableWhen": "Cardholder data touches our infrastructure.",
+      "strategicPosition": "Stay SAQ-A. Card data lives in Stripe Elements iframes; our infrastructure never sees a PAN, CVV, or full track data.",
+      "commonEvidencePatterns": [
+        "No `card_number` / `cvv` / `pan` / `track_data` in any module's schema. Enforced by data-classes.json — the `regulated_financial` tier is reserved for tokenised references only.",
+        "Stripe as the SAQ-A boundary. Every subscription module reference is a Stripe customer / subscription id.",
+        "Annual SAQ-A + quarterly ASV scan of the marketing surface (out of scope for the app itself)."
+      ]
+    },
+    "hipaa_adjacent": {
+      "name": "Health Insurance Portability and Accountability Act — adjacent controls",
+      "regulation": "45 CFR Parts 160, 162, 164",
+      "jurisdiction": "United States (covered entities + business associates)",
+      "applicableWhen": "Currently NOT applicable — Academorix is not a HIPAA covered entity + no BAA is signed with any tenant. `regulated_health` data-class tier reserved for future v2 when a physical-therapy or sports-medicine vertical lands.",
+      "strategicPosition": "Deliberately avoid covered-entity status in v1. Model safeguarding health fields as `regulated_health` data class → encrypted at rest, restricted access, mandatory audit trail, NEVER exported to marketing analytics."
+    },
+    "wcag_2_2_aa": {
+      "name": "Web Content Accessibility Guidelines",
+      "regulation": "W3C Recommendation 5 October 2023",
+      "jurisdiction": "Public-sector procurement (US Section 508 + EU EN 301 549 + Ontario AODA + Australia DDA)",
+      "applicableWhen": "Every SDUI screen + Refine UI kit component. Public-sector procurement gates on VPAT conformance report.",
+      "commonSuccessCriteria": [
+        {
+          "sc": "SC 1.4.3",
+          "principle": "contrast (minimum) — 4.5:1 for text, 3:1 for large text"
+        },
+        { "sc": "SC 1.4.11", "principle": "non-text contrast — 3:1 for UI components" },
+        {
+          "sc": "SC 2.4.4",
+          "principle": "link purpose (in context) — link text should indicate destination"
+        },
+        {
+          "sc": "SC 2.4.7",
+          "principle": "focus visible — every focusable element has a visible focus indicator"
+        },
+        { "sc": "SC 3.1.1", "principle": "language of page — <html lang> present + correct" },
+        {
+          "sc": "SC 3.3.4",
+          "principle": "error prevention (legal, financial, data) — confirmable before submission"
+        },
+        {
+          "sc": "SC 4.1.2",
+          "principle": "name, role, value — every interactive element has an accessible name"
+        }
+      ]
+    },
+    "soc2_type2": {
+      "name": "System and Organization Controls 2 Type II",
+      "regulation": "AICPA Trust Services Criteria 2017",
+      "jurisdiction": "worldwide (customer-driven)",
+      "applicableWhen": "Any enterprise buyer over ~$50k ACV. Independent auditor report over a 12-month audit window.",
+      "trustServicesCriteria": [
+        {
+          "criterion": "CC1",
+          "principle": "control environment — org structure, roles, responsibilities"
+        },
+        { "criterion": "CC2", "principle": "communication and information" },
+        { "criterion": "CC3", "principle": "risk assessment" },
+        { "criterion": "CC4", "principle": "monitoring activities" },
+        { "criterion": "CC5", "principle": "control activities" },
+        { "criterion": "CC6", "principle": "logical + physical access controls" },
+        {
+          "criterion": "CC6.1",
+          "principle": "logical access — least-privilege, role-based, MFA where warranted"
+        },
+        { "criterion": "CC7", "principle": "system operations" },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring — health probes, metrics, incident response"
+        },
+        {
+          "criterion": "CC7.3",
+          "principle": "system incident response — documented runbooks + evidence"
+        },
+        { "criterion": "CC8", "principle": "change management" },
+        {
+          "criterion": "CC8.1",
+          "principle": "change management — every change ships behind a rollout flag with an audit trail"
+        },
+        { "criterion": "CC9", "principle": "risk mitigation" }
+      ]
+    },
+    "iso_27001": {
+      "name": "ISO/IEC 27001",
+      "regulation": "ISO/IEC 27001:2022",
+      "jurisdiction": "worldwide (customer-driven, especially EU + APAC + Middle East)",
+      "applicableWhen": "International enterprise buyers request. Substantially overlaps SOC 2 controls with 93 Annex A controls.",
+      "commonControls": [
+        { "annex": "A.5", "principle": "organizational controls" },
+        { "annex": "A.5.15", "principle": "access control policy" },
+        { "annex": "A.6", "principle": "people controls" },
+        { "annex": "A.7", "principle": "physical controls" },
+        { "annex": "A.8", "principle": "technological controls" },
+        { "annex": "A.8.5", "principle": "secure authentication" },
+        { "annex": "A.8.24", "principle": "use of cryptography" }
+      ]
+    },
+    "can_spam": {
+      "name": "CAN-SPAM Act",
+      "regulation": "15 U.S.C. §7701 (Controlling the Assault of Non-Solicited Pornography And Marketing Act)",
+      "jurisdiction": "United States",
+      "applicableWhen": "Commercial email under US law. Transactional (invitations, receipts, security alerts) is exempt from the primary requirements but must still comply with accuracy + return-address rules.",
+      "commonArticles": [
+        {
+          "article": "§7704(a)(1)",
+          "principle": "accurate header info — From, To, Reply-To, routing headers"
+        },
+        {
+          "article": "§7704(a)(2)",
+          "principle": "accurate subject line — reflects the message content"
+        },
+        {
+          "article": "§7704(a)(3)",
+          "principle": "functional return address AND physical postal address in the footer"
+        },
+        {
+          "article": "§7704(a)(4)",
+          "principle": "unsubscribe mechanism — 10-day honor, at least 30 days functional"
+        }
+      ]
+    },
+    "casl": {
+      "name": "Canadian Anti-Spam Legislation",
+      "regulation": "S.C. 2010, c. 23",
+      "jurisdiction": "Canada",
+      "applicableWhen": "Any electronic message sent to a Canadian recipient.",
+      "commonArticles": [
+        { "article": "s. 6", "principle": "consent — express or implied" },
+        {
+          "article": "s. 6(6)(f)",
+          "principle": "existing business relationship — implied consent for two years post-transaction"
+        }
+      ]
+    }
+  },
+  "downstreamConvention": {
+    "eachModuleDeclares": [
+      "Which regimes apply (`applicable: true|false`).",
+      "Per-regime: article-level controls it produces evidence for.",
+      "Per-control: the concrete evidence artefact (file path, event, retention rule, notification, ...)."
+    ],
+    "ciCheck": "Every regime + article-level reference in a downstream compliance.json must resolve to an entry defined here. Undefined regimes fail the build."
+  }
+}

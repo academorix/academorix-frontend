@@ -1,0 +1,59 @@
+{
+  "id": "academorix://modules/notifications-sms/subprocessors",
+  "$version": 1,
+  "title": "notifications-sms \u2014 subprocessors (GDPR Art. 28)",
+  "regulatoryBasis": ["gdpr Art. 28", "uk_gdpr Art. 28"],
+  "subprocessors": [
+    {
+      "name": "Twilio",
+      "controller": "Twilio Inc. (US)",
+      "region": "us-east-1 / eu-west-1 (Ireland)",
+      "purpose": "SMS + programmable messaging.",
+      "data_categories": [
+        "recipient phone (E.164)",
+        "message body",
+        "SID",
+        "delivery status",
+        "cost + segment count"
+      ],
+      "dpa_url": "https://www.twilio.com/legal/data-protection-addendum",
+      "certifications": ["SOC 2 Type II", "ISO 27001", "GDPR compliant", "HIPAA (BAA)"]
+    },
+    {
+      "name": "MessageBird",
+      "controller": "MessageBird B.V. (Netherlands)",
+      "region": "eu-west-1",
+      "purpose": "SMS delivery with EU data residency.",
+      "data_categories": ["phone", "message body", "message id", "delivery status"],
+      "dpa_url": "https://messagebird.com/legal/dpa",
+      "certifications": ["SOC 2 Type II", "ISO 27001", "GDPR compliant"]
+    },
+    {
+      "name": "Vonage (Nexmo)",
+      "controller": "Vonage Holdings Corp.",
+      "region": "us-east-1 / eu-west-1",
+      "purpose": "SMS with global carrier reach.",
+      "data_categories": ["phone", "message body", "message id", "delivery status"],
+      "dpa_url": "https://www.vonage.com/legal/gdpr/",
+      "certifications": ["SOC 2 Type II", "ISO 27001"]
+    },
+    {
+      "name": "Plivo",
+      "controller": "Plivo Inc.",
+      "region": "us-east-1 / eu-west-1",
+      "purpose": "SMS + voice messaging.",
+      "data_categories": ["phone", "message body", "message id", "delivery status"],
+      "dpa_url": "https://www.plivo.com/legal/dpa/",
+      "certifications": ["SOC 2 Type II", "ISO 27001"]
+    },
+    {
+      "name": "AWS Simple Notification Service (SNS)",
+      "controller": "Amazon Web Services, Inc.",
+      "region": "us-east-1 / eu-central-1",
+      "purpose": "SMS via AWS SNS \u2014 typically for transactional workloads with existing AWS integration.",
+      "data_categories": ["phone", "message body", "message id"],
+      "dpa_url": "https://aws.amazon.com/service-terms/",
+      "certifications": ["SOC 2 Type II", "ISO 27001/27017/27018", "HIPAA (BAA)"]
+    }
+  ]
+}

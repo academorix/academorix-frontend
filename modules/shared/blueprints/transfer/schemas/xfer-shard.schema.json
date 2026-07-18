@@ -1,0 +1,194 @@
+{
+  "id": "academorix://modules/transfer/schemas/xfer-shard",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "XferShard",
+  "description": "Per-shard progress record for a sharded import / export or multi-sheet workbook. One row per shard \u2014 the XferJob aggregate carries the sum. Enables shard-level retry (`POST /jobs/{id}/retry-shard`) without rerunning successful shards.",
+  "type": "object",
+  "x-module": "transfer",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "xfer_shards",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "xshd_",
+    "incrementing": false,
+    "model": "Academorix\\Transfer\\Models\\XferShard",
+    "interface": "Academorix\\Transfer\\Contracts\\Data\\XferShardInterface",
+    "implements": ["Academorix\\Transfer\\Contracts\\Data\\XferShardInterface"],
+    "traits": ["HasUlids", "BelongsToTenant"],
+    "casts": {
+      "status": "Academorix\\Transfer\\Enums\\XferShardStatus",
+      "counters": "Academorix\\Transfer\\Casts\\XferJobCountersCast",
+      "attempt": "integer",
+      "index": "integer",
+      "offset": "integer",
+      "limit": "integer",
+      "started_at": "immutable_datetime",
+      "finished_at": "immutable_datetime"
+    },
+    "hidden": [],
+    "guarded": ["id", "xfer_job_id", "tenant_id"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "description": "Child table of xfer_jobs. Cascade-deletes with the parent. Compact rows \u2014 the row itself is the shard's ledger.",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `xshd_<26 chars>`."
+      },
+      "xfer_job_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "xfer_jobs",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "Parent job."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "Denormalised for scan predicates and tenant-scope enforcement."
+      },
+      "index": {
+        "type": "integer",
+        "nullable": false,
+        "description": "1-based shard index within the job."
+      },
+      "sheet_name": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Non-null for workbook shards. The sheet name inside the Excel file this shard represents."
+      },
+      "offset": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Row offset within the source file. Null for exports (shards partition the query, not the file)."
+      },
+      "limit": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Row count in this shard. Null for exports; the export chunk owns its own count."
+      },
+      "status": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'queued'",
+        "description": "Enum: queued / running / succeeded / failed / cancelled."
+      },
+      "counters": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{\"total\":0,\"created\":0,\"updated\":0,\"skipped\":0,\"failed\":0,\"deleted\":0}'",
+        "description": "Same shape as XferJob.counters. Aggregated into the parent on shard completion."
+      },
+      "attempt": {
+        "type": "integer",
+        "nullable": false,
+        "default": "1",
+        "description": "Retry counter. Incremented on `retry-shard` endpoint or automatic retry."
+      },
+      "started_at": { "type": "timestamptz", "nullable": true },
+      "finished_at": { "type": "timestamptz", "nullable": true },
+      "error_message": { "type": "text", "nullable": true },
+      "error_code": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["xfer_job_id", "index"],
+        "unique": true,
+        "name": "xfer_shards_job_index_uniq_idx"
+      },
+      {
+        "columns": ["xfer_job_id", "status"],
+        "unique": false,
+        "name": "xfer_shards_job_status_idx",
+        "description": "Coordinator aggregate + retry scans."
+      },
+      {
+        "columns": ["status", "started_at"],
+        "unique": false,
+        "name": "xfer_shards_status_time_idx",
+        "description": "Stalled-shard health probe."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "xfer_job_id",
+    "index",
+    "status",
+    "counters",
+    "attempt",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^xshd_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "xfer_job_id": { "type": "string", "pattern": "^xfer_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "index": { "type": "integer", "minimum": 1 },
+    "sheet_name": { "type": ["string", "null"], "maxLength": 128 },
+    "offset": { "type": ["integer", "null"], "minimum": 0 },
+    "limit": { "type": ["integer", "null"], "minimum": 0 },
+    "status": {
+      "type": "string",
+      "enum": ["queued", "running", "succeeded", "failed", "cancelled"]
+    },
+    "counters": {
+      "type": "object",
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "created": { "type": "integer", "minimum": 0 },
+        "updated": { "type": "integer", "minimum": 0 },
+        "skipped": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "deleted": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false,
+      "required": ["total", "created", "updated", "skipped", "failed", "deleted"]
+    },
+    "attempt": { "type": "integer", "minimum": 1 },
+    "started_at": { "type": ["string", "null"], "format": "date-time" },
+    "finished_at": { "type": ["string", "null"], "format": "date-time" },
+    "error_message": { "type": ["string", "null"] },
+    "error_code": { "type": ["string", "null"], "maxLength": 64 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": [],
+    "computed": [
+      {
+        "name": "is_terminal",
+        "expression": "in_array(status, ['succeeded', 'failed', 'cancelled'], true)"
+      },
+      {
+        "name": "duration_seconds",
+        "expression": "started_at && finished_at ? (finished_at - started_at) : null"
+      }
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "id": "academorix://modules/subscription/listeners",
+  "$version": 1,
+  "title": "subscription \u2014 subscribed events",
+  "listeners": [
+    {
+      "event": "webhook::InboundWebhookReceived",
+      "listener": "Academorix\\Subscription\\Listeners\\IngestCashierWebhookListener",
+      "queue": "notifications-critical",
+      "filter": "event.namespace === 'subscription'",
+      "purpose": "Dispatches SyncFromCashierWebhookJob. Handles stripe + paddle providers. Idempotent via provider_event_id."
+    },
+    {
+      "event": "tenancy::TenantProvisioned",
+      "listener": "Academorix\\Subscription\\Listeners\\SeedInitialSubscription",
+      "queue": "notifications",
+      "purpose": "On tenant creation, create a free-tier Subscription (or trial-tier if tenancy::event.metadata.trial=true)."
+    },
+    {
+      "event": "tenancy::TenantErased",
+      "listener": "Academorix\\Subscription\\Listeners\\CancelSubscriptionForErasedTenant",
+      "queue": "notifications",
+      "purpose": "GDPR Art. 17. Cancels subscription at Cashier (best-effort) + soft-deletes local rows. Retains SubscriptionEvent for SOX."
+    },
+    {
+      "event": "subscription::SubscriptionSuspended",
+      "listener": "Academorix\\Subscription\\Listeners\\NotifyTenantOwner",
+      "queue": "notifications-critical",
+      "purpose": "Sends escalation email to tenant owner + billing contact when tenant suspended for non-payment."
+    }
+  ]
+}

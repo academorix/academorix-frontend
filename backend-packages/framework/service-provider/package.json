@@ -1,0 +1,13 @@
+{
+  "name": "@academorix/service-provider",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Turborepo shim for the PHP `academorix/service-provider` package. Ships attribute-driven module service provider machinery — declarative resource loading, olvlvl-cached discovery, lifecycle hooks. NOTE: composer install is exposed as `install:composer` — never plain `install` — so pnpm's lifecycle does not run it during a root `pnpm install`.",
+  "scripts": {
+    "install:composer": "composer install --no-interaction --prefer-dist",
+    "lint": "../../apps/ai-service/vendor/bin/pint --test --config=../../config/pint.json src",
+    "lint:fix": "../../apps/ai-service/vendor/bin/pint --config=../../config/pint.json src",
+    "analyse": "../../apps/ai-service/vendor/bin/phpstan analyse -c ../../config/phpstan-base.neon src",
+    "test": "./vendor/bin/pest"
+  }
+}

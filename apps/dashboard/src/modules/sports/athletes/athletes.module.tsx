@@ -7,7 +7,7 @@
  * `athletes`; tenants may display it as "Students"/"Members" via terminology.
  */
 
-import { AcademicCapIcon } from "@academorix/ui/icons/outline";
+import { AcademicCapIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

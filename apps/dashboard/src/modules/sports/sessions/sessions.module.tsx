@@ -12,7 +12,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §13.4 "Private Sessions"
  */
 
-import { ClockIcon } from "@academorix/ui/icons/outline";
+import { ClockIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

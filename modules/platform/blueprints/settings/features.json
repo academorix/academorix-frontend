@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/settings/features",
+  "$version": 1,
+  "title": "settings \u2014 feature keys",
+  "features": [
+    {
+      "key": "settings.platform",
+      "displayName": "Settings platform",
+      "description": "Attribute-driven settings surface. Always on \u2014 platform infrastructure.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "enterprise"]
+    },
+    {
+      "key": "settings.user_scope",
+      "displayName": "User-scope settings",
+      "description": "Users may override tenant settings for themselves (where AsSetting.scope=user).",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "enterprise"]
+    },
+    {
+      "key": "settings.export_import",
+      "displayName": "Settings export / import",
+      "description": "Backup + restore workflows.",
+      "defaultEnabled": false,
+      "planTiers": ["team", "enterprise"]
+    },
+    {
+      "key": "settings.encrypt_sensitive_at_rest",
+      "displayName": "KMS encryption for sensitive fields",
+      "description": "Additional KMS layer on top of app-level masking.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
+}

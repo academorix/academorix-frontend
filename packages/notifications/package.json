@@ -1,47 +1,158 @@
 {
-  "name": "@academorix/notifications",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
+  "name": "@stackra/notifications",
+  "version": "0.1.0",
+  "description": "Enterprise multi-channel notification orchestrator for the Stackra framework — Web Push subscription management, an in-app notification centre backed by @stackra/storage, Expo native push token handling, permission management, analytics event fan-out, HeroUI-based permission prompt + list + badge components, and a full testing subpath with in-memory mocks.",
   "license": "MIT",
-  "description": "Notification primitives for the Academorix workspace: backend-shaped Notification DTO, preferences model with quiet-hours + mandatory-push allowlist, in-app / web-push / native-OS delivery surfaces, service-worker push handlers, and typed React hooks (useNotifications, usePushSubscription). Composes on top of @academorix/http + @academorix/realtime.",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "author": {
+    "name": "Stackra L.L.C",
+    "email": "dev@stackra.com",
+    "url": "https://stackra.com"
+  },
+  "keywords": [
+    "stackra",
+    "notifications",
+    "web-push",
+    "push-notifications",
+    "in-app-notifications",
+    "notification-centre",
+    "expo-notifications",
+    "vapid",
+    "service-worker",
+    "react",
+    "react-native"
+  ],
+  "homepage": "https://github.com/stackra-inc/core/tree/main/notifications#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stackra-inc/core.git",
+    "directory": "notifications"
+  },
+  "bugs": {
+    "url": "https://github.com/stackra-inc/core/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./context": "./src/context/index.ts",
-    "./hooks": "./src/hooks/index.ts",
-    "./push": "./src/push/index.ts",
-    "./preferences": "./src/preferences/index.ts",
-    "./service-worker": "./src/service-worker/index.ts",
-    "./types": "./src/types/index.ts",
-    "./package.json": "./package.json"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./push": {
+      "types": "./dist/push.d.ts",
+      "import": "./dist/push.mjs",
+      "require": "./dist/push.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.mjs",
+      "require": "./dist/react.js"
+    },
+    "./native": {
+      "types": "./dist/native.d.ts",
+      "import": "./dist/native.mjs",
+      "require": "./dist/native.js"
+    },
+    "./testing": {
+      "types": "./dist/testing.d.ts",
+      "import": "./dist/testing.mjs",
+      "require": "./dist/testing.js"
+    }
   },
+  "files": [
+    "config",
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run",
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rimraf dist .turbo",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "clean": "rm -rf .turbo coverage"
-  },
-  "dependencies": {
-    "@academorix/core": "workspace:*",
-    "@academorix/http": "workspace:*",
-    "@academorix/realtime": "workspace:*"
+    "test:coverage": "vitest run --coverage --passWithNoTests"
   },
   "peerDependencies": {
-    "react": ">=19"
+    "@heroicons/react": ">=2",
+    "@stackra/analytics": "workspace:^",
+    "@stackra/container": "workspace:^",
+    "@stackra/contracts": "workspace:^",
+    "@stackra/logger": "workspace:^",
+    "@stackra/network": "workspace:^",
+    "@stackra/storage": "workspace:^",
+    "@stackra/support": "workspace:^",
+    "@stackra/testing": "workspace:^",
+    "@stackra/ui": "workspace:^",
+    "expo-notifications": "*",
+    "react": "*",
+    "react-native": "*",
+    "reflect-metadata": "*"
+  },
+  "peerDependenciesMeta": {
+    "@heroicons/react": {
+      "optional": true
+    },
+    "@stackra/analytics": {
+      "optional": true
+    },
+    "@stackra/logger": {
+      "optional": true
+    },
+    "@stackra/network": {
+      "optional": true
+    },
+    "@stackra/storage": {
+      "optional": true
+    },
+    "@stackra/testing": {
+      "optional": true
+    },
+    "@stackra/ui": {
+      "optional": true
+    },
+    "expo-notifications": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
   },
   "devDependencies": {
-    "@academorix/eslint-config": "workspace:*",
-    "@academorix/typescript-config": "workspace:*",
-    "@testing-library/jest-dom": "catalog:",
+    "@heroicons/react": "catalog:",
+    "@stackra/analytics": "workspace:*",
+    "@stackra/container": "workspace:*",
+    "@stackra/contracts": "workspace:*",
+    "@stackra/logger": "workspace:*",
+    "@stackra/network": "workspace:*",
+    "@stackra/storage": "workspace:*",
+    "@stackra/support": "workspace:*",
+    "@stackra/testing": "workspace:*",
+    "@stackra/ui": "workspace:*",
     "@testing-library/react": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "eslint": "catalog:",
+    "@types/react-dom": "catalog:",
     "jsdom": "catalog:",
     "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "reflect-metadata": "catalog:",
+    "rimraf": "catalog:",
+    "tsup": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

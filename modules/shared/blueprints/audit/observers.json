@@ -1,0 +1,19 @@
+{
+  "id": "academorix://modules/audit/observers",
+  "$version": 1,
+  "title": "audit \u2014 Eloquent observers",
+  "description": "owen-it handles the actual model observation via its Auditable trait. Our observer is on the Audit model itself \u2014 KMS encrypt + hash chain + event fan-out.",
+  "observers": [
+    {
+      "model": "Audit",
+      "observer": "Academorix\\Audit\\Observers\\AuditObserver",
+      "handles": [
+        "creating \u2192 resolve tenant_id from TenancyResolver if not set + populate ULID prefix `aud_`",
+        "creating \u2192 for each key in $auditEncrypted on the auditable model, KMS-encrypt old_values[key] + new_values[key] via EncryptedAuditValueCast + set is_encrypted=true",
+        "creating \u2192 truncate ip_address to /24 subnet (GDPR)",
+        "creating \u2192 if audit.tamper_evident_chain feature on for the tenant: look up latest audit row for tenant \u2192 set previous_hash = that row's row_hash \u2192 compute row_hash = SHA-256(canonical serialisation of this row) \u2192 write both",
+        "created \u2192 fire AuditRecorded (afterCommit)"
+      ]
+    }
+  ]
+}

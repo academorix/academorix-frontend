@@ -1,0 +1,14 @@
+{
+  "id": "academorix://modules/newsletter/subprocessors",
+  "$version": 1,
+  "title": "newsletter \u2014 subprocessors",
+  "description": "This module has NO new subprocessors. Actual dispatch flows through notifications-mail; refer there for provider-side subprocessors (Mailgun / SendGrid / SES / Postmark / Resend).",
+  "regulatoryBasis": ["gdpr Art. 28"],
+  "subprocessors": [],
+  "delegated": {
+    "email_delivery": {
+      "reference": "modules/notifications-mail/subprocessors.json",
+      "note": "Every newsletter dispatch flows through notifications-mail's provider stack."
+    }
+  }
+}

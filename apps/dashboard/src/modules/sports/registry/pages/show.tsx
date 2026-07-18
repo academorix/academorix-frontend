@@ -7,7 +7,7 @@
  * terminology map (which drives per-sport labels across the app).
  */
 
-import { Card, Chip, Spinner } from "@academorix/ui/react";
+import { Card, Chip, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 
 import type { Sport } from "@/types";

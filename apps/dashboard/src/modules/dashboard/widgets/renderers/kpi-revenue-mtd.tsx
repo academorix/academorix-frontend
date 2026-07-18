@@ -9,8 +9,8 @@
  * Phase 1 we compute it in-browser off the mock fixtures.
  */
 
-import { BanknotesIcon } from "@academorix/ui/icons/outline";
-import { KPI, Skeleton } from "@academorix/ui/react";
+import { BanknotesIcon } from "@stackra/ui/icons/heroicon/outline";
+import { KPI, Skeleton } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 
 import type { BaseRecord } from "@refinedev/core";

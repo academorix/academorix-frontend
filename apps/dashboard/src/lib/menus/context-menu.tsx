@@ -66,7 +66,7 @@
  * (React Query cache warming up mid-open).
  */
 
-import { Header, Menu, MenuItem, MenuSection, Popover, Separator } from "@academorix/ui/react";
+import { Header, Menu, MenuItem, MenuSection, Popover, Separator } from "@stackra/ui/react";
 import { Fragment, useMemo, useRef } from "react";
 
 import type { MenuCategory, MenuCommand, MenuContext, ShortcutOs } from "@/lib/menus/command.types";

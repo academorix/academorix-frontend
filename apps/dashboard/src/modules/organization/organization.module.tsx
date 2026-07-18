@@ -11,7 +11,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §10.4 "Organization"
  */
 
-import { BuildingOffice2Icon } from "@academorix/ui/icons/outline";
+import { BuildingOffice2Icon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

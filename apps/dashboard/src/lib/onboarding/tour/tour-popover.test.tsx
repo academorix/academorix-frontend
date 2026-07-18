@@ -16,7 +16,7 @@
  */
 
 import { act, render, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router";
+import { RoutingTestFrame } from "@stackra/routing/testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { ReactNode } from "react";
@@ -34,10 +34,14 @@ vi.mock("@/lib/i18n", () => ({
 }));
 
 function Wrapper({ children }: { children: ReactNode }): ReactNode {
+  // `<RoutingTestFrame>` provides the Stackra + react-router
+  // contexts the tour tree depends on. Replaces the previous raw
+  // `<MemoryRouter>` (which left the Stackra context unmounted and
+  // made every `useNavigate()` call throw).
   return (
-    <MemoryRouter initialEntries={["/dashboard"]}>
+    <RoutingTestFrame initialEntries={["/dashboard"]}>
       <TourProvider>{children}</TourProvider>
-    </MemoryRouter>
+    </RoutingTestFrame>
   );
 }
 

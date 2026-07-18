@@ -9,7 +9,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §14.7 "Awards & Certificates"
  */
 
-import { StarIcon } from "@academorix/ui/icons/outline";
+import { StarIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

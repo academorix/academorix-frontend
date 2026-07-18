@@ -14,8 +14,8 @@
  * isolation.
  */
 
-import { ArrowLeftIcon, ArrowRightIcon } from "@academorix/ui/icons/outline";
-import { Button } from "@academorix/ui/react";
+import { ArrowLeftIcon, ArrowRightIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button } from "@stackra/ui/react";
 
 import type { CalendarView } from "@/components/calendar/calendar.types";
 import type { ReactNode } from "react";
@@ -184,13 +184,7 @@ export function CalendarToolbar({
         <Button aria-label="Today" size="sm" variant="secondary" onPress={onToday}>
           Today
         </Button>
-        <Button
-          isIconOnly
-          aria-label={`Next ${view}`}
-          size="sm"
-          variant="ghost"
-          onPress={onNext}
-        >
+        <Button isIconOnly aria-label={`Next ${view}`} size="sm" variant="ghost" onPress={onNext}>
           <ArrowRightIcon aria-hidden="true" className="size-4" />
         </Button>
 
@@ -198,7 +192,7 @@ export function CalendarToolbar({
             the digits change. */}
         <span
           aria-live="polite"
-          className="ml-2 hidden text-sm font-medium tabular-nums text-foreground sm:inline"
+          className="ml-2 hidden text-sm font-medium text-foreground tabular-nums sm:inline"
         >
           {formatPeriodLabel(currentDate, view)}
         </span>

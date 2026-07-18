@@ -1,0 +1,61 @@
+{
+  "name": "academorix/authorization",
+  "type": "library",
+  "description": "Attribute-driven controller authorization layer. Ships #[RequirePermission], #[RequireAnyPermission], #[RequireRole], #[RequireAnyRole], and #[AllowGuest] — enforced by a reflection-cached middleware that fails 401/403 BEFORE the controller body runs. Zero models, zero migrations, zero coupling to a specific permission backend — every domain package can require this without dragging spatie/laravel-permission's tables in. The heavier `packages/access` builds on top with roles + permissions + admin controllers.",
+  "license": "proprietary",
+  "keywords": [
+    "academorix",
+    "laravel",
+    "authorization",
+    "attributes",
+    "permissions",
+    "roles"
+  ],
+  "require": {
+    "php": "^8.3",
+    "academorix/exceptions": "@dev",
+    "academorix/foundation": "@dev",
+    "academorix/service-provider": "@dev",
+    "academorix/support": "@dev",
+    "illuminate/auth": "^13.0",
+    "illuminate/contracts": "^13.0",
+    "illuminate/http": "^13.0",
+    "illuminate/routing": "^13.0",
+    "illuminate/support": "^13.0"
+  },
+  "require-dev": {
+    "mockery/mockery": "^1.6",
+    "orchestra/testbench": "^11.0",
+    "pestphp/pest": "^4.0",
+    "phpstan/phpstan": "^2.0"
+  },
+  "suggest": {
+    "academorix/database": "Required by SeedsPermissionEnum \u2014 provides the underlying Enumable trait.",
+    "spatie/laravel-permission": "Required by SeedsPermissionEnum \u2014 the permissions-table schema this trait writes to. Only needed by modules that project a PermissionEnum into the DB."
+  },
+  "autoload": {
+    "psr-4": {
+      "Academorix\\Authorization\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Academorix\\Authorization\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Academorix\\Authorization\\Providers\\AuthorizationServiceProvider"
+      ]
+    }
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

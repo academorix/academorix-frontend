@@ -7,7 +7,7 @@
  * `useListButton` (hidden/disabled reflect the `accessControlProvider`).
  */
 
-import { ListBulletIcon } from "@academorix/ui/icons/outline";
+import { ListBulletIcon } from "@stackra/ui/icons/heroicon/outline";
 import { useListButton } from "@refinedev/core";
 
 import type { ResourceActionButtonProps } from "@/components/refine/buttons/nav-button";

@@ -1,0 +1,171 @@
+{
+  "id": "academorix://modules/compliance/traits",
+  "$version": 1,
+  "title": "compliance — trait composition",
+  "description": "Four owned traits mixed into downstream models. `HasConsent` gives a model consent-tracking helpers keyed on its own identity. `IsRetentionAware` is a marker so the retention runner picks the model up. `HasLegalHold` gives freeze-check helpers. `IsDsarContributor` is a marker composed on models participating in DSAR collection. None wraps a vendor package — compliance is a first-party module.",
+  "owned": [
+    {
+      "trait": "Academorix\\Compliance\\Concerns\\HasConsent",
+      "description": "Mixed into any Eloquent model that represents a consent subject (User, Guardian, TenantContact, future subjects). Adds runtime helpers: `->consents()` (all ConsentRecord rows for this subject), `->consentFor(string $category)` (latest decision), `->grantConsent(string $category, array $meta = [])`, `->withdrawConsent(string $category)`, `->hasActiveConsent(string $category): bool` (delegates to ConsentGate; cached). Boot hook wires the subject_id column to the trait-composing model's primary key.",
+      "public": true,
+      "usedBy": [
+        "future consumers (user::User, tenancy::TenantContact, sports::AthleteGuardian, ...)"
+      ],
+      "conflicts_with": [],
+      "columns_added": [],
+      "note": "Trait adds NO columns to the composing model \u2014 subject identity is the model's own primary key. The relationship lands on ConsentRecord.subject_type + ConsentRecord.subject_id."
+    },
+    {
+      "trait": "Academorix\\Compliance\\Concerns\\IsRetentionAware",
+      "description": "Marker + minimal helper trait for models participating in the retention runner. The RetentionRunner uses `retention.json` for the model's canonical window; this trait's runtime is a single accessor `->retentionEffective(): RetentionOutcome` returning the resolved window after LegalHold + tenant override checks. Composed by every model that lives past its expected purge (Files, ActivityLog entries, TransferArtifacts, etc.) so the runner has one API surface.",
+      "public": true,
+      "usedBy": ["storage::File (planned)", "activity::ActivityLog (planned)", "audit::AuditLog"],
+      "conflicts_with": [],
+      "columns_added": []
+    },
+    {
+      "trait": "Academorix\\Compliance\\Concerns\\HasLegalHold",
+      "description": "Mixed into models that can be frozen from purges. Adds `->isLegallyHeld(): bool` and a global query scope `withoutLegallyHeld()`. The trait registers the model against `LegalHoldGate` at boot so the gate can enumerate held rows across every model class from one seam. Composed alongside `IsRetentionAware` on models whose purges must respect litigation freezes.",
+      "public": true,
+      "usedBy": ["storage::File (planned)", "activity::ActivityLog (planned)", "audit::AuditLog"],
+      "conflicts_with": [],
+      "columns_added": [],
+      "note": "The hold data lives entirely in the compliance::LegalHold table \u2014 the trait never adds a `hold_id` column to the composing model. `isLegallyHeld()` is a query against LegalHold with the composing model's identity + tenant_id."
+    },
+    {
+      "trait": "Academorix\\Compliance\\Concerns\\IsDsarContributor",
+      "description": "Marker trait composed on models that contribute to DSAR bundles. Complements the `#[DsarExportable]` / `#[DsarErasable]` class attributes \u2014 the attributes carry the CONFIGURATION (which column is the subject, what to include / exclude, erasure strategy); the trait provides the RUNTIME hooks (`->dsarExportRow(SubjectId $s): array`, `->dsarErase(SubjectId $s): void`). Downstream modules override the trait hooks when their contribution needs custom shape (e.g. streaming rows for large exports).",
+      "public": true,
+      "usedBy": ["future consumers via #[DsarExportable] / #[DsarErasable]"],
+      "conflicts_with": [],
+      "columns_added": []
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "Dsar, LegalHold, Subprocessor, SafeguardingIncident. NOT ConsentRecord (immutable) or RetentionRun (audit-only, hard-purge)."
+      }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasAuditable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" }
+    ],
+    "tenants": [
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Every entity except platform-default ConsentCategory rows + platform-default Subprocessor rows carries tenant_id."
+      }
+    ],
+    "activity": [
+      {
+        "trait": "Academorix\\Activity\\Concerns\\HasActivityLog",
+        "consumed_by": "Dsar, SafeguardingIncident, LegalHold. NOT ConsentRecord (audit target already via HasAuditable; adding activity would double-log every consent change into the tenant feed \u2014 too noisy)."
+      }
+    ]
+  },
+  "composition": {
+    "consent_category": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasSystemFlag",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAuditable",
+        "Filterable"
+      ],
+      "notes": "NO BelongsToTenant \u2014 platform-default rows carry tenant_id=NULL; tenant overrides carry a tenant_id. Global scope resolution merges the two sets. NO SoftDeletes \u2014 categories are HardDelete only (deleting a category with active ConsentRecords refused by observer). NO HasActivityLog."
+    },
+    "consent_record": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAuditable",
+        "Filterable"
+      ],
+      "notes": "NO SoftDeletes \u2014 consent records are IMMUTABLE. NO HasActivityLog (see consumed.activity above). Withdrawal writes a new row rather than mutating; the ConsentRecordObserver refuses UPDATE on all fields except `metadata` (append-only)."
+    },
+    "dsar": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAuditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "SoftDeletes so a cancelled DSAR can be inspected in retro before hard-purge. HasActivityLog puts the tenant-facing lifecycle transitions in the activity feed for the requester's own visibility."
+    },
+    "dsar_artefact": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "SoftDeletes cascades from parent Dsar. NO HasAuditable (parent Dsar carries the compliance audit trail; artefact deltas would double-log). NO HasActivityLog."
+    },
+    "legal_hold": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAuditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "Full audit-material trait stack. SoftDeletes so released holds can be inspected during litigation retros. HasActivityLog for platform-admin visibility."
+    },
+    "retention_run": {
+      "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "Filterable"],
+      "notes": "High-volume table (one row per tenant per sweep). NO SoftDeletes / HasUserstamps / HasActivityLog / HasAuditable. Hard-purged after 365 days (see retention.json)."
+    },
+    "subprocessor": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasSystemFlag",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAuditable",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "NO BelongsToTenant \u2014 subprocessors are a PLATFORM-LEVEL registry (tenant_id=NULL always). Full audit trail because every change is a DPA amendment. Versioning handled by an internal `version` integer + a SubprocessorVersion snapshot table (not exposed as a separate module entity; managed within Subprocessor observers)."
+    },
+    "safeguarding_incident": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAuditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "Every touch is audit-material. HasActivityLog puts state transitions in the tenant safeguarding officer's feed. SoftDeletes lets a closed_no_action row be re-opened when new information surfaces."
+    }
+  }
+}

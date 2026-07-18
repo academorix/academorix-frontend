@@ -9,7 +9,7 @@
  * headers, and preview banners share one visual language.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 
 import type { DocumentScanStatus } from "@/modules/documents/documents.types";
 import type { ReactNode } from "react";

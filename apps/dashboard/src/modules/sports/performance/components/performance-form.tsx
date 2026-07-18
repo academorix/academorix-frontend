@@ -11,7 +11,7 @@
  * resource so the form works under both the mock and REST providers.
  */
 
-import { Button, Card, Form, Input, Label, ListBox, Select, TextField } from "@academorix/ui/react";
+import { Button, Card, Form, Input, Label, ListBox, Select, TextField } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 import { useEffect, useRef, useState } from "react";
 

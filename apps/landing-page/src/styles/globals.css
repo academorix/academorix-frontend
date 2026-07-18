@@ -4,7 +4,7 @@
  * Style graph:
  *   1. Tailwind v4 core
  *   2. HeroUI OSS core styles (@heroui/styles)
- *   3. @academorix/ui/react/styles — bundles @heroui-pro/react/css + our
+ *   3. @stackra/ui/react/styles — bundles @heroui-pro/react/css + our
  *      controllers.css (cursor conventions) + rtl.css (Arabic layout)
  *   4. @heroui-pro/react/themes/glass — the HeroUI Pro Glass theme
  *      variant. Ships two modes (glass-light / glass-dark) scoped
@@ -22,7 +22,7 @@
 
 @import "tailwindcss";
 @import "@heroui/styles";
-@import "@academorix/ui/react/styles";
+@import "@stackra/ui/react/styles";
 @import "@heroui-pro/react/themes/glass";
 
 @source "../../../../packages/ui/src/**/*.{ts,tsx}";

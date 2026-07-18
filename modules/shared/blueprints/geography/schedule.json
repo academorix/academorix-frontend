@@ -1,0 +1,28 @@
+{
+  "id": "academorix://modules/geography/schedule",
+  "$version": 1,
+  "title": "geography \u2014 scheduled tasks",
+  "entries": [
+    {
+      "name": "geography-refresh-maxmind",
+      "command": "geography:refresh-maxmind",
+      "cron": "0 3 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 03:00 UTC: download the latest GeoLite2-City.mmdb. Skipped when MAXMIND_LICENSE_KEY absent or config('geography.schedule.refresh_maxmind_weekly')=false."
+    },
+    {
+      "name": "geography-warm-cache",
+      "command": "geography:warm-cache",
+      "cron": "20 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly at :20: pre-populate top-N reference-catalog cache entries."
+    },
+    {
+      "name": "geography-reconcile-vendor",
+      "command": "geography:reconcile-vendor --dry-run",
+      "cron": "0 5 * * 1",
+      "timezone": "UTC",
+      "purpose": "Monday 05:00 UTC: dry-run reconciliation check between our DB rows + vendor seeder to surface drift after upstream vendor updates."
+    }
+  ]
+}

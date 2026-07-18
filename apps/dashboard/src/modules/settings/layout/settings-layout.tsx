@@ -21,6 +21,13 @@ import { SettingsSidebar } from "@/modules/settings/layout/settings-sidebar";
 export interface SettingsLayoutProps {
   /** The section content — usually a `<SectionContainer>`-flavoured page. */
   children: ReactNode;
+  /**
+   * Current router pathname — passed through so the sidebar's active
+   * highlight tracks the routed section without pulling `useLocation`
+   * inside the sidebar. Optional; when omitted the sidebar falls
+   * back to `window.location.pathname` on the client side.
+   */
+  pathname?: string;
 }
 
 /**

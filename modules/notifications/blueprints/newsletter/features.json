@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/newsletter/features",
+  "$version": 1,
+  "title": "newsletter \u2014 feature keys",
+  "features": [
+    {
+      "key": "newsletter.enabled",
+      "displayName": "Newsletter",
+      "description": "Editorial newsletter platform. Master toggle.",
+      "defaultEnabled": false,
+      "planTiers": ["team", "enterprise"]
+    },
+    {
+      "key": "newsletter.audience_segments",
+      "displayName": "Audience segments",
+      "description": "Query-builder-based segmentation. Team + enterprise.",
+      "defaultEnabled": true,
+      "planTiers": ["team", "enterprise"]
+    },
+    {
+      "key": "newsletter.public_signup_form",
+      "displayName": "Public sign-up form",
+      "description": "Anonymous double-opt-in form for embedding on public sites.",
+      "defaultEnabled": true,
+      "planTiers": ["team", "enterprise"]
+    },
+    {
+      "key": "newsletter.import_export",
+      "displayName": "Subscriber import / export",
+      "description": "Bulk CSV workflows with consent evidence.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "newsletter.reputation_monitoring",
+      "displayName": "Reputation monitoring",
+      "description": "Open / click / bounce / complaint threshold tracking with auto-throttle.",
+      "defaultEnabled": true,
+      "planTiers": ["team", "enterprise"]
+    }
+  ]
+}

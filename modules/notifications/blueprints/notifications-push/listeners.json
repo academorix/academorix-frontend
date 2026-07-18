@@ -1,0 +1,49 @@
+{
+  "id": "academorix://modules/notifications-push/listeners",
+  "$version": 1,
+  "title": "notifications-push \u2014 subscribed events",
+  "listeners": [
+    {
+      "event": "notifications::NotificationDispatched",
+      "listener": "Academorix\\Notifications\\Push\\Listeners\\HandlePushDispatch",
+      "queue": "notifications",
+      "filter": "event.channels_requested contains 'push'",
+      "purpose": "Dispatches SendPushJob."
+    },
+    {
+      "event": "webhook::InboundWebhookReceived",
+      "listener": "Academorix\\Notifications\\Push\\Listeners\\IngestPushProviderWebhookListener",
+      "queue": "notifications-webhooks",
+      "filter": "event.namespace === 'notifications-push'",
+      "purpose": "Dispatches IngestPushProviderWebhookJob. Provider (fcm / apns / onesignal) determined via event.provider."
+    },
+    {
+      "event": "notifications-push::PushInvalidToken",
+      "listener": "Academorix\\Notifications\\Push\\Listeners\\ExpireSubscriptionListener",
+      "queue": "notifications",
+      "purpose": "Marks the subscription is_active=false + fires PushSubscriptionExpired with reason=invalid_token."
+    },
+    {
+      "event": "user::UserErased",
+      "listener": "Academorix\\Notifications\\Push\\Listeners\\PurgeSubscriptionsForErasedUser",
+      "queue": "notifications",
+      "purpose": "GDPR Art. 17 erasure \u2014 hard-delete every PushSubscription for the user. Cascade FK handles the row delete; this listener does the audit."
+    },
+    {
+      "event": "notifications-push::PushSubscriptionRegistered",
+      "listener": "Academorix\\Notifications\\Push\\Listeners\\WarmSubscriptionCache",
+      "queue": null,
+      "purpose": "Sync cache invalidation \u2014 first dispatch after register sees the fresh subscription."
+    },
+    {
+      "event": "notifications-push::PushSubscriptionExpired",
+      "listener": "Academorix\\Notifications\\Push\\Listeners\\InvalidateSubscriptionCache",
+      "queue": null
+    },
+    {
+      "event": "notifications-push::PushSubscriptionRevoked",
+      "listener": "Academorix\\Notifications\\Push\\Listeners\\InvalidateSubscriptionCache",
+      "queue": null
+    }
+  ]
+}

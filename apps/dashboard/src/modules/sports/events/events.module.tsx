@@ -10,7 +10,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §13.1 "Events, Invitations & RSVP"
  */
 
-import { CalendarIcon } from "@academorix/ui/icons/outline";
+import { CalendarIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

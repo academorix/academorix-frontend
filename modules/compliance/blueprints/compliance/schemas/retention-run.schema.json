@@ -1,0 +1,228 @@
+{
+  "id": "academorix://modules/compliance/schemas/retention-run",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "RetentionRun",
+  "description": "Audit trail of every retention sweep. One row per (tenant, sweep). Populated by the nightly RetentionSweepJob (schedule=nightly) or by a platform-admin manual dispatch. High-volume; 365-day hard-purge retention. Never soft-deleted \u2014 audit purity requires immutable append + hard-purge on age.",
+  "type": "object",
+  "x-module": "compliance",
+  "x-eloquent": {
+    "table": "retention_runs",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "rtr_",
+    "incrementing": false,
+    "model": "Academorix\\Compliance\\Models\\RetentionRun",
+    "interface": "Academorix\\Compliance\\Contracts\\Data\\RetentionRunInterface",
+    "implements": ["Academorix\\Compliance\\Contracts\\Data\\RetentionRunInterface"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "Filterable"],
+    "casts": {
+      "triggered_by": "string",
+      "started_at": "datetime",
+      "completed_at": "datetime",
+      "error_summary": "array",
+      "modules_processed": "array",
+      "metadata": "array"
+    },
+    "appends": ["outcome_totals"],
+    "observers": ["RetentionRunObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true, "description": "`rtr_<26>`" },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" },
+        "description": "NULL for platform-level sweeps (over platform-owned entities like Subprocessor version history)."
+      },
+      "triggered_by": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'schedule'",
+        "description": "Enum: schedule / manual / cascade. `cascade` fires when tenant-erasure drives an immediate sweep independent of the nightly cron."
+      },
+      "triggered_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" },
+        "description": "Populated when triggered_by=manual."
+      },
+      "started_at": { "type": "timestamptz", "nullable": false },
+      "completed_at": { "type": "timestamptz", "nullable": true },
+      "duration_ms": { "type": "integer", "nullable": true },
+      "scanned_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Rows the runner enumerated across every module's retention.json declarations."
+      },
+      "purged_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Rows hard-deleted."
+      },
+      "anonymized_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Rows whose subject-identifying columns were hashed."
+      },
+      "archived_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Rows soft-deleted (deleted_at set)."
+      },
+      "held_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Rows skipped because of a LegalHold."
+      },
+      "skipped_policy_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Rows skipped because a per-module rule refused (e.g. regulatory_minimum_days not yet met)."
+      },
+      "failed_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Rows the runner attempted to process but errored on. Details in error_summary."
+      },
+      "error_summary": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Array of {module, class, count, sample_error} up to 50 entries."
+      },
+      "modules_processed": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Ordered list of {module, class, retention_json_ref, scanned, purged, anonymized, archived, held, skipped, failed, duration_ms}."
+      },
+      "sweep_config_hash": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "SHA-256 of the compiled retention config at run time (retention.json of every module + tenant overrides). Lets audit tie a run to the exact policy state that governed it."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "started_at"],
+        "unique": false,
+        "name": "retention_runs_tenant_recency_idx"
+      },
+      {
+        "columns": ["triggered_by", "started_at"],
+        "unique": false,
+        "name": "retention_runs_trigger_idx"
+      },
+      {
+        "columns": ["failed_count"],
+        "unique": false,
+        "name": "retention_runs_failed_idx",
+        "predicate": "failed_count > 0",
+        "description": "Partial \u2014 platform-admin dashboard scan for failed sweeps."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "triggered_by",
+    "started_at",
+    "scanned_count",
+    "purged_count",
+    "anonymized_count",
+    "archived_count",
+    "held_count",
+    "skipped_policy_count",
+    "failed_count",
+    "error_summary",
+    "modules_processed",
+    "sweep_config_hash",
+    "created_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^rtr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "triggered_by": { "type": "string", "enum": ["schedule", "manual", "cascade"] },
+    "triggered_by_user_id": { "type": ["string", "null"] },
+    "started_at": { "type": "string", "format": "date-time" },
+    "completed_at": { "type": ["string", "null"], "format": "date-time" },
+    "duration_ms": { "type": ["integer", "null"], "minimum": 0 },
+    "scanned_count": { "type": "integer", "minimum": 0 },
+    "purged_count": { "type": "integer", "minimum": 0 },
+    "anonymized_count": { "type": "integer", "minimum": 0 },
+    "archived_count": { "type": "integer", "minimum": 0 },
+    "held_count": { "type": "integer", "minimum": 0 },
+    "skipped_policy_count": { "type": "integer", "minimum": 0 },
+    "failed_count": { "type": "integer", "minimum": 0 },
+    "error_summary": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "module": { "type": "string" },
+          "class": { "type": "string" },
+          "count": { "type": "integer" },
+          "sample_error": { "type": "string" }
+        }
+      }
+    },
+    "modules_processed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "module": { "type": "string" },
+          "class": { "type": "string" },
+          "scanned": { "type": "integer" },
+          "purged": { "type": "integer" },
+          "anonymized": { "type": "integer" },
+          "archived": { "type": "integer" },
+          "held": { "type": "integer" },
+          "skipped": { "type": "integer" },
+          "failed": { "type": "integer" },
+          "duration_ms": { "type": "integer" }
+        }
+      }
+    },
+    "sweep_config_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "outcome_totals": {
+      "type": "object",
+      "description": "Computed. Sum of every outcome across modules_processed for convenience.",
+      "properties": {
+        "processed": { "type": "integer" },
+        "held": { "type": "integer" },
+        "failed_ratio": { "type": "number" }
+      }
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["sweep_config_hash"],
+    "computed": ["outcome_totals"],
+    "notes": [
+      "sweep_config_hash hidden by default; expose on platform-admin only via ?include=policy_hash for compliance replays."
+    ]
+  }
+}

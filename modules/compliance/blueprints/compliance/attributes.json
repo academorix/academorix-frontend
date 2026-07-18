@@ -1,0 +1,216 @@
+{
+  "id": "academorix://modules/compliance/attributes",
+  "$version": 1,
+  "title": "compliance — PHP attribute contracts",
+  "description": "Five attributes discovered at build time by CompileComplianceRegistries. The compiler maps class + method targets into DsarContributorRegistry + ConsentGate + LegalHoldGate + RetentionPolicyResolver so runtime enforcement is a hash-map lookup, never a reflection call.",
+  "namespace": "Academorix\\Compliance\\Attributes",
+  "attributes": [
+    {
+      "name": "DsarExportable",
+      "class": "Academorix\\Compliance\\Attributes\\DsarExportable",
+      "targets": ["class"],
+      "description": "Declares that the annotated model class contributes rows to a DSAR export bundle. The DsarOrchestrator scans registered classes during Dsar.state=collecting to build the artefact list for a subject.",
+      "params": [
+        {
+          "name": "subject",
+          "type": "string",
+          "required": true,
+          "description": "Column name on the model pointing at the subject id. e.g. `owner_id`, `user_id`, `subject_id`."
+        },
+        {
+          "name": "subject_type",
+          "type": "string",
+          "default": null,
+          "description": "When the subject is polymorphic, the column name for the morph type (paired with `subject`). Null for single-target FKs."
+        },
+        {
+          "name": "include",
+          "type": "array<string>",
+          "default": ["*"],
+          "description": "Column glob to export. `['*']` = all columns. Explicit list = only these columns. Combine with `exclude` when starting from `['*']`."
+        },
+        {
+          "name": "exclude",
+          "type": "array<string>",
+          "default": [],
+          "description": "Columns to redact from the export. Applied after `include`. Sensitive columns like `password_hash`, `remember_token`, `mfa_secret` MUST be excluded."
+        },
+        {
+          "name": "format",
+          "type": "string",
+          "default": "json",
+          "enum": ["json", "csv", "ndjson"],
+          "description": "Wire format for the artefact. `json` = pretty-printed object array. `ndjson` = newline-delimited JSON for large tables. `csv` = flattened rows for spreadsheet consumers."
+        },
+        {
+          "name": "chunk_size",
+          "type": "int",
+          "default": 1000,
+          "description": "Rows per chunk when streaming. The assembler concatenates chunks into the final artefact file."
+        },
+        {
+          "name": "priority",
+          "type": "int",
+          "default": 100,
+          "description": "Assembly order. Lower priority runs first \u2014 useful when downstream artefacts reference upstream ones (e.g. Files export runs after User export so File.owner_id resolves in the same bundle)."
+        }
+      ],
+      "example": "#[DsarExportable(subject: 'owner_id', exclude: ['password_hash', 'mfa_secret', 'remember_token'], format: 'json')]\nfinal class User extends Model { /* ... */ }"
+    },
+    {
+      "name": "DsarErasable",
+      "class": "Academorix\\Compliance\\Attributes\\DsarErasable",
+      "targets": ["class"],
+      "description": "Declares that the annotated model class supports DSAR erasure. Every DsarExportable class should ALSO be DsarErasable unless a compliance-supported retention prevents deletion (e.g. tax receipts under 7-year regulatory retention \u2014 in which case the class is DsarExportable but NOT DsarErasable, and the DSAR request is partially fulfilled with a rejection note for the retained records).",
+      "params": [
+        {
+          "name": "subject",
+          "type": "string",
+          "required": true,
+          "description": "Column name on the model pointing at the subject id."
+        },
+        {
+          "name": "subject_type",
+          "type": "string",
+          "default": null,
+          "description": "Polymorphic morph type column when applicable."
+        },
+        {
+          "name": "strategy",
+          "type": "string",
+          "required": true,
+          "enum": ["hard_delete", "anonymize", "soft_delete"],
+          "description": "Erasure strategy. `hard_delete` = row + relations removed. `anonymize` = subject-identifying columns hashed to a stable pseudonym (email \u2192 sha256, name \u2192 'Erased Subject', profile_photo \u2192 null). `soft_delete` = deleted_at set."
+        },
+        {
+          "name": "retain_shell",
+          "type": "bool",
+          "default": false,
+          "description": "When `strategy=hard_delete`, keep a stub row (id + tenant_id + created_at) for referential-integrity reconciliation. Set true when relations from other tables must survive (e.g. Order.customer_id needs to stay resolvable after Customer erasure for finance)."
+        },
+        {
+          "name": "priority",
+          "type": "int",
+          "default": 100,
+          "description": "Erasure order. Higher priority runs LAST so child rows are erased before parents."
+        },
+        {
+          "name": "on_legal_hold",
+          "type": "string",
+          "default": "refuse",
+          "enum": ["refuse", "skip", "flag"],
+          "description": "Behaviour when the subject has an active LegalHold. `refuse` = the entire DSAR is rejected. `skip` = this contributor is skipped, DSAR proceeds without it, rejection note added. `flag` = artefact created with `held=true`, review-required."
+        }
+      ],
+      "example": "#[DsarErasable(subject: 'owner_id', strategy: 'anonymize', on_legal_hold: 'skip', priority: 200)]\nfinal class Comment extends Model { /* ... */ }"
+    },
+    {
+      "name": "ConsentRequired",
+      "class": "Academorix\\Compliance\\Attributes\\ConsentRequired",
+      "targets": ["class", "method"],
+      "description": "Marks an action / class / job as gated on a specific consent category. Enforced by the ConsentGate facade at method entry OR by the compliance.consent.gate HTTP middleware on routes. Requests / jobs targeting a subject without the required consent get a `ConsentRequiredException` (mapped to HTTP 451 Unavailable For Legal Reasons at the API boundary).",
+      "params": [
+        {
+          "name": "category",
+          "type": "string",
+          "required": true,
+          "description": "Consent category key. Must match a row in `consent_categories`."
+        },
+        {
+          "name": "subject",
+          "type": "string",
+          "default": "recipient",
+          "description": "Argument name (for methods) or property name (for jobs) pointing at the subject id. Defaults to `recipient`."
+        },
+        {
+          "name": "fail_action",
+          "type": "string",
+          "default": "throw",
+          "enum": ["throw", "skip", "log"],
+          "description": "Behaviour on missing consent. `throw` = ConsentRequiredException. `skip` = method returns early (job dispatches null). `log` = proceeds but writes a warning."
+        }
+      ],
+      "example": "#[ConsentRequired(category: 'marketing', subject: 'recipient')]\nfinal class SendMarketingEmailJob { public function handle(User $recipient): void { /* ... */ } }"
+    },
+    {
+      "name": "RetentionPolicy",
+      "class": "Academorix\\Compliance\\Attributes\\RetentionPolicy",
+      "targets": ["class"],
+      "description": "Declares an INLINE retention policy for the annotated model. Overrides the module's own `retention.json` when the retention runner encounters conflicting values (attribute wins for the annotated class only; retention.json wins for every other class in the same module).",
+      "params": [
+        {
+          "name": "hot_days",
+          "type": "int",
+          "default": null,
+          "description": "Days a non-soft-deleted row stays in the hot table. Null = indefinite."
+        },
+        {
+          "name": "warm_days",
+          "type": "int",
+          "default": null,
+          "description": "Days a soft-deleted row stays before hard-purge. Null = inherit runner default (30 days)."
+        },
+        {
+          "name": "cold_days",
+          "type": "int",
+          "default": null,
+          "description": "Days an archived_at-flagged row stays before hard-purge. Null = inherit module retention.json default."
+        },
+        {
+          "name": "on_purge",
+          "type": "string",
+          "default": "hard_delete",
+          "enum": ["hard_delete", "anonymize", "archive_cold"],
+          "description": "Terminal action. `archive_cold` = move to cold-storage table (long-tail regulatory).",
+          "compliance_note": "Regulated data classes (financial receipts under tax law, healthcare records under HIPAA) MUST use `archive_cold` not `hard_delete`."
+        },
+        {
+          "name": "regulatory_minimum_days",
+          "type": "int",
+          "default": null,
+          "description": "Non-negotiable lower bound. The retention runner refuses to purge rows younger than this even when the tenant admin has configured a shorter window. Use for tax retention (2555 days = 7 years) + healthcare retention where applicable."
+        }
+      ],
+      "example": "#[RetentionPolicy(hot_days: null, cold_days: 2555, on_purge: 'archive_cold', regulatory_minimum_days: 2555)]\nfinal class TaxReceipt extends Model { /* ... */ }"
+    },
+    {
+      "name": "LegalHoldable",
+      "class": "Academorix\\Compliance\\Attributes\\LegalHoldable",
+      "targets": ["class"],
+      "description": "Declares that the annotated model class supports legal hold. LegalHoldGate scans registered classes at boot; runtime calls check the LegalHold table for freezes on this model's rows before any purge / erase / hard-delete action.",
+      "params": [
+        {
+          "name": "subject",
+          "type": "string",
+          "default": null,
+          "description": "Column pointing at the subject id (nullable when the model participates in tenant / case / class holds but has no per-row subject binding)."
+        },
+        {
+          "name": "scopes_supported",
+          "type": "array<string>",
+          "default": ["subject", "tenant", "case", "class"],
+          "description": "Which hold scopes apply to this model. Some models (e.g. platform-level rows) only support `class` scope; tenant-scoped models support all four."
+        },
+        {
+          "name": "on_soft_delete",
+          "type": "string",
+          "default": "allow",
+          "enum": ["allow", "refuse"],
+          "description": "Behaviour on soft-delete while held. `allow` (default) = user can soft-delete, restore later. `refuse` = LegalHoldActiveException. Hard-delete always refused on held rows."
+        }
+      ],
+      "example": "#[LegalHoldable(subject: 'owner_id', scopes_supported: ['subject', 'tenant', 'case'])]\nfinal class Message extends Model { /* ... */ }"
+    }
+  ],
+  "discovery": {
+    "loader": "Academorix\\Compliance\\Discovery\\CompileComplianceRegistries",
+    "runs_at": "boot (after ContainerBooted event)",
+    "output_registries": [
+      "DsarContributorRegistry \u2014 map of subject-column \u2192 list of contributor class names",
+      "ConsentGateRegistry \u2014 map of category-key \u2192 list of gated actions",
+      "LegalHoldGate registry \u2014 map of model class \u2192 supported hold scopes",
+      "RetentionPolicyResolver registry \u2014 map of model class \u2192 inline policy attribute (falls back to retention.json)"
+    ],
+    "cache": "Redis, keyed on `compliance:registries:<sha256-of-attribute-scan>`. Invalidated on `artisan compliance:describe --refresh` or class-map change."
+  }
+}

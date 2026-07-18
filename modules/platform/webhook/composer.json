@@ -1,0 +1,89 @@
+{
+  "name": "academorix/webhook",
+  "type": "library",
+  "description": "Outbound webhook substrate for Academorix. Owns the `WebhookSubscription` aggregate (customer-registered inbound URLs + destinations) and the `WebhookDelivery` aggregate (per-attempt outbound audit trail). Attribute-driven event registration (`#[AsWebhookEvent]`) + pluggable destinations (`#[AsWebhookDestination]`) + backoff strategies + HMAC-SHA256 signing with rotation grace + Bus::batch fan-out + auto-disable on 410 / N consecutive failures + per-subscription rate limiting + health probes + API-version pinning. HTTPS destination ships in v1; EventBridge / PubSub / mTLS are feature-flag guarded and require optional AWS / GCP SDKs.",
+  "license": "proprietary",
+  "keywords": [
+    "academorix",
+    "laravel",
+    "webhook",
+    "outbound-webhooks",
+    "inbound-webhooks",
+    "hmac",
+    "signing",
+    "rotation-grace",
+    "fan-out",
+    "auto-disable",
+    "rate-limit",
+    "destinations",
+    "eventbridge",
+    "pubsub",
+    "mtls",
+    "payload-transformers"
+  ],
+  "require": {
+    "php": "^8.3",
+    "academorix/application": "@dev",
+    "academorix/authorization": "@dev",
+    "academorix/console": "@dev",
+    "academorix/crud": "@dev",
+    "academorix/database": "@dev",
+    "academorix/enum": "@dev",
+    "academorix/events": "@dev",
+    "academorix/exceptions": "@dev",
+    "academorix/foundation": "@dev",
+    "academorix/retention": "@dev",
+    "academorix/routing": "@dev",
+    "academorix/service-provider": "@dev",
+    "academorix/support": "@dev",
+    "academorix/tenancy": "@dev",
+    "illuminate/bus": "^13.0",
+    "illuminate/contracts": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/events": "^13.0",
+    "illuminate/http": "^13.0",
+    "illuminate/queue": "^13.0",
+    "illuminate/routing": "^13.0",
+    "illuminate/support": "^13.0",
+    "spatie/laravel-data": "^4.11"
+  },
+  "suggest": {
+    "aws/aws-sdk-php": "Required by EventBridgeDestination when the `webhook.destination.eventbridge` feature flag is on.",
+    "google/cloud-pubsub": "Required by PubSubDestination when the `webhook.destination.pubsub` feature flag is on."
+  },
+  "require-dev": {
+    "mockery/mockery": "^1.6",
+    "orchestra/testbench": "^11.0",
+    "pestphp/pest": "^4.0",
+    "pestphp/pest-plugin-laravel": "^4.0",
+    "phpstan/phpstan": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Academorix\\Webhook\\": "src/",
+      "Academorix\\Webhook\\Database\\Factories\\": "database/factories/",
+      "Academorix\\Webhook\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Academorix\\Webhook\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Academorix\\Webhook\\Providers\\WebhookServiceProvider"
+      ],
+      "aliases": {}
+    }
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

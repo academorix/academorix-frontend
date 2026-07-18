@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "name": "Academorix Athletics",
+    "domain": "academorix.app",
+    "branches": 3,
+    "athletes": 428,
+    "status": { "text": "Active", "color": "success" },
+    "isActive": true,
+    "region": "Global",
+    "createdAt": "2019-01-01T09:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Riverside Aquatics",
+    "domain": "riverside.academorix.app",
+    "branches": 1,
+    "athletes": 82,
+    "status": { "text": "Trial", "color": "warning" },
+    "isActive": true,
+    "region": "US · West",
+    "createdAt": "2024-11-01T09:00:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Northgate Sports Academy",
+    "domain": "northgate.academorix.app",
+    "branches": 2,
+    "athletes": 148,
+    "status": { "text": "Active", "color": "success" },
+    "isActive": true,
+    "region": "UK",
+    "createdAt": "2023-04-15T09:00:00Z"
+  }
+]

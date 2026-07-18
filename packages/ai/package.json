@@ -1,0 +1,149 @@
+{
+  "name": "@stackra/ai",
+  "version": "0.1.0",
+  "description": "Client AI toolkit for the Stackra framework — swappable streaming transport (SSE/WebSocket), mount-scoped client tools and UI context frames, personas, draft-then-confirm writes, and HeroUI Pro chat components. Client counterpart to the academorix/ai backend.",
+  "license": "MIT",
+  "author": {
+    "name": "Stackra L.L.C",
+    "email": "dev@stackra.com",
+    "url": "https://stackra.com"
+  },
+  "keywords": [
+    "stackra",
+    "ai",
+    "chat",
+    "streaming",
+    "sse",
+    "tools",
+    "react",
+    "react-native"
+  ],
+  "homepage": "https://github.com/stackra-inc/core/tree/main/ai#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stackra-inc/core.git",
+    "directory": "ai"
+  },
+  "bugs": {
+    "url": "https://github.com/stackra-inc/core/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.mjs",
+      "require": "./dist/react.js"
+    },
+    "./native": {
+      "types": "./dist/native.d.ts",
+      "import": "./dist/native.mjs",
+      "require": "./dist/native.js"
+    },
+    "./testing": {
+      "types": "./dist/testing.d.ts",
+      "import": "./dist/testing.mjs",
+      "require": "./dist/testing.js"
+    }
+  },
+  "files": [
+    "config",
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rimraf dist .turbo",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage --passWithNoTests"
+  },
+  "peerDependencies": {
+    "@stackra/actions": "workspace:^",
+    "@stackra/container": "workspace:^",
+    "@stackra/contracts": "workspace:^",
+    "@stackra/coordinator": "workspace:^",
+    "@stackra/devtools": "workspace:^",
+    "@stackra/http": "workspace:^",
+    "@stackra/logger": "workspace:^",
+    "@stackra/network": "workspace:^",
+    "@stackra/support": "workspace:^",
+    "@stackra/testing": "workspace:^",
+    "@stackra/ui": "workspace:^",
+    "heroui-native": "^1.0.0",
+    "react": "*",
+    "react-native": "*",
+    "reflect-metadata": "*",
+    "zod": ">=3"
+  },
+  "peerDependenciesMeta": {
+    "@stackra/actions": {
+      "optional": true
+    },
+    "@stackra/coordinator": {
+      "optional": true
+    },
+    "@stackra/devtools": {
+      "optional": true
+    },
+    "@stackra/network": {
+      "optional": true
+    },
+    "@stackra/testing": {
+      "optional": true
+    },
+    "@stackra/ui": {
+      "optional": true
+    },
+    "heroui-native": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@stackra/actions": "workspace:*",
+    "@stackra/container": "workspace:*",
+    "@stackra/contracts": "workspace:*",
+    "@stackra/coordinator": "workspace:*",
+    "@stackra/devtools": "workspace:*",
+    "@stackra/http": "workspace:*",
+    "@stackra/logger": "workspace:*",
+    "@stackra/network": "workspace:*",
+    "@stackra/support": "workspace:*",
+    "@stackra/testing": "workspace:*",
+    "@stackra/ui": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "heroui-native": "^1.0.0",
+    "react": "catalog:",
+    "react-native": "^0.76.0",
+    "reflect-metadata": "catalog:",
+    "rimraf": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "zod": "^3.23.0"
+  }
+}

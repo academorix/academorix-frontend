@@ -1,0 +1,47 @@
+{
+  "id": "academorix://modules/notifications-mail/entitlements",
+  "$version": 1,
+  "title": "notifications-mail \u2014 entitlements",
+  "description": "Metered mail send caps + attachment caps. Aggregated by notifications core into the top-level `notifications.mail.month` entitlement.",
+  "reference": {
+    "publishedBy": "entitlements",
+    "resolvedBy": "GET /api/auth/me \u2192 data.quota_summary",
+    "seededFrom": "BusinessType.default_config.entitlements"
+  },
+  "kinds": [{ "kind": "pool" }, { "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "notifications.mail.month",
+      "kind": "pool",
+      "period": "month",
+      "unit": "emails",
+      "defaultsByPlan": { "free": 100, "team": 5000, "enterprise": "unlimited" },
+      "description": "Monthly outbound mail sends per tenant. Reset at UTC month boundary. Aggregated view lives in notifications core."
+    },
+    {
+      "key": "notifications.mail.attachments.max_bytes",
+      "kind": "slot",
+      "unit": "bytes",
+      "defaultsByPlan": { "free": 262144, "team": 5242880, "enterprise": 26214400 },
+      "description": "Max total attachment size per email (256KB / 5MB / 25MB). Providers cap at ~25MB typically."
+    },
+    {
+      "key": "notifications.mail.attachments.enabled",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "team": true, "enterprise": true },
+      "description": "Whether attachments are allowed at all. Free plan gates them out."
+    },
+    {
+      "key": "notifications.mail.custom_smtp",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "team": false, "enterprise": true },
+      "description": "Enterprise tenants may configure their own SMTP endpoint via settings."
+    },
+    {
+      "key": "notifications.mail.dedicated_ip",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "team": false, "enterprise": true },
+      "description": "Sends from a dedicated IP (SendGrid / SES). Enterprise add-on."
+    }
+  ]
+}

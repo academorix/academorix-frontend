@@ -7,10 +7,10 @@
  * show/edit/delete actions.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 
 import type { User } from "@/types";
-import type { DataGridColumn } from "@academorix/ui/react";
+import type { DataGridColumn } from "@stackra/ui/react";
 import type { ReactNode } from "react";
 
 import {

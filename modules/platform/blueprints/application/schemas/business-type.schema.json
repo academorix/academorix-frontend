@@ -1,0 +1,135 @@
+{
+  "id": "academorix://modules/application/schemas/business-type",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "BusinessType",
+  "description": "Catalogue entry that drives per-tenant defaults. NOT a database table — the `Tenant.business_type` column carries the enum key and Tenancy resolves the entry from `data/business-types.json` (seeded into `config/tenants.php` on install). Feature toggles, terminology overrides, seeded roles, and starter entitlements all flow from this catalogue at tenant provisioning time.",
+  "type": "object",
+  "x-module": "application",
+  "x-storage": {
+    "kind": "config",
+    "phpEnum": "Academorix\\Application\\Enums\\BusinessType",
+    "phpEnumBacking": "string",
+    "configFile": "config/application.php",
+    "configKey": "application.business_types",
+    "seeder": "Academorix\\Application\\Database\\Seeders\\BusinessTypeSeeder",
+    "syncCommand": "application:sync-catalogue",
+    "note": "`php artisan application:sync-catalogue` mirrors `data/business-types.json` into `config/application.php` on every deploy so a Laravel dev never edits config directly."
+  },
+  "x-translatable": {
+    "strategy": "config-backed",
+    "trait": null,
+    "reason": "BusinessType is a config catalogue (NOT an Eloquent model / DB table), so the `HasTranslations` trait does not apply. Localised copies live inline in the same config file: each catalogue entry carries a `translations` map that mirrors the JSONB shape used by Eloquent-backed tier-A models (`{ locale_code: { field: value } }`). The Tenancy resolver reads the active locale from the request context.",
+    "fields": ["label", "description"],
+    "underlying_package": "N/A (no Eloquent model)",
+    "wire_convention": "Active-locale projection onto `label` + `description` by default. Full blob returned under `data.translations` when the request carries `?include=translations`."
+  },
+  "required": ["key", "label", "description", "default_config"],
+  "properties": {
+    "key": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "description": "Enum key. Also the value written to `tenants.business_type`."
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "x-translatable": true,
+      "description": "Human label shown on the tenant picker + admin. Active-locale projection; full per-locale map available via `translations` (see `x-translatable` block) or `?include=translations` on the wire."
+    },
+    "translations": {
+      "type": "object",
+      "description": "Per-locale content translations. Shape: `{ locale_code: { label: string, description: string } }`. Wire-included only when `?include=translations`. Physical source is the same `data/business-types.json` entry \u2014 no separate table.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": { "type": ["string", "null"] }
+      }
+    },
+    "label_translations": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "DEPRECATED \u2014 superseded by `translations` (which covers both label + description). Kept for one release for backward-compatibility; a normalizer at load time hoists label_translations values into `translations[<locale>].label` when both are present. Remove after v0.4.0."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "x-translatable": true
+    },
+    "icon": {
+      "type": "string",
+      "description": "Iconify token, e.g. `academic-cap`, `dumbbell`, `graduation-cap`, `flag`."
+    },
+    "hero_image_url": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "Optional hero shown on the self-serve `/sign-up` screen when this business type is selected."
+    },
+    "default_config": {
+      "type": "object",
+      "description": "Bag of tenant defaults applied at provisioning time.",
+      "additionalProperties": false,
+      "properties": {
+        "features": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string" },
+          "description": "Feature keys enabled by default. Consumed by the FeatureFlag module. e.g. `athletes`, `teams`, `attendance`, `scheduling`, `progress`, `competition`."
+        },
+        "terminology": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Resource-label overrides. Keys are canonical resource names (e.g. `athletes`); values are the display label for this business type (e.g. `Students` for schools, `Members` for gyms)."
+        },
+        "roles": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string" },
+          "description": "Role keys seeded on tenant provisioning. Consumed by Access. `owner` is always seeded (from Access) regardless of this list."
+        },
+        "entitlements": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "kind": { "type": "string", "enum": ["slot", "pool", "boolean", "unlimited"] },
+              "limit": { "type": ["integer", "null"], "minimum": 0 },
+              "enabled": { "type": ["boolean", "null"] }
+            }
+          },
+          "description": "Starter entitlements applied at provisioning. Keyed by entitlement id (e.g. `athletes.max`, `branches.max`, `storage_gb.max`). The Subscription module overrides these once a plan is picked."
+        },
+        "onboarding_steps": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "IDs of onboarding steps surfaced to first-time owners. Consumed by the Overview dashboard's onboarding checklist widget."
+        },
+        "sports": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string" },
+          "description": "Sports (or programme) keys pre-enabled for this business type."
+        }
+      }
+    },
+    "priority": {
+      "type": "integer",
+      "default": 100,
+      "description": "Sort order on the self-serve business-type picker (ascending)."
+    },
+    "is_visible": {
+      "type": "boolean",
+      "default": true,
+      "description": "When false, the business type is hidden from the self-serve picker and can only be assigned by platform admins."
+    }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": []
+  }
+}

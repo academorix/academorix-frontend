@@ -135,9 +135,7 @@ export function useCalendarNavigation(
 ): UseCalendarNavigationReturn {
   // `useState`'s functional initialiser keeps the "today" default from
   // resetting on every render.
-  const [currentDate, setCurrentDate] = useState<Date>(
-    () => options.initialDate ?? new Date(),
-  );
+  const [currentDate, setCurrentDate] = useState<Date>(() => options.initialDate ?? new Date());
   const [view, setView] = useState<CalendarView>(options.initialView ?? "week");
 
   const goToPrev = useCallback(() => {

@@ -1,0 +1,199 @@
+{
+  "id": "academorix://modules/transfer/schemas/xfer-artifact",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "XferArtifact",
+  "description": "Generated file record. Every file produced (source upload staging, export result, errors report, downloadable template) is tracked as an artifact so retention + signed downloads + integrity checks compose uniformly. Independent retention clock from xfer_jobs \u2014 files typically expire before the row.",
+  "type": "object",
+  "x-module": "transfer",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "xfer_artifacts",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "xart_",
+    "incrementing": false,
+    "model": "Academorix\\Transfer\\Models\\XferArtifact",
+    "interface": "Academorix\\Transfer\\Contracts\\Data\\XferArtifactInterface",
+    "implements": ["Academorix\\Transfer\\Contracts\\Data\\XferArtifactInterface"],
+    "traits": ["HasUlids", "BelongsToTenant"],
+    "casts": {
+      "kind": "Academorix\\Transfer\\Enums\\XferArtifactKind",
+      "format": "string",
+      "size_bytes": "integer",
+      "row_count": "integer",
+      "retention_expires_at": "immutable_datetime",
+      "purged_at": "immutable_datetime"
+    },
+    "hidden": ["checksum_sha256", "path"],
+    "guarded": ["id", "tenant_id"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "description": "Artifact ledger. `disk` + `path` locate the file on the configured filesystem; `checksum_sha256` supports tamper detection; `retention_expires_at` drives the purge scan. Rows persist past purge (with `purged_at` set + `path` retained as historical breadcrumb, then nulled on hard delete).",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `xart_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "Tenant scope. Null for platform-admin operations."
+      },
+      "xfer_job_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": {
+          "table": "xfer_jobs",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        },
+        "description": "Owning job. Null for standalone templates."
+      },
+      "kind": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Artifact kind. Enum: source / result / errors / template / workbook."
+      },
+      "format": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "File format. Enum: csv / xlsx / json / pdf / zip."
+      },
+      "disk": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Filesystem disk name from Laravel's config/filesystems.php."
+      },
+      "path": {
+        "type": "text",
+        "nullable": true,
+        "description": "Path within the disk. Nullable so we can null it on hard-purge while retaining the ledger row temporarily."
+      },
+      "filename": {
+        "type": "string",
+        "length": 255,
+        "nullable": false,
+        "description": "Display / download name. Includes extension."
+      },
+      "mime_type": { "type": "string", "length": 128, "nullable": false },
+      "size_bytes": { "type": "bigint", "nullable": false },
+      "row_count": {
+        "type": "integer",
+        "nullable": true,
+        "description": "For source uploads or result exports: rows in the file. Null when not applicable (PDF)."
+      },
+      "checksum_sha256": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "SHA-256 of the file bytes. Enables tamper detection and idempotent-retry recognition."
+      },
+      "created_by_type": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Polymorphic causer type."
+      },
+      "created_by_id": { "type": "string", "length": 64, "nullable": false },
+      "retention_expires_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When PruneXferArtifactsJob will unlink the file. Null = no expiry (rare; templates for shared use)."
+      },
+      "purged_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When the file was deleted from disk. Row may linger briefly for observability, then hard-delete."
+      },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["xfer_job_id", "kind"],
+        "unique": false,
+        "name": "xfer_artifacts_job_kind_idx",
+        "description": "Fast lookup for job-scoped artifact resolution."
+      },
+      {
+        "columns": ["retention_expires_at"],
+        "unique": false,
+        "name": "xfer_artifacts_expiry_scan_idx",
+        "predicate": "purged_at IS NULL AND retention_expires_at IS NOT NULL",
+        "description": "PruneXferArtifactsJob file-scan predicate."
+      },
+      {
+        "columns": ["tenant_id", "created_at"],
+        "unique": false,
+        "name": "xfer_artifacts_tenant_time_idx"
+      },
+      {
+        "columns": ["checksum_sha256"],
+        "unique": false,
+        "name": "xfer_artifacts_checksum_idx",
+        "predicate": "checksum_sha256 IS NOT NULL",
+        "description": "Idempotent duplicate-upload detection for source artifacts."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "kind",
+    "format",
+    "disk",
+    "filename",
+    "mime_type",
+    "size_bytes",
+    "created_by_type",
+    "created_by_id",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^xart_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "xfer_job_id": { "type": ["string", "null"], "pattern": "^xfer_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "kind": { "type": "string", "enum": ["source", "result", "errors", "template", "workbook"] },
+    "format": { "type": "string", "enum": ["csv", "xlsx", "json", "pdf", "zip"] },
+    "disk": { "type": "string", "maxLength": 64 },
+    "path": { "type": ["string", "null"] },
+    "filename": { "type": "string", "maxLength": 255 },
+    "mime_type": { "type": "string", "maxLength": 128 },
+    "size_bytes": { "type": "integer", "minimum": 0 },
+    "row_count": { "type": ["integer", "null"], "minimum": 0 },
+    "checksum_sha256": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+    "created_by_type": { "type": "string" },
+    "created_by_id": { "type": "string" },
+    "retention_expires_at": { "type": ["string", "null"], "format": "date-time" },
+    "purged_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["path", "checksum_sha256"],
+    "computed": [
+      { "name": "is_available", "expression": "purged_at === null && path !== null" },
+      { "name": "download_url", "expression": "is_available ? SignedUrlSigner::sign(id) : null" }
+    ]
+  }
+}

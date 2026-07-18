@@ -11,7 +11,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §11.3 "Seasons & Registration"
  */
 
-import { CalendarDaysIcon } from "@academorix/ui/icons/outline";
+import { CalendarDaysIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

@@ -1,0 +1,233 @@
+{
+  "id": "academorix://modules/notifications/settings",
+  "$version": 1,
+  "title": "notifications core \u2014 settings",
+  "description": "Core notification settings shared across channels. Canonical group/section/field taxonomy. Two #[AsSetting] classes: `NotificationSenderSettings` (identity + brand) and `NotificationBehaviourSettings` (digest + consent + quiet hours).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "notifications_sender",
+      "class": "Academorix\\Notifications\\Settings\\NotificationSenderSettings",
+      "label": "Sender identity",
+      "description": "Default sender identity + brand overlay for outbound notifications across channels.",
+      "icon": "identification",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 10,
+      "permission": "settings.read",
+      "sections": [
+        {
+          "label": "Sender identity",
+          "description": "Overrides platform default. Per-channel overrides in the respective channel module (mail / sms).",
+          "icon": "envelope",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "display_name",
+              "controlType": "text",
+              "label": "From display name",
+              "defaultValue": "Academorix",
+              "validation": ["required", "string", "max:40"],
+              "sortOrder": 1,
+              "helpText": "Kept short (< 40 chars) for provider compatibility."
+            },
+            {
+              "name": "from_email",
+              "controlType": "email",
+              "label": "From email",
+              "defaultValue": "no-reply@academorix.app",
+              "validation": ["required", "email", "max:254"],
+              "sortOrder": 2,
+              "helpText": "Must match a verified sender identity on the mail provider (validated at save time)."
+            },
+            {
+              "name": "reply_to_email",
+              "controlType": "email",
+              "label": "Reply-to email",
+              "defaultValue": null,
+              "validation": ["nullable", "email", "max:254"],
+              "sortOrder": 3,
+              "helpText": "Empty = use From address."
+            },
+            {
+              "name": "postal_address",
+              "controlType": "textarea",
+              "label": "Postal address",
+              "defaultValue": "Academorix Ltd, 123 Placeholder St, City, Country",
+              "validation": ["required", "string", "max:500"],
+              "sortOrder": 4,
+              "helpText": "Required for CAN-SPAM footer. Rendered into email footer as-is."
+            }
+          ]
+        },
+        {
+          "label": "Notification branding",
+          "description": "Tenant branding used in the shared React Email Layout + in-app notification card. Overlays tenancy::Branding.",
+          "icon": "swatch",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "brand_logo_url",
+              "controlType": "url",
+              "label": "Logo URL",
+              "defaultValue": null,
+              "validation": ["nullable", "url", "max:500"],
+              "sortOrder": 1,
+              "helpText": "Empty = use tenants default."
+            },
+            {
+              "name": "brand_primary_color",
+              "controlType": "color",
+              "label": "Primary colour",
+              "defaultValue": null,
+              "validation": ["nullable", "regex:/^#[0-9a-fA-F]{6}$/"],
+              "sortOrder": 2,
+              "helpText": "Empty = use tenants default."
+            },
+            {
+              "name": "brand_footer_text",
+              "controlType": "textarea",
+              "label": "Supplementary footer text",
+              "defaultValue": null,
+              "validation": ["nullable", "string", "max:500"],
+              "sortOrder": 3,
+              "helpText": "Optional text below the required CAN-SPAM postal address."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "notifications_behaviour",
+      "class": "Academorix\\Notifications\\Settings\\NotificationBehaviourSettings",
+      "label": "Notification behaviour",
+      "description": "Digest defaults + consent defaults + quiet hours defaults.",
+      "icon": "bell",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 11,
+      "permission": "settings.read",
+      "sections": [
+        {
+          "label": "Digest defaults",
+          "description": "Platform-default digest behaviour. Users may still override per-category.",
+          "icon": "queue-list",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "digest_default_mode",
+              "controlType": "select",
+              "label": "Default digest mode",
+              "defaultValue": "immediate",
+              "options": {
+                "immediate": "Immediate",
+                "daily": "Daily",
+                "weekly": "Weekly",
+                "off": "Off"
+              },
+              "validation": ["required", "string", "in:immediate,daily,weekly,off"],
+              "sortOrder": 1,
+              "helpText": "Default for new users on non-critical categories."
+            },
+            {
+              "name": "digest_opt_in_default",
+              "controlType": "toggle",
+              "label": "Show digest option in preferences UI",
+              "defaultValue": true,
+              "validation": ["boolean"],
+              "sortOrder": 2,
+              "helpText": "Consumer plans may turn off to reduce UI complexity."
+            },
+            {
+              "name": "digest_marketing_default_mode",
+              "controlType": "select",
+              "label": "Marketing digest mode",
+              "defaultValue": "weekly",
+              "options": {
+                "immediate": "Immediate",
+                "daily": "Daily",
+                "weekly": "Weekly",
+                "off": "Off"
+              },
+              "validation": ["required", "string", "in:immediate,daily,weekly,off"],
+              "sortOrder": 3,
+              "helpText": "Higher default reduces marketing burden."
+            }
+          ]
+        },
+        {
+          "label": "Consent defaults",
+          "description": "Per-tenant marketing consent defaults governed by tenant's jurisdiction.",
+          "icon": "shield-check",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "consent_marketing_default",
+              "controlType": "select",
+              "label": "Marketing consent mode",
+              "defaultValue": "opt_in",
+              "options": {
+                "opt_in": "Opt-in (explicit enable)",
+                "opt_out": "Opt-out (US-only, per CAN-SPAM \u00a77702)"
+              },
+              "validation": ["required", "string", "in:opt_in,opt_out"],
+              "sortOrder": 1
+            },
+            {
+              "name": "consent_double_opt_in",
+              "controlType": "toggle",
+              "label": "Double opt-in",
+              "defaultValue": false,
+              "validation": ["boolean"],
+              "sortOrder": 2,
+              "helpText": "Require confirmation email before marketing consent is captured. Required for EU/UK tenants."
+            },
+            {
+              "name": "consent_age_gate_enabled",
+              "controlType": "toggle",
+              "label": "Enforce age gate",
+              "defaultValue": true,
+              "validation": ["boolean"],
+              "sortOrder": 3,
+              "helpText": "Block marketing to minors. Recommended on for every tenant."
+            }
+          ]
+        },
+        {
+          "label": "Quiet hours defaults",
+          "description": "Tenant-wide quiet-hours defaults. Users can override per-user.",
+          "icon": "moon",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "quiet_hours_enabled_default",
+              "controlType": "toggle",
+              "label": "Enable by default for new users",
+              "defaultValue": true,
+              "validation": ["boolean"],
+              "sortOrder": 1
+            },
+            {
+              "name": "quiet_hours_start",
+              "controlType": "time",
+              "label": "Start",
+              "defaultValue": "22:00",
+              "validation": ["required", "date_format:H:i"],
+              "sortOrder": 2,
+              "helpText": "Applied in user's local timezone."
+            },
+            {
+              "name": "quiet_hours_end",
+              "controlType": "time",
+              "label": "End",
+              "defaultValue": "07:00",
+              "validation": ["required", "date_format:H:i"],
+              "sortOrder": 3
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

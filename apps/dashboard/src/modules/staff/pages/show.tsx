@@ -6,7 +6,7 @@
  * Staff detail — contact, role/title, employment, pay, and status.
  */
 
-import { Card, Spinner } from "@academorix/ui/react";
+import { Card, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 
 import type { Staff } from "@/types";

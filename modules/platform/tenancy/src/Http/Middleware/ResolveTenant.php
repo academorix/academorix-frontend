@@ -1,0 +1,135 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Academorix\Tenancy\Http\Middleware;
+
+use Academorix\Application\Contracts\Repositories\ApplicationRepositoryInterface;
+use Academorix\Application\Models\Application;
+use Academorix\Routing\Attributes\AsMiddleware;
+use Academorix\ServiceProvider\Dispatchers\TenancyHookDispatcher;
+use Academorix\ServiceProvider\Support\TenantHookContext;
+use Academorix\Tenancy\Contracts\Repositories\TenantRepositoryInterface;
+use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Academorix\Tenancy\Models\Tenant;
+use Academorix\Tenancy\Services\HostResolver;
+use Closure;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
+/**
+ * Bind the Tenant context for the request.
+ *
+ * Resolution order:
+ *   1. Application must already be bound (by `resolve.application`
+ *      middleware, priority 20 — runs before this).
+ *   2. Host lookup — `{slug}.{application.central_host}` → Tenant.
+ *   3. When the host is the Application's `central_host` OR
+ *      `platform_admin_host` (no tenant subdomain), the request runs
+ *      unbound. Central + platform-admin routes flow through.
+ *   4. When the host is a tenant subdomain but the slug doesn't
+ *      match any tenant → 404.
+ *
+ * On successful bind, fires every registered `#[AsTenancyHook]` via
+ * the {@see TenancyHookDispatcher} + registers a terminating callback
+ * that mirrors the teardown on response.
+ *
+ * @category Tenancy
+ *
+ * @since    0.1.0
+ */
+#[AsMiddleware(alias: 'resolve.tenant', groups: ['api'], priority: 40)]
+final class ResolveTenant
+{
+    public function __construct(
+        private readonly ApplicationRepositoryInterface $applications,
+        private readonly TenantRepositoryInterface $tenants,
+        private readonly TenantContextInterface $tenantContext,
+        private readonly HostResolver $hostResolver,
+        private readonly TenancyHookDispatcher $hookDispatcher,
+    ) {
+    }
+
+    /**
+     * Bind the tenant context for the request lifetime; run hooks.
+     */
+    public function handle(Request $request, Closure $next): Response|JsonResponse
+    {
+        $host = $request->getHost();
+
+        // The Application resolver runs at priority 20 — it must have
+        // bound by now. If not, we fall back to lookup here.
+        $application = $this->resolveApplication($host);
+        if ($application === null) {
+            return new JsonResponse([
+                'message' => __('tenancy::errors.application_not_found'),
+                'code'    => 'tenancy.application_not_found',
+            ], 404);
+        }
+
+        $classification = $this->hostResolver->classify($host, $application);
+
+        // Central + admin hosts run without a tenant context.
+        if ($classification === 'central' || $classification === 'admin') {
+            return $next($request);
+        }
+
+        if ($classification === 'unknown') {
+            return new JsonResponse([
+                'message' => __('tenancy::errors.tenant_not_found'),
+                'code'    => 'tenancy.tenant_not_found',
+            ], 404);
+        }
+
+        // Tenant subdomain — resolve the tenant.
+        $tenant = $this->resolveTenant($host, $application);
+        if ($tenant === null) {
+            return new JsonResponse([
+                'message' => __('tenancy::errors.tenant_not_found'),
+                'code'    => 'tenancy.tenant_not_found',
+            ], 404);
+        }
+
+        $this->tenantContext->setCurrent($tenant);
+        \app()->instance('tenant.context', $this->tenantContext);
+
+        $ctx = new TenantHookContext(
+            container: \app(),
+            tenant: $tenant,
+        );
+        $this->hookDispatcher->fireInit($ctx);
+
+        try {
+            $response = $next($request);
+        } finally {
+            // Terminate hooks — mirror the init in reverse priority.
+            $this->hookDispatcher->fireEnd($ctx);
+            $this->tenantContext->setCurrent(null);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Resolve the Application from the host, falling back to default.
+     */
+    private function resolveApplication(string $host): ?Application
+    {
+        return $this->applications->findByHost($host)
+            ?? $this->applications->findDefault();
+    }
+
+    /**
+     * Resolve the Tenant from `{slug}.{application.central_host}`.
+     */
+    private function resolveTenant(string $host, Application $application): ?Tenant
+    {
+        $slug = $this->hostResolver->extractTenantSlug($host, $application);
+        if ($slug === null) {
+            return null;
+        }
+
+        return $this->tenants->findBySlug((string) $application->getKey(), $slug);
+    }
+}

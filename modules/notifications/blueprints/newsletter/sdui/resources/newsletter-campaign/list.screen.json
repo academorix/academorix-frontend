@@ -1,0 +1,85 @@
+{
+  "id": "newsletter.resources.newsletter-campaign.list",
+  "title": "Campaigns",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/newsletters/{newsletter}/campaigns",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "newsletter", "entity": "newsletter-campaign", "action": "list" },
+  "requiresPermission": "newsletter-campaigns.viewAny",
+  "params": [{ "name": "newsletter", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "campaigns",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/newsletters/' + params.newsletter + '/campaigns'",
+      "unwrap": "data",
+      "paginated": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Campaigns" }
+        },
+        {
+          "kind": "DataGrid",
+          "bindings": { "items": { "$ref": "campaigns" } },
+          "columns": [
+            {
+              "id": "name",
+              "header": "Name",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "font-medium" },
+                "bindings": { "children": { "$ref": "row.name" } }
+              }
+            },
+            {
+              "id": "state",
+              "header": "State",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "sm" },
+                "bindings": {
+                  "variant": {
+                    "$expr": "row.state === 'completed' ? 'success' : (row.state === 'failed' ? 'danger' : 'info')"
+                  },
+                  "children": { "$ref": "row.state" }
+                }
+              }
+            },
+            {
+              "id": "progress",
+              "header": "Progress",
+              "cell": {
+                "kind": "Widget",
+                "widget": "newsletter.campaign-progress-bar",
+                "props": { "campaign": { "$ref": "row" }, "compact": true }
+              }
+            },
+            {
+              "id": "when",
+              "header": "When",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm" },
+                "bindings": {
+                  "children": {
+                    "$expr": "row.completed_at ? ('Completed ' + formatRelative(row.completed_at)) : (row.started_at ? ('Started ' + formatRelative(row.started_at)) : ('Scheduled ' + formatRelative(row.scheduled_at)))"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

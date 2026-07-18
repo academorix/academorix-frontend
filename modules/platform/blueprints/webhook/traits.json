@@ -1,0 +1,82 @@
+{
+  "id": "academorix://modules/webhook/traits",
+  "$version": 1,
+  "title": "webhook \u2014 trait composition per model",
+  "description": "Two entities: WebhookSubscription + WebhookDelivery. Both compose foundation's canonical stack. WebhookSubscription opts into HasVersions (via foundation) so admin edits to url/destination_config/events produce rollback-capable snapshots \u2014 useful when someone breaks a critical integration.",
+  "owned": [],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" },
+      { "trait": "Spatie\\ModelStates\\HasStates" }
+    ],
+    "foundation": [
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag",
+        "reason": "Some subscriptions are platform-seeded (e.g. audit-log receiver for compliance). is_system=true blocks tenant-side edits."
+      },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasAuditable",
+        "reason": "Subscription creation/edit + secret rotation + state transitions audit-logged for compliance evidence."
+      },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasVersions",
+        "reason": "WebhookSubscription only \u2014 rollback for admin edits that break integrations. Delivery rows are append-only, never versioned."
+      },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\Filterable",
+        "reason": "Admin listings filter by state, destination, event_name, tenant."
+      },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\Searchable",
+        "reason": "Admin search by subscription name / URL."
+      }
+    ],
+    "tenants": [
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Subscriptions + deliveries are per-tenant. Auto-scoped queries."
+      },
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToApplication",
+        "reason": "WebhookSubscription only \u2014 per-app scoping when the subscription is app-specific."
+      }
+    ]
+  },
+  "composition": {
+    "webhook_subscription": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasStates",
+        "HasSystemFlag",
+        "BelongsToTenant",
+        "BelongsToApplication",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAuditable",
+        "HasVersions",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "Full lifecycle stack. HasVersions produces snapshots on every edit \u2014 rollback the URL / events / destination_config change that broke customer's integration."
+    },
+    "webhook_delivery": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasStates",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAuditable",
+        "Filterable"
+      ],
+      "notes": "Append-only audit rows. NOT HasVersions (would double the delivery table). NOT Searchable (too many rows; use structured filters). NOT SoftDeletes (retention is 30d hard-purge via PruneWebhookDeliveriesJob)."
+    }
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "id": "academorix://modules/search/features",
+  "$version": 1,
+  "title": "search \u2014 feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me \u2192 data.features",
+    "seededFrom": "BusinessType.default_config.features"
+  },
+  "features": [
+    {
+      "key": "search.enabled",
+      "displayName": "Search engine",
+      "description": "Master toggle for the search module. Off \u2014 all /api/v1/search/* routes return 403.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "enterprise"]
+    },
+    {
+      "key": "search.suggest",
+      "displayName": "Autocomplete",
+      "description": "GET /api/v1/search/suggest endpoint.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "enterprise"]
+    },
+    {
+      "key": "search.analytics",
+      "displayName": "Search analytics",
+      "description": "Record + view search analytics. Off \u2014 no recording; dashboards empty.",
+      "defaultEnabled": true,
+      "planTiers": ["team", "enterprise"]
+    },
+    {
+      "key": "search.click_tracking",
+      "displayName": "Click-through tracking",
+      "description": "POST /api/v1/search/click endpoint + click analytics events. Off \u2014 dashboards show query volume without click-through rate.",
+      "defaultEnabled": true,
+      "planTiers": ["team", "enterprise"]
+    },
+    {
+      "key": "search.synonyms",
+      "displayName": "Synonyms",
+      "description": "Tenant-managed synonym registry. Off \u2014 only platform-seeded synonyms apply.",
+      "defaultEnabled": true,
+      "planTiers": ["team", "enterprise"]
+    },
+    {
+      "key": "search.saved_queries",
+      "displayName": "Saved queries",
+      "description": "User-saved queries + smart lists.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "enterprise"]
+    },
+    {
+      "key": "search.smart_lists",
+      "displayName": "Smart lists",
+      "description": "Auto-refreshing saved queries + dashboard tiles.",
+      "defaultEnabled": false,
+      "planTiers": ["team", "enterprise"]
+    },
+    {
+      "key": "search.command_palette",
+      "displayName": "\u2318K command palette",
+      "description": "Cross-app command palette powered by search + saved queries.",
+      "defaultEnabled": true,
+      "planTiers": ["team", "enterprise"]
+    },
+    {
+      "key": "search.pgvector",
+      "displayName": "Semantic search",
+      "description": "Enable pgvector engine. Requires embedded pgvector Postgres extension + `search.can_use_pgvector` entitlement.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "search.elasticsearch",
+      "displayName": "Elasticsearch",
+      "description": "v2 stub. When ES engine ships, activate per plan.",
+      "defaultEnabled": false,
+      "planTiers": []
+    },
+    {
+      "key": "search.reindex_from_transfer",
+      "displayName": "Reindex from transfer export",
+      "description": "Enable ReindexModelBatchJob with source=xfer_artifact. Cross-region migration flow.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
+}

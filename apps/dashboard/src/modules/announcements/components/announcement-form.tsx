@@ -17,7 +17,7 @@ import {
   Select,
   TextArea,
   TextField,
-} from "@academorix/ui/react";
+} from "@stackra/ui/react";
 import { useState } from "react";
 
 import type {

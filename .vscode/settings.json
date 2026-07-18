@@ -47,7 +47,7 @@
     "**/node_modules": true,
     "**/dist": true,
     "**/.next": true,
-    ".ref": true,
+    ".ref": false,
     ".docs": true,
     ".references": true,
     "**/.vite": true,

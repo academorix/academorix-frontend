@@ -1,0 +1,106 @@
+{
+  "id": "academorix://modules/geography/listeners",
+  "$version": 1,
+  "title": "geography \u2014 subscribed events",
+  "listeners": [
+    {
+      "event": "geography::CountryCreated",
+      "listener": "Academorix\\Geography\\Listeners\\Domain\\OnCountryCreated",
+      "queue": "notifications",
+      "purpose": "Invalidate geography.cache tags for countries + related indexes (region / subregion caches). Warm the localized_name cache for the 23 vendor locales."
+    },
+    {
+      "event": "geography::CountryUpdated",
+      "listener": "Academorix\\Geography\\Listeners\\Domain\\OnCountryUpdated",
+      "queue": "notifications"
+    },
+    {
+      "event": "geography::CountryDeleted",
+      "listener": "Academorix\\Geography\\Listeners\\Domain\\OnCountryDeleted",
+      "queue": "notifications"
+    },
+    {
+      "event": "geography::StateCreated",
+      "listener": "Academorix\\Geography\\Listeners\\Domain\\OnStateCreated",
+      "queue": "notifications",
+      "purpose": "Invalidate states + parent country's states index cache."
+    },
+    {
+      "event": "geography::StateUpdated",
+      "listener": "Academorix\\Geography\\Listeners\\Domain\\OnStateUpdated",
+      "queue": "notifications"
+    },
+    {
+      "event": "geography::StateDeleted",
+      "listener": "Academorix\\Geography\\Listeners\\Domain\\OnStateDeleted",
+      "queue": "notifications"
+    },
+    {
+      "event": "geography::CityCreated",
+      "listener": "Academorix\\Geography\\Listeners\\Domain\\OnCityCreated",
+      "queue": "notifications",
+      "purpose": "Invalidate cities + parent state's cities index cache. City-list caches never do a full-table warm (150k rows) \u2014 we let them cold-miss."
+    },
+    {
+      "event": "geography::CityUpdated",
+      "listener": "Academorix\\Geography\\Listeners\\Domain\\OnCityUpdated",
+      "queue": "notifications"
+    },
+    {
+      "event": "geography::CityDeleted",
+      "listener": "Academorix\\Geography\\Listeners\\Domain\\OnCityDeleted",
+      "queue": "notifications"
+    },
+    {
+      "event": "geography::CurrencyCreated",
+      "listener": "Academorix\\Geography\\Listeners\\Domain\\OnCurrencyCreated",
+      "queue": "notifications"
+    },
+    {
+      "event": "geography::CurrencyUpdated",
+      "listener": "Academorix\\Geography\\Listeners\\Domain\\OnCurrencyUpdated",
+      "queue": "notifications"
+    },
+    {
+      "event": "geography::CurrencyDeleted",
+      "listener": "Academorix\\Geography\\Listeners\\Domain\\OnCurrencyDeleted",
+      "queue": "notifications"
+    },
+    {
+      "event": "geography::LanguageCreated",
+      "listener": "Academorix\\Geography\\Listeners\\Domain\\OnLanguageCreated",
+      "queue": "notifications"
+    },
+    {
+      "event": "geography::LanguageUpdated",
+      "listener": "Academorix\\Geography\\Listeners\\Domain\\OnLanguageUpdated",
+      "queue": "notifications"
+    },
+    {
+      "event": "geography::LanguageDeleted",
+      "listener": "Academorix\\Geography\\Listeners\\Domain\\OnLanguageDeleted",
+      "queue": "notifications"
+    },
+    {
+      "event": "geography::TimezoneCreated",
+      "listener": "Academorix\\Geography\\Listeners\\Domain\\OnTimezoneCreated",
+      "queue": "notifications"
+    },
+    {
+      "event": "geography::TimezoneUpdated",
+      "listener": "Academorix\\Geography\\Listeners\\Domain\\OnTimezoneUpdated",
+      "queue": "notifications"
+    },
+    {
+      "event": "geography::TimezoneDeleted",
+      "listener": "Academorix\\Geography\\Listeners\\Domain\\OnTimezoneDeleted",
+      "queue": "notifications"
+    },
+    {
+      "event": "geography::MaxMindDatabaseStale",
+      "listener": "Academorix\\Geography\\Listeners\\DispatchRefreshMaxMindOnStale",
+      "queue": "notifications-critical",
+      "purpose": "Kick off RefreshMaxMindDatabaseJob as soon as the stale-probe fires, without waiting for the weekly schedule."
+    }
+  ]
+}

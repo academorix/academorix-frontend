@@ -15,8 +15,8 @@
  * the tenant-settings resource (see `TODO(backend-endpoint)` in the caller).
  */
 
-import { ArrowUturnLeftIcon } from "@academorix/ui/icons/outline";
-import { Button, Card, Form, Input, Label, TextField } from "@academorix/ui/react";
+import { ArrowUturnLeftIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Card, Form, Input, Label, TextField } from "@stackra/ui/react";
 import { useMemo, useState } from "react";
 
 import type { TerminologyDraft } from "@/modules/admin/admin.types";

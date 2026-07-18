@@ -1,16 +1,29 @@
 /**
  * @file index.ts
- * @module @academorix/pwa/manifest
+ * @module @stackra/pwa/manifest
+ * @description Public API for the Web App Manifest builder.
  *
- * @description
- * Public barrel for the manifest builder + types.
+ *   The builder is pure and dependency-free — call it from
+ *   `vite.config.ts`, a Next.js `manifest.ts`, or any Node script.
  */
 
-export { buildManifest } from "./build-manifest.util";
-export type { BuildManifestInput } from "./build-manifest.util";
+export { buildManifest } from './utils';
 export type {
-  ManifestIcon,
-  ManifestShortcut,
-  ManifestTranslation,
-  WebAppManifest,
-} from "./manifest.type";
+  IManifestIcon,
+  IManifestShortcut,
+  IManifestScreenshot,
+  IManifestTranslation,
+  IWebAppManifest,
+  ManifestDisplayMode,
+  IBuildManifestInput,
+  IRelatedApplication,
+  ILaunchHandler,
+  LaunchHandlerClientMode,
+  IFileHandler,
+  IProtocolHandler,
+  IUrlHandler,
+  IShareTarget,
+  IShareTargetParams,
+  IShareTargetFile,
+  IWidget,
+} from './interfaces';

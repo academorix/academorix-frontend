@@ -22,10 +22,10 @@
  * so this page assumes the guard has already passed.
  */
 
-import { CheckIcon, Cog6ToothIcon } from "@academorix/ui/icons/outline";
-import { Button, Chip, Label } from "@academorix/ui/react";
+import { CheckIcon, Cog6ToothIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Chip, Label } from "@stackra/ui/react";
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "@stackra/routing/react";
 
 import type {
   NotificationDrawerCategoryFilter,

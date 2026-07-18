@@ -10,7 +10,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §13.3 "Matches"
  */
 
-import { TrophyIcon } from "@academorix/ui/icons/outline";
+import { TrophyIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

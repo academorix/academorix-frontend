@@ -9,15 +9,12 @@
  * button in the header links out to the facility's own bookings page.
  */
 
-import { Button, Card, Chip, Spinner } from "@academorix/ui/react";
+import { Button, Card, Chip, Spinner } from "@stackra/ui/react";
 import { useList, useShow } from "@refinedev/core";
 import { useMemo } from "react";
-import { Link } from "react-router";
+import { Link } from "@stackra/routing/react";
 
-import type {
-  Facility,
-  ResourceBooking,
-} from "@/modules/facilities/facilities.types";
+import type { Facility, ResourceBooking } from "@/modules/facilities/facilities.types";
 import type { Branch } from "@/types";
 import type { ReactNode } from "react";
 
@@ -121,11 +118,7 @@ export default function FacilityShow(): ReactNode {
             <Card.Description>
               <div className="flex flex-wrap items-center gap-2">
                 <FacilityTypeChip type={facility.type} />
-                <Chip
-                  color={facility.is_active ? "success" : "default"}
-                  size="sm"
-                  variant="soft"
-                >
+                <Chip color={facility.is_active ? "success" : "default"} size="sm" variant="soft">
                   {facility.is_active ? "Active" : "Inactive"}
                 </Chip>
               </div>
@@ -167,9 +160,7 @@ export default function FacilityShow(): ReactNode {
 
             {facility.notes ? (
               <div className="mt-6 flex flex-col gap-1">
-                <dt className="text-xs font-medium tracking-wide text-muted uppercase">
-                  Notes
-                </dt>
+                <dt className="text-xs font-medium tracking-wide text-muted uppercase">Notes</dt>
                 <dd className="text-sm whitespace-pre-line text-foreground">{facility.notes}</dd>
               </div>
             ) : null}
@@ -181,10 +172,7 @@ export default function FacilityShow(): ReactNode {
             <h2 className="text-lg font-semibold text-foreground">Upcoming bookings</h2>
             <span className="text-sm text-muted">Next {UPCOMING_WINDOW_DAYS} days</span>
           </div>
-          <BookingList
-            bookings={bookings}
-            emptyMessage="No upcoming bookings for this facility."
-          />
+          <BookingList bookings={bookings} emptyMessage="No upcoming bookings for this facility." />
         </section>
       </div>
     </ShowView>

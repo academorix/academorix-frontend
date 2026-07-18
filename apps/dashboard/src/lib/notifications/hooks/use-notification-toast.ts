@@ -55,7 +55,7 @@
  * (see `notifications/telemetry.ts` docblock).
  */
 
-import { toast } from "@academorix/ui/react";
+import { toast } from "@stackra/ui/react";
 import { useEffect, useRef } from "react";
 
 import type { NotificationToastVariant, RenderableNotification } from "@/lib/notifications/types";

@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "name": "Family day pass",
+    "price": 45,
+    "duration": "1 day",
+    "includes": "Any sport, one family",
+    "status": { "text": "Available", "color": "success" },
+    "isActive": true,
+    "sold": 218,
+    "createdAt": "2024-02-01T09:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Learn-to-swim starter",
+    "price": 120,
+    "duration": "4 weeks",
+    "includes": "4 sessions · Pool 2",
+    "status": { "text": "Available", "color": "success" },
+    "isActive": true,
+    "sold": 82,
+    "createdAt": "2024-03-15T09:00:00Z"
+  },
+  {
+    "id": 3,
+    "name": "10-session tennis card",
+    "price": 340,
+    "duration": "3 months",
+    "includes": "10 group sessions",
+    "status": { "text": "Available", "color": "success" },
+    "isActive": true,
+    "sold": 47,
+    "createdAt": "2024-05-01T09:00:00Z"
+  },
+  {
+    "id": 4,
+    "name": "Summer camp week",
+    "price": 380,
+    "duration": "1 week",
+    "includes": "Full-day multi-sport",
+    "status": { "text": "Coming soon", "color": "warning" },
+    "isActive": true,
+    "sold": 0,
+    "createdAt": "2025-02-15T09:00:00Z"
+  },
+  {
+    "id": 5,
+    "name": "Corporate wellness pack",
+    "price": 4200,
+    "duration": "6 months",
+    "includes": "10 employee memberships",
+    "status": { "text": "Available", "color": "success" },
+    "isActive": true,
+    "sold": 3,
+    "createdAt": "2024-09-01T09:00:00Z"
+  }
+]

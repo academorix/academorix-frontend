@@ -1,0 +1,159 @@
+{
+  "id": "tenants.resources.business-type.list",
+  "title": "Business types",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/business-types",
+  "host": "central_admin",
+  "audience": "authenticated",
+  "resource": { "module": "tenancy", "entity": "business-type", "action": "list" },
+  "requiresPermission": "platform.business-types.viewAny",
+  "dataSources": [
+    {
+      "name": "businessTypes",
+      "kind": "http.get",
+      "url": "/api/v1/business-types",
+      "unwrap": "data",
+      "paginated": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Business types"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Config catalogue driving per-tenant defaults for features, terminology, roles, entitlements."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "size": "sm",
+                "leadingIcon": "plus",
+                "children": "New business type"
+              },
+              "actions": { "onPress": { "kind": "navigate", "to": "/platform/business-types/new" } }
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "bindings": { "items": { "$ref": "businessTypes" } },
+          "columns": [
+            {
+              "id": "identity",
+              "header": "Type",
+              "cell": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-3" },
+                "children": [
+                  {
+                    "kind": "Icon",
+                    "props": { "className": "size-5 text-muted" },
+                    "bindings": { "icon": { "$ref": "row.icon" } }
+                  },
+                  {
+                    "kind": "View",
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-medium" },
+                        "bindings": { "children": { "$ref": "row.display_name" } }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted font-mono" },
+                        "bindings": { "children": { "$ref": "row.key" } }
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "terminology",
+              "header": "Athletes label",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm" },
+                "bindings": { "children": { "$expr": "row.terminology?.athletes || 'Athletes'" } }
+              }
+            },
+            {
+              "id": "features",
+              "header": "Features",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm text-muted" },
+                "bindings": {
+                  "children": {
+                    "$expr": "(row.default_config?.features?.length || 0) + ' enabled'"
+                  }
+                }
+              }
+            },
+            {
+              "id": "tenants_count",
+              "header": "Tenancy",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm" },
+                "bindings": { "children": { "$ref": "row.tenants_count" } }
+              }
+            },
+            {
+              "id": "is_system",
+              "header": "",
+              "cell": {
+                "kind": "Icon",
+                "bindings": {
+                  "hidden": { "$expr": "!row.is_system" },
+                  "icon": "shield-check",
+                  "className": "text-info size-4"
+                }
+              }
+            },
+            {
+              "id": "actions",
+              "header": "",
+              "align": "end",
+              "cell": {
+                "kind": "Button",
+                "props": { "variant": "ghost", "size": "sm", "children": "Open" },
+                "actions": {
+                  "onPress": {
+                    "kind": "navigate",
+                    "toExpr": "'/platform/business-types/' + row.key"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

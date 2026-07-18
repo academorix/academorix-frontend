@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "name": "Freestyle catch-up drill",
+    "sport": "Swimming",
+    "difficulty": "Intermediate",
+    "duration": 15,
+    "status": { "text": "Published", "color": "success" },
+    "isActive": true,
+    "author": "Nadia Petrova",
+    "createdAt": "2024-09-01T09:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Cone dribble weave",
+    "sport": "Soccer",
+    "difficulty": "Beginner",
+    "duration": 10,
+    "status": { "text": "Published", "color": "success" },
+    "isActive": true,
+    "author": "Tom Bailey",
+    "createdAt": "2024-08-14T09:00:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Handstand hold progression",
+    "sport": "Gymnastics",
+    "difficulty": "Intermediate",
+    "duration": 20,
+    "status": { "text": "Published", "color": "success" },
+    "isActive": true,
+    "author": "Marcus Lee",
+    "createdAt": "2024-07-20T09:00:00Z"
+  },
+  {
+    "id": 4,
+    "name": "Serve toss consistency",
+    "sport": "Tennis",
+    "difficulty": "Beginner",
+    "duration": 12,
+    "status": { "text": "Published", "color": "success" },
+    "isActive": true,
+    "author": "Emma Watts",
+    "createdAt": "2024-06-05T09:00:00Z"
+  },
+  {
+    "id": 5,
+    "name": "Block start acceleration",
+    "sport": "Athletics",
+    "difficulty": "Advanced",
+    "duration": 20,
+    "status": { "text": "Draft", "color": "warning" },
+    "isActive": false,
+    "author": "Tariq Hassan",
+    "createdAt": "2025-01-10T09:00:00Z"
+  },
+  {
+    "id": 6,
+    "name": "Ukemi break-fall",
+    "sport": "Martial arts",
+    "difficulty": "Beginner",
+    "duration": 8,
+    "status": { "text": "Published", "color": "success" },
+    "isActive": true,
+    "author": "Yuki Tanaka",
+    "createdAt": "2024-10-01T09:00:00Z"
+  }
+]

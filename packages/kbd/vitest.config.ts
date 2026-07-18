@@ -1,0 +1,29 @@
+/**
+ * @file vitest.config.ts
+ * @module @stackra/kbd/test
+ * @description Vitest configuration for `@stackra/kbd`.
+ *
+ *   Extends the shared `@stackra/testing/preset` and mounts a jsdom
+ *   environment so React component tests (when added) get a DOM.
+ */
+
+import path from 'node:path';
+import { defineConfig, mergeConfig } from 'vitest/config';
+import preset from '@stackra/testing/preset';
+
+export default mergeConfig(
+  preset,
+  defineConfig({
+    oxc: false,
+    esbuild: false,
+    test: {
+      environment: 'jsdom',
+      setupFiles: ['./__tests__/vitest.setup.ts'],
+    },
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
+    },
+  }),
+);

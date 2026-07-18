@@ -1,0 +1,40 @@
+{
+  "id": "academorix://modules/audit/data-classes",
+  "$version": 1,
+  "title": "audit \u2014 field classification",
+  "description": "Audit rows are the ULTIMATE PII sink \u2014 they contain snapshots of every restricted field value ever changed. KMS encryption + strict access control + meta-audit on view-restricted use.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "Audit.id",
+      "Audit.event",
+      "Audit.auditable_type",
+      "Audit.is_encrypted",
+      "Audit.created_at",
+      "Audit.updated_at"
+    ],
+    "internal": [
+      "Audit.tenant_id",
+      "Audit.auditable_id",
+      "Audit.user_type",
+      "Audit.user_id",
+      "Audit.url",
+      "Audit.tags",
+      "Audit.previous_hash",
+      "Audit.row_hash",
+      "Audit.cold_key"
+    ],
+    "confidential": ["Audit.ip_address", "Audit.user_agent"],
+    "restricted": ["Audit.old_values", "Audit.new_values"],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "audit_log": ["Audit rows are themselves the audit_log \u2014 recursive by definition"]
+  },
+  "notes": [
+    "old_values + new_values are RESTRICTED at the row level. Within them, individual fields inherit the source model's classification. Fields listed in the source model's $auditEncrypted array get additional KMS envelope encryption. Fields listed in $auditExclude never land in old/new values.",
+    "ip_address is truncated to /24 (IPv4) or /48 (IPv6) at write time \u2014 sufficient for tracing without pinpointing individual devices.",
+    "user_agent may reveal browser + OS fingerprint. Confidential.",
+    "cold_key is internal \u2014 hidden from API responses via x-eloquent.hidden. Reveals S3 key layout; not a secret but not intended for tenant visibility."
+  ]
+}

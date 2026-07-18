@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/notifications-push/subprocessors",
+  "$version": 1,
+  "title": "notifications-push \u2014 subprocessors (GDPR Art. 28)",
+  "regulatoryBasis": ["gdpr Art. 28", "uk_gdpr Art. 28", "coppa \u00a7312.8"],
+  "subprocessors": [
+    {
+      "name": "Firebase Cloud Messaging (FCM)",
+      "controller": "Google LLC",
+      "region": "us-central1 / europe-west1",
+      "purpose": "Push delivery to Android + Web browsers.",
+      "data_categories": ["device_token", "notification title + body", "custom data payload"],
+      "dpa_url": "https://cloud.google.com/terms/data-processing-addendum",
+      "certifications": [
+        "SOC 2 Type II",
+        "ISO 27001/27017/27018",
+        "GDPR compliant",
+        "HIPAA (BAA available on GCP)"
+      ]
+    },
+    {
+      "name": "Apple Push Notification service (APNs)",
+      "controller": "Apple Inc.",
+      "region": "us-east / eu-west (routed automatically)",
+      "purpose": "Push delivery to iOS + macOS + iPadOS.",
+      "data_categories": [
+        "device_token (base64 encoded)",
+        "notification title + body",
+        "custom data payload"
+      ],
+      "dpa_url": "https://www.apple.com/legal/enterprise/",
+      "certifications": ["ISO 27001", "GDPR compliant"]
+    },
+    {
+      "name": "Expo",
+      "controller": "650 Industries, Inc.",
+      "region": "us-east-1",
+      "purpose": "Push delivery orchestration for React Native apps. Routes to FCM/APNs.",
+      "data_categories": ["expo push token", "notification payload"],
+      "dpa_url": "https://expo.dev/legal/dpa"
+    },
+    {
+      "name": "OneSignal",
+      "controller": "OneSignal, Inc.",
+      "region": "us-east-1 / eu-west-1",
+      "purpose": "Cross-platform push with segmentation + rich notifications. Enterprise only.",
+      "data_categories": [
+        "device tokens",
+        "notification payload",
+        "recipient tags (for segmentation \u2014 optional)"
+      ],
+      "dpa_url": "https://onesignal.com/dpa",
+      "certifications": ["SOC 2 Type II", "GDPR compliant"]
+    }
+  ]
+}

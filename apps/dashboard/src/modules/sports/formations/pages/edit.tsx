@@ -8,7 +8,7 @@
  * built from the edited form values alone.
  */
 
-import { Spinner } from "@academorix/ui/react";
+import { Spinner } from "@stackra/ui/react";
 import { useForm } from "@refinedev/core";
 
 import type { Formation } from "@/modules/sports/formations/formation.types";

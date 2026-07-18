@@ -32,9 +32,10 @@
  *    single-key shortcuts. See `shortcuts.config.ts`.
  *  - `execute` is a side-effect callable. Actions that need to reach
  *    into a live React subtree call {@link "@/lib/menus/menu-actions"
- *    invokeMenuAction}, an event bus wired by
- *    {@link "@/lib/menus/menu-actions-bridge" MenuActionsBridge}. Actions
- *    that just open a URL or navigate stay inline.
+ *    invokeMenuAction}, an event bus consumed by service-based
+ *    hooks (`useCommandPalette`, `useTheme`, `useSidebar`) inside the
+ *    shell subtree. Actions that just open a URL or navigate stay
+ *    inline.
  *  - `requires` names one or more permission codes; the shell hides
  *    (not disables) commands the user can't invoke.
  *
@@ -263,9 +264,10 @@ export const menuCommands: readonly MenuCommand[] = [
     labelKey: "menu.command_palette",
     shortcut: "CmdOrCtrl+K",
     category: "view",
-    // Bridged to `CommandPaletteProvider.open()` by MenuActionsBridge.
-    // The ⌘K shortcut itself is bound inside the palette provider so
-    // this menu entry is the mouse/touch fallback.
+    // Fires the `view.command_palette` action; the palette listens on
+    // that event via `useCommandPalette`. The ⌘K shortcut itself is
+    // bound inside the palette so this menu entry is the mouse/touch
+    // fallback.
     execute: () => invokeMenuAction("view.command_palette"),
   },
   {

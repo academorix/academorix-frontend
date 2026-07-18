@@ -1,0 +1,52 @@
+{
+  "id": "academorix://modules/entitlements/data-classes",
+  "$version": 1,
+  "title": "entitlements \u2014 field classification",
+  "description": "Entitlement rows are mostly public/internal. No PII. correlation_id may reference confidential entities but is treated as internal.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "Entitlement.id",
+      "Entitlement.key",
+      "Entitlement.kind",
+      "Entitlement.period",
+      "Entitlement.value_cap",
+      "Entitlement.value_used",
+      "Entitlement.is_unlimited",
+      "Entitlement.is_metered_billing",
+      "Entitlement.is_platform_overridden",
+      "Entitlement.resets_at",
+      "Entitlement.created_at",
+      "Entitlement.updated_at",
+      "EntitlementUsage.id",
+      "EntitlementUsage.key",
+      "EntitlementUsage.amount",
+      "EntitlementUsage.meter",
+      "EntitlementUsage.consumed_at",
+      "EntitlementUsage.reason",
+      "EntitlementUsage.created_at"
+    ],
+    "internal": [
+      "Entitlement.tenant_id",
+      "Entitlement.source_plan_id",
+      "Entitlement.notes",
+      "Entitlement.metadata",
+      "EntitlementUsage.tenant_id",
+      "EntitlementUsage.entitlement_id",
+      "EntitlementUsage.correlation_id",
+      "EntitlementUsage.metadata"
+    ],
+    "confidential": [],
+    "restricted": [],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [
+      "EntitlementUsage.* rows where source Entitlement.is_metered_billing=true \u2014 constitute revenue-recognition evidence"
+    ],
+    "audit_log": ["audits.entitlements.* rows for override events + reset events"]
+  },
+  "notes": [
+    "notes column carries platform-admin's override reason \u2014 may reference contract details. Treated as internal.",
+    "correlation_id points to source entity (delivery, notification, etc). The correlated entity's classification applies transitively \u2014 an EntitlementUsage row pointing at a device_token consumption inherits the token's `restricted` classification for cross-reference queries."
+  ]
+}

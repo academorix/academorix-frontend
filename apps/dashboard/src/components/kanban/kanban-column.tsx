@@ -12,7 +12,7 @@
  * only knows how to render its own chrome + how to be a drop target.
  */
 
-import { Chip, cn } from "@academorix/ui/react";
+import { Chip, cn } from "@stackra/ui/react";
 
 import type {
   KanbanColumn as KanbanColumnDef,
@@ -113,9 +113,7 @@ export function KanbanColumnView<TColumnId extends string>({
             </Chip.Label>
           </Chip>
         </div>
-        {column.description ? (
-          <p className="text-xs text-muted">{column.description}</p>
-        ) : null}
+        {column.description ? <p className="text-xs text-muted">{column.description}</p> : null}
       </header>
 
       <div
@@ -138,9 +136,7 @@ export function KanbanColumnView<TColumnId extends string>({
       >
         {isEmpty ? (
           <div className="flex flex-1 items-center justify-center rounded-md border border-dashed border-border/60 px-3 py-6 text-center">
-            {emptyState ?? (
-              <p className="text-xs text-muted">No cards in this column</p>
-            )}
+            {emptyState ?? <p className="text-xs text-muted">No cards in this column</p>}
           </div>
         ) : (
           children

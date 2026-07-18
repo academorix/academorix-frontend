@@ -7,8 +7,8 @@
  * public landing page. Rendered directly by the router (not a feature module).
  */
 
-import { Button } from "@academorix/ui/react";
-import { useNavigate } from "react-router";
+import { Button } from "@stackra/ui/react";
+import { useNavigate } from "@stackra/routing/react";
 
 import type { ReactNode } from "react";
 

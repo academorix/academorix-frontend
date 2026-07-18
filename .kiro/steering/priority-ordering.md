@@ -56,7 +56,7 @@ Every arrow strictly increases priority left → right.
 
 ## CI check
 
-`modules/foundation/scripts/validate-module-graph.py` walks every
+`modules/shared/foundation/scripts/validate-module-graph.py` walks every
 `module.json.dependencies` edge + refuses:
 
 - Any dep with a priority ≥ the consumer's priority.
@@ -66,7 +66,7 @@ Every arrow strictly increases priority left → right.
 Run locally:
 
 ```
-python3 modules/foundation/scripts/validate-module-graph.py
+python3 modules/shared/foundation/scripts/validate-module-graph.py
 ```
 
 Exit code non-zero = merge blocked in CI.

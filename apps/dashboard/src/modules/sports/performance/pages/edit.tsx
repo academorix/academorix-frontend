@@ -8,7 +8,7 @@
  * the shared form's live SDUI editor.
  */
 
-import { Spinner } from "@academorix/ui/react";
+import { Spinner } from "@stackra/ui/react";
 import { useForm } from "@refinedev/core";
 
 import type { PerformanceTest } from "@/types";

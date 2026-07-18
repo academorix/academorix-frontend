@@ -1,27 +1,28 @@
 /**
  * @file vitest.config.ts
- * @module @academorix/i18n/vitest.config
- *
- * @description
- * Vitest configuration for `@academorix/i18n`. The `<LocaleProvider>`
- * touches `<html lang>` / `<html dir>` and `window.localStorage`, so
- * we need a DOM-shaped environment — `jsdom` provides it. `globals: true`
- * mirrors the workspace convention so `beforeEach` / `afterEach` are
- * available to `@testing-library/react`'s auto-cleanup.
+ * @module @stackra/i18n/test
+ * @description Vitest configuration for @stackra/i18n.
  */
 
-import { defineConfig } from "vitest/config";
+import { defineConfig, mergeConfig } from 'vitest/config';
+import path from 'node:path';
+import preset from '@stackra/testing/preset';
 
-export default defineConfig({
-  test: {
-    environment: "jsdom",
-    globals: true,
-    include: ["src/**/*.{test,spec}.{ts,tsx}"],
-    // Pin the timezone so date/relative-time formatters give the same
-    // output on every developer's machine + CI. Otherwise a Mac in
-    // Cupertino formats `new Date("2026-07-06")` as "Jul 5, 2026".
-    env: {
-      TZ: "UTC",
+export default mergeConfig(
+  preset,
+  defineConfig({
+    // Explicitly re-declare to survive mergeConfig — vitest 4's default OXC
+    // transformer breaks decorator metadata emission.
+    oxc: false,
+    esbuild: false,
+    test: {
+      environment: 'node',
+      setupFiles: ['./__tests__/vitest.setup.ts'],
     },
-  },
-});
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
+    },
+  })
+);

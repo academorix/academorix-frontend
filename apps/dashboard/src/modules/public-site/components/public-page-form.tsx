@@ -18,7 +18,7 @@ import {
   Select,
   Switch,
   TextField,
-} from "@academorix/ui/react";
+} from "@stackra/ui/react";
 import { useState } from "react";
 
 import type { PublicPage, PublicPageStatus } from "@/modules/public-site/public-site.types";

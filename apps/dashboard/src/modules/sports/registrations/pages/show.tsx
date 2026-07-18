@@ -7,7 +7,7 @@
  * the linked athlete once converted.
  */
 
-import { Card, Spinner } from "@academorix/ui/react";
+import { Card, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 
 import type { Registration } from "@/types";

@@ -1,0 +1,11 @@
+{
+  "defaultErrorFallback": {
+    "title": "حدث خطأ ما",
+    "defaultDescription": "حدث خطأ غير متوقع أثناء عرض هذه الصفحة.",
+    "retryButton": "حاول مرة أخرى"
+  },
+  "inlineErrorFallback": {
+    "label": "تعذّر تحميل هذا القسم.",
+    "retryButton": "إعادة المحاولة"
+  }
+}

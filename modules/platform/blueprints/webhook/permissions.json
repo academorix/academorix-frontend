@@ -1,0 +1,64 @@
+{
+  "id": "academorix://modules/webhook/permissions",
+  "$version": 1,
+  "title": "webhook \u2014 permissions",
+  "description": "Two guards. Sanctum permissions are tenant-facing (subscription + delivery admin). platform_admin permissions gate cross-tenant inspection + emergency pause.",
+  "seeder": "Academorix\\Webhook\\Database\\Seeders\\WebhookPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    { "name": "webhook.subscriptions.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "webhook.subscriptions.view", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "webhook.subscriptions.create", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "webhook.subscriptions.update", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "webhook.subscriptions.delete", "guard": "sanctum", "seededOn": ["owner"] },
+    {
+      "name": "webhook.subscriptions.manage",
+      "guard": "sanctum",
+      "description": "Pause/resume subscriptions.",
+      "seededOn": ["admin", "owner"]
+    },
+    { "name": "webhook.subscriptions.test", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "webhook.subscriptions.rotate-secret", "guard": "sanctum", "seededOn": ["owner"] },
+    { "name": "webhook.deliveries.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "webhook.deliveries.view", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "webhook.deliveries.retry", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "webhook.events.viewAny",
+      "guard": "sanctum",
+      "description": "Read the events catalog for the subscription create form.",
+      "seededOn": ["admin", "owner"]
+    },
+    { "name": "webhook.destinations.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "platform.webhook.subscriptions.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "support", "ops"]
+    },
+    {
+      "name": "platform.webhook.subscriptions.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "support", "ops"]
+    },
+    {
+      "name": "platform.webhook.subscriptions.manage",
+      "guard": "platform_admin",
+      "description": "Emergency cross-tenant pause/resume.",
+      "seededOn": ["super_admin", "ops"]
+    },
+    {
+      "name": "platform.webhook.deliveries.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "support", "ops"]
+    },
+    {
+      "name": "platform.webhook.deliveries.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "support", "ops"]
+    },
+    {
+      "name": "platform.webhook.deliveries.retry",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops"]
+    }
+  ]
+}

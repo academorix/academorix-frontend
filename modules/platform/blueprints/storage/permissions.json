@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/storage/permissions",
+  "$version": 1,
+  "title": "storage \u2014 permissions",
+  "seeder": "Academorix\\Storage\\Database\\Seeders\\StoragePermissionSeeder",
+  "isSystem": true,
+  "description": "Tenant-facing file permissions + platform-admin permissions. Every tenant-scoped route composes one of the tenant permissions; every platform-admin route composes one of the platform permissions.",
+  "permissions": [
+    {
+      "name": "files.viewAny",
+      "guard": "sanctum",
+      "description": "List files in the tenant.",
+      "seededOn": ["owner", "admin", "member"]
+    },
+    {
+      "name": "files.view",
+      "guard": "sanctum",
+      "description": "Read a single file + issue a standard-TTL signed URL for download / preview.",
+      "seededOn": ["owner", "admin", "member"]
+    },
+    {
+      "name": "files.upload",
+      "guard": "sanctum",
+      "description": "Upload new files (single-request + chunked).",
+      "seededOn": ["owner", "admin", "member"]
+    },
+    {
+      "name": "files.update",
+      "guard": "sanctum",
+      "description": "Update mutable file fields (name, visibility, metadata) on own files. Admins can update any file.",
+      "seededOn": ["owner", "admin", "member"]
+    },
+    {
+      "name": "files.delete",
+      "guard": "sanctum",
+      "description": "Soft-delete own files. Admins can delete any file.",
+      "seededOn": ["owner", "admin", "member"]
+    },
+    {
+      "name": "files.admin",
+      "guard": "sanctum",
+      "description": "Elevated actions: reprocess variants, bulk revoke signed URLs, issue long-TTL / IP-locked / one-time signed URLs, download infected files (with acknowledgment), update / delete any file regardless of ownership.",
+      "seededOn": ["owner", "admin"]
+    },
+    {
+      "name": "platform.storage.view",
+      "guard": "platform_admin",
+      "description": "Cross-tenant file + variant + signed-url-audit read. Antivirus dashboard access.",
+      "seededOn": ["super_admin", "ops", "sre", "compliance_officer"]
+    },
+    {
+      "name": "platform.storage.manage",
+      "guard": "platform_admin",
+      "description": "Platform-side write actions: rescan, quarantine, hard-delete bypassing retention, force reconcile-quota.",
+      "seededOn": ["super_admin", "compliance_officer"]
+    }
+  ]
+}

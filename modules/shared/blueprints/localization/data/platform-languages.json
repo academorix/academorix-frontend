@@ -1,0 +1,273 @@
+{
+  "$version": 1,
+  "title": "PlatformLanguage catalogue seed",
+  "description": "Seeded by `localization:seed-platform-languages`. UPSERT keyed on the composite triple `(geography_language_id, geography_country_id, script_code)`. Each row identifies its geography rows by NATURAL keys (`geography_language_code` \u2192 `geography::Language.code`, optional `geography_country_iso2` \u2192 `geography::Country.iso2`) so the seed file stays portable across environments where the vendor auto-increment ids differ. Prefer BCP 47 tags over raw ISO-639-1 for regional variants (fr vs fr-CA, zh-Hans vs zh-Hant). The seeder resolves natural keys \u2192 FK ids at insert time; a lookup miss (missing geography row) aborts the seed and points to `php artisan world:install`.",
+  "columns_note": "Fields on each row: `bcp47_code`, `geography_language_code` (natural key), optional `geography_country_iso2` (natural key; only for regional variants), optional `script_code` (ISO 15924; required when the language has multiple written scripts, e.g. zh-Hans / zh-Hant / sr-Latn / sr-Cyrl), `is_active_on_platform`, `is_beta`, `is_system`, `sort_order`. All display fields (name, native_name, direction, flag_emoji) are READ at runtime via accessors chaining through the joined geography rows \u2014 not stored in this file, not stored in platform_languages.",
+  "platform_languages": [
+    {
+      "bcp47_code": "en",
+      "geography_language_code": "en",
+      "is_active_on_platform": true,
+      "is_system": true,
+      "sort_order": 1
+    },
+    {
+      "bcp47_code": "en-US",
+      "geography_language_code": "en",
+      "geography_country_iso2": "US",
+      "is_active_on_platform": true,
+      "sort_order": 2
+    },
+    {
+      "bcp47_code": "en-GB",
+      "geography_language_code": "en",
+      "geography_country_iso2": "GB",
+      "is_active_on_platform": true,
+      "sort_order": 3
+    },
+    {
+      "bcp47_code": "ar",
+      "geography_language_code": "ar",
+      "is_active_on_platform": true,
+      "sort_order": 5
+    },
+    {
+      "bcp47_code": "he",
+      "geography_language_code": "he",
+      "is_active_on_platform": true,
+      "sort_order": 6
+    },
+    {
+      "bcp47_code": "fa",
+      "geography_language_code": "fa",
+      "is_active_on_platform": true,
+      "sort_order": 7
+    },
+    {
+      "bcp47_code": "ur",
+      "geography_language_code": "ur",
+      "is_active_on_platform": true,
+      "sort_order": 8
+    },
+    {
+      "bcp47_code": "fr",
+      "geography_language_code": "fr",
+      "is_active_on_platform": true,
+      "sort_order": 10
+    },
+    {
+      "bcp47_code": "fr-CA",
+      "geography_language_code": "fr",
+      "geography_country_iso2": "CA",
+      "is_active_on_platform": true,
+      "sort_order": 11
+    },
+    {
+      "bcp47_code": "es",
+      "geography_language_code": "es",
+      "is_active_on_platform": true,
+      "sort_order": 20
+    },
+    {
+      "bcp47_code": "es-MX",
+      "geography_language_code": "es",
+      "geography_country_iso2": "MX",
+      "is_active_on_platform": true,
+      "sort_order": 21
+    },
+    {
+      "bcp47_code": "de",
+      "geography_language_code": "de",
+      "is_active_on_platform": true,
+      "sort_order": 30
+    },
+    {
+      "bcp47_code": "pt",
+      "geography_language_code": "pt",
+      "is_active_on_platform": true,
+      "sort_order": 40
+    },
+    {
+      "bcp47_code": "pt-BR",
+      "geography_language_code": "pt",
+      "geography_country_iso2": "BR",
+      "is_active_on_platform": true,
+      "sort_order": 41
+    },
+    {
+      "bcp47_code": "it",
+      "geography_language_code": "it",
+      "is_active_on_platform": true,
+      "sort_order": 50
+    },
+    {
+      "bcp47_code": "nl",
+      "geography_language_code": "nl",
+      "is_active_on_platform": true,
+      "sort_order": 60
+    },
+    {
+      "bcp47_code": "sv",
+      "geography_language_code": "sv",
+      "is_active_on_platform": true,
+      "sort_order": 70
+    },
+    {
+      "bcp47_code": "no",
+      "geography_language_code": "no",
+      "is_active_on_platform": true,
+      "sort_order": 71
+    },
+    {
+      "bcp47_code": "da",
+      "geography_language_code": "da",
+      "is_active_on_platform": true,
+      "sort_order": 72
+    },
+    {
+      "bcp47_code": "fi",
+      "geography_language_code": "fi",
+      "is_active_on_platform": true,
+      "sort_order": 73
+    },
+    {
+      "bcp47_code": "pl",
+      "geography_language_code": "pl",
+      "is_active_on_platform": true,
+      "sort_order": 80
+    },
+    {
+      "bcp47_code": "cs",
+      "geography_language_code": "cs",
+      "is_active_on_platform": true,
+      "sort_order": 81
+    },
+    {
+      "bcp47_code": "ro",
+      "geography_language_code": "ro",
+      "is_active_on_platform": true,
+      "sort_order": 82
+    },
+    {
+      "bcp47_code": "hu",
+      "geography_language_code": "hu",
+      "is_active_on_platform": true,
+      "sort_order": 83
+    },
+    {
+      "bcp47_code": "ru",
+      "geography_language_code": "ru",
+      "script_code": "Cyrl",
+      "is_active_on_platform": true,
+      "sort_order": 90
+    },
+    {
+      "bcp47_code": "uk",
+      "geography_language_code": "uk",
+      "script_code": "Cyrl",
+      "is_active_on_platform": true,
+      "sort_order": 91
+    },
+    {
+      "bcp47_code": "el",
+      "geography_language_code": "el",
+      "script_code": "Grek",
+      "is_active_on_platform": true,
+      "sort_order": 92
+    },
+    {
+      "bcp47_code": "tr",
+      "geography_language_code": "tr",
+      "is_active_on_platform": true,
+      "sort_order": 100
+    },
+    {
+      "bcp47_code": "hi",
+      "geography_language_code": "hi",
+      "script_code": "Deva",
+      "is_active_on_platform": true,
+      "sort_order": 110
+    },
+    {
+      "bcp47_code": "bn",
+      "geography_language_code": "bn",
+      "script_code": "Beng",
+      "is_active_on_platform": true,
+      "sort_order": 111
+    },
+    {
+      "bcp47_code": "ta",
+      "geography_language_code": "ta",
+      "script_code": "Taml",
+      "is_active_on_platform": true,
+      "sort_order": 112
+    },
+    {
+      "bcp47_code": "th",
+      "geography_language_code": "th",
+      "script_code": "Thai",
+      "is_active_on_platform": true,
+      "sort_order": 120
+    },
+    {
+      "bcp47_code": "vi",
+      "geography_language_code": "vi",
+      "is_active_on_platform": true,
+      "sort_order": 121
+    },
+    {
+      "bcp47_code": "id",
+      "geography_language_code": "id",
+      "is_active_on_platform": true,
+      "sort_order": 122
+    },
+    {
+      "bcp47_code": "ms",
+      "geography_language_code": "ms",
+      "is_active_on_platform": true,
+      "sort_order": 123
+    },
+    {
+      "bcp47_code": "zh-Hans",
+      "geography_language_code": "zh",
+      "script_code": "Hans",
+      "is_active_on_platform": true,
+      "sort_order": 130
+    },
+    {
+      "bcp47_code": "zh-Hant",
+      "geography_language_code": "zh",
+      "script_code": "Hant",
+      "is_active_on_platform": true,
+      "sort_order": 131
+    },
+    {
+      "bcp47_code": "ja",
+      "geography_language_code": "ja",
+      "script_code": "Jpan",
+      "is_active_on_platform": true,
+      "sort_order": 140
+    },
+    {
+      "bcp47_code": "ko",
+      "geography_language_code": "ko",
+      "script_code": "Kore",
+      "is_active_on_platform": true,
+      "sort_order": 141
+    },
+    {
+      "bcp47_code": "sw",
+      "geography_language_code": "sw",
+      "is_active_on_platform": true,
+      "is_beta": true,
+      "sort_order": 150
+    },
+    {
+      "bcp47_code": "af",
+      "geography_language_code": "af",
+      "is_active_on_platform": true,
+      "is_beta": true,
+      "sort_order": 151
+    }
+  ]
+}

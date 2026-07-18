@@ -1,0 +1,53 @@
+{
+  "id": "newsletter.newsletter-stat-card",
+  "title": "Newsletter stat card",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "KPI card for newsletter metrics. `kind` selects the metric label + formatting; `value` is the raw number.",
+  "props": {
+    "kind": {
+      "type": "string",
+      "description": "Metric key: subscribers / open_rate / click_rate / bounce_rate / complaint_rate."
+    },
+    "value": {
+      "type": "number",
+      "description": "Raw number. Rate types formatted as percentages."
+    },
+    "valueExpr": {
+      "type": "string",
+      "description": "Alternative to value \u2014 dynamic expression."
+    },
+    "compact": { "type": "boolean", "default": false }
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "card",
+      "kind": "Card",
+      "props": { "className": "p-4" },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs font-semibold text-muted uppercase tracking-wide" },
+          "bindings": {
+            "children": {
+              "$expr": "({subscribers: 'Subscribers', open_rate: 'Open rate', click_rate: 'Click rate', bounce_rate: 'Bounce rate', complaint_rate: 'Complaint rate'})[props.kind]"
+            }
+          }
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-2xl font-semibold mt-1" },
+          "bindings": {
+            "className": {
+              "$expr": "(props.kind === 'bounce_rate' || props.kind === 'complaint_rate') && (props.value ?? 0) > 0.05 ? 'text-2xl font-semibold mt-1 text-danger' : 'text-2xl font-semibold mt-1'"
+            },
+            "children": {
+              "$expr": "props.kind === 'subscribers' ? (props.value ?? props.valueExpr ?? 0).toLocaleString() : ((props.value ?? props.valueExpr ?? 0) * 100).toFixed(1) + '%'"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

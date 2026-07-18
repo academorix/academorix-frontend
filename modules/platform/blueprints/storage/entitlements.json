@@ -1,0 +1,65 @@
+{
+  "id": "academorix://modules/storage/entitlements",
+  "$version": 1,
+  "title": "storage \u2014 declared entitlements",
+  "description": "Three entitlements the storage module consumes. Two pool kinds (bytes + monthly uploads) + one slot kind (max file count per tenant). Overquota rejects at the middleware layer with HTTP 402.",
+  "reference": { "publishedBy": "entitlements" },
+  "kinds": ["slot", "pool"],
+  "entitlements": [
+    {
+      "key": "storage.bytes.consumed",
+      "kind": "pool",
+      "period": "anniversary",
+      "unit": "bytes",
+      "description": "Total bytes currently referenced by non-erased File rows. Reconciled hourly via SyncStorageEntitlementUsageJob (SUM of File.size_bytes WHERE deleted_at IS NULL AND archived_at IS NULL). Reset window is `anniversary` because storage is a persistent resource \u2014 the cap represents the tenant's steady-state ceiling, not a monthly recurring budget.",
+      "consumed_by": ["storage.quota.enforce middleware on every upload"],
+      "default_caps": {
+        "free": { "value_cap": 1073741824, "note": "1 GB" },
+        "team": { "value_cap": 53687091200, "note": "50 GB" },
+        "business": { "value_cap": 536870912000, "note": "500 GB" },
+        "enterprise": { "value_cap": null, "note": "Unlimited by default; negotiated per contract" }
+      },
+      "approaching_threshold": 0.8,
+      "notifications": {
+        "approaching": "notifications-mail::StorageQuotaApproachingNotification",
+        "exceeded": "notifications-mail::StorageQuotaExceededNotification"
+      }
+    },
+    {
+      "key": "storage.files.max_per_tenant",
+      "kind": "slot",
+      "unit": "files",
+      "description": "Hard cap on File row count. Defence against pathological upload floods (a malicious script creating millions of tiny files to blow through DB row limits before hitting the byte cap).",
+      "consumed_by": ["storage.quota.enforce middleware on every upload"],
+      "default_caps": {
+        "free": { "value_cap": 100 },
+        "team": { "value_cap": 10000 },
+        "business": { "value_cap": 100000 },
+        "enterprise": { "value_cap": 1000000 }
+      },
+      "approaching_threshold": 0.9,
+      "notifications": {
+        "exceeded": "notifications-mail::StorageQuotaExceededNotification"
+      }
+    },
+    {
+      "key": "storage.uploads.month",
+      "kind": "pool",
+      "period": "monthly",
+      "unit": "uploads",
+      "description": "Monthly upload count cap. Distinct from the file count slot \u2014 this is a THROUGHPUT limit that resets each calendar month, defending against sustained-abuse patterns where uploads are also being deleted in a cycle. Free tier: 500 uploads/month; enterprise: unlimited.",
+      "consumed_by": ["storage.quota.enforce middleware on every upload"],
+      "default_caps": {
+        "free": { "value_cap": 500 },
+        "team": { "value_cap": 50000 },
+        "business": { "value_cap": 500000 },
+        "enterprise": { "value_cap": null }
+      }
+    }
+  ],
+  "reservation_semantics": {
+    "chunked_uploads": "On ChunkedUpload initiate, the entire total_size_bytes is RESERVED against storage.bytes.consumed. Reservation held for the upload's TTL (24h default). On successful finalize, reservation flips to actual usage on the resulting File. On abort / expire, reservation is released via SyncStorageEntitlementUsageJob.",
+    "dedup_effect": "When a dedup-hit occurs (matching SHA-256 already in the tenant), the second tenant still consumes bytes for its reference (each row 'pays' for the reference). Cross-tenant dedup applies to physical byte storage only \u2014 not to per-tenant accounting.",
+    "atomicity": "Reservation + upload commit are atomic within the DB transaction. On roll-back (validation failure, virus detection during upload), the reservation is released via the FileObserver deleting hook."
+  }
+}

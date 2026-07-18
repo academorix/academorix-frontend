@@ -1,20 +1,31 @@
 /**
  * @file vitest.config.ts
- * @module @academorix/pwa/vitest.config
- *
- * @description
- * Minimal Vitest config for @academorix/pwa. Runs `tsc`-checked tests
- * (co-located under `src/**\/__tests__/*.test.ts`) in the Node
- * environment. All helpers are pure — no globals, no side effects.
+ * @module @stackra/pwa/test
+ * @description Vitest configuration for @stackra/pwa. Merges with
+ *   `@stackra/testing/preset` for the SWC-backed transformer (which
+ *   correctly emits `design:paramtypes` for DI classes referenced
+ *   before their declaration).
  */
 
-import { defineConfig } from "vitest/config";
+import { defineConfig, mergeConfig } from 'vitest/config';
+import path from 'node:path';
+import preset from '@stackra/testing/preset';
 
-export default defineConfig({
-  test: {
-    environment: "node",
-    include: ["src/**/__tests__/**/*.test.ts"],
-    unstubGlobals: true,
-    clearMocks: true,
-  },
-});
+export default mergeConfig(
+  preset,
+  defineConfig({
+    // Disable Vitest 4's default OXC + esbuild transformers so SWC is
+    // the sole transform — matches every other workspace package.
+    oxc: false,
+    esbuild: false,
+    test: {
+      environment: 'node',
+      setupFiles: ['./__tests__/vitest.setup.ts'],
+    },
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
+    },
+  })
+);

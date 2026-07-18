@@ -1,0 +1,130 @@
+{
+  "id": "academorix://modules/invitations/metrics",
+  "$version": 1,
+  "title": "invitations — OpenTelemetry metrics",
+  "description": "OpenTelemetry / Prometheus metrics this module emits. RED pattern for send + accept surfaces; funnel counters mirror the analytics.json event names but at the ops / SLO level (i.e. not gated by user consent).",
+  "instrumentation": "open-telemetry/sdk",
+  "namespace": "academorix.invitations",
+  "metrics": [
+    {
+      "name": "academorix.invitations.sent.total",
+      "kind": "counter",
+      "unit": "invitations",
+      "labels": ["application_id", "tenant_id", "channel", "target_type"],
+      "description": "Increments on InvitationSent."
+    },
+    {
+      "name": "academorix.invitations.delivered.total",
+      "kind": "counter",
+      "unit": "invitations",
+      "labels": ["application_id", "channel", "transport"]
+    },
+    {
+      "name": "academorix.invitations.opened.total",
+      "kind": "counter",
+      "unit": "invitations",
+      "labels": ["application_id"]
+    },
+    {
+      "name": "academorix.invitations.clicked.total",
+      "kind": "counter",
+      "unit": "invitations",
+      "labels": ["application_id"]
+    },
+    {
+      "name": "academorix.invitations.accepted.total",
+      "kind": "counter",
+      "unit": "invitations",
+      "labels": ["application_id", "target_type", "role_key"]
+    },
+    {
+      "name": "academorix.invitations.declined.total",
+      "kind": "counter",
+      "unit": "invitations",
+      "labels": ["application_id", "target_type"]
+    },
+    {
+      "name": "academorix.invitations.expired.total",
+      "kind": "counter",
+      "unit": "invitations",
+      "labels": ["application_id", "target_type"]
+    },
+    {
+      "name": "academorix.invitations.revoked.total",
+      "kind": "counter",
+      "unit": "invitations",
+      "labels": ["application_id", "is_abuse_response"]
+    },
+    {
+      "name": "academorix.invitations.bounced.total",
+      "kind": "counter",
+      "unit": "invitations",
+      "labels": ["application_id", "bounce_kind", "transport"],
+      "description": "hard / soft / complaint distribution — feeds deliverability dashboards."
+    },
+    {
+      "name": "academorix.invitations.resent.total",
+      "kind": "counter",
+      "unit": "invitations",
+      "labels": ["application_id", "resend_count"]
+    },
+    {
+      "name": "academorix.invitations.pending",
+      "kind": "gauge",
+      "unit": "invitations",
+      "labels": ["application_id", "tenant_id"],
+      "description": "Point-in-time count of non-terminal invitations. Sampled every 60s."
+    },
+    {
+      "name": "academorix.invitations.send.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [50, 100, 250, 500, 1000, 2500, 5000, 10000, 30000],
+      "labels": ["transport"],
+      "description": "SendInvitationJob end-to-end duration."
+    },
+    {
+      "name": "academorix.invitations.accept.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [50, 100, 250, 500, 1000, 2500, 5000],
+      "labels": ["target_type"],
+      "description": "POST /api/invitations/{token}/accept duration — includes the target-handler runtime."
+    },
+    {
+      "name": "academorix.invitations.acceptance_rate",
+      "kind": "gauge",
+      "unit": "ratio",
+      "labels": ["application_id", "tenant_id"],
+      "description": "Rolling 30d (accepted / sent). SLO target: >0.6 for owner-role invitations, >0.4 overall."
+    },
+    {
+      "name": "academorix.invitations.bounce_rate",
+      "kind": "gauge",
+      "unit": "ratio",
+      "labels": ["application_id", "tenant_id"],
+      "description": "Rolling 30d (bounced / sent). SLO target: <0.02. Alerts fire above 0.05."
+    },
+    {
+      "name": "academorix.invitations.rate_limit_exceeded.total",
+      "kind": "counter",
+      "unit": "requests",
+      "labels": ["dimension"],
+      "description": "Counter of 429 responses from `throttle.invitations`. Dimension is the counter that tripped: inviter_user / inviter_service_account / tenant / invitee_email."
+    },
+    {
+      "name": "academorix.invitations.webhook.received.total",
+      "kind": "counter",
+      "unit": "webhooks",
+      "labels": ["transport", "signal"],
+      "description": "Inbound mail-transport webhooks by (transport, signal)."
+    },
+    {
+      "name": "academorix.invitations.webhook.signature_failed.total",
+      "kind": "counter",
+      "unit": "webhooks",
+      "labels": ["transport"],
+      "description": "Signature verification failures. High volume = likely attack; alerts fire."
+    }
+  ]
+}

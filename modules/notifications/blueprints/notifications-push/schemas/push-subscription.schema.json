@@ -1,0 +1,239 @@
+{
+  "id": "academorix://modules/notifications-push/schemas/push-subscription",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PushSubscription",
+  "description": "Per-user per-device push subscription. `device_token` is RESTRICTED tier \u2014 encrypted at rest via AWS KMS. Rotated by client on app launch. Auto-expired on PushInvalidToken from provider webhook. 90d idle \u2192 hard purge.",
+  "type": "object",
+  "x-module": "notifications-push",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "push_subscriptions",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "psub_",
+    "incrementing": false,
+    "model": "Academorix\\Notifications\\Push\\Models\\PushSubscription",
+    "interface": "Academorix\\Notifications\\Push\\Contracts\\Data\\PushSubscriptionInterface",
+    "implements": ["Academorix\\Notifications\\Push\\Contracts\\Data\\PushSubscriptionInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToApplication",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "device_token": "DeviceTokenCast",
+      "is_active": "boolean",
+      "last_seen_at": "datetime",
+      "expires_at": "datetime",
+      "invalid_token_reported_at": "datetime",
+      "metadata": "array"
+    },
+    "appends": ["is_stale", "is_expired"],
+    "observers": ["PushSubscriptionObserver"],
+    "hidden": ["device_token", "metadata"],
+    "encrypted": ["device_token"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `psub_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "application_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "applications",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        }
+      },
+      "user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "provider": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: fcm, apns, expo, onesignal."
+      },
+      "platform": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: ios, android, web, macos, windows."
+      },
+      "device_token": {
+        "type": "text",
+        "nullable": false,
+        "description": "Provider-issued device token. AES-256 encrypted at rest via KMS. Never returned by API responses. Provider validates on register (dry-run) before persist."
+      },
+      "device_token_fingerprint": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "SHA-256 hex of device_token. Non-secret. Used for admin listings + support diagnostics without exposing the raw token."
+      },
+      "device_name": {
+        "type": "string",
+        "length": 100,
+        "nullable": true,
+        "description": "User-supplied device name (\"Sarah's iPhone 14\")."
+      },
+      "app_version": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Client app version at register time. Powers backwards-compat queries."
+      },
+      "os_version": { "type": "string", "length": 32, "nullable": true },
+      "locale": {
+        "type": "string",
+        "length": 8,
+        "nullable": true,
+        "description": "Device locale. Used to pick template locale when different from user preference."
+      },
+      "timezone": { "type": "string", "length": 64, "nullable": true },
+      "is_active": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "False when token invalid OR user revoked OR provider expired."
+      },
+      "last_seen_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Refreshed on every client re-register call. Powers the 90d idle prune."
+      },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Provider-declared expiry (rare; most tokens auto-rotate)."
+      },
+      "invalid_token_reported_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When PushInvalidToken event fired for this subscription. Sets is_active=false."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["user_id", "application_id", "device_token_fingerprint"],
+        "unique": true,
+        "name": "push_subscriptions_user_app_token_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "Prevents duplicate subscription rows for the same (user, app, token). Re-register updates last_seen_at + refreshes metadata."
+      },
+      {
+        "columns": ["user_id", "is_active"],
+        "unique": false,
+        "name": "push_subscriptions_user_active_index",
+        "description": "Primary read path on dispatch."
+      },
+      {
+        "columns": ["last_seen_at"],
+        "unique": false,
+        "name": "push_subscriptions_stale_scan_index",
+        "predicate": "is_active = true",
+        "description": "PruneExpiredSubscriptionsJob scan."
+      },
+      {
+        "columns": ["provider", "platform"],
+        "unique": false,
+        "name": "push_subscriptions_provider_index"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "application_id",
+    "user_id",
+    "provider",
+    "platform",
+    "device_token",
+    "device_token_fingerprint",
+    "is_active",
+    "last_seen_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^psub_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "application_id": { "type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "user_id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "provider": { "type": "string", "enum": ["fcm", "apns", "expo", "onesignal"] },
+    "platform": { "type": "string", "enum": ["ios", "android", "web", "macos", "windows"] },
+    "device_token": { "type": "string", "description": "Never returned by API." },
+    "device_token_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "device_name": { "type": ["string", "null"], "maxLength": 100 },
+    "app_version": { "type": ["string", "null"], "maxLength": 32 },
+    "os_version": { "type": ["string", "null"], "maxLength": 32 },
+    "locale": { "type": ["string", "null"], "pattern": "^[a-z]{2}(_[A-Z]{2})?$", "maxLength": 8 },
+    "timezone": { "type": ["string", "null"], "maxLength": 64 },
+    "is_active": { "type": "boolean" },
+    "last_seen_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": ["string", "null"], "format": "date-time" },
+    "invalid_token_reported_at": { "type": ["string", "null"], "format": "date-time" },
+    "is_stale": { "type": "boolean", "description": "Computed. last_seen_at older than 30d." },
+    "is_expired": {
+      "type": "boolean",
+      "description": "Computed. is_active=false OR expires_at < now()."
+    },
+    "metadata": { "type": ["object", "null"], "additionalProperties": true },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["device_token", "metadata", "created_by", "updated_by", "deleted_by"],
+    "computed": ["is_stale", "is_expired"]
+  }
+}

@@ -38,15 +38,15 @@ import {
   ClockIcon,
   TrashIcon,
   ChevronRightIcon,
-} from "@academorix/ui/icons/outline";
-import { Button, Dropdown, Label } from "@academorix/ui/react";
+} from "@stackra/ui/icons/heroicon/outline";
+import { Button, Dropdown, Label } from "@stackra/ui/react";
 import { useMemo } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "@stackra/routing/react";
 
 import type { SnoozePreset } from "@/lib/notifications/hooks";
 import type { NotificationRenderPriority, RenderableNotification } from "@/lib/notifications/types";
 import type { Notification, NotificationChannel } from "@academorix/notifications";
-import type { IconType } from "@academorix/ui/icons";
+import type { IconType } from "@stackra/ui/icons";
 import type { Key, ReactNode } from "react";
 
 import { EVENTS } from "@/config/analytics.config";

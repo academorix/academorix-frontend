@@ -12,8 +12,8 @@
  * column, above the section content.
  */
 
-import { ChevronRightIcon } from "@academorix/ui/icons/outline";
-import { Link } from "@academorix/ui/react";
+import { ChevronRightIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Link } from "@stackra/ui/react";
 
 import type { ReactNode } from "react";
 

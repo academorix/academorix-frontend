@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/versioning/feature-flags",
+  "$version": 1,
+  "title": "versioning \u2014 kill switches + rollout controls",
+  "description": "Pennant flags. Kill switches default ON.",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "versioning.resolve",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master resolver kill switch. When off, every request resolves to config('versioning.default') without walking the chain. Emergency toggle for a bad resolver."
+    },
+    {
+      "key": "versioning.resolvers.url",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Disable URL-path resolver. Requests must use header/query then."
+    },
+    { "key": "versioning.resolvers.header", "kind": "kill-switch", "default": "on" },
+    {
+      "key": "versioning.resolvers.query",
+      "kind": "rollout",
+      "default": "off",
+      "description": "Enable query-param resolver in production (default off; on in dev/test/staging via env). Turning on in production requires the versioning.query_resolver_in_production feature entitlement."
+    },
+    {
+      "key": "versioning.resolvers.webhook",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Disable webhook subscription pinning. All webhook payloads deliver as platform-current \u2014 backwards-incompatible for pinned subscribers."
+    },
+    {
+      "key": "versioning.resolvers.graphql",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Disable GraphQL context resolver. GraphQL surface defaults to platform-current schema."
+    },
+    {
+      "key": "versioning.transformers.chain",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Disable payload transformer chain composition. Direct edges still resolve; multi-hop chains skipped (delivery fails with NO_TRANSFORMER_PATH)."
+    },
+    {
+      "key": "versioning.sunset.enforce_410",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "When off, sunset versions serve responses (with Sunset header) instead of returning 410. Emergency toggle if a customer's business-critical integration is caught by a sunset."
+    },
+    {
+      "key": "versioning.sunset.auto_upgrade",
+      "kind": "rollout",
+      "default": "on",
+      "description": "Enable the AutoUpgradePinnedSubscriptions listener. Off = pinned subs paused instead of upgraded."
+    }
+  ]
+}

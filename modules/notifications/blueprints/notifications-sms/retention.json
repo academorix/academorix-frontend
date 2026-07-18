@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/notifications-sms/retention",
+  "$version": 1,
+  "title": "notifications-sms \u2014 retention windows",
+  "description": "SmsOptOut retained per TCPA + CASL evidence requirements. Cost aggregation retained for billing.",
+  "compliance_regimes_referenced": [
+    "tcpa 47 CFR \u00a7 64.1200 \u2014 opt-out records evidence",
+    "casl s.11 \u2014 unsubscribe records",
+    "ctia short code guidelines \u2014 STOP keyword records",
+    "gdpr Art. 5 (storage limitation) + Art. 17 (erasure)"
+  ],
+  "retention": [
+    {
+      "entity": "SmsOptOut (reason=stop_keyword)",
+      "hot": {
+        "days": "forever",
+        "description": "TCPA + CTIA require perpetual retention of unsubscribe records as evidence."
+      },
+      "purge": {
+        "trigger": "super_admin manual only",
+        "action": "anonymise phone (SHA-256 hash) + retain row"
+      }
+    },
+    {
+      "entity": "SmsOptOut (reason=do_not_call_registry)",
+      "hot": { "days": "forever" },
+      "purge": { "trigger": "removed from DNC upstream", "action": "soft delete + retain audit" }
+    },
+    {
+      "entity": "SmsOptOut (reason=complaint)",
+      "hot": { "days": 1825, "description": "5 years for TCPA evidence." },
+      "purge": { "trigger": "> 5 years", "action": "anonymise phone + retain row" }
+    },
+    {
+      "entity": "SmsOptOut (reason=invalid_number)",
+      "hot": {
+        "days": 30,
+        "description": "Recheck window \u2014 numbers may be reassigned by carrier."
+      },
+      "purge": { "trigger": "expires_at reached", "action": "soft delete" }
+    },
+    {
+      "entity": "SmsOptOut (reason=manual)",
+      "hot": { "days": "while tenant owns" },
+      "purge": { "trigger": "admin action", "action": "soft delete then 30d hard delete" }
+    },
+    {
+      "entity": "SmsOptOut (reason=spam_trap)",
+      "hot": {
+        "days": "forever",
+        "description": "Platform-wide is_system=true. Not tenant-deletable."
+      },
+      "purge": { "trigger": "super_admin manual", "action": "hard delete with mandatory audit" }
+    },
+    {
+      "entity": "audit_log (notifications-sms scoped)",
+      "hot": { "days": 365 },
+      "cold": { "days": 2555, "description": "7y for TCPA + SOC 2 evidence." },
+      "purge": { "trigger": "cold window exceeded", "action": "anonymise-not-delete" }
+    }
+  ]
+}

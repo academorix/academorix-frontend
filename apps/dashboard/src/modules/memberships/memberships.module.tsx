@@ -9,7 +9,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §16.5 "Recurring Membership & Subscriptions"
  */
 
-import { CreditCardIcon } from "@academorix/ui/icons/outline";
+import { CreditCardIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

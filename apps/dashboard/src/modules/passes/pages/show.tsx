@@ -7,7 +7,7 @@
  * production; a styled code block here) plus holder, type, status, and validity.
  */
 
-import { Card, Chip, Spinner } from "@academorix/ui/react";
+import { Card, Chip, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 
 import type { Pass, PassStatus } from "@/modules/passes/passes.types";

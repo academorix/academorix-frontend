@@ -30,7 +30,7 @@
  * dismissible, respects unsaved work.
  */
 
-import { toast } from "@academorix/ui/react";
+import { toast } from "@stackra/ui/react";
 import { useEffect, useRef } from "react";
 
 import type { ReactNode } from "react";

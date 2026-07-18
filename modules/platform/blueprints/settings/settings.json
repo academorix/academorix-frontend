@@ -1,0 +1,66 @@
+{
+  "id": "academorix://modules/settings/settings",
+  "$version": 1,
+  "title": "settings \u2014 settings (meta)",
+  "description": "Settings the settings module publishes about itself. Encryption + quota controls. Canonical group/section/field taxonomy.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "settings_platform",
+      "class": "Academorix\\Settings\\Settings\\SettingsPlatformSettings",
+      "label": "Settings platform",
+      "description": "Encryption + quota controls for tenant-scope setting values.",
+      "icon": "cog-6-tooth",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 22,
+      "permission": "settings.read",
+      "sections": [
+        {
+          "label": "Sensitive field encryption",
+          "description": "Additional KMS envelope encryption for sensitive settings values at rest.",
+          "icon": "lock-closed",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "encryption_enabled",
+              "controlType": "toggle",
+              "label": "Enable KMS encryption at rest",
+              "defaultValue": false,
+              "validation": ["boolean"],
+              "sortOrder": 1,
+              "helpText": "Requires settings.encrypt_sensitive_at_rest entitlement (enterprise)."
+            },
+            {
+              "name": "encryption_re_encrypt_on_kms_rotation",
+              "controlType": "toggle",
+              "label": "Re-encrypt on KMS key rotation",
+              "defaultValue": true,
+              "validation": ["boolean"],
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Override quota",
+          "description": "Cap on active SettingValue rows per scope.",
+          "icon": "queue-list",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "max_overrides_per_scope_override",
+              "controlType": "number",
+              "label": "Max overrides per scope",
+              "defaultValue": null,
+              "validation": ["nullable", "integer", "min:1"],
+              "min": 1,
+              "sortOrder": 1,
+              "helpText": "Empty = follow entitlement default. Bounded by plan max."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

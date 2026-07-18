@@ -1,0 +1,38 @@
+{
+  "id": "academorix://modules/notifications-push/permissions",
+  "$version": 1,
+  "title": "notifications-push \u2014 permissions",
+  "seeder": "Academorix\\Notifications\\Push\\Database\\Seeders\\NotificationsPushPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "notifications.subscriptions.viewAny",
+      "guard": "sanctum",
+      "description": "List push subscriptions.",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "notifications.subscriptions.view",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "notifications.subscriptions.create",
+      "guard": "sanctum",
+      "description": "Register a new push device token.",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "notifications.subscriptions.delete",
+      "guard": "sanctum",
+      "description": "Revoke a push subscription. Users revoke own; tenant admins revoke any.",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "platform.notifications-push.subscriptions.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant subscription visibility for support (device_token still hidden).",
+      "seededOn": ["super_admin", "support", "ops"]
+    }
+  ]
+}

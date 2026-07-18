@@ -1,0 +1,186 @@
+{
+  "id": "academorix://modules/localization/events",
+  "$version": 1,
+  "title": "localization \u2014 published events",
+  "namespace": "Academorix\\Localization\\Events",
+  "dispatchMode": "afterCommit",
+  "events": [
+    {
+      "name": "LocaleResolved",
+      "class": "Academorix\\Localization\\Events\\LocaleResolved",
+      "trigger": "ResolveLocale middleware finished. Every request fires exactly once.",
+      "queue": null,
+      "consumers": ["telemetry::AddLocaleToBaggage"],
+      "payload": {
+        "tenant_id": "ULID | null",
+        "user_id": "ULID | null",
+        "locale_code": "string",
+        "source": "'query' | 'header' | 'user' | 'tenant' | 'accept_language' | 'subdomain' | 'app_default'",
+        "fallback_code": "string | null"
+      }
+    },
+    {
+      "name": "LocaleChanged",
+      "class": "Academorix\\Localization\\Events\\LocaleChanged",
+      "trigger": "User's profile.preferred_locale was updated. Not fired on transient overrides.",
+      "queue": "notifications",
+      "consumers": ["activity::WriteToActivityLog"],
+      "payload": {
+        "user_id": "ULID",
+        "tenant_id": "ULID",
+        "from_locale": "string",
+        "to_locale": "string"
+      }
+    },
+    {
+      "name": "TranslationCacheHit",
+      "class": "Academorix\\Localization\\Events\\TranslationCacheHit",
+      "trigger": "get() resolved from DB Translation. Sampled to config('localization.telemetry.cache_hit_sample_ratio') to avoid volume.",
+      "queue": null,
+      "payload": {
+        "namespace": "string",
+        "group": "string",
+        "key": "string",
+        "locale_code": "string",
+        "source": "string"
+      }
+    },
+    {
+      "name": "TranslationCacheMiss",
+      "class": "Academorix\\Localization\\Events\\TranslationCacheMiss",
+      "trigger": "get() fell through all cache tiers. Precedes possible MachineTranslationRequested.",
+      "queue": null,
+      "consumers": ["localization::MaybeDispatchAutoTranslate"],
+      "payload": {
+        "tenant_id": "ULID",
+        "namespace": "string",
+        "group": "string",
+        "key": "string",
+        "locale_code": "string"
+      }
+    },
+    {
+      "name": "MachineTranslationRequested",
+      "class": "Academorix\\Localization\\Events\\MachineTranslationRequested",
+      "trigger": "TranslateJob started calling the driver.",
+      "queue": "notifications",
+      "payload": {
+        "tenant_id": "ULID",
+        "namespace": "string",
+        "key": "string",
+        "source_locale": "string",
+        "target_locale": "string",
+        "driver": "string"
+      }
+    },
+    {
+      "name": "MachineTranslationCompleted",
+      "class": "Academorix\\Localization\\Events\\MachineTranslationCompleted",
+      "trigger": "Driver returned + Translation row upserted.",
+      "queue": "notifications",
+      "consumers": ["observability::MetricsCollector", "activity::WriteToActivityLog"],
+      "payload": {
+        "tenant_id": "ULID",
+        "translation_id": "ULID",
+        "namespace": "string",
+        "key": "string",
+        "locale_code": "string",
+        "driver": "string",
+        "quality_score": "number | null",
+        "duration_ms": "integer"
+      }
+    },
+    {
+      "name": "MachineTranslationFailed",
+      "class": "Academorix\\Localization\\Events\\MachineTranslationFailed",
+      "trigger": "Driver refused / errored after retries exhausted.",
+      "queue": "notifications-critical",
+      "payload": {
+        "tenant_id": "ULID",
+        "namespace": "string",
+        "key": "string",
+        "locale_code": "string",
+        "driver": "string",
+        "error_class": "string",
+        "error_message": "string"
+      }
+    },
+    {
+      "name": "TranslationOverridden",
+      "class": "Academorix\\Localization\\Events\\TranslationOverridden",
+      "trigger": "Tenant admin manually edited a translation.",
+      "queue": "notifications",
+      "consumers": ["activity::WriteToActivityLog"],
+      "payload": {
+        "tenant_id": "ULID",
+        "translation_id": "ULID",
+        "actor_id": "ULID",
+        "namespace": "string",
+        "key": "string",
+        "locale_code": "string"
+      }
+    },
+    {
+      "name": "TranslationJobStarted",
+      "class": "Academorix\\Localization\\Events\\TranslationJobStarted",
+      "queue": "notifications",
+      "payload": {
+        "job_id": "ULID",
+        "tenant_id": "ULID",
+        "kind": "string",
+        "target_locale_codes": "string[]",
+        "driver": "string"
+      }
+    },
+    {
+      "name": "TranslationJobCompleted",
+      "class": "Academorix\\Localization\\Events\\TranslationJobCompleted",
+      "queue": "notifications",
+      "consumers": ["notifications::DispatchTranslationJobCompletedNotification"],
+      "payload": {
+        "job_id": "ULID",
+        "tenant_id": "ULID",
+        "keys_translated": "integer",
+        "keys_failed": "integer",
+        "duration_ms": "integer"
+      }
+    },
+    {
+      "name": "LanguageEnabledForTenant",
+      "class": "Academorix\\Localization\\Events\\LanguageEnabledForTenant",
+      "queue": "notifications",
+      "consumers": ["activity::WriteToActivityLog"],
+      "payload": {
+        "tenant_id": "ULID",
+        "language_id": "ULID",
+        "locale_code": "string",
+        "is_default": "boolean"
+      }
+    },
+    {
+      "name": "LanguageDisabledForTenant",
+      "class": "Academorix\\Localization\\Events\\LanguageDisabledForTenant",
+      "queue": "notifications",
+      "payload": { "tenant_id": "ULID", "language_id": "ULID", "locale_code": "string" }
+    },
+    {
+      "name": "TranslationWritten",
+      "class": "Academorix\\Localization\\Events\\TranslationWritten",
+      "trigger": "`HasTranslations::setTranslation()` wrote a new (locale, field) tuple into a model's `translations` JSONB column. Fires on both first-time writes AND updates. Distinct from `TranslationOverridden` (which is for platform-level UI-string overrides).",
+      "queue": "notifications",
+      "consumers": [
+        "localization::BackfillMissingLocalesViaAutoTranslate",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "tenant_id": "ULID | null",
+        "model_type": "string (fully qualified class)",
+        "model_id": "string (ULID or PK)",
+        "field": "string (the property annotated with #[Translatable])",
+        "locale_code": "string (BCP-47)",
+        "actor_id": "ULID | null (null = system write, e.g. auto-translate)",
+        "is_new_locale": "boolean (true = first write for this locale on this row)"
+      }
+    }
+  ]
+}

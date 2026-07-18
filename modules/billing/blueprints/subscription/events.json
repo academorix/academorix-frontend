@@ -1,0 +1,227 @@
+{
+  "id": "academorix://modules/subscription/events",
+  "$version": 1,
+  "title": "subscription \u2014 published events",
+  "namespace": "Academorix\\Subscription\\Events",
+  "dispatchMode": "afterCommit",
+  "events": [
+    {
+      "name": "PlanCreated",
+      "class": "Academorix\\Subscription\\Events\\PlanCreated",
+      "queue": "notifications",
+      "payload": { "plan_id": "ULID", "application_id": "ULID", "key": "string" }
+    },
+    {
+      "name": "PlanUpdated",
+      "class": "Academorix\\Subscription\\Events\\PlanUpdated",
+      "queue": "notifications",
+      "consumers": ["entitlements::InvalidatePlanCache"],
+      "payload": { "plan_id": "ULID", "changed_fields": "string[]" }
+    },
+    {
+      "name": "PlanArchived",
+      "class": "Academorix\\Subscription\\Events\\PlanArchived",
+      "queue": "notifications",
+      "payload": { "plan_id": "ULID" }
+    },
+    {
+      "name": "SubscriptionStarted",
+      "class": "Academorix\\Subscription\\Events\\SubscriptionStarted",
+      "trigger": "New Subscription persisted (tenant signup or first plan selection).",
+      "queue": "notifications",
+      "consumers": [
+        "entitlements::SyncEntitlementsFromPlanListener",
+        "notifications::DispatchSubscriptionStartedNotification"
+      ],
+      "payload": {
+        "subscription_id": "ULID",
+        "tenant_id": "ULID",
+        "plan_id": "ULID",
+        "state": "string"
+      }
+    },
+    {
+      "name": "SubscriptionActivated",
+      "class": "Academorix\\Subscription\\Events\\SubscriptionActivated",
+      "trigger": "State \u2192 active (from trialing or from grace after payment).",
+      "queue": "notifications",
+      "payload": { "subscription_id": "ULID", "tenant_id": "ULID", "from_state": "string" }
+    },
+    {
+      "name": "SubscriptionUpgraded",
+      "class": "Academorix\\Subscription\\Events\\SubscriptionUpgraded",
+      "trigger": "Plan swap to higher tier.",
+      "queue": "notifications-critical",
+      "wire_contract_file": "contracts/subscription-upgraded.v1.json",
+      "wire_contract_version": "v1",
+      "wire_event_name": "subscription.subscription.upgraded",
+      "consumers": [
+        "entitlements::SyncEntitlementsFromPlanListener",
+        "notifications::DispatchSubscriptionUpgradedNotification",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "subscription_id": "ULID",
+        "tenant_id": "ULID",
+        "from_plan_id": "ULID",
+        "to_plan_id": "ULID",
+        "actor_id": "ULID"
+      }
+    },
+    {
+      "name": "SubscriptionDowngraded",
+      "class": "Academorix\\Subscription\\Events\\SubscriptionDowngraded",
+      "trigger": "Plan swap to lower tier.",
+      "queue": "notifications",
+      "consumers": [
+        "entitlements::SyncEntitlementsFromPlanListener",
+        "notifications::DispatchSubscriptionDowngradedNotification"
+      ],
+      "payload": {
+        "subscription_id": "ULID",
+        "tenant_id": "ULID",
+        "from_plan_id": "ULID",
+        "to_plan_id": "ULID",
+        "actor_id": "ULID"
+      }
+    },
+    {
+      "name": "SubscriptionSwitched",
+      "class": "Academorix\\Subscription\\Events\\SubscriptionSwitched",
+      "trigger": "Plan swap within same tier (e.g. monthly \u2192 annual).",
+      "queue": "notifications",
+      "consumers": ["entitlements::SyncEntitlementsFromPlanListener"],
+      "payload": { "subscription_id": "ULID", "from_plan_id": "ULID", "to_plan_id": "ULID" }
+    },
+    {
+      "name": "SubscriptionCancelled",
+      "class": "Academorix\\Subscription\\Events\\SubscriptionCancelled",
+      "trigger": "State \u2192 cancelled or cancel_at_period_end=true.",
+      "queue": "notifications-critical",
+      "consumers": ["notifications::DispatchSubscriptionCancelledNotification"],
+      "payload": {
+        "subscription_id": "ULID",
+        "tenant_id": "ULID",
+        "cancel_at_period_end": "boolean",
+        "reason": "string | null",
+        "actor_id": "ULID | null"
+      }
+    },
+    {
+      "name": "SubscriptionReinstated",
+      "class": "Academorix\\Subscription\\Events\\SubscriptionReinstated",
+      "trigger": "Cancel_at_period_end reversed OR cancelled subscription reactivated within grace.",
+      "queue": "notifications",
+      "payload": { "subscription_id": "ULID", "tenant_id": "ULID" }
+    },
+    {
+      "name": "SubscriptionRenewed",
+      "class": "Academorix\\Subscription\\Events\\SubscriptionRenewed",
+      "trigger": "Successful renewal payment. Cashier fired invoice.payment_succeeded for renewal.",
+      "queue": "notifications",
+      "consumers": ["entitlements::ResetPeriodicUsageForRenewal"],
+      "payload": {
+        "subscription_id": "ULID",
+        "tenant_id": "ULID",
+        "amount_micro_units": "integer",
+        "next_period_end": "ISO 8601"
+      }
+    },
+    {
+      "name": "SubscriptionPastDue",
+      "class": "Academorix\\Subscription\\Events\\SubscriptionPastDue",
+      "trigger": "Cashier flagged past_due (first payment failure). State \u2192 at_risk.",
+      "queue": "notifications-critical",
+      "consumers": ["notifications::DispatchPaymentFailedNotification"],
+      "payload": { "subscription_id": "ULID", "tenant_id": "ULID", "grace_ends_at": "ISO 8601" }
+    },
+    {
+      "name": "SubscriptionUnpaid",
+      "class": "Academorix\\Subscription\\Events\\SubscriptionUnpaid",
+      "trigger": "Past_due extended past retry window. State \u2192 grace.",
+      "queue": "notifications-critical",
+      "payload": {
+        "subscription_id": "ULID",
+        "tenant_id": "ULID",
+        "consecutive_failures": "integer"
+      }
+    },
+    {
+      "name": "SubscriptionSuspended",
+      "class": "Academorix\\Subscription\\Events\\SubscriptionSuspended",
+      "trigger": "Grace expired. State \u2192 suspended. Tenant loses non-critical features.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "notifications::DispatchSubscriptionSuspendedNotification",
+        "tenancy::HandleTenantSuspension"
+      ],
+      "payload": { "subscription_id": "ULID", "tenant_id": "ULID" }
+    },
+    {
+      "name": "TrialStarted",
+      "class": "Academorix\\Subscription\\Events\\TrialStarted",
+      "queue": "notifications",
+      "payload": { "subscription_id": "ULID", "tenant_id": "ULID", "trial_ends_at": "ISO 8601" }
+    },
+    {
+      "name": "TrialEnding",
+      "class": "Academorix\\Subscription\\Events\\TrialEnding",
+      "trigger": "3 days before trial_ends_at (dispatched by ExpireTrialsJob).",
+      "queue": "notifications",
+      "consumers": ["notifications::DispatchTrialEndingNotification"],
+      "payload": {
+        "subscription_id": "ULID",
+        "tenant_id": "ULID",
+        "trial_ends_at": "ISO 8601",
+        "days_remaining": "integer"
+      }
+    },
+    {
+      "name": "TrialEnded",
+      "class": "Academorix\\Subscription\\Events\\TrialEnded",
+      "trigger": "trial_ends_at reached without conversion.",
+      "queue": "notifications",
+      "consumers": ["notifications::DispatchTrialEndedNotification"],
+      "payload": { "subscription_id": "ULID", "tenant_id": "ULID", "converted": "boolean" }
+    },
+    {
+      "name": "PaymentSucceeded",
+      "class": "Academorix\\Subscription\\Events\\PaymentSucceeded",
+      "trigger": "invoice.payment_succeeded webhook from Cashier.",
+      "queue": "notifications",
+      "payload": {
+        "subscription_id": "ULID",
+        "tenant_id": "ULID",
+        "amount_micro_units": "integer",
+        "invoice_number": "string",
+        "provider_event_id": "string"
+      }
+    },
+    {
+      "name": "PaymentFailed",
+      "class": "Academorix\\Subscription\\Events\\PaymentFailed",
+      "trigger": "invoice.payment_failed webhook from Cashier.",
+      "queue": "notifications-critical",
+      "payload": {
+        "subscription_id": "ULID",
+        "tenant_id": "ULID",
+        "amount_micro_units": "integer",
+        "failure_reason": "string",
+        "provider_event_id": "string"
+      }
+    },
+    {
+      "name": "UsageReported",
+      "class": "Academorix\\Subscription\\Events\\UsageReported",
+      "trigger": "Metered usage successfully reported to provider via Cashier's reportUsage().",
+      "queue": "notifications",
+      "payload": {
+        "subscription_id": "ULID",
+        "tenant_id": "ULID",
+        "meter_key": "string",
+        "amount": "integer",
+        "provider_usage_record_id": "string"
+      }
+    }
+  ]
+}

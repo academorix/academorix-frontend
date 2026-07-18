@@ -1,0 +1,140 @@
+{
+  "id": "notifications.notification-card",
+  "title": "Notification card",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Single-row card rendering a Notification. Used inside inbox list, bell dropdown, admin dashboard recent-failures, and downstream module timeline views. Renders category chip + subject snippet + relative timestamp + optional actions (mark seen, archive). Uses aria-live for live regions when new rows arrive via broadcast.",
+  "props": {
+    "notification": {
+      "type": "object",
+      "description": "The Notification row (see notification schema)."
+    },
+    "compact": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, render a two-line dense card (bell dropdown). When false, render the full three-line card (inbox list)."
+    },
+    "onPressUrl": { "type": "string", "description": "Route to navigate to on press." },
+    "onMarkSeenAction": {
+      "type": "object",
+      "description": "SDUI action to run when mark-seen is clicked. Hidden when notification.is_seen is true."
+    },
+    "onArchiveAction": {
+      "type": "object",
+      "description": "SDUI action to run when archive is clicked. Hidden when notification.is_archived is true."
+    }
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "card",
+      "kind": "View",
+      "props": {
+        "className": "flex items-start gap-3 p-3 hover:bg-content2 rounded-lg cursor-pointer transition-colors"
+      },
+      "bindings": {
+        "className": {
+          "$expr": "'flex items-start gap-3 p-3 hover:bg-content2 rounded-lg cursor-pointer transition-colors ' + (props.notification.is_seen ? '' : 'bg-info/5')"
+        },
+        "aria-live": { "$expr": "props.notification.is_seen ? 'off' : 'polite'" }
+      },
+      "actions": { "onPress": { "kind": "navigateExpr", "expr": "props.onPressUrl" } },
+      "children": [
+        {
+          "id": "channel-icon",
+          "kind": "Widget",
+          "widget": "notifications.channel-icon",
+          "bindings": {
+            "props.channel": { "$ref": "props.notification.priority_channels_requested[0]" },
+            "props.size": { "$expr": "props.compact ? 'sm' : 'md'" }
+          }
+        },
+        {
+          "id": "body",
+          "kind": "View",
+          "props": { "className": "flex-1 min-w-0" },
+          "children": [
+            {
+              "id": "line-1",
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Chip",
+                  "props": { "size": "xs", "variant": "neutral" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "props.notification.category ? props.notification.category.display_name : props.notification.category_slug"
+                    }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted flex-1 text-right" },
+                  "bindings": {
+                    "children": { "$expr": "formatRelative(props.notification.created_at)" }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "font-medium truncate mt-1" },
+              "bindings": { "children": { "$ref": "props.notification.subject" } }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm text-muted truncate" },
+              "bindings": {
+                "hidden": { "$expr": "props.compact" },
+                "children": {
+                  "$expr": "props.notification.payload && props.notification.payload.preview ? props.notification.payload.preview : ''"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "actions",
+          "kind": "View",
+          "props": {
+            "className": "flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+          },
+          "bindings": { "hidden": { "$expr": "props.compact" } },
+          "children": [
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "ghost",
+                "isIconOnly": true,
+                "size": "sm",
+                "leadingIcon": "check",
+                "ariaLabel": "Mark seen"
+              },
+              "bindings": {
+                "hidden": { "$ref": "props.notification.is_seen" },
+                "isDisabled": { "$expr": "!props.onMarkSeenAction" }
+              },
+              "actions": { "onPress": { "$ref": "props.onMarkSeenAction" } }
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "ghost",
+                "isIconOnly": true,
+                "size": "sm",
+                "leadingIcon": "archive-box",
+                "ariaLabel": "Archive"
+              },
+              "bindings": {
+                "hidden": { "$ref": "props.notification.is_archived" },
+                "isDisabled": { "$expr": "!props.onArchiveAction" }
+              },
+              "actions": { "onPress": { "$ref": "props.onArchiveAction" } }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

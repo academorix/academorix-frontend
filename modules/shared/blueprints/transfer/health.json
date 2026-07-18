@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/transfer/health",
+  "$version": 1,
+  "title": "transfer \u2014 health probes",
+  "probes": [
+    {
+      "name": "transfer-registry-warm",
+      "class": "Academorix\\Transfer\\Health\\Probes\\RegistryWarmProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "EntityRegistry loaded from #[Importable] / #[Exportable] / #[SampleData] discovery on ApplicationBooted.",
+      "timeoutMs": 100
+    },
+    {
+      "name": "transfer-storage-writable",
+      "class": "Academorix\\Transfer\\Health\\Probes\\StorageWritableProbe",
+      "category": "readiness",
+      "critical": true,
+      "description": "Round-trip write / read / delete on the configured artifact disks (source / result / errors).",
+      "timeoutMs": 2000
+    },
+    {
+      "name": "transfer-queue-workers-fresh",
+      "class": "Academorix\\Transfer\\Health\\Probes\\QueueWorkersFreshProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "At least one xfer_job reached succeeded / partially_succeeded within the last N hours. Warns when transfer queue workers are stalled fleet-wide.",
+      "timeoutMs": 500,
+      "thresholds": { "warn_hours": 6, "fail_hours": 24 }
+    },
+    {
+      "name": "transfer-stalled-jobs",
+      "class": "Academorix\\Transfer\\Health\\Probes\\StalledJobsProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "No xfer_job in running with last_progress_at > stale threshold. Signals worker crash / stuck chunks.",
+      "timeoutMs": 500,
+      "thresholds": { "warn_count": 5, "fail_count": 50 }
+    },
+    {
+      "name": "transfer-artifact-disk-usage",
+      "class": "Academorix\\Transfer\\Health\\Probes\\ArtifactDiskUsageProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Artifact disk usage below cap. Alerts when retention scans are behind.",
+      "timeoutMs": 1000,
+      "thresholds": { "warn_percent": 70, "fail_percent": 90 }
+    },
+    {
+      "name": "transfer-registry-drift",
+      "class": "Academorix\\Transfer\\Health\\Probes\\RegistryDriftProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Compares in-memory EntityRegistry hash with the cached hash. Non-zero drift means a deploy left the cache behind \u2014 hourly refresh should catch it.",
+      "timeoutMs": 200
+    }
+  ]
+}

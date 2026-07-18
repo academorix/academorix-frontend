@@ -1,0 +1,137 @@
+{
+  "id": "academorix://modules/settings/attributes",
+  "$version": 1,
+  "title": "settings \u2014 declarative attributes",
+  "description": "Three PHP attributes drive discovery + rendering. Grouped as the platform's public authoring API.",
+  "namespace": "Academorix\\Settings\\Attributes",
+  "attributes": [
+    {
+      "name": "AsSetting",
+      "class": "Academorix\\Settings\\Attributes\\AsSetting",
+      "target": "class",
+      "repeatable": false,
+      "purpose": "Marks a settings class for registry discovery. One per Settings subclass.",
+      "arguments": [
+        {
+          "name": "group",
+          "type": "string",
+          "required": true,
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "description": "Unique group key. Matches API route segment + spatie group identifier."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "default": "''",
+          "description": "Human display label. Empty falls back to the group key."
+        },
+        { "name": "description", "type": "string", "default": "''" },
+        {
+          "name": "icon",
+          "type": "string",
+          "default": "''",
+          "description": "Semantic icon name (heroicons)."
+        },
+        {
+          "name": "permission",
+          "type": "string",
+          "default": "'settings.read'",
+          "description": "Permission gating GET; PUT always requires settings.update.{group}."
+        },
+        {
+          "name": "scope",
+          "type": "enum<system,tenant,user>",
+          "default": "'system'",
+          "description": "Hierarchy scope for value storage."
+        },
+        {
+          "name": "public",
+          "type": "bool",
+          "default": "false",
+          "description": "Whether GET skips auth. PUT still requires permission."
+        },
+        { "name": "sortOrder", "type": "int", "default": "0" }
+      ]
+    },
+    {
+      "name": "SettingGroup",
+      "class": "Academorix\\Settings\\Attributes\\SettingGroup",
+      "target": "property",
+      "repeatable": true,
+      "purpose": "Defines a visual section within a settings class. Other #[SettingField] on the same class reference this section via their `group` argument.",
+      "arguments": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "description": "Display label AND reference key. Fields opt in via field.group === section.label."
+        },
+        { "name": "description", "type": "string", "default": "''" },
+        { "name": "icon", "type": "string", "default": "''" },
+        { "name": "sortOrder", "type": "int", "default": "0" }
+      ]
+    },
+    {
+      "name": "SettingField",
+      "class": "Academorix\\Settings\\Attributes\\SettingField",
+      "target": "property",
+      "repeatable": false,
+      "purpose": "Declares a single field's control type + validation + display metadata.",
+      "arguments": [
+        {
+          "name": "controlType",
+          "type": "ControlType|string",
+          "default": "ControlType::Text",
+          "description": "See control-types.json for the enum."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "default": "''",
+          "description": "Empty falls back to snake_case property \u2192 Title Case."
+        },
+        { "name": "placeholder", "type": "string", "default": "''" },
+        {
+          "name": "validation",
+          "type": "array<string>",
+          "default": "[]",
+          "description": "Laravel validation rules applied server-side before writing."
+        },
+        {
+          "name": "defaultValue",
+          "type": "mixed",
+          "default": "null",
+          "description": "Escape-hatch when the property default can't express it (closures, computed shapes)."
+        },
+        { "name": "sortOrder", "type": "int", "default": "0" },
+        {
+          "name": "group",
+          "type": "string|null",
+          "default": "null",
+          "description": "References a #[SettingGroup] label \u2014 attaches the field to that visual section."
+        },
+        {
+          "name": "options",
+          "type": "string|array|null",
+          "default": "null",
+          "description": "Enum FQCN, associative value=>label, or flat list."
+        },
+        {
+          "name": "sensitive",
+          "type": "bool",
+          "default": "false",
+          "description": "Masked in reads unless caller has settings.view-sensitive."
+        },
+        { "name": "helpText", "type": "string", "default": "''" },
+        { "name": "min", "type": "float|null", "default": "null" },
+        { "name": "max", "type": "float|null", "default": "null" },
+        { "name": "step", "type": "float|null", "default": "null" }
+      ]
+    }
+  ],
+  "conventions": [
+    "Every settings class MUST declare `#[AsSetting(group: '<unique-key>')]` \u2014 duplicate group keys fail the compile-time discovery pass.",
+    "Fields WITHOUT a `#[SettingField]` attribute are not exposed via HTTP (they still persist via spatie).",
+    "Sections are optional. A settings class with no #[SettingGroup] renders fields in a single implicit 'General' section."
+  ]
+}

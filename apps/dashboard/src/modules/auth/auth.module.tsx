@@ -16,7 +16,7 @@ import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";
 
-import { appRoutes } from "@/lib/module/routes";
+import { appRoutes } from "@/lib/module";
 
 // --- Public auth pages ---------------------------------------------------
 const LoginPage = lazy(() => import("@/modules/auth/pages/login-page"));

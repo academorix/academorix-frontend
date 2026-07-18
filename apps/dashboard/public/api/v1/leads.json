@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "name": "Diana Yang · U8 swim trial",
+    "source": "Google search",
+    "stage": "New",
+    "assignedTo": "Amelia Ford",
+    "value": 0,
+    "status": { "text": "New", "color": "accent" },
+    "isActive": true,
+    "createdAt": "2025-03-17T10:22:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Family Owusu · Gymnastics",
+    "source": "Referral",
+    "stage": "Contacted",
+    "assignedTo": "Hana Kim",
+    "value": 0,
+    "status": { "text": "Contacted", "color": "accent" },
+    "isActive": true,
+    "createdAt": "2025-03-15T14:00:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Family Petrov · Multi-sport",
+    "source": "Facebook ad",
+    "stage": "Trial",
+    "assignedTo": "Amelia Ford",
+    "value": 220,
+    "status": { "text": "Trial", "color": "warning" },
+    "isActive": true,
+    "createdAt": "2025-03-10T11:00:00Z"
+  },
+  {
+    "id": 4,
+    "name": "Ilyas Family · U12 soccer",
+    "source": "Website form",
+    "stage": "Won",
+    "assignedTo": "Tom Bailey",
+    "value": 420,
+    "status": { "text": "Won", "color": "success" },
+    "isActive": false,
+    "createdAt": "2025-02-20T09:00:00Z"
+  },
+  {
+    "id": 5,
+    "name": "Anna Reyes · Tennis",
+    "source": "Instagram",
+    "stage": "Lost",
+    "assignedTo": "Emma Watts",
+    "value": 0,
+    "status": { "text": "Lost", "color": "default" },
+    "isActive": false,
+    "createdAt": "2025-02-01T09:00:00Z"
+  },
+  {
+    "id": 6,
+    "name": "Family Hoffman · Winter camp",
+    "source": "Google search",
+    "stage": "Negotiation",
+    "assignedTo": "Hana Kim",
+    "value": 640,
+    "status": { "text": "Negotiation", "color": "warning" },
+    "isActive": true,
+    "createdAt": "2025-03-05T13:00:00Z"
+  }
+]

@@ -1,0 +1,170 @@
+{
+  "id": "academorix://modules/notifications/config",
+  "$version": 1,
+  "title": "notifications core \u2014 developer configuration",
+  "description": "Developer / operator configuration. Mirrors `config/notifications.php`. Deploy-static; changes require redeploy + `config:cache`. Per-channel config lives in the respective channel module's config.json.",
+  "configFile": "config/notifications.php",
+  "envPrefix": "NOTIFICATIONS_",
+  "sections": {
+    "queues": {
+      "description": "Queue names + criticality mapping.",
+      "keys": [
+        {
+          "path": "notifications.queues.critical",
+          "type": "string",
+          "default": "notifications-critical"
+        },
+        { "path": "notifications.queues.default", "type": "string", "default": "notifications" },
+        {
+          "path": "notifications.queues.digests",
+          "type": "string",
+          "default": "notifications-digests"
+        },
+        {
+          "path": "notifications.queues.webhooks",
+          "type": "string",
+          "default": "notifications-webhooks",
+          "description": "Delegated to channel modules for ingestion; naming reserved for consistency."
+        }
+      ]
+    },
+    "retry": {
+      "description": "Retry backoff schedule for channel-module SendJobs (channel modules import this shape).",
+      "keys": [
+        {
+          "path": "notifications.retry.backoff_seconds",
+          "type": "array<int>",
+          "default": [30, 120, 600, 3600, 21600, 86400],
+          "description": "6 attempts total (30s, 2m, 10m, 1h, 6h, 24h). Applied per channel module."
+        },
+        { "path": "notifications.retry.max_attempts", "type": "int", "default": 6 }
+      ]
+    },
+    "digests": {
+      "description": "Digest scheduling defaults.",
+      "keys": [
+        {
+          "path": "notifications.digests.daily_time",
+          "type": "string",
+          "default": "08:00",
+          "description": "Local time (per user's timezone) for daily digest delivery."
+        },
+        {
+          "path": "notifications.digests.weekly_day",
+          "type": "string",
+          "default": "monday",
+          "description": "Day-of-week for weekly digest delivery."
+        },
+        {
+          "path": "notifications.digests.weekly_time",
+          "type": "string",
+          "default": "09:00",
+          "description": "Local time for weekly digest delivery."
+        },
+        {
+          "path": "notifications.digests.min_items",
+          "type": "int",
+          "default": 1,
+          "description": "Skip digest delivery if fewer than N items accumulated (avoids empty emails)."
+        },
+        {
+          "path": "notifications.digests.max_items",
+          "type": "int",
+          "default": 50,
+          "description": "Cap items per digest. If exceeded, split into multiple digests OR truncate with a 'plus N more' summary."
+        }
+      ]
+    },
+    "caches": {
+      "description": "Cache TTL overrides. See caches.json for pattern-level details.",
+      "keys": [
+        { "path": "notifications.caches.category_registry_ttl", "type": "int", "default": 3600 },
+        { "path": "notifications.caches.template_registry_ttl", "type": "int", "default": 900 },
+        { "path": "notifications.caches.preference_ttl", "type": "int", "default": 600 },
+        { "path": "notifications.caches.recipient_ttl", "type": "int", "default": 900 },
+        { "path": "notifications.caches.unseen_count_ttl", "type": "int", "default": 300 }
+      ]
+    },
+    "dispatch": {
+      "description": "Dispatch API surface.",
+      "keys": [
+        {
+          "path": "notifications.dispatch.async_by_default",
+          "type": "bool",
+          "default": true,
+          "description": "Every ->notify() queues. Sync via ->notifyNow() only \u2014 no `sync` config."
+        },
+        {
+          "path": "notifications.dispatch.per_tenant_rate_limit",
+          "type": "int|null",
+          "default": null,
+          "description": "Per-tenant dispatches/min. Null = no limit. Gated by notifications.dispatch-per-tenant-rate-limit Pennant flag."
+        },
+        {
+          "path": "notifications.dispatch.critical_channels",
+          "type": "array<string>",
+          "default": ["mail", "in_app", "push"],
+          "description": "Channels used for priority=critical when preferences don't override. SMS excluded from default critical channels (cost)."
+        }
+      ]
+    },
+    "unsubscribe": {
+      "description": "Signed unsubscribe URL config.",
+      "keys": [
+        {
+          "path": "notifications.unsubscribe.token_ttl_days",
+          "type": "int",
+          "default": 30,
+          "description": "Signed URL validity from mail footer. Older tokens stop rendering the confirmation page but if already unsubscribed, stays unsubscribed."
+        },
+        {
+          "path": "notifications.unsubscribe.honour_within_seconds",
+          "type": "int",
+          "default": 5,
+          "description": "SLA for propagating the unsubscribe to the preference cache. Enforced by PreferenceCacheInvalidator listener."
+        }
+      ]
+    },
+    "emails_render_pipeline": {
+      "description": "Render pipeline manifest \u2014 read by SeedTemplatesCommand.",
+      "keys": [
+        {
+          "path": "notifications.emails.manifest_path",
+          "type": "string",
+          "default": "packages/notifications-emails-renderer/dist/manifest.json",
+          "description": "Path to the render manifest emitted by the emails renderer at CI build time."
+        },
+        {
+          "path": "notifications.emails.artifact_base_url",
+          "type": "string",
+          "env": "NOTIFICATIONS_EMAILS_ARTIFACT_BASE_URL",
+          "example": "s3://academorix-emails/",
+          "description": "Optional S3 base URL if templates are read from S3 at boot instead of a bundled manifest."
+        },
+        {
+          "path": "notifications.emails.blade_strict",
+          "type": "bool",
+          "default": true,
+          "description": "Refuse rendering when Blade encounters an undefined variable. Off = renders '{{ $var ?? '' }}' fallback."
+        }
+      ]
+    },
+    "resolvers": {
+      "description": "Resolver defaults.",
+      "keys": [
+        {
+          "path": "notifications.resolvers.preference_fallback_order",
+          "type": "array<string>",
+          "default": ["user", "tenant", "platform"],
+          "description": "Order: user preference \u2192 tenant default (settings.json) \u2192 platform default (category)."
+        },
+        {
+          "path": "notifications.resolvers.quiet_hours_bypass_for_critical",
+          "type": "bool",
+          "default": true,
+          "description": "Priority=critical bypasses quiet hours."
+        }
+      ]
+    }
+  }
+}

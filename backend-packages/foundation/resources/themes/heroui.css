@@ -1,0 +1,87 @@
+/**
+ * HeroUI Console Theme
+ *
+ * Default theme for Academorix console output based on HeroUI design tokens.
+ * Copy this file and customize the CSS custom properties to match your brand.
+ *
+ * Usage:
+ *   1. Copy this file to your project (e.g., resources/themes/custom.css)
+ *   2. Set TERMINAL_STYLE_FILE=/path/to/custom.css in your .env
+ *   3. Customize the colors below
+ *
+ * Supported color formats:
+ *   - OKLCH: oklch(76.97% 0.2124 148.67)
+ *   - HSL: hsl(45, 93%, 47%)
+ *   - RGB: rgb(239, 68, 68)
+ *   - Hex: #22c55e
+ */
+
+:root,
+.light,
+.default,
+[data-theme="light"],
+[data-theme="default"] {
+  /* Theme Colors (Light Mode) */
+  --accent: oklch(76.97% 0.2124 148.67);
+  --accent-foreground: oklch(15% 0.03 148.67);
+  --background: oklch(97.02% 0.002 148.67);
+  --border: oklch(90% 0.002 148.67);
+  --danger: oklch(0.5509 0.2166 25.29);
+  --danger-foreground: oklch(98% 0.02 25.29);
+  --default: oklch(94% 0.002 148.67);
+  --default-foreground: oklch(21.03% 0.0059 148.67);
+  --foreground: oklch(21.03% 0.002 148.67);
+  --muted: oklch(55.17% 0.004 148.67);
+  --success: oklch(0.6072 0.1647 149.02);
+  --success-foreground: oklch(98% 0.0165 149.02);
+  --surface: oklch(100% 0.001 148.67);
+  --surface-foreground: oklch(21.03% 0.002 148.67);
+  --surface-secondary: oklch(95.24% 0.0016 148.67);
+  --surface-secondary-foreground: oklch(21.03% 0.002 148.67);
+  --warning: oklch(0.6972 0.1687 54.22);
+  --warning-foreground: oklch(15% 0.05 54.22);
+  --separator: oklch(92% 0.002 148.67);
+  --focus: oklch(76.97% 0.2124 148.67);
+  --overlay: oklch(100% 0.0006 148.67);
+  --overlay-foreground: oklch(21.03% 0.002 148.67);
+
+  /* Info color (not in HeroUI, added for console) */
+  --info: oklch(0.685 0.169 237.32);
+  --info-foreground: oklch(98% 0.02 237.32);
+
+  /* Border Radius */
+  --radius: 0.5rem;
+}
+
+.dark,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Theme Colors (Dark Mode) */
+  --accent: oklch(76.97% 0.2124 148.67);
+  --accent-foreground: oklch(15% 0.03 148.67);
+  --background: oklch(12% 0.002 148.67);
+  --border: oklch(28% 0.002 148.67);
+  --danger: oklch(0.5931 0.2338 25.42);
+  --danger-foreground: oklch(98% 0.02 25.42);
+  --default: oklch(27.4% 0.002 148.67);
+  --default-foreground: oklch(99.11% 0 0);
+  --foreground: oklch(99.11% 0.002 148.67);
+  --muted: oklch(70.5% 0.004 148.67);
+  --success: oklch(0.7697 0.2124 148.67);
+  --success-foreground: oklch(15% 0.05 148.67);
+  --surface: oklch(21.03% 0.004 148.67);
+  --surface-foreground: oklch(99.11% 0.002 148.67);
+  --surface-secondary: oklch(25.7% 0.003 148.67);
+  --surface-secondary-foreground: oklch(99.11% 0.002 148.67);
+  --warning: oklch(0.7921 0.1626 67.42);
+  --warning-foreground: oklch(15% 0.0488 67.42);
+  --separator: oklch(25% 0.002 148.67);
+  --focus: oklch(76.97% 0.2124 148.67);
+  --overlay: oklch(21.03% 0.004 148.67);
+  --overlay-foreground: oklch(99.11% 0.002 148.67);
+
+  /* Info color (not in HeroUI, added for console) */
+  --info: oklch(0.715 0.143 215.22);
+  --info-foreground: oklch(98% 0.02 215.22);
+}

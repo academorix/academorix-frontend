@@ -37,10 +37,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 
-import type {
-  KanbanColumn,
-  KanbanMoveHandler,
-} from "@/components/kanban/kanban-board.types";
+import type { KanbanColumn, KanbanMoveHandler } from "@/components/kanban/kanban-board.types";
 import type {
   DragEvent as ReactDragEvent,
   DragEventHandler,
@@ -91,11 +88,7 @@ export interface UseKanbanDragReturn<TColumnId extends string> {
    */
   previewColumn: TColumnId | null;
   /** Handlers for a draggable card element. */
-  getCardDragProps: (
-    cardId: string,
-    fromColumn: TColumnId,
-    order: number,
-  ) => KanbanCardDragProps;
+  getCardDragProps: (cardId: string, fromColumn: TColumnId, order: number) => KanbanCardDragProps;
   /** Handlers for a droppable column element. */
   getColumnDropProps: (toColumn: TColumnId) => KanbanColumnDropProps;
   /** Keyboard-move handler for a focused card. */

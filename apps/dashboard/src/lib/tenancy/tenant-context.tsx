@@ -27,7 +27,7 @@
  * call repeatedly.
  */
 
-import { Spinner } from "@academorix/ui/react";
+import { Spinner } from "@stackra/ui/react";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 import type { TenancyContextValue, TenantWorkspace } from "@/lib/tenancy/tenancy.types";

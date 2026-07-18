@@ -1,0 +1,145 @@
+[
+  {
+    "id": 1,
+    "name": "Payment received · $180",
+    "kind": "Payment",
+    "recipient": "Alex Morgan",
+    "sentAt": "2025-03-18T09:15:00Z",
+    "channel": "In-app",
+    "status": { "text": "Delivered", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-03-18T09:15:00Z",
+    "url": "/finance/payments/1",
+    "actions": [
+      {
+        "id": "view-invoice",
+        "label": "View invoice",
+        "icon": "receipt",
+        "variant": "secondary",
+        "url": "/finance/invoices/1"
+      },
+      { "id": "send-receipt", "label": "Send receipt", "icon": "envelope", "variant": "ghost" }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "New registration · Lina Al-Sadeq",
+    "kind": "Roster",
+    "recipient": "Alex Morgan",
+    "sentAt": "2025-03-18T07:29:00Z",
+    "channel": "In-app",
+    "status": { "text": "Delivered", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-03-18T07:29:00Z",
+    "url": "/athletes/2",
+    "actions": [
+      {
+        "id": "review",
+        "label": "Review",
+        "icon": "eye",
+        "variant": "primary",
+        "url": "/athletes/2"
+      },
+      { "id": "assign-team", "label": "Assign team", "icon": "persons", "variant": "ghost" }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Session started · Beam Level 3",
+    "kind": "Attendance",
+    "recipient": "Marcus Lee",
+    "sentAt": "2025-03-18T09:00:00Z",
+    "channel": "Push",
+    "status": { "text": "Delivered", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-03-18T09:00:00Z",
+    "url": "/attendance",
+    "actions": [
+      {
+        "id": "open-session",
+        "label": "Open session",
+        "icon": "arrow-right",
+        "variant": "secondary",
+        "url": "/attendance"
+      },
+      {
+        "id": "mark-all-present",
+        "label": "Mark all present",
+        "icon": "circle-check",
+        "variant": "ghost"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Safeguarding case opened",
+    "kind": "Safeguarding",
+    "recipient": "Priya Nair",
+    "sentAt": "2025-03-17T21:04:00Z",
+    "channel": "Email",
+    "status": { "text": "Delivered", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-03-17T21:04:00Z",
+    "url": "/safeguarding",
+    "actions": [
+      {
+        "id": "open-case",
+        "label": "Open case",
+        "icon": "shield-check",
+        "variant": "primary",
+        "url": "/safeguarding"
+      },
+      { "id": "escalate", "label": "Escalate", "icon": "triangle-exclamation", "variant": "danger" }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Invoice overdue · Family Chen",
+    "kind": "Billing",
+    "recipient": "Diego Alvarez",
+    "sentAt": "2025-03-16T09:00:00Z",
+    "channel": "Email",
+    "status": { "text": "Failed", "color": "danger" },
+    "isActive": false,
+    "createdAt": "2025-03-16T09:00:00Z",
+    "url": "/finance/invoices/5",
+    "actions": [
+      { "id": "retry", "label": "Retry", "icon": "arrow-rotate-right", "variant": "primary" },
+      {
+        "id": "send-reminder",
+        "label": "Send reminder",
+        "icon": "envelope",
+        "variant": "secondary"
+      },
+      {
+        "id": "view-invoice",
+        "label": "View invoice",
+        "icon": "receipt",
+        "variant": "ghost",
+        "url": "/finance/invoices/5"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Weekly summary",
+    "kind": "Digest",
+    "recipient": "All directors",
+    "sentAt": "2025-03-17T08:00:00Z",
+    "channel": "Email",
+    "status": { "text": "Delivered", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-03-17T08:00:00Z",
+    "url": "/reports",
+    "actions": [
+      {
+        "id": "open-digest",
+        "label": "Open digest",
+        "icon": "arrow-right",
+        "variant": "secondary",
+        "url": "/reports"
+      },
+      { "id": "download-pdf", "label": "Download PDF", "icon": "download", "variant": "ghost" }
+    ]
+  }
+]

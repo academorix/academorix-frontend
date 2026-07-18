@@ -1,9 +1,0 @@
-{
-  "id": "academorix://modules/geofencing/schedule",
-  "$version": 1,
-  "title": "geofencing \u2014 scheduled tasks",
-  "entries": [
-    {"name": "geofencing-immutability-reconcile", "command": "geofencing:reconcile-immutability", "cron": "5 * * * *", "timezone": "UTC", "purpose": "Hourly at :05: verify no geofence_checks row has more than one audit event. Any drift = immutability violation \u2014 raises critical alert."},
-    {"name": "geofencing-purge-stale", "command": "geofencing:purge-stale-checks", "cron": "0 4 * * *", "timezone": "UTC", "purpose": "Daily 04:00 UTC: soft-delete + anonymise rows past retention. Small batches of 1000."}
-  ]
-}

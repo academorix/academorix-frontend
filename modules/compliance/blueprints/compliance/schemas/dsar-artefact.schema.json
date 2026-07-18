@@ -1,0 +1,205 @@
+{
+  "id": "academorix://modules/compliance/schemas/dsar-artefact",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "DsarArtefact",
+  "description": "Per-module contribution to a DSAR bundle. One row per (Dsar, contributor). Points at the storage::File containing the actual export bytes. state machine tracks the contributor's collection lifecycle: pending \u2192 collecting \u2192 completed | skipped_no_contributor | failed.",
+  "type": "object",
+  "x-module": "compliance",
+  "x-eloquent": {
+    "table": "dsar_artefacts",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "dsa_",
+    "incrementing": false,
+    "model": "Academorix\\Compliance\\Models\\DsarArtefact",
+    "interface": "Academorix\\Compliance\\Contracts\\Data\\DsarArtefactInterface",
+    "implements": ["Academorix\\Compliance\\Contracts\\Data\\DsarArtefactInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "redacted_columns": "array",
+      "format": "string",
+      "state": "string",
+      "started_at": "datetime",
+      "completed_at": "datetime",
+      "metadata": "array"
+    },
+    "appends": [],
+    "observers": ["DsarArtefactObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true, "description": "`dsa_<26>`" },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "dsar_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "dsars", "column": "id", "onDelete": "cascade" }
+      },
+      "contributor_module": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Owning module name: `user`, `storage`, `activity`, `subscription`, ..."
+      },
+      "contributor_class": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "FQCN of the DsarExportable / DsarErasable class."
+      },
+      "subject_column": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Column on contributor_class pointing at the subject id (from the attribute's `subject` param)."
+      },
+      "row_count": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Number of rows contributed. Populated on state=completed. Null on skipped / pending."
+      },
+      "redacted_columns": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Column names excluded via the attribute's `exclude` param, plus any tenant-configured extra redactions."
+      },
+      "format": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'json'",
+        "description": "Enum: json / csv / ndjson."
+      },
+      "file_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "files", "column": "id", "onDelete": "set null" },
+        "description": "Points at the storage::File containing the artefact bytes. NULL until assembly completes. NULL after retention purge of the export."
+      },
+      "state": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "Enum: pending / collecting / completed / skipped_no_contributor / skipped_legal_hold / failed."
+      },
+      "started_at": { "type": "timestamptz", "nullable": true },
+      "completed_at": { "type": "timestamptz", "nullable": true },
+      "error_message": {
+        "type": "text",
+        "nullable": true,
+        "description": "Populated on state=failed."
+      },
+      "duration_ms": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Populated on state=completed. Used for cost-attribution + slow-contributor detection."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["dsar_id", "contributor_module"],
+        "unique": true,
+        "name": "dsar_artefacts_dsar_contributor_uidx",
+        "description": "One artefact per (DSAR, module) \u2014 contributors deduped at collection time."
+      },
+      {
+        "columns": ["state", "created_at"],
+        "unique": false,
+        "name": "dsar_artefacts_state_idx",
+        "description": "Assembler scan \u2014 'artefacts in state X ready for assembly'."
+      },
+      {
+        "columns": ["file_id"],
+        "unique": false,
+        "name": "dsar_artefacts_file_idx",
+        "predicate": "file_id IS NOT NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "dsar_id",
+    "contributor_module",
+    "contributor_class",
+    "subject_column",
+    "redacted_columns",
+    "format",
+    "state",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^dsa_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "dsar_id": { "type": "string", "pattern": "^dsr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "contributor_module": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,62}$" },
+    "contributor_class": { "type": "string" },
+    "subject_column": { "type": "string" },
+    "row_count": { "type": ["integer", "null"], "minimum": 0 },
+    "redacted_columns": { "type": "array", "items": { "type": "string" } },
+    "format": { "type": "string", "enum": ["json", "csv", "ndjson"] },
+    "file_id": { "type": ["string", "null"], "pattern": "^fil_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "state": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "collecting",
+        "completed",
+        "skipped_no_contributor",
+        "skipped_legal_hold",
+        "failed"
+      ]
+    },
+    "started_at": { "type": ["string", "null"], "format": "date-time" },
+    "completed_at": { "type": ["string", "null"], "format": "date-time" },
+    "error_message": { "type": ["string", "null"] },
+    "duration_ms": { "type": ["integer", "null"], "minimum": 0 },
+    "metadata": { "type": ["object", "null"] },
+    "created_by": { "type": ["string", "null"] },
+    "updated_by": { "type": ["string", "null"] },
+    "deleted_by": { "type": ["string", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["created_by", "updated_by", "deleted_by"],
+    "computed": [],
+    "notes": [
+      "The artefact FILE is served via the parent Dsar's signed URL, not per-artefact. Artefact rows are inspection-only \u2014 platform-admin can see 'what did each module contribute' but downloads always go through the assembled ZIP."
+    ]
+  }
+}

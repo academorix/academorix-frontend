@@ -16,7 +16,7 @@
  * @see DASHBOARD_UX_PLAN.md §5.7 (safeguarding → Kanban as primary view)
  */
 
-import { ShieldCheckIcon } from "@academorix/ui/icons/outline";
+import { ShieldCheckIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

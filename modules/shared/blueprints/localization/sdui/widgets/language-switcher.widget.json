@@ -1,0 +1,117 @@
+{
+  "id": "localization.language-switcher",
+  "title": "Language switcher",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Dropdown in the navbar. Lists enabled TenantLocale rows for the current tenant. Native names with flag emoji. Selecting a locale POSTs preferred_locale to the user profile then hard-reloads.",
+  "props": {
+    "size": { "type": "string", "default": "md", "enum": ["sm", "md", "lg"] },
+    "showFlag": { "type": "boolean", "default": true },
+    "showNativeName": { "type": "boolean", "default": true }
+  },
+  "dataSources": [
+    {
+      "name": "locales",
+      "kind": "http.get",
+      "url": "/api/v1/tenant-locales?filter[is_enabled]=true",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "me",
+      "kind": "http.get",
+      "url": "/api/auth/me",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Popover",
+      "children": [
+        {
+          "kind": "Button",
+          "props": { "variant": "ghost", "size": "sm" },
+          "children": [
+            {
+              "kind": "Text",
+              "bindings": {
+                "childrenExpr": "props.showFlag ? (locales.find(l => l.language_code === me.profile.preferred_locale_code)?.flag_emoji || '\ud83c\udf10') : ''"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "ml-1 uppercase" },
+              "bindings": { "children": { "$ref": "me.profile.preferred_locale_code" } }
+            }
+          ]
+        },
+        {
+          "kind": "PopoverContent",
+          "props": { "className": "w-56" },
+          "children": [
+            {
+              "kind": "List",
+              "props": { "className": "max-h-96 overflow-y-auto" },
+              "bindings": { "items": { "$ref": "locales" } },
+              "itemRenderer": {
+                "kind": "Pressable",
+                "props": {
+                  "className": "flex items-center gap-2 px-2 py-2 rounded hover:bg-content1 w-full"
+                },
+                "actions": {
+                  "onPress": {
+                    "kind": "http.patch",
+                    "url": "/api/v1/profile",
+                    "bodyExpr": "{ preferred_locale_code: row.language_code }",
+                    "onSuccess": { "kind": "reload" }
+                  }
+                },
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xl" },
+                    "bindings": {
+                      "hidden": { "$expr": "!props.showFlag" },
+                      "children": { "$ref": "row.language.flag_emoji" }
+                    }
+                  },
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex flex-col items-start flex-1" },
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-medium" },
+                        "bindings": {
+                          "children": {
+                            "$expr": "props.showNativeName ? row.language.native_name : row.language.name"
+                          }
+                        }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted uppercase" },
+                        "bindings": { "children": { "$ref": "row.language_code" } }
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "Icon",
+                    "props": { "name": "check", "className": "size-4 text-accent" },
+                    "bindings": {
+                      "hidden": {
+                        "$expr": "row.language_code !== me.profile.preferred_locale_code"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

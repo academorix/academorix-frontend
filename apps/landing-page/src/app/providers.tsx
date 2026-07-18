@@ -9,12 +9,12 @@
  *
  *  1. `<NextThemesProvider>` — applies `class="dark"` / `class="light"`
  *     to `<html>` based on the user's preference, matching the
- *     `dark:` variant we use throughout `@academorix/ui`.
+ *     `dark:` variant we use throughout `@stackra/ui`.
  *  2. `<GlassThemeSync>` — client-side companion that mirrors
  *     `resolvedTheme` from next-themes into `html[data-theme=
  *     "glass-{light|dark}"]`, activating the HeroUI Pro Glass
  *     theme variant. Renders nothing.
- *  3. `<ToastProvider>` from `@academorix/ui/react` — the HeroUI v3
+ *  3. `<ToastProvider>` from `@stackra/ui/react` — the HeroUI v3
  *     toast region + portal boundary. Required for any `toast()`
  *     calls from our shared UI kit to render.
  *  4. `<SerwistProvider>` — registers the Serwist-compiled service
@@ -29,7 +29,7 @@
 
 "use client";
 
-import { ToastProvider } from "@academorix/ui/react";
+import { ToastProvider } from "@stackra/ui/react";
 import { SerwistProvider } from "@serwist/turbopack/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 

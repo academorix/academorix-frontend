@@ -28,7 +28,7 @@ import {
   ShieldCheckIcon,
   TrophyIcon,
   WrenchScrewdriverIcon,
-} from "@academorix/ui/icons/outline";
+} from "@stackra/ui/icons/heroicon/outline";
 
 import type { SettingsSectionDescriptor } from "@/modules/settings/settings.types";
 
@@ -195,3 +195,17 @@ export const SETTINGS_GROUP_ORDER: readonly string[] = [
 // Silence "unused" tree-shaking hint: WrenchScrewdriverIcon reserved for the
 // Danger zone's per-action buttons in Phase 4b.
 void WrenchScrewdriverIcon;
+
+/**
+ * Look up a settings section descriptor by its `id`.
+ *
+ * Convenience wrapper over `settingsSectionsById.get(id)` — the routed
+ * `<SettingsSectionPage>` uses it to resolve the section metadata for
+ * the current URL, and the sidebar uses it to render group headers.
+ *
+ * @param id - Section id (e.g. `"general"`, `"branding"`).
+ * @returns The descriptor when found, otherwise `undefined`.
+ */
+export function findSection(id: string): SettingsSectionDescriptor | undefined {
+  return settingsSectionsById.get(id);
+}

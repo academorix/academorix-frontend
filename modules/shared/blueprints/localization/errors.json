@@ -1,0 +1,156 @@
+{
+  "id": "academorix://modules/localization/errors",
+  "$version": 1,
+  "title": "localization \u2014 error codes",
+  "namespace": "localization",
+  "errors": [
+    {
+      "code": "PLATFORM_LANGUAGE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "localization.errors.platform_language_not_found"
+    },
+    {
+      "code": "PLATFORM_LANGUAGE_NOT_ACTIVE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "localization.errors.platform_language_not_active",
+      "description": "Attempted to enable a PlatformLanguage with is_active_on_platform=false."
+    },
+    {
+      "code": "PLATFORM_LANGUAGE_IN_USE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "localization.errors.platform_language_in_use",
+      "description": "Platform admin attempted to archive a PlatformLanguage with active TenantLocale references."
+    },
+    {
+      "code": "PLATFORM_LANGUAGE_GEOGRAPHY_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "localization.errors.platform_language_geography_mismatch",
+      "description": "The submitted bcp47_code region subtag does not match the geography::Country FK (e.g. bcp47_code='fr-CA' with geography_country_id resolving to iso2='US'). Observer refuses at creation time."
+    },
+    {
+      "code": "GEOGRAPHY_LANGUAGE_MISSING",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "localization.errors.geography_language_missing",
+      "description": "PlatformLanguage.geography_language_id references a non-existent geography::Language row. Startup validation catches this (usually indicates `world:install` never ran)."
+    },
+    {
+      "code": "TENANT_LOCALE_ALREADY_ENABLED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "localization.errors.tenant_locale_already_enabled"
+    },
+    {
+      "code": "TENANT_LOCALE_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "localization.errors.tenant_locale_quota_exceeded",
+      "description": "Reached localization.locales.count slot cap. Response includes upgrade path."
+    },
+    {
+      "code": "TENANT_LOCALE_DEFAULT_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "localization.errors.tenant_locale_default_required",
+      "description": "Attempted to disable the default locale without promoting another."
+    },
+    {
+      "code": "TRANSLATION_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "localization.errors.translation_not_found"
+    },
+    {
+      "code": "TRANSLATION_QUALITY_BELOW_THRESHOLD",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "localization.errors.translation_quality_below_threshold",
+      "description": "Driver returned a translation with quality_score < tenant_locale.min_quality_score. Row refused; caller falls back."
+    },
+    {
+      "code": "AUTO_TRANSLATE_DISABLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "localization.errors.auto_translate_disabled",
+      "description": "tenant_locale.auto_translate=false OR entitlement quota exhausted."
+    },
+    {
+      "code": "AI_TRANSLATION_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "localization.errors.ai_translation_quota_exceeded",
+      "description": "localization.ai_translations.month cap reached."
+    },
+    {
+      "code": "DRIVER_UNREACHABLE",
+      "http": 502,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "localization.errors.driver_unreachable"
+    },
+    {
+      "code": "DRIVER_RATE_LIMITED",
+      "http": 429,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "localization.errors.driver_rate_limited"
+    },
+    {
+      "code": "DRIVER_AUTH_FAILED",
+      "http": 502,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "localization.errors.driver_auth_failed",
+      "description": "API key rotated / revoked. Requires ops attention."
+    },
+    {
+      "code": "DRIVER_UNSUPPORTED_LOCALE_PAIR",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "localization.errors.driver_unsupported_locale_pair",
+      "description": "Driver does not support the requested (source, target) pair. Fall back to a different driver via tenant_locale.auto_translate_driver."
+    },
+    {
+      "code": "TRANSLATION_JOB_IN_FLIGHT",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "localization.errors.translation_job_in_flight",
+      "description": "Existing job for the same (kind, target_locale_codes) still running. Wait for completion or --force."
+    }
+  ]
+}

@@ -15,9 +15,9 @@
  * subscription banner elsewhere in the shell.
  */
 
-import { ArrowRightIcon, ArrowTopRightOnSquareIcon } from "@academorix/ui/icons/outline";
-import { Button, Card, Chip } from "@academorix/ui/react";
-import { useNavigate } from "react-router";
+import { ArrowRightIcon, ArrowTopRightOnSquareIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Card, Chip } from "@stackra/ui/react";
+import { useNavigate } from "@stackra/routing/react";
 
 import type { AdminSurface } from "@/modules/admin/admin.types";
 import type { ReactNode } from "react";
@@ -92,9 +92,7 @@ export function AdminSurfaceCard({ surface }: AdminSurfaceCardProps): ReactNode 
           onPress={handleOpen}
         >
           {surface.isComingSoon ? "Coming soon" : "Open"}
-          {!surface.isComingSoon ? (
-            <ActionIcon aria-hidden="true" className="size-4" />
-          ) : null}
+          {!surface.isComingSoon ? <ActionIcon aria-hidden="true" className="size-4" /> : null}
         </Button>
       </Card.Footer>
     </Card>

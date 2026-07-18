@@ -18,7 +18,7 @@ import {
   Slider,
   Switch,
   TextField,
-} from "@academorix/ui/react";
+} from "@stackra/ui/react";
 
 import type { AttributeLocale } from "@/lib/attributes/attribute.types";
 import type { Attribute } from "@/types";

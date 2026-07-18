@@ -1,0 +1,48 @@
+{
+    "name": "academorix/scheduling",
+    "type": "library",
+    "description": "Attribute-based task scheduling for the Academorix monorepo. Register schedules declaratively on Job and Command classes via #[Schedule], #[Cron], #[WithoutOverlapping], etc. — no more edits to app/Console/Kernel.php or routes/console.php.",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.3",
+        "academorix/foundation": "*",
+        "academorix/service-provider": "@dev",
+        "illuminate/console": "^13.0",
+        "illuminate/contracts": "^13.0",
+        "illuminate/support": "^13.0",
+        "olvlvl/composer-attribute-collector": "^2.1"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "phpstan/phpstan": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Academorix\\Scheduling\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Academorix\\Scheduling\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Academorix\\Scheduling\\Providers\\SchedulingServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "olvlvl/composer-attribute-collector": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

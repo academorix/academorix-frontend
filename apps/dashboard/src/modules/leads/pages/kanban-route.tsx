@@ -17,7 +17,7 @@
  */
 
 import { lazy } from "react";
-import { Navigate } from "react-router";
+import { Navigate } from "@stackra/routing/react";
 
 import type { ReactNode } from "react";
 

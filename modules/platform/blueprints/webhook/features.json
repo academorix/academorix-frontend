@@ -1,0 +1,76 @@
+{
+  "id": "academorix://modules/webhook/features",
+  "$version": 1,
+  "title": "webhook \u2014 feature keys",
+  "description": "Features exposed at /auth/me. Gates destination drivers + advanced capabilities by plan tier.",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me \u2192 data.features (string[])",
+    "seededFrom": "BusinessType.default_config.features"
+  },
+  "features": [
+    {
+      "key": "webhook.enabled",
+      "displayName": "Outbound webhooks",
+      "description": "Master toggle. Off = tenant cannot create subscriptions. Inbound provider webhooks (used internally by channel modules) still function.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "enterprise"]
+    },
+    {
+      "key": "webhook.destination.https",
+      "displayName": "HTTPS destination",
+      "description": "Standard destination. Free.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "enterprise"]
+    },
+    {
+      "key": "webhook.destination.eventbridge",
+      "displayName": "AWS EventBridge destination",
+      "description": "Publish events directly to a customer's AWS EventBridge event bus. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "webhook.destination.pubsub",
+      "displayName": "Google Cloud Pub/Sub destination",
+      "description": "Publish events directly to a customer's GCP Pub/Sub topic. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "webhook.destination.mtls",
+      "displayName": "mTLS HTTPS destination",
+      "description": "HTTPS with client-certificate authentication. Regulated verticals (banking, gov, health). Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "webhook.payload_compression",
+      "displayName": "Payload compression",
+      "description": "Gzip request body. Reduces bandwidth for large payloads. Team + Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["team", "enterprise"]
+    },
+    {
+      "key": "webhook.custom_backoff_strategies",
+      "displayName": "Custom backoff strategies",
+      "description": "Subscription-level backoff strategy override. Without this: static strategy only. Team + Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["team", "enterprise"]
+    },
+    {
+      "key": "webhook.filter_expressions",
+      "displayName": "Filter expressions",
+      "description": "Per-subscription payload filter expression via symfony/expression-language. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "webhook.api_version_pinning",
+      "displayName": "API version pinning",
+      "description": "Pin subscription to a specific api version + auto-upgrade on sunset. Requires versioning module.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "enterprise"]
+    }
+  ]
+}

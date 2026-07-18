@@ -1,0 +1,150 @@
+{
+  "id": "academorix://modules/search/permissions",
+  "$version": 1,
+  "title": "search \u2014 permissions",
+  "seeder": "Academorix\\Search\\Database\\Seeders\\SearchPermissionSeeder",
+  "isSystem": true,
+  "description": "Operational permissions on the search surface itself. Per-ENTITY search permissions (e.g. `athletes.viewAny`) come from each domain module \u2014 they compose via `requiredPermission` on the #[Searchable] attribute (the query engine filters out models the caller can't see).",
+  "permissions": [
+    {
+      "name": "search.query",
+      "guard": "sanctum",
+      "description": "Run search queries. Per-entity filtering applied automatically via `#[Searchable(requiredPermission:)]`.",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "search.suggest",
+      "guard": "sanctum",
+      "description": "Autocomplete queries.",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "search.click.record",
+      "guard": "sanctum",
+      "description": "Record a click-through analytics event.",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "search.indexes.viewAny",
+      "guard": "sanctum",
+      "description": "List indexes catalogued for the tenant.",
+      "seededOn": ["admin", "owner"]
+    },
+    { "name": "search.indexes.view", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "search.sync-jobs.viewAny",
+      "guard": "sanctum",
+      "description": "List own sync jobs. Regular users only see their own via query scope.",
+      "seededOn": ["admin", "owner"]
+    },
+    { "name": "search.sync-jobs.view", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "search.sync-jobs.cancel",
+      "guard": "sanctum",
+      "description": "Cancel own queued / running sync job.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "search.synonyms.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "coach"]
+    },
+    { "name": "search.synonyms.view", "guard": "sanctum", "seededOn": ["admin", "owner", "coach"] },
+    { "name": "search.synonyms.create", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "search.synonyms.update",
+      "guard": "sanctum",
+      "description": "Also grants disable (is_active toggle) on system-seeded rows.",
+      "seededOn": ["admin", "owner"]
+    },
+    { "name": "search.synonyms.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "search.saved-queries.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner", "coach"]
+    },
+    {
+      "name": "search.saved-queries.view",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner", "coach"]
+    },
+    {
+      "name": "search.saved-queries.create",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner", "coach"]
+    },
+    {
+      "name": "search.saved-queries.update",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner", "coach"]
+    },
+    {
+      "name": "search.saved-queries.delete",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner", "coach"]
+    },
+    {
+      "name": "search.saved-queries.share",
+      "guard": "sanctum",
+      "description": "Mark a saved query as tenant-wide shared. Gated additionally by entitlement `search.can_share_saved_queries`.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "search.analytics.view",
+      "guard": "sanctum",
+      "description": "View tenant analytics dashboards. Aggregated only \u2014 raw query text never exposed.",
+      "seededOn": ["admin", "owner"]
+    },
+
+    {
+      "name": "platform.search.indexes.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "support", "ops"]
+    },
+    {
+      "name": "platform.search.indexes.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "support", "ops"]
+    },
+    {
+      "name": "platform.search.indexes.reindex",
+      "guard": "platform_admin",
+      "description": "Trigger reindex on any tenant's index. Audit-heavy.",
+      "seededOn": ["super_admin", "ops"]
+    },
+    {
+      "name": "platform.search.indexes.flush",
+      "guard": "platform_admin",
+      "description": "Drop an index. Destructive. Requires confirmation.",
+      "seededOn": ["super_admin"]
+    },
+    {
+      "name": "platform.search.sync-jobs.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "support", "ops"]
+    },
+    {
+      "name": "platform.search.sync-jobs.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "support", "ops"]
+    },
+    {
+      "name": "platform.search.sync-jobs.cancel",
+      "guard": "platform_admin",
+      "description": "Cancel any tenant's job, including terminal-state force cancel.",
+      "seededOn": ["super_admin", "ops"]
+    },
+    {
+      "name": "platform.search.engines.view",
+      "guard": "platform_admin",
+      "description": "View live engine health + latency.",
+      "seededOn": ["super_admin", "support", "ops"]
+    },
+    {
+      "name": "platform.search.analytics.view",
+      "guard": "platform_admin",
+      "description": "Cross-tenant analytics.",
+      "seededOn": ["super_admin", "support", "ops"]
+    }
+  ]
+}

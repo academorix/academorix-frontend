@@ -18,7 +18,7 @@ import {
   Select,
   Switch,
   TextField,
-} from "@academorix/ui/react";
+} from "@stackra/ui/react";
 import { useState } from "react";
 
 import type { Season, SeasonStatus } from "@/types";

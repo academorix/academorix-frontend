@@ -7,6 +7,7 @@
 
 import { useContext } from "react";
 
+// Relative import — see the note in `page-progress.provider.tsx`.
 import { PageProgressContext } from "../../contexts/page-progress";
 
 import type { IPageProgressContextValue } from "../../providers/page-progress/page-progress.interface";

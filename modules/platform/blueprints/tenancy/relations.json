@@ -1,0 +1,215 @@
+{
+  "id": "academorix://modules/tenancy/relations",
+  "$version": 1,
+  "title": "tenants — cross-module relations",
+  "description": "Cross-module Eloquent relations rooted at the two entities tenants still owns after the v0.3 platform split: Tenant + TenantContact. Application + BusinessType moved to `application/`; Domain + DomainRecord to `domains/`; Branding to `branding/`; TenantIntegration to `integrations/`; the Identity stub was deleted entirely (Identity belongs in identity-service, not platform-service). Each `target.module` is a bare basename (per the discovery contract); CI resolves it to the target module's schemas and validates the FK columns match. Cross-tenant FKs are FORBIDDEN — every FK is either same-tenant, application-scoped, or crosses no tenancy boundary at all.",
+  "anchors": [
+    {
+      "model": {
+        "name": "Tenant",
+        "class": "Academorix\\Tenancy\\Models\\Tenant",
+        "schemaRef": "academorix://modules/tenancy/schemas/tenant"
+      },
+      "relations": [
+        {
+          "name": "application",
+          "type": "BelongsTo",
+          "target": {
+            "module": "application",
+            "model": "Application",
+            "class": "Academorix\\Application\\Models\\Application"
+          },
+          "foreignKey": "application_id",
+          "ownerKey": "id",
+          "description": "Owned via BelongsToApplication trait (consumed from the `application` module)."
+        },
+        {
+          "name": "primaryBranding",
+          "type": "BelongsTo",
+          "target": {
+            "module": "branding",
+            "model": "Branding",
+            "class": "Academorix\\Branding\\Models\\Branding"
+          },
+          "foreignKey": "primary_branding_id",
+          "ownerKey": "id",
+          "description": "Nullable. Materialises the active Branding row and drives the denormalised `branding` JSONB on the tenants table."
+        },
+        {
+          "name": "brandings",
+          "type": "HasMany",
+          "target": {
+            "module": "branding",
+            "model": "Branding",
+            "class": "Academorix\\Branding\\Models\\Branding"
+          },
+          "foreignKey": "tenant_id"
+        },
+        {
+          "name": "domains",
+          "type": "HasMany",
+          "target": {
+            "module": "domains",
+            "model": "Domain",
+            "class": "Academorix\\Domains\\Models\\Domain"
+          },
+          "foreignKey": "tenant_id",
+          "cascade": {
+            "onDelete": "cascade",
+            "description": "Archiving a Tenant archives its Domains via the cascade FK on the domains table."
+          }
+        },
+        {
+          "name": "contacts",
+          "type": "HasMany",
+          "target": {
+            "module": "tenancy",
+            "model": "TenantContact",
+            "class": "Academorix\\Tenancy\\Models\\TenantContact"
+          },
+          "foreignKey": "tenant_id"
+        },
+        {
+          "name": "integrations",
+          "type": "HasMany",
+          "target": {
+            "module": "integrations",
+            "model": "TenantIntegration",
+            "class": "Academorix\\Integrations\\Models\\TenantIntegration"
+          },
+          "foreignKey": "tenant_id"
+        },
+        {
+          "name": "organizations",
+          "type": "HasMany",
+          "target": {
+            "module": "organization",
+            "model": "Organization",
+            "class": "Academorix\\Organization\\Models\\Organization"
+          },
+          "foreignKey": "tenant_id",
+          "cascade": {
+            "onDelete": "cascade",
+            "description": "Archiving a Tenant archives every Organization under it (soft-delete cascade)."
+          },
+          "description": "Every tenant carries at least one Organization (auto-provisioned with is_default=true). Multi-brand tenants add more."
+        },
+        {
+          "name": "regions",
+          "type": "HasMany",
+          "target": {
+            "module": "region",
+            "model": "Region",
+            "class": "Academorix\\Region\\Models\\Region"
+          },
+          "foreignKey": "tenant_id",
+          "description": "Every tenant provisions one default Region on create."
+        },
+        {
+          "name": "branches",
+          "type": "HasMany",
+          "target": {
+            "module": "branch",
+            "model": "Branch",
+            "class": "Academorix\\Branch\\Models\\Branch"
+          },
+          "foreignKey": "tenant_id",
+          "description": "Direct shortcut; also reachable via organizations.branches and regions.branches."
+        },
+        {
+          "name": "users",
+          "type": "HasMany",
+          "target": {
+            "module": "user",
+            "model": "User",
+            "class": "Academorix\\User\\Models\\User"
+          },
+          "foreignKey": "tenant_id",
+          "description": "Every user belongs to exactly one tenant. A person invited to two tenants has one User row per tenant, all pointing at the same application-scoped Identity."
+        },
+        {
+          "name": "roles",
+          "type": "HasMany",
+          "target": {
+            "module": "access",
+            "model": "Role",
+            "class": "Academorix\\Access\\Models\\Role"
+          },
+          "foreignKey": "tenant_id",
+          "description": "Tenant-scoped roles on the sanctum guard. Platform roles (platform_admin guard) have tenant_id = null and are NOT part of this relation."
+        },
+        {
+          "name": "subscription",
+          "type": "HasOne",
+          "target": {
+            "module": "subscription",
+            "model": "TenantSubscription",
+            "class": "Academorix\\Subscription\\Models\\TenantSubscription"
+          },
+          "foreignKey": "tenant_id",
+          "description": "Exactly one subscription per (application_id, tenant_id) tuple."
+        },
+        {
+          "name": "entitlementLicenses",
+          "type": "HasMany",
+          "target": {
+            "module": "entitlements",
+            "model": "EntitlementLicense",
+            "class": "Academorix\\Entitlements\\Models\\EntitlementLicense"
+          },
+          "foreignKey": "tenant_id",
+          "description": "Full entitlement matrix for this tenant. quota_summary on /api/auth/me returns the top 3-5; the whole set is behind GET /api/v1/entitlements."
+        },
+        {
+          "name": "audits",
+          "type": "HasMany",
+          "target": {
+            "module": "audit",
+            "model": "Audit",
+            "class": "Academorix\\Audit\\Models\\Audit"
+          },
+          "foreignKey": "tenant_id",
+          "description": "Every mutation on any tenant-scoped model writes here. Depends on the Audit-adds-tenant_id migration (gap register)."
+        }
+      ],
+      "morphs": [
+        {
+          "name": "scopeNode",
+          "type": "MorphOne",
+          "target": {
+            "module": "scope",
+            "model": "ScopeNode",
+            "class": "Academorix\\Scope\\Models\\ScopeNode"
+          },
+          "morphType": "entity_type",
+          "morphId": "entity_id",
+          "description": "Every Tenant projects into the scope substrate as a root node."
+        }
+      ]
+    },
+    {
+      "model": {
+        "name": "TenantContact",
+        "class": "Academorix\\Tenancy\\Models\\TenantContact",
+        "schemaRef": "academorix://modules/tenancy/schemas/tenant-contact"
+      },
+      "relations": [
+        {
+          "name": "tenant",
+          "type": "BelongsTo",
+          "target": {
+            "module": "tenancy",
+            "model": "Tenant",
+            "class": "Academorix\\Tenancy\\Models\\Tenant"
+          },
+          "foreignKey": "tenant_id"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Cross-tenant FKs are FORBIDDEN. Every FK on every relation above is same-tenant (BelongsToTenant), application-scoped (BelongsToApplication), or crosses no tenancy boundary at all (scopeNode morph).",
+    "Post-v0.3-split ownership: Application + BusinessType relations live in `modules/platform/application/relations.json`; Domain + DomainRecord in `modules/platform/domains/relations.json`; Branding in `modules/platform/branding/relations.json`; TenantIntegration in `modules/platform/integrations/relations.json`. Identity is NOT a platform module — it lives in identity-service (see `modules/identity/README.md`).",
+    "Cascade semantics: archiving a Tenant soft-deletes rows in the extracted modules (Domain / Branding / Integration) via the cascade FKs on those tables. Downstream domain modules (Organization, Branch, etc.) wire their own on-delete behaviour."
+  ]
+}

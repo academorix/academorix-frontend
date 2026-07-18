@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/audit/routes",
+  "$version": 1,
+  "title": "audit \u2014 HTTP routes",
+  "description": "Platform admin cross-tenant surface + minimal tenant DPO surface. Read-only \u2014 audits never mutable via HTTP.",
+  "groups": [
+    {
+      "name": "tenant-audits",
+      "prefix": "/api/v1/audits",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:audit-tenant",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Tenant DPO surface. Sensitive fields masked; heavy rate limit.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Audit\\Http\\Controllers\\Tenant\\AuditController@index",
+          "permission": "audit.viewAny",
+          "description": "Tenant admin sees own tenant audit rows. Restricted-tier fields masked as `[REDACTED]` unless caller has audit.view-restricted."
+        },
+        {
+          "method": "GET",
+          "path": "/{audit}",
+          "controller": "Academorix\\Audit\\Http\\Controllers\\Tenant\\AuditController@show",
+          "permission": "audit.view"
+        }
+      ]
+    },
+    {
+      "name": "platform-audits",
+      "prefix": "/api/v1/platform/audits",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "throttle:audit-platform",
+        "response.envelope"
+      ],
+      "hosts": ["central_admin"],
+      "description": "Platform-admin cross-tenant surface. Full field access for compliance investigation.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Audit\\Http\\Controllers\\Platform\\AuditController@index",
+          "permission": "platform.audit.viewAny"
+        },
+        {
+          "method": "GET",
+          "path": "/{audit}",
+          "controller": "Academorix\\Audit\\Http\\Controllers\\Platform\\AuditController@show",
+          "permission": "platform.audit.view"
+        },
+        {
+          "method": "POST",
+          "path": "/verify-chain",
+          "controller": "Academorix\\Audit\\Http\\Controllers\\Platform\\AuditController@verifyChain",
+          "permission": "platform.audit.verify-chain",
+          "description": "Trigger VerifyAuditChainJob for a tenant. Returns job id + streams results."
+        },
+        {
+          "method": "POST",
+          "path": "/export-dsar",
+          "controller": "Academorix\\Audit\\Http\\Controllers\\Platform\\AuditController@exportDsar",
+          "permission": "platform.audit.export-dsar",
+          "description": "Trigger ExportAuditForDsarJob for a specific user_id. Compliance-DPO endpoint. Produces a signed download URL via storage module."
+        }
+      ]
+    }
+  ]
+}

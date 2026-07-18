@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "name": "Stripe",
+    "kind": "Payments",
+    "status": { "text": "Connected", "color": "success" },
+    "isActive": true,
+    "connectedAt": "2024-02-14T09:00:00Z",
+    "owner": "Diego Alvarez",
+    "createdAt": "2024-02-14T09:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Twilio",
+    "kind": "SMS",
+    "status": { "text": "Connected", "color": "success" },
+    "isActive": true,
+    "connectedAt": "2024-04-10T09:00:00Z",
+    "owner": "Alex Morgan",
+    "createdAt": "2024-04-10T09:00:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Google Calendar",
+    "kind": "Calendar",
+    "status": { "text": "Connected", "color": "success" },
+    "isActive": true,
+    "connectedAt": "2024-05-01T09:00:00Z",
+    "owner": "Amelia Ford",
+    "createdAt": "2024-05-01T09:00:00Z"
+  },
+  {
+    "id": 4,
+    "name": "Mailchimp",
+    "kind": "Email marketing",
+    "status": { "text": "Disconnected", "color": "warning" },
+    "isActive": false,
+    "connectedAt": null,
+    "owner": "Hana Kim",
+    "createdAt": "2024-09-01T09:00:00Z"
+  },
+  {
+    "id": 5,
+    "name": "Slack",
+    "kind": "Notifications",
+    "status": { "text": "Connected", "color": "success" },
+    "isActive": true,
+    "connectedAt": "2024-11-01T09:00:00Z",
+    "owner": "Alex Morgan",
+    "createdAt": "2024-11-01T09:00:00Z"
+  },
+  {
+    "id": 6,
+    "name": "Zapier",
+    "kind": "Automation",
+    "status": { "text": "Available", "color": "accent" },
+    "isActive": false,
+    "connectedAt": null,
+    "owner": null,
+    "createdAt": null
+  }
+]

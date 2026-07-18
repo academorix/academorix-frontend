@@ -1,0 +1,96 @@
+{
+  "id": "academorix://modules/newsletter/data/newsletter-defaults",
+  "$version": 1,
+  "title": "newsletter \u2014 default newsletters per business_type",
+  "description": "Bootstrap seed for tenant creation. Each business_type gets sensible starter newsletters. Tenant admins may delete + create as needed.",
+  "seeder": "Academorix\\Newsletter\\Database\\Seeders\\BootstrapNewslettersSeeder",
+  "note": "Only seeded when tenant.default_config.newsletter.seed_defaults=true (default true).",
+  "byBusinessType": {
+    "academy": [
+      {
+        "slug": "weekly-digest",
+        "name": "Weekly Digest",
+        "description": "Weekly roundup of upcoming courses + coach spotlights + student achievements.",
+        "cadence": "weekly",
+        "state": "draft",
+        "is_system": false
+      },
+      {
+        "slug": "parent-update",
+        "name": "Parent Update",
+        "description": "Monthly progress + upcoming events for parents.",
+        "cadence": "monthly",
+        "state": "draft",
+        "is_system": false
+      }
+    ],
+    "sportscenter": [
+      {
+        "slug": "weekly-training",
+        "name": "Weekly Training Highlights",
+        "description": "Sessions, results, and upcoming fixtures.",
+        "cadence": "weekly",
+        "state": "draft",
+        "is_system": false
+      }
+    ],
+    "school": [
+      {
+        "slug": "school-newsletter",
+        "name": "School Newsletter",
+        "description": "News, events, and reminders for the school community.",
+        "cadence": "weekly",
+        "state": "draft",
+        "is_system": false
+      },
+      {
+        "slug": "family-monthly",
+        "name": "Family Monthly",
+        "description": "Monthly deeper-dive for parents.",
+        "cadence": "monthly",
+        "state": "draft",
+        "is_system": false
+      }
+    ],
+    "gym": [
+      {
+        "slug": "member-weekly",
+        "name": "Member Weekly",
+        "description": "Class schedules + trainer tips.",
+        "cadence": "weekly",
+        "state": "draft",
+        "is_system": false
+      }
+    ],
+    "federation": [
+      {
+        "slug": "official-updates",
+        "name": "Official Updates",
+        "description": "Federation notices for member organisations.",
+        "cadence": "adhoc",
+        "state": "draft",
+        "is_system": false
+      }
+    ],
+    "club": [
+      {
+        "slug": "club-weekly",
+        "name": "Club Weekly",
+        "description": "Club news + upcoming matches.",
+        "cadence": "weekly",
+        "state": "draft",
+        "is_system": false
+      }
+    ]
+  },
+  "shared_defaults": {
+    "confirmation_required": true,
+    "confirmation_ttl_hours": 720,
+    "reputation_thresholds": {
+      "min_open_rate": 0.1,
+      "min_click_rate": 0.01,
+      "max_bounce_rate": 0.05,
+      "max_complaint_rate": 0.003
+    }
+  }
+}

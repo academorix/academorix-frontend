@@ -1,0 +1,84 @@
+{
+  "id": "activity.activity-log-entry",
+  "title": "Activity log entry",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "One row in an activity feed: causer avatar + description + subject link + relative timestamp. Reusable across activity list + dashboard + settings audit tab.",
+  "props": {
+    "activity": {
+      "type": "object",
+      "description": "Activity DTO with description + causer + subject + event + created_at."
+    },
+    "showSubjectLink": { "type": "boolean", "default": true },
+    "compact": {
+      "type": "boolean",
+      "default": false,
+      "description": "Compact mode for dashboard widget."
+    }
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "row",
+      "kind": "View",
+      "props": {
+        "className": "flex items-start gap-3 py-3 border-b border-content2 last:border-b-0"
+      },
+      "children": [
+        {
+          "kind": "Avatar",
+          "props": { "size": "sm" },
+          "bindings": {
+            "src": { "$expr": "props.activity.causer?.avatar_url" },
+            "fallback": { "$expr": "(props.activity.causer?.display_name || 'S')[0]" }
+          }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex-1 min-w-0" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm" },
+              "bindings": { "children": { "$ref": "props.activity.description" } }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2 mt-1 text-xs text-muted" },
+              "children": [
+                {
+                  "kind": "Chip",
+                  "props": { "size": "xs", "variant": "neutral" },
+                  "bindings": { "children": { "$ref": "props.activity.event" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "as": "span" },
+                  "bindings": {
+                    "children": { "$expr": "'\u00b7 ' + formatRelative(props.activity.created_at)" }
+                  }
+                },
+                {
+                  "kind": "Link",
+                  "props": { "size": "xs", "className": "ml-auto" },
+                  "bindings": {
+                    "hidden": {
+                      "$expr": "!props.showSubjectLink || !props.activity.subject_type || !props.activity.subject_id"
+                    },
+                    "children": "View"
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigateExpr",
+                      "expr": "resourceUrl(props.activity.subject_type, props.activity.subject_id)"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "defaultNotFoundFallback": {
+    "title": "Page not found",
+    "description": "The URL doesn't match any route in this app.",
+    "defaultAction": "Go home"
+  },
+  "defaultEmptyFallback": {
+    "title": "Nothing here yet",
+    "description": "This route returned no data. Try adjusting filters or come back later."
+  },
+  "defaultLoadingFallback": {
+    "ariaLabel": "Loading"
+  },
+  "defaultPendingFallback": {
+    "ariaLabel": "Loading page"
+  }
+}

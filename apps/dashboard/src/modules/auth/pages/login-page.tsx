@@ -13,11 +13,11 @@
  * backend exclusively.
  */
 
-import { AcademicCapIcon, CheckCircleIcon } from "@academorix/ui/icons/outline";
-import { Button, Card, Form, Input, Label, TextField } from "@academorix/ui/react";
+import { AcademicCapIcon, CheckCircleIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Card, Form, Input, Label, TextField } from "@stackra/ui/react";
 import { useLogin } from "@refinedev/core";
 import { useState } from "react";
-import { Link, useSearchParams } from "react-router";
+import { Link, useSearchParams } from "@stackra/routing/react";
 
 import type { LoginCredentials } from "@/types";
 import type { FormEvent, ReactNode } from "react";

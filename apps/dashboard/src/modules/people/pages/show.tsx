@@ -16,11 +16,11 @@
  * fires so an operator can trace the shape locally.
  */
 
-import { ArrowsRightLeftIcon } from "@academorix/ui/icons/outline";
-import { Button, Card, Chip, Spinner } from "@academorix/ui/react";
+import { ArrowsRightLeftIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Card, Chip, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 import { useEffect } from "react";
-import { Link } from "react-router";
+import { Link } from "@stackra/routing/react";
 
 import type { Person } from "@/modules/people/people.types";
 import type { ReactNode } from "react";
@@ -94,9 +94,7 @@ function ExternalIdsSection({ person }: { person: Person }): ReactNode {
     <Card>
       <Card.Header>
         <Card.Title>External integrations</Card.Title>
-        <Card.Description>
-          Identifiers linking this person to third-party systems.
-        </Card.Description>
+        <Card.Description>Identifiers linking this person to third-party systems.</Card.Description>
       </Card.Header>
       <Card.Content>
         {entries.length === 0 ? (
@@ -143,9 +141,7 @@ function MergeHistorySection({ person }: { person: Person }): ReactNode {
                 <Chip size="sm" variant="soft">
                   Merged
                 </Chip>
-                <span className="text-foreground">
-                  Absorbed {merge.merged_from_person_id}
-                </span>
+                <span className="text-foreground">Absorbed {merge.merged_from_person_id}</span>
                 <span className="text-xs text-muted">{formatDateTime(merge.created_at)}</span>
               </div>
               <div className="text-xs text-muted">

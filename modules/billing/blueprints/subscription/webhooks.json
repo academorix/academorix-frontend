@@ -1,0 +1,64 @@
+{
+  "id": "academorix://modules/subscription/webhooks",
+  "$version": 1,
+  "title": "subscription \u2014 webhook contracts",
+  "description": "Inbound Cashier webhooks. Registered with the webhook module which handles signature verification, replay protection, and dispatch. Our IngestCashierWebhookListener translates events into SubscriptionEvent + fires our own domain events.",
+  "inbound": {
+    "stripe": {
+      "endpoint": "POST /webhooks/inbound/subscription/stripe",
+      "signature_header": "Stripe-Signature",
+      "signature_secret_env": "STRIPE_WEBHOOK_SECRET",
+      "signature_algorithm": "HMAC-SHA256 (Stripe format: t=<timestamp>,v1=<signature>)",
+      "timestamp_tolerance_seconds": 300,
+      "idempotency_key": "event.id (mapped to SubscriptionEvent.provider_event_id)",
+      "consumed_event_types": [
+        {
+          "type": "customer.subscription.created",
+          "action": "create Subscription + fire SubscriptionStarted"
+        },
+        {
+          "type": "customer.subscription.updated",
+          "action": "map state \u2192 our state; fire SubscriptionActivated / SubscriptionUpgraded / SubscriptionDowngraded / SubscriptionSwitched / SubscriptionPastDue"
+        },
+        {
+          "type": "customer.subscription.deleted",
+          "action": "state \u2192 cancelled; fire SubscriptionCancelled"
+        },
+        { "type": "customer.subscription.trial_will_end", "action": "fire TrialEnding" },
+        {
+          "type": "invoice.payment_succeeded",
+          "action": "fire PaymentSucceeded + SubscriptionRenewed if renewal"
+        },
+        { "type": "invoice.payment_failed", "action": "fire PaymentFailed" },
+        {
+          "type": "customer.subscription.paused",
+          "action": "state \u2192 suspended; fire SubscriptionSuspended"
+        },
+        {
+          "type": "customer.subscription.resumed",
+          "action": "state \u2192 active; fire SubscriptionActivated"
+        }
+      ]
+    },
+    "paddle": {
+      "endpoint": "POST /webhooks/inbound/subscription/paddle",
+      "signature_header": "Paddle-Signature",
+      "signature_secret_env": "PADDLE_WEBHOOK_SECRET",
+      "signature_algorithm": "HMAC-SHA256 (Paddle format: ts=<timestamp>;h1=<signature>)",
+      "timestamp_tolerance_seconds": 300,
+      "idempotency_key": "event_id",
+      "consumed_event_types": [
+        { "type": "subscription.created", "action": "create Subscription" },
+        { "type": "subscription.updated", "action": "state + plan changes" },
+        { "type": "subscription.canceled", "action": "state \u2192 cancelled" },
+        { "type": "subscription.paused", "action": "state \u2192 suspended" },
+        { "type": "subscription.resumed", "action": "state \u2192 active" },
+        { "type": "transaction.completed", "action": "fire PaymentSucceeded" },
+        { "type": "transaction.payment_failed", "action": "fire PaymentFailed" }
+      ]
+    }
+  },
+  "outbound": {
+    "description": "The subscription module does NOT publish outbound webhooks directly. The `webhook` module (with its OutboundWebhookDelivery entity) subscribes to our domain events + publishes them to tenant-configured webhook URLs. Subscription events available to tenant webhook subscribers include all events published in events.json."
+  }
+}

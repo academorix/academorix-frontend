@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/entitlements/analytics",
+  "$version": 1,
+  "title": "entitlements \u2014 product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Quota Approached",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "key", "usage_ratio"],
+      "description": "80% cap crossed. Feeds upgrade-prompt experiments."
+    },
+    {
+      "name": "Quota Exceeded",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "key", "attempted_amount"],
+      "description": "100% cap reached. Strong upgrade signal."
+    },
+    {
+      "name": "Entitlement Overridden",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "key", "old_cap", "new_cap"],
+      "description": "Enterprise contract override applied."
+    },
+    {
+      "name": "Entitlement Reset",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "key", "period", "previous_used"],
+      "description": "Period boundary hit. Sizes typical usage per period."
+    },
+    {
+      "name": "Usage Reported to Billing",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "key", "amount_reported", "provider"],
+      "description": "Metered billing export succeeded."
+    }
+  ]
+}

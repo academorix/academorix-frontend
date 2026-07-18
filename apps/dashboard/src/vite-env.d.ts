@@ -107,3 +107,15 @@ interface ImportMeta {
  * on every request, and by the PWA update toast to show the build number.
  */
 declare const __ACADEMORIX_VERSION__: string;
+
+/**
+ * Absolute filesystem path to the project root — injected by Vite's
+ * `define` at build time (see `vite.config.ts`). Consumed by
+ * `Path.setRoot(...)` at the top of `main.tsx` so `@stackra/support`'s
+ * root registry is populated before any framework code runs.
+ *
+ * String replacement is verbatim: production bundles inline the literal
+ * path (e.g. `"/Users/…/apps/dashboard"`) so the browser never has to
+ * touch `node:fs` to discover its own root.
+ */
+declare const __STACKRA_ROOT__: string;

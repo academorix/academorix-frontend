@@ -1,0 +1,165 @@
+{
+  "id": "transfer.resources.xfer-job.list",
+  "title": "Data transfers",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/transfer/jobs",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "transfer", "entity": "xfer-job", "action": "list" },
+  "requiresPermission": "transfer.viewAny",
+  "requiresFeature": "transfer.enabled",
+  "dataSources": [
+    {
+      "name": "jobs",
+      "kind": "http.get",
+      "url": "/api/v1/transfer/jobs",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": [
+        "filter[status]",
+        "filter[kind]",
+        "filter[entity]",
+        "filter[created_at]",
+        "sort",
+        "page",
+        "per_page"
+      ]
+    },
+    {
+      "name": "entities",
+      "kind": "http.get",
+      "url": "/api/v1/transfer/entities",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-6xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col gap-1" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Data transfers"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Your import, export, and sample-data operations. Live-updating."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "secondary", "startIcon": "arrow-down-tray" },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/tenant/transfer/imports/new" }
+                  },
+                  "bindings": {
+                    "children": { "$expr": "t('transfer.actions.new_import')" },
+                    "hidden": { "$expr": "!can('transfer.imports.run')" }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "startIcon": "arrow-up-tray" },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/tenant/transfer/exports/new" }
+                  },
+                  "bindings": {
+                    "children": { "$expr": "t('transfer.actions.new_export')" },
+                    "hidden": { "$expr": "!can('transfer.exports.run')" }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-wrap gap-3" },
+          "children": [
+            {
+              "kind": "Select",
+              "props": {
+                "label": "Status",
+                "name": "filter[status]",
+                "placeholder": "All statuses"
+              },
+              "options": [
+                { "key": "queued", "label": "Queued" },
+                { "key": "running", "label": "Running" },
+                { "key": "succeeded", "label": "Succeeded" },
+                { "key": "partially_succeeded", "label": "Partial success" },
+                { "key": "failed", "label": "Failed" },
+                { "key": "cancelled", "label": "Cancelled" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "jobs" } }
+            },
+            {
+              "kind": "Select",
+              "props": { "label": "Kind", "name": "filter[kind]", "placeholder": "All kinds" },
+              "options": [
+                { "key": "import", "label": "Import" },
+                { "key": "export", "label": "Export" },
+                { "key": "sample", "label": "Sample data" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "jobs" } }
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "label": "Entity",
+                "name": "filter[entity]",
+                "placeholder": "All entities"
+              },
+              "optionsSource": { "$ref": "entities", "valueField": "key", "labelField": "label" },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "jobs" } }
+            },
+            {
+              "kind": "DateRange",
+              "props": { "label": "Created", "name": "filter[created_at]" },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "jobs" } }
+            }
+          ]
+        },
+        {
+          "kind": "List",
+          "props": {
+            "emptyState": {
+              "title": "No transfers yet",
+              "description": "Start an import or export from the buttons above."
+            }
+          },
+          "bindings": { "items": { "$ref": "jobs" }, "isLoading": { "$ref": "jobs.isLoading" } },
+          "itemRenderer": {
+            "kind": "Widget",
+            "widget": "transfer.xfer-job-row",
+            "props": { "showCauser": false },
+            "bindings": { "job": { "$ref": "row" } }
+          }
+        }
+      ]
+    }
+  ]
+}

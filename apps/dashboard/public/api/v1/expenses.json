@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "name": "Pool 2 chemical treatment",
+    "category": "Facilities",
+    "amount": 340,
+    "vendor": "AquaCare Ltd",
+    "date": "2025-03-01",
+    "status": { "text": "Paid", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-03-01T09:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "New tennis balls · 6 tubes",
+    "category": "Equipment",
+    "amount": 86,
+    "vendor": "Sportstop",
+    "date": "2025-03-03",
+    "status": { "text": "Paid", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-03-03T09:00:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Coach retreat catering",
+    "category": "Staff",
+    "amount": 620,
+    "vendor": "GreenCatering",
+    "date": "2025-03-05",
+    "status": { "text": "Paid", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-03-05T09:00:00Z"
+  },
+  {
+    "id": 4,
+    "name": "Software licenses",
+    "category": "IT",
+    "amount": 240,
+    "vendor": "Notion",
+    "date": "2025-03-10",
+    "status": { "text": "Paid", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-03-10T09:00:00Z"
+  },
+  {
+    "id": 5,
+    "name": "Marketing photography",
+    "category": "Marketing",
+    "amount": 1200,
+    "vendor": "Studio 21",
+    "date": "2025-03-12",
+    "status": { "text": "Pending", "color": "warning" },
+    "isActive": true,
+    "createdAt": "2025-03-12T09:00:00Z"
+  }
+]

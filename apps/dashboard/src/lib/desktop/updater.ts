@@ -38,7 +38,7 @@
  * before it hits the disk.
  */
 
-import { toast } from "@academorix/ui/react";
+import { toast } from "@stackra/ui/react";
 
 import { desktopConfig } from "@/config/desktop.config";
 import { isDesktop } from "@/lib/desktop/is-desktop";

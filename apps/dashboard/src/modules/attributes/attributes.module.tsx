@@ -10,7 +10,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §10.9 "Attributes"
  */
 
-import { AdjustmentsHorizontalIcon } from "@academorix/ui/icons/outline";
+import { AdjustmentsHorizontalIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

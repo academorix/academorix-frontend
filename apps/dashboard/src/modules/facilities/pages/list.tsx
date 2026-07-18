@@ -18,7 +18,7 @@
  * so the two look and feel identical to the user.
  */
 
-import { XMarkIcon } from "@academorix/ui/icons/outline";
+import { XMarkIcon } from "@stackra/ui/icons/heroicon/outline";
 import {
   ActionBar,
   Button,
@@ -29,7 +29,7 @@ import {
   Separator,
   Spinner,
   Tooltip,
-} from "@academorix/ui/react";
+} from "@stackra/ui/react";
 import { useList, useUpdate } from "@refinedev/core";
 import { useMemo, useState } from "react";
 
@@ -39,7 +39,7 @@ import type {
   DataGridColumn,
   DataGridSelection,
   DataGridSortDescriptor,
-} from "@academorix/ui/react";
+} from "@stackra/ui/react";
 import type { CrudFilter, CrudSort } from "@refinedev/core";
 import type { ReactNode } from "react";
 
@@ -47,10 +47,7 @@ import { EditButton, ListView, ShowButton } from "@/components/refine";
 import { buildScopeFilters, useScope } from "@/lib/scope";
 import { FacilityCapacityBadge } from "@/modules/facilities/components/facility-capacity-badge";
 import { FacilityTypeChip } from "@/modules/facilities/components/facility-type-chip";
-import {
-  FACILITY_TYPE_COLOR,
-  FACILITY_TYPE_ICON,
-} from "@/modules/facilities/facilities.config";
+import { FACILITY_TYPE_COLOR, FACILITY_TYPE_ICON } from "@/modules/facilities/facilities.config";
 import { FACILITY_TYPE_LABELS } from "@/modules/facilities/facilities.types";
 
 /** Number of rows per page — matches the shared `ResourceDataGrid` default. */
@@ -196,10 +193,7 @@ export default function FacilitiesList(): ReactNode {
   // Fetch all matching facilities in one shot — the tenant list is typically
   // < 50 rows so paginating on the client is safe, and it lets bulk actions
   // operate on the full filtered set (not just the current page).
-  const {
-    result: facilitiesResult,
-    query: facilitiesQuery,
-  } = useList<Facility>({
+  const { result: facilitiesResult, query: facilitiesQuery } = useList<Facility>({
     resource: "facilities",
     filters: combinedFilters,
     sorters: [sort],
@@ -404,7 +398,8 @@ export default function FacilitiesList(): ReactNode {
               className="rounded-md border border-border bg-transparent px-2 py-1 text-sm"
               value={filters.type ?? ""}
               onChange={(event) => {
-                const value = event.target.value === "" ? null : (event.target.value as FacilityType);
+                const value =
+                  event.target.value === "" ? null : (event.target.value as FacilityType);
 
                 setFilters((prev) => ({ ...prev, type: value }));
                 setCurrentPage(1);

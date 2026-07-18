@@ -7,7 +7,7 @@
  * (hidden/disabled reflect the `accessControlProvider`).
  */
 
-import { PencilSquareIcon } from "@academorix/ui/icons/outline";
+import { PencilSquareIcon } from "@stackra/ui/icons/heroicon/outline";
 import { useEditButton } from "@refinedev/core";
 
 import type { RecordActionButtonProps } from "@/components/refine/buttons/nav-button";

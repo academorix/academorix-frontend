@@ -1,0 +1,13 @@
+{
+  "offlineBanner": {
+    "title": "You are offline"
+  },
+  "networkStatus": {
+    "offline": "Offline",
+    "slow": "Slow",
+    "wifi": "Wi-Fi",
+    "cellular": "Cellular",
+    "ethernet": "Ethernet",
+    "unknown": "Online"
+  }
+}

@@ -6,7 +6,7 @@
  * Organization detail — identity, default flag, and lifecycle status.
  */
 
-import { Card, Chip, Spinner } from "@academorix/ui/react";
+import { Card, Chip, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 
 import type { Organization } from "@/types";

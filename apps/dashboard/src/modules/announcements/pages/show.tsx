@@ -6,7 +6,7 @@
  * Announcement detail — audience, status, publish date, and the message body.
  */
 
-import { Card, Chip, Spinner } from "@academorix/ui/react";
+import { Card, Chip, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 
 import type { Announcement } from "@/modules/announcements/announcements.types";

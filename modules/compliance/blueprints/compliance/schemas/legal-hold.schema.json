@@ -1,0 +1,215 @@
+{
+  "id": "academorix://modules/compliance/schemas/legal-hold",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "LegalHold",
+  "description": "Freezes retention on a subject / tenant / case / class scope. Every apply requires two-person approval (applied_by + approved_by). LegalHoldGate::isHeld() consults this table on every purge / erase candidate; a held row is skipped + counted in RetentionRun.held_count.",
+  "type": "object",
+  "x-module": "compliance",
+  "x-eloquent": {
+    "table": "legal_holds",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "lhd_",
+    "incrementing": false,
+    "model": "Academorix\\Compliance\\Models\\LegalHold",
+    "interface": "Academorix\\Compliance\\Contracts\\Data\\LegalHoldInterface",
+    "implements": ["Academorix\\Compliance\\Contracts\\Data\\LegalHoldInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "scope": "LegalHoldScope",
+      "applied_at": "datetime",
+      "expires_at": "datetime",
+      "released_at": "datetime",
+      "metadata": "array"
+    },
+    "appends": ["is_active", "days_remaining"],
+    "observers": ["LegalHoldObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true, "description": "`lhd_<26>`" },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" },
+        "description": "NULL for platform-level holds (rare, super_admin only)."
+      },
+      "scope": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: subject / tenant / case / class."
+      },
+      "subject_type": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Populated when scope=subject. NULL for tenant / case / class scopes."
+      },
+      "subject_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Populated when scope=subject."
+      },
+      "case_ref": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Populated when scope=case. Free-text litigation case number / arbitration reference."
+      },
+      "class_target": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Populated when scope=class. FQCN of the frozen model class."
+      },
+      "reason": {
+        "type": "text",
+        "nullable": false,
+        "description": "Free-text justification. Displayed in the audit trail + on LegalHoldAppliedNotification."
+      },
+      "applied_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "approved_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "Two-person approval requirement. Must differ from applied_by_user_id."
+      },
+      "applied_at": { "type": "timestamptz", "nullable": false },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Required unless super_admin-authorised. NULL indicates indefinite (rare, super_admin only)."
+      },
+      "released_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set when manually released OR when ExpireLegalHoldsJob auto-releases past expires_at."
+      },
+      "released_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "released_reason": { "type": "string", "length": 500, "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "scope", "released_at"],
+        "unique": false,
+        "name": "legal_holds_tenant_scope_active_idx",
+        "description": "Active-hold sweep: 'tenant X's holds still in force'.",
+        "predicate": "released_at IS NULL"
+      },
+      {
+        "columns": ["subject_type", "subject_id"],
+        "unique": false,
+        "name": "legal_holds_subject_idx",
+        "predicate": "scope = 'subject' AND released_at IS NULL",
+        "description": "Per-subject freeze check by LegalHoldGate."
+      },
+      {
+        "columns": ["case_ref"],
+        "unique": false,
+        "name": "legal_holds_case_idx",
+        "predicate": "case_ref IS NOT NULL AND released_at IS NULL"
+      },
+      {
+        "columns": ["class_target"],
+        "unique": false,
+        "name": "legal_holds_class_idx",
+        "predicate": "class_target IS NOT NULL AND released_at IS NULL"
+      },
+      {
+        "columns": ["expires_at"],
+        "unique": false,
+        "name": "legal_holds_expiry_sweep_idx",
+        "predicate": "expires_at IS NOT NULL AND released_at IS NULL",
+        "description": "ExpireLegalHoldsJob scan."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "scope",
+    "reason",
+    "applied_by_user_id",
+    "approved_by_user_id",
+    "applied_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^lhd_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "scope": { "type": "string", "enum": ["subject", "tenant", "case", "class"] },
+    "subject_type": { "type": ["string", "null"] },
+    "subject_id": { "type": ["string", "null"] },
+    "case_ref": { "type": ["string", "null"], "maxLength": 128 },
+    "class_target": { "type": ["string", "null"] },
+    "reason": { "type": "string", "minLength": 10 },
+    "applied_by_user_id": { "type": "string" },
+    "approved_by_user_id": { "type": "string" },
+    "applied_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": ["string", "null"], "format": "date-time" },
+    "released_at": { "type": ["string", "null"], "format": "date-time" },
+    "released_by_user_id": { "type": ["string", "null"] },
+    "released_reason": { "type": ["string", "null"], "maxLength": 500 },
+    "metadata": { "type": ["object", "null"] },
+    "is_active": {
+      "type": "boolean",
+      "description": "Computed. True when released_at IS NULL AND (expires_at IS NULL OR expires_at > now())."
+    },
+    "days_remaining": {
+      "type": ["integer", "null"],
+      "description": "Computed. Days until expires_at when active + expiring; null when indefinite."
+    },
+    "created_by": { "type": ["string", "null"] },
+    "updated_by": { "type": ["string", "null"] },
+    "deleted_by": { "type": ["string", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["created_by", "updated_by", "deleted_by"],
+    "computed": ["is_active", "days_remaining"],
+    "notes": [
+      "Tenant-facing wire hides subject_type + subject_id when the tenant member is not the subject. Platform-admin sees everything."
+    ]
+  }
+}

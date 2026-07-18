@@ -1,0 +1,57 @@
+{
+  "id": "academorix://modules/storage/schedule",
+  "$version": 1,
+  "title": "storage \u2014 scheduled tasks",
+  "description": "Recurring background work registered with Laravel's Scheduler. Every job is idempotent + uses shouldBeUnique guards so overlapping runs are impossible.",
+  "schedule": [
+    {
+      "job": "Academorix\\Storage\\Jobs\\PurgeExpiredFilesJob",
+      "cron": "0 3 * * *",
+      "timezone": "UTC",
+      "queue": "storage-maintenance",
+      "description": "Nightly at 03:00 UTC. Sweeps soft-deleted + archived files past their per-kind retention window. Batches at 500 rows/run to keep DB pressure low."
+    },
+    {
+      "job": "Academorix\\Storage\\Jobs\\PurgeAbortedChunkedUploadsJob",
+      "cron": "30 3 * * *",
+      "timezone": "UTC",
+      "queue": "storage-maintenance",
+      "description": "Nightly at 03:30 UTC. Hard-deletes ChunkedUploads in aborted/expired state older than 7 days + cleans provider multipart parts."
+    },
+    {
+      "job": "Academorix\\Storage\\Jobs\\RevokeExpiredSignedUrlsJob",
+      "cron": "*/60 * * * *",
+      "timezone": "UTC",
+      "queue": "storage-maintenance",
+      "description": "Hourly. Marks SignedUrlAudit rows where expires_at < NOW() AND revoked_at IS NULL as revoked. Fires SignedUrlRevoked per row."
+    },
+    {
+      "job": "Academorix\\Storage\\Jobs\\SyncStorageEntitlementUsageJob",
+      "cron": "15 * * * *",
+      "timezone": "UTC",
+      "queue": "storage-maintenance",
+      "description": "Hourly at :15. Reconciles storage.bytes.consumed + storage.files.max_per_tenant per tenant. Corrects drift + emits StorageQuotaApproaching when crossing the 80% threshold."
+    },
+    {
+      "job": "Academorix\\Storage\\Jobs\\DedupOrphanBlobsJob",
+      "cron": "0 4 * * 0",
+      "timezone": "UTC",
+      "queue": "storage-maintenance",
+      "description": "Weekly at 04:00 UTC on Sundays. Reconciles ContentAddressableStore refcount against actual File row count per sha256. Reports drift; does NOT delete (deletion happens naturally through the last-referrer hard-delete path)."
+    },
+    {
+      "job": "Academorix\\Storage\\Jobs\\AntivirusSignatureRefreshJob",
+      "cron": "0 */6 * * *",
+      "timezone": "UTC",
+      "queue": "storage-maintenance",
+      "description": "Every 6 hours. Refreshes the AV signature version cache + fires storage::AntivirusSignaturesUpdated if the version changed. Downstream: storage:rescan-virus can operate against the newly-loaded signatures."
+    },
+    {
+      "job": "Academorix\\Storage\\Jobs\\RotateSigningKeyJob",
+      "cron": "0 2 1 * *",
+      "timezone": "UTC",
+      "queue": "storage-maintenance",
+      "description": "Monthly at 02:00 UTC on the 1st. Rotates the signed-URL signing key. Previous key retained for 30 days grace so in-flight signatures survive. Governed by config('storage.signing_key_rotation_days', 30)."
+    }
+  ]
+}

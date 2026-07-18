@@ -1,0 +1,210 @@
+{
+  "id": "academorix://modules/versioning/schemas/deprecation-notice",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "DeprecationNotice",
+  "description": "A public + auditable record of a deprecation or sunset warning. Attached to an ApiVersion. Notice can target specific endpoints and/or specific webhook events \u2014 not necessarily the entire version (e.g. 'v1 endpoint /api/v1/legacy-invitations is deprecated; rest of v1 continues'). Notified customers receive `ApiDeprecationNotification` in-app + by mail. State machine: draft \u2192 published \u2192 archived (published rows are append-only after publish; text corrections produce new versions via HasVersions).",
+  "type": "object",
+  "x-module": "versioning",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "deprecation_notices",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "dep_",
+    "incrementing": false,
+    "model": "Academorix\\Versioning\\Models\\DeprecationNotice",
+    "interface": "Academorix\\Versioning\\Contracts\\Data\\DeprecationNoticeInterface",
+    "implements": ["Academorix\\Versioning\\Contracts\\Data\\DeprecationNoticeInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "HasStates",
+      "HasSystemFlag",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable",
+      "HasVersions",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "state": "DeprecationNoticeState",
+      "notice_type": "NoticeType",
+      "affected_endpoints": "array",
+      "affected_events": "array",
+      "notify_customers": "boolean",
+      "is_system": "boolean",
+      "published_at": "datetime",
+      "notified_at": "datetime",
+      "metadata": "array"
+    },
+    "appends": ["is_published"],
+    "observers": ["DeprecationNoticeObserver"],
+    "hidden": ["metadata"],
+    "guarded": [],
+    "dontVersionFields": ["state", "published_at", "notified_at", "updated_at"],
+    "keepOldVersions": 100
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `dep_<26 chars>`."
+      },
+      "api_version_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "api_versions",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "notice_type": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "description": "Enum: `deprecation` (announces upcoming sunset), `sunset_reminder` (7d / 3d / 1d before sunset), `sunset_final` (fired when state transitions to sunset), `partial_deprecation` (specific endpoints / events without the whole version)."
+      },
+      "title": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "description": "Short notice title for email subject + admin UI heading."
+      },
+      "notice_markdown": {
+        "type": "text",
+        "nullable": false,
+        "description": "Full notice body in markdown. Rendered on customer-facing docs page + in the deprecation email."
+      },
+      "affected_endpoints": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "[]",
+        "description": "Array of URL patterns affected. Empty [] = entire version. Example: ['/api/v1/legacy-invitations', '/api/v1/deprecated-webhooks']"
+      },
+      "affected_events": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "[]",
+        "description": "Array of webhook event names affected. Empty [] = entire version's webhook surface. Example: ['invitation.sent', 'user.registered']"
+      },
+      "migration_guide_url": {
+        "type": "string",
+        "length": 500,
+        "nullable": true,
+        "description": "Optional migration guide URL. Falls back to the parent ApiVersion.sunset_notice_url when null."
+      },
+      "state": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "draft",
+        "description": "Enum: draft, published, archived."
+      },
+      "published_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set on draft \u2192 published transition. From this moment, the notice appears on public deprecation surfaces + the migration guide is emitted in Link headers."
+      },
+      "notify_customers": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "Whether to dispatch ApiDeprecationNotification / ApiSunsetNotification to affected tenants on publish."
+      },
+      "notified_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set when PublishDeprecationNoticeJob completed the customer notification fanout."
+      },
+      "is_system": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "All notices are is_system=true. Blocks tenant-side edits."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["api_version_id", "state", "published_at"],
+        "unique": false,
+        "name": "deprecation_notices_version_state_index",
+        "description": "Primary read path: 'active notices for version X'."
+      },
+      {
+        "columns": ["notice_type", "state"],
+        "unique": false,
+        "name": "deprecation_notices_type_state_index"
+      },
+      {
+        "columns": ["published_at"],
+        "unique": false,
+        "name": "deprecation_notices_published_at_index",
+        "predicate": "state = 'published'"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "api_version_id",
+    "notice_type",
+    "title",
+    "notice_markdown",
+    "affected_endpoints",
+    "affected_events",
+    "state",
+    "notify_customers",
+    "is_system",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^dep_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "api_version_id": { "type": "string", "pattern": "^apv_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "notice_type": {
+      "type": "string",
+      "enum": ["deprecation", "sunset_reminder", "sunset_final", "partial_deprecation"]
+    },
+    "title": { "type": "string", "maxLength": 200 },
+    "notice_markdown": { "type": "string" },
+    "affected_endpoints": { "type": "array", "items": { "type": "string" } },
+    "affected_events": { "type": "array", "items": { "type": "string" } },
+    "migration_guide_url": { "type": ["string", "null"], "format": "uri", "maxLength": 500 },
+    "state": { "type": "string", "enum": ["draft", "published", "archived"] },
+    "published_at": { "type": ["string", "null"], "format": "date-time" },
+    "notify_customers": { "type": "boolean" },
+    "notified_at": { "type": ["string", "null"], "format": "date-time" },
+    "is_system": { "type": "boolean" },
+    "is_published": { "type": "boolean", "description": "Computed. state === 'published'." },
+    "metadata": { "type": ["object", "null"], "additionalProperties": true },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["metadata", "created_by", "updated_by", "deleted_by"],
+    "computed": ["is_published"]
+  }
+}

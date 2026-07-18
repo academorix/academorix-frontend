@@ -1,8 +1,8 @@
 /*
- * @academorix/ui — Global Styles
+ * @stackra/ui — Global Styles
  *
  * Single import for all UI package styles. Import in your app root CSS
- * from the package subpath: academorix/ui/react/styles
+ * from the package subpath: @stackra/ui/react/styles
  *
  * Includes:
  * - @heroui-pro/react/css — HeroUI Pro component styles (AppLayout, Sidebar,
@@ -12,6 +12,10 @@
  * - controllers.css — Cursor behavior conventions (default vs pointer)
  * - rtl.css — Right-to-left layout support for Arabic/Hebrew
  */
+
+@import "tailwindcss";
+@import "@heroui/styles";
 @import "@heroui-pro/react/css";
-@import "./controllers.css";
+
 @import "./rtl.css";
+@import "./controllers.css";

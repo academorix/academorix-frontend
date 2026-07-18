@@ -1,0 +1,87 @@
+{
+  "id": "academorix://modules/activity/config",
+  "$version": 1,
+  "title": "activity \u2014 developer configuration",
+  "configFile": "config/activity.php",
+  "envPrefix": "ACTIVITY_",
+  "sections": {
+    "activitylog_bridge": {
+      "description": "Bridge into spatie's config/activitylog.php \u2014 we don't overwrite theirs; we set overrides here that our provider applies at boot.",
+      "keys": [
+        {
+          "path": "activity.database.connection",
+          "type": "string",
+          "env": "ACTIVITY_DB_CONNECTION",
+          "default": null,
+          "description": "Null = default connection."
+        },
+        {
+          "path": "activity.table_name",
+          "type": "string",
+          "default": "activity_log",
+          "description": "spatie's default; do not change without migrating."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "activity.retention.tier_days.short",
+          "type": "int",
+          "env": "ACTIVITY_RETENTION_SHORT_DAYS",
+          "default": 30
+        },
+        {
+          "path": "activity.retention.tier_days.medium",
+          "type": "int",
+          "env": "ACTIVITY_RETENTION_MEDIUM_DAYS",
+          "default": 90
+        },
+        {
+          "path": "activity.retention.tier_days.long",
+          "type": "int",
+          "env": "ACTIVITY_RETENTION_LONG_DAYS",
+          "default": 365
+        },
+        {
+          "path": "activity.retention.default_tier",
+          "type": "enum<short,medium,long>",
+          "default": "short"
+        },
+        {
+          "path": "activity.retention.prune_chunk_size",
+          "type": "int",
+          "env": "ACTIVITY_PRUNE_CHUNK",
+          "default": 1000
+        }
+      ]
+    },
+    "causer": {
+      "description": "Causer resolution.",
+      "keys": [
+        {
+          "path": "activity.causer.guard",
+          "type": "string",
+          "default": "sanctum",
+          "description": "Which auth guard resolves the causer."
+        },
+        {
+          "path": "activity.causer.fallback_to_system",
+          "type": "bool",
+          "default": true,
+          "description": "When no auth user, use System actor. Off = leave causer null."
+        }
+      ]
+    },
+    "batching": {
+      "keys": [
+        {
+          "path": "activity.batching.enabled",
+          "type": "bool",
+          "default": true,
+          "description": "Enable spatie's LogBatch::startBatch() inside our batch decorators."
+        }
+      ]
+    }
+  }
+}

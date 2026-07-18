@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/transfer/observers",
+  "$version": 1,
+  "title": "transfer \u2014 Eloquent observers",
+  "description": "Two owned observers on XferJob + XferShard. Enforce the state machine + populate defaults at creation + fan out lifecycle events afterCommit. XferArtifact + XferMappingProfile do not need observers \u2014 they are simpler value-object-ish rows whose lifecycle is driven by the jobs that create them.",
+  "observers": [
+    {
+      "model": "XferJob",
+      "observer": "Academorix\\Transfer\\Observers\\XferJobObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `xfer_`",
+        "creating \u2192 resolve tenant_id from TenancyResolver when caller didn't set it",
+        "creating \u2192 resolve causer polymorphic pair from Sanctum guard",
+        "creating \u2192 resolve notify_channels + notify_locale (precedence: request > user setting > tenant setting > config default) and FREEZE onto the row",
+        "creating \u2192 resolve retention_tier from tenant plan entitlement `transfer.retention_tier`",
+        "creating \u2192 default queue_name to config('transfer.queue.name', 'transfer')",
+        "created  \u2192 fire XferJobQueued (afterCommit)",
+        "updating \u2192 enforce status state-machine (queued\u2192running, running\u2192{succeeded|partially_succeeded|failed|cancelling}, cancelling\u2192cancelled, cancelled|succeeded|partially_succeeded|failed are terminal). Refuse invalid transitions with TRANSFER_INVALID_STATE_TRANSITION.",
+        "updating \u2192 populate started_at on first queued\u2192running, finished_at on transition to any terminal state, last_progress_at whenever counters change",
+        "updating \u2192 on status change fire the matching event (XferJobStarted / XferJobCompleted / XferJobPartiallySucceeded / XferJobFailed / XferJobCancelled) via afterCommit",
+        "deleting \u2192 refuse hard-delete unless the caller is PruneXferArtifactsJob or platform admin (soft delete allowed for owner)"
+      ]
+    },
+    {
+      "model": "XferShard",
+      "observer": "Academorix\\Transfer\\Observers\\XferShardObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `xshd_`, tenant_id denorm from parent XferJob",
+        "creating \u2192 initialise counters to zeros, status = queued",
+        "updating \u2192 on status transition to succeeded / failed, fire XferJobShardCompleted (afterCommit)",
+        "updated  \u2192 propagate this shard's counters into the parent XferJob.counters via atomic UPDATE (JSONB path arithmetic to avoid read-modify-write races). Also bump XferJob.shards_completed and recompute XferJob.progress_percent."
+      ]
+    }
+  ]
+}

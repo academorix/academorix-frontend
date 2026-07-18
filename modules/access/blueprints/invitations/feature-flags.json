@@ -1,0 +1,81 @@
+{
+  "id": "academorix://modules/invitations/feature-flags",
+  "$version": 1,
+  "title": "invitations — rollout flags",
+  "description": "Rollout / change-management flags for THIS module. Distinct from `features.json` (empty — invitations substrate is always on). Every material change ships behind a flag per SOC 2 CC8.1.",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "invitations.kill-switch",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Turns off ALL send endpoints without a redeploy. Incident-response only — flipping off returns 503 to every POST /tenant/invitations. Existing pending invitations continue to accept normally."
+    },
+    {
+      "key": "invitations.sms-channel",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [
+        {
+          "name": "enterprise-tenants",
+          "predicate": "tenant.subscription.plan = 'enterprise' AND tenant.entitlements.channels.sms = true",
+          "state": "on"
+        }
+      ],
+      "description": "SMS channel via Twilio. Off by default (mail-only). Enterprise plan enables via entitlement; other tenants can request per-tenant via ops-only setting."
+    },
+    {
+      "key": "invitations.slack-channel",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [
+        {
+          "name": "tenant-integration-configured",
+          "predicate": "tenant.integrations.slack.is_active = true",
+          "state": "on"
+        }
+      ],
+      "description": "Slack channel — Slack bot delivery. Enabled only for tenants with an active Slack integration."
+    },
+    {
+      "key": "invitations.reminder-emails",
+      "kind": "rollout",
+      "default": "on",
+      "cohorts": [],
+      "description": "48h-before-expiry reminder emails. On by default; kill-switch capability for deliverability incidents."
+    },
+    {
+      "key": "invitations.message-templates",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [
+        {
+          "name": "design-partners",
+          "predicate": "tenant.metadata.design_partner = true",
+          "state": "on"
+        }
+      ],
+      "description": "Per-tenant customisable email templates (subject line + body). Off in v1 (all tenants use platform templates); rolled out per tenant."
+    },
+    {
+      "key": "invitations.risk-scorer",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [
+        { "name": "canary", "predicate": "tenant.metadata.canary_bucket = 'a'", "state": "on" }
+      ],
+      "description": "Enables invitation risk scoring (velocity checks, invitee blocklist matching, transient email pattern detection). Off in v1; canary bucket at first."
+    },
+    {
+      "key": "invitations.acceptance-rate-alerts",
+      "kind": "rollout",
+      "default": "on",
+      "cohorts": [],
+      "description": "Emits alerts when acceptance_rate drops below SLO thresholds. On for observability from day 1."
+    }
+  ],
+  "retirement_policy": {
+    "description": "A flag lives at most 90 days after reaching 100% GA. After 90d, either the flag is deleted OR converts to a `kill-switch`. Prevents flag-registry sprawl.",
+    "reviewCommand": "invitations:review-flags"
+  }
+}

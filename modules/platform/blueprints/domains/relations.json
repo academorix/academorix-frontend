@@ -1,0 +1,49 @@
+{
+  "id": "academorix://modules/domains/relations",
+  "$version": 1,
+  "title": "domains — model relationships",
+  "description": "Domain belongs to a Tenant (tenant scope) + an Application (product boundary). DomainRecord belongs to a Domain, and tenant_id cascades through the parent.",
+  "internal": [
+    {
+      "from": "DomainRecord",
+      "kind": "belongsTo",
+      "to": "Domain",
+      "foreignKey": "domain_id",
+      "onUpdate": "cascade",
+      "onDelete": "cascade",
+      "description": "Domain -> DomainRecord is 1:N; deleting the parent hard-deletes every record (DomainRecord has NO SoftDeletes)."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Domain",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onUpdate": "cascade",
+      "onDelete": "cascade",
+      "description": "Applied via the BelongsToTenant trait."
+    },
+    {
+      "from": "Domain",
+      "kind": "belongsTo",
+      "to": "application::Application",
+      "foreignKey": "application_id",
+      "onUpdate": "cascade",
+      "onDelete": "restrict",
+      "description": "Applied via the BelongsToApplication trait."
+    },
+    {
+      "from": "DomainRecord",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onUpdate": "cascade",
+      "onDelete": "cascade",
+      "description": "Tenant scope inherited via BelongsToTenant (composite auto-fill from the parent Domain)."
+    }
+  ],
+  "inbound_expected": [
+    { "from": "access::TenantMember", "via": "domain_id (planned: per-domain role scoping)" }
+  ]
+}

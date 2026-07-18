@@ -1,68 +1,17 @@
 /**
  * @file index.ts
- * @module @academorix/pwa
+ * @module @stackra/pwa
+ * @description Root barrel. Prefer the subpath entries:
+ *   - `@stackra/pwa` (core DI + services + tokens)
+ *   - `@stackra/pwa/react` (web hooks + components)
+ *   - `@stackra/pwa/manifest` (Web App Manifest builder)
+ *   - `@stackra/pwa/workbox` (curated runtime-caching rules)
+ *   - `@stackra/pwa/vite` (vite-plugin-pwa + assets-generator builders)
+ *   - `@stackra/pwa/twa` (Bubblewrap Android TWA config builder)
+ *   - `@stackra/pwa/testing` (mocks + factories)
  *
- * @description
- * Public root barrel. Prefer subpath imports for tree-shaking.
- *
- * ## Public API
- *
- *  - {@link "@academorix/pwa/manifest"} — `buildManifest(input)`
- *    + `WebAppManifest`, `ManifestIcon`, `ManifestShortcut`,
- *    `ManifestTranslation` types.
- *  - {@link "@academorix/pwa/workbox"} — `getRuntimeCaching(options)`
- *    + `RuntimeCachingRule` shape.
- *  - {@link "@academorix/pwa/security"} — `buildContentSecurityPolicy`,
- *    `getSecurityHeaders`, `DEFAULT_CSP_INPUT`,
- *    `DEFAULT_PERMISSIONS_POLICY`.
- *  - {@link "@academorix/pwa/vite"} — `getVitePwaOptions(input)`
- *    for `vite-plugin-pwa` consumers (dashboard).
- *  - {@link "@academorix/pwa/serwist"} — `getSerwistOptions(input)`
- *    for Serwist consumers (landing-page).
- *
- * @example
- * ```ts
- * // apps/dashboard/src/config/pwa.config.ts
- * import { buildManifest, getRuntimeCaching, getVitePwaOptions } from "@academorix/pwa";
- *
- * export const PWA_PLUGIN_OPTIONS = getVitePwaOptions({
- *   manifest: {
- *     name: "Academorix",
- *     shortName: "Academorix",
- *     description: "…",
- *     lang: "en-US",
- *     themeColor: "#0EA5E9",
- *     backgroundColor: "#FFFFFF",
- *     icons: MANIFEST_ICONS,
- *     shortcuts: MANIFEST_SHORTCUTS,
- *     translations: PWA_MANIFEST_TRANSLATIONS,
- *   },
- * });
- * ```
+ *   Push notifications, in-app centres, and native push tokens live
+ *   in `@stackra/notifications`.
  */
 
-export { buildManifest } from "./manifest";
-export type {
-  BuildManifestInput,
-  ManifestIcon,
-  ManifestShortcut,
-  ManifestTranslation,
-  WebAppManifest,
-} from "./manifest";
-
-export { getRuntimeCaching } from "./workbox";
-export type { RuntimeCachingOptions, RuntimeCachingRule } from "./workbox";
-
-export {
-  buildContentSecurityPolicy,
-  DEFAULT_CSP_INPUT,
-  DEFAULT_PERMISSIONS_POLICY,
-  getSecurityHeaders,
-} from "./security";
-export type { CspInput, FrameOptionsValue, SecurityHeadersOptions } from "./security";
-
-export { DEFAULT_NAVIGATE_FALLBACK_DENYLIST, getVitePwaOptions } from "./vite";
-export type { GetVitePwaOptionsInput } from "./vite";
-
-export { getSerwistOptions } from "./serwist";
-export type { GetSerwistOptionsInput } from "./serwist";
+export * from './core';

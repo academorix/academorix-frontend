@@ -7,10 +7,10 @@
  * flag. Composed from the shared Refine UI kit.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 
 import type { Organization } from "@/types";
-import type { DataGridColumn } from "@academorix/ui/react";
+import type { DataGridColumn } from "@stackra/ui/react";
 import type { ReactNode } from "react";
 
 import { EntityStatusChip } from "@/components/entity-status-chip";

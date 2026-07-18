@@ -1,0 +1,55 @@
+{
+  "name": "academorix/database",
+  "type": "library",
+  "description": "Data-layer building blocks for every Academorix module: base Model + schema Blueprint macros + data-shaping attributes (Searchable, Translatable, Metadatable, Sluggable, Sortable, Taggable, UserStamped, UuidColumn, Archivable, StatusColumn) + model concern traits (HasArchive, HasSlug, HasSortOrder, HasStatus, HasTags, HasUserStamp, HasUuid, HasMetadata, HasTranslations, HasPrefixedUlid, HasSystemFlag, HasMockableStorage, InteractsWithMedia). Answers 'what the data IS' — pair with academorix/crud for 'how the data is QUERIED' and academorix/caching for tag-based invalidation.",
+  "license": "proprietary",
+  "require": {
+    "php": "^8.3",
+    "academorix/foundation": "@dev",
+    "academorix/service-provider": "@dev",
+    "illuminate/contracts": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/support": "^13.0",
+    "mattiverse/userstamps": "^1.0",
+    "olvlvl/composer-attribute-collector": "^2.0",
+    "spatie/laravel-translatable": "^6.10"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^11.0",
+    "pestphp/pest": "^4.0",
+    "pestphp/pest-plugin-laravel": "^4.0",
+    "phpstan/phpstan": "^2.0"
+  },
+  "suggest": {
+    "spatie/laravel-medialibrary": "Required by the InteractsWithMedia concern for file/image attachments.",
+    "waad/laravel-model-metadata": "Required by the HasMetadata concern for polymorphic key/value metadata.",
+    "calebporzio/sushi": "Required by the HasMockableStorage concern for fixture-backed models."
+  },
+  "autoload": {
+    "psr-4": {
+      "Academorix\\Database\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Academorix\\Database\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Academorix\\Database\\Providers\\DatabaseServiceProvider"
+      ],
+      "aliases": {}
+    }
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "olvlvl/composer-attribute-collector": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

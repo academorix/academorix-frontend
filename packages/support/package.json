@@ -1,0 +1,101 @@
+{
+  "name": "@stackra/support",
+  "version": "0.1.0",
+  "description": "Foundation utility layer for the Stackra framework — Str, Arr, Num, Env, Pipeline, Fluent, Uri, BaseRegistry, Manager, and 20+ helpers.",
+  "license": "MIT",
+  "author": {
+    "name": "Stackra L.L.C",
+    "email": "dev@stackra.com",
+    "url": "https://stackra.com"
+  },
+  "keywords": [
+    "stackra",
+    "support",
+    "utilities",
+    "helpers",
+    "collections",
+    "registry",
+    "manager"
+  ],
+  "homepage": "https://github.com/stackra-inc/core/tree/main/support#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stackra-inc/core.git",
+    "directory": "support"
+  },
+  "bugs": {
+    "url": "https://github.com/stackra-inc/core/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./testing": {
+      "types": "./dist/testing.d.ts",
+      "import": "./dist/testing.mjs",
+      "require": "./dist/testing.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rimraf dist .turbo",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage --passWithNoTests"
+  },
+  "dependencies": {
+    "collect.js": "catalog:",
+    "path-browserify": "catalog:"
+  },
+  "peerDependencies": {
+    "@stackra/contracts": "workspace:^",
+    "@stackra/testing": "workspace:^",
+    "@vivtel/metadata": "catalog:",
+    "react": "catalog:",
+    "reflect-metadata": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@stackra/contracts": {
+      "optional": true
+    },
+    "@stackra/testing": {
+      "optional": true
+    },
+    "@vivtel/metadata": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@stackra/testing": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/path-browserify": "catalog:",
+    "reflect-metadata": "catalog:",
+    "rimraf": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

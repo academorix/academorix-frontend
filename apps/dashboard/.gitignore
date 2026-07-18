@@ -1,0 +1,27 @@
+# Local secrets pulled from Doppler
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+dist-ssr/
+*.local
+
+# Editor
+.vscode/
+.idea/
+
+# Node
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test artifacts
+test-results/
+playwright-report/

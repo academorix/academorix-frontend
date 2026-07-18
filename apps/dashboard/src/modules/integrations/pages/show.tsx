@@ -7,7 +7,7 @@
  * sync, and any status note for a single third-party integration.
  */
 
-import { Card, Chip, Spinner } from "@academorix/ui/react";
+import { Card, Chip, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 
 import type { Integration, IntegrationStatus } from "@/modules/integrations/integrations.types";

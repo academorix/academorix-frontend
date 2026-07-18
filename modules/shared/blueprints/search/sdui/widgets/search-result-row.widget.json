@@ -1,0 +1,107 @@
+{
+  "id": "search.search-result-row",
+  "title": "Search result row",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "One row in a search result list. Icon reflects the source entity kind; title + snippet from highlighted fields; breadcrumbs show contextual scope (branch \u2192 season \u2192 team etc.). Clicking navigates to the entity + records a click-through analytics event.",
+  "props": {
+    "hit": {
+      "type": "object",
+      "description": "SearchHit DTO: { entity, id, title, snippet, breadcrumbs[], meta{}, highlight{}, score, position }."
+    },
+    "sessionId": {
+      "type": "string",
+      "description": "Client-generated search_session_id passed to POST /search/click for click-through analytics."
+    },
+    "compact": {
+      "type": "boolean",
+      "default": false,
+      "description": "Compact mode for the ⌘K palette."
+    }
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "row",
+      "kind": "Pressable",
+      "actions": {
+        "onPress": [
+          {
+            "kind": "http.post",
+            "url": "/api/v1/search/click",
+            "body": {
+              "search_session_id": { "$ref": "props.sessionId" },
+              "clicked_result_type": { "$ref": "props.hit.entity" },
+              "clicked_result_id": { "$ref": "props.hit.id" },
+              "clicked_position": { "$ref": "props.hit.position" }
+            },
+            "fireAndForget": true
+          },
+          { "kind": "navigateExpr", "expr": "resourceUrl(props.hit.entity, props.hit.id)" }
+        ]
+      },
+      "props": {
+        "className": "flex items-start gap-3 py-3 border-b border-content2 last:border-b-0 hover:bg-content1"
+      },
+      "children": [
+        {
+          "kind": "Icon",
+          "bindings": {
+            "name": { "$expr": "entityIcon(props.hit.entity)" },
+            "className": "text-muted mt-1"
+          }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex-1 min-w-0" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm font-medium truncate" },
+                  "bindings": { "children": { "$ref": "props.hit.title" } }
+                },
+                {
+                  "kind": "Chip",
+                  "props": { "size": "xs", "variant": "neutral" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "t('search.entity.' + props.hit.entity, {fallback: props.hit.entity})"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-xs text-muted mt-1 line-clamp-2" },
+              "bindings": {
+                "children": { "$ref": "props.hit.snippet" },
+                "hidden": { "$ref": "props.compact" }
+              }
+            },
+            {
+              "kind": "Breadcrumbs",
+              "props": { "className": "mt-1", "size": "xs" },
+              "bindings": {
+                "items": { "$ref": "props.hit.breadcrumbs" },
+                "hidden": { "$expr": "!props.hit.breadcrumbs?.length" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs text-muted" },
+          "bindings": {
+            "children": { "$expr": "props.hit.score ? props.hit.score.toFixed(2) : ''" },
+            "hidden": { "$ref": "props.compact" }
+          }
+        }
+      ]
+    }
+  ]
+}

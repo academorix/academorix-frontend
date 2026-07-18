@@ -7,7 +7,7 @@
  * names are resolved from their resources.
  */
 
-import { Card, Spinner } from "@academorix/ui/react";
+import { Card, Spinner } from "@stackra/ui/react";
 import { useOne, useShow } from "@refinedev/core";
 
 import type { CoachAssignment } from "@/modules/sports/coaching/coaching.types";

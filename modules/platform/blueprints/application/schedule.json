@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/application/schedule",
+  "$version": 1,
+  "title": "application — scheduled tasks",
+  "description": "Artisan / cron entries this module registers.",
+  "schedule": []
+}

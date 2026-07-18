@@ -43,9 +43,7 @@ const MAX_INLINE_EVENTS = 3;
  * multiple days appear only on the start day — matching how the week view
  * pins cross-day events.
  */
-function groupByDay<TMeta>(
-  events: CalendarEvent<TMeta>[],
-): Map<string, CalendarEvent<TMeta>[]> {
+function groupByDay<TMeta>(events: CalendarEvent<TMeta>[]): Map<string, CalendarEvent<TMeta>[]> {
   const groups = new Map<string, CalendarEvent<TMeta>[]>();
 
   for (const event of events) {
@@ -160,7 +158,7 @@ export function CalendarMonth<TMeta>({
         {weekdayHeaders.map((label, index) => (
           <div
             key={`${label}-${index}`}
-            className="border-r border-border px-2 py-2 text-center text-xs font-medium uppercase tracking-wide text-muted last:border-r-0"
+            className="border-r border-border px-2 py-2 text-center text-xs font-medium tracking-wide text-muted uppercase last:border-r-0"
             role="columnheader"
           >
             {label}
@@ -191,7 +189,7 @@ export function CalendarMonth<TMeta>({
                 day: "numeric",
                 year: "numeric",
               })}
-              className={`flex flex-col gap-1 border-b border-r border-border p-2 last:border-r-0 ${
+              className={`flex flex-col gap-1 border-r border-b border-border p-2 last:border-r-0 ${
                 isCurrentMonth ? "" : "bg-background/40 text-muted"
               }`}
               role="gridcell"
@@ -216,15 +214,14 @@ export function CalendarMonth<TMeta>({
                   can open a day drilldown or switch to day view. */}
               <ul className="flex flex-col gap-0.5">
                 {inlineEvents.map((event) => {
-                  const colorClass =
-                    CALENDAR_EVENT_COLOR_CLASSES[event.colorKey ?? "neutral"];
+                  const colorClass = CALENDAR_EVENT_COLOR_CLASSES[event.colorKey ?? "neutral"];
                   const isCancelled = event.status === "cancelled";
 
                   return (
                     <li key={event.id}>
                       <button
                         aria-label={`${event.title} on ${day.toLocaleDateString()}`}
-                        className={`w-full truncate rounded px-1 py-0.5 text-left text-[11px] leading-tight hover:brightness-105 focus:outline-none focus:ring-1 focus:ring-accent ${colorClass} ${
+                        className={`w-full truncate rounded px-1 py-0.5 text-left text-[11px] leading-tight hover:brightness-105 focus:ring-1 focus:ring-accent focus:outline-none ${colorClass} ${
                           isCancelled ? "line-through opacity-70" : ""
                         }`}
                         type="button"
@@ -239,7 +236,7 @@ export function CalendarMonth<TMeta>({
                   <li>
                     <button
                       aria-label={`Show ${overflowCount} more events on ${day.toLocaleDateString()}`}
-                      className="w-full rounded px-1 py-0.5 text-left text-[11px] text-muted hover:text-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                      className="w-full rounded px-1 py-0.5 text-left text-[11px] text-muted hover:text-accent focus:ring-1 focus:ring-accent focus:outline-none"
                       type="button"
                       onClick={() => {
                         if (!onSlotClick) {

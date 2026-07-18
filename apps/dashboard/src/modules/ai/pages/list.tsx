@@ -10,8 +10,8 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §18 "AI & Assistants"
  */
 
-import { SparklesIcon } from "@academorix/ui/icons/outline";
-import { Card, Separator } from "@academorix/ui/react";
+import { SparklesIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Card, Separator } from "@stackra/ui/react";
 
 import type { ReactNode } from "react";
 

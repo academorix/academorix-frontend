@@ -1,0 +1,59 @@
+{
+    "name": "academorix/crud",
+    "type": "library",
+    "description": "Attribute-driven repository/service/controller layer for every Academorix module. Ships #[AsRepository], #[UseModel], #[Filterable], #[Sortable], #[UseScope], #[UseCriteria], #[UseQueryScope], #[WithRelations], #[WithCount], #[OrderBy], #[UseRepository], #[UseService], #[UseResource], #[UseData], #[Cacheable] — discovered at composer-dump time via olvlvl/composer-attribute-collector, pre-resolved into a boot-time registry, then consumed by Repository / Service / CrudController base classes. Answers 'how the data is QUERIED and MANAGED' — pair with academorix/database for 'what the data IS'.",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.3",
+        "academorix/caching": "@dev",
+        "academorix/database": "@dev",
+        "academorix/foundation": "@dev",
+        "academorix/routing": "@dev",
+        "academorix/service-provider": "@dev",
+        "illuminate/cache": "^13.0",
+        "illuminate/container": "^13.0",
+        "illuminate/contracts": "^13.0",
+        "illuminate/database": "^13.0",
+        "illuminate/http": "^13.0",
+        "illuminate/pagination": "^13.0",
+        "illuminate/support": "^13.0",
+        "olvlvl/composer-attribute-collector": "^2.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "phpstan/phpstan": "^2.0"
+    },
+    "suggest": {
+        "spatie/laravel-data": "Required by CrudController for typed input/output DTOs.",
+        "spatie/laravel-query-builder": "Required by BaseRepository for request-driven filter/sort/include allow-lists."
+    },
+    "autoload": {
+        "psr-4": {
+            "Academorix\\Crud\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Academorix\\Crud\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Academorix\\Crud\\Providers\\CrudServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "olvlvl/composer-attribute-collector": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

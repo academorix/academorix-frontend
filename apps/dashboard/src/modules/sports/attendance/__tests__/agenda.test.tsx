@@ -28,7 +28,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter } from "react-router";
+import { RoutingTestFrame } from "@stackra/routing/testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { Attendance, Branch, Event, Staff, Team } from "@/types";
@@ -284,9 +284,12 @@ function renderAgenda(children: ReactNode = <AttendanceAgendaPage />) {
     },
   });
 
+  // `<RoutingTestFrame>` mounts the Stackra + react-router contexts
+  // the agenda tree pulls in through `useNavigate` (Stackra) and
+  // `useLocation` (RRv7 re-export).
   return render(
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter>{children}</MemoryRouter>
+      <RoutingTestFrame>{children}</RoutingTestFrame>
     </QueryClientProvider>,
   );
 }

@@ -1,0 +1,264 @@
+{
+  "id": "academorix://modules/localization/schemas/platform-language",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PlatformLanguage",
+  "description": "Platform-owned catalogue of BCP 47 locale tags this platform supports. Formerly `Language` (Wave 5 pre-release). REFERENCES `geography::Language` (ISO-639 base) + optionally `geography::Country` (regional variant) instead of duplicating those fields. Adds platform-specific state: BCP 47 composition, script code, active-on-platform toggle, beta flag, picker sort order. Tenancy enable rows via `TenantLocale`. Table renamed from `languages` \u2192 `platform_languages` to eliminate the collision with the vendor-owned `languages` table (`nnjeim/world`).",
+  "type": "object",
+  "x-module": "localization",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "platform_languages",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "lng_",
+    "incrementing": false,
+    "model": "Academorix\\Localization\\Models\\PlatformLanguage",
+    "interface": "Academorix\\Localization\\Contracts\\Data\\PlatformLanguageInterface",
+    "implements": ["Academorix\\Localization\\Contracts\\Data\\PlatformLanguageInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "HasSystemFlag",
+      "HasMetadata",
+      "HasUserstamps",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "is_system": "boolean",
+      "is_active_on_platform": "boolean",
+      "is_beta": "boolean",
+      "sort_order": "integer",
+      "metadata": "array"
+    },
+    "appends": ["name", "native_name", "direction", "flag_emoji", "display_label"],
+    "observers": ["PlatformLanguageObserver"],
+    "relations_note": "`geographyLanguage()` belongsTo geography::Language via geography_language_id. `geographyCountry()` belongsTo geography::Country via geography_country_id (nullable). `name` / `native_name` / `direction` accessors read from the joined geography language. `flag_emoji` accessor reads from the joined geography country (regional variant) OR null (base language).",
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "description": "Table renamed from `languages` to `platform_languages` to eliminate collision with the vendor-owned `languages` table shipped by `nnjeim/world` (geography module). Reference fields are removed and replaced with FKs to geography::languages + geography::countries. The migration ships a fresh CREATE TABLE + seeder for platform-specific state only; ISO-639 + ISO-3166 rows are entirely owned by `nnjeim/world`.",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `lng_<26 chars>`."
+      },
+      "geography_language_id": {
+        "type": "bigint",
+        "unsigned": true,
+        "nullable": false,
+        "foreign": {
+          "table": "languages",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "FK to `geography::Language.id` (vendor row from nnjeim/world). Source of truth for iso_639_1, name, native, dir, is_rtl. Cannot be null \u2014 every platform language must trace to a canonical ISO-639 row."
+      },
+      "geography_country_id": {
+        "type": "bigint",
+        "unsigned": true,
+        "nullable": true,
+        "foreign": {
+          "table": "countries",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "FK to `geography::Country.id`. Populated ONLY for regional variants (`fr-CA` \u2192 Canada, `en-GB` \u2192 United Kingdom, `pt-BR` \u2192 Brazil). NULL for base languages that span many countries (English, French, Spanish base rows)."
+      },
+      "bcp47_code": {
+        "type": "string",
+        "length": 12,
+        "nullable": false,
+        "description": "BCP 47 language tag. Composed from geography_language.code + optional script + optional geography_country.iso2. Examples: `en`, `en-GB`, `fr`, `fr-CA`, `zh`, `zh-Hans`, `zh-Hans-HK`, `ar`, `ar-EG`. Lowercase language + optional Titlecase script + optional UPPERCASE region."
+      },
+      "script_code": {
+        "type": "string",
+        "length": 4,
+        "nullable": true,
+        "description": "ISO 15924 four-letter script code. `Latn`, `Arab`, `Cyrl`, `Hans` (Simplified Chinese), `Hant` (Traditional Chinese), `Deva` (Devanagari). Independent of geography_country_id \u2014 a language may have multiple script variants targeting the same country (`sr-Cyrl-RS` vs `sr-Latn-RS`). Absent from geography catalogue \u2014 this is the ONE field genuinely additive over the vendor row."
+      },
+      "is_active_on_platform": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "Platform-level enable toggle. False hides from tenant pickers even if a tenant previously enabled it. Preserved on soft-delete."
+      },
+      "is_beta": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Surfaces a 'translation completeness < 90%' warning banner. Platform admins mark languages beta until enough keys are translated."
+      },
+      "is_system": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "From HasSystemFlag. Platform-seeded rows can be disabled but not deleted by tenants."
+      },
+      "sort_order": {
+        "type": "integer",
+        "nullable": false,
+        "default": 100,
+        "description": "Ascending sort in picker UIs. Common languages get low values (English=1, Arabic=5, French=10)."
+      },
+      "notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Platform ops notes. Not shown to tenants."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form platform notes bag (from HasMetadata)."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["bcp47_code"],
+        "unique": true,
+        "name": "platform_languages_bcp47_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "One platform row per BCP 47 tag."
+      },
+      {
+        "columns": ["geography_language_id", "geography_country_id", "script_code"],
+        "unique": true,
+        "name": "platform_languages_composite_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "One platform row per (base ISO-639 language, optional country region, optional script) combination. Also protects against duplicate BCP 47 constructions."
+      },
+      {
+        "columns": ["is_active_on_platform", "sort_order"],
+        "unique": false,
+        "name": "platform_languages_picker_idx",
+        "description": "Fast scan for the tenant-facing picker list."
+      },
+      {
+        "columns": ["geography_language_id"],
+        "unique": false,
+        "name": "platform_languages_geo_language_idx",
+        "description": "JOIN acceleration on the reverse direction (given a geography language, find all platform variants)."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "geography_language_id",
+    "bcp47_code",
+    "is_active_on_platform",
+    "is_beta",
+    "is_system",
+    "sort_order",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^lng_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "geography_language_id": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "FK to geography::Language.id."
+    },
+    "geography_country_id": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "description": "FK to geography::Country.id. Null for base languages."
+    },
+    "bcp47_code": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$",
+      "maxLength": 12
+    },
+    "script_code": { "type": ["string", "null"], "pattern": "^[A-Z][a-z]{3}$" },
+    "is_active_on_platform": { "type": "boolean" },
+    "is_beta": { "type": "boolean" },
+    "is_system": { "type": "boolean" },
+    "sort_order": { "type": "integer", "minimum": 0 },
+    "notes": { "type": ["string", "null"] },
+    "metadata": { "type": ["object", "null"] },
+    "name": {
+      "type": "string",
+      "description": "Computed. English name from geography::Language.name (e.g. `French`)."
+    },
+    "native_name": {
+      "type": "string",
+      "description": "Computed. Native-script name from geography::Language.native (e.g. `Fran\u00e7ais`, `\u4e2d\u6587`, `\u0627\u0644\u0639\u0631\u0628\u064a\u0629`)."
+    },
+    "direction": {
+      "type": "string",
+      "enum": ["ltr", "rtl"],
+      "description": "Computed. Derived from geography::Language.is_rtl or dir."
+    },
+    "flag_emoji": {
+      "type": ["string", "null"],
+      "description": "Computed. From geography::Country.emoji for regional variants; null for base languages (which span many countries)."
+    },
+    "display_label": {
+      "type": "string",
+      "description": "Computed. E.g. `English (US)` or `\u0627\u0644\u0639\u0631\u0628\u064a\u0629` (native) or `Fran\u00e7ais (Canada)` \u2014 formatted per caller locale."
+    },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["name", "native_name", "direction", "flag_emoji", "display_label"]
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`lng_<26>`)", "bcp47_code (case-insensitive, matches `bcp47_code` column)"]
+  },
+  "migration_notes": {
+    "prior_shape": "Older `Language` schema at `academorix://modules/localization/schemas/language` (deleted this pass) carried duplicated ISO-639 + ISO-3166 fields (code, iso_639_1, iso_639_3, name, native_name, direction, script_code, country_code as plain string, flag_emoji, is_system, is_active_on_platform, is_beta, sort_order, notes, metadata).",
+    "removed_columns": [
+      "code",
+      "iso_639_1",
+      "iso_639_3",
+      "name",
+      "native_name",
+      "direction",
+      "country_code",
+      "flag_emoji"
+    ],
+    "column_notes": {
+      "code \u2192 bcp47_code": "Renamed for clarity. Same purpose (BCP 47 tag).",
+      "iso_639_1 / iso_639_3": "Dropped. Read via `geographyLanguage->code` (ISO-639-1).",
+      "name / native_name": "Dropped. Read via `geographyLanguage->name` / `geographyLanguage->native`.",
+      "direction": "Dropped. Computed accessor reads `geographyLanguage->dir` / `is_rtl`.",
+      "country_code (plain 2-letter string)": "Replaced by `geography_country_id` FK. Old free-text integrity gap closed.",
+      "flag_emoji": "Dropped. Computed accessor reads `geographyCountry->emoji` when a regional variant is set."
+    },
+    "kept_columns": [
+      "bcp47_code",
+      "script_code (ISO 15924 \u2014 not in geography)",
+      "is_active_on_platform",
+      "is_beta",
+      "is_system",
+      "sort_order",
+      "notes",
+      "metadata"
+    ],
+    "seed_direction": "Seeder inserts one row per platform-active BCP 47 tag with the correct geography_language_id + optional geography_country_id resolved by lookup against the vendor-seeded geography rows."
+  }
+}

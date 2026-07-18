@@ -1,0 +1,310 @@
+{
+  "id": "academorix://modules/storage/config",
+  "$version": 1,
+  "title": "storage \u2014 developer configuration",
+  "configFile": "config/storage.php",
+  "envPrefix": "STORAGE_",
+  "description": "Deployment-wide storage configuration. Tenant-facing preferences live in the settings module (see settings.json). config('storage.*') is admin/dev-owned and rarely changes at runtime.",
+  "sections": {
+    "defaults": {
+      "path_prefix": "storage.default_disk",
+      "keys": [
+        {
+          "path": "storage.default_disk",
+          "type": "string",
+          "env": "STORAGE_DEFAULT_DISK",
+          "default": "s3",
+          "description": "The Laravel filesystem disk name used when a tenant has no explicit disk_assignment."
+        },
+        {
+          "path": "storage.direct_upload_ceiling_mb",
+          "type": "int",
+          "env": "STORAGE_DIRECT_UPLOAD_CEILING_MB",
+          "default": 100,
+          "description": "Files up to this size use single-request upload; larger triggers chunked."
+        },
+        {
+          "path": "storage.default_visibility",
+          "type": "string",
+          "env": "STORAGE_DEFAULT_VISIBILITY",
+          "default": "tenant",
+          "enum": ["public", "tenant", "restricted"]
+        }
+      ]
+    },
+    "disks": {
+      "path_prefix": "storage.disks",
+      "keys": [
+        {
+          "path": "storage.disks.s3.enabled",
+          "type": "bool",
+          "env": "STORAGE_S3_ENABLED",
+          "default": true
+        },
+        { "path": "storage.disks.s3.bucket", "type": "string", "env": "STORAGE_S3_BUCKET" },
+        {
+          "path": "storage.disks.s3.region",
+          "type": "string",
+          "env": "STORAGE_S3_REGION",
+          "default": "us-east-1"
+        },
+        {
+          "path": "storage.disks.s3.path_prefix",
+          "type": "string",
+          "env": "STORAGE_S3_PATH_PREFIX",
+          "default": "",
+          "description": "Optional prefix under the bucket. Useful when sharing a bucket across staging/prod."
+        },
+        {
+          "path": "storage.disks.s3-eu.enabled",
+          "type": "bool",
+          "env": "STORAGE_S3_EU_ENABLED",
+          "default": false,
+          "description": "EU-only bucket for tenants opting into storage.eu_data_residency."
+        },
+        {
+          "path": "storage.disks.gcs.enabled",
+          "type": "bool",
+          "env": "STORAGE_GCS_ENABLED",
+          "default": false
+        },
+        {
+          "path": "storage.disks.azure.enabled",
+          "type": "bool",
+          "env": "STORAGE_AZURE_ENABLED",
+          "default": false
+        },
+        {
+          "path": "storage.disks.local.enabled",
+          "type": "bool",
+          "env": "STORAGE_LOCAL_ENABLED",
+          "default": false,
+          "description": "Dev-only. Requires signed-URL redemption to serve through Laravel."
+        }
+      ]
+    },
+    "signed_urls": {
+      "path_prefix": "storage.signed_urls",
+      "keys": [
+        {
+          "path": "storage.signed_urls.default_ttl_seconds",
+          "type": "int",
+          "default": 3600,
+          "description": "1 hour default. Per-reason overrides in reasons.*."
+        },
+        {
+          "path": "storage.signed_urls.max_ttl_seconds",
+          "type": "int",
+          "default": 604800,
+          "description": "7 days ceiling. Applies to `share` reason only; other reasons capped lower."
+        },
+        {
+          "path": "storage.signed_urls.reasons.download.ttl_seconds",
+          "type": "int",
+          "default": 3600
+        },
+        {
+          "path": "storage.signed_urls.reasons.preview.ttl_seconds",
+          "type": "int",
+          "default": 300
+        },
+        {
+          "path": "storage.signed_urls.reasons.share.ttl_seconds",
+          "type": "int",
+          "default": 604800
+        },
+        {
+          "path": "storage.signed_urls.reasons.admin_action.ttl_seconds",
+          "type": "int",
+          "default": 300
+        },
+        {
+          "path": "storage.signing_key_rotation_days",
+          "type": "int",
+          "env": "STORAGE_SIGNING_KEY_ROTATION_DAYS",
+          "default": 30,
+          "description": "How often to rotate the signing key. Rotation grace period allows in-flight signatures to survive."
+        },
+        {
+          "path": "storage.signing_key_rotation_grace_days",
+          "type": "int",
+          "env": "STORAGE_SIGNING_KEY_ROTATION_GRACE_DAYS",
+          "default": 7,
+          "description": "Previous key retained for redemption verification for this many days after rotation."
+        }
+      ]
+    },
+    "chunked_uploads": {
+      "path_prefix": "storage.chunked_uploads",
+      "keys": [
+        {
+          "path": "storage.chunked_uploads.enabled",
+          "type": "bool",
+          "env": "STORAGE_CHUNKED_UPLOADS_ENABLED",
+          "default": true
+        },
+        {
+          "path": "storage.chunked_uploads.default_protocol",
+          "type": "string",
+          "env": "STORAGE_CHUNKED_UPLOADS_PROTOCOL",
+          "default": "s3_multipart",
+          "enum": ["tus", "s3_multipart"]
+        },
+        {
+          "path": "storage.chunked_uploads.default_chunk_size_bytes",
+          "type": "int",
+          "default": 5242880,
+          "description": "5 MB. S3 multipart min except last chunk."
+        },
+        {
+          "path": "storage.chunked_uploads.max_chunk_size_bytes",
+          "type": "int",
+          "default": 5368709120,
+          "description": "5 GB. tus + S3 max."
+        },
+        {
+          "path": "storage.chunked_uploads.ttl_hours",
+          "type": "int",
+          "default": 24,
+          "description": "In-flight upload TTL. Overridable per-request within [1, 168]."
+        }
+      ]
+    },
+    "antivirus": {
+      "path_prefix": "storage.antivirus",
+      "keys": [
+        {
+          "path": "storage.antivirus.driver",
+          "type": "string",
+          "env": "STORAGE_AV_DRIVER",
+          "default": "clamav",
+          "enum": ["clamav", "s3-antivirus", "cloudmersive", "null"]
+        },
+        {
+          "path": "storage.antivirus.clamav.socket",
+          "type": "string",
+          "env": "CLAMAV_SOCKET",
+          "default": "tcp://clamav:3310"
+        },
+        { "path": "storage.antivirus.clamav.timeout_seconds", "type": "int", "default": 30 },
+        {
+          "path": "storage.antivirus.cloudmersive.api_key",
+          "type": "string",
+          "env": "CLOUDMERSIVE_API_KEY"
+        },
+        {
+          "path": "storage.antivirus.scan_max_size_mb",
+          "type": "int",
+          "default": 100,
+          "description": "Files larger than this skip inline scan and route through an async large-file scan queue (S3-antivirus tier)."
+        }
+      ]
+    },
+    "cdn": {
+      "path_prefix": "storage.cdn",
+      "keys": [
+        {
+          "path": "storage.cdn.enabled",
+          "type": "bool",
+          "env": "STORAGE_CDN_ENABLED",
+          "default": false
+        },
+        {
+          "path": "storage.cdn.provider",
+          "type": "string",
+          "env": "STORAGE_CDN_PROVIDER",
+          "default": "cloudfront",
+          "enum": ["cloudfront", "cloudflare"]
+        },
+        {
+          "path": "storage.cdn.base_url",
+          "type": "string",
+          "env": "STORAGE_CDN_BASE_URL",
+          "description": "Public base URL. Signed URLs are rewritten from raw driver URLs to this base."
+        },
+        {
+          "path": "storage.cdn.behind_cdn_signing",
+          "type": "bool",
+          "default": true,
+          "description": "When true, signed URLs are signed against the CDN's own signing scheme (CloudFront Trusted Signers / Cloudflare signed URLs) rather than the driver's."
+        }
+      ]
+    },
+    "variants": {
+      "path_prefix": "storage.variants",
+      "keys": [
+        {
+          "path": "storage.variants.driver",
+          "type": "string",
+          "env": "STORAGE_VARIANTS_DRIVER",
+          "default": "intervention-image",
+          "enum": ["intervention-image", "imagick", "cloudinary"]
+        },
+        {
+          "path": "storage.variants.default_quality",
+          "type": "int",
+          "default": 85,
+          "description": "JPEG/WebP quality for image variants. 85 balances size + fidelity."
+        },
+        {
+          "path": "storage.variants.webp_enabled",
+          "type": "bool",
+          "default": true,
+          "description": "Generate WebP variant alongside JPEG. Modern browsers prefer WebP; JPEG serves as fallback."
+        }
+      ]
+    },
+    "dedup": {
+      "path_prefix": "storage.dedup",
+      "keys": [
+        {
+          "path": "storage.dedup.enabled",
+          "type": "bool",
+          "env": "STORAGE_DEDUP_ENABLED",
+          "default": true
+        },
+        {
+          "path": "storage.dedup.cross_tenant_enabled",
+          "type": "bool",
+          "env": "STORAGE_DEDUP_CROSS_TENANT_ENABLED",
+          "default": true,
+          "description": "When false, dedup only within a single tenant's files. Disable for compliance regimes requiring per-tenant physical isolation."
+        }
+      ]
+    },
+    "redaction": {
+      "path_prefix": "storage.redaction",
+      "keys": [
+        {
+          "path": "storage.redaction.preserve_exif_gps",
+          "type": "bool",
+          "default": false,
+          "description": "When false (default), FileObserver strips EXIF GPS coordinates on image uploads."
+        },
+        {
+          "path": "storage.redaction.strip_pdf_metadata",
+          "type": "bool",
+          "default": true,
+          "description": "Strip Author/Producer/Creator PDF metadata on upload."
+        }
+      ]
+    },
+    "telemetry": {
+      "path_prefix": "storage.telemetry",
+      "keys": [
+        {
+          "path": "storage.telemetry.signed_url_issued_sample_ratio",
+          "type": "float",
+          "default": 0.1,
+          "description": "SignedUrlIssued events dispatched at this sample rate. 10% default. Set 1.0 for exhaustive audit; 0.0 to suppress."
+        },
+        {
+          "path": "storage.telemetry.emit_hit_events",
+          "type": "bool",
+          "default": false,
+          "description": "When true, every redemption fires a SignedUrlHit event. High volume; enable only for security investigations."
+        }
+      ]
+    }
+  }
+}

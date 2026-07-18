@@ -1,0 +1,97 @@
+{
+  "$version": 1,
+  "name": "tenancy",
+  "alias": "tenancy",
+  "namespace": "Academorix\\Tenancy",
+  "description": "Tenant substrate. Owns Tenant (the tenant row) and TenantContact (per-tenant billing/DPO/security contacts). Publishes the BelongsToTenant + BelongsToTenantOptional traits, the ->tenantable() migration macro, tenancy hooks, and the resolve.tenant + tenant.user middleware every downstream module composes. Slimmed at v0.3 — Application + BusinessType moved to `application`, Domain + DomainRecord to `domains`, Branding to `branding`, TenantIntegration to `integrations`, Identity dropped entirely (belongs in identity-service).",
+  "keywords": ["tenants", "tenant", "tenant", "multi-tenant", "contact", "hierarchy"],
+  "priority": 10,
+  "providers": ["Academorix\\Tenancy\\Providers\\TenancyServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "application"],
+  "extendedBy": [
+    "audit",
+    "settings",
+    "activity",
+    "notifications",
+    "subscription",
+    "entitlements",
+    "domains",
+    "branding",
+    "integrations"
+  ],
+  "planned_consumers": [
+    "access",
+    "feature-flag",
+    "compliance",
+    "user",
+    "auth",
+    "organization",
+    "region",
+    "branch",
+    "facilities",
+    "teams",
+    "sports"
+  ],
+  "contributes": {
+    "traits": ["BelongsToTenant", "BelongsToTenantOptional"],
+    "blueprints": ["tenantable"],
+    "middleware": ["resolve.tenant", "tenant.user", "platform.domain"],
+    "events": [
+      "TenantProvisioning",
+      "TenantProvisioned",
+      "TenantSuspended",
+      "TenantUnsuspended",
+      "TenantResumed",
+      "TenantArchived",
+      "TenantErased",
+      "TenantSettingsUpdated",
+      "TenantContactAdded",
+      "TenantContactUpdated",
+      "TenantContactRemoved"
+    ],
+    "policies": ["TenantPolicy", "TenantContactPolicy"],
+    "hooks": ["LogContextTenantHook", "CachePrefixTenantHook"],
+    "commands": ["tenancy:archive", "tenancy:hard-delete-archived", "tenancy:seed-defaults"],
+    "jobs": ["ProvisionTenantJob", "HardDeleteArchivedTenantJob"],
+    "notifications": [
+      "WelcomeNotification",
+      "TenantSuspendedNotification",
+      "TenantResumedNotification",
+      "TenantArchivedNotification"
+    ],
+    "broadcasts": ["tenant.{id}.lifecycle"],
+    "observers": ["TenantObserver", "TenantContactObserver"],
+    "rules": ["dns_safe_slug", "reserved_slug"],
+    "casts": ["ProvisioningPayload"],
+    "views": [],
+    "lang": ["tenancy"],
+    "config": ["tenancy"],
+    "macros": [],
+    "bindings": ["TenantResolver", "HostResolver"],
+    "resources": ["tenant", "tenant-contact"]
+  },
+  "hosts": {
+    "central": {
+      "description": "Central tenant picker + self-serve tenant registration. Rejects tenant subdomains via platform.domain middleware.",
+      "routes": [
+        "GET /api/current-tenant",
+        "POST /api/v1/tenants/register",
+        "POST /api/v1/auth/find-tenants"
+      ]
+    },
+    "platform-admin": {
+      "description": "Academorix staff surface. Full CRUD over Tenant + TenantContact.",
+      "routes": ["* /api/v1/tenants*", "* /api/v1/tenant-contacts*"]
+    },
+    "tenant": {
+      "description": "Tenant-scoped SPA. Reads active tenant + tenant list; manages tenant-owned settings + contacts.",
+      "routes": [
+        "GET /api/current-tenant",
+        "GET /api/v1/me/tenants",
+        "PATCH /api/current-tenant",
+        "* /api/v1/tenant/contacts*"
+      ]
+    }
+  }
+}

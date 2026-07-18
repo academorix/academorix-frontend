@@ -24,14 +24,14 @@ import {
   RectangleGroupIcon,
   Squares2X2Icon,
   WrenchScrewdriverIcon,
-} from "@academorix/ui/icons/outline";
+} from "@stackra/ui/icons/heroicon/outline";
 
 import type {
   BookingPurpose,
   BookingStatus,
   FacilityType,
 } from "@/modules/facilities/facilities.types";
-import type { IconType } from "@academorix/ui/icons";
+import type { IconType } from "@stackra/ui/icons";
 
 /**
  * The semantic HeroUI Chip color palette the module renders against. Kept as
@@ -41,7 +41,7 @@ export type ChipColor = "default" | "success" | "warning" | "danger";
 
 /**
  * Icon component for each facility type. Chosen from the Heroicons outline set
- * shipped by `@academorix/ui/icons/outline`:
+ * shipped by `@stackra/ui/icons/heroicon/outline`:
  *
  * - `pitch`  → `RectangleGroupIcon` (evokes a marked-out field grid)
  * - `pool`   → `BeakerIcon`         (water-container fallback; heroicons has

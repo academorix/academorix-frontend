@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/entitlements/notifications",
+  "$version": 1,
+  "title": "entitlements \u2014 notification classes + categories",
+  "namespace": "Academorix\\Entitlements\\Notifications",
+  "notifications": [
+    "QuotaApproachingNotification",
+    "QuotaExceededNotification",
+    "EntitlementResetNotification"
+  ],
+  "categories": [
+    {
+      "slug": "entitlements.quota_approaching",
+      "display_name": "Approaching quota",
+      "description": "Notifies tenant owner when a metered feature reaches 80% of its cap. Ships an upgrade CTA when a higher plan removes the constraint.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": true,
+      "is_system": true
+    },
+    {
+      "slug": "entitlements.quota_exceeded",
+      "display_name": "Quota exceeded",
+      "description": "Notifies tenant owner when a metered feature hit its cap + an operation was refused.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "critical",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "entitlements.reset",
+      "display_name": "Quota reset",
+      "description": "Notifies tenant owner when a pool entitlement resets at period boundary. Off by default (noisy). Opt-in per admin.",
+      "default_channels": ["in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": false,
+      "is_system": true
+    }
+  ]
+}

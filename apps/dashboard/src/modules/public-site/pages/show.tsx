@@ -7,7 +7,7 @@
  * editor for a single CMS page.
  */
 
-import { Card, Chip, Spinner } from "@academorix/ui/react";
+import { Card, Chip, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 
 import type { PublicPage, PublicPageStatus } from "@/modules/public-site/public-site.types";

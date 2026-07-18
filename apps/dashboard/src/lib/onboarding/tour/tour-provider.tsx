@@ -51,7 +51,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useSearchParams } from "react-router";
+import { useSearchParams } from "@stackra/routing/react";
 
 import type {
   OnboardingSurface,

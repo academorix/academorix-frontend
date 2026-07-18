@@ -1,0 +1,52 @@
+<%#
+/**
+ * @file service.ejs
+ * @module @stackra/console/stubs
+ * @description Template for `make:service` — renders a new `@Injectable`
+ *   service class with docblocks + JSDoc on every export.
+ *
+ * @template name         Kebab-case service name (e.g. `route-registry`).
+ * @template className    PascalCase class name (e.g. `RouteRegistryService`).
+ * @template description  One-line description of what the service does.
+ * @template fileName     Emitted filename (e.g. `route-registry.service.ts`).
+ * @template moduleName   Package scope (e.g. `@stackra/routing/core/services`).
+ * @template Str          `@stackra/support` string utilities auto-injected.
+ *
+ * @example
+ * ```bash
+ * stackra make:service route-registry --module @stackra/routing/core/services \
+ *   --description "Central registry of every route in the app."
+ * ```
+ */
+-%>
+/**
+ * @file <%= fileName %>
+ * @module <%= moduleName %>
+ * @description <%= description %>
+ */
+
+import { Injectable } from '@stackra/container';
+
+/**
+ * <%= description %>
+ *
+ * @example
+ * ```typescript
+ * // In a module's providers:
+ * providers: [<%= className %>];
+ *
+ * // In a consumer:
+ * constructor(private readonly svc: <%= className %>) {}
+ * ```
+ */
+@Injectable()
+export class <%= className %> {
+  /**
+   * Construct a new `<%= className %>` instance. Add dependencies here
+   * — `@stackra/container` will resolve every parameter from the DI
+   * graph.
+   */
+  public constructor() {
+    // no-op — extend as needed.
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "id": "academorix://modules/newsletter/notifications",
+  "$version": 1,
+  "title": "newsletter \u2014 notification classes + categories",
+  "namespace": "Academorix\\Newsletter\\Notifications",
+  "notifications": [
+    "NewsletterCampaignCompletedNotification",
+    "NewsletterCampaignFailedNotification",
+    "NewsletterReputationAlertNotification",
+    "NewsletterSubscribeConfirmationNotification"
+  ],
+  "categories": [
+    {
+      "slug": "newsletter.campaign_completed",
+      "display_name": "Newsletter campaign completed",
+      "description": "Notifies newsletter owner when a campaign finishes sending. Includes summary counters.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": true,
+      "is_system": true
+    },
+    {
+      "slug": "newsletter.campaign_failed",
+      "display_name": "Newsletter campaign failed",
+      "description": "Notifies newsletter owner when a campaign encounters a fatal error.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "critical",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "newsletter.reputation_alert",
+      "display_name": "Newsletter reputation alert",
+      "description": "Notifies newsletter owner when open/click/bounce/complaint rates breach thresholds.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "newsletter.subscribe_confirmation",
+      "display_name": "Newsletter subscribe confirmation",
+      "description": "Sent to a new subscriber with a signed confirmation link. Only sent for double-opt-in newsletters.",
+      "default_channels": ["mail"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

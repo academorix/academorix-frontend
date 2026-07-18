@@ -48,8 +48,8 @@
 
 import { isPushSupported } from "@academorix/notifications";
 import { isQuietHoursWindow } from "@academorix/notifications/preferences";
-import { Button, Separator, Switch } from "@academorix/ui/react";
-import { toast } from "@academorix/ui/react";
+import { Button, Separator, Switch } from "@stackra/ui/react";
+import { toast } from "@stackra/ui/react";
 import { useCallback, useEffect, useState } from "react";
 
 import type { NotificationPreferences, QuietHoursWindow } from "@academorix/notifications";

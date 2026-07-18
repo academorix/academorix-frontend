@@ -15,10 +15,10 @@
  * hidden/disabled/label logic in five places.
  */
 
-import { Button } from "@academorix/ui/react";
-import { useNavigate } from "react-router";
+import { Button } from "@stackra/ui/react";
+import { useNavigate } from "@stackra/routing/react";
 
-import type { ButtonProps } from "@academorix/ui/react";
+import type { ButtonProps } from "@stackra/ui/react";
 import type { BaseKey } from "@refinedev/core";
 import type { ReactNode } from "react";
 

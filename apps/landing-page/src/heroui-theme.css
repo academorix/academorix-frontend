@@ -1,0 +1,88 @@
+/*
+ * HeroUI Pro Theme
+ * Add this to your globals.css after importing @heroui/styles
+ * @see https://heroui.com/docs/react/getting-started/theming
+ */
+
+.glass-light,
+[data-theme="glass-light"] {
+  /* Theme Colors */
+  --foreground: oklch(0.19 0.028 258);
+  --muted: oklch(55.17% 0 126.84);
+  --scrollbar: oklch(87.1% 0 126.84);
+  --accent: oklch(0.87 0.212 132);
+  --accent-foreground: oklch(0.24 0.04 155);
+  --border: oklch(90% 0 126.84);
+
+  /* Border Width */
+  --border-width-field: 0px;
+  --field-border-width: 0px;
+
+  /* Font */
+  --font-sans: "Inter", sans-serif;
+}
+
+.glass-dark,
+[data-theme="glass-dark"] {
+  color-scheme: dark;
+  /* Theme Colors */
+  --foreground: oklch(0.19 0.028 258);
+  --muted: oklch(70.5% 0 126.84);
+  --scrollbar: oklch(70.5% 0 126.84);
+  --surface-secondary-foreground: oklch(25.7% 0 126.84);
+  --surface-tertiary-foreground: oklch(27.21% 0 126.84);
+  --accent: oklch(0.87 0.212 132);
+  --accent-foreground: oklch(0.24 0.04 155);
+  --field-placeholder: oklch(70.5% 0 126.84);
+  --segment: oklch(39.64% 0 126.84);
+  --border: oklch(28% 0 126.84);
+}
+
+:root {
+  --heroui-active-theme: "glass-light";
+}
+
+/* @heroui-chat-theme-state
+{
+  "colorValueDefinitions": null,
+  "customFonts": "[\"Archivo\",\"Inter\",\"IBM Plex Sans Arabic\"]",
+  "designTheme": "glass",
+  "id": "e6d6c5dd-a82d-4f50-9e53-54c31855a1fe",
+  "name": "Academorix Glass",
+  "source": "chat",
+  "variableOverrides": {
+    "--accent": "oklch(0.87 0.212 132)",
+    "--accent-foreground": "oklch(0.24 0.04 155)",
+    "--foreground": "oklch(0.19 0.028 258)"
+  },
+  "variables": {
+    "accentHex": "#B4F03C",
+    "base": 0,
+    "baseTone": "neutral",
+    "bodyFont": "Inter",
+    "borderScale": 1,
+    "chroma": 0.195,
+    "dangerHex": "#FF383C",
+    "designTheme": "glass",
+    "fieldBorderScale": 0,
+    "fontSizeScale": 1,
+    "formRadius": "large",
+    "glassBlurDark": 36,
+    "glassBlurLight": 20,
+    "headingFont": "Archivo",
+    "hue": 253.83,
+    "iconSet": "gravity",
+    "letterSpacing": 0,
+    "lightness": 0.6204,
+    "lineHeightScale": 1,
+    "menuStyle": "default",
+    "radius": "medium",
+    "ringOffsetScale": 2,
+    "spacingScale": 1,
+    "successHex": "#17C964",
+    "tooltipStyle": "default",
+    "vibrantPalette": false,
+    "warningHex": "#F5A524"
+  }
+}
+@heroui-chat-theme-state */

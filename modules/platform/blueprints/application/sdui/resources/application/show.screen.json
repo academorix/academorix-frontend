@@ -1,0 +1,166 @@
+{
+  "id": "tenants.resources.application.show",
+  "title": "Application detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/applications/{id}",
+  "host": "central_admin",
+  "audience": "authenticated",
+  "resource": { "module": "tenancy", "entity": "application", "action": "show" },
+  "requiresPermission": "platform.applications.view",
+  "params": [{ "name": "id", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "application",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/applications/' + params.id",
+      "unwrap": "data"
+    },
+    {
+      "name": "tenants",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/tenants?filter[application_id]=' + params.id + '&per_page=20'",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "Back",
+            "className": "text-sm text-muted"
+          },
+          "actions": { "onPress": { "kind": "navigate", "to": "/platform/applications" } }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$ref": "application.name" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted font-mono" },
+                  "bindings": { "children": { "$ref": "application.slug" } }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "outline",
+                "size": "sm",
+                "leadingIcon": "pencil",
+                "children": "Edit"
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/platform/applications/' + params.id + '/edit'"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "DescriptionList",
+              "children": [
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Region" },
+                  "bindings": { "value": { "$ref": "application.data_residency_region" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Payment provider" },
+                  "bindings": { "value": { "$ref": "application.payment_provider" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Tenancy" },
+                  "bindings": { "value": { "$ref": "application.tenants_count" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Created" },
+                  "bindings": { "value": { "$expr": "formatDate(application.created_at)" } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "Recent tenants"
+              }
+            },
+            {
+              "kind": "List",
+              "bindings": { "items": { "$ref": "tenants" } },
+              "itemRenderer": {
+                "kind": "View",
+                "props": {
+                  "className": "flex items-center justify-between py-2 border-b last:border-b-0"
+                },
+                "children": [
+                  {
+                    "kind": "View",
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-medium" },
+                        "bindings": { "children": { "$ref": "row.name" } }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted" },
+                        "bindings": {
+                          "children": {
+                            "$expr": "row.slug + '.academorix.app \u00b7 ' + row.status"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "Link",
+                    "props": { "size": "sm", "children": "Open" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/platform/tenants/' + row.id"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

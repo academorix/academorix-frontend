@@ -40,11 +40,11 @@
  * client-side because they combine post-fetch.
  */
 
-import { PlusIcon, XMarkIcon } from "@academorix/ui/icons/outline";
-import { Button, Chip, Label, ListBox, Select, Tooltip } from "@academorix/ui/react";
+import { PlusIcon, XMarkIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Chip, Label, ListBox, Select, Tooltip } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 import { useCallback, useMemo, useState } from "react";
-import { Navigate, useNavigate } from "react-router";
+import { Navigate, useNavigate } from "@stackra/routing/react";
 
 import type { CalendarEvent, CalendarEventColorKey } from "@/components/calendar";
 import type {

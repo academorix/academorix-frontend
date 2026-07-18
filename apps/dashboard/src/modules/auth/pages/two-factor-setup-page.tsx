@@ -17,10 +17,10 @@
  * `TwoFactorAuthenticatable` trait yet (backend gap G9).
  */
 
-import { ShieldCheckIcon } from "@academorix/ui/icons/outline";
-import { Button, Description, Form, Input, Label, TextField } from "@academorix/ui/react";
+import { ShieldCheckIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Description, Form, Input, Label, TextField } from "@stackra/ui/react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "@stackra/routing/react";
 
 import type { ApiError } from "@/lib/http";
 import type { TwoFactorEnableResponse } from "@/providers/auth";

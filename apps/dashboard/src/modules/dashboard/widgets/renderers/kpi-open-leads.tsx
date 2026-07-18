@@ -7,8 +7,8 @@
  * Uses an `nin` filter on the stage field.
  */
 
-import { UserPlusIcon } from "@academorix/ui/icons/outline";
-import { KPI, Skeleton } from "@academorix/ui/react";
+import { UserPlusIcon } from "@stackra/ui/icons/heroicon/outline";
+import { KPI, Skeleton } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 
 import type { ReactNode } from "react";

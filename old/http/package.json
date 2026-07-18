@@ -1,0 +1,40 @@
+{
+  "name": "@academorix/http",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "Framework-agnostic HTTP client for the Academorix workspace. Native fetch with observable token store, single-flight refresh, device-fingerprint headers, Foundation envelope helpers, and HttpError normalization. Used by @academorix/query, @academorix/notifications, both apps, and Refine's data provider.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client/index.ts",
+    "./errors": "./src/errors/index.ts",
+    "./envelope": "./src/envelope/index.ts",
+    "./tokens": "./src/tokens/index.ts",
+    "./refresh": "./src/refresh/index.ts",
+    "./device": "./src/device/index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf .turbo"
+  },
+  "dependencies": {
+    "@academorix/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@academorix/eslint-config": "workspace:*",
+    "@academorix/config-tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "jsdom": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

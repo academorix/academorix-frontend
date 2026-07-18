@@ -1,0 +1,299 @@
+/**
+ * Theme Presets CSS
+ *
+ * Contains [data-design-theme="<id>"] selectors for all 11 built-in themes
+ * with oklch() variable overrides for both light and dark modes.
+ *
+ * The "default" theme has NO selector — when active, the data-design-theme
+ * attribute is removed from <html>, letting the base HeroUI v3 palette apply.
+ */
+
+/* ============================================================================
+ * SKY THEME
+ * ========================================================================= */
+[data-design-theme='sky'] {
+  --accent: oklch(0.59 0.17 231);
+  --accent-foreground: oklch(1 0 0);
+  --surface: oklch(0.97 0.005 231);
+  --surface-foreground: oklch(0.15 0.01 231);
+  --surface-secondary: oklch(0.94 0.01 231);
+  --chart-1: oklch(0.59 0.17 231);
+  --chart-2: oklch(0.52 0.14 231);
+  --chart-3: oklch(0.45 0.11 231);
+  --chart-4: oklch(0.69 0.13 231);
+  --chart-5: oklch(0.76 0.09 231);
+}
+
+:is(.dark, [data-theme='dark'])[data-design-theme='sky'] {
+  --accent: oklch(0.65 0.18 231);
+  --accent-foreground: oklch(0.15 0.01 231);
+  --surface: oklch(0.15 0.015 231);
+  --surface-foreground: oklch(0.95 0.005 231);
+  --surface-secondary: oklch(0.2 0.02 231);
+  --chart-1: oklch(0.65 0.18 231);
+  --chart-2: oklch(0.58 0.15 231);
+  --chart-3: oklch(0.51 0.12 231);
+  --chart-4: oklch(0.72 0.14 231);
+  --chart-5: oklch(0.79 0.1 231);
+}
+
+/* ============================================================================
+ * LAVENDER THEME
+ * ========================================================================= */
+[data-design-theme='lavender'] {
+  --accent: oklch(0.59 0.19 292);
+  --accent-foreground: oklch(1 0 0);
+  --surface: oklch(0.97 0.005 292);
+  --surface-foreground: oklch(0.15 0.01 292);
+  --surface-secondary: oklch(0.94 0.01 292);
+  --chart-1: oklch(0.59 0.19 292);
+  --chart-2: oklch(0.52 0.16 292);
+  --chart-3: oklch(0.45 0.13 292);
+  --chart-4: oklch(0.69 0.15 292);
+  --chart-5: oklch(0.76 0.11 292);
+}
+
+:is(.dark, [data-theme='dark'])[data-design-theme='lavender'] {
+  --accent: oklch(0.65 0.2 292);
+  --accent-foreground: oklch(0.15 0.01 292);
+  --surface: oklch(0.15 0.015 292);
+  --surface-foreground: oklch(0.95 0.005 292);
+  --surface-secondary: oklch(0.2 0.02 292);
+  --chart-1: oklch(0.65 0.2 292);
+  --chart-2: oklch(0.58 0.17 292);
+  --chart-3: oklch(0.51 0.14 292);
+  --chart-4: oklch(0.72 0.16 292);
+  --chart-5: oklch(0.79 0.12 292);
+}
+
+/* ============================================================================
+ * MINT THEME
+ * ========================================================================= */
+[data-design-theme='mint'] {
+  --accent: oklch(0.62 0.15 165);
+  --accent-foreground: oklch(1 0 0);
+  --surface: oklch(0.97 0.005 165);
+  --surface-foreground: oklch(0.15 0.01 165);
+  --surface-secondary: oklch(0.94 0.01 165);
+  --chart-1: oklch(0.62 0.15 165);
+  --chart-2: oklch(0.55 0.12 165);
+  --chart-3: oklch(0.48 0.09 165);
+  --chart-4: oklch(0.72 0.11 165);
+  --chart-5: oklch(0.79 0.07 165);
+}
+
+:is(.dark, [data-theme='dark'])[data-design-theme='mint'] {
+  --accent: oklch(0.68 0.16 165);
+  --accent-foreground: oklch(0.15 0.01 165);
+  --surface: oklch(0.15 0.015 165);
+  --surface-foreground: oklch(0.95 0.005 165);
+  --surface-secondary: oklch(0.2 0.02 165);
+  --chart-1: oklch(0.68 0.16 165);
+  --chart-2: oklch(0.61 0.13 165);
+  --chart-3: oklch(0.54 0.1 165);
+  --chart-4: oklch(0.75 0.12 165);
+  --chart-5: oklch(0.82 0.08 165);
+}
+
+/* ============================================================================
+ * NETFLIX THEME
+ * ========================================================================= */
+[data-design-theme='netflix'] {
+  --accent: oklch(0.52 0.22 27);
+  --accent-foreground: oklch(1 0 0);
+  --surface: oklch(0.97 0.003 27);
+  --surface-foreground: oklch(0.15 0.005 27);
+  --surface-secondary: oklch(0.94 0.006 27);
+  --chart-1: oklch(0.52 0.22 27);
+  --chart-2: oklch(0.45 0.19 27);
+  --chart-3: oklch(0.38 0.16 27);
+  --chart-4: oklch(0.62 0.18 27);
+  --chart-5: oklch(0.72 0.14 27);
+}
+
+:is(.dark, [data-theme='dark'])[data-design-theme='netflix'] {
+  --accent: oklch(0.58 0.23 27);
+  --accent-foreground: oklch(1 0 0);
+  --surface: oklch(0.12 0.005 27);
+  --surface-foreground: oklch(0.95 0.003 27);
+  --surface-secondary: oklch(0.17 0.008 27);
+  --chart-1: oklch(0.58 0.23 27);
+  --chart-2: oklch(0.51 0.2 27);
+  --chart-3: oklch(0.44 0.17 27);
+  --chart-4: oklch(0.65 0.19 27);
+  --chart-5: oklch(0.72 0.15 27);
+}
+
+/* ============================================================================
+ * UBER THEME
+ * ========================================================================= */
+[data-design-theme='uber'] {
+  --accent: oklch(0.25 0 0);
+  --accent-foreground: oklch(1 0 0);
+  --surface: oklch(0.98 0 0);
+  --surface-foreground: oklch(0.15 0 0);
+  --surface-secondary: oklch(0.95 0 0);
+  --chart-1: oklch(0.25 0 0);
+  --chart-2: oklch(0.35 0 0);
+  --chart-3: oklch(0.45 0 0);
+  --chart-4: oklch(0.55 0 0);
+  --chart-5: oklch(0.65 0 0);
+}
+
+:is(.dark, [data-theme='dark'])[data-design-theme='uber'] {
+  --accent: oklch(0.95 0 0);
+  --accent-foreground: oklch(0.15 0 0);
+  --surface: oklch(0.12 0 0);
+  --surface-foreground: oklch(0.95 0 0);
+  --surface-secondary: oklch(0.18 0 0);
+  --chart-1: oklch(0.95 0 0);
+  --chart-2: oklch(0.85 0 0);
+  --chart-3: oklch(0.75 0 0);
+  --chart-4: oklch(0.65 0 0);
+  --chart-5: oklch(0.55 0 0);
+}
+
+/* ============================================================================
+ * SPOTIFY THEME
+ * ========================================================================= */
+[data-design-theme='spotify'] {
+  --accent: oklch(0.62 0.18 151);
+  --accent-foreground: oklch(0.15 0.01 151);
+  --surface: oklch(0.97 0.003 151);
+  --surface-foreground: oklch(0.15 0.005 151);
+  --surface-secondary: oklch(0.94 0.006 151);
+  --chart-1: oklch(0.62 0.18 151);
+  --chart-2: oklch(0.55 0.15 151);
+  --chart-3: oklch(0.48 0.12 151);
+  --chart-4: oklch(0.72 0.14 151);
+  --chart-5: oklch(0.79 0.1 151);
+}
+
+:is(.dark, [data-theme='dark'])[data-design-theme='spotify'] {
+  --accent: oklch(0.68 0.19 151);
+  --accent-foreground: oklch(0.15 0.01 151);
+  --surface: oklch(0.12 0.01 151);
+  --surface-foreground: oklch(0.95 0.003 151);
+  --surface-secondary: oklch(0.18 0.015 151);
+  --chart-1: oklch(0.68 0.19 151);
+  --chart-2: oklch(0.61 0.16 151);
+  --chart-3: oklch(0.54 0.13 151);
+  --chart-4: oklch(0.75 0.15 151);
+  --chart-5: oklch(0.82 0.11 151);
+}
+
+/* ============================================================================
+ * COINBASE THEME
+ * ========================================================================= */
+[data-design-theme='coinbase'] {
+  --accent: oklch(0.52 0.2 255);
+  --accent-foreground: oklch(1 0 0);
+  --surface: oklch(0.97 0.003 255);
+  --surface-foreground: oklch(0.15 0.005 255);
+  --surface-secondary: oklch(0.94 0.006 255);
+  --chart-1: oklch(0.52 0.2 255);
+  --chart-2: oklch(0.45 0.17 255);
+  --chart-3: oklch(0.38 0.14 255);
+  --chart-4: oklch(0.62 0.16 255);
+  --chart-5: oklch(0.72 0.12 255);
+}
+
+:is(.dark, [data-theme='dark'])[data-design-theme='coinbase'] {
+  --accent: oklch(0.58 0.21 255);
+  --accent-foreground: oklch(1 0 0);
+  --surface: oklch(0.12 0.01 255);
+  --surface-foreground: oklch(0.95 0.003 255);
+  --surface-secondary: oklch(0.18 0.015 255);
+  --chart-1: oklch(0.58 0.21 255);
+  --chart-2: oklch(0.51 0.18 255);
+  --chart-3: oklch(0.44 0.15 255);
+  --chart-4: oklch(0.65 0.17 255);
+  --chart-5: oklch(0.72 0.13 255);
+}
+
+/* ============================================================================
+ * AIRBNB THEME
+ * ========================================================================= */
+[data-design-theme='airbnb'] {
+  --accent: oklch(0.58 0.18 15);
+  --accent-foreground: oklch(1 0 0);
+  --surface: oklch(0.97 0.003 15);
+  --surface-foreground: oklch(0.15 0.005 15);
+  --surface-secondary: oklch(0.94 0.006 15);
+  --chart-1: oklch(0.58 0.18 15);
+  --chart-2: oklch(0.51 0.15 15);
+  --chart-3: oklch(0.44 0.12 15);
+  --chart-4: oklch(0.68 0.14 15);
+  --chart-5: oklch(0.78 0.1 15);
+}
+
+:is(.dark, [data-theme='dark'])[data-design-theme='airbnb'] {
+  --accent: oklch(0.64 0.19 15);
+  --accent-foreground: oklch(1 0 0);
+  --surface: oklch(0.12 0.005 15);
+  --surface-foreground: oklch(0.95 0.003 15);
+  --surface-secondary: oklch(0.18 0.008 15);
+  --chart-1: oklch(0.64 0.19 15);
+  --chart-2: oklch(0.57 0.16 15);
+  --chart-3: oklch(0.5 0.13 15);
+  --chart-4: oklch(0.71 0.15 15);
+  --chart-5: oklch(0.78 0.11 15);
+}
+
+/* ============================================================================
+ * DISCORD THEME
+ * ========================================================================= */
+[data-design-theme='discord'] {
+  --accent: oklch(0.55 0.18 268);
+  --accent-foreground: oklch(1 0 0);
+  --surface: oklch(0.97 0.005 268);
+  --surface-foreground: oklch(0.15 0.01 268);
+  --surface-secondary: oklch(0.94 0.008 268);
+  --chart-1: oklch(0.55 0.18 268);
+  --chart-2: oklch(0.48 0.15 268);
+  --chart-3: oklch(0.41 0.12 268);
+  --chart-4: oklch(0.65 0.14 268);
+  --chart-5: oklch(0.75 0.1 268);
+}
+
+:is(.dark, [data-theme='dark'])[data-design-theme='discord'] {
+  --accent: oklch(0.61 0.19 268);
+  --accent-foreground: oklch(1 0 0);
+  --surface: oklch(0.14 0.015 268);
+  --surface-foreground: oklch(0.95 0.005 268);
+  --surface-secondary: oklch(0.2 0.02 268);
+  --chart-1: oklch(0.61 0.19 268);
+  --chart-2: oklch(0.54 0.16 268);
+  --chart-3: oklch(0.47 0.13 268);
+  --chart-4: oklch(0.68 0.15 268);
+  --chart-5: oklch(0.75 0.11 268);
+}
+
+/* ============================================================================
+ * RABBIT THEME
+ * ========================================================================= */
+[data-design-theme='rabbit'] {
+  --accent: oklch(0.65 0.2 48);
+  --accent-foreground: oklch(0.15 0.01 48);
+  --surface: oklch(0.97 0.005 48);
+  --surface-foreground: oklch(0.15 0.01 48);
+  --surface-secondary: oklch(0.94 0.008 48);
+  --chart-1: oklch(0.65 0.2 48);
+  --chart-2: oklch(0.58 0.17 48);
+  --chart-3: oklch(0.51 0.14 48);
+  --chart-4: oklch(0.72 0.16 48);
+  --chart-5: oklch(0.79 0.12 48);
+}
+
+:is(.dark, [data-theme='dark'])[data-design-theme='rabbit'] {
+  --accent: oklch(0.71 0.21 48);
+  --accent-foreground: oklch(0.15 0.01 48);
+  --surface: oklch(0.15 0.01 48);
+  --surface-foreground: oklch(0.95 0.005 48);
+  --surface-secondary: oklch(0.2 0.015 48);
+  --chart-1: oklch(0.71 0.21 48);
+  --chart-2: oklch(0.64 0.18 48);
+  --chart-3: oklch(0.57 0.15 48);
+  --chart-4: oklch(0.78 0.17 48);
+  --chart-5: oklch(0.85 0.13 48);
+}

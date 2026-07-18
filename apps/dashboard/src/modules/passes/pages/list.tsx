@@ -7,11 +7,11 @@
  * The scannable code is shown on the detail screen.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 import { useMemo } from "react";
 
 import type { Pass, PassStatus } from "@/modules/passes/passes.types";
-import type { DataGridColumn } from "@academorix/ui/react";
+import type { DataGridColumn } from "@stackra/ui/react";
 import type { ReactNode } from "react";
 
 import { EditButton, ListView, ResourceDataGrid, ShowButton } from "@/components/refine";

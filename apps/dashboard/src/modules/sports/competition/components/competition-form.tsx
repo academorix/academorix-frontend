@@ -8,7 +8,7 @@
  * caller's scope at submit time (see {@link toCompetitionPayload}).
  */
 
-import { Button, Card, Form, Input, Label, ListBox, Select, TextField } from "@academorix/ui/react";
+import { Button, Card, Form, Input, Label, ListBox, Select, TextField } from "@stackra/ui/react";
 import { useState } from "react";
 
 import type { ActiveScope } from "@/lib/scope";

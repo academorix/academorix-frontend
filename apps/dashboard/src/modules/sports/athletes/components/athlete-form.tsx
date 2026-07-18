@@ -12,7 +12,7 @@
  * is always registered at a branch the user can access.
  */
 
-import { Button, Card, Form, Input, Label, ListBox, Select, TextField } from "@academorix/ui/react";
+import { Button, Card, Form, Input, Label, ListBox, Select, TextField } from "@stackra/ui/react";
 import { useState } from "react";
 
 import type { Athlete, EntityStatus, Gender } from "@/types";

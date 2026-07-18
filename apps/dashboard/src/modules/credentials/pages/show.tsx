@@ -7,7 +7,7 @@
  * athlete name is resolved from the `athletes` resource.
  */
 
-import { Card, Spinner } from "@academorix/ui/react";
+import { Card, Spinner } from "@stackra/ui/react";
 import { useOne, useShow } from "@refinedev/core";
 
 import type { Credential } from "@/modules/credentials/credentials.types";

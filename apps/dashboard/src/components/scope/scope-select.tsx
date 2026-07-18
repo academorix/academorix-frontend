@@ -11,9 +11,9 @@
  * scopes are already filtered server-side in `/auth/me`.
  */
 
-import { Label, ListBox, Select } from "@academorix/ui/react";
+import { Label, ListBox, Select } from "@stackra/ui/react";
 
-import type { IconType } from "@academorix/ui/icons";
+import type { IconType } from "@stackra/ui/icons";
 import type { Key, ReactNode } from "react";
 
 /** A selectable scope option. */

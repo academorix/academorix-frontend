@@ -1,0 +1,257 @@
+{
+  "id": "academorix://modules/compliance/schemas/subprocessor",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Subprocessor",
+  "description": "Versioned VPC / DPA registry. Every third party that receives subject data lives here. Platform-level (tenant_id ALWAYS NULL). Every material change bumps `version` and writes a SubprocessorVersion snapshot (not modelled as a separate entity \u2014 stored via HasAuditable field snapshots + surfaced via a version history query). Renders the public Trust Center feed at `GET /compliance/subprocessors.json`.",
+  "type": "object",
+  "x-module": "compliance",
+  "x-eloquent": {
+    "table": "subprocessors",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "spr_",
+    "incrementing": false,
+    "model": "Academorix\\Compliance\\Models\\Subprocessor",
+    "interface": "Academorix\\Compliance\\Contracts\\Data\\SubprocessorInterface",
+    "implements": ["Academorix\\Compliance\\Contracts\\Data\\SubprocessorInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "HasSystemFlag",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "role": "SubprocessorRole",
+      "data_processed": "array",
+      "location": "array",
+      "is_active": "boolean",
+      "is_system": "boolean",
+      "first_engaged_at": "datetime",
+      "metadata": "array"
+    },
+    "appends": ["current_dpa_url"],
+    "observers": ["SubprocessorObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true, "description": "`spr_<26>`" },
+      "key": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Stable identifier. e.g. `aws_s3`, `cloudflare_r2`, `stripe`, `sentry`, `posthog`."
+      },
+      "name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Vendor + product name. e.g. `Amazon Web Services (S3)`, `Stripe`."
+      },
+      "role": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: storage / cdn / email_delivery / sms_delivery / push_delivery / payment_processor / analytics / error_tracking / customer_support / ai_inference / ai_training / backup / identity_provider."
+      },
+      "purpose": {
+        "type": "text",
+        "nullable": false,
+        "description": "One-paragraph description of what this subprocessor does for Academorix."
+      },
+      "description": {
+        "type": "text",
+        "nullable": true,
+        "description": "Longer prose. Shown on the Trust Center page next to the vendor entry."
+      },
+      "data_processed": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Array of data classes this subprocessor receives. e.g. `['file_bytes', 'file_metadata', 'access_logs']`."
+      },
+      "location": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Array of regions where data lands. e.g. `['us-east', 'eu-west', 'ap-southeast']`."
+      },
+      "legal_basis": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "default": "'contract'",
+        "description": "Enum: contract / legitimate_interest / consent / legal_obligation / self_hosted."
+      },
+      "dpa_url": {
+        "type": "string",
+        "length": 500,
+        "nullable": true,
+        "description": "Public URL to the vendor's Data Processing Addendum."
+      },
+      "dpa_version": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Vendor's DPA version marker. Populated when we've signed a specific version."
+      },
+      "contact_email": {
+        "type": "string",
+        "length": 320,
+        "nullable": true,
+        "description": "Vendor privacy contact. Not shown publicly \u2014 platform-admin only."
+      },
+      "is_active": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "False marks a decommissioned subprocessor. Retained in the registry for historical record."
+      },
+      "is_system": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Seeded platform defaults are system=true \u2014 cannot be hard-deleted."
+      },
+      "version": {
+        "type": "integer",
+        "nullable": false,
+        "default": 1,
+        "description": "Bumps on every material change (new region / new data class / new purpose). Cache-busts the Trust Center feed."
+      },
+      "previous_version_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "description": "Points at the immediately-preceding Subprocessor row (soft-deleted) for lineage."
+      },
+      "first_engaged_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "When Academorix first started sending data to this vendor. Fixed per key \u2014 does not update on version bump."
+      },
+      "last_updated_by": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["key"],
+        "unique": true,
+        "name": "subprocessors_key_uidx",
+        "predicate": "deleted_at IS NULL",
+        "description": "Only active rows enforce key uniqueness \u2014 soft-deleted lineage predecessors coexist."
+      },
+      {
+        "columns": ["is_active", "role"],
+        "unique": false,
+        "name": "subprocessors_active_role_idx",
+        "description": "Trust Center feed scan."
+      },
+      {
+        "columns": ["version"],
+        "unique": false,
+        "name": "subprocessors_version_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "key",
+    "name",
+    "role",
+    "purpose",
+    "data_processed",
+    "location",
+    "legal_basis",
+    "is_active",
+    "is_system",
+    "version",
+    "first_engaged_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^spr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "key": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,62}$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "role": {
+      "type": "string",
+      "enum": [
+        "storage",
+        "cdn",
+        "email_delivery",
+        "sms_delivery",
+        "push_delivery",
+        "payment_processor",
+        "analytics",
+        "error_tracking",
+        "customer_support",
+        "ai_inference",
+        "ai_training",
+        "backup",
+        "identity_provider"
+      ]
+    },
+    "purpose": { "type": "string" },
+    "description": { "type": ["string", "null"] },
+    "data_processed": { "type": "array", "items": { "type": "string" } },
+    "location": { "type": "array", "items": { "type": "string" } },
+    "legal_basis": {
+      "type": "string",
+      "enum": ["contract", "legitimate_interest", "consent", "legal_obligation", "self_hosted"]
+    },
+    "dpa_url": { "type": ["string", "null"], "format": "uri" },
+    "dpa_version": { "type": ["string", "null"] },
+    "contact_email": { "type": ["string", "null"], "format": "email" },
+    "is_active": { "type": "boolean" },
+    "is_system": { "type": "boolean" },
+    "version": { "type": "integer", "minimum": 1 },
+    "previous_version_id": {
+      "type": ["string", "null"],
+      "pattern": "^spr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "first_engaged_at": { "type": "string", "format": "date-time" },
+    "last_updated_by": { "type": ["string", "null"] },
+    "current_dpa_url": {
+      "type": ["string", "null"],
+      "description": "Computed. dpa_url with dpa_version query string appended for cache-busting."
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_by": { "type": ["string", "null"] },
+    "updated_by": { "type": ["string", "null"] },
+    "deleted_by": { "type": ["string", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["contact_email", "created_by", "updated_by", "deleted_by"],
+    "computed": ["current_dpa_url"],
+    "notes": [
+      "contact_email is HIDDEN on the public Trust Center feed. Platform-admin surface reveals it.",
+      "The public feed (GET /compliance/subprocessors.json) uses a projected shape: {key, name, role, purpose, location, dpa_url, version}. This full schema is admin-surface only."
+    ]
+  }
+}

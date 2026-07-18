@@ -16,7 +16,7 @@
  * pages don't flash blank while the (in-memory) check resolves.
  */
 
-import { LockClosedIcon } from "@academorix/ui/icons/outline";
+import { LockClosedIcon } from "@stackra/ui/icons/heroicon/outline";
 import { useCan, useResourceParams, useTranslate } from "@refinedev/core";
 
 import type { ReactNode } from "react";

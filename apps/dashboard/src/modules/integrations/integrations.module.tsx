@@ -9,7 +9,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §10.9 "Integrations"
  */
 
-import { PuzzlePieceIcon } from "@academorix/ui/icons/outline";
+import { PuzzlePieceIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

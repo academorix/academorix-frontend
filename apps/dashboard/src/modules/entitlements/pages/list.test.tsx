@@ -16,12 +16,12 @@
  *   5. Loading + error states render.
  */
 
-import { render, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router";
+import { screen } from "@testing-library/react";
+import { renderWithRouting } from "@stackra/routing/testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { EntitlementUsage, QuotaHeadline } from "@/types";
-import type { ReactNode } from "react";
+import type { ReactElement, ReactNode } from "react";
 
 // ─────────────────────────────────────────────────────────────────────
 // Mocks
@@ -117,9 +117,13 @@ const DISABLED_FEATURE: EntitlementUsage = {
   is_unlimited: false,
 };
 
-/** Wraps the page in MemoryRouter (Breadcrumbs uses router hooks internally). */
+/**
+ * Wraps the page in the Stackra routing test context. Breadcrumbs +
+ * QuotaMeter both pull in `useNavigate` (Stackra) and `useLocation`
+ * (RRv7 re-export); `renderWithRouting` mounts both providers.
+ */
 function renderPage(ui: ReactNode = <EntitlementsUsagePage />) {
-  return render(<MemoryRouter>{ui}</MemoryRouter>);
+  return renderWithRouting(ui as ReactElement);
 }
 
 /**

@@ -7,7 +7,7 @@
  * the detail screen: invited athlete + their response.
  */
 
-import { Chip, Spinner } from "@academorix/ui/react";
+import { Chip, Spinner } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 
 import type { EventInvitation, RsvpStatus } from "@/types";

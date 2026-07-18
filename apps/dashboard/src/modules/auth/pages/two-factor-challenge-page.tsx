@@ -11,9 +11,9 @@
  * functional.
  */
 
-import { Button, Description, Form, Input, Label, Switch, TextField } from "@academorix/ui/react";
+import { Button, Description, Form, Input, Label, Switch, TextField } from "@stackra/ui/react";
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "@stackra/routing/react";
 
 import type { ApiError } from "@/lib/http";
 import type { FormEvent, ReactNode } from "react";

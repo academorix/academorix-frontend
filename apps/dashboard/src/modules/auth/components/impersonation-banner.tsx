@@ -10,8 +10,8 @@
  * and drops the caller back to `/login`.
  */
 
-import { EyeIcon, XMarkIcon } from "@academorix/ui/icons/outline";
-import { Button } from "@academorix/ui/react";
+import { EyeIcon, XMarkIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button } from "@stackra/ui/react";
 import { useLogout } from "@refinedev/core";
 
 import type { ReactNode } from "react";

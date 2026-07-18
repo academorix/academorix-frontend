@@ -1,0 +1,10 @@
+{
+  "id": "academorix://modules/notifications-in-app/traits",
+  "$version": 1,
+  "title": "notifications-in-app \u2014 trait composition",
+  "description": "Zero owned traits. This channel has no Eloquent models \u2014 delivery rows are written to core's NotificationDelivery table via DispatchGateway. Consumed traits documented for completeness but not directly applied here (no models to apply them to).",
+  "owned": [],
+  "consumed": {
+    "note": "No models in this module. The framework, foundation, and tenants trait blocks are consumed indirectly \u2014 InAppChannel writes to core's NotificationDelivery model which composes them."
+  }
+}

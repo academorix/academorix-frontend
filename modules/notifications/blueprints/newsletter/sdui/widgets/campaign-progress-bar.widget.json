@@ -1,0 +1,89 @@
+{
+  "id": "newsletter.campaign-progress-bar",
+  "title": "Campaign progress bar",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Segmented progress bar visualising campaign counters: sent / delivered / opened / clicked / bounced / complained.",
+  "props": {
+    "campaign": {
+      "type": "object",
+      "description": "NewsletterCampaign DTO with counters + progress_pct."
+    },
+    "compact": { "type": "boolean", "default": false }
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "container",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-1" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "className": "text-xs text-muted" },
+              "bindings": {
+                "children": {
+                  "$expr": "(props.campaign.counters.sent ?? 0) + ' / ' + (props.campaign.counters.targeted ?? 0) + ' sent'"
+                }
+              }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-xs font-medium" },
+              "bindings": {
+                "children": { "$expr": "(props.campaign.progress_pct ?? 0).toFixed(1) + '%'" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex h-2 rounded overflow-hidden bg-content2" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "bg-success" },
+              "bindings": {
+                "style": {
+                  "$expr": "{ width: ((props.campaign.counters.delivered ?? 0) / Math.max(props.campaign.counters.targeted ?? 1, 1) * 100) + '%' }"
+                }
+              }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "bg-warning" },
+              "bindings": {
+                "style": {
+                  "$expr": "{ width: ((props.campaign.counters.bounced ?? 0) / Math.max(props.campaign.counters.targeted ?? 1, 1) * 100) + '%' }"
+                }
+              }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "bg-danger" },
+              "bindings": {
+                "style": {
+                  "$expr": "{ width: ((props.campaign.counters.complained ?? 0) / Math.max(props.campaign.counters.targeted ?? 1, 1) * 100) + '%' }"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs text-muted" },
+          "bindings": {
+            "hidden": { "$expr": "props.compact" },
+            "children": {
+              "$expr": "(props.campaign.counters.delivered ?? 0) + ' delivered \u00b7 ' + (props.campaign.counters.opened ?? 0) + ' opened \u00b7 ' + (props.campaign.counters.clicked ?? 0) + ' clicked \u00b7 ' + (props.campaign.counters.bounced ?? 0) + ' bounced \u00b7 ' + (props.campaign.counters.complained ?? 0) + ' complained'"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

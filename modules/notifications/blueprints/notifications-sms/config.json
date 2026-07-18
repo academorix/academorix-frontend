@@ -1,0 +1,198 @@
+{
+  "id": "academorix://modules/notifications-sms/config",
+  "$version": 1,
+  "title": "notifications-sms \u2014 developer configuration",
+  "configFile": "config/notifications-sms.php",
+  "envPrefix": "NOTIFICATIONS_SMS_",
+  "sections": {
+    "default": {
+      "keys": [
+        {
+          "path": "notifications-sms.default",
+          "type": "string",
+          "env": "NOTIFICATIONS_SMS_DEFAULT",
+          "default": "twilio"
+        }
+      ]
+    },
+    "providers": {
+      "keys": [
+        {
+          "path": "notifications-sms.providers.twilio.account_sid_secret_ref",
+          "type": "string",
+          "env": "TWILIO_ACCOUNT_SID",
+          "secret": true
+        },
+        {
+          "path": "notifications-sms.providers.twilio.auth_token_secret_ref",
+          "type": "string",
+          "env": "TWILIO_AUTH_TOKEN",
+          "secret": true
+        },
+        {
+          "path": "notifications-sms.providers.twilio.messaging_service_sid",
+          "type": "string",
+          "env": "TWILIO_MESSAGING_SERVICE_SID",
+          "description": "Recommended over from-number \u2014 provides sender pool + copilot features."
+        },
+        {
+          "path": "notifications-sms.providers.messagebird.access_key_secret_ref",
+          "type": "string",
+          "env": "MESSAGEBIRD_ACCESS_KEY",
+          "secret": true
+        },
+        {
+          "path": "notifications-sms.providers.vonage.api_key_secret_ref",
+          "type": "string",
+          "env": "VONAGE_API_KEY",
+          "secret": true
+        },
+        {
+          "path": "notifications-sms.providers.vonage.api_secret_secret_ref",
+          "type": "string",
+          "env": "VONAGE_API_SECRET",
+          "secret": true
+        },
+        {
+          "path": "notifications-sms.providers.plivo.auth_id_secret_ref",
+          "type": "string",
+          "env": "PLIVO_AUTH_ID",
+          "secret": true
+        },
+        {
+          "path": "notifications-sms.providers.plivo.auth_token_secret_ref",
+          "type": "string",
+          "env": "PLIVO_AUTH_TOKEN",
+          "secret": true
+        },
+        {
+          "path": "notifications-sms.providers.aws-sns.region",
+          "type": "string",
+          "env": "AWS_SNS_REGION",
+          "default": "us-east-1"
+        }
+      ]
+    },
+    "webhook_signatures": {
+      "keys": [
+        {
+          "path": "notifications-sms.webhook_secrets.twilio",
+          "type": "string",
+          "env": "NOTIFICATIONS_SMS_TWILIO_WEBHOOK_SECRET",
+          "secret": true
+        },
+        {
+          "path": "notifications-sms.webhook_secrets.messagebird",
+          "type": "string",
+          "env": "NOTIFICATIONS_SMS_MESSAGEBIRD_WEBHOOK_SECRET",
+          "secret": true
+        },
+        {
+          "path": "notifications-sms.webhook_secrets.vonage",
+          "type": "string",
+          "env": "NOTIFICATIONS_SMS_VONAGE_WEBHOOK_SECRET",
+          "secret": true
+        },
+        {
+          "path": "notifications-sms.webhook_secrets.plivo",
+          "type": "string",
+          "env": "NOTIFICATIONS_SMS_PLIVO_WEBHOOK_SECRET",
+          "secret": true
+        },
+        {
+          "path": "notifications-sms.webhook_secrets.aws-sns",
+          "type": "string",
+          "env": "NOTIFICATIONS_SMS_AWS_SNS_TOPIC_ARN",
+          "secret": true
+        }
+      ]
+    },
+    "keywords": {
+      "description": "STOP-family + START-family keyword patterns (case-insensitive).",
+      "keys": [
+        {
+          "path": "notifications-sms.keywords.stop",
+          "type": "array<string>",
+          "default": ["STOP", "STOPALL", "END", "QUIT", "CANCEL", "UNSUBSCRIBE"]
+        },
+        {
+          "path": "notifications-sms.keywords.start",
+          "type": "array<string>",
+          "default": ["START", "SUBSCRIBE", "UNSTOP", "YES"]
+        },
+        {
+          "path": "notifications-sms.keywords.help",
+          "type": "array<string>",
+          "default": ["HELP", "INFO"]
+        }
+      ]
+    },
+    "cost": {
+      "keys": [
+        { "path": "notifications-sms.cost.currency", "type": "string", "default": "USD" },
+        {
+          "path": "notifications-sms.cost.per_country_cache_ttl_seconds",
+          "type": "int",
+          "default": 3600
+        },
+        {
+          "path": "notifications-sms.cost.cap_warning_threshold_ratio",
+          "type": "float",
+          "default": 0.8,
+          "description": "Warn tenant admin at 80% of monthly cap."
+        }
+      ]
+    },
+    "segments": {
+      "keys": [
+        {
+          "path": "notifications-sms.segments.gsm7_chars_per_segment",
+          "type": "int",
+          "default": 160
+        },
+        {
+          "path": "notifications-sms.segments.gsm7_multi_chars_per_segment",
+          "type": "int",
+          "default": 153,
+          "description": "For multi-segment messages (concat SMS), each segment carries 153 GSM chars."
+        },
+        {
+          "path": "notifications-sms.segments.ucs2_chars_per_segment",
+          "type": "int",
+          "default": 70,
+          "description": "Unicode messages."
+        },
+        {
+          "path": "notifications-sms.segments.ucs2_multi_chars_per_segment",
+          "type": "int",
+          "default": 67
+        },
+        {
+          "path": "notifications-sms.segments.max_segments_per_message",
+          "type": "int",
+          "default": 3,
+          "description": "Refuse sends > N segments (expensive)."
+        }
+      ]
+    },
+    "auto_replies": {
+      "keys": [
+        {
+          "path": "notifications-sms.auto_reply.opt_out_confirmation",
+          "type": "string",
+          "default": "You have been unsubscribed. No more messages will be sent. Reply START to re-subscribe."
+        },
+        {
+          "path": "notifications-sms.auto_reply.subscribe_confirmation",
+          "type": "string",
+          "default": "You are re-subscribed to messages from {{ tenant_name }}."
+        },
+        {
+          "path": "notifications-sms.auto_reply.help",
+          "type": "string",
+          "default": "Reply STOP to unsubscribe. Msg + data rates may apply. Visit {{ tenant_url }} for support."
+        }
+      ]
+    }
+  }
+}

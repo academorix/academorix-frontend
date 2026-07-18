@@ -8,7 +8,7 @@
  * guardian roles read consistently.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 
 import type { RoleInTenant } from "@/modules/people/people.types";
 import type { ReactNode } from "react";

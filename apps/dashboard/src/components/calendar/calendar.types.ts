@@ -105,12 +105,7 @@ export interface CalendarEvent<TMeta = unknown> {
  * domain-loaded (`"attendance-taken"`) so multiple consumers can share the
  * calendar without stepping on each other's semantics.
  */
-export type CalendarEventColorKey =
-  | "accent"
-  | "success"
-  | "warning"
-  | "danger"
-  | "neutral";
+export type CalendarEventColorKey = "accent" | "success" | "warning" | "danger" | "neutral";
 
 /**
  * Tailwind class fragments per color key. Kept as a plain map so tree-shaking
@@ -182,8 +177,7 @@ export interface CalendarViewProps<TMeta = unknown> {
  * the hour range. The month view drops this: it renders dates only.
  */
 export interface CalendarTimeViewProps<TMeta = unknown>
-  extends CalendarViewProps<TMeta>,
-    Partial<CalendarTimeRange> {}
+  extends CalendarViewProps<TMeta>, Partial<CalendarTimeRange> {}
 
 /**
  * Full top-level props exposed from the `<Calendar>` composite. Currently the
@@ -193,8 +187,7 @@ export interface CalendarTimeViewProps<TMeta = unknown>
  *
  * @typeParam TMeta - The event `meta` shape.
  */
-export interface CalendarProps<TMeta = unknown>
-  extends CalendarTimeViewProps<TMeta> {
+export interface CalendarProps<TMeta = unknown> extends CalendarTimeViewProps<TMeta> {
   /** Active view mode. Defaults to `"week"` inside the toolbar hook. */
   view: CalendarView;
   /** Emitted when the user switches views via the toolbar. */

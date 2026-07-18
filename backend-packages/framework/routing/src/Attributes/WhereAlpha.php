@@ -1,0 +1,49 @@
+<?php
+
+
+/**
+ * Where Alpha Attribute
+ *
+ * PHP 8 attribute for compile-time metadata annotation in the Framework module.
+ * Discovered by the compiler to configure runtime behavior automatically.
+ *
+ * @category Attributes
+ *
+ * @since    1.0.0
+ */
+namespace Academorix\Routing\Attributes;
+
+use Attribute;
+use Spatie\RouteAttributes\Attributes\WhereAlpha as SpatieWhereAlpha;
+
+/**
+ * Constrain a route parameter to alphabetic characters.
+ *
+ * Extends Spatie's WhereAlpha attribute to constrain parameters
+ * to only alphabetic characters (a-z, A-Z).
+ *
+ * ## Purpose:
+ * - Validate parameters contain only letters
+ * - Convenient shorthand for [a-zA-Z]+ pattern
+ * - Ensure clean, alphabetic-only parameters
+ *
+ * ## Usage:
+ * ```php
+ * use Academorix\Routing\Attributes\WhereAlpha;
+ * use Academorix\Routing\Attributes\Get;
+ *
+ * class CategoryController
+ * {
+ *     #[Get('/categories/{slug}')]
+ *     #[WhereAlpha('slug')]  // Only letters: 'technology', 'sports'
+ *     public function show(string $slug) { }
+ * }
+ * ```
+ *
+ * ## Pattern:
+ * Applies the regex pattern: `[a-zA-Z]+`
+ *
+ * @since 1.0.0
+ */
+#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
+class WhereAlpha extends SpatieWhereAlpha {}

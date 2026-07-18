@@ -1,0 +1,24 @@
+{
+  "id": "academorix://modules/branding/relations",
+  "$version": 1,
+  "title": "branding — model relationships",
+  "description": "Branding is a single-entity module; the only relation is Tenant -> Branding (1:1 or 1:N depending on future multi-profile design; single row per Tenant at v0.3).",
+  "internal": [],
+  "outbound": [
+    {
+      "from": "Branding",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onUpdate": "cascade",
+      "onDelete": "cascade",
+      "description": "Applied via the BelongsToTenant trait. Unique(tenant_id) index at v0.3 (one profile per tenant); may relax if per-audience branding lands."
+    }
+  ],
+  "inbound_expected": [
+    {
+      "from": "storage::File",
+      "via": "brandable_type + brandable_id (planned: logo variants stored via storage)"
+    }
+  ]
+}

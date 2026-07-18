@@ -10,7 +10,7 @@
  * active organization/branch are injected from scope at submit time.
  */
 
-import { PlusIcon, TrashIcon } from "@academorix/ui/icons/outline";
+import { PlusIcon, TrashIcon } from "@stackra/ui/icons/heroicon/outline";
 import {
   Button,
   Card,
@@ -20,7 +20,7 @@ import {
   NumberField,
   TextArea,
   TextField,
-} from "@academorix/ui/react";
+} from "@stackra/ui/react";
 import { useState } from "react";
 
 import type { ActiveScope } from "@/lib/scope";

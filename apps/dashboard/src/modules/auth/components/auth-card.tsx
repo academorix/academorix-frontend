@@ -9,8 +9,8 @@
  * description consistently — and so we can tweak the whole set in one place.
  */
 
-import { AcademicCapIcon } from "@academorix/ui/icons/outline";
-import { Card } from "@academorix/ui/react";
+import { AcademicCapIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Card } from "@stackra/ui/react";
 
 import type { ReactNode } from "react";
 

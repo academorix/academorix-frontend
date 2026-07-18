@@ -9,7 +9,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §13.5 "Attendance" (offline capture)
  */
 
-import { ArrowPathIcon } from "@academorix/ui/icons/outline";
+import { ArrowPathIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

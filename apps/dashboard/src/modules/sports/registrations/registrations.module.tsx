@@ -10,7 +10,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §12.4 "Enrollment & Waitlist"
  */
 
-import { ClipboardDocumentListIcon } from "@academorix/ui/icons/outline";
+import { ClipboardDocumentListIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

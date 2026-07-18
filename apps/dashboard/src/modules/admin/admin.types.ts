@@ -15,7 +15,7 @@
  * hub free to evolve without cascading through the shared type layer.
  */
 
-import type { IconType } from "@academorix/ui/icons";
+import type { IconType } from "@stackra/ui/icons";
 
 /**
  * The stable, kebab-case identifier for an admin surface. Used as a `Map` key

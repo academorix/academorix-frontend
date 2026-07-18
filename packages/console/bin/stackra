@@ -1,0 +1,132 @@
+#!/usr/bin/env node
+
+/**
+ * @file stackra
+ * @module @stackra/console/bin
+ * @description Binary entry point for the Stackra CLI.
+ *   Discovers the app module from CWD, then delegates to ConsoleKernel.
+ */
+
+import { readFileSync } from 'fs';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+process.title = 'stackra';
+
+// ─── Version (fast path — no bootstrap needed) ─────────────────────────────
+if (process.argv.includes('--version') || process.argv.includes('-V')) {
+  try {
+    const pkg = JSON.parse(readFileSync(resolve(__dirname, '..', 'package.json'), 'utf-8'));
+    process.stdout.write(`${pkg.name} v${pkg.version}\n`);
+  } catch {
+    process.stdout.write('stackra v0.1.0\n');
+  }
+  process.exit(0);
+}
+
+// ─── Signal Handling ────────────────────────────────────────────────────────
+let isShuttingDown = false;
+process.on('SIGINT', () => {
+  if (isShuttingDown) return;
+  isShuttingDown = true;
+  process.stderr.write('\n\n  Command cancelled.\n\n');
+  process.exit(130);
+});
+
+process.on('SIGTERM', () => {
+  if (isShuttingDown) return;
+  isShuttingDown = true;
+  process.exit(143);
+});
+
+process.on('uncaughtException', (error) => {
+  const verbose = process.argv.includes('--verbose') || process.argv.includes('-v');
+  process.stderr.write(`\n  Fatal: ${error.message}\n`);
+  if (verbose && error.stack) process.stderr.write(`\n  ${error.stack}\n`);
+  process.stderr.write('\n');
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason) => {
+  const verbose = process.argv.includes('--verbose') || process.argv.includes('-v');
+  const message = reason instanceof Error ? reason.message : String(reason);
+  process.stderr.write(`\n  Unhandled rejection: ${message}\n`);
+  if (verbose && reason instanceof Error && reason.stack)
+    process.stderr.write(`\n  ${reason.stack}\n`);
+  process.stderr.write('\n');
+  process.exit(1);
+});
+
+// ─── Bootstrap ──────────────────────────────────────────────────────────────
+async function bootstrap() {
+  const cwd = process.cwd();
+
+  // Discover the app module. `src/` locations are typechecked/authored,
+  // `dist/` locations are compiled output. Prefer CLI-specific modules
+  // over generic app modules so an app can ship a Node-only CLI wiring
+  // without pulling `@stackra/console` into its browser bundle. Node
+  // ESM does NOT auto-resolve extensions, so every candidate is tried
+  // with an explicit `.ts` first (Node 24 strips types natively), then
+  // `.js` / `.mjs` / `.cjs` for compiled builds.
+  const stems = [
+    { stem: 'src/cli.module', exports: ['CliModule', 'default'] },
+    { stem: 'src/app.module', exports: ['AppModule', 'default'] },
+    { stem: 'dist/cli.module', exports: ['CliModule', 'default'] },
+    { stem: 'dist/app.module', exports: ['AppModule', 'default'] },
+  ];
+
+  const extensions = ['.ts', '.js', '.mjs', '.cjs'];
+
+  const moduleLocations = stems.flatMap((s) =>
+    extensions.map((ext) => ({ path: `${cwd}/${s.stem}${ext}`, exports: s.exports }))
+  );
+
+  let AppModule;
+  let discoveredPath;
+  for (const loc of moduleLocations) {
+    try {
+      const mod = await import(loc.path);
+      for (const exp of loc.exports) {
+        if (mod[exp]) {
+          AppModule = mod[exp];
+          discoveredPath = loc.path;
+          break;
+        }
+      }
+      if (AppModule) break;
+    } catch {
+      /* try next candidate */
+    }
+  }
+
+  if (process.argv.includes('--verbose') || process.argv.includes('-v')) {
+    if (discoveredPath) process.stderr.write(`  Discovered: ${discoveredPath}\n`);
+  }
+
+  if (!AppModule) {
+    process.stderr.write(
+      '\n  Error: Could not find a CLI module.\n' +
+        '  Expected one of:\n' +
+        '    • src/cli.module.ts → export class CliModule {}\n' +
+        '    • src/app.module.ts → export class AppModule {}\n\n'
+    );
+    process.exit(1);
+  }
+
+  // Delegate to ConsoleKernel — exported from the package's main
+  // entry (`dist/index.js`), NOT a `dist/kernel/` subpath. Tsup emits
+  // a single flat `dist/` per subpath entry; the kernel lives inside
+  // `dist/index.js` because `src/kernel/*` is a directory ABOVE the
+  // build (`src/index.ts` re-exports every kernel symbol).
+  const { ConsoleKernel } = await import('../dist/index.js');
+  const verbose = process.argv.includes('--verbose') || process.argv.includes('-v');
+
+  await ConsoleKernel.run(AppModule, {
+    logLevels: verbose ? ['log', 'error', 'warn', 'debug', 'verbose'] : ['error'],
+  });
+}
+
+bootstrap();

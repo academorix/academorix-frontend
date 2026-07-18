@@ -1,0 +1,102 @@
+{
+  "id": "academorix://modules/geography/settings",
+  "$version": 1,
+  "title": "geography \u2014 settings",
+  "description": "Tenant-facing geography preferences. Two groups: tenant defaults + per-user preferences. These are PREFERENCES only \u2014 reference-catalog rows themselves are global.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "geography",
+      "class": "Academorix\\Geography\\Settings\\GeographySettings",
+      "label": "Region defaults",
+      "description": "Tenant-wide defaults for country, currency, timezone, and language.",
+      "icon": "globe-alt",
+      "scope": "tenant",
+      "public": true,
+      "sortOrder": 12,
+      "permission": "tenant_locales.viewAny",
+      "sections": [
+        {
+          "label": "Defaults",
+          "icon": "map-pin",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "default_country_code",
+              "controlType": "select",
+              "label": "Default country",
+              "helpText": "Used as pre-selected value on signup + form dropdowns.",
+              "optionsSource": "geography.countries",
+              "sortOrder": 1
+            },
+            {
+              "name": "default_currency_code",
+              "controlType": "select",
+              "label": "Default currency",
+              "helpText": "Used for pricing display when the tenant doesn't specify a currency per row.",
+              "optionsSource": "geography.currencies",
+              "sortOrder": 2
+            },
+            {
+              "name": "default_timezone",
+              "controlType": "select",
+              "label": "Default timezone",
+              "helpText": "IANA timezone name. Used for date rendering.",
+              "optionsSource": "geography.timezones",
+              "sortOrder": 3
+            },
+            {
+              "name": "default_geography_language_code",
+              "controlType": "select",
+              "label": "Default reference language",
+              "helpText": "Distinct from the tenant's active locale (see Languages settings). Used for content-authoring hints.",
+              "optionsSource": "geography.languages",
+              "sortOrder": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "geography_user",
+      "class": "Academorix\\Geography\\Settings\\GeographyUserSettings",
+      "label": "My region",
+      "description": "Per-user region preferences.",
+      "icon": "user-circle",
+      "scope": "user",
+      "public": true,
+      "sortOrder": 6,
+      "sections": [
+        {
+          "label": "Region",
+          "icon": "map",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "preferred_country_code",
+              "controlType": "select",
+              "label": "Country",
+              "optionsSource": "geography.countries",
+              "sortOrder": 1
+            },
+            {
+              "name": "preferred_currency_code",
+              "controlType": "select",
+              "label": "Currency",
+              "optionsSource": "geography.currencies",
+              "sortOrder": 2
+            },
+            {
+              "name": "preferred_timezone",
+              "controlType": "select",
+              "label": "Timezone",
+              "optionsSource": "geography.timezones",
+              "sortOrder": 3
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

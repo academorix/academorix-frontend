@@ -1,0 +1,49 @@
+{
+  "name": "@academorix/query",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "React Query primitives for the Academorix workspace: createQueryClient() factory + defineResource<T>() that generates typed useList/useOne/useCreate/useUpdate/useDelete hooks bound to @academorix/http, plus a Laravel query-builder serializer and a Refine DataProvider adapter that both apps can consume.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client/index.ts",
+    "./resource": "./src/resource/index.ts",
+    "./query-keys": "./src/query-keys/index.ts",
+    "./laravel": "./src/laravel/index.ts",
+    "./refine": "./src/refine/index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf .turbo"
+  },
+  "dependencies": {
+    "@academorix/core": "workspace:*",
+    "@academorix/http": "workspace:*"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "catalog:",
+    "react": "catalog:"
+  },
+  "devDependencies": {
+    "@academorix/eslint-config": "workspace:*",
+    "@academorix/config-tsconfig": "workspace:*",
+    "@tanstack/react-query": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/react": "catalog:",
+    "eslint": "catalog:",
+    "jsdom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

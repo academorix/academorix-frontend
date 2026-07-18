@@ -1,0 +1,52 @@
+{
+  "id": "academorix://modules/geography/caches",
+  "$version": 1,
+  "title": "geography \u2014 cache keys + tags",
+  "driver": "redis",
+  "ownedTags": [
+    "geography.ref",
+    "geography.countries",
+    "geography.states",
+    "geography.cities",
+    "geography.currencies",
+    "geography.languages",
+    "geography.timezones",
+    "geography.geolocate"
+  ],
+  "keys": [
+    {
+      "pattern": "geography.ref:{verb}:{path}:{sha1(sortedQuery)}:{locale}",
+      "description": "Reference-catalog response cache. Emitted by geography.cache middleware for any GET on /api/v1/geography/*.",
+      "ttlSeconds": 3600,
+      "tags": ["geography.ref", "geography.{entity}"],
+      "invalidatedBy": [
+        "Any Country/State/City/... Created / Updated / Deleted event via listeners"
+      ]
+    },
+    {
+      "pattern": "geography.localized_name:{iso2}:{locale}",
+      "description": "Cached resolveLocalizedName() output for hot country codes. Bypasses repeated Lang::has() + trans() calls.",
+      "ttlSeconds": 86400,
+      "tags": ["geography.countries"],
+      "invalidatedBy": ["CountryUpdated (when name changed)"]
+    },
+    {
+      "pattern": "geography.geolocate:{ip}:{locale}",
+      "description": "Vendor's own cache + our DTO wrapper. TTL from config('world.geolocate.cache_ttl'), typically 3600s.",
+      "ttlSeconds": 3600,
+      "tags": ["geography.geolocate"]
+    },
+    {
+      "pattern": "geography.maxmind.metadata",
+      "description": "Cached DB path + version + last-refreshed-at metadata. Read by MaxMindFreshProbe.",
+      "ttlSeconds": 300,
+      "tags": ["geography.geolocate"]
+    },
+    {
+      "pattern": "geography.warm.top_n:{locale}",
+      "description": "Sorted set of top-N (path, query) tuples per locale for the warm-cache job.",
+      "ttlSeconds": 86400,
+      "tags": ["geography.ref"]
+    }
+  ]
+}

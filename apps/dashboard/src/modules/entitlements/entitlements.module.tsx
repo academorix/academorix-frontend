@@ -19,7 +19,7 @@
  * @see BACKEND_HANDOFF.md §5.5 (`GET /api/entitlements/usage`)
  */
 
-import { ChartPieIcon } from "@academorix/ui/icons/outline";
+import { ChartPieIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

@@ -7,7 +7,7 @@
  * loaded. Sensitive data, gated by the `medical` permission.
  */
 
-import { Spinner } from "@academorix/ui/react";
+import { Spinner } from "@stackra/ui/react";
 import { useForm } from "@refinedev/core";
 
 import type { MedicalRecord } from "@/types";

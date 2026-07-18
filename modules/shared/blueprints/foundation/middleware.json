@@ -1,0 +1,96 @@
+{
+  "id": "academorix://modules/foundation/middleware",
+  "$version": 1,
+  "title": "foundation \u2014 HTTP middleware",
+  "description": "Four base middleware every downstream module composes on top of. Registered by `FoundationServiceProvider::boot()` via `Router::aliasMiddleware()` + assembled into the global `api` middleware group. API + payload version resolution (previously `api.version` here) has moved to `modules/versioning/` \u2014 that module owns the ApiVersion entity + the resolver chain + the RFC 8594 Sunset header emitter. The priority order at the bottom is the canonical stack including versioning's slot.",
+  "middleware": [
+    {
+      "alias": "request.id",
+      "class": "Academorix\\Foundation\\Middleware\\RequestId",
+      "priority": 5,
+      "description": "Reads inbound `X-Request-ID` header or generates a fresh UUIDv7 if absent. Binds the value into the request-scoped container, the log context (`Log::withContext(['request_id' => $id])`), and emits it back on the response header. Cornerstone of distributed tracing \u2014 every downstream service reads this header, every log line carries it, every event dispatched during the request includes it as metadata.",
+      "sideEffects": [
+        "Sets Log::withContext(['request_id' => $id])",
+        "Attaches to Sentry scope as `request_id` tag",
+        "Emits `X-Request-ID` on the response"
+      ],
+      "runsFirst": true
+    },
+    {
+      "alias": "response.envelope",
+      "class": "Academorix\\Foundation\\Middleware\\ResponseEnvelope",
+      "priority": 200,
+      "description": "Wraps controller responses into the canonical `{ data, meta, links }` shape (or `{ message, error, errors }` for error responses). Idempotent \u2014 if the response is already enveloped, passes through unchanged. Handles: successful collection responses (adds `meta.pagination` from LengthAwarePaginator), single-resource responses (bare data), errors (wraps ApiException into the error envelope), and streamed responses (skips envelope entirely).",
+      "sideEffects": [
+        "Wraps response.body into ResponseEnvelope::wrap($body)",
+        "Emits `X-Correlation-ID` = request_id for downstream correlation"
+      ]
+    },
+    {
+      "alias": "throttle.base",
+      "class": "Illuminate\\Routing\\Middleware\\ThrottleRequests",
+      "priority": 40,
+      "description": "Global rate limit applied on top of every route. Framework's ThrottleRequests with a foundation-configured RateLimiter binding. Base limit: 60 requests / minute per authenticated user OR per IP (unauthenticated). Every module's per-feature limiter composes ADDITIVELY on top \u2014 a 429 from throttle.invitations does not consume the base counter.",
+      "sideEffects": [
+        "Emits X-RateLimit-Limit + X-RateLimit-Remaining on every response",
+        "Emits Retry-After on 429 responses"
+      ],
+      "config": {
+        "authenticated_per_minute": 60,
+        "unauthenticated_per_minute": 30,
+        "cluster_key_prefix": "foundation:throttle:base"
+      }
+    },
+    {
+      "alias": "cors.strict",
+      "class": "Academorix\\Foundation\\Middleware\\CorsStrict",
+      "priority": 10,
+      "description": "CORS enforcement with a per-Application origin allow-list. Reads `application.cors_origins` from the resolved Application (via tenants's ResolveTenant). Refuses requests from origins not on the allow-list with 403. Allow-list is per-Application because the EU deployment has different customer origins than the US deployment.",
+      "sideEffects": [
+        "Emits Access-Control-Allow-Origin (echoing the request Origin when allow-listed)",
+        "Emits Access-Control-Allow-Credentials: true (Sanctum cookie sessions require)",
+        "Emits Access-Control-Max-Age: 7200 for preflight caching"
+      ]
+    },
+    {
+      "alias": "throttle:foundation-health",
+      "class": "Illuminate\\Routing\\Middleware\\ThrottleRequests",
+      "priority": 25,
+      "description": "Specialised throttle for the health surface. 300 req/min per IP for /api/ping + /up; 60 req/min for /api/health.",
+      "config": {
+        "ping": { "limit": 300, "window_seconds": 60, "key": "ip" },
+        "health": { "limit": 60, "window_seconds": 60, "key": "ip" },
+        "up": { "limit": 300, "window_seconds": 60, "key": "ip" }
+      }
+    }
+  ],
+  "priorityOrder": [
+    "request.id",
+    "cors.strict",
+    "throttle:foundation-health",
+    "versioning.resolve",
+    "throttle.base",
+    "platform.domain",
+    "resolve.tenant",
+    "auth:sanctum",
+    "tenant.user",
+    "platform.user",
+    "throttle.<feature>",
+    "can:*",
+    "response.envelope"
+  ],
+  "delegated": {
+    "api.version": {
+      "movedTo": "modules/versioning",
+      "aliasNow": "versioning.resolve",
+      "reason": "API + payload + webhook payload versioning are all instances of the same lifecycle concern. Versioning module owns the ApiVersion entity + resolver chain (URL + header + query + webhook + GraphQL) + deprecation workflow + payload transformer registry.",
+      "since": "0.1.0"
+    }
+  },
+  "notes": [
+    "response.envelope has priority 200 to guarantee it runs LAST \u2014 any earlier response wrapper would double-wrap.",
+    "request.id has priority 5 to guarantee it runs FIRST \u2014 every subsequent middleware needs the request_id in the log context.",
+    "throttle.base composes ADDITIVELY with per-feature limiters. A 429 from a feature limiter does not consume the base counter.",
+    "versioning.resolve slots in at priority 30 (was foundation's api.version priority) \u2014 declared by modules/versioning/middleware.json but placed in this canonical order."
+  ]
+}

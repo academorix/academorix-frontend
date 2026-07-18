@@ -9,7 +9,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §13.7 "Formations & Tactics"
  */
 
-import { Squares2X2Icon } from "@academorix/ui/icons/outline";
+import { Squares2X2Icon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

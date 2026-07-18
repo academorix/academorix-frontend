@@ -5,7 +5,7 @@
  * @description
  * Dropdown that lets a visitor switch between English and Arabic
  * without leaving the current path. Uses the HeroUI `Button`
- * variant="ghost" from `@academorix/ui/react` as the trigger — a
+ * variant="ghost" from `@stackra/ui/react` as the trigger — a
  * prior bugfix confirmed that raw `<button>` elements don't play
  * well with HeroUI's popover anchoring, so we always go through the
  * shared Button.

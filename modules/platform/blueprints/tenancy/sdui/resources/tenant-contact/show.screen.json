@@ -1,0 +1,121 @@
+{
+  "id": "tenants.resources.tenant-contact.show",
+  "title": "Contact detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/contacts/{id}",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "tenancy", "entity": "tenant-contact", "action": "show" },
+  "requiresPermission": "tenants.manage_contacts",
+  "params": [{ "name": "id", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "contact",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/tenant/contacts/' + params.id",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": { "leadingIcon": "arrow-left", "children": "Back to contacts" },
+          "actions": { "onPress": { "kind": "navigate", "to": "/tenant/contacts" } }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$ref": "contact.name" } }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-center gap-2 mt-1" },
+                  "children": [
+                    {
+                      "kind": "Chip",
+                      "props": { "size": "sm" },
+                      "bindings": { "children": { "$ref": "contact.kind" } }
+                    },
+                    {
+                      "kind": "Chip",
+                      "props": { "size": "xs" },
+                      "bindings": {
+                        "variant": { "$expr": "contact.verified_at ? 'success' : 'warning'" },
+                        "children": {
+                          "$expr": "contact.verified_at ? 'verified' : 'pending verification'"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "outline",
+                "size": "sm",
+                "leadingIcon": "pencil",
+                "children": "Edit"
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/contacts/' + params.id + '/edit'"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "DescriptionList",
+              "children": [
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Email" },
+                  "bindings": { "value": { "$ref": "contact.email" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Phone" },
+                  "bindings": { "value": { "$expr": "contact.phone || 'Not set'" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Title" },
+                  "bindings": { "value": { "$expr": "contact.title || 'Not set'" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Verified" },
+                  "bindings": {
+                    "value": {
+                      "$expr": "contact.verified_at ? formatDate(contact.verified_at) : 'Not verified'"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

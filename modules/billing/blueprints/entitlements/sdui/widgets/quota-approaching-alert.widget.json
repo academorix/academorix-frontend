@@ -1,0 +1,78 @@
+{
+  "id": "entitlements.quota-approaching-alert",
+  "title": "Quota approaching alert",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Dismissible banner shown on the tenant dashboard when any entitlement crossed the warn threshold. Deep-links to the offending entitlement's detail or the upgrade page.",
+  "props": {
+    "dismissKey": {
+      "type": "string",
+      "default": "quota-approaching",
+      "description": "localStorage key for per-user dismissal (24h)."
+    }
+  },
+  "dataSources": [
+    {
+      "name": "approaching",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements?filter[is_approaching_cap]=true",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "banner",
+      "kind": "Alert",
+      "props": { "variant": "warning", "dismissible": true, "leadingIcon": "chart-bar-square" },
+      "bindings": {
+        "hidden": {
+          "$expr": "(approaching?.length ?? 0) === 0 || localStorage.getItem(props.dismissKey) === 'dismissed'"
+        }
+      },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-2" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "className": "font-medium" },
+              "bindings": {
+                "children": {
+                  "$expr": "approaching.length === 1 ? ('Approaching cap: ' + approaching[0].key) : (approaching.length + ' entitlements approaching cap')"
+                }
+              }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm" },
+              "bindings": {
+                "hidden": { "$expr": "approaching.length !== 1" },
+                "children": {
+                  "$expr": "approaching[0].value_used.toLocaleString() + ' / ' + approaching[0].value_cap.toLocaleString() + ' used (' + Math.round((approaching[0].value_used / approaching[0].value_cap) * 100) + '%)'"
+                }
+              }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "size": "sm", "children": "View quotas" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/entitlements" } }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "outline", "size": "sm", "children": "Upgrade plan" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/subscription" } }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

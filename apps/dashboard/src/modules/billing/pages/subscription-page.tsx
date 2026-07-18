@@ -25,8 +25,8 @@ import {
   ArrowTopRightOnSquareIcon,
   ExclamationCircleIcon,
   ReceiptPercentIcon,
-} from "@academorix/ui/icons/outline";
-import { Button, Card, Chip, Separator, Spinner } from "@academorix/ui/react";
+} from "@stackra/ui/icons/heroicon/outline";
+import { Button, Card, Chip, Separator, Spinner } from "@stackra/ui/react";
 import { useCallback } from "react";
 
 import type { SubscriptionStatus } from "@/types";
@@ -36,11 +36,7 @@ import { ResourceAccessGuard } from "@/components/access";
 import { QuotaMeter } from "@/components/billing";
 import { Breadcrumbs } from "@/components/refine";
 import { siteConfig } from "@/config/site.config";
-import {
-  subscriptionStatusLabel,
-  useLiveSubscription,
-  useQuotaSummary,
-} from "@/lib/billing";
+import { subscriptionStatusLabel, useLiveSubscription, useQuotaSummary } from "@/lib/billing";
 import { formatDate } from "@/lib/format";
 import { useOpenBillingPortal } from "@/modules/billing/hooks/use-billing";
 import { PLAN_KEY_LABELS } from "@/types";
@@ -119,12 +115,7 @@ function ChooseAPlanEmpty({ onGoToPricing }: { onGoToPricing: () => void }): Rea
  * `/settings/billing/subscription`.
  */
 export default function BillingSubscriptionPage(): ReactNode {
-  const {
-    subscription,
-    isLoading,
-    error,
-    refetch,
-  } = useLiveSubscription();
+  const { subscription, isLoading, error, refetch } = useLiveSubscription();
   const quotas = useQuotaSummary();
   const portal = useOpenBillingPortal();
 
@@ -190,11 +181,7 @@ export default function BillingSubscriptionPage(): ReactNode {
                     </Card.Title>
                     <Card.Description>Platform subscription</Card.Description>
                   </div>
-                  <Chip
-                    color={STATUS_COLOR[subscription.status]}
-                    size="sm"
-                    variant="soft"
-                  >
+                  <Chip color={STATUS_COLOR[subscription.status]} size="sm" variant="soft">
                     {subscriptionStatusLabel(subscription.status)}
                   </Chip>
                 </div>
@@ -227,10 +214,7 @@ export default function BillingSubscriptionPage(): ReactNode {
               </Card.Content>
               <Separator />
               <div className="flex flex-wrap gap-2 px-6 py-4">
-                <Button
-                  isDisabled={portal.isPending}
-                  onPress={handleOpenPortal}
-                >
+                <Button isDisabled={portal.isPending} onPress={handleOpenPortal}>
                   {portal.isPending ? (
                     "Opening…"
                   ) : (

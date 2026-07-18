@@ -1,0 +1,93 @@
+{
+  "id": "academorix://modules/storage/health",
+  "$version": 1,
+  "title": "storage \u2014 health probes",
+  "description": "Probes registered with the foundation HealthAggregator. Startup probes gate app boot; readiness probes gate traffic acceptance (K8s readiness endpoint). Critical probes fail app boot when they fail; non-critical probes surface as warnings.",
+  "probes": [
+    {
+      "name": "storage-registry-hydrated",
+      "class": "Academorix\\Storage\\Health\\Probes\\RegistryHydratedProbe",
+      "category": "startup",
+      "critical": true,
+      "timeoutMs": 200,
+      "description": "FileKindRegistry compiled from #[FileKind] discovery. Refuses boot when the registry is empty in production (misconfiguration \u2014 no attach-able models declared)."
+    },
+    {
+      "name": "storage-default-disk-reachable",
+      "class": "Academorix\\Storage\\Health\\Probes\\DefaultDiskReachableProbe",
+      "category": "startup",
+      "critical": true,
+      "timeoutMs": 5000,
+      "description": "config('storage.default_disk') endpoint is reachable + writable. For S3: HEAD bucket + PutObject with a 1-byte probe file that's immediately deleted. Refuses boot on failure \u2014 storage-less operation is a broken state."
+    },
+    {
+      "name": "storage-antivirus-reachable",
+      "class": "Academorix\\Storage\\Health\\Probes\\AntivirusReachableProbe",
+      "category": "readiness",
+      "critical": true,
+      "timeoutMs": 3000,
+      "description": "Configured AV driver responds to a health-ping. For ClamAV: PING command over the socket; for hosted: HEAD on the AV service healthcheck endpoint. Critical because a broken AV pipeline is a compliance breach (files that skip scan don't reach `clean` state)."
+    },
+    {
+      "name": "storage-cdn-reachable",
+      "class": "Academorix\\Storage\\Health\\Probes\\CdnReachableProbe",
+      "category": "readiness",
+      "critical": false,
+      "timeoutMs": 2000,
+      "description": "When cdn_delivery is enabled: probe the CDN origin health endpoint. Non-critical because redemptions can fall back to direct S3 URLs during CDN outages."
+    },
+    {
+      "name": "storage-variant-queue-depth",
+      "class": "Academorix\\Storage\\Health\\Probes\\VariantQueueDepthProbe",
+      "category": "readiness",
+      "critical": false,
+      "timeoutMs": 200,
+      "description": "GenerateFileVariantsJob queue depth. Warns at > 500 pending, fails at > 5000 (backlog indicates image processor degradation).",
+      "thresholds": { "warn_count": 500, "fail_count": 5000 }
+    },
+    {
+      "name": "storage-antivirus-queue-depth",
+      "class": "Academorix\\Storage\\Health\\Probes\\AntivirusQueueDepthProbe",
+      "category": "readiness",
+      "critical": false,
+      "timeoutMs": 200,
+      "description": "ScanFileForVirusesJob queue depth. Warns at > 200 pending, fails at > 2000. Backlog means new uploads take longer to become available.",
+      "thresholds": { "warn_count": 200, "fail_count": 2000 }
+    },
+    {
+      "name": "storage-quota-drift",
+      "class": "Academorix\\Storage\\Health\\Probes\\QuotaDriftProbe",
+      "category": "readiness",
+      "critical": false,
+      "timeoutMs": 5000,
+      "description": "Aggregate check: for a sample of 100 tenants, compare SUM(File.size_bytes) against the recorded storage.bytes.consumed entitlement usage. Alerts if any sampled tenant drifts by > 1%. Signals a race in the reconciler.",
+      "thresholds": { "warn_drift_ratio": 0.01, "fail_drift_ratio": 0.1 }
+    },
+    {
+      "name": "storage-quarantine-review-lag",
+      "class": "Academorix\\Storage\\Health\\Probes\\QuarantineReviewLagProbe",
+      "category": "readiness",
+      "critical": false,
+      "timeoutMs": 200,
+      "description": "Warns when > 10 files have virus_scan_state='infected' + no admin review in > 24h. Security signal.",
+      "environments": ["production", "staging"]
+    },
+    {
+      "name": "storage-chunked-upload-stuck",
+      "class": "Academorix\\Storage\\Health\\Probes\\ChunkedUploadStuckProbe",
+      "category": "readiness",
+      "critical": false,
+      "timeoutMs": 200,
+      "description": "Alerts when ChunkedUploads in state=finalizing have lingered > 5 minutes (typical finalize is P95 < 30s). Backlog signal for the FinalizeChunkedUploadController.",
+      "thresholds": { "warn_count": 5, "fail_count": 50, "max_finalize_seconds": 300 }
+    },
+    {
+      "name": "storage-signature-key-freshness",
+      "class": "Academorix\\Storage\\Health\\Probes\\SignatureKeyFreshnessProbe",
+      "category": "readiness",
+      "critical": true,
+      "timeoutMs": 100,
+      "description": "Alerts when the current signed-URL signing key was rotated > config('storage.signing_key_rotation_days', 90) ago. Compliance requirement (SOC 2 CC6.6 key rotation cadence)."
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "id": "academorix://modules/notifications/schedule",
+  "$version": 1,
+  "title": "notifications core \u2014 scheduled tasks",
+  "description": "Cron-driven core work: digest windows, retention expunge, delivery reconciliation, registry cache warm.",
+  "entries": [
+    {
+      "name": "digest-daily-windows",
+      "command": "notifications:process-digests --window=daily",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every hour on the hour, check for users whose local 08:00 window has just passed + trigger daily digest processing for them. Timezone-aware per user's timezone."
+    },
+    {
+      "name": "digest-weekly-windows",
+      "command": "notifications:process-digests --window=weekly",
+      "cron": "0 * * * 1",
+      "timezone": "UTC",
+      "purpose": "Every Monday, every hour, check for users whose local Monday 09:00 has just passed + trigger weekly digest processing."
+    },
+    {
+      "name": "expunge-archived-notifications",
+      "command": "notifications:expunge-archived --batch=1000",
+      "cron": "15 2 * * *",
+      "timezone": "UTC",
+      "purpose": "Hard-delete Notification rows past retention window. Batched by tenant to spread load. 02:15 UTC to avoid US + EU business hours."
+    },
+    {
+      "name": "reconcile-deliveries",
+      "command": "notifications:reconcile-deliveries --lookback=1h",
+      "cron": "*/15 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 15 minutes, re-poll each channel module's reconciliation endpoint to catch missed provider webhooks. Cost: one API call per active provider per run \u2014 negligible."
+    },
+    {
+      "name": "warm-registry-caches",
+      "command": "notifications:warm-registries",
+      "cron": "*/30 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 30 minutes, refresh the category + template registry caches proactively. Belt-and-braces on top of on-demand loads \u2014 keeps the caches consistent across worker restarts."
+    }
+  ]
+}

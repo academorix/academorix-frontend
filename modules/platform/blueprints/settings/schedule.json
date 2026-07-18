@@ -1,0 +1,14 @@
+{
+  "id": "academorix://modules/settings/schedule",
+  "$version": 1,
+  "title": "settings \u2014 scheduled tasks",
+  "entries": [
+    {
+      "name": "settings-schema-drift-check",
+      "command": "settings:describe --check-drift",
+      "cron": "0 4 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 04 UTC: verify compiled registry matches persisted schema snapshot. Alerts ops when a deployed module ships a field rename without a MigrateSettingsSchemaJob."
+    }
+  ]
+}

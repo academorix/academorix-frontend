@@ -1,185 +1,197 @@
 packages:
   - "apps/*"
+  - "old/*"
+  - "old/config/*"
+  - "contracts-app"
   - "packages/*"
+  - "packages/old/*"
+  - "packages/old/config/*"
 
-# Native deps that ship prebuilt binaries still occasionally need their
-# install scripts approved under pnpm v10's secure-by-default policy.
-onlyBuiltDependencies:
-  - esbuild
-  - "@tailwindcss/oxide"
-  - "@heroui-pro/react"
-  - heroui-pro
+# Force every transitive `react-stately` resolution to a single version.
+# Without this, `@heroui/react` and `@heroui-pro/react` can pull in two
+# different `react-stately` versions (3.47.0 + 3.48.0), causing subtle
+# duplicate-type errors on `QueuedToast<T>` (each version declares its
+# own nominal type) at every `<Toast>` boundary in the workspace.
+overrides:
+  react-stately: 3.48.0
+  # Force one esbuild version across the workspace. Without this,
+  # pnpm hoists two peer resolutions (0.27.7 + 0.28.1) — each
+  # producing a distinct Vite `Plugin<any>` type at build time. That
+  # trips TypeScript when a plugin factory from one copy is passed
+  # into a `IPluginEntry` typed against the other copy
+  # ("Two different types with this name exist").
+  esbuild: ^0.28.1
 
 # Single source of truth for every dependency version in the workspace.
 # Reference these from any package.json with "catalog:".
 catalog:
-  # --- React ---
-  react: ^19.0.0
-  react-dom: ^19.0.0
-  react-router: ^7.18.1
-  "@types/react": ^19.0.0
-  "@types/react-dom": ^19.0.0
-
-  # --- HeroUI + styling ---
-  "@heroui/react": 3.2.1
-  "@heroui/styles": 3.2.1
-  "@heroui-pro/react": 1.0.0-beta.6
-  "@heroicons/react": ^2.2.0
-  tailwindcss: 4.3.1
-  "@tailwindcss/vite": 4.3.1
-  tailwind-variants: ^3.2.2
-  tailwind-merge: ^3.4.0
-  motion: ^12.12.0
-  react-aria-components: ^1.18.0
-  # HeroUI Pro barrel peers (charts, AI/markdown, rich-text, carousel)
-  "@number-flow/react": ^0.6.1
-  "@tiptap/core": ^3.27.1
-  "@tiptap/react": ^3.27.1
-  "@tiptap/pm": ^3.27.1
-  "@tiptap/starter-kit": ^3.27.1
-  "@tiptap/suggestion": ^3.27.1
-  "@tiptap/extensions": ^3.27.1
-  "@tiptap/extension-link": ^3.27.1
-  "@tiptap/extension-underline": ^3.27.1
-  embla-carousel: ^8.6.0
-  embla-carousel-react: ^8.6.0
-  marked: ^18.0.5
-  react-markdown: ^10.1.0
-  react-resizable-panels: ^4.12.0
-  recharts: ^3.9.1
-  remark-breaks: ^4.0.0
-  remark-gfm: ^4.0.1
-  shiki: ^4.3.0
-  streamdown: ^2.5.0
-
-  # --- Runtime validation ---
-  zod: ^4.4.3
-
-  # --- Refine + data layer ---
-  "@refinedev/core": ^5.0.12
-  "@refinedev/react-router": ^2.0.4
-  "@tanstack/react-query": ^5.101.2
-  laravel-echo: ^2.3.7
-  pusher-js: ^8.5.0
-  openapi-fetch: ^0.17.0
-  openapi-typescript: ^7.13.0
-
-  # --- Build toolchain ---
-  vite: ^8.1.2
-  "@vitejs/plugin-react": ^6.0.3
-  typescript: ^5.6.3
-  "@types/node": ^22.12.0
-
-  # --- Tauri (desktop shell for @academorix/dashboard) ---
-  # `@tauri-apps/cli` runs `tauri dev` + `tauri build` from
-  # `apps/dashboard`; the CLI shells out to the Rust toolchain and
-  # `apps/dashboard/src-tauri/` — see `DESKTOP_PLAN.md` for the phased
-  # rollout. `@tauri-apps/api` is the renderer-side bindings the SPA
-  # uses to invoke Rust commands + subscribe to shell events (only
-  # active behind the `isDesktop` feature detection helper — the same
-  # bundle keeps working in the web build).
-  "@tauri-apps/cli": ^2.9.0
-  "@tauri-apps/api": ^2.9.0
-
-  # --- Progressive Web App (dashboard SPA) ---
-  # `vite-plugin-pwa` wires a Workbox-generated service worker into the Vite
-  # build. `workbox-window` is the client-side counterpart that our
-  # `useRegisterSW` React hook uses under the hood. `@vite-pwa/assets-generator`
-  # is an optional CLI that rasterizes `favicon.svg` into the PNG icon set
-  # referenced by the web manifest — invoked manually via
-  # `pnpm --filter @academorix/dashboard generate-pwa-assets`, never at build
-  # time, so it stays out of the CI hot path.
-  vite-plugin-pwa: ^1.3.0
-  workbox-window: ^7.4.1
-  "@vite-pwa/assets-generator": ^1.0.2
-
-  # --- Real-user monitoring ---
-  # `web-vitals` is Google's official library for Core Web Vitals (CLS, LCP,
-  # INP, FID, TTFB, FCP). The dashboard registers observers at idle time so
-  # metrics don't compete with hydration for main-thread budget; the
-  # telemetry helper fans them out to the analytics adapter registry.
-  web-vitals: ^5.3.0
-
-  # --- Vercel-native analytics + speed insights (landing-page) ---
-  # First-party Vercel packages that report to the analytics + speed
-  # insights dashboards attached to a Vercel project. Zero-config: the
-  # `<Analytics />` and `<SpeedInsights />` components no-op outside a
-  # Vercel deployment, so keeping them in the tree costs ~2KB gz.
-  "@vercel/analytics": ^1.6.1
-  "@vercel/speed-insights": ^1.2.0
-
-  # --- Overview dashboard drag-and-drop grid ---
-  # `react-grid-layout` powers the overview widget grid on the dashboard
-  # (`DASHBOARD_UX_PLAN.md` §4.2). It ships responsive breakpoint handling,
-  # layout serialisation, and keyboard-accessible drag / resize handles out
-  # of the box — the plan explicitly names it as the default choice over a
-  # bespoke `@dnd-kit/core` composition. `@types/react-grid-layout` is the
-  # DefinitelyTyped bundle for the v1.x line; v1.x is what we pin because it
-  # has the longest track record and the plan-referenced `isBounded` +
-  # `draggableCancel` props already exist in that release train.
-  react-grid-layout: ^1.5.2
-  "@types/react-grid-layout": ^1.3.6
-
-  # --- Marketing app (Next.js 16 + React 19 + Tailwind v4) ---
-  # Public marketing surface lives in `apps/landing-page` — a Next.js App
-  # Router app so the tenant SPA (`apps/dashboard`) stays CSR-only. Next.js
-  # is required for SEO-quality prerendering, MDX, and the `next/image`
-  # optimizer used for the pricing + landing artwork.
-  next: ^16.2.6
-  eslint-config-next: ^16.2.0
-  "@next/eslint-plugin-next": ^16.2.0
-  next-themes: ^0.4.6
-  "@tailwindcss/postcss": 4.3.1
+  "@babel/core": ^7.28.4
+  "@babel/preset-react": ^7.28.4
+  "@babel/preset-typescript": ^7.28.4
+  "@babel/traverse": ^7.28.4
+  "@babel/types": ^7.28.4
+  "@commitlint/cli": ^21.2.0
+  "@types/babel__core": ^7.20.5
+  "@types/babel__traverse": ^7.20.6
+  "@commitlint/config-conventional": ^21.2.0
+  "@dnd-kit/core": ^6.3.1
+  "@dnd-kit/sortable": ^10.0.0
+  "@dnd-kit/utilities": ^3.2.2
   "@eslint/compat": ^1.2.8
   "@eslint/eslintrc": ^3.3.1
-  clsx: ^2.1.1
-  intl-messageformat: ^10.7.16
-  # Reserved for Wave 5 (i18n) — locale routing + typed navigation.
-  next-intl: ^4.4.0
-
-  # --- Progressive Web App (marketing app) ---
-  # Serwist is the Workbox-based PWA toolkit maintained by Google's PWA
-  # working group. `@serwist/turbopack` is the Turbopack-native
-  # integration (Next 16 defaults to Turbopack for both `next dev` and
-  # `next build`; the older `@serwist/next` package requires webpack).
-  # `serwist` is the runtime library the service worker source imports;
-  # the two versions must match. `esbuild` is invoked by Serwist at
-  # request time to compile the service worker source — the Serwist
-  # route handler `import`s it directly, so it must be resolvable at
-  # the app level (not just as a transitive dep).
-  serwist: ^9.5.11
-  "@serwist/turbopack": ^9.5.11
-  esbuild: ^0.28.0
-
-  # --- Testing ---
-  vitest: ^4.1.9
-  "@vitest/coverage-v8": ^4.1.9
-  "@testing-library/react": ^16.3.2
-  "@testing-library/jest-dom": ^6.9.1
-  "@testing-library/user-event": ^14.6.1
-  jsdom: ^29.1.1
-
-  # --- Lint / format ---
-  eslint: ^9.25.1
   "@eslint/js": ^9.25.1
-  typescript-eslint: ^8.31.1
+  "@heroicons/react": ^2.2.0
+  "@heroui-pro/react": 1.0.0-beta.6
+  "@react-native-async-storage/async-storage": ^2.1.0
+  "@clack/prompts": ^1.5.1
+  "@heroui/react": 3.2.1
+  heroui-native-pro: ^1.0.0-beta.1
+  "@iconify/react": ^6.0.2
+  "@simplewebauthn/browser": ^10.0.0
+  boxen: ^8.0.1
+  cli-table3: ^0.6.5
+  ejs: ^6.0.1
+  picocolors: ^1.1.1
+  terminal-link: ^5.0.0
+  "@heroui/styles": 3.2.1
+  "@next/bundle-analyzer": ^16.2.10
+  "@next/eslint-plugin-next": ^16.2.0
+  "@number-flow/react": ^0.6.1
+  "@playwright/test": ^1.61.1
+  "@refinedev/core": ^5.0.12
+  "@refinedev/react-router": ^2.0.4
+  "@sentry/browser": ^9.0.0
+  "@sentry/nextjs": ^10.30.0
+  "@serwist/turbopack": ^9.5.11
+  "@size-limit/file": ^12.1.0
+  "@swc/core": ^1.10.0
+  "@tailwindcss/postcss": 4.3.1
+  "@tailwindcss/vite": 4.3.1
+  "@tanstack/query-core": ^5.101.2
+  "@tanstack/react-devtools": ^0.10.8
+  "@tanstack/react-hotkeys": ^0.10.0
+  "@tanstack/react-hotkeys-devtools": ^0.7.0
+  "@tanstack/react-query": ^5.101.2
+  "@tanstack/react-store": ^0.11.0
+  "@tanstack/store": ^0.11.0
+  "@tauri-apps/api": ^2.9.0
+  "@tauri-apps/cli": ^2.9.0
+  "@testing-library/jest-dom": ^6.9.1
+  "@testing-library/react": ^16.3.2
+  "@testing-library/user-event": ^14.6.1
+  "@tiptap/core": ^3.27.1
+  "@tiptap/extension-link": ^3.27.1
+  "@tiptap/extension-underline": ^3.27.1
+  "@tiptap/extensions": ^3.27.1
+  "@tiptap/pm": ^3.27.1
+  "@tiptap/react": ^3.27.1
+  "@tiptap/starter-kit": ^3.27.1
+  "@tiptap/suggestion": ^3.27.1
+  "@types/node": ^22.12.0
+  "@types/react": ^19.0.0
+  "@types/react-dom": ^19.0.0
+  "@types/react-grid-layout": ^1.3.6
+  "@vercel/analytics": ^1.6.1
+  "@vercel/otel": ^2.1.0
+  "@vercel/speed-insights": ^1.2.0
+  "@vite-pwa/assets-generator": ^1.0.2
+  "@vitejs/plugin-react": ^6.0.3
+  "@vitejs/plugin-react-swc": ^4.1.0
+  "@vitest/coverage-v8": ^4.1.9
+  "@vivtel/metadata": ^1.0.5
+  axios: ^1.7.9
+  clsx: ^2.1.1
+  collect.js: ^4.36.1
+  consola: ^3.4.2
+  dexie: ^4.0.11
+  dotenv: 17.4.2
+  dotenv-expand: 13.0.0
+  embla-carousel: ^8.6.0
+  embla-carousel-react: ^8.6.0
+  esbuild: ^0.28.0
+  firebase: ^11.10.0
+  eslint: ^9.25.1
+  eslint-config-next: ^16.2.0
   eslint-config-prettier: ^9.1.0
+  eslint-plugin-import: ^2.31.0
+  eslint-plugin-jsx-a11y: ^6.10.2
   eslint-plugin-react: ^7.37.5
   eslint-plugin-react-hooks: ^5.2.0
-  eslint-plugin-jsx-a11y: ^6.10.2
-  eslint-plugin-import: ^2.31.0
+  eslint-plugin-react-refresh: ^0.4.20
+  eslint-plugin-unicorn: ^56.0.1
   eslint-plugin-unused-imports: ^4.1.4
   globals: ^16.0.0
+  husky: ^9.1.7
+  intl-messageformat: ^10.7.16
+  joi: 18.2.3
+  jsdom: ^29.1.1
+  knip: ^6.23.0
+  laravel-echo: ^2.3.7
+  lint-staged: ^17.0.8
+  marked: ^18.0.5
+  motion: ^12.12.0
+  next: ^16.2.6
+  next-intl: ^4.4.0
+  next-themes: ^0.4.6
+  openapi-fetch: ^0.17.0
+  # `path-browserify` — pure-JS reimplementation of Node's `path` API.
+  # Used by `@stackra/support`'s `Path` façade so browser code (which
+  # can't `import "node:path"` without Vite stubbing it into a throwing
+  # module) keeps working. Also used by anything that consumes `Path`
+  # transitively — the whole framework layer becomes browser-safe.
+  path-browserify: ^1.0.1
+  "@types/path-browserify": ^1.0.3
+  openapi-typescript: ^7.13.0
+  pino: ^10.3.1
+  pino-pretty: ^13.1.1
+  postcss: ^8.5.6
   prettier: ^3.9.4
   prettier-plugin-tailwindcss: ^0.8.0
-
-  # --- Monorepo tooling ---
-  turbo: ^2.10.2
-  knip: ^6.23.0
-  husky: ^9.1.7
-  lint-staged: ^17.0.8
-  "@commitlint/cli": ^21.2.0
-  "@commitlint/config-conventional": ^21.2.0
-  "@playwright/test": ^1.61.1
+  pusher-js: ^8.5.0
+  react: ^19.0.0
+  react-aria-components: ^1.18.0
+  react-dom: ^19.0.0
+  react-native: ^0.76.0
+  react-grid-layout: ^1.5.2
+  react-markdown: ^10.1.0
+  react-resizable-panels: ^4.12.0
+  react-router: ^7.18.1
+  react-router-dom: ^7.0.0
+  recharts: ^3.9.1
+  reflect-metadata: ^0.2.2
+  remark-breaks: ^4.0.0
+  remark-gfm: ^4.0.1
+  rimraf: ^6.0.1
+  rxjs: ^7.8.1
+  serwist: ^9.5.11
+  shiki: ^4.3.0
+  source-map-js: ^1.2.1
   size-limit: ^12.1.0
-  "@size-limit/file": ^12.1.0
+  streamdown: ^2.5.0
+  tailwind-merge: ^3.4.0
+  tailwind-variants: ^3.2.2
+  tailwindcss: 4.3.1
+  tsup: ^8.5.0
+  tsx: ^4.20.0
+  turbo: ^2.10.2
+  typescript: ^5.6.3
+  typescript-eslint: ^8.31.1
+  unplugin-swc: ^1.5.9
+  vite: ^8.1.2
+  vite-plugin-pwa: ^1.3.0
+  vitest: ^4.1.9
+  web-vitals: ^5.3.0
+  workbox-window: ^7.4.1
+  zod: ^4.4.3
+# Native deps that ship prebuilt binaries still occasionally need their
+# install scripts approved under pnpm v10's secure-by-default policy.
+onlyBuiltDependencies:
+  - "@heroui-pro/react"
+  - "@parcel/watcher"
+  - "@sentry/cli"
+  - "@swc/core"
+  - "@tailwindcss/oxide"
+  - esbuild
+  - heroui-pro
+  - sharp
+  - unrs-resolver

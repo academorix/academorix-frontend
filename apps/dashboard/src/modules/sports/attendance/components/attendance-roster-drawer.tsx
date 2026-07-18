@@ -21,8 +21,8 @@
  * athletes at once" surface.
  */
 
-import { UserGroupIcon } from "@academorix/ui/icons/outline";
-import { Chip, Drawer, Spinner } from "@academorix/ui/react";
+import { UserGroupIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Chip, Drawer, Spinner } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 import { useMemo } from "react";
 

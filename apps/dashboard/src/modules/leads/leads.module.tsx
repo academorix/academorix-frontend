@@ -16,7 +16,7 @@
  * @see DASHBOARD_UX_PLAN.md §5.7 (leads → Kanban as primary view)
  */
 
-import { UserPlusIcon } from "@academorix/ui/icons/outline";
+import { UserPlusIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

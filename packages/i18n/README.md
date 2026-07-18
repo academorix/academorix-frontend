@@ -1,90 +1,139 @@
-# @academorix/i18n
+# @stackra/i18n
 
-Locale primitives + React runtime for the Academorix workspace: type-safe
-`LocaleProvider`, `useLocale` hook, RTL detection, Intl formatters, and a
-lightweight `MessageCatalog` contract with `{{placeholder}}` interpolation.
+Unified internationalization package for the Stackra platform — handles
+translation, locale management, direction (RTL/LTR), and type-safe key
+resolution across web, native, and backend.
 
-Depends on `@academorix/core` (for brand utilities) and React 19.
+## Subpath Exports
 
-## Public API
+| Import                   | Purpose                                    |
+| ------------------------ | ------------------------------------------ |
+| `@stackra/i18n`          | Core engine, loaders, types, utilities     |
+| `@stackra/i18n/react`    | Web module, hooks, resolvers, adapters     |
+| `@stackra/i18n/native`   | Native module, device locale, AsyncStorage |
+| `@stackra/i18n/nestjs`   | NestJS middleware, per-request resolution  |
+| `@stackra/i18n/vite`     | Vite plugin for auto-discovery + HMR       |
+| `@stackra/i18n/commands` | CLI tools (type generation)                |
 
-| Subpath                     | Exports                                                                                                             |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `@academorix/i18n/config`   | `defineI18nConfig`, `I18nConfig<T>`                                                                                 |
-| `@academorix/i18n/context`  | `createLocaleContext<T>()` → `{ LocaleProvider, useLocale, isSupportedLocale, isRtlLocale, resolveLocale, config }` |
-| `@academorix/i18n/format`   | `formatDate`, `formatDateTime`, `formatNumber`, `formatCurrency`, `formatRelativeTime`, `formatList`                |
-| `@academorix/i18n/messages` | `MessageCatalog`, `interpolate(message, params)`                                                                    |
+## Quick Start (Web)
 
-Prefer subpath imports for optimal tree-shaking.
+```typescript
+import { WebI18nModule, useI18n } from '@stackra/i18n/react';
+import { StaticLoader } from '@stackra/i18n';
 
-## Design principles
+// Initialize (app entry)
+WebI18nModule.forRoot({
+  defaultLocale: 'en',
+  supportedLocales: ['en', 'ar'],
+  loader: StaticLoader,
+  loaderOptions: { translations: { en, ar } },
+});
 
-- **Types stay app-owned.** Each app declares its concrete `LOCALES` tuple and
-  passes it through `defineI18nConfig`. Downstream primitives (Provider, hook,
-  predicates) are typed against that tuple.
-- **Runtime stays package-owned.** localStorage persistence, `<html lang>` +
-  `<html dir>` sync, provider memoization — all handled once in the factory.
-- **Formatters stay pure.** No React, no state — safe for Server Components,
-  hooks, and vanilla code alike.
+// In components
+function MyComponent() {
+  const { t, locale, setLocale, dir, isRTL } = useI18n();
+  return <div dir={dir}>{t('common.hello')}</div>;
+}
+```
 
-## Usage
+## Quick Start (React Native)
 
-### 1. Declare the app's config
+```typescript
+import { NativeI18nModule, useI18n } from '@stackra/i18n/native';
 
-```ts
-// apps/dashboard/src/config/i18n.config.ts
-import { defineI18nConfig } from "@academorix/i18n/config";
+const { needsRestart } = NativeI18nModule.forRoot({
+  defaultLocale: 'en',
+  supportedLocales: ['en', 'ar'],
+  loader: StaticLoader,
+  loaderOptions: { translations: { en, ar } },
+});
 
-export const LOCALES = ["en", "ar"] as const;
-export type Locale = (typeof LOCALES)[number];
+if (needsRestart) await Updates.reloadAsync();
+```
 
-export const i18nConfig = defineI18nConfig({
-  locales: LOCALES,
-  defaultLocale: "en",
-  rtlLocales: ["ar"],
-  labels: { en: "English", ar: "العربية" },
-  bcp47: { en: "en-US", ar: "ar-EG" },
-  storageKey: "academorix.locale",
-  timeZone: "UTC",
-  currencyByLocale: { en: "USD", ar: "USD" },
+## Quick Start (NestJS)
+
+```typescript
+import { NestI18nModule } from '@stackra/i18n/nestjs';
+
+NestI18nModule.forRoot({
+  defaultLocale: 'en',
+  supportedLocales: ['en', 'ar'],
+  loader: StaticLoader,
+  loaderOptions: { translations: { en, ar } },
+});
+// Locale auto-resolved from Accept-Language / headers / query params per request
+```
+
+## Direction (RTL/LTR)
+
+Direction is handled automatically:
+
+- **Web**: Sets `<html dir="rtl" lang="ar">` via `WebDirectionAdapter`
+- **Native**: Calls `I18nManager.forceRTL()` via `NativeDirectionAdapter`
+- **NestJS**: No-op (server-side, no DOM)
+
+```typescript
+import { useDirection } from '@stackra/i18n/react';
+
+const { dir, isRTL } = useDirection();
+```
+
+## Resolvers (Locale Detection)
+
+Web resolvers (in priority order):
+
+- `SubdomainResolver` — `ar.myapp.com`
+- `UrlParamResolver` — `?lang=ar` or `/ar/dashboard`
+- `CookieResolver` — `document.cookie`
+- `LocalStorageResolver` — user's saved preference
+- `NavigatorResolver` — browser language
+
+Native resolvers:
+
+- `AsyncStorageResolver` — saved preference
+- `DeviceLocaleResolver` — `expo-localization`
+
+NestJS resolvers:
+
+- `HeaderResolver` — `X-Language` header
+- `QueryResolver` — `?lang=ar`
+- `NestCookieResolver` — request cookies
+- `AcceptLanguageResolver` — `Accept-Language` header
+
+## Loaders
+
+| Loader                | Use Case                                      |
+| --------------------- | --------------------------------------------- |
+| `StaticLoader`        | Pre-bundled JSON (Vite plugin, direct import) |
+| `DynamicImportLoader` | Code-split per locale (Vite)                  |
+| `HttpLoader`          | Remote endpoint (CMS-managed)                 |
+
+## Vite Plugin
+
+```typescript
+import { i18nPlugin } from '@stackra/i18n/vite';
+
+export default defineConfig({
+  plugins: [i18nPlugin({ translationsDir: './src/i18n' })],
 });
 ```
 
-### 2. Instantiate the provider bundle
+Exposes `virtual:i18n/translations` with HMR support.
 
-```ts
-// apps/dashboard/src/lib/i18n/locale-context.ts
-import { createLocaleContext } from "@academorix/i18n/context";
-import { i18nConfig, type Locale } from "@/config/i18n.config";
+## Type Safety
 
-export const {
-  LocaleProvider,
-  useLocale,
-  isSupportedLocale,
-  isRtlLocale,
-  resolveLocale,
-} = createLocaleContext<Locale>(i18nConfig);
+Generate types from translation files:
+
+```typescript
+import { generateI18nTypes } from '@stackra/i18n/commands';
+
+generateI18nTypes({
+  translationsPath: './src/i18n',
+  outputPath: './src/@types/i18n.generated.d.ts',
+});
 ```
 
-### 3. Mount it once
+## License
 
-```tsx
-// apps/dashboard/src/providers.tsx
-<LocaleProvider>
-  <App />
-</LocaleProvider>
-```
-
-### 4. Consume anywhere
-
-```tsx
-import { useLocale } from "@/lib/i18n";
-import { formatDate } from "@academorix/i18n/format";
-import { i18nConfig } from "@/config/i18n.config";
-
-function DateCell({ value }: { value: string }) {
-  const { locale } = useLocale();
-
-  return <span>{formatDate(new Date(value), i18nConfig.bcp47[locale])}</span>;
-}
-```
+MIT © Stackra L.L.C

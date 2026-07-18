@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "name": "Pool 1",
+    "type": "Swimming pool",
+    "branch": "Downtown",
+    "capacity": 24,
+    "indoor": true,
+    "status": { "text": "Available", "color": "success" },
+    "isActive": true,
+    "utilisation": 0.72,
+    "createdAt": "2020-01-01T09:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Pool 2",
+    "type": "Swimming pool",
+    "branch": "Downtown",
+    "capacity": 12,
+    "indoor": true,
+    "status": { "text": "Available", "color": "success" },
+    "isActive": true,
+    "utilisation": 0.68,
+    "createdAt": "2020-01-01T09:00:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Gym hall",
+    "type": "Gymnastics",
+    "branch": "Downtown",
+    "capacity": 40,
+    "indoor": true,
+    "status": { "text": "Available", "color": "success" },
+    "isActive": true,
+    "utilisation": 0.81,
+    "createdAt": "2020-01-01T09:00:00Z"
+  },
+  {
+    "id": 4,
+    "name": "Pitch A",
+    "type": "Soccer pitch",
+    "branch": "Riverside",
+    "capacity": 40,
+    "indoor": false,
+    "status": { "text": "Available", "color": "success" },
+    "isActive": true,
+    "utilisation": 0.88,
+    "createdAt": "2020-01-01T09:00:00Z"
+  },
+  {
+    "id": 5,
+    "name": "Pitch B",
+    "type": "Soccer pitch",
+    "branch": "Riverside",
+    "capacity": 40,
+    "indoor": false,
+    "status": { "text": "Under maintenance", "color": "warning" },
+    "isActive": false,
+    "utilisation": 0,
+    "createdAt": "2020-01-01T09:00:00Z"
+  },
+  {
+    "id": 6,
+    "name": "Court 1",
+    "type": "Tennis court",
+    "branch": "Northgate",
+    "capacity": 4,
+    "indoor": false,
+    "status": { "text": "Available", "color": "success" },
+    "isActive": true,
+    "utilisation": 0.62,
+    "createdAt": "2020-01-01T09:00:00Z"
+  },
+  {
+    "id": 7,
+    "name": "Track",
+    "type": "Athletics track",
+    "branch": "Downtown",
+    "capacity": 60,
+    "indoor": false,
+    "status": { "text": "Available", "color": "success" },
+    "isActive": true,
+    "utilisation": 0.58,
+    "createdAt": "2020-01-01T09:00:00Z"
+  },
+  {
+    "id": 8,
+    "name": "Dojo",
+    "type": "Martial arts",
+    "branch": "Riverside",
+    "capacity": 30,
+    "indoor": true,
+    "status": { "text": "Available", "color": "success" },
+    "isActive": true,
+    "utilisation": 0.55,
+    "createdAt": "2020-01-01T09:00:00Z"
+  }
+]

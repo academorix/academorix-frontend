@@ -1,0 +1,280 @@
+{
+  "id": "academorix://modules/compliance/schemas/dsar",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Dsar",
+  "description": "Data-Subject-Access-Request state machine. One row per request. Coordinates cross-module collection + assembly. State transitions: received \u2192 triaging \u2192 collecting \u2192 assembling \u2192 delivered | rejected. Every transition writes a row into audit::AuditLog via HasAuditable.",
+  "type": "object",
+  "x-module": "compliance",
+  "x-eloquent": {
+    "table": "dsars",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "dsr_",
+    "incrementing": false,
+    "model": "Academorix\\Compliance\\Models\\Dsar",
+    "interface": "Academorix\\Compliance\\Contracts\\Data\\DsarInterface",
+    "implements": ["Academorix\\Compliance\\Contracts\\Data\\DsarInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "action": "DsarAction",
+      "state": "DsarState",
+      "verified_at": "datetime",
+      "submitted_at": "datetime",
+      "sla_deadline": "datetime",
+      "collected_at": "datetime",
+      "assembled_at": "datetime",
+      "delivered_at": "datetime",
+      "rejected_at": "datetime",
+      "notes": "array",
+      "request_metadata": "array",
+      "metadata": "array"
+    },
+    "appends": ["days_until_deadline", "artefact_count", "is_overdue"],
+    "observers": ["DsarObserver"],
+    "hidden": ["request_metadata.ip", "request_metadata.user_agent"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true, "description": "`dsr_<26>`" },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "subject_type": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "e.g. `Academorix\\User\\Models\\User` or a walk-in ExternalSubject class."
+      },
+      "subject_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Subject primary key OR a temporary id for anonymous walk-in requests."
+      },
+      "subject_email": {
+        "type": "string",
+        "length": 320,
+        "nullable": false,
+        "description": "Delivery email. For subjects with accounts, this MUST match the account's verified email. For walk-in requests, this is verified via out-of-band mailer round-trip during triage."
+      },
+      "action": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: export / erase / rectify / restrict."
+      },
+      "state": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'received'",
+        "description": "Enum: received / triaging / collecting / assembling / delivered / rejected."
+      },
+      "verified_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set when the platform-admin has verified subject identity out-of-band. Required before state can transition from triaging."
+      },
+      "assigned_reviewer_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" },
+        "description": "Platform-admin handling this DSAR."
+      },
+      "submitted_at": { "type": "timestamptz", "nullable": false },
+      "sla_days": {
+        "type": "integer",
+        "nullable": false,
+        "default": 30,
+        "description": "Days from submitted_at to sla_deadline. Default 30 (GDPR baseline). May extend to 60 for complex requests."
+      },
+      "sla_deadline": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Computed on submit: submitted_at + sla_days. Frozen at that time \u2014 extensions bump sla_days + rewrite this column."
+      },
+      "collected_at": { "type": "timestamptz", "nullable": true },
+      "assembled_at": { "type": "timestamptz", "nullable": true },
+      "delivered_at": { "type": "timestamptz", "nullable": true },
+      "rejected_at": { "type": "timestamptz", "nullable": true },
+      "rejection_reason": {
+        "type": "string",
+        "length": 500,
+        "nullable": true,
+        "description": "Free-text reason. Delivered to the subject in the rejection notification."
+      },
+      "extension_reason": {
+        "type": "text",
+        "nullable": true,
+        "description": "GDPR Art. 12(3): SLA extensions must be justified + communicated within the first 30 days."
+      },
+      "notes": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Append-only array of {actor_id, timestamp, note} for internal review comments."
+      },
+      "request_metadata": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "ip, user_agent, referrer, submission_channel. PII-sensitive \u2014 hidden on wire."
+      },
+      "signature": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Signed-URL signature for the assembled artefact ZIP. Populated when state transitions to delivered."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "state", "sla_deadline"],
+        "unique": false,
+        "name": "dsars_tenant_state_deadline_idx",
+        "description": "Overdue-sweep scan: 'DSARs in tenant X still in <state> past SLA'."
+      },
+      {
+        "columns": ["subject_type", "subject_id", "created_at"],
+        "unique": false,
+        "name": "dsars_subject_history_idx",
+        "description": "Subject's own DSAR history."
+      },
+      {
+        "columns": ["assigned_reviewer_id", "state"],
+        "unique": false,
+        "name": "dsars_reviewer_queue_idx",
+        "description": "Platform-admin's queue."
+      },
+      {
+        "columns": ["signature"],
+        "unique": true,
+        "name": "dsars_signature_uidx",
+        "predicate": "signature IS NOT NULL",
+        "description": "Signed-URL redemption lookup on the central host."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "subject_type",
+    "subject_id",
+    "subject_email",
+    "action",
+    "state",
+    "submitted_at",
+    "sla_days",
+    "sla_deadline",
+    "notes",
+    "request_metadata",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^dsr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "subject_type": { "type": "string" },
+    "subject_id": { "type": "string" },
+    "subject_email": { "type": "string", "format": "email" },
+    "action": { "type": "string", "enum": ["export", "erase", "rectify", "restrict"] },
+    "state": {
+      "type": "string",
+      "enum": ["received", "triaging", "collecting", "assembling", "delivered", "rejected"]
+    },
+    "verified_at": { "type": ["string", "null"], "format": "date-time" },
+    "assigned_reviewer_id": { "type": ["string", "null"] },
+    "submitted_at": { "type": "string", "format": "date-time" },
+    "sla_days": { "type": "integer", "minimum": 1, "maximum": 90 },
+    "sla_deadline": { "type": "string", "format": "date-time" },
+    "collected_at": { "type": ["string", "null"], "format": "date-time" },
+    "assembled_at": { "type": ["string", "null"], "format": "date-time" },
+    "delivered_at": { "type": ["string", "null"], "format": "date-time" },
+    "rejected_at": { "type": ["string", "null"], "format": "date-time" },
+    "rejection_reason": { "type": ["string", "null"], "maxLength": 500 },
+    "extension_reason": { "type": ["string", "null"] },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "actor_id": { "type": ["string", "null"] },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "request_metadata": {
+      "type": "object",
+      "properties": {
+        "ip": { "type": "string" },
+        "user_agent": { "type": "string" },
+        "referrer": { "type": ["string", "null"] },
+        "submission_channel": {
+          "type": "string",
+          "enum": ["self_serve_form", "email_intake", "phone_intake", "admin_created"]
+        }
+      }
+    },
+    "signature": { "type": ["string", "null"] },
+    "metadata": { "type": ["object", "null"] },
+    "days_until_deadline": {
+      "type": "integer",
+      "description": "Computed. Negative when overdue."
+    },
+    "artefact_count": { "type": "integer", "description": "Computed. Count of DsarArtefact rows." },
+    "is_overdue": {
+      "type": "boolean",
+      "description": "Computed. True when state != delivered/rejected AND now() > sla_deadline."
+    },
+    "created_by": { "type": ["string", "null"] },
+    "updated_by": { "type": ["string", "null"] },
+    "deleted_by": { "type": ["string", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": [
+      "signature",
+      "request_metadata.ip",
+      "request_metadata.user_agent",
+      "created_by",
+      "updated_by",
+      "deleted_by"
+    ],
+    "computed": ["days_until_deadline", "artefact_count", "is_overdue"],
+    "notes": [
+      "signature is HIDDEN on every wire. The delivered signed URL is materialised freshly per read from the central-host redemption route.",
+      "request_metadata.ip + user_agent are HIDDEN on tenant wire; visible on platform-admin only."
+    ]
+  }
+}

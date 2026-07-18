@@ -1,0 +1,64 @@
+{
+  "id": "academorix://modules/subscription/relations",
+  "$version": 1,
+  "title": "subscription \u2014 model relationships",
+  "internal": [
+    { "from": "Plan", "kind": "hasMany", "to": "Subscription", "foreignKey": "plan_id" },
+    {
+      "from": "Subscription",
+      "kind": "belongsTo",
+      "to": "Plan",
+      "foreignKey": "plan_id",
+      "onDelete": "restrict",
+      "description": "Subscriptions cannot delete their referenced Plan \u2014 archive the Plan instead."
+    },
+    {
+      "from": "Subscription",
+      "kind": "hasMany",
+      "to": "SubscriptionEvent",
+      "foreignKey": "subscription_id"
+    },
+    {
+      "from": "SubscriptionEvent",
+      "kind": "belongsTo",
+      "to": "Subscription",
+      "foreignKey": "subscription_id",
+      "onDelete": "cascade"
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Plan",
+      "kind": "belongsTo",
+      "to": "tenancy::Application",
+      "foreignKey": "application_id",
+      "onDelete": "restrict",
+      "description": "Plans are Application-scoped."
+    },
+    {
+      "from": "Subscription",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "Subscription",
+      "kind": "belongsTo",
+      "to": "tenancy::Application",
+      "foreignKey": "application_id",
+      "onDelete": "restrict",
+      "description": "Denormalised for fast Application \u2192 all-subscriptions queries without joining through tenant."
+    },
+    {
+      "from": "SubscriptionEvent",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    }
+  ],
+  "inbound": {
+    "description": "Entitlements module listens for our Subscription* events + syncs Entitlement rows. Notifications module renders subscription-lifecycle notifications. No FK inbound."
+  }
+}

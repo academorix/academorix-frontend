@@ -1,0 +1,136 @@
+{
+  "id": "academorix://modules/notifications-mail/events",
+  "$version": 1,
+  "title": "notifications-mail \u2014 published events",
+  "description": "Channel-scoped events. Core listens for MailSent/MailDelivered/MailFailed/etc. + projects onto NotificationDelivery.state + emits its own aggregate events (NotificationSent/Delivered/Failed). All events afterCommit.",
+  "namespace": "Academorix\\Notifications\\Mail\\Events",
+  "dispatchMode": "afterCommit",
+  "events": [
+    {
+      "name": "MailSent",
+      "class": "Academorix\\Notifications\\Mail\\Events\\MailSent",
+      "trigger": "SendMailJob completed \u2014 Mail::mailer()->send() returned without exception + provider message id captured.",
+      "queue": "notifications",
+      "consumers": ["notifications::UpdateDeliverySentListener"],
+      "payload": {
+        "notification_id": "ULID",
+        "delivery_id": "ULID",
+        "provider": "string",
+        "provider_message_id": "string | null",
+        "recipient_email": "string",
+        "subject": "string",
+        "sent_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MailDelivered",
+      "class": "Academorix\\Notifications\\Mail\\Events\\MailDelivered",
+      "trigger": "Provider webhook: delivered event.",
+      "queue": "notifications",
+      "consumers": ["notifications::UpdateDeliveryDeliveredListener"],
+      "payload": {
+        "notification_id": "ULID",
+        "delivery_id": "ULID",
+        "provider": "string",
+        "provider_message_id": "string",
+        "delivered_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MailOpened",
+      "class": "Academorix\\Notifications\\Mail\\Events\\MailOpened",
+      "trigger": "Provider webhook: open event (tracking pixel loaded).",
+      "queue": "notifications",
+      "consumers": ["notifications::UpdateDeliveryOpenedListener"],
+      "payload": {
+        "notification_id": "ULID",
+        "delivery_id": "ULID",
+        "provider": "string",
+        "opened_at": "ISO 8601",
+        "opened_ip": "string | null",
+        "user_agent": "string | null"
+      }
+    },
+    {
+      "name": "MailClicked",
+      "class": "Academorix\\Notifications\\Mail\\Events\\MailClicked",
+      "trigger": "Provider webhook: click event.",
+      "queue": "notifications",
+      "consumers": ["notifications::UpdateDeliveryClickedListener"],
+      "payload": {
+        "notification_id": "ULID",
+        "delivery_id": "ULID",
+        "provider": "string",
+        "clicked_url": "string \u2014 hashed for restricted URLs",
+        "clicked_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MailBounced",
+      "class": "Academorix\\Notifications\\Mail\\Events\\MailBounced",
+      "trigger": "Provider webhook: bounce event. Hard bounces trigger address suppression; soft bounces trigger retry.",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::UpdateDeliveryFailedListener",
+        "notifications-mail::SuppressAddressListener"
+      ],
+      "payload": {
+        "notification_id": "ULID",
+        "delivery_id": "ULID",
+        "provider": "string",
+        "bounce_kind": "'hard' | 'soft'",
+        "bounce_reason": "string",
+        "recipient_email": "string",
+        "bounced_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MailComplaint",
+      "class": "Academorix\\Notifications\\Mail\\Events\\MailComplaint",
+      "trigger": "Provider webhook: complaint / spam-report event. Always suppresses the address.",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::UpdateDeliveryFailedListener",
+        "notifications-mail::SuppressAddressListener",
+        "compliance::AuditComplaintListener"
+      ],
+      "payload": {
+        "notification_id": "ULID",
+        "delivery_id": "ULID",
+        "provider": "string",
+        "recipient_email": "string",
+        "complained_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MailSuppressed",
+      "class": "Academorix\\Notifications\\Mail\\Events\\MailSuppressed",
+      "trigger": "Address added to MailSuppression (either from webhook or manual admin).",
+      "queue": "notifications",
+      "consumers": [
+        "notifications-mail::SuppressionCacheInvalidator",
+        "compliance::AuditSuppressionListener"
+      ],
+      "payload": {
+        "suppression_id": "ULID",
+        "tenant_id": "ULID | null",
+        "email": "string",
+        "reason": "string",
+        "source": "'webhook' | 'admin' | 'seed'"
+      }
+    },
+    {
+      "name": "MailSuppressionRevoked",
+      "class": "Academorix\\Notifications\\Mail\\Events\\MailSuppressionRevoked",
+      "trigger": "Admin removed a suppression OR soft-bounce expired.",
+      "queue": "notifications",
+      "consumers": ["notifications-mail::SuppressionCacheInvalidator"],
+      "payload": {
+        "suppression_id": "ULID",
+        "tenant_id": "ULID | null",
+        "email": "string",
+        "revoked_by_user_id": "ULID | null"
+      }
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "id": "academorix://modules/geofencing/caches",
+  "$version": 1,
+  "title": "geofencing \u2014 cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["geofence", "geofence.fenceable", "geofence.checks", "geofence.morph_map"],
+  "keys": [
+    {
+      "pattern": "geofence.fenceable:{fenceable_type}:{fenceable_id}",
+      "description": "Cached FenceableGeometry value object. Read on every evaluate() call. Invalidated when the fenceable model's geometry columns change (via FenceableGeometryUpdated event).",
+      "ttlSeconds": 3600,
+      "tags": ["geofence", "geofence.fenceable"]
+    },
+    {
+      "pattern": "geofence.checks:{tenant_id}:recent",
+      "description": "Sorted set of the last 1000 evaluation IDs per tenant. Read by the RecentGeofenceActivityCheck health probe.",
+      "ttlSeconds": 86400,
+      "tags": ["geofence", "geofence.checks"]
+    },
+    {
+      "pattern": "geofence.override_rate:{tenant_id}",
+      "description": "1h rolling counter: overrides_applied / evaluations_total. Populated by the metrics recorder. Read by GeofenceOverrideRateCheck.",
+      "ttlSeconds": 3600,
+      "tags": ["geofence"]
+    },
+    {
+      "pattern": "geofence.morph_map:fenceable",
+      "description": "Compiled fenceable morph map from #[Geofenceable] attribute discovery. { alias => class }.",
+      "ttlSeconds": 86400,
+      "tags": ["geofence", "geofence.morph_map"],
+      "invalidatedBy": ["foundation::ApplicationBooted"]
+    },
+    {
+      "pattern": "geofence.morph_map:subject",
+      "description": "Compiled subject morph map from #[GeofenceSubjectAlias] attribute discovery.",
+      "ttlSeconds": 86400,
+      "tags": ["geofence", "geofence.morph_map"]
+    }
+  ]
+}

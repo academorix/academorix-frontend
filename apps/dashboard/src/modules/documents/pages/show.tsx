@@ -11,8 +11,8 @@
  * the backend surface ships, this is the one place to update.
  */
 
-import { ArrowDownTrayIcon, LockClosedIcon } from "@academorix/ui/icons/outline";
-import { Alert, Button, Card, Chip, Spinner } from "@academorix/ui/react";
+import { ArrowDownTrayIcon, LockClosedIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Alert, Button, Card, Chip, Spinner } from "@stackra/ui/react";
 import { useList, useShow } from "@refinedev/core";
 import { useMemo } from "react";
 
@@ -201,9 +201,7 @@ export default function DocumentsShow(): ReactNode {
                   {document.mime}
                 </code>
               </Field>
-              <Field label="Uploaded by">
-                {uploaderName ?? document.uploaded_by ?? "—"}
-              </Field>
+              <Field label="Uploaded by">{uploaderName ?? document.uploaded_by ?? "—"}</Field>
               <Field label="Uploaded at">{formatDateTime(document.uploaded_at)}</Field>
               <Field label="Expires">{formatDate(document.expiry_at)}</Field>
               <Field label="Storage path">

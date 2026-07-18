@@ -1,0 +1,133 @@
+{
+  "id": "academorix://modules/search/jobs",
+  "$version": 1,
+  "title": "search \u2014 background jobs",
+  "description": "Live sync happens via IndexModelJob dispatched from HasSearchable's Eloquent observers (per-model save/delete). Long-running reindex / backfill goes through the orchestrator + shard + coordinator + swap chain, matching the transfer module pipeline. Analytics recording is fire-and-forget via RecordSearchAnalyticsEventJob. Prune runs on schedule.",
+  "jobs": [
+    {
+      "class": "Academorix\\Search\\Jobs\\IndexModelJob",
+      "queue": "search",
+      "purpose": "Push one model to its configured search index. Dispatched by HasSearchable's `saved` observer with a 30-second unique window so rapid re-saves collapse. Also called by ReindexModelShardJob for bulk backfill.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 30,
+      "uniqueKeyExpr": "'search-index:' + model.morph_type + ':' + model.id",
+      "tries": 5,
+      "backoffSeconds": [10, 60, 300, 900, 3600],
+      "input": { "model_type": "string (morph key)", "model_id": "string" }
+    },
+    {
+      "class": "Academorix\\Search\\Jobs\\PurgeIndexModelJob",
+      "queue": "search",
+      "purpose": "Drop a physical engine index. Two triggers: (1) SearchIndex soft-deleted + swap_grace_days elapsed. (2) Post-successful-alias-swap, the previous physical version's grace has elapsed. Also called with force=true from TenantErased cascade to skip the grace.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueVia": "search_index_id + version",
+      "uniqueFor": 3600,
+      "tries": 3,
+      "backoffSeconds": [60, 600, 3600],
+      "input": { "search_index_id": "ULID", "version": "integer", "force": "boolean" }
+    },
+    {
+      "class": "Academorix\\Search\\Jobs\\ReindexModelBatchJob",
+      "queue": "search",
+      "purpose": "Top-level orchestrator for a reindex. Creates a fresh empty target index (`{name}_v{target_version}`), enumerates the source records (from live DB or from an XferArtifact per `source` field), decides whether to shard based on `search.shards.enabled` + row count, dispatches N ReindexModelShardJobs via Bus::batch(), and chains ReindexCoordinatorJob + SwapIndexAliasJob + SendSearchSyncNotificationJob on completion.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueVia": "search_sync_job_id",
+      "uniqueFor": 3600,
+      "tries": 1,
+      "notes": "tries=1 \u2014 shard-level retries handled at the shard job. Retrying the orchestrator would double-process."
+    },
+    {
+      "class": "Academorix\\Search\\Jobs\\ReindexModelShardJob",
+      "queue": "search",
+      "purpose": "Runs one shard of a sharded reindex. Reads rows [offset, offset+limit), pushes to the TARGET index (not live). Increments SearchSyncJob shard counters via atomic UPDATE. Fires SearchSyncJobShardCompleted on terminal transition.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueVia": "search_sync_job_id:shard_index",
+      "uniqueFor": 3600,
+      "tries": 3,
+      "backoffSeconds": [60, 300, 900]
+    },
+    {
+      "class": "Academorix\\Search\\Jobs\\ReindexCoordinatorJob",
+      "queue": "search",
+      "purpose": "Coordinator sitting at the end of the shard batch. Verifies every shard reached terminal, aggregates counters into SearchSyncJob, and decides succeeded vs partially_succeeded vs failed. Fires the matching completion event. Only when status=succeeded does it dispatch SwapIndexAliasJob \u2014 partial success or failure means the old alias stays live (rollback-safe).",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueVia": "search_sync_job_id",
+      "uniqueFor": 3600,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Search\\Jobs\\SwapIndexAliasJob",
+      "queue": "search",
+      "purpose": "Atomically repoint `{index_name}_live` from `_v{source_version}` to `_v{target_version}` via the engine adapter's native alias-swap operation. Only runs when the reindex reached status=succeeded. Emits SearchIndexAliasSwapped. Schedules PurgeIndexModelJob for the old version with a `swap_grace_days` delay so rollback is one command.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueVia": "search_index_id",
+      "uniqueFor": 1800,
+      "tries": 5,
+      "backoffSeconds": [10, 30, 90, 300, 900],
+      "notes": "Meilisearch: uses UpdateIndex swap. PG-FTS: schema-owned table + view rename atomic via DDL. pgvector: same. Elasticsearch: aliases API."
+    },
+    {
+      "class": "Academorix\\Search\\Jobs\\WarmSynonymCacheJob",
+      "queue": "search",
+      "purpose": "Push the current effective synonym set (system + tenant, filtered by is_active) to every engine's native synonym storage for the given (tenant, language) scope. Rebuilds `search:synonyms:{tenant}:{lang}` cache key. Dispatched from SearchSynonymObserver.created/updated/deleted.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueVia": "tenant_id:language",
+      "uniqueFor": 60,
+      "tries": 3,
+      "backoffSeconds": [10, 30, 120]
+    },
+    {
+      "class": "Academorix\\Search\\Jobs\\PruneSearchAnalyticsJob",
+      "queue": "notifications",
+      "purpose": "Retention scan. Four passes per run.",
+      "steps": [
+        "PASS 1 (analytics rows): For each retention tier (short/medium/long): DELETE FROM search_analytics_events WHERE retention_tier = tier AND created_at < now() - tier_days LIMIT prune_chunk_size. Loop.",
+        "PASS 2 (query text scrub): UPDATE search_analytics_events SET query = NULL WHERE query IS NOT NULL AND created_at < now() - query_text_days. Independent of PASS 1 \u2014 GDPR guardrail even when row is retained.",
+        "PASS 3 (sync-job rows): For each retention tier: DELETE FROM search_sync_jobs WHERE retention_tier = tier AND created_at < now() - tier_days AND status IN terminal.",
+        "PASS 4 (stale queued/running sweep): UPDATE search_sync_jobs SET status='cancelled', cancel_reason='stalled' WHERE status IN ('queued','running') AND last_progress_at < now() - stale_hours. Emits SearchSyncJobCancelled per row.",
+        "PASS 5 (soft-deleted hard-delete): Hard-delete SearchIndex + SearchSynonym + SearchSavedQuery rows past their soft-delete grace."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2,
+      "notes": "Runs daily 03:45 UTC. Idempotent \u2014 no-op when caught up. Same job also handles --stale-only when invoked from the 15-min sweep."
+    },
+    {
+      "class": "Academorix\\Search\\Jobs\\RecordSearchAnalyticsEventJob",
+      "queue": "search-analytics",
+      "purpose": "Async insertion of one search_analytics_events row from the search / suggest / click endpoints. Runs off the request thread so latency of the API call is not affected. Fires the matching Query / NoResults / ClickThrough / Suggest event on insert.",
+      "shouldQueue": true,
+      "shouldBeUnique": false,
+      "tries": 3,
+      "backoffSeconds": [5, 30, 300],
+      "notes": "Dedicated `search-analytics` queue so a burst of query volume can't back up sync operations."
+    },
+    {
+      "class": "Academorix\\Search\\Jobs\\SendSearchSyncNotificationJob",
+      "queue": "notifications",
+      "purpose": "Fan out the completion / failure notification through the notifications module using search_sync_jobs.notify_channels + notify_locale. Chained after the coordinator terminal transition.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueVia": "search_sync_job_id:${status}",
+      "uniqueFor": 3600,
+      "tries": 5,
+      "backoffSeconds": [10, 60, 300, 1800, 3600]
+    }
+  ],
+  "queues": {
+    "search": {
+      "description": "Reindex + shard + coordinator + swap + sync + synonym cache warm-up. Isolated so a big reindex doesn't stall live save-to-index dispatches (which are also on this queue but capped by shouldBeUnique + short retry backoff)."
+    },
+    "search-analytics": {
+      "description": "Fire-and-forget analytics recording. Dedicated so a spike in query volume can't back up sync / reindex work."
+    }
+  }
+}

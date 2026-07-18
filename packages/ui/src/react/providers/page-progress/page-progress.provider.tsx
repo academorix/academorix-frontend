@@ -12,6 +12,9 @@
 import { ProgressBar } from "@heroui/react";
 import React, { useState, useCallback, useRef, useMemo, useEffect } from "react";
 
+// Relative import — the `@/*` tsconfig alias trips Vite's dev
+// server when it walks the workspace source directly. Relative
+// paths resolve identically in every tool.
 import { PageProgressContext } from "../../contexts/page-progress";
 
 import type {

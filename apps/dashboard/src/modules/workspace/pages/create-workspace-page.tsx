@@ -14,7 +14,7 @@
  * error envelope instead of an artificial success — no more mock fake-out.
  */
 
-import { RocketLaunchIcon } from "@academorix/ui/icons/outline";
+import { RocketLaunchIcon } from "@stackra/ui/icons/heroicon/outline";
 import {
   Button,
   Description,
@@ -24,9 +24,9 @@ import {
   ListBox,
   Select,
   TextField,
-} from "@academorix/ui/react";
+} from "@stackra/ui/react";
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link } from "@stackra/routing/react";
 
 import type { ApiError } from "@/lib/http";
 import type { FormEvent, Key, ReactNode } from "react";

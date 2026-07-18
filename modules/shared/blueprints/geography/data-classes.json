@@ -1,0 +1,59 @@
+{
+  "id": "academorix://modules/geography/data-classes",
+  "$version": 1,
+  "title": "geography \u2014 field classification",
+  "description": "Reference-catalog data is public. IP addresses (in the geolocate cache key + audit) are personal data under GDPR.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "Country.id",
+      "Country.iso2",
+      "Country.iso3",
+      "Country.name",
+      "Country.native",
+      "Country.phone_code",
+      "Country.region",
+      "Country.subregion",
+      "Country.emoji",
+      "Country.status",
+      "State.*",
+      "City.*",
+      "Currency.id",
+      "Currency.code",
+      "Currency.name",
+      "Currency.symbol",
+      "Currency.symbol_native",
+      "Currency.precision",
+      "Language.id",
+      "Language.code",
+      "Language.name",
+      "Language.native",
+      "Language.dir",
+      "Language.is_rtl",
+      "Timezone.id",
+      "Timezone.name",
+      "Timezone.country_code",
+      "GeolocationData.country_code",
+      "GeolocationData.country_name",
+      "GeolocationData.state_code",
+      "GeolocationData.state_name",
+      "GeolocationData.city_name",
+      "GeolocationData.postal_code",
+      "GeolocationData.timezone",
+      "GeolocationData.accuracy_radius"
+    ],
+    "internal": ["GeolocationData.latitude", "GeolocationData.longitude"],
+    "confidential": [],
+    "restricted": [
+      "GeolocationData.ip \u2014 personal data under GDPR Art. 4(1). Used only as cache key; never persisted alongside user_id or tenant_id."
+    ],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "audit_log": ["audit_log.geography.* rows for platform-admin catalog edits"]
+  },
+  "notes": [
+    "The IP in GeolocationData is echoed back to the caller because the caller submitted it (auth'd endpoint). It is never LOGGED with user_id + tenant_id in the same row \u2014 the response cache key includes IP but the key itself is not audit material.",
+    "Latitude / longitude coming out of geolocate are coarse (city-level precision, ~1 km accuracy_radius). We do not surface street-level coordinates."
+  ]
+}

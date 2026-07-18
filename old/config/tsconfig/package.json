@@ -1,0 +1,27 @@
+{
+  "name": "@academorix/config-tsconfig",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared TypeScript configuration presets for the academorix-frontend monorepo. Exports base + react-library + vite + vite-node presets.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./base": "./base.json",
+    "./react-library": "./react-library.json",
+    "./vite": "./vite.json",
+    "./vite-node": "./vite-node.json"
+  },
+  "files": [
+    "base.json",
+    "react-library.json",
+    "vite.json",
+    "vite-node.json",
+    "README.md"
+  ],
+  "scripts": {
+    "lint": "echo 'JSON files — linted via prettier'",
+    "typecheck": "echo 'No TypeScript sources'",
+    "test": "echo 'No tests'",
+    "build": "echo 'Static JSON — nothing to build'"
+  }
+}

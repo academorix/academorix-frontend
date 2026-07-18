@@ -12,7 +12,7 @@
  * fleshing them out later is purely a UI task.
  */
 
-import { WrenchScrewdriverIcon } from "@academorix/ui/icons/outline";
+import { WrenchScrewdriverIcon } from "@stackra/ui/icons/heroicon/outline";
 import { useResourceParams } from "@refinedev/core";
 
 import type { AppResourceMeta } from "@/lib/module";

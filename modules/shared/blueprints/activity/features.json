@@ -1,0 +1,33 @@
+{
+  "id": "academorix://modules/activity/features",
+  "$version": 1,
+  "title": "activity \u2014 feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me \u2192 data.features",
+    "seededFrom": "BusinessType.default_config.features"
+  },
+  "features": [
+    {
+      "key": "activity.feed",
+      "displayName": "Activity feed",
+      "description": "Tenant-facing feed of who did what. Always on \u2014 platform-infrastructure.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "enterprise"]
+    },
+    {
+      "key": "activity.per_user_feed",
+      "displayName": "Per-user activity feed",
+      "description": "Users see their own activity via /activities?filter[causer_id]=me.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "enterprise"]
+    },
+    {
+      "key": "activity.extended_retention",
+      "displayName": "Extended activity retention",
+      "description": "Retain activity 365 days instead of 30/90.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
+}

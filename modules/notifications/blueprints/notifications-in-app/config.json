@@ -1,0 +1,53 @@
+{
+  "id": "academorix://modules/notifications-in-app/config",
+  "$version": 1,
+  "title": "notifications-in-app \u2014 developer configuration",
+  "description": "Deploy-static configuration for the in-app channel. Mirrors `config/notifications-in-app.php`.",
+  "configFile": "config/notifications-in-app.php",
+  "envPrefix": "NOTIFICATIONS_INAPP_",
+  "sections": {
+    "broadcast": {
+      "description": "Broadcast dispatch configuration.",
+      "keys": [
+        {
+          "path": "notifications-in-app.broadcast.enabled",
+          "type": "bool",
+          "default": true,
+          "description": "Master toggle. False = DB-only writes."
+        },
+        {
+          "path": "notifications-in-app.broadcast.driver",
+          "type": "string",
+          "default": "reverb",
+          "enum": ["reverb", "pusher", "ably", "log", "null"],
+          "env": "BROADCAST_CONNECTION",
+          "description": "Delegates to Laravel BroadcastManager. Change here does not require redeploy \u2014 BroadcastManager reads config at boot."
+        },
+        {
+          "path": "notifications-in-app.broadcast.batch_threshold",
+          "type": "int",
+          "default": 5,
+          "description": "Above N in-app deliveries for the same user in the batch_window_seconds, collapse into `notifications.bulk` broadcast."
+        },
+        {
+          "path": "notifications-in-app.broadcast.batch_window_seconds",
+          "type": "int",
+          "default": 30
+        }
+      ]
+    },
+    "reverb": {
+      "description": "Reverb-specific tuning. Ignored when driver \u2260 reverb.",
+      "keys": [
+        {
+          "path": "notifications-in-app.reverb.admin_url",
+          "type": "string",
+          "env": "REVERB_ADMIN_URL",
+          "example": "http://reverb:8080/apps/{app_id}",
+          "description": "Admin API used by health probes."
+        },
+        { "path": "notifications-in-app.reverb.probe_timeout_ms", "type": "int", "default": 500 }
+      ]
+    }
+  }
+}

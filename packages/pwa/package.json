@@ -1,36 +1,151 @@
 {
-  "name": "@academorix/pwa",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
+  "name": "@stackra/pwa",
+  "version": "0.1.0",
+  "description": "Production-grade PWA runtime + build-time toolkit for the Stackra framework — install prompt handling (with iOS Safari tutorial), service-worker update prompts, standalone detection, UTM attribution, Web Share, Vibration, Wake Lock, safe-area insets, adaptive loading, QR-code install helper, splash screen, PwaHead meta emitter, locale-aware Web App Manifest builder, curated Workbox runtime-caching, vite-plugin-pwa options builder, @vite-pwa/assets-generator config builder, and a Bubblewrap TWA config builder.",
   "license": "MIT",
-  "description": "PWA + web-security build helpers for the Academorix workspace: manifest builder with locale translations, workbox runtime-caching defaults, security-header baseline (CSP + STS + Permissions-Policy), and factory adapters for vite-plugin-pwa and Serwist. Zero React — safe to import from vite.config.ts and next.config.ts.",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "author": {
+    "name": "Stackra L.L.C",
+    "email": "dev@stackra.com",
+    "url": "https://stackra.com"
+  },
+  "keywords": [
+    "stackra",
+    "pwa",
+    "progressive-web-app",
+    "service-worker",
+    "web-app-manifest",
+    "vite-plugin-pwa",
+    "workbox",
+    "bubblewrap",
+    "install-prompt",
+    "react"
+  ],
+  "homepage": "https://github.com/stackra-inc/core/tree/main/pwa#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stackra-inc/core.git",
+    "directory": "pwa"
+  },
+  "bugs": {
+    "url": "https://github.com/stackra-inc/core/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./manifest": "./src/manifest/index.ts",
-    "./workbox": "./src/workbox/index.ts",
-    "./security": "./src/security/index.ts",
-    "./vite": "./src/vite/index.ts",
-    "./serwist": "./src/serwist/index.ts",
-    "./package.json": "./package.json"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.mjs",
+      "require": "./dist/react.js"
+    },
+    "./manifest": {
+      "types": "./dist/manifest.d.ts",
+      "import": "./dist/manifest.mjs",
+      "require": "./dist/manifest.js"
+    },
+    "./workbox": {
+      "types": "./dist/workbox.d.ts",
+      "import": "./dist/workbox.mjs",
+      "require": "./dist/workbox.js"
+    },
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "import": "./dist/vite.mjs",
+      "require": "./dist/vite.js"
+    },
+    "./twa": {
+      "types": "./dist/twa.d.ts",
+      "import": "./dist/twa.mjs",
+      "require": "./dist/twa.js"
+    },
+    "./testing": {
+      "types": "./dist/testing.d.ts",
+      "import": "./dist/testing.mjs",
+      "require": "./dist/testing.js"
+    }
   },
+  "files": [
+    "config",
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run",
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rimraf dist .turbo",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "clean": "rm -rf .turbo"
+    "test:coverage": "vitest run --coverage --passWithNoTests"
   },
-  "dependencies": {
-    "@academorix/core": "workspace:*"
+  "peerDependencies": {
+    "@stackra/container": "workspace:^",
+    "@stackra/contracts": "workspace:^",
+    "@stackra/network": "workspace:^",
+    "@stackra/support": "workspace:^",
+    "@stackra/testing": "workspace:^",
+    "@stackra/ui": "workspace:^",
+    "qrcode": "*",
+    "react": "*",
+    "reflect-metadata": "*",
+    "vite": ">=5.0.0",
+    "vite-plugin-pwa": "*",
+    "@vite-pwa/assets-generator": "*"
+  },
+  "peerDependenciesMeta": {
+    "@stackra/testing": {
+      "optional": true
+    },
+    "@stackra/ui": {
+      "optional": true
+    },
+    "qrcode": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "vite": {
+      "optional": true
+    },
+    "vite-plugin-pwa": {
+      "optional": true
+    },
+    "@vite-pwa/assets-generator": {
+      "optional": true
+    }
   },
   "devDependencies": {
-    "@academorix/eslint-config": "workspace:*",
-    "@academorix/typescript-config": "workspace:*",
-    "eslint": "catalog:",
+    "@stackra/container": "workspace:*",
+    "@stackra/contracts": "workspace:*",
+    "@stackra/network": "workspace:*",
+    "@stackra/support": "workspace:*",
+    "@stackra/testing": "workspace:*",
+    "@stackra/ui": "workspace:*",
+    "@testing-library/react": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "jsdom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "reflect-metadata": "catalog:",
+    "rimraf": "catalog:",
+    "tsup": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

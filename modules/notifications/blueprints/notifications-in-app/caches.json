@@ -1,0 +1,28 @@
+{
+  "id": "academorix://modules/notifications-in-app/caches",
+  "$version": 1,
+  "title": "notifications-in-app \u2014 cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["notifications-in-app"],
+  "keys": [
+    {
+      "pattern": "notif-inapp:unread:{tenant_id}:{user_id}",
+      "description": "Cached unread-count for the caller. Read on every /unread-count call (bell-badge hot path). Invalidated (delete + rebuild) on: NotificationDelivered where channel=in_app; InAppDeliveryRead; InAppDeliveryDismissed; InAppBulkMarkAllRead.",
+      "ttlSeconds": 30,
+      "tags": ["notifications-in-app", "tenant"],
+      "invalidatedBy": [
+        "notifications::NotificationDelivered (channel=in_app)",
+        "notifications-in-app::InAppDeliveryRead",
+        "notifications-in-app::InAppDeliveryDismissed",
+        "notifications-in-app::InAppBulkMarkAllRead"
+      ]
+    },
+    {
+      "pattern": "notif-inapp:preferences:{tenant_id}:{user_id}",
+      "description": "Cached preferences summary per user \u2014 which categories have in-app delivery enabled. Fills the GET /preferences/summary endpoint.",
+      "ttlSeconds": 300,
+      "tags": ["notifications-in-app", "tenant"],
+      "invalidatedBy": ["notifications::PreferenceUpdated"]
+    }
+  ]
+}

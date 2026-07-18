@@ -10,7 +10,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §12.2 "Teams (roster & staffing)"
  */
 
-import { UserGroupIcon } from "@academorix/ui/icons/outline";
+import { UserGroupIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

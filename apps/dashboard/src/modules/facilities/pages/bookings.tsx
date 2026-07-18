@@ -15,16 +15,13 @@
  * per click.
  */
 
-import { ArrowLeftIcon, ArrowRightIcon, CalendarDaysIcon } from "@academorix/ui/icons/outline";
-import { Button, Card, Spinner } from "@academorix/ui/react";
+import { ArrowLeftIcon, ArrowRightIcon, CalendarDaysIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Card, Spinner } from "@stackra/ui/react";
 import { useList, useShow } from "@refinedev/core";
 import { useMemo, useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useParams } from "@stackra/routing/react";
 
-import type {
-  Facility,
-  ResourceBooking,
-} from "@/modules/facilities/facilities.types";
+import type { Facility, ResourceBooking } from "@/modules/facilities/facilities.types";
 import type { ReactNode } from "react";
 
 import { ListView } from "@/components/refine";
@@ -220,10 +217,7 @@ export default function FacilityBookings(): ReactNode {
                 <h3 className="text-sm font-semibold tracking-wide text-foreground uppercase">
                   {day.label}
                 </h3>
-                <BookingList
-                  bookings={day.rows}
-                  emptyMessage="No bookings on this day."
-                />
+                <BookingList bookings={day.rows} emptyMessage="No bookings on this day." />
               </section>
             ))}
           </div>

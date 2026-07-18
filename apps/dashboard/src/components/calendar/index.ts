@@ -23,10 +23,7 @@ export * from "@/components/calendar/calendar.types";
 export { CalendarWeek } from "@/components/calendar/calendar-week";
 export { CalendarDay } from "@/components/calendar/calendar-day";
 export { CalendarMonth } from "@/components/calendar/calendar-month";
-export {
-  CalendarToolbar,
-  formatPeriodLabel,
-} from "@/components/calendar/calendar-toolbar";
+export { CalendarToolbar, formatPeriodLabel } from "@/components/calendar/calendar-toolbar";
 export type { CalendarToolbarProps } from "@/components/calendar/calendar-toolbar";
 export {
   useCalendarNavigation,

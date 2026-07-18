@@ -1,0 +1,139 @@
+{
+  "$version": 1,
+  "name": "geofencing",
+  "alias": "geofencing",
+  "namespace": "Academorix\\Geofencing",
+  "description": "Model-agnostic point-in-polygon primitive. **Any** Eloquent model can carry a geofence by using the `HasGeofence` trait + declaring itself with the `#[Geofenceable]` attribute — no hard-wired coupling to Branch or any other entity. Owns the audited `geofence_checks` log (immutable, insert-only, `gfc_` prefix) which references the fenced entity polymorphically via `fenceable_type` + `fenceable_id`. Consumer modules add the standard geometry columns to their own table via the `$table->addGeofenceColumns()` blueprint macro. Ships the polygon + radius evaluator, the override flow, the mobile pre-flight endpoint (no persistence), and 5 Spatie Health probes. Consuming features never run their own point-in-polygon math — they call `$fenceable->evaluateGeofence($lat, $lng, $accuracyM, $subject)` or `GeofenceService::evaluate($fenceable, $data)` and stamp the returned check id on their own entity. Fires `GeofenceEvaluated` events that consuming modules subscribe to via a `subject_type` filter. PostGIS required (enabled by our own migration `enable_postgis_extension`) + `clickbar/laravel-magellan` for spatial column types + `spinen/laravel-geometry` for runtime geometry math (with a hand-rolled ray-cast + haversine fallback so the module works without the geoPHP classmap in tests).",
+  "keywords": [
+    "geofencing",
+    "geofence",
+    "point-in-polygon",
+    "polygon",
+    "radius",
+    "haversine",
+    "postgis",
+    "magellan",
+    "spinen-geometry",
+    "polymorphic",
+    "model-agnostic",
+    "attendance",
+    "clock-in",
+    "check-in",
+    "spatial",
+    "audit-log",
+    "trait"
+  ],
+  "priority": 70,
+  "providers": [
+    "Academorix\\Geofencing\\Providers\\GeofencingServiceProvider",
+    "Academorix\\Geofencing\\Providers\\GeofencingHealthProvider",
+    "Academorix\\Geofencing\\Providers\\RouteServiceProvider",
+    "Academorix\\Geofencing\\Providers\\EventServiceProvider"
+  ],
+  "files": [],
+  "dependencies": ["foundation", "tenancy", "activity", "audit", "entitlements"],
+  "optional_dependencies": ["geography", "notifications"],
+  "optional_dependencies_note": "Geography (when available) provides the geolocate service used by the mobile preflight controller. Notifications propagates the override-requested + override-applied notification categories. NO hard dependency on any specific 'fenceable' host module — the module is completely model-agnostic. Any Eloquent model in any downstream module can opt in by using the HasGeofence trait.",
+  "extendedBy": [],
+  "planned_consumers": [
+    "staff-clock-in-out",
+    "athlete-self-check-in",
+    "visitor-auto-log",
+    "attendance"
+  ],
+  "wraps": {
+    "spatial_types": {
+      "package": "clickbar/laravel-magellan",
+      "version_constraint": "^0.7",
+      "rationale": "PostGIS spatial column types (POINT, POLYGON, GEOGRAPHY) on Eloquent models."
+    },
+    "geometry_math": {
+      "package": "spinen/laravel-geometry",
+      "version_constraint": "^3.0",
+      "rationale": "Runtime geometry primitives (point-in-polygon, distance) wrapping geoPHP. Our PolygonEvaluator delegates to it in production + falls back to hand-rolled math when the geoPHP classmap is not loaded (tests)."
+    }
+  },
+  "contributes": {
+    "traits": ["HasGeofence"],
+    "attributes": ["Geofenceable", "GeofenceSubjectAlias"],
+    "blueprints": ["addGeofenceColumns"],
+    "middleware": ["geofence.preflight.throttle"],
+    "events": [
+      "GeofenceEvaluated",
+      "GeofenceOverrideRequested",
+      "GeofenceOverrideApplied",
+      "GeofenceOverrideRejected",
+      "GeofenceCheckCreated",
+      "GeofenceCheckUpdated",
+      "GeofenceCheckDeleted"
+    ],
+    "interfaces": ["Geofenceable (contract)"],
+    "policies": ["GeofenceCheckPolicy"],
+    "hooks": [],
+    "commands": [
+      "geofencing:describe",
+      "geofencing:test-eval",
+      "geofencing:list-fenceable-aliases",
+      "geofencing:list-subject-aliases",
+      "geofencing:reconcile-immutability"
+    ],
+    "jobs": ["PurgeStaleGeofenceChecksJob", "ReconcileGeofenceCheckImmutabilityJob"],
+    "notifications": [
+      "GeofenceOverrideRequestedNotification",
+      "GeofenceOverrideAppliedNotification",
+      "GeofenceOverrideRejectedNotification"
+    ],
+    "broadcasts": ["tenant.{id}.geofence"],
+    "observers": ["GeofenceCheckObserver"],
+    "rules": [
+      "valid_polygon_geojson",
+      "valid_wkt_polygon",
+      "valid_lat_lng",
+      "registered_fenceable_alias",
+      "registered_subject_alias"
+    ],
+    "casts": ["GeofenceResult", "GeofenceMode", "PolygonValidationReason"],
+    "views": [],
+    "lang": ["geofencing"],
+    "config": ["geofencing"],
+    "macros": ["Blueprint::addGeofenceColumns"],
+    "bindings": [
+      "GeofenceService",
+      "GeofenceOverrideService",
+      "GeofenceCheckService",
+      "PolygonEvaluator",
+      "PolygonValidator",
+      "GeofenceMetricsRecorder",
+      "GeofenceCheckRepository",
+      "FenceableResolver",
+      "ApprovalTaskRepository"
+    ],
+    "resources": ["geofence-check"],
+    "value_objects": ["LatLngAccuracy", "FenceableGeometry", "GeofenceSubject", "ApprovalTask"],
+    "public_contracts": ["geofence-evaluated.v1"]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing preflight + override request + check log read.",
+      "routes": [
+        "POST /api/v1/geofence/preflight (throttle:60,1)",
+        "POST /api/v1/geofence/overrides",
+        "GET /api/v1/geofence/checks[/{check}]",
+        "PATCH /api/v1/geofence/fences/{fenceable_type}/{fenceable_id} (edit any HasGeofence model's fence)",
+        "GET /api/v1/geofence/fences/{fenceable_type}/{fenceable_id}"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant observability + override log + retention purge.",
+      "routes": [
+        "GET /api/v1/platform/geofence/checks",
+        "GET /api/v1/platform/geofence/overrides",
+        "GET /api/v1/platform/geofence/fenceable-aliases",
+        "POST /api/v1/platform/geofence/checks/{check}/purge"
+      ]
+    }
+  },
+  "requires_postgis": true,
+  "requires_postgis_note": "The `enable_postgis_extension` migration runs on the central Postgres DB (single-database row-level tenants — no per-tenant hook needed). Non-Postgres drivers (SQLite in unit tests) short-circuit the extension migration so the module continues to boot; spatial columns fall back to plain `geometry` column type which SQLite tolerates syntactically.",
+  "model_agnostic_note": "There is NO `branch_id` on `geofence_checks`. The fenced entity is referenced polymorphically via `fenceable_type` + `fenceable_id`. Two distinct morph pairs exist on every check row: (1) `subject_type` / `subject_id` = WHY the evaluation happened (the caller's entity, e.g. staff_clockin, attendance, reception_visit); (2) `fenceable_type` / `fenceable_id` = WHAT the evaluation ran AGAINST (any HasGeofence model, e.g. branch, facility, venue, event, home_address). Consumers register both aliases via #[GeofenceSubjectAlias] and #[Geofenceable] respectively."
+}

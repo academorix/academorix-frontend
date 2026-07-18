@@ -13,7 +13,7 @@ import { useMemo } from "react";
 
 import type { Credential } from "@/modules/credentials/credentials.types";
 import type { Athlete } from "@/types";
-import type { DataGridColumn } from "@academorix/ui/react";
+import type { DataGridColumn } from "@stackra/ui/react";
 import type { ReactNode } from "react";
 
 import { ListView, ResourceDataGrid, ShowButton } from "@/components/refine";

@@ -8,7 +8,7 @@
  * available only on paid/partially-paid invoices.
  */
 
-import { Button, Card, Popover, Spinner } from "@academorix/ui/react";
+import { Button, Card, Popover, Spinner } from "@stackra/ui/react";
 import { useShow, useList, useUpdate } from "@refinedev/core";
 import { useState } from "react";
 

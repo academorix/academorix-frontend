@@ -1,0 +1,32 @@
+{
+  "id": "academorix://modules/settings/data-classes",
+  "$version": 1,
+  "title": "settings \u2014 field classification",
+  "description": "SettingValue.payload inherits the classification of the underlying field. Sensitive fields (SettingField.sensitive=true) are treated as confidential-tier by default.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "SettingValue.id",
+      "SettingValue.scope_type",
+      "SettingValue.group",
+      "SettingValue.name",
+      "SettingValue.is_sensitive",
+      "SettingValue.is_locked",
+      "SettingValue.encrypted_at_rest",
+      "SettingValue.created_at",
+      "SettingValue.updated_at"
+    ],
+    "internal": ["SettingValue.scope_id", "SettingValue.created_by", "SettingValue.updated_by"],
+    "confidential": ["SettingValue.payload (when is_sensitive=true)"],
+    "restricted": ["SettingValue.payload (when encrypted_at_rest=true; KMS-encrypted at rest)"],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "audit_log": ["Every settings change captured via activity + audit dual-write"]
+  },
+  "notes": [
+    "The payload column's classification is dynamic \u2014 depends on the field's SettingField.sensitive flag + optional encrypted_at_rest.",
+    "Reads mask sensitive payloads server-side; the `masked_payload` accessor returns `\"***\"` unless the caller passes ?reveal=true AND has settings.view-sensitive.",
+    "Every ?reveal=true use fires a `Audit Restricted Field Viewed` analytics event + writes a new audit row (meta-audit)."
+  ]
+}

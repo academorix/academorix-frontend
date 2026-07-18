@@ -14,8 +14,9 @@ tpl_01HXYZABCDEFGHJKMNPQRSTVW   NotificationTemplate
 ```
 
 The prefix is unique across the entire platform + globally documented in the
-registry at `modules/foundation/data/ulid-prefixes.json`. This steering doc is
-the human-readable index; the JSON file is the machine-readable source of truth.
+registry at `modules/shared/foundation/data/ulid-prefixes.json`. This steering
+doc is the human-readable index; the JSON file is the machine-readable source of
+truth.
 
 ## Why prefixed ULIDs (and not plain UUIDs)
 
@@ -30,7 +31,7 @@ the human-readable index; the JSON file is the machine-readable source of truth.
 
 ## The rules
 
-Enforced by `modules/foundation/scripts/validate-module-graph.py`:
+Enforced by `modules/shared/foundation/scripts/validate-module-graph.py`:
 
 1. **Every prefix is 3–4 lowercase ASCII letters + trailing underscore.** Regex:
    `^[a-z]{3,4}_$`. Grandfathered exceptions are marked `grandfathered: true` in
@@ -69,8 +70,8 @@ substitutions across all modules.
 
 ## Current registry (by module)
 
-Full details in `modules/foundation/data/ulid-prefixes.json`. Summary by owning
-module:
+Full details in `modules/shared/foundation/data/ulid-prefixes.json`. Summary by
+owning module:
 
 - **workspaces** — `wsp_` (Workspace), `app_` (Application), `dom_` (Domain),
   `drc_` (DomainRecord), `brd_` (Branding), `ide_` (Identity), `wct_`
@@ -104,7 +105,7 @@ module:
    for ApiVersion, not `ap_`).
 2. Check the registry `reserved_for_future` block — don't collide with a
    reserved prefix.
-3. Add the prefix to `modules/foundation/data/ulid-prefixes.json` under
+3. Add the prefix to `modules/shared/foundation/data/ulid-prefixes.json` under
    `prefixes` with `module`, `entity`, and `description`.
 4. Declare the same prefix on the model schema via `x-eloquent.keyPrefix` + a
    matching JSON Schema `pattern` on the `id` property.
@@ -141,7 +142,7 @@ module:
 ## What this doc does NOT do
 
 - **Does not repeat every prefix's description.** Full details in
-  `modules/foundation/data/ulid-prefixes.json`.
+  `modules/shared/foundation/data/ulid-prefixes.json`.
 - **Does not decide which entities need ULIDs.** Every persisted entity does;
   that's the architectural convention documented in
   `frontend-module-architecture.md` and the backend module standard.

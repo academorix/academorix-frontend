@@ -1,0 +1,16 @@
+{
+  "$comment": "TS config for @academorix/access-control. Decorators + JSX enabled; includes config/**.",
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "types": ["node"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "paths": { "@/*": ["./src/*"] },
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*", "config/**/*"],
+  "exclude": ["node_modules", "dist", "__tests__"]
+}

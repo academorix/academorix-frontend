@@ -19,7 +19,7 @@ import {
   Select,
   TextArea,
   TextField,
-} from "@academorix/ui/react";
+} from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 import { useState } from "react";
 

@@ -9,9 +9,9 @@
  * the same success message either way.
  */
 
-import { Button, Description, Form, Input, Label, TextField } from "@academorix/ui/react";
+import { Button, Description, Form, Input, Label, TextField } from "@stackra/ui/react";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "@stackra/routing/react";
 
 import type { ApiError } from "@/lib/http";
 import type { FormEvent, ReactNode } from "react";

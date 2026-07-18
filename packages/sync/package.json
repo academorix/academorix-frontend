@@ -1,0 +1,135 @@
+{
+  "name": "@stackra/sync",
+  "version": "0.1.0",
+  "description": "Offline-first synchronization engine — cursor-based pull, batched push, pluggable conflict resolution, and cross-tab coordination.",
+  "license": "MIT",
+  "author": {
+    "name": "Stackra L.L.C",
+    "email": "dev@stackra.com",
+    "url": "https://stackra.com"
+  },
+  "keywords": [
+    "stackra",
+    "sync",
+    "offline-first",
+    "conflict-resolution",
+    "cursor",
+    "cross-platform",
+    "react",
+    "react-native"
+  ],
+  "homepage": "https://github.com/stackra-inc/core/tree/main/sync#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stackra-inc/core.git",
+    "directory": "sync"
+  },
+  "bugs": {
+    "url": "https://github.com/stackra-inc/core/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.mjs",
+      "require": "./dist/react.js"
+    },
+    "./testing": {
+      "types": "./dist/testing.d.ts",
+      "import": "./dist/testing.mjs",
+      "require": "./dist/testing.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rimraf dist .turbo",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage --passWithNoTests"
+  },
+  "peerDependencies": {
+    "@stackra/container": "workspace:^",
+    "@stackra/contracts": "workspace:^",
+    "@stackra/coordinator": "workspace:^",
+    "@stackra/devtools": "workspace:^",
+    "@stackra/http": "workspace:^",
+    "@stackra/logger": "workspace:^",
+    "@stackra/network": "workspace:^",
+    "@stackra/pipeline": "workspace:^",
+    "@stackra/storage": "workspace:^",
+    "@stackra/support": "workspace:^",
+    "@stackra/testing": "workspace:^",
+    "@stackra/ui": "workspace:^",
+    "react": "*",
+    "reflect-metadata": "*",
+    "rxjs": ">=7.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@stackra/coordinator": {
+      "optional": true
+    },
+    "@stackra/devtools": {
+      "optional": true
+    },
+    "@stackra/storage": {
+      "optional": true
+    },
+    "@stackra/testing": {
+      "optional": true
+    },
+    "@stackra/ui": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "rxjs": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@stackra/container": "workspace:*",
+    "@stackra/contracts": "workspace:*",
+    "@stackra/coordinator": "workspace:*",
+    "@stackra/devtools": "workspace:*",
+    "@stackra/http": "workspace:*",
+    "@stackra/logger": "workspace:*",
+    "@stackra/network": "workspace:*",
+    "@stackra/pipeline": "workspace:*",
+    "@stackra/storage": "workspace:*",
+    "@stackra/support": "workspace:*",
+    "@stackra/testing": "workspace:*",
+    "@stackra/ui": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "react": "catalog:",
+    "reflect-metadata": "catalog:",
+    "rimraf": "catalog:",
+    "rxjs": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

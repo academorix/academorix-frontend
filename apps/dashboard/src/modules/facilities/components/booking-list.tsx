@@ -13,12 +13,9 @@
  * bringing a Refine query along for the ride.
  */
 
-import { Chip, EmptyState, Separator } from "@academorix/ui/react";
+import { Chip, EmptyState, Separator } from "@stackra/ui/react";
 
-import type {
-  BookingPurpose,
-  ResourceBooking,
-} from "@/modules/facilities/facilities.types";
+import type { BookingPurpose, ResourceBooking } from "@/modules/facilities/facilities.types";
 import type { ReactNode } from "react";
 
 import { formatDateTime } from "@/lib/format";
@@ -107,10 +104,7 @@ export function BookingList({
   const sorted = [...bookings].sort(byStart);
 
   return (
-    <ul
-      aria-label="Bookings"
-      className="flex flex-col rounded-lg border border-border bg-surface"
-    >
+    <ul aria-label="Bookings" className="flex flex-col rounded-lg border border-border bg-surface">
       {sorted.map((booking, index) => (
         <li key={booking.id} className="flex flex-col">
           <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">

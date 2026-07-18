@@ -8,7 +8,7 @@
  * (active/inactive/pending/archived), so status styling stays consistent.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 
 import type { EntityStatus } from "@/types";
 import type { ReactNode } from "react";

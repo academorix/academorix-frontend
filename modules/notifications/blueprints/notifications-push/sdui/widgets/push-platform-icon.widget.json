@@ -1,0 +1,26 @@
+{
+  "id": "notifications-push.push-platform-icon",
+  "title": "Push platform icon",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Small icon for platform slug. Mapping: ios / macos = apple, android = android-brand, web = globe-alt, windows = windows.",
+  "props": {
+    "platform": { "type": "string", "description": "PushSubscription.platform enum." },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] }
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "icon",
+      "kind": "Icon",
+      "bindings": {
+        "icon": {
+          "$expr": "props.platform === 'ios' || props.platform === 'macos' ? 'apple' : (props.platform === 'android' ? 'android' : (props.platform === 'web' ? 'globe-alt' : (props.platform === 'windows' ? 'window' : 'device-phone-mobile')))"
+        },
+        "className": {
+          "$expr": "props.size === 'xs' ? 'size-3' : (props.size === 'sm' ? 'size-4' : (props.size === 'md' ? 'size-5' : 'size-7'))"
+        }
+      }
+    }
+  ]
+}

@@ -170,7 +170,7 @@ export interface DocumentFormValues {
 
 /**
  * Shape of a queued upload as tracked by the upload page's local state. This
- * mirrors {@link "@academorix/ui/react".UploadFile} but keeps the field set
+ * mirrors {@link "@stackra/ui/react".UploadFile} but keeps the field set
  * intentionally small — we don't currently propagate a preview url after
  * dropzone selection, and the server side of the flow is TODO.
  */

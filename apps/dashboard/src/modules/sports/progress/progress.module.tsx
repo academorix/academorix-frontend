@@ -10,7 +10,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §14.1 "Progress & Skill Cards"
  */
 
-import { ChartBarIcon } from "@academorix/ui/icons/outline";
+import { ChartBarIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

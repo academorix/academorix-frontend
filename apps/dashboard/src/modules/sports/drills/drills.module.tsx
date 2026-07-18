@@ -9,7 +9,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §14.5 "Drill Library & Curriculum"
  */
 
-import { RectangleStackIcon } from "@academorix/ui/icons/outline";
+import { RectangleStackIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

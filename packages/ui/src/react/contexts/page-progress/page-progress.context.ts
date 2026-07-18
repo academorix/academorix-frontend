@@ -6,6 +6,7 @@
 
 import { createContext } from "react";
 
+// Relative import — same rationale as the sibling context file.
 import type { IPageProgressContextValue } from "../../providers/page-progress/page-progress.interface";
 
 /**

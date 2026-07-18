@@ -7,7 +7,7 @@
  * detail screens.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 
 import type { EventStatus } from "@/types";
 import type { ReactNode } from "react";

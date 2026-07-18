@@ -1,0 +1,195 @@
+{
+  "id": "webhook.resources.webhook-delivery.show",
+  "title": "Delivery detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/webhooks/deliveries/{id}",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "webhook", "entity": "webhook-delivery", "action": "show" },
+  "requiresPermission": "webhook.deliveries.view",
+  "params": [{ "name": "id", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "delivery",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/tenant/webhook/deliveries/' + params.id + '?include=subscription'",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "Back",
+            "className": "text-sm text-muted"
+          },
+          "actions": { "onPress": { "kind": "navigate", "to": "/tenant/webhooks/deliveries" } }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col gap-1" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold font-mono" },
+                  "bindings": { "children": { "$ref": "delivery.event_name" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "delivery.event_version + ' \u00b7 attempt ' + delivery.attempt_number + '/' + delivery.max_attempts"
+                    }
+                  }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-center gap-2 mt-2" },
+                  "children": [
+                    {
+                      "kind": "Widget",
+                      "widget": "webhook.webhook-delivery-status-chip",
+                      "props": { "state": { "$ref": "delivery.state" }, "size": "md" }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "size": "sm",
+                "leadingIcon": "arrow-path",
+                "children": "Retry"
+              },
+              "bindings": {
+                "isDisabled": {
+                  "$expr": "delivery.state !== 'failedPermanent' || !identity.permissions.includes('webhook.deliveries.retry')"
+                }
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "urlExpr": "'/api/v1/tenant/webhook/deliveries/' + params.id + '/retry'",
+                  "confirm": { "title": "Retry this delivery?" },
+                  "onSuccess": [
+                    { "kind": "toast.success", "message": "Retry dispatched" },
+                    { "kind": "data.refresh", "source": "delivery" }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "Request"
+              }
+            },
+            {
+              "kind": "DescriptionList",
+              "children": [
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "URL" },
+                  "bindings": { "value": { "$ref": "delivery.request_url" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Method" },
+                  "bindings": { "value": { "$ref": "delivery.http_verb" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Body size" },
+                  "bindings": { "value": { "$expr": "delivery.request_body_bytes + ' bytes'" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Signed at" },
+                  "bindings": { "value": { "$expr": "formatDate(delivery.signed_at)" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Signature algorithm" },
+                  "bindings": { "value": { "$ref": "delivery.signature_algorithm" } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "Response"
+              }
+            },
+            {
+              "kind": "DescriptionList",
+              "children": [
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Status" },
+                  "bindings": { "value": { "$expr": "delivery.response_status || 'No response'" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Duration" },
+                  "bindings": { "value": { "$expr": "(delivery.duration_ms || 0) + 'ms'" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Body size" },
+                  "bindings": {
+                    "value": {
+                      "$expr": "(delivery.response_body_bytes || 0) + ' bytes (truncated to 64KB max)'"
+                    }
+                  }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Error" },
+                  "bindings": {
+                    "hidden": { "$expr": "!delivery.error_class" },
+                    "value": { "$expr": "delivery.error_class + ': ' + delivery.error_message" }
+                  }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Response snippet" },
+                  "bindings": { "value": { "$ref": "delivery.response_snippet" } }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

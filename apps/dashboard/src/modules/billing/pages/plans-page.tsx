@@ -27,8 +27,8 @@ import {
   CheckCircleIcon,
   ExclamationCircleIcon,
   ReceiptPercentIcon,
-} from "@academorix/ui/icons/outline";
-import { Button, Card, Chip, Separator, Spinner } from "@academorix/ui/react";
+} from "@stackra/ui/icons/heroicon/outline";
+import { Button, Card, Chip, Separator, Spinner } from "@stackra/ui/react";
 import { useMemo } from "react";
 
 import type { Plan, SubscriptionSummary } from "@/types";
@@ -163,10 +163,7 @@ function PlanCard({
             Current plan
           </Button>
         ) : (
-          <Button
-            aria-label={`Change to ${label}`}
-            onPress={() => onChangePlan(plan)}
-          >
+          <Button aria-label={`Change to ${label}`} onPress={() => onChangePlan(plan)}>
             Change plan
           </Button>
         )}

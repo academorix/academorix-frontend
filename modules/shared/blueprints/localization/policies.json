@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/localization/policies",
+  "$version": 1,
+  "title": "localization \u2014 authorization policies",
+  "policies": [
+    {
+      "model": "PlatformLanguage",
+      "class": "Academorix\\Localization\\Policies\\PlatformLanguagePolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "languages.viewAny",
+          "scope": "any tenant member sees active platform languages (permission name stays `languages.viewAny` \u2014 user-facing concept)"
+        },
+        { "action": "view", "permission": "languages.view" },
+        { "action": "platformViewAny", "permission": "platform.languages.viewAny" },
+        { "action": "platformCreate", "permission": "platform.languages.create" },
+        { "action": "platformUpdate", "permission": "platform.languages.update" },
+        { "action": "platformArchive", "permission": "platform.languages.archive" }
+      ]
+    },
+    {
+      "model": "TenantLocale",
+      "class": "Academorix\\Localization\\Policies\\TenantLocalePolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "tenant_locales.viewAny",
+          "scope": "any tenant member"
+        },
+        { "action": "view", "permission": "tenant_locales.view" },
+        { "action": "manage", "permission": "tenant_locales.manage", "scope": "owner + admin" }
+      ]
+    },
+    {
+      "model": "Translation",
+      "class": "Academorix\\Localization\\Policies\\TranslationPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "translations.viewAny" },
+        { "action": "view", "permission": "translations.view" },
+        { "action": "create", "permission": "translations.create" },
+        { "action": "update", "permission": "translations.update" },
+        { "action": "delete", "permission": "translations.delete" },
+        {
+          "action": "verify",
+          "permission": "translations.verify",
+          "scope": "translation-reviewer role or admin"
+        },
+        { "action": "platformViewAny", "permission": "platform.translations.viewAny" }
+      ]
+    },
+    {
+      "model": "TranslationJob",
+      "class": "Academorix\\Localization\\Policies\\TranslationJobPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "translation_jobs.viewAny" },
+        { "action": "view", "permission": "translation_jobs.view" },
+        { "action": "create", "permission": "translation_jobs.create", "scope": "admin + owner" },
+        {
+          "action": "cancel",
+          "permission": "translation_jobs.cancel",
+          "scope": "job requester or admin"
+        }
+      ]
+    }
+  ]
+}

@@ -19,11 +19,11 @@ import {
   ExclamationCircleIcon,
   ShieldCheckIcon,
   XCircleIcon,
-} from "@academorix/ui/icons/outline";
-import { Card, Chip, Separator, Spinner } from "@academorix/ui/react";
+} from "@stackra/ui/icons/heroicon/outline";
+import { Card, Chip, Separator, Spinner } from "@stackra/ui/react";
 
 import type { EntitlementType, EntitlementUsage } from "@/types";
-import type { IconType } from "@academorix/ui/icons";
+import type { IconType } from "@stackra/ui/icons";
 import type { ReactNode } from "react";
 
 import { ResourceAccessGuard } from "@/components/access";

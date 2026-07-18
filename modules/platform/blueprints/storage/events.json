@@ -1,0 +1,270 @@
+{
+  "id": "academorix://modules/storage/events",
+  "$version": 1,
+  "title": "storage \u2014 published events",
+  "namespace": "Academorix\\Storage\\Events",
+  "dispatchMode": "afterCommit",
+  "dispatchModeRationale": "Every event fires only AFTER the initiating DB transaction commits. Subscribers reading the File / FileVariant / SignedUrlAudit / ChunkedUpload row must see it. Without after-commit, a race condition surfaces where the subscriber queries a not-yet-visible row.",
+  "events": [
+    {
+      "name": "FileUploading",
+      "class": "Academorix\\Storage\\Events\\FileUploading",
+      "trigger": "The upload byte stream reached the server + is being persisted. Fires INSIDE the DB transaction that creates the File row (afterCommit=false) so same-transaction sub-work (audit trail insert, quota reservation) lands atomically.",
+      "afterCommit": false,
+      "queue": null,
+      "consumers": ["storage::EnforceUploadQuotaListener"],
+      "payload": {
+        "tenant_id": "ULID",
+        "owner_id": "ULID | null",
+        "kind": "string",
+        "declared_size_bytes": "integer",
+        "declared_mime_type": "string"
+      }
+    },
+    {
+      "name": "FileUploaded",
+      "class": "Academorix\\Storage\\Events\\FileUploaded",
+      "trigger": "File row committed with virus_scan_state=pending. AV scan queued.",
+      "afterCommit": true,
+      "queue": "notifications",
+      "wire_contract_file": "contracts/file-uploaded.v1.json",
+      "wire_contract_version": "v1",
+      "wire_event_name": "storage.file.uploaded",
+      "consumers": [
+        "storage::QueueAntivirusScan",
+        "storage::QueueVariantGeneration",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditEntry",
+        "search::IndexUploadedFile (opt-in per tenant)"
+      ],
+      "payload": {
+        "file_id": "fil_ULID",
+        "tenant_id": "ULID",
+        "owner_id": "ULID | null",
+        "kind": "string",
+        "collection": "string",
+        "filename": "string",
+        "mime_type": "string",
+        "size_bytes": "integer",
+        "sha256": "string (64 hex)",
+        "fileable_type": "string | null",
+        "fileable_id": "string | null",
+        "visibility": "'public' | 'tenant' | 'restricted'"
+      }
+    },
+    {
+      "name": "FileScanned",
+      "class": "Academorix\\Storage\\Events\\FileScanned",
+      "trigger": "ScanFileForVirusesJob completed (regardless of outcome).",
+      "afterCommit": true,
+      "queue": "notifications",
+      "consumers": ["telemetry::MetricsCollector"],
+      "payload": {
+        "file_id": "fil_ULID",
+        "tenant_id": "ULID",
+        "outcome": "'clean' | 'infected' | 'scan_failed'",
+        "signature": "string | null",
+        "duration_ms": "integer",
+        "driver": "string"
+      }
+    },
+    {
+      "name": "FileVirusFound",
+      "class": "Academorix\\Storage\\Events\\FileVirusFound",
+      "trigger": "AV scan returned a virus signature. File moved to quarantine disk; virus_scan_state=infected.",
+      "afterCommit": true,
+      "queue": "notifications-critical",
+      "consumers": [
+        "storage::QuarantineFileListener",
+        "storage::RevokeAllSignedUrlsForFile",
+        "notifications::DispatchFileQuarantinedNotification",
+        "audit::WriteAuditEntry",
+        "compliance::RecordVirusIncident"
+      ],
+      "payload": {
+        "file_id": "fil_ULID",
+        "tenant_id": "ULID",
+        "owner_id": "ULID | null",
+        "signature": "string",
+        "detected_at": "ISO-8601",
+        "driver": "string"
+      }
+    },
+    {
+      "name": "FileVariantGenerated",
+      "class": "Academorix\\Storage\\Events\\FileVariantGenerated",
+      "trigger": "GenerateFileVariantsJob successfully produced ONE variant. Multiple events per file (one per variant_key).",
+      "afterCommit": true,
+      "queue": "notifications",
+      "consumers": ["telemetry::MetricsCollector"],
+      "payload": {
+        "file_variant_id": "fvr_ULID",
+        "file_id": "fil_ULID",
+        "tenant_id": "ULID",
+        "variant_key": "string",
+        "size_bytes": "integer",
+        "width": "integer | null",
+        "height": "integer | null",
+        "duration_ms": "integer"
+      }
+    },
+    {
+      "name": "FileVariantsCompleted",
+      "class": "Academorix\\Storage\\Events\\FileVariantsCompleted",
+      "trigger": "Every variant declared by the file's kind has been generated. Broadcast to the tenant so client-side galleries refresh their previews.",
+      "afterCommit": true,
+      "queue": "notifications",
+      "broadcast": true,
+      "broadcastAs": "storage.file.variants_ready",
+      "broadcastChannel": "private-tenant.{tenant_id}.storage.uploads",
+      "payload": {
+        "file_id": "fil_ULID",
+        "tenant_id": "ULID",
+        "variant_count": "integer"
+      }
+    },
+    {
+      "name": "FileArchived",
+      "class": "Academorix\\Storage\\Events\\FileArchived",
+      "trigger": "archived_at was set (single=true replacement OR user-initiated archive). Distinct from FileErased \u2014 archive keeps the blob until retention window elapses.",
+      "afterCommit": true,
+      "queue": "notifications",
+      "consumers": ["activity::WriteToActivityLog"],
+      "payload": {
+        "file_id": "fil_ULID",
+        "tenant_id": "ULID",
+        "archived_by": "ULID | null",
+        "reason": "'replaced' | 'user_archived' | 'kind_retention_policy'"
+      }
+    },
+    {
+      "name": "FileErased",
+      "class": "Academorix\\Storage\\Events\\FileErased",
+      "trigger": "File hard-deleted (row + blob refcount decremented; on refcount=0 the physical byte is removed).",
+      "afterCommit": true,
+      "queue": "notifications",
+      "wire_contract_file": "contracts/file-erased.v1.json",
+      "wire_contract_version": "v1",
+      "wire_event_name": "storage.file.erased",
+      "consumers": [
+        "storage::DecrementBlobRefcount",
+        "storage::RevokeAllSignedUrlsForFile",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditEntry",
+        "search::RemoveFileFromIndex",
+        "compliance::RecordErasureForDsar"
+      ],
+      "payload": {
+        "file_id": "fil_ULID",
+        "tenant_id": "ULID",
+        "sha256": "string (64 hex)",
+        "size_bytes_freed": "integer",
+        "erased_by": "ULID | null",
+        "erasure_reason": "'user_delete' | 'tenant_erased' | 'admin_takedown' | 'dsar_erasure' | 'retention_purge' | 'virus_purge'"
+      }
+    },
+    {
+      "name": "SignedUrlIssued",
+      "class": "Academorix\\Storage\\Events\\SignedUrlIssued",
+      "trigger": "A signed URL was issued and its SignedUrlAudit row committed. High-volume; sampled to config('storage.telemetry.signed_url_issued_sample_ratio', 0.1).",
+      "afterCommit": true,
+      "queue": null,
+      "payload": {
+        "signed_url_audit_id": "sua_ULID",
+        "file_id": "fil_ULID",
+        "tenant_id": "ULID",
+        "issued_to_user_id": "ULID | null",
+        "reason": "string",
+        "ttl_seconds": "integer",
+        "expires_at": "ISO-8601"
+      }
+    },
+    {
+      "name": "SignedUrlRevoked",
+      "class": "Academorix\\Storage\\Events\\SignedUrlRevoked",
+      "trigger": "A signed URL was revoked \u2014 either by admin bulk-revoke, by one_time_use consumption, by sweep after expiration, or by file erasure.",
+      "afterCommit": true,
+      "queue": "notifications",
+      "consumers": ["audit::WriteAuditEntry"],
+      "payload": {
+        "signed_url_audit_id": "sua_ULID",
+        "file_id": "fil_ULID",
+        "tenant_id": "ULID",
+        "revoked_by": "ULID | null",
+        "revoked_reason": "string"
+      }
+    },
+    {
+      "name": "ChunkedUploadInitiated",
+      "class": "Academorix\\Storage\\Events\\ChunkedUploadInitiated",
+      "trigger": "ChunkedUpload row committed with state=initiating. Quota reservation held for total_size_bytes.",
+      "afterCommit": true,
+      "queue": "notifications",
+      "payload": {
+        "chunked_upload_id": "cup_ULID",
+        "tenant_id": "ULID",
+        "owner_id": "ULID",
+        "target_kind": "string",
+        "total_size_bytes": "integer",
+        "protocol": "'tus' | 's3_multipart'"
+      }
+    },
+    {
+      "name": "ChunkedUploadCompleted",
+      "class": "Academorix\\Storage\\Events\\ChunkedUploadCompleted",
+      "trigger": "state transitioned to completed. resulting_file_id set. FileUploaded fires alongside for the newly-materialised File row.",
+      "afterCommit": true,
+      "queue": "notifications",
+      "payload": {
+        "chunked_upload_id": "cup_ULID",
+        "resulting_file_id": "fil_ULID",
+        "tenant_id": "ULID",
+        "duration_ms": "integer"
+      }
+    },
+    {
+      "name": "ChunkedUploadAborted",
+      "class": "Academorix\\Storage\\Events\\ChunkedUploadAborted",
+      "trigger": "state transitioned to aborted or expired. Quota reservation released.",
+      "afterCommit": true,
+      "queue": "notifications",
+      "payload": {
+        "chunked_upload_id": "cup_ULID",
+        "tenant_id": "ULID",
+        "state": "'aborted' | 'expired'",
+        "abort_reason": "string | null",
+        "bytes_wasted": "integer"
+      }
+    },
+    {
+      "name": "StorageQuotaApproaching",
+      "class": "Academorix\\Storage\\Events\\StorageQuotaApproaching",
+      "trigger": "Post-upload, the tenant's storage.bytes.consumed usage crossed the 80% threshold (configurable per plan).",
+      "afterCommit": true,
+      "queue": "notifications",
+      "consumers": ["notifications::DispatchStorageQuotaApproachingNotification"],
+      "payload": {
+        "tenant_id": "ULID",
+        "used_bytes": "integer",
+        "cap_bytes": "integer",
+        "used_ratio": "number",
+        "threshold": "number"
+      }
+    },
+    {
+      "name": "StorageQuotaExceeded",
+      "class": "Academorix\\Storage\\Events\\StorageQuotaExceeded",
+      "trigger": "An upload was rejected by storage.quota.enforce middleware. Fired for observability + notification.",
+      "afterCommit": true,
+      "queue": "notifications-critical",
+      "consumers": ["notifications::DispatchStorageQuotaExceededNotification"],
+      "payload": {
+        "tenant_id": "ULID",
+        "attempted_bytes": "integer",
+        "cap_bytes": "integer",
+        "used_bytes": "integer",
+        "attempted_by": "ULID | null"
+      }
+    }
+  ]
+}

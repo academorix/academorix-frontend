@@ -1,0 +1,41 @@
+{
+  "id": "academorix://modules/notifications/broadcasts",
+  "$version": 1,
+  "title": "notifications core \u2014 broadcast channels",
+  "description": "Real-time channels for the inbox UX. The channel binding lives in this module; notifications-in-app is the module that actually pushes NotificationCreated messages onto these channels. Uses Laravel Reverb (self-hosted WebSocket server) in dev + prod; Pusher/Ably remain as pluggable alternatives via BroadcastManager.",
+  "driver": "reverb",
+  "channels": [
+    {
+      "name": "user.{id}.notifications",
+      "kind": "private",
+      "authorization": {
+        "class": "Academorix\\Notifications\\Broadcasting\\UserNotificationsChannel",
+        "rule": "$user->id === (string) $id"
+      },
+      "purpose": "Per-user private inbox live-updates. New in-app notifications, seen-count changes, and archive events push here. Client subscribes on inbox mount + updates the bell badge in real time.",
+      "eventsPushed": [
+        "notifications.created \u2014 new in-app notification arrived",
+        "notifications.seen \u2014 seen state updated (multi-tab sync)",
+        "notifications.archived \u2014 archived by user or system"
+      ]
+    },
+    {
+      "name": "tenant.{id}.notifications",
+      "kind": "private",
+      "authorization": {
+        "class": "Academorix\\Notifications\\Broadcasting\\TenantNotificationsChannel",
+        "rule": "$user->can('platform.notifications.viewAny') OR ($user->tenant_id === (string) $id AND $user->can('notifications.admin.view'))"
+      },
+      "purpose": "Tenant-admin realtime dashboard. Aggregate send counts, delivery-failure spikes, template publish events. Used by the admin sends dashboard SDUI screen.",
+      "eventsPushed": [
+        "notifications.tenant.dispatched \u2014 aggregate send counter tick",
+        "notifications.tenant.failed \u2014 delivery failure signal for the dashboard alert widget",
+        "notifications.tenant.template_published \u2014 template moved to published"
+      ]
+    }
+  ],
+  "notes": [
+    "Broadcast events are additive to the events in events.json. events.json fires domain events on the Laravel event dispatcher; broadcast events push serialised payloads onto WebSocket channels. Not every domain event is broadcast \u2014 only the ones with live-UI value.",
+    "In-app notification content itself is delivered by notifications-in-app writing to the database + immediately pushing a `notifications.created` broadcast so the bell updates without a page refresh."
+  ]
+}

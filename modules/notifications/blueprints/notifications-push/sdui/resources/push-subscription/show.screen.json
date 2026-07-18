@@ -1,0 +1,171 @@
+{
+  "id": "notifications-push.resources.push-subscription.show",
+  "title": "Device detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/notification-subscriptions/{id}",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "notifications-push", "entity": "push-subscription", "action": "show" },
+  "requiresPermission": "notifications.subscriptions.view",
+  "params": [{ "name": "id", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "subscription",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/tenant/notification-subscriptions/' + params.id",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "Back to devices",
+            "className": "text-sm text-muted"
+          },
+          "actions": {
+            "onPress": { "kind": "navigate", "to": "/tenant/notification-subscriptions" }
+          }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-4" },
+          "children": [
+            {
+              "kind": "Widget",
+              "widget": "notifications-push.push-platform-icon",
+              "props": { "platform": { "$ref": "subscription.platform" }, "size": "lg" }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "subscription.device_name || (subscription.platform + ' device')"
+                    }
+                  }
+                },
+                {
+                  "kind": "Chip",
+                  "props": { "size": "sm" },
+                  "bindings": {
+                    "variant": { "$expr": "subscription.is_active ? 'success' : 'neutral'" },
+                    "children": { "$expr": "subscription.is_active ? 'Active' : 'Expired'" }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "Details"
+              }
+            },
+            {
+              "kind": "DescriptionList",
+              "children": [
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Platform" },
+                  "bindings": { "value": { "$ref": "subscription.platform" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Provider" },
+                  "bindings": { "value": { "$ref": "subscription.provider" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "OS version" },
+                  "bindings": { "value": { "$expr": "subscription.os_version || 'Unknown'" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "App version" },
+                  "bindings": { "value": { "$expr": "subscription.app_version || 'Unknown'" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Locale" },
+                  "bindings": { "value": { "$expr": "subscription.locale || 'Not set'" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Registered" },
+                  "bindings": { "value": { "$expr": "formatDate(subscription.created_at)" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Last seen" },
+                  "bindings": { "value": { "$expr": "formatRelative(subscription.last_seen_at)" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Token fingerprint" },
+                  "bindings": {
+                    "value": {
+                      "$expr": "subscription.device_token_fingerprint.substring(0, 12) + '\u2026'"
+                    },
+                    "note": "Truncated for readability. Full fingerprint available to support with permission."
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "danger" },
+          "bindings": {
+            "hidden": { "$expr": "subscription.is_active" },
+            "children": {
+              "$expr": "'This device is expired. Reason: ' + (subscription.metadata?.expiration_reason || 'unknown')"
+            }
+          }
+        },
+        {
+          "kind": "Button",
+          "props": {
+            "variant": "danger",
+            "size": "md",
+            "leadingIcon": "trash",
+            "children": "Revoke device"
+          },
+          "actions": {
+            "onPress": {
+              "kind": "http.delete",
+              "urlExpr": "'/api/v1/tenant/notification-subscriptions/' + params.id",
+              "confirm": {
+                "title": "Revoke this device?",
+                "description": "Push notifications will stop on this device."
+              },
+              "onSuccess": [
+                { "kind": "toast.success", "message": "Revoked" },
+                { "kind": "navigate", "to": "/tenant/notification-subscriptions" }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

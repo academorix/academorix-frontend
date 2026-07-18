@@ -1,0 +1,26 @@
+{
+  "$schema": "https://gist.githubusercontent.com/stackra-usr/766cbb0d72b6566fdc2642ffcb3d73ee/raw/manifest.schema.json",
+  "slug": "theming",
+  "version": "0.1.0",
+  "name": {
+    "en": "Theming",
+    "ar": "السمات"
+  },
+  "type": "core",
+  "description": {
+    "en": "Unified theming — core services, React hooks, and NestJS adapter via subpath exports.",
+    "ar": "السمات — وحدة أساسية في المنصة."
+  },
+  "author": {
+    "name": "Stackra L.L.C",
+    "email": "dev@stackra.com"
+  },
+  "dependencies": ["console", "container"],
+  "support": {
+    "documentation": "https://docs.stackra.com/platform/theming",
+    "email": "dev@stackra.com"
+  },
+  "compatibility": {
+    "platform_version": ">=1.0.0"
+  }
+}

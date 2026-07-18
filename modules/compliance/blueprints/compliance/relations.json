@@ -1,0 +1,237 @@
+{
+  "id": "academorix://modules/compliance/relations",
+  "$version": 1,
+  "title": "compliance — model relationships",
+  "description": "Eight owned entities with a tight internal graph. External graph is intentionally minimal: the module publishes traits + attributes so downstream models opt in without adding foreign keys back to this module. DSAR artefacts point at storage::File; consent + legal-hold + safeguarding are polymorphic on subject (subject_type + subject_id).",
+  "internal": [
+    {
+      "from": "ConsentRecord",
+      "kind": "belongsTo",
+      "to": "ConsentCategory",
+      "foreignKey": "consent_category_id",
+      "onUpdate": "cascade",
+      "onDelete": "restrict",
+      "description": "Restrict on delete so a category with active records cannot be removed. Enforced additionally at the ConsentCategoryObserver.deleting level with a specific error message."
+    },
+    {
+      "from": "DsarArtefact",
+      "kind": "belongsTo",
+      "to": "Dsar",
+      "foreignKey": "dsar_id",
+      "onUpdate": "cascade",
+      "onDelete": "cascade",
+      "description": "Artefacts cascade with their parent DSAR. On soft-delete of Dsar, artefacts soft-delete too."
+    },
+    {
+      "from": "RetentionRun",
+      "kind": "belongsToMany",
+      "to": "LegalHold",
+      "through": "retention_run_held (tenant-scoped pivot)",
+      "description": "One RetentionRun references every LegalHold that was active during its execution + skipped rows because of it. Enables the audit query 'which rows did we NOT purge in run X + why?'"
+    }
+  ],
+  "outbound": [
+    {
+      "from": "ConsentCategory",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "nullable": true,
+      "onDelete": "cascade",
+      "description": "Nullable \u2014 platform-default rows carry tenant_id=NULL and are visible to every tenant. Tenant overrides carry a tenant_id and shadow the platform default."
+    },
+    {
+      "from": "ConsentRecord",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every consent record is tenant-scoped. On tenant erasure the cascade runs a compliance::CascadeConsentErasure listener that writes summary rows into audit before dropping."
+    },
+    {
+      "from": "ConsentRecord",
+      "kind": "morphTo",
+      "to": "subject (any HasConsent model)",
+      "foreignKey": "subject_id + subject_type",
+      "description": "Polymorphic subject: User, TenantContact, Guardian, ..."
+    },
+    {
+      "from": "ConsentRecord",
+      "kind": "belongsTo",
+      "to": "user::User (future)",
+      "foreignKey": "guardian_user_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "Set only when the consent category `requires_guardian=true`. Non-null indicates parental / guardian consent for a minor."
+    },
+    {
+      "from": "Dsar",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every DSAR is scoped to a tenant. Cross-tenant DSARs (rare) require the requester to file one DSAR per tenant they have data in."
+    },
+    {
+      "from": "Dsar",
+      "kind": "morphTo",
+      "to": "subject (the person making the request)",
+      "foreignKey": "subject_id + subject_type",
+      "description": "Polymorphic subject. Typically a user::User but can be a TenantContact or an ExternalSubject (a walk-in inquiry from a non-account holder)."
+    },
+    {
+      "from": "Dsar",
+      "kind": "belongsTo",
+      "to": "user::User (future)",
+      "foreignKey": "assigned_reviewer_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "Platform-admin who is triaging / reviewing this DSAR. Null before triage."
+    },
+    {
+      "from": "DsarArtefact",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "DsarArtefact",
+      "kind": "belongsTo",
+      "to": "storage::File",
+      "foreignKey": "file_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "Points at the actual export file (ZIP / JSON / CSV per artefact format). Null until assembly completes. On file erasure (retention purge of the DSAR export), stays as an audit-only row with file_id=null."
+    },
+    {
+      "from": "LegalHold",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every hold is scoped to at most one tenant. Platform-level holds (rare) use tenant_id=NULL + require super_admin authorisation."
+    },
+    {
+      "from": "LegalHold",
+      "kind": "morphTo",
+      "to": "subject (any HasLegalHold model or null for scope-level holds)",
+      "foreignKey": "subject_id + subject_type",
+      "description": "Subject-scoped hold. Null when the hold is tenant / case / class scoped."
+    },
+    {
+      "from": "LegalHold",
+      "kind": "belongsTo",
+      "to": "user::User (future)",
+      "foreignKey": "applied_by_user_id",
+      "onDelete": "restrict",
+      "description": "Restrict on delete \u2014 the user who applied a hold cannot be removed while the hold is active (compliance audit-trail integrity)."
+    },
+    {
+      "from": "LegalHold",
+      "kind": "belongsTo",
+      "to": "user::User (future)",
+      "foreignKey": "approved_by_user_id",
+      "onDelete": "restrict",
+      "description": "Two-person approval requirement. Restrict same as applied_by."
+    },
+    {
+      "from": "RetentionRun",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "One RetentionRun per (tenant, sweep). Platform-level sweeps (rare, for platform-owned entities) use tenant_id=NULL."
+    },
+    {
+      "from": "Subprocessor",
+      "kind": "belongsTo",
+      "to": "user::User (future)",
+      "foreignKey": "last_updated_by",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "Platform-admin who last edited the subprocessor row. Historical trail preserved via HasAuditable snapshots."
+    },
+    {
+      "from": "SafeguardingIncident",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "SafeguardingIncident",
+      "kind": "morphTo",
+      "to": "subject (typically Athlete / Minor future models)",
+      "foreignKey": "subject_id + subject_type",
+      "description": "The minor at the centre of the safeguarding concern."
+    },
+    {
+      "from": "SafeguardingIncident",
+      "kind": "belongsTo",
+      "to": "user::User (future)",
+      "foreignKey": "reported_by_user_id",
+      "onDelete": "set null",
+      "description": "The reporter. Nullable for anonymous reports (feature-flagged \u2014 default off; enterprise tenants may enable)."
+    },
+    {
+      "from": "SafeguardingIncident",
+      "kind": "belongsTo",
+      "to": "user::User (future)",
+      "foreignKey": "assigned_to_user_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "The tenant's safeguarding officer handling the case. Null until triage."
+    }
+  ],
+  "inbound": {
+    "description": "Downstream modules attach to compliance via TRAITS + ATTRIBUTES, not via foreign keys. Every consumer opts in through composition; compliance's registries discover them at boot.",
+    "consumer_patterns": [
+      "any model with `use HasConsent` \u2014 the model becomes a polymorphic subject on ConsentRecord (subject_type = model class, subject_id = model primary key)",
+      "any model with `use IsRetentionAware` \u2014 the RetentionRunner enumerates its rows during the sweep + writes outcomes into RetentionRun",
+      "any model with `use HasLegalHold` \u2014 LegalHoldGate can freeze its rows",
+      "any model with `#[DsarExportable]` / `#[DsarErasable]` \u2014 becomes a DsarContributor",
+      "any model with `#[LegalHoldable]` \u2014 rows can be scoped by a LegalHold with scope=`class`"
+    ],
+    "consumer_examples_planned": [
+      "user::User \u2014 the primary subject. HasConsent + IsDsarContributor + #[DsarExportable] + #[DsarErasable] + #[LegalHoldable]",
+      "storage::File \u2014 IsRetentionAware + HasLegalHold + #[DsarExportable] (contributes file metadata to DSAR)",
+      "audit::AuditLog \u2014 IsRetentionAware + HasLegalHold + #[LegalHoldable]",
+      "activity::ActivityLog \u2014 IsRetentionAware + HasLegalHold + #[DsarExportable]",
+      "tenancy::TenantContact \u2014 HasConsent (for marketing consent on billing contacts)",
+      "subscription::Subscription \u2014 IsRetentionAware + #[DsarExportable] + #[RetentionPolicy(regulatory_minimum_days: 2555)] for tax retention",
+      "sports::Athlete (future) \u2014 the primary minor-safeguarding subject",
+      "sports::AthleteGuardian (future) \u2014 HasConsent with requires_guardian=true"
+    ]
+  },
+  "consumed": [
+    {
+      "from": "storage::File",
+      "usage": "DsarArtefact.file_id \u2014 the assembled export ZIP / JSON is materialised as a storage::File with kind=`export_artifact`. The file's retention window (30 days per storage::retention.json) governs when the DSAR artefact link expires."
+    },
+    {
+      "from": "tenancy::Tenant",
+      "usage": "Every entity is tenant-scoped via BelongsToTenant (except platform-default ConsentCategory + platform-owned Subprocessor)."
+    },
+    {
+      "from": "audit::AuditLog",
+      "usage": "Every DSAR state transition, legal-hold apply / release, subprocessor change, consent grant / withdrawal, and safeguarding-incident touch writes an entry via HasAuditable."
+    },
+    {
+      "from": "activity::ActivityLog",
+      "usage": "DSAR + LegalHold + SafeguardingIncident state transitions surface in the tenant activity feed via HasActivityLog. ConsentRecord changes DO NOT (too noisy \u2014 lives in audit only)."
+    },
+    {
+      "from": "entitlements::Entitlement",
+      "usage": "compliance.dsars.month consumed per DSAR submission. compliance.legal-holds.max slot consumed per active hold. compliance.retention-runs.month consumed per manually-dispatched sweep (nightly automatic sweeps do not consume the quota)."
+    },
+    {
+      "from": "notifications::NotificationCategory",
+      "usage": "12 notification categories seeded under the `compliance` namespace for DSAR lifecycle, safeguarding lifecycle, breach detection, subprocessor changes."
+    },
+    {
+      "from": "notifications-mail::MailChannel",
+      "usage": "DsarDeliveredNotification uses a signed-URL body pointing at the export artefact (storage-issued). LegalHoldAppliedNotification / BreachDetectedNotification are email-only (never SMS / push \u2014 too sensitive for those channels by default)."
+    }
+  ]
+}

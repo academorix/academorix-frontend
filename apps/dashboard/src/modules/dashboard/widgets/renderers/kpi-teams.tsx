@@ -6,8 +6,8 @@
  * Overview widget: total teams in the active branch and season.
  */
 
-import { UserGroupIcon } from "@academorix/ui/icons/outline";
-import { KPI, Skeleton } from "@academorix/ui/react";
+import { UserGroupIcon } from "@stackra/ui/icons/heroicon/outline";
+import { KPI, Skeleton } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 
 import type { ReactNode } from "react";

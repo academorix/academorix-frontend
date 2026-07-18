@@ -1,0 +1,12 @@
+{
+  "name": "@academorix/architecture",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Turborepo shim for the architecture package — the actual code lives in the composer package.",
+  "scripts": {
+    "install:composer": "composer install --no-interaction --prefer-dist",
+    "test": "vendor/bin/pest --colors=always",
+    "analyse": "vendor/bin/phpstan analyse --memory-limit=1G",
+    "check": "php -d memory_limit=512M vendor/bin/phpunit"
+  }
+}

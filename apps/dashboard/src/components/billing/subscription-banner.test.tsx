@@ -5,8 +5,9 @@
  * @description
  * Component tests for {@link SubscriptionBanner}. We mock `useSubscription`
  * (the sole data dependency) at the module boundary so we can drive the
- * banner into each lifecycle state, and wrap the render in `<MemoryRouter>`
- * because the banner uses `useNavigate` for its CTA.
+ * banner into each lifecycle state, and wrap the render in
+ * `renderWithRouting()` from `@stackra/routing/testing` because the
+ * banner uses `useNavigate` from `@stackra/routing/react` for its CTA.
  *
  * Real `bannerFor()` runs — we exercise the full state machine, not a mock
  * of it, so a copy/tone change surfaces here immediately.
@@ -19,12 +20,12 @@
  *   5. sessionStorage-backed dismissal survives the render.
  */
 
-import { fireEvent, render, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router";
+import { fireEvent, screen } from "@testing-library/react";
+import { renderWithRouting } from "@stackra/routing/testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { SubscriptionStatus, SubscriptionSummary } from "@/types";
-import type { ReactNode } from "react";
+import type { ReactElement } from "react";
 
 const useSubscriptionMock = vi.fn();
 
@@ -61,9 +62,12 @@ function makeSubscription(overrides: Partial<SubscriptionSummary> = {}): Subscri
   };
 }
 
-/** Renders `children` inside a MemoryRouter (the banner uses `useNavigate`). */
-function renderWithRouter(ui: ReactNode) {
-  return render(<MemoryRouter>{ui}</MemoryRouter>);
+/**
+ * Renders `children` inside the Stackra routing test context so the
+ * banner's `useNavigate()` (from `@stackra/routing/react`) resolves.
+ */
+function renderWithRouter(ui: ReactElement) {
+  return renderWithRouting(ui);
 }
 
 beforeEach(() => {
@@ -184,11 +188,11 @@ describe("SubscriptionBanner", () => {
       makeSubscription({ status: "past_due" as SubscriptionStatus }),
     );
 
-    rerender(
-      <MemoryRouter>
-        <SubscriptionBanner />
-      </MemoryRouter>,
-    );
+    // rerender is the raw testing-library rerender — it does NOT
+    // re-run the test wrapper. The banner still lives under the
+    // routing context established by the first render, so we pass
+    // the raw component here.
+    rerender(<SubscriptionBanner />);
 
     expect(screen.getByText(/payment failed/i)).toBeInTheDocument();
   });

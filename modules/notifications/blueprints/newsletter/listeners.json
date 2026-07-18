@@ -1,0 +1,89 @@
+{
+  "id": "academorix://modules/newsletter/listeners",
+  "$version": 1,
+  "title": "newsletter \u2014 subscribed events",
+  "listeners": [
+    {
+      "event": "newsletter::NewsletterCreated",
+      "listener": "Academorix\\Newsletter\\Listeners\\CreateDefaultAudience",
+      "queue": "notifications",
+      "purpose": "Auto-create the 'All active subscribers' audience for every new newsletter. is_default=true."
+    },
+    {
+      "event": "newsletter::NewsletterArchived",
+      "listener": "Academorix\\Newsletter\\Listeners\\PausePendingCampaigns",
+      "queue": "notifications",
+      "purpose": "Cancel any pending campaigns when newsletter is archived."
+    },
+    {
+      "event": "newsletter::NewsletterSubscriptionAdded",
+      "listener": "Academorix\\Newsletter\\Listeners\\DispatchConfirmationEmail",
+      "queue": "notifications",
+      "filter": "event.requires_confirmation === true",
+      "purpose": "Send confirmation email via notifications core with signed confirmation_token URL."
+    },
+    {
+      "event": "newsletter::NewsletterSubscriptionConfirmed",
+      "listener": "Academorix\\Newsletter\\Listeners\\UpdateAudienceCache",
+      "queue": "notifications",
+      "purpose": "Bust cached_subscriber_ids for audiences whose expression may match this subscription."
+    },
+    {
+      "event": "newsletter::NewsletterSubscriptionRemoved",
+      "listener": "Academorix\\Newsletter\\Listeners\\UpdateAudienceCache",
+      "queue": "notifications"
+    },
+    {
+      "event": "newsletter::NewsletterCampaignCompleted",
+      "listener": "Academorix\\Newsletter\\Listeners\\EvaluateReputation",
+      "queue": "notifications",
+      "purpose": "Check open/click/bounce/complaint rates against thresholds; fire alerts + auto-throttle newsletter on breach."
+    },
+    {
+      "event": "newsletter::NewsletterOpenRecorded",
+      "listener": "Academorix\\Newsletter\\Listeners\\UpdateEngagementScore",
+      "queue": "notifications",
+      "purpose": "Increment subscription.engagement_score (opens weight lower than clicks) + update last_opened_at."
+    },
+    {
+      "event": "newsletter::NewsletterClickRecorded",
+      "listener": "Academorix\\Newsletter\\Listeners\\UpdateEngagementScore",
+      "queue": "notifications",
+      "purpose": "Increment engagement_score + last_clicked_at."
+    },
+    {
+      "event": "notifications-mail::MailBounced",
+      "listener": "Academorix\\Newsletter\\Listeners\\HandleMailBounce",
+      "queue": "notifications",
+      "filter": "event.metadata contains newsletter_id + subscription_id",
+      "purpose": "Flip subscription state to bounced (hard) or increment soft_bounce_count (soft). Fires NewsletterSubscriptionBounced."
+    },
+    {
+      "event": "notifications-mail::MailComplaint",
+      "listener": "Academorix\\Newsletter\\Listeners\\HandleMailComplaint",
+      "queue": "notifications",
+      "filter": "event.metadata contains newsletter_id + subscription_id",
+      "purpose": "Flip subscription state to complained + fire NewsletterSubscriptionRemoved. Records complaint in audit for CAN-SPAM evidence."
+    },
+    {
+      "event": "notifications-mail::MailOpened",
+      "listener": "Academorix\\Newsletter\\Listeners\\HandleMailOpened",
+      "queue": "notifications",
+      "filter": "event.metadata contains newsletter_id",
+      "purpose": "Fires NewsletterOpenRecorded."
+    },
+    {
+      "event": "notifications-mail::MailClicked",
+      "listener": "Academorix\\Newsletter\\Listeners\\HandleMailClicked",
+      "queue": "notifications",
+      "filter": "event.metadata contains newsletter_id",
+      "purpose": "Fires NewsletterClickRecorded."
+    },
+    {
+      "event": "user::UserErased",
+      "listener": "Academorix\\Newsletter\\Listeners\\AnonymiseSubscriptionsForErasedUser",
+      "queue": "notifications",
+      "purpose": "GDPR Art. 17 \u2014 replace user_id + PII fields with anonymised placeholders. Subscription row retained for audit continuity."
+    }
+  ]
+}

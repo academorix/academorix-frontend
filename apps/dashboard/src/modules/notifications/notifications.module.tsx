@@ -11,7 +11,7 @@
  * Both routes are gated by the `notification.view` permission on the
  * primary resource. The layout shell reads the resource's icon +
  * label to render the sidebar entry; the actual unread badge lives on
- * the navbar bell (see `authenticated-layout.tsx`).
+ * the navbar bell (see `app-navbar.tsx`).
  *
  * ## Coordination
  *
@@ -26,7 +26,7 @@
  * @see notifications module — end-to-end architecture.
  */
 
-import { BellIcon } from "@academorix/ui/icons/outline";
+import { BellIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

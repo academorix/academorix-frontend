@@ -1,0 +1,172 @@
+{
+  "id": "newsletter.resources.newsletter.list",
+  "title": "Newsletters",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/newsletters",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "newsletter", "entity": "newsletter", "action": "list" },
+  "requiresPermission": "newsletters.viewAny",
+  "requiresFeature": "newsletter.enabled",
+  "dataSources": [
+    {
+      "name": "newsletters",
+      "kind": "http.get",
+      "url": "/api/v1/newsletters",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": ["filter[cadence]", "filter[state]", "sort", "page", "per_page"]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Newsletters"
+              }
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "size": "sm",
+                "leadingIcon": "plus",
+                "children": "New newsletter"
+              },
+              "bindings": {
+                "isDisabled": { "$expr": "!identity.permissions.includes('newsletters.create')" }
+              },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/newsletters/new" } }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-wrap gap-3" },
+          "children": [
+            {
+              "kind": "Select",
+              "props": { "label": "Cadence", "name": "filter[cadence]", "placeholder": "All" },
+              "options": [
+                { "key": "daily", "label": "Daily" },
+                { "key": "weekly", "label": "Weekly" },
+                { "key": "biweekly", "label": "Biweekly" },
+                { "key": "monthly", "label": "Monthly" },
+                { "key": "quarterly", "label": "Quarterly" },
+                { "key": "adhoc", "label": "Ad-hoc" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "newsletters" } }
+            },
+            {
+              "kind": "Select",
+              "props": { "label": "State", "name": "filter[state]", "placeholder": "All" },
+              "options": [
+                { "key": "draft", "label": "Draft" },
+                { "key": "active", "label": "Active" },
+                { "key": "paused", "label": "Paused" },
+                { "key": "throttled", "label": "Throttled" },
+                { "key": "archived", "label": "Archived" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "newsletters" } }
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "props": {
+            "emptyState": {
+              "title": "No newsletters yet",
+              "description": "Create your first newsletter to start engaging subscribers.",
+              "icon": "newspaper"
+            }
+          },
+          "bindings": {
+            "items": { "$ref": "newsletters" },
+            "isLoading": { "$ref": "newsletters.isLoading" }
+          },
+          "columns": [
+            {
+              "id": "name",
+              "header": "Name",
+              "cell": {
+                "kind": "View",
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-medium" },
+                    "bindings": { "children": { "$ref": "row.name" } }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted font-mono" },
+                    "bindings": { "children": { "$ref": "row.slug" } }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "cadence",
+              "header": "Cadence",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "xs", "variant": "neutral" },
+                "bindings": { "children": { "$ref": "row.cadence" } }
+              }
+            },
+            {
+              "id": "subscribers",
+              "header": "Subscribers",
+              "cell": {
+                "kind": "Widget",
+                "widget": "newsletter.newsletter-stat-card",
+                "props": {
+                  "kind": "subscribers",
+                  "value": { "$ref": "row.subscriber_count" },
+                  "compact": true
+                }
+              }
+            },
+            {
+              "id": "state",
+              "header": "State",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "sm" },
+                "bindings": {
+                  "variant": {
+                    "$expr": "row.state === 'active' ? 'success' : (row.state === 'throttled' ? 'danger' : (row.state === 'paused' ? 'warning' : 'neutral'))"
+                  },
+                  "children": { "$ref": "row.state" }
+                }
+              }
+            },
+            {
+              "id": "actions",
+              "header": "",
+              "align": "end",
+              "cell": {
+                "kind": "Button",
+                "props": { "variant": "ghost", "size": "sm", "children": "Open" },
+                "actions": {
+                  "onPress": { "kind": "navigate", "toExpr": "'/tenant/newsletters/' + row.id" }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

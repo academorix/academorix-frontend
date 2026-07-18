@@ -1,0 +1,39 @@
+{
+  "id": "academorix://modules/subscription/observers",
+  "$version": 1,
+  "title": "subscription \u2014 Eloquent observers",
+  "observers": [
+    {
+      "model": "Plan",
+      "observer": "Academorix\\Subscription\\Observers\\PlanObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `pln_`",
+        "creating \u2192 refuse if provider_price_id is set but does not exist at Stripe/Paddle (dry-run lookup)",
+        "created \u2192 fire PlanCreated",
+        "updating \u2192 fire PlanUpdated",
+        "deleting \u2192 refuse when active_subscription_count > 0 unless force flag + super_admin"
+      ]
+    },
+    {
+      "model": "Subscription",
+      "observer": "Academorix\\Subscription\\Observers\\SubscriptionObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `sub_` + denormalise application_id + billing_cycle from Plan",
+        "creating \u2192 refuse if tenant already has non-terminal Subscription",
+        "created \u2192 fire SubscriptionStarted + create initial SubscriptionEvent(kind=started)",
+        "updating (state changed) \u2192 fire the matching state event + create SubscriptionEvent",
+        "updating (plan_id changed) \u2192 fire SubscriptionUpgraded/Downgraded/Switched by comparing Plan.tier ordering + create SubscriptionEvent",
+        "updating (trial_ends_at crossed) \u2192 fire TrialEnded"
+      ]
+    },
+    {
+      "model": "SubscriptionEvent",
+      "observer": "Academorix\\Subscription\\Observers\\SubscriptionEventObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `sev_`",
+        "creating \u2192 refuse duplicate provider_event_id (idempotency)",
+        "created \u2192 broadcast on tenant.{id}.subscription channel"
+      ]
+    }
+  ]
+}

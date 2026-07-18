@@ -1,0 +1,17 @@
+{
+  "defaultNotFoundFallback": {
+    "title": "الصفحة غير موجودة",
+    "description": "لا يتطابق عنوان URL مع أي مسار في هذا التطبيق.",
+    "defaultAction": "العودة إلى الرئيسية"
+  },
+  "defaultEmptyFallback": {
+    "title": "لا يوجد شيء هنا بعد",
+    "description": "لم يُرجع هذا المسار أي بيانات. حاول تعديل عوامل التصفية أو عد لاحقًا."
+  },
+  "defaultLoadingFallback": {
+    "ariaLabel": "جارٍ التحميل"
+  },
+  "defaultPendingFallback": {
+    "ariaLabel": "جارٍ تحميل الصفحة"
+  }
+}

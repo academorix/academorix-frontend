@@ -1,0 +1,329 @@
+{
+  "id": "academorix://modules/search/routes",
+  "$version": 1,
+  "title": "search \u2014 HTTP routes",
+  "description": "Seven tenant groups + one platform-admin group. Query + suggest are high-frequency reads with per-user rate limits. Sync-job + synonym + saved-query mutations are audit-heavy but low frequency. Analytics is read-only aggregate. Click-through record is a POST with no result body (fire-and-forget analytics).",
+  "groups": [
+    {
+      "name": "tenant-search-query",
+      "prefix": "/api/v1/search",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:search-query",
+        "search.rate-limit",
+        "search.query-log",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "The primary read surface. `search.query-log` middleware fires RecordSearchAnalyticsEventJob asynchronously so latency stays flat.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\QueryController@index",
+          "permission": "search.query",
+          "description": "Unified query. Query params: q, index (optional array), filter (spatie grammar), facets (array), sort, page, per_page, highlight (bool), boost (per-entity overrides), language."
+        },
+        {
+          "method": "GET",
+          "path": "/suggest",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SuggestController@index",
+          "permission": "search.suggest",
+          "middleware_extras": ["throttle:search-suggest"],
+          "description": "Autocomplete. Prefix-matched against #[SearchField(prefix: true)] fields. Cached per (tenant, index, query-prefix) for search.suggest.ttl_seconds."
+        },
+        {
+          "method": "POST",
+          "path": "/click",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\ClickController@store",
+          "permission": "search.click.record",
+          "description": "Record a click-through analytics event. Body: search_session_id, clicked_result_type, clicked_result_id, clicked_position. Returns 202."
+        }
+      ]
+    },
+    {
+      "name": "tenant-search-analytics",
+      "prefix": "/api/v1/search/analytics",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:search-read",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Tenant analytics dashboards. All aggregated \u2014 no raw query text emitted (that column is hidden on the wire).",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\AnalyticsController@summary",
+          "permission": "search.analytics.view",
+          "description": "Summary: query volume + avg took_ms + no-results rate + click-through rate. Filter[from], filter[to]."
+        },
+        {
+          "method": "GET",
+          "path": "/top-queries",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\AnalyticsController@topQueries",
+          "permission": "search.analytics.view",
+          "description": "Top queries by count (grouped on query_hash). Filter by index."
+        },
+        {
+          "method": "GET",
+          "path": "/no-results",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\AnalyticsController@noResults",
+          "permission": "search.analytics.view",
+          "description": "No-result queries admins should watch (indicates index gaps or synonym gaps)."
+        }
+      ]
+    },
+    {
+      "name": "tenant-search-indexes",
+      "prefix": "/api/v1/search/indexes",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:search-read",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Read-only registry surface. Tenancy may inspect their indexes' status but cannot reindex / flush directly \u2014 that's platform-admin.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\IndexController@index",
+          "permission": "search.indexes.viewAny",
+          "description": "List indexes visible to this tenant. Includes document_count, status, needs_reindex flag."
+        },
+        {
+          "method": "GET",
+          "path": "/{index}",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\IndexController@show",
+          "permission": "search.indexes.view",
+          "description": "Detail: field_specs + facet_specs + boost_specs + last_swap_at + current_version."
+        }
+      ]
+    },
+    {
+      "name": "tenant-search-sync-jobs",
+      "prefix": "/api/v1/search/sync-jobs",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:search-read",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Sync job history + control. Own jobs only (initiator = auth); platform admins see cross-tenant.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SyncJobController@index",
+          "permission": "search.sync-jobs.viewAny"
+        },
+        {
+          "method": "GET",
+          "path": "/{jobId}",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SyncJobController@show",
+          "permission": "search.sync-jobs.view"
+        },
+        {
+          "method": "POST",
+          "path": "/{jobId}/cancel",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SyncJobController@cancel",
+          "permission": "search.sync-jobs.cancel",
+          "middleware_extras": ["search.owned-sync-job"]
+        }
+      ]
+    },
+    {
+      "name": "tenant-search-synonyms",
+      "prefix": "/api/v1/search/synonyms",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:search-write",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Per-tenant synonym CRUD. Platform-seeded (is_system=true) rows can be disabled but not deleted.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SynonymController@index",
+          "permission": "search.synonyms.viewAny"
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SynonymController@store",
+          "permission": "search.synonyms.create"
+        },
+        {
+          "method": "GET",
+          "path": "/{synonym}",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SynonymController@show",
+          "permission": "search.synonyms.view"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{synonym}",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SynonymController@update",
+          "permission": "search.synonyms.update"
+        },
+        {
+          "method": "DELETE",
+          "path": "/{synonym}",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SynonymController@destroy",
+          "permission": "search.synonyms.delete"
+        }
+      ]
+    },
+    {
+      "name": "tenant-search-saved-queries",
+      "prefix": "/api/v1/search/saved-queries",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:search-write",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Per-user saved queries + smart lists. Shared queries visible across the tenant.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SavedQueryController@index",
+          "permission": "search.saved-queries.viewAny"
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SavedQueryController@store",
+          "permission": "search.saved-queries.create"
+        },
+        {
+          "method": "GET",
+          "path": "/{query}",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SavedQueryController@show",
+          "permission": "search.saved-queries.view"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{query}",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SavedQueryController@update",
+          "permission": "search.saved-queries.update"
+        },
+        {
+          "method": "DELETE",
+          "path": "/{query}",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SavedQueryController@destroy",
+          "permission": "search.saved-queries.delete"
+        },
+        {
+          "method": "POST",
+          "path": "/{query}/run",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Tenant\\SavedQueryController@run",
+          "permission": "search.saved-queries.view",
+          "description": "Execute a saved query + record analytics with was_from_saved_query=true. Same result envelope as GET /search/."
+        }
+      ]
+    },
+    {
+      "name": "platform-search",
+      "prefix": "/api/v1/platform/search",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "throttle:search-platform",
+        "response.envelope"
+      ],
+      "hosts": ["central_admin"],
+      "description": "Platform-admin cross-tenant surface. Reindex + flush + engine-health + cross-tenant analytics.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/indexes",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Platform\\IndexController@index",
+          "permission": "platform.search.indexes.viewAny"
+        },
+        {
+          "method": "GET",
+          "path": "/indexes/{index}",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Platform\\IndexController@show",
+          "permission": "platform.search.indexes.view"
+        },
+        {
+          "method": "POST",
+          "path": "/indexes/{index}/reindex",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Platform\\IndexController@reindex",
+          "permission": "platform.search.indexes.reindex",
+          "description": "Trigger a zero-downtime reindex. Creates a SearchSyncJob (kind=reindex) and returns 202 with the job id."
+        },
+        {
+          "method": "POST",
+          "path": "/indexes/{index}/flush",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Platform\\IndexController@flush",
+          "permission": "platform.search.indexes.flush",
+          "description": "Drop an index. Destructive \u2014 requires confirmation payload with the index name."
+        },
+        {
+          "method": "GET",
+          "path": "/sync-jobs",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Platform\\SyncJobController@index",
+          "permission": "platform.search.sync-jobs.viewAny"
+        },
+        {
+          "method": "GET",
+          "path": "/sync-jobs/{jobId}",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Platform\\SyncJobController@show",
+          "permission": "platform.search.sync-jobs.view"
+        },
+        {
+          "method": "POST",
+          "path": "/sync-jobs/{jobId}/cancel",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Platform\\SyncJobController@cancel",
+          "permission": "platform.search.sync-jobs.cancel"
+        },
+        {
+          "method": "GET",
+          "path": "/analytics",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Platform\\AnalyticsController@index",
+          "permission": "platform.search.analytics.view",
+          "description": "Cross-tenant analytics for capacity + support triage."
+        },
+        {
+          "method": "GET",
+          "path": "/engines/health",
+          "controller": "Academorix\\Search\\Http\\Controllers\\Platform\\EnginesController@health",
+          "permission": "platform.search.engines.view",
+          "description": "Live reachability + latency for every configured engine."
+        }
+      ]
+    }
+  ]
+}

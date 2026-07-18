@@ -1,0 +1,70 @@
+{
+  "id": "academorix://modules/tenancy/caches",
+  "$version": 1,
+  "title": "tenants — cache keys",
+  "description": "Cache keys this module owns. Every key is namespaced by the tenants hook (`CachePrefixTenantHook` prepends `tenant:{tenant_id}:` per request). Keys documented WITHOUT the tenant prefix — that prefix is applied at read/write time.",
+  "driver": "redis",
+  "keys": [
+    {
+      "pattern": "tenant:{tenant_id}:branding",
+      "description": "Denormalised Branding payload for the tenant's primary profile. Read on every request that renders themed chrome.",
+      "ttlSeconds": 3600,
+      "tags": ["tenant", "branding"],
+      "invalidatedBy": [
+        "BrandingObserver@saved",
+        "TenantObserver@saved (primary_branding_id dirty)"
+      ]
+    },
+    {
+      "pattern": "tenant:{tenant_id}:features",
+      "description": "Effective features array for the tenant (BusinessType.default_config.features + feature-flag overrides). Read on every /auth/me and every access-control check.",
+      "ttlSeconds": 300,
+      "tags": ["tenant", "features"],
+      "invalidatedBy": ["feature-flag Toggle listener", "TenantProvisioned listener"]
+    },
+    {
+      "pattern": "tenant:{tenant_id}:provisioning",
+      "description": "The tenant's `provisioning` JSONB (timezone, locale, currency). Read at boot to seed the request-scoped Locale + Region context.",
+      "ttlSeconds": 3600,
+      "tags": ["tenant"],
+      "invalidatedBy": ["TenantObserver@updated (provisioning dirty)"]
+    },
+    {
+      "pattern": "domain:{host}:tenant",
+      "description": "Resolves a host header to the (application_id, tenant_id) tuple. Short TTL because DNS + custom-domain edits need to reflect quickly.",
+      "ttlSeconds": 60,
+      "tags": ["domain"],
+      "invalidatedBy": ["DomainObserver@saved", "DomainObserver@deleted"],
+      "note": "Un-prefixed key — this cache is consulted BEFORE the tenant is known."
+    },
+    {
+      "pattern": "application:host:{host}",
+      "description": "Resolves a host header (central_host or platform_admin_host) to the Application row. Consulted on every request before tenant resolution.",
+      "ttlSeconds": 3600,
+      "tags": ["application"],
+      "invalidatedBy": ["Application@updated"],
+      "note": "Un-prefixed key — application resolution runs before tenant scope."
+    },
+    {
+      "pattern": "business-types:catalogue",
+      "description": "The full BusinessType catalogue (from config). Rarely changes.",
+      "ttlSeconds": 86400,
+      "tags": ["business-types"],
+      "invalidatedBy": ["tenancy:sync-catalogue command", "BusinessTypePolicy@update"],
+      "note": "Un-prefixed key — application-wide catalogue, not tenant-scoped."
+    },
+    {
+      "pattern": "tenant:{tenant_id}:my-tenancy:{identity_id}",
+      "description": "Per-identity tenant list projection. Powers the tenant picker + shell tenant switcher.",
+      "ttlSeconds": 60,
+      "tags": ["tenant", "identity", "tenants"],
+      "invalidatedBy": [
+        "TenantProvisioned",
+        "TenantSuspended",
+        "TenantResumed",
+        "TenantArchived",
+        "membership changes in user module"
+      ]
+    }
+  ]
+}

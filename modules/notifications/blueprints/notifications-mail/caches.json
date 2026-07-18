@@ -1,0 +1,36 @@
+{
+  "id": "academorix://modules/notifications-mail/caches",
+  "$version": 1,
+  "title": "notifications-mail \u2014 cache keys + tags",
+  "description": "Suppression bloom filter for hot-path lookup + per-provider config caches.",
+  "driver": "redis",
+  "ownedTags": ["notifications-mail"],
+  "keys": [
+    {
+      "pattern": "notifications-mail:suppressions:{tenant_id}:bloom",
+      "description": "Bloom filter of suppressed email hashes for tenant. Read on every send (hot path). Bloom miss = definitely not suppressed; hit = fall through to DB check.",
+      "ttlSeconds": 300,
+      "tags": ["notifications-mail", "suppression", "tenant"],
+      "invalidatedBy": ["MailSuppressed event", "MailSuppressionRevoked event"]
+    },
+    {
+      "pattern": "notifications-mail:suppressions:{tenant_id}:list:{page}",
+      "description": "Paginated suppression list for admin UI. Warmed on admin page load.",
+      "ttlSeconds": 60,
+      "tags": ["notifications-mail", "suppression", "tenant"]
+    },
+    {
+      "pattern": "notifications-mail:providers:{provider}:reachable",
+      "description": "Provider reachability cache (result of health probe). Reused by SendMailJob for pre-flight abort when provider is known-down.",
+      "ttlSeconds": 60,
+      "tags": ["notifications-mail", "provider"]
+    },
+    {
+      "pattern": "notifications-mail:tenant_defaults:{tenant_id}",
+      "description": "Tenant-level defaults (sender identity, postal address, footer text) from settings.json. Read on every send.",
+      "ttlSeconds": 600,
+      "tags": ["notifications-mail", "tenant"],
+      "invalidatedBy": ["tenancy::TenantSettingsUpdated event"]
+    }
+  ]
+}

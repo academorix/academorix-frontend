@@ -1,0 +1,215 @@
+{
+  "id": "academorix://modules/notifications/schemas/notification-digest",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "NotificationDigest",
+  "description": "Batching state for a `(user, category, channel, scheduled_for)` window. Notifications with digest_mode\u2260immediate accumulate items into this row until the window boundary; ProcessDigestJob then renders + dispatches the aggregate as a single Notification with priority=transactional. Items linked via the `notification_digest_items` pivot table. Not soft-deleted \u2014 30-day hard purge post-delivery.",
+  "type": "object",
+  "x-module": "notifications",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "notification_digests",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "dgst_",
+    "incrementing": false,
+    "model": "Academorix\\Notifications\\Models\\NotificationDigest",
+    "interface": "Academorix\\Notifications\\Contracts\\Data\\NotificationDigestInterface",
+    "implements": ["Academorix\\Notifications\\Contracts\\Data\\NotificationDigestInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "HasStates",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Filterable"
+    ],
+    "casts": {
+      "state": "NotificationDigestState",
+      "scheduled_for": "datetime",
+      "delivered_at": "datetime",
+      "metadata": "array"
+    },
+    "appends": ["is_pending", "is_terminal", "item_count"],
+    "observers": [],
+    "hidden": ["metadata"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `dgst_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "category_slug": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "foreign": {
+          "table": "notification_categories",
+          "column": "slug",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        }
+      },
+      "channel": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: `mail`, `sms`, `push`, `in_app`. Rare for anything but mail."
+      },
+      "window": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: `daily`, `weekly`. Determines the boundary rule."
+      },
+      "scheduled_for": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "The delivery boundary. UTC. Timezone-aware because ProcessDigestJob converts user.timezone \u2192 UTC when computing."
+      },
+      "state": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "pending",
+        "description": "Enum: `pending`, `delivered`, `skipped`, `failed`."
+      },
+      "delivered_notification_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": {
+          "table": "notifications",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        },
+        "description": "The single Notification created by ProcessDigestJob when the digest delivers. Points back to the aggregate."
+      },
+      "delivered_at": { "type": "timestamptz", "nullable": true },
+      "skip_reason": {
+        "type": "string",
+        "length": 100,
+        "nullable": true,
+        "description": "When state=skipped: `empty_at_boundary` (no items accumulated) OR `user_disabled_digest` (mode changed to off before boundary)."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["user_id", "category_slug", "channel", "scheduled_for"],
+        "unique": true,
+        "name": "notification_digests_window_unique",
+        "description": "One row per (user, category, channel, window) tuple. Enforces the ProcessDigestJob uniqueness contract."
+      },
+      {
+        "columns": ["state", "scheduled_for"],
+        "unique": false,
+        "name": "notification_digests_pending_scan_index",
+        "predicate": "state = 'pending'",
+        "description": "ProcessDigestsCommand scan for pending digests approaching their boundary."
+      },
+      {
+        "columns": ["tenant_id", "state", "created_at"],
+        "unique": false,
+        "name": "notification_digests_tenant_state_index"
+      },
+      {
+        "columns": ["delivered_at"],
+        "unique": false,
+        "name": "notification_digests_delivered_at_index",
+        "description": "Retention scan for the 30-day hard purge."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "user_id",
+    "category_slug",
+    "channel",
+    "window",
+    "scheduled_for",
+    "state",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^dgst_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "user_id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "category_slug": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$",
+      "maxLength": 128
+    },
+    "channel": { "type": "string", "enum": ["mail", "sms", "push", "in_app"] },
+    "window": { "type": "string", "enum": ["daily", "weekly"] },
+    "scheduled_for": { "type": "string", "format": "date-time" },
+    "state": { "type": "string", "enum": ["pending", "delivered", "skipped", "failed"] },
+    "delivered_notification_id": {
+      "type": ["string", "null"],
+      "pattern": "^not_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "delivered_at": { "type": ["string", "null"], "format": "date-time" },
+    "skip_reason": {
+      "type": ["string", "null"],
+      "enum": ["empty_at_boundary", "user_disabled_digest", null],
+      "maxLength": 100
+    },
+    "is_pending": { "type": "boolean", "description": "Computed. state=='pending'." },
+    "is_terminal": {
+      "type": "boolean",
+      "description": "Computed. state IN delivered/skipped/failed."
+    },
+    "item_count": {
+      "type": "integer",
+      "description": "Computed. COUNT() from notification_digest_items pivot."
+    },
+    "metadata": { "type": ["object", "null"], "additionalProperties": true },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["metadata", "created_by", "updated_by"],
+    "computed": ["is_pending", "is_terminal", "item_count"]
+  }
+}

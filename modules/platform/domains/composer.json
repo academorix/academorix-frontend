@@ -1,0 +1,80 @@
+{
+  "name": "academorix/domains",
+  "type": "library",
+  "description": "Domains domain module — owns the `Domain` aggregate (custom hostname bound to a Tenant) and `DomainRecord` (the expected DNS records diffed by the verification job). Publishes the `DomainVerifier` + `CertificateProvisioner` bindings every host-resolver + ACME consumer swaps at deploy. Extracted from tenants at v0.3 so long-running DNS + cert workflows own their module lifecycle.",
+  "license": "proprietary",
+  "keywords": [
+    "academorix",
+    "laravel",
+    "domain",
+    "dns",
+    "cname",
+    "verification",
+    "certificate",
+    "ssl",
+    "white-label",
+    "domain-module"
+  ],
+  "require": {
+    "php": "^8.3",
+    "academorix/application": "@dev",
+    "academorix/authorization": "@dev",
+    "academorix/console": "@dev",
+    "academorix/crud": "@dev",
+    "academorix/database": "@dev",
+    "academorix/enum": "@dev",
+    "academorix/events": "@dev",
+    "academorix/exceptions": "@dev",
+    "academorix/foundation": "@dev",
+    "academorix/retention": "@dev",
+    "academorix/routing": "@dev",
+    "academorix/service-provider": "@dev",
+    "academorix/support": "@dev",
+    "academorix/tenancy": "@dev",
+    "illuminate/contracts": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/events": "^13.0",
+    "illuminate/http": "^13.0",
+    "illuminate/mail": "^13.0",
+    "illuminate/notifications": "^13.0",
+    "illuminate/queue": "^13.0",
+    "illuminate/routing": "^13.0",
+    "illuminate/support": "^13.0",
+    "spatie/laravel-data": "^4.11"
+  },
+  "require-dev": {
+    "mockery/mockery": "^1.6",
+    "orchestra/testbench": "^11.0",
+    "pestphp/pest": "^4.0",
+    "pestphp/pest-plugin-laravel": "^4.0",
+    "phpstan/phpstan": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Academorix\\Domains\\": "src/",
+      "Academorix\\Domains\\Database\\Factories\\": "database/factories/",
+      "Academorix\\Domains\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Academorix\\Domains\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Academorix\\Domains\\Providers\\DomainsServiceProvider"
+      ],
+      "aliases": {}
+    }
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

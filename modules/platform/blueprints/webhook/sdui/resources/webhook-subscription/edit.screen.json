@@ -1,0 +1,162 @@
+{
+  "id": "webhook.resources.webhook-subscription.edit",
+  "title": "Edit webhook",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/webhooks/{id}/edit",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "webhook", "entity": "webhook-subscription", "action": "edit" },
+  "requiresPermission": "webhook.subscriptions.update",
+  "params": [{ "name": "id", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "subscription",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/tenant/webhook/subscriptions/' + params.id",
+      "unwrap": "data"
+    },
+    {
+      "name": "eventsCatalog",
+      "kind": "http.get",
+      "url": "/api/v1/tenant/webhook/events",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "apiVersions",
+      "kind": "http.get",
+      "url": "/api/v1/tenant/versioning/api-versions",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "Cancel",
+            "className": "text-sm text-muted"
+          },
+          "actions": {
+            "onPress": { "kind": "navigate", "toExpr": "'/tenant/webhooks/' + params.id" }
+          }
+        },
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold" },
+          "bindings": { "children": { "$expr": "'Edit ' + subscription.name" } }
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "children": "Every save produces a snapshot via versioning. Revert accidental changes via the version history."
+          }
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "submitUrlExpr": "'/api/v1/tenant/webhook/subscriptions/' + params.id",
+            "submitMethod": "PATCH",
+            "onSuccess": [
+              { "kind": "toast.success", "message": "Saved" },
+              { "kind": "data.refresh", "source": "subscription" }
+            ]
+          },
+          "bindings": { "initialValues": { "$ref": "subscription" } },
+          "children": [
+            {
+              "kind": "TextField",
+              "props": { "label": "Name", "name": "name" },
+              "bindings": { "defaultValue": { "$ref": "subscription.name" } }
+            },
+            {
+              "kind": "TextArea",
+              "props": { "label": "Description", "name": "description", "rows": 2 },
+              "bindings": { "defaultValue": { "$ref": "subscription.description" } }
+            },
+            {
+              "kind": "TextField",
+              "props": { "label": "URL", "name": "destination_config.url", "type": "url" },
+              "bindings": { "defaultValue": { "$expr": "subscription.destination_config?.url" } }
+            },
+            {
+              "kind": "MultiSelect",
+              "props": { "label": "Events", "name": "events" },
+              "optionsSource": {
+                "$ref": "eventsCatalog",
+                "valueField": "name",
+                "labelField": "name"
+              },
+              "bindings": { "defaultValue": { "$ref": "subscription.events" } }
+            },
+            {
+              "kind": "Select",
+              "props": { "label": "API version pin", "name": "api_version" },
+              "optionsSource": {
+                "$ref": "apiVersions",
+                "valueField": "slug",
+                "labelField": "slug"
+              },
+              "bindings": { "defaultValue": { "$ref": "subscription.api_version" } }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "grid grid-cols-2 gap-3" },
+              "children": [
+                {
+                  "kind": "NumberField",
+                  "props": {
+                    "label": "Timeout (seconds)",
+                    "name": "timeout_seconds",
+                    "min": 1,
+                    "max": 300
+                  },
+                  "bindings": { "defaultValue": { "$ref": "subscription.timeout_seconds" } }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "Max attempts", "name": "max_attempts", "min": 1, "max": 10 },
+                  "bindings": { "defaultValue": { "$ref": "subscription.max_attempts" } }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": {
+                    "label": "Rate limit (req/min)",
+                    "name": "rate_limit_per_minute",
+                    "min": 1,
+                    "max": 100000
+                  },
+                  "bindings": { "defaultValue": { "$ref": "subscription.rate_limit_per_minute" } }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": {
+                    "label": "Failure threshold",
+                    "name": "consecutive_failure_threshold",
+                    "min": 1,
+                    "max": 1000
+                  },
+                  "bindings": {
+                    "defaultValue": { "$ref": "subscription.consecutive_failure_threshold" }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "size": "md", "type": "submit", "children": "Save" }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

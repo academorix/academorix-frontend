@@ -1,0 +1,30 @@
+{
+  "id": "academorix://modules/versioning/notifications",
+  "$version": 1,
+  "title": "versioning \u2014 notification classes + categories",
+  "description": "2 Notification classes + 2 categories registered with the notifications core. Fired when a DeprecationNotice publishes with notify_customers=true.",
+  "namespace": "Academorix\\Versioning\\Notifications",
+  "notifications": ["ApiDeprecationNotification", "ApiSunsetNotification"],
+  "categories": [
+    {
+      "slug": "versioning.api_deprecation",
+      "display_name": "API deprecation notices",
+      "description": "Notifies tenant admins when an API version they use is scheduled for sunset. Includes migration guide URL + affected endpoints/events. Cannot be opted out (transactional).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "versioning.api_sunset",
+      "display_name": "API sunset final notice",
+      "description": "Final notification when an API version transitions to sunset. Includes list of paused subscriptions + upgrade path taken. Cannot be opted out.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "critical",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

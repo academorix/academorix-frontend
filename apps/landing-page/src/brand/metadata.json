@@ -1,0 +1,35 @@
+{
+  "name": "Academorix",
+  "shortName": "Academorix",
+  "tagline": "Run every sport from one command center",
+  "description": "Sport-agnostic academy management for scheduling, parent communication, and automated billing.",
+  "icons": {
+    "isotipo": "BrandIsotipo",
+    "logotipo": "BrandLogotipo"
+  },
+  "assets": {
+    "isotipo": {
+      "src": "/brand/mark.png",
+      "alt": "Academorix",
+      "width": 720,
+      "height": 620
+    },
+    "logotipo": {
+      "src": "/brand/lockup.png",
+      "alt": "Academorix",
+      "width": 900,
+      "height": 390
+    },
+    "wordmark": {
+      "src": "/brand/wordmark.png",
+      "alt": "Academorix",
+      "width": 731,
+      "height": 63
+    },
+    "favicon": "/brand/mark.png"
+  },
+  "usage": {
+    "isotipo": "Use the compact symbol-only isotype in constrained contexts such as login screens, signup screens, mobile headers, collapsed sidebars, and app icons. On login and signup screens, render it at least 44x44.",
+    "logotipo": "Use the complete wordmark/logotype in expanded sidebars, full headers, and brand bars. Keep header wordmarks compact by default."
+  }
+}

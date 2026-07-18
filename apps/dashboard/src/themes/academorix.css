@@ -1,0 +1,121 @@
+/*
+ * ---------------------------------------------------------------------------
+ * Academorix theme
+ * ---------------------------------------------------------------------------
+ *
+ * A minimal override on top of HeroUI's default schema. Only the tokens that
+ * carry brand meaning are redefined here — everything else falls through to
+ * HeroUI's stock light/dark tokens (which HeroUI Pro then extends via the
+ * `-hover` / `-soft` calculated variants).
+ *
+ * Anchor: the brand accent is `oklch(0.87 0.22 128)` — a chartreuse/lime that
+ * matches the source-of-truth PNGs in `/brand` (sampled at `#B2F407`).
+ * All neutrals share hue 128 at very low chroma so the paper carries a
+ * whisper of brand instead of pure grey.
+ *
+ * Because the accent lands near white in luminance (L ≈ 0.87), its foreground
+ * flips to a deep bottle-green — dark text over the chartreuse never smears.
+ *
+ * Success is deliberately parked at a DIFFERENT hue (148°, leaf green) so
+ * "Active" chips and other success signals don't collide with the accent.
+ *
+ * Applied via `[data-theme="light"]` / `[data-theme="dark"]` on <html>.
+ */
+
+:root,
+.light,
+[data-theme="light"] {
+  /* Theme Colors (Light Mode) */
+  --accent: oklch(0.87 0.22 128);
+  --accent-foreground: oklch(0.2 0.06 128);
+  --background: oklch(97.02% 0.002 128);
+  --border: oklch(90% 0.002 128);
+  --danger: oklch(0.5509 0.2166 25.29);
+  --danger-foreground: oklch(98% 0.02 25.29);
+  --default: oklch(94% 0.002 128);
+  --default-foreground: oklch(21.03% 0.0059 128);
+  --field-background: oklch(100% 0.001 128);
+  --field-border: transparent;
+  --field-foreground: oklch(21.03% 0.002 128);
+  --field-placeholder: oklch(55.17% 0.004 128);
+  --focus: oklch(0.87 0.22 128);
+  --foreground: oklch(21.03% 0.002 128);
+  --muted: oklch(55.17% 0.004 128);
+  --overlay: oklch(100% 0.0006 128);
+  --overlay-foreground: oklch(21.03% 0.002 128);
+  --scrollbar: oklch(87.1% 0.002 128);
+  --segment: oklch(100% 0.002 128);
+  --segment-foreground: oklch(21.03% 0.002 128);
+  --separator: oklch(92% 0.002 128);
+  --success: oklch(0.6072 0.1647 148);
+  --success-foreground: oklch(98% 0.0165 148);
+  --surface: oklch(100% 0.001 128);
+  --surface-foreground: oklch(21.03% 0.002 128);
+  --surface-secondary: oklch(95.24% 0.0016 128);
+  --surface-secondary-foreground: oklch(21.03% 0.002 128);
+  --surface-tertiary: oklch(93.73% 0.0016 128);
+  --surface-tertiary-foreground: oklch(21.03% 0.002 128);
+  --warning: oklch(0.6972 0.1687 54.22);
+  --warning-foreground: oklch(15% 0.05 54.22);
+
+  /* Chart palette — brand chartreuse leads, then hues rotated ~50° apart
+     with matched luminance so no series visually outweighs another. */
+  --chart-1: oklch(0.87 0.22 128); /* Chartreuse — brand */
+  --chart-2: oklch(0.68 0.13 220); /* Teal */
+  --chart-3: oklch(0.78 0.16 72); /* Amber */
+  --chart-4: oklch(0.66 0.2 22); /* Coral */
+  --chart-5: oklch(0.6 0.19 290); /* Violet */
+
+  /* Border Radius */
+  --radius: 0.25rem;
+  --field-radius: 0.125rem;
+
+  /* Font Family */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+.dark,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Theme Colors (Dark Mode) */
+  --accent: oklch(0.87 0.22 128);
+  --accent-foreground: oklch(0.18 0.06 128);
+  --background: oklch(12% 0.002 128);
+  --border: oklch(28% 0.002 128);
+  --danger: oklch(0.5931 0.2338 25.42);
+  --danger-foreground: oklch(98% 0.02 25.42);
+  --default: oklch(27.4% 0.002 128);
+  --default-foreground: oklch(99.11% 0 0);
+  --field-background: oklch(21.03% 0.004 128);
+  --field-border: transparent;
+  --field-foreground: oklch(99.11% 0.002 128);
+  --field-placeholder: oklch(70.5% 0.004 128);
+  --focus: oklch(0.87 0.22 128);
+  --foreground: oklch(99.11% 0.002 128);
+  --muted: oklch(70.5% 0.004 128);
+  --overlay: oklch(21.03% 0.004 128);
+  --overlay-foreground: oklch(99.11% 0.002 128);
+  --scrollbar: oklch(70.5% 0.002 128);
+  --segment: oklch(39.64% 0.002 128);
+  --segment-foreground: oklch(99.11% 0.002 128);
+  --separator: oklch(25% 0.002 128);
+  --success: oklch(0.72 0.18 148);
+  --success-foreground: oklch(15% 0.05 148);
+  --surface: oklch(21.03% 0.004 128);
+  --surface-foreground: oklch(99.11% 0.002 128);
+  --surface-secondary: oklch(25.7% 0.003 128);
+  --surface-secondary-foreground: oklch(99.11% 0.002 128);
+  --surface-tertiary: oklch(27.21% 0.003 128);
+  --surface-tertiary-foreground: oklch(99.11% 0.002 128);
+  --warning: oklch(0.7921 0.1626 67.42);
+  --warning-foreground: oklch(15% 0.0488 67.42);
+
+  /* Chart palette — luminance lifted ~4pp vs light mode so hues stay legible
+     against the dark canvas without oversaturating. */
+  --chart-1: oklch(0.87 0.22 128); /* Chartreuse — brand */
+  --chart-2: oklch(0.74 0.13 220); /* Teal */
+  --chart-3: oklch(0.82 0.155 72); /* Amber */
+  --chart-4: oklch(0.72 0.2 22); /* Coral */
+  --chart-5: oklch(0.68 0.19 290); /* Violet */
+}

@@ -13,7 +13,7 @@ import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";
 
-import { appRoutes } from "@/lib/module/routes";
+import { appRoutes } from "@/lib/module";
 
 const WorkspacePickerPage = lazy(() => import("@/modules/workspace/pages/workspace-picker-page"));
 const FindWorkspacesPage = lazy(() => import("@/modules/workspace/pages/find-workspaces-page"));

@@ -1,0 +1,68 @@
+{
+  "id": "academorix://modules/notifications-mail/retention",
+  "$version": 1,
+  "title": "notifications-mail \u2014 retention windows",
+  "description": "MailSuppression retention is regulation-driven \u2014 hard bounces forever, complaints P5Y for CAN-SPAM evidence.",
+  "compliance_regimes_referenced": [
+    "can_spam \u00a77704(a)(4) \u2014 unsubscribe records retained 10 days functional; complaint records retained for evidence",
+    "casl s.6 \u2014 consent trail evidence",
+    "gdpr Art. 5 (storage limitation)",
+    "gdpr Art. 30 (records of processing \u2014 who unsubscribed when)"
+  ],
+  "retention": [
+    {
+      "entity": "MailSuppression (reason=hard_bounce)",
+      "hot": {
+        "days": "forever",
+        "description": "Hard bounces retained forever. Address is invalid; suppression is protection."
+      },
+      "purge": { "trigger": "manual by super_admin (rare)", "action": "hard delete with audit row" }
+    },
+    {
+      "entity": "MailSuppression (reason=complaint)",
+      "hot": { "days": 1825, "description": "5 years for CAN-SPAM + CASL evidence." },
+      "cold": { "days": 0, "description": "Compliance surfaces need hot access." },
+      "purge": {
+        "trigger": "> 5 years since suppression",
+        "action": "anonymise email (SHA-256 hash) + retain row",
+        "job": "manual annual review"
+      }
+    },
+    {
+      "entity": "MailSuppression (reason=unsubscribed)",
+      "hot": {
+        "days": "while user active",
+        "description": "Follows the user account lifecycle. Preference layer is the authoritative unsubscribe record; this is a provider-level filter."
+      },
+      "purge": {
+        "trigger": "UserErased event",
+        "action": "hard delete via cascade + write audit row"
+      }
+    },
+    {
+      "entity": "MailSuppression (reason=manual)",
+      "hot": {
+        "days": "while tenant owns",
+        "description": "Tenant-managed. Deletable by tenant admin at any time."
+      },
+      "purge": { "trigger": "admin action", "action": "soft delete then hard delete after 30d" }
+    },
+    {
+      "entity": "MailSuppression (reason=spam_trap)",
+      "hot": {
+        "days": "forever",
+        "description": "Known spam-trap domains \u2014 platform-wide protection. is_system=true."
+      },
+      "purge": {
+        "trigger": "manual by super_admin only",
+        "action": "hard delete with mandatory audit"
+      }
+    },
+    {
+      "entity": "audit_log (notifications-mail scoped)",
+      "hot": { "days": 365 },
+      "cold": { "days": 2555, "description": "7y for CAN-SPAM + SOC 2 evidence." },
+      "purge": { "trigger": "cold window exceeded", "action": "anonymise-not-delete" }
+    }
+  ]
+}

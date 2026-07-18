@@ -1,0 +1,88 @@
+{
+  "id": "academorix://modules/notifications-sms/compliance",
+  "$version": 1,
+  "title": "notifications-sms \u2014 compliance evidence",
+  "description": "Primary enforcement point for TCPA + CASL + CTIA short-code guidelines. GDPR Art. 6/7 for EU marketing SMS.",
+  "regimes": {
+    "tcpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "section": "47 CFR \u00a7 64.1200(a)(3)",
+          "principle": "express written consent for autodialed marketing SMS",
+          "evidence": "Marketing categories require consent captured by compliance module. NotificationPreference.enabled + audit trail."
+        },
+        {
+          "section": "47 CFR \u00a7 64.1200(d)(4)",
+          "principle": "immediate honour of stop request",
+          "evidence": "STOP-keyword \u2192 SmsOptedOut event within seconds. Cross-channel propagation to preferences."
+        },
+        {
+          "section": "CTIA short code guidelines",
+          "principle": "STOP + HELP keyword responses",
+          "evidence": "Automated SendOptOutConfirmation on STOP; HELP handler returns tenant-configured help text."
+        }
+      ]
+    },
+    "casl": {
+      "applicable": true,
+      "controls": [
+        {
+          "section": "s.6",
+          "principle": "express consent for CEM",
+          "evidence": "Marketing SMS refused for CA recipients without express consent."
+        },
+        {
+          "section": "s.11",
+          "principle": "unsubscribe mechanism",
+          "evidence": "STOP keyword satisfies unsubscribe mechanism. Auto-confirmation per s.11(3)."
+        }
+      ]
+    },
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 6",
+          "principle": "lawful basis",
+          "evidence": "Same as mail \u2014 opt-in for marketing categories via NotificationPreference."
+        },
+        {
+          "article": "Art. 8",
+          "principle": "child's consent",
+          "evidence": "SMS to minors requires VPC \u2014 gated in DispatchGateway before reaching this module."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "AnonymiseOptOutsForErasedUser listener \u2014 phone \u2192 SHA-256 hash on UserErased. Opt-out row retained for TCPA."
+        },
+        {
+          "article": "Art. 28",
+          "principle": "processor arrangement",
+          "evidence": "subprocessors.json lists all SMS providers."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.6",
+          "principle": "encryption in transit",
+          "evidence": "TLS 1.3 to all providers."
+        },
+        {
+          "criterion": "CC7.3",
+          "principle": "incident response",
+          "evidence": "Per-provider kill switches + cost-cap enforcement."
+        },
+        {
+          "criterion": "CC7.4",
+          "principle": "corrective actions",
+          "evidence": "Auto-disable on repeated STOP-response patterns (spike detection)."
+        }
+      ]
+    }
+  }
+}

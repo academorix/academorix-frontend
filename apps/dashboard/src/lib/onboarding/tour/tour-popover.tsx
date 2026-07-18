@@ -63,7 +63,7 @@
  * @see onboarding module — UX.
  */
 
-import { Button, Separator } from "@academorix/ui/react";
+import { Button, Separator } from "@stackra/ui/react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 

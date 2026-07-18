@@ -20,7 +20,7 @@
  * @see apps/dashboard/DASHBOARD_UX_PLAN.md §8
  */
 
-import { CheckCircleIcon } from "@academorix/ui/icons/outline";
+import { CheckCircleIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

@@ -1,0 +1,49 @@
+{
+  "id": "notifications.delivery-status-chip",
+  "title": "Delivery status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for a NotificationDelivery.state. Semantic mapping: queued / sending = neutral, sent = info, delivered = success (green), opened / clicked = success with a subtle variant, failed = warning (amber), permanently_failed = danger (red). Consumed by inbox show, admin dashboard, and downstream modules (e.g. invitations show renders one per delivery attempt).",
+  "props": {
+    "state": { "type": "string", "description": "The NotificationDelivery.state enum value." },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md"] },
+    "showIcon": { "type": "boolean", "default": true },
+    "showLabel": { "type": "boolean", "default": true }
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "chip",
+      "kind": "Chip",
+      "props": { "className": "focus-ring" },
+      "bindings": {
+        "variant": {
+          "$expr": "props.state === 'delivered' ? 'success' : (props.state === 'opened' ? 'success' : (props.state === 'clicked' ? 'success' : (props.state === 'sent' ? 'info' : (props.state === 'failed' ? 'warning' : (props.state === 'permanently_failed' ? 'danger' : 'neutral')))))"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "children": [
+        {
+          "kind": "Icon",
+          "props": { "className": "size-3 mr-1" },
+          "bindings": {
+            "hidden": { "$expr": "!props.showIcon" },
+            "icon": {
+              "$expr": "props.state === 'delivered' ? 'check-circle' : (props.state === 'opened' ? 'envelope-open' : (props.state === 'clicked' ? 'cursor-arrow-rays' : (props.state === 'sent' ? 'paper-airplane' : (props.state === 'failed' ? 'exclamation-triangle' : (props.state === 'permanently_failed' ? 'x-circle' : (props.state === 'sending' ? 'arrow-path' : 'clock'))))))"
+            }
+          }
+        },
+        {
+          "kind": "Text",
+          "props": { "as": "span" },
+          "bindings": {
+            "hidden": { "$expr": "!props.showLabel" },
+            "children": {
+              "$expr": "props.state === 'delivered' ? 'Delivered' : (props.state === 'opened' ? 'Opened' : (props.state === 'clicked' ? 'Clicked' : (props.state === 'sent' ? 'Sent' : (props.state === 'failed' ? 'Retry pending' : (props.state === 'permanently_failed' ? 'Failed' : (props.state === 'sending' ? 'Sending' : 'Queued'))))))"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

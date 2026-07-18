@@ -8,7 +8,7 @@
  * active scope.
  */
 
-import { Button, Card, Form, Input, Label, ListBox, Select, TextField } from "@academorix/ui/react";
+import { Button, Card, Form, Input, Label, ListBox, Select, TextField } from "@stackra/ui/react";
 import { useState } from "react";
 
 import type { Staff, StaffEmploymentType, StaffStatus } from "@/types";

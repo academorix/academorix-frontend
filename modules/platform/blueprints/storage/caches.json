@@ -1,0 +1,76 @@
+{
+  "id": "academorix://modules/storage/caches",
+  "$version": 1,
+  "title": "storage \u2014 cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["storage"],
+  "keys": [
+    {
+      "pattern": "storage:registry:kinds",
+      "description": "Compiled FileKindRegistry (kind_key -> {allowed_mimes, max_size, variants, retention, permissions}). Warmed on boot; long-lived.",
+      "ttlSeconds": 86400,
+      "tags": ["storage", "platform"],
+      "invalidatedBy": ["foundation::ApplicationBooted", "ConfigReloaded"]
+    },
+    {
+      "pattern": "storage:registry:variant_recipes",
+      "description": "Compiled map of variant_key -> Recipe class + config. Same lifecycle as kinds registry.",
+      "ttlSeconds": 86400,
+      "tags": ["storage", "platform"],
+      "invalidatedBy": ["foundation::ApplicationBooted"]
+    },
+    {
+      "pattern": "storage:signing_key:current",
+      "description": "Current signing key (HMAC secret) used by SignedUrlIssuer. Rotated per config('storage.signing_key_rotation_days'). Rotation writes a new key + moves the previous under `storage:signing_key:previous` for the grace window.",
+      "ttlSeconds": 7776000,
+      "tags": ["storage", "platform"],
+      "invalidatedBy": ["storage:signing_key_rotation"]
+    },
+    {
+      "pattern": "storage:signing_key:previous",
+      "description": "Previous signing key retained during rotation grace (config('storage.signing_key_rotation_grace_days', 30)). Redemption middleware tries current first, previous second.",
+      "ttlSeconds": 2592000,
+      "tags": ["storage", "platform"]
+    },
+    {
+      "pattern": "storage:signed_url:{signature_hash}",
+      "description": "Cached SignedUrlAudit lookup by signature_hash \u2014 the redemption hot path. Reads happen per redemption; caching cuts the DB round-trip. Invalidated on revocation or expiration sweep.",
+      "ttlSeconds": 300,
+      "tags": ["storage"],
+      "invalidatedBy": ["storage::SignedUrlRevoked", "storage::SignedUrlSweepCompleted"]
+    },
+    {
+      "pattern": "storage:kind_usage:{tenant_id}:{kind}",
+      "description": "Cached count + size of files per (tenant, kind). Feeds the storage dashboard + quota-approaching notifications.",
+      "ttlSeconds": 300,
+      "tags": ["storage", "tenant"],
+      "invalidatedBy": ["storage::FileUploaded", "storage::FileErased", "storage::FileArchived"]
+    },
+    {
+      "pattern": "storage:disk_assignment:{tenant_id}",
+      "description": "Which storage disk (s3-us / s3-eu / gcs / azure) a tenant's uploads route to. Set at tenant provisioning + rarely changed. TTL long \u2014 tenants changing region is a major operation.",
+      "ttlSeconds": 86400,
+      "tags": ["storage", "tenant"],
+      "invalidatedBy": ["tenancy::TenantUpdated"]
+    },
+    {
+      "pattern": "storage:sha256_refcount:{sha256}",
+      "description": "Cached refcount for a content-addressable blob. Reads on dedup-hit check; writes on File create + hard-delete via ContentAddressableStore.",
+      "ttlSeconds": 3600,
+      "tags": ["storage"]
+    },
+    {
+      "pattern": "storage:redemption_ratelimit:{ip}",
+      "description": "Redemption rate-limit counter per client IP. Enforced by the storage-redemption throttle.",
+      "ttlSeconds": 60,
+      "tags": ["storage"]
+    },
+    {
+      "pattern": "storage:antivirus:signature_version",
+      "description": "Currently-loaded AV signature database version (ClamAV freshclam updates advance this). Used by the storage:rescan-virus command to know which quarantined files may benefit from a rescan.",
+      "ttlSeconds": 3600,
+      "tags": ["storage", "platform"],
+      "invalidatedBy": ["storage::AntivirusSignaturesUpdated"]
+    }
+  ]
+}

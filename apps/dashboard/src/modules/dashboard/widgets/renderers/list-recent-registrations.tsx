@@ -9,8 +9,8 @@
  * the same and only the source resource changes.
  */
 
-import { UserPlusIcon } from "@academorix/ui/icons/outline";
-import { Chip, Link, Skeleton, Widget } from "@academorix/ui/react";
+import { UserPlusIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Chip, Link, Skeleton, Widget } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 
 import type { BaseRecord } from "@refinedev/core";

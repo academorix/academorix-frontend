@@ -1,0 +1,58 @@
+{
+  "$version": 1,
+  "name": "activity",
+  "alias": "activity",
+  "namespace": "Academorix\\Activity",
+  "description": "Tenant-facing activity feed. Thin wrapper around spatie/laravel-activitylog with our conventions: tenant scoping via BelongsToTenant global scope, ULID prefix `act_`, tier-based retention (30 / 90 / 365 days per plan), causer resolution from Sanctum, event batching. Publishes `HasActivityLog` trait (aliases spatie's `LogsActivity` + adds our defaults) and `#[LoggableActivity]` attribute for build-time discovery of models that opt in. Ships tenant HTTP surface `GET /api/v1/activities` filterable via spatie query builder. Distinct from `audit` module which is compliance-grade + 7y cold.",
+  "keywords": [
+    "activity",
+    "activity-log",
+    "spatie",
+    "audit",
+    "product-feed",
+    "tenant-facing",
+    "who-did-what"
+  ],
+  "priority": 20,
+  "providers": ["Academorix\\Activity\\Providers\\ActivityServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "tenancy"],
+  "extendedBy": [],
+  "contributes": {
+    "traits": ["HasActivityLog"],
+    "blueprints": [],
+    "middleware": [],
+    "events": ["ActivityRecorded"],
+    "policies": ["ActivityPolicy"],
+    "hooks": [],
+    "commands": ["activity:prune", "activity:seed", "activity:describe"],
+    "jobs": ["PruneActivityLogJob"],
+    "notifications": [],
+    "broadcasts": [],
+    "observers": [],
+    "attributes": ["LoggableActivity"],
+    "rules": [],
+    "casts": [],
+    "views": [],
+    "lang": ["activity"],
+    "config": ["activity"],
+    "macros": [],
+    "bindings": ["ActivityLogger", "ActivityRegistry"],
+    "resources": ["activity"]
+  },
+  "wraps": {
+    "package": "spatie/laravel-activitylog",
+    "version_constraint": "^4.10",
+    "rationale": "Battle-tested activity log with model observation + causer resolution. We inherit their schema + trait + add our conventions (tenant scoping, ULID prefix, tier retention) via HasActivityLog. Our `Activity` model extends theirs; DB table shape unchanged."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant admin + user activity feed.",
+      "routes": ["GET /api/v1/activities", "GET /api/v1/activities/{activity}"]
+    },
+    "central_admin": {
+      "description": "Platform-admin cross-tenant activity search for support incident triage.",
+      "routes": ["GET /api/v1/platform/activities", "GET /api/v1/platform/activities/{activity}"]
+    }
+  }
+}

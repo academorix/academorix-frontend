@@ -4,7 +4,7 @@
  *
  * @description
  * Multi-file drag-and-drop upload for documents. Uses the shared
- * {@link FileUpload} dropzone from `@academorix/ui/react`, which already
+ * {@link FileUpload} dropzone from `@stackra/ui/react`, which already
  * ships drag state highlighting, file type/size validation, and a preview
  * grid. Each queued file tracks its own progress; the "Upload" action
  * kicks off a simulated progress tick for now because the backend
@@ -12,7 +12,7 @@
  * `TODO(backend-endpoint)` inside {@link performUpload}.
  */
 
-import { CheckCircleIcon, ExclamationTriangleIcon } from "@academorix/ui/icons/outline";
+import { CheckCircleIcon, ExclamationTriangleIcon } from "@stackra/ui/icons/heroicon/outline";
 import {
   Button,
   Card,
@@ -21,9 +21,9 @@ import {
   ListBox,
   ProgressBar,
   Select,
-} from "@academorix/ui/react";
+} from "@stackra/ui/react";
 import { useCallback, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "@stackra/routing/react";
 
 import type { DocumentOwnerType, DocumentUploadItem } from "@/modules/documents/documents.types";
 import type { Key, ReactNode } from "react";
@@ -103,10 +103,7 @@ export default function DocumentsUpload(): ReactNode {
   const isBusyRef = useRef(false);
   const [isBusy, setIsBusy] = useState(false);
 
-  const totalBytes = useMemo(
-    () => items.reduce((sum, item) => sum + item.file.size, 0),
-    [items],
-  );
+  const totalBytes = useMemo(() => items.reduce((sum, item) => sum + item.file.size, 0), [items]);
 
   /**
    * Handles files added via the shared FileUpload dropzone (already
@@ -159,9 +156,7 @@ export default function DocumentsUpload(): ReactNode {
     for (const item of queued) {
       setItems((current) =>
         current.map((entry) =>
-          entry.id === item.id
-            ? { ...entry, status: "uploading" as const, progress: 0 }
-            : entry,
+          entry.id === item.id ? { ...entry, status: "uploading" as const, progress: 0 } : entry,
         ),
       );
 
@@ -176,9 +171,7 @@ export default function DocumentsUpload(): ReactNode {
 
       setItems((current) =>
         current.map((entry) =>
-          entry.id === item.id
-            ? { ...entry, status: "completed" as const, progress: 100 }
-            : entry,
+          entry.id === item.id ? { ...entry, status: "completed" as const, progress: 100 } : entry,
         ),
       );
     }
@@ -338,8 +331,8 @@ export default function DocumentsUpload(): ReactNode {
             <div className="text-xs text-muted">
               {items.length > 0 ? (
                 <>
-                  {items.length} file{items.length === 1 ? "" : "s"} ·{" "}
-                  {formatByteSize(totalBytes)} · {completedCount} uploaded
+                  {items.length} file{items.length === 1 ? "" : "s"} · {formatByteSize(totalBytes)}{" "}
+                  · {completedCount} uploaded
                 </>
               ) : (
                 <>No files selected yet.</>

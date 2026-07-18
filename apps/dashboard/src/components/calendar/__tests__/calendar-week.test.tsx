@@ -50,9 +50,7 @@ function fixtureAnchor(): Date {
 describe("CalendarWeek — layout", () => {
   it("renders exactly seven column headers", () => {
     const anchor = fixtureAnchor();
-    const { container } = render(
-      <CalendarWeek currentDate={anchor} events={[]} />,
-    );
+    const { container } = render(<CalendarWeek currentDate={anchor} events={[]} />);
 
     // `role="columnheader"` is set on each day-header cell. The gutter cell
     // is `aria-hidden`, so it does not appear in the columnheader count.
@@ -63,9 +61,7 @@ describe("CalendarWeek — layout", () => {
 
   it("renders one grid cell per weekday", () => {
     const anchor = fixtureAnchor();
-    const { container } = render(
-      <CalendarWeek currentDate={anchor} events={[]} />,
-    );
+    const { container } = render(<CalendarWeek currentDate={anchor} events={[]} />);
 
     const gridCells = container.querySelectorAll("[role='gridcell']");
 

@@ -7,7 +7,7 @@
  * active scope supplies branch/season on the payload.
  */
 
-import { Spinner } from "@academorix/ui/react";
+import { Spinner } from "@stackra/ui/react";
 import { useForm } from "@refinedev/core";
 
 import type { TrainingSession } from "@/types";

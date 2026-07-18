@@ -1,0 +1,9 @@
+includes:
+    - ../../../config/phpstan-base.neon
+
+parameters:
+    level: 8
+    paths:
+        - src
+    ignoreErrors: []
+    treatPhpDocTypesAsCertain: false

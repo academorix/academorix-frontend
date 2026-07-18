@@ -1,20 +1,25 @@
 /**
  * @file vitest.config.ts
- * @module @academorix/analytics/vitest.config
- *
- * @description
- * Vitest configuration for `@academorix/analytics`. The provider is a
- * React component so jsdom is required; `globals: true` mirrors the
- * workspace convention so `@testing-library/react`'s auto-cleanup
- * finds the `afterEach` hook.
+ * @module @stackra/analytics/test
+ * @description Vitest configuration for @stackra/analytics.
  */
 
-import { defineConfig } from "vitest/config";
+import { defineConfig, mergeConfig } from 'vitest/config';
+import path from 'node:path';
+import preset from '@stackra/testing/preset';
 
-export default defineConfig({
-  test: {
-    environment: "jsdom",
-    globals: true,
-    include: ["src/**/*.{test,spec}.{ts,tsx}"],
-  },
-});
+export default mergeConfig(
+  preset,
+  defineConfig({
+    oxc: false,
+    esbuild: false,
+    test: {
+      environment: 'jsdom',
+    },
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
+    },
+  })
+);

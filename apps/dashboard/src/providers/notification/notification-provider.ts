@@ -15,7 +15,7 @@
  * `src/providers.tsx`) for these toasts to render.
  */
 
-import { toast } from "@academorix/ui/react";
+import { toast } from "@stackra/ui/react";
 
 import type { NotificationProvider, OpenNotificationParams } from "@refinedev/core";
 

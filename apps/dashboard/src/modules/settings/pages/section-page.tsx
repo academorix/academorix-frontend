@@ -14,8 +14,8 @@
  * `settings.sections.ts`, add a route pointing here in the module manifest.
  */
 
-import { WrenchScrewdriverIcon } from "@academorix/ui/icons/outline";
-import { EmptyState } from "@academorix/ui/react";
+import { WrenchScrewdriverIcon } from "@stackra/ui/icons/heroicon/outline";
+import { EmptyState } from "@stackra/ui/react";
 
 import type { SettingsSectionId } from "@/modules/settings/settings.types";
 import type { ReactNode } from "react";

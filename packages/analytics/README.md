@@ -1,119 +1,82 @@
-# @academorix/analytics
+# @stackra/analytics
 
-Analytics primitives for the Academorix workspace: adapter interface,
-`AnalyticsProvider` + `useAnalytics` factory, `defineEvents` passthrough, and
-pluggable console / Vercel / PostHog / Sentry adapters.
+Analytics & tracking for the Stackra framework — a **consent-gated**,
+fan-out manager over pluggable destinations (GA4, console) and marketing
+pixels (Meta, TikTok, Snapchat), with auto-registration and React bindings.
 
-Depends on `@academorix/core` and React 19.
-
-## Public API
-
-| Subpath                                  | Exports                                                                                   |
-| ---------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `@academorix/analytics/config`           | `defineEvents<T extends Record<string, string>>(events)`                                  |
-| `@academorix/analytics/context`          | `createAnalyticsContext<TEvent>()` → `{ AnalyticsProvider, useAnalytics }`                |
-| `@academorix/analytics/adapters`         | `AnalyticsAdapter`, `AnalyticsIdentity`, `AnalyticsPageView`, `AnalyticsProperties` types |
-| `@academorix/analytics/adapters/console` | `consoleAnalyticsAdapter`, `createConsoleAnalyticsAdapter(prefix?)`                       |
-| `@academorix/analytics/adapters/vercel`  | `vercelAnalyticsAdapter` (requires `@vercel/analytics` in the app)                        |
-| `@academorix/analytics/adapters/posthog` | `posthogAnalyticsAdapter` (requires `posthog-js` in the app)                              |
-| `@academorix/analytics/adapters/sentry`  | `sentryAnalyticsAdapter`, `createSentryAnalyticsAdapter({ modulePath })`                  |
-
-Root barrel re-exports everything.
-
-## Design principles
-
-- **Fan-out over hard integration.** The provider composes zero or more adapters
-  and forwards every call. Adding a vendor is one adapter file + one config
-  line.
-- **Event registry stays app-owned.** Each app declares its own
-  `defineEvents({ ... })`. Two dashboards will never share the same event list.
-- **SDK loading is lazy.** Every non-trivial adapter dynamic-imports its SDK at
-  first call. Apps that don't ship a given SDK pay zero bytes for the adapter's
-  presence.
-- **SSR-safe.** All adapters no-op when `window` is undefined.
-- **Fail soft.** A broken adapter never breaks the fan-out — errors are caught
-  and logged.
-
-## Usage
-
-### 1. Declare the app's events
+## Register
 
 ```ts
-// apps/dashboard/src/config/analytics.config.ts
-import { defineEvents } from "@academorix/analytics/config";
+import { AnalyticsModule } from '@stackra/analytics';
 
-export const EVENTS = defineEvents({
-  userLoggedIn: "user_logged_in",
-  athleteCreated: "athlete_created",
-  athleteEdited: "athlete_edited",
-  commandOpened: "command_palette_opened",
-});
-
-export type AnalyticsEvent = (typeof EVENTS)[keyof typeof EVENTS];
+@Module({
+  imports: [
+    // ConsentModule.forRoot(...) should be present so gating works.
+    AnalyticsModule.forRoot({
+      default: 'console',
+      providers: {
+        console: { driver: 'console' },
+        ga4: { driver: 'ga4', measurementId: 'G-XXXXXXX' }, // gated on `analytics`
+        'meta-pixel': { driver: 'meta-pixel', pixelId: '123' }, // gated on `marketing`
+      },
+    }),
+  ],
+})
+export class AppModule {}
 ```
 
-### 2. Instantiate the provider bundle
+## Consent gating
+
+Each provider declares a `consentCategory`. The manager only dispatches to
+a provider once consent for its category is granted (resolved from
+`@stackra/consent` via `Symbol.for('CONSENT_MANAGER')` — no hard
+dependency). Events emitted before consent are **buffered** and replayed
+per-provider as categories are granted. With no consent manager wired the
+manager fails **closed** (drops gated events) unless `requireConsent: false`.
+
+Built-in category defaults: GA4 → `analytics`; Meta/TikTok/Snapchat →
+`marketing`; console → ungated.
+
+## Custom / extra marketing providers
 
 ```ts
-// apps/dashboard/src/lib/analytics/context.ts
-import { createAnalyticsContext } from "@academorix/analytics/context";
-import { type AnalyticsEvent } from "@/config/analytics.config";
-
-export const { AnalyticsProvider, useAnalytics } =
-  createAnalyticsContext<AnalyticsEvent>();
-```
-
-### 3. Mount with adapters
-
-```tsx
-// apps/dashboard/src/providers.tsx
-import { vercelAnalyticsAdapter } from "@academorix/analytics/adapters/vercel";
-import { posthogAnalyticsAdapter } from "@academorix/analytics/adapters/posthog";
-import { sentryAnalyticsAdapter } from "@academorix/analytics/adapters/sentry";
-
-<AnalyticsProvider
-  adapters={[
-    vercelAnalyticsAdapter,
-    posthogAnalyticsAdapter,
-    sentryAnalyticsAdapter,
-  ]}
->
-  <App />
-</AnalyticsProvider>;
-```
-
-### 4. Consume anywhere
-
-```tsx
-import { useAnalytics } from "@/lib/analytics";
-import { EVENTS } from "@/config/analytics.config";
-
-function CreateAthleteButton() {
-  const { track } = useAnalytics();
-
-  return (
-    <Button onPress={() => track(EVENTS.athleteCreated, { tenantId })}>
-      Create
-    </Button>
-  );
+@AnalyticsProvider({ name: 'amplitude' })
+@Injectable()
+export class AmplitudeProvider implements IAnalyticsProvider {
+  /* ... */
 }
+
+// or explicitly:
+AnalyticsModule.forFeature(AmplitudeProvider);
 ```
 
-## Adapter installation cheat-sheet
+## CSP
 
-Each adapter dynamic-imports its SDK. Install the peer package in the consuming
-app when you enable the adapter:
+Script-injecting providers (GA4 + pixels) need their origins allow-listed
+or the browser blocks them. Derive the contributions from the same config
+so the CSP can't drift from the enabled providers:
 
-```bash
-# Vercel Analytics
-pnpm --filter @academorix/dashboard add @vercel/analytics
+```ts
+import { AnalyticsModule, getAnalyticsCspPolicies } from '@stackra/analytics';
 
-# PostHog
-pnpm --filter @academorix/dashboard add posthog-js
-
-# Sentry (Vite/React)
-pnpm --filter @academorix/dashboard add @sentry/react
-
-# Sentry (Next.js)
-pnpm --filter @academorix/landing-page add @sentry/nextjs
+imports: [
+  CspModule.forRoot(cspConfig),
+  ...getAnalyticsCspPolicies(analyticsConfig).map((p) => CspModule.forFeature(p)),
+  AnalyticsModule.forRoot(analyticsConfig),
+];
 ```
+
+The per-provider constants (`GA4_CSP`, `META_PIXEL_CSP`, `TIKTOK_PIXEL_CSP`,
+`SNAPCHAT_PIXEL_CSP`) are also exported if you prefer to wire them manually.
+
+## React
+
+```tsx
+const analytics = useAnalytics();
+analytics.track('cta_clicked', { id: 'hero' });
+
+// auto page views:
+usePageView(useLocation().pathname);
+```
+
+Inject anywhere via `ANALYTICS_MANAGER` (from `@stackra/contracts`).

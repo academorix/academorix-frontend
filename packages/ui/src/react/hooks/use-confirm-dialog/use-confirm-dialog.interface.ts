@@ -4,6 +4,8 @@
  * @description Interfaces for the useConfirmDialog hook.
  */
 
+// Relative import — see the note in the `progress-tabs` component
+// for the rationale (Vite dev server + tsconfig `@/*` alias).
 import type { ConfirmDialogVariant } from "../../components/confirm-dialog/confirm-dialog.interface";
 import type { ReactNode } from "react";
 

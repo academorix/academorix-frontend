@@ -29,7 +29,7 @@ import {
   PuzzlePieceIcon,
   ShieldCheckIcon,
   UsersIcon,
-} from "@academorix/ui/icons/outline";
+} from "@stackra/ui/icons/heroicon/outline";
 import { defineConfig } from "@academorix/core/config";
 
 import type { AdminSurface, AdminSurfaceGroup, AdminSurfaceId } from "@/modules/admin/admin.types";

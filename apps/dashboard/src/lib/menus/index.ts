@@ -10,7 +10,6 @@
  *
  *   import {
  *     ContextMenu,
- *     MenuActionsBridge,
  *     invokeMenuAction,
  *     useContextMenu,
  *     useMenuAction,
@@ -35,7 +34,6 @@ export {
   formatShortcut,
 } from "@/lib/menus/command.types";
 export { ContextMenu, TOP_LEVEL_LIMIT, splitOverflow } from "@/lib/menus/context-menu";
-export { MenuActionsBridge } from "@/lib/menus/menu-actions-bridge";
 export { invokeMenuAction, useMenuAction } from "@/lib/menus/menu-actions";
 export {
   assertNoDuplicateShortcuts,

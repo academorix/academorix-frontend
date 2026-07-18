@@ -9,7 +9,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §14.2 "Performance & Fitness Testing"
  */
 
-import { ArrowTrendingUpIcon } from "@academorix/ui/icons/outline";
+import { ArrowTrendingUpIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

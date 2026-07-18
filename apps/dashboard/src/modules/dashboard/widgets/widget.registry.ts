@@ -3,31 +3,23 @@
  * @module modules/dashboard/widgets/widget.registry
  *
  * @description
- * Maps widget catalogue keys to their React renderers. Kept separate from the
- * catalogue so the picker can display a widget's metadata (title, description,
- * category) even before its renderer has shipped: the catalogue entry sets
- * `isAvailable: false`, the registry omits the key, and the overview page
- * skips it at render time.
- *
- * Renderers are lazy-loaded so a user whose personal layout only shows two
- * KPIs does not download the code for widgets they do not have. `React.lazy`
- * plays nicely with the widget grid: the grid renders a `Suspense` boundary
- * per cell so one slow widget cannot block the rest of the page.
+ * Maps legacy grid-catalogue widget keys to their `React.lazy`-loaded
+ * renderers. Kept in the app because the renderers themselves are
+ * HeroUI-heavy visual components — the `@stackra/dashboard` package
+ * ships the headless registry service, but the concrete renderer
+ * modules stay app-side.
  */
 
 import { lazy } from "react";
 
-import type { WidgetRenderer } from "@/modules/dashboard/widgets/widget.types";
+import type { WidgetRenderer } from "@stackra/dashboard";
 import type { LazyExoticComponent } from "react";
 
 /**
- * The registered set of renderers, keyed by widget catalogue key. Any key not
- * in this map is treated as unavailable — the overview page renders a small
- * placeholder card so a stale saved layout does not crash the grid.
- *
- * The `onboarding-checklist` widget is deliberately absent. It renders above
- * the grid (in the overview page) as a special widget, not inside the picker,
- * so keeping it out of the registry avoids an ineffective dynamic import.
+ * The registered set of renderers, keyed by widget catalogue key.
+ * Any key not in this map is treated as unavailable — the overview
+ * page renders a small placeholder card so a stale saved layout does
+ * not crash the grid.
  */
 export const widgetRenderers: ReadonlyMap<string, LazyExoticComponent<WidgetRenderer>> = new Map<
   string,

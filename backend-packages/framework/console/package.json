@@ -1,0 +1,39 @@
+{
+  "name": "@academorix/laravel-foundation",
+  "version": "0.1.0",
+  "description": "Academorix Foundation module \u2014 custom Application class, base API structure, and core providers.",
+  "homepage": "https://github.com/academorix-inc/php-monorepo/tree/main/modules/foundation",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/academorix-inc/php-monorepo.git",
+    "directory": "modules/foundation"
+  },
+  "bugs": {
+    "url": "https://github.com/academorix-inc/php-monorepo/issues"
+  },
+  "license": "MIT",
+  "scripts": {
+    "deps": "composer install --no-interaction --prefer-dist --optimize-autoloader",
+    "deps:prod": "composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev",
+    "lint": "vendor/bin/pint --test",
+    "lint:fix": "vendor/bin/pint",
+    "analyse": "vendor/bin/phpstan analyse --no-progress",
+    "refactor": "vendor/bin/rector process --dry-run",
+    "refactor:fix": "vendor/bin/rector process",
+    "test": "vendor/bin/phpunit --testdox",
+    "test:coverage": "vendor/bin/phpunit --coverage-clover coverage.xml",
+    "clean": "rm -rf vendor composer.lock .turbo .phpunit.result.cache coverage.xml coverage",
+    "upgrade": "composer update"
+  },
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  },
+  "private": false,
+  "author": {
+    "name": "Academorix Team",
+    "email": "dev@academorix.com",
+    "url": "https://academorix.com"
+  },
+  "packageManager": "pnpm@10.33.0"
+}

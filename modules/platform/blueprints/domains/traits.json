@@ -1,0 +1,34 @@
+{
+  "id": "academorix://modules/domains/traits",
+  "$version": 1,
+  "title": "domains — model traits",
+  "description": "No owned traits — the domains module consumes BelongsToTenant (from tenants) + BelongsToApplication (from application) to bind Domain rows to their tenant + product.",
+  "owned": [],
+  "consumed": [
+    {
+      "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+      "source": "tenants",
+      "usedBy": ["Domain"]
+    },
+    {
+      "trait": "Academorix\\Application\\Concerns\\BelongsToApplication",
+      "source": "application",
+      "usedBy": ["Domain"]
+    },
+    { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory", "source": "framework" },
+    { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids", "source": "framework" },
+    { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata", "source": "foundation" },
+    { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps", "source": "foundation" },
+    { "trait": "Academorix\\Foundation\\Concerns\\HasAuditable", "source": "foundation" },
+    {
+      "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+      "source": "framework",
+      "usedBy": ["Domain"],
+      "note": "DomainRecord is diff-state, NOT soft-deleted — records are hard-deleted after the DNS provider confirms."
+    }
+  ],
+  "composition_example": {
+    "language": "php",
+    "code": "final class Domain extends Model implements DomainInterface\n{\n    use HasFactory;\n    use HasUlids;\n    use BelongsToApplication;    // Application boundary (host resolution)\n    use BelongsToTenant;      // Tenant scope\n    use HasMetadata;\n    use HasUserstamps;\n    use HasAuditable;\n    use SoftDeletes;\n}\n\nfinal class DomainRecord extends Model implements DomainRecordInterface\n{\n    use HasFactory;\n    use HasUlids;\n    use BelongsToTenant;      // Tenant scope inherited via parent Domain\n    use HasMetadata;\n    use HasUserstamps;\n    use HasAuditable;\n    // NO SoftDeletes \u2014 diff-state.\n}"
+  }
+}

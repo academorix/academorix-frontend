@@ -1,0 +1,55 @@
+{
+  "id": "academorix://modules/versioning/features",
+  "$version": 1,
+  "title": "versioning \u2014 feature keys",
+  "description": "Features exposed at `/auth/me` \u2192 `data.features`. Gate capability availability by plan.",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me \u2192 data.features (string[])",
+    "seededFrom": "BusinessType.default_config.features"
+  },
+  "features": [
+    {
+      "key": "versioning.enabled",
+      "displayName": "API versioning",
+      "description": "Master toggle. When off, all requests default to the single 'v1' version. Rare \u2014 always on in practice.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "enterprise"]
+    },
+    {
+      "key": "versioning.payload_transformers",
+      "displayName": "Payload transformer chains",
+      "description": "Enables the transformer registry to compose chains across multiple version bumps (v3 \u2192 v2 \u2192 v1). Without this, subscribers pinned to older versions receive raw current-version payloads (backwards-incompatible).",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "enterprise"]
+    },
+    {
+      "key": "versioning.graphql_support",
+      "displayName": "GraphQL schema versioning",
+      "description": "Enables @api(version:) directive resolution + #[VersionedField] attribute stripping. Feature-flag guarded because GraphQL surface is v2 platform-scope.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "versioning.query_resolver_in_production",
+      "displayName": "Query-param resolver in production",
+      "description": "Enables `?version=vN` resolution in production. Off by default \u2014 dev + testing + staging only \u2014 to avoid accidental version pinning by consumers using browsers or docs playgrounds.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "versioning.auto_upgrade_pinned_subscriptions",
+      "displayName": "Auto-upgrade pinned subscriptions",
+      "description": "When a version sunsets, automatically upgrade WebhookSubscriptions pinned to it (if migration_target_slug set). When off, pinned subscriptions are paused on sunset + customers must manually upgrade.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "enterprise"]
+    },
+    {
+      "key": "versioning.deprecation_notices",
+      "displayName": "Deprecation notice dispatch",
+      "description": "Enables customer notification fan-out on notice publish (mail + in-app). When off, notices are visible only via the docs page \u2014 no push signals. Off would violate RFC 8594 spirit but useful for legal orchestration edge cases.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "enterprise"]
+    }
+  ]
+}

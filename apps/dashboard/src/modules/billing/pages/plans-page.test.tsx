@@ -21,12 +21,12 @@
  *   5. Loading + error banners render.
  */
 
-import { render, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router";
+import { screen } from "@testing-library/react";
+import { renderWithRouting } from "@stackra/routing/testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { Plan, SubscriptionSummary } from "@/types";
-import type { ReactNode } from "react";
+import type { ReactElement, ReactNode } from "react";
 
 // ─────────────────────────────────────────────────────────────────────
 // Mocks
@@ -114,9 +114,13 @@ const GROWTH_SUBSCRIPTION: SubscriptionSummary = {
   canceled_at: null,
 };
 
-/** Wraps the page in a MemoryRouter — Breadcrumbs uses router hooks. */
+/**
+ * Wraps the page in the Stackra routing test context so both
+ * Breadcrumbs (RRv7 `useLocation`) and the plan buttons (Stackra
+ * `useNavigate`) resolve their hooks.
+ */
 function renderPage(ui: ReactNode = <BillingPlansPage />) {
-  return render(<MemoryRouter>{ui}</MemoryRouter>);
+  return renderWithRouting(ui as ReactElement);
 }
 
 beforeEach(() => {
@@ -172,12 +176,8 @@ describe("BillingPlansPage", () => {
     expect(currentPlanButton).toBeDisabled();
 
     // Non-current plans still expose "Change to <plan>" buttons.
-    expect(
-      screen.getByRole("button", { name: /change to starter/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /change to enterprise/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /change to starter/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /change to enterprise/i })).toBeInTheDocument();
   });
 
   it("renders enabled Change plan buttons for every plan when there's no subscription", () => {

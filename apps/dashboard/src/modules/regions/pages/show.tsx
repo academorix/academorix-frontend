@@ -6,7 +6,7 @@
  * Region detail — currency, countries, timezone, locale, and tax configuration.
  */
 
-import { Card, Spinner } from "@academorix/ui/react";
+import { Card, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 
 import type { Region } from "@/types";

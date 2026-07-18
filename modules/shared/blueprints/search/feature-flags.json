@@ -1,0 +1,92 @@
+{
+  "id": "academorix://modules/search/feature-flags",
+  "$version": 1,
+  "title": "search \u2014 kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "search.queue",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master queue kill switch. Off \u2014 all reindex / sync-job dispatches short-circuit to SEARCH_QUEUE_DISABLED with 503. Emergency ops during engine incidents."
+    },
+    {
+      "key": "search.indexing",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "IndexModelJob dispatch from HasSearchable observers. Off \u2014 model saves stop pushing to engines; search index goes stale until manual reindex. Existing queries keep working (stale results)."
+    },
+    {
+      "key": "search.analytics.record",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "RecordSearchAnalyticsEventJob execution. Off \u2014 no analytics rows written; dashboards empty. Used during analytics-storm incidents."
+    },
+    {
+      "key": "search.analytics.query",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "GET /api/v1/search/analytics/* endpoints. Off \u2014 dashboards return 503. Rare \u2014 for perf incidents on the aggregation."
+    },
+    {
+      "key": "search.suggest",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "GET /api/v1/search/suggest. Off \u2014 autocomplete returns 503. Used to shed load during a Meilisearch incident."
+    },
+    {
+      "key": "search.synonyms.warm",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "WarmSynonymCacheJob execution. Off \u2014 engine synonym state goes stale until manual re-warm."
+    },
+    {
+      "key": "search.notifications",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "SendSearchSyncNotificationJob execution. Off \u2014 sync jobs complete silently; users poll `GET /sync-jobs/{id}`."
+    },
+    {
+      "key": "search.prune",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "PruneSearchAnalyticsJob execution. Off \u2014 nothing purges. Emergency during retention policy audits."
+    },
+    {
+      "key": "search.stalled_sweep",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "The 15-min + login-time stalled sweep. Off \u2014 stuck sync jobs sit until daily prune."
+    },
+    {
+      "key": "search.query_text_scrub",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "7-day query text scrub pass in PruneSearchAnalyticsJob. Off \u2014 raw query text retained for full row TTL. DANGEROUS \u2014 GDPR guardrail. Only disable with legal sign-off."
+    },
+    {
+      "key": "search.dual_write.activity",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "HasActivityLog on SearchIndex / SearchSyncJob / SearchSynonym / SearchSavedQuery dual-write to activity_log. Off decouples search transitions from the tenant feed. Emergency during activity ingest storms."
+    },
+    {
+      "key": "search.dual_write.audit",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "HasAudit on SearchIndex + SearchSyncJob dual-write to audits. Off decouples from the audit trail. Very rare \u2014 only when the audit substrate is quarantined."
+    },
+    {
+      "key": "search.registry.compiled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Use the compiled SearchIndex registry cache. Off \u2014 registry is scanned from reflection on every boot (slow; for registry debugging)."
+    },
+    {
+      "key": "search.alias_swap",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "SwapIndexAliasJob execution. Off \u2014 successful reindexes complete but the alias never swaps; old index stays live. Reversible via re-enable + manual `search:reindex --swap-only`. Used to freeze traffic on the old index during a migration window."
+    }
+  ]
+}

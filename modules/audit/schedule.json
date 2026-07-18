@@ -1,9 +1,0 @@
-{
-  "id": "academorix://modules/audit/schedule",
-  "$version": 1,
-  "title": "audit \u2014 scheduled tasks",
-  "entries": [
-    {"name": "audit-cold-rotate", "command": "audit:cold-rotate", "cron": "0 4 1 * *", "timezone": "UTC", "purpose": "Monthly 1st @ 04 UTC: rotate audit rows past 365d hot window to S3 Glacier. Off-peak window minimises DB load."},
-    {"name": "audit-verify-chain", "command": "audit:verify-chain --sample-workspaces=10", "cron": "0 6 * * 0", "timezone": "UTC", "purpose": "Weekly Sunday @ 06 UTC: chain integrity spot-check across 10 sampled workspaces + all enterprise workspaces."}
-  ]
-}

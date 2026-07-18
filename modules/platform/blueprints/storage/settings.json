@@ -1,0 +1,131 @@
+{
+  "id": "academorix://modules/storage/settings",
+  "$version": 1,
+  "title": "storage \u2014 tenant + user settings",
+  "description": "Tenant-facing preferences resolved via the settings module's #[AsSetting] classes. Distinct from config('storage.*') (deployment-owned). Every setting is scoped to a tenant + optionally per-user.",
+  "storedIn": "settings",
+  "groups": [
+    {
+      "key": "storage",
+      "class": "Academorix\\Storage\\Settings\\StorageTenantSettings",
+      "scope": "tenant",
+      "label": "File storage",
+      "description": "Configure how your tenant handles file uploads, retention, and sharing.",
+      "sections": [
+        {
+          "label": "Retention",
+          "sort_order": 10,
+          "fields": [
+            {
+              "name": "storage_retention_overrides",
+              "control_type": "repeater",
+              "label": "Custom retention per file kind",
+              "help_text": "Override the platform default retention for specific file kinds. Cannot shorten below compliance minimums.",
+              "value_type": "array",
+              "requires_feature": "storage.custom_retention",
+              "sort_order": 10
+            },
+            {
+              "name": "archive_on_replace",
+              "control_type": "toggle",
+              "label": "Archive files on replace",
+              "help_text": "When a file is replaced (single=true attachment), archive the old file for the retention window instead of hard-deleting immediately.",
+              "value_type": "boolean",
+              "default_value": true,
+              "sort_order": 20
+            }
+          ]
+        },
+        {
+          "label": "Sharing",
+          "sort_order": 20,
+          "fields": [
+            {
+              "name": "share_links_enabled",
+              "control_type": "toggle",
+              "label": "Allow external share links",
+              "help_text": "Tenant admins can issue signed URLs with the `share` reason. Rejects if disabled.",
+              "value_type": "boolean",
+              "default_value": false,
+              "requires_feature": "storage.share_links",
+              "sort_order": 10
+            },
+            {
+              "name": "share_max_ttl_days",
+              "control_type": "number",
+              "label": "Max share link duration (days)",
+              "help_text": "Cap on share-reason TTL. Global limit is 7 days.",
+              "value_type": "integer",
+              "min": 1,
+              "max": 7,
+              "default_value": 7,
+              "requires_feature": "storage.share_links",
+              "sort_order": 20
+            },
+            {
+              "name": "ip_locked_share_required",
+              "control_type": "toggle",
+              "label": "Require IP lock on share links",
+              "help_text": "Every share-reason signed URL must specify a CIDR IP lock.",
+              "value_type": "boolean",
+              "default_value": false,
+              "requires_feature": "storage.ip_locked_urls",
+              "sort_order": 30
+            }
+          ]
+        },
+        {
+          "label": "Privacy",
+          "sort_order": 30,
+          "fields": [
+            {
+              "name": "strip_exif_gps",
+              "control_type": "toggle",
+              "label": "Strip location data from image uploads",
+              "help_text": "Removes GPS coordinates from photo EXIF data on upload.",
+              "value_type": "boolean",
+              "default_value": true,
+              "sort_order": 10
+            },
+            {
+              "name": "strip_pdf_metadata",
+              "control_type": "toggle",
+              "label": "Strip PDF metadata",
+              "help_text": "Removes Author/Producer/Creator fields from PDF uploads.",
+              "value_type": "boolean",
+              "default_value": true,
+              "sort_order": 20
+            }
+          ]
+        },
+        {
+          "label": "Data residency",
+          "sort_order": 40,
+          "fields": [
+            {
+              "name": "storage_region",
+              "control_type": "select",
+              "label": "Storage region",
+              "help_text": "Where your files are stored. Changing this triggers a data-migration operation.",
+              "value_type": "string",
+              "options": {
+                "us-east-1": "US East (N. Virginia)",
+                "us-west-2": "US West (Oregon)",
+                "eu-west-1": "EU (Ireland)",
+                "eu-central-1": "EU (Frankfurt)",
+                "ap-southeast-1": "Asia Pacific (Singapore)",
+                "ap-southeast-2": "Asia Pacific (Sydney)"
+              },
+              "default_value": "us-east-1",
+              "requires_feature": "storage.eu_data_residency",
+              "sort_order": 10
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "The `storage_region` setting is a WRITE-ONCE-AT-PROVISIONING-TIME field for most tiers. Changing it after uploads exist triggers a background data-migration operation + potentially incurs migration cost. Enterprise tenants can request the change via a support ticket."
+  ]
+}

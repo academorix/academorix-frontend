@@ -8,7 +8,7 @@
  * cells, and any inline booking references on the facility detail screen.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 
 import type { BookingStatus } from "@/modules/facilities/facilities.types";
 import type { ReactNode } from "react";

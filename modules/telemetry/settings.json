@@ -1,8 +1,0 @@
-{
-  "id": "academorix://modules/telemetry/settings",
-  "$version": 1,
-  "title": "telemetry \u2014 settings",
-  "description": "Not workspace-facing \u2014 telemetry is developer infrastructure. No #[AsSetting] classes. All operational tuning lives in config('telemetry.*') + Pennant kill switches.",
-  "storedIn": "settings",
-  "groups": []
-}

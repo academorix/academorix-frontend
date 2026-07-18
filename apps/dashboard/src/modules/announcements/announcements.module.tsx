@@ -9,7 +9,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §16.2 "Announcements & Notifications"
  */
 
-import { MegaphoneIcon } from "@academorix/ui/icons/outline";
+import { MegaphoneIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

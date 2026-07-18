@@ -1,0 +1,30 @@
+{
+  "id": "academorix://modules/subscription/middleware",
+  "$version": 1,
+  "title": "subscription \u2014 HTTP middleware",
+  "middleware": [
+    {
+      "alias": "subscription.active",
+      "class": "Academorix\\Subscription\\Http\\Middleware\\EnforceActiveSubscription",
+      "priority": 58,
+      "description": "Route middleware: refuses the request when tenant subscription is in a restrictive state (grace / suspended / cancelled). Response includes upgrade path + current state. Use on any route that requires a paying tenant.",
+      "usage_example": "Route::post('/webhooks/subscriptions', ...)->middleware('subscription.active');"
+    },
+    {
+      "alias": "subscription.state",
+      "class": "Academorix\\Subscription\\Http\\Middleware\\RequireSubscriptionState",
+      "priority": 58,
+      "description": "Route middleware with parameter. Refuses unless tenant subscription state is IN the allowed list. E.g. `subscription.state:active,trialing`.",
+      "usage_example": "Route::post('/premium-feature', ...)->middleware('subscription.state:active,at_risk,grace');"
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "foundation::auth:sanctum" },
+    { "middleware": "foundation::throttle" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "versioning::versioning.resolve" }
+  ]
+}

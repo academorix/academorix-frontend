@@ -6,7 +6,7 @@
  * Pass edit screen. Renders the shared form once the record has loaded.
  */
 
-import { Spinner } from "@academorix/ui/react";
+import { Spinner } from "@stackra/ui/react";
 import { useForm } from "@refinedev/core";
 
 import type { Pass } from "@/modules/passes/passes.types";

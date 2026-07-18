@@ -8,12 +8,12 @@
  * from the `athletes` resource.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 import { useMemo } from "react";
 
 import type { Athlete, Attendance } from "@/types";
-import type { DataGridColumn } from "@academorix/ui/react";
+import type { DataGridColumn } from "@stackra/ui/react";
 import type { ReactNode } from "react";
 
 import { ListView, ResourceDataGrid } from "@/components/refine";

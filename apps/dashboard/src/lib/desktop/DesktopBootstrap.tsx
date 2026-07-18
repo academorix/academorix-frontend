@@ -52,7 +52,6 @@
 
 import { useGetIdentity } from "@refinedev/core";
 import { useEffect, useRef } from "react";
-import { useNavigate } from "react-router";
 
 import type { Identity } from "@/types";
 import type { ReactNode } from "react";
@@ -82,7 +81,6 @@ interface DesktopBootstrapProps {
  * Guaranteed to render nothing beyond what its children render.
  */
 export function DesktopBootstrap({ children }: DesktopBootstrapProps): ReactNode {
-  const navigate = useNavigate();
   const { data: identity } = useGetIdentity<Identity>();
 
   /**
@@ -141,9 +139,20 @@ export function DesktopBootstrap({ children }: DesktopBootstrapProps): ReactNode
     });
 
     // 5. Deep-link handler. Every academorix:// URL the OS forwards
-    //    to the shell routes through React Router — this is what
-    //    lets `academorix://workspace/nike/dashboard` open the
-    //    right page inside an already-running app.
+    //    to the shell routes into the app — `academorix://workspace/
+    //    nike/dashboard` becomes an in-app path the router picks up.
+    //
+    //    ## Why `window.location.assign` (not `useNavigate`)
+    //
+    //    `DesktopBootstrap` mounts INSIDE `<Providers>` but OUTSIDE
+    //    `<StackraRoutingProvider>` — the routing context isn't
+    //    available at this level, so calling `useNavigate()` from
+    //    `@stackra/routing/react` throws at render time. Full-page
+    //    navigation is the correct primitive for a deep-link
+    //    handler anyway: the OS just handed us a URL that the SPA
+    //    should boot into fresh. `assign` preserves the browser's
+    //    history stack; `raiseWindow` above still fires so the
+    //    behaviour is "same window, new route".
     const disposeDeepLink = onDeepLink((payload) => {
       const resolved = resolveDeepLinkPath(payload.url);
 
@@ -157,7 +166,9 @@ export function DesktopBootstrap({ children }: DesktopBootstrapProps): ReactNode
       // Raise the window BEFORE navigating so a "same window,
       // different route" behaviour lands cleanly on all three OSes.
       void raiseWindow();
-      navigate(resolved.path);
+      if (typeof window !== "undefined") {
+        window.location.assign(resolved.path);
+      }
     });
 
     // 6. Auto-updater. Polls every 4h (see `desktopConfig.updater`).

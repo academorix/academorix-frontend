@@ -1,0 +1,26 @@
+{
+  "$schema": "https://gist.githubusercontent.com/stackra-usr/766cbb0d72b6566fdc2642ffcb3d73ee/raw/manifest.schema.json",
+  "slug": "console",
+  "version": "0.1.0",
+  "name": {
+    "en": "Console",
+    "ar": "وحدة التحكم"
+  },
+  "type": "core",
+  "description": {
+    "en": "CLI framework for the @stackra monorepo — @stackra/container command execution with interactive prompts, auto-discovery, and config publishing.",
+    "ar": "وحدة التحكم — وحدة أساسية في المنصة."
+  },
+  "author": {
+    "name": "Stackra L.L.C",
+    "email": "dev@stackra.com"
+  },
+  "dependencies": ["support"],
+  "support": {
+    "documentation": "https://docs.stackra.com/platform/console",
+    "email": "dev@stackra.com"
+  },
+  "compatibility": {
+    "platform_version": ">=1.0.0"
+  }
+}

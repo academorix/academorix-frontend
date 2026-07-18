@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/settings/registry",
+  "$version": 1,
+  "title": "settings \u2014 SettingsRegistry contract",
+  "description": "The compiled catalogue of every discovered settings class. Hydrated at boot from foundation's DiscoversAttributes seam; Octane-safe.",
+  "class": "Academorix\\Settings\\Registry\\SettingsRegistry",
+  "interface": "Academorix\\Settings\\Contracts\\SettingsRegistryInterface",
+  "binding": "singleton (per-request scoped)",
+  "shape": {
+    "groups": "array<string, GroupDescriptor>",
+    "byPermission": "array<string, string[]> \u2014 permission => group keys",
+    "publicGroups": "string[] \u2014 groups where AsSetting.public=true"
+  },
+  "descriptors": [
+    {
+      "name": "GroupDescriptor",
+      "shape": {
+        "key": "string",
+        "class": "string \u2014 FQCN of the Settings subclass",
+        "label": "string",
+        "description": "string",
+        "icon": "string",
+        "permission": "string",
+        "scope": "'system' | 'tenant' | 'user'",
+        "public": "bool",
+        "sortOrder": "int",
+        "sections": "SectionDescriptor[]"
+      }
+    },
+    {
+      "name": "SectionDescriptor",
+      "shape": {
+        "label": "string",
+        "description": "string",
+        "icon": "string",
+        "sortOrder": "int",
+        "fields": "FieldDescriptor[]"
+      }
+    },
+    {
+      "name": "FieldDescriptor",
+      "shape": {
+        "name": "string \u2014 the property name on the settings class",
+        "controlType": "ControlType",
+        "label": "string",
+        "placeholder": "string",
+        "validation": "string[]",
+        "defaultValue": "mixed",
+        "sortOrder": "int",
+        "section": "string | null",
+        "options": "array<string, string>",
+        "sensitive": "bool",
+        "helpText": "string",
+        "min": "float | null",
+        "max": "float | null",
+        "step": "float | null"
+      }
+    }
+  ],
+  "methods": [
+    {
+      "name": "register(GroupDescriptor $group): void",
+      "purpose": "Called at boot by the discovery pass."
+    },
+    { "name": "all(): GroupDescriptor[]", "purpose": "List every registered group." },
+    { "name": "find(string $group): ?GroupDescriptor", "purpose": "Lookup by group key." },
+    {
+      "name": "requiresPermission(string $group): ?string",
+      "purpose": "Read the AsSetting.permission for a group."
+    },
+    {
+      "name": "listForPermission(string $permission): GroupDescriptor[]",
+      "purpose": "All groups the caller can read given their permissions."
+    },
+    {
+      "name": "toSchemaArray(): array",
+      "purpose": "Return the full schema for `GET /api/v1/settings/schema`."
+    }
+  ]
+}

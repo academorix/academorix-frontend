@@ -1,0 +1,37 @@
+{
+  "id": "academorix://modules/subscription/commands",
+  "$version": 1,
+  "title": "subscription \u2014 Artisan commands",
+  "commands": [
+    {
+      "signature": "subscription:seed-plans {--application=}",
+      "class": "Academorix\\Subscription\\Console\\Commands\\SeedPlansCommand",
+      "purpose": "Seed the plan catalogue for an Application from data/plans.json defaults. Idempotent \u2014 UPSERTs by (application_id, key)."
+    },
+    {
+      "signature": "subscription:describe {--tenant=}",
+      "class": "Academorix\\Subscription\\Console\\Commands\\DescribeCommand",
+      "purpose": "Print tenant's current subscription: plan, state, grace_ends_at, entitlements, next invoice."
+    },
+    {
+      "signature": "subscription:sync-cashier {--tenant=} {--reconcile} {--dry-run}",
+      "class": "Academorix\\Subscription\\Console\\Commands\\SyncCashierCommand",
+      "purpose": "Reconcile our Subscription state against Cashier. --reconcile mode samples all; --tenant targets one."
+    },
+    {
+      "signature": "subscription:advance-dunning {--dry-run}",
+      "class": "Academorix\\Subscription\\Console\\Commands\\AdvanceDunningCommand",
+      "purpose": "Manually run AdvanceDunningStageJob. --dry-run reports transitions without applying."
+    },
+    {
+      "signature": "subscription:expire-trials {--dry-run}",
+      "class": "Academorix\\Subscription\\Console\\Commands\\ExpireTrialsCommand",
+      "purpose": "Manually run ExpireTrialsJob."
+    },
+    {
+      "signature": "subscription:report-usage {subscription} {--meter=} {--period=current}",
+      "class": "Academorix\\Subscription\\Console\\Commands\\ReportUsageCommand",
+      "purpose": "Manually push usage to Stripe/Paddle for one subscription."
+    }
+  ]
+}

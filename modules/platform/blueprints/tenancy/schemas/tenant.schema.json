@@ -1,0 +1,307 @@
+{
+  "id": "academorix://modules/tenancy/schemas/tenant",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Tenant",
+  "description": "The tenant / customer record. Every domain row below the tenants line carries a `tenant_id` FK back to this table via the BelongsToTenant trait. Rows on this table carry `application_id` directly (BelongsToApplication).",
+  "type": "object",
+  "x-module": "tenants",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "tenants",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "ten_",
+    "incrementing": false,
+    "model": "Academorix\\Tenancy\\Models\\Tenant",
+    "interface": "Academorix\\Tenancy\\Contracts\\Data\\TenantInterface",
+    "implements": ["Academorix\\Tenancy\\Contracts\\Data\\TenantInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToApplication",
+      "HasSystemFlag",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "branding": "array",
+      "provisioning": "array",
+      "metadata": "array",
+      "is_default": "boolean",
+      "is_system": "boolean",
+      "trial_ends_at": "datetime",
+      "suspended_at": "datetime",
+      "grace_ends_at": "datetime"
+    },
+    "appends": ["business_type_label", "status_label", "tenant_url"],
+    "observers": ["TenantObserver"],
+    "hidden": ["metadata"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `ten_<26 chars>`."
+      },
+      "application_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "FK to `applications.id`. Rows on this table carry `application_id` directly via BelongsToApplication (one of the tenants-boundary rows).",
+        "foreign": {
+          "table": "applications",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        }
+      },
+      "primary_branding_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "FK to the active `brandings` row for this tenant. Nullable while a tenant has no branding profile yet; then denormalised into the `branding` JSONB below on save via `TenantObserver`.",
+        "foreign": {
+          "table": "brandings",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        }
+      },
+      "slug": {
+        "type": "string",
+        "length": 63,
+        "nullable": false,
+        "description": "DNS-safe tenant identifier. Appears in the subdomain: `{slug}.{application.central_host}`."
+      },
+      "name": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "description": "Display name shown on invoices, emails, and the shell chrome."
+      },
+      "business_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum key referencing `BusinessType`. Drives per-tenant defaults for features, terminology, roles, and entitlements."
+      },
+      "status": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "trialing",
+        "description": "Lifecycle enum: `trialing`, `active`, `suspended`, `grace`, `archived`, `inactive`."
+      },
+      "branding": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Denormalised preview of the primary Branding row. Written by TenantObserver whenever primary_branding_id changes. Powers the tenant picker without a join."
+      },
+      "provisioning": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Provisioning payload captured at tenant creation. Consumed by CreateDefaultOrganization / CreateDefaultBranch / CreateDefaultRegion listeners."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form attribute bag. Never queried; used for platform-side notes and experiment flags."
+      },
+      "is_default": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "True for the tenant seeded on fresh installs (dev / test). Never true in prod."
+      },
+      "is_system": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "From HasSystemFlag. True for platform-owned tenants. Refused on TenantPolicy@update / @delete."
+      },
+      "trial_ends_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "End of the free-trial window."
+      },
+      "suspended_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set by TenantSuspended. Null when active."
+      },
+      "grace_ends_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Read-only grace window after a failed payment. Cleared by TenantResumed."
+      },
+      "created_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "updated_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "deleted_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "deleted_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "SoftDeletes. Tenancy are archived, never hard-deleted."
+      },
+      "created_at": {
+        "type": "timestamptz",
+        "nullable": false
+      },
+      "updated_at": {
+        "type": "timestamptz",
+        "nullable": false
+      }
+    },
+    "indexes": [
+      {
+        "columns": ["application_id", "slug"],
+        "unique": true,
+        "name": "tenants_application_slug_unique"
+      },
+      {
+        "columns": ["application_id", "status"],
+        "unique": false,
+        "name": "tenants_application_status_index"
+      },
+      {
+        "columns": ["business_type"],
+        "unique": false,
+        "name": "tenants_business_type_index"
+      },
+      {
+        "columns": ["created_at"],
+        "unique": false,
+        "name": "tenants_created_at_index"
+      },
+      {
+        "columns": ["primary_branding_id"],
+        "unique": false,
+        "name": "tenants_primary_branding_id_index"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "application_id",
+    "slug",
+    "name",
+    "business_type",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "application_id": {
+      "type": "string",
+      "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "primary_branding_id": {
+      "type": ["string", "null"],
+      "pattern": "^brd_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$",
+      "minLength": 1,
+      "maxLength": 63,
+      "description": "DNS-safe subdomain label. Cannot be `www`, `api`, `admin`, `mail`, `blog`, `platform`, `app` (reserved — enforced by `reserved_slug` rule)."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "business_type": {
+      "type": "string",
+      "enum": ["academy", "sports_center", "school", "gym", "federation", "club"]
+    },
+    "business_type_label": {
+      "type": "string",
+      "description": "Computed on read via BusinessType.label."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["trialing", "active", "suspended", "grace", "archived", "inactive"]
+    },
+    "status_label": {
+      "type": "string",
+      "description": "Computed on read."
+    },
+    "tenant_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Computed. `https://{slug}.{application.central_host}` (or the primary Domain host when the tenant has a verified custom domain)."
+    },
+    "branding": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "logo_url": { "type": ["string", "null"], "format": "uri" },
+        "favicon_url": { "type": ["string", "null"], "format": "uri" },
+        "primary_color": { "type": ["string", "null"], "pattern": "^#[0-9a-fA-F]{6}$" },
+        "secondary_color": { "type": ["string", "null"], "pattern": "^#[0-9a-fA-F]{6}$" },
+        "accent_color": { "type": ["string", "null"], "pattern": "^#[0-9a-fA-F]{6}$" },
+        "background_color": { "type": ["string", "null"], "pattern": "^#[0-9a-fA-F]{6}$" },
+        "font_stack": { "type": ["string", "null"] },
+        "public_domain": { "type": ["string", "null"] }
+      }
+    },
+    "provisioning": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "timezone": {
+          "type": "string",
+          "description": "IANA timezone applied to the default Region."
+        },
+        "locale": { "type": "string", "pattern": "^[a-z]{2,3}(-[A-Z]{2})?$" },
+        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+        "country_code": { "type": "string", "pattern": "^[A-Z]{2}$" },
+        "phone_country_code": { "type": "string", "pattern": "^\\+\\d{1,4}$" },
+        "default_region_code": { "type": "string" }
+      }
+    },
+    "metadata": {
+      "type": ["object", "null"],
+      "additionalProperties": true
+    },
+    "is_default": { "type": "boolean", "default": false },
+    "is_system": { "type": "boolean", "default": false },
+    "trial_ends_at": { "type": ["string", "null"], "format": "date-time" },
+    "suspended_at": { "type": ["string", "null"], "format": "date-time" },
+    "grace_ends_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["metadata", "created_by", "updated_by", "deleted_by"],
+    "computed": ["business_type_label", "status_label", "tenant_url"]
+  }
+}

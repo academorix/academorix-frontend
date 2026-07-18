@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "name": "Family Al-Sadeq · Monthly",
+    "athlete": "Lina Al-Sadeq",
+    "plan": "Monthly · Swimming",
+    "startDate": "2024-08-01",
+    "renewalDate": "2025-04-01",
+    "amount": 180,
+    "status": { "text": "Active", "color": "success" },
+    "isActive": true,
+    "createdAt": "2024-08-01T09:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Family Farouk · Termly",
+    "athlete": "Omar Farouk",
+    "plan": "Termly · Soccer",
+    "startDate": "2024-09-01",
+    "renewalDate": "2025-06-01",
+    "amount": 420,
+    "status": { "text": "Active", "color": "success" },
+    "isActive": true,
+    "createdAt": "2024-09-01T09:00:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Family Rossi · Annual",
+    "athlete": "Isabella Rossi",
+    "plan": "Annual · Gymnastics",
+    "startDate": "2024-04-06",
+    "renewalDate": "2025-04-06",
+    "amount": 1800,
+    "status": { "text": "Renewing", "color": "warning" },
+    "isActive": true,
+    "createdAt": "2024-04-06T09:00:00Z"
+  },
+  {
+    "id": 4,
+    "name": "Family Chowdhury · Monthly",
+    "athlete": "Yusuf Chowdhury",
+    "plan": "Monthly · Soccer",
+    "startDate": "2024-02-18",
+    "renewalDate": "2025-04-18",
+    "amount": 220,
+    "status": { "text": "Active", "color": "success" },
+    "isActive": true,
+    "createdAt": "2024-02-18T09:00:00Z"
+  },
+  {
+    "id": 5,
+    "name": "Family Lee · Trial",
+    "athlete": "Marcus Lee",
+    "plan": "2-week trial",
+    "startDate": "2024-10-19",
+    "renewalDate": "2024-11-02",
+    "amount": 0,
+    "status": { "text": "Ended", "color": "default" },
+    "isActive": false,
+    "createdAt": "2024-10-19T09:00:00Z"
+  },
+  {
+    "id": 6,
+    "name": "Family Nair · Monthly",
+    "athlete": "Priya Nair",
+    "plan": "Monthly · Athletics",
+    "startDate": "2024-07-15",
+    "renewalDate": "2025-04-15",
+    "amount": 160,
+    "status": { "text": "Active", "color": "success" },
+    "isActive": true,
+    "createdAt": "2024-07-15T09:00:00Z"
+  }
+]

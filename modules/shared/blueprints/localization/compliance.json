@@ -1,0 +1,48 @@
+{
+  "id": "academorix://modules/localization/compliance",
+  "$version": 1,
+  "title": "localization \u2014 compliance evidence",
+  "description": "Machine-translation providers are subprocessors under GDPR Art. 28. Source strings often contain UI copy (public) but occasionally domain data \u2014 tenant admins are responsible for ensuring no PII passes through auto-translate.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "Machine translation calls only send the source string \u2014 no tenant metadata, user id, or other context. Redactor pipeline strips PII regex patterns from source text before dispatch (email, phone, credit card)."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "TenantErased cascades hard-delete of all Translation + TranslationJob rows. Subprocessor-side deletion request submitted where required (OpenAI, Google, DeepL all offer 24\u201372h purge SLAs)."
+        },
+        {
+          "article": "Art. 28",
+          "principle": "subprocessor obligations",
+          "evidence": "See subprocessors.json. DPAs signed with each engaged provider. Tenant-level opt-in for auto_translate."
+        },
+        {
+          "article": "Art. 44",
+          "principle": "cross-border transfers",
+          "evidence": "EU-region drivers preferred (DeepL EU, Google europe-west, OpenAI EU region). Configurable per tenant via localization.driver_region."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.7",
+          "principle": "restrict data transmission",
+          "evidence": "Driver API calls TLS 1.2+. API keys stored via env vars, never in DB."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "Per-driver health probes + quality-score metrics + drift-detection reconciliation."
+        }
+      ]
+    }
+  }
+}

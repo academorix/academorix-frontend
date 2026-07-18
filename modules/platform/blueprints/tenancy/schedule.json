@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/tenancy/schedule",
+  "$version": 1,
+  "title": "tenants — scheduled tasks",
+  "description": "Cron entries registered via `Schedule::command()` and `Schedule::job()` in `TenancyServiceProvider::schedule()`. All times UTC. `runOnOneServer` set on every job so multi-node worker pools do not double-execute. `withoutOverlapping` set where the job window may exceed the interval.",
+  "entries": [
+    {
+      "signature": "tenancy:hard-delete-archived",
+      "kind": "command",
+      "cron": "0 3 * * *",
+      "timezone": "UTC",
+      "description": "Daily 03:00 UTC. Enumerates archived tenants past the 30d retention window and dispatches HardDeleteArchivedTenantJob for each. Respects `retention.json` — tenants marked `is_system=true` are skipped.",
+      "runOnOneServer": true,
+      "withoutOverlapping": true,
+      "withoutOverlappingExpiresAfterMinutes": 60
+    },
+    {
+      "signature": "tenancy:reverify-domains",
+      "kind": "command",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "description": "Hourly. Reverifies every Domain whose `verified_at` is stale (last_check_at older than 24h) or whose `ssl_expires_at` is within 30 days. Dispatches VerifyDomainDnsJob for each.",
+      "runOnOneServer": true,
+      "withoutOverlapping": true
+    },
+    {
+      "signature": "tenancy:snapshot-subprocessors",
+      "kind": "command",
+      "cron": "0 4 * * 0",
+      "timezone": "UTC",
+      "description": "Weekly Sunday 04:00 UTC. Snapshots `subprocessors.json` state to the compliance store (GDPR Art. 28 evidence). No-op if unchanged.",
+      "runOnOneServer": true
+    },
+    {
+      "signature": "SyncTenantIntegrationJob (all active)",
+      "kind": "job-batch",
+      "cron": "*/15 * * * *",
+      "timezone": "UTC",
+      "description": "Every 15 minutes. Enumerates active TenantIntegrations whose `next_sync_at <= now` and dispatches SyncTenantIntegrationJob for each. v2 — no-op in v1 until integrations ship.",
+      "runOnOneServer": true,
+      "withoutOverlapping": true
+    }
+  ]
+}

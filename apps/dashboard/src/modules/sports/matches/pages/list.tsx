@@ -8,7 +8,7 @@
  */
 
 import type { Match } from "@/types";
-import type { DataGridColumn } from "@academorix/ui/react";
+import type { DataGridColumn } from "@stackra/ui/react";
 import type { ReactNode } from "react";
 
 import {

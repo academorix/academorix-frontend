@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/notifications-push/features",
+  "$version": 1,
+  "title": "notifications-push \u2014 feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me \u2192 data.features",
+    "seededFrom": "BusinessType.default_config.features"
+  },
+  "features": [
+    {
+      "key": "notifications.push.enabled",
+      "displayName": "Push channel",
+      "description": "Master toggle.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "enterprise"]
+    },
+    {
+      "key": "notifications.push.provider.fcm",
+      "displayName": "FCM (Android + Web)",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "enterprise"]
+    },
+    {
+      "key": "notifications.push.provider.apns",
+      "displayName": "APNs (iOS)",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "enterprise"]
+    },
+    {
+      "key": "notifications.push.provider.expo",
+      "displayName": "Expo (React Native)",
+      "defaultEnabled": false,
+      "planTiers": ["team", "enterprise"]
+    },
+    {
+      "key": "notifications.push.provider.onesignal",
+      "displayName": "OneSignal",
+      "description": "Enterprise cross-platform provider with advanced segmentation.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "notifications.push.rich_notifications",
+      "displayName": "Rich notifications",
+      "description": "Images, action buttons, custom sounds. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "notifications.push.background_updates",
+      "displayName": "Silent / background pushes",
+      "description": "iOS content-available + Android priority=high. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
+}

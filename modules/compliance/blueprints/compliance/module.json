@@ -1,0 +1,393 @@
+{
+  "$version": 1,
+  "name": "compliance",
+  "alias": "compliance",
+  "namespace": "Academorix\\Compliance",
+  "description": "Cross-cutting compliance substrate. Owns eight entities: ConsentCategory (config-backed catalogue: essential / functional / marketing / analytics / ai-training / minor-parental), ConsentRecord (immutable subject × category × decision snapshots — the audit-material consent evidence), Dsar (data-subject-request state machine: received → triaging → collecting → assembling → delivered | rejected), DsarArtefact (per-module contribution to a DSAR bundle — points at a storage::File), LegalHold (freezes retention on a subject or record set while litigation / audit is active), RetentionRun (audit trail of every retention sweep: what was purged, what was held, per-tenant), Subprocessor (versioned VPC registry — every third party that receives subject data), SafeguardingIncident (minor-safeguarding report inbox distinct from audit — domain-driven, not diff-driven). Ships the `HasConsent`, `IsRetentionAware`, `HasLegalHold`, `IsDsarContributor` traits + the `#[DsarExportable]` / `#[DsarErasable]` / `#[ConsentRequired]` / `#[RetentionPolicy]` / `#[LegalHoldable]` attributes so downstream modules opt into the DSAR / retention / consent-gate machinery without importing the SDK. Not a per-module obligation — the DSAR runner, retention runner, legal-hold policy, and consent-gate facade all live here; every other module is a contributor via events + attributes.",
+  "keywords": [
+    "compliance",
+    "gdpr",
+    "ccpa",
+    "dsar",
+    "consent",
+    "retention",
+    "legal-hold",
+    "subprocessor",
+    "vpc",
+    "dpa",
+    "safeguarding",
+    "coppa",
+    "ferpa",
+    "pci-dss",
+    "soc2",
+    "data-classification",
+    "breach-notification"
+  ],
+  "priority": 30,
+  "providers": ["Academorix\\Compliance\\Providers\\ComplianceServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "audit",
+    "activity",
+    "storage",
+    "entitlements",
+    "notifications",
+    "notifications-mail"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "user",
+    "subscription",
+    "teams",
+    "sports",
+    "invitations",
+    "newsletter",
+    "transfer",
+    "webhook",
+    "search",
+    "notifications-in-app",
+    "notifications-push",
+    "notifications-sms",
+    "geofencing"
+  ],
+  "contributes": {
+    "traits": ["HasConsent", "IsRetentionAware", "HasLegalHold", "IsDsarContributor"],
+    "attributes": [
+      "DsarExportable",
+      "DsarErasable",
+      "ConsentRequired",
+      "RetentionPolicy",
+      "LegalHoldable"
+    ],
+    "blueprints": [],
+    "middleware": [
+      "compliance.consent.gate",
+      "compliance.legal-hold.check",
+      "compliance.dsar.throttle",
+      "compliance.dsar.tenant-scope"
+    ],
+    "events": [
+      "ConsentGiven",
+      "ConsentWithdrawn",
+      "ConsentCategoryDefined",
+      "DsarRequested",
+      "DsarTriaged",
+      "DsarCollectionStarted",
+      "DsarArtefactContributed",
+      "DsarAssembled",
+      "DsarDelivered",
+      "DsarRejected",
+      "LegalHoldApplied",
+      "LegalHoldReleased",
+      "RetentionSweepStarted",
+      "RetentionSweepCompleted",
+      "RetentionSweepFailed",
+      "SubprocessorAdded",
+      "SubprocessorUpdated",
+      "SubprocessorRemoved",
+      "SafeguardingIncidentReported",
+      "SafeguardingIncidentEscalated",
+      "SafeguardingIncidentResolved",
+      "BreachDetected",
+      "BreachNotificationSent"
+    ],
+    "policies": [
+      "DsarPolicy",
+      "DsarArtefactPolicy",
+      "ConsentRecordPolicy",
+      "ConsentCategoryPolicy",
+      "LegalHoldPolicy",
+      "RetentionRunPolicy",
+      "SubprocessorPolicy",
+      "SafeguardingIncidentPolicy"
+    ],
+    "hooks": [],
+    "commands": [
+      "compliance:describe",
+      "compliance:seed-consent-categories",
+      "compliance:seed-subprocessors",
+      "compliance:dsar-status",
+      "compliance:retention-sweep",
+      "compliance:legal-hold-apply",
+      "compliance:legal-hold-release",
+      "compliance:validate-data-classes",
+      "compliance:audit-subprocessors",
+      "compliance:reconcile-consent"
+    ],
+    "jobs": [
+      "DsarRunnerJob",
+      "DsarCollectFromModuleJob",
+      "DsarAssembleArchiveJob",
+      "DsarDeliverJob",
+      "DsarRejectionNotifyJob",
+      "RetentionSweepJob",
+      "ExpireLegalHoldsJob",
+      "ScanForBreachSignaturesJob",
+      "PurgeExpiredDsarArtefactsJob",
+      "SendBreachNotificationJob",
+      "ReconcileConsentSnapshotsJob",
+      "RegenerateSubprocessorFeedJob",
+      "EscalateSafeguardingIncidentJob",
+      "GenerateComplianceReportJob"
+    ],
+    "notifications": [
+      "DsarReceivedNotification",
+      "DsarReadyForReviewNotification",
+      "DsarDeliveredNotification",
+      "DsarRejectedNotification",
+      "ConsentWithdrawalConfirmedNotification",
+      "LegalHoldAppliedNotification",
+      "LegalHoldReleasedNotification",
+      "SafeguardingIncidentReceivedNotification",
+      "SafeguardingIncidentEscalatedNotification",
+      "BreachDetectedNotification",
+      "BreachNotificationSentNotification",
+      "SubprocessorChangedNotification"
+    ],
+    "broadcasts": [
+      "tenant.{id}.compliance.dsar",
+      "tenant.{id}.compliance.safeguarding",
+      "platform.compliance.breach"
+    ],
+    "observers": [
+      "ConsentRecordObserver",
+      "DsarObserver",
+      "DsarArtefactObserver",
+      "LegalHoldObserver",
+      "RetentionRunObserver",
+      "SubprocessorObserver",
+      "SafeguardingIncidentObserver"
+    ],
+    "rules": [
+      "valid_dsar_action",
+      "valid_consent_decision",
+      "valid_retention_window",
+      "valid_legal_hold_scope",
+      "valid_subprocessor_role",
+      "valid_safeguarding_severity"
+    ],
+    "casts": [
+      "DsarState",
+      "DsarAction",
+      "ConsentDecision",
+      "LegalHoldScope",
+      "RetentionOutcome",
+      "SubprocessorRole",
+      "SafeguardingSeverity",
+      "SafeguardingIncidentState"
+    ],
+    "views": [],
+    "lang": ["compliance"],
+    "config": ["compliance"],
+    "macros": [],
+    "bindings": [
+      "ConsentRegistry",
+      "ConsentGate",
+      "DsarOrchestrator",
+      "DsarContributorRegistry",
+      "DsarArtefactAssembler",
+      "RetentionRunner",
+      "RetentionPolicyResolver",
+      "LegalHoldGate",
+      "SubprocessorRegistry",
+      "SubprocessorFeedRenderer",
+      "BreachDetector",
+      "BreachNotifier",
+      "SafeguardingEscalator",
+      "DataClassScanner",
+      "ComplianceReportGenerator"
+    ],
+    "resources": [
+      "consent-category",
+      "consent-record",
+      "dsar",
+      "dsar-artefact",
+      "legal-hold",
+      "retention-run",
+      "subprocessor",
+      "safeguarding-incident"
+    ]
+  },
+  "attribute_driven": {
+    "description": "Modules opt in to compliance orchestration via attributes. Discovery pass at boot compiles the DsarContributorRegistry + RetentionPolicyResolver + LegalHoldGate registries so runtime is a hash-map lookup, never reflection.",
+    "attributes": {
+      "DsarExportable": "Marks a model class as DSAR-exportable. `#[DsarExportable(subject: 'owner_id', include: ['*'], exclude: ['password_hash'])]`. The DsarOrchestrator scans registered classes when assembling a subject's export bundle. Params: subject (required, column name pointing at the subject id), include (glob of columns — default `['*']`), exclude (columns to redact), format (json | csv — default `json`).",
+      "DsarErasable": "Marks a model class as DSAR-erasable. `#[DsarErasable(subject: 'owner_id', strategy: 'anonymize', retain_shell: true)]`. Strategy: `hard_delete` = row removed, `anonymize` = subject-identifying columns hashed, `soft_delete` = deleted_at set. `retain_shell`: keep a stub row for audit reconciliation.",
+      "ConsentRequired": "Marks an action or class as gated on a specific consent category. `#[ConsentRequired(category: 'marketing')]` on a MarketingEmailJob refuses dispatch when the recipient has no active ConsentRecord for that category. Enforced by the ConsentGate facade + compliance.consent.gate middleware.",
+      "RetentionPolicy": "Class-level, declares retention behaviour when the module's own retention.json is not authoritative. `#[RetentionPolicy(hot_days: 30, cold_days: 365, on_purge: 'anonymize')]`. Overrides the RetentionPolicyResolver default when the model belongs to a tenant whose plan tier supports overrides.",
+      "LegalHoldable": "Marks a class as legal-hold-eligible. `#[LegalHoldable(subject: 'owner_id')]`. Rows on legal-held subjects are frozen from retention purges + soft-deletes (soft-delete still allowed for user control; hard-delete refused with `LegalHoldActiveException`)."
+    }
+  },
+  "consent_architecture": {
+    "description": "Consent is per-subject × per-category, snapshotted at every state change. Never mutated — withdrawal writes a new row with decision=withdrawn. The active decision is `latest row per (subject_id, category_key)`.",
+    "categories_default": [
+      "essential (always granted; cannot be withdrawn without deleting the account)",
+      "functional (product analytics, UX personalization)",
+      "marketing (product news, feature announcements, upsell)",
+      "analytics (aggregated + anonymised product analytics; separate from functional)",
+      "ai_training (allow subject data to be included in AI model training corpuses)",
+      "minor_parental (COPPA / FERPA parental consent for under-13 / under-16 subjects)"
+    ],
+    "gate_evaluation": "ConsentGate::has($subjectId, $categoryKey) reads the latest ConsentRecord row and returns bool. Cached in Redis with 5m TTL keyed on `compliance:consent:{subject}:{category}` — invalidated on ConsentGiven / ConsentWithdrawn events.",
+    "minor_flow": "When ConsentCategory has `requires_guardian=true`, ConsentRecord.decision transitions require a companion row where guardian_user_id is set + evidence (verification method + timestamp) captured. Enforced by ConsentRecordObserver."
+  },
+  "dsar_orchestration": {
+    "description": "DSAR is a state machine coordinating cross-module read + write. One Dsar row per request. Multiple DsarArtefact rows (one per contributing module).",
+    "state_machine": {
+      "received": ["triaging", "rejected"],
+      "triaging": ["collecting", "rejected"],
+      "collecting": ["assembling", "rejected"],
+      "assembling": ["delivered", "rejected"],
+      "delivered": [],
+      "rejected": []
+    },
+    "actions": [
+      "export (Art. 15 access + Art. 20 portability)",
+      "erase (Art. 17 right to erasure)",
+      "rectify (Art. 16 rectification)",
+      "restrict (Art. 18 restriction of processing)"
+    ],
+    "sla_days": {
+      "default": 30,
+      "extended": 90,
+      "note": "GDPR Art. 12(3) baseline is 30d; extension up to 60d for complex requests must be communicated within the first month. Enterprise contracts may negotiate SLAs; overrides live in tenancy::TenantSetting.compliance.dsar_sla_days."
+    },
+    "contributor_discovery": "DsarContributorRegistry scans #[DsarExportable] + #[DsarErasable] classes at boot. Each contributor implements `Academorix\\Compliance\\Contracts\\DsarContributor` with `collect(SubjectId $s): Iterable` + `erase(SubjectId $s): void`."
+  },
+  "retention_orchestration": {
+    "description": "RetentionRunner is the ONLY canonical purge orchestrator. Every module declares its per-entity retention windows in `modules/<name>/retention.json`. The runner reads them all + respects LegalHold + applies tenant-tier overrides.",
+    "runner_schedule": "Nightly 03:00 tenant-local time (per tenancy::TenantSetting.timezone). Long tenancies partitioned into hourly slots to avoid thundering herd on the compliance-mail queue.",
+    "legal_hold_precedence": "LegalHoldGate::isHeld($subject, $context) short-circuits every purge candidate. Held rows are counted in the RetentionRun.held_count column but never touched.",
+    "outcomes_recorded": [
+      "purged (row hard-deleted)",
+      "anonymized (subject-identifying columns hashed)",
+      "archived (soft-delete via deleted_at)",
+      "held (skipped due to LegalHold)",
+      "skipped_policy (per-module rule refused)",
+      "failed (job error, retried next sweep)"
+    ]
+  },
+  "legal_hold_policy": {
+    "description": "LegalHold overrides normal retention. Applied at the SUBJECT level (any user_id) or the SCOPE level (all rows in a tenant, all rows tagged with a case id).",
+    "scopes": [
+      "subject (single subject_id — blocks their DSAR erasure + retention purges)",
+      "tenant (entire tenant — blocks retention runner + tenant-erasure cascade)",
+      "case (records tagged with case_ref — flexible, driven by litigation case number)",
+      "class (an entire model class — rare, used for regulatory inquiries requiring full-table freeze)"
+    ],
+    "duration": "Explicit expires_at required unless authorised by super_admin. Auto-release via ExpireLegalHoldsJob when expired.",
+    "acknowledgement": "Applying a LegalHold requires two-person approval (applied_by + approved_by). Enforced by LegalHoldObserver.creating hook.",
+    "audit_trail": "Every apply / release / expiry writes an entry into audit::AuditLog with actor + reason + scope."
+  },
+  "subprocessor_registry": {
+    "description": "Versioned catalogue of every third party receiving subject data. Feed rendered as public JSON at `GET /compliance/subprocessors.json` for the Trust Center + as PDF for DPAs.",
+    "versioning": "Every material change to a subprocessor (new region, new data class, new purpose) writes a new SubprocessorVersion row + fires SubprocessorUpdated. Historical versions immutable.",
+    "public_feed": "Rendered by SubprocessorFeedRenderer. Cache-Control 1h. Change to the feed dispatches SubprocessorChangedNotification to every tenant's DPO contact.",
+    "roles": [
+      "storage",
+      "cdn",
+      "email_delivery",
+      "sms_delivery",
+      "push_delivery",
+      "payment_processor",
+      "analytics",
+      "error_tracking",
+      "customer_support",
+      "ai_inference",
+      "ai_training",
+      "backup",
+      "identity_provider"
+    ]
+  },
+  "safeguarding_flow": {
+    "description": "Minor-safeguarding reports (concerns about a minor's welfare). Distinct from audit (which is diff-driven); distinct from activity (which is user-visible feed). Reports go into a triaged inbox with escalation SLAs.",
+    "severity": [
+      "info (observation, no action needed)",
+      "concern (single flag, review within 5 business days)",
+      "urgent (multiple flags OR keyword match, review within 24h)",
+      "critical (immediate risk, escalate to tenant safeguarding officer + external authority per jurisdiction)"
+    ],
+    "escalation_sla_hours": {
+      "info": null,
+      "concern": 120,
+      "urgent": 24,
+      "critical": 1
+    },
+    "state_machine": {
+      "reported": ["triaging", "closed_no_action"],
+      "triaging": ["investigating", "closed_no_action", "escalated"],
+      "investigating": ["resolved", "escalated"],
+      "escalated": ["resolved"],
+      "resolved": [],
+      "closed_no_action": []
+    },
+    "external_referrals": "critical incidents surface a `pending_external_referral` flag; the tenant's designated safeguarding lead completes the referral out-of-band + records the referral reference. Compliance module never contacts external authorities automatically."
+  },
+  "breach_detection": {
+    "description": "Signal fanout, not primary detection. Compliance subscribes to signals from storage (FileVirusFound), audit (unusual mass-export patterns), tenants (impossible-travel logins if / when Auth module lands), and produces `BreachDetected` events that feed the platform-admin breach dashboard.",
+    "notification_deadline_hours": 72,
+    "notification_deadline_reference": "GDPR Art. 33 (72h supervisory authority notification) + Art. 34 (data-subject notification without undue delay when high risk).",
+    "tenants_receive": "The tenant's DPO TenantContact receives the BreachDetectedNotification within 15 minutes of the platform-admin acknowledging the incident. Subject-facing notification is orchestrated but NEVER auto-sent — requires human approval in the platform-admin dashboard."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing DSAR + consent + safeguarding self-serve.",
+      "routes": [
+        "POST /api/v1/compliance/dsars",
+        "GET /api/v1/compliance/dsars",
+        "GET /api/v1/compliance/dsars/{dsar}",
+        "POST /api/v1/compliance/dsars/{dsar}/cancel",
+        "GET /api/v1/compliance/consent-categories",
+        "GET /api/v1/compliance/consents",
+        "POST /api/v1/compliance/consents/{category}",
+        "DELETE /api/v1/compliance/consents/{category}",
+        "GET /api/v1/compliance/subprocessors",
+        "POST /api/v1/compliance/safeguarding-incidents",
+        "GET /api/v1/compliance/safeguarding-incidents",
+        "GET /api/v1/compliance/safeguarding-incidents/{incident}",
+        "POST /api/v1/compliance/safeguarding-incidents/{incident}/note"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant compliance oversight. DSAR review + subprocessor management + legal-hold + breach dashboard.",
+      "routes": [
+        "GET /api/v1/platform/compliance/dsars",
+        "GET /api/v1/platform/compliance/dsars/{dsar}",
+        "POST /api/v1/platform/compliance/dsars/{dsar}/triage",
+        "POST /api/v1/platform/compliance/dsars/{dsar}/approve",
+        "POST /api/v1/platform/compliance/dsars/{dsar}/reject",
+        "POST /api/v1/platform/compliance/dsars/{dsar}/deliver",
+        "GET /api/v1/platform/compliance/consent-categories",
+        "POST /api/v1/platform/compliance/consent-categories",
+        "PATCH /api/v1/platform/compliance/consent-categories/{category}",
+        "GET /api/v1/platform/compliance/legal-holds",
+        "POST /api/v1/platform/compliance/legal-holds",
+        "PATCH /api/v1/platform/compliance/legal-holds/{hold}",
+        "DELETE /api/v1/platform/compliance/legal-holds/{hold}",
+        "GET /api/v1/platform/compliance/subprocessors",
+        "POST /api/v1/platform/compliance/subprocessors",
+        "PATCH /api/v1/platform/compliance/subprocessors/{subprocessor}",
+        "DELETE /api/v1/platform/compliance/subprocessors/{subprocessor}",
+        "GET /api/v1/platform/compliance/retention-runs",
+        "GET /api/v1/platform/compliance/retention-runs/{run}",
+        "POST /api/v1/platform/compliance/retention-runs/dispatch",
+        "GET /api/v1/platform/compliance/safeguarding-incidents",
+        "POST /api/v1/platform/compliance/safeguarding-incidents/{incident}/escalate",
+        "POST /api/v1/platform/compliance/breaches",
+        "GET /api/v1/platform/compliance/breaches",
+        "POST /api/v1/platform/compliance/breaches/{breach}/notify"
+      ]
+    },
+    "central": {
+      "description": "Public-facing compliance surface. Subprocessor feed (Trust Center) + DSAR download redemption (signed URL). No authentication — signature IS the credential.",
+      "routes": [
+        "GET /compliance/subprocessors.json",
+        "GET /compliance/subprocessors.pdf",
+        "GET /compliance/dsars/{signature}",
+        "GET /compliance/dpa/{version}"
+      ]
+    }
+  }
+}

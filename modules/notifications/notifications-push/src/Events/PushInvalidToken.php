@@ -1,0 +1,30 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Academorix\Notifications\Push\Events;
+
+use Academorix\Notifications\Push\Enums\PushSubscriptionExpiredReason;
+use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
+
+/**
+ * Provider reported a device token is no longer valid.
+ *
+ * Fires either from the SendPushJob (immediate at send) OR from the
+ * IngestPushProviderWebhookJob (via APNs Feedback Service / FCM invalid-token
+ * callback). The `ExpireSubscriptionListener` marks the subscription inactive
+ * on receipt.
+ *
+ * @category NotificationsPush
+ *
+ * @since    0.1.0
+ */
+final readonly class PushInvalidToken implements ShouldDispatchAfterCommit
+{
+    public function __construct(
+        public string $subscriptionId,
+        public string $provider,
+        public PushSubscriptionExpiredReason $reason,
+    ) {
+    }
+}

@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "athlete": "Lina Al-Sadeq",
+    "skill": "Freestyle stroke",
+    "level": "Level 3 · Confident",
+    "assessedAt": "2025-03-10",
+    "coach": "Nadia Petrova",
+    "status": { "text": "Complete", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-03-10T09:00:00Z"
+  },
+  {
+    "id": 2,
+    "athlete": "Lina Al-Sadeq",
+    "skill": "Diving start",
+    "level": "Level 2 · Practising",
+    "assessedAt": "2025-03-10",
+    "coach": "Nadia Petrova",
+    "status": { "text": "In progress", "color": "warning" },
+    "isActive": true,
+    "createdAt": "2025-03-10T09:00:00Z"
+  },
+  {
+    "id": 3,
+    "athlete": "Isabella Rossi",
+    "skill": "Back walkover",
+    "level": "Level 4 · Proficient",
+    "assessedAt": "2025-03-08",
+    "coach": "Marcus Lee",
+    "status": { "text": "Complete", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-03-08T09:00:00Z"
+  },
+  {
+    "id": 4,
+    "athlete": "Priya Nair",
+    "skill": "Sprint start",
+    "level": "Level 3 · Confident",
+    "assessedAt": "2025-03-12",
+    "coach": "Tariq Hassan",
+    "status": { "text": "Complete", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-03-12T09:00:00Z"
+  },
+  {
+    "id": 5,
+    "athlete": "Marcus Lee",
+    "skill": "Second serve",
+    "level": "Level 2 · Practising",
+    "assessedAt": "2025-03-05",
+    "coach": "Emma Watts",
+    "status": { "text": "In progress", "color": "warning" },
+    "isActive": true,
+    "createdAt": "2025-03-05T09:00:00Z"
+  }
+]

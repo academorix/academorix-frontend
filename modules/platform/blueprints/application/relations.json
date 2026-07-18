@@ -1,0 +1,38 @@
+{
+  "id": "academorix://modules/application/relations",
+  "$version": 1,
+  "title": "application — model relationships",
+  "description": "Application + BusinessType are ROOT entities in the tenancy DAG — nothing above them, everything tenant-scoped cascades down through them.",
+  "internal": [
+    {
+      "from": "Tenant",
+      "kind": "belongsTo",
+      "to": "Application",
+      "foreignKey": "application_id",
+      "onUpdate": "cascade",
+      "onDelete": "restrict",
+      "note": "Actually declared on Tenant in the tenancy module; listed here because the FK target is Application.owning."
+    }
+  ],
+  "config_references": [
+    {
+      "from": "Tenant",
+      "kind": "resolvesConfig",
+      "to": "BusinessType",
+      "field": "business_type",
+      "note": "`tenants.business_type` is a string enum whose value resolves against the BusinessType config catalogue (`x-storage.kind: config`, keyed on `key`). NOT an Eloquent FK — no `business_type_id` column exists. The Tenant model reads `config('application.business_types')` to hydrate the catalogue entry on demand."
+    }
+  ],
+  "outbound": [],
+  "inbound_expected": [
+    { "from": "tenancy::Tenant", "via": "application_id + business_type_id" },
+    { "from": "domains::Domain", "via": "application_id (BelongsToApplication)" },
+    { "from": "identity::Identity (future)", "via": "application_id" },
+    { "from": "access::Role", "via": "application_id" },
+    { "from": "access::Permission", "via": "application_id" },
+    { "from": "subscription::TenantSubscription", "via": "application_id" },
+    { "from": "entitlements::EntitlementLicense", "via": "application_id" },
+    { "from": "audit::Audit", "via": "application_id (tenant audience)" },
+    { "from": "activity::ActivityLog", "via": "application_id (tenant audience)" }
+  ]
+}

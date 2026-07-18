@@ -1,0 +1,48 @@
+{
+  "id": "academorix://modules/notifications-sms/traits",
+  "$version": 1,
+  "title": "notifications-sms \u2014 trait composition",
+  "description": "One entity: SmsOptOut.",
+  "owned": [],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSystemFlag" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasAuditable",
+        "reason": "TCPA + CASL evidence \u2014 every opt-out audit-logged."
+      },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "tenants": [
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenantOptional",
+        "reason": "tenant_id NULL = platform-wide opt-out (known bad numbers, spam-trap short codes). tenant_id set = tenant-specific."
+      }
+    ]
+  },
+  "composition": {
+    "sms_opt_out": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasSystemFlag",
+        "BelongsToTenantOptional",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAuditable",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "Same shape as MailSuppression. NEVER Importable/Exportable \u2014 regulatory evidence must stay on-platform."
+    }
+  }
+}

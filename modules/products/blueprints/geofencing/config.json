@@ -1,0 +1,139 @@
+{
+  "id": "academorix://modules/geofencing/config",
+  "$version": 1,
+  "title": "geofencing \u2014 developer configuration",
+  "configFile": "config/geofencing.php",
+  "envPrefix": "GEOFENCE_",
+  "sections": {
+    "evaluator": {
+      "keys": [
+        {
+          "path": "geofencing.evaluator.default_accuracy_tolerance_m",
+          "type": "int",
+          "env": "GEOFENCE_DEFAULT_ACCURACY_TOLERANCE_M",
+          "default": 50,
+          "description": "Fallback accuracy tolerance when the fenceable model returns null from geofenceAccuracyToleranceM()."
+        },
+        {
+          "path": "geofencing.evaluator.default_radius_m",
+          "type": "int",
+          "env": "GEOFENCE_DEFAULT_RADIUS_M",
+          "default": 100,
+          "description": "Fallback radius when the fenceable has no polygon AND no explicit radius."
+        },
+        {
+          "path": "geofencing.evaluator.max_polygon_diameter_m",
+          "type": "int",
+          "default": 10000,
+          "description": "Reject polygons spanning more than this diameter. PolygonEvaluator's tangent-plane approximation loses accuracy beyond ~10km."
+        }
+      ]
+    },
+    "preflight": {
+      "keys": [
+        {
+          "path": "geofencing.preflight.rate_limit.per_minute",
+          "type": "int",
+          "env": "GEOFENCE_PREFLIGHT_RATE_PER_MINUTE",
+          "default": 60
+        },
+        {
+          "path": "geofencing.preflight.log_sample_ratio",
+          "type": "float",
+          "default": 1.0,
+          "description": "Fraction of preflight calls that emit the `geofence.health_check` log line. Reduce for high-volume mobile fleets."
+        }
+      ]
+    },
+    "override": {
+      "keys": [
+        { "path": "geofencing.override.min_reason_length", "type": "int", "default": 10 },
+        {
+          "path": "geofencing.override.approval_task_type",
+          "type": "string",
+          "default": "geofence_override",
+          "description": "The approval_tasks.type value we filter on when the approval event fires."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        { "path": "geofencing.retention.default_hot_years", "type": "int", "default": 7 },
+        {
+          "path": "geofencing.retention.override_row_hot_years",
+          "type": "int",
+          "default": 10,
+          "description": "Non-configurable floor; tenant setting cannot go below this for override rows."
+        },
+        {
+          "path": "geofencing.retention.cold_years",
+          "type": "int",
+          "default": 3,
+          "description": "After soft-delete + anonymisation, retain for this many years then hard-delete."
+        }
+      ]
+    },
+    "morph_map": {
+      "keys": [
+        {
+          "path": "geofencing.morph_map.strict",
+          "type": "bool",
+          "default": true,
+          "description": "When true, refuse evaluations with fenceable_type or subject_type not registered via attributes. Turn off ONLY during migrations from legacy class-name morph values."
+        },
+        {
+          "path": "geofencing.morph_map.fenceable_discovery_paths",
+          "type": "array",
+          "default": ["modules/*/src/Models", "app/Models"],
+          "description": "Directories scanned for #[Geofenceable] attributes at boot."
+        },
+        {
+          "path": "geofencing.morph_map.subject_discovery_paths",
+          "type": "array",
+          "default": ["modules/*/src/Models", "app/Models"],
+          "description": "Directories scanned for #[GeofenceSubjectAlias] attributes at boot."
+        }
+      ]
+    },
+    "trait_defaults": {
+      "description": "Default column names the HasGeofence trait expects. Consumer models with non-standard schemas override the Geofenceable interface methods directly.",
+      "keys": [
+        {
+          "path": "geofencing.trait.column_geofence_polygon",
+          "type": "string",
+          "default": "geofence_polygon"
+        },
+        {
+          "path": "geofencing.trait.column_location_point",
+          "type": "string",
+          "default": "location_point"
+        },
+        {
+          "path": "geofencing.trait.column_geofence_radius_m",
+          "type": "string",
+          "default": "geofence_radius_m"
+        },
+        {
+          "path": "geofencing.trait.column_geofence_accuracy_tolerance_m",
+          "type": "string",
+          "default": "geofence_accuracy_tolerance_m"
+        },
+        {
+          "path": "geofencing.trait.column_geofence_enforcement_enabled",
+          "type": "string",
+          "default": "geofence_enforcement_enabled"
+        },
+        {
+          "path": "geofencing.trait.column_geofence_updated_at",
+          "type": "string",
+          "default": "geofence_updated_at"
+        },
+        {
+          "path": "geofencing.trait.column_geofence_updated_by",
+          "type": "string",
+          "default": "geofence_updated_by"
+        }
+      ]
+    }
+  }
+}

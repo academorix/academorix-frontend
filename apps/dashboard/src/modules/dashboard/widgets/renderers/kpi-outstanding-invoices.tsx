@@ -8,8 +8,8 @@
  * status filter uses `in` so both statuses aggregate into a single number.
  */
 
-import { ExclamationCircleIcon } from "@academorix/ui/icons/outline";
-import { KPI, Skeleton } from "@academorix/ui/react";
+import { ExclamationCircleIcon } from "@stackra/ui/icons/heroicon/outline";
+import { KPI, Skeleton } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 
 import type { BaseRecord } from "@refinedev/core";

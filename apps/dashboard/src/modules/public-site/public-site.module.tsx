@@ -9,7 +9,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §19 "Public Site & CMS"
  */
 
-import { GlobeAltIcon } from "@academorix/ui/icons/outline";
+import { GlobeAltIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

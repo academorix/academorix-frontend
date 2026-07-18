@@ -1,0 +1,17 @@
+{
+  "id": "academorix://modules/audit/middleware",
+  "$version": 1,
+  "title": "audit \u2014 HTTP middleware",
+  "description": "No owned middleware. Consumes foundation's + tenants's stack.",
+  "middleware": [],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "foundation::auth:sanctum" },
+    { "middleware": "foundation::auth:platform_admin" },
+    { "middleware": "foundation::throttle", "notes": "audit-tenant + audit-platform buckets." },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "versioning::versioning.resolve" }
+  ]
+}

@@ -13,7 +13,7 @@ import { useMemo } from "react";
 
 import type { Lead } from "@/modules/leads/leads.types";
 import type { Staff } from "@/types";
-import type { DataGridColumn } from "@academorix/ui/react";
+import type { DataGridColumn } from "@stackra/ui/react";
 import type { ReactNode } from "react";
 
 import { EditButton, ListView, ResourceDataGrid, ShowButton } from "@/components/refine";

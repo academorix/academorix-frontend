@@ -8,7 +8,7 @@
  * conversation id.
  */
 
-import { Avatar, Card, Spinner } from "@academorix/ui/react";
+import { Avatar, Card, Spinner } from "@stackra/ui/react";
 import { useList, useShow } from "@refinedev/core";
 
 import type { Conversation, Message } from "@/modules/messaging/messaging.types";

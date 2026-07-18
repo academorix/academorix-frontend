@@ -1,0 +1,72 @@
+{
+  "id": "academorix://modules/audit/jobs",
+  "$version": 1,
+  "title": "audit \u2014 background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Audit\\Jobs\\RotateAuditColdStorageJob",
+      "queue": "notifications",
+      "purpose": "Move audit rows past hot window (365d) to S3 with Glacier lifecycle. Retains a stub row with cold_key populated for chain integrity.",
+      "steps": [
+        "Query: SELECT * FROM audits WHERE cold_key IS NULL AND created_at < now() - hot_days LIMIT rotate_batch_size ORDER BY created_at ASC.",
+        "For each batch: serialise to canonical JSON \u2192 KMS envelope encrypt \u2192 PutObject to S3 with Glacier lifecycle + Object Lock (immutable retention).",
+        "UPDATE audits SET cold_key = <key>, old_values = NULL, new_values = NULL, url = NULL, user_agent = NULL WHERE id IN (...).",
+        "row_hash + previous_hash preserved \u2014 chain integrity maintained.",
+        "Emit AuditColdRotated per batch."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 3,
+      "backoff": [300, 1800, 3600],
+      "notes": "Runs monthly. Idempotent \u2014 cold_key IS NULL predicate ensures no double-rotation."
+    },
+    {
+      "class": "Academorix\\Audit\\Jobs\\VerifyAuditChainJob",
+      "queue": "notifications",
+      "purpose": "Scan audit rows for chain integrity. Recompute each row_hash + compare against stored value. Fire AuditChainBroken on mismatch.",
+      "steps": [
+        "For each tenant with audit.tamper_evident_chain feature on:",
+        "  Iterate audits ORDER BY created_at ASC (up to N most recent per config).",
+        "  For each: recompute row_hash from canonical serialisation. Compare to stored.",
+        "  Check previous_hash matches previous row's row_hash.",
+        "  On mismatch: fire AuditChainBroken with the first offending audit_id + expected + actual.",
+        "  On success: fire AuditChainVerified with count + duration."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "tenant_id",
+      "tries": 2,
+      "notes": "Runs weekly + on demand via audit:verify-chain command."
+    },
+    {
+      "class": "Academorix\\Audit\\Jobs\\KmsEncryptAuditFieldsJob",
+      "queue": "notifications-critical",
+      "purpose": "Async KMS envelope encryption for large old_values/new_values payloads that would exceed synchronous KMS latency budget. Only used when payload > 32KB. Row created with is_encrypted=false + is_pending_encryption=true; this job flips to encrypted state.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "audit_id",
+      "tries": 5,
+      "backoff": [10, 60, 300, 1800, 3600]
+    },
+    {
+      "class": "Academorix\\Audit\\Jobs\\ExportAuditForDsarJob",
+      "queue": "notifications",
+      "purpose": "Produce DSAR export of audit rows referring to a specific user_id. Compliance module orchestrates DSAR overall; this job builds the audit-scoped export.",
+      "steps": [
+        "Query hot: audits WHERE user_id = target OR (auditable_type = User AND auditable_id = target).",
+        "Query cold: same predicate against cold view (S3 restore initiated for matching keys).",
+        "Compose CSV + JSON exports. Restricted-tier fields either included (DPO export) or [REDACTED] (subject-facing export) per --format flag.",
+        "Upload to storage module + return signed URL via ExportReady event to compliance.",
+        "Fire compliance::DsarPartComplete."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 7200,
+      "uniqueVia": "(target_user_id, format)",
+      "tries": 3
+    }
+  ]
+}

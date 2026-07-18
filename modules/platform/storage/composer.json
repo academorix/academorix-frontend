@@ -1,0 +1,91 @@
+{
+  "name": "academorix/storage",
+  "type": "library",
+  "description": "File-upload substrate — wraps `spatie/laravel-medialibrary ^11` and adds our tenant scoping, entitlement enforcement, antivirus pipeline, audited signed-URL orchestrator, chunked-upload state machine, image variants, and content-addressable dedup. Owns four aggregates: File (the domain unit, polymorphic via `fileable_type`/`fileable_id`), FileVariant (image + document derivatives), SignedUrlAudit (every signed URL issued with TTL / IP lock / user lock / hit count), and ChunkedUpload (in-flight multipart / tus.io state).",
+  "license": "proprietary",
+  "keywords": [
+    "academorix",
+    "laravel",
+    "storage",
+    "files",
+    "attachments",
+    "uploads",
+    "signed-urls",
+    "image-variants",
+    "chunked-upload",
+    "tus",
+    "s3",
+    "antivirus",
+    "clamav",
+    "dedup",
+    "sha256",
+    "cdn",
+    "medialibrary"
+  ],
+  "require": {
+    "php": "^8.3",
+    "academorix/activity": "@dev",
+    "academorix/application": "@dev",
+    "academorix/audit": "@dev",
+    "academorix/authorization": "@dev",
+    "academorix/console": "@dev",
+    "academorix/crud": "@dev",
+    "academorix/database": "@dev",
+    "academorix/entitlements": "@dev",
+    "academorix/enum": "@dev",
+    "academorix/events": "@dev",
+    "academorix/exceptions": "@dev",
+    "academorix/foundation": "@dev",
+    "academorix/retention": "@dev",
+    "academorix/routing": "@dev",
+    "academorix/service-provider": "@dev",
+    "academorix/support": "@dev",
+    "academorix/tenancy": "@dev",
+    "illuminate/contracts": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/events": "^13.0",
+    "illuminate/filesystem": "^13.0",
+    "illuminate/http": "^13.0",
+    "illuminate/notifications": "^13.0",
+    "illuminate/queue": "^13.0",
+    "illuminate/routing": "^13.0",
+    "illuminate/support": "^13.0",
+    "spatie/laravel-data": "^4.11",
+    "spatie/laravel-medialibrary": "^11.0"
+  },
+  "require-dev": {
+    "mockery/mockery": "^1.6",
+    "orchestra/testbench": "^11.0",
+    "pestphp/pest": "^4.0",
+    "pestphp/pest-plugin-laravel": "^4.0",
+    "phpstan/phpstan": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Academorix\\Storage\\": "src/",
+      "Academorix\\Storage\\Database\\Factories\\": "database/factories/",
+      "Academorix\\Storage\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Academorix\\Storage\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Academorix\\Storage\\Providers\\StorageServiceProvider"
+      ],
+      "aliases": {}
+    }
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

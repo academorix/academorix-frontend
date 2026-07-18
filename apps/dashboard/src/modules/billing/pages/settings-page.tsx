@@ -27,10 +27,10 @@
  * @see BACKEND_HANDOFF.md §4 (route table) + §5 (payload shapes)
  */
 
-import { ExclamationCircleIcon, ReceiptPercentIcon } from "@academorix/ui/icons/outline";
-import { Button, Card, Chip, Separator, Spinner } from "@academorix/ui/react";
+import { ExclamationCircleIcon, ReceiptPercentIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Card, Chip, Separator, Spinner } from "@stackra/ui/react";
 import { useCallback } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "@stackra/routing/react";
 
 import type { BillingInvoice, SubscriptionStatus, SubscriptionSummary } from "@/types";
 import type { ReactNode } from "react";

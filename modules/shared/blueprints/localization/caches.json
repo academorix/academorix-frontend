@@ -1,0 +1,48 @@
+{
+  "id": "academorix://modules/localization/caches",
+  "$version": 1,
+  "title": "localization \u2014 cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["localization", "translations"],
+  "keys": [
+    {
+      "pattern": "loc:trans:{tenant_id}:{locale_code}:{namespace}:{group}:{key_hash}",
+      "description": "Per-key resolved translation. Redis-first, DB-second, file-third. key_hash = short SHA-1 of the full key path to keep Redis keys under 250 bytes.",
+      "ttlSeconds": 3600,
+      "tags": ["localization", "translations", "tenant"],
+      "invalidatedBy": ["TranslationObserver.created", "TranslationObserver.updated"]
+    },
+    {
+      "pattern": "loc:trans:platform:{locale_code}:{namespace}:{group}:{key_hash}",
+      "description": "Platform defaults (tenant_id NULL rows).",
+      "ttlSeconds": 7200,
+      "tags": ["localization", "translations", "platform"]
+    },
+    {
+      "pattern": "loc:top:{tenant_id}:{locale_code}",
+      "description": "Top-200 most-accessed keys per (tenant, locale). Warmed hourly by WarmTranslationCacheJob.",
+      "ttlSeconds": 3600,
+      "tags": ["localization", "translations", "tenant"]
+    },
+    {
+      "pattern": "loc:locales:tenant:{tenant_id}",
+      "description": "Enabled TenantLocale rows for a tenant. Read on ResolveLocale middleware.",
+      "ttlSeconds": 300,
+      "tags": ["localization", "tenant"],
+      "invalidatedBy": ["TenantLocaleObserver.*"]
+    },
+    {
+      "pattern": "loc:languages:catalogue",
+      "description": "Full PlatformLanguage catalogue (is_active_on_platform=true) joined with geography::Language + geography::Country for display metadata (name, native_name, direction, flag_emoji). Warmed on boot; the join is why we cache aggressively at 24h TTL.",
+      "ttlSeconds": 86400,
+      "tags": ["localization", "platform"],
+      "invalidatedBy": ["PlatformLanguageObserver.*"]
+    },
+    {
+      "pattern": "loc:auto_translate:debounce:{tenant_id}:{ns}:{group}:{key}:{locale}",
+      "description": "60s debounce guard preventing translate stampedes.",
+      "ttlSeconds": 60,
+      "tags": ["localization"]
+    }
+  ]
+}

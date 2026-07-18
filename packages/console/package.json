@@ -1,0 +1,108 @@
+{
+  "name": "@stackra/console",
+  "version": "0.1.0",
+  "description": "Artisan-style CLI framework for the @stackra workspace — @Command()-driven command registration, auto-discovery via DISCOVERY_SERVICE, styled terminal output, stub-based scaffolding.",
+  "license": "MIT",
+  "author": {
+    "name": "Stackra L.L.C",
+    "email": "dev@stackra.com",
+    "url": "https://stackra.com"
+  },
+  "keywords": [
+    "stackra",
+    "cli",
+    "console",
+    "command",
+    "artisan",
+    "nestjs"
+  ],
+  "homepage": "https://github.com/stackra-inc/core/tree/main/console#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stackra-inc/core.git",
+    "directory": "console"
+  },
+  "bugs": {
+    "url": "https://github.com/stackra-inc/core/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./publishing": {
+      "types": "./dist/publishing.d.ts",
+      "import": "./dist/publishing.js",
+      "require": "./dist/publishing.cjs"
+    },
+    "./testing": {
+      "types": "./dist/testing.d.ts",
+      "import": "./dist/testing.js",
+      "require": "./dist/testing.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "stackra": "./bin/stackra"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "stubs",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rimraf dist .turbo",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage --passWithNoTests"
+  },
+  "dependencies": {
+    "@clack/prompts": "catalog:",
+    "boxen": "catalog:",
+    "cli-table3": "catalog:",
+    "ejs": "catalog:",
+    "picocolors": "catalog:",
+    "terminal-link": "catalog:"
+  },
+  "peerDependencies": {
+    "@stackra/container": "workspace:^",
+    "@stackra/contracts": "workspace:^",
+    "@stackra/support": "workspace:^",
+    "reflect-metadata": "catalog:",
+    "@vivtel/metadata": "catalog:"
+  },
+  "devDependencies": {
+    "@academorix/typescript-config": "workspace:*",
+    "@stackra/container": "workspace:*",
+    "@stackra/contracts": "workspace:*",
+    "@stackra/support": "workspace:*",
+    "@stackra/testing": "workspace:*",
+    "@types/node": "catalog:",
+    "@vivtel/metadata": "catalog:",
+    "reflect-metadata": "catalog:",
+    "rimraf": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

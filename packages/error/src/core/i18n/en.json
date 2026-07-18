@@ -1,0 +1,11 @@
+{
+  "defaultErrorFallback": {
+    "title": "Something went wrong",
+    "defaultDescription": "An unexpected error occurred while rendering this page.",
+    "retryButton": "Try again"
+  },
+  "inlineErrorFallback": {
+    "label": "This section failed to load.",
+    "retryButton": "Retry"
+  }
+}

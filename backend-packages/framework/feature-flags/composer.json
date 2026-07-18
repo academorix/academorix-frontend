@@ -1,0 +1,70 @@
+{
+    "name": "academorix/feature-flags",
+    "description": "Production-grade multi-tenant feature-flag layer on top of Laravel Pennant. Ships the KillSwitch -> Override -> Rollout -> PlanGate -> class-default resolution chain, one contract (FeatureCheckerInterface), one facade (Feature::), attribute-driven flag discovery, route gating, AI tool visibility gating, boot-payload contribution, an actions-only admin surface, and a Saloon SDK sibling.",
+    "type": "library",
+    "keywords": ["academorix", "laravel", "feature-flags", "pennant", "kill-switch", "rollout", "override", "plan-gate", "multitenancy", "attributes"],
+    "license": "proprietary",
+    "authors": [
+        { "name": "Academorix Team", "email": "dev@academorix.com", "homepage": "https://academorix.com" }
+    ],
+    "require": {
+        "php": "^8.3|^8.4|^8.5",
+        "academorix/authorization": "@dev",
+        "academorix/caching": "@dev",
+        "academorix/crud": "@dev",
+        "academorix/database": "@dev",
+        "academorix/enum": "@dev",
+        "academorix/exceptions": "@dev",
+        "academorix/foundation": "@dev",
+        "academorix/routing": "@dev",
+        "academorix/scope": "@dev",
+        "academorix/service-provider": "@dev",
+        "illuminate/contracts": "^13.0",
+        "illuminate/database": "^13.0",
+        "illuminate/http": "^13.0",
+        "illuminate/routing": "^13.0",
+        "illuminate/support": "^13.0",
+        "laravel/pennant": "^1.18",
+        "olvlvl/composer-attribute-collector": "^2.0",
+        "owen-it/laravel-auditing": "^13.0|^14.0",
+        "spatie/laravel-data": "^4.11"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0",
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "phpstan/phpstan": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Academorix\\FeatureFlags\\": "src/",
+            "Academorix\\FeatureFlags\\Database\\Factories\\": "database/factories/",
+            "Academorix\\FeatureFlags\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": { "Academorix\\FeatureFlags\\Tests\\": "tests/" }
+    },
+    "repositories": [
+        { "type": "path", "url": "../../*", "options": { "symlink": true } },
+        { "type": "path", "url": "../*", "options": { "symlink": true } }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": ["Academorix\\FeatureFlags\\Providers\\FeatureFlagsServiceProvider"],
+            "aliases": { "Feature": "Academorix\\FeatureFlags\\Facades\\Feature" }
+        },
+        "composer-attribute-collector": { "include": ["src"] },
+        "branch-alias": { "dev-main": "0.1.x-dev" }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "olvlvl/composer-attribute-collector": true,
+            "pestphp/pest-plugin": true
+        }
+    }
+}

@@ -1,0 +1,87 @@
+{
+  "id": "academorix://modules/notifications/analytics",
+  "$version": 1,
+  "title": "notifications core \u2014 product analytics events",
+  "description": "User-facing analytics events for the product analytics sink. Distinct from metrics.json (OpenTelemetry / ops signals). These feed engagement funnels + preference change patterns. All events respect the user's analytics-consent tier \u2014 events with `consent_required: analytics` are dropped for users who haven't consented.",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Notification Sent",
+      "kind": "track",
+      "consent_required": "analytics",
+      "description": "Fired when NotificationSent event emits \u2014 provider accepted the handoff.",
+      "properties": [
+        "tenant_id",
+        "category_slug",
+        "channel",
+        "priority",
+        "template_key",
+        "template_version"
+      ]
+    },
+    {
+      "name": "Notification Delivered",
+      "kind": "track",
+      "consent_required": "analytics",
+      "description": "Fired when NotificationDelivered event emits \u2014 provider confirmed delivery.",
+      "properties": ["tenant_id", "category_slug", "channel", "priority", "delivery_lag_seconds"]
+    },
+    {
+      "name": "Notification Opened",
+      "kind": "track",
+      "consent_required": "analytics",
+      "description": "Fired when NotificationOpened event emits.",
+      "properties": ["tenant_id", "category_slug", "channel", "priority", "opened_via_client"]
+    },
+    {
+      "name": "Notification Clicked",
+      "kind": "track",
+      "consent_required": "analytics",
+      "description": "Fired when NotificationClicked event emits.",
+      "properties": ["tenant_id", "category_slug", "channel", "clicked_url_kind"]
+    },
+    {
+      "name": "Notification Seen",
+      "kind": "track",
+      "consent_required": "analytics",
+      "description": "Fired when a user marks an in-app notification seen. Powers unseen-count \u2192 seen conversion funnel.",
+      "properties": ["tenant_id", "category_slug", "seen_via"]
+    },
+    {
+      "name": "Preference Changed",
+      "kind": "track",
+      "consent_required": "functional",
+      "description": "Preference change events \u2014 functional consent because preferences are essential to service delivery, not marketing insight. Tracks opt-out patterns for the product team.",
+      "properties": [
+        "tenant_id",
+        "category_slug",
+        "channel",
+        "enabled_before",
+        "enabled_after",
+        "source"
+      ]
+    },
+    {
+      "name": "Digest Delivered",
+      "kind": "track",
+      "consent_required": "analytics",
+      "description": "Fired when DigestDelivered event emits \u2014 measures batching effectiveness.",
+      "properties": ["tenant_id", "category_slug", "channel", "window", "item_count"]
+    },
+    {
+      "name": "Inbox Opened",
+      "kind": "track",
+      "consent_required": "analytics",
+      "description": "Fired when the user opens the inbox screen. Front-end origin \u2014 dashboard SPA calls this on mount.",
+      "properties": ["tenant_id", "unseen_count_before_open"]
+    },
+    {
+      "name": "Unsubscribed",
+      "kind": "track",
+      "consent_required": "functional",
+      "description": "Fired on one-click unsubscribe. Functional consent \u2014 it's a service action, not marketing.",
+      "properties": ["tenant_id", "category_slug", "channel", "source"]
+    }
+  ]
+}

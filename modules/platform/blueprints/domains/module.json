@@ -1,0 +1,85 @@
+{
+  "$version": 1,
+  "name": "domains",
+  "alias": "domains",
+  "namespace": "Academorix\\Domains",
+  "description": "Custom domain substrate for tenant white-label. Owns Domain (canonical hostname bound to a Tenant) and DomainRecord (DNS records inside a Domain). Publishes DNS verification round-trips, certificate rotation jobs, and the DomainVerifier binding every host-resolver consumes. Extracted from tenants at v0.3 so long-running DNS + cert workflows have their own module lifecycle independent of the Tenant lifecycle.",
+  "keywords": [
+    "domain",
+    "custom-domain",
+    "dns",
+    "cname",
+    "verification",
+    "certificate",
+    "white-label",
+    "hostname"
+  ],
+  "priority": 12,
+  "providers": ["Academorix\\Domains\\Providers\\DomainsServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "tenancy"],
+  "extendedBy": [],
+  "planned_consumers": ["compliance", "audit", "activity", "access"],
+  "contributes": {
+    "traits": [],
+    "blueprints": [],
+    "middleware": [],
+    "events": [
+      "DomainAdded",
+      "DomainVerified",
+      "DomainVerificationFailed",
+      "DomainRemoved",
+      "DomainRecordCreated",
+      "DomainRecordUpdated",
+      "DomainRecordRemoved",
+      "CertificateIssued",
+      "CertificateRotated",
+      "CertificateExpiring"
+    ],
+    "policies": ["DomainPolicy", "DomainRecordPolicy"],
+    "hooks": [],
+    "commands": [
+      "domains:verify",
+      "domains:reverify",
+      "domains:issue-certificate",
+      "domains:rotate-certificates"
+    ],
+    "jobs": [
+      "VerifyDomainDnsJob",
+      "IssueCertificateJob",
+      "RotateCertificateJob",
+      "PurgeExpiredCertificatesJob"
+    ],
+    "notifications": [
+      "DomainVerifiedNotification",
+      "DomainVerificationFailedNotification",
+      "CertificateExpiringNotification"
+    ],
+    "broadcasts": ["tenant.{id}.domain"],
+    "observers": ["DomainObserver", "DomainRecordObserver"],
+    "rules": ["valid_domain_host", "dns_safe_slug"],
+    "casts": [],
+    "views": [],
+    "lang": ["domains"],
+    "config": ["domains"],
+    "macros": [],
+    "bindings": ["DomainVerifier", "CertificateProvisioner"],
+    "resources": ["domain", "domain-record"]
+  },
+  "hosts": {
+    "platform-admin": {
+      "description": "Academorix staff surface. Full CRUD over Domain + DomainRecord.",
+      "routes": ["* /api/v1/domains*"]
+    },
+    "tenant": {
+      "description": "Tenant-scoped domain management. Add, verify, remove.",
+      "routes": [
+        "GET /api/v1/tenant/domains",
+        "POST /api/v1/tenant/domains",
+        "GET /api/v1/tenant/domains/{id}",
+        "POST /api/v1/tenant/domains/{id}/verify",
+        "DELETE /api/v1/tenant/domains/{id}"
+      ]
+    }
+  }
+}

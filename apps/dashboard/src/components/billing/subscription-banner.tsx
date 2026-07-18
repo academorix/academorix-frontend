@@ -21,13 +21,13 @@ import {
   ExclamationTriangleIcon,
   InformationCircleIcon,
   XMarkIcon,
-} from "@academorix/ui/icons/outline";
-import { Button } from "@academorix/ui/react";
+} from "@stackra/ui/icons/heroicon/outline";
+import { Button } from "@stackra/ui/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "@stackra/routing/react";
 
 import type { SubscriptionBannerDescriptor, SubscriptionTone } from "@/lib/billing";
-import type { IconType } from "@academorix/ui/icons";
+import type { IconType } from "@stackra/ui/icons";
 import type { ReactNode } from "react";
 
 import { bannerFor, useSubscription } from "@/lib/billing";

@@ -1,0 +1,141 @@
+{
+  "id": "academorix://modules/transfer/relations",
+  "$version": 1,
+  "title": "transfer \u2014 model relationships",
+  "description": "Four owned models with a hub-and-spoke shape: XferJob is the aggregate root; XferShard, XferArtifact, XferMappingProfile hang off it. Every model belongs to a tenant. No other module holds an FK to transfer tables \u2014 inbound integration happens via #[Importable] / #[Exportable] attribute-driven registration + HasActivityLog / HasAudit dual-write on transitions.",
+  "internal": [
+    {
+      "from": "XferJob",
+      "kind": "hasMany",
+      "to": "XferShard",
+      "foreignKey": "xfer_job_id",
+      "localKey": "id",
+      "onDelete": "cascade",
+      "description": "Shards for sharded imports / exports and multi-sheet workbooks. Cascade-delete with the parent job."
+    },
+    {
+      "from": "XferJob",
+      "kind": "belongsTo",
+      "to": "XferArtifact",
+      "foreignKey": "source_artifact_id",
+      "localKey": "id",
+      "onDelete": "set null",
+      "description": "The uploaded file for imports. Purged before the row (see retention.json)."
+    },
+    {
+      "from": "XferJob",
+      "kind": "belongsTo",
+      "to": "XferArtifact",
+      "foreignKey": "result_artifact_id",
+      "localKey": "id",
+      "onDelete": "set null",
+      "description": "The export result file or import success artifact."
+    },
+    {
+      "from": "XferJob",
+      "kind": "belongsTo",
+      "to": "XferArtifact",
+      "foreignKey": "errors_artifact_id",
+      "localKey": "id",
+      "onDelete": "set null",
+      "description": "The `errors.csv` for `partially_succeeded` imports."
+    },
+    {
+      "from": "XferJob",
+      "kind": "belongsTo",
+      "to": "XferMappingProfile",
+      "foreignKey": "mapping_profile_id",
+      "localKey": "id",
+      "onDelete": "set null",
+      "description": "Mapping profile applied at request time, if any. `XferMappingProfile` uses soft-delete so a historical job keeps a readable reference until final hard-delete."
+    },
+    {
+      "from": "XferShard",
+      "kind": "belongsTo",
+      "to": "XferJob",
+      "foreignKey": "xfer_job_id",
+      "description": "Inverse of XferJob\u2192XferShard."
+    },
+    {
+      "from": "XferArtifact",
+      "kind": "belongsTo",
+      "to": "XferJob",
+      "foreignKey": "xfer_job_id",
+      "onDelete": "set null",
+      "description": "Nullable \u2014 templates and pre-request artifacts are not tied to a job."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "XferJob",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Nullable when a platform-admin runs a system-level operation (rare). Cascade so tenant deletion removes the audit trail too."
+    },
+    {
+      "from": "XferJob",
+      "kind": "morphTo",
+      "to": "*",
+      "morphName": "causer",
+      "columns": ["causer_type", "causer_id"],
+      "description": "Polymorphic initiator. Typically `Academorix\\User\\Models\\User`, may be `Academorix\\Auth\\Models\\ServiceAccount` for API-driven jobs."
+    },
+    {
+      "from": "XferJob",
+      "kind": "morphTo",
+      "to": "*",
+      "morphName": "cancelledBy",
+      "columns": ["cancelled_by_type", "cancelled_by_id"],
+      "description": "Polymorphic canceller. Null when the job succeeded / failed on its own."
+    },
+    {
+      "from": "XferShard",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Denormalised from parent for scan predicates."
+    },
+    {
+      "from": "XferArtifact",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "XferArtifact",
+      "kind": "morphTo",
+      "to": "*",
+      "morphName": "createdBy",
+      "columns": ["created_by_type", "created_by_id"],
+      "description": "Polymorphic causer of the artifact write. Typically User; may be System for scheduled jobs producing templates."
+    },
+    {
+      "from": "XferMappingProfile",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "XferMappingProfile",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "owner_id",
+      "onDelete": "cascade",
+      "description": "Profile ownership. Cascade so removing a user drops their private profiles. Shared profiles (`is_shared=true`) transfer ownership to a tenant admin before the delete (handled by user::UserErased listener)."
+    }
+  ],
+  "inbound": {
+    "description": "No other module holds an FK to transfer tables. Inbound integration is attribute-driven: any model in any module carrying #[Importable] / #[Exportable] / #[SampleData] is discovered by the compiler at boot and registered in EntityRegistry. HasActivityLog on XferJob writes a row into activity_log (activity module) on every status transition; HasAudit on XferJob writes a row into audits (audit module) on the same signal \u2014 both are morphMany from the perspective of activity + audit, not FKs on our side.",
+    "consumed_traits": [
+      "foundation::HasUlids",
+      "tenancy::BelongsToTenant",
+      "activity::HasActivityLog",
+      "audit::HasAudit"
+    ]
+  }
+}

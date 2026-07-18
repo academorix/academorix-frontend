@@ -1,48 +1,155 @@
 {
-  "name": "@academorix/query",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
+  "name": "@stackra/query",
+  "version": "0.2.0",
+  "description": "Store-backed data fetching for the Stackra framework — TanStack Query-backed cache + fetcher registry, DI-integrated. Composable with @stackra/state stores for cross-app reactive reads.",
   "license": "MIT",
-  "description": "React Query primitives for the Academorix workspace: createQueryClient() factory + defineResource<T>() that generates typed useList/useOne/useCreate/useUpdate/useDelete hooks bound to @academorix/http, plus a Laravel query-builder serializer and a Refine DataProvider adapter that both apps can consume.",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "author": {
+    "name": "Stackra L.L.C",
+    "email": "dev@stackra.com",
+    "url": "https://stackra.com"
+  },
+  "keywords": [
+    "stackra",
+    "query",
+    "tanstack-query",
+    "cache",
+    "data-fetching",
+    "react",
+    "optimistic",
+    "undoable",
+    "realtime"
+  ],
+  "homepage": "https://github.com/stackra-inc/core/tree/main/query#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stackra-inc/core.git",
+    "directory": "query"
+  },
+  "bugs": {
+    "url": "https://github.com/stackra-inc/core/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./client": "./src/client/index.ts",
-    "./resource": "./src/resource/index.ts",
-    "./query-keys": "./src/query-keys/index.ts",
-    "./laravel": "./src/laravel/index.ts",
-    "./refine": "./src/refine/index.ts",
-    "./package.json": "./package.json"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.mjs",
+      "require": "./dist/react.js"
+    },
+    "./actions": {
+      "types": "./dist/actions.d.ts",
+      "import": "./dist/actions.mjs",
+      "require": "./dist/actions.js"
+    },
+    "./testing": {
+      "types": "./dist/testing.d.ts",
+      "import": "./dist/testing.mjs",
+      "require": "./dist/testing.js"
+    }
   },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run",
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rimraf dist .turbo",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "clean": "rm -rf .turbo"
-  },
-  "dependencies": {
-    "@academorix/core": "workspace:*",
-    "@academorix/http": "workspace:*"
+    "test:coverage": "vitest run --coverage --passWithNoTests"
   },
   "peerDependencies": {
-    "@tanstack/react-query": ">=5",
-    "react": ">=19"
+    "@stackra/actions": "workspace:^",
+    "@stackra/container": "workspace:^",
+    "@stackra/contracts": "workspace:^",
+    "@stackra/devtools": "workspace:^",
+    "@stackra/http": "workspace:^",
+    "@stackra/logger": "workspace:^",
+    "@stackra/realtime": "workspace:^",
+    "@stackra/state": "workspace:^",
+    "@stackra/testing": "workspace:^",
+    "@stackra/ui": "workspace:^",
+    "@tanstack/query-core": "catalog:",
+    "@tanstack/react-query": "catalog:",
+    "@tanstack/react-store": "catalog:",
+    "@tanstack/store": "catalog:",
+    "react": "*",
+    "reflect-metadata": "*"
+  },
+  "peerDependenciesMeta": {
+    "@stackra/actions": {
+      "optional": true
+    },
+    "@stackra/devtools": {
+      "optional": true
+    },
+    "@stackra/http": {
+      "optional": true
+    },
+    "@stackra/realtime": {
+      "optional": true
+    },
+    "@stackra/state": {
+      "optional": true
+    },
+    "@stackra/testing": {
+      "optional": true
+    },
+    "@stackra/ui": {
+      "optional": true
+    },
+    "@tanstack/react-query": {
+      "optional": true
+    },
+    "@tanstack/react-store": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
   },
   "devDependencies": {
-    "@academorix/eslint-config": "workspace:*",
-    "@academorix/typescript-config": "workspace:*",
+    "@stackra/actions": "workspace:*",
+    "@stackra/container": "workspace:*",
+    "@stackra/contracts": "workspace:*",
+    "@stackra/devtools": "workspace:*",
+    "@stackra/http": "workspace:*",
+    "@stackra/logger": "workspace:*",
+    "@stackra/realtime": "workspace:*",
+    "@stackra/state": "workspace:*",
+    "@stackra/testing": "workspace:*",
+    "@stackra/ui": "workspace:*",
+    "@tanstack/query-core": "catalog:",
     "@tanstack/react-query": "catalog:",
-    "@testing-library/jest-dom": "catalog:",
+    "@tanstack/react-store": "catalog:",
+    "@tanstack/store": "catalog:",
     "@testing-library/react": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "eslint": "catalog:",
+    "@types/react-dom": "catalog:",
     "jsdom": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "reflect-metadata": "catalog:",
+    "rimraf": "catalog:",
+    "tsup": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

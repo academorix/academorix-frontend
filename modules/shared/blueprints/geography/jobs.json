@@ -1,0 +1,38 @@
+{
+  "id": "academorix://modules/geography/jobs",
+  "$version": 1,
+  "title": "geography \u2014 background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Geography\\Jobs\\RefreshMaxMindDatabaseJob",
+      "queue": "notifications",
+      "purpose": "Weekly refresh of the local GeoLite2-City.mmdb via the vendor's world:geoip command.",
+      "steps": [
+        "Verify MAXMIND_LICENSE_KEY is present in env; skip + log warning otherwise.",
+        "Delegate to Nnjeim\\World\\Console\\Commands\\GeoipCommand::download() with license key.",
+        "Compute new file size + hash + written path.",
+        "Fire MaxMindDatabaseRefreshed on success or dispatch DispatchMaxMindRefreshFailedNotification on failure."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 3,
+      "backoff": [300, 3600, 21600],
+      "notes": "Runs Sunday 03:00 UTC via schedule.json. Also dispatched by DispatchRefreshMaxMindOnStale listener when the stale-probe fires mid-week."
+    },
+    {
+      "class": "Academorix\\Geography\\Jobs\\WarmReferenceCatalogCacheJob",
+      "queue": "notifications",
+      "purpose": "Pre-populate the geography.cache Redis entries for the top-N most-hit list queries per locale + tenant.",
+      "steps": [
+        "Fetch top-N (path + query + locale) tuples from cache-hit metrics.",
+        "For each: invoke the corresponding controller in-process (no HTTP round-trip) and stash the response bytes in Redis with the standard cache key."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 2,
+      "notes": "Runs hourly at :20 via schedule.json."
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "id": "invitations.status-chip",
+  "title": "Invitation status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip that renders an Invitation's state. Consumed by the invitations list + show screens plus any downstream module that displays invitation state (Team member list, Athlete guardian list, etc.). Semantic colours map to lifecycle: pending / delivered / opened / clicked = in-progress (blue/violet); accepted = success (green); declined = neutral (slate); expired = warn (amber); revoked = danger (red); bounced = danger (red).",
+  "props": {
+    "state": {
+      "type": "string",
+      "description": "The invitation state enum value. One of pending / delivered / opened / clicked / accepted / declined / expired / revoked / bounced."
+    },
+    "size": {
+      "type": "string",
+      "default": "sm",
+      "enum": ["xs", "sm", "md"],
+      "description": "Chip size."
+    },
+    "showIcon": {
+      "type": "boolean",
+      "default": true,
+      "description": "Render the leading icon."
+    },
+    "showLabel": {
+      "type": "boolean",
+      "default": true,
+      "description": "Render the human-readable label. When false, only the icon renders (dense tables)."
+    }
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "chip",
+      "kind": "Chip",
+      "props": {
+        "className": "focus-ring"
+      },
+      "bindings": {
+        "variant": {
+          "$expr": "props.state === 'accepted' ? 'success' : (props.state === 'declined' ? 'neutral' : (props.state === 'expired' ? 'warning' : ((props.state === 'revoked' || props.state === 'bounced') ? 'danger' : 'info')))"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "children": [
+        {
+          "id": "icon",
+          "kind": "Icon",
+          "props": {
+            "className": "size-3 mr-1"
+          },
+          "bindings": {
+            "hidden": { "$expr": "!props.showIcon" },
+            "icon": {
+              "$expr": "props.state === 'accepted' ? 'check-circle' : (props.state === 'declined' ? 'x-circle' : (props.state === 'expired' ? 'clock' : (props.state === 'revoked' ? 'ban' : (props.state === 'bounced' ? 'exclamation-triangle' : (props.state === 'clicked' ? 'cursor-arrow-rays' : (props.state === 'opened' ? 'envelope-open' : (props.state === 'delivered' ? 'envelope' : 'paper-airplane')))))))"
+            }
+          }
+        },
+        {
+          "id": "label",
+          "kind": "Text",
+          "props": { "as": "span" },
+          "bindings": {
+            "hidden": { "$expr": "!props.showLabel" },
+            "children": {
+              "$expr": "props.state === 'accepted' ? 'Accepted' : (props.state === 'declined' ? 'Declined' : (props.state === 'expired' ? 'Expired' : (props.state === 'revoked' ? 'Revoked' : (props.state === 'bounced' ? 'Bounced' : (props.state === 'clicked' ? 'Clicked' : (props.state === 'opened' ? 'Opened' : (props.state === 'delivered' ? 'Delivered' : 'Pending')))))))"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

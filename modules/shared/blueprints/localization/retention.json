@@ -1,0 +1,48 @@
+{
+  "id": "academorix://modules/localization/retention",
+  "$version": 1,
+  "title": "localization \u2014 retention windows",
+  "description": "PlatformLanguage + TenantLocale retained while tenant active. Translation retention driven by source: file-imported = permanent, human-verified = permanent, ai-translated = TTL per plan. TranslationJob = 1 year hot, then hard purge.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5 (storage limitation \u2014 AI translations don't carry personal data as such but source strings may)",
+    "gdpr Art. 28 (subprocessor \u2014 machine-translation providers)"
+  ],
+  "retention": [
+    {
+      "entity": "PlatformLanguage",
+      "hot": { "days": "while any tenant has it enabled" },
+      "purge": {
+        "trigger": "manual archive by platform admin + zero TenantLocale references",
+        "action": "hard delete",
+        "notes": "Deleting a PlatformLanguage row NEVER cascades to the referenced geography::Language / geography::Country rows \u2014 those are owned by the geography module (vendor seed via nnjeim/world) and outlive individual platform enablement decisions. Onward FK integrity is enforced with onDelete=restrict on both geography FKs."
+      }
+    },
+    {
+      "entity": "TenantLocale",
+      "hot": { "days": "while tenant active" },
+      "purge": { "trigger": "tenancy::TenantErased", "action": "hard delete via FK cascade" }
+    },
+    {
+      "entity": "Translation (source='ai')",
+      "hot": { "days": "tenant_locale.auto_translate_ttl_hours / 24 (30\u2013365d per plan)" },
+      "purge": {
+        "trigger": "translated_at + TTL past + no recent access",
+        "action": "hard delete",
+        "job": "PruneStaleTranslationsJob"
+      }
+    },
+    {
+      "entity": "Translation (source='human' or 'file' or 'imported')",
+      "hot": { "days": "permanent while tenant active" },
+      "purge": { "trigger": "tenancy::TenantErased", "action": "hard delete via FK cascade" }
+    },
+    {
+      "entity": "TranslationJob",
+      "hot": { "days": 365 },
+      "purge": {
+        "trigger": "> 1 year old + state IN (completed / failed / cancelled)",
+        "action": "hard delete"
+      }
+    }
+  ]
+}

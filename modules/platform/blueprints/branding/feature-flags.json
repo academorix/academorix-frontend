@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/branding/feature-flags",
+  "$version": 1,
+  "title": "branding — feature flags",
+  "description": "Kill switches + gradual-rollout flags this module publishes.",
+  "flags": []
+}

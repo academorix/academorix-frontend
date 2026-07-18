@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "name": "Pool 1 closure · Maintenance",
+    "audience": "Swim families",
+    "sentAt": "2025-03-14T09:00:00Z",
+    "channel": "Email + push",
+    "status": { "text": "Sent", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-03-13T15:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Spring showcase · Save the date",
+    "audience": "All families",
+    "sentAt": "2025-03-01T09:00:00Z",
+    "channel": "Email",
+    "status": { "text": "Sent", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-02-25T15:00:00Z"
+  },
+  {
+    "id": 3,
+    "name": "New coach welcome · Elena Marsh",
+    "audience": "Soccer families",
+    "sentAt": "2025-01-14T09:00:00Z",
+    "channel": "Email + portal",
+    "status": { "text": "Sent", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-01-13T15:00:00Z"
+  },
+  {
+    "id": 4,
+    "name": "Summer camp · Draft",
+    "audience": "All families",
+    "sentAt": null,
+    "channel": "Email",
+    "status": { "text": "Draft", "color": "warning" },
+    "isActive": false,
+    "createdAt": "2025-03-05T15:00:00Z"
+  },
+  {
+    "id": 5,
+    "name": "Payment reminder · Overdue",
+    "audience": "5 families",
+    "sentAt": "2025-03-15T09:00:00Z",
+    "channel": "Email",
+    "status": { "text": "Sent", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-03-15T09:00:00Z"
+  }
+]

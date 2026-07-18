@@ -1,0 +1,255 @@
+{
+  "id": "academorix://modules/search/schemas/search-index",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "SearchIndex",
+  "description": "Registry row for one `(model_class, engine, index_name)` triple. Records the live alias pointer, current version, compiled field / facet / boost specs from `#[Search*]` attributes, and the config hash used for drift detection on deploy.",
+  "type": "object",
+  "x-module": "search",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "search_indexes",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "sidx_",
+    "incrementing": false,
+    "model": "Academorix\\Search\\Models\\SearchIndex",
+    "interface": "Academorix\\Search\\Contracts\\Data\\SearchIndexInterface",
+    "implements": ["Academorix\\Search\\Contracts\\Data\\SearchIndexInterface"],
+    "traits": [
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasActivityLog",
+      "HasAudit",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "engine": "Academorix\\Search\\Enums\\SearchEngine",
+      "status": "Academorix\\Search\\Enums\\SearchIndexStatus",
+      "field_specs": "Academorix\\Search\\Casts\\SearchFieldSpecCast",
+      "facet_specs": "array",
+      "boost_specs": "array",
+      "metadata": "array",
+      "document_count": "integer",
+      "current_version": "integer",
+      "last_indexed_at": "immutable_datetime",
+      "last_swap_at": "immutable_datetime"
+    },
+    "hidden": ["config_hash"],
+    "guarded": [
+      "id",
+      "tenant_id",
+      "config_hash",
+      "document_count",
+      "current_version",
+      "live_alias",
+      "last_indexed_at",
+      "last_swap_at"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "description": "Catalogue of every registered searchable model \u00d7 engine \u00d7 physical index. One row per triple. Non-tenant indexes carry `tenant_id = NULL` (platform-wide). Alias-swap flow rewrites `live_alias` + bumps `current_version`.",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `sidx_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "Tenant scope. Null for platform-wide indexes (audit, activity)."
+      },
+      "model_class": {
+        "type": "string",
+        "length": 191,
+        "nullable": false,
+        "description": "Fully-qualified Eloquent model class name discovered from `#[Searchable]` at compile time."
+      },
+      "engine": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: meilisearch / postgres-fts / pgvector / elasticsearch. Resolved from `#[Searchable(engine:)]` with tenant setting override."
+      },
+      "index_name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Logical index name (e.g. `athletes`). Physical name is `{index_name}_v{current_version}`."
+      },
+      "live_alias": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Alias pointing at the currently-live physical index (e.g. `athletes_live` \u2192 `athletes_v42`). Queries hit the alias, not the physical name."
+      },
+      "current_version": {
+        "type": "integer",
+        "nullable": false,
+        "default": "1",
+        "description": "Version number of the live physical index. Incremented on each reindex."
+      },
+      "status": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'active'",
+        "description": "Enum: active / reindexing / disabled / error."
+      },
+      "language": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "Analyzer language (e.g. `en`, `ar`, `multi`). Null = engine default."
+      },
+      "document_count": {
+        "type": "bigint",
+        "nullable": false,
+        "default": "0",
+        "description": "Current doc count in the live index. Updated on reindex + on demand via health probe."
+      },
+      "last_indexed_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Timestamp of the last successful mutation (index / delete / bulk push)."
+      },
+      "last_swap_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Timestamp of the last alias swap (completed reindex)."
+      },
+      "field_specs": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'",
+        "description": "Array of compiled `#[SearchField]` specs \u2014 `{attribute, weight, prefix, typo_tolerance, format, from, name}` per field. Used for reflection + admin dashboard rendering."
+      },
+      "facet_specs": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'",
+        "description": "Array of compiled `#[SearchFacet]` specs \u2014 `{attribute, kind, label}` per facet."
+      },
+      "boost_specs": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'",
+        "description": "Array of compiled `#[SearchBoost]` specs \u2014 `{attribute, boost, condition}` per boost."
+      },
+      "config_hash": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "SHA-256 of `(field_specs, facet_specs, boost_specs, language)`. Drift-detection probe compares deploy-time compiled hash against this to detect stale indexes."
+      },
+      "retention_tier": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'medium'",
+        "description": "Retention tier of associated analytics rows referencing this index."
+      },
+      "metadata": { "type": "jsonb", "nullable": true, "description": "Free-form metadata bag." },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Soft delete \u2014 disabling an index doesn't drop the row (referenced by historical sync jobs)."
+      }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "model_class", "engine"],
+        "unique": true,
+        "name": "search_indexes_scope_uniq_idx",
+        "predicate": "deleted_at IS NULL",
+        "description": "One live registry per triple within a tenant scope."
+      },
+      {
+        "columns": ["engine", "status"],
+        "unique": false,
+        "name": "search_indexes_engine_status_idx",
+        "description": "Health probes + operational dashboards."
+      },
+      {
+        "columns": ["model_class", "status"],
+        "unique": false,
+        "name": "search_indexes_model_status_idx",
+        "description": "HasSearchable observer resolution."
+      },
+      {
+        "columns": ["config_hash"],
+        "unique": false,
+        "name": "search_indexes_config_hash_idx",
+        "description": "Drift-detection probe."
+      },
+      {
+        "columns": ["tenant_id", "created_at"],
+        "unique": false,
+        "name": "search_indexes_tenant_time_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "model_class",
+    "engine",
+    "index_name",
+    "live_alias",
+    "current_version",
+    "status",
+    "config_hash",
+    "retention_tier",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^sidx_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "model_class": { "type": "string", "maxLength": 191 },
+    "engine": {
+      "type": "string",
+      "enum": ["meilisearch", "postgres-fts", "pgvector", "elasticsearch"]
+    },
+    "index_name": { "type": "string", "maxLength": 128 },
+    "live_alias": { "type": "string", "maxLength": 128 },
+    "current_version": { "type": "integer", "minimum": 1 },
+    "status": { "type": "string", "enum": ["active", "reindexing", "disabled", "error"] },
+    "language": { "type": ["string", "null"], "maxLength": 16 },
+    "document_count": { "type": "integer", "minimum": 0 },
+    "last_indexed_at": { "type": ["string", "null"], "format": "date-time" },
+    "last_swap_at": { "type": ["string", "null"], "format": "date-time" },
+    "field_specs": { "type": "array", "items": { "type": "object" } },
+    "facet_specs": { "type": "array", "items": { "type": "object" } },
+    "boost_specs": { "type": "array", "items": { "type": "object" } },
+    "config_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "retention_tier": { "type": "string", "enum": ["short", "medium", "long"] },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["config_hash"],
+    "computed": [
+      { "name": "physical_index_name", "expression": "index_name + '_v' + current_version" },
+      { "name": "is_active", "expression": "status === 'active' && deleted_at === null" }
+    ]
+  }
+}

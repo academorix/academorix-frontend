@@ -10,7 +10,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §10.17 "People & Global Identity"
  */
 
-import { IdentificationIcon } from "@academorix/ui/icons/outline";
+import { IdentificationIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

@@ -1,0 +1,48 @@
+{
+    "name": "academorix/events",
+    "type": "library",
+    "description": "Attribute-based event listener discovery and broadcasting wiring for Academorix packages. Ships #[OnEvent], #[ListensFor], #[AfterCommit], #[Broadcastable], #[BroadcastOn], #[BroadcastAs], and #[BroadcastQueue] so packages never need to maintain EventServiceProvider::$listen maps or hand-roll broadcastOn()/broadcastAs() methods.",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.3",
+        "academorix/foundation": "@dev",
+        "academorix/service-provider": "@dev",
+        "illuminate/broadcasting": "^13.0",
+        "illuminate/contracts": "^13.0",
+        "illuminate/events": "^13.0",
+        "illuminate/support": "^13.0",
+        "olvlvl/composer-attribute-collector": "^2.1"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "phpstan/phpstan": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Academorix\\Events\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Academorix\\Events\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Academorix\\Events\\Providers\\EventsServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

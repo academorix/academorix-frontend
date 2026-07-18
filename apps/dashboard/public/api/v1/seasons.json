@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "name": "2024/25 season",
+    "sport": "All sports",
+    "startDate": "2024-08-01",
+    "endDate": "2025-07-31",
+    "status": { "text": "Active", "color": "success" },
+    "isActive": true,
+    "teamsCount": 18,
+    "athletesCount": 428,
+    "createdAt": "2024-06-01T10:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "2023/24 season",
+    "sport": "All sports",
+    "startDate": "2023-08-01",
+    "endDate": "2024-07-31",
+    "status": { "text": "Closed", "color": "default" },
+    "isActive": false,
+    "teamsCount": 16,
+    "athletesCount": 372,
+    "createdAt": "2023-06-02T10:00:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Summer 2025",
+    "sport": "Swimming",
+    "startDate": "2025-06-15",
+    "endDate": "2025-08-31",
+    "status": { "text": "Draft", "color": "warning" },
+    "isActive": false,
+    "teamsCount": 4,
+    "athletesCount": 96,
+    "createdAt": "2025-01-14T09:00:00Z"
+  },
+  {
+    "id": 4,
+    "name": "Winter cup 2024/25",
+    "sport": "Soccer",
+    "startDate": "2024-11-01",
+    "endDate": "2025-03-31",
+    "status": { "text": "Active", "color": "success" },
+    "isActive": true,
+    "teamsCount": 6,
+    "athletesCount": 118,
+    "createdAt": "2024-09-20T14:00:00Z"
+  },
+  {
+    "id": 5,
+    "name": "Spring meets 2025",
+    "sport": "Athletics",
+    "startDate": "2025-03-15",
+    "endDate": "2025-06-30",
+    "status": { "text": "Draft", "color": "warning" },
+    "isActive": false,
+    "teamsCount": 3,
+    "athletesCount": 62,
+    "createdAt": "2025-01-05T11:30:00Z"
+  }
+]

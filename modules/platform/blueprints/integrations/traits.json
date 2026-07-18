@@ -1,0 +1,25 @@
+{
+  "id": "academorix://modules/integrations/traits",
+  "$version": 1,
+  "title": "integrations — model traits",
+  "description": "No owned traits. Integrations composes the standard tenant-scoped stack + the IntegrationSecretsCipher for encryption-at-rest on the `config` column.",
+  "owned": [],
+  "consumed": [
+    {
+      "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+      "source": "tenants",
+      "usedBy": ["TenantIntegration"]
+    },
+    { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory", "source": "framework" },
+    { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids", "source": "framework" },
+    { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata", "source": "foundation" },
+    { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps", "source": "foundation" },
+    { "trait": "Academorix\\Foundation\\Concerns\\HasAuditable", "source": "foundation" },
+    { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes", "source": "framework" }
+  ],
+  "composition_example": {
+    "language": "php",
+    "note": "The `config` JSONB is encrypted at rest via the IntegrationConfig cast, which routes through IntegrationSecretsCipher.",
+    "code": "#[Table('tenant_integrations', keyType: 'string')]\n#[Fillable('tenant_id', 'provider', 'config', 'status')]\n#[Hidden('config')]\nfinal class TenantIntegration extends Model implements TenantIntegrationInterface\n{\n    use HasFactory;\n    use HasUlids;\n    use BelongsToTenant;\n    use HasMetadata;\n    use HasUserstamps;\n    use HasAuditable;\n    use SoftDeletes;\n\n    protected function casts(): array\n    {\n        return ['config' => IntegrationConfig::class];\n    }\n}"
+  }
+}

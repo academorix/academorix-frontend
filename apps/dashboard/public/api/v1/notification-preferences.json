@@ -1,0 +1,20 @@
+[
+  {
+    "id": "me",
+    "userId": "user-current",
+    "channels": {
+      "payment": { "In-app": true, "Email": true, "Push": false, "SMS": false },
+      "billing": { "In-app": true, "Email": true, "Push": false, "SMS": false },
+      "attendance": { "In-app": true, "Email": false, "Push": true, "SMS": false },
+      "roster": { "In-app": true, "Email": false, "Push": false, "SMS": false },
+      "safeguarding": { "In-app": true, "Email": true, "Push": true, "SMS": true },
+      "digest": { "In-app": false, "Email": true, "Push": false, "SMS": false }
+    },
+    "digest": {
+      "daily": true,
+      "weekly": false,
+      "quietHours": { "start": "22:00", "end": "07:00" }
+    },
+    "updatedAt": "2026-07-10T09:00:00.000Z"
+  }
+]

@@ -6,7 +6,7 @@
  * Color-coded chip for a {@link StaffStatus}, reused by the staff list and detail.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 
 import type { StaffStatus } from "@/types";
 import type { ReactNode } from "react";

@@ -36,7 +36,12 @@
     "secrets:open:web": "doppler open dashboard --project academorix-dashboard --config dev",
     "secrets:open:landing": "doppler open dashboard --project academorix-marketing --config dev",
     "clean": "turbo run clean && rm -rf node_modules .turbo",
-    "prepare": "husky || true"
+    "prepare": "husky || true",
+    "jit": "node scripts/toggle-jit.mjs",
+    "jit:check": "node scripts/toggle-jit.mjs --check",
+    "jit:rewrite": "node scripts/toggle-jit.mjs --rewrite-only",
+    "compile": "node scripts/toggle-jit.mjs --compiled",
+    "compile:check": "node scripts/toggle-jit.mjs --compiled --check"
   },
   "devDependencies": {
     "@academorix/eslint-config": "workspace:*",

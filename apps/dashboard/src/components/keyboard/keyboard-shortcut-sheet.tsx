@@ -35,7 +35,7 @@
  * sheet targets scans headings, not free text.
  */
 
-import { Button, Kbd, Modal, useOverlayState } from "@academorix/ui/react";
+import { Button, Kbd, Modal, useOverlayState } from "@stackra/ui/react";
 import { createContext, useCallback, useContext, useMemo } from "react";
 
 import type { MenuCategory, MenuCommand, MenuContext, ShortcutOs } from "@/lib/menus/command.types";

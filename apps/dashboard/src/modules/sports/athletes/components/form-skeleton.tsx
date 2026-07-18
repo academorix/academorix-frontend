@@ -8,7 +8,7 @@
  * loaded form is visually stable (no layout shift).
  */
 
-import { Card, Skeleton } from "@academorix/ui/react";
+import { Card, Skeleton } from "@stackra/ui/react";
 
 import type { ReactNode } from "react";
 

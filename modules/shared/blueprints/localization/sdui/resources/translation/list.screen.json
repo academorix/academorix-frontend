@@ -1,0 +1,236 @@
+{
+  "id": "localization.resources.translation.list",
+  "title": "Translations",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/settings/translations",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "localization", "entity": "translation", "action": "list" },
+  "requiresPermission": "translations.viewAny",
+  "dataSources": [
+    { "name": "translations", "kind": "http.get", "url": "/api/v1/translations", "unwrap": "data" },
+    {
+      "name": "locales",
+      "kind": "http.get",
+      "url": "/api/v1/tenant-locales?filter[is_enabled]=true",
+      "unwrap": "data"
+    }
+  ],
+  "state": [
+    {
+      "name": "filters",
+      "default": { "locale_code": null, "namespace": null, "source": null, "is_stale": null }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Translations"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Tenant overrides for platform translations. Empty means fallback to platform default."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "outline",
+                    "leadingIcon": "sparkles",
+                    "children": "Bulk translate"
+                  },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/tenant/settings/translations/bulk" }
+                  },
+                  "requiresPermission": "translation_jobs.create"
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "plus",
+                    "children": "New override"
+                  },
+                  "actions": { "onPress": { "kind": "modal.open", "modal": "create-translation" } },
+                  "requiresPermission": "translations.create"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Toolbar",
+          "children": [
+            { "kind": "SearchField", "props": { "placeholder": "Key or value", "name": "q" } },
+            {
+              "kind": "Select",
+              "props": { "name": "locale_code", "placeholder": "All locales", "clearable": true },
+              "bindings": {
+                "options": { "$ref": "locales" },
+                "optionKey": "language_code",
+                "optionLabel": "language_native_name"
+              }
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "namespace", "placeholder": "All namespaces", "clearable": true },
+              "options": [
+                { "key": "*" },
+                { "key": "validation" },
+                { "key": "auth" },
+                { "key": "users" },
+                { "key": "tenant" },
+                { "key": "terminology" },
+                { "key": "content" }
+              ]
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "source", "placeholder": "All sources", "clearable": true },
+              "options": [
+                { "key": "file" },
+                { "key": "db" },
+                { "key": "ai" },
+                { "key": "human" },
+                { "key": "imported" }
+              ]
+            },
+            { "kind": "Toggle", "props": { "name": "is_stale", "label": "Stale only" } }
+          ]
+        },
+        {
+          "kind": "Table",
+          "columns": [
+            {
+              "key": "key",
+              "header": "Key",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "font-mono text-xs truncate max-w-md" },
+                "bindings": {
+                  "children": {
+                    "$expr": "row.namespace + ':' + (row.group ? row.group + '.' : '') + row.key"
+                  }
+                }
+              }
+            },
+            {
+              "key": "locale_code",
+              "header": "Locale",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "xs" },
+                "bindings": { "children": { "$ref": "row.locale_code" } }
+              }
+            },
+            {
+              "key": "value_preview",
+              "header": "Value",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm truncate max-w-lg" },
+                "bindings": {
+                  "children": {
+                    "$expr": "typeof row.value === 'string' ? row.value : JSON.stringify(row.value)"
+                  }
+                }
+              }
+            },
+            {
+              "key": "source",
+              "header": "Source",
+              "cell": {
+                "kind": "Widget",
+                "widget": "localization.translation-status-chip",
+                "propsExpr": "{ source: row.source, provider: row.provider, verified: !!row.verified_at, isStale: row.is_stale }"
+              }
+            },
+            {
+              "key": "quality_score",
+              "header": "Quality",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "font-mono text-right text-sm" },
+                "bindings": {
+                  "childrenExpr": "row.quality_score !== null ? (row.quality_score * 100).toFixed(0) + '%' : '\u2014'"
+                }
+              }
+            },
+            {
+              "key": "actions",
+              "header": "",
+              "cell": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-1 justify-end" },
+                "children": [
+                  {
+                    "kind": "Button",
+                    "props": {
+                      "variant": "ghost",
+                      "isIconOnly": true,
+                      "size": "sm",
+                      "children": { "kind": "Icon", "props": { "name": "pencil-square" } }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "modal.open",
+                        "modal": "edit-translation",
+                        "propsExpr": "{ translationId: row.id }"
+                      }
+                    },
+                    "requiresPermission": "translations.update"
+                  },
+                  {
+                    "kind": "Button",
+                    "props": {
+                      "variant": "ghost",
+                      "isIconOnly": true,
+                      "size": "sm",
+                      "children": { "kind": "Icon", "props": { "name": "check-circle" } }
+                    },
+                    "bindings": {
+                      "hidden": { "$expr": "!!row.verified_at || row.source !== 'ai'" }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "urlExpr": "'/api/v1/translations/' + row.id + '/verify'"
+                      }
+                    },
+                    "requiresPermission": "translations.verify"
+                  }
+                ]
+              }
+            }
+          ],
+          "bindings": { "rows": { "$ref": "translations" } }
+        }
+      ]
+    }
+  ]
+}

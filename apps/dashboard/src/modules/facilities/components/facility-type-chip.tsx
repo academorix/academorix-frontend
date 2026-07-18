@@ -8,7 +8,7 @@
  * and the booking list so a "pool" always looks the same.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 
 import type { FacilityType } from "@/modules/facilities/facilities.types";
 import type { ReactNode } from "react";

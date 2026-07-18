@@ -1,0 +1,12 @@
+{
+  "kbd.palette.no_results": "لا توجد نتائج",
+  "kbd.palette.no_results_hint": "جرّب مصطلح بحث مختلف",
+  "kbd.palette.result_count_one": "نتيجة واحدة",
+  "kbd.palette.result_count_other": "{{count}} نتائج",
+  "kbd.palette.search_placeholder": "البحث في الأوامر...",
+  "kbd.palette.close": "إغلاق",
+  "kbd.catalog.title": "اختصارات لوحة المفاتيح",
+  "kbd.catalog.scope_label": "النطاق · {{scope}}",
+  "kbd.catalog.or_separator": "أو",
+  "kbd.catalog.search_placeholder": "البحث في الاختصارات..."
+}

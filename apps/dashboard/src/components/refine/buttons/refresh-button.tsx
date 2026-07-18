@@ -7,8 +7,8 @@
  * Not access-gated — refreshing data the user can already see is always safe.
  */
 
-import { ArrowPathIcon } from "@academorix/ui/icons/outline";
-import { Button } from "@academorix/ui/react";
+import { ArrowPathIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button } from "@stackra/ui/react";
 import { useRefreshButton } from "@refinedev/core";
 
 import type { ButtonPassthroughProps } from "@/components/refine/buttons/nav-button";

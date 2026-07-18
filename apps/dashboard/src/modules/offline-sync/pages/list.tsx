@@ -8,7 +8,7 @@
  * queued to sync. The pending queue is read from the `sync-queue` fixture.
  */
 
-import { Card, Chip, Separator } from "@academorix/ui/react";
+import { Card, Chip, Separator } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 
 import type { SyncItem } from "@/modules/offline-sync/offline-sync.types";

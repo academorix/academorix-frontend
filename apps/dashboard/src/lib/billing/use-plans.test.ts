@@ -270,8 +270,7 @@ describe("usePlans (flag off)", () => {
 
     // Live path was disabled — useList's `enabled` argument should be false.
     const args = useListMock.mock.calls[0]?.[0] as
-      | { queryOptions?: { enabled?: boolean } }
-      | undefined;
+      { queryOptions?: { enabled?: boolean } } | undefined;
 
     expect(args?.queryOptions?.enabled).toBe(false);
   });

@@ -1,0 +1,73 @@
+{
+  "$version": 1,
+  "name": "integrations",
+  "alias": "integrations",
+  "namespace": "Academorix\\Integrations",
+  "description": "Third-party integration credentials per Tenant (Stripe, Slack, HubSpot, Zapier, custom OAuth2, SCIM, ...). Extracted from tenants at v0.3 because integration credentials carry different sensitivity than a tenant's own configuration — they are encrypted at rest (Doppler-derived KMS key), rotate on their own schedule, and NEVER surface on the tenant-facing wire outside a redacted status shape.",
+  "keywords": [
+    "integration",
+    "oauth",
+    "scim",
+    "credentials",
+    "secrets",
+    "third-party",
+    "encrypted"
+  ],
+  "priority": 12,
+  "providers": ["Academorix\\Integrations\\Providers\\IntegrationsServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "tenancy"],
+  "extendedBy": [],
+  "planned_consumers": ["subscription", "compliance", "audit", "activity", "access"],
+  "contributes": {
+    "traits": [],
+    "blueprints": [],
+    "middleware": [],
+    "events": [
+      "IntegrationConfigured",
+      "IntegrationSyncStarted",
+      "IntegrationSyncCompleted",
+      "IntegrationSyncFailed",
+      "IntegrationTokenRefreshed",
+      "IntegrationDisabled",
+      "IntegrationRemoved"
+    ],
+    "policies": ["TenantIntegrationPolicy"],
+    "hooks": [],
+    "commands": [
+      "integrations:list",
+      "integrations:sync",
+      "integrations:rotate-tokens",
+      "integrations:purge-disabled"
+    ],
+    "jobs": ["SyncIntegrationJob", "RefreshIntegrationTokenJob", "PurgeDisabledIntegrationJob"],
+    "notifications": ["IntegrationSyncFailedNotification", "IntegrationDisabledNotification"],
+    "broadcasts": ["tenant.{id}.integration"],
+    "observers": ["TenantIntegrationObserver"],
+    "rules": ["valid_integration_provider"],
+    "casts": ["IntegrationConfig"],
+    "views": [],
+    "lang": ["integrations"],
+    "config": ["integrations"],
+    "macros": [],
+    "bindings": ["IntegrationRegistry", "IntegrationSecretsCipher"],
+    "resources": ["tenant-integration"]
+  },
+  "hosts": {
+    "platform-admin": {
+      "description": "Academorix staff surface. Full CRUD (secrets always redacted on read).",
+      "routes": ["* /api/v1/tenant-integrations*"]
+    },
+    "tenant": {
+      "description": "Tenant-scoped integration management. Configure, sync, disable.",
+      "routes": [
+        "GET /api/v1/tenant/integrations",
+        "POST /api/v1/tenant/integrations",
+        "GET /api/v1/tenant/integrations/{id}",
+        "PATCH /api/v1/tenant/integrations/{id}",
+        "POST /api/v1/tenant/integrations/{id}/sync",
+        "DELETE /api/v1/tenant/integrations/{id}"
+      ]
+    }
+  }
+}

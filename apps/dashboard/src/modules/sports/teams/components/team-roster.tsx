@@ -7,7 +7,7 @@
  * screen: member, position, and captain flag.
  */
 
-import { Chip, Spinner } from "@academorix/ui/react";
+import { Chip, Spinner } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 
 import type { TeamMember } from "@/types";

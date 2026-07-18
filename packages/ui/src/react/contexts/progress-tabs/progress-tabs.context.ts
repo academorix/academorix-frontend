@@ -6,6 +6,8 @@
 
 import { createContext } from "react";
 
+// Relative import — matches the pattern in the sibling `.component.tsx`
+// files (Vite dev server walks the workspace source directly).
 import type { IProgressTabsContextValue } from "../../components/progress-tabs/progress-tabs.interface";
 
 /**

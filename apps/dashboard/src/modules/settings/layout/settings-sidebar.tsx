@@ -10,9 +10,9 @@
  * GitHub / Linear / Vercel settings sidebar pattern.
  */
 
-import { Chip, Sidebar } from "@academorix/ui/react";
+import { Chip, Sidebar } from "@stackra/ui/react";
 import { useGetIdentity } from "@refinedev/core";
-import { useLocation } from "react-router";
+import { useLocation } from "@stackra/routing/react";
 
 import type { Identity } from "@/types";
 import type { ReactNode } from "react";

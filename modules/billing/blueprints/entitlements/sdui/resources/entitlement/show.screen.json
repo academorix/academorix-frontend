@@ -1,0 +1,122 @@
+{
+  "id": "entitlements.resources.entitlement.show",
+  "title": "Entitlement detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/entitlements/{key}",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "entitlements", "entity": "entitlement", "action": "show" },
+  "requiresPermission": "entitlements.view",
+  "params": [{ "name": "key", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "entitlement",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/entitlements/' + params.key",
+      "unwrap": "data"
+    },
+    {
+      "name": "usage",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/entitlements/' + params.key + '/usage?filter[bucket]=' + (state.bucket || 'day')",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": { "leadingIcon": "arrow-left", "children": "Back to quotas" },
+          "actions": { "onPress": { "kind": "navigate", "to": "/tenant/entitlements" } }
+        },
+        {
+          "kind": "View",
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h1", "className": "text-2xl font-semibold font-mono" },
+              "bindings": { "children": { "$ref": "entitlement.key" } }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2 mt-1" },
+              "children": [
+                {
+                  "kind": "Chip",
+                  "props": { "size": "sm" },
+                  "bindings": { "children": { "$ref": "entitlement.kind" } }
+                },
+                {
+                  "kind": "Chip",
+                  "props": { "size": "xs", "variant": "info" },
+                  "bindings": {
+                    "hidden": { "$expr": "!entitlement.is_platform_overridden" },
+                    "children": "Custom cap"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Widget",
+          "widget": "entitlements.entitlement-usage-bar",
+          "props": {
+            "cap": { "$ref": "entitlement.value_cap" },
+            "used": { "$ref": "entitlement.value_used" },
+            "isUnlimited": { "$ref": "entitlement.is_unlimited" },
+            "size": "lg"
+          }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-between mb-4" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-sm font-semibold text-muted uppercase tracking-wide",
+                    "children": "Usage over time"
+                  }
+                },
+                {
+                  "kind": "Select",
+                  "props": { "name": "bucket", "defaultValue": "day", "size": "sm" },
+                  "options": [
+                    { "key": "hour", "label": "By hour" },
+                    { "key": "day", "label": "By day" },
+                    { "key": "month", "label": "By month" }
+                  ],
+                  "actions": { "onChange": { "kind": "data.refresh", "source": "usage" } }
+                }
+              ]
+            },
+            {
+              "kind": "Chart",
+              "props": { "kind": "area", "className": "h-64" },
+              "bindings": { "data": { "$ref": "usage" }, "xKey": "bucket", "yKey": "amount" }
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "info" },
+          "bindings": {
+            "hidden": { "$expr": "!entitlement.notes" },
+            "children": { "$expr": "'Custom note: ' + entitlement.notes" }
+          }
+        }
+      ]
+    }
+  ]
+}

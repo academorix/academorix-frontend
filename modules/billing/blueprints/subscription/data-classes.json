@@ -1,0 +1,72 @@
+{
+  "id": "academorix://modules/subscription/data-classes",
+  "$version": 1,
+  "title": "subscription \u2014 field classification",
+  "description": "Amounts + provider references are financial data (regulated). No PAN / CVV stored (delegated to Cashier). Actor identities are internal.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "Plan.key",
+      "Plan.name",
+      "Plan.description",
+      "Plan.tier",
+      "Plan.billing_cycle",
+      "Plan.price_micro_units",
+      "Plan.currency",
+      "Plan.trial_days",
+      "Plan.default_entitlements",
+      "Plan.included_features",
+      "Plan.is_public"
+    ],
+    "internal": [
+      "Plan.id",
+      "Plan.application_id",
+      "Plan.provider_price_id",
+      "Plan.is_system",
+      "Plan.is_deprecated",
+      "Plan.sort_order",
+      "Subscription.id",
+      "Subscription.tenant_id",
+      "Subscription.application_id",
+      "Subscription.plan_id",
+      "Subscription.state",
+      "Subscription.billing_cycle",
+      "Subscription.trial_ends_at",
+      "Subscription.current_period_start",
+      "Subscription.current_period_end",
+      "Subscription.grace_ends_at",
+      "Subscription.cancel_at_period_end",
+      "Subscription.reinstated_at",
+      "SubscriptionEvent.id",
+      "SubscriptionEvent.kind",
+      "SubscriptionEvent.occurred_at",
+      "SubscriptionEvent.actor_type",
+      "SubscriptionEvent.reason"
+    ],
+    "confidential": [
+      "Subscription.provider",
+      "Subscription.consecutive_failures",
+      "Subscription.last_payment_failed_at"
+    ],
+    "restricted": [
+      "Subscription.provider_subscription_id",
+      "Subscription.provider_customer_id",
+      "SubscriptionEvent.provider_event_id",
+      "SubscriptionEvent.payload"
+    ],
+    "regulated_financial": [
+      "Subscription.last_payment_at",
+      "SubscriptionEvent.amount_micro_units",
+      "SubscriptionEvent.currency",
+      "SubscriptionEvent.provider_event_id (audit trail)"
+    ],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "audit_log": ["SubscriptionEvent.* (this IS the audit trail \u2014 SOX 7y retention)"]
+  },
+  "notes": [
+    "Cardholder data (PAN, CVV, expiry) NEVER stored. Cashier delegates capture to Stripe Elements / Paddle Checkout \u2014 the provider tokenises + we only see the token (pm_xxx / pdd_xxx). PCI-DSS scope minimised to SAQ A.",
+    "SubscriptionEvent.payload is the raw provider payload snapshot. Treat as restricted \u2014 may reference customer email, address, and tax IDs.",
+    "GDPR erasure anonymises tenant_id + provider IDs but retains financial aggregates for SOX. The reversal path (identity de-anonymisation) is impossible by design."
+  ]
+}

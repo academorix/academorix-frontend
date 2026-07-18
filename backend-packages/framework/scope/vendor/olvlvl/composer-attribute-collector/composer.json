@@ -1,0 +1,53 @@
+{
+  "name": "olvlvl/composer-attribute-collector",
+  "type": "composer-plugin",
+  "description": "A convenient and near zero-cost way to retrieve targets of PHP 8 attributes",
+  "license": "BSD-3-Clause",
+  "authors": [
+    {
+      "name": "Olivier Laviale",
+      "email": "olivier.laviale@gmail.com",
+      "homepage": "https://olvlvl.com/",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "olvlvl\\ComposerAttributeCollector\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "tests\\olvlvl\\ComposerAttributeCollector\\": "tests",
+      "Acme\\": "tests/Acme",
+      "Acme81\\": "tests/Acme81"
+    },
+    "classmap": [
+      "tests/Acme/ClassMap"
+    ]
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": ">=8.0",
+    "composer-plugin-api": ">=2.3",
+    "composer/class-map-generator": "^1.4"
+  },
+  "require-dev": {
+    "composer/composer": ">=2.3",
+    "phpstan/phpstan": "^2.1.17",
+    "phpunit/phpunit": "^9.6.23"
+  },
+  "extra": {
+    "class": "olvlvl\\ComposerAttributeCollector\\Plugin",
+    "composer-attribute-collector": {
+      "include": [
+        "tests"
+      ],
+      "exclude": [
+        "tests/Acme/PSR4/IncompatibleSignature.php"
+      ]
+    }
+  }
+}

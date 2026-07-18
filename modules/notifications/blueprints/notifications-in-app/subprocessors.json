@@ -1,0 +1,11 @@
+{
+  "id": "academorix://modules/notifications-in-app/subprocessors",
+  "$version": 1,
+  "title": "notifications-in-app \u2014 subprocessors",
+  "description": "None. The in-app transport uses our own broadcast layer (Laravel Reverb / Pusher-compatible driver hosted on our infra); no third-party vendor sees the notification content. If the tenant's deployment swaps in Pusher / Ably / Soketi as the broadcaster, that vendor becomes a subprocessor \u2014 update this file per deployment. Marker file with an explanation.",
+  "subprocessors": [],
+  "notes": [
+    "The default deployment ships Laravel Reverb on our own K8s cluster. Reverb is transport (not a subprocessor) because we control it.",
+    "Tenancy on the self-hosted plan may opt into Pusher / Ably; when they do, the deployment-specific config should override subprocessors.json to declare that vendor."
+  ]
+}

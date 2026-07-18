@@ -1,0 +1,8 @@
+# Changelog
+
+## Unreleased
+
+- Initial scaffold of the `academorix/compliance` module — eight aggregates
+  (ConsentCategory, ConsentRecord, Dsar, DsarArtefact, LegalHold, RetentionRun,
+  Subprocessor, SafeguardingIncident), attribute contracts, registries, HTTP
+  surface, and orchestration jobs.

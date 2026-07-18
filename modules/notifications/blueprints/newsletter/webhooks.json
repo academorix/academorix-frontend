@@ -1,0 +1,43 @@
+{
+  "id": "academorix://modules/newsletter/webhooks",
+  "$version": 1,
+  "title": "newsletter \u2014 webhook namespaces",
+  "description": "No inbound webhook receiver. Newsletter-specific outbound webhook events (newsletter.issue.published, newsletter.campaign.completed) go through the universal webhook module.",
+  "inboundNamespace": null,
+  "outbound": {
+    "note": "Newsletter-scoped outbound events published via notifications CORE + webhook module. Customers subscribe to newsletter.issue.published + newsletter.campaign.completed via /api/v1/webhook/subscriptions.",
+    "events": [
+      {
+        "name": "newsletter.issue.published",
+        "trigger": "NewsletterIssuePublished",
+        "shape": {
+          "newsletter_id": "ULID",
+          "issue_id": "ULID",
+          "issue_number": "int | null",
+          "subject": "string",
+          "sent_at": "ISO 8601"
+        }
+      },
+      {
+        "name": "newsletter.campaign.completed",
+        "trigger": "NewsletterCampaignCompleted",
+        "shape": {
+          "newsletter_id": "ULID",
+          "campaign_id": "ULID",
+          "counters": "object",
+          "completed_at": "ISO 8601"
+        }
+      },
+      {
+        "name": "newsletter.subscriber.added",
+        "trigger": "NewsletterSubscriptionConfirmed",
+        "shape": { "newsletter_id": "ULID", "subscription_id": "ULID", "source": "string" }
+      },
+      {
+        "name": "newsletter.subscriber.removed",
+        "trigger": "NewsletterSubscriptionRemoved",
+        "shape": { "newsletter_id": "ULID", "subscription_id": "ULID", "reason": "string" }
+      }
+    ]
+  }
+}

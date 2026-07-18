@@ -183,7 +183,14 @@ export const PinLock = React.memo(function PinLock({
 
         <Button
           isIconOnly
-          aria-label="0"
+          // `aria-label` must match the RENDERED digit so screen-reader
+          // users get the correct number. When `scramble` is on, this
+          // slot renders whatever ended up at index 9 of the shuffled
+          // keypad — hardcoding "0" here would produce duplicate
+          // accessible names (two buttons announced as "0") when the
+          // shuffle placed 0 into `topRows` and some other digit into
+          // this bottom slot.
+          aria-label={String(zeroDigit)}
           className="size-16 text-xl font-medium"
           isDisabled={isDisabled || isLoading}
           variant="ghost"

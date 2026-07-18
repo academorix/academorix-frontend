@@ -1,0 +1,250 @@
+{
+  "id": "academorix://modules/newsletter/schemas/newsletter-audience",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "NewsletterAudience",
+  "description": "Segment definition. Expression evaluated against NewsletterSubscription. Refreshed daily; cache subscriber_ids.",
+  "type": "object",
+  "x-module": "newsletter",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "newsletter_audiences",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "nla_",
+    "incrementing": false,
+    "model": "Academorix\\Newsletter\\Models\\NewsletterAudience",
+    "interface": "Academorix\\Newsletter\\Contracts\\Data\\NewsletterAudienceInterface",
+    "implements": ["Academorix\\Newsletter\\Contracts\\Data\\NewsletterAudienceInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasTranslations",
+      "HasVersions",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "expression": "AudienceExpressionCast",
+      "cached_subscriber_ids": "array",
+      "cache_refreshed_at": "datetime",
+      "metadata": "array",
+      "translations": "array"
+    },
+    "appends": ["subscriber_count"],
+    "observers": ["NewsletterAudienceObserver"],
+    "hidden": ["cached_subscriber_ids"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `nla_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onDelete": "cascade"
+        }
+      },
+      "newsletter_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "newsletters",
+          "column": "id",
+          "onDelete": "cascade"
+        }
+      },
+      "name": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "description": "Translated via `HasTranslations`."
+      },
+      "slug": {
+        "type": "string",
+        "length": 100,
+        "nullable": false
+      },
+      "description": {
+        "type": "text",
+        "nullable": true,
+        "description": "Translated via `HasTranslations`."
+      },
+      "expression": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "spatie query builder expression: { filter: {...}, include: [...] }."
+      },
+      "cached_subscriber_ids": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Materialised subscriber id list. Refreshed by BuildAudienceSegmentJob."
+      },
+      "cache_refreshed_at": {
+        "type": "timestamptz",
+        "nullable": true
+      },
+      "is_default": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Newsletter's default audience — auto-created on newsletter create. All active subscribers."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true
+      },
+      "translations": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Per-locale content-translation blob. Shape: `{ locale_code: { field: value } }`. Managed by the `HasTranslations` trait (wraps `spatie/laravel-translatable`). Column added via `localization::Blueprint::translations()`."
+      },
+      "created_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "updated_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "deleted_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "deleted_at": {
+        "type": "timestamptz",
+        "nullable": true
+      },
+      "created_at": {
+        "type": "timestamptz",
+        "nullable": false
+      },
+      "updated_at": {
+        "type": "timestamptz",
+        "nullable": false
+      }
+    },
+    "indexes": [
+      {
+        "columns": ["newsletter_id", "slug"],
+        "unique": true,
+        "name": "newsletter_audiences_slug_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["newsletter_id", "is_default"],
+        "unique": true,
+        "name": "newsletter_audiences_default_unique",
+        "predicate": "is_default = true AND deleted_at IS NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "newsletter_id",
+    "name",
+    "slug",
+    "expression",
+    "is_default",
+    "translations",
+    "created_at",
+    "updated_at"
+  ],
+  "x-translatable": {
+    "trait": "Academorix\\Localization\\Concerns\\HasTranslations",
+    "column": "translations",
+    "fields": ["name", "description"],
+    "underlying_package": "spatie/laravel-translatable ^6.0",
+    "migration_macro": "localization::Blueprint::translations()",
+    "wire_convention": "Active-locale projection onto the field name by default. Full JSONB blob under `data.translations` when the request carries `?include=translations`.",
+    "auto_translate": "opt-in via TenantLocale.auto_translate=true per target locale"
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^nla_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "tenant_id": {
+      "type": "string",
+      "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "newsletter_id": {
+      "type": "string",
+      "pattern": "^nlp_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 200,
+      "x-translatable": true,
+      "description": "Active-locale projection. Full blob available via `?include=translations`."
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,99}$"
+    },
+    "description": {
+      "type": ["string", "null"],
+      "x-translatable": true,
+      "description": "Active-locale projection. Full blob available via `?include=translations`."
+    },
+    "translations": {
+      "type": "object",
+      "description": "Per-locale content translations. Wire-included only when `?include=translations`. Shape: `{ locale_code: { field: value } }`.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "expression": {
+      "type": "object"
+    },
+    "cache_refreshed_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "is_default": {
+      "type": "boolean"
+    },
+    "subscriber_count": {
+      "type": "integer",
+      "description": "Computed. Length of cached_subscriber_ids or live-queried."
+    },
+    "metadata": {
+      "type": ["object", "null"]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["cached_subscriber_ids"],
+    "computed": ["subscriber_count"]
+  }
+}

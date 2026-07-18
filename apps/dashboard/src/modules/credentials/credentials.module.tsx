@@ -9,7 +9,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §10.20 "Reception & Front Desk"
  */
 
-import { QrCodeIcon } from "@academorix/ui/icons/outline";
+import { QrCodeIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

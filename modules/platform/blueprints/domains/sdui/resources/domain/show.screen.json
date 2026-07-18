@@ -1,0 +1,163 @@
+{
+  "id": "tenants.resources.domain.show",
+  "title": "Domain detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/domains/{id}",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "tenancy", "entity": "domain", "action": "show" },
+  "requiresPermission": "tenants.manage_domains",
+  "params": [{ "name": "id", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "domain",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/tenant/domains/' + params.id + '?include=domain_records'",
+      "unwrap": "data"
+    }
+  ],
+  "broadcasts": [
+    {
+      "channel": "tenant.{id}.domain",
+      "on": ["DomainVerified", "DomainVerificationFailed"],
+      "action": { "kind": "data.refresh", "source": "domain" }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-4xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": { "leadingIcon": "arrow-left", "children": "Back to domains" },
+          "actions": { "onPress": { "kind": "navigate", "to": "/tenant/domains" } }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold font-mono" },
+                  "bindings": { "children": { "$ref": "domain.host" } }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-center gap-2 mt-1" },
+                  "children": [
+                    {
+                      "kind": "Chip",
+                      "props": { "size": "sm" },
+                      "bindings": {
+                        "variant": { "$expr": "domain.verified_at ? 'success' : 'warning'" },
+                        "children": {
+                          "$expr": "domain.verified_at ? 'Verified' : 'Pending verification'"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "Chip",
+                      "props": { "size": "xs", "variant": "neutral" },
+                      "bindings": { "children": { "$ref": "domain.kind" } }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "danger", "size": "sm", "children": "Remove" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.delete",
+                  "urlExpr": "'/api/v1/tenant/domains/' + params.id",
+                  "confirm": {
+                    "title": "Remove this domain?",
+                    "description": "Traffic to this domain will stop resolving to your tenant.",
+                    "confirmationInputMatches": "domain.host"
+                  },
+                  "onSuccess": [
+                    { "kind": "toast.success", "message": "Removed" },
+                    { "kind": "navigate", "to": "/tenant/domains" }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "DNS records"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted mb-4",
+                "children": "Add these records at your DNS provider. Verification retries every 30 minutes."
+              }
+            },
+            {
+              "kind": "DataGrid",
+              "bindings": { "items": { "$ref": "domain.domain_records" } },
+              "columns": [
+                {
+                  "id": "kind",
+                  "header": "Type",
+                  "cell": {
+                    "kind": "Chip",
+                    "props": { "size": "xs" },
+                    "bindings": { "children": { "$ref": "row.kind" } }
+                  }
+                },
+                {
+                  "id": "name",
+                  "header": "Name",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "font-mono text-sm" },
+                    "bindings": { "children": { "$ref": "row.name" } }
+                  }
+                },
+                {
+                  "id": "value",
+                  "header": "Value",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "font-mono text-sm break-all" },
+                    "bindings": { "children": { "$ref": "row.value" } }
+                  }
+                },
+                {
+                  "id": "state",
+                  "header": "State",
+                  "cell": {
+                    "kind": "Chip",
+                    "props": { "size": "xs" },
+                    "bindings": {
+                      "variant": { "$expr": "row.observed_at ? 'success' : 'warning'" },
+                      "children": { "$expr": "row.observed_at ? 'observed' : 'expected'" }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

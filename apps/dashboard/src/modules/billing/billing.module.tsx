@@ -28,16 +28,14 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §10.8 "Billing"
  */
 
-import { ReceiptPercentIcon } from "@academorix/ui/icons/outline";
+import { ReceiptPercentIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";
 
 const BillingSettingsPage = lazy(() => import("@/modules/billing/pages/settings-page"));
 const BillingPlansPage = lazy(() => import("@/modules/billing/pages/plans-page"));
-const BillingSubscriptionPage = lazy(
-  () => import("@/modules/billing/pages/subscription-page"),
-);
+const BillingSubscriptionPage = lazy(() => import("@/modules/billing/pages/subscription-page"));
 const BillingInvoicesPage = lazy(() => import("@/modules/billing/pages/invoices-page"));
 
 /** The Billing feature module. */

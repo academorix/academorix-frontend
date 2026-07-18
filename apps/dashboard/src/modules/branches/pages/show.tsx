@@ -6,7 +6,7 @@
  * Branch detail — location, capacity, contacts, and status.
  */
 
-import { Card, Chip, Spinner } from "@academorix/ui/react";
+import { Card, Chip, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 
 import type { Branch } from "@/types";

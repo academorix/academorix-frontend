@@ -7,10 +7,10 @@
  * system-role flag. Detail shows the full permission set.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 
 import type { Role } from "@/types";
-import type { DataGridColumn } from "@academorix/ui/react";
+import type { DataGridColumn } from "@stackra/ui/react";
 import type { ReactNode } from "react";
 
 import { ListView, ResourceDataGrid, ShowButton } from "@/components/refine";

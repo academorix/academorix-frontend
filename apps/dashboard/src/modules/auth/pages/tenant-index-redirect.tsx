@@ -14,11 +14,11 @@
  * "back" button never lands the visitor on this pass-through.
  */
 
-import { Navigate } from "react-router";
+import { Navigate } from "@stackra/routing/react";
 
 import type { ReactElement } from "react";
 
-import { appRoutes } from "@/lib/module/routes";
+import { appRoutes } from "@/lib/module";
 
 /** Redirects `/` on a tenant host to the tenant's login page. */
 export default function TenantIndexRedirect(): ReactElement {

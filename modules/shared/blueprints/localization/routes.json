@@ -1,0 +1,271 @@
+{
+  "id": "academorix://modules/localization/routes",
+  "$version": 1,
+  "title": "localization \u2014 HTTP routes",
+  "description": "Tenant-facing locale + translation management surface + platform-admin language catalogue.",
+  "groups": [
+    {
+      "name": "tenant-languages",
+      "prefix": "/api/v1/languages",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Read-only. Public catalogue of platform-active languages that any tenant can enable.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Tenant\\PlatformLanguageController@index",
+          "permission": "languages.viewAny",
+          "description": "Filterable by is_beta / direction / script_code."
+        },
+        {
+          "method": "GET",
+          "path": "/{language}",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Tenant\\PlatformLanguageController@show",
+          "permission": "languages.view"
+        }
+      ]
+    },
+    {
+      "name": "tenant-locales",
+      "prefix": "/api/v1/tenant-locales",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Tenant's enabled locales. Owner + admin only for writes.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Tenant\\TenantLocaleController@index",
+          "permission": "tenant_locales.viewAny"
+        },
+        {
+          "method": "POST",
+          "path": "/{language}",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Tenant\\TenantLocaleController@enable",
+          "permission": "tenant_locales.manage",
+          "description": "Enable a language for this tenant. Consumes localization.locales.count entitlement."
+        },
+        {
+          "method": "PATCH",
+          "path": "/{tenantLocale}",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Tenant\\TenantLocaleController@update",
+          "permission": "tenant_locales.manage",
+          "description": "Body: { is_default, is_fallback, auto_translate, auto_translate_driver, auto_translate_ttl_hours }."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{tenantLocale}",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Tenant\\TenantLocaleController@disable",
+          "permission": "tenant_locales.manage",
+          "description": "Cannot disable the default locale. Deactivates + preserves translations. Hard delete via ?purge=true (removes cached translations)."
+        }
+      ]
+    },
+    {
+      "name": "tenant-translations",
+      "prefix": "/api/v1/translations",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Tenant-facing translation CRUD. Overrides platform defaults for a tenant.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Tenant\\TranslationController@index",
+          "permission": "translations.viewAny",
+          "description": "filter[language_code], filter[namespace], filter[group], filter[key], filter[source], filter[is_stale]"
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Tenant\\TranslationController@store",
+          "permission": "translations.create",
+          "description": "Hand-authored tenant override. Body: { language_id, namespace, group, key, value }."
+        },
+        {
+          "method": "GET",
+          "path": "/{translation}",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Tenant\\TranslationController@show",
+          "permission": "translations.view"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{translation}",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Tenant\\TranslationController@update",
+          "permission": "translations.update"
+        },
+        {
+          "method": "DELETE",
+          "path": "/{translation}",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Tenant\\TranslationController@destroy",
+          "permission": "translations.delete",
+          "description": "Deletes the tenant override; falls back to platform default or file translation."
+        },
+        {
+          "method": "POST",
+          "path": "/{translation}/verify",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Tenant\\TranslationController@verify",
+          "permission": "translations.verify",
+          "description": "Marks translation as human-verified (sets verified_at)."
+        }
+      ]
+    },
+    {
+      "name": "tenant-translation-jobs",
+      "prefix": "/api/v1/translation-jobs",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:foundation-base",
+        "response.envelope",
+        "entitlement.enforce:localization.auto_translate"
+      ],
+      "hosts": ["tenant"],
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Tenant\\TranslationJobController@index",
+          "permission": "translation_jobs.viewAny"
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Tenant\\TranslationJobController@store",
+          "permission": "translation_jobs.create",
+          "description": "Body: { kind, source_locale_code, target_locale_codes[], namespaces[], driver }. Dispatches BulkTranslateNamespaceJob."
+        },
+        {
+          "method": "GET",
+          "path": "/{translationJob}",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Tenant\\TranslationJobController@show",
+          "permission": "translation_jobs.view"
+        },
+        {
+          "method": "POST",
+          "path": "/{translationJob}/cancel",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Tenant\\TranslationJobController@cancel",
+          "permission": "translation_jobs.cancel"
+        }
+      ]
+    },
+    {
+      "name": "platform-languages",
+      "prefix": "/api/v1/platform/languages",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "Language catalogue CRUD for platform ops.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Platform\\PlatformLanguageController@index",
+          "permission": "platform.languages.viewAny"
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Platform\\PlatformLanguageController@store",
+          "permission": "platform.languages.create"
+        },
+        {
+          "method": "GET",
+          "path": "/{language}",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Platform\\PlatformLanguageController@show",
+          "permission": "platform.languages.view"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{language}",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Platform\\PlatformLanguageController@update",
+          "permission": "platform.languages.update"
+        },
+        {
+          "method": "DELETE",
+          "path": "/{language}",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Platform\\PlatformLanguageController@archive",
+          "permission": "platform.languages.archive",
+          "description": "Refused when any TenantLocale row references this language."
+        }
+      ]
+    },
+    {
+      "name": "platform-translations-observability",
+      "prefix": "/api/v1/platform/translations",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Platform\\TranslationController@index",
+          "permission": "platform.translations.viewAny"
+        }
+      ]
+    },
+    {
+      "name": "platform-driver-status",
+      "prefix": "/api/v1/platform/translation-drivers",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/status",
+          "controller": "Academorix\\Localization\\Http\\Controllers\\Platform\\DriverStatusController@index",
+          "permission": "platform.translations.viewAny",
+          "description": "Per-driver reachability + quota + recent-error report."
+        }
+      ]
+    }
+  ]
+}

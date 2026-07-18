@@ -7,12 +7,12 @@
  * sidebar uniformly) even though it's an overview surface, not a CRUD entity.
  */
 
-import { Squares2X2Icon } from "@academorix/ui/icons/outline";
+import { Squares2X2Icon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";
 
-import { appRoutes } from "@/lib/module/routes";
+import { appRoutes } from "@/lib/module";
 
 const DashboardPage = lazy(() => import("@/modules/dashboard/pages/dashboard-page"));
 

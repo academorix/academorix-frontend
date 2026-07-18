@@ -9,7 +9,7 @@
  * *other* Sanctum token on success so the presenting session survives.
  */
 
-import { Button, Description, Form, Input, Label, TextField } from "@academorix/ui/react";
+import { Button, Description, Form, Input, Label, TextField } from "@stackra/ui/react";
 import { useState } from "react";
 
 import type { ApiError } from "@/lib/http";

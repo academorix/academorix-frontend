@@ -123,9 +123,7 @@ describe("KanbanBoard", () => {
         columns={COLUMNS}
         groupBy={(card) => card.stage}
         renderCard={(card) => <span>{card.name}</span>}
-        renderColumnEmptyState={(column) => (
-          <p>No records in {column.label} stage</p>
-        )}
+        renderColumnEmptyState={(column) => <p>No records in {column.label} stage</p>}
         onMove={vi.fn()}
       />,
     );

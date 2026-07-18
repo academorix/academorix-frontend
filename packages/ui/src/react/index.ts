@@ -50,8 +50,14 @@ export type {
 export * from "./components";
 
 // ============================================================================
+// Cross-platform hooks — re-exported here so the workspace `core/hooks`
+// rule is satisfied (both `react/index.ts` and `native/index.ts` re-export
+// the same source in `./core/hooks`).
+// ============================================================================
+export { useDebounce } from "../core/hooks/use-debounce";
+
+// ============================================================================
 // Web-Specific Hooks
-// (pure-React hooks that work on both platforms live in ./core)
 // ============================================================================
 export * from "./hooks";
 

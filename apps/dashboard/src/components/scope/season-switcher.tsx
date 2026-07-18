@@ -8,7 +8,7 @@
  * upcoming/closed ones. Renders read-only when only one season is available.
  */
 
-import { CalendarDaysIcon } from "@academorix/ui/icons/outline";
+import { CalendarDaysIcon } from "@stackra/ui/icons/heroicon/outline";
 
 import type { ReactNode } from "react";
 

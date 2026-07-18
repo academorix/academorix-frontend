@@ -1,0 +1,88 @@
+{
+  "id": "academorix://modules/search/entitlements",
+  "$version": 1,
+  "title": "search \u2014 entitlements",
+  "reference": {
+    "publishedBy": "entitlements",
+    "resolvedBy": "GET /api/auth/me \u2192 data.quota_summary",
+    "seededFrom": "BusinessType.default_config.entitlements"
+  },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "search.max_indexes",
+      "kind": "slot",
+      "unit": "indexes",
+      "defaultsByPlan": { "free": 5, "team": 50, "enterprise": 500 },
+      "description": "Cap on the number of #[Searchable] models this tenant may register. Additional registration returns SEARCH_INDEX_LIMIT_EXCEEDED (429)."
+    },
+    {
+      "key": "search.max_synonyms",
+      "kind": "slot",
+      "unit": "rows",
+      "defaultsByPlan": { "free": 100, "team": 1000, "enterprise": 10000 },
+      "description": "Cap on active synonym rows (soft-deleted don't count)."
+    },
+    {
+      "key": "search.max_saved_queries_per_user",
+      "kind": "slot",
+      "unit": "rows",
+      "defaultsByPlan": { "free": 10, "team": 50, "enterprise": 500 }
+    },
+    {
+      "key": "search.max_query_rate_per_minute",
+      "kind": "slot",
+      "unit": "queries",
+      "defaultsByPlan": { "free": 60, "team": 300, "enterprise": 1500 },
+      "description": "Per-user query rate. Enforced by search.rate-limit middleware on top of foundation's generic throttle."
+    },
+    {
+      "key": "search.max_reindex_concurrency",
+      "kind": "slot",
+      "unit": "jobs",
+      "defaultsByPlan": { "free": 1, "team": 3, "enterprise": 10 },
+      "description": "Concurrent SearchSyncJobs in `queued` or `running` per tenant."
+    },
+    {
+      "key": "search.analytics_retention_tier",
+      "kind": "slot",
+      "unit": "enum",
+      "defaultsByPlan": { "free": "short", "team": "medium", "enterprise": "long" },
+      "description": "Retention tier for search_sync_jobs + search_analytics_events. See retention.json for tier day counts."
+    },
+    {
+      "key": "search.can_use_pgvector",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "team": false, "enterprise": true },
+      "description": "Enable pgvector engine for #[Searchable(engine: 'pgvector')]. Requires the pgvector Postgres extension AND search.pgvector feature toggle."
+    },
+    {
+      "key": "search.can_use_elasticsearch",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "team": false, "enterprise": false },
+      "description": "v2 stub. When Elasticsearch engine ships, enable per plan."
+    },
+    {
+      "key": "search.can_share_saved_queries",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "team": true, "enterprise": true }
+    },
+    {
+      "key": "search.can_share_synonyms",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "team": true, "enterprise": true }
+    },
+    {
+      "key": "search.can_use_smart_lists",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "team": true, "enterprise": true },
+      "description": "Enable auto-refreshing saved queries + dashboard tiles."
+    },
+    {
+      "key": "search.can_use_workbook_reindex",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "team": false, "enterprise": true },
+      "description": "Enable reindex from a transfer XferArtifact (cross-region migration flow)."
+    }
+  ]
+}

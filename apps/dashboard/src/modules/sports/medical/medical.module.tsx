@@ -10,7 +10,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §14.3 "Medical & Clearance"
  */
 
-import { HeartIcon } from "@academorix/ui/icons/outline";
+import { HeartIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

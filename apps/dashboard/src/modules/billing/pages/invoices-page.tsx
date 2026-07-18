@@ -19,8 +19,8 @@
  * `useBillingInvoices` surfaces an error banner and the page renders empty.
  */
 
-import { ExclamationCircleIcon, ReceiptPercentIcon } from "@academorix/ui/icons/outline";
-import { Card, Chip, Separator, Spinner } from "@academorix/ui/react";
+import { ExclamationCircleIcon, ReceiptPercentIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Card, Chip, Separator, Spinner } from "@stackra/ui/react";
 
 import type { BillingInvoice } from "@/types";
 import type { ReactNode } from "react";
@@ -123,9 +123,7 @@ export default function BillingInvoicesPage(): ReactNode {
                   <tbody className="divide-y divide-default/40">
                     {rows.map((invoice) => (
                       <tr key={invoice.id}>
-                        <td className="py-3 pr-4 font-medium text-foreground">
-                          {invoice.number}
-                        </td>
+                        <td className="py-3 pr-4 font-medium text-foreground">{invoice.number}</td>
                         <td className="py-3 pr-4 text-muted">{formatDate(invoice.issued_at)}</td>
                         <td className="py-3 pr-4">
                           <Chip

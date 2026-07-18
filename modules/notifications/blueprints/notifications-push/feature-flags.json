@@ -1,0 +1,39 @@
+{
+  "id": "academorix://modules/notifications-push/feature-flags",
+  "$version": 1,
+  "title": "notifications-push \u2014 kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "notifications.push.dispatch",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master push dispatch kill switch."
+    },
+    {
+      "key": "notifications.push.provider.fcm.enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Disable FCM. Failover to next-configured provider (typically none \u2014 platform-specific)."
+    },
+    { "key": "notifications.push.provider.apns.enabled", "kind": "kill-switch", "default": "on" },
+    { "key": "notifications.push.provider.expo.enabled", "kind": "kill-switch", "default": "on" },
+    {
+      "key": "notifications.push.provider.onesignal.enabled",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "notifications.push.token_validation_on_register",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Dry-run token validation before persist. Off = accept any token (risk: bad tokens waste send budget)."
+    },
+    {
+      "key": "notifications.push.coppa_vpc_gate",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Refuse marketing pushes to minors without VPC. NEVER TURN OFF except in strict-compliance jurisdictions with alternative controls."
+    }
+  ]
+}

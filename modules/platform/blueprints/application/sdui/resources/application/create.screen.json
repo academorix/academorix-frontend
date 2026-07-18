@@ -1,0 +1,107 @@
+{
+  "id": "tenants.resources.application.create",
+  "title": "New application",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/applications/new",
+  "host": "central_admin",
+  "audience": "authenticated",
+  "resource": { "module": "tenancy", "entity": "application", "action": "create" },
+  "requiresPermission": "platform.applications.create",
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": { "leadingIcon": "arrow-left", "children": "Cancel" },
+          "actions": { "onPress": { "kind": "navigate", "to": "/platform/applications" } }
+        },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "New application"
+          }
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "submitUrl": "/api/v1/applications",
+            "submitMethod": "POST",
+            "onSuccess": [
+              { "kind": "toast.success", "message": "Application created" },
+              { "kind": "navigateExpr", "expr": "'/platform/applications/' + response.data.id" }
+            ]
+          },
+          "children": [
+            {
+              "kind": "TextField",
+              "props": {
+                "label": "Name",
+                "name": "name",
+                "isRequired": true,
+                "placeholder": "Academorix Academy"
+              }
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "label": "Slug",
+                "name": "slug",
+                "isRequired": true,
+                "placeholder": "academy",
+                "description": "URL-safe. Used in subdomain resolution."
+              }
+            },
+            {
+              "kind": "TextArea",
+              "props": { "label": "Description", "name": "description", "rows": 2 }
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "label": "Data residency region",
+                "name": "data_residency_region",
+                "isRequired": true,
+                "defaultValue": "us"
+              },
+              "options": [
+                { "key": "us", "label": "United States (us-east-1)" },
+                { "key": "eu", "label": "European Union (eu-central-1)" },
+                { "key": "apac", "label": "Asia-Pacific (ap-southeast-1)" }
+              ]
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "label": "Payment provider",
+                "name": "payment_provider",
+                "isRequired": true,
+                "defaultValue": "stripe",
+                "description": "Cashier-backed. All tenants under this application use this provider."
+              },
+              "options": [
+                { "key": "stripe", "label": "Stripe" },
+                { "key": "paddle", "label": "Paddle" }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "size": "md",
+                "type": "submit",
+                "children": "Create application"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

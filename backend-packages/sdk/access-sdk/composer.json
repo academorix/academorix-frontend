@@ -1,0 +1,58 @@
+{
+    "name": "academorix/access-sdk",
+    "type": "library",
+    "description": "Typed Saloon SDK for the Access service — roles, permissions, policies, scopes, groups, invitations.",
+    "license": "proprietary",
+    "keywords": [
+        "academorix",
+        "sdk",
+        "saloon",
+        "api-client",
+        "access"
+    ],
+    "require": {
+        "php": "^8.3",
+        "academorix/api-sdk": "@dev",
+        "academorix/exceptions": "@dev",
+        "academorix/foundation": "@dev",
+        "academorix/service-provider": "@dev",
+        "illuminate/contracts": "^13.0",
+        "illuminate/support": "^13.0",
+        "saloonphp/saloon": "^3.10",
+        "spatie/laravel-data": "^4.11"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.6",
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "phpstan/phpstan": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Academorix\\AccessSdk\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Academorix\\AccessSdk\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Academorix\\AccessSdk\\Providers\\AccessSdkServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "olvlvl/composer-attribute-collector": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

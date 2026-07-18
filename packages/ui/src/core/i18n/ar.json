@@ -1,0 +1,45 @@
+{
+  "confirmDialog": {
+    "confirmLabel": "تأكيد",
+    "cancelLabel": "إلغاء"
+  },
+  "fileUpload": {
+    "label": "أفلِت الملفات هنا أو انقر للرفع",
+    "uploadingAriaLabel": "جارٍ رفع {{name}}",
+    "removeAriaLabel": "إزالة {{name}}"
+  },
+  "inlineTip": {
+    "dismissAriaLabel": "إغلاق التلميح"
+  },
+  "jsonViewSection": {
+    "title": "البيانات الخام",
+    "copyLabel": "نسخ",
+    "copiedLabel": "تم النسخ!",
+    "copyAriaLabel": "نسخ JSON",
+    "copiedAriaLabel": "تم النسخ"
+  },
+  "moneyAmountCell": {
+    "originalPriceAriaLabel": "السعر الأصلي"
+  },
+  "pageProgress": {
+    "ariaLabel": "جارٍ تحميل الصفحة"
+  },
+  "patternLock": {
+    "ariaLabel": "إدخال نمط القفل"
+  },
+  "phoneInput": {
+    "placeholder": "أدخل رقم الهاتف",
+    "ariaLabel": "رقم الهاتف",
+    "countryButtonAriaLabel": "الدولة المحددة: {{country}}، +{{callingCode}}"
+  },
+  "pinLock": {
+    "biometricAriaLabel": "المصادقة البيومترية",
+    "deleteAriaLabel": "حذف الرقم الأخير",
+    "dotsProgressAriaLabel": "{{entered}} من {{total}} أرقام مدخلة"
+  },
+  "progressAccordion": {
+    "notStarted": "لم يبدأ",
+    "inProgress": "قيد التنفيذ",
+    "completed": "مكتمل"
+  }
+}

@@ -10,8 +10,8 @@
  * user-friendly fallback derived from the resource name.
  */
 
-import { ArrowLeftIcon } from "@academorix/ui/icons/outline";
-import { Button, Separator } from "@academorix/ui/react";
+import { ArrowLeftIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Separator } from "@stackra/ui/react";
 import { useBack, useResourceParams, useUserFriendlyName } from "@refinedev/core";
 
 import type { ReactNode } from "react";

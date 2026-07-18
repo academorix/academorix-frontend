@@ -15,7 +15,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import type { Person } from "@/modules/people/people.types";
-import type { DataGridColumn } from "@academorix/ui/react";
+import type { DataGridColumn } from "@stackra/ui/react";
 import type { ReactNode } from "react";
 
 import { ListView, ResourceDataGrid, ShowButton } from "@/components/refine";
@@ -79,12 +79,8 @@ export default function PeopleList(): ReactNode {
         minWidth: 220,
         cell: (person) => (
           <div className="flex flex-col text-sm">
-            <span className="text-foreground">
-              {person.primary_email ?? EMPTY_PLACEHOLDER}
-            </span>
-            <span className="text-xs text-muted">
-              {person.primary_phone ?? EMPTY_PLACEHOLDER}
-            </span>
+            <span className="text-foreground">{person.primary_email ?? EMPTY_PLACEHOLDER}</span>
+            <span className="text-xs text-muted">{person.primary_phone ?? EMPTY_PLACEHOLDER}</span>
           </div>
         ),
       },

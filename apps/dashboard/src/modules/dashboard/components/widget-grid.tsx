@@ -46,7 +46,7 @@
 
 import "react-grid-layout/css/styles.css";
 
-import { Card, Skeleton } from "@academorix/ui/react";
+import { Card, Skeleton } from "@stackra/ui/react";
 import { Suspense, useCallback, useMemo } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout";
 
@@ -207,7 +207,7 @@ function EditModeFrame({ children, title }: { children: ReactNode; title: string
        */}
       <div
         aria-label={`Drag ${title}`}
-        className={`absolute left-2 top-2 z-10 flex cursor-grab items-center gap-1 rounded-full bg-accent/10 px-2 py-1 text-xs text-accent shadow-sm ${DRAG_HANDLE_CLASS}`}
+        className={`absolute top-2 left-2 z-10 flex cursor-grab items-center gap-1 rounded-full bg-accent/10 px-2 py-1 text-xs text-accent shadow-sm ${DRAG_HANDLE_CLASS}`}
         data-testid="widget-grid__drag-handle"
         role="button"
         tabIndex={0}

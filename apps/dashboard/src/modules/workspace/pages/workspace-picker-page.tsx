@@ -20,9 +20,9 @@ import {
   BuildingOfficeIcon,
   MagnifyingGlassIcon,
   PlusIcon,
-} from "@academorix/ui/icons/outline";
-import { Avatar, Button, Card, Description, Spinner } from "@academorix/ui/react";
-import { useNavigate } from "react-router";
+} from "@stackra/ui/icons/heroicon/outline";
+import { Avatar, Button, Card, Description, Spinner } from "@stackra/ui/react";
+import { useNavigate } from "@stackra/routing/react";
 
 import type { ReactNode } from "react";
 

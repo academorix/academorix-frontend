@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/notifications-mail/subprocessors",
+  "$version": 1,
+  "title": "notifications-mail \u2014 subprocessors (GDPR Art. 28)",
+  "description": "Third-party mail providers that process tenant subject data on behalf of Academorix. Each requires a signed DPA + is disclosed to tenants per Art. 28. Tenant admins see this list on the Compliance Center screen; DPO exports via DSAR orchestrator.",
+  "regulatoryBasis": ["gdpr Art. 28", "uk_gdpr Art. 28"],
+  "subprocessors": [
+    {
+      "name": "Mailgun",
+      "controller": "Mailgun Technologies, Inc. (US) / Mailgun EU (Ireland)",
+      "region": "us-east-1 (default) / eu-central-1 (EU tenants)",
+      "purpose": "Transactional + marketing email delivery. Provides SMTP relay + REST API for send + bounce/open/click webhooks.",
+      "data_categories": [
+        "recipient email address",
+        "email subject",
+        "email body (rendered template with variables)",
+        "provider message id",
+        "bounce reason strings",
+        "opened_at + opened_ip (masked)"
+      ],
+      "dpa_url": "https://www.mailgun.com/legal/dpa/",
+      "certifications": ["SOC 2 Type II", "ISO 27001", "GDPR compliant"],
+      "subprocessors_page": "https://www.mailgun.com/legal/subprocessors/"
+    },
+    {
+      "name": "SendGrid (Twilio)",
+      "controller": "Twilio Inc.",
+      "region": "us-east-1 / eu-west-1",
+      "purpose": "Transactional + marketing email delivery, higher-volume tier.",
+      "data_categories": [
+        "recipient email",
+        "subject",
+        "body",
+        "provider message id",
+        "bounce/open/click event metadata"
+      ],
+      "dpa_url": "https://www.twilio.com/legal/data-protection-addendum",
+      "certifications": ["SOC 2 Type II", "ISO 27001", "GDPR compliant", "HIPAA (BAA available)"]
+    },
+    {
+      "name": "AWS Simple Email Service (SES)",
+      "controller": "Amazon Web Services, Inc.",
+      "region": "Per-tenant-configurable: us-east-1 / eu-central-1 / ap-southeast-1",
+      "purpose": "Transactional email delivery + high-volume marketing. Preferred provider for EU tenants (eu-central-1 residency).",
+      "data_categories": [
+        "recipient email",
+        "subject",
+        "body",
+        "message id",
+        "bounce/complaint via SNS"
+      ],
+      "dpa_url": "https://aws.amazon.com/service-terms/",
+      "certifications": ["SOC 2 Type II", "ISO 27001/27017/27018", "GDPR", "HIPAA (BAA on AWS)"]
+    },
+    {
+      "name": "Postmark",
+      "controller": "ActiveCampaign LLC",
+      "region": "us-east-1",
+      "purpose": "High-deliverability transactional-only email. No marketing.",
+      "data_categories": ["recipient email", "subject", "body", "message id", "bounce/open/click"],
+      "dpa_url": "https://postmarkapp.com/eu-privacy",
+      "certifications": ["SOC 2 Type II", "GDPR compliant"]
+    },
+    {
+      "name": "Resend",
+      "controller": "Resend, Inc.",
+      "region": "us-east-1 / eu-west-1",
+      "purpose": "React-Email-native transactional delivery.",
+      "data_categories": [
+        "recipient email",
+        "subject",
+        "body",
+        "message id",
+        "delivery events via Svix"
+      ],
+      "dpa_url": "https://resend.com/legal/dpa",
+      "certifications": ["SOC 2 Type II"]
+    }
+  ]
+}

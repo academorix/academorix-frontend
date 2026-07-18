@@ -8,12 +8,12 @@
  * inside the component so the "Enabled" cell can read the overlay map.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 import { useMemo } from "react";
 
 import type { Sport, TenantSport } from "@/types";
-import type { DataGridColumn } from "@academorix/ui/react";
+import type { DataGridColumn } from "@stackra/ui/react";
 import type { ReactNode } from "react";
 
 import { ListView, ResourceDataGrid } from "@/components/refine";

@@ -21,7 +21,7 @@ import {
   Spinner,
   TextArea,
   TextField,
-} from "@academorix/ui/react";
+} from "@stackra/ui/react";
 import { useForm } from "@refinedev/core";
 import { useState } from "react";
 

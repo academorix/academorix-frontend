@@ -1,0 +1,136 @@
+{
+  "id": "newsletter.resources.newsletter-audience.list",
+  "title": "Audiences",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/newsletters/{newsletter}/audiences",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "newsletter", "entity": "newsletter-audience", "action": "list" },
+  "requiresPermission": "newsletter-audiences.viewAny",
+  "params": [{ "name": "newsletter", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "audiences",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/newsletters/' + params.newsletter + '/audiences'",
+      "unwrap": "data",
+      "paginated": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Audiences"
+              }
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "size": "sm",
+                "leadingIcon": "plus",
+                "children": "New audience"
+              },
+              "actions": {
+                "onPress": { "kind": "openDialog", "dialog": "newsletter.dialogs.create-audience" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "bindings": { "items": { "$ref": "audiences" } },
+          "columns": [
+            {
+              "id": "name",
+              "header": "Name",
+              "cell": {
+                "kind": "View",
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-medium" },
+                    "bindings": { "children": { "$ref": "row.name" } }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted" },
+                    "bindings": { "children": { "$ref": "row.description" } }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "subscriber_count",
+              "header": "Subscribers",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm" },
+                "bindings": { "children": { "$ref": "row.subscriber_count" } }
+              }
+            },
+            {
+              "id": "refreshed",
+              "header": "Last refresh",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm text-muted" },
+                "bindings": {
+                  "children": {
+                    "$expr": "row.cache_refreshed_at ? formatRelative(row.cache_refreshed_at) : 'never'"
+                  }
+                }
+              }
+            },
+            {
+              "id": "is_default",
+              "header": "",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "xs", "variant": "info" },
+                "bindings": { "hidden": { "$expr": "!row.is_default" }, "children": "Default" }
+              }
+            },
+            {
+              "id": "actions",
+              "header": "",
+              "align": "end",
+              "cell": {
+                "kind": "Button",
+                "props": {
+                  "variant": "ghost",
+                  "size": "sm",
+                  "leadingIcon": "arrow-path",
+                  "children": "Refresh"
+                },
+                "actions": {
+                  "onPress": {
+                    "kind": "http.post",
+                    "urlExpr": "'/api/v1/newsletters/' + params.newsletter + '/audiences/' + row.id + '/refresh'",
+                    "onSuccess": [
+                      { "kind": "toast.success", "message": "Refresh dispatched" },
+                      { "kind": "data.refresh", "source": "audiences" }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

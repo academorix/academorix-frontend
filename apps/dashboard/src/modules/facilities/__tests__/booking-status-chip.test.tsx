@@ -13,10 +13,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { BookingStatusChip } from "@/modules/facilities/components/booking-status-chip";
-import {
-  BOOKING_STATUS_LABELS,
-  BOOKING_STATUSES,
-} from "@/modules/facilities/facilities.types";
+import { BOOKING_STATUS_LABELS, BOOKING_STATUSES } from "@/modules/facilities/facilities.types";
 
 describe("BookingStatusChip", () => {
   // Same shape as the facility-type-chip suite: a parametric loop guarantees

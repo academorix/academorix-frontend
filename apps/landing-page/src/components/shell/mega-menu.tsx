@@ -213,10 +213,7 @@ export function MegaMenu({ label, panel, className }: MegaMenuProps) {
         <span>{label}</span>
         <span
           aria-hidden
-          className={clsx(
-            "text-xs transition-transform duration-200",
-            isOpen && "rotate-180",
-          )}
+          className={clsx("text-xs transition-transform duration-200", isOpen && "rotate-180")}
         >
           ▾
         </span>

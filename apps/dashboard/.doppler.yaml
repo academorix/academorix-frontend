@@ -1,0 +1,5 @@
+# Pins this app to `academorix-frontend` / `dev_dashboard`.
+# See docs/doppler.md at the monorepo root for the design.
+setup:
+  project: academorix-frontend
+  config: dev_dashboard

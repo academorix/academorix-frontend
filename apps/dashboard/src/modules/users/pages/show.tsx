@@ -6,7 +6,7 @@
  * User detail — identity, roles, and status.
  */
 
-import { Card, Chip, Spinner } from "@academorix/ui/react";
+import { Card, Chip, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 
 import type { User } from "@/types";

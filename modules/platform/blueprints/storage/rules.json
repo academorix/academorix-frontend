@@ -1,0 +1,71 @@
+{
+  "id": "academorix://modules/storage/rules",
+  "$version": 1,
+  "title": "storage \u2014 validation rules",
+  "namespace": "Academorix\\Storage\\Rules",
+  "description": "Custom Laravel validation rules published by StorageServiceProvider::boot(). Consumers use them in FormRequest / Data class rule sets.",
+  "rules": [
+    {
+      "name": "valid_mime_for_kind",
+      "class": "Academorix\\Storage\\Rules\\ValidMimeForKind",
+      "signature": "valid_mime_for_kind:<kind>",
+      "description": "Ensures the uploaded file's sniffed MIME matches the target kind's allowed_mimes list. Sniff is finfo-based; client Content-Type header is IGNORED.",
+      "params": [
+        { "name": "kind", "type": "string", "description": "Kind key from FileKindRegistry." }
+      ],
+      "example_field_rule": "file: [required, file, valid_mime_for_kind:avatar]",
+      "error_message_key": "storage.validation.valid_mime_for_kind",
+      "default_message": "The :attribute must be one of: :allowed_mimes."
+    },
+    {
+      "name": "max_size_for_kind",
+      "class": "Academorix\\Storage\\Rules\\MaxSizeForKind",
+      "signature": "max_size_for_kind:<kind>",
+      "description": "Ensures the uploaded file's size does not exceed the kind's max_size_mb.",
+      "params": [{ "name": "kind", "type": "string" }],
+      "example_field_rule": "file: [required, file, max_size_for_kind:avatar]",
+      "error_message_key": "storage.validation.max_size_for_kind",
+      "default_message": "The :attribute may not be larger than :max_mb MB."
+    },
+    {
+      "name": "valid_file_kind",
+      "class": "Academorix\\Storage\\Rules\\ValidFileKind",
+      "signature": "valid_file_kind",
+      "description": "Ensures the value is a registered kind key.",
+      "params": [],
+      "example_field_rule": "kind: [required, string, valid_file_kind]",
+      "error_message_key": "storage.validation.valid_file_kind",
+      "default_message": "The :attribute is not a recognised file kind."
+    },
+    {
+      "name": "unique_sha256_within_tenant",
+      "class": "Academorix\\Storage\\Rules\\UniqueSha256WithinTenant",
+      "signature": "unique_sha256_within_tenant",
+      "description": "For kinds that opt out of dedup (`#[FileKind(dedupable: false)]`), enforces sha256 uniqueness within the tenant. Skipped for dedupable kinds \u2014 duplicates are the expected case there.",
+      "params": [],
+      "example_field_rule": "sha256: [required, string, size:64, unique_sha256_within_tenant]",
+      "error_message_key": "storage.validation.unique_sha256_within_tenant",
+      "default_message": "A file with identical content already exists in this tenant."
+    },
+    {
+      "name": "valid_signed_url_reason",
+      "class": "Academorix\\Storage\\Rules\\ValidSignedUrlReason",
+      "signature": "valid_signed_url_reason:<caller_permission>",
+      "description": "Ensures the requested signed-URL reason is permitted for the caller. `share` and `admin_action` require elevated permissions.",
+      "params": [{ "name": "caller_permission", "type": "string", "default": "files.view" }],
+      "example_field_rule": "reason: [required, valid_signed_url_reason:files.view]",
+      "error_message_key": "storage.validation.valid_signed_url_reason",
+      "default_message": "The `:reason` reason requires the :required_permission permission."
+    },
+    {
+      "name": "valid_cidr",
+      "class": "Academorix\\Storage\\Rules\\ValidCidr",
+      "signature": "valid_cidr",
+      "description": "Validates that a string is a valid CIDR block. Used for ip_lock validation on signed-URL issue requests. Accepts IPv4 (`192.0.2.0/24`) and IPv6 (`2001:db8::/32`) formats.",
+      "params": [],
+      "example_field_rule": "ip_lock: [nullable, string, valid_cidr]",
+      "error_message_key": "storage.validation.valid_cidr",
+      "default_message": "The :attribute must be a valid CIDR block."
+    }
+  ]
+}

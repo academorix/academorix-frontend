@@ -1,0 +1,222 @@
+{
+  "id": "subscription.resources.plan.show",
+  "title": "Plan",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/plans/{plan}",
+  "host": "central_admin",
+  "audience": "platform_admin",
+  "resource": { "module": "subscription", "entity": "plan", "action": "show" },
+  "requiresPermission": "platform.plans.view",
+  "params": [{ "name": "plan", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "plan",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/platform/plans/' + params.plan",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-4xl" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": { "leadingIcon": "arrow-left", "children": "Back to plans" },
+          "actions": { "onPress": { "kind": "navigate", "to": "/platform/plans" } }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$ref": "plan.name" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted font-mono mt-1" },
+                  "bindings": { "children": { "$ref": "plan.key" } }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "outline", "children": "Edit" },
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/platform/plans/' + plan.id + '/edit'"
+                    }
+                  },
+                  "requiresPermission": "platform.plans.update"
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "outline",
+                    "className": "text-danger",
+                    "children": "Archive"
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.delete",
+                      "urlExpr": "'/api/v1/platform/plans/' + plan.id, confirm: 'This plan has ' + plan.active_subscription_count + ' active subscriptions. Archiving keeps them grandfathered but blocks new signups.'"
+                    }
+                  },
+                  "bindings": { "hidden": { "$expr": "plan.archived_at !== null" } },
+                  "requiresPermission": "platform.plans.archive"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "grid grid-cols-2 md:grid-cols-4 gap-4" },
+              "children": [
+                {
+                  "kind": "View",
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted uppercase", "children": "Tier" }
+                    },
+                    {
+                      "kind": "Chip",
+                      "props": { "size": "sm" },
+                      "bindings": { "children": { "$ref": "plan.tier" } }
+                    }
+                  ]
+                },
+                {
+                  "kind": "View",
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted uppercase", "children": "Cycle" }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-medium mt-1" },
+                      "bindings": { "children": { "$ref": "plan.billing_cycle" } }
+                    }
+                  ]
+                },
+                {
+                  "kind": "View",
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted uppercase", "children": "Price" }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-semibold text-lg mt-1" },
+                      "bindings": { "children": { "$ref": "plan.price_formatted" } }
+                    }
+                  ]
+                },
+                {
+                  "kind": "View",
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": {
+                        "className": "text-xs text-muted uppercase",
+                        "children": "Active subs"
+                      }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-mono font-semibold text-lg mt-1" },
+                      "bindings": { "children": { "$ref": "plan.active_subscription_count" } }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h3",
+                "className": "text-sm font-semibold uppercase text-muted mb-4",
+                "children": "Included features"
+              }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-wrap gap-1" },
+              "children": [
+                {
+                  "kind": "List",
+                  "bindings": { "items": { "$ref": "plan.included_features" } },
+                  "itemRenderer": {
+                    "kind": "Chip",
+                    "props": { "size": "xs" },
+                    "bindings": { "children": { "$ref": "row" } }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h3",
+                "className": "text-sm font-semibold uppercase text-muted mb-4",
+                "children": "Default entitlements"
+              }
+            },
+            {
+              "kind": "Table",
+              "columns": [
+                {
+                  "key": "key",
+                  "header": "Key",
+                  "cell": { "kind": "Text", "props": { "className": "font-mono text-xs" } }
+                },
+                {
+                  "key": "kind",
+                  "header": "Kind",
+                  "cell": { "kind": "Chip", "props": { "size": "xs" } }
+                },
+                { "key": "value_cap", "header": "Cap" },
+                { "key": "period", "header": "Period" }
+              ],
+              "bindings": {
+                "rowsExpr": "Object.entries(plan.default_entitlements).map(([key, v]) => ({ key, ...v }))"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

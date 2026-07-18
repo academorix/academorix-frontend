@@ -9,7 +9,7 @@
  * one screen matches the same fallback everywhere.
  */
 
-import { Avatar } from "@academorix/ui/react";
+import { Avatar } from "@stackra/ui/react";
 
 import type { ReactNode } from "react";
 

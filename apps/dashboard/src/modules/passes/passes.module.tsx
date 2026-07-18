@@ -9,7 +9,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §16.7 "Digital Passes & Check-in"
  */
 
-import { TicketIcon } from "@academorix/ui/icons/outline";
+import { TicketIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

@@ -7,11 +7,11 @@
  * documents, and refunds with inline approve/reject actions.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 
 import type { ApprovalTask } from "@/modules/reception/reception.types";
 import type { ApprovalStatus } from "@/types";
-import type { DataGridColumn } from "@academorix/ui/react";
+import type { DataGridColumn } from "@stackra/ui/react";
 import type { ReactNode } from "react";
 
 import { ListView, ResourceDataGrid } from "@/components/refine";

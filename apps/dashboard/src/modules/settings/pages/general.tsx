@@ -11,7 +11,7 @@
  * resource.
  */
 
-import { Card, Chip, InlineTip } from "@academorix/ui/react";
+import { Card, Chip, InlineTip } from "@stackra/ui/react";
 import { useGetIdentity } from "@refinedev/core";
 
 import type { Identity } from "@/types";

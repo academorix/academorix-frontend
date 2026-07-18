@@ -1,0 +1,287 @@
+{
+  "id": "academorix://modules/application/schemas/application",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Application",
+  "description": "The top-level Academorix product / deployment container. Every Tenant belongs to exactly one Application. Applications rarely change in count (~1-8 on the platform: production, EU-production, staging, dev-preview, demo). One of the rows carrying `application_id` directly rather than inheriting it via BelongsToTenant.",
+  "type": "object",
+  "x-module": "application",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "applications",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "app_",
+    "incrementing": false,
+    "model": "Academorix\\Application\\Models\\Application",
+    "interface": "Academorix\\Application\\Contracts\\Data\\ApplicationInterface",
+    "implements": ["Academorix\\Application\\Contracts\\Data\\ApplicationInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "HasSystemFlag",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "config": "array",
+      "metadata": "array",
+      "is_default": "boolean",
+      "is_system": "boolean"
+    },
+    "appends": ["central_url", "platform_admin_url"],
+    "observers": ["ApplicationObserver"],
+    "hidden": ["metadata"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `app_<26 chars>`."
+      },
+      "slug": {
+        "type": "string",
+        "length": 63,
+        "nullable": false,
+        "description": "URL-safe application identifier."
+      },
+      "name": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "description": "Display name (e.g. 'Academorix', 'Academorix EU')."
+      },
+      "description": {
+        "type": "text",
+        "nullable": true
+      },
+      "default_business_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "BusinessType enum key preselected on the self-serve business-type picker for this application."
+      },
+      "default_locale": {
+        "type": "string",
+        "length": 10,
+        "nullable": false,
+        "default": "en"
+      },
+      "default_timezone": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "default": "UTC"
+      },
+      "default_currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": false,
+        "default": "USD"
+      },
+      "central_host": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "description": "Marketing + tenant-picker host (e.g. 'academorix.app'). Hard-refused as a tenant subdomain by `platform.domain` middleware."
+      },
+      "platform_admin_host": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "description": "Academorix staff surface host (e.g. 'admin.academorix.app')."
+      },
+      "config": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Application-scoped config bag: default branding tokens, feature-flag overrides, deployment metadata."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form platform notes. Never queried."
+      },
+      "is_default": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "True for the row seeded on `php artisan application:seed-catalogue`. Referenced when host resolution finds no matching application."
+      },
+      "is_system": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "From HasSystemFlag. True for platform-owned application rows. Refused on `ApplicationPolicy@update` / `@delete`."
+      },
+      "created_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "updated_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "deleted_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "deleted_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "SoftDeletes. Applications are archived, never hard-deleted."
+      },
+      "created_at": {
+        "type": "timestamptz",
+        "nullable": false
+      },
+      "updated_at": {
+        "type": "timestamptz",
+        "nullable": false
+      }
+    },
+    "indexes": [
+      {
+        "columns": ["slug"],
+        "unique": true,
+        "name": "applications_slug_unique"
+      },
+      {
+        "columns": ["central_host"],
+        "unique": true,
+        "name": "applications_central_host_unique"
+      },
+      {
+        "columns": ["platform_admin_host"],
+        "unique": true,
+        "name": "applications_platform_admin_host_unique"
+      },
+      {
+        "columns": ["is_default"],
+        "unique": false,
+        "name": "applications_is_default_index",
+        "predicate": "is_default = TRUE"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "slug",
+    "name",
+    "central_host",
+    "platform_admin_host",
+    "default_locale",
+    "default_timezone",
+    "default_currency",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "Prefixed ULID."
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$",
+      "minLength": 1,
+      "maxLength": 63
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "description": {
+      "type": ["string", "null"]
+    },
+    "default_business_type": {
+      "type": ["string", "null"],
+      "enum": ["academy", "sports_center", "school", "gym", "federation", "club", null]
+    },
+    "default_locale": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}(-[A-Z]{2})?$"
+    },
+    "default_timezone": {
+      "type": "string",
+      "description": "IANA timezone name."
+    },
+    "default_currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "central_host": {
+      "type": "string",
+      "format": "hostname"
+    },
+    "platform_admin_host": {
+      "type": "string",
+      "format": "hostname"
+    },
+    "config": {
+      "type": ["object", "null"],
+      "additionalProperties": true
+    },
+    "metadata": {
+      "type": ["object", "null"],
+      "additionalProperties": true
+    },
+    "is_default": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_system": {
+      "type": "boolean",
+      "default": false
+    },
+    "central_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Computed. `https://{central_host}`."
+    },
+    "platform_admin_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Computed. `https://{platform_admin_host}`."
+    },
+    "created_by": {
+      "type": ["string", "null"],
+      "format": "uuid"
+    },
+    "updated_by": {
+      "type": ["string", "null"],
+      "format": "uuid"
+    },
+    "deleted_by": {
+      "type": ["string", "null"],
+      "format": "uuid"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "deleted_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["metadata", "created_by", "updated_by", "deleted_by"],
+    "computed": ["central_url", "platform_admin_url"]
+  }
+}

@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "name": "Yara Al-Sadeq",
+    "subject": "Missed session enquiry",
+    "lastMessageAt": "2025-03-18T09:12:00Z",
+    "unread": 2,
+    "channel": "Portal",
+    "status": { "text": "Open", "color": "warning" },
+    "isActive": true,
+    "createdAt": "2025-03-18T09:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Nabil Farouk",
+    "subject": "Payment receipt request",
+    "lastMessageAt": "2025-03-17T15:44:00Z",
+    "unread": 0,
+    "channel": "Email",
+    "status": { "text": "Replied", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-03-17T15:20:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Coach Nadia Petrova",
+    "subject": "Roster adjustment · Squad A",
+    "lastMessageAt": "2025-03-18T07:02:00Z",
+    "unread": 1,
+    "channel": "Portal",
+    "status": { "text": "Open", "color": "warning" },
+    "isActive": true,
+    "createdAt": "2025-03-18T07:00:00Z"
+  },
+  {
+    "id": 4,
+    "name": "Ines Duarte",
+    "subject": "Beam grading question",
+    "lastMessageAt": "2025-03-16T18:30:00Z",
+    "unread": 0,
+    "channel": "Portal",
+    "status": { "text": "Resolved", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-03-16T18:00:00Z"
+  },
+  {
+    "id": 5,
+    "name": "Anonymous safeguarding",
+    "subject": "Sensitive · escalated",
+    "lastMessageAt": "2025-03-15T21:04:00Z",
+    "unread": 3,
+    "channel": "Portal",
+    "status": { "text": "Escalated", "color": "danger" },
+    "isActive": true,
+    "createdAt": "2025-03-15T21:00:00Z"
+  },
+  {
+    "id": 6,
+    "name": "Diego Alvarez",
+    "subject": "Return-to-play clearance",
+    "lastMessageAt": "2025-03-14T11:00:00Z",
+    "unread": 0,
+    "channel": "Email",
+    "status": { "text": "Replied", "color": "success" },
+    "isActive": true,
+    "createdAt": "2025-03-14T10:45:00Z"
+  }
+]

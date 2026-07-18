@@ -1,0 +1,30 @@
+{
+  "brand": {
+    "name": "Academorix",
+    "voice": "Confident, precise, and warm. Speaks like a senior academy director who happens to love shipping software: bold on outcomes, quiet on itself.",
+    "principles": [
+      "Show, don't tell. Every screen leads with the operator's job, not the marketing pitch.",
+      "One command center. Nothing lives in more than one place; scope switches the view.",
+      "Sport-agnostic by default. Terminology adapts per tenant — swimming, gymnastics, soccer, tennis, athletics, martial arts.",
+      "Accessible by construction. WCAG 2.2 AA, keyboard-first, RTL-first."
+    ]
+  },
+  "palette": {
+    "modes": ["glass-light", "glass-dark"],
+    "notes": "The glass family uses HeroUI Pro glassmorphism with a lime-green accent. The academorix family layers a chartreuse identity (oklch(0.87 0.212 132)) plus a Spectral serif for editorial surfaces. Themes are selected at runtime via data-theme on <html>."
+  },
+  "typography": {
+    "heading": {
+      "glass": "Inter",
+      "academorix": "Spectral"
+    },
+    "body": {
+      "default": "Inter",
+      "rtl": "IBM Plex Sans Arabic"
+    }
+  },
+  "iconography": {
+    "primary": "@gravity-ui/icons",
+    "fallback": "@iconify/react"
+  }
+}

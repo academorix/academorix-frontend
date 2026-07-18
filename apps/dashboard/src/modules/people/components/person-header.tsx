@@ -47,7 +47,9 @@ export interface PersonHeaderProps {
 export function PersonHeader({ person, size = "md", actions }: PersonHeaderProps): ReactNode {
   const languages = person.languages.length > 0 ? person.languages.join(", ") : EMPTY_PLACEHOLDER;
   const titleClass =
-    size === "sm" ? "text-lg font-semibold text-foreground" : "text-xl font-semibold text-foreground";
+    size === "sm"
+      ? "text-lg font-semibold text-foreground"
+      : "text-xl font-semibold text-foreground";
 
   return (
     <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">

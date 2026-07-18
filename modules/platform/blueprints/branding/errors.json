@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/branding/errors",
+  "$version": 1,
+  "title": "branding — error catalogue",
+  "description": "Domain exception classes + HTTP status + translation keys.",
+  "errors": []
+}

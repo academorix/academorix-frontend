@@ -1,0 +1,50 @@
+{
+  "id": "academorix://modules/invitations/retention",
+  "$version": 1,
+  "title": "invitations — data retention windows",
+  "description": "Retention per model. Drives CleanupAcceptedInvitationsJob + the compliance module's retention orchestrator. Durations ISO-8601. Compliance tier drives DSAR + right-to-erasure behaviour per data-classes.json.",
+  "retention": [
+    {
+      "model": "Invitation",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": null,
+      "byState": {
+        "pending": {
+          "softDeleteAfter": null,
+          "hardDeleteAfter": "P180D",
+          "description": "Never soft-deleted while pending; but a pending invitation older than 180 days without any activity is a data-quality issue and gets hard-deleted."
+        },
+        "delivered": { "softDeleteAfter": null, "hardDeleteAfter": "P180D" },
+        "opened": { "softDeleteAfter": null, "hardDeleteAfter": "P180D" },
+        "clicked": { "softDeleteAfter": null, "hardDeleteAfter": "P180D" },
+        "accepted": {
+          "softDeleteAfter": "P90D",
+          "hardDeleteAfter": "P365D",
+          "description": "Kept 90 days for admin visibility; soft-deleted then; hard-deleted at 1 year for GDPR compliance."
+        },
+        "declined": { "softDeleteAfter": "P30D", "hardDeleteAfter": "P90D" },
+        "expired": { "softDeleteAfter": "P30D", "hardDeleteAfter": "P90D" },
+        "revoked": { "softDeleteAfter": "P30D", "hardDeleteAfter": "P90D" },
+        "bounced": {
+          "softDeleteAfter": "P90D",
+          "hardDeleteAfter": "P365D",
+          "description": "Kept longer for deliverability learning (avoid re-inviting confirmed-invalid addresses)."
+        }
+      },
+      "complianceTier": "customer_data",
+      "erasureOnRequest": "P0D",
+      "description": "GDPR erasure: on subject request, the invitation is anonymised in place (email → `erased-<hash>@invalid.local`, message + metadata purged) and cascaded to InvitationEvent rows. Full row deletion happens via the retention pipeline."
+    },
+    {
+      "model": "InvitationEvent",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": "P365D",
+      "complianceTier": "audit_log",
+      "description": "Append-only. Retained 1 year hot for SOC 2 evidence + funnel analysis. Older rows shipped to cold storage per compliance module's export orchestrator. NOT deleted on right-to-erasure — the event row is anonymised (ip_address, user_agent, city zeroed) but the invitation_id + event + occurred_at + transport are preserved for aggregate deliverability + audit."
+    }
+  ],
+  "complianceTiers": {
+    "customer_data": "Customer-owned records (invitations). Retained for the customer's benefit until the retention window. Subject to erasure on request.",
+    "audit_log": "Immutable audit records. Retained for the shortest of the compliance regime maximum + the operational SLA. Anonymised, not deleted, on erasure requests."
+  }
+}

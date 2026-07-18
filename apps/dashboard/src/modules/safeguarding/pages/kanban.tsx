@@ -37,7 +37,7 @@
  * `safeguarding.module.tsx` in that case so pasted URLs land on the list.
  */
 
-import { PlusIcon, TableCellsIcon } from "@academorix/ui/icons/outline";
+import { PlusIcon, TableCellsIcon } from "@stackra/ui/icons/heroicon/outline";
 import {
   Button,
   Chip,
@@ -47,10 +47,10 @@ import {
   Spinner,
   toast,
   Tooltip,
-} from "@academorix/ui/react";
+} from "@stackra/ui/react";
 import { useList, useUpdate } from "@refinedev/core";
 import { useMemo, useState } from "react";
-import { Link } from "react-router";
+import { Link } from "@stackra/routing/react";
 
 import type { KanbanColumn } from "@/components/kanban";
 import type {

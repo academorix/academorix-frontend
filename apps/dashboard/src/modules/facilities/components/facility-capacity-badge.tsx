@@ -12,7 +12,7 @@
  * Used in the DataGrid's capacity column and on the detail-page metadata row.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 
 import type { Facility } from "@/modules/facilities/facilities.types";
 import type { ReactNode } from "react";

@@ -15,9 +15,9 @@
  * consistent regardless of which surface is showing it.
  */
 
-import { BellSlashIcon, Cog6ToothIcon } from "@academorix/ui/icons/outline";
-import { Button, EmptyState } from "@academorix/ui/react";
-import { useNavigate } from "react-router";
+import { BellSlashIcon, Cog6ToothIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, EmptyState } from "@stackra/ui/react";
+import { useNavigate } from "@stackra/routing/react";
 
 import type { ReactNode } from "react";
 

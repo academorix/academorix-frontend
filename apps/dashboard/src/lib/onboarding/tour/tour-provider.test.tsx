@@ -18,7 +18,7 @@
  */
 
 import { act, render, renderHook, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router";
+import { RoutingTestFrame } from "@stackra/routing/testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { ReactNode } from "react";
@@ -185,10 +185,15 @@ function Wrapper({
   children: ReactNode;
   initialUrl?: string;
 }): ReactNode {
+  // `<RoutingTestFrame>` mounts the same three providers
+  // `renderWithRouting` does — `<ContainerProvider>` +
+  // `<StackraRoutingContext.Provider>` + `<MemoryRouter>` — so both
+  // Stackra hooks (`useNavigate` etc.) AND RRv7-native re-exports
+  // (`useLocation` etc.) resolve inside the tour tree.
   return (
-    <MemoryRouter initialEntries={[initialUrl]}>
+    <RoutingTestFrame initialEntries={[initialUrl]}>
       <TourProvider>{children}</TourProvider>
-    </MemoryRouter>
+    </RoutingTestFrame>
   );
 }
 

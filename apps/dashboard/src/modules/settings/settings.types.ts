@@ -13,7 +13,7 @@
  * the full JSON schema this module will grow into.
  */
 
-import type { IconType } from "@academorix/ui/icons";
+import type { IconType } from "@stackra/ui/icons";
 
 /** Stable identifier for every top-level section in the module. */
 export type SettingsSectionId =

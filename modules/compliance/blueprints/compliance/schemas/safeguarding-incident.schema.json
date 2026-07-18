@@ -1,0 +1,262 @@
+{
+  "id": "academorix://modules/compliance/schemas/safeguarding-incident",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "SafeguardingIncident",
+  "description": "Minor-safeguarding report inbox. Distinct from audit (diff-driven) and activity (user feed) \u2014 domain-driven reports about welfare concerns for minors. Severity drives escalation SLAs. External referrals (contacting authorities) are NEVER automated \u2014 the tenant's designated safeguarding lead completes the referral out-of-band + records the referral reference here.",
+  "type": "object",
+  "x-module": "compliance",
+  "x-eloquent": {
+    "table": "safeguarding_incidents",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "sfi_",
+    "incrementing": false,
+    "model": "Academorix\\Compliance\\Models\\SafeguardingIncident",
+    "interface": "Academorix\\Compliance\\Contracts\\Data\\SafeguardingIncidentInterface",
+    "implements": ["Academorix\\Compliance\\Contracts\\Data\\SafeguardingIncidentInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "severity": "SafeguardingSeverity",
+      "state": "SafeguardingIncidentState",
+      "reported_at": "datetime",
+      "triaged_at": "datetime",
+      "investigating_at": "datetime",
+      "escalated_at": "datetime",
+      "resolved_at": "datetime",
+      "closed_at": "datetime",
+      "sla_deadline": "datetime",
+      "keywords_matched": "array",
+      "notes": "array",
+      "external_referral": "array",
+      "pending_external_referral": "boolean",
+      "metadata": "array"
+    },
+    "appends": ["is_overdue", "hours_until_deadline"],
+    "observers": ["SafeguardingIncidentObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true, "description": "`sfi_<26>`" },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "subject_type": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "The minor at the centre of the concern. Typically `Academorix\\Sports\\Models\\Athlete` when that ships."
+      },
+      "subject_id": { "type": "string", "length": 64, "nullable": false },
+      "severity": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: info / concern / urgent / critical."
+      },
+      "state": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'reported'",
+        "description": "Enum: reported / triaging / investigating / escalated / resolved / closed_no_action."
+      },
+      "reported_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" },
+        "description": "NULL for anonymous reports (feature-flagged; enterprise tenants opt in)."
+      },
+      "assigned_to_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" },
+        "description": "The tenant's safeguarding officer. Assigned during triage."
+      },
+      "reported_at": { "type": "timestamptz", "nullable": false },
+      "triaged_at": { "type": "timestamptz", "nullable": true },
+      "investigating_at": { "type": "timestamptz", "nullable": true },
+      "escalated_at": { "type": "timestamptz", "nullable": true },
+      "resolved_at": { "type": "timestamptz", "nullable": true },
+      "closed_at": { "type": "timestamptz", "nullable": true },
+      "sla_deadline": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Computed on state=reported per severity policy. info=NULL, concern=+120h, urgent=+24h, critical=+1h."
+      },
+      "description": {
+        "type": "text",
+        "nullable": false,
+        "description": "The original report text. Sensitive \u2014 wire-hidden from anyone but assigned_to + tenant safeguarding officers."
+      },
+      "keywords_matched": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Array of keyword hits that triggered auto-escalation (abuse / harm / medical / neglect / discrimination lexicon). Empty for reports submitted below the auto-escalation threshold."
+      },
+      "notes": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Append-only array of {actor_id, timestamp, note} for investigation trail."
+      },
+      "external_referral": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "When an external authority has been contacted: {authority_name, reference_number, contacted_at, contacted_by_user_id, method (phone / portal / paper)}."
+      },
+      "pending_external_referral": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Set true when severity=critical AND external_referral is null. Flagged on the safeguarding dashboard."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "state", "severity", "sla_deadline"],
+        "unique": false,
+        "name": "safeguarding_incidents_queue_idx",
+        "description": "Safeguarding officer's queue view + overdue-sweep scan."
+      },
+      {
+        "columns": ["subject_type", "subject_id"],
+        "unique": false,
+        "name": "safeguarding_incidents_subject_idx",
+        "description": "History-per-subject view. Same subject with 3+ incidents in 30d triggers pattern-alert."
+      },
+      {
+        "columns": ["pending_external_referral"],
+        "unique": false,
+        "name": "safeguarding_incidents_pending_referral_idx",
+        "predicate": "pending_external_referral = true",
+        "description": "Critical-with-no-referral dashboard scan."
+      },
+      {
+        "columns": ["assigned_to_user_id", "state"],
+        "unique": false,
+        "name": "safeguarding_incidents_assigned_queue_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "subject_type",
+    "subject_id",
+    "severity",
+    "state",
+    "reported_at",
+    "description",
+    "keywords_matched",
+    "notes",
+    "pending_external_referral",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^sfi_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "subject_type": { "type": "string" },
+    "subject_id": { "type": "string" },
+    "severity": { "type": "string", "enum": ["info", "concern", "urgent", "critical"] },
+    "state": {
+      "type": "string",
+      "enum": ["reported", "triaging", "investigating", "escalated", "resolved", "closed_no_action"]
+    },
+    "reported_by_user_id": { "type": ["string", "null"] },
+    "assigned_to_user_id": { "type": ["string", "null"] },
+    "reported_at": { "type": "string", "format": "date-time" },
+    "triaged_at": { "type": ["string", "null"], "format": "date-time" },
+    "investigating_at": { "type": ["string", "null"], "format": "date-time" },
+    "escalated_at": { "type": ["string", "null"], "format": "date-time" },
+    "resolved_at": { "type": ["string", "null"], "format": "date-time" },
+    "closed_at": { "type": ["string", "null"], "format": "date-time" },
+    "sla_deadline": { "type": ["string", "null"], "format": "date-time" },
+    "description": { "type": "string", "minLength": 10 },
+    "keywords_matched": { "type": "array", "items": { "type": "string" } },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "actor_id": { "type": ["string", "null"] },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "external_referral": {
+      "type": ["object", "null"],
+      "properties": {
+        "authority_name": { "type": "string" },
+        "reference_number": { "type": "string" },
+        "contacted_at": { "type": "string", "format": "date-time" },
+        "contacted_by_user_id": { "type": "string" },
+        "method": { "type": "string", "enum": ["phone", "portal", "paper", "email"] }
+      }
+    },
+    "pending_external_referral": { "type": "boolean" },
+    "metadata": { "type": ["object", "null"] },
+    "is_overdue": {
+      "type": "boolean",
+      "description": "Computed. True when sla_deadline is past + state not in [resolved, closed_no_action]."
+    },
+    "hours_until_deadline": {
+      "type": ["number", "null"],
+      "description": "Computed. Negative when overdue; null when severity=info."
+    },
+    "created_by": { "type": ["string", "null"] },
+    "updated_by": { "type": ["string", "null"] },
+    "deleted_by": { "type": ["string", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": [
+      "description",
+      "notes",
+      "keywords_matched",
+      "external_referral",
+      "created_by",
+      "updated_by",
+      "deleted_by"
+    ],
+    "computed": ["is_overdue", "hours_until_deadline"],
+    "notes": [
+      "description + notes + keywords_matched + external_referral are HIDDEN on general tenant wire. Visible to: (a) the assigned safeguarding officer, (b) tenant admin with safeguarding.incidents.view permission, (c) platform-admin with platform.compliance.safeguarding.view permission.",
+      "The report submitter can see their own submission via the reporter's history endpoint even without safeguarding.incidents.view."
+    ]
+  }
+}

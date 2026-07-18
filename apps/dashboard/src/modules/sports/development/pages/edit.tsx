@@ -6,7 +6,7 @@
  * Development-plan edit screen. Renders the shared form once the record loads.
  */
 
-import { Spinner } from "@academorix/ui/react";
+import { Spinner } from "@stackra/ui/react";
 import { useForm } from "@refinedev/core";
 
 import type { DevelopmentPlan } from "@/modules/sports/development/development.types";

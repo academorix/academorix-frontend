@@ -1,0 +1,33 @@
+{
+  "id": "academorix://modules/webhook/data/webhook-events-catalog",
+  "$version": 1,
+  "title": "webhook \u2014 bootstrap event catalog seed",
+  "description": "Bootstrap events registered with the WebhookRegistry at deploy time. Only meta events \u2014 webhook.test (synthetic test event) + webhook.probe (health probe). Real business events (invitation.sent, notification.delivered, subscription.created, etc.) register at boot via #[AsWebhookEvent] discovery.",
+  "seeder": "Academorix\\Webhook\\Database\\Seeders\\BootstrapEventCatalogSeeder",
+  "target": "WebhookRegistry (in-memory / Redis cache)",
+  "events": [
+    {
+      "name": "webhook.test",
+      "class": "Academorix\\Webhook\\Events\\WebhookTestEvent",
+      "version": "v1",
+      "description": "Synthetic test event dispatched by /subscriptions/{id}/test endpoint. Receivers should acknowledge with 200 OK and ignore.",
+      "payload_shape": {
+        "test_id": "ULID",
+        "subscription_id": "ULID",
+        "dispatched_at": "ISO 8601",
+        "tenant": { "id": "ULID", "name": "string" },
+        "note": "This is a synthetic test event. Safe to ignore or acknowledge."
+      },
+      "is_system": true
+    },
+    {
+      "name": "webhook.probe",
+      "class": "Academorix\\Webhook\\Events\\WebhookProbeEvent",
+      "version": "v1",
+      "description": "Health probe event (only referenced by WebhookProbeJob for the probe HEAD; NOT dispatched as a real payload). Kept in catalog for documentation.",
+      "payload_shape": null,
+      "is_system": true,
+      "internal_only": true
+    }
+  ]
+}

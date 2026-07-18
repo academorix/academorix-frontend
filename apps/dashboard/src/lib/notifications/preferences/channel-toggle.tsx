@@ -14,7 +14,7 @@
  * ship later.
  */
 
-import { Switch } from "@academorix/ui/react";
+import { Switch } from "@stackra/ui/react";
 
 import type { ReactNode } from "react";
 

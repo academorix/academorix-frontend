@@ -22,8 +22,8 @@
  * — cheap when we need it, unnecessary today.
  */
 
-import { BellIcon } from "@academorix/ui/icons/outline";
-import { Badge, Button } from "@academorix/ui/react";
+import { BellIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Badge, Button } from "@stackra/ui/react";
 import { useState } from "react";
 
 import type { ReactNode } from "react";

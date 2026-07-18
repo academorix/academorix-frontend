@@ -21,8 +21,8 @@ import {
   EyeIcon,
   EyeSlashIcon,
   XMarkIcon,
-} from "@academorix/ui/icons/outline";
-import { CheckCircleIcon as CheckCircleSolid } from "@academorix/ui/icons/solid";
+} from "@stackra/ui/icons/heroicon/outline";
+import { CheckCircleIcon as CheckCircleSolid } from "@stackra/ui/icons/heroicon/solid";
 import {
   Button,
   Chip,
@@ -32,8 +32,8 @@ import {
   ProgressBar,
   Separator,
   Skeleton,
-} from "@academorix/ui/react";
-import { useNavigate } from "react-router";
+} from "@stackra/ui/react";
+import { useNavigate } from "@stackra/routing/react";
 
 import type { ChecklistState, ChecklistTaskState } from "./use-checklist-tasks";
 import type { ReactNode } from "react";

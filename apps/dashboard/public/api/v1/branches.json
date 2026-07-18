@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "name": "Downtown",
+    "region": "US · West",
+    "openedAt": "2019-01-01",
+    "activeAthletes": 246,
+    "status": { "text": "Active", "color": "success" },
+    "isActive": true,
+    "manager": "Alex Morgan",
+    "createdAt": "2019-01-01T09:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Riverside",
+    "region": "US · West",
+    "openedAt": "2022-06-15",
+    "activeAthletes": 102,
+    "status": { "text": "Active", "color": "success" },
+    "isActive": true,
+    "manager": "Marcus Chen",
+    "createdAt": "2022-06-15T09:00:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Northgate",
+    "region": "UK",
+    "openedAt": "2023-04-01",
+    "activeAthletes": 80,
+    "status": { "text": "Active", "color": "success" },
+    "isActive": true,
+    "manager": "Hana Kim",
+    "createdAt": "2023-04-01T09:00:00Z"
+  }
+]

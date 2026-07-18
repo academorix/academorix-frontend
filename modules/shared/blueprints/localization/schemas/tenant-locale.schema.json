@@ -1,0 +1,183 @@
+{
+  "id": "academorix://modules/localization/schemas/tenant-locale",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "TenantLocale",
+  "description": "Per-tenant association of a PlatformLanguage. Records that this tenant has enabled the locale, whether it's the default / fallback, and tenant-specific translation preferences (auto-translate driver, quality threshold). `language_id` FKs to `platform_languages.id` (Wave 5: was formerly `languages.id` before the PlatformLanguage rename).",
+  "type": "object",
+  "x-module": "localization",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "tenant_locales",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "wsl_",
+    "incrementing": false,
+    "model": "Academorix\\Localization\\Models\\TenantLocale",
+    "interface": "Academorix\\Localization\\Contracts\\Data\\TenantLocaleInterface",
+    "implements": ["Academorix\\Localization\\Contracts\\Data\\TenantLocaleInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "is_default": "boolean",
+      "is_fallback": "boolean",
+      "is_enabled": "boolean",
+      "auto_translate": "boolean",
+      "auto_translate_ttl_hours": "integer",
+      "min_quality_score": "float",
+      "metadata": "array"
+    },
+    "appends": ["language_code", "language_native_name", "language_direction"],
+    "relations_note": "`platformLanguage()` belongsTo PlatformLanguage via language_id. Accessors `language_code` / `language_native_name` / `language_direction` chain through the PlatformLanguage \u2192 geography::Language accessors (name / native_name / direction come from geography; bcp47_code from PlatformLanguage).",
+    "observers": ["TenantLocaleObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `wsl_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "language_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "platform_languages", "column": "id", "onDelete": "restrict" },
+        "description": "FK to `PlatformLanguage.id`. Column name stays `language_id` (concept-name) even though the target table is `platform_languages` (Laravel FK-column-vs-table-name is a convention we keep)."
+      },
+      "is_default": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Exactly one TenantLocale per tenant has is_default=true (enforced by partial unique index)."
+      },
+      "is_fallback": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "At most one is_fallback=true per tenant. Falls back for keys missing in the active locale."
+      },
+      "is_enabled": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "False = temporarily disabled without deleting the row. Preserves translations for later re-enable."
+      },
+      "auto_translate": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "When true + a cache miss occurs, dispatch TranslateJob to fill it. Consumes localization.ai_translations.month entitlement."
+      },
+      "auto_translate_driver": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Override driver for this locale. Null = use tenant default. Enum: openai / google / deepl / aws-translate / azure-translator / null."
+      },
+      "auto_translate_ttl_hours": {
+        "type": "integer",
+        "nullable": false,
+        "default": 720,
+        "description": "Cache TTL for auto-translated entries. Default 30 days. Beyond TTL, next resolution re-translates (checked against source_hash for freshness)."
+      },
+      "min_quality_score": {
+        "type": "numeric",
+        "nullable": true,
+        "description": "Optional lower bound on driver-reported quality (0.0\u20131.0). Translations below this score refuse to persist and fall back to key."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "language_id"],
+        "unique": true,
+        "name": "tenant_locales_tenant_language_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["tenant_id"],
+        "unique": true,
+        "name": "tenant_locales_default_unique",
+        "predicate": "is_default = true AND deleted_at IS NULL",
+        "description": "One default per tenant."
+      },
+      {
+        "columns": ["tenant_id"],
+        "unique": true,
+        "name": "tenant_locales_fallback_unique",
+        "predicate": "is_fallback = true AND deleted_at IS NULL",
+        "description": "At most one fallback per tenant."
+      },
+      {
+        "columns": ["tenant_id", "is_enabled"],
+        "unique": false,
+        "name": "tenant_locales_scan_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "language_id",
+    "is_default",
+    "is_fallback",
+    "is_enabled",
+    "auto_translate",
+    "auto_translate_ttl_hours",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^wsl_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "language_id": { "type": "string", "pattern": "^lng_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "is_default": { "type": "boolean" },
+    "is_fallback": { "type": "boolean" },
+    "is_enabled": { "type": "boolean" },
+    "auto_translate": { "type": "boolean" },
+    "auto_translate_driver": {
+      "type": ["string", "null"],
+      "enum": ["openai", "google", "deepl", "aws-translate", "azure-translator", "null", null]
+    },
+    "auto_translate_ttl_hours": { "type": "integer", "minimum": 1, "maximum": 8760 },
+    "min_quality_score": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+    "language_code": { "type": "string", "description": "Computed. PlatformLanguage.bcp47_code." },
+    "language_native_name": { "type": "string" },
+    "language_direction": { "type": "string", "enum": ["ltr", "rtl"] },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["language_code", "language_native_name", "language_direction"]
+  }
+}

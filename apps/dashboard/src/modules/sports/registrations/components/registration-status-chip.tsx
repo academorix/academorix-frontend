@@ -6,7 +6,7 @@
  * Color-coded chip for a {@link RegistrationStatus} in the acquisition funnel.
  */
 
-import { Chip } from "@academorix/ui/react";
+import { Chip } from "@stackra/ui/react";
 
 import type { RegistrationStatus } from "@/types";
 import type { ReactNode } from "react";

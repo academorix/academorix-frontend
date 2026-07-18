@@ -1,0 +1,133 @@
+{
+  "id": "notifications.resources.category.list",
+  "title": "Notification categories",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/notification-categories",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "notifications", "entity": "category", "action": "list" },
+  "requiresPermission": "notifications.templates.viewAny",
+  "dataSources": [
+    {
+      "name": "categories",
+      "kind": "http.get",
+      "url": "/api/v1/tenant/notification-categories",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 3600 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-1" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Notification categories"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Read-only registry. Every category is contributed by a module. Tenancy may override display_name + default_channels but not priority + consent_tier."
+              }
+            }
+          ]
+        },
+        {
+          "id": "table",
+          "kind": "DataGrid",
+          "props": { "selection": "none" },
+          "bindings": {
+            "items": { "$ref": "categories" },
+            "isLoading": { "$ref": "categories.isLoading" }
+          },
+          "columns": [
+            {
+              "id": "slug",
+              "header": "Slug",
+              "cell": {
+                "kind": "View",
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-mono text-sm" },
+                    "bindings": { "children": { "$ref": "row.slug" } }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted" },
+                    "bindings": { "children": { "$ref": "row.owning_module" } }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "display_name",
+              "header": "Display name",
+              "cell": { "kind": "Text", "bindings": { "children": { "$ref": "row.display_name" } } }
+            },
+            {
+              "id": "priority",
+              "header": "Priority",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "sm" },
+                "bindings": {
+                  "variant": {
+                    "$expr": "row.priority === 'critical' ? 'danger' : (row.priority === 'transactional' ? 'info' : (row.priority === 'product' ? 'neutral' : 'warning'))"
+                  },
+                  "children": { "$ref": "row.priority" }
+                }
+              }
+            },
+            {
+              "id": "consent_tier",
+              "header": "Consent",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-xs text-muted" },
+                "bindings": { "children": { "$ref": "row.consent_tier" } }
+              }
+            },
+            {
+              "id": "default_channels",
+              "header": "Default channels",
+              "cell": {
+                "kind": "View",
+                "props": { "className": "flex gap-1" },
+                "bindings": { "items": { "$ref": "row.default_channels" } },
+                "itemRenderer": {
+                  "kind": "Widget",
+                  "widget": "notifications.channel-icon",
+                  "props": { "channel": { "$ref": "row" }, "size": "xs", "showLabel": false }
+                }
+              }
+            },
+            {
+              "id": "opt_out_allowed",
+              "header": "Opt-out",
+              "cell": {
+                "kind": "Icon",
+                "bindings": {
+                  "icon": { "$expr": "row.opt_out_allowed ? 'check' : 'lock-closed'" },
+                  "className": { "$expr": "row.opt_out_allowed ? 'text-success' : 'text-muted'" }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

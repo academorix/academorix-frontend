@@ -1,0 +1,6 @@
+{
+  "sync.status.synced": "تمت المزامنة ✓",
+  "sync.status.syncing": "جارٍ المزامنة...",
+  "sync.status.pending": "{{count}} معلّق",
+  "sync.status.offline": "غير متصل"
+}

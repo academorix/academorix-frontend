@@ -1,0 +1,28 @@
+{
+  "id": "academorix://modules/entitlements/schedule",
+  "$version": 1,
+  "title": "entitlements \u2014 scheduled tasks",
+  "entries": [
+    {
+      "name": "entitlements-reset-periodic",
+      "command": "entitlements:reset",
+      "cron": "*/15 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 15 minutes: reset pool Entitlements past their resets_at boundary. Frequent enough to catch month boundaries in every timezone (UTC-12 to UTC+14)."
+    },
+    {
+      "name": "entitlements-reconcile-usage",
+      "command": "entitlements:reconcile",
+      "cron": "10 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly at :10: sync Redis counters to Postgres source-of-truth."
+    },
+    {
+      "name": "entitlements-prune-usage",
+      "command": "entitlements:prune-usage",
+      "cron": "30 3 1 * *",
+      "timezone": "UTC",
+      "purpose": "Monthly 1st @ 03:30 UTC: DROP old EntitlementUsage partitions past retention."
+    }
+  ]
+}

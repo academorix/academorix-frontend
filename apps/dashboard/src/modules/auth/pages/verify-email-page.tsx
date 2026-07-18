@@ -14,10 +14,10 @@
  * ask them to check their email again.
  */
 
-import { CheckCircleIcon, EnvelopeIcon } from "@academorix/ui/icons/outline";
-import { Button } from "@academorix/ui/react";
+import { CheckCircleIcon, EnvelopeIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button } from "@stackra/ui/react";
 import { useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "@stackra/routing/react";
 
 import type { ReactNode } from "react";
 

@@ -1,0 +1,10 @@
+includes:
+    - ../../config/phpstan-base.neon
+
+parameters:
+    paths:
+        - src
+
+    excludePaths:
+        analyseAndScan:
+            - vendor/*

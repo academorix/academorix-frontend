@@ -18,10 +18,7 @@ import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import type { KanbanColumn } from "@/components/kanban/kanban-board.types";
-import type {
-  DragEvent as ReactDragEvent,
-  KeyboardEvent as ReactKeyboardEvent,
-} from "react";
+import type { DragEvent as ReactDragEvent, KeyboardEvent as ReactKeyboardEvent } from "react";
 
 import { useKanbanDrag } from "@/components/kanban/use-kanban-drag";
 
@@ -160,9 +157,7 @@ describe("useKanbanDrag", () => {
 
     it("fires onMove with (cardId, fromColumn, toColumn, order) on drop", () => {
       const onMove = vi.fn();
-      const { result } = renderHook(() =>
-        useKanbanDrag<ColumnId>({ columns: COLUMNS, onMove }),
-      );
+      const { result } = renderHook(() => useKanbanDrag<ColumnId>({ columns: COLUMNS, onMove }));
 
       const cardProps = result.current.getCardDragProps("card-1", "new", 0);
       const dataTransfer = createFakeDataTransfer();
@@ -193,9 +188,7 @@ describe("useKanbanDrag", () => {
 
     it("does not fire onMove when the drag payload is missing (external drop)", () => {
       const onMove = vi.fn();
-      const { result } = renderHook(() =>
-        useKanbanDrag<ColumnId>({ columns: COLUMNS, onMove }),
-      );
+      const { result } = renderHook(() => useKanbanDrag<ColumnId>({ columns: COLUMNS, onMove }));
 
       // No `onDragStart` — we simulate a drop from outside the board (e.g.
       // dragging text onto the column). The hook should treat this as a
@@ -212,9 +205,7 @@ describe("useKanbanDrag", () => {
 
     it("silently ignores a drop with a malformed payload", () => {
       const onMove = vi.fn();
-      const { result } = renderHook(() =>
-        useKanbanDrag<ColumnId>({ columns: COLUMNS, onMove }),
-      );
+      const { result } = renderHook(() => useKanbanDrag<ColumnId>({ columns: COLUMNS, onMove }));
 
       const dataTransfer = createFakeDataTransfer();
 
@@ -278,9 +269,7 @@ describe("useKanbanDrag", () => {
 
     it("fires onMove and resets when Enter commits the previewed column", () => {
       const onMove = vi.fn();
-      const { result } = renderHook(() =>
-        useKanbanDrag<ColumnId>({ columns: COLUMNS, onMove }),
-      );
+      const { result } = renderHook(() => useKanbanDrag<ColumnId>({ columns: COLUMNS, onMove }));
 
       const invoke = (key: string): void => {
         act(() => {
@@ -299,9 +288,7 @@ describe("useKanbanDrag", () => {
 
     it("resets grabbed state on Escape without firing onMove", () => {
       const onMove = vi.fn();
-      const { result } = renderHook(() =>
-        useKanbanDrag<ColumnId>({ columns: COLUMNS, onMove }),
-      );
+      const { result } = renderHook(() => useKanbanDrag<ColumnId>({ columns: COLUMNS, onMove }));
 
       const invoke = (key: string): void => {
         act(() => {
@@ -335,9 +322,7 @@ describe("useKanbanDrag", () => {
 
     it("space acts as Enter for grab + commit", () => {
       const onMove = vi.fn();
-      const { result } = renderHook(() =>
-        useKanbanDrag<ColumnId>({ columns: COLUMNS, onMove }),
-      );
+      const { result } = renderHook(() => useKanbanDrag<ColumnId>({ columns: COLUMNS, onMove }));
 
       const invoke = (key: string): void => {
         act(() => {

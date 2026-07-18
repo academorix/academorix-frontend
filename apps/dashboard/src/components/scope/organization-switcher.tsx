@@ -8,7 +8,7 @@
  * provider). Renders read-only when the caller has a single organization.
  */
 
-import { BuildingOffice2Icon } from "@academorix/ui/icons/outline";
+import { BuildingOffice2Icon } from "@stackra/ui/icons/heroicon/outline";
 
 import type { ReactNode } from "react";
 

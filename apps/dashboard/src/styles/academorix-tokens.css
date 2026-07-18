@@ -1,0 +1,108 @@
+/**
+ * @file academorix-tokens.css
+ * @module styles/academorix-tokens
+ *
+ * @description
+ * Academorix-specific design tokens (§15). Sits on top of HeroUI's default
+ * `--color-*`, `--radius-*`, `--font-*`, `--spacing-*` tokens and adds
+ * status / role / sport / pipeline colours the app leans on.
+ */
+
+:root {
+  /* Role colours — badges, chips, and per-role sidebar accents. */
+  --color-role-owner: oklch(0.62 0.19 300);
+  --color-role-coach: oklch(0.68 0.17 220);
+  --color-role-reception: oklch(0.7 0.16 180);
+  --color-role-finance: oklch(0.68 0.16 140);
+  --color-role-athlete: oklch(0.75 0.16 60);
+
+  /* Per-sport accents — Agenda events, cards, chips. */
+  --color-sport-football: oklch(0.66 0.19 140);
+  --color-sport-basketball: oklch(0.7 0.18 40);
+  --color-sport-swimming: oklch(0.72 0.16 220);
+  --color-sport-tennis: oklch(0.78 0.17 100);
+  --color-sport-volleyball: oklch(0.72 0.18 20);
+  --color-sport-gymnastics: oklch(0.68 0.19 340);
+  --color-sport-cricket: oklch(0.7 0.18 80);
+  --color-sport-athletics: oklch(0.68 0.18 260);
+  --color-sport-rugby: oklch(0.6 0.17 30);
+  --color-sport-cycling: oklch(0.7 0.16 200);
+
+  /* Lead pipeline colours — Kanban columns and status cells. */
+  --color-status-lead-new: oklch(0.72 0.14 220);
+  --color-status-lead-contacted: oklch(0.72 0.14 180);
+  --color-status-lead-qualified: oklch(0.72 0.16 90);
+  --color-status-lead-converted: oklch(0.7 0.19 140);
+  --color-status-lead-lost: oklch(0.65 0.19 20);
+
+  /* Attendance status colours. */
+  --color-status-attendance-present: oklch(0.7 0.19 140);
+  --color-status-attendance-late: oklch(0.72 0.16 80);
+  --color-status-attendance-absent: oklch(0.65 0.19 20);
+  --color-status-attendance-excused: oklch(0.7 0.14 220);
+
+  /* Payment status colours. */
+  --color-status-payment-paid: oklch(0.7 0.19 140);
+  --color-status-payment-pending: oklch(0.72 0.16 80);
+  --color-status-payment-overdue: oklch(0.65 0.19 20);
+  --color-status-payment-refunded: oklch(0.7 0.11 260);
+  --color-status-payment-void: oklch(0.55 0.03 260);
+
+  /* Safeguarding severity colours. */
+  --color-safeguarding-severity-low: oklch(0.72 0.14 220);
+  --color-safeguarding-severity-medium: oklch(0.72 0.16 80);
+  --color-safeguarding-severity-high: oklch(0.65 0.19 20);
+  --color-safeguarding-severity-critical: oklch(0.55 0.22 20);
+}
+
+/* Dark-mode reweights so contrast stays predictable. */
+.dark {
+  --color-role-owner: oklch(0.7 0.16 300);
+  --color-role-coach: oklch(0.76 0.14 220);
+  --color-role-reception: oklch(0.78 0.14 180);
+  --color-role-finance: oklch(0.76 0.14 140);
+  --color-role-athlete: oklch(0.82 0.14 60);
+
+  --color-sport-football: oklch(0.75 0.16 140);
+  --color-sport-basketball: oklch(0.78 0.16 40);
+  --color-sport-swimming: oklch(0.8 0.14 220);
+  --color-sport-tennis: oklch(0.85 0.15 100);
+  --color-sport-volleyball: oklch(0.8 0.16 20);
+  --color-sport-gymnastics: oklch(0.75 0.16 340);
+  --color-sport-cricket: oklch(0.78 0.16 80);
+  --color-sport-athletics: oklch(0.75 0.16 260);
+  --color-sport-rugby: oklch(0.7 0.15 30);
+  --color-sport-cycling: oklch(0.78 0.14 200);
+
+  --color-status-lead-new: oklch(0.8 0.12 220);
+  --color-status-lead-contacted: oklch(0.8 0.12 180);
+  --color-status-lead-qualified: oklch(0.8 0.14 90);
+  --color-status-lead-converted: oklch(0.78 0.17 140);
+  --color-status-lead-lost: oklch(0.72 0.17 20);
+
+  --color-status-attendance-present: oklch(0.78 0.17 140);
+  --color-status-attendance-late: oklch(0.8 0.14 80);
+  --color-status-attendance-absent: oklch(0.72 0.17 20);
+  --color-status-attendance-excused: oklch(0.78 0.12 220);
+
+  --color-status-payment-paid: oklch(0.78 0.17 140);
+  --color-status-payment-pending: oklch(0.8 0.14 80);
+  --color-status-payment-overdue: oklch(0.72 0.17 20);
+  --color-status-payment-refunded: oklch(0.78 0.09 260);
+  --color-status-payment-void: oklch(0.65 0.03 260);
+
+  --color-safeguarding-severity-low: oklch(0.8 0.12 220);
+  --color-safeguarding-severity-medium: oklch(0.8 0.14 80);
+  --color-safeguarding-severity-high: oklch(0.72 0.17 20);
+  --color-safeguarding-severity-critical: oklch(0.6 0.19 20);
+}
+
+/* Font stack — layer Arabic fallbacks under the default sans stack. */
+:root {
+  --font-arabic: "Cairo", "Noto Naskh Arabic", system-ui, sans-serif;
+  --font-mono-brand: "JetBrains Mono", ui-monospace, "SF Mono", "Menlo", monospace;
+}
+
+html[dir="rtl"] {
+  font-family: var(--font-arabic);
+}

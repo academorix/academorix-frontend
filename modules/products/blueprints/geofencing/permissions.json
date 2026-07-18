@@ -1,0 +1,53 @@
+{
+  "id": "academorix://modules/geofencing/permissions",
+  "$version": 1,
+  "title": "geofencing \u2014 permissions",
+  "seeder": "Academorix\\Geofencing\\Database\\Seeders\\GeofencingPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "geofence.preflight",
+      "guard": "sanctum",
+      "description": "Call /api/v1/geofence/preflight. Rate-limited to 60/min per user.",
+      "seededOn": ["member", "admin", "owner"]
+    },
+    {
+      "name": "geofence.overrides.request",
+      "guard": "sanctum",
+      "seededOn": ["member", "admin", "owner"]
+    },
+    {
+      "name": "geofence.checks.viewAny",
+      "guard": "sanctum",
+      "description": "See ALL evaluations for the tenant. Members see only their own subject via a scope in the controller.",
+      "seededOn": ["admin", "owner", "audit_reviewer"]
+    },
+    {
+      "name": "geofence.checks.view",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "audit_reviewer"]
+    },
+    {
+      "name": "platform.geofence.checks.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "compliance"]
+    },
+    {
+      "name": "platform.geofence.checks.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "compliance"]
+    },
+    {
+      "name": "platform.geofence.overrides.viewAny",
+      "guard": "platform_admin",
+      "description": "Every override applied across all tenants \u2014 compliance surface.",
+      "seededOn": ["super_admin", "compliance"]
+    },
+    {
+      "name": "platform.geofence.checks.purge",
+      "guard": "platform_admin",
+      "description": "GDPR retention path. Every use audit-logged.",
+      "seededOn": ["super_admin", "compliance"]
+    }
+  ]
+}

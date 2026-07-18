@@ -1,0 +1,21 @@
+{
+  "id": "academorix://modules/notifications-push/schedule",
+  "$version": 1,
+  "title": "notifications-push \u2014 scheduled tasks",
+  "entries": [
+    {
+      "name": "push-prune-expired",
+      "command": "notifications:push:prune-expired",
+      "cron": "45 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 03:45 UTC: soft-delete idle subscriptions (last_seen_at < now() - 90d) + hard-purge soft-deleted > 30d."
+    },
+    {
+      "name": "push-validate-stale-tokens",
+      "command": "notifications:push:validate-tokens --stale-days=30 --sample-rate=0.05",
+      "cron": "0 5 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 05 UTC: revalidate 5% of subscriptions with last_seen_at older than 30d. Proactively catches revoked tokens before they consume send budget."
+    }
+  ]
+}

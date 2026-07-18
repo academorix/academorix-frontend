@@ -1,0 +1,217 @@
+{
+  "$version": 1,
+  "name": "telemetry",
+  "alias": "telemetry",
+  "namespace": "Academorix\\Telemetry",
+  "description": "Unified observability surface. Owns the THREE OpenTelemetry signals \u2014 traces, metrics, structured logs \u2014 under one boundary. Wraps `keepsuit/laravel-opentelemetry` for framework-native auto-instrumentation of HTTP, DB, queue, cache, view; wraps Monolog with a processor pipeline emitting newline-delimited JSON. Two sub-namespaces preserve the separation-of-concerns internally without splitting the module: `Academorix\\Telemetry\\Otel\\*` for span + metric emission (via keepsuit's Tracer + Meter facades) and `Academorix\\Telemetry\\Logs\\*` for the log record pipeline. Attribute-driven manual instrumentation (10 attributes: AsSpan / AsCounter / AsHistogram / AsGauge / AsUpDownCounter / AsContext / AsBaggage for OTel; AsLogContext / AsLogChannel / RedactedForLogs for logs). Fire-and-forget \u2014 no data stored locally; every signal exports via OTLP or a Monolog sink and the downstream backend (Grafana Cloud / DataDog / Honeycomb / Loki / self-hosted collector) owns retention. Trace-to-logs correlation is automatic: every log record picks up the active `trace_id` + `span_id` from the current OTel context.",
+  "keywords": [
+    "telemetry",
+    "opentelemetry",
+    "otel",
+    "tracing",
+    "spans",
+    "metrics",
+    "logs",
+    "structured-logging",
+    "monolog",
+    "observability",
+    "otlp",
+    "keepsuit"
+  ],
+  "priority": 12,
+  "providers": ["Academorix\\Telemetry\\Providers\\TelemetryServiceProvider"],
+  "internal_providers": [
+    "Academorix\\Telemetry\\Otel\\Providers\\OtelServiceProvider",
+    "Academorix\\Telemetry\\Logs\\Providers\\LogsServiceProvider"
+  ],
+  "files": [],
+  "dependencies": ["foundation"],
+  "wraps": {
+    "opentelemetry": {
+      "package": "keepsuit/laravel-opentelemetry",
+      "version_constraint": "^0.10",
+      "underlying_stack": [
+        "open-telemetry/sdk",
+        "open-telemetry/exporter-otlp",
+        "open-telemetry/api"
+      ],
+      "rationale": "Laravel-native OTel wrapper. Turn-key auto-instrumentation of HTTP + DB + queue + cache + view via ~5 lines of provider glue instead of ~500 lines maintaining our own binding layer."
+    },
+    "logs": {
+      "package": "monolog/monolog (bundled with Laravel)",
+      "loki_driver": "itspire/monolog-loki",
+      "rationale": "Laravel's default Log facade IS Monolog. We register processors + a JSON formatter on top \u2014 no replacement of the framework logger."
+    }
+  },
+  "extendedBy": [],
+  "contributes": {
+    "traits": ["Traceable", "StructuredLog"],
+    "attributes": [
+      "AsSpan",
+      "AsCounter",
+      "AsHistogram",
+      "AsGauge",
+      "AsUpDownCounter",
+      "AsContext",
+      "AsBaggage",
+      "AsLogContext",
+      "AsLogChannel",
+      "RedactedForLogs"
+    ],
+    "blueprints": [],
+    "middleware": ["otel.trace", "otel.baggage", "logs.context"],
+    "events": [
+      "TracerInitialized",
+      "SpanStarted",
+      "SpanEnded",
+      "SpanErrored",
+      "LogRecordEmitted",
+      "LogPipelineErrored"
+    ],
+    "policies": [],
+    "hooks": [],
+    "commands": [
+      "telemetry:describe",
+      "telemetry:test-export",
+      "telemetry:sample-traces",
+      "telemetry:tail-logs",
+      "telemetry:test-emit"
+    ],
+    "jobs": ["FlushBufferedSpansJob"],
+    "notifications": [],
+    "broadcasts": [],
+    "observers": [],
+    "rules": [],
+    "casts": [],
+    "views": [],
+    "lang": ["telemetry"],
+    "config": ["telemetry"],
+    "macros": [],
+    "bindings": [
+      "TracerProvider",
+      "MeterProvider",
+      "SpanRegistry",
+      "MetricRegistry",
+      "ResourceBuilder",
+      "PropagatorRegistry",
+      "ContextEnricherPipeline",
+      "LogContextRegistry",
+      "ProcessorPipeline",
+      "RedactorPipeline",
+      "ChannelResolver"
+    ],
+    "resources": []
+  },
+  "signals": {
+    "traces": {
+      "description": "OpenTelemetry spans exported via OTLP. Auto-instruments HTTP server, HTTP client, DB queries, queue jobs; manual instrumentation via #[AsSpan] attribute.",
+      "namespace": "Academorix\\Telemetry\\Otel",
+      "auto_instrumentation": {
+        "http_server": { "enabled_by_default": true, "package": "keepsuit/laravel-opentelemetry" },
+        "http_client": { "enabled_by_default": true, "package": "keepsuit/laravel-opentelemetry" },
+        "database": { "enabled_by_default": true, "package": "keepsuit/laravel-opentelemetry" },
+        "queue": { "enabled_by_default": true, "package": "keepsuit/laravel-opentelemetry" },
+        "cache": {
+          "enabled_by_default": false,
+          "reason": "High volume + noisy \u2014 opt-in per env."
+        },
+        "view": {
+          "enabled_by_default": false,
+          "reason": "Only enable when investigating template render latency."
+        }
+      }
+    },
+    "metrics": {
+      "description": "OpenTelemetry metric instruments (counters, histograms, gauges, up-down counters) exported via OTLP metrics.",
+      "namespace": "Academorix\\Telemetry\\Otel"
+    },
+    "logs": {
+      "description": "Structured JSON log records emitted through Monolog with a processor pipeline. Every record carries request_id + tenant_id + causer_id + trace_id + span_id.",
+      "namespace": "Academorix\\Telemetry\\Logs",
+      "processor_pipeline": [
+        {
+          "name": "MessageInterpolator",
+          "purpose": "Fills placeholders in `Log::info('User {id}', ['id' => 1])` style calls."
+        },
+        {
+          "name": "PsrLogMessageProcessor",
+          "purpose": "Standard Monolog processor. Handles PSR-3 interpolation."
+        },
+        {
+          "name": "IntrospectionProcessor",
+          "purpose": "Adds source class + line + function to every record."
+        },
+        {
+          "name": "AcademorixContextProcessor",
+          "purpose": "Injects academorix.request_id, academorix.tenant_id, academorix.causer_id from RequestContext."
+        },
+        {
+          "name": "OtelTraceContextProcessor",
+          "purpose": "Adds trace_id + span_id from the active OTel context so log lines correlate with spans emitted by this same module."
+        },
+        {
+          "name": "ModuleContextProcessor",
+          "purpose": "Evaluates every #[AsLogContext] enricher registered for the current call site via the compiled LogContextRegistry."
+        },
+        {
+          "name": "RedactorProcessor",
+          "purpose": "Applies redaction rules to record fields. Class-level #[RedactedForLogs] marks specific fields; config-level rules cover global patterns."
+        },
+        {
+          "name": "JsonFormatter",
+          "purpose": "Serialises to newline-delimited JSON. Loki, Grafana Alloy, DataDog agent all consume this format."
+        }
+      ]
+    }
+  },
+  "attribute_driven": {
+    "description": "Modules opt into custom instrumentation via attributes. Discovery pass at boot compiles the registries; runtime is vanilla method calls.",
+    "attributes": {
+      "AsSpan": "Wraps a method with a manual span. Params: name, kind, attributes[], record_exceptions, sampling_priority.",
+      "AsCounter": "Emits +1 counter increment on method entry (or lifted from a param). Params: name, unit, amount, from, labels[].",
+      "AsHistogram": "Records method duration_ms in a histogram. Params: name, buckets, unit, value, labels[].",
+      "AsGauge": "Read-only observable gauge \u2014 the method's return value is the current reading. Called on scrape.",
+      "AsUpDownCounter": "Emits a signed delta. Useful for concurrent-count tracking.",
+      "AsContext": "Adds the method's parameter value to the current span attributes for the duration of the call.",
+      "AsBaggage": "Propagates a key/value across service / queue boundaries via the W3C Baggage header.",
+      "AsLogContext": "Marks a method as a log-record enricher \u2014 its return value is merged into `record.extra` for logs emitted from the declaring class.",
+      "AsLogChannel": "Marks a class \u2014 all `Log::*` calls from this class route to the named Monolog channel.",
+      "RedactedForLogs": "Marks a class or property \u2014 the marked fields are replaced with `[REDACTED]` before the record leaves the pipeline."
+    }
+  },
+  "cross_signal_correlation": {
+    "description": "The single-module boundary is what makes trace-to-logs jump work end-to-end. The OtelTraceContextProcessor reads directly from the OTel context established by the OTel sub-provider \u2014 no cross-module boundary crossings.",
+    "keys": { "trace_id": "trace_id", "span_id": "span_id" },
+    "propagation_across_queue_boundaries": "TracePropagatingBusMiddleware serialises the OTel context into every dispatched job payload. On execution, listeners resume the trace so consumer spans link to producers; PropagateContextIntoJob restores tenant_id + causer_id into RequestContext so async-job log records carry the originating context."
+  },
+  "hosts": {
+    "central_admin": {
+      "description": "Debug + operational surface for the SRE team. Not tenant-facing.",
+      "routes": [
+        "GET /api/v1/platform/telemetry/status",
+        "GET /api/v1/platform/telemetry/registry",
+        "POST /api/v1/platform/telemetry/test-export",
+        "POST /api/v1/platform/telemetry/test-emit"
+      ]
+    }
+  },
+  "migration_notes": {
+    "merged_from": ["telemetry-otel", "telemetry-logs"],
+    "date": "2026-07-14",
+    "rationale": "Two modules were splitting one observability surface. Traces + metrics + logs are the three OTel signals \u2014 OTLP handles all three natively since spec v1.19. Merging removes duplicate providers/config/health probes and lets the trace-to-logs correlation processor live inside a single boot boundary.",
+    "namespace_mapping": {
+      "Academorix\\TelemetryOtel\\*": "Academorix\\Telemetry\\Otel\\*",
+      "Academorix\\TelemetryLogs\\*": "Academorix\\Telemetry\\Logs\\*"
+    },
+    "config_mapping": {
+      "config('telemetry-otel.*')": "config('telemetry.otel.*') or config('telemetry.traces.*') / config('telemetry.metrics.*')",
+      "config('telemetry-logs.*')": "config('telemetry.logs.*')"
+    },
+    "flag_mapping": {
+      "telemetry-otel.exporter_traces": "telemetry.exporter_traces",
+      "telemetry-otel.auto_*": "telemetry.auto_*",
+      "telemetry-logs.pipeline": "telemetry.logs_pipeline",
+      "telemetry-logs.redaction_enforcement": "telemetry.logs_redaction_enforcement"
+    }
+  }
+}

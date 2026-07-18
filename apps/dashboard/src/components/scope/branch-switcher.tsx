@@ -8,7 +8,7 @@
  * has a single branch.
  */
 
-import { MapPinIcon } from "@academorix/ui/icons/outline";
+import { MapPinIcon } from "@stackra/ui/icons/heroicon/outline";
 
 import type { ReactNode } from "react";
 

@@ -9,7 +9,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §13.2 "Training"
  */
 
-import { BoltIcon } from "@academorix/ui/icons/outline";
+import { BoltIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

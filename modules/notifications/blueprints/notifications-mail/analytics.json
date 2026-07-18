@@ -1,0 +1,48 @@
+{
+  "id": "academorix://modules/notifications-mail/analytics",
+  "$version": 1,
+  "title": "notifications-mail \u2014 product analytics events",
+  "description": "Mail-specific analytics. Delegated open/click aggregation to notifications core; this file publishes mail-only signal (bounce classifications, suppression additions, provider selections).",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Mail Sent",
+      "kind": "track",
+      "consent_required": "analytics",
+      "properties": ["tenant_id", "provider", "category_slug", "cost_micro_units"]
+    },
+    {
+      "name": "Mail Delivered",
+      "kind": "track",
+      "consent_required": "analytics",
+      "properties": ["tenant_id", "provider", "category_slug"]
+    },
+    {
+      "name": "Mail Bounced",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "bounce_kind"],
+      "description": "Functional \u2014 hard bounces produce a suppression which affects delivery."
+    },
+    {
+      "name": "Mail Complained",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider"],
+      "description": "Functional \u2014 complaint = suppression + CAN-SPAM evidence."
+    },
+    {
+      "name": "Mail Address Suppressed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "reason"]
+    },
+    {
+      "name": "Mail Address Suppression Revoked",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "reason"]
+    }
+  ]
+}

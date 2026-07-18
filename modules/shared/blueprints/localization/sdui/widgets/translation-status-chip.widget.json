@@ -1,0 +1,39 @@
+{
+  "id": "localization.translation-status-chip",
+  "title": "Translation status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for the 5 source values + verified + stale states.",
+  "props": {
+    "source": {
+      "type": "string",
+      "required": true,
+      "enum": ["file", "db", "ai", "human", "imported"]
+    },
+    "provider": { "type": ["string", "null"] },
+    "verified": { "type": "boolean", "default": false },
+    "isStale": { "type": "boolean", "default": false },
+    "size": { "type": "string", "default": "xs", "enum": ["xs", "sm", "md"] }
+  },
+  "nodes": [
+    {
+      "id": "chip",
+      "kind": "Chip",
+      "props": { "size": "xs" },
+      "bindings": {
+        "props": {
+          "size": { "$ref": "props.size" },
+          "variant": {
+            "$expr": "props.isStale ? 'warning' : (props.verified ? 'success' : ({ file: 'neutral', db: 'accent', ai: 'info', human: 'success', imported: 'neutral' }[props.source] || 'neutral'))"
+          },
+          "leadingIcon": {
+            "$expr": "props.isStale ? 'exclamation-triangle' : (props.verified ? 'check-circle' : ({ file: 'document', db: 'circle-stack', ai: 'sparkles', human: 'user-circle', imported: 'arrow-down-tray' }[props.source]))"
+          },
+          "children": {
+            "$expr": "props.isStale ? 'Stale' : (props.verified ? 'Verified' : (props.source === 'ai' && props.provider ? (props.provider === 'openai' ? 'OpenAI' : (props.provider === 'google' ? 'Google' : (props.provider === 'deepl' ? 'DeepL' : props.provider))) : ({ file: 'File', db: 'DB', ai: 'AI', human: 'Human', imported: 'Imported' }[props.source])))"
+          }
+        }
+      }
+    }
+  ]
+}

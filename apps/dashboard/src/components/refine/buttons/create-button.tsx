@@ -7,7 +7,7 @@
  * `useCreateButton` (hidden/disabled reflect the `accessControlProvider`).
  */
 
-import { PlusIcon } from "@academorix/ui/icons/outline";
+import { PlusIcon } from "@stackra/ui/icons/heroicon/outline";
 import { useCreateButton } from "@refinedev/core";
 
 import type { ResourceActionButtonProps } from "@/components/refine/buttons/nav-button";

@@ -10,14 +10,14 @@
  * they can be cleared individually or all at once.
  */
 
-import { AdjustmentsHorizontalIcon } from "@academorix/ui/icons/outline";
-import { Button, Dropdown, Label } from "@academorix/ui/react";
+import { AdjustmentsHorizontalIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Dropdown, Label } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 import { useMemo, useState } from "react";
 
 import type { Document, DocumentOwnerType } from "@/modules/documents/documents.types";
 import type { Athlete, Staff, User } from "@/types";
-import type { DataGridColumn } from "@academorix/ui/react";
+import type { DataGridColumn } from "@stackra/ui/react";
 import type { CrudFilter } from "@refinedev/core";
 import type { ReactNode } from "react";
 
@@ -81,9 +81,7 @@ function labelForFilter(filter: DocumentFilter): string {
         filter.value.replaceAll("_", " ")
       }`;
     case "by_scope":
-      return `Scope: ${
-        DOCUMENT_SCOPE_LABELS[filter.value as DocumentOwnerType] ?? filter.value
-      }`;
+      return `Scope: ${DOCUMENT_SCOPE_LABELS[filter.value as DocumentOwnerType] ?? filter.value}`;
     case "by_status":
       return `Status: ${
         DOCUMENT_STATUS_LABELS[filter.value as keyof typeof DOCUMENT_STATUS_LABELS] ?? filter.value
@@ -219,9 +217,7 @@ export default function DocumentsList(): ReactNode {
         id: "size_bytes",
         header: "Size",
         allowsSorting: true,
-        cell: (record) => (
-          <span className="tabular-nums">{formatByteSize(record.size_bytes)}</span>
-        ),
+        cell: (record) => <span className="tabular-nums">{formatByteSize(record.size_bytes)}</span>,
       },
       {
         id: "uploaded_by",
@@ -276,11 +272,7 @@ export default function DocumentsList(): ReactNode {
         initialSorters={[{ field: "uploaded_at", order: "desc" }]}
         resource="documents"
         toolbar={
-          <DocumentsFilterBar
-            activeFilters={filters}
-            onClear={clearFilter}
-            onSelect={addFilter}
-          />
+          <DocumentsFilterBar activeFilters={filters} onClear={clearFilter} onSelect={addFilter} />
         }
         onClearFilters={() => setFilters([])}
       />
@@ -366,12 +358,7 @@ const CLEAR_ITEM_KEY = "__any__";
  * item clears the dimension; a string value scopes it. Menus close on
  * selection courtesy of the underlying HeroUI compound.
  */
-function FilterDropdown({
-  label,
-  entries,
-  activeValue,
-  onSelect,
-}: FilterDropdownProps): ReactNode {
+function FilterDropdown({ label, entries, activeValue, onSelect }: FilterDropdownProps): ReactNode {
   const activeLabel = activeValue
     ? (entries.find(([key]) => key === activeValue)?.[1] ?? activeValue)
     : null;

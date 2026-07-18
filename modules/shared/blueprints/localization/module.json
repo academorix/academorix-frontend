@@ -1,0 +1,131 @@
+{
+  "$version": 1,
+  "name": "localization",
+  "alias": "localization",
+  "namespace": "Academorix\\Localization",
+  "description": "Multilingual substrate on top of Laravel's built-in localization. Owns four entities — PlatformLanguage (platform catalogue of BCP 47 locale tags with script + platform state; REFERENCES `geography::Language` for ISO-639 base metadata + optionally `geography::Country` for regional variants), TenantLocale (per-tenant enabled locales with default + fallback), Translation (persistent cache of resolved key→value bindings per tenant + locale, indexed for fast lookup), TranslationJob (async bulk-translation audit). Resolves the caller's active locale from user preference → tenant setting → Accept-Language header → subdomain → app default. Publishes override helpers (`t()`, `__()`, `trans()`, `trans_choice()`) that pass through to Laravel's translator but consult our DB cache first + optionally auto-translate via configured driver (OpenAI, Google Cloud Translation, DeepL, AWS Translate, Azure Translator). Ships #[Translatable] attribute for Eloquent property translation. RTL-aware. Wave 5 refactor: `Language` renamed → `PlatformLanguage`; table renamed `languages` → `platform_languages` to end the collision with the vendor-owned `languages` table (`nnjeim/world`, geography module); ISO-639 + ISO-3166 fields dropped and replaced with FKs to geography.",
+  "keywords": [
+    "localization",
+    "i18n",
+    "translation",
+    "locale",
+    "language",
+    "iso639",
+    "rtl",
+    "openai",
+    "google-translate",
+    "deepl",
+    "aws-translate",
+    "azure-translator"
+  ],
+  "priority": 66,
+  "providers": ["Academorix\\Localization\\Providers\\LocalizationServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "tenancy", "activity", "entitlements", "geography"],
+  "extendedBy": [],
+  "contributes": {
+    "traits": ["HasTranslations", "IsLocaleAware"],
+    "attributes": ["Translatable", "AsTranslation"],
+    "blueprints": ["translations"],
+    "middleware": ["locale.resolve", "locale.persist"],
+    "events": [
+      "LocaleResolved",
+      "LocaleChanged",
+      "TranslationCacheHit",
+      "TranslationCacheMiss",
+      "MachineTranslationRequested",
+      "MachineTranslationCompleted",
+      "MachineTranslationFailed",
+      "TranslationOverridden",
+      "TranslationJobStarted",
+      "TranslationJobCompleted",
+      "LanguageEnabledForTenant",
+      "LanguageDisabledForTenant"
+    ],
+    "policies": [
+      "PlatformLanguagePolicy",
+      "TenantLocalePolicy",
+      "TranslationPolicy",
+      "TranslationJobPolicy"
+    ],
+    "hooks": [],
+    "commands": [
+      "localization:list-locales",
+      "localization:describe",
+      "localization:translate",
+      "localization:warm-cache",
+      "localization:bulk-translate",
+      "localization:seed-platform-languages",
+      "localization:reconcile-cache"
+    ],
+    "jobs": [
+      "TranslateJob",
+      "BulkTranslateNamespaceJob",
+      "WarmTranslationCacheJob",
+      "PruneStaleTranslationsJob",
+      "ReconcileTranslationCacheJob"
+    ],
+    "notifications": [
+      "TranslationJobCompletedNotification",
+      "TranslationJobFailedNotification",
+      "MachineTranslationQuotaApproachingNotification"
+    ],
+    "broadcasts": ["tenant.{id}.translations"],
+    "observers": [
+      "PlatformLanguageObserver",
+      "TenantLocaleObserver",
+      "TranslationObserver",
+      "TranslationJobObserver"
+    ],
+    "rules": ["valid_iso639_code", "valid_bcp47_tag"],
+    "casts": ["LocaleCode", "TextDirection", "TranslationSource"],
+    "views": [],
+    "lang": ["localization"],
+    "config": ["localization"],
+    "macros": ["str_localize", "Blueprint::translations"],
+    "bindings": [
+      "LocaleResolver",
+      "TranslationRepository",
+      "TranslatorDriverManager",
+      "OpenAITranslatorDriver",
+      "GoogleTranslatorDriver",
+      "DeepLTranslatorDriver",
+      "AwsTranslateDriver",
+      "AzureTranslatorDriver",
+      "NullTranslatorDriver",
+      "PluralizationEngine",
+      "InterpolationEngine"
+    ],
+    "resources": ["platform-language", "tenant-locale", "translation", "translation-job"]
+  },
+  "wraps": {
+    "package": "illuminate/translation",
+    "rationale": "We do not replace Laravel's Translator — we decorate it. Our Translator extends `Illuminate\\Translation\\Translator` and overrides `get()` + `choice()` to consult the DB cache first. All Laravel behaviours (JSON files, PHP arrays, `:placeholder`, `{0} zero|{1} one|[2,*] other`) work unchanged."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing locale + translation management.",
+      "routes": [
+        "GET /api/v1/languages",
+        "GET /api/v1/tenant-locales",
+        "POST /api/v1/tenant-locales/{language}",
+        "DELETE /api/v1/tenant-locales/{language}",
+        "PATCH /api/v1/tenant-locales/{language}",
+        "GET /api/v1/translations",
+        "POST /api/v1/translations",
+        "PATCH /api/v1/translations/{translation}",
+        "DELETE /api/v1/translations/{translation}",
+        "GET /api/v1/translation-jobs",
+        "POST /api/v1/translation-jobs"
+      ]
+    },
+    "platform-admin": {
+      "description": "Platform-admin language catalogue + cross-tenant observability.",
+      "routes": [
+        "GET/POST/PATCH/DELETE /api/v1/platform/languages[/{language}]",
+        "GET /api/v1/platform/translations",
+        "GET /api/v1/platform/translation-drivers/status"
+      ]
+    }
+  }
+}

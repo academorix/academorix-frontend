@@ -6,7 +6,7 @@
  * Event detail — schedule/location card plus the RSVP list.
  */
 
-import { Card, Spinner } from "@academorix/ui/react";
+import { Card, Spinner } from "@stackra/ui/react";
 import { useShow } from "@refinedev/core";
 
 import type { Event } from "@/types";

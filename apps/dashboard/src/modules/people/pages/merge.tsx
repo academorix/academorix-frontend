@@ -25,10 +25,10 @@ import {
   Spinner,
   TextField,
   toast,
-} from "@academorix/ui/react";
+} from "@stackra/ui/react";
 import { useOne } from "@refinedev/core";
 import { useCallback, useReducer, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router";
+import { useNavigate, useParams, useSearchParams } from "@stackra/routing/react";
 
 import type {
   MergeableField,
@@ -169,10 +169,10 @@ export default function PeopleMerge(): ReactNode {
       const status = statusCodeOf(error);
 
       // eslint-disable-next-line no-console
-      console.debug(
-        "[people] POST /api/v1/people/merge failed — TODO(backend-endpoint)",
-        { status, error },
-      );
+      console.debug("[people] POST /api/v1/people/merge failed — TODO(backend-endpoint)", {
+        status,
+        error,
+      });
 
       if (status !== undefined && BACKEND_GAP_STATUSES.has(status)) {
         toast.danger("People merge unavailable", {
@@ -331,8 +331,8 @@ export default function PeopleMerge(): ReactNode {
             </AlertDialog.Header>
             <AlertDialog.Body>
               <p>
-                The source person will be retired and every downstream identifier will be
-                re-pointed at the target. This is not reversible from the UI.
+                The source person will be retired and every downstream identifier will be re-pointed
+                at the target. This is not reversible from the UI.
               </p>
             </AlertDialog.Body>
             <AlertDialog.Footer>

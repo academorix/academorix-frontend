@@ -1,0 +1,83 @@
+{
+  "id": "settings.resources.settings-group.list",
+  "title": "Settings",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/settings",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "settings", "entity": "settings-group", "action": "list" },
+  "requiresPermission": "settings.read",
+  "dataSources": [
+    {
+      "name": "schema",
+      "kind": "http.get",
+      "url": "/api/v1/settings/schema",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex h-full" },
+      "children": [
+        {
+          "id": "sidebar",
+          "kind": "View",
+          "props": { "className": "w-64 border-r border-content2 p-4 overflow-auto" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-lg font-semibold mb-4",
+                "children": "Settings"
+              }
+            },
+            {
+              "kind": "List",
+              "bindings": { "items": { "$ref": "schema.groups" } },
+              "itemRenderer": {
+                "kind": "Link",
+                "props": {
+                  "className": "flex items-center gap-2 p-2 rounded hover:bg-content2 no-underline"
+                },
+                "actions": {
+                  "onPress": { "kind": "navigate", "toExpr": "'/tenant/settings/' + row.key" }
+                },
+                "children": [
+                  {
+                    "kind": "Icon",
+                    "props": { "className": "size-4" },
+                    "bindings": { "icon": { "$ref": "row.icon" } }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-sm" },
+                    "bindings": { "children": { "$ref": "row.label" } }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "main",
+          "kind": "View",
+          "props": { "className": "flex-1 p-6 overflow-auto" },
+          "children": [
+            {
+              "kind": "Alert",
+              "props": {
+                "variant": "info",
+                "children": "Select a settings group from the sidebar to view + edit its values."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

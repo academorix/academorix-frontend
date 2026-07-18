@@ -1,0 +1,64 @@
+{
+  "id": "academorix://modules/settings/metrics",
+  "$version": 1,
+  "title": "settings \u2014 OpenTelemetry metrics",
+  "instrumentation": "open-telemetry/sdk",
+  "namespace": "academorix.settings",
+  "labelConventions": {
+    "always": [],
+    "commonlyAvailable": ["group", "scope_type"],
+    "forbiddenAsLabels": ["scope_id", "field_name", "old_value", "new_value"]
+  },
+  "metrics": [
+    {
+      "name": "academorix.settings.reads.total",
+      "kind": "counter",
+      "unit": "reads",
+      "labels": ["group", "scope_type", "outcome"],
+      "description": "outcome: hit / cache_miss / permission_denied / group_not_found."
+    },
+    {
+      "name": "academorix.settings.writes.total",
+      "kind": "counter",
+      "unit": "writes",
+      "labels": ["group", "scope_type", "outcome"],
+      "description": "outcome: applied / validation_failed / locked / permission_denied."
+    },
+    {
+      "name": "academorix.settings.resolver_duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [1, 5, 25, 100, 500],
+      "labels": ["group"],
+      "description": "Cascade resolution latency. Should stay < 5ms P99 given the resolved-value cache."
+    },
+    {
+      "name": "academorix.settings.cache_hit_ratio",
+      "kind": "gauge",
+      "unit": "ratio",
+      "labels": ["group"],
+      "description": "Sampled every 30s from Redis counters."
+    },
+    {
+      "name": "academorix.settings.registry_size",
+      "kind": "gauge",
+      "unit": "groups",
+      "labels": [],
+      "description": "Number of discovered groups. Sampled at boot + on reload."
+    },
+    {
+      "name": "academorix.settings.sensitive_reveals.total",
+      "kind": "counter",
+      "unit": "reveals",
+      "labels": ["group"],
+      "description": "?reveal=true usage. Meta-audit signal."
+    },
+    {
+      "name": "academorix.settings.overrides_per_scope_gauge",
+      "kind": "gauge",
+      "unit": "overrides",
+      "labels": ["scope_type"],
+      "description": "Entitlement usage \u2014 approaches the max_overrides_per_scope cap."
+    }
+  ]
+}

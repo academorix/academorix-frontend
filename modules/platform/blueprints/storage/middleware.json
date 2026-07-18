@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/storage/middleware",
+  "$version": 1,
+  "title": "storage \u2014 HTTP middleware",
+  "description": "Five middleware. Every upload route composes at least the tenant scope + quota + MIME + size gates. The signed-URL redemption path composes an audit-hit middleware that verifies the signature + updates hit counters.",
+  "middleware": [
+    {
+      "alias": "storage.mime.validate",
+      "class": "Academorix\\Storage\\Http\\Middleware\\ValidateMimeType",
+      "priority": 55,
+      "description": "Sniffs the uploaded file's real MIME (finfo based) and validates against the target kind's allowed_mimes list. Rejects with HTTP 415 STORAGE_UNSUPPORTED_MIME on mismatch. Client-supplied Content-Type is IGNORED \u2014 only the byte sniff counts (client can lie).",
+      "auto_applied": false,
+      "auto_applied_to": ["storage-uploads"]
+    },
+    {
+      "alias": "storage.size.validate",
+      "class": "Academorix\\Storage\\Http\\Middleware\\ValidateFileSize",
+      "priority": 56,
+      "description": "Enforces the kind's max_size_mb ceiling. On single-request uploads, checks Content-Length header + actual byte count. On chunked uploads, checks Chunk-Size header against remaining allowance. Rejects with HTTP 413 STORAGE_FILE_TOO_LARGE.",
+      "auto_applied": false,
+      "auto_applied_to": ["storage-uploads"]
+    },
+    {
+      "alias": "storage.quota.enforce",
+      "class": "Academorix\\Storage\\Http\\Middleware\\EnforceStorageQuota",
+      "priority": 57,
+      "description": "Consumes the file's byte count against `storage.bytes.consumed` entitlement BEFORE the upload starts. On overquota rejects with HTTP 402 STORAGE_QUOTA_EXCEEDED + error envelope pointing at the plan upgrade URL. For chunked uploads, reserves the full total_size_bytes at initiate; on abort/expire, releases the reservation.",
+      "auto_applied": false,
+      "auto_applied_to": ["storage-uploads"]
+    },
+    {
+      "alias": "storage.antivirus.gate",
+      "class": "Academorix\\Storage\\Http\\Middleware\\AntivirusGate",
+      "priority": 58,
+      "description": "Applied to READ routes (download, signed-url issuance). Rejects with HTTP 423 STORAGE_FILE_NOT_AVAILABLE when the target file's virus_scan_state != 'clean'. Even the tenant admin cannot download an infected file; the platform-admin surface has its own quarantine-review flow with explicit consent + audit.",
+      "auto_applied": false,
+      "auto_applied_to": ["storage-reads"]
+    },
+    {
+      "alias": "storage.tenant.scope",
+      "class": "Academorix\\Storage\\Http\\Middleware\\EnforceTenantScope",
+      "priority": 59,
+      "description": "Stamps `tenant_id` onto every uploaded File from the caller's RequestContext AND rejects any read attempt whose file's tenant_id doesn't match the caller's active tenant. Belt-and-braces defence \u2014 the FilePolicy already gates individual actions, but this middleware short-circuits at the route level before hitting the controller.",
+      "auto_applied": false,
+      "auto_applied_to": ["storage-uploads", "storage-reads"]
+    },
+    {
+      "alias": "storage.audit-hit",
+      "class": "Academorix\\Storage\\Http\\Middleware\\AuditSignedUrlHit",
+      "priority": 5,
+      "description": "Applied on the central-host redemption route ONLY (no auth). Hashes the signature portion of the URL, looks up SignedUrlAudit by signature_hash, verifies (not expired, not revoked, IP lock CIDR match if set, user lock match if set, one_time_use unconsumed). On success, increments hit_count via raw SQL (write-only hot path). On failure, returns HTTP 403 STORAGE_URL_INVALID.",
+      "auto_applied": false,
+      "auto_applied_to": ["central-storage-redemption"]
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "auth::sanctum" },
+    { "middleware": "tenancy::resolve" }
+  ]
+}

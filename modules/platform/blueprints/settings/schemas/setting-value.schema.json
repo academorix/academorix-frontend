@@ -1,0 +1,150 @@
+{
+  "id": "academorix://modules/settings/schemas/setting-value",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "SettingValue",
+  "description": "Persistence row. One row per (scope_type, scope_id, group, name). System scope carries scope_id NULL. Payload is spatie's JSON-encoded property value.",
+  "type": "object",
+  "x-module": "settings",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "setting_values",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "set_",
+    "incrementing": false,
+    "model": "Academorix\\Settings\\Models\\SettingValue",
+    "interface": "Academorix\\Settings\\Contracts\\Data\\SettingValueInterface",
+    "implements": ["Academorix\\Settings\\Contracts\\Data\\SettingValueInterface"],
+    "traits": ["HasFactory", "HasUlids", "HasUserstamps", "HasMetadata"],
+    "casts": {
+      "payload": "json",
+      "scope_type": "ScopeType",
+      "is_sensitive": "boolean",
+      "is_locked": "boolean",
+      "encrypted_at_rest": "boolean"
+    },
+    "appends": ["masked_payload"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `set_<26 chars>`."
+      },
+      "scope_type": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: system, tenant, user (org, branch reserved for scope module wave)."
+      },
+      "scope_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Nullable for system scope; required otherwise."
+      },
+      "group": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "AsSetting.group \u2014 the settings class identifier."
+      },
+      "name": {
+        "type": "string",
+        "length": 100,
+        "nullable": false,
+        "description": "Property name on the settings class."
+      },
+      "payload": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "JSON-encoded value. Null means \"cleared override\" \u2014 falls through to lower scope in the cascade."
+      },
+      "is_sensitive": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Mirrors the field's SettingField.sensitive flag at write time. Powers server-side masking on read."
+      },
+      "is_locked": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Prevents overrides at lower scopes. System-scope lock cascades: no tenant/user override allowed."
+      },
+      "encrypted_at_rest": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "True when payload was written via EncryptedSensitiveSettingCast. Requires KMS decrypt on read."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["scope_type", "scope_id", "group", "name"],
+        "unique": true,
+        "name": "setting_values_scope_group_name_unique",
+        "description": "Primary lookup path AND uniqueness constraint. One row per (scope, group, name)."
+      },
+      {
+        "columns": ["group", "name"],
+        "unique": false,
+        "name": "setting_values_group_name_idx",
+        "description": "Cross-scope inspection for support/debugging."
+      },
+      {
+        "columns": ["scope_type", "scope_id"],
+        "unique": false,
+        "name": "setting_values_scope_idx",
+        "description": "Bulk read of a scope's entire settings block."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "scope_type",
+    "group",
+    "name",
+    "is_sensitive",
+    "is_locked",
+    "encrypted_at_rest",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^set_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "scope_type": { "type": "string", "enum": ["system", "tenant", "user"] },
+    "scope_id": { "type": ["string", "null"], "maxLength": 64 },
+    "group": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$", "maxLength": 64 },
+    "name": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,99}$", "maxLength": 100 },
+    "payload": { "description": "Any JSON value." },
+    "is_sensitive": { "type": "boolean" },
+    "is_locked": { "type": "boolean" },
+    "encrypted_at_rest": { "type": "boolean" },
+    "masked_payload": {
+      "description": "Computed. Returns `\"***\"` when is_sensitive=true unless caller has settings.view-sensitive."
+    },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["created_by", "updated_by"],
+    "computed": ["masked_payload"]
+  }
+}

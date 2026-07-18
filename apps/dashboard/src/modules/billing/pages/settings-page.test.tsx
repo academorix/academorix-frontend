@@ -24,12 +24,12 @@
  *   6. Invoices table renders per invoice.
  */
 
-import { render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter } from "react-router";
+import { screen, waitFor } from "@testing-library/react";
+import { renderWithRouting } from "@stackra/routing/testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { BillingInvoice, SubscriptionSummary } from "@/types";
-import type { ReactNode } from "react";
+import type { ReactElement, ReactNode } from "react";
 
 // ─────────────────────────────────────────────────────────────────────
 // Mocks — the settings page depends on a small ecosystem of hooks
@@ -125,9 +125,13 @@ const PAID_INVOICE: BillingInvoice = {
   pdf_url: "https://example/invoices/in_1.pdf",
 };
 
-/** Wraps the page in a MemoryRouter (settings page uses `useNavigate`). */
+/**
+ * Wraps the page in the Stackra routing test context. The settings
+ * page pulls in `useNavigate` from `@stackra/routing/react`, which
+ * needs the framework's context in addition to react-router's.
+ */
 function renderPage(ui: ReactNode = <BillingSettingsPage />) {
-  return render(<MemoryRouter>{ui}</MemoryRouter>);
+  return renderWithRouting(ui as ReactElement);
 }
 
 /** Set up a happy-path state: active sub, one paid invoice, no quotas. */

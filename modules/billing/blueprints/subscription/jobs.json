@@ -1,0 +1,95 @@
+{
+  "id": "academorix://modules/subscription/jobs",
+  "$version": 1,
+  "title": "subscription \u2014 background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Subscription\\Jobs\\SyncFromCashierWebhookJob",
+      "queue": "notifications-critical",
+      "purpose": "Consume a Cashier webhook event + translate to our Subscription state + create SubscriptionEvent.",
+      "steps": [
+        "Verify provider_event_id not already processed (idempotency check on subscription_events table).",
+        "Load or create the tenant's Subscription row.",
+        "Apply state transition based on event type (customer.subscription.updated, invoice.payment_succeeded, etc).",
+        "Create SubscriptionEvent with actor_type=provider_webhook + full payload.",
+        "Fire the appropriate our-domain event."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "provider_event_id",
+      "tries": 5,
+      "backoff": [30, 300, 1800, 3600, 21600]
+    },
+    {
+      "class": "Academorix\\Subscription\\Jobs\\AdvanceDunningStageJob",
+      "queue": "notifications",
+      "purpose": "Progress past_due subscriptions through our extended grace stages (at_risk \u2192 grace \u2192 suspended).",
+      "steps": [
+        "Query: state IN (at_risk, grace, past_due) AND grace_ends_at <= now().",
+        "For each: advance to next state per config('subscription.dunning.stages').",
+        "Fire SubscriptionUnpaid / SubscriptionSuspended as appropriate.",
+        "Emit metric: subscription.dunning.transitions_total."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Subscription\\Jobs\\ExpireTrialsJob",
+      "queue": "notifications",
+      "purpose": "Send TrialEnding warnings + transition expired trials.",
+      "steps": [
+        "For each trialing subscription with trial_ends_at between now() and now()+3d: fire TrialEnding (if not already fired for this trial).",
+        "For each trialing subscription with trial_ends_at <= now(): transition to active (if converted, i.e. valid payment method) or cancelled (if no payment method)."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Subscription\\Jobs\\ReconcileSubscriptionStateJob",
+      "queue": "notifications",
+      "purpose": "Hourly reconciliation: sample-check our Subscription state against Cashier's provider-side state. Detects drift from missed webhooks.",
+      "steps": [
+        "Sample 100 subscriptions (weighted toward high-value + non-terminal states).",
+        "For each: fetch provider state via Cashier API.",
+        "Compare our state vs provider state (mapped through Cashier's semantics).",
+        "On mismatch: emit metric + dispatch SyncFromCashierWebhookJob with synthetic event to correct."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Subscription\\Jobs\\ReportMeteredUsageJob",
+      "queue": "notifications-critical",
+      "purpose": "Report usage-based entitlement consumption to provider at period end. Called by entitlements module.",
+      "steps": [
+        "Load subscription + metered entitlement usage for the period.",
+        "Cashier: $subscription->reportUsage($price_id, $amount, $timestamp).",
+        "On success: fire UsageReported + entitlements::UsageReportedToBilling.",
+        "On failure: retry with exponential backoff (financial-material, up to 5 attempts)."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 7200,
+      "uniqueVia": "(subscription_id, meter_key, period_start)",
+      "tries": 5,
+      "backoff": [60, 300, 1800, 3600, 21600]
+    },
+    {
+      "class": "Academorix\\Subscription\\Jobs\\CancelPastDueSubscriptionJob",
+      "queue": "notifications",
+      "purpose": "Terminal step of dunning: cancel + suspend tenant after all grace exhausted.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "subscription_id",
+      "tries": 3
+    }
+  ]
+}

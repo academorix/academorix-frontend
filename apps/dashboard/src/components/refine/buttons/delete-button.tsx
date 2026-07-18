@@ -11,8 +11,8 @@
  * "Undo" toast — this button just triggers it.
  */
 
-import { TrashIcon } from "@academorix/ui/icons/outline";
-import { Button, Popover } from "@academorix/ui/react";
+import { TrashIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Popover } from "@stackra/ui/react";
 import { useDeleteButton } from "@refinedev/core";
 import { useState } from "react";
 

@@ -10,7 +10,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §12.3 "Coaching"
  */
 
-import { UserIcon } from "@academorix/ui/icons/outline";
+import { UserIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

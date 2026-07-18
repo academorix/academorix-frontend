@@ -10,10 +10,10 @@
  * regardless of whether the address matched.
  */
 
-import { EnvelopeIcon, MagnifyingGlassIcon } from "@academorix/ui/icons/outline";
-import { Button, Description, Form, Input, Label, TextField } from "@academorix/ui/react";
+import { EnvelopeIcon, MagnifyingGlassIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button, Description, Form, Input, Label, TextField } from "@stackra/ui/react";
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link } from "@stackra/routing/react";
 
 import type { FormEvent, ReactNode } from "react";
 

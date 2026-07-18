@@ -20,8 +20,8 @@ import {
   BuildingLibraryIcon,
   ChevronUpDownIcon,
   PlusIcon,
-} from "@academorix/ui/icons/outline";
-import { Avatar, Button, Dropdown, Label } from "@academorix/ui/react";
+} from "@stackra/ui/icons/heroicon/outline";
+import { Avatar, Button, Dropdown, Label } from "@stackra/ui/react";
 
 import type { WorkspaceListEntry } from "@/lib/tenancy/tenancy.types";
 import type { Key, ReactNode } from "react";

@@ -1,0 +1,174 @@
+{
+  "id": "subscription.resources.plan.create",
+  "title": "New plan",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/plans/create",
+  "host": "central_admin",
+  "audience": "platform_admin",
+  "resource": { "module": "subscription", "entity": "plan", "action": "create" },
+  "requiresPermission": "platform.plans.create",
+  "dataSources": [
+    {
+      "name": "applications",
+      "kind": "http.get",
+      "url": "/api/v1/platform/applications",
+      "unwrap": "data"
+    },
+    {
+      "name": "entitlementRegistry",
+      "kind": "http.get",
+      "url": "/api/v1/platform/entitlements/registry",
+      "unwrap": "data"
+    }
+  ],
+  "form": {
+    "action": "POST /api/v1/platform/plans",
+    "successRedirect": "/platform/plans/{id}",
+    "fields": [
+      {
+        "name": "application_id",
+        "controlType": "select",
+        "label": "Application",
+        "required": true,
+        "bindings": {
+          "options": { "$ref": "applications" },
+          "optionKey": "id",
+          "optionLabel": "name"
+        }
+      },
+      {
+        "name": "key",
+        "controlType": "text",
+        "label": "Key (slug)",
+        "required": true,
+        "helpText": "Lowercase, underscores. Stable identifier. E.g. `academy_team_monthly`."
+      },
+      { "name": "name", "controlType": "text", "label": "Display name", "required": true },
+      { "name": "description", "controlType": "textarea", "label": "Description" },
+      {
+        "name": "tier",
+        "controlType": "select",
+        "label": "Tier",
+        "required": true,
+        "options": [
+          { "key": "free" },
+          { "key": "team" },
+          { "key": "business" },
+          { "key": "enterprise" },
+          { "key": "custom" }
+        ]
+      },
+      {
+        "name": "billing_cycle",
+        "controlType": "select",
+        "label": "Billing cycle",
+        "required": true,
+        "options": [{ "key": "monthly" }, { "key": "annual" }, { "key": "lifetime" }]
+      },
+      {
+        "name": "billing_mode",
+        "controlType": "select",
+        "label": "Billing mode",
+        "required": true,
+        "defaultValue": "cashier",
+        "options": [
+          { "key": "cashier", "label": "Cashier (Stripe / Paddle)" },
+          { "key": "invoice", "label": "Offline invoice (Enterprise)" }
+        ]
+      },
+      {
+        "name": "price_micro_units",
+        "controlType": "number",
+        "label": "Price (micro-units)",
+        "required": true,
+        "helpText": "1 unit = 1 micro-cent. $29.00 \u2192 29000000."
+      },
+      {
+        "name": "currency",
+        "controlType": "select",
+        "label": "Currency",
+        "required": true,
+        "defaultValue": "USD",
+        "options": [
+          { "key": "USD" },
+          { "key": "EUR" },
+          { "key": "GBP" },
+          { "key": "AUD" },
+          { "key": "CAD" }
+        ]
+      },
+      {
+        "name": "provider_price_id",
+        "controlType": "text",
+        "label": "Provider price ID",
+        "helpText": "Stripe price_xxx or Paddle product ID. Empty when billing_mode=invoice.",
+        "bindings": { "hidden": { "$expr": "form.billing_mode === 'invoice'" } }
+      },
+      {
+        "name": "trial_days",
+        "controlType": "number",
+        "label": "Trial days",
+        "defaultValue": 0,
+        "min": 0,
+        "max": 90
+      },
+      {
+        "name": "is_public",
+        "controlType": "toggle",
+        "label": "Public (shown on pricing page)",
+        "defaultValue": true
+      },
+      {
+        "name": "is_deprecated",
+        "controlType": "toggle",
+        "label": "Deprecated (no new signups)",
+        "defaultValue": false
+      },
+      {
+        "name": "included_features",
+        "controlType": "tag-input",
+        "label": "Included features",
+        "helpText": "Feature keys enabled by this plan."
+      },
+      {
+        "name": "default_entitlements",
+        "controlType": "repeater",
+        "label": "Default entitlements",
+        "itemFields": [
+          {
+            "name": "key",
+            "controlType": "select",
+            "label": "Entitlement",
+            "bindings": {
+              "options": { "$ref": "entitlementRegistry" },
+              "optionKey": "key",
+              "optionLabel": "key"
+            }
+          },
+          {
+            "name": "kind",
+            "controlType": "select",
+            "options": [
+              { "key": "slot" },
+              { "key": "pool" },
+              { "key": "boolean" },
+              { "key": "unlimited" }
+            ]
+          },
+          { "name": "value_cap", "controlType": "number" },
+          {
+            "name": "period",
+            "controlType": "select",
+            "options": [
+              { "key": "month" },
+              { "key": "year" },
+              { "key": "anniversary" },
+              { "key": "lifetime" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

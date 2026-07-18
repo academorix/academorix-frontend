@@ -1,0 +1,234 @@
+{
+  "id": "academorix://modules/versioning/schemas/api-version",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ApiVersion",
+  "description": "One row per registered API version. Global, platform-owned, is_system=true. Slug is the primary reference key everywhere (URL path, Accept header, WebhookSubscription.api_version FK). State machine advances via lifecycle commands (versioning:release / deprecate / sunset). One row per surface (api, webhook, graphql) may have is_default=true \u2014 the default resolver falls back to it when no version is otherwise resolved.",
+  "type": "object",
+  "x-module": "versioning",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "api_versions",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "apv_",
+    "incrementing": false,
+    "model": "Academorix\\Versioning\\Models\\ApiVersion",
+    "interface": "Academorix\\Versioning\\Contracts\\Data\\ApiVersionInterface",
+    "implements": ["Academorix\\Versioning\\Contracts\\Data\\ApiVersionInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "HasStates",
+      "HasSystemFlag",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable",
+      "HasVersions",
+      "Sortable",
+      "Filterable",
+      "Sluggable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "state": "ApiVersionState",
+      "scheme": "VersionScheme",
+      "is_default": "boolean",
+      "is_system": "boolean",
+      "released_at": "datetime",
+      "deprecated_at": "datetime",
+      "sunset_at": "datetime",
+      "metadata": "array"
+    },
+    "appends": ["is_released", "is_deprecated", "is_sunset", "days_until_sunset"],
+    "observers": ["ApiVersionObserver"],
+    "hidden": ["metadata"],
+    "guarded": [],
+    "dontVersionFields": ["is_default", "sort_order", "updated_at"],
+    "keepOldVersions": 50
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `apv_<26 chars>`."
+      },
+      "slug": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Human-readable version identifier: 'v1' / 'v2' / '2024-10-15'. Unique. Reserved slugs (default, current, latest) refused via Sluggable's reserved list."
+      },
+      "name": {
+        "type": "string",
+        "length": 100,
+        "nullable": false,
+        "description": "Display name in admin UI: 'v1 (Initial Release)' / '2024.10 (Autumn 2024)'."
+      },
+      "description": {
+        "type": "text",
+        "nullable": true,
+        "description": "Markdown-formatted description of what changed in this version. Rendered on the /api/versions/{slug} public page."
+      },
+      "scheme": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "semver",
+        "description": "Enum: semver, calver. Selected at release time; cannot change post-release."
+      },
+      "state": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "draft",
+        "description": "State machine: draft \u2192 released \u2192 deprecated \u2192 sunset."
+      },
+      "released_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set on draft \u2192 released transition."
+      },
+      "deprecated_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set on released \u2192 deprecated transition. From this moment, Deprecation + Sunset headers are emitted."
+      },
+      "sunset_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Scheduled sunset time. Set on deprecate command; the RFC 8594 Sunset header carries this value. When `now() > sunset_at` AND state=deprecated, SunsetApiVersionJob transitions to state=sunset."
+      },
+      "sunset_notice_url": {
+        "type": "string",
+        "length": 500,
+        "nullable": true,
+        "description": "Migration guide URL emitted in the Link: rel=successor-version header."
+      },
+      "migration_target_slug": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "foreign": {
+          "table": "api_versions",
+          "column": "slug",
+          "onUpdate": "cascade",
+          "onDelete": "set null"
+        },
+        "description": "Self-referential: 'when this sunsets, upgrade subscribers to this slug'. Null = manual migration required."
+      },
+      "is_default": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "One row is is_default=true \u2014 the fallback when no version is resolved. Partial unique index enforces exactly-one-default."
+      },
+      "is_system": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "All ApiVersion rows are is_system=true. Blocks tenant-side edits."
+      },
+      "sort_order": {
+        "type": "unsignedInteger",
+        "nullable": false,
+        "default": 0,
+        "description": "Admin UI + tenant catalog display order. Convention: latest first (highest sort_order first)."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["slug"],
+        "unique": true,
+        "name": "api_versions_slug_unique",
+        "description": "Primary lookup path. FK target for WebhookSubscription.api_version."
+      },
+      {
+        "columns": ["is_default"],
+        "unique": true,
+        "name": "api_versions_is_default_unique",
+        "predicate": "is_default = true AND deleted_at IS NULL",
+        "description": "Exactly one default at a time."
+      },
+      {
+        "columns": ["state", "sunset_at"],
+        "unique": false,
+        "name": "api_versions_sunset_scan_index",
+        "predicate": "state = 'deprecated' AND sunset_at IS NOT NULL",
+        "description": "SunsetApiVersionJob scan."
+      },
+      {
+        "columns": ["migration_target_slug"],
+        "unique": false,
+        "name": "api_versions_migration_target_index"
+      },
+      { "columns": ["scheme"], "unique": false, "name": "api_versions_scheme_index" }
+    ]
+  },
+  "required": [
+    "id",
+    "slug",
+    "name",
+    "scheme",
+    "state",
+    "is_default",
+    "is_system",
+    "sort_order",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^apv_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,30}$",
+      "maxLength": 32,
+      "description": "Lowercase, alphanumeric + dot/dash/underscore. E.g. v1 / v1.2 / 2024-10-15."
+    },
+    "name": { "type": "string", "maxLength": 100 },
+    "description": { "type": ["string", "null"] },
+    "scheme": { "type": "string", "enum": ["semver", "calver"] },
+    "state": { "type": "string", "enum": ["draft", "released", "deprecated", "sunset"] },
+    "released_at": { "type": ["string", "null"], "format": "date-time" },
+    "deprecated_at": { "type": ["string", "null"], "format": "date-time" },
+    "sunset_at": { "type": ["string", "null"], "format": "date-time" },
+    "sunset_notice_url": { "type": ["string", "null"], "format": "uri", "maxLength": 500 },
+    "migration_target_slug": { "type": ["string", "null"], "maxLength": 32 },
+    "is_default": { "type": "boolean" },
+    "is_system": { "type": "boolean" },
+    "sort_order": { "type": "integer", "minimum": 0 },
+    "is_released": { "type": "boolean", "description": "Computed. state === 'released'." },
+    "is_deprecated": { "type": "boolean", "description": "Computed. state === 'deprecated'." },
+    "is_sunset": { "type": "boolean", "description": "Computed. state === 'sunset'." },
+    "days_until_sunset": {
+      "type": ["integer", "null"],
+      "description": "Computed. When state = deprecated and sunset_at is set, days from now() to sunset_at (clamped >= 0). Null otherwise."
+    },
+    "metadata": { "type": ["object", "null"], "additionalProperties": true },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["metadata", "created_by", "updated_by", "deleted_by"],
+    "computed": ["is_released", "is_deprecated", "is_sunset", "days_until_sunset"]
+  }
+}

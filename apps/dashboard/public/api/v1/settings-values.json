@@ -1,0 +1,142 @@
+[
+  {
+    "id": "seed-tenant-timezone",
+    "key": "workspace.general.timezone",
+    "scopeKind": "tenant",
+    "scopeId": "tenant-academorix",
+    "locale": null,
+    "value": "Asia/Riyadh",
+    "updatedAt": "2025-09-14T09:15:00Z",
+    "updatedBy": "user-current"
+  },
+  {
+    "id": "seed-tenant-week-start",
+    "key": "workspace.general.week_start",
+    "scopeKind": "tenant",
+    "scopeId": "tenant-academorix",
+    "locale": null,
+    "value": "sunday",
+    "updatedAt": "2025-09-14T09:15:00Z",
+    "updatedBy": "user-current"
+  },
+  {
+    "id": "seed-branch-timezone",
+    "key": "workspace.general.timezone",
+    "scopeKind": "branch",
+    "scopeId": "branch-riyadh-central",
+    "locale": null,
+    "value": "Asia/Riyadh",
+    "updatedAt": "2025-10-02T10:12:00Z",
+    "updatedBy": "user-current"
+  },
+  {
+    "id": "seed-branch-currency",
+    "key": "workspace.currency.code",
+    "scopeKind": "branch",
+    "scopeId": "branch-riyadh-central",
+    "locale": null,
+    "value": "SAR",
+    "updatedAt": "2025-10-02T10:12:00Z",
+    "updatedBy": "user-current"
+  },
+  {
+    "id": "seed-tenant-terminology-athletes-en",
+    "key": "language.terminology.athletes",
+    "scopeKind": "tenant",
+    "scopeId": "tenant-academorix",
+    "locale": "en",
+    "value": "Athletes",
+    "updatedAt": "2025-08-20T14:00:00Z",
+    "updatedBy": "user-current"
+  },
+  {
+    "id": "seed-tenant-terminology-athletes-ar",
+    "key": "language.terminology.athletes",
+    "scopeKind": "tenant",
+    "scopeId": "tenant-academorix",
+    "locale": "ar",
+    "value": "طلبة",
+    "updatedAt": "2025-08-20T14:00:00Z",
+    "updatedBy": "user-current"
+  },
+  {
+    "id": "seed-tenant-terminology-coaches-ar",
+    "key": "language.terminology.coaches",
+    "scopeKind": "tenant",
+    "scopeId": "tenant-academorix",
+    "locale": "ar",
+    "value": "المدربون",
+    "updatedAt": "2025-08-20T14:00:00Z",
+    "updatedBy": "user-current"
+  },
+  {
+    "id": "seed-tenant-terminology-teams-ar",
+    "key": "language.terminology.teams",
+    "scopeKind": "tenant",
+    "scopeId": "tenant-academorix",
+    "locale": "ar",
+    "value": "الفرق",
+    "updatedAt": "2025-08-20T14:00:00Z",
+    "updatedBy": "user-current"
+  },
+  {
+    "id": "seed-tenant-safeguarding-officer",
+    "key": "safeguarding.designated_officer_name",
+    "scopeKind": "tenant",
+    "scopeId": "tenant-academorix",
+    "locale": null,
+    "value": "Priya Nair",
+    "updatedAt": "2025-07-11T11:30:00Z",
+    "updatedBy": "user-current"
+  },
+  {
+    "id": "seed-tenant-safeguarding-officer-email",
+    "key": "safeguarding.designated_officer_email",
+    "scopeKind": "tenant",
+    "scopeId": "tenant-academorix",
+    "locale": null,
+    "value": "priya@academorix.com",
+    "updatedAt": "2025-07-11T11:30:00Z",
+    "updatedBy": "user-current"
+  },
+  {
+    "id": "seed-tenant-billing-plan",
+    "key": "billing.plan_key",
+    "scopeKind": "tenant",
+    "scopeId": "tenant-academorix",
+    "locale": null,
+    "value": "growth",
+    "updatedAt": "2025-06-01T09:00:00Z",
+    "updatedBy": "user-current"
+  },
+  {
+    "id": "seed-branch-invoice-prefix",
+    "key": "billing.invoice_prefix",
+    "scopeKind": "branch",
+    "scopeId": "branch-riyadh-central",
+    "locale": null,
+    "value": "INV-RYD-",
+    "updatedAt": "2025-10-05T12:20:00Z",
+    "updatedBy": "user-current"
+  },
+  {
+    "id": "seed-branch-session-duration",
+    "key": "sports.session.default_duration_minutes",
+    "scopeKind": "branch",
+    "scopeId": "branch-riyadh-central",
+    "locale": null,
+    "value": 90,
+    "updatedAt": "2025-10-10T08:45:00Z",
+    "updatedBy": "user-current"
+  },
+  {
+    "id": "seed-user-density",
+    "key": "workspace.general.density",
+    "scopeKind": "user",
+    "scopeId": "user-current",
+    "locale": null,
+    "value": "compact",
+    "updatedAt": "2025-11-01T14:00:00Z",
+    "updatedBy": "user-current"
+  }
+]

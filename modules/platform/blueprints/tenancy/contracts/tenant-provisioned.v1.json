@@ -1,0 +1,117 @@
+{
+  "id": "academorix://modules/tenancy/contracts/tenant-provisioned.v1",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "title": "tenant-provisioned event \u2014 v1 wire contract",
+  "description": "FROZEN wire shape for the `tenancy::TenantProvisioned` event. Emitted AFTER the provisioning DB transaction commits (safe for external side effects: welcome-email, DNS provisioning, search-index registration). Every consumer (workflow subscribers, webhook fan-out, downstream services) reads this shape unchanged; any additive property must land in v2 while v1 continues to dispatch in parallel per the versioning policy \u2014 see `foundation/readme.md` \u00a712.",
+  "x-emitter": "Academorix\\Tenancy\\Events\\TenantProvisioned",
+  "x-owning-module": "tenants",
+  "x-event-name": "tenants.tenant.provisioned",
+  "x-version": "v1",
+  "x-frozen": true,
+  "x-frozen-since": "2026-07-14",
+  "x-transport": ["laravel-events (in-process)", "webhook (outbound)", "eventbridge (planned)"],
+  "x-consumers": [
+    "invitations::SeedOwnerInvitation",
+    "localization::SeedInitialTenantLocale",
+    "activity::WriteToActivityLog",
+    "notifications::DispatchWelcomeNotification",
+    "webhook::FanOutTenantProvisioned"
+  ],
+  "x-versioning": {
+    "current": "v1",
+    "next": "v2 (planned \u2014 not scheduled)",
+    "policy": "Additive changes (new optional fields) can land in a v1 minor patch WITHOUT a new contract file when the change is backward-compatible. Breaking changes (removed field, renamed field, tightened type, changed semantics) REQUIRE a v2 contract file + parallel dispatch of both versions for one full deprecation cycle (typically 6 months).",
+    "breaking_change_checklist": [
+      "Publish `<event>.v2.json` alongside this file.",
+      "Update owning `events.json` with a second `wire_contract_file` entry.",
+      "Emit BOTH v1 + v2 in parallel until every documented consumer has migrated.",
+      "Publish a DeprecationNotice via versioning module targeting the v1 contract.",
+      "Wait the deprecation window, then delete v1 in a MAJOR release."
+    ]
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_id",
+    "event_name",
+    "event_version",
+    "occurred_at",
+    "tenant_id",
+    "application_id",
+    "business_type",
+    "tenant_slug",
+    "tenant_name",
+    "created_at",
+    "provisioned_by"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "ULID identifier for THIS event instance. Used for deduplication + idempotency by downstream consumers. Distinct from `tenant_id`."
+    },
+    "event_name": {
+      "type": "string",
+      "const": "tenants.tenant.provisioned",
+      "description": "Wire-canonical event name. Namespaced with the emitting module + entity + action."
+    },
+    "event_version": { "type": "string", "const": "v1" },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp with timezone \u2014 the wall-clock moment the event was dispatched (post-commit). Distinct from `created_at`, which is the tenant row's own `created_at`."
+    },
+    "tenant_id": {
+      "type": "string",
+      "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "The provisioned Tenant's primary key."
+    },
+    "application_id": {
+      "type": "string",
+      "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "The Application the tenant belongs to (product container)."
+    },
+    "business_type": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "description": "The tenant's business_type enum key (academy / sports_center / school / gym / federation / club / \u2026). Drives per-business defaults at provisioning time."
+    },
+    "tenant_slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,62}$",
+      "description": "DNS-safe tenant slug. Used to construct tenant URLs (`{slug}.academorix.app`)."
+    },
+    "tenant_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "description": "Human-readable tenant display name."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The Tenant row's own `created_at`. Typically identical to `occurred_at` (\u00b1 milliseconds); provided separately because `occurred_at` is the event-dispatch moment and `created_at` is the DB row birth moment."
+    },
+    "provisioned_by": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["user", "platform_admin", "system", "api"],
+          "description": "Who initiated the provisioning. `user` = self-serve signup, `platform_admin` = staff on the central-admin surface, `system` = automated (backfill / migration), `api` = external caller via API token."
+        },
+        "id": {
+          "type": ["string", "null"],
+          "description": "ULID of the user / platform_admin / API token that provisioned. Null for `system`."
+        },
+        "email": {
+          "type": ["string", "null"],
+          "format": "email",
+          "description": "Email of the provisioner \u2014 useful for auditability without a downstream user-service lookup. Redacted (`[REDACTED]`) when the caller opted into pseudonymised events."
+        }
+      }
+    }
+  }
+}

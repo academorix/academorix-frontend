@@ -1,0 +1,34 @@
+{
+  "id": "academorix://modules/activity/relations",
+  "$version": 1,
+  "title": "activity \u2014 model relationships",
+  "description": "Activity inherits spatie's polymorphic subject + causer FKs. Adds tenant_id FK.",
+  "internal": [],
+  "outbound": [
+    {
+      "from": "Activity",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Nullable when created by system commands with no tenant context (deploy, seed). Otherwise required."
+    },
+    {
+      "from": "Activity",
+      "kind": "morphTo",
+      "to": "*",
+      "morphName": "subject",
+      "description": "Spatie contract: the model that was acted upon."
+    },
+    {
+      "from": "Activity",
+      "kind": "morphTo",
+      "to": "*",
+      "morphName": "causer",
+      "description": "Spatie contract: the User (or Service) that caused the event."
+    }
+  ],
+  "inbound": {
+    "description": "Any model using HasActivityLog gets an `activities()` morphMany on the fly via spatie's HasActivities trait."
+  }
+}

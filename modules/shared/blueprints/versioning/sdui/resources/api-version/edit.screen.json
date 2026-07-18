@@ -1,0 +1,117 @@
+{
+  "id": "versioning.resources.api-version.edit",
+  "title": "Edit API version",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/versioning/api-versions/{slug}/edit",
+  "host": "central-admin",
+  "audience": "authenticated",
+  "resource": { "module": "versioning", "entity": "api-version", "action": "edit" },
+  "requiresPermission": "platform.versioning.update",
+  "params": [{ "name": "slug", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "apiVersion",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/platform/versioning/api-versions/' + params.slug",
+      "unwrap": "data"
+    },
+    {
+      "name": "otherVersions",
+      "kind": "http.get",
+      "url": "/api/v1/platform/versioning/api-versions?filter[state]=released&per_page=100",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-2xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "Cancel",
+            "className": "text-sm text-muted"
+          },
+          "actions": {
+            "onPress": {
+              "kind": "navigate",
+              "toExpr": "'/platform/versioning/api-versions/' + params.slug"
+            }
+          }
+        },
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold" },
+          "bindings": { "children": { "$expr": "'Edit ' + apiVersion.slug" } }
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "warning" },
+          "bindings": {
+            "hidden": { "$expr": "apiVersion.state === 'draft'" },
+            "children": {
+              "$expr": "'This version is ' + apiVersion.state + '. Metadata edits are allowed; state transitions use dedicated actions.'"
+            }
+          }
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "submitUrlExpr": "'/api/v1/platform/versioning/api-versions/' + params.slug",
+            "submitMethod": "PATCH",
+            "onSuccess": [
+              { "kind": "toast.success", "message": "Saved" },
+              { "kind": "data.refresh", "source": "apiVersion" }
+            ]
+          },
+          "bindings": { "initialValues": { "$ref": "apiVersion" } },
+          "children": [
+            {
+              "kind": "TextField",
+              "props": { "label": "Display name", "name": "name" },
+              "bindings": { "defaultValue": { "$ref": "apiVersion.name" } }
+            },
+            {
+              "kind": "TextArea",
+              "props": { "label": "Description (markdown)", "name": "description", "rows": 8 },
+              "bindings": { "defaultValue": { "$ref": "apiVersion.description" } }
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "label": "Migration target (on sunset)",
+                "name": "migration_target_slug",
+                "placeholder": "None \u2014 manual migration required"
+              },
+              "optionsSource": {
+                "$ref": "otherVersions",
+                "valueField": "slug",
+                "labelField": "slug"
+              },
+              "bindings": { "defaultValue": { "$ref": "apiVersion.migration_target_slug" } }
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "label": "Migration guide URL",
+                "name": "sunset_notice_url",
+                "type": "url",
+                "placeholder": "https://docs.academorix.com/migration/v1-to-v2"
+              },
+              "bindings": { "defaultValue": { "$ref": "apiVersion.sunset_notice_url" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "size": "md", "type": "submit", "children": "Save" }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

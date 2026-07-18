@@ -11,7 +11,7 @@
  * @see DOMAIN_MODULES_BLUEPRINT.md §10.10 "Documents & Media"
  */
 
-import { DocumentTextIcon } from "@academorix/ui/icons/outline";
+import { DocumentTextIcon } from "@stackra/ui/icons/heroicon/outline";
 import { createElement, lazy } from "react";
 
 import type { AppModule } from "@/lib/module";

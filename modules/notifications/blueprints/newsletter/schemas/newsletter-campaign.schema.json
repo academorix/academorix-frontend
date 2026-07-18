@@ -1,0 +1,323 @@
+{
+  "id": "academorix://modules/newsletter/schemas/newsletter-campaign",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "NewsletterCampaign",
+  "description": "A send event. Combines an issue + an audience + scheduled_at. State machine: pending → in_progress → completed | failed | cancelled.",
+  "type": "object",
+  "x-module": "newsletter",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "newsletter_campaigns",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "nlc_",
+    "incrementing": false,
+    "model": "Academorix\\Newsletter\\Models\\NewsletterCampaign",
+    "interface": "Academorix\\Newsletter\\Contracts\\Data\\NewsletterCampaignInterface",
+    "implements": ["Academorix\\Newsletter\\Contracts\\Data\\NewsletterCampaignInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasTranslations",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "state": "NewsletterCampaignState",
+      "counters": "array",
+      "scheduled_at": "datetime",
+      "started_at": "datetime",
+      "completed_at": "datetime",
+      "metadata": "array",
+      "translations": "array"
+    },
+    "appends": ["progress_pct", "open_rate", "click_rate", "bounce_rate", "complaint_rate"],
+    "observers": ["NewsletterCampaignObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `nlc_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onDelete": "cascade"
+        }
+      },
+      "newsletter_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "newsletters",
+          "column": "id",
+          "onDelete": "cascade"
+        }
+      },
+      "issue_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "newsletter_issues",
+          "column": "id",
+          "onDelete": "restrict"
+        }
+      },
+      "audience_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "newsletter_audiences",
+          "column": "id",
+          "onDelete": "restrict"
+        }
+      },
+      "name": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "description": "Translated via `HasTranslations`."
+      },
+      "state": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "Enum: pending / in_progress / completed / failed / cancelled."
+      },
+      "scheduled_at": {
+        "type": "timestamptz",
+        "nullable": true
+      },
+      "started_at": {
+        "type": "timestamptz",
+        "nullable": true
+      },
+      "completed_at": {
+        "type": "timestamptz",
+        "nullable": true
+      },
+      "counters": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "{ targeted, sent, delivered, opened, clicked, bounced, complained, unsubscribed, failed }."
+      },
+      "send_batch_size": {
+        "type": "integer",
+        "nullable": false,
+        "default": 500
+      },
+      "throttle_per_second": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Provider-side send-rate cap. Null = uncapped."
+      },
+      "failure_reason": {
+        "type": "string",
+        "length": 200,
+        "nullable": true
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true
+      },
+      "translations": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Per-locale content-translation blob. Shape: `{ locale_code: { field: value } }`. Managed by the `HasTranslations` trait (wraps `spatie/laravel-translatable`). Column added via `localization::Blueprint::translations()`."
+      },
+      "created_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "updated_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "deleted_by": {
+        "type": "uuid",
+        "nullable": true
+      },
+      "deleted_at": {
+        "type": "timestamptz",
+        "nullable": true
+      },
+      "created_at": {
+        "type": "timestamptz",
+        "nullable": false
+      },
+      "updated_at": {
+        "type": "timestamptz",
+        "nullable": false
+      }
+    },
+    "indexes": [
+      {
+        "columns": ["newsletter_id", "state", "scheduled_at"],
+        "unique": false,
+        "name": "newsletter_campaigns_send_scan_idx"
+      },
+      {
+        "columns": ["issue_id"],
+        "unique": false,
+        "name": "newsletter_campaigns_issue_idx"
+      },
+      {
+        "columns": ["audience_id"],
+        "unique": false,
+        "name": "newsletter_campaigns_audience_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "newsletter_id",
+    "issue_id",
+    "audience_id",
+    "name",
+    "state",
+    "counters",
+    "send_batch_size",
+    "translations",
+    "created_at",
+    "updated_at"
+  ],
+  "x-translatable": {
+    "trait": "Academorix\\Localization\\Concerns\\HasTranslations",
+    "column": "translations",
+    "fields": ["name"],
+    "underlying_package": "spatie/laravel-translatable ^6.0",
+    "migration_macro": "localization::Blueprint::translations()",
+    "wire_convention": "Active-locale projection onto the field name by default. Full JSONB blob under `data.translations` when the request carries `?include=translations`.",
+    "auto_translate": "opt-in via TenantLocale.auto_translate=true per target locale"
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^nlc_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "tenant_id": {
+      "type": "string",
+      "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "newsletter_id": {
+      "type": "string",
+      "pattern": "^nlp_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "issue_id": {
+      "type": "string",
+      "pattern": "^nli_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "audience_id": {
+      "type": "string",
+      "pattern": "^nla_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 200,
+      "x-translatable": true,
+      "description": "Active-locale projection. Full blob available via `?include=translations`."
+    },
+    "translations": {
+      "type": "object",
+      "description": "Per-locale content translations. Wire-included only when `?include=translations`. Shape: `{ locale_code: { field: value } }`.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "state": {
+      "type": "string",
+      "enum": ["pending", "in_progress", "completed", "failed", "cancelled"]
+    },
+    "scheduled_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "started_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "counters": {
+      "type": "object"
+    },
+    "send_batch_size": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10000
+    },
+    "throttle_per_second": {
+      "type": ["integer", "null"],
+      "minimum": 1
+    },
+    "failure_reason": {
+      "type": ["string", "null"],
+      "maxLength": 200
+    },
+    "progress_pct": {
+      "type": "number",
+      "description": "Computed. sent / targeted × 100."
+    },
+    "open_rate": {
+      "type": "number",
+      "description": "Computed."
+    },
+    "click_rate": {
+      "type": "number",
+      "description": "Computed."
+    },
+    "bounce_rate": {
+      "type": "number",
+      "description": "Computed."
+    },
+    "complaint_rate": {
+      "type": "number",
+      "description": "Computed."
+    },
+    "metadata": {
+      "type": ["object", "null"]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["progress_pct", "open_rate", "click_rate", "bounce_rate", "complaint_rate"]
+  }
+}

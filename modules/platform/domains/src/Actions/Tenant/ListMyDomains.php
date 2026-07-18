@@ -1,0 +1,53 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Academorix\Domains\Actions\Tenant;
+
+use Academorix\Authorization\Attributes\RequirePermission;
+use Academorix\Domains\Contracts\Repositories\DomainRepositoryInterface;
+use Academorix\Domains\Data\DomainData;
+use Academorix\Domains\Enums\DomainsPermission;
+use Academorix\Domains\Models\Domain;
+use Academorix\Routing\Attributes\AsAction;
+use Academorix\Routing\Attributes\Get;
+use Academorix\Routing\Attributes\Middleware;
+use Academorix\Routing\Concerns\AsController;
+use Academorix\Tenancy\Contracts\Services\TenantContextInterface;
+use Spatie\LaravelData\DataCollection;
+
+/**
+ * `GET /api/v1/tenant/domains` — the caller tenant's domains.
+ *
+ * @category Domains
+ *
+ * @since    0.1.0
+ */
+#[AsAction(name: 'domains.tenant.list')]
+#[Get('/api/v1/tenant/domains')]
+#[Middleware(['api', 'resolve.tenant', 'auth:sanctum', 'tenant.user'])]
+#[RequirePermission(DomainsPermission::ManageOwn)]
+final class ListMyDomains
+{
+    use AsController;
+
+    public function __construct(
+        private readonly DomainRepositoryInterface $domains,
+        private readonly TenantContextInterface $tenantContext,
+    ) {
+    }
+
+    /**
+     * @return DataCollection<int, DomainData>
+     */
+    public function __invoke(): DataCollection
+    {
+        $tenant = $this->tenantContext->currentOrFail();
+
+        $rows = $this->domains
+            ->findByTenant((string) $tenant->getKey())
+            ->map(static fn (Domain $d): DomainData => DomainData::fromModel($d));
+
+        return new DataCollection(DomainData::class, $rows);
+    }
+}

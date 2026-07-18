@@ -7,8 +7,8 @@
  * Refine's `useUpdate`. Renders nothing once the task is resolved.
  */
 
-import { CheckIcon, XMarkIcon } from "@academorix/ui/icons/outline";
-import { Button } from "@academorix/ui/react";
+import { CheckIcon, XMarkIcon } from "@stackra/ui/icons/heroicon/outline";
+import { Button } from "@stackra/ui/react";
 import { useUpdate } from "@refinedev/core";
 
 import type { ApprovalTask } from "@/modules/reception/reception.types";

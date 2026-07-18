@@ -1,0 +1,145 @@
+{
+  "id": "academorix://modules/search/relations",
+  "$version": 1,
+  "title": "search \u2014 model relationships",
+  "description": "Five owned models with a hub-and-spoke shape: SearchIndex is the primary aggregate; SearchSyncJob + SearchSynonym hang off it. SearchSavedQuery + SearchAnalyticsEvent are user-facing peers scoped to tenant. Cross-module: SearchSyncJob may reference an xfer_artifact for the reindex-from-transfer-export flow.",
+  "internal": [
+    {
+      "from": "SearchIndex",
+      "kind": "hasMany",
+      "to": "SearchSyncJob",
+      "foreignKey": "search_index_id",
+      "localKey": "id",
+      "onDelete": "cascade",
+      "description": "Sync jobs for this index. Cascade-delete with the parent index."
+    },
+    {
+      "from": "SearchIndex",
+      "kind": "hasMany",
+      "to": "SearchSynonym",
+      "foreignKey": "search_index_id",
+      "localKey": "id",
+      "onDelete": "cascade",
+      "description": "Optional index-scoped synonyms. Broader tenant + language synonyms have search_index_id = NULL."
+    },
+    {
+      "from": "SearchSyncJob",
+      "kind": "belongsTo",
+      "to": "SearchIndex",
+      "foreignKey": "search_index_id",
+      "description": "Inverse."
+    },
+    {
+      "from": "SearchSynonym",
+      "kind": "belongsTo",
+      "to": "SearchIndex",
+      "foreignKey": "search_index_id",
+      "onDelete": "cascade",
+      "description": "Nullable \u2014 tenant + language scope when null."
+    },
+    {
+      "from": "SearchAnalyticsEvent",
+      "kind": "belongsTo",
+      "to": "SearchSavedQuery",
+      "foreignKey": "saved_query_id",
+      "onDelete": "set null",
+      "description": "Nullable \u2014 populated when the event originated from a saved query invocation. Retained for smart-list usage analytics."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "SearchIndex",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Nullable when platform-wide (audit, activity)."
+    },
+    {
+      "from": "SearchSyncJob",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "SearchSyncJob",
+      "kind": "belongsTo",
+      "to": "transfer::XferArtifact",
+      "foreignKey": "source_artifact_id",
+      "onDelete": "set null",
+      "description": "Populated only when kind = 'reindex' AND source = 'xfer_artifact'. Reindex-from-transfer-export flow for cross-region migrations."
+    },
+    {
+      "from": "SearchSyncJob",
+      "kind": "morphTo",
+      "to": "*",
+      "morphName": "causer",
+      "columns": ["causer_type", "causer_id"],
+      "description": "Polymorphic initiator. Typically User; may be System for scheduled reindexes."
+    },
+    {
+      "from": "SearchSyncJob",
+      "kind": "morphTo",
+      "to": "*",
+      "morphName": "cancelledBy",
+      "columns": ["cancelled_by_type", "cancelled_by_id"]
+    },
+    {
+      "from": "SearchSynonym",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "SearchSynonym",
+      "kind": "morphTo",
+      "to": "*",
+      "morphName": "createdBy",
+      "columns": ["created_by_type", "created_by_id"]
+    },
+    {
+      "from": "SearchSavedQuery",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "SearchSavedQuery",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "owner_id",
+      "onDelete": "cascade",
+      "description": "Cascade drops private queries when owner is erased. Shared queries (is_shared=true) transfer ownership to a tenant admin via the AnonymiseSearchForErasedUser listener before the delete cascades."
+    },
+    {
+      "from": "SearchAnalyticsEvent",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "SearchAnalyticsEvent",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "user_id",
+      "onDelete": "set null",
+      "description": "Set to null on user erasure. Keep the row for anonymised aggregate analytics (GDPR Art. 17)."
+    }
+  ],
+  "inbound": {
+    "description": "No other module holds an FK to search tables. Inbound integration is attribute-driven: any model in any module carrying #[Searchable] is discovered by the compiler at boot and registered in EntityRegistry / SearchIndex. HasActivityLog on SearchSyncJob + SearchIndex + SearchSynonym + SearchSavedQuery writes rows into activity_log (activity module) on their lifecycle events; HasAudit on SearchSyncJob + SearchIndex writes rows into audits (audit module) on the same signal \u2014 both are morphMany from those modules' perspective, not FKs on our side.",
+    "consumed_traits": [
+      "foundation::HasUlids",
+      "foundation::HasSystemFlag (on SearchSynonym)",
+      "foundation::HasMetadata (on SearchIndex + SearchSavedQuery)",
+      "tenancy::BelongsToTenant",
+      "activity::HasActivityLog (on SearchIndex + SearchSyncJob + SearchSynonym + SearchSavedQuery)",
+      "audit::HasAudit (on SearchIndex + SearchSyncJob)",
+      "laravel/scout::Searchable (wrapped by our own HasSearchable trait \u2014 applied to CONSUMER models via #[Searchable] attribute, not to search's own models)"
+    ]
+  }
+}

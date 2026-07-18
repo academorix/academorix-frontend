@@ -8,7 +8,7 @@
  * from the caller's scope. Start/end use `datetime-local` inputs.
  */
 
-import { Button, Card, Form, Input, Label, ListBox, Select, TextField } from "@academorix/ui/react";
+import { Button, Card, Form, Input, Label, ListBox, Select, TextField } from "@stackra/ui/react";
 import { useList } from "@refinedev/core";
 import { useState } from "react";
 

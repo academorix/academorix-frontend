@@ -17,10 +17,7 @@ import { describe, expect, it } from "vitest";
 import type { FacilityType } from "@/modules/facilities/facilities.types";
 
 import { FacilityTypeChip } from "@/modules/facilities/components/facility-type-chip";
-import {
-  FACILITY_TYPE_LABELS,
-  FACILITY_TYPES,
-} from "@/modules/facilities/facilities.types";
+import { FACILITY_TYPE_LABELS, FACILITY_TYPES } from "@/modules/facilities/facilities.types";
 
 describe("FacilityTypeChip", () => {
   // A parametric loop is the cleanest way to guarantee every type has a

@@ -1,0 +1,116 @@
+{
+  "id": "subscription.checkout",
+  "title": "Choose a plan",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/subscription/checkout",
+  "host": "tenant",
+  "audience": "authenticated",
+  "requiresPermission": "subscription.manage",
+  "dataSources": [
+    { "name": "plans", "kind": "http.get", "url": "/api/v1/plans", "unwrap": "data" },
+    { "name": "subscription", "kind": "http.get", "url": "/api/v1/subscription", "unwrap": "data" }
+  ],
+  "state": [{ "name": "billingCycle", "default": "monthly" }],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-6xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "text-center flex flex-col gap-2" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-3xl font-semibold",
+                "children": "Choose your plan"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Upgrade any time. Downgrades take effect at the end of your current billing period."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "ToggleGroup",
+          "props": { "name": "billingCycle", "className": "mx-auto" },
+          "options": [
+            { "key": "monthly", "label": "Monthly" },
+            { "key": "annual", "label": "Annual (save 17%)" }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-3 gap-4" },
+          "children": [
+            {
+              "kind": "List",
+              "bindings": {
+                "items": {
+                  "$expr": "plans.filter(p => p.billing_cycle === state.billingCycle && p.is_public && p.tier !== 'free')"
+                }
+              },
+              "itemRenderer": {
+                "kind": "Widget",
+                "widget": "subscription.plan-comparison-card",
+                "props": {
+                  "plan": { "$ref": "row" },
+                  "isCurrent": { "$expr": "subscription?.plan_id === row.id" }
+                },
+                "actions": {
+                  "onSelect": {
+                    "kind": "http.post",
+                    "url": "/api/v1/subscription/checkout",
+                    "bodyExpr": "{ plan_id: row.id }",
+                    "onSuccess": {
+                      "kind": "redirectExternal",
+                      "urlExpr": "response.data.checkout_url"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "variant": "muted", "className": "p-6 text-center flex flex-col gap-2" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h3",
+                "className": "font-semibold",
+                "children": "Need more? Enterprise plans available."
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Custom limits, dedicated support, SLA guarantees, and offline PO billing."
+              }
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "outline",
+                "className": "mx-auto",
+                "children": "Contact sales"
+              },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/contact-sales" } }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
