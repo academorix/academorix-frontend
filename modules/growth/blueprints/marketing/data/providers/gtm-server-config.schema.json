@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/marketing/data/providers/gtm-server-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "GTM Server-side provider config",
+  "description": "Configuration shape for a Google Tag Manager Server-side container integration. The tenant hosts the GTM container; Academorix dispatches to it via HTTPS with HMAC signature.",
+  "type": "object",
+  "required": ["webhook_url", "hmac_secret"],
+  "additionalProperties": false,
+  "properties": {
+    "webhook_url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://",
+      "description": "HTTPS endpoint of the tenant's GTM Server container. Must start with https:// (TLS required)."
+    },
+    "hmac_secret": {
+      "type": "string",
+      "minLength": 32,
+      "description": "Shared secret for HMAC-SHA256 signing. 32 chars minimum. Rotated by the tenant; changes here trigger MarketingConfigurationChangedNotification. Encrypted at rest."
+    },
+    "signature_header": {
+      "type": "string",
+      "default": "X-Gtm-Signature",
+      "description": "HTTP header carrying the HMAC signature. Tenant's GTM container reads this to verify authenticity."
+    },
+    "timestamp_header": {
+      "type": "string",
+      "default": "X-Gtm-Timestamp",
+      "description": "HTTP header carrying the signature's timestamp (Unix seconds). Prevents replay attacks."
+    },
+    "signature_tolerance_seconds": {
+      "type": "integer",
+      "minimum": 60,
+      "maximum": 3600,
+      "default": 300,
+      "description": "Signature timestamp tolerance window. Requests with a timestamp older than this may be rejected by the container. Default 5 min."
+    },
+    "custom_headers": {
+      "type": ["object", "null"],
+      "description": "Optional additional headers on every dispatch. Useful for tenant-specific auth (Bearer token, Cloudflare Access token). Values encrypted at rest.",
+      "patternProperties": {
+        "^X-[A-Za-z0-9-]+$": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15
+    }
+  }
+}

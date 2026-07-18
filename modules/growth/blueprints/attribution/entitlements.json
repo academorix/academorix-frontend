@@ -1,0 +1,75 @@
+{
+  "id": "academorix://modules/attribution/entitlements",
+  "$version": 1,
+  "title": "attribution — declared entitlements",
+  "description": "Six entitlement keys. `attribution_capture` is the master boolean feature gate — off = middleware becomes a no-op. `attribution_click_ids_advanced` gates the msclkid + sccid captures (Medium+). `attribution_rollup` gates the campaign performance rollup + dashboards (Medium+). `attribution_merge` gates cross-device profile merging (Enterprise). `attribution_import` gates bulk CSV import from external CRM (Enterprise). `attribution_touchpoint_retention_extended` extends touchpoint retention from 730d to 2555d (Enterprise). Every downstream growth-tier consumer (marketing, analytics, referrals) has its OWN feature gate — this module is a feeder, not a policy layer.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "attribution_capture",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Master feature gate. Off = AttributionMiddleware becomes a no-op; downstream marketing / analytics / referrals events attribute against a null profile. All tiers on by default — a tenant may explicitly disable for privacy-conservative deployments.",
+      "enforcedBy": [
+        "AttributionMiddleware short-circuits when the tenant's attribution_capture is false",
+        "AttributionObserver refuses attribution create when the gate is closed",
+        "AttributionSnapshotBuilder returns null when the gate is closed (downstream events attribute null)",
+        "SDUI attribution dashboard hidden when features array does not include 'attribution.core'"
+      ]
+    },
+    {
+      "key": "attribution_click_ids_advanced",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Medium+. Enables capture of msclkid (Microsoft Bing) + sccid (Snapchat) click IDs. Small tier captures only gclid + fbclid — the two largest ad networks. Small tenants using Bing / Snapchat lose that attribution.",
+      "enforcedBy": [
+        "ClickIdExtractor filters the extracted click_id blob to remove msclkid + sccid when the gate is closed",
+        "SDUI campaign rollup surface hides the Microsoft + Snapchat rows when the gate is closed"
+      ]
+    },
+    {
+      "key": "attribution_rollup",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Medium+. Enables the campaign performance rollup + dashboards + GET /api/v1/campaigns/rollup routes. Small tenants can still see individual attribution profiles but not aggregated campaign performance.",
+      "enforcedBy": [
+        "CampaignRollupAggregatorJob skips tenants without the gate",
+        "GET /api/v1/campaigns/rollup routes return 402 attribution_rollup_not_entitled when the gate is closed",
+        "SDUI campaign-rollup screens hidden when features array does not include 'attribution.rollup'"
+      ]
+    },
+    {
+      "key": "attribution_merge",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Enables cross-device profile merging — MergeIdentifiedAttributionsJob dispatches on AttributionSubjectIdentified events. Non-Enterprise tenants leave anonymous + identified profiles side-by-side and attribute conversions to the identified profile only (partial-attribution — a compliance-safe fallback).",
+      "enforcedBy": [
+        "MergeAnonymousAttributionsOnSubjectIdentified hook short-circuits when the gate is closed",
+        "POST /api/v1/attributions/{attribution}/merge route returns 402 attribution_merge_not_entitled when the gate is closed",
+        "attribution:merge CLI refuses when the target tenant lacks the entitlement",
+        "SDUI merge dialog hidden when features array does not include 'attribution.merge'"
+      ]
+    },
+    {
+      "key": "attribution_import",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Enables bulk CSV import of historical attribution data from external CRMs (Salesforce, HubSpot, Segment). POST /api/v1/attributions/import accepts a signed CSV upload; each row creates a fresh attributions + attribution_touchpoints record.",
+      "enforcedBy": [
+        "POST /api/v1/attributions/import route returns 402 attribution_import_not_entitled when the gate is closed",
+        "SDUI import wizard hidden when features array does not include 'attribution.import'"
+      ]
+    },
+    {
+      "key": "attribution_touchpoint_retention_extended",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Extends touchpoint retention from 730 days (2 years) to 2555 days (7 years). Aligns with financial-record retention downstream (Wave 5 finance module invoices/subscriptions retain 7 years — attribution data on those events must survive as long).",
+      "enforcedBy": [
+        "PurgeArchivedAttributionsJob reads the entitlement to select the retention window per tenant",
+        "SDUI retention-window indicator on the attribution dashboard shows 2 or 7 years based on the gate"
+      ]
+    }
+  ]
+}

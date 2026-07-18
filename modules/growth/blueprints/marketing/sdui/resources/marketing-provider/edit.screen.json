@@ -1,0 +1,137 @@
+{
+  "id": "marketing.resources.marketing-provider.edit",
+  "title": "Edit marketing provider",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/marketing/providers/:providerId/edit",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "marketing", "entity": "marketing-provider", "action": "edit" },
+  "requiresPermission": "marketing.providers.update",
+  "requiresEntitlement": "marketing_capture",
+  "dataSources": [
+    {
+      "name": "provider",
+      "kind": "http.get",
+      "url": "/api/v1/marketing/providers/{{routeParams.providerId}}",
+      "unwrap": "data"
+    },
+    {
+      "name": "capabilities",
+      "kind": "http.get",
+      "url": "/api/v1/marketing/providers/capabilities",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 3600 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-3xl mx-auto p-6 flex flex-col gap-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "'Edit ' + provider.provider" } } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted font-mono" }, "bindings": { "children": { "$ref": "provider.id" } } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                { "kind": "Widget", "widget": "marketing.circuit-breaker-badge", "bindings": { "provider_config": { "$ref": "provider" } } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Credentials" } },
+            { "kind": "Text", "props": { "className": "text-xs text-muted mb-3", "children": "Credentials are encrypted at rest. Editing rotates the encryption at rest." } },
+            {
+              "kind": "DynamicForm",
+              "bindings": {
+                "schema": { "$expr": "capabilities[provider.provider].config_schema" },
+                "initialValues": { "$ref": "provider.config_redacted" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Event types" } },
+            {
+              "kind": "Widget",
+              "widget": "marketing.event-type-picker",
+              "bindings": {
+                "provider": { "$ref": "provider.provider" },
+                "supported_event_types": { "$expr": "capabilities[provider.provider].supports" },
+                "selected": { "$ref": "provider.enabled_event_types" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Danger zone" } },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2 flex-wrap" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "warning", "leadingIcon": "arrow-path", "children": "Reset circuit-breaker" },
+                  "requiresPermission": "marketing.providers.reset-circuit-breaker",
+                  "bindings": { "disabled": { "$expr": "!provider.circuit_breaker_open_until" } },
+                  "actions": {
+                    "onPress": {
+                      "kind": "prompt",
+                      "title": "Reset circuit-breaker?",
+                      "description": "The breaker will transition from OPEN to CLOSED. New dispatches will resume immediately.",
+                      "fields": [{ "name": "note", "label": "Reason for reset", "required": true }],
+                      "onConfirm": {
+                        "kind": "http.post",
+                        "url": "/api/v1/marketing/providers/{{provider.id}}/reset-circuit-breaker",
+                        "body": { "note": "{{prompt.note}}" },
+                        "invalidateQueries": ["providers"]
+                      }
+                    }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "danger", "leadingIcon": "trash", "children": "Deactivate provider" },
+                  "requiresPermission": "marketing.providers.delete",
+                  "actions": {
+                    "onPress": {
+                      "kind": "confirm",
+                      "title": "Deactivate this provider?",
+                      "message": "In-flight retries will drain but no new attempts will be made. The config is soft-deleted with a 90-day grace period.",
+                      "onConfirm": {
+                        "kind": "http.delete",
+                        "url": "/api/v1/marketing/providers/{{provider.id}}",
+                        "onSuccess": { "kind": "navigate", "to": "/tenant/marketing/providers" }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

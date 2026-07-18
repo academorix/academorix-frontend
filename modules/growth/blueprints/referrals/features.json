@@ -1,0 +1,74 @@
+{
+  "id": "academorix://modules/referrals/features",
+  "$version": 1,
+  "title": "referrals — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "referrals.core",
+      "displayName": "Referrals",
+      "description": "Master feature key. Off = the whole module is invisible: no admin surfaces, no /me/referral-code endpoint, no invitation composer.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "referrals.advanced_reward_types",
+      "displayName": "Advanced reward types",
+      "description": "Unlocks free_months, free_sessions, credits, point_award reward types. Small tier is limited to percent_discount + fixed_amount.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "referrals.double_sided",
+      "displayName": "Double-sided rewards",
+      "description": "Reward both referrer and referred. When off, only single-sided programs are allowed.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "referrals.fraud_detection",
+      "displayName": "Fraud detection",
+      "description": "Enables the FraudDetector rule surface + the fraud-flag review UI. When off, all referrals proceed regardless of self-IP-match / disposable-email / velocity signals.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "referrals.program_budget_cap",
+      "displayName": "Program budget cap",
+      "description": "Enables max_rewards_per_program budget cap + spike alerts. When off, programs run unbounded until manually paused.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "referrals.manual_override",
+      "displayName": "Manual override",
+      "description": "Enables admin force-vest + admin fraud manual-override actions. Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "referrals.extended_retention",
+      "displayName": "Extended retention (10 years)",
+      "description": "Enterprise-only. Extends retention 7y -> 10y for financial audit alignment.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "referrals.campaign_codes",
+      "displayName": "Campaign codes",
+      "description": "Enables admin-generated campaign codes (SUMMER25, TENYEARS, etc.). Small tenants only get user-scoped codes (auto-issued).",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "referrals.invitation_composer",
+      "displayName": "Invitation composer",
+      "description": "Enables the /me/invitations composer surface. When off, users can share their referral code but cannot send in-app invitations.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "id": "academorix://modules/attribution/traits",
+  "$version": 1,
+  "title": "attribution — trait composition",
+  "description": "Three owned traits. `BelongsToAttribution` is the FK trait for downstream models that hold an attribution FK (rarely used — most downstream modules copy the FROZEN snapshot into a jsonb column rather than an FK). `HasAttribution` is a marker trait for models that carry an `attribution jsonb NULL` column (frozen snapshot). `HasAttributionSnapshot` is a scope + accessor helper for models composing `HasAttribution`. Order matters when composed with `BelongsToTenant` — tenant MUST come first so the scope chain observes the tenant context.",
+  "owned": [
+    {
+      "trait": "Academorix\\Growth\\Attribution\\Concerns\\BelongsToAttribution",
+      "description": "Mixed into any domain model that carries a `attribution_id` FK. Adds the `attribution()` belongsTo relation + a `resolveInAttribution(?Attribution)` query scope. RARELY used — most downstream modules prefer HasAttribution (frozen snapshot in jsonb) over BelongsToAttribution (live FK) because attribution can be reset. The FK form is only used by AttributionTouchpoint (the internal ledger).",
+      "public": true,
+      "usedBy": [
+        "attribution::AttributionTouchpoint (the internal ledger; touchpoints hold a live FK because they're the write-side of last-touch tracking)"
+      ],
+      "conflicts_with": [],
+      "composition_notes": [
+        "Order: `BelongsToTenant` must appear BEFORE `BelongsToAttribution` in the trait list so the tenant scope resolves first.",
+        "The trait does NOT auto-fill attribution_id on create — callers must set it explicitly (touchpoints are the only consumer today and they know their attribution_id).",
+        "Refuses to save a row whose `attribution_id` points at an Attribution in a different tenant (defense-in-depth)."
+      ]
+    },
+    {
+      "trait": "Academorix\\Growth\\Attribution\\Concerns\\HasAttribution",
+      "description": "Composed onto any downstream model that carries a frozen `attribution jsonb NULL` column (marketing events, analytics events, subscriptions, invoices, referral conversions). Adds no query scopes — just a getter that unpacks the jsonb into a structured DTO for readability. The trait's presence is a marker for the tenancy-compliance-auditor to recognise the row as attribution-carrying.",
+      "public": true,
+      "usedBy": [
+        "marketing::MarketingEvent (Wave 5)",
+        "analytics::AnalyticsEvent (Wave 5)",
+        "referrals::ReferralConversion (Wave 5)",
+        "finance::Subscription (Wave 5)",
+        "finance::Invoice (Wave 5)"
+      ]
+    },
+    {
+      "trait": "Academorix\\Growth\\Attribution\\Concerns\\HasAttributionSnapshot",
+      "description": "Extends HasAttribution with additional query helpers for reading the jsonb via SQL — `->whereAttributionSource(?string)`, `->whereAttributionCampaign(?string)`, `->whereAttributionMedium(?string)`, `->whereFirstTouchSource(?string)`. These generate `WHERE attribution->>'source' = ?` etc for direct rollup queries. Optional (only composed by models with reporting workloads).",
+      "public": true,
+      "usedBy": [
+        "marketing::MarketingEvent (Wave 5)",
+        "analytics::AnalyticsEvent (Wave 5)",
+        "finance::Subscription (Wave 5)"
+      ]
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "Attribution only. NOT AttributionTouchpoint — touchpoints are append-only (no soft-delete)."
+      }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable", "reason": "Attribution only — searchable by campaign/source. NOT AttributionTouchpoint (too high-volume for full-text)." }
+    ],
+    "tenants": [
+      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+    ],
+    "audit": [
+      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Attribution lifecycle transitions + reset requests are compliance-relevant (7-year retention)." }
+    ],
+    "activity": [
+      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Attribution profile lifecycle transitions feed the staff-visible activity feed. NOT on AttributionTouchpoint — too high-volume." }
+    ]
+  },
+  "composition": {
+    "attribution": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "Order matters: BelongsToTenant precedes every scope-observing trait. Auditable applies because lifecycle transitions + reset requests have 7-year audit retention. NO BelongsToApplication / BelongsToRegion / BelongsToOrganization / BelongsToBranch — attribution cascades through tenant only (tenancy-columns.md §5). NO BelongsToUser — subject is polymorphic (morphTo). NO BelongsToAttribution — attribution IS the attribution."
+    },
+    "attribution_touchpoint": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToAttribution",
+        "HasMetadata",
+        "HasUserstamps",
+        "Filterable"
+      ],
+      "notes": "NO SoftDeletes — touchpoints are append-only ledger rows. NO Searchable — too high-volume for full-text index. NO Auditable — the parent attribution's audit trail suffices; per-touchpoint audit would explode volume. NO HasActivityLog for the same reason. HasMetadata provides a jsonb field for admin retroactive re-tagging (the only field the observer permits updating post-create)."
+    }
+  },
+  "downstream_composition_example": {
+    "description": "Wave 5 marketing::MarketingEvent example — shows how downstream events compose HasAttribution + HasAttributionSnapshot for frozen-snapshot analysis.",
+    "example_composition": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasAttribution",
+      "HasAttributionSnapshot",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "notes": "Marketing events carry a frozen `attribution jsonb NULL` column populated at create-time from AttributionSnapshotBuilder.build(). Reading attribution via `$marketingEvent->attribution` returns a structured DTO (via HasAttribution). Querying by attribution via `MarketingEvent::whereAttributionCampaign('spring-signup-2026')` uses jsonb operators (via HasAttributionSnapshot)."
+  }
+}

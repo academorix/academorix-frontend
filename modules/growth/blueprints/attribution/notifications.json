@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/attribution/notifications",
+  "$version": 1,
+  "title": "attribution — notification classes + categories",
+  "namespace": "Academorix\\Growth\\Attribution\\Notifications",
+  "notifications": [
+    "AttributionResetConfirmationNotification",
+    "AttributionMergeCompletedNotification",
+    "AttributionSuppressedByConsentNotification",
+    "AttributionChurnDetectedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "attribution.reset_confirmation",
+      "display_name": "Attribution reset confirmed",
+      "description": "Confirms that your attribution profile has been reset per your GDPR / CCPA right-to-erasure request. Details what was redacted, when hard-delete completes (90 days from now), and how to appeal.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "notes": "Cannot opt out — this is a legal-obligation notification per GDPR Art. 12 + 17. The subject has a right to know their erasure request was processed."
+    },
+    {
+      "slug": "attribution.merge_completed",
+      "display_name": "Attribution profiles merged",
+      "description": "Admin-only. Notifies tenant admin when the module merged N anonymous attribution profiles into an identified profile. Ops audit signal.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": false,
+      "is_system": true,
+      "notes": "Enterprise-only (fires only when attribution_merge entitlement is on). Default opt-out because most admins don't need this signal; opt-in for ops teams that audit merges."
+    },
+    {
+      "slug": "attribution.suppressed_by_consent",
+      "display_name": "Consent suppression report",
+      "description": "Compliance-team digest. Daily / weekly batched report of AttributionSuppressedByConsent events — count, breakdown by consent_state_summary, no PII. Feeds the compliance-team quarterly regulatory review.",
+      "default_channels": ["mail"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true,
+      "notes": "Default opt-in for the compliance role only. The batched daily cadence prevents the notification queue from flooding on high-consent-refusal days."
+    },
+    {
+      "slug": "attribution.churn_detected",
+      "display_name": "Attribution churn cohort ready",
+      "description": "Marketing-team digest. Fires when MarkAttributionChurnedJob completes a nightly pass with N > threshold new churned profiles. Includes cohort breakdown by first-touch source. Signal to trigger a re-engagement campaign.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true,
+      "notes": "Default opt-in for marketing role only. Non-Enterprise tenants: cohort breakdown is per (first-touch source) only. Enterprise: includes lifecycle-source cross-tab."
+    }
+  ]
+}

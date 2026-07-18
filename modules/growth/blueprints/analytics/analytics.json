@@ -1,0 +1,65 @@
+{
+  "id": "academorix://modules/analytics/analytics",
+  "$version": 1,
+  "lane": "analytics",
+  "title": "analytics — self-emitted analytics events",
+  "description": "Meta-analytics: events emitted by the analytics module itself. These are lifecycle events (provider configured, circuit breaker opened, identity merged) that admins care about \u2014 they surface in the tenant's own analytics dashboards under the `analytics_module_lifecycle` bucket. Distinct from events.json (Laravel event bus) + metrics.json (OpenTelemetry ops signal).",
+  "sink": "self",
+  "consentTiers": ["essential", "functional"],
+  "note": "sink='self' \u2014 these events dispatch through the AnalyticsProviderManager just like everything else. Admin-facing dashboards read them via the tenant HTTP surface.",
+  "events": [
+    {
+      "name": "Analytics Provider Configured",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "changes"],
+      "description": "AnalyticsProviderConfigured mirror \u2014 lets analytics dashboards visualise provider CRUD activity."
+    },
+    {
+      "name": "Analytics Provider Deactivated",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "reason"]
+    },
+    {
+      "name": "Analytics Circuit Breaker Opened",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "failure_rate", "failure_count"],
+      "description": "Ops signal AND admin dashboard signal \u2014 shown on the AnalyticsProviderList screen as a persistent chip while the breaker is open."
+    },
+    {
+      "name": "Analytics Circuit Breaker Closed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "outage_duration_seconds"]
+    },
+    {
+      "name": "Analytics Identity Identified",
+      "kind": "identify",
+      "consent_required": "functional",
+      "properties": ["tenant_id"],
+      "description": "Server-side identify \u2014 written to the identified subject's PROVIDER stream so downstream analytics tools see the alias too."
+    },
+    {
+      "name": "Analytics Identity Merged",
+      "kind": "alias",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "rewritten_event_count"]
+    },
+    {
+      "name": "Analytics Funnel Step Reached",
+      "kind": "track",
+      "consent_required": "analytics",
+      "properties": ["tenant_id", "funnel_key", "step_key", "step_index"],
+      "description": "Emitted per AnalyticsFunnelStepReached \u2014 semantic mirror for provider-side funnel reports."
+    },
+    {
+      "name": "Analytics Experiment Variant Assigned",
+      "kind": "track",
+      "consent_required": "analytics",
+      "properties": ["tenant_id", "experiment_key", "variant"],
+      "description": "Emitted per AnalyticsExperimentAssigned. Powers the ExperimentAssignmentReportBuilder."
+    }
+  ]
+}

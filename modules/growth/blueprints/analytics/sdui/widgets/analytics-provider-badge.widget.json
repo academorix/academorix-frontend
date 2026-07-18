@@ -1,0 +1,56 @@
+{
+  "id": "analytics.analytics-provider-badge",
+  "title": "Analytics provider badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Provider brand badge with logo + name. Also renders circuit-breaker state indicator when circuit_open=true.",
+  "props": {
+    "provider": { "type": "string", "description": "Provider enum value." },
+    "showLogo": { "type": "boolean", "default": true },
+    "showLabel": { "type": "boolean", "default": true },
+    "showCircuitBreaker": { "type": "boolean", "default": false, "description": "Show a red dot when circuit is open." },
+    "isCircuitOpen": { "type": "boolean", "default": false },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] }
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "inline-flex items-center gap-1.5" },
+      "children": [
+        {
+          "kind": "Image",
+          "props": { "className": "rounded" },
+          "bindings": {
+            "hidden": { "$expr": "!props.showLogo" },
+            "src": {
+              "$expr": "'/icons/providers/' + props.provider + '.svg'"
+            },
+            "alt": { "$ref": "props.provider" },
+            "width": { "$expr": "props.size === 'xs' ? 12 : (props.size === 'sm' ? 16 : (props.size === 'md' ? 20 : 24))" },
+            "height": { "$expr": "props.size === 'xs' ? 12 : (props.size === 'sm' ? 16 : (props.size === 'md' ? 20 : 24))" }
+          }
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "font-medium" },
+          "bindings": {
+            "hidden": { "$expr": "!props.showLabel" },
+            "children": {
+              "$expr": "props.provider === 'posthog' ? 'PostHog' : (props.provider === 'amplitude' ? 'Amplitude' : (props.provider === 'mixpanel' ? 'Mixpanel' : (props.provider === 'segment' ? 'Segment' : (props.provider === 'june' ? 'June' : (props.provider === 'google_analytics_4' ? 'Google Analytics 4' : 'Custom webhook')))))"
+            }
+          }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "size-2 rounded-full bg-danger animate-pulse" },
+          "bindings": {
+            "hidden": { "$expr": "!(props.showCircuitBreaker && props.isCircuitOpen)" },
+            "title": { "$expr": "'Circuit breaker open'" }
+          }
+        }
+      ]
+    }
+  ]
+}

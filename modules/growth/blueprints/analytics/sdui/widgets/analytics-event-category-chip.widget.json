@@ -1,0 +1,48 @@
+{
+  "id": "analytics.analytics-event-category-chip",
+  "title": "Analytics event category chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for AnalyticsEvent.category. Values seeded from data/event-category-catalog.json.",
+  "props": {
+    "category": { "type": "string", "description": "AnalyticsEvent.category enum value." },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md"] },
+    "showIcon": { "type": "boolean", "default": true },
+    "showLabel": { "type": "boolean", "default": true }
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "chip",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "props.category === 'funnel_step' ? 'primary' : (props.category === 'cta' ? 'accent' : (props.category === 'error' ? 'danger' : (props.category === 'performance' ? 'warning' : (props.category === 'experiment' ? 'secondary' : (props.category === 'lifecycle' ? 'success' : (props.category === 'session' ? 'muted' : 'info'))))))"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "children": [
+        {
+          "kind": "Icon",
+          "props": { "className": "size-3 mr-1" },
+          "bindings": {
+            "hidden": { "$expr": "!props.showIcon" },
+            "icon": {
+              "$expr": "props.category === 'funnel_step' ? 'funnel' : (props.category === 'cta' ? 'cursor-arrow-ripple' : (props.category === 'error' ? 'exclamation-triangle' : (props.category === 'performance' ? 'bolt' : (props.category === 'experiment' ? 'beaker' : (props.category === 'lifecycle' ? 'user-plus' : (props.category === 'session' ? 'clock' : 'cursor-arrow-rays'))))))"
+            }
+          }
+        },
+        {
+          "kind": "Text",
+          "props": { "as": "span" },
+          "bindings": {
+            "hidden": { "$expr": "!props.showLabel" },
+            "children": {
+              "$expr": "props.category === 'feature_use' ? 'Feature use' : (props.category === 'funnel_step' ? 'Funnel step' : (props.category === 'cta' ? 'CTA' : (props.category === 'error' ? 'Error' : (props.category === 'performance' ? 'Perf' : (props.category === 'experiment' ? 'Experiment' : (props.category === 'lifecycle' ? 'Lifecycle' : 'Session'))))))"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

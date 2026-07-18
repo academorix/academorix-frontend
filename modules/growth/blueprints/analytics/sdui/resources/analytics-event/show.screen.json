@@ -1,0 +1,308 @@
+{
+  "id": "analytics.resources.analytics-event.show",
+  "title": "Analytics event detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/analytics/events/{id}",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "analytics", "entity": "analytics-event", "action": "show" },
+  "requiresPermission": "analytics.events.view",
+  "params": [{ "name": "id", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "event",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/analytics/events/' + params.id",
+      "unwrap": "data"
+    },
+    {
+      "name": "deliveries",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/analytics/deliveries?filter[analytics_event_id]=' + params.id",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "Back to events",
+            "className": "text-sm text-muted"
+          },
+          "actions": { "onPress": { "kind": "navigate", "to": "/tenant/analytics/events" } }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col gap-2" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold font-mono" },
+                  "bindings": { "children": { "$ref": "event.event_name" } }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-center gap-2" },
+                  "children": [
+                    {
+                      "kind": "Chip",
+                      "props": { "size": "sm", "variant": "muted" },
+                      "bindings": { "children": { "$ref": "event.event_kind" } }
+                    },
+                    {
+                      "kind": "Widget",
+                      "widget": "analytics.analytics-event-category-chip",
+                      "props": { "category": { "$ref": "event.category" }, "size": "sm" }
+                    },
+                    {
+                      "kind": "Widget",
+                      "widget": "analytics.analytics-event-status-chip",
+                      "props": { "status": { "$ref": "event.status" }, "size": "sm" }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "Metadata"
+              }
+            },
+            {
+              "kind": "DescriptionList",
+              "children": [
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Event ID" },
+                  "bindings": { "value": { "$ref": "event.id" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Subject" },
+                  "bindings": {
+                    "value": { "$expr": "event.subject_type + ' \u00b7 ' + event.subject_id" }
+                  }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Anonymous ID" },
+                  "bindings": {
+                    "hidden": { "$expr": "!event.anonymous_id" },
+                    "value": { "$ref": "event.anonymous_id" }
+                  }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Session ID" },
+                  "bindings": { "value": { "$ref": "event.session_id" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Event time" },
+                  "bindings": { "value": { "$expr": "formatDateTime(event.event_time)" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Captured" },
+                  "bindings": { "value": { "$expr": "formatRelative(event.created_at)" } }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Providers" },
+                  "bindings": {
+                    "value": {
+                      "$expr": "event.delivered_provider_count + ' delivered of ' + event.eligible_provider_count + ' eligible'"
+                    }
+                  }
+                },
+                {
+                  "kind": "DescriptionListItem",
+                  "props": { "label": "Dedupe key" },
+                  "bindings": {
+                    "hidden": { "$expr": "!event.deduplication_key" },
+                    "value": { "$ref": "event.deduplication_key" }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "Properties"
+              }
+            },
+            {
+              "kind": "JsonViewer",
+              "bindings": { "value": { "$ref": "event.properties" } }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "Attribution snapshot"
+              }
+            },
+            {
+              "kind": "Alert",
+              "props": {
+                "variant": "info",
+                "children": "Frozen at capture time \u2014 attribution changes since do not affect this event."
+              }
+            },
+            {
+              "kind": "JsonViewer",
+              "bindings": { "value": { "$ref": "event.attribution" } }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "Consent snapshot"
+              }
+            },
+            {
+              "kind": "JsonViewer",
+              "bindings": { "value": { "$ref": "event.consent_snapshot" } }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "Deliveries"
+              }
+            },
+            {
+              "kind": "DataGrid",
+              "bindings": {
+                "items": { "$ref": "deliveries" },
+                "isLoading": { "$ref": "deliveries.isLoading" }
+              },
+              "columns": [
+                {
+                  "id": "provider",
+                  "header": "Provider",
+                  "cell": {
+                    "kind": "Widget",
+                    "widget": "analytics.analytics-provider-badge",
+                    "props": {
+                      "provider": { "$ref": "row.provider" },
+                      "size": "sm",
+                      "showLabel": true
+                    }
+                  }
+                },
+                {
+                  "id": "status",
+                  "header": "Status",
+                  "cell": {
+                    "kind": "Chip",
+                    "bindings": {
+                      "children": { "$ref": "row.status" },
+                      "variant": {
+                        "$expr": "row.status === 'delivered' ? 'success' : (row.status.startsWith('suppressed') ? 'muted' : (row.status === 'circuit_open' || row.status === 'permanently_failed' ? 'danger' : 'warning'))"
+                      }
+                    },
+                    "props": { "size": "xs" }
+                  }
+                },
+                {
+                  "id": "attempt",
+                  "header": "Attempt",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-sm font-mono" },
+                    "bindings": { "children": { "$ref": "row.attempt_number" } }
+                  }
+                },
+                {
+                  "id": "latency",
+                  "header": "Latency",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-sm font-mono" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.latency_ms ? row.latency_ms + 'ms' : '\u2014'"
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "http",
+                  "header": "HTTP",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-sm font-mono" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.response_http_status || '\u2014'"
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "error",
+                  "header": "Error",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-danger" },
+                    "bindings": { "children": { "$expr": "row.error_code || ''" } }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

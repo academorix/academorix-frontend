@@ -1,0 +1,100 @@
+{
+  "id": "academorix://modules/marketing/entitlements",
+  "$version": 1,
+  "title": "marketing — declared entitlements",
+  "description": "Nine entitlement keys. `marketing_capture` is the boolean master gate. `marketing_provider_slot` caps provider configs per tenant. `marketing_event_slot_per_month` caps captured events per rolling calendar month (breach after which capture returns 402). `marketing_advanced_providers` unlocks LinkedIn / Snapchat / Pinterest / GTM Server on Medium+. `marketing_test_mode` (all tiers) enables the test-event flow. `marketing_roas_report` unlocks the ROAS dashboard on Medium+. `marketing_dead_letter_replay` unlocks manual dead-letter replay on Enterprise. `marketing_custom_webhook` unlocks the generic HMAC-signed webhook driver on Medium+. `marketing_extended_retention` unlocks 10-year retention on Enterprise (default 7).",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "pool" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "marketing_capture",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Master feature gate. Off = the whole module is invisible: no capture, no dispatch, no provider CRUD. All tiers get this on — Small tenants get a reduced provider set via marketing_advanced_providers = 0.",
+      "enforcedBy": [
+        "marketing.enforce_consent + entitlement.enforce:marketing_capture middleware on every /api/v1/marketing/* route",
+        "MarketingEventObserver refuses capture when the gate is closed",
+        "SDUI marketing surfaces hidden when features array does not include 'marketing.core'"
+      ]
+    },
+    {
+      "key": "marketing_provider_slot",
+      "kind": "slot",
+      "unit": "providers",
+      "defaultsByPlan": { "small": 1, "medium": 3, "enterprise": null },
+      "description": "How many marketing provider configs a tenant can have. Small: 1 (Meta or Google Ads only). Medium: 3. Enterprise: unlimited. Consumed on provider config create; released on soft-delete.",
+      "enforcedBy": [
+        "MarketingProviderConfigObserver.creating consumes 1 unit via EntitlementGate::consume('marketing_provider_slot')",
+        "MarketingProviderConfigObserver.deleted (soft-delete) releases 1 unit"
+      ]
+    },
+    {
+      "key": "marketing_event_slot_per_month",
+      "kind": "slot",
+      "unit": "events_per_month",
+      "defaultsByPlan": { "small": 10000, "medium": 100000, "enterprise": null },
+      "description": "How many marketing events a tenant may capture per rolling calendar month. Small: 10k, Medium: 100k, Enterprise: unlimited. Consumed on event capture; resets on the 1st of each calendar month via a scheduled reset job in the entitlements module.",
+      "enforcedBy": [
+        "MarketingEventObserver.creating consumes 1 unit; refuses with MARKETING_EVENT_QUOTA_EXCEEDED when cap reached"
+      ]
+    },
+    {
+      "key": "marketing_advanced_providers",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables LinkedIn Insight, Snapchat CAPI, Pinterest CAPI, and GTM Server providers. Small tenants get only Meta CAPI / Google Ads / GA4 / Custom Webhook (4 providers). Medium + Enterprise get all 9.",
+      "enforcedBy": [
+        "MarketingProviderConfigObserver.creating refuses when provider IN ('linkedin_insight', 'snapchat_capi', 'pinterest_capi', 'gtm_server') AND gate is closed",
+        "SDUI provider picker filters the provider list per this gate"
+      ]
+    },
+    {
+      "key": "marketing_test_mode",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Enables the test-event flow (per-provider sandbox dispatch). All tiers get this — tenants need to validate credentials during onboarding.",
+      "enforcedBy": [
+        "SDUI test-provider button hidden when gate is closed",
+        "POST /providers/{provider}/test returns 402 when gate is closed"
+      ]
+    },
+    {
+      "key": "marketing_roas_report",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables the ROAS report dashboard + GET /api/v1/marketing/roas endpoint + marketing:roas-report Artisan command. Medium + Enterprise.",
+      "enforcedBy": [
+        "entitlement.enforce:marketing_roas_report middleware on /api/v1/marketing/roas",
+        "MarketingRoasReportReadyNotification only fires on tier with this gate"
+      ]
+    },
+    {
+      "key": "marketing_dead_letter_replay",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enables manual dead-letter replay via POST /api/v1/marketing/dead-letters/{id}/replay. Enterprise-only — Small + Medium tenants see dead-letters (read-only) but cannot replay. Platform ops can replay any dead-letter cross-tenant regardless.",
+      "enforcedBy": [
+        "entitlement.enforce:marketing_dead_letter_replay middleware on the replay endpoint",
+        "SDUI replay button hidden when gate is closed"
+      ]
+    },
+    {
+      "key": "marketing_custom_webhook",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables the generic HMAC-signed CustomWebhook provider driver. Escape hatch for tenants using Segment / Rudderstack / custom analytics warehouses. Medium + Enterprise.",
+      "enforcedBy": [
+        "MarketingProviderConfigObserver.creating refuses when provider = 'custom_webhook' AND gate is closed"
+      ]
+    },
+    {
+      "key": "marketing_extended_retention",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Extends marketing_events retention from 7 years to 10 years (some financial-audit regimes require > 7). marketing_deliveries + marketing_dead_letters retention windows remain fixed at 2 years + indefinite respectively.",
+      "enforcedBy": [
+        "PurgeExpiredMarketingDataJob checks this gate + applies 10-year retention when set"
+      ]
+    }
+  ]
+}

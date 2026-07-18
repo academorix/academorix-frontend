@@ -1,0 +1,258 @@
+{
+  "id": "referrals.resources.referral-program.create",
+  "title": "New referral program",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/referral-programs/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "referrals", "entity": "referral-program", "action": "create" },
+  "requiresPermission": "referral_programs.create",
+  "requiresEntitlement": "referrals_capture",
+  "dataSources": [
+    {
+      "name": "rewardTypeCatalog",
+      "kind": "static",
+      "path": "modules/growth/blueprints/referrals/data/reward-type-catalog.json"
+    },
+    {
+      "name": "vestingRuleCatalog",
+      "kind": "static",
+      "path": "modules/growth/blueprints/referrals/data/vesting-rule-catalog.json"
+    },
+    {
+      "name": "advancedRewardEntitlement",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/referrals_advanced_reward_types",
+      "unwrap": "data"
+    },
+    {
+      "name": "doubleSidedEntitlement",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/referrals_double_sided",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "New referral program" }
+        },
+        {
+          "kind": "Tabs",
+          "props": { "defaultValue": "basics" },
+          "items": [
+            {
+              "id": "basics",
+              "label": "Basics",
+              "children": [
+                {
+                  "kind": "TextField",
+                  "props": { "label": "Program name", "isRequired": true, "placeholder": "e.g. Refer a Friend — Summer 2026" },
+                  "form": { "field": "name" }
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "label": "Slug", "isRequired": true, "description": "Unique per tenant; url-safe." },
+                  "form": { "field": "slug" }
+                },
+                {
+                  "kind": "TextArea",
+                  "props": { "label": "Description" },
+                  "form": { "field": "description" }
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "label": "Terms URL", "type": "url" },
+                  "form": { "field": "terms_url" }
+                }
+              ]
+            },
+            {
+              "id": "reward",
+              "label": "Reward",
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": { "label": "Side", "menuTrigger": "focus", "isRequired": true },
+                  "bindings": {
+                    "disabledKeys": { "$expr": "doubleSidedEntitlement.enabled ? [] : ['double_sided']" }
+                  },
+                  "props_items": [
+                    { "id": "single_sided", "label": "Single-sided (referrer only)" },
+                    { "id": "double_sided", "label": "Double-sided (both parties)" }
+                  ],
+                  "form": { "field": "side", "defaultValue": "single_sided" }
+                },
+                {
+                  "kind": "Alert",
+                  "bindings": {
+                    "hidden": { "$expr": "doubleSidedEntitlement.enabled" },
+                    "variant": "info",
+                    "children": "Double-sided requires Medium tier or above."
+                  }
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": { "label": "Reward type (referrer)", "menuTrigger": "focus", "isRequired": true },
+                  "bindings": {
+                    "items": {
+                      "$expr": "rewardTypeCatalog.types.filter(t => (advancedRewardEntitlement.enabled || ['percent_discount','fixed_amount'].includes(t.reward_type))).map(t => ({ id: t.reward_type, label: t.display_name, description: t.description }))"
+                    }
+                  },
+                  "form": { "field": "reward_type_referrer" }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "Amount (referrer)", "isRequired": true, "minValue": 1 },
+                  "form": { "field": "reward_amount_referrer" }
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "label": "Currency (referrer)", "placeholder": "USD", "description": "ISO 4217 — required for fixed_amount + credits." },
+                  "form": { "field": "reward_currency_referrer" }
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": { "label": "Reward type (referred)", "menuTrigger": "focus" },
+                  "bindings": {
+                    "hidden": { "$expr": "form.side !== 'double_sided'" },
+                    "items": {
+                      "$expr": "rewardTypeCatalog.types.filter(t => (advancedRewardEntitlement.enabled || ['percent_discount','fixed_amount'].includes(t.reward_type))).map(t => ({ id: t.reward_type, label: t.display_name }))"
+                    }
+                  },
+                  "form": { "field": "reward_type_referred" }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "Amount (referred)", "minValue": 1 },
+                  "bindings": { "hidden": { "$expr": "form.side !== 'double_sided'" } },
+                  "form": { "field": "reward_amount_referred" }
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "label": "Currency (referred)", "placeholder": "USD" },
+                  "bindings": { "hidden": { "$expr": "form.side !== 'double_sided'" } },
+                  "form": { "field": "reward_currency_referred" }
+                }
+              ]
+            },
+            {
+              "id": "vesting",
+              "label": "Vesting",
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": { "label": "Trigger event", "menuTrigger": "focus", "isRequired": true },
+                  "props_items": [
+                    { "id": "signup", "label": "Signup" },
+                    { "id": "trial_started", "label": "Trial started" },
+                    { "id": "first_payment", "label": "First payment (recommended)" },
+                    { "id": "subscription_renewal_1", "label": "First renewal" },
+                    { "id": "subscription_renewal_3", "label": "Third renewal" },
+                    { "id": "lifetime_value_threshold_hit", "label": "LTV threshold" },
+                    { "id": "athlete_enrolled", "label": "Athlete enrolled" },
+                    { "id": "event_registered", "label": "Event registered" }
+                  ],
+                  "form": { "field": "trigger_event", "defaultValue": "first_payment" }
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": { "label": "Vesting rule", "menuTrigger": "focus", "isRequired": true },
+                  "bindings": {
+                    "items": {
+                      "$expr": "vestingRuleCatalog.rules.map(r => ({ id: r.vesting_rule, label: r.display_name, description: r.description }))"
+                    }
+                  },
+                  "form": { "field": "vesting_rule", "defaultValue": "trigger_plus_hold_days" }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "Vesting hold days", "minValue": 1, "maxValue": 365 },
+                  "bindings": { "hidden": { "$expr": "form.vesting_rule !== 'trigger_plus_hold_days'" } },
+                  "form": { "field": "vesting_hold_days", "defaultValue": 30 }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "N events required", "minValue": 1, "maxValue": 100 },
+                  "bindings": { "hidden": { "$expr": "form.vesting_rule !== 'n_events_completed'" } },
+                  "form": { "field": "vesting_n_events" }
+                }
+              ]
+            },
+            {
+              "id": "limits",
+              "label": "Limits & fraud",
+              "children": [
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "Max rewards per referrer (lifetime)", "minValue": 1, "description": "Leave empty for unlimited." },
+                  "form": { "field": "max_rewards_per_referrer" }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "Max rewards per referrer (per 30d)", "minValue": 1 },
+                  "form": { "field": "max_rewards_per_period" }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "Program budget cap (cents)", "minValue": 1, "description": "Total budget the program can distribute. Requires `Program budget cap` entitlement (Medium+)." },
+                  "form": { "field": "max_rewards_per_program" }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "Fraud hard-block threshold", "minValue": 0, "maxValue": 100, "description": "Referrals scoring above this at claim time are refused." },
+                  "form": { "field": "fraud_config.hard_block_threshold", "defaultValue": 90 }
+                }
+              ]
+            },
+            {
+              "id": "window",
+              "label": "Window",
+              "children": [
+                {
+                  "kind": "DatePicker",
+                  "props": { "label": "Program starts at", "isRequired": true },
+                  "form": { "field": "program_starts_at" }
+                },
+                {
+                  "kind": "DatePicker",
+                  "props": { "label": "Program ends at", "description": "Leave empty for an open-ended program." },
+                  "form": { "field": "program_ends_at" }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2 pt-4" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate.back" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "children": "Create program" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/referral-programs",
+                  "bodyExpr": "form",
+                  "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/referral-programs/' + $response.data.id" }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

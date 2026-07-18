@@ -1,0 +1,61 @@
+{
+  "id": "marketing.provider-picker",
+  "title": "Provider picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Single-select for provider slug. Entitlement-aware — hides advanced providers (LinkedIn, Snapchat, Pinterest, GTM Server) on Small tier + hides Custom Webhook on Small tier.",
+  "props": {},
+  "dataSources": [
+    {
+      "name": "advanced_entitled",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/marketing_advanced_providers",
+      "unwrap": "data.granted"
+    },
+    {
+      "name": "custom_webhook_entitled",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/marketing_custom_webhook",
+      "unwrap": "data.granted"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "RadioGroup",
+      "props": { "className": "grid grid-cols-1 md:grid-cols-2 gap-3" },
+      "bindings": {
+        "items": {
+          "$expr": "[{ id: 'meta_capi', label: 'Meta Conversions API', description: 'Facebook + Instagram ad networks.', tier: 'all' }, { id: 'google_ads', label: 'Google Ads', description: 'Enhanced Conversions Upload for Google Ads campaigns.', tier: 'all' }, { id: 'google_analytics_4', label: 'Google Analytics 4', description: 'GA4 Measurement Protocol.', tier: 'all' }, { id: 'gtm_server', label: 'Google Tag Manager Server-side', description: 'Deliver to a tenant-hosted GTM Server container.', tier: 'advanced', disabled: !advanced_entitled }, { id: 'tiktok_events', label: 'TikTok Events API', description: 'Server-side conversion tracking for TikTok Ads.', tier: 'all' }, { id: 'linkedin_insight', label: 'LinkedIn Insight Tag', description: 'B2B-focused conversion tracking.', tier: 'advanced', disabled: !advanced_entitled }, { id: 'snapchat_capi', label: 'Snapchat Conversions API', description: 'Snap Ads conversion tracking.', tier: 'advanced', disabled: !advanced_entitled }, { id: 'pinterest_capi', label: 'Pinterest Conversions API', description: 'Pinterest Ads conversion tracking.', tier: 'advanced', disabled: !advanced_entitled }, { id: 'custom_webhook', label: 'Custom webhook', description: 'HMAC-signed JSON delivery. Escape hatch for Segment / Rudderstack / custom warehouses.', tier: 'medium', disabled: !custom_webhook_entitled }]"
+        }
+      },
+      "itemRenderer": {
+        "kind": "Card",
+        "props": { "className": "p-4 cursor-pointer hover:shadow-md transition-shadow" },
+        "bindings": {
+          "className": {
+            "$expr": "item.disabled ? 'p-4 opacity-50 cursor-not-allowed' : 'p-4 cursor-pointer hover:shadow-md transition-shadow'"
+          }
+        },
+        "children": [
+          {
+            "kind": "View",
+            "props": { "className": "flex items-start justify-between gap-2 mb-1" },
+            "children": [
+              { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "item.label" } } },
+              {
+                "kind": "Chip",
+                "props": { "size": "xs", "variant": "warning" },
+                "bindings": {
+                  "hidden": { "$expr": "!item.disabled" },
+                  "children": "Requires upgrade"
+                }
+              }
+            ]
+          },
+          { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$ref": "item.description" } } }
+        ]
+      }
+    }
+  ]
+}

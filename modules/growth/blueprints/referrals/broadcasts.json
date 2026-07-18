@@ -1,0 +1,70 @@
+{
+  "id": "academorix://modules/referrals/broadcasts",
+  "$version": 1,
+  "title": "referrals — realtime broadcast channels",
+  "description": "Three broadcast channel families. Tenant-level for admin dashboards; user-level for a user's own referral + reward stream; program-level for real-time reward materialization visibility on the program-detail screen. Reverb (Laravel Reverb) is the default transport; the notifications module handles fanout.",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.referrals",
+      "class": "Academorix\\Growth\\Referrals\\Broadcasts\\TenantReferralsChannel",
+      "description": "Tenant-wide referral + reward + fraud-flag stream. Sink for admin dashboards.",
+      "authorization": "sanctum::authed AND tenant_matches AND has_permission('referrals.viewAny')",
+      "events": [
+        "ReferralProgramCreated",
+        "ReferralProgramActivated",
+        "ReferralProgramPaused",
+        "ReferralProgramArchived",
+        "ReferralProgramBudgetReached",
+        "ReferralProgramBudgetSpike",
+        "ReferralCodeIssued",
+        "ReferralCodeUsageCapReached",
+        "ReferralClaimed",
+        "ReferralSignedUp",
+        "ReferralVested",
+        "ReferralRewarded",
+        "ReferralCancelled",
+        "ReferralFraudDetected",
+        "ReferralClawback"
+      ],
+      "throttle": "100 events/minute per channel",
+      "notes": "Payload trimmed to non-confidential fields (see data-classes.json). Fraud flag payloads carry severity + flag_type but NOT the underlying evidence hashes."
+    },
+    {
+      "name": "user.{userId}.referrals",
+      "class": "Academorix\\Growth\\Referrals\\Broadcasts\\UserReferralsChannel",
+      "description": "Per-user referral stream. Powers the /me/referrals live-updates widget in the user dashboard. Fires when the user is either the referrer OR the recipient.",
+      "authorization": "sanctum::authed AND user_matches",
+      "events": [
+        "ReferralClaimed (where referrer_id = userId)",
+        "ReferralSignedUp (where referrer_id = userId)",
+        "ReferralTriggerReached (where referrer_id = userId)",
+        "ReferralVested (where referrer_id = userId OR referred_id = userId)",
+        "ReferralRewarded (where recipient_id = userId)",
+        "ReferralCancelled (where referrer_id = userId OR referred_id = userId)",
+        "ReferralClawback (where recipient_id = userId)",
+        "ReferralMaxReferralsPerReferrerReached (where referrer_id = userId)"
+      ],
+      "throttle": "20 events/minute per channel",
+      "notes": "Payload trimmed to what the user needs to render their dashboard row. Never carries other users' identifying data."
+    },
+    {
+      "name": "referral-program.{programId}.rewards",
+      "class": "Academorix\\Growth\\Referrals\\Broadcasts\\ProgramRewardsChannel",
+      "description": "Program-scoped reward + referral stream. Powers the program-detail analytics screen's real-time counter (referrals in-flight, rewards issued, rewards paid, budget consumed).",
+      "authorization": "sanctum::authed AND has_permission('referral_programs.view-analytics') AND program.tenant_matches",
+      "events": [
+        "ReferralClaimed",
+        "ReferralSignedUp",
+        "ReferralVested",
+        "ReferralRewardMaterialized",
+        "ReferralRewarded",
+        "ReferralCancelled",
+        "ReferralClawback",
+        "ReferralProgramBudgetReached",
+        "ReferralProgramBudgetSpike"
+      ],
+      "throttle": "50 events/minute per channel",
+      "notes": "Aggregate counters only — no per-user identifying data. Powers the ceiling counters on the program-detail dashboard."
+    }
+  ]
+}

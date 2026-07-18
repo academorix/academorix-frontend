@@ -1,0 +1,273 @@
+{
+  "id": "analytics.resources.analytics-provider-config.list",
+  "title": "Analytics providers",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/analytics/providers",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "analytics", "entity": "analytics-provider-config", "action": "list" },
+  "requiresPermission": "analytics.providers.viewAny",
+  "dataSources": [
+    {
+      "name": "providers",
+      "kind": "http.get",
+      "url": "/api/v1/analytics/providers",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": ["filter[provider]", "filter[is_active]", "sort"]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Analytics providers"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Configured destinations for behavioral events. Each provider fans out based on its enabled_event_types + sampling_rate."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "size": "sm",
+                "leadingIcon": "plus",
+                "children": "Add provider"
+              },
+              "bindings": {
+                "isDisabled": {
+                  "$expr": "!identity.permissions.includes('analytics.providers.create') || identity.quota_summary.analytics_provider_slot.remaining <= 0"
+                }
+              },
+              "actions": {
+                "onPress": { "kind": "navigate", "to": "/tenant/analytics/providers/new" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "children": "You have reached your analytics provider slot limit. Upgrade your plan or delete an unused provider to add more."
+          },
+          "bindings": {
+            "hidden": { "$expr": "identity.quota_summary.analytics_provider_slot.remaining > 0" }
+          }
+        },
+        {
+          "kind": "DataGrid",
+          "props": {
+            "emptyState": {
+              "title": "No providers configured",
+              "description": "Add a PostHog, Amplitude, Mixpanel, Segment, June, GA4, or custom webhook provider to fan out analytics events.",
+              "icon": "adjustments-horizontal"
+            }
+          },
+          "bindings": {
+            "items": { "$ref": "providers" },
+            "isLoading": { "$ref": "providers.isLoading" }
+          },
+          "columns": [
+            {
+              "id": "provider",
+              "header": "Provider",
+              "cell": {
+                "kind": "View",
+                "children": [
+                  {
+                    "kind": "Widget",
+                    "widget": "analytics.analytics-provider-badge",
+                    "props": {
+                      "provider": { "$ref": "row.provider" },
+                      "size": "md",
+                      "showLabel": true,
+                      "showCircuitBreaker": true,
+                      "isCircuitOpen": { "$ref": "row.is_circuit_open" }
+                    }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted mt-1" },
+                    "bindings": { "children": { "$ref": "row.name" } }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "status",
+              "header": "Status",
+              "cell": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-1.5" },
+                "children": [
+                  {
+                    "kind": "Chip",
+                    "bindings": {
+                      "variant": { "$expr": "row.is_active ? 'success' : 'muted'" },
+                      "children": { "$expr": "row.is_active ? 'Active' : 'Inactive'" }
+                    },
+                    "props": { "size": "xs" }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "variant": "info", "size": "xs", "children": "Test mode" },
+                    "bindings": { "hidden": { "$expr": "!row.test_mode" } }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sampling",
+              "header": "Sampling",
+              "cell": {
+                "kind": "Widget",
+                "widget": "analytics.analytics-sampling-indicator",
+                "props": {
+                  "samplingRate": { "$ref": "row.sampling_rate" },
+                  "size": "sm",
+                  "showLabel": true
+                }
+              }
+            },
+            {
+              "id": "batching",
+              "header": "Batching",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm font-mono" },
+                "bindings": {
+                  "children": {
+                    "$expr": "row.supports_batching ? row.batch_config.size + ' / ' + Math.round(row.batch_config.flush_interval_ms / 1000) + 's' : '\u2014'"
+                  }
+                }
+              }
+            },
+            {
+              "id": "last_success",
+              "header": "Last success",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-xs text-muted" },
+                "bindings": {
+                  "children": {
+                    "$expr": "row.last_success_at ? formatRelative(row.last_success_at) : 'Never'"
+                  }
+                }
+              }
+            },
+            {
+              "id": "actions",
+              "header": "",
+              "align": "end",
+              "cell": {
+                "kind": "Menu",
+                "props": {
+                  "trigger": {
+                    "kind": "Button",
+                    "props": {
+                      "variant": "ghost",
+                      "isIconOnly": true,
+                      "leadingIcon": "ellipsis-horizontal",
+                      "ariaLabel": "Actions"
+                    }
+                  }
+                },
+                "items": [
+                  {
+                    "id": "view",
+                    "label": "View",
+                    "leadingIcon": "eye",
+                    "action": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/analytics/providers/' + row.id"
+                    }
+                  },
+                  {
+                    "id": "edit",
+                    "label": "Edit",
+                    "leadingIcon": "pencil-square",
+                    "action": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/analytics/providers/' + row.id + '/edit'"
+                    }
+                  },
+                  {
+                    "id": "test",
+                    "label": "Send test event",
+                    "leadingIcon": "beaker",
+                    "action": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/analytics/providers/' + row.id + '/test'"
+                    }
+                  },
+                  {
+                    "id": "reset-cb",
+                    "label": "Reset circuit breaker",
+                    "leadingIcon": "arrow-path",
+                    "bindings": {
+                      "isDisabled": { "$expr": "!row.is_circuit_open" }
+                    },
+                    "action": {
+                      "kind": "http.post",
+                      "urlExpr": "'/api/v1/analytics/providers/' + row.id + '/reset-circuit-breaker'",
+                      "confirm": {
+                        "title": "Reset the circuit breaker?",
+                        "description": "Forces the circuit back to closed. Next dispatch attempt will hit the provider immediately. Only reset if you know the provider issue is resolved."
+                      },
+                      "onSuccess": [
+                        { "kind": "toast.success", "message": "Circuit breaker reset" },
+                        { "kind": "data.refresh", "source": "providers" }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "delete",
+                    "label": "Delete",
+                    "leadingIcon": "trash",
+                    "variant": "danger",
+                    "action": {
+                      "kind": "http.delete",
+                      "urlExpr": "'/api/v1/analytics/providers/' + row.id",
+                      "confirm": {
+                        "title": "Delete this provider?",
+                        "description": "Any pending batched events for this provider will be flushed first. The provider slot is released after drain."
+                      },
+                      "onSuccess": [
+                        { "kind": "toast.success", "message": "Provider deleted" },
+                        { "kind": "data.refresh", "source": "providers" }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

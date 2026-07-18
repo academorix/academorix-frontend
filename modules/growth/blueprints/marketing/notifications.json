@@ -1,0 +1,96 @@
+{
+  "id": "academorix://modules/marketing/notifications",
+  "$version": 1,
+  "title": "marketing — notification classes + categories",
+  "namespace": "Academorix\\Growth\\Marketing\\Notifications",
+  "notifications": [
+    "MarketingProviderCircuitBreakerOpenedNotification",
+    "MarketingDeadLetterCreatedNotification",
+    "MarketingProviderTestFailedNotification",
+    "MarketingRoasReportReadyNotification",
+    "MarketingConsentSuppressionSpikeNotification",
+    "MarketingHighFailureRateNotification",
+    "MarketingConfigurationChangedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "marketing.circuit_breaker_opened",
+      "display_name": "Ad-network provider unreachable",
+      "description": "A marketing provider (Meta / Google Ads / etc.) has been marked unreachable after N consecutive failures. Conversion tracking is paused until the breaker auto-resets or ops manually resets it. Includes provider name, last error, open-until timestamp, and reset instructions.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + platform_ops"
+    },
+    {
+      "slug": "marketing.dead_letter_created",
+      "display_name": "Conversion event failed permanently",
+      "description": "A conversion event exhausted its retry budget or failed permanently against a marketing provider. Every fire is a paid-conversion loss — the tenant should replay or investigate. Includes event type, subject, revenue amount, provider, and final error.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + platform_ops"
+    },
+    {
+      "slug": "marketing.provider_test_failed",
+      "display_name": "Provider test failed",
+      "description": "A test dispatch to a provider (during tenant onboarding or after credential rotation) failed. Signals mis-configured credentials, wrong pixel_id, or invalid webhook_url. Includes provider name, error, and troubleshooting steps.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin"
+    },
+    {
+      "slug": "marketing.roas_report_ready",
+      "display_name": "Monthly ROAS report ready",
+      "description": "Your monthly Return on Ad Spend (ROAS) report is available. Includes campaign-level revenue attribution, cost/value ratio, and top-performing campaigns. Enterprise-only.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + marketing_role"
+    },
+    {
+      "slug": "marketing.consent_suppression_spike",
+      "display_name": "Consent suppression spike detected",
+      "description": "The rate of consent-suppressed marketing events has spiked above baseline. May indicate a consent-collection bug (users being erroneously marked opted-out) or a compliance change. Includes the spike ratio + affected event types.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + compliance_role"
+    },
+    {
+      "slug": "marketing.high_failure_rate",
+      "display_name": "High marketing failure rate",
+      "description": "More than 10% of marketing events are failing over a 15-minute window. Likely provider-side issue or credential expiry. Includes the failure ratio, top failing providers, and top error codes.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + platform_ops"
+    },
+    {
+      "slug": "marketing.configuration_changed",
+      "display_name": "Marketing provider configuration changed",
+      "description": "A marketing provider config (credentials, enabled event types, test mode) was edited. Audit-trail notification — the tenant admin should confirm they made the change. Includes provider name, changed fields, and actor.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin"
+    }
+  ]
+}

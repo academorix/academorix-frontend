@@ -1,0 +1,37 @@
+{
+  "id": "academorix://modules/marketing/data/providers/tiktok-events-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "TikTok Events API provider config",
+  "description": "Configuration shape for a TikTok Events API integration.",
+  "type": "object",
+  "required": ["pixel_code", "access_token"],
+  "additionalProperties": false,
+  "properties": {
+    "pixel_code": {
+      "type": "string",
+      "pattern": "^C[A-Z0-9]+$",
+      "description": "TikTok Pixel Code (called Pixel ID in TikTok Business Center). Format: C followed by uppercase alphanumerics."
+    },
+    "access_token": {
+      "type": "string",
+      "minLength": 30,
+      "description": "TikTok Business API access token. Generated in TikTok Business Center. Encrypted at rest."
+    },
+    "test_event_code": {
+      "type": ["string", "null"],
+      "description": "Optional test event code (called test_id in TikTok's docs). Used when test_mode=true. TikTok routes these events to the Test Events tab."
+    },
+    "advertiser_id": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9]+$",
+      "description": "Optional TikTok Advertiser ID for events that need to be attributed to a specific ad account. Rare — most tenants have exactly one advertiser."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15
+    }
+  }
+}

@@ -1,0 +1,239 @@
+{
+  "id": "academorix://modules/referrals/config",
+  "$version": 1,
+  "title": "referrals — developer configuration",
+  "configFile": "config/referrals.php",
+  "envPrefix": "REFERRALS_",
+  "sections": {
+    "program_defaults": {
+      "keys": [
+        {
+          "path": "referrals.program_defaults.side",
+          "type": "string",
+          "env": "REFERRALS_DEFAULT_SIDE",
+          "default": "single_sided",
+          "enum": ["single_sided", "double_sided"],
+          "description": "Default side for newly-created programs when the caller doesn't set it."
+        },
+        {
+          "path": "referrals.program_defaults.reward_type",
+          "type": "string",
+          "env": "REFERRALS_DEFAULT_REWARD_TYPE",
+          "default": "percent_discount",
+          "enum": ["percent_discount", "fixed_amount", "free_months", "free_sessions", "credits", "point_award"]
+        },
+        {
+          "path": "referrals.program_defaults.trigger_event",
+          "type": "string",
+          "env": "REFERRALS_DEFAULT_TRIGGER",
+          "default": "first_payment",
+          "enum": ["signup", "trial_started", "first_payment", "subscription_renewal_1", "subscription_renewal_3", "lifetime_value_threshold_hit", "athlete_enrolled", "event_registered"]
+        },
+        {
+          "path": "referrals.program_defaults.vesting_rule",
+          "type": "string",
+          "env": "REFERRALS_DEFAULT_VESTING",
+          "default": "trigger_plus_hold_days",
+          "enum": ["immediate", "trigger_plus_hold_days", "after_refund_window_closes", "n_events_completed", "manual_approval"]
+        },
+        {
+          "path": "referrals.program_defaults.vesting_hold_days",
+          "type": "int",
+          "env": "REFERRALS_DEFAULT_HOLD_DAYS",
+          "default": 30,
+          "description": "Default vesting_hold_days when vesting_rule=trigger_plus_hold_days."
+        },
+        {
+          "path": "referrals.program_defaults.claim_ttl_days",
+          "type": "int",
+          "default": 30,
+          "description": "Default TTL for a claimed-but-not-signed-up referral. Past this window, ExpireStaleReferralsJob expires the row."
+        }
+      ]
+    },
+    "code_generation": {
+      "keys": [
+        {
+          "path": "referrals.code_generation.user_format",
+          "type": "string",
+          "default": "{username-slug}-{6-char-random}",
+          "description": "Template for user_scoped code generation. Substitutions: {username-slug} (kebab-lowercase of user's display name); {N-char-random} (Crockford-alphabet random string of length N)."
+        },
+        {
+          "path": "referrals.code_generation.entropy_bits",
+          "type": "int",
+          "default": 30,
+          "description": "Random-suffix entropy for user_scoped + opaque codes. Default 30 bits = ~1 in 1B collision rate for the 6-char Crockford suffix."
+        },
+        {
+          "path": "referrals.code_generation.opaque_length",
+          "type": "int",
+          "default": 20,
+          "description": "Length of opaque codes. 20 chars of Crockford = 100 bits entropy."
+        },
+        {
+          "path": "referrals.code_generation.collision_retry_max",
+          "type": "int",
+          "default": 5,
+          "description": "How many times to retry code generation on unique-constraint collision before giving up. Rare — 6-char + 30-bit entropy on a per-tenant scope."
+        }
+      ]
+    },
+    "fraud": {
+      "keys": [
+        {
+          "path": "referrals.fraud.hard_block_threshold",
+          "type": "int",
+          "env": "REFERRALS_FRAUD_HARD_BLOCK",
+          "default": 90,
+          "description": "Default fraud_score threshold (0..100) above which a referral is REFUSED at claim time. Overridable per-program via fraud_config.hard_block_threshold."
+        },
+        {
+          "path": "referrals.fraud.warn_threshold",
+          "type": "int",
+          "env": "REFERRALS_FRAUD_WARN",
+          "default": 40,
+          "description": "Default fraud_score threshold above which a warn-severity flag is created but the referral proceeds."
+        },
+        {
+          "path": "referrals.fraud.disposable_email_domains_path",
+          "type": "string",
+          "default": "data/disposable-email-domains.json",
+          "description": "Path (relative to blueprint) of the disposable-email domain list. Loaded at boot into a memoised Set for O(1) lookup by DisposableEmailFraudRule."
+        },
+        {
+          "path": "referrals.fraud.velocity_window_seconds",
+          "type": "int",
+          "default": 3600,
+          "description": "Rolling window for velocity_exceeded flag. Default 60 min."
+        },
+        {
+          "path": "referrals.fraud.click_storm_min_events",
+          "type": "int",
+          "default": 10,
+          "description": "Threshold for click_storm_pattern flag. > N claims from the same IP in 10 min without signups fires the flag."
+        },
+        {
+          "path": "referrals.fraud.geographic_mismatch_km",
+          "type": "int",
+          "default": 5000,
+          "description": "IP-geo distance threshold for geographic_mismatch flag. Default 5000km (VPN abuse signal)."
+        }
+      ]
+    },
+    "vesting_check_schedule": {
+      "keys": [
+        {
+          "path": "referrals.vesting.check_frequency_cron",
+          "type": "string",
+          "default": "0 3 * * *",
+          "description": "Cron for CheckReferralVestingJob. Default nightly 03:00 UTC."
+        },
+        {
+          "path": "referrals.vesting.check_batch_size",
+          "type": "int",
+          "default": 1000,
+          "description": "Rows processed per CheckReferralVestingJob run."
+        }
+      ]
+    },
+    "clawback": {
+      "keys": [
+        {
+          "path": "referrals.clawback.window_days",
+          "type": "int",
+          "env": "REFERRALS_CLAWBACK_WINDOW",
+          "default": 30,
+          "description": "Post-payment window during which a refund / chargeback automatically triggers clawback. Beyond this window, admin-initiated clawback is still allowed but no auto-cascade fires."
+        },
+        {
+          "path": "referrals.clawback.cascade_batch_size",
+          "type": "int",
+          "default": 500,
+          "description": "Cascade clawback processes rewards in batches of this size."
+        }
+      ]
+    },
+    "materialization": {
+      "keys": [
+        {
+          "path": "referrals.materialization.job_frequency_cron",
+          "type": "string",
+          "default": "*/15 * * * *",
+          "description": "Cron for MaterializeVestedRewardsJob. Default every 15 min."
+        },
+        {
+          "path": "referrals.materialization.batch_size",
+          "type": "int",
+          "default": 500
+        },
+        {
+          "path": "referrals.materialization.finance_module_timeout_ms",
+          "type": "int",
+          "default": 5000,
+          "description": "Timeout for the RewardMaterializer -> Finance module call. Longer timeouts backpressure the job queue."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "referrals.retention.window_years",
+          "type": "int",
+          "default": 7,
+          "description": "Default retention window in years. Enterprise `referrals_extended_retention` uses 10y."
+        },
+        {
+          "path": "referrals.retention.extended_window_years",
+          "type": "int",
+          "default": 10,
+          "description": "Extended retention window when Enterprise entitlement is on."
+        },
+        {
+          "path": "referrals.retention.purge_frequency_cron",
+          "type": "string",
+          "default": "0 4 * * 0",
+          "description": "Cron for PurgeArchivedReferralsJob. Default weekly Sunday 04:00 UTC."
+        }
+      ]
+    },
+    "attribution": {
+      "keys": [
+        {
+          "path": "referrals.attribution.snapshot_from_module",
+          "type": "string",
+          "default": "growth::attribution",
+          "description": "The upstream module that provides AttributionSnapshotBuilder. This module reads Request::attributionSnapshot() at claim time."
+        },
+        {
+          "path": "referrals.attribution.snapshot_shape_version",
+          "type": "int",
+          "default": 1,
+          "description": "Schema version of the attribution_snapshot JSONB blob. Downstream consumers (marketing, finance) can branch on this to handle evolution."
+        }
+      ]
+    },
+    "invitation": {
+      "keys": [
+        {
+          "path": "referrals.invitation.max_recipients_per_request",
+          "type": "int",
+          "default": 10,
+          "description": "Cap on the number of recipients in a single POST /me/invitations call."
+        },
+        {
+          "path": "referrals.invitation.max_recipients_per_day_per_user",
+          "type": "int",
+          "default": 100,
+          "description": "Per-day rate limit per user for invitations."
+        },
+        {
+          "path": "referrals.invitation.default_template_slug",
+          "type": "string",
+          "default": "generic-friend-invite",
+          "description": "Default template when the caller doesn't specify one. See data/invitation-template-samples.json."
+        }
+      ]
+    }
+  }
+}

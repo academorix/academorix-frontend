@@ -1,0 +1,154 @@
+{
+  "id": "attribution.attribution-timeline",
+  "title": "Attribution timeline",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Vertical timeline of touchpoints for an attribution profile. Most-recent at top. Each row shows source chip + campaign + landing_page + captured_at + optional conversion badge. Long-form displays a full timeline; compact displays only the last 5.",
+  "props": {
+    "touchpoints": {
+      "type": "array",
+      "required": true,
+      "description": "Array of AttributionTouchpoint rows (from GET /api/v1/attributions/{id}/touchpoints)."
+    },
+    "compact": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, shows only the last 5 touchpoints. Long-form (false) shows every touchpoint in the array."
+    },
+    "showConversions": {
+      "type": "boolean",
+      "default": true,
+      "description": "When true, badges conversion touchpoints with a star icon."
+    }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-3" },
+      "children": [
+        {
+          "kind": "Repeater",
+          "bindings": {
+            "items": {
+              "$expr": "props.compact ? props.touchpoints.slice(0, 5) : props.touchpoints"
+            }
+          },
+          "emptyState": {
+            "kind": "Text",
+            "props": { "className": "text-sm text-muted text-center py-6", "children": "No touchpoints yet." }
+          },
+          "itemRenderer": {
+            "kind": "View",
+            "props": { "className": "flex items-start gap-3 pb-3 border-b border-neutral-100 last:border-b-0" },
+            "children": [
+              {
+                "kind": "View",
+                "props": { "className": "flex flex-col items-center pt-1" },
+                "children": [
+                  {
+                    "kind": "View",
+                    "bindings": {
+                      "className": {
+                        "$expr": "'w-2 h-2 rounded-full ' + (item.was_first_touch ? 'bg-info' : (item.was_conversion ? 'bg-success' : 'bg-neutral-300'))"
+                      }
+                    }
+                  },
+                  {
+                    "kind": "View",
+                    "props": { "className": "w-px h-full bg-neutral-100" },
+                    "bindings": { "hidden": { "$expr": "$isLast" } }
+                  }
+                ]
+              },
+              {
+                "kind": "View",
+                "props": { "className": "flex-1" },
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2 flex-wrap" },
+                    "children": [
+                      {
+                        "kind": "Widget",
+                        "widget": "attribution.attribution-source-chip",
+                        "props": { "size": "xs" },
+                        "bindings": {
+                          "source": { "$ref": "item.source" },
+                          "bucket": { "$ref": "item.source_bucket" }
+                        }
+                      },
+                      {
+                        "kind": "Chip",
+                        "props": { "size": "xs", "variant": "neutral" },
+                        "bindings": { "children": { "$ref": "item.touchpoint_type" } }
+                      },
+                      {
+                        "kind": "Chip",
+                        "props": { "size": "xs", "variant": "info" },
+                        "bindings": {
+                          "hidden": { "$expr": "!item.was_first_touch" },
+                          "children": "first-touch"
+                        }
+                      },
+                      {
+                        "kind": "Chip",
+                        "props": { "size": "xs", "variant": "success", "leadingIcon": "star" },
+                        "bindings": {
+                          "hidden": { "$expr": "!item.was_conversion || !props.showConversions" },
+                          "children": "conversion"
+                        }
+                      },
+                      {
+                        "kind": "Chip",
+                        "props": { "size": "xs", "variant": "warning" },
+                        "bindings": {
+                          "hidden": { "$expr": "item.was_authenticated" },
+                          "children": "anonymous"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-sm mt-1 truncate" },
+                    "bindings": {
+                      "children": { "$expr": "item.campaign || item.landing_page" }
+                    }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted mt-0.5" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "formatRelative(item.captured_at) + ' · ' + (item.device_snapshot.device_type || 'unknown device')"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Button",
+          "props": {
+            "variant": "ghost",
+            "size": "sm",
+            "trailingIcon": "arrow-right",
+            "children": "See full timeline"
+          },
+          "bindings": {
+            "hidden": { "$expr": "!props.compact || props.touchpoints.length <= 5" }
+          },
+          "actions": {
+            "onPress": {
+              "kind": "navigate",
+              "toExpr": "'/tenant/attributions/' + params.attributionId + '/touchpoints'"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

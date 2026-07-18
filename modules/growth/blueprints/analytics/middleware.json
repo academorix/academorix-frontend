@@ -1,0 +1,31 @@
+{
+  "id": "academorix://modules/analytics/middleware",
+  "$version": 1,
+  "title": "analytics — HTTP middleware",
+  "description": "One owned middleware — `analytics.enforce_consent` — used on funnel + experiment report routes to refuse queries that would return data belonging to subjects who withdrew consent (the query itself is not sensitive, but composing per-subject rollups from suppressed events is).",
+  "middleware": [
+    {
+      "alias": "analytics.enforce_consent",
+      "class": "Academorix\\Growth\\Analytics\\Http\\Middleware\\EnforceAnalyticsConsent",
+      "kind": "route-scoped",
+      "purpose": "Refuses report queries (funnel + experiment) when the caller lacks the `analytics.data-viewer` permission OR when the query would include subjects who have withdrawn `analytics` consent. Withdrawn-consent subjects are transparently EXCLUDED from the report; when exclusion would drop >20% of the sample, returns HTTP 422 with a warning so the caller doesn't misinterpret partial data.",
+      "steps": [
+        "Load caller's permissions from Sanctum abilities.",
+        "Refuse (403) when caller lacks analytics.data-viewer.",
+        "For the report route: probe the underlying event set to determine consent-suppression ratio.",
+        "Attach a `X-Analytics-Consent-Suppressed-Ratio: <float>` header to the response envelope so the caller can render a warning banner.",
+        "When ratio > 0.20 AND caller lacks analytics.data-viewer.override, return 422 NOTIFICATIONS_ANALYTICS_HIGH_CONSENT_SUPPRESSION."
+      ]
+    }
+  ],
+  "delegated": {
+    "entitlements.check": {
+      "movedTo": "modules/entitlements",
+      "reason": "Universal entitlement gate. Applied on every route via `entitlements.check:analytics_capture` etc."
+    },
+    "tenant.resolve": {
+      "movedTo": "modules/tenancy",
+      "reason": "Universal tenant resolution."
+    }
+  }
+}

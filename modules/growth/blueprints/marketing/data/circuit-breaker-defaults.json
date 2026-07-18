@@ -1,0 +1,59 @@
+{
+  "$version": 1,
+  "title": "Circuit-breaker defaults per provider",
+  "description": "Default circuit_breaker_config values baked into new marketing_provider_configs when the caller doesn't specify. Tenants can override per-provider — but the defaults are tuned for each provider's known-good behaviour.",
+  "defaults": {
+    "meta_capi": {
+      "failure_threshold": 5,
+      "open_duration_seconds": 3600,
+      "half_open_test_events": 1,
+      "notes": "Meta CAPI is generally reliable. 5-strike default. 1h open duration. Meta's own retry semantics favour bursty retries, so we don't stack retries too aggressively."
+    },
+    "google_ads": {
+      "failure_threshold": 5,
+      "open_duration_seconds": 3600,
+      "half_open_test_events": 1,
+      "notes": "Google Ads API has stricter auth requirements (OAuth2 token refresh). If auth fails, the breaker opens fast. 3600s = 1h open."
+    },
+    "google_analytics_4": {
+      "failure_threshold": 10,
+      "open_duration_seconds": 1800,
+      "half_open_test_events": 1,
+      "notes": "GA4 Measurement Protocol is very forgiving (silently accepts most payloads). Higher failure threshold + shorter open duration."
+    },
+    "gtm_server": {
+      "failure_threshold": 5,
+      "open_duration_seconds": 3600,
+      "half_open_test_events": 1,
+      "notes": "GTM Server is caller-hosted — reliability depends on the tenant's infrastructure. Default 5-strike."
+    },
+    "tiktok_events": {
+      "failure_threshold": 5,
+      "open_duration_seconds": 3600,
+      "half_open_test_events": 1,
+      "notes": "TikTok Events API is generally reliable but rate-limits aggressively. Circuit-breaker complements the rate-limit gate."
+    },
+    "linkedin_insight": {
+      "failure_threshold": 5,
+      "open_duration_seconds": 7200,
+      "half_open_test_events": 1,
+      "notes": "LinkedIn API has been known to have longer outages (2-4h). 7200s = 2h open duration to reduce probe frequency."
+    },
+    "snapchat_capi": {
+      "failure_threshold": 5,
+      "open_duration_seconds": 3600,
+      "half_open_test_events": 1
+    },
+    "pinterest_capi": {
+      "failure_threshold": 5,
+      "open_duration_seconds": 3600,
+      "half_open_test_events": 1
+    },
+    "custom_webhook": {
+      "failure_threshold": 3,
+      "open_duration_seconds": 1800,
+      "half_open_test_events": 1,
+      "notes": "Caller-hosted endpoints are typically less reliable. Lower failure threshold + shorter open duration for faster recovery detection."
+    }
+  }
+}

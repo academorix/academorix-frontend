@@ -1,0 +1,118 @@
+{
+  "id": "academorix://modules/analytics/permissions",
+  "$version": 1,
+  "title": "analytics — permissions",
+  "description": "Read-heavy permission surface. Analytics events + deliveries are READ-only via the API (only listener path creates); provider config + identity have full CRUD with tighter scoping.",
+  "seeder": "Academorix\\Growth\\Analytics\\Database\\Seeders\\AnalyticsPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "analytics.events.viewAny",
+      "guard": "sanctum",
+      "description": "List analytics events in tenant.",
+      "seededOn": ["admin", "owner", "analyst"]
+    },
+    {
+      "name": "analytics.events.view",
+      "guard": "sanctum",
+      "description": "View a single analytics event.",
+      "seededOn": ["admin", "owner", "analyst"]
+    },
+    {
+      "name": "analytics.deliveries.viewAny",
+      "guard": "sanctum",
+      "description": "List delivery log across events.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "analytics.deliveries.view",
+      "guard": "sanctum",
+      "description": "View a single delivery row.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "analytics.providers.viewAny",
+      "guard": "sanctum",
+      "description": "List AnalyticsProviderConfig rows.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "analytics.providers.view",
+      "guard": "sanctum",
+      "description": "View a single provider config (config credentials hidden).",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "analytics.providers.create",
+      "guard": "sanctum",
+      "description": "Create a new AnalyticsProviderConfig.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "analytics.providers.update",
+      "guard": "sanctum",
+      "description": "Update provider config (credentials, enabled_event_types, sampling_rate, batch_config).",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "analytics.providers.delete",
+      "guard": "sanctum",
+      "description": "Soft-delete a provider config.",
+      "seededOn": ["owner"]
+    },
+    {
+      "name": "analytics.providers.test",
+      "guard": "sanctum",
+      "description": "Dispatch a test event to a provider config.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "analytics.providers.reset_circuit_breaker",
+      "guard": "sanctum",
+      "description": "Manually reset a provider's circuit breaker.",
+      "seededOn": ["owner"]
+    },
+    {
+      "name": "analytics.identities.viewAny",
+      "guard": "sanctum",
+      "description": "List AnalyticsIdentity rows.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "analytics.identities.merge",
+      "guard": "sanctum",
+      "description": "Merge one identity into another. Requires analytics_identity_merge entitlement.",
+      "seededOn": ["owner"]
+    },
+    {
+      "name": "analytics.identities.identify",
+      "guard": "sanctum",
+      "description": "Server-side identify \u2014 associate an anonymous_id with a user_id.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "analytics.funnels.view",
+      "guard": "sanctum",
+      "description": "Access funnel reports.",
+      "seededOn": ["admin", "owner", "analyst"]
+    },
+    {
+      "name": "analytics.experiments.view",
+      "guard": "sanctum",
+      "description": "Access experiment results.",
+      "seededOn": ["admin", "owner", "analyst"]
+    },
+    {
+      "name": "analytics.deliveries.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant delivery log for support.",
+      "seededOn": ["support", "on_call"]
+    },
+    {
+      "name": "analytics.circuit_breakers.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant circuit-breaker dashboard for on-call.",
+      "seededOn": ["support", "on_call"]
+    }
+  ]
+}

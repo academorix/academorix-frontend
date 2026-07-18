@@ -1,0 +1,43 @@
+{
+  "id": "referrals.referral-status-chip",
+  "title": "Referral status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for referral.status. Values: pending_claim (neutral), claimed (info), signed_up (info), trigger_pending (info), vesting (warning), vested (success), rewarded (success solid), cancelled (neutral), expired (neutral), fraudulent (danger). Never relies on colour alone — always carries a text label + optional icon.",
+  "props": {
+    "status": {
+      "type": "string",
+      "enum": ["pending_claim", "claimed", "signed_up", "trigger_pending", "vesting", "vested", "rewarded", "cancelled", "expired", "fraudulent"],
+      "required": true
+    },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showIcon": { "type": "boolean", "default": true }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "({ pending_claim: 'neutral', claimed: 'info', signed_up: 'info', trigger_pending: 'info', vesting: 'warning', vested: 'success', rewarded: 'success', cancelled: 'neutral', expired: 'neutral', fraudulent: 'danger' })[props.status]"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "props": {
+        "leadingIcon": {
+          "$expr": "props.showIcon ? ({ pending_claim: 'clock', claimed: 'cursor-arrow-rays', signed_up: 'user-plus', trigger_pending: 'bolt', vesting: 'hourglass', vested: 'check', rewarded: 'gift', cancelled: 'x-mark', expired: 'calendar-x', fraudulent: 'shield-exclamation' })[props.status] : null"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "({ pending_claim: 'Pending claim', claimed: 'Claimed', signed_up: 'Signed up', trigger_pending: 'Trigger pending', vesting: 'Vesting', vested: 'Vested', rewarded: 'Rewarded', cancelled: 'Cancelled', expired: 'Expired', fraudulent: 'Fraudulent' })[props.status]"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

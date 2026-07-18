@@ -1,0 +1,102 @@
+{
+  "$version": 1,
+  "title": "Referral reward type catalogue",
+  "description": "Every valid reward_type + the shape of its (amount, currency) tuple + validation bounds + display metadata. The valid_reward_type_amount_currency_combo rule reads this catalogue.",
+  "types": [
+    {
+      "reward_type": "percent_discount",
+      "display_name": "Percent discount",
+      "description": "Percentage discount applied to the recipient's next payment.",
+      "amount_unit": "percent",
+      "amount_min": 1,
+      "amount_max": 100,
+      "requires_currency": false,
+      "small_tier_allowed": true,
+      "medium_tier_allowed": true,
+      "enterprise_tier_allowed": true,
+      "typical_range": [5, 25],
+      "example_display": "10% off",
+      "finance_credit_type_hint": "percent_discount_credit"
+    },
+    {
+      "reward_type": "fixed_amount",
+      "display_name": "Fixed amount",
+      "description": "Fixed monetary credit to the recipient's account.",
+      "amount_unit": "cents",
+      "amount_min": 1,
+      "amount_max": 100000000,
+      "requires_currency": true,
+      "small_tier_allowed": true,
+      "medium_tier_allowed": true,
+      "enterprise_tier_allowed": true,
+      "typical_range": [500, 5000],
+      "example_display": "$25 credit",
+      "finance_credit_type_hint": "monetary_credit"
+    },
+    {
+      "reward_type": "free_months",
+      "display_name": "Free months",
+      "description": "N months added to the recipient's subscription. Consumed at the next renewal.",
+      "amount_unit": "months",
+      "amount_min": 1,
+      "amount_max": 24,
+      "requires_currency": false,
+      "small_tier_allowed": false,
+      "medium_tier_allowed": true,
+      "enterprise_tier_allowed": true,
+      "typical_range": [1, 3],
+      "example_display": "1 month free",
+      "finance_credit_type_hint": "subscription_time_credit"
+    },
+    {
+      "reward_type": "free_sessions",
+      "display_name": "Free sessions",
+      "description": "N free bookable sessions credited to the recipient's account (uses Pass module).",
+      "amount_unit": "sessions",
+      "amount_min": 1,
+      "amount_max": 1000,
+      "requires_currency": false,
+      "small_tier_allowed": false,
+      "medium_tier_allowed": true,
+      "enterprise_tier_allowed": true,
+      "typical_range": [1, 10],
+      "example_display": "3 free sessions",
+      "finance_credit_type_hint": "pass_credit"
+    },
+    {
+      "reward_type": "credits",
+      "display_name": "Credits",
+      "description": "Monetary credits to the recipient's account (identical to fixed_amount but tracked separately for accounting purposes).",
+      "amount_unit": "cents",
+      "amount_min": 1,
+      "amount_max": 100000000,
+      "requires_currency": true,
+      "small_tier_allowed": false,
+      "medium_tier_allowed": true,
+      "enterprise_tier_allowed": true,
+      "typical_range": [500, 10000],
+      "example_display": "$50 in credits",
+      "finance_credit_type_hint": "credit_wallet"
+    },
+    {
+      "reward_type": "point_award",
+      "display_name": "Points",
+      "description": "Loyalty points awarded to the recipient. Uses tenant's loyalty-points system (not a currency).",
+      "amount_unit": "points",
+      "amount_min": 1,
+      "amount_max": 10000000,
+      "requires_currency": false,
+      "small_tier_allowed": false,
+      "medium_tier_allowed": true,
+      "enterprise_tier_allowed": true,
+      "typical_range": [100, 1000],
+      "example_display": "500 points",
+      "finance_credit_type_hint": "loyalty_points"
+    }
+  ],
+  "notes": [
+    "Small tier only allows percent_discount + fixed_amount. Medium+ unlocks the other four via `referrals_advanced_reward_types` entitlement.",
+    "amount_min / amount_max are the observer-enforced bounds. Tenants can further restrict via program config.",
+    "finance_credit_type_hint tells the Finance module (Wave 4) how to shape the pending Credit row. Distinct types support different retention + accounting semantics."
+  ]
+}

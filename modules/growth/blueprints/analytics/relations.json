@@ -1,0 +1,131 @@
+{
+  "id": "academorix://modules/analytics/relations",
+  "$version": 1,
+  "title": "analytics — model relationships",
+  "description": "Four owned entities with a tight internal graph. External graph is intentionally minimal — analytics is a leaf module in the growth tree. Downstream consumers (marketing, finance, referrals, notifications) subscribe to AnalyticsEvent* events; they do NOT hold foreign keys back to this module. Attribution snapshots are frozen jsonb, not FKs — attribution changes don't ripple into historical events.",
+  "internal": [
+    {
+      "from": "AnalyticsDelivery",
+      "kind": "belongsTo",
+      "to": "AnalyticsEvent",
+      "foreignKey": "analytics_event_id",
+      "onUpdate": "cascade",
+      "onDelete": "restrict",
+      "description": "Restrict on delete \u2014 events must not vanish while deliveries reference them. PurgeExpiredAnalyticsDataJob purges deliveries FIRST (90-day window), then events (2-year window)."
+    },
+    {
+      "from": "AnalyticsDelivery",
+      "kind": "belongsTo",
+      "to": "AnalyticsProviderConfig",
+      "foreignKey": "analytics_provider_config_id",
+      "onUpdate": "cascade",
+      "onDelete": "set null",
+      "description": "Set-null on delete \u2014 historical deliveries survive when a config is deleted. The `provider` denormalised column preserves the identity of the driver used."
+    },
+    {
+      "from": "AnalyticsEvent",
+      "kind": "hasMany",
+      "to": "AnalyticsDelivery",
+      "foreignKey": "analytics_event_id",
+      "description": "Reverse of AnalyticsDelivery.belongsTo. One event has N deliveries (one per provider \u00d7 attempt)."
+    },
+    {
+      "from": "AnalyticsProviderConfig",
+      "kind": "hasMany",
+      "to": "AnalyticsDelivery",
+      "foreignKey": "analytics_provider_config_id",
+      "description": "Reverse of AnalyticsDelivery.belongsTo. One config has N deliveries."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "AnalyticsEvent",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every analytics event is tenant-scoped. On tenant erasure the cascade runs PurgeAnalyticsDataForErasedTenant which writes a summary row into audit + hard-deletes every event + delivery + identity."
+    },
+    {
+      "from": "AnalyticsEvent",
+      "kind": "morphTo",
+      "to": "subject (User | AnalyticsIdentity)",
+      "foreignKey": "subject_id + subject_type",
+      "description": "Polymorphic subject. Identified events point at User; anonymous events point at AnalyticsIdentity. When identify() merges anonymous \u2192 user, MergeAliasedEventsJob rewrites historical subject_id/subject_type from AnalyticsIdentity to User."
+    },
+    {
+      "from": "AnalyticsDelivery",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "AnalyticsProviderConfig",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every provider config is tenant-scoped. Cross-tenant configs (rare, super_admin) refused by AnalyticsProviderConfigObserver."
+    },
+    {
+      "from": "AnalyticsIdentity",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "AnalyticsIdentity",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "identified_user_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "Set-null preserves the identity trail after user erasure. The row transitions to `deidentified=true` via observer AND the identified_user_id column nulls."
+    }
+  ],
+  "inbound": {
+    "description": "Analytics is a leaf in the growth graph. Downstream modules (marketing, finance, referrals, notifications, planned Wave 5+) subscribe to AnalyticsEvent* published events; they hold NO foreign keys back to this module. AnalyticsEventCapturer classes register as listeners via #[AsAnalyticsEventCapturer] but the capturer implementations LIVE in the consumer module \u2014 they read domain-event context and produce analytics-event payloads.",
+    "consumer_patterns": [
+      "any module with a listener class carrying #[AsAnalyticsEventCapturer(domainEvent: X::class, analyticsEventName: 'y_z')] — the listener becomes a registered capturer in AnalyticsEventCapturerRegistry",
+      "any module subscribing to `analytics.event.delivered` webhook events — cross-service consumption of analytics deliveries via the webhook module"
+    ],
+    "consumer_examples_planned": [
+      "marketing \u2014 subscribes to AnalyticsFunnelStepReached to correlate funnel completion against marketing attribution (ROAS query support)",
+      "finance \u2014 emits domain events (SubscriptionUpgraded, PaymentSucceeded) that a finance-owned AnalyticsEventCapturer maps to 'subscription_upgraded' + 'payment_succeeded' analytics events",
+      "referrals \u2014 emits ReferralConversionRecorded which a referrals-owned capturer maps to 'referral_converted' with the referrer + referee properties",
+      "notifications \u2014 emits NotificationOpened / Clicked which a notifications-owned capturer maps to 'notification_opened' + 'notification_clicked' analytics events with { channel, template_key, provider } properties"
+    ]
+  },
+  "consumed": [
+    {
+      "from": "tenancy::Tenant",
+      "usage": "Every entity is tenant-scoped via BelongsToTenant. No exceptions \u2014 there are no platform-level analytics rows."
+    },
+    {
+      "from": "user::User",
+      "usage": "Polymorphic subject on AnalyticsEvent (post-identify) + belongsTo target of AnalyticsIdentity.identified_user_id."
+    },
+    {
+      "from": "application::Application",
+      "usage": "Application ID cascades through Tenant \u2014 no direct FK. Every analytics event participates in an application via tenants.application_id join."
+    },
+    {
+      "from": "growth::attribution::AttributionContext",
+      "usage": "AnalyticsEventObserver.creating snapshots the current AttributionContext into AnalyticsEvent.attribution jsonb. Immutable after CREATE."
+    },
+    {
+      "from": "compliance::ConsentGate",
+      "usage": "AnalyticsEventObserver.creating calls ConsentGate::has(subject, 'analytics') to determine eligible_provider_count. AnalyticsProviderManager re-checks at dispatch time via consent_snapshot on the event row (a snapshot NOT a fresh call \u2014 that lets us honor the consent state that was in effect when the event was captured, even if the user's consent has since changed)."
+    },
+    {
+      "from": "entitlements::Entitlement",
+      "usage": "analytics_capture (module master gate). analytics_provider_slot (config-create quota). analytics_event_slot_per_month (dispatch pool). analytics_advanced_providers (Mixpanel/June/Segment). analytics_batch_configuration (custom batch_config). analytics_identity_merge (identity merge routes). analytics_sampling_config (custom sampling_rate). analytics_extended_retention (2y \u2192 5y events). analytics_session_recording (PostHog session recording opt-in)."
+    },
+    {
+      "from": "notifications::NotificationCategory",
+      "usage": "Four notification categories seeded under the `analytics` namespace for circuit-breaker + backpressure + drop-rate + identity-merge notifications."
+    }
+  ]
+}

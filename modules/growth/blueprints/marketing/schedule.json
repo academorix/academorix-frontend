@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/marketing/schedule",
+  "$version": 1,
+  "title": "marketing — scheduled tasks",
+  "entries": [
+    {
+      "name": "marketing-retry-failed-deliveries",
+      "command": "queue:dispatch --job=Academorix\\Growth\\Marketing\\Jobs\\RetryFailedDeliveriesJob",
+      "cron": "*/5 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 5 min: pick up marketing_deliveries with status='failed' + next_retry_at <= now() + attempt_number < max_attempts, enqueue fresh DispatchToProviderJob with attempt_number+1."
+    },
+    {
+      "name": "marketing-reconcile-status",
+      "command": "queue:dispatch --job=Academorix\\Growth\\Marketing\\Jobs\\ReconcileMarketingEventStatusJob",
+      "cron": "0 2 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 02:00 UTC: roll up per-event delivery aggregates + update marketing_events.status. Findings above 0 are P1 (stuck event = crashed dispatch job)."
+    },
+    {
+      "name": "marketing-purge-expired",
+      "command": "queue:dispatch --job=Academorix\\Growth\\Marketing\\Jobs\\PurgeExpiredMarketingDataJob",
+      "cron": "0 4 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 04:00 UTC: apply the per-entity retention windows. Events > 7y hard-deleted (10y for Enterprise); deliveries > 2y hard-deleted; soft-deleted provider_configs > 90d hard-deleted. Dead letters NEVER auto-purged."
+    },
+    {
+      "name": "marketing-half-open-circuit-probes",
+      "command": "queue:dispatch --job=Academorix\\Growth\\Marketing\\Jobs\\HalfOpenCircuitBreakerJob",
+      "cron": "*/10 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 10 min: sweep marketing_provider_configs where circuit_breaker_open_until <= now() AND is still marked open. Transition to HALF_OPEN + dispatch a probe event. NOTE: the primary trigger for this job is the delayed enqueue from OpenCircuitBreakerJob; this scheduled sweep is a safety net for cases where the delayed enqueue was lost (crashed worker, queue restart)."
+    },
+    {
+      "name": "marketing-detect-high-failure-rate",
+      "command": "marketing:detect-high-failure-rate",
+      "cron": "*/15 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 15 min: compute per-provider failure rate over the last 15 min window. If > 10% of deliveries failed AND > 10 total attempts occurred: fire MarketingHighFailureRateNotification. Debounce: at most 1 notification per (tenant, provider) per hour."
+    },
+    {
+      "name": "marketing-detect-consent-suppression-spike",
+      "command": "marketing:detect-consent-suppression-spike",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every hour: compute the consent-suppression rate over the last 60 min window per tenant. If the rate exceeds 3× the trailing 7-day baseline AND absolute count > 100: fire MarketingConsentSuppressionSpikeNotification. Signals a consent-collection bug or a compliance change."
+    },
+    {
+      "name": "marketing-monthly-roas-report",
+      "command": "marketing:roas-report --auto-dispatch",
+      "cron": "0 6 1 * *",
+      "timezone": "UTC",
+      "purpose": "Monthly 06:00 UTC on the 1st: compute per-tenant ROAS reports for the previous calendar month. Only fires for tenants with the marketing_roas_report entitlement. Delivers MarketingRoasReportReadyNotification."
+    },
+    {
+      "name": "marketing-reset-event-quota",
+      "command": "marketing:reset-event-quota",
+      "cron": "0 0 1 * *",
+      "timezone": "UTC",
+      "purpose": "Monthly 00:00 UTC on the 1st: reset marketing_event_slot_per_month consumed counters for every tenant. This is the entitlement rolling-window reset — Small: 10k / month, Medium: 100k / month, Enterprise: unlimited. Delegated to the entitlements module's monthly-slot-reset infrastructure."
+    }
+  ]
+}

@@ -1,0 +1,248 @@
+{
+  "$version": 1,
+  "title": "Marketing event type catalogue",
+  "description": "The 26 marketing event types the module supports day-1. Each type documents its trigger (which domain event maps here via #[AsDomainEventMapper]), typical value_amount semantics, subject_type, and consumer expectation across the 9 providers. Consumers of the DomainEventMapper registry read this catalogue to understand the mapping surface.",
+  "event_types": [
+    {
+      "event_type": "signup",
+      "display_name": "Signup",
+      "description": "A user completed registration. Fires on user.registered domain event. Deduplication_key = 'signup:{user_id}'. First-milestone event — every conversion funnel starts here.",
+      "subject_types": ["User"],
+      "carries_value": false,
+      "typical_deduplication_pattern": "signup:{subject_id}",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "linkedin_insight", "snapchat_capi", "pinterest_capi", "custom_webhook"]
+    },
+    {
+      "event_type": "trial_started",
+      "display_name": "Trial started",
+      "description": "A subscription entered trial period. Fires on finance.trial_started (Wave 4). Precedes trial_converted or trial_ended.",
+      "subject_types": ["Subscription"],
+      "carries_value": false,
+      "typical_deduplication_pattern": "trial:{subject_id}:started",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "linkedin_insight", "custom_webhook"]
+    },
+    {
+      "event_type": "trial_ended",
+      "display_name": "Trial ended (without converting)",
+      "description": "A trial subscription ended without converting to paid. Fires on finance.trial_ended. Signals churn to ad networks so they can adjust targeting.",
+      "subject_types": ["Subscription"],
+      "carries_value": false,
+      "typical_deduplication_pattern": "trial:{subject_id}:ended",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "custom_webhook"]
+    },
+    {
+      "event_type": "trial_converted",
+      "display_name": "Trial converted",
+      "description": "A trial subscription converted to paid. Fires on finance.trial_converted with value_amount_cents = plan.price. Revenue event.",
+      "subject_types": ["Subscription"],
+      "carries_value": true,
+      "typical_deduplication_pattern": "trial:{subject_id}:converted",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "linkedin_insight", "snapchat_capi", "pinterest_capi", "custom_webhook"]
+    },
+    {
+      "event_type": "subscription_started",
+      "display_name": "Subscription started",
+      "description": "A paid subscription began (skipping trial). Fires on finance.subscription_started with value_amount_cents = plan.price.",
+      "subject_types": ["Subscription"],
+      "carries_value": true,
+      "typical_deduplication_pattern": "sub:{subject_id}:started",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "linkedin_insight", "snapchat_capi", "pinterest_capi", "custom_webhook"]
+    },
+    {
+      "event_type": "subscription_upgraded",
+      "display_name": "Subscription upgraded",
+      "description": "A subscription moved to a higher-tier plan. Fires on finance.subscription_upgraded with value_amount_cents = MRR delta.",
+      "subject_types": ["Subscription"],
+      "carries_value": true,
+      "typical_deduplication_pattern": "sub:{subject_id}:upgraded:{new_plan_id}",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "linkedin_insight", "custom_webhook"]
+    },
+    {
+      "event_type": "subscription_downgraded",
+      "display_name": "Subscription downgraded",
+      "description": "A subscription moved to a lower-tier plan. Negative-value revenue event (MRR reduction).",
+      "subject_types": ["Subscription"],
+      "carries_value": true,
+      "typical_deduplication_pattern": "sub:{subject_id}:downgraded:{new_plan_id}",
+      "supported_by_providers": ["google_analytics_4", "gtm_server", "custom_webhook"]
+    },
+    {
+      "event_type": "subscription_cancelled",
+      "display_name": "Subscription cancelled",
+      "description": "A subscription was cancelled. Fires on finance.subscription_cancelled. Signals churn.",
+      "subject_types": ["Subscription"],
+      "carries_value": false,
+      "typical_deduplication_pattern": "sub:{subject_id}:cancelled",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "linkedin_insight", "custom_webhook"]
+    },
+    {
+      "event_type": "membership_purchased",
+      "display_name": "Membership purchased",
+      "description": "A parent purchased a membership for an athlete. Fires on finance.membership_purchased with value_amount_cents = membership.price. Revenue event.",
+      "subject_types": ["Membership"],
+      "carries_value": true,
+      "typical_deduplication_pattern": "membership:{subject_id}:purchased",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "linkedin_insight", "snapchat_capi", "pinterest_capi", "custom_webhook"]
+    },
+    {
+      "event_type": "lead_captured",
+      "display_name": "Lead captured",
+      "description": "A prospect submitted a contact form / demo request / newsletter signup. Fires on growth.lead_captured. Top-of-funnel event.",
+      "subject_types": ["Lead"],
+      "carries_value": false,
+      "typical_deduplication_pattern": "lead:{subject_id}",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "linkedin_insight", "snapchat_capi", "pinterest_capi", "custom_webhook"]
+    },
+    {
+      "event_type": "session_booked",
+      "display_name": "Session booked",
+      "description": "A user booked a paid facility session. Fires on facility.booking_created WHEN booking.payment_status IN ('paid', 'included_in_membership'). Free bookings do NOT fire (not a conversion signal).",
+      "subject_types": ["User", "Athlete"],
+      "carries_value": true,
+      "typical_deduplication_pattern": "booking:{booking_id}",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "custom_webhook"]
+    },
+    {
+      "event_type": "event_registered",
+      "display_name": "Event registered",
+      "description": "A user registered for a tournament/event. Fires on sports.event_registered (Wave 3).",
+      "subject_types": ["User", "Athlete"],
+      "carries_value": true,
+      "typical_deduplication_pattern": "event_reg:{event_registration_id}",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "custom_webhook"]
+    },
+    {
+      "event_type": "athlete_enrolled",
+      "display_name": "Athlete enrolled",
+      "description": "An athlete was enrolled in a program (Wave 3 sports domain). Signals customer LTV expansion.",
+      "subject_types": ["Athlete"],
+      "carries_value": false,
+      "typical_deduplication_pattern": "athlete:{subject_id}:enrolled:{enrollment_id}",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "custom_webhook"]
+    },
+    {
+      "event_type": "athlete_withdrawn",
+      "display_name": "Athlete withdrawn",
+      "description": "An athlete withdrew from a program. Churn signal.",
+      "subject_types": ["Athlete"],
+      "carries_value": false,
+      "typical_deduplication_pattern": "athlete:{subject_id}:withdrawn:{enrollment_id}",
+      "supported_by_providers": ["google_analytics_4", "gtm_server", "custom_webhook"]
+    },
+    {
+      "event_type": "cart_abandoned",
+      "display_name": "Cart abandoned",
+      "description": "A user started a purchase flow without completing. Fires on finance.cart_abandoned after N minutes of inactivity. Retargeting signal.",
+      "subject_types": ["User"],
+      "carries_value": true,
+      "typical_deduplication_pattern": "cart:{cart_id}:abandoned",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "snapchat_capi", "pinterest_capi", "custom_webhook"]
+    },
+    {
+      "event_type": "churn_predicted",
+      "display_name": "Churn predicted",
+      "description": "The churn-prediction service (Wave 5+) flagged a subscription as likely-to-churn. Retention signal for ad networks.",
+      "subject_types": ["Subscription"],
+      "carries_value": false,
+      "typical_deduplication_pattern": "churn:{subject_id}:{prediction_date}",
+      "supported_by_providers": ["google_analytics_4", "gtm_server", "custom_webhook"]
+    },
+    {
+      "event_type": "referral_completed",
+      "display_name": "Referral completed",
+      "description": "A referral converted (both referrer + referee received rewards). Fires on referrals.completed (Wave 5 sibling module). Viral-loop signal.",
+      "subject_types": ["User"],
+      "carries_value": true,
+      "typical_deduplication_pattern": "referral:{referral_id}:completed",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "custom_webhook"]
+    },
+    {
+      "event_type": "refund_issued",
+      "display_name": "Refund issued",
+      "description": "A refund was issued for a subscription/membership/booking. Fires on finance.refund_issued with NEGATIVE value_amount_cents (revenue reversal). Providers that support negative-value conversion subtract from ROAS.",
+      "subject_types": ["Subscription", "Membership"],
+      "carries_value": true,
+      "value_may_be_negative": true,
+      "typical_deduplication_pattern": "refund:{refund_id}",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "custom_webhook"]
+    },
+    {
+      "event_type": "chargeback_filed",
+      "display_name": "Chargeback filed",
+      "description": "A customer filed a chargeback with their bank. Fires on finance.chargeback_filed. Fraud + chargeback loss signal — ad networks may reduce targeting on similar segments.",
+      "subject_types": ["Subscription", "Membership"],
+      "carries_value": true,
+      "value_may_be_negative": true,
+      "typical_deduplication_pattern": "chargeback:{chargeback_id}",
+      "supported_by_providers": ["google_ads", "google_analytics_4", "gtm_server", "custom_webhook"]
+    },
+    {
+      "event_type": "feature_used_high_value",
+      "display_name": "High-value feature used",
+      "description": "A user engaged with a high-value feature (e.g. completed onboarding, invited teammate, used AI tool). Retention + up-sell signal.",
+      "subject_types": ["User"],
+      "carries_value": false,
+      "typical_deduplication_pattern": "feature:{user_id}:{feature_key}:{daily_bucket}",
+      "supported_by_providers": ["google_analytics_4", "gtm_server", "custom_webhook"]
+    },
+    {
+      "event_type": "demo_scheduled",
+      "display_name": "Demo scheduled",
+      "description": "A prospect scheduled a sales demo. Middle-of-funnel event.",
+      "subject_types": ["Lead"],
+      "carries_value": false,
+      "typical_deduplication_pattern": "demo:{lead_id}:scheduled",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "linkedin_insight", "custom_webhook"]
+    },
+    {
+      "event_type": "demo_attended",
+      "display_name": "Demo attended",
+      "description": "A prospect attended a scheduled demo (didn't no-show). Signals qualified pipeline.",
+      "subject_types": ["Lead"],
+      "carries_value": false,
+      "typical_deduplication_pattern": "demo:{lead_id}:attended",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "linkedin_insight", "custom_webhook"]
+    },
+    {
+      "event_type": "newsletter_subscribed",
+      "display_name": "Newsletter subscribed",
+      "description": "A user subscribed to the tenant's newsletter. Retention + audience-building signal.",
+      "subject_types": ["User", "Lead"],
+      "carries_value": false,
+      "typical_deduplication_pattern": "newsletter:{subject_id}:subscribed",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "custom_webhook"]
+    },
+    {
+      "event_type": "newsletter_unsubscribed",
+      "display_name": "Newsletter unsubscribed",
+      "description": "A user unsubscribed. Disengagement signal.",
+      "subject_types": ["User", "Lead"],
+      "carries_value": false,
+      "typical_deduplication_pattern": "newsletter:{subject_id}:unsubscribed",
+      "supported_by_providers": ["google_analytics_4", "gtm_server", "custom_webhook"]
+    },
+    {
+      "event_type": "contact_form_submitted",
+      "display_name": "Contact form submitted",
+      "description": "A prospect submitted a contact form (not a full lead capture). Lightweight top-of-funnel.",
+      "subject_types": ["Lead"],
+      "carries_value": false,
+      "typical_deduplication_pattern": "contact:{lead_id}",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "custom_webhook"]
+    },
+    {
+      "event_type": "app_install",
+      "display_name": "App installed",
+      "description": "A user installed the mobile app. Fires from the mobile app's server-side attribution callback (Wave 6+). Signal for MAI advertising campaigns.",
+      "subject_types": ["User"],
+      "carries_value": false,
+      "typical_deduplication_pattern": "install:{user_id}:{device_id}",
+      "supported_by_providers": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "snapchat_capi", "custom_webhook"]
+    }
+  ],
+  "notes": [
+    "The event_type enum is the authoritative list. Adding a new type = updating this catalogue + updating the MarketingEventType enum + updating provider-capability-matrix.json for which providers support it.",
+    "The supported_by_providers list for each event_type is the source of truth for the observer's valid_enabled_event_types rule. A provider's enabled_event_types must be a subset of the intersection of {this catalogue's supported_by_providers for each event_type} × {provider-capability-matrix.json's per-provider supports() list}.",
+    "value_may_be_negative flag on refund_issued + chargeback_filed indicates the driver must handle negative amounts. Providers that don't support negative amounts (older Meta CAPI, TikTok) either skip these event types OR the driver transforms to a positive-amount + type='refund' semantic."
+  ]
+}

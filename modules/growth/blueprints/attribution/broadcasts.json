@@ -1,0 +1,47 @@
+{
+  "id": "academorix://modules/attribution/broadcasts",
+  "$version": 1,
+  "title": "attribution — realtime broadcast channels",
+  "description": "Two broadcast channel families for live UI updates. Tenant-level channel for admin dashboards (campaign-rollup + newly-identified subjects); user-level channel for a user's own attribution profile changes (rare — but referrals dashboard shows real-time attribution). Reverb driver (Laravel Reverb) is the default transport; the notifications module handles fanout. NO facility-level channels — attribution is per-tenant + per-subject, no intermediate scope.",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.attribution",
+      "class": "Academorix\\Growth\\Attribution\\Broadcasts\\TenantAttributionChannel",
+      "description": "Tenant-wide attribution + campaign stream. Sink for admin dashboards showing incoming attribution activity, campaign-rollup updates, merge/reset admin actions.",
+      "authorization": "sanctum::authed AND tenant_matches AND permission:attribution.view-all",
+      "events": [
+        "AttributionCreated",
+        "AttributionSubjectIdentified",
+        "AttributionConverted",
+        "AttributionChurned",
+        "AttributionMerged",
+        "AttributionResetRequested",
+        "AttributionResetConfirmed",
+        "AttributionCampaignRollupComputed"
+      ],
+      "throttle": "60 events/minute per channel",
+      "notes": "Payload is trimmed to non-confidential fields (see data-classes.json). Individual click IDs + IP hashes NEVER broadcast — only aggregated campaign counters."
+    },
+    {
+      "name": "user.{userId}.attribution",
+      "class": "Academorix\\Growth\\Attribution\\Broadcasts\\UserAttributionChannel",
+      "description": "Per-user attribution stream. Powers the my-attribution live-updates widget in the user dashboard (rare — most users don't need this; referrals module surfaces it for referrer accounts).",
+      "authorization": "sanctum::authed AND user_matches",
+      "events": [
+        "AttributionSubjectIdentified (where new_subject_id = userId)",
+        "AttributionConverted (where subject_id = userId)",
+        "AttributionChurned (where subject_id = userId)",
+        "AttributionRestored (where subject_id = userId)",
+        "AttributionResetRequested (where requested_for_subject_id = userId)",
+        "AttributionResetConfirmed (where subject_id = userId)"
+      ],
+      "throttle": "10 events/minute per channel",
+      "notes": "Payload trimmed to what the user needs to render their own attribution overview — no click IDs, no ip_hash, no consent snapshot."
+    }
+  ],
+  "notes": [
+    "AttributionTouchpointCaptured is NEVER broadcast — high-volume event; broadcasting every touchpoint would saturate the Reverb transport. Consumers that need touchpoint-level realtime updates should poll the API or listen server-side via AsTouchpointListener.",
+    "AttributionSuppressedByConsent is NEVER broadcast — compliance signal, batched daily via notifications instead.",
+    "AttributionUpdated + AttributionLastTouchUpdated are NEVER broadcast — too noisy; downstream consumers rely on the CampaignRollupComputed aggregate instead."
+  ]
+}

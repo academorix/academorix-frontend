@@ -1,0 +1,68 @@
+{
+  "id": "academorix://modules/analytics/observers",
+  "$version": 1,
+  "title": "analytics — Eloquent observers",
+  "description": "Four observers \u2014 one per owned entity. The event + provider-config + identity observers handle the load-bearing validation + snapshot + gate work; the delivery observer handles the delivered_provider_count aggregation on parent events.",
+  "observers": [
+    {
+      "model": "AnalyticsEvent",
+      "observer": "Academorix\\Growth\\Analytics\\Observers\\AnalyticsEventObserver",
+      "handles": [
+        "creating \u2014 snapshot attribution via AttributionContext (frozen jsonb into attribution column)",
+        "creating \u2014 snapshot consent via ConsentGate::has(subject, 'analytics') into consent_snapshot column; refuse creation when analytics consent missing AND category NOT IN ('essential-funnel-steps whitelist') \u2014 fires AnalyticsEventSuppressedByConsent instead of persisting",
+        "creating \u2014 validate properties against PropertyValidator (max 100 keys, max 1KB total, PII regex scan). Refuse with NOTIFICATIONS_ANALYTICS_PII_DETECTED on violation",
+        "creating \u2014 compute eligible_provider_count via AnalyticsProviderConfig fan-out with sampling roll; when zero, set status='suppressed_by_provider_off' and fire AnalyticsEventSuppressedBySampling / _SuppressedByConsent (whichever branch caused it)",
+        "creating \u2014 apply per-event-name category rules (funnel_step must carry properties.funnel_key + properties.step_key; experiment must carry properties.experiment_key + properties.variant)",
+        "created \u2014 fire AnalyticsEventCaptured",
+        "created \u2014 dispatch DispatchAnalyticsEventJob when eligible_provider_count > 0",
+        "created \u2014 fire AnalyticsFunnelStepReached when category='funnel_step'",
+        "created \u2014 fire AnalyticsExperimentAssigned when category='experiment' AND event_name='experiment_variant_assigned'",
+        "updating \u2014 refuse most updates. Only the state columns (status, delivered_provider_count) may be mutated; the immutable columns (properties, context, attribution, consent_snapshot, event_time) are frozen. Refusal writes an audit warning."
+      ]
+    },
+    {
+      "model": "AnalyticsProviderConfig",
+      "observer": "Academorix\\Growth\\Analytics\\Observers\\AnalyticsProviderConfigObserver",
+      "handles": [
+        "creating \u2014 refuse when tenant has no `analytics_provider_slot` entitlement remaining",
+        "creating \u2014 validate provider-specific config shape against schemas/providers/{provider}.provider.json",
+        "creating \u2014 validate enabled_event_types patterns (each must be a valid event-name pattern)",
+        "creating \u2014 validate sampling_rate in [0..1] AND for provider not in {posthog, custom_webhook}, refuse sampling_rate < 1.0 unless tenant has `analytics_sampling_config` entitlement",
+        "creating \u2014 validate batch_config against provider's max_batch_size + max_batch_bytes",
+        "creating \u2014 initialise circuit_breaker_state to closed",
+        "creating \u2014 seed retry_config from provider defaults if not caller-supplied",
+        "creating \u2014 when test_mode=true, dispatch DispatchToProviderJob with a synthetic test event to verify credentials + endpoint reachability",
+        "created \u2014 fire AnalyticsProviderConfigured",
+        "updating \u2014 refuse changes to `provider` column (immutable once created; delete + recreate to change providers)",
+        "updated \u2014 fire AnalyticsProviderConfigured with the list of changed columns",
+        "updated \u2014 when is_active flipped false, fire AnalyticsProviderDeactivated + drain the batch buffer for this config",
+        "deleting \u2014 drain the batch buffer for this config (flush any queued events) before soft-delete completes",
+        "deleted \u2014 fire AnalyticsProviderDeactivated with reason='soft_delete'"
+      ]
+    },
+    {
+      "model": "AnalyticsIdentity",
+      "observer": "Academorix\\Growth\\Analytics\\Observers\\AnalyticsIdentityObserver",
+      "handles": [
+        "creating \u2014 enforce unique (tenant_id, anonymous_id) among non-deleted rows (Postgres unique index catches the race; this observer refuses proactively)",
+        "creating \u2014 set first_seen_at + last_seen_at to now() if not caller-set",
+        "creating \u2014 hash device_fingerprint if caller supplied a raw fingerprint (defensive; the endpoint should never accept raw)",
+        "created \u2014 fire AnalyticsIdentityCreated",
+        "updating \u2014 detect null \u2192 non-null transition on identified_user_id column",
+        "updated \u2014 on null \u2192 non-null identified_user_id transition: set identified_at=now(), fire AnalyticsIdentityIdentified, dispatch MergeAliasedEventsJob (when tenant has `analytics_identity_merge` entitlement)",
+        "updated \u2014 on non-null \u2192 null identified_user_id transition (deidentification): fire AnalyticsIdentitySplit",
+        "saving \u2014 update last_seen_at when any event references this identity (via touch())"
+      ]
+    },
+    {
+      "model": "AnalyticsDelivery",
+      "observer": "Academorix\\Growth\\Analytics\\Observers\\AnalyticsDeliveryObserver",
+      "handles": [
+        "creating \u2014 denormalise provider column from the referenced AnalyticsProviderConfig for query performance",
+        "updated \u2014 when status transitions TO 'delivered', increment parent AnalyticsEvent.delivered_provider_count atomically; when delivered_provider_count reaches eligible_provider_count, transition parent AnalyticsEvent.status \u2192 'delivered' + fire AnalyticsEventDelivered",
+        "updated \u2014 when status transitions TO 'permanently_failed' AND all sibling deliveries are terminal AND some sibling delivered_provider_count < eligible_provider_count: transition parent AnalyticsEvent.status \u2192 'partially_delivered' + fire AnalyticsEventPartiallyDelivered",
+        "updated \u2014 on any delivery error, invoke AnalyticsCircuitBreakerRegistry::recordFailure(provider_config_id) which may transition the circuit to open + fire AnalyticsProviderCircuitBreakerOpened"
+      ]
+    }
+  ]
+}

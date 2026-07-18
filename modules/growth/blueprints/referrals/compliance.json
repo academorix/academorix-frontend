@@ -1,0 +1,148 @@
+{
+  "id": "academorix://modules/referrals/compliance",
+  "$version": 1,
+  "title": "referrals — compliance evidence",
+  "description": "Referrals module is financial-record-adjacent (every reward is 1099-reportable when > $600 US) + PII-adjacent (referred email captured pre-signup) + advertising-adjacent (feeds marketing conversion events) + fraud-audit-relevant (every flag retained 7y). GDPR (Art. 5, 6, 17, 22), CAN-SPAM Act (invitation emails), US tax law (1099 reporting), SOC 2 CC6.3 (segregation of duties), ISO 27001 Annex A (fraud audit).",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(a)",
+          "principle": "lawfulness + fairness + transparency",
+          "evidence": "Every invitation email carries a plain-language disclosure of the reward program + unsubscribe link. Every referral row snapshots consent state at claim time (via growth::attribution's consent_snapshot)."
+        },
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "referred_email is captured at claim time (needed to correlate the signup). Under user erasure, referred_email redacts to [REDACTED] 90 days post-erasure. device_snapshot stores ONLY hashes (SHA-256), never raw UA / IP / fingerprint."
+        },
+        {
+          "article": "Art. 5(1)(e)",
+          "principle": "storage limitation",
+          "evidence": "7-year retention window justified by tax + fraud audit obligations. Enterprise 10-year extension for regulated tenants. Automated purge via PurgeArchivedReferralsJob."
+        },
+        {
+          "article": "Art. 6(1)(b)",
+          "principle": "lawful basis: contract",
+          "evidence": "Referral programs are contractual — parents / users opt into the referral offer by using their code / clicking the link. The reward promise is a contractual term."
+        },
+        {
+          "article": "Art. 6(1)(f)",
+          "principle": "lawful basis: legitimate interest",
+          "evidence": "FraudDetector's rule-based flag detection uses legitimate-interest basis: preventing referral fraud + protecting genuine referrers' rewards. Balancing test recorded in DPIA."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "UserErased triggers RedactReferralDataOnUserErasure — cancels pending referrals + retains paid rewards with subject redacted (financial-obligation carve-out per Art. 17 §3(b)). The referred_email on remaining referrals redacts to [REDACTED]."
+        },
+        {
+          "article": "Art. 22",
+          "principle": "automated decision-making",
+          "evidence": "FraudDetector's rule-based decisions are subject to Art. 22 disclosure. Every fraud flag surfaces to the admin who reviews it — no fully-automated hard blocks without human review path (except the `hard_block_threshold` which the tenant explicitly configures + accepts responsibility for). Refused referrals include a support-contact CTA."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "device_snapshot stores hashes only. attribution_snapshot is immutable — no in-flight PII edits. Manual override permissions gated behind Enterprise-only `referrals_manual_override` entitlement."
+        }
+      ]
+    },
+    "can_spam": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "unsubscribe link",
+          "principle": "one-click opt-out",
+          "evidence": "Every ReferralInvitationSentNotification email carries an unsubscribe link. Opting out sets the recipient's email in a per-tenant suppression list; future invitations to the same email refuse silently (NotifyReferralInvitationJob checks the list)."
+        },
+        {
+          "requirement": "physical postal address",
+          "principle": "identification of the sender",
+          "evidence": "Invitation email footer includes the tenant's registered business address (populated from tenant.legal_address_json)."
+        },
+        {
+          "requirement": "no false / misleading header + subject",
+          "principle": "clear identification",
+          "evidence": "Invitation email subject template is fixed shape: '{sender_display_name} invited you to {tenant_name}' — no clickbait / misleading language. Templates are validated on tenant customisation via NotificationsService's template linter."
+        }
+      ]
+    },
+    "us_tax_law": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "1099-MISC / 1099-NEC reporting",
+          "principle": "reporting of aggregate payments > $600",
+          "evidence": "Every paid ReferralReward with reward_type IN (fixed_amount, credits) contributing to a recipient's YTD total > $600 (US) triggers Finance module's 1099 reporting flow (Wave 4). This module retains the reward + recipient identity for 7 years to support the reporting."
+        },
+        {
+          "requirement": "financial audit trail",
+          "principle": "traceable audit trail of every issued reward",
+          "evidence": "Every ReferralReward carries: created_at, materialized_at, paid_at, clawback_at, finance_credit_id + parent Referral traces back to a program + a code + a specific attribution snapshot. The full chain is queryable in the compliance-archive view."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.3",
+          "principle": "restricted access + segregation of duties",
+          "evidence": "referral_programs.archive + referral_rewards.clawback + referral_fraud_flags.override are admin/owner only. Marketing role can manage programs + codes but cannot force-vest or override fraud. Platform.referrals.force-vest + platform.referral_rewards.force-clawback are ops-only + emit tenant notifications (segregation)."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "restrict data transmission",
+          "evidence": "All routes are TLS-only + require auth:sanctum (tenant) or auth:platform_admin (platform). Public claim endpoint (/api/v1/referrals/claim/{code}) is rate-limited via throttle:referrals-claim + captures only a signed session cookie."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "ReferralFraudDetected is a P1 signal + tracked via academorix.referrals.fraud_flags_created_total counter. ReferralProgramBudgetSpike is a P2 signal (viral traction vs fraud storm — admin decides). Every ReferralClawback event fires notifications + audit rows."
+        },
+        {
+          "criterion": "CC9.1",
+          "principle": "risk mitigation",
+          "evidence": "FraudDetector is the primary mitigation for referral fraud abuse. Program budget caps limit financial exposure. Reconciler jobs (ReconcileProgramBudgetJob) catch counter drift. Every clawback path notifies Finance module for the credit reversal."
+        }
+      ]
+    },
+    "iso_27001": {
+      "applicable": true,
+      "controls": [
+        {
+          "annex": "A.12.4 Logging + monitoring",
+          "principle": "fraud audit log",
+          "evidence": "ReferralFraudFlag rows are immutable after create (only disposition + reviewed fields mutate). 7-year retention on flags. Every review recorded with reviewed_by_user_id + reviewed_at + disposition + reason. audit-log entries survive cascade deletes."
+        },
+        {
+          "annex": "A.9 Access control",
+          "principle": "role-based access",
+          "evidence": "Two-guard permission surface (sanctum + platform_admin). Fraud-flag view + review restricted to admin + support roles. Manual override gated behind Enterprise entitlement + admin permission."
+        }
+      ]
+    },
+    "wcag_2_2_aa": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "1.4.3 (Contrast Minimum)",
+          "principle": "readable text",
+          "evidence": "The referral-status-chip + fraud-severity-chip use HeroUI's design tokens which meet AA contrast by default. Status colours (pending / claimed / signed_up / vesting / vested / rewarded / cancelled / fraudulent) never rely on colour alone — each carries a text label."
+        },
+        {
+          "criterion": "2.1.1 (Keyboard)",
+          "principle": "keyboard operable",
+          "evidence": "Invitation composer (multi-recipient input) + fraud review modal are fully keyboard-navigable per HeroUI ComboBox + Modal semantics."
+        },
+        {
+          "criterion": "3.3.1 (Error Identification)",
+          "principle": "explicit error surfacing",
+          "evidence": "Every observer refusal returns a specific error code (REFERRAL_CAPTURE_NOT_ENTITLED, REFERRAL_PROGRAM_QUOTA_EXCEEDED, etc.) + user-facing message. Fraud-related refusals include a support-contact CTA."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,206 @@
+{
+  "id": "academorix://modules/marketing/schemas/marketing-provider-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "MarketingProviderConfig",
+  "description": "Per-tenant provider connection. Carries `tenant_id` only. `config` jsonb ENCRYPTED at rest (contains credentials). NEVER carries `application_id`, `region_id`, `organization_id`, or `scope_node_id`.",
+  "type": "object",
+  "x-module": "marketing",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "marketing_provider_configs",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "mpc_",
+    "incrementing": false,
+    "model": "Academorix\\Growth\\Marketing\\Models\\MarketingProviderConfig",
+    "interface": "Academorix\\Growth\\Marketing\\Contracts\\Data\\MarketingProviderConfigInterface",
+    "implements": ["Academorix\\Growth\\Marketing\\Contracts\\Data\\MarketingProviderConfigInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "provider": "MarketingProvider",
+      "is_active": "boolean",
+      "config": "encrypted:array",
+      "enabled_event_types": "array",
+      "test_mode": "boolean",
+      "circuit_breaker_config": "array",
+      "retry_config": "array",
+      "rate_limit_config": "array",
+      "consecutive_failure_count": "integer",
+      "circuit_breaker_reset_count": "integer",
+      "last_success_at": "datetime",
+      "last_failure_at": "datetime",
+      "circuit_breaker_open_until": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["MarketingProviderConfigObserver"],
+    "appends": ["circuit_breaker_state", "config_redacted"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "provider": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum matching MarketingProvider enum."
+      },
+      "is_active": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true
+      },
+      "config": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "ENCRYPTED AT REST. Contains provider-specific credentials. Validated against data/providers/<provider>-config.schema.json."
+      },
+      "enabled_event_types": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Non-empty array of MarketingEventType values this config dispatches. Subset of the provider's supports() list per data/provider-capability-matrix.json."
+      },
+      "test_mode": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "true = dispatch to the provider's sandbox endpoint (Meta test_event_code, GA4 debug endpoint, etc.). Test-mode events are excluded from ROAS aggregation."
+      },
+      "test_event_code": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Meta CAPI's test_event_code (format: TEST[0-9]+). Only used when test_mode=true + provider=meta_capi."
+      },
+      "last_success_at": { "type": "timestamptz", "nullable": true },
+      "last_failure_at": { "type": "timestamptz", "nullable": true },
+      "consecutive_failure_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Reset to 0 on any successful delivery."
+      },
+      "circuit_breaker_open_until": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When the breaker will auto-transition to HALF_OPEN. NULL = breaker is CLOSED."
+      },
+      "circuit_breaker_reset_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "How many times ops has manually reset the breaker."
+      },
+      "circuit_breaker_config": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "Shape: { failure_threshold, open_duration_seconds, half_open_test_events }. Defaults from data/circuit-breaker-defaults.json."
+      },
+      "retry_config": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "Shape: { max_attempts, backoff_seconds: int[] }. Defaults from data/retry-schedule-defaults.json."
+      },
+      "rate_limit_config": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Optional per-provider rate-limit override. Shape: { per_second, per_minute? }. Defaults from config('marketing.rate_limit.<provider>_per_second')."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "provider"],
+        "unique": true,
+        "name": "marketing_provider_configs_tenant_provider_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      { "columns": ["tenant_id", "is_active"], "name": "marketing_provider_configs_active_idx" },
+      { "columns": ["circuit_breaker_open_until"], "name": "marketing_provider_configs_breaker_idx", "predicate": "circuit_breaker_open_until IS NOT NULL" }
+    ]
+  },
+  "required": ["id", "tenant_id", "provider", "is_active", "config", "enabled_event_types", "test_mode", "consecutive_failure_count", "circuit_breaker_reset_count", "circuit_breaker_config", "retry_config", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^mpc_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "provider": {
+      "type": "string",
+      "enum": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "linkedin_insight", "snapchat_capi", "pinterest_capi", "custom_webhook"]
+    },
+    "is_active": { "type": "boolean" },
+    "config": { "type": "object", "additionalProperties": true },
+    "enabled_event_types": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "test_mode": { "type": "boolean" },
+    "test_event_code": { "type": ["string", "null"] },
+    "last_success_at": { "type": ["string", "null"], "format": "date-time" },
+    "last_failure_at": { "type": ["string", "null"], "format": "date-time" },
+    "consecutive_failure_count": { "type": "integer", "minimum": 0 },
+    "circuit_breaker_open_until": { "type": ["string", "null"], "format": "date-time" },
+    "circuit_breaker_reset_count": { "type": "integer", "minimum": 0 },
+    "circuit_breaker_config": {
+      "type": "object",
+      "required": ["failure_threshold", "open_duration_seconds", "half_open_test_events"],
+      "properties": {
+        "failure_threshold": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "open_duration_seconds": { "type": "integer", "minimum": 60, "maximum": 86400 },
+        "half_open_test_events": { "type": "integer", "minimum": 1, "maximum": 5 }
+      }
+    },
+    "retry_config": {
+      "type": "object",
+      "required": ["max_attempts", "backoff_seconds"],
+      "properties": {
+        "max_attempts": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "backoff_seconds": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 1, "maximum": 86400 }
+        }
+      }
+    },
+    "rate_limit_config": {
+      "type": ["object", "null"],
+      "properties": {
+        "per_second": { "type": "integer", "minimum": 1 },
+        "per_minute": { "type": ["integer", "null"], "minimum": 1 }
+      }
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "unique (tenant_id, provider) WHERE deleted_at IS NULL",
+    "config validates against data/providers/<provider>-config.schema.json",
+    "enabled_event_types is a non-empty subset of provider.supports() per data/provider-capability-matrix.json",
+    "retry_config.backoff_seconds.length == retry_config.max_attempts",
+    "retry_config.backoff_seconds monotonically non-decreasing",
+    "circuit_breaker_reset_count increments only on manual reset (via marketing:reset-circuit-breaker command / POST endpoint)",
+    "config field encrypted at rest",
+    "test_mode cannot toggle after production deliveries in last 30 days",
+    "circuit_breaker_open_until can only be NULL when consecutive_failure_count < circuit_breaker_config.failure_threshold"
+  ]
+}

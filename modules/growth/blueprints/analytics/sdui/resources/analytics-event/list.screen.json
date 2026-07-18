@@ -1,0 +1,259 @@
+{
+  "id": "analytics.resources.analytics-event.list",
+  "title": "Analytics event log",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/analytics/events",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "analytics", "entity": "analytics-event", "action": "list" },
+  "requiresPermission": "analytics.events.viewAny",
+  "dataSources": [
+    {
+      "name": "events",
+      "kind": "http.get",
+      "url": "/api/v1/analytics/events",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": [
+        "filter[event_name]",
+        "filter[event_kind]",
+        "filter[category]",
+        "filter[status]",
+        "filter[event_time_from]",
+        "filter[event_time_to]",
+        "sort",
+        "page",
+        "per_page"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Analytics events"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Server-side behavioral events captured across your product. Read-only \u2014 events only enter via the domain listener path."
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-wrap gap-3" },
+          "children": [
+            {
+              "kind": "TextField",
+              "props": {
+                "label": "Event name",
+                "name": "filter[event_name]",
+                "placeholder": "e.g. feature_viewed"
+              },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "events" } }
+            },
+            {
+              "kind": "Select",
+              "props": { "label": "Kind", "name": "filter[event_kind]", "placeholder": "All" },
+              "options": [
+                { "key": "track", "label": "track" },
+                { "key": "identify", "label": "identify" },
+                { "key": "page", "label": "page" },
+                { "key": "screen", "label": "screen" },
+                { "key": "alias", "label": "alias" },
+                { "key": "group", "label": "group" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "events" } }
+            },
+            {
+              "kind": "Select",
+              "props": { "label": "Category", "name": "filter[category]", "placeholder": "All" },
+              "options": [
+                { "key": "feature_use", "label": "Feature use" },
+                { "key": "funnel_step", "label": "Funnel step" },
+                { "key": "cta", "label": "Call to action" },
+                { "key": "error", "label": "Error" },
+                { "key": "performance", "label": "Performance" },
+                { "key": "experiment", "label": "Experiment" },
+                { "key": "lifecycle", "label": "Lifecycle" },
+                { "key": "session", "label": "Session" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "events" } }
+            },
+            {
+              "kind": "Select",
+              "props": { "label": "Status", "name": "filter[status]", "placeholder": "All" },
+              "options": [
+                { "key": "delivered", "label": "Delivered" },
+                { "key": "partially_delivered", "label": "Partial" },
+                { "key": "pending", "label": "Pending" },
+                { "key": "dispatching", "label": "Dispatching" },
+                { "key": "suppressed_by_consent", "label": "No consent" },
+                { "key": "suppressed_by_sampling", "label": "Sampled out" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "events" } }
+            },
+            {
+              "kind": "DateRangeField",
+              "props": {
+                "label": "Event time",
+                "nameFrom": "filter[event_time_from]",
+                "nameTo": "filter[event_time_to]"
+              },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "events" } }
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "props": {
+            "emptyState": {
+              "title": "No analytics events yet",
+              "description": "Events appear when your product code fires domain events that a registered capturer maps to analytics.",
+              "icon": "chart-bar"
+            }
+          },
+          "bindings": {
+            "items": { "$ref": "events" },
+            "isLoading": { "$ref": "events.isLoading" }
+          },
+          "columns": [
+            {
+              "id": "event",
+              "header": "Event",
+              "cell": {
+                "kind": "View",
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-mono text-sm font-semibold" },
+                    "bindings": { "children": { "$ref": "row.event_name" } }
+                  },
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-1.5 mt-0.5" },
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted" },
+                        "bindings": { "children": { "$ref": "row.event_kind" } }
+                      },
+                      {
+                        "kind": "Widget",
+                        "widget": "analytics.analytics-event-category-chip",
+                        "props": {
+                          "category": { "$ref": "row.category" },
+                          "size": "xs",
+                          "showIcon": true,
+                          "showLabel": true
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "subject",
+              "header": "Subject",
+              "cell": {
+                "kind": "View",
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-mono text-xs" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.subject_type.includes('User') ? row.subject_id : (row.anonymous_id ? 'anonymous \u00b7 ' + row.anonymous_id.slice(0, 8) : row.subject_id)"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "delivery",
+              "header": "Delivery",
+              "cell": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2" },
+                "children": [
+                  {
+                    "kind": "Widget",
+                    "widget": "analytics.analytics-event-status-chip",
+                    "props": {
+                      "status": { "$ref": "row.status" },
+                      "size": "sm",
+                      "showIcon": true,
+                      "showLabel": true
+                    }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.delivered_provider_count + ' / ' + row.eligible_provider_count"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "when",
+              "header": "When",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm" },
+                "bindings": { "children": { "$expr": "formatRelative(row.event_time)" } }
+              }
+            },
+            {
+              "id": "actions",
+              "header": "",
+              "align": "end",
+              "cell": {
+                "kind": "Button",
+                "props": {
+                  "variant": "ghost",
+                  "isIconOnly": true,
+                  "leadingIcon": "chevron-right",
+                  "ariaLabel": "View event detail"
+                },
+                "actions": {
+                  "onPress": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/analytics/events/' + row.id"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

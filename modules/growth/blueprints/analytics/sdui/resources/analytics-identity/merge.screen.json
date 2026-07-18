@@ -1,0 +1,152 @@
+{
+  "id": "analytics.resources.analytics-identity.merge",
+  "title": "Merge identities",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/analytics/identities/{id}/merge",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "analytics", "entity": "analytics-identity", "action": "merge" },
+  "requiresPermission": "analytics.identities.merge",
+  "requiresEntitlement": "analytics_identity_merge",
+  "params": [{ "name": "id", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "survivor",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/analytics/identities/' + params.id",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-2xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "Back to identities",
+            "className": "text-sm text-muted"
+          },
+          "actions": { "onPress": { "kind": "navigate", "to": "/tenant/analytics/identities" } }
+        },
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Merge identities" }
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "children": "Merging is irreversible. The survivor identity keeps its ID; merged-in identities are soft-deleted and their historical events are rewritten to point at the survivor."
+          }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "Survivor"
+              }
+            },
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-mono text-sm" },
+                  "bindings": { "children": { "$ref": "survivor.anonymous_id" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "survivor.identified_user_id ? 'identified as ' + survivor.identified_user_id : 'anonymous'"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "Identities to merge in"
+              }
+            },
+            {
+              "kind": "IdentityPicker",
+              "props": {
+                "name": "mergees",
+                "excludeIds": { "$expr": "[params.id]" },
+                "multiple": true,
+                "maxSelection": 20,
+                "helpText": "Search by anonymous_id or identified user id."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "TextArea",
+              "props": {
+                "label": "Reason",
+                "name": "reason",
+                "required": true,
+                "helpText": "Recorded in the audit trail + notification email to the initiator."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/analytics/identities" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "danger", "children": "Merge \u2014 irreversible" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "urlExpr": "'/api/v1/analytics/identities/' + params.id + '/merge'",
+                  "bodyFromState": true,
+                  "confirm": {
+                    "title": "Merge these identities?",
+                    "description": "This will soft-delete the selected identities and rewrite their historical events to point at the survivor. You cannot undo this."
+                  },
+                  "onSuccess": [
+                    { "kind": "toast.success", "message": "Merge queued \u2014 you'll receive a notification when it completes" },
+                    { "kind": "navigate", "to": "/tenant/analytics/identities" }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

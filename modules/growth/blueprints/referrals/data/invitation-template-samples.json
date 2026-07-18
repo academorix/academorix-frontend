@@ -1,0 +1,76 @@
+{
+  "$version": 1,
+  "title": "Referral invitation template samples",
+  "description": "Ready-to-use invitation templates the InvitationDispatcher can render. Each template supports the substitutions {sender_name}, {sender_display_name}, {referral_url}, {reward_summary}, {tenant_name}, {tenant_url}, {sender_avatar_url}, {unsubscribe_url}. All templates carry CAN-SPAM-compliant unsubscribe path + physical address footer.",
+  "templates": [
+    {
+      "slug": "generic-friend-invite",
+      "display_name": "Generic (friend)",
+      "description": "Neutral tone. Suitable for most tenants + most audiences. Default choice.",
+      "channel": "email",
+      "subject": "{sender_display_name} invited you to {tenant_name}",
+      "body_plain": "Hi,\n\n{sender_display_name} thought you'd love {tenant_name} — a place to {tenant_tagline}.\n\nSign up with their invitation and get {reward_summary}.\n\nJoin here: {referral_url}\n\nWelcome!\nThe {tenant_name} team\n\n---\n{tenant_legal_address}\nDon't want these emails? Unsubscribe: {unsubscribe_url}",
+      "body_html_hint": "Standard two-column layout with tenant logo top-left, CTA button linking to {referral_url}, footer with unsubscribe + legal address."
+    },
+    {
+      "slug": "casual-friend-invite",
+      "display_name": "Casual",
+      "description": "Playful tone with emoji. Suitable for consumer-fitness / youth-sports tenants.",
+      "channel": "email",
+      "subject": "hey — {sender_display_name} wants you at {tenant_name}",
+      "body_plain": "hey!\n\n{sender_display_name} says you'd have a blast at {tenant_name}. use their link and both of you get {reward_summary}.\n\ncheck it out → {referral_url}\n\n— the {tenant_name} crew\n\n---\n{tenant_legal_address}\nnot into this? unsubscribe: {unsubscribe_url}",
+      "body_html_hint": "Minimal, informal — no fancy layout. Sender avatar prominent, CTA is inline text link."
+    },
+    {
+      "slug": "professional-invite",
+      "display_name": "Professional",
+      "description": "Formal tone. Suitable for B2B tenants + academic-style academies.",
+      "channel": "email",
+      "subject": "Invitation: {sender_display_name} recommends {tenant_name}",
+      "body_plain": "Dear friend,\n\n{sender_display_name} has recommended {tenant_name} as a platform they trust for {tenant_tagline}. As a friend of {sender_display_name}, you are invited to join with a preferred welcome offer of {reward_summary}.\n\nAccept the invitation: {referral_url}\n\nBest regards,\nThe {tenant_name} team\n\n---\n{tenant_legal_address}\nTo unsubscribe from future invitations, click here: {unsubscribe_url}",
+      "body_html_hint": "Formal serif typography, clean layout, subdued colours. Signature block with {sender_display_name}'s title if available."
+    },
+    {
+      "slug": "parent-friend-invite",
+      "display_name": "Parent-to-parent",
+      "description": "Family-oriented tone. Suitable for youth-sports + kids-academy tenants where the referrer is a parent inviting another parent.",
+      "channel": "email",
+      "subject": "{sender_display_name} thinks your kid would love {tenant_name}",
+      "body_plain": "Hi there,\n\n{sender_display_name} thought your family might enjoy {tenant_name} — where their kids are learning, growing, and having fun.\n\nSign your child up with their invitation and receive {reward_summary}.\n\nGet started: {referral_url}\n\nYou can meet the coaches, tour the facilities, and see if it's a good fit — no commitment needed.\n\nBest,\nThe {tenant_name} coaches\n\n---\n{tenant_legal_address}\nUnsubscribe: {unsubscribe_url}",
+      "body_html_hint": "Warm colours, family-focused imagery. CTA button emphasised. Include a testimonial quote if available."
+    },
+    {
+      "slug": "sms-short-invite",
+      "display_name": "SMS short-form",
+      "description": "160-char SMS template. Automatic fallback when channel=sms.",
+      "channel": "sms",
+      "subject": null,
+      "body_plain": "{sender_display_name} invited you to {tenant_name}. Get {reward_summary} when you join: {referral_url_short}. Reply STOP to unsubscribe.",
+      "body_html_hint": null,
+      "notes": [
+        "{referral_url_short} is auto-generated via the URL shortener (max 20 chars).",
+        "Fits in 160 chars for the average payload.",
+        "STOP compliance is CAN-SPAM + telecom carrier requirement."
+      ]
+    }
+  ],
+  "substitutions": {
+    "sender_name": "The sender's full legal name (e.g. 'Alice Johnson').",
+    "sender_display_name": "The sender's display / preferred name (e.g. 'Alice' or 'Alice J.').",
+    "sender_avatar_url": "URL to the sender's avatar image (nullable).",
+    "referral_url": "The full URL: https://{tenant.slug}.academorix.app/?ref={code}.",
+    "referral_url_short": "Shortened URL for SMS (bit.ly-style; max 20 chars).",
+    "reward_summary": "Human-readable reward summary (e.g. '10% off your first payment' or '$25 in credits').",
+    "tenant_name": "The tenant's display name.",
+    "tenant_url": "The tenant's canonical URL (branding + landing).",
+    "tenant_tagline": "The tenant's marketing tagline (from tenant settings).",
+    "tenant_legal_address": "The tenant's registered business address (required by CAN-SPAM Act).",
+    "unsubscribe_url": "Full URL to the recipient's per-email suppression endpoint."
+  },
+  "notes": [
+    "Every email template MUST carry: an unsubscribe link, the tenant's physical postal address, a non-misleading subject.",
+    "Tenants can customise templates via the settings module. Customisation is validated by the InvitationDispatcher's template linter to ensure CAN-SPAM compliance remains.",
+    "The default_template_slug config value (referrals.invitation.default_template_slug) picks which template runs when the caller doesn't specify one.",
+    "New templates added here require corresponding SDUI selector options in the invitation composer widget."
+  ]
+}

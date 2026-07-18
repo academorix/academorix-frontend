@@ -1,0 +1,239 @@
+{
+  "id": "academorix://modules/analytics/schemas/analytics-delivery",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AnalyticsDelivery",
+  "description": "Per-provider-per-attempt delivery log. One row per (event \u00d7 provider \u00d7 attempt). Contains the request payload sent, provider response, HTTP status, latency, and (on failure) error details + next_retry_at. 90-day retention \u2014 debugging window past which the provider-side dashboard is authoritative.",
+  "type": "object",
+  "x-module": "analytics",
+  "x-eloquent": {
+    "table": "analytics_deliveries",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "and_",
+    "incrementing": false,
+    "model": "Academorix\\Growth\\Analytics\\Models\\AnalyticsDelivery",
+    "interface": "Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsDeliveryInterface",
+    "implements": ["Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsDeliveryInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Filterable"
+    ],
+    "casts": {
+      "provider": "AnalyticsProvider",
+      "status": "AnalyticsDeliveryStatus",
+      "request_payload": "array",
+      "response": "array",
+      "next_retry_at": "datetime"
+    },
+    "appends": ["is_terminal", "is_retryable"],
+    "observers": ["AnalyticsDeliveryObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true, "description": "`and_<26>`" },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "analytics_event_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "analytics_events", "column": "id", "onDelete": "restrict" },
+        "description": "Restrict on delete \u2014 events cannot vanish while deliveries reference them. Retention cascade purges deliveries FIRST, then events."
+      },
+      "analytics_provider_config_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "analytics_provider_configs", "column": "id", "onDelete": "set null" },
+        "description": "The provider config used at dispatch time. Nulled when the config is deleted so historical deliveries survive."
+      },
+      "provider": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: posthog / amplitude / mixpanel / segment / june / google_analytics_4 / custom_webhook. Denormalised from the config for query performance."
+      },
+      "status": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "Enum: pending / dispatching / delivered / failed / rate_limited / circuit_open / suppressed_by_consent / suppressed_by_sampling / permanently_failed."
+      },
+      "attempt_number": {
+        "type": "integer",
+        "nullable": false,
+        "default": 1,
+        "description": "1-indexed. Retries increment. Max attempts per provider governed by AnalyticsProviderConfig.retry_config.max_attempts."
+      },
+      "request_payload": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Provider-native request body sent (post ProviderPayloadTransformer). Nullable for suppressed rows (never sent)."
+      },
+      "response": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Provider response body (JSON parsed when Content-Type: application/json; raw text otherwise, capped at 8KB)."
+      },
+      "response_http_status": {
+        "type": "integer",
+        "nullable": true,
+        "description": "HTTP status code. Nullable when the request never reached the provider (DNS failure, TLS handshake failure, circuit_open)."
+      },
+      "latency_ms": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Round-trip time in milliseconds. Nullable on network failures."
+      },
+      "error_code": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Academorix error code from errors.json when status IN (failed, permanently_failed)."
+      },
+      "error_message": {
+        "type": "text",
+        "nullable": true,
+        "description": "Free-text error detail. Provider-specific error messages captured here for debugging."
+      },
+      "next_retry_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When RetryFailedAnalyticsDeliveriesJob should pick this row back up. Nullable for terminal statuses."
+      },
+      "sent_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When the HTTP request was actually sent."
+      },
+      "batch_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "description": "ULID of the FlushBatchedProviderJob batch this delivery was included in. Nullable for non-batched providers (June) or synchronous flushes."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["analytics_event_id", "provider"],
+        "unique": false,
+        "name": "analytics_deliveries_event_provider_idx",
+        "description": "Look up all deliveries for a given event; typical inspection query."
+      },
+      {
+        "columns": ["tenant_id", "provider", "created_at"],
+        "unique": false,
+        "name": "analytics_deliveries_tenant_provider_time_idx",
+        "description": "Per-tenant per-provider delivery volume + failure rate query."
+      },
+      {
+        "columns": ["tenant_id", "status", "next_retry_at"],
+        "unique": false,
+        "name": "analytics_deliveries_retry_sweep_idx",
+        "predicate": "status IN ('failed', 'rate_limited') AND next_retry_at IS NOT NULL",
+        "description": "RetryFailedAnalyticsDeliveriesJob scan."
+      },
+      {
+        "columns": ["batch_id"],
+        "unique": false,
+        "name": "analytics_deliveries_batch_idx",
+        "predicate": "batch_id IS NOT NULL",
+        "description": "Batch rollback: all deliveries in a failed batch."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "analytics_event_id",
+    "provider",
+    "status",
+    "attempt_number",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^and_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "analytics_event_id": { "type": "string", "pattern": "^ane_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "analytics_provider_config_id": {
+      "type": ["string", "null"],
+      "pattern": "^apc_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "provider": {
+      "type": "string",
+      "enum": [
+        "posthog",
+        "amplitude",
+        "mixpanel",
+        "segment",
+        "june",
+        "google_analytics_4",
+        "custom_webhook"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "dispatching",
+        "delivered",
+        "failed",
+        "rate_limited",
+        "circuit_open",
+        "suppressed_by_consent",
+        "suppressed_by_sampling",
+        "permanently_failed"
+      ]
+    },
+    "attempt_number": { "type": "integer", "minimum": 1 },
+    "request_payload": { "type": ["object", "array", "null"] },
+    "response": { "type": ["object", "array", "string", "null"] },
+    "response_http_status": { "type": ["integer", "null"], "minimum": 100, "maximum": 599 },
+    "latency_ms": { "type": ["integer", "null"], "minimum": 0 },
+    "error_code": { "type": ["string", "null"] },
+    "error_message": { "type": ["string", "null"] },
+    "next_retry_at": { "type": ["string", "null"], "format": "date-time" },
+    "sent_at": { "type": ["string", "null"], "format": "date-time" },
+    "batch_id": { "type": ["string", "null"] },
+    "is_terminal": {
+      "type": "boolean",
+      "description": "Computed. True when status IN (delivered, permanently_failed, suppressed_*)."
+    },
+    "is_retryable": {
+      "type": "boolean",
+      "description": "Computed. True when status IN (failed, rate_limited) AND attempt_number < config.retry_config.max_attempts."
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["request_payload", "response"],
+    "computed": ["is_terminal", "is_retryable"],
+    "notes": [
+      "request_payload + response are HIDDEN on the tenant-facing wire by default (may contain sensitive property values that survived PII scanning). Reveal with `?include=raw_payload` \u2014 gated on admin-only role.",
+      "AnalyticsDelivery is READ-ONLY over HTTP."
+    ]
+  }
+}

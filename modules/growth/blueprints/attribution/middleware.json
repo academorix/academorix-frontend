@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/attribution/middleware",
+  "$version": 1,
+  "title": "attribution — HTTP middleware",
+  "middleware": [
+    {
+      "alias": "attribution.capture",
+      "class": "Academorix\\Growth\\Attribution\\Http\\Middleware\\CaptureAttribution",
+      "priority": 45,
+      "description": "The core request-boundary capture. Reads cookies (`_utm`, `_gclid`, `_fbclid`, `_ttclid`, `_msclkid`, `_sccid`, `_session_id`) + query params + Referer header + User-Agent. Runs `ConsentGate::allows('marketing')` — when granted: creates or updates the attributions row + appends an attribution_touchpoints row. When NOT granted: captures ONLY session_id + hashed_ip in an ephemeral in-memory AttributionContext; NO PERSISTENCE + fires AttributionSuppressedByConsent. Publishes the `currentAttribution` + `currentAttributionId` + `attributionSnapshot` macros on the Request class. Runs AFTER auth (needs the authenticated User to identify) but BEFORE any domain writes (so downstream code sees the resolved attribution).",
+      "auto_applied": true,
+      "auto_applied_to": ["web", "api"],
+      "notes": "Auto-applied globally when the tenant's attribution_capture entitlement is on. The middleware short-circuits when the entitlement is off — same behaviour as the feature-flags attribution.middleware kill-switch."
+    },
+    {
+      "alias": "attribution.resolve_subject",
+      "class": "Academorix\\Growth\\Attribution\\Http\\Middleware\\ResolveAttributionSubject",
+      "priority": 46,
+      "description": "Reads attribution_id or (subject_type, subject_id) from the request body (admin routes: merge, reset, import) or the X-Attribution-Id header. Loads the Attribution model, checks tenant scoping (refuses when attribution.tenant_id != request tenant with ATTRIBUTION_RESET_TENANT_MISMATCH), and stores it on RequestContext::attributionSubject() so admin actions operate on the resolved profile. Optional (skipped when the request carries no attribution reference — most read routes).",
+      "auto_applied": false,
+      "auto_applied_to": []
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "application::application.resolve" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "entitlements::entitlement.enforce" },
+    { "middleware": "compliance::consent.resolve", "note": "Populates the ConsentGate state that AttributionMiddleware checks." },
+    {
+      "middleware": "access::authorize",
+      "note": "The permission-based authorize middleware wraps the ability checks defined in policies.json + permissions.json."
+    },
+    {
+      "middleware": "scope::resolve_scope",
+      "note": "ResolveScope narrows admin read queries by the caller's active branch/organization scope. Attribution profiles cascade through tenant only (no branch/org scoping)."
+    }
+  ]
+}

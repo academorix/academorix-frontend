@@ -1,0 +1,72 @@
+{
+  "id": "academorix://modules/attribution/observers",
+  "$version": 1,
+  "title": "attribution — Eloquent observers",
+  "description": "Two observers enforce the module's write-time invariants: attribution-profile integrity + first-touch immutability, and attribution-touchpoint append-only + parent-profile-required. The AttributionObserver is the more consequential — it enforces the first-touch-is-immutable rule, cross-tenant refusal, consent-gate defense-in-depth, and lifecycle-transition validity.",
+  "observers": [
+    {
+      "model": "Attribution",
+      "observer": "Academorix\\Growth\\Attribution\\Observers\\AttributionObserver",
+      "handles": [
+        "creating → populate ULID prefix `att_`",
+        "creating → refuse when tenant does NOT hold `attribution_capture` entitlement (returns `ATTRIBUTION_CAPTURE_NOT_ENTITLED` — defense-in-depth; the middleware should have short-circuited but observers guard against direct writes)",
+        "creating → refuse when the resolved consent for `marketing` category is NOT granted UNLESS the caller is a background job with the CaptureManualAttribution intent (returns `ATTRIBUTION_CONSENT_NOT_GRANTED` — defense-in-depth against direct DB writes bypassing the middleware)",
+        "creating → refuse when subject_type is not in the enum { user, athlete, lead, anonymous_session } (returns `ATTRIBUTION_INVALID_SUBJECT_TYPE`)",
+        "creating → refuse when subject_id shape does not match subject_type (user/athlete/lead: ULID prefix match; anonymous_session: UUID v4) — returns `ATTRIBUTION_SUBJECT_MISMATCH`",
+        "creating → validate first_touch_landing_page + first_touch_referrer against valid_url rule (returns `ATTRIBUTION_INVALID_URL`)",
+        "creating → validate first_touch_click_id blob against schemas/attribution.schema.json + data/click-id-catalog.json (returns `ATTRIBUTION_INVALID_CLICK_ID_SHAPE`)",
+        "creating → validate current_session_id against UUID v4 (returns `ATTRIBUTION_INVALID_SESSION_ID`)",
+        "creating → validate first_touch_device.ip_hash + user_agent_hash against SHA-256 shape (64 hex chars) — returns `ATTRIBUTION_INVALID_IP_HASH`",
+        "creating → refuse when any utm_* field exceeds max_utm_length (returns `ATTRIBUTION_UTM_TOO_LONG`)",
+        "creating → set lifecycle_state='anonymous' when subject_type='anonymous_session', 'identified' otherwise",
+        "creating → set first_touch_at = now() (frozen — subsequent updates refused)",
+        "creating → set last_touch_at = now() (same values as first_touch on first-touch save)",
+        "creating → copy first_touch_* into last_touch_* on first save (last_touch is the CURRENT touch — starts identical to first)",
+        "creating → set consent_at_capture to the current ConsentGate state (marketing / advertising / personalized_advertising / functional booleans)",
+        "creating → fire AttributionCreated + AttributionFirstTouchRecorded (in that order, both afterCommit)",
+        "updating (first_touch_* changed) → REFUSE with `ATTRIBUTION_FIRST_TOUCH_IMMUTABLE` (critical severity — every fire indicates a data-integrity bug in a write path)",
+        "updating (last_touch_* changed) → refuse when the change is retroactive (last_touch_at < previous last_touch_at); allow forward-only updates; fire AttributionLastTouchUpdated",
+        "updating (subject_type / subject_id changed from anonymous_session → identified) → validate the new subject exists in the appropriate table (user/athlete/lead) + belongs to the same tenant; fire AttributionSubjectIdentified",
+        "updating (subject_type change other than anonymous → identified) → REFUSE with `ATTRIBUTION_INVALID_LIFECYCLE_TRANSITION` (subject_type is immutable once identified)",
+        "updating (lifecycle_state changed) → validate the transition per valid_lifecycle_state_transition rule; refuse backward transitions (converted → identified, churned → converted without going through identified first) with `ATTRIBUTION_INVALID_LIFECYCLE_TRANSITION`",
+        "updating (lifecycle_state → converted) → set lifecycle_converted_at = now(); fire AttributionConverted",
+        "updating (lifecycle_state → churned) → fire AttributionChurned (typically driven by MarkAttributionChurnedJob, not manual)",
+        "updating (lifecycle_state churned → identified | anonymous — via re-engagement) → fire AttributionRestored",
+        "updating (current_session_id changed) → fire AttributionSessionRefreshed",
+        "updating (consent_at_capture changed) → fire AttributionConsentSnapshotUpdated",
+        "updating (touchpoint_count / conversion_touchpoint_count changed) → allow only via ReconcileAttributionCountsJob or via observer trigger from AttributionTouchpointObserver.created (bumps counter in same transaction); manual updates via API refused",
+        "deleting (soft-delete) → refuse cross-tenant delete (returns `ATTRIBUTION_RESET_TENANT_MISMATCH`); fire AttributionDeleted with deletion_kind='soft'",
+        "deleting (hard-delete) → refused unless retention window has elapsed OR TenantErased cascade is running; when allowed: fire AttributionDeleted with deletion_kind='hard'",
+        "reset flow (invoked from POST /reset or attribution:reset CLI) → redact every confidential field to '[REDACTED]' + set click_id + device to '{}' + null subject_id + transition lifecycle to churned + fire AttributionResetRequested; schedule touchpoint hard-delete 90 days out"
+      ]
+    },
+    {
+      "model": "AttributionTouchpoint",
+      "observer": "Academorix\\Growth\\Attribution\\Observers\\AttributionTouchpointObserver",
+      "handles": [
+        "creating → populate ULID prefix `atp_`",
+        "creating → refuse when tenant does NOT hold `attribution_capture` entitlement (returns `ATTRIBUTION_CAPTURE_NOT_ENTITLED` — defense-in-depth)",
+        "creating → refuse when the resolved consent for `marketing` category is NOT granted UNLESS the caller is a bulk-import job (returns `ATTRIBUTION_CONSENT_NOT_GRANTED`)",
+        "creating → refuse when attribution_id does not resolve to an active attributions row (returns `ATTRIBUTION_TOUCHPOINT_WITHOUT_PROFILE`)",
+        "creating → refuse when attribution.tenant_id != touchpoint.tenant_id (cross-tenant smuggling; returns `ATTRIBUTION_SUBJECT_MISMATCH`)",
+        "creating → validate landing_page + referrer via valid_url rule",
+        "creating → validate click_id blob via schemas/attribution-touchpoint.schema.json + data/click-id-catalog.json",
+        "creating → validate device_snapshot has ip_hash + user_agent_hash in SHA-256 shape (64 hex chars)",
+        "creating → validate session_id as UUID v4",
+        "creating → validate touchpoint_type against the enum (page_view / campaign_click / referral_click / direct_visit / email_open / email_click / paid_ad_click / organic_click / social_click / affiliate_click / referral_link_click)",
+        "creating → set captured_at = now() (immutable post-create)",
+        "creating → derive was_first_touch = (attribution.touchpoint_count == 0)",
+        "creating → set was_authenticated = (auth()->check())",
+        "creating → set consent_snapshot to the current ConsentGate state (matches attributions.consent_at_capture; captured per-touchpoint for regulator queryability without JOIN)",
+        "creating → in same transaction: INCREMENT attributions.touchpoint_count; when was_conversion=true: also INCREMENT attributions.conversion_touchpoint_count",
+        "creating → in same transaction: UPDATE attributions.last_touch_* fields (source / medium / campaign / content / term / landing_page / referrer / click_id / device) — the write-side of last-touch tracking",
+        "creating → in same transaction: UPDATE attributions.last_touch_at = now()",
+        "creating → fire AttributionTouchpointCaptured (afterCommit)",
+        "updating (any field except metadata jsonb) → REFUSE with `ATTRIBUTION_TOUCHPOINT_APPEND_ONLY` (critical severity — every fire indicates a write path that shouldn't exist)",
+        "updating (metadata jsonb only) → allow (used for retroactive re-tagging by admin ops); fire AttributionUpdated on the parent attribution",
+        "deleting (soft-delete) → REFUSE — touchpoints are append-only; the reset flow hard-deletes them 90 days after AttributionResetRequested",
+        "deleting (hard-delete) → allow only when: (a) reset audit hold elapsed, OR (b) PurgeArchivedAttributionsJob is running with retention window elapsed, OR (c) TenantErased cascade is running"
+      ]
+    }
+  ]
+}

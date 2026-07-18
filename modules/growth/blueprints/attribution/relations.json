@@ -1,0 +1,96 @@
+{
+  "id": "academorix://modules/attribution/relations",
+  "$version": 1,
+  "title": "attribution — model relationships",
+  "description": "Two owned entities. Attribution is a leaf below Tenant (polymorphic subject via subject_type + subject_id). AttributionTouchpoint attaches to Attribution + carries a denormalised subject reference for direct queries. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / region_id / organization_id / branch_id / scope_node_id on any owned row (attribution cascades ONLY through tenant).",
+  "internal": [
+    {
+      "from": "Attribution",
+      "kind": "hasMany",
+      "to": "AttributionTouchpoint",
+      "foreignKey": "attribution_id",
+      "description": "Touchpoint → Attribution. RESTRICT on hard-delete via observer — touchpoints must be purged before their attribution can be hard-deleted (except during TenantErased FK CASCADE)."
+    },
+    {
+      "from": "AttributionTouchpoint",
+      "kind": "belongsTo",
+      "to": "Attribution",
+      "foreignKey": "attribution_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT on delete except during full-tenant erasure. The append-only nature of touchpoints requires that the parent attribution survive their retention window."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Attribution",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every attribution is tenant-scoped per tenancy-columns.md §3."
+    },
+    {
+      "from": "Attribution",
+      "kind": "morphTo",
+      "to": "polymorphic",
+      "morph_type_field": "subject_type",
+      "morph_id_field": "subject_id",
+      "morph_map": {
+        "user": "user::User",
+        "athlete": "athlete::Athlete (Wave 3+)",
+        "lead": "growth::Lead (Wave 5+)",
+        "anonymous_session": "no target — subject_id is a UUID v4 session identifier"
+      },
+      "description": "Polymorphic subject. Anonymous sessions have no target row — subject_id is a session UUID. On identify, the row is UPDATED to point at the User (or Athlete/Lead) with matching guard.",
+      "on_target_delete": "SET NULL via RedactAttributionOnUserErasure hook — subject_id nulled, lifecycle_state → churned, PII fields redacted (never a hard cascade)."
+    },
+    {
+      "from": "AttributionTouchpoint",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Denormalised tenant_id — cascades through attribution.tenant_id but explicit for query-plan + FK integrity."
+    },
+    {
+      "from": "AttributionTouchpoint",
+      "kind": "morphTo",
+      "to": "polymorphic",
+      "morph_type_field": "subject_type",
+      "morph_id_field": "subject_id",
+      "description": "Denormalised subject reference — matches the parent Attribution's subject at capture time. On subject_id nullification (per RedactAttributionOnUserErasure): the touchpoint subject_id is redacted too."
+    }
+  ],
+  "inbound": {
+    "description": "Wave 5+ downstream modules snapshot the attribution profile into their own `attribution jsonb` columns at capture-time — they do NOT hold FKs back to `attributions` because the snapshot is FROZEN. Examples:",
+    "examples": [
+      "marketing::MarketingEvent — one row per business-milestone event; `attribution jsonb` copied from AttributionSnapshotBuilder.build() at create-time. Frozen — never re-joined to Attribution.",
+      "analytics::AnalyticsEvent — same shape; carries `attribution jsonb` for cohort analysis.",
+      "referrals::ReferralConversion — same shape; carries `attribution jsonb` for referral-attribution.",
+      "finance::Subscription (Wave 5) — `attribution jsonb` for lifetime-revenue-per-source analysis.",
+      "finance::Invoice (Wave 5) — same."
+    ],
+    "note": "NONE of these hold an FK back to attributions. The snapshot is the immutable contract. That's what makes 'which campaign drove this revenue 3 months ago' a stable query."
+  },
+  "morphs": [
+    {
+      "morph": "subject",
+      "columns": ["subject_type", "subject_id"],
+      "used_by": ["Attribution", "AttributionTouchpoint"],
+      "morph_map": {
+        "user": "user::User",
+        "athlete": "athlete::Athlete (Wave 3+)",
+        "lead": "growth::Lead (Wave 5+)",
+        "anonymous_session": "no target — session UUID"
+      }
+    }
+  ],
+  "notes": [
+    "Attribution does NOT carry `application_id`. Application cascades through tenant_id per tenancy-columns.md §2. Reach it via `$attribution->tenant->application`.",
+    "Attribution does NOT carry `region_id` / `organization_id` / `branch_id`. Attribution operates at the tenant + subject level; region/org/branch attribution reads the tenant hierarchy separately.",
+    "Attribution does NOT carry `scope_node_id`. It is operational data, not configuration. Per tenancy-columns.md §4, only configuration consumers (settings, permissions overlay, feature flags, pricing, notification prefs) integrate with scope. Attribution is a feeder, not a consumer of scope.",
+    "AttributionTouchpoint carries denormalised subject_type + subject_id even though these could be joined through the parent Attribution. The denormalisation supports direct index-driven touchpoint scans without a join to attributions — critical for the timeline widget's < 20ms latency budget.",
+    "The morphTo relationship on 'anonymous_session' has no target — subject_id is a UUID v4 session identifier not backed by any table. This is intentional: the whole point of anonymous is 'no user row exists yet'.",
+    "Wave 5+ downstream modules NEVER hold a foreign key back to attributions. Instead they copy the attribution snapshot into their own `attribution jsonb` column at capture-time. Reads answer 'which campaign drove this' from the frozen snapshot — the source attribution can be reset without invalidating historical revenue attribution."
+  ]
+}

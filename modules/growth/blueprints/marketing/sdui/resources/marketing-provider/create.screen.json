@@ -1,0 +1,158 @@
+{
+  "id": "marketing.resources.marketing-provider.create",
+  "title": "Add marketing provider",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/marketing/providers/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "marketing", "entity": "marketing-provider", "action": "create" },
+  "requiresPermission": "marketing.providers.create",
+  "requiresEntitlement": "marketing_capture",
+  "dataSources": [
+    {
+      "name": "provider_capabilities",
+      "kind": "http.get",
+      "url": "/api/v1/marketing/providers/capabilities",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 3600 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "MultiStepForm",
+      "props": { "className": "max-w-3xl mx-auto p-6" },
+      "children": [
+        {
+          "kind": "Step",
+          "props": { "title": "Choose provider", "description": "Pick the ad network you want to forward conversions to." },
+          "children": [
+            {
+              "kind": "Widget",
+              "widget": "marketing.provider-picker",
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "provider",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Credentials", "description": "Enter your provider credentials. Encrypted at rest." },
+          "children": [
+            {
+              "kind": "DynamicForm",
+              "bindings": {
+                "schema": { "$expr": "provider_capabilities[form.provider].config_schema" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Event types", "description": "Select which business milestones to forward to this provider." },
+          "children": [
+            {
+              "kind": "Widget",
+              "widget": "marketing.event-type-picker",
+              "bindings": {
+                "provider": { "$ref": "form.provider" },
+                "supported_event_types": { "$expr": "provider_capabilities[form.provider].supports" }
+              },
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "enabled_event_types",
+                  "valueExpr": "$selectedKeys"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Test mode", "description": "Send a test event before going live. Recommended for first-time setup." },
+          "children": [
+            {
+              "kind": "Switch",
+              "props": { "label": "Enable test mode", "description": "Test-mode events dispatch to the provider's sandbox endpoint. Excluded from ROAS aggregation." },
+              "actions": {
+                "onChange": {
+                  "kind": "form.set",
+                  "field": "test_mode",
+                  "valueExpr": "$value"
+                }
+              }
+            },
+            {
+              "kind": "Input",
+              "props": {
+                "label": "Test event code (Meta CAPI only)",
+                "placeholder": "TEST12345",
+                "description": "Optional. Meta shows these events in the Test Events tab of Events Manager."
+              },
+              "bindings": {
+                "hidden": { "$expr": "!form.test_mode || form.provider !== 'meta_capi'" }
+              },
+              "actions": {
+                "onChange": {
+                  "kind": "form.set",
+                  "field": "test_event_code",
+                  "valueExpr": "$value"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Confirm", "description": "Review + create." },
+          "children": [
+            {
+              "kind": "DescriptionList",
+              "bindings": {
+                "items": {
+                  "$expr": "[{label: 'Provider', value: form.provider}, {label: 'Event types', value: form.enabled_event_types?.length + ' selected'}, {label: 'Test mode', value: form.test_mode ? 'On' : 'Off'}]"
+                }
+              }
+            },
+            {
+              "kind": "Alert",
+              "props": {
+                "variant": "warning",
+                "title": "Data processing agreement",
+                "description": "Adding this provider means Academorix will forward hashed customer data to the provider. Please confirm you have accepted the provider's DPA."
+              }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "size": "lg", "children": "Create provider" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/marketing/providers",
+                  "body": {
+                    "provider": "{{form.provider}}",
+                    "config": "{{form.config}}",
+                    "enabled_event_types": "{{form.enabled_event_types}}",
+                    "test_mode": "{{form.test_mode}}",
+                    "test_event_code": "{{form.test_event_code}}"
+                  },
+                  "onSuccess": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/marketing/providers/' + response.data.id"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

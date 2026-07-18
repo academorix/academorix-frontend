@@ -1,0 +1,292 @@
+{
+  "id": "academorix://modules/analytics/schemas/analytics-provider-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AnalyticsProviderConfig",
+  "description": "Per-tenant configuration of a single analytics provider. Encrypted `config` column holds credentials (API keys, project IDs, host URLs). `enabled_event_types` filters which events fan out to this provider. `sampling_rate` reduces volume. `batch_config` controls per-provider batching. `circuit_breaker_state` holds the runtime failure-counter state.",
+  "type": "object",
+  "x-module": "analytics",
+  "x-eloquent": {
+    "table": "analytics_provider_configs",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "apc_",
+    "incrementing": false,
+    "model": "Academorix\\Growth\\Analytics\\Models\\AnalyticsProviderConfig",
+    "interface": "Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsProviderConfigInterface",
+    "implements": ["Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsProviderConfigInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "provider": "AnalyticsProvider",
+      "config": "encrypted:AnalyticsProviderConfigShape",
+      "enabled_event_types": "array",
+      "sampling_rate": "float",
+      "batch_config": "AnalyticsBatchConfig",
+      "circuit_breaker_config": "array",
+      "circuit_breaker_state": "array",
+      "retry_config": "array",
+      "test_mode": "boolean",
+      "is_active": "boolean"
+    },
+    "appends": ["is_circuit_open", "supports_batching"],
+    "observers": ["AnalyticsProviderConfigObserver"],
+    "hidden": ["config"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true, "description": "`apc_<26>`" },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "provider": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: posthog / amplitude / mixpanel / segment / june / google_analytics_4 / custom_webhook."
+      },
+      "name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Tenant-chosen display name. Two configs for the same provider allowed (e.g. 'PostHog Production' + 'PostHog EU'). Unique per (tenant, name) among non-deleted rows."
+      },
+      "is_active": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "Master toggle. Inactive configs are skipped at fan-out."
+      },
+      "config": {
+        "type": "text",
+        "nullable": false,
+        "description": "AES-256-encrypted JSON with provider-specific credentials. Shape validated by AnalyticsProviderConfigShape cast against data/providers/{provider}.provider.json."
+      },
+      "enabled_event_types": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[\"track:*\", \"identify\", \"page\", \"screen\", \"alias\", \"group\"]'::jsonb",
+        "description": "Array of event-type patterns. `track:*` = all track events. `track:feature_viewed` = only that event name. `identify` = all identify verbs. Empty array = provider inactive for this tenant."
+      },
+      "sampling_rate": {
+        "type": "float",
+        "nullable": false,
+        "default": 1.0,
+        "description": "0..1. Fraction of events dispatched to this provider. 1.0 = all events. 0.1 = 10%. Sampling roll is stable per (event.deduplication_key, provider.name)."
+      },
+      "sampling_rules": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Optional per-event-name sampling overrides. Array of { event_name_pattern, sampling_rate }. Falls back to top-level sampling_rate when no rule matches."
+      },
+      "batch_config": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{\"size\": 100, \"flush_interval_ms\": 5000, \"max_bytes\": 500000}'::jsonb",
+        "description": "size + flush_interval_ms + max_bytes. Non-batching providers (June) ignore these. Defaults are provider-appropriate seeded from data/batch-defaults.json."
+      },
+      "circuit_breaker_config": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{\"threshold\": 5, \"failure_rate\": 0.2, \"window_seconds\": 60, \"half_open_probe_interval_seconds\": 60, \"close_after_successes\": 3}'::jsonb"
+      },
+      "circuit_breaker_state": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{\"state\": \"closed\", \"failures\": 0, \"successes\": 0, \"opened_at\": null, \"half_opened_at\": null}'::jsonb",
+        "description": "Runtime state. Written by AnalyticsProviderManager on every delivery success/failure. Also mirrored to Redis for hot-path check."
+      },
+      "retry_config": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{\"max_attempts\": 5, \"backoff_ms\": [1000, 5000, 30000, 300000, 3600000], \"retry_on_status\": [408, 429, 500, 502, 503, 504]}'::jsonb"
+      },
+      "test_mode": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "When true, provider is called with a test-flag payload so events land in a sandbox / debug view rather than production analytics. Individual providers have different mechanisms: PostHog $test flag, Amplitude environment=development, etc."
+      },
+      "notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Admin notes."
+      },
+      "last_success_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Last time a delivery reached status=delivered. Ops signal."
+      },
+      "last_failure_at": {
+        "type": "timestamptz",
+        "nullable": true
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "provider", "is_active"],
+        "unique": false,
+        "name": "analytics_provider_configs_tenant_provider_active_idx",
+        "description": "Fan-out lookup: 'active configs for tenant X'."
+      },
+      {
+        "columns": ["tenant_id", "name"],
+        "unique": true,
+        "name": "analytics_provider_configs_tenant_name_uidx",
+        "predicate": "deleted_at IS NULL",
+        "description": "Unique display name per tenant among non-deleted rows."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "provider",
+    "name",
+    "is_active",
+    "config",
+    "enabled_event_types",
+    "sampling_rate",
+    "batch_config",
+    "circuit_breaker_config",
+    "circuit_breaker_state",
+    "retry_config",
+    "test_mode",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^apc_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "provider": {
+      "type": "string",
+      "enum": [
+        "posthog",
+        "amplitude",
+        "mixpanel",
+        "segment",
+        "june",
+        "google_analytics_4",
+        "custom_webhook"
+      ]
+    },
+    "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "is_active": { "type": "boolean" },
+    "config": {
+      "type": "object",
+      "description": "Decrypted at read via encrypted cast. Provider-specific shape \u2014 see data/providers/{provider}.provider.json for JSON Schema per driver."
+    },
+    "enabled_event_types": {
+      "type": "array",
+      "items": { "type": "string" },
+      "maxItems": 128
+    },
+    "sampling_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+    "sampling_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "event_name_pattern": { "type": "string" },
+          "sampling_rate": { "type": "number", "minimum": 0, "maximum": 1 }
+        },
+        "required": ["event_name_pattern", "sampling_rate"]
+      }
+    },
+    "batch_config": {
+      "type": "object",
+      "properties": {
+        "size": { "type": "integer", "minimum": 1 },
+        "flush_interval_ms": { "type": "integer", "minimum": 100 },
+        "max_bytes": { "type": "integer", "minimum": 1024 }
+      },
+      "required": ["size", "flush_interval_ms"]
+    },
+    "circuit_breaker_config": {
+      "type": "object",
+      "properties": {
+        "threshold": { "type": "integer", "minimum": 1 },
+        "failure_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "window_seconds": { "type": "integer", "minimum": 1 },
+        "half_open_probe_interval_seconds": { "type": "integer", "minimum": 1 },
+        "close_after_successes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "circuit_breaker_state": {
+      "type": "object",
+      "properties": {
+        "state": { "type": "string", "enum": ["closed", "open", "half_open"] },
+        "failures": { "type": "integer", "minimum": 0 },
+        "successes": { "type": "integer", "minimum": 0 },
+        "opened_at": { "type": ["string", "null"], "format": "date-time" },
+        "half_opened_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "retry_config": {
+      "type": "object",
+      "properties": {
+        "max_attempts": { "type": "integer", "minimum": 1, "maximum": 20 },
+        "backoff_ms": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "retry_on_status": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 100, "maximum": 599 }
+        }
+      }
+    },
+    "test_mode": { "type": "boolean" },
+    "notes": { "type": ["string", "null"] },
+    "last_success_at": { "type": ["string", "null"], "format": "date-time" },
+    "last_failure_at": { "type": ["string", "null"], "format": "date-time" },
+    "is_circuit_open": {
+      "type": "boolean",
+      "description": "Computed. True when circuit_breaker_state.state=='open'."
+    },
+    "supports_batching": {
+      "type": "boolean",
+      "description": "Computed from provider metadata."
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_by": { "type": ["string", "null"] },
+    "updated_by": { "type": ["string", "null"] },
+    "deleted_by": { "type": ["string", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["config", "created_by", "updated_by", "deleted_by"],
+    "computed": ["is_circuit_open", "supports_batching"],
+    "notes": [
+      "config is ALWAYS hidden on the wire \u2014 credentials must never leak. Test-only reveals via GET /providers/{p}?include=config are gated on super_admin.",
+      "Encrypted at rest with AES-256-GCM via Laravel's Crypt facade + per-tenant DEK when tenant-scoped-encryption entitlement is active."
+    ]
+  }
+}

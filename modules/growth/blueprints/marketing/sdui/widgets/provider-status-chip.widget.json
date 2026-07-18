@@ -1,0 +1,42 @@
+{
+  "id": "marketing.provider-status-chip",
+  "title": "Marketing provider status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for marketing_event / marketing_delivery status. Values: pending (blue), dispatching (yellow), delivered (green), partially_delivered (yellow with warning icon), failed (red), suppressed_by_consent (grey), suppressed_by_provider_off (grey), suppressed_by_circuit_breaker (orange), rate_limited (orange), succeeded (green), superseded (grey with strikethrough).",
+  "props": {
+    "status": {
+      "type": "string",
+      "required": true
+    },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showIcon": { "type": "boolean", "default": true }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "props.status === 'delivered' || props.status === 'succeeded' ? 'success' : (props.status === 'failed' ? 'danger' : (props.status === 'partially_delivered' ? 'warning' : (props.status === 'dispatching' || props.status === 'pending' ? 'info' : (props.status === 'rate_limited' || props.status === 'suppressed_by_circuit_breaker' ? 'warning' : 'neutral'))))"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "props": {
+        "leadingIcon": {
+          "$expr": "props.showIcon ? (props.status === 'delivered' || props.status === 'succeeded' ? 'check-circle' : (props.status === 'failed' ? 'x-circle' : (props.status === 'partially_delivered' ? 'exclamation-triangle' : (props.status === 'dispatching' ? 'arrow-path' : (props.status === 'pending' ? 'clock' : (props.status.startsWith('suppressed_') ? 'no-symbol' : (props.status === 'rate_limited' ? 'signal-slash' : 'archive-box'))))))) : null"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "props.status === 'delivered' ? 'Delivered' : (props.status === 'succeeded' ? 'Succeeded' : (props.status === 'pending' ? 'Pending' : (props.status === 'dispatching' ? 'Dispatching' : (props.status === 'partially_delivered' ? 'Partially delivered' : (props.status === 'failed' ? 'Failed' : (props.status === 'suppressed_by_consent' ? 'Suppressed (consent)' : (props.status === 'suppressed_by_provider_off' ? 'Suppressed (provider off)' : (props.status === 'suppressed_by_circuit_breaker' ? 'Suppressed (circuit open)' : (props.status === 'rate_limited' ? 'Rate limited' : (props.status === 'superseded' ? 'Superseded' : props.status))))))))))"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

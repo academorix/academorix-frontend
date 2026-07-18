@@ -1,0 +1,79 @@
+{
+  "id": "academorix://modules/analytics/notifications",
+  "$version": 1,
+  "title": "analytics — notifications",
+  "description": "Four notifications covering circuit-breaker + batch backpressure + high drop rate + identity merge lifecycle. Wired via the `notifications` core module. Category slugs live under the `analytics.*` namespace.",
+  "seeder": "Academorix\\Growth\\Analytics\\Database\\Seeders\\AnalyticsNotificationCategorySeeder",
+  "categories": [
+    {
+      "slug": "analytics.circuit-breaker",
+      "displayName": "Analytics provider circuit breaker",
+      "description": "Alerts tenant admins + platform-admin on-call when an analytics provider's circuit breaker opens or closes.",
+      "priority": "high",
+      "defaultChannels": ["mail", "in_app"],
+      "userConfigurable": false,
+      "seed_default_preference": true
+    },
+    {
+      "slug": "analytics.batch-backpressure",
+      "displayName": "Analytics batch backpressure",
+      "description": "Alerts platform-admin when batch queue depth exceeds threshold.",
+      "priority": "high",
+      "defaultChannels": ["mail"],
+      "userConfigurable": false,
+      "seed_default_preference": true
+    },
+    {
+      "slug": "analytics.high-drop-rate",
+      "displayName": "Analytics high drop rate",
+      "description": "Alerts tenant admins when >5% of captured events are being suppressed unexpectedly (not by explicit sampling or consent).",
+      "priority": "high",
+      "defaultChannels": ["mail", "in_app"],
+      "userConfigurable": false,
+      "seed_default_preference": true
+    },
+    {
+      "slug": "analytics.identity-merge-completed",
+      "displayName": "Analytics identity merge completed",
+      "description": "Informs the initiating tenant admin that an identity merge finished processing (including how many events were rewritten).",
+      "priority": "low",
+      "defaultChannels": ["in_app"],
+      "userConfigurable": true,
+      "seed_default_preference": true
+    }
+  ],
+  "notifications": [
+    {
+      "class": "Academorix\\Growth\\Analytics\\Notifications\\AnalyticsProviderCircuitBreakerOpenedNotification",
+      "category": "analytics.circuit-breaker",
+      "channels": ["mail", "in_app"],
+      "audience": ["tenant.admin", "tenant.owner", "platform.on_call"],
+      "template_key": "analytics.circuit-breaker.opened",
+      "trigger": "AnalyticsProviderCircuitBreakerOpened event"
+    },
+    {
+      "class": "Academorix\\Growth\\Analytics\\Notifications\\AnalyticsBatchBackpressureNotification",
+      "category": "analytics.batch-backpressure",
+      "channels": ["mail"],
+      "audience": ["platform.on_call"],
+      "template_key": "analytics.batch-backpressure",
+      "trigger": "SamplingRateReconcilerJob + a batch-depth-monitor probe (batch queue depth > threshold for 5 min)"
+    },
+    {
+      "class": "Academorix\\Growth\\Analytics\\Notifications\\AnalyticsHighDropRateNotification",
+      "category": "analytics.high-drop-rate",
+      "channels": ["mail", "in_app"],
+      "audience": ["tenant.admin", "tenant.owner"],
+      "template_key": "analytics.high-drop-rate",
+      "trigger": "SamplingRateReconcilerJob detects drop rate > 5% over past 24h across events NOT explicitly sampled or consent-suppressed"
+    },
+    {
+      "class": "Academorix\\Growth\\Analytics\\Notifications\\AnalyticsIdentityMergeCompletedNotification",
+      "category": "analytics.identity-merge-completed",
+      "channels": ["in_app"],
+      "audience": ["tenant.admin (the initiator)"],
+      "template_key": "analytics.identity-merge-completed",
+      "trigger": "MergeAliasedEventsJob completed \u2014 payload includes surviving identity_id + merged_from + rewritten event count"
+    }
+  ]
+}

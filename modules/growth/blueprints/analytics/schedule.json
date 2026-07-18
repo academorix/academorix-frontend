@@ -1,0 +1,37 @@
+{
+  "id": "academorix://modules/analytics/schedule",
+  "$version": 1,
+  "title": "analytics — scheduled tasks",
+  "description": "Four entries: retry-failed-deliveries every 30s, reconcile-identities nightly, purge-expired-data weekly, sampling-reconcile nightly.",
+  "entries": [
+    {
+      "name": "retry-failed-deliveries",
+      "command": "analytics:retry-failed-deliveries",
+      "cron": "*/1 * * * *",
+      "sub_minute_interval_seconds": 30,
+      "timezone": "UTC",
+      "purpose": "Every 30 seconds \u2014 scan analytics_deliveries where status IN (failed, rate_limited) AND next_retry_at <= now(). Dispatch DispatchToProviderJob to retry. Bounded batch (100 rows / invocation)."
+    },
+    {
+      "name": "reconcile-identities",
+      "command": "analytics:reconcile-identities",
+      "cron": "0 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 03:00 UTC per tenant. Runs ReconcileAnalyticsIdentityJob: purges dangling anonymous identities (no activity > 90 days), backfills subject_id on events whose owner is now identified, hard-purges identified identities whose User was erased > 30 days ago."
+    },
+    {
+      "name": "purge-expired-data",
+      "command": "analytics:purge-expired-data",
+      "cron": "0 4 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 04:00 UTC. Runs PurgeExpiredAnalyticsDataJob: deliveries > 90 days, events > 2 years (5 with extended retention), configs deleted_at > 90 days. Ordering: deliveries first (they RESTRICT event deletion)."
+    },
+    {
+      "name": "sampling-reconcile",
+      "command": "analytics:sampling-reconcile",
+      "cron": "0 4 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 04:00 UTC. Computes actual vs configured sampling_rate per (provider, event_name) for the past 24h. Emits monitoring metrics + fires AnalyticsHighDropRateNotification when drift > 5%."
+    }
+  ]
+}

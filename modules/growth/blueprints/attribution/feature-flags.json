@@ -1,0 +1,69 @@
+{
+  "id": "academorix://modules/attribution/feature-flags",
+  "$version": 1,
+  "title": "attribution — kill switches",
+  "engine": "laravel/pennant",
+  "description": "Operational kill switches distinct from the tier-based `features.json` gates. These are for emergency-off / staged rollout / per-tenant ops interventions. Every flag is ON in normal production; off flips are ops decisions.",
+  "flags": [
+    {
+      "key": "attribution.middleware",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for AttributionMiddleware. Off = middleware becomes a no-op globally; downstream events attribute against null profiles. Emergency-only (used during DB migrations of the attributions table)."
+    },
+    {
+      "key": "attribution.persistence",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = middleware still resolves + binds AttributionContext for the request, but skips the DB write. Downstream events still get their snapshot from the resolved (in-memory-only) profile. Used to shed DB load during incidents while keeping downstream flows functional."
+    },
+    {
+      "key": "attribution.click_id_extraction",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ClickIdExtractor returns an empty jsonb. Emergency-only if a specific ad-network's click ID format changes and starts throwing parse errors."
+    },
+    {
+      "key": "attribution.merge",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = MergeIdentifiedAttributionsJob no-ops. Used when the merge strategy is misbehaving (runaway merges, first-touch overwrite bugs)."
+    },
+    {
+      "key": "attribution.rollup",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = CampaignRollupAggregatorJob skips. Used when the rollup pipeline is unstable to avoid backing up its queue."
+    },
+    {
+      "key": "attribution.touchpoint_analytics_sampled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = 'Attribution Touchpoint Captured' analytics event fires on 100% of touchpoints (bypassing the 10% default sample rate). Enterprise tenants may flip on for full-fidelity funnel analysis. Warning: high analytics volume."
+    },
+    {
+      "key": "attribution.reconciler_jobs",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReconcileAttributionCountsJob + PurgeArchivedAttributionsJob skip. Only flip off for maintenance windows."
+    },
+    {
+      "key": "attribution.churn_detection",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = MarkAttributionChurnedJob no-ops. Used during migration windows where the touchpoint table lags."
+    },
+    {
+      "key": "attribution.gpc_honor",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = AttributionMiddleware ignores the Sec-GPC HTTP header. Emergency-only if a compliance disagreement mid-rollout requires falling back to explicit consent only."
+    },
+    {
+      "key": "attribution.suppression_notifications",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = AttributionSuppressedByConsentNotification batches skip. Compliance team can still query via the audit report. Used to reduce notification volume during a large consent-refresh campaign."
+    }
+  ]
+}

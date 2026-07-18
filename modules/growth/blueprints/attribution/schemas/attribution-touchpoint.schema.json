@@ -1,0 +1,282 @@
+{
+  "id": "academorix://modules/attribution/schemas/attribution-touchpoint",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AttributionTouchpoint",
+  "description": "Append-only ledger of every attribution-bearing request. One row per HTTP request that carries an attribution signal (utm change, ad click, referrer switch). NEVER mutated after commit except metadata jsonb. NO SoftDeletes (append-only). Carries `tenant_id` + `attribution_id` — NEVER `application_id`, `region_id`, `organization_id`, `branch_id`, or `scope_node_id`.",
+  "type": "object",
+  "x-module": "attribution",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "attribution_touchpoints",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "atp_",
+    "incrementing": false,
+    "model": "Academorix\\Growth\\Attribution\\Models\\AttributionTouchpoint",
+    "interface": "Academorix\\Growth\\Attribution\\Contracts\\Data\\AttributionTouchpointInterface",
+    "implements": ["Academorix\\Growth\\Attribution\\Contracts\\Data\\AttributionTouchpointInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToAttribution",
+      "HasMetadata",
+      "HasUserstamps",
+      "Filterable"
+    ],
+    "casts": {
+      "touchpoint_type": "AttributionTouchpointType",
+      "click_id": "array",
+      "device_snapshot": "array",
+      "consent_snapshot": "array",
+      "captured_at": "datetime",
+      "was_authenticated": "boolean",
+      "was_first_touch": "boolean",
+      "was_conversion": "boolean",
+      "metadata": "array"
+    },
+    "observers": ["AttributionTouchpointObserver"],
+    "appends": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `atp_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "attribution_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "attributions", "column": "id", "onDelete": "restrict" },
+        "description": "RESTRICT on parent delete except during TenantErased cascade. Ensures touchpoints do not orphan."
+      },
+      "subject_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Denormalised from parent attribution — supports direct index-driven touchpoint scans without a JOIN."
+      },
+      "subject_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Denormalised. Nullable-in-practice via redaction (RedactAttributionOnUserErasure)."
+      },
+      "touchpoint_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: page_view / campaign_click / referral_click / direct_visit / email_open / email_click / paid_ad_click / organic_click / social_click / affiliate_click / referral_link_click."
+      },
+      "source": { "type": "string", "length": 128, "nullable": false },
+      "medium": { "type": "string", "length": 64, "nullable": true },
+      "campaign": { "type": "string", "length": 256, "nullable": true },
+      "content": { "type": "string", "length": 256, "nullable": true },
+      "term": { "type": "string", "length": 256, "nullable": true },
+      "landing_page": { "type": "string", "length": 512, "nullable": false },
+      "referrer": { "type": "string", "length": 512, "nullable": true },
+      "click_id": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Shape: { gclid, fbclid, ttclid, msclkid, sccid, provider_hint }."
+      },
+      "device_snapshot": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Shape: { user_agent_hash, ip_hash, device_type, browser, os, is_mobile, screen_size?, timezone?, locale? }."
+      },
+      "session_id": {
+        "type": "uuid",
+        "nullable": false,
+        "description": "The session this touch belongs to. UUID v4."
+      },
+      "captured_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "IMMUTABLE post-create."
+      },
+      "was_authenticated": {
+        "type": "boolean",
+        "nullable": false,
+        "description": "Was there a resolved auth()->user() at capture time?"
+      },
+      "was_first_touch": {
+        "type": "boolean",
+        "nullable": false,
+        "description": "Is this the subject's first-ever touchpoint? Set at create by the observer."
+      },
+      "was_conversion": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "false",
+        "description": "Was a conversion event fired in the same session as this touch? Set retroactively when AttributionConverted fires."
+      },
+      "consent_snapshot": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Consent state at capture time. Regulator-queryable proof-of-consent. Shape: { marketing, advertising, personalized_advertising, functional }."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "The ONLY mutable field post-create (admin retroactive re-tagging)."
+      },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "attribution_id", "captured_at"],
+        "name": "attribution_touchpoints_attribution_captured_idx",
+        "description": "Feeds the my-attribution timeline widget (DESC scan of last N touchpoints per attribution)."
+      },
+      {
+        "columns": ["tenant_id", "subject_type", "subject_id", "captured_at"],
+        "name": "attribution_touchpoints_subject_captured_idx",
+        "description": "Denormalised direct-subject scan (bypasses the JOIN to attributions)."
+      },
+      {
+        "columns": ["tenant_id", "campaign", "captured_at"],
+        "name": "attribution_touchpoints_campaign_captured_idx",
+        "description": "Feeds CampaignRollupAggregatorJob. WHERE campaign IS NOT NULL implicit — the rollup ignores null campaigns."
+      },
+      {
+        "columns": ["tenant_id", "session_id"],
+        "name": "attribution_touchpoints_session_idx",
+        "description": "Feeds the merge-strategy's session-match logic."
+      },
+      {
+        "columns": ["tenant_id", "captured_at"],
+        "name": "attribution_touchpoints_captured_at_idx",
+        "description": "Feeds the retention-purge job."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "attribution_id",
+    "subject_type",
+    "touchpoint_type",
+    "source",
+    "landing_page",
+    "click_id",
+    "device_snapshot",
+    "session_id",
+    "captured_at",
+    "was_authenticated",
+    "was_first_touch",
+    "was_conversion",
+    "consent_snapshot",
+    "created_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^atp_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "attribution_id": { "type": "string", "pattern": "^att_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "subject_type": {
+      "type": "string",
+      "enum": ["user", "athlete", "lead", "anonymous_session"]
+    },
+    "subject_id": { "type": ["string", "null"] },
+    "touchpoint_type": {
+      "type": "string",
+      "enum": [
+        "page_view",
+        "campaign_click",
+        "referral_click",
+        "direct_visit",
+        "email_open",
+        "email_click",
+        "paid_ad_click",
+        "organic_click",
+        "social_click",
+        "affiliate_click",
+        "referral_link_click"
+      ]
+    },
+    "source": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "medium": { "type": ["string", "null"], "maxLength": 64 },
+    "campaign": { "type": ["string", "null"], "maxLength": 256 },
+    "content": { "type": ["string", "null"], "maxLength": 256 },
+    "term": { "type": ["string", "null"], "maxLength": 256 },
+    "landing_page": { "type": "string", "format": "uri", "maxLength": 512 },
+    "referrer": { "type": ["string", "null"], "format": "uri", "maxLength": 512 },
+    "click_id": {
+      "type": "object",
+      "properties": {
+        "gclid": { "type": ["string", "null"] },
+        "fbclid": { "type": ["string", "null"] },
+        "ttclid": { "type": ["string", "null"] },
+        "msclkid": { "type": ["string", "null"] },
+        "sccid": { "type": ["string", "null"] },
+        "provider_hint": {
+          "type": ["string", "null"],
+          "enum": ["google", "meta", "tiktok", "microsoft", "snapchat", null]
+        }
+      },
+      "additionalProperties": false
+    },
+    "device_snapshot": {
+      "type": "object",
+      "properties": {
+        "user_agent_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "ip_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "device_type": {
+          "type": "string",
+          "enum": ["mobile", "tablet", "desktop", "bot", "other"]
+        },
+        "browser": { "type": "string", "maxLength": 64 },
+        "os": { "type": "string", "maxLength": 64 },
+        "is_mobile": { "type": "boolean" },
+        "screen_size": { "type": ["string", "null"], "maxLength": 32 },
+        "timezone": { "type": ["string", "null"], "maxLength": 64 },
+        "locale": { "type": ["string", "null"], "maxLength": 16 }
+      },
+      "required": ["user_agent_hash", "ip_hash", "device_type", "browser", "os", "is_mobile"],
+      "additionalProperties": false
+    },
+    "session_id": { "type": "string", "format": "uuid" },
+    "captured_at": { "type": "string", "format": "date-time" },
+    "was_authenticated": { "type": "boolean" },
+    "was_first_touch": { "type": "boolean" },
+    "was_conversion": { "type": "boolean" },
+    "consent_snapshot": {
+      "type": "object",
+      "properties": {
+        "marketing": { "type": "boolean" },
+        "advertising": { "type": "boolean" },
+        "personalized_advertising": { "type": "boolean" },
+        "functional": { "type": "boolean" }
+      },
+      "required": ["marketing", "advertising", "personalized_advertising", "functional"],
+      "additionalProperties": false
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "APPEND-ONLY: only metadata jsonb is updatable post-create. Every other field is IMMUTABLE.",
+    "NO SoftDeletes — hard-delete only via retention purge or reset audit hold or TenantErased cascade.",
+    "subject_type + subject_id denormalised from parent attribution — must match at create-time. Redaction via RedactAttributionOnUserErasure nulls subject_id in-place.",
+    "device_snapshot must contain SHA-256 hashes for user_agent_hash + ip_hash — raw UA or raw IP refused.",
+    "consent_snapshot must contain all four booleans — extra keys refused.",
+    "session_id must be a UUID v4 (not v1 which leaks MAC address).",
+    "was_first_touch set true only on the subject's first-ever touchpoint (attribution.touchpoint_count == 0 at create-time).",
+    "NO application_id / region_id / organization_id / branch_id / scope_node_id columns — cascades through tenant."
+  ]
+}

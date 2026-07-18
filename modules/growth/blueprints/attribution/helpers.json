@@ -1,0 +1,66 @@
+{
+  "id": "academorix://modules/attribution/helpers",
+  "$version": 1,
+  "title": "attribution — helper functions",
+  "description": "Ergonomic helpers for accessing the current attribution from the request context, building the frozen snapshot for downstream events, extracting click IDs, and hashing IPs. All helpers are thin wrappers around bound services — never business logic.",
+  "namespace": "Academorix\\Growth\\Attribution\\Support",
+  "helpers": [
+    {
+      "signature": "current_attribution(): ?Attribution",
+      "purpose": "Returns the resolved Attribution for the current request (set by attribution.capture middleware). Null when consent was refused OR when the request predates the middleware in the pipeline.",
+      "example": "$attribution = current_attribution();\nif ($attribution === null) return; // consent refused or no attribution context",
+      "delegates_to": "Request::currentAttribution() macro"
+    },
+    {
+      "signature": "current_attribution_id(): ?string",
+      "purpose": "Returns the resolved Attribution.id or null. Convenience for downstream event-create paths that need the FK without loading the model.",
+      "delegates_to": "Request::currentAttributionId() macro"
+    },
+    {
+      "signature": "attribution_snapshot(): ?array",
+      "purpose": "Returns the frozen attribution snapshot jsonb that downstream marketing/analytics/referrals events copy into their own `attribution` column. Null when no attribution context. Cached per-request so repeated calls in the same request don't rebuild the blob.",
+      "example": "$order->attribution = attribution_snapshot();  // freeze current attribution into the order row",
+      "delegates_to": "AttributionSnapshotBuilder::build()"
+    },
+    {
+      "signature": "extract_click_ids(Request $request): array",
+      "purpose": "Reads every known click ID from the request's cookies + query params. Returns the packed jsonb blob { gclid, fbclid, ttclid, msclkid, sccid, provider_hint }.",
+      "delegates_to": "ClickIdExtractor::extract()"
+    },
+    {
+      "signature": "extract_utm_params(Request $request): array",
+      "purpose": "Reads every utm_* param from the request's query string + cookies. Returns the packed { source, medium, campaign, content, term } blob.",
+      "delegates_to": "UtmExtractor::extract()"
+    },
+    {
+      "signature": "hash_ip(string $ip): string",
+      "purpose": "Returns the SHA-256 hex hash of an IP address with the module's salt applied. Never store raw IPs — always hash first.",
+      "delegates_to": "IpHasher::hash()"
+    },
+    {
+      "signature": "parse_device_snapshot(Request $request): array",
+      "purpose": "Returns the parsed device blob { user_agent_hash, ip_hash, device_type, browser, os, screen_size, timezone, locale, is_mobile }. Never returns the raw UA string.",
+      "delegates_to": "DeviceParser::parse()"
+    },
+    {
+      "signature": "normalize_referrer(?string $referrer): ?string",
+      "purpose": "Normalises a referrer string: strips query parameters when strip_pii_from_referrer=true, resolves protocol-relative URLs, refuses invalid URLs. Returns the cleaned string or null.",
+      "delegates_to": "ReferrerNormalizer::normalize()"
+    },
+    {
+      "signature": "resolve_attribution_for_subject(string $tenantId, string $subjectType, string $subjectId): ?Attribution",
+      "purpose": "Direct lookup of the attribution profile for a subject (bypasses request context). Used by background jobs + admin flows that need to attribute an action without an HTTP request.",
+      "delegates_to": "AttributionResolver::findBySubject()"
+    },
+    {
+      "signature": "attribution_source_bucket(string $source): string",
+      "purpose": "Collapses an individual utm_source into one of the 8 buckets ({ paid, organic, social, referral, direct, email, affiliate, unknown }) used by the analytics module. Uses data/attribution-source-catalog.json.",
+      "delegates_to": "AttributionSourceBucketer::bucket()"
+    }
+  ],
+  "notes": [
+    "Helpers deliberately delegate — testing swaps the bound service to a stub, and every helper follows.",
+    "No helper directly touches the DB — everything routes through repositories or services. Keeps the boundary clean.",
+    "attribution_snapshot() is the canonical way downstream code freezes attribution into an event row. Downstream modules do NOT call AttributionSnapshotBuilder directly — they call the helper, so the module's boundary is discoverable via grep."
+  ]
+}

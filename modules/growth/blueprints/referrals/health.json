@@ -1,0 +1,95 @@
+{
+  "id": "academorix://modules/referrals/health",
+  "$version": 1,
+  "title": "referrals — health probes",
+  "probes": [
+    {
+      "name": "referrals-schema-migrations-applied",
+      "class": "Academorix\\Growth\\Referrals\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms every migration this module ships has run: referral_programs, referral_codes, referrals, referral_rewards, referral_fraud_flags, plus their composite unique indexes.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "referrals-unique-indexes-present",
+      "class": "Academorix\\Growth\\Referrals\\Health\\Probes\\UniqueIndexesPresentProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms the composite unique indexes exist: (tenant_id, referral_program_id, referrer_id, referred_id) partial WHERE deleted_at IS NULL on referrals; (referral_id, recipient_role) partial WHERE deleted_at IS NULL on referral_rewards; (tenant_id, code) partial WHERE deleted_at IS NULL on referral_codes. Missing any index risks double-referral / double-materialization races.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "referrals-attribution-module-reachable",
+      "class": "Academorix\\Growth\\Referrals\\Health\\Probes\\AttributionModuleReachableProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms growth::attribution's AttributionSnapshotBuilder is resolvable from the container. This module cannot function without the upstream attribution feeder.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "referrals-vesting-queue-backlog",
+      "class": "Academorix\\Growth\\Referrals\\Health\\Probes\\VestingQueueBacklogProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Warns when > 500 rows in referrals are stuck in status='vesting' with vesting_completes_at past-due for > 24h. Indicates CheckReferralVestingJob has stalled.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "referrals-materialization-backlog",
+      "class": "Academorix\\Growth\\Referrals\\Health\\Probes\\MaterializationBacklogProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Warns when > 200 rows in referral_rewards are stuck in status='vested' for > 2h. Indicates MaterializeVestedRewardsJob has stalled OR Finance module is refusing.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "referrals-fraud-open-flags",
+      "class": "Academorix\\Growth\\Referrals\\Health\\Probes\\FraudOpenFlagsProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Warns when > 100 fraud flags across the platform are unreviewed for > 7 days. Indicates fraud-review workflow is stalled — tenants aren't reviewing their flags.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "referrals-atomicity-counter-clean",
+      "class": "Academorix\\Growth\\Referrals\\Health\\Probes\\AtomicityCounterCleanProbe",
+      "category": "readiness",
+      "critical": true,
+      "description": "Reads academorix.referrals.atomicity.failures_total counter. Any non-zero value in the last 24h is a P1 signal — the vested-transition + reward creation transaction failed somewhere.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "referrals-double-materialization-clean",
+      "class": "Academorix\\Growth\\Referrals\\Health\\Probes\\DoubleMaterializationCleanProbe",
+      "category": "readiness",
+      "critical": true,
+      "description": "Reads academorix.referrals.rewards.double_materialization_attempts_total counter. Any non-zero value indicates a race the observer's unique index should have prevented — P1 signal.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "referrals-budget-cap-not-blown",
+      "class": "Academorix\\Growth\\Referrals\\Health\\Probes\\BudgetCapNotBlownProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Warns when any program has rewards_issued_amount_cents > 1.05 * max_rewards_per_program (>5% overrun of the configured cap). Indicates a race that got past the observer's gate.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "referrals-invitation-suppression-recent",
+      "class": "Academorix\\Growth\\Referrals\\Health\\Probes\\InvitationSuppressionRecentProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Confirms the invitation-suppression cache is warm + refresh runs. Stale cache leaks unsubscribes past the CAN-SPAM window.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "referrals-reconcile-recent",
+      "class": "Academorix\\Growth\\Referrals\\Health\\Probes\\ReconcileRecentProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Confirms ReconcileProgramBudgetJob completed within the last 25 hours (nightly cadence + 1h slop). Stale reconciler indicates scheduler drift.",
+      "timeoutMs": 500
+    }
+  ]
+}

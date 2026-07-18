@@ -1,0 +1,186 @@
+{
+  "id": "academorix://modules/referrals/schemas/referral-reward",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ReferralReward",
+  "description": "Per-referral reward record. One row per side (referrer + optional referred). Vesting lifecycle: pending -> vesting -> vested -> materialized -> paid. Escape hatches: cancelled, clawback. Carries `tenant_id` + `referral_id`. NEVER carries application_id / region_id / organization_id / branch_id / scope_node_id.",
+  "type": "object",
+  "x-module": "referrals",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "referral_rewards",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "rrw_",
+    "incrementing": false,
+    "model": "Academorix\\Growth\\Referrals\\Models\\ReferralReward",
+    "interface": "Academorix\\Growth\\Referrals\\Contracts\\Data\\ReferralRewardInterface",
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToReferral",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "status": "ReferralRewardStatus",
+      "recipient_role": "ReferralRewardRole",
+      "reward_type": "ReferralRewardType",
+      "reward_amount": "integer",
+      "clawback_reason": "ReferralClawbackReason",
+      "vesting_starts_at": "datetime",
+      "vesting_completes_at": "datetime",
+      "materialized_at": "datetime",
+      "paid_at": "datetime",
+      "clawback_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["ReferralRewardObserver"],
+    "appends": ["is_terminal", "days_until_vested", "days_until_materialized"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `rrw_<26>`." },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "referral_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "referrals", "column": "id", "onDelete": "restrict" }
+      },
+      "recipient_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Polymorphic. Enum: user / lead."
+      },
+      "recipient_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false
+      },
+      "recipient_role": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: referrer / referred. Determines which program.reward_type_* applies."
+      },
+      "reward_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum matching ReferralProgram.reward_type_referrer / reward_type_referred."
+      },
+      "reward_amount": {
+        "type": "integer",
+        "nullable": false,
+        "description": "Frozen at reward-create time. Interpretation depends on reward_type."
+      },
+      "reward_currency": { "type": "string", "length": 3, "nullable": true, "description": "ISO 4217." },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "Enum: pending / vesting / vested / materialized / paid / cancelled / clawback."
+      },
+      "vesting_starts_at": { "type": "timestamptz", "nullable": false, "description": "Denormalised from parent Referral at reward-create." },
+      "vesting_completes_at": { "type": "timestamptz", "nullable": false },
+      "materialized_at": { "type": "timestamptz", "nullable": true, "description": "Set by MaterializeVestedRewardsJob when Finance credit is created." },
+      "finance_credit_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Wave 4 finance FK. Set atomically with materialized_at."
+      },
+      "paid_at": { "type": "timestamptz", "nullable": true, "description": "Set when the recipient actually redeems / receives the credit." },
+      "clawback_reason": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: refund / chargeback / fraud / program_archived."
+      },
+      "clawback_at": { "type": "timestamptz", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["referral_id", "recipient_role"],
+        "unique": true,
+        "name": "referral_rewards_referral_role_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "Prevents double-materialization on retry. One row per (referral, role)."
+      },
+      { "columns": ["tenant_id", "recipient_type", "recipient_id", "status"], "name": "referral_rewards_by_recipient_idx" },
+      { "columns": ["tenant_id", "status", "vesting_completes_at"], "name": "referral_rewards_vesting_idx" },
+      { "columns": ["tenant_id", "status", "materialized_at"], "name": "referral_rewards_materialized_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "referral_id",
+    "recipient_type",
+    "recipient_id",
+    "recipient_role",
+    "reward_type",
+    "reward_amount",
+    "status",
+    "vesting_starts_at",
+    "vesting_completes_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^rrw_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "referral_id": { "type": "string", "pattern": "^ref_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "recipient_type": { "type": "string", "enum": ["user", "lead"] },
+    "recipient_id": { "type": "string", "minLength": 1 },
+    "recipient_role": { "type": "string", "enum": ["referrer", "referred"] },
+    "reward_type": {
+      "type": "string",
+      "enum": ["percent_discount", "fixed_amount", "free_months", "free_sessions", "credits", "point_award"]
+    },
+    "reward_amount": { "type": "integer", "minimum": 1 },
+    "reward_currency": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
+    "status": { "type": "string", "enum": ["pending", "vesting", "vested", "materialized", "paid", "cancelled", "clawback"] },
+    "vesting_starts_at": { "type": "string", "format": "date-time" },
+    "vesting_completes_at": { "type": "string", "format": "date-time" },
+    "materialized_at": { "type": ["string", "null"], "format": "date-time" },
+    "finance_credit_id": { "type": ["string", "null"] },
+    "paid_at": { "type": ["string", "null"], "format": "date-time" },
+    "clawback_reason": { "type": ["string", "null"], "enum": [null, "refund", "chargeback", "fraud", "program_archived"] },
+    "clawback_at": { "type": ["string", "null"], "format": "date-time" },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "(referral_id, recipient_role) unique via partial index — prevents double-materialization",
+    "reward_type + reward_amount + reward_currency frozen at create; IMMUTABLE",
+    "status transitions: pending -> vesting -> vested -> materialized -> paid; escape to cancelled | clawback",
+    "materialized_at + finance_credit_id set atomically together",
+    "clawback_reason + clawback_at set atomically together",
+    "vesting_starts_at <= vesting_completes_at",
+    "reward_type=fixed_amount / credits requires reward_currency",
+    "reward_type=point_award refuses reward_currency"
+  ]
+}

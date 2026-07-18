@@ -1,0 +1,81 @@
+{
+  "id": "academorix://modules/analytics/feature-flags",
+  "$version": 1,
+  "title": "analytics — kill switches + rollout controls",
+  "description": "Per-provider kill switches let ops flip a bad provider off in seconds without a redeploy. All kill switches default ON.",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "analytics.capture",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master analytics capture kill switch. Off = ALL analytics capture is skipped (event never persisted, no downstream fan-out). Used during ingest incidents."
+    },
+    {
+      "key": "analytics.dispatch",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Fan-out dispatch kill switch. Off = events still persisted BUT no HTTP calls fire. Backlog processes when re-enabled (queued dispatch jobs pick up pending events)."
+    },
+    {
+      "key": "analytics.provider.posthog.enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Disable PostHog dispatch immediately. Failover: other configured providers still receive events."
+    },
+    {
+      "key": "analytics.provider.amplitude.enabled",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "analytics.provider.mixpanel.enabled",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "analytics.provider.segment.enabled",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "analytics.provider.june.enabled",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "analytics.provider.google_analytics_4.enabled",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "analytics.provider.custom_webhook.enabled",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "analytics.identity_merge.enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Disable identity-merge processing globally. Used when MergeAliasedEventsJob backlog explodes during a bulk identify() rollout."
+    },
+    {
+      "key": "analytics.batch_flushing.enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Disable batch flushing. Non-batching providers keep working. Used when a batching provider's rate limits are hit and we need to slow down globally."
+    },
+    {
+      "key": "analytics.strict_pii_scan",
+      "kind": "rollout",
+      "default": "on",
+      "description": "Strict PII regex scan in PropertyValidator. Off = warnings instead of refusals. Should always be on in production; only disable for a debug session with super_admin approval."
+    },
+    {
+      "key": "analytics.session_recording.capture",
+      "kind": "rollout",
+      "default": "on",
+      "description": "Master session-recording rollout gate. Combined with analytics_session_recording entitlement + subject-level functional consent. All three must be true for a recording to fire."
+    }
+  ]
+}

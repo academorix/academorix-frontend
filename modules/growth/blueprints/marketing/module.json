@@ -1,0 +1,256 @@
+{
+  "$version": 1,
+  "name": "marketing",
+  "alias": "marketing",
+  "namespace": "Academorix\\Growth\\Marketing",
+  "description": "Server-side ad-network conversion event forwarder. Answers 'which ad campaigns delivered which conversions?'. Captures business-level milestone events (signup, trial_started, subscription_started, membership_purchased, athlete_enrolled, session_booked, event_registered, subscription_upgraded, subscription_cancelled, refund_issued, chargeback_filed, ...) via domain-event listeners + fans out to N ad-network providers per-tenant. Loss tolerance ZERO — every event affects ad-spend optimization + attribution reporting. Ships FOUR tables: `marketing_events` (canonical event ledger, 7-year retention for financial audit), `marketing_deliveries` (per-provider-per-attempt delivery log, 2-year retention), `marketing_provider_configs` (per-tenant encrypted provider credentials + enabled_event_types filter + circuit-breaker state + test-mode flag), `marketing_dead_letters` (max-attempts-exceeded events for manual replay). MultipleInstanceManager pattern via `MarketingProviderManager` with 9 provider drivers day-1: Meta CAPI, Google Ads Enhanced Conversions, Google Analytics 4 Measurement Protocol, Google Tag Manager Server, TikTok Events API, LinkedIn Insight Tag, Snapchat Conversions API, Pinterest Conversions API, Custom Webhook (generic HMAC-signed JSON escape hatch). Per-provider payload transformation handles PII hashing (Meta CAPI requires SHA256 email/phone; Google Ads requires gclid + click_time_utc; GA4 requires session_id + engagement_time_msec). Per-provider retry with exponential backoff (1m/5m/30m/2h/12h/24h; max 6 attempts) + per-tenant-per-provider circuit breaker (opens after N consecutive failures, TTL-based auto-close). Consent-gated at BOTH capture time (snapshotted) AND dispatch time (re-checked) via `marketing` + `advertising` consent categories. Attribution snapshot pulled from `attribution` module at event-CREATE time (frozen). Test-mode per-provider dispatches to sandbox endpoints for tenant onboarding validation. Domain code stays marketing-agnostic — `MarketingEventCapturer` listener maps domain events to marketing events via a mapping registry.",
+  "keywords": [
+    "marketing",
+    "marketing-event",
+    "marketing-delivery",
+    "marketing-provider",
+    "marketing-dead-letter",
+    "conversion-tracking",
+    "ad-network",
+    "ad-forwarder",
+    "server-side-tracking",
+    "meta-capi",
+    "google-ads",
+    "google-analytics-4",
+    "gtm-server",
+    "tiktok-events",
+    "linkedin-insight",
+    "snapchat-capi",
+    "pinterest-capi",
+    "custom-webhook",
+    "conversion-api",
+    "roas",
+    "attribution",
+    "utm",
+    "gclid",
+    "fbclid",
+    "ttclid",
+    "circuit-breaker",
+    "dead-letter",
+    "retry",
+    "backoff",
+    "consent",
+    "pii-hashing",
+    "sha256",
+    "financial-audit",
+    "growth",
+    "wave-5"
+  ],
+  "priority": 65,
+  "providers": ["Academorix\\Growth\\Marketing\\Providers\\MarketingServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "entitlements",
+    "compliance",
+    "attribution"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "finance (Wave 4 — subscription lifecycle + refund + chargeback events feed marketing capture)",
+    "referrals (Wave 5 — referral-conversion events dispatch to ad networks for viral-loop optimization)",
+    "notifications (Wave 5 — reads marketing failure signals for dashboard warnings)"
+  ],
+  "contributes": {
+    "traits": [
+      "BelongsToMarketingEvent",
+      "HasMarketingDeliveries",
+      "HasMarketingDeadLetters"
+    ],
+    "attributes": [
+      "AsMarketingListener",
+      "AsMarketingProvider",
+      "AsDomainEventMapper"
+    ],
+    "blueprints": [
+      "marketing_events",
+      "marketing_deliveries",
+      "marketing_provider_configs",
+      "marketing_dead_letters"
+    ],
+    "middleware": ["marketing.enforce_consent"],
+    "events": [
+      "MarketingEventCaptured",
+      "MarketingEventDispatched",
+      "MarketingEventDelivered",
+      "MarketingEventPartiallyDelivered",
+      "MarketingEventFailed",
+      "MarketingEventSuppressedByConsent",
+      "MarketingEventSuperseded",
+      "MarketingDeliveryAttempted",
+      "MarketingDeliverySucceeded",
+      "MarketingDeliveryFailed",
+      "MarketingDeliverySuppressedByConsent",
+      "MarketingDeliverySuppressedByCircuitBreaker",
+      "MarketingDeliveryRateLimited",
+      "MarketingProviderCircuitBreakerOpened",
+      "MarketingProviderCircuitBreakerClosed",
+      "MarketingProviderCircuitBreakerHalfOpen",
+      "MarketingProviderConfigured",
+      "MarketingProviderDeactivated",
+      "MarketingDeadLetterCreated",
+      "MarketingDeadLetterReplayed",
+      "MarketingDeadLetterResolved",
+      "MarketingProviderTestSent",
+      "MarketingProviderTestSucceeded",
+      "MarketingProviderTestFailed"
+    ],
+    "policies": [
+      "MarketingEventPolicy",
+      "MarketingDeliveryPolicy",
+      "MarketingProviderConfigPolicy",
+      "MarketingDeadLetterPolicy"
+    ],
+    "hooks": [
+      "PurgeMarketingDataForErasedTenant",
+      "SuppressMarketingOnConsentRevoked",
+      "CascadeMarketingProviderDeactivationOnTenantSuspended"
+    ],
+    "commands": [
+      "marketing:list-events",
+      "marketing:describe-event",
+      "marketing:dispatch-event",
+      "marketing:list-deliveries",
+      "marketing:list-dead-letters",
+      "marketing:replay-dead-letter",
+      "marketing:resolve-dead-letter",
+      "marketing:list-providers",
+      "marketing:configure-provider",
+      "marketing:test-provider",
+      "marketing:reset-circuit-breaker",
+      "marketing:audit-suppressions",
+      "marketing:roas-report",
+      "marketing:reconcile-status"
+    ],
+    "jobs": [
+      "CaptureMarketingEventJob",
+      "DispatchMarketingEventJob",
+      "DispatchToProviderJob",
+      "RetryFailedDeliveriesJob",
+      "ReconcileMarketingEventStatusJob",
+      "OpenCircuitBreakerJob",
+      "CloseCircuitBreakerJob",
+      "HalfOpenCircuitBreakerJob",
+      "PurgeExpiredMarketingDataJob"
+    ],
+    "notifications": [
+      "MarketingProviderCircuitBreakerOpenedNotification",
+      "MarketingDeadLetterCreatedNotification",
+      "MarketingProviderTestFailedNotification",
+      "MarketingRoasReportReadyNotification",
+      "MarketingConsentSuppressionSpikeNotification",
+      "MarketingHighFailureRateNotification",
+      "MarketingConfigurationChangedNotification"
+    ],
+    "broadcasts": [
+      "tenant.{tenantId}.marketing",
+      "tenant.{tenantId}.marketing.providers",
+      "tenant.{tenantId}.marketing.dead-letters"
+    ],
+    "observers": [
+      "MarketingEventObserver",
+      "MarketingDeliveryObserver",
+      "MarketingProviderConfigObserver",
+      "MarketingDeadLetterObserver"
+    ],
+    "rules": [
+      "valid_event_type",
+      "valid_provider",
+      "valid_currency",
+      "valid_positive_amount",
+      "valid_attribution_snapshot_shape",
+      "valid_consent_snapshot_shape",
+      "valid_deduplication_key",
+      "valid_provider_config_shape",
+      "valid_test_event_code",
+      "valid_circuit_breaker_config",
+      "valid_retry_config",
+      "valid_enabled_event_types"
+    ],
+    "casts": [
+      "MarketingEventType",
+      "MarketingEventSource",
+      "MarketingEventStatus",
+      "MarketingProvider",
+      "MarketingDeliveryStatus",
+      "MarketingDeadLetterReason",
+      "AttributionSnapshot",
+      "ConsentSnapshot",
+      "CircuitBreakerConfig",
+      "RetryConfig",
+      "RateLimitConfig"
+    ],
+    "views": [],
+    "lang": ["marketing"],
+    "config": ["marketing"],
+    "macros": [],
+    "bindings": [
+      "MarketingEventRepository",
+      "MarketingDeliveryRepository",
+      "MarketingProviderConfigRepository",
+      "MarketingDeadLetterRepository",
+      "MarketingProviderManager",
+      "MarketingEventCapturer",
+      "MarketingEventDispatcher",
+      "MarketingPayloadTransformer",
+      "CircuitBreakerGate",
+      "RateLimitGate",
+      "DeadLetterHandler",
+      "DomainEventMapper",
+      "PiiHasher",
+      "HmacSigner"
+    ],
+    "resources": [
+      "marketing-event",
+      "marketing-delivery",
+      "marketing-provider",
+      "marketing-dead-letter"
+    ]
+  },
+  "wraps": {
+    "packages": [
+      "guzzlehttp/guzzle ^7.8 (HTTP client for provider dispatch — retry-safe, connection-pooled, request-signable)"
+    ],
+    "rationale": "Every provider driver dispatches through a shared Guzzle client with per-provider timeout + retry-safe request encoding. The `MarketingPayloadTransformer` builds the provider-native payload; the driver hands it to Guzzle which handles TLS + connection pooling + timeout. Retry semantics are OWNED BY THIS MODULE (via RetryFailedDeliveriesJob + backoff schedule) — Guzzle-level retry is disabled to preserve idempotency + circuit-breaker semantics."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing marketing surface. Every route carries the `sanctum` guard + `X-Application-Id` header + `entitlement.enforce:marketing_capture`. Owner + tenant admin authored templates + provider configs; marketing role + support role read the delivery ledger + dead-letter queue.",
+      "routes": [
+        "GET /api/v1/marketing/events",
+        "GET /api/v1/marketing/events/{event}",
+        "GET /api/v1/marketing/events/{event}/deliveries",
+        "POST /api/v1/marketing/events/{event}/dispatch",
+        "GET /api/v1/marketing/deliveries",
+        "GET /api/v1/marketing/deliveries/{delivery}",
+        "GET /api/v1/marketing/providers",
+        "POST /api/v1/marketing/providers",
+        "GET /api/v1/marketing/providers/{provider}",
+        "PATCH /api/v1/marketing/providers/{provider}",
+        "DELETE /api/v1/marketing/providers/{provider}",
+        "POST /api/v1/marketing/providers/{provider}/test",
+        "POST /api/v1/marketing/providers/{provider}/reset-circuit-breaker",
+        "GET /api/v1/marketing/dead-letters",
+        "POST /api/v1/marketing/dead-letters/{dead_letter}/replay",
+        "POST /api/v1/marketing/dead-letters/{dead_letter}/resolve",
+        "GET /api/v1/marketing/roas",
+        "GET /api/v1/marketing/reports/consent-suppressions"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant support tooling. Ops + support review circuit-breaker health, replay P1 dead-letters, and audit consent-suppression trends.",
+      "routes": [
+        "GET /api/v1/platform/marketing/deliveries",
+        "GET /api/v1/platform/marketing/dead-letters",
+        "GET /api/v1/platform/marketing/circuit-breakers"
+      ]
+    }
+  }
+}

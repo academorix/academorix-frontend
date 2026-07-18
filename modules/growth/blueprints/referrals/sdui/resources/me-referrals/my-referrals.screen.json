@@ -1,0 +1,164 @@
+{
+  "id": "referrals.resources.me-referrals.my-referrals",
+  "title": "My referrals",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/me/referrals",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "referrals", "entity": "me-referrals", "action": "show" },
+  "requiresPermission": null,
+  "requiresEntitlement": "referrals_capture",
+  "dataSources": [
+    {
+      "name": "myCode",
+      "kind": "http.get",
+      "url": "/api/v1/me/referral-code",
+      "unwrap": "data"
+    },
+    {
+      "name": "myReferrals",
+      "kind": "http.get",
+      "url": "/api/v1/me/referrals",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "myRewards",
+      "kind": "http.get",
+      "url": "/api/v1/me/referral-rewards",
+      "unwrap": "data"
+    },
+    {
+      "name": "invitationRateLimit",
+      "kind": "http.get",
+      "url": "/api/v1/me/rate-limits/referrals-invitation",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Invite friends, earn rewards" } },
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm text-muted" },
+              "bindings": {
+                "children": {
+                  "$expr": "myCode?.program_summary ? ('Share your code and get ' + myCode.program_summary.reward_summary_referrer + '. Your friends get ' + myCode.program_summary.reward_summary_referred + '.') : 'No active referral program yet.'"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Widget",
+          "widget": "referrals.invitation-composer",
+          "bindings": {
+            "userReferralCode": { "$ref": "myCode" },
+            "dailyLimit": { "$expr": "invitationRateLimit?.limit || 100" },
+            "dailyUsed": { "$expr": "invitationRateLimit?.used || 0" }
+          }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Your rewards" } },
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col gap-2" },
+              "bindings": { "items": { "$ref": "myRewards" } },
+              "emptyState": {
+                "kind": "Text",
+                "props": { "className": "text-sm text-muted text-center py-4", "children": "No rewards yet. Invite friends to earn some!" }
+              },
+              "itemRenderer": {
+                "kind": "View",
+                "props": { "className": "flex items-center justify-between border-b py-2 last:border-0" },
+                "children": [
+                  {
+                    "kind": "Widget",
+                    "widget": "referrals.reward-badge",
+                    "bindings": {
+                      "rewardType": { "$ref": "row.reward_type" },
+                      "rewardAmount": { "$ref": "row.reward_amount" },
+                      "rewardCurrency": { "$ref": "row.reward_currency" },
+                      "recipientRole": { "$ref": "row.recipient_role" }
+                    }
+                  },
+                  {
+                    "kind": "Chip",
+                    "bindings": {
+                      "variant": {
+                        "$expr": "({ pending: 'neutral', vesting: 'warning', vested: 'info', materialized: 'info', paid: 'success', cancelled: 'neutral', clawback: 'danger' })[row.status]"
+                      },
+                      "size": "sm",
+                      "children": { "$ref": "row.status" }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Your referrals" } },
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col gap-2" },
+              "bindings": { "items": { "$ref": "myReferrals" } },
+              "emptyState": {
+                "kind": "Text",
+                "props": { "className": "text-sm text-muted text-center py-4", "children": "No referrals yet. Share your code above!" }
+              },
+              "itemRenderer": {
+                "kind": "View",
+                "props": { "className": "flex items-center justify-between border-b py-2 last:border-0" },
+                "children": [
+                  {
+                    "kind": "View",
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-medium" },
+                        "bindings": {
+                          "children": {
+                            "$expr": "row.referred?.display_name || 'Your friend'"
+                          }
+                        }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted" },
+                        "bindings": {
+                          "children": {
+                            "$expr": "'Claimed ' + formatRelativeTime(row.claimed_at)"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "Widget",
+                    "widget": "referrals.referral-status-chip",
+                    "bindings": { "status": { "$ref": "row.status" }, "size": "xs" }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

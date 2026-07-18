@@ -1,0 +1,59 @@
+{
+  "id": "academorix://modules/analytics/data/providers/google_analytics_4",
+  "$version": 1,
+  "provider": "google_analytics_4",
+  "displayName": "Google Analytics 4",
+  "description": "GA4 measurement protocol (mp/collect). Web + app analytics via server-side event capture. NOTE: same wire protocol as marketing::google_analytics_4 but distinct event catalog \u2014 analytics uses snake_case behavioral names, marketing uses business names.",
+  "wire_protocol": {
+    "endpoint_template": "https://www.google-analytics.com/mp/collect?measurement_id={measurement_id}&api_secret={api_secret}",
+    "debug_endpoint": "https://www.google-analytics.com/debug/mp/collect?measurement_id={measurement_id}&api_secret={api_secret}",
+    "http_method": "POST",
+    "content_type": "application/json",
+    "auth_scheme": "measurement_id + api_secret in query string",
+    "note": "Test-mode uses the debug endpoint which returns validation errors instead of silently dropping."
+  },
+  "config_schema": {
+    "type": "object",
+    "required": ["measurement_id", "api_secret"],
+    "properties": {
+      "measurement_id": {
+        "type": "string",
+        "pattern": "^G-[A-Z0-9]{10}$",
+        "description": "GA4 measurement ID. Shape: G-XXXXXXXXXX."
+      },
+      "api_secret": {
+        "type": "string",
+        "description": "GA4 API secret. Sensitive.",
+        "minLength": 20
+      },
+      "default_client_id_source": {
+        "type": "string",
+        "enum": ["anonymous_id", "device_fingerprint_hash", "custom"],
+        "default": "anonymous_id",
+        "description": "Which field to use as GA4's `client_id`. Default: AnalyticsIdentity.anonymous_id."
+      },
+      "user_id_field": {
+        "type": "string",
+        "default": "identified_user_id",
+        "description": "Which field to pass as GA4's `user_id`. Requires user consent under GA4 Consent Mode."
+      },
+      "consent_mode": {
+        "type": "object",
+        "description": "GA4 Consent Mode v2 signals.",
+        "properties": {
+          "ad_user_data": { "type": "string", "enum": ["granted", "denied"], "default": "denied" },
+          "ad_personalization": { "type": "string", "enum": ["granted", "denied"], "default": "denied" },
+          "analytics_storage": { "type": "string", "enum": ["granted", "denied"], "default": "granted" },
+          "ad_storage": { "type": "string", "enum": ["granted", "denied"], "default": "denied" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "additionalProperties": false
+  },
+  "test_event": {
+    "event_kind": "track",
+    "event_name": "test_event",
+    "properties": { "engagement_time_msec": 100, "session_id": "test-session" }
+  }
+}

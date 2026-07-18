@@ -1,0 +1,82 @@
+{
+  "id": "academorix://modules/analytics/listeners",
+  "$version": 1,
+  "title": "analytics — subscribed events",
+  "description": "Subscribes to own AnalyticsEvent* events for the fan-out pipeline + cross-module lifecycle events (TenantErased, UserErased, IdentityMerged) for compliance-driven cascades. Also subscribes to compliance::ConsentWithdrawn to suppress pending events.",
+  "listeners": [
+    {
+      "event": "analytics::AnalyticsEventCaptured",
+      "listener": "Academorix\\Growth\\Analytics\\Listeners\\DispatchAnalyticsEventListener",
+      "queue": "analytics",
+      "purpose": "Dispatches DispatchAnalyticsEventJob when eligible_provider_count > 0. Skips otherwise (event already terminal)."
+    },
+    {
+      "event": "analytics::AnalyticsIdentityIdentified",
+      "listener": "Academorix\\Growth\\Analytics\\Listeners\\MergeAliasedEventsListener",
+      "queue": "analytics",
+      "filter": "tenant has analytics_identity_merge entitlement",
+      "purpose": "Dispatches MergeAliasedEventsJob to rewrite subject_id on prior events from AnalyticsIdentity to User."
+    },
+    {
+      "event": "analytics::AnalyticsIdentityAliased",
+      "listener": "Academorix\\Growth\\Analytics\\Listeners\\MergeAliasedEventsListener",
+      "queue": "analytics",
+      "purpose": "Same as above but triggered by alias() rather than identify()."
+    },
+    {
+      "event": "analytics::AnalyticsDeliverySucceeded",
+      "listener": "Academorix\\Growth\\Analytics\\Listeners\\UpdateDeliveredCountListener",
+      "queue": "analytics",
+      "purpose": "Atomic increment of AnalyticsEvent.delivered_provider_count. On reaching eligible_provider_count, transitions status \u2192 delivered + fires AnalyticsEventDelivered."
+    },
+    {
+      "event": "analytics::AnalyticsDeliverySucceeded",
+      "listener": "Academorix\\Growth\\Analytics\\Listeners\\CircuitBreakerSuccessListener",
+      "queue": "analytics",
+      "purpose": "Records success into AnalyticsProviderConfig.circuit_breaker_state. Half-open probe transitions to closed after `close_after_successes` successes."
+    },
+    {
+      "event": "analytics::AnalyticsDeliveryFailed",
+      "listener": "Academorix\\Growth\\Analytics\\Listeners\\CircuitBreakerFailureListener",
+      "queue": "analytics",
+      "purpose": "Records failure into circuit_breaker_state. Threshold or failure_rate breach transitions state \u2192 open + fires AnalyticsProviderCircuitBreakerOpened."
+    },
+    {
+      "event": "analytics::AnalyticsProviderConfigured",
+      "listener": "Academorix\\Growth\\Analytics\\Listeners\\InvalidateFanoutCacheListener",
+      "queue": "analytics",
+      "purpose": "Clears the Redis cache of active-providers-per-tenant so the next fan-out picks up the change."
+    },
+    {
+      "event": "analytics::AnalyticsProviderDeactivated",
+      "listener": "Academorix\\Growth\\Analytics\\Listeners\\DrainBatchBufferListener",
+      "queue": "analytics",
+      "purpose": "Flushes any queued events for this provider before dropping them. Prevents silent data loss on config change."
+    },
+    {
+      "event": "tenancy::TenantErased",
+      "listener": "Academorix\\Growth\\Analytics\\Listeners\\PurgeAnalyticsDataForErasedTenantListener",
+      "queue": "compliance",
+      "purpose": "Cascade delete: analytics_events + analytics_deliveries + analytics_provider_configs + analytics_identities for the erased tenant. Writes a summary row into audit before the hard-delete."
+    },
+    {
+      "event": "user::UserErased",
+      "listener": "Academorix\\Growth\\Analytics\\Listeners\\RedactAnalyticsSubjectOnUserErasureListener",
+      "queue": "compliance",
+      "purpose": "GDPR Art. 17 cascade: for the erased user_id, (a) redact properties.email + properties.phone + any other subject-identifying properties on their events; (b) set AnalyticsIdentity.identified_user_id = null; (c) hash device_fingerprint_hash if not already. Retains behavioral shape for aggregate reporting; strips per-subject identifiers."
+    },
+    {
+      "event": "compliance::ConsentWithdrawn",
+      "listener": "Academorix\\Growth\\Analytics\\Listeners\\SuppressPendingEventsOnConsentWithdrawnListener",
+      "queue": "analytics",
+      "filter": "event.category === 'analytics'",
+      "purpose": "When a subject withdraws analytics consent, mark any pending AnalyticsEvent + AnalyticsDelivery rows for that subject as suppressed_by_consent. Prevents post-withdrawal dispatches for events already captured under the prior consent state."
+    },
+    {
+      "event": "identity::IdentityMerged",
+      "listener": "Academorix\\Growth\\Analytics\\Listeners\\HandleIdentityMergedListener",
+      "queue": "analytics",
+      "purpose": "When two Identity rows merge (post-signup 'link accounts'), consolidate their AnalyticsIdentity rows too. Emit AnalyticsIdentityAliased."
+    }
+  ]
+}

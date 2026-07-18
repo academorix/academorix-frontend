@@ -1,0 +1,187 @@
+{
+  "id": "academorix://modules/analytics/schemas/analytics-identity",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AnalyticsIdentity",
+  "description": "Identity resolution table. Maps anonymous_id (uuid, browser/device generated on first visit) \u2192 identified_user_id (usr_...) as soon as the user identifies. `identify()` verb writes an identity row; `alias()` verb merges two identities that turned out to be the same person. Downstream MergeAliasedEventsJob rewrites subject_id on prior events from the anonymous_id to the identified user_id, so pre-signup behavior funnels into the post-signup profile.",
+  "type": "object",
+  "x-module": "analytics",
+  "x-eloquent": {
+    "table": "analytics_identities",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "aid_",
+    "incrementing": false,
+    "model": "Academorix\\Growth\\Analytics\\Models\\AnalyticsIdentity",
+    "interface": "Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsIdentityInterface",
+    "implements": ["Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsIdentityInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "first_seen_at": "datetime",
+      "identified_at": "datetime",
+      "last_seen_at": "datetime",
+      "merged_from": "array"
+    },
+    "appends": ["is_identified", "session_span_days"],
+    "observers": ["AnalyticsIdentityObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true, "description": "`aid_<26>`" },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "anonymous_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "UUID generated browser-side on first visit. Unique per tenant \u2014 the frontend `@stackra/analytics` package writes it to a first-party cookie AND local storage for cross-session persistence."
+      },
+      "identified_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" },
+        "description": "Populated when the caller invokes analytics.identify(user_id). Null before identify, becomes non-null AT identify time, may transition back to null on deidentification / GDPR erasure."
+      },
+      "first_seen_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "When we first observed this anonymous_id \u2014 the timestamp of the very first analytics event carrying it."
+      },
+      "identified_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When identity_id became known. Retained even if identified_user_id later reverts to null (deidentification)."
+      },
+      "last_seen_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Updated on every analytics event carrying this anonymous_id. Enables the anti-abuse job to purge stale identities with no activity for 90+ days."
+      },
+      "device_fingerprint_hash": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "SHA-256 hex of a browser/device fingerprint. NEVER raw fingerprint. Used ONLY for anti-abuse (detect coordinated signup patterns from the same device). Never for cross-device tracking without explicit consent."
+      },
+      "merged_from": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Array of prior AnalyticsIdentity.id (aid_...) values that were merged INTO this row via alias(). Preserves the merge trail for support debugging."
+      },
+      "notes": {
+        "type": "text",
+        "nullable": true
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "anonymous_id"],
+        "unique": true,
+        "name": "analytics_identities_tenant_anonymous_uidx",
+        "predicate": "deleted_at IS NULL",
+        "description": "Composite unique on (tenant, anonymous_id) among non-deleted rows. Primary lookup path when incoming events carry an anonymous_id."
+      },
+      {
+        "columns": ["identified_user_id"],
+        "unique": false,
+        "name": "analytics_identities_identified_user_idx",
+        "predicate": "identified_user_id IS NOT NULL",
+        "description": "Reverse lookup: 'all anonymous identities belonging to user X' (useful for cross-device merge candidates)."
+      },
+      {
+        "columns": ["tenant_id", "last_seen_at"],
+        "unique": false,
+        "name": "analytics_identities_tenant_activity_idx",
+        "description": "ReconcileAnalyticsIdentityJob scans by last_seen_at to purge stale anonymous identities."
+      },
+      {
+        "columns": ["device_fingerprint_hash"],
+        "unique": false,
+        "name": "analytics_identities_fingerprint_idx",
+        "predicate": "device_fingerprint_hash IS NOT NULL",
+        "description": "Anti-abuse query: 'how many identities share this fingerprint hash?' \u2014 coordinated signup detector."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "anonymous_id",
+    "first_seen_at",
+    "last_seen_at",
+    "merged_from",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^aid_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "anonymous_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "identified_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "first_seen_at": { "type": "string", "format": "date-time" },
+    "identified_at": { "type": ["string", "null"], "format": "date-time" },
+    "last_seen_at": { "type": "string", "format": "date-time" },
+    "device_fingerprint_hash": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
+    "merged_from": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^aid_[0-9A-HJKMNP-TV-Z]{26}$" }
+    },
+    "notes": { "type": ["string", "null"] },
+    "is_identified": {
+      "type": "boolean",
+      "description": "Computed. True iff identified_user_id IS NOT NULL."
+    },
+    "session_span_days": {
+      "type": "integer",
+      "description": "Computed. Days between first_seen_at and last_seen_at."
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_by": { "type": ["string", "null"] },
+    "updated_by": { "type": ["string", "null"] },
+    "deleted_by": { "type": ["string", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["device_fingerprint_hash", "created_by", "updated_by", "deleted_by"],
+    "computed": ["is_identified", "session_span_days"],
+    "notes": [
+      "device_fingerprint_hash HIDDEN on every wire \u2014 hashed value, but still an anti-abuse signal.",
+      "anonymous_id is visible to tenant admins for support debugging (correlating a browser session to events).",
+      "identified_user_id can be null-ed via POST /identities/{id}/deidentify (Enterprise + explicit user request) \u2014 audit row written."
+    ]
+  }
+}

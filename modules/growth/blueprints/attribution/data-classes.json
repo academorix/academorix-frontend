@@ -1,0 +1,92 @@
+{
+  "id": "academorix://modules/attribution/data-classes",
+  "$version": 1,
+  "title": "attribution — field classification",
+  "description": "Attributions are behavioural marketing metadata (confidential — tenant-competitive). Touchpoints carry device + IP hash + consent snapshot (confidential + PII-adjacent — redacted on user erasure). Click IDs are third-party tokens (confidential — ad-network vendor lock-in signal). No health data, no financial account data on any owned row.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "Attribution.id",
+      "Attribution.tenant_id",
+      "Attribution.subject_type",
+      "Attribution.lifecycle_state",
+      "Attribution.touchpoint_count",
+      "Attribution.conversion_touchpoint_count",
+      "AttributionTouchpoint.id",
+      "AttributionTouchpoint.tenant_id",
+      "AttributionTouchpoint.touchpoint_type",
+      "AttributionTouchpoint.was_first_touch",
+      "AttributionTouchpoint.was_conversion"
+    ],
+    "internal": [
+      "Attribution.subject_id",
+      "Attribution.current_session_id",
+      "Attribution.first_touch_at",
+      "Attribution.last_touch_at",
+      "Attribution.lifecycle_converted_at",
+      "Attribution.created_at",
+      "Attribution.updated_at",
+      "Attribution.deleted_at",
+      "AttributionTouchpoint.attribution_id",
+      "AttributionTouchpoint.subject_id",
+      "AttributionTouchpoint.session_id",
+      "AttributionTouchpoint.captured_at",
+      "AttributionTouchpoint.was_authenticated",
+      "AttributionTouchpoint.created_at"
+    ],
+    "confidential": [
+      "Attribution.first_touch_source (competitive info — which channels the tenant relies on)",
+      "Attribution.first_touch_medium",
+      "Attribution.first_touch_campaign (marketing team's own campaign taxonomy)",
+      "Attribution.first_touch_content",
+      "Attribution.first_touch_term",
+      "Attribution.first_touch_landing_page",
+      "Attribution.first_touch_referrer",
+      "Attribution.first_touch_click_id (jsonb — third-party ad-network tokens)",
+      "Attribution.first_touch_device (jsonb — user-agent parsed; not raw fingerprint)",
+      "Attribution.last_touch_source",
+      "Attribution.last_touch_medium",
+      "Attribution.last_touch_campaign",
+      "Attribution.last_touch_content",
+      "Attribution.last_touch_term",
+      "Attribution.last_touch_landing_page",
+      "Attribution.last_touch_referrer",
+      "Attribution.last_touch_click_id",
+      "Attribution.last_touch_device",
+      "Attribution.consent_at_capture (jsonb — subject's consent state; regulator-inspectable)",
+      "AttributionTouchpoint.source",
+      "AttributionTouchpoint.medium",
+      "AttributionTouchpoint.campaign",
+      "AttributionTouchpoint.content",
+      "AttributionTouchpoint.term",
+      "AttributionTouchpoint.landing_page",
+      "AttributionTouchpoint.referrer",
+      "AttributionTouchpoint.click_id",
+      "AttributionTouchpoint.device_snapshot (jsonb — includes hashed IP + parsed UA fields)",
+      "AttributionTouchpoint.consent_snapshot"
+    ],
+    "restricted": [],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "regulated_pii": [
+      "AttributionTouchpoint.device_snapshot.ip_hash (SHA-256 hash of client IP — pseudonymised but still traceable to a household)",
+      "AttributionTouchpoint.device_snapshot.user_agent_hash (SHA-256 of full UA string — potential fingerprinting concern; hashed to prevent raw reads)"
+    ],
+    "audit_log": [
+      "Attribution.lifecycle_state (every transition)",
+      "Attribution.first_touch_source / campaign / medium (immutable post-create; attempted changes logged)",
+      "Attribution.deleted_at (reset audit — 7-year retention)",
+      "AttributionTouchpoint.consent_snapshot (regulator queryable — proof of consent at capture time)"
+    ]
+  },
+  "notes": [
+    "IP addresses are NEVER stored raw. Every touchpoint's device_snapshot.ip_hash is the SHA-256 of the client IP. Reversing the hash requires knowing the input space (IPv4 = 2^32; feasible for a nation-state, infeasible for opportunistic attackers).",
+    "User-Agent strings are hashed similarly for device_snapshot.user_agent_hash. The parsed fields (browser / OS / device_type / is_mobile) are stored in the clear because they don't uniquely identify.",
+    "Click IDs are confidential because they're third-party tokens — leaking them to competitors would allow reverse-engineering of ad-spend budgets + campaign taxonomy.",
+    "Landing page URLs are confidential — they reveal the tenant's URL structure + internal campaign codes (utm_content often carries A/B-test variant IDs).",
+    "consent_snapshot is confidential because it's a regulator-queryable proof-of-consent — visible to compliance staff + auditors, not to marketing operators.",
+    "The redactor pipeline strips device_snapshot.ip_hash + user_agent_hash on egress for callers who lack attribution.view-confidential permission. Marketing role sees the source/medium/campaign fields but not the PII-adjacent fields.",
+    "Reset (GDPR Art. 17) replaces every confidential field with '[REDACTED]' AND schedules touchpoint hard-delete 90 days out. The lifecycle_state transitions to 'churned' with subject_id NULL — row survives for aggregate metrics only."
+  ]
+}

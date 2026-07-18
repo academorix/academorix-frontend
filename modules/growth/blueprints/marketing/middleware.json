@@ -1,0 +1,37 @@
+{
+  "id": "academorix://modules/marketing/middleware",
+  "$version": 1,
+  "title": "marketing — HTTP middleware",
+  "middleware": [
+    {
+      "alias": "marketing.enforce_consent",
+      "class": "Academorix\\Growth\\Marketing\\Http\\Middleware\\EnforceMarketingConsent",
+      "priority": 44,
+      "description": "Guards tenant-plane marketing routes that expose marketing data. Refuses non-owner / non-admin / non-marketing-role callers with 403 MARKETING_INSUFFICIENT_ROLE. Not a consent-gate for the DATA (that's per-event via ConsentGate); this middleware gates VIEW ACCESS to the marketing surface based on role. Distinct from entitlement.enforce:marketing_capture which gates on tenant tier.",
+      "auto_applied": false,
+      "auto_applied_to": [
+        "/api/v1/marketing/*"
+      ]
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "application::application.resolve" },
+    { "middleware": "tenancy::tenant.resolve" },
+    {
+      "middleware": "entitlements::entitlement.enforce",
+      "note": "Applied per-route with the specific entitlement key (marketing_capture for base surface, marketing_advanced_providers for advanced provider routes, marketing_roas_report for /roas, marketing_dead_letter_replay for /dead-letters/{id}/replay)."
+    },
+    {
+      "middleware": "access::authorize",
+      "note": "The permission-based authorize middleware wraps the ability checks defined in policies.json + permissions.json. Route-level `permission` metadata resolves through this middleware."
+    },
+    {
+      "middleware": "attribution::attribution.capture",
+      "note": "Runs on every tenant-plane request to snapshot UTM + click IDs into the request-scoped AttributionContext. When a domain event later triggers MarketingEventCapturer, the AttributionResolver reads from this context. Marketing does NOT own this middleware — it's owned by the attribution module — but the marketing capture path depends on it being applied earlier in the chain."
+    }
+  ]
+}

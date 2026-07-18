@@ -1,0 +1,124 @@
+{
+  "id": "academorix://modules/referrals/observers",
+  "$version": 1,
+  "title": "referrals — Eloquent observers",
+  "description": "Five observers enforce this module's write-time invariants. ReferralProgramObserver validates config shape + entitlement + program window; ReferralCodeObserver enforces unique code + owner-matches-type + slot consumption; ReferralObserver is the load-bearing observer that runs FraudDetector, snapshots attribution, gates the state machine + creates rewards atomically at vested transition; ReferralRewardObserver enforces the reward state machine + calls Finance module for materialization + prevents double-spend; ReferralFraudFlagObserver cascades severity=critical flags to the parent referral.",
+  "observers": [
+    {
+      "model": "ReferralProgram",
+      "observer": "Academorix\\Growth\\Referrals\\Observers\\ReferralProgramObserver",
+      "handles": [
+        "creating → populate ULID prefix `rpg_`",
+        "creating → refuse when tenant does NOT hold `referrals_capture` entitlement (returns `REFERRAL_CAPTURE_NOT_ENTITLED`)",
+        "creating → consume 1 unit of `referrals_program_slot` entitlement; refuse with `REFERRAL_PROGRAM_QUOTA_EXCEEDED` when cap reached (Small=1, Medium=5, Enterprise=unlimited)",
+        "creating → validate reward config via valid_reward_type_amount_currency_combo (percent_discount requires 1..100; fixed_amount requires currency; free_months requires months 1..24; free_sessions requires count 1..1000; credits requires currency + amount > 0; point_award requires amount > 0)",
+        "creating → validate double-sided config: if side='double_sided' requires reward_type_referred + reward_amount_referred; refuse with `REFERRAL_DOUBLE_SIDED_NOT_ENTITLED` when tenant does NOT hold `referrals_double_sided`",
+        "creating → validate advanced reward types: if reward_type IN (free_months, free_sessions, credits, point_award) refuse with `REFERRAL_ADVANCED_REWARD_NOT_ENTITLED` when tenant does NOT hold `referrals_advanced_reward_types`",
+        "creating → validate vesting_rule dependencies: trigger_plus_hold_days requires vesting_hold_days IN [1..365]; n_events_completed requires vesting_n_events > 0",
+        "creating → validate program_starts_at < program_ends_at (when ends_at is set); refuse with `REFERRAL_PROGRAM_INVALID_DATE_RANGE`",
+        "creating → validate fraud_config JSONB against schemas/referral-program.schema.json (fraud_config sub-shape); refuse with `REFERRAL_PROGRAM_INVALID_FRAUD_CONFIG`",
+        "creating → validate eligibility_config JSONB against schemas/referral-program.schema.json (eligibility_config sub-shape)",
+        "creating → validate max_rewards_per_program: if set requires `referrals_program_budget_cap` (Medium+)",
+        "creating → default status = 'draft'; fire ReferralProgramCreated",
+        "updating (status draft -> active) → refuse when program_starts_at > now() (schedule via a cron activation for future starts); require program has at least one code (user_scoped auto-issue OR admin campaign code)",
+        "updating (status active -> paused) → allow; fire ReferralProgramPaused; existing in-flight referrals complete on their trajectory",
+        "updating (status -> archived) → allow only from status IN ('draft','paused','active'); fire ReferralProgramArchived; cascade to pending referrals via ArchiveReferralsOnProgramArchived listener",
+        "updating (reward_type_*, reward_amount_*) → REFUSE when program has any in-flight referrals in status IN ('trigger_pending','vesting','vested','rewarded') — reward config cannot change after any referral committed to it (returns `REFERRAL_PROGRAM_REWARD_LOCKED`)",
+        "updating (fraud_config, eligibility_config) → allow at any time — takes effect on new claims only",
+        "deleting → refuse when program has any referrals in non-terminal status (must archive first). Soft-delete allowed only from archived status",
+        "post-commit budget check → if max_rewards_per_program set AND rewards_issued_count >= max: fire ReferralProgramBudgetReached (idempotent — check audit for prior fire)"
+      ]
+    },
+    {
+      "model": "ReferralCode",
+      "observer": "Academorix\\Growth\\Referrals\\Observers\\ReferralCodeObserver",
+      "handles": [
+        "creating → populate ULID prefix `rcd_`",
+        "creating → refuse when parent program.status NOT IN ('draft','active') — no code creation on paused/archived",
+        "creating → enforce unique (tenant_id, code) via partial unique index; refuse with `REFERRAL_CODE_DUPLICATE`",
+        "creating → validate code_type vs owner_type/owner_user_id/campaign_name: user_scoped requires owner_user_id + owner_type='user'; campaign requires campaign_name + owner_type='campaign'; opaque requires no owner (returns `REFERRAL_CODE_OWNER_MISMATCH`)",
+        "creating → validate code format per code_type: user_scoped follows pattern `[a-z0-9]+(-[a-z0-9]{4,8})?` OR generated via ReferralCodeGenerator.forUser; campaign follows `[A-Z0-9_-]{4,32}`; opaque follows `[A-Z0-9]{16,26}`",
+        "creating → for campaign codes: consume 1 unit of `referrals_code_slot` entitlement; user_scoped codes always free",
+        "creating → validate usage_cap null OR positive integer",
+        "creating → validate expires_at IS NULL OR > now()",
+        "creating → default is_active=true, usage_count=0; fire ReferralCodeIssued",
+        "updating (usage_count incremented) → refuse when usage_count > usage_cap (should never happen — ReferralClaimer + observer both guard); if new usage_count == usage_cap: fire ReferralCodeUsageCapReached",
+        "updating (is_active false) → allow; new claims against the code refused",
+        "updating (owner_user_id) → REFUSE — code ownership is immutable (returns `REFERRAL_CODE_OWNER_IMMUTABLE`)",
+        "deleting → refuse when code has any referrals in non-terminal status. Soft-delete permitted on deactivated + zero-usage codes",
+        "post-commit expiry check → if expires_at is set + past: fire ReferralCodeExpired (idempotent)"
+      ]
+    },
+    {
+      "model": "Referral",
+      "observer": "Academorix\\Growth\\Referrals\\Observers\\ReferralObserver",
+      "handles": [
+        "creating → populate ULID prefix `ref_`",
+        "creating → refuse when tenant does NOT hold `referrals_capture` entitlement",
+        "creating → refuse when parent program.status != 'active' (returns `REFERRAL_PROGRAM_NOT_ACTIVE`)",
+        "creating → refuse when parent program has time window: program_starts_at > now() OR program_ends_at < now() (returns `REFERRAL_PROGRAM_OUTSIDE_WINDOW`)",
+        "creating → refuse when referrer_id equals referred_id (self-referral guard — returns `REFERRAL_SELF_REFERRAL`)",
+        "creating → refuse when a Referral row already exists for (tenant_id, referral_program_id, referrer_id, referred_id) via the composite unique partial index (returns `REFERRAL_ALREADY_EXISTS`)",
+        "creating → refuse when program_budget_cap set + program.rewards_issued_count >= max_rewards_per_program (returns `REFERRAL_PROGRAM_BUDGET_EXHAUSTED`)",
+        "creating → refuse when referrer has already hit max_rewards_per_referrer / max_rewards_per_period (returns `REFERRAL_REFERRER_CAP_REACHED`)",
+        "creating → run FraudDetector immediately (returns fraud_score 0..100); refuse when fraud_score > program.fraud_config.hard_block_threshold (returns `REFERRAL_FRAUD_HARD_BLOCK`)",
+        "creating → if fraud_score is warn-level (>= program.fraud_config.warn_threshold, default 40): create ReferralFraudFlag row with severity='warn' but proceed",
+        "creating → snapshot AttributionContext via AttributionSnapshotBuilder into attribution_snapshot JSONB",
+        "creating → snapshot device_snapshot (user_agent_hash, ip_hash, device_fingerprint_hash) via IpHasher + DeviceParser",
+        "creating → default status='pending_claim' OR 'claimed' per the caller path (public GET /claim/{code} sets 'pending_claim'; signup flow sets 'claimed')",
+        "creating → fire ReferralClaimed",
+        "updating (status → signed_up) → verify referred user is new (referred_id resolves to a user with created_at close to now — within 24h); refuse when the user existed before the referral timestamp (`REFERRAL_REFERRED_NOT_NEW`); fire ReferralSignedUp + fire marketing::CaptureReferralSignupAsConversion",
+        "updating (status → trigger_pending) → fire ReferralTriggerReached; enqueue DetectReferralFraudJob for the trigger-time re-check",
+        "updating (status → vesting) → set vesting_starts_at + vesting_completes_at via VestingScheduler (based on program.vesting_rule); fire ReferralEnteredVesting; if vesting_rule='immediate' cascade to status='vested' in the same transaction",
+        "updating (status → vested) → ATOMIC CONVERSION: create ReferralReward row(s) in the same DB transaction (1 for single_sided, 2 for double_sided). Uses SELECT ... FOR UPDATE on the referral row + inserts rewards. On any failure: rollback both sides + fire REFERRAL_ATOMICITY_FAILED (P1); fire ReferralVested with reward_ids",
+        "updating (status → cancelled) → cascade to any pending / vesting rewards (transition to cancelled); to materialized rewards → clawback (transition to clawback + fire ReferralClawback); fire ReferralCancelled",
+        "updating (status → rewarded) → verify ALL rewards on this referral are status='paid'; refuse otherwise; fire ReferralRewarded",
+        "updating (status → fraudulent) → cascade to pending / vesting rewards (cancelled); to materialized rewards → clawback with reason='fraud'; fire ReferralCancelled with cancellation_reason='fraud_detected'",
+        "updating (status → expired) → allowed only from status IN ('pending_claim','claimed') by ExpireStaleReferralsJob; fire ReferralExpired",
+        "updating (attribution_snapshot changed) → REFUSE (returns `REFERRAL_ATTRIBUTION_SNAPSHOT_IMMUTABLE`) — the snapshot is frozen at claim time",
+        "deleting (soft-delete) → refuse when status NOT IN terminal set (rewarded/cancelled/expired/fraudulent). Retention pipeline handles hard-delete."
+      ]
+    },
+    {
+      "model": "ReferralReward",
+      "observer": "Academorix\\Growth\\Referrals\\Observers\\ReferralRewardObserver",
+      "handles": [
+        "creating → populate ULID prefix `rrw_`",
+        "creating → verify parent Referral status IN ('vesting','vested') — otherwise refuse (returns `REFERRAL_REWARD_INVALID_PARENT_STATUS`)",
+        "creating → verify (referral_id, recipient_role) is unique via partial unique index (returns `REFERRAL_REWARD_DUPLICATE_ROLE` on collision — prevents double-materialization on retry)",
+        "creating → verify reward_type / reward_amount / reward_currency matches the program config for this role (returns `REFERRAL_REWARD_CONFIG_MISMATCH` if program.reward_type_referrer != reward.reward_type for role=referrer, etc.)",
+        "creating → for advanced reward types: verify tenant still holds `referrals_advanced_reward_types` (rare edge case: entitlement revoked between program create + first vest)",
+        "creating → default status='pending' (or 'vested' when created inside the ReferralObserver vested-transition — atomic)",
+        "creating → set vesting_starts_at + vesting_completes_at from the parent Referral row (denormalised for query planning)",
+        "creating → fire ReferralRewardMaterialized when created with finance_credit_id already set (rare — normally MaterializeVestedRewardsJob does the materialization)",
+        "updating (status pending → vesting) → cascade from parent Referral transition",
+        "updating (status vesting → vested) → cascade from parent Referral transition",
+        "updating (status vested → materialized) → require finance_credit_id + materialized_at to be set; refuse if finance_credit_id was already set to a different value (returns `REFERRAL_REWARD_DOUBLE_MATERIALIZATION` — P1); fire ReferralRewardMaterialized",
+        "updating (status materialized → paid) → require paid_at + materialized_at both set; fire ReferralRewarded; check if all rewards on parent Referral are paid → transition parent Referral to status='rewarded'",
+        "updating (status → cancelled) → allow from pending / vesting / vested; refuse from materialized / paid (must use clawback instead)",
+        "updating (status → clawback) → require clawback_reason IN ('refund','chargeback','fraud','program_archived') + clawback_at; fire ReferralClawback; if was materialized: notify Finance module to reverse the credit",
+        "updating (reward_amount, reward_currency, reward_type) → REFUSE — reward terms are frozen at create (returns `REFERRAL_REWARD_TERMS_IMMUTABLE`)",
+        "deleting (soft-delete) → refuse when status NOT IN terminal set (paid / cancelled / clawback); retention pipeline handles hard-delete after 7-year window"
+      ]
+    },
+    {
+      "model": "ReferralFraudFlag",
+      "observer": "Academorix\\Growth\\Referrals\\Observers\\ReferralFraudFlagObserver",
+      "handles": [
+        "creating → populate ULID prefix `rfr_`",
+        "creating → verify parent Referral.tenant_id equals flag.tenant_id (cross-tenant guard)",
+        "creating → validate flag_type against known enum (self_ip_match / device_fingerprint_match / disposable_email / self_email_variant / velocity_exceeded / click_storm_pattern / blacklist_domain / geographic_mismatch / behavioral_anomaly)",
+        "creating → validate confidence IN [0..100]",
+        "creating → validate details JSONB has the shape required for the flag_type (self_ip_match requires matched_ip_hash; device_fingerprint_match requires matched_device_hash; velocity_exceeded requires velocity_window_seconds + count; etc.)",
+        "creating → fire ReferralFraudDetected",
+        "creating → if severity='critical': immediately transition parent Referral to status='fraudulent' (in a nested transaction) + cascade to rewards",
+        "creating → notification: dispatch ReferralFraudFlaggedNotification to admin (severity determines opt-out — critical is cannot-opt-out)",
+        "updating (disposition set → confirmed_fraud) → cascade parent Referral to status='fraudulent'; cascade rewards → clawback with clawback_reason='fraud'; fire ReferralFraudFlagReviewed",
+        "updating (disposition set → false_positive) → no cascade; the flag stays for audit but doesn't affect reward flow; fire ReferralFraudDismissed + ReferralFraudFlagReviewed; register in FraudDetector's known-false-positives for the (referrer, referred) pair — lowers confidence for future flags",
+        "updating (disposition set → manual_override_approved) → REQUIRE `referrals_manual_override` entitlement (Enterprise-only); reversibly clears the block on the referral — permits it to continue to trigger_pending / vesting; fire ReferralFraudFlagReviewed; audit-critical (recorded with reason)",
+        "updating (severity, flag_type, confidence, details) → REFUSE — flag detection findings are immutable (returns `REFERRAL_FRAUD_FLAG_IMMUTABLE`); only disposition + reviewed fields are mutable",
+        "deleting → REFUSE ALL — fraud flags are compliance-relevant + retained 7 years hard; retention pipeline handles hard-purge"
+      ]
+    }
+  ]
+}

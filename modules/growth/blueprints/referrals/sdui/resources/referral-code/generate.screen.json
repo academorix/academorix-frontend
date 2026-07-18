@@ -1,0 +1,108 @@
+{
+  "id": "referrals.resources.referral-code.generate",
+  "title": "Generate campaign code",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/referral-codes/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "referrals", "entity": "referral-code", "action": "create" },
+  "requiresPermission": "referral_codes.create",
+  "requiresEntitlement": "referrals_capture",
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-2xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Generate campaign code" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "User codes are auto-issued when users activate. Use this form for campaign codes (SUMMER25) + opaque codes (A/B cohorts)." } }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "info",
+            "children": "Campaign codes consume 1 unit of `referrals_code_slot` entitlement (Medium+). User codes are always free."
+          }
+        },
+        {
+          "kind": "Widget",
+          "widget": "referrals.program-picker",
+          "props": { "label": "Program", "isRequired": true, "onlyActive": true },
+          "form": { "field": "referral_program_id" }
+        },
+        {
+          "kind": "ComboBox",
+          "props": { "label": "Code type", "menuTrigger": "focus", "isRequired": true },
+          "props_items": [
+            { "id": "campaign", "label": "Campaign (readable — SUMMER25)" },
+            { "id": "opaque", "label": "Opaque (random — A/B cohorts)" }
+          ],
+          "form": { "field": "code_type", "defaultValue": "campaign" }
+        },
+        {
+          "kind": "TextField",
+          "props": {
+            "label": "Code",
+            "isRequired": true,
+            "placeholder": "SUMMER25",
+            "description": "Uppercase alphanumeric + dash + underscore. 4-32 chars."
+          },
+          "bindings": { "hidden": { "$expr": "form.code_type !== 'campaign'" } },
+          "form": { "field": "code" }
+        },
+        {
+          "kind": "Alert",
+          "bindings": { "hidden": { "$expr": "form.code_type !== 'opaque'" } },
+          "props": {
+            "variant": "info",
+            "children": "Opaque codes are auto-generated. You'll see the code after submit."
+          }
+        },
+        {
+          "kind": "TextField",
+          "props": { "label": "Campaign name", "description": "Internal name for reporting. E.g. 'Summer 2026 Facebook Ads'." },
+          "bindings": { "hidden": { "$expr": "form.code_type !== 'campaign'" } },
+          "form": { "field": "campaign_name" }
+        },
+        {
+          "kind": "NumberField",
+          "props": { "label": "Usage cap", "minValue": 1, "description": "Max redemptions. Leave empty for unlimited." },
+          "form": { "field": "usage_cap" }
+        },
+        {
+          "kind": "DatePicker",
+          "props": { "label": "Expires at", "description": "Leave empty for no expiration." },
+          "form": { "field": "expires_at" }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2 pt-4" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate.back" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "children": "Generate code" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/referral-codes",
+                  "bodyExpr": "form",
+                  "onSuccess": { "kind": "navigate.back" }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

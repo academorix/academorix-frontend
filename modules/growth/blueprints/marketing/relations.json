@@ -1,0 +1,123 @@
+{
+  "id": "academorix://modules/marketing/relations",
+  "$version": 1,
+  "title": "marketing — model relationships",
+  "description": "Four owned entities. MarketingEvent is the aggregate root; MarketingDelivery + MarketingDeadLetter attach to it. MarketingProviderConfig is standalone (tenant-scoped) — deliveries reference it via provider slug + provider_config_id. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / region_id / organization_id / scope_node_id on any owned row.",
+  "internal": [
+    {
+      "from": "MarketingEvent",
+      "kind": "hasMany",
+      "to": "MarketingDelivery",
+      "foreignKey": "marketing_event_id",
+      "description": "Per-provider-per-attempt delivery log. RESTRICT on event hard-delete via observer."
+    },
+    {
+      "from": "MarketingDelivery",
+      "kind": "belongsTo",
+      "to": "MarketingEvent",
+      "foreignKey": "marketing_event_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT — deliveries anchor to their event for auditing. An event's hard-delete cascades only after 7-year retention closes."
+    },
+    {
+      "from": "MarketingEvent",
+      "kind": "hasMany",
+      "to": "MarketingDeadLetter",
+      "foreignKey": "marketing_event_id",
+      "description": "Dead-letter rows for max-attempts-exceeded events. Zero-or-more per event (one per failed provider)."
+    },
+    {
+      "from": "MarketingDeadLetter",
+      "kind": "belongsTo",
+      "to": "MarketingEvent",
+      "foreignKey": "marketing_event_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT — dead letters anchor to their event. Financial retention: dead letters retained indefinitely; events retained 7 years. Dead letters may OUTLIVE their events (in which case the FK resolution returns NULL on the event side)."
+    },
+    {
+      "from": "MarketingDelivery",
+      "kind": "belongsTo",
+      "to": "MarketingProviderConfig",
+      "foreignKey": "provider_config_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT — deliveries hold provider_config_id for auditing the exact credentials used. Config soft-delete does NOT cascade — deliveries preserve the historical config reference."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "MarketingEvent",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every marketing event is tenant-scoped per tenancy-columns.md §3."
+    },
+    {
+      "from": "MarketingEvent",
+      "kind": "morphTo",
+      "to": "subject",
+      "foreignKey": "subject_id",
+      "morphType": "subject_type",
+      "description": "Polymorphic subject: User, Athlete, Membership, Subscription, Lead. Each subject_type has its own tenant scoping; MarketingEventObserver validates that subject.tenant_id == event.tenant_id (defense-in-depth against cross-tenant FK smuggling)."
+    },
+    {
+      "from": "MarketingDelivery",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Denormalised tenant_id — cascades through event.tenant_id but explicit for query-plan + FK integrity."
+    },
+    {
+      "from": "MarketingProviderConfig",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "MarketingDeadLetter",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "MarketingDeadLetter",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "resolved_by_user_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "The actor who marked the dead-letter resolved. RESTRICT for audit-integrity — user hard-delete cannot orphan resolution records."
+    }
+  ],
+  "inbound": {
+    "description": "Marketing does NOT have inbound relations. No downstream module attaches to marketing rows. Marketing is a leaf in the growth tier — its role is to fan out to external providers, not to be consumed by other domain rows.",
+    "examples": [],
+    "note": "The referrals module (Wave 5 sibling) emits its own MarketingEvent rows via the domain-event listener path but does NOT hold an FK on marketing rows. Referrals owns its own tables (`referrals`, `referral_rewards`)."
+  },
+  "morphs": [
+    {
+      "field": "subject",
+      "onModels": ["MarketingEvent"],
+      "morphType": "subject_type",
+      "morphId": "subject_id",
+      "supportedTypes": [
+        "user::User",
+        "sports::Athlete",
+        "finance::Membership",
+        "finance::Subscription",
+        "growth::Lead"
+      ],
+      "description": "Polymorphic subject of the marketing event. Each supported type is tenant-scoped in its own module. The observer validates cross-model tenant integrity on write."
+    }
+  ],
+  "notes": [
+    "None of the four owned rows carry `application_id` — cascades through tenant_id → tenants.application_id per tenancy-columns.md §2. Only the 8 named rows carry application_id directly; marketing_* is not among them.",
+    "None of the four owned rows carry `region_id`, `organization_id`, or `scope_node_id`. Marketing is a domain-plane concern — the growth/scope substrate does not apply.",
+    "MarketingDelivery.provider_config_id is a snapshot reference — when the config is soft-deleted, the delivery still resolves the config via the RESTRICT FK. When the config is hard-purged after the 90-day grace, the FK resolution returns the stale row from the audit trail.",
+    "The morph on MarketingEvent.subject is deliberately loose — the module's mapping registry (DomainEventMapper) knows about specific types, but the base schema allows any (subject_type, subject_id) pair. This lets new subject types land without a schema change.",
+    "MarketingProviderConfig has NO inverse relation from Delivery marked as hasMany — that's intentional. Deliveries are per-attempt and would double-count if we exposed the inverse. Query deliveries by (tenant, provider) instead."
+  ]
+}

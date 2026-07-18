@@ -1,0 +1,37 @@
+{
+  "id": "academorix://modules/analytics/data/providers/june",
+  "$version": 1,
+  "provider": "june",
+  "displayName": "June",
+  "description": "June B2B product analytics. Company-level insights + retention curves for SaaS.",
+  "wire_protocol": {
+    "endpoint_template": "https://api.june.so/sdk/",
+    "http_method": "POST",
+    "content_type": "application/json",
+    "auth_scheme": "Bearer api_key",
+    "batching": false
+  },
+  "config_schema": {
+    "type": "object",
+    "required": ["write_key"],
+    "properties": {
+      "write_key": {
+        "type": "string",
+        "description": "June source write key.",
+        "minLength": 20,
+        "maxLength": 128
+      },
+      "auto_group_by_tenant": {
+        "type": "boolean",
+        "default": true,
+        "description": "Auto-attach a groupId = tenant_id to every event. Enables June's B2B group-level views."
+      }
+    },
+    "additionalProperties": false
+  },
+  "test_event": {
+    "event_kind": "track",
+    "event_name": "test_event_from_academorix",
+    "properties": { "__test": true, "source": "academorix_provider_test" }
+  }
+}

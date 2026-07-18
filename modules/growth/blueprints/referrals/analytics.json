@@ -1,0 +1,150 @@
+{
+  "id": "academorix://modules/referrals/analytics",
+  "$version": 1,
+  "title": "referrals — product analytics",
+  "lane": "analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Referral Program Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "program_id", "side", "reward_type", "trigger_event", "vesting_rule"],
+      "description": "Admin created a referral program. Powers program-setup funnel + reward-type-mix insight."
+    },
+    {
+      "name": "Referral Program Activated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "program_id", "was_status"]
+    },
+    {
+      "name": "Referral Program Archived",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "program_id", "cascaded_referral_count", "cascaded_clawback_count"]
+    },
+    {
+      "name": "Referral Code Issued",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "program_id", "code_type", "has_usage_cap", "has_expiry"],
+      "description": "code_type distinguishes user_scoped auto-issue vs admin-created campaign/opaque codes."
+    },
+    {
+      "name": "Referral Clicked",
+      "kind": "track",
+      "consent_required": "marketing",
+      "properties": ["tenant_id", "code_type_bucket", "has_utm", "click_id_provider", "referrer_domain_hash"],
+      "description": "click_id_provider = google/meta/tiktok/microsoft/snapchat/none. Consent-tier marketing because click data can inform ad-network optimisation."
+    },
+    {
+      "name": "Referral Claimed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "program_id", "fraud_score_bucket", "code_type", "utm_source"],
+      "description": "fraud_score_bucket: 0-19 / 20-39 / 40-69 / 70-89 / 90-100 (pre-computed bin — never raw score)."
+    },
+    {
+      "name": "Referral Signed Up",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "program_id", "days_from_claim_bucket", "utm_source", "click_id_provider"]
+    },
+    {
+      "name": "Referral Trigger Reached",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "program_id", "trigger_event", "days_from_signup_bucket"]
+    },
+    {
+      "name": "Referral Vested",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "program_id", "reward_type", "reward_amount_bucket", "side", "days_from_trigger_bucket", "was_forced"],
+      "description": "Fires a mirror event on the marketing lane for ad-network conversion attribution."
+    },
+    {
+      "name": "Referral Reward Materialized",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "program_id", "reward_type", "reward_amount_bucket", "recipient_role", "days_from_vested_bucket"]
+    },
+    {
+      "name": "Referral Rewarded",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "program_id", "reward_type", "reward_amount_bucket", "recipient_role", "days_from_materialized_bucket"]
+    },
+    {
+      "name": "Referral Cancelled",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "program_id", "cancellation_reason", "was_within_notice_window", "status_at_cancel"]
+    },
+    {
+      "name": "Referral Expired",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "program_id", "days_since_claimed_bucket"]
+    },
+    {
+      "name": "Referral Fraud Detected",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "program_id", "flag_type", "severity", "confidence_bucket"],
+      "description": "P1 event — every fire indicates data-integrity concern. Consent tier: essential (safety + integrity)."
+    },
+    {
+      "name": "Referral Fraud Reviewed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "flag_type", "severity", "disposition", "days_from_created_bucket"]
+    },
+    {
+      "name": "Referral Clawback",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "program_id", "clawback_reason", "was_paid", "was_materialized", "reversed_amount_bucket"]
+    },
+    {
+      "name": "Referral Program Budget Reached",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "program_id", "budget_cap_bucket", "days_since_program_start_bucket"]
+    },
+    {
+      "name": "Referral Program Budget Spike",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "program_id", "spike_ratio_bucket", "consumed_in_24h_bucket"],
+      "description": "P2 event — 50% consumed in 24h. Ops/product signal. Consent tier: essential."
+    },
+    {
+      "name": "Referral Max Referrals Reached",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "program_id", "cap_type", "cap_value_bucket"]
+    },
+    {
+      "name": "Referral Invitation Sent",
+      "kind": "track",
+      "consent_required": "marketing",
+      "properties": ["tenant_id", "channel", "recipient_count", "template_slug"],
+      "description": "Consent tier: marketing (user-initiated outbound marketing act — subject to CAN-SPAM disclosures)."
+    },
+    {
+      "name": "Referral Invitation Clicked",
+      "kind": "track",
+      "consent_required": "marketing",
+      "properties": ["tenant_id", "days_from_sent_bucket", "channel"]
+    }
+  ],
+  "notes": [
+    "Reward amounts NEVER surface as raw properties — always the bucket (0-999 / 1000-2999 / 3000-9999 / 10000+). Prevents competitor cross-inference.",
+    "fraud_score is likewise bucketed. Only aggregate rollups (per-tenant, per-program) expose the raw score to admin dashboards.",
+    "The 'essential' consent tier for fraud events + budget spikes is deliberate — data-integrity signals cannot be opted out.",
+    "Consent tier 'marketing' on click + invitation events aligns with GDPR/CCPA marketing-consent — a user who revokes marketing consent stops appearing in ad-network fanout AND stops receiving invitation emails."
+  ]
+}

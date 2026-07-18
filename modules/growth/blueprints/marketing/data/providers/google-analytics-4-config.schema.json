@@ -1,0 +1,49 @@
+{
+  "id": "academorix://modules/marketing/data/providers/google-analytics-4-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "GA4 Measurement Protocol provider config",
+  "description": "Configuration shape for a Google Analytics 4 Measurement Protocol integration.",
+  "type": "object",
+  "required": ["measurement_id", "api_secret"],
+  "additionalProperties": false,
+  "properties": {
+    "measurement_id": {
+      "type": "string",
+      "pattern": "^G-[A-Z0-9]+$",
+      "description": "GA4 Measurement ID. Format: G-XXXXXXXXXX."
+    },
+    "api_secret": {
+      "type": "string",
+      "minLength": 20,
+      "description": "GA4 Measurement Protocol API secret. Generated in the GA4 Admin > Data Streams > Web > Measurement Protocol API secrets pane. Encrypted at rest."
+    },
+    "firebase_app_id": {
+      "type": ["string", "null"],
+      "description": "For app-stream integrations (mobile). When present, dispatches use the app-specific endpoint. Format: 1:XXXX:web:XXXX or 1:XXXX:android:XXXX."
+    },
+    "default_currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "default": "USD",
+      "description": "Fallback ISO 4217 currency for events that don't carry a value_currency."
+    },
+    "engagement_time_msec_default": {
+      "type": "integer",
+      "minimum": 100,
+      "default": 100,
+      "description": "GA4 requires an engagement_time_msec on every event to trigger user_engagement. Default 100ms."
+    },
+    "debug_endpoint": {
+      "type": "boolean",
+      "default": false,
+      "description": "true = dispatch to https://www.google-analytics.com/debug/mp/collect (validates payload + returns validation errors, does NOT record the event). Used for provider test mode. false = production endpoint."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15
+    }
+  }
+}

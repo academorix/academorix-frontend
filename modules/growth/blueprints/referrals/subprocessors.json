@@ -1,0 +1,34 @@
+{
+  "id": "academorix://modules/referrals/subprocessors",
+  "$version": 1,
+  "title": "referrals — subprocessors",
+  "description": "The Referrals module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. Downstream marketing module engages ad-network subprocessors (Meta / Google / TikTok / Microsoft / Snapchat) to receive the marketing events fired from this module; the notifications module engages email/SMS subprocessors to deliver invitations. All are declared in their respective modules' subprocessors.json.",
+  "subprocessors": [],
+  "downstream_subprocessors_referenced": [
+    {
+      "module": "marketing",
+      "reference": "marketing::subprocessors.json (Wave 5)",
+      "used_for": "Forwarding Referral Signup Attributed + Referral Vested Attributed + reversal events to ad networks (Meta CAPI, Google Ads Enhanced Conversions, TikTok Events API, Microsoft UET, Snapchat CAPI)."
+    },
+    {
+      "module": "notifications",
+      "reference": "notifications::subprocessors.json",
+      "used_for": "Delivering ReferralInvitationSent invitations via email / SMS + ReferralClaimed / ReferralSignedUp / ReferralVested / ReferralRewarded / ReferralClawback / ReferralFraudFlagged notifications."
+    },
+    {
+      "module": "finance",
+      "reference": "finance::subprocessors.json (Wave 4)",
+      "used_for": "Processing the actual credit issuance (materialization) + refund/chargeback cascades. Stripe / Paddle / Adyen depending on region."
+    },
+    {
+      "module": "attribution",
+      "reference": "attribution::subprocessors.json",
+      "used_for": "None — attribution module also engages zero direct subprocessors. Referrals reads AttributionSnapshotBuilder output at claim time; the snapshot itself is stored locally."
+    }
+  ],
+  "notes": [
+    "This file exists deliberately with an empty subprocessors array. The GDPR Art. 30 record of processing activities requires per-module subprocessor lists; an empty list is the correct declaration for a module that engages none directly.",
+    "The Wave 5 tenant-facing 'subprocessor disclosure' page reads THIS FILE'S downstream_subprocessors_referenced list to compose the full disclosure — every downstream that this module transitively engages is surfaced to the tenant admin.",
+    "Ad-network subprocessors (Meta / Google / TikTok / Microsoft / Snapchat) are the highest-risk category — they receive PII (hashed) + click IDs + conversion values. Tenants opt into which providers via marketing module's provider configuration."
+  ]
+}

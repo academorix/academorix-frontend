@@ -1,0 +1,131 @@
+{
+  "id": "marketing.resources.marketing-roas.dashboard",
+  "title": "ROAS report",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/marketing/roas",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "marketing", "entity": "marketing-roas", "action": "view" },
+  "requiresPermission": "marketing.roas.view",
+  "requiresEntitlement": "marketing_roas_report",
+  "dataSources": [
+    {
+      "name": "roas",
+      "kind": "http.get",
+      "url": "/api/v1/marketing/roas",
+      "unwrap": "data",
+      "queryFromFilters": true,
+      "initialFilters": { "group_by": "campaign", "from": "$daysAgo(30)", "to": "$today" }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Return on Ad Spend" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Delivered marketing conversions attributed to your campaigns." } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "DateRangePicker",
+              "props": { "label": "Date range", "className": "min-w-64" },
+              "actions": {
+                "onChange": {
+                  "kind": "filter.setMany",
+                  "fields": { "from": "$value.start", "to": "$value.end" }
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Group by", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "campaign", "label": "Campaign" },
+                { "id": "source", "label": "Source" },
+                { "id": "medium", "label": "Medium" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "group_by", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Provider", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items_source": "marketing.providers",
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "provider", "valueExpr": "$selectedKey" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Grid",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-3 gap-4" },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-6" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Total delivered revenue" } },
+                { "kind": "Text", "props": { "className": "text-3xl font-bold mt-1" }, "bindings": { "children": { "$ref": "roas.totals.value_delivered", "formatter": "currency" } } }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-6" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Conversion events" } },
+                { "kind": "Text", "props": { "className": "text-3xl font-bold mt-1" }, "bindings": { "children": { "$ref": "roas.totals.event_count" } } }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-6" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Delivery success rate" } },
+                { "kind": "Text", "props": { "className": "text-3xl font-bold mt-1" }, "bindings": { "children": { "$ref": "roas.totals.success_rate", "formatter": "percent" } } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Attribution breakdown" } },
+            {
+              "kind": "DataGrid",
+              "bindings": { "items": { "$ref": "roas.rows" } },
+              "props": {
+                "columns": [
+                  { "field": "grouping_key", "label": "Group", "sortable": true, "width": 320 },
+                  { "field": "value_delivered", "label": "Revenue", "sortable": true, "defaultSort": "desc", "width": 160, "formatter": "currency" },
+                  { "field": "event_count", "label": "Events", "sortable": true, "width": 120 },
+                  { "field": "delivered_count", "label": "Delivered", "width": 120 },
+                  { "field": "failed_count", "label": "Failed", "width": 100 },
+                  { "field": "suppressed_count", "label": "Suppressed", "width": 130 }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

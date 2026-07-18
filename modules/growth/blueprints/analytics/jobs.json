@@ -1,0 +1,127 @@
+{
+  "id": "academorix://modules/analytics/jobs",
+  "$version": 1,
+  "title": "analytics — background jobs",
+  "description": "8 queued jobs covering capture, fan-out dispatch, per-provider delivery, batched flush, retry, identity reconciliation, retention purge, and sampling-rate reconciliation.",
+  "jobs": [
+    {
+      "class": "Academorix\\Growth\\Analytics\\Jobs\\CaptureAnalyticsEventJob",
+      "queue": "analytics",
+      "purpose": "Dispatched by the AnalyticsEventCapturer when EmitsAnalyticsEvent trait fires inline (rare) OR when a domain event's registered capturer chooses async capture. Standard sync capture goes through AnalyticsEventCapturer::capture() directly which creates the row synchronously; this job is the async escape hatch.",
+      "steps": [
+        "Read the domain-event snapshot from the job payload.",
+        "Resolve subject via AnalyticsIdentity or User lookup.",
+        "Snapshot attribution from AttributionContext (frozen from job dispatch time \u2014 the request context is gone).",
+        "Snapshot consent via ConsentGate::allows(subject, 'analytics').",
+        "Compute eligible_provider_count via AnalyticsProviderConfig fan-out with sampling roll.",
+        "Insert AnalyticsEvent row \u2014 observer fires AnalyticsEventCaptured."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "(domain_event_id, capturer_class) when domain_event_id is available; else the job's random ULID",
+      "tries": 3,
+      "backoff": [10, 60, 300]
+    },
+    {
+      "class": "Academorix\\Growth\\Analytics\\Jobs\\DispatchAnalyticsEventJob",
+      "queue": "analytics",
+      "purpose": "Reads an AnalyticsEvent row + fans out DispatchToProviderJob per eligible provider. Skips providers with circuit_breaker_state.state='open'. Suppresses providers where consent has since revoked (re-checks consent_snapshot column).",
+      "steps": [
+        "Load AnalyticsEvent by ID.",
+        "Load active AnalyticsProviderConfigs for tenant where enabled_event_types matches event_name.",
+        "For each config: check circuit_breaker_state; skip if open. Check consent_snapshot; suppress if revoked. Check sampling roll (stable hash); suppress if rolled out.",
+        "Insert AnalyticsDelivery(status=pending) per eligible provider.",
+        "Dispatch DispatchToProviderJob per delivery (or add to batch buffer for batching providers).",
+        "Fire AnalyticsEventDispatched."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "analytics_event_id",
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Growth\\Analytics\\Jobs\\DispatchToProviderJob",
+      "queue": "resolved-at-dispatch \u2014 analytics-critical if event.category IN (funnel_step, lifecycle), else analytics",
+      "purpose": "Single-event delivery to a single provider (non-batching path OR opportunistic non-batched dispatch when the batch queue is otherwise empty).",
+      "steps": [
+        "Load AnalyticsDelivery(id) + related AnalyticsEvent + AnalyticsProviderConfig.",
+        "Resolve AnalyticsProviderManager->instance(provider).",
+        "Call ProviderPayloadTransformer::transform(event, provider) to produce native payload.",
+        "Fire AnalyticsDeliveryAttempted.",
+        "HTTP POST to provider endpoint.",
+        "On 2xx: update AnalyticsDelivery(status=delivered, response_http_status, latency_ms, response body capped at 8KB). Fire AnalyticsDeliverySucceeded.",
+        "On 429: update AnalyticsDelivery(status=rate_limited, next_retry_at=now + Retry-After). Fire AnalyticsDeliveryRateLimited.",
+        "On 5xx / network: update AnalyticsDelivery(status=failed, attempt_number+=1, next_retry_at=now + backoff[attempt]). Fire AnalyticsDeliveryFailed.",
+        "On non-retryable (4xx except 429): update AnalyticsDelivery(status=permanently_failed). Fire AnalyticsDeliveryFailed."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 60,
+      "uniqueVia": "(analytics_delivery_id, attempt_number)",
+      "tries": 1,
+      "notes": "Retries are HANDLED VIA RetryFailedAnalyticsDeliveriesJob (schedule-driven), not via Laravel's job retry mechanism. This gives us explicit control over the next_retry_at column + backoff schedule."
+    },
+    {
+      "class": "Academorix\\Growth\\Analytics\\Jobs\\FlushBatchedProviderJob",
+      "queue": "analytics",
+      "purpose": "Per-provider batch flush. Dispatched by the batch buffer when batch_config.size reached OR flush_interval_ms elapsed OR shutdown signal received.",
+      "steps": [
+        "Load buffered AnalyticsDelivery(status=pending, batch_id=<this batch>) rows.",
+        "Concatenate ProviderPayloadTransformer output into the provider's batch shape.",
+        "Fire AnalyticsDeliveryAttempted per delivery.",
+        "HTTP POST batch to provider batch endpoint.",
+        "Parse provider batch response \u2014 many providers return per-event success/failure detail (Segment does; Amplitude returns overall).",
+        "Update each AnalyticsDelivery row to delivered / failed based on the response detail.",
+        "Fire AnalyticsBatchFlushed on total success OR AnalyticsBatchFailed on transport failure.",
+        "Fire per-delivery events (AnalyticsDeliverySucceeded / Failed)."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 30,
+      "uniqueVia": "(tenant_id, provider_config_id) \u2014 one flush job in flight per (tenant, provider)",
+      "tries": 2,
+      "backoff": [10, 60]
+    },
+    {
+      "class": "Academorix\\Growth\\Analytics\\Jobs\\RetryFailedAnalyticsDeliveriesJob",
+      "queue": "analytics",
+      "purpose": "Every 30 seconds \u2014 scan AnalyticsDelivery where status IN (failed, rate_limited) AND next_retry_at <= now() AND attempt_number < config.retry_config.max_attempts. Dispatch DispatchToProviderJob to retry.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 25,
+      "tries": 1,
+      "notes": "Scheduled every 30s. Reads a bounded batch (100 rows per invocation) to avoid overwhelming providers on recovery."
+    },
+    {
+      "class": "Academorix\\Growth\\Analytics\\Jobs\\ReconcileAnalyticsIdentityJob",
+      "queue": "analytics",
+      "purpose": "Nightly 03:00 UTC per tenant. Cleans dangling anonymous identities: (a) purges AnalyticsIdentity rows with last_seen_at older than 90 days and identified_user_id IS NULL; (b) rewrites subject_id on any remaining anonymous events whose subject is now identified but MergeAliasedEventsJob failed to run (belt-and-braces); (c) purges identified identities where the User was erased more than 30 days ago.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "tenant_id",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Growth\\Analytics\\Jobs\\PurgeExpiredAnalyticsDataJob",
+      "queue": "analytics",
+      "purpose": "Weekly Sunday 03:00 UTC. Retention purge: analytics_events > 2 years (5 with extended retention); analytics_deliveries > 90 days; analytics_provider_configs deleted_at > 90 days. Writes a summary row into audit + fires per-batch counters.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 7200,
+      "tries": 1,
+      "notes": "Ordering matters: deliveries first (they RESTRICT event deletion), then events, then configs."
+    },
+    {
+      "class": "Academorix\\Growth\\Analytics\\Jobs\\SamplingRateReconcilerJob",
+      "queue": "analytics",
+      "purpose": "Nightly 04:00 UTC. Computes per-event actual dispatch rate vs configured sampling_rate for the past 24h. Emits a monitoring metric per provider per event_name so ops can see if sampling is behaving as configured. Not a data-mutating job \u2014 diagnostic only.",
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 1
+    }
+  ]
+}

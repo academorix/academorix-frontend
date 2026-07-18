@@ -1,0 +1,48 @@
+{
+  "id": "academorix://modules/marketing/data/providers/meta-capi-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Meta CAPI provider config",
+  "description": "Configuration shape for a Meta Conversions API integration. Validated by MarketingProviderConfigObserver on create + update.",
+  "type": "object",
+  "required": ["pixel_id", "access_token"],
+  "additionalProperties": false,
+  "properties": {
+    "pixel_id": {
+      "type": "string",
+      "pattern": "^[0-9]{15,20}$",
+      "description": "The Meta Pixel ID. 15-20 numeric characters."
+    },
+    "access_token": {
+      "type": "string",
+      "minLength": 100,
+      "description": "The Meta CAPI access token. Generated in Meta Events Manager. Encrypted at rest."
+    },
+    "test_event_code": {
+      "type": ["string", "null"],
+      "pattern": "^TEST[0-9]+$",
+      "description": "Optional test event code. Format: TEST[0-9]+. Only used when test_mode=true on the provider_config. Meta shows these events in the Test Events tab of Events Manager."
+    },
+    "action_source": {
+      "type": "string",
+      "enum": ["website", "app", "email", "phone_call", "chat", "physical_store", "system_generated", "other"],
+      "default": "website",
+      "description": "Meta CAPI action_source parameter. Defaults to 'website' for browser-originated events; 'app' for mobile app; 'system_generated' for server-only events like subscription renewals."
+    },
+    "data_processing_options": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "string",
+        "enum": ["LDU"]
+      },
+      "description": "Meta CAPI data_processing_options. ['LDU'] enables Limited Data Use for California users (CCPA compliance). Empty/null = standard processing."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15,
+      "description": "Per-request HTTP timeout for this provider's dispatches. Overrides the global marketing.dispatch.timeout_seconds."
+    }
+  }
+}

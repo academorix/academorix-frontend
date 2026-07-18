@@ -1,0 +1,66 @@
+{
+  "id": "academorix://modules/marketing/data/providers/custom-webhook-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Custom Webhook provider config",
+  "description": "Configuration shape for the generic HMAC-signed JSON webhook provider. Escape hatch for tenants using Segment / Rudderstack / custom analytics warehouses.",
+  "type": "object",
+  "required": ["webhook_url", "hmac_secret"],
+  "additionalProperties": false,
+  "properties": {
+    "webhook_url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://",
+      "description": "HTTPS endpoint. HTTP is refused (TLS required)."
+    },
+    "hmac_secret": {
+      "type": "string",
+      "minLength": 32,
+      "description": "Shared secret for HMAC-SHA256 signing. 32 chars minimum. Encrypted at rest."
+    },
+    "signature_header": {
+      "type": "string",
+      "default": "X-Marketing-Signature",
+      "description": "HTTP header carrying the HMAC signature."
+    },
+    "timestamp_header": {
+      "type": "string",
+      "default": "X-Marketing-Timestamp",
+      "description": "HTTP header carrying the signature timestamp (Unix seconds)."
+    },
+    "signature_tolerance_seconds": {
+      "type": "integer",
+      "minimum": 60,
+      "maximum": 3600,
+      "default": 300,
+      "description": "Signature timestamp tolerance window. Prevents replay attacks."
+    },
+    "custom_headers": {
+      "type": ["object", "null"],
+      "description": "Optional additional headers on every dispatch. Useful for auth (Bearer token, API key). Values encrypted at rest.",
+      "patternProperties": {
+        "^X-[A-Za-z0-9-]+$": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "payload_shape": {
+      "type": "string",
+      "enum": ["canonical", "segment_track", "rudderstack_track", "custom"],
+      "default": "canonical",
+      "description": "Payload shape. 'canonical' = the full marketing_event row + attribution + consent snapshot as-is. 'segment_track' = Segment's Track API shape. 'rudderstack_track' = Rudderstack's Track shape. 'custom' = call the tenant's own JSONata expression via the transform_expression field."
+    },
+    "transform_expression": {
+      "type": ["string", "null"],
+      "description": "Optional JSONata expression to transform the canonical payload before dispatch. Only used when payload_shape='custom'."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15
+    }
+  }
+}

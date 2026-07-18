@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/marketing/macros",
+  "$version": 1,
+  "title": "marketing — published macros",
+  "description": "The marketing module publishes ZERO framework macros. Every consumer touches the marketing surface via injected services (MarketingEventDispatcher, MarketingProviderManager) or the #[AsDomainEventMapper] discovery path. Middleware attaches the AttributionContext (owned by growth::attribution) — marketing consumes it via injection.",
+  "namespace_note": "No macros published.",
+  "macros": [],
+  "rationale": [
+    "Marketing is a SERVER-SIDE FORWARDER. The consumer contract is: fire a domain event → the mapper turns it into a MarketingEvent → the module fans out. There is no request-level state that needs to be surfaced as a Request macro (contrast with facility::activeFacility which caches a per-request model).",
+    "The attribution snapshot IS request-scoped — but it's owned by growth::attribution (via Request::currentAttribution / Request::attributionSnapshot macros). Marketing reads those via AttributionResolver injection, not via its own macros.",
+    "Adding a marketing-specific macro (e.g. Request::activeMarketingEvent) would signal a design smell — marketing events are ephemeral capture-then-fan-out artifacts, not persistent per-request state."
+  ]
+}

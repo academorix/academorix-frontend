@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/analytics/data/providers/segment",
+  "$version": 1,
+  "provider": "segment",
+  "displayName": "Segment (Twilio)",
+  "description": "Segment CDP. Upstream fan-out point \u2014 Segment then routes to N downstream destinations configured tenant-side in Segment console.",
+  "wire_protocol": {
+    "endpoint_template": "https://api.segment.io/v1/{verb}",
+    "endpoint_eu": "https://events.eu1.segmentapis.com/v1/{verb}",
+    "http_method": "POST",
+    "content_type": "application/json",
+    "auth_scheme": "Basic (write_key:)",
+    "batch_endpoint": "https://api.segment.io/v1/batch",
+    "note": "Segment supports track, identify, page, screen, alias, group as separate verb endpoints OR unified via /v1/batch."
+  },
+  "config_schema": {
+    "type": "object",
+    "required": ["write_key"],
+    "properties": {
+      "write_key": {
+        "type": "string",
+        "description": "Segment source write key.",
+        "minLength": 20,
+        "maxLength": 128
+      },
+      "region": {
+        "type": "string",
+        "enum": ["us", "eu"],
+        "default": "us"
+      },
+      "integrations": {
+        "type": "object",
+        "description": "Segment destination overrides. Shape: { \"All\": true, \"Amplitude\": false } to enable all EXCEPT Amplitude. Passed through in every event's integrations field.",
+        "additionalProperties": { "type": ["boolean", "object"] }
+      }
+    },
+    "additionalProperties": false
+  },
+  "test_event": {
+    "event_kind": "track",
+    "event_name": "test_event_from_academorix",
+    "properties": { "__test": true, "source": "academorix_provider_test" }
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "id": "referrals.resources.referral-reward.clawback",
+  "title": "Clawback reward",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/referral-rewards/:rewardId/clawback",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "referrals", "entity": "referral-reward", "action": "clawback" },
+  "requiresPermission": "referral_rewards.clawback",
+  "requiresEntitlement": "referrals_capture",
+  "dataSources": [
+    {
+      "name": "reward",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/referral-rewards/' + $params.rewardId + '?include=referral,recipient'",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-2xl mx-auto" },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Clawback reward" }
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "danger",
+            "children": "Financial reversal — this action reverses the Finance credit + notifies the recipient. Every clawback is audit-critical."
+          }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Reward" } },
+            {
+              "kind": "Widget",
+              "widget": "referrals.reward-badge",
+              "bindings": {
+                "rewardType": { "$ref": "reward.reward_type" },
+                "rewardAmount": { "$ref": "reward.reward_amount" },
+                "rewardCurrency": { "$ref": "reward.reward_currency" },
+                "recipientRole": { "$ref": "reward.recipient_role" }
+              }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col gap-1 text-sm mt-3" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": { "$expr": "'Recipient: ' + (reward.recipient?.display_name || reward.recipient_id)" }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": { "$expr": "'Status: ' + reward.status" }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": { "$expr": "reward.materialized_at ? 'Materialized at ' + formatDate(reward.materialized_at) : 'Not yet materialized'" }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": { "$expr": "reward.paid_at ? 'Paid at ' + formatDate(reward.paid_at) : 'Not yet paid'" }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "ComboBox",
+          "props": { "label": "Clawback reason", "isRequired": true, "menuTrigger": "focus" },
+          "props_items": [
+            { "id": "refund", "label": "Refund issued" },
+            { "id": "chargeback", "label": "Chargeback filed" },
+            { "id": "fraud", "label": "Fraud confirmed" },
+            { "id": "program_archived", "label": "Program archived" }
+          ],
+          "form": { "field": "clawback_reason" }
+        },
+        {
+          "kind": "TextArea",
+          "props": { "label": "Notes (optional)", "description": "Recorded in the audit trail." },
+          "form": { "field": "notes" }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2 pt-4" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate.back" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "danger", "children": "Confirm clawback" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "urlExpr": "'/api/v1/referral-rewards/' + reward.id + '/clawback'",
+                  "bodyExpr": "form",
+                  "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/referrals/' + reward.referral_id" }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

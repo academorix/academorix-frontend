@@ -1,0 +1,178 @@
+{
+  "id": "academorix://modules/marketing/schemas/marketing-delivery",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "MarketingDelivery",
+  "description": "Per-provider-per-attempt delivery log. Carries `tenant_id` + `marketing_event_id`. Per-attempt-immutable after create. NEVER carries `application_id`, `region_id`, `organization_id`, or `scope_node_id`.",
+  "type": "object",
+  "x-module": "marketing",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "marketing_deliveries",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "mdv_",
+    "incrementing": false,
+    "model": "Academorix\\Growth\\Marketing\\Models\\MarketingDelivery",
+    "interface": "Academorix\\Growth\\Marketing\\Contracts\\Data\\MarketingDeliveryInterface",
+    "implements": ["Academorix\\Growth\\Marketing\\Contracts\\Data\\MarketingDeliveryInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToMarketingEvent",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable"
+    ],
+    "casts": {
+      "provider": "MarketingProvider",
+      "status": "MarketingDeliveryStatus",
+      "attempt_number": "integer",
+      "request_payload": "encrypted:array",
+      "response_headers": "array",
+      "response_body": "array",
+      "response_status_code": "integer",
+      "error_details": "array",
+      "dispatched_at": "datetime",
+      "responded_at": "datetime",
+      "latency_ms": "integer",
+      "next_retry_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["MarketingDeliveryObserver"],
+    "appends": ["is_terminal", "is_retryable"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "marketing_event_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "marketing_events", "column": "id", "onDelete": "restrict" }
+      },
+      "provider_config_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "marketing_provider_configs", "column": "id", "onDelete": "restrict" }
+      },
+      "provider": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: meta_capi / google_ads / google_analytics_4 / gtm_server / tiktok_events / linkedin_insight / snapchat_capi / pinterest_capi / custom_webhook."
+      },
+      "status": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "Enum: pending / dispatching / succeeded / failed / suppressed_by_consent / suppressed_by_provider_off / suppressed_by_circuit_breaker / rate_limited."
+      },
+      "attempt_number": {
+        "type": "integer",
+        "nullable": false,
+        "description": "1-based. Bounded by provider_config.retry_config.max_attempts."
+      },
+      "request_payload": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Encrypted at rest. Contains hashed PII + attribution + consent snapshot in provider-native shape."
+      },
+      "request_url": {
+        "type": "string",
+        "length": 512,
+        "nullable": false,
+        "description": "The provider endpoint URL the request went to. Includes query params for GA4."
+      },
+      "response_status_code": { "type": "integer", "nullable": true },
+      "response_headers": { "type": "jsonb", "nullable": true, "description": "Truncated to essential headers (Content-Type, X-Response-Id, Retry-After)." },
+      "response_body": { "type": "jsonb", "nullable": true, "description": "Truncated to 4KB. Encrypted at rest." },
+      "provider_event_id": {
+        "type": "string",
+        "length": 256,
+        "nullable": true,
+        "description": "The identifier the provider returned. Meta returns event_id; Google Ads returns order_id."
+      },
+      "error_details": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Shape: { error_code, error_message, retry_after, is_transient }."
+      },
+      "dispatched_at": { "type": "timestamptz", "nullable": true },
+      "responded_at": { "type": "timestamptz", "nullable": true },
+      "latency_ms": { "type": "integer", "nullable": true },
+      "next_retry_at": { "type": "timestamptz", "nullable": true, "description": "When the next retry attempt should fire. NULL = terminal (no retry)." },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["marketing_event_id", "provider", "attempt_number"], "unique": true, "name": "marketing_deliveries_event_provider_attempt_unique" },
+      { "columns": ["tenant_id", "provider", "status"], "name": "marketing_deliveries_provider_status_idx" },
+      { "columns": ["status", "next_retry_at"], "name": "marketing_deliveries_retry_sweep_idx", "predicate": "status IN ('failed', 'rate_limited') AND next_retry_at IS NOT NULL" },
+      { "columns": ["tenant_id", "created_at"], "name": "marketing_deliveries_recent_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "marketing_event_id", "provider_config_id", "provider", "status", "attempt_number", "request_url", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^mdv_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "marketing_event_id": { "type": "string", "pattern": "^mev_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "provider_config_id": { "type": "string", "pattern": "^mpc_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "provider": {
+      "type": "string",
+      "enum": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "linkedin_insight", "snapchat_capi", "pinterest_capi", "custom_webhook"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "dispatching", "succeeded", "failed", "suppressed_by_consent", "suppressed_by_provider_off", "suppressed_by_circuit_breaker", "rate_limited"]
+    },
+    "attempt_number": { "type": "integer", "minimum": 1, "maximum": 20 },
+    "request_url": { "type": "string", "format": "uri", "maxLength": 512 },
+    "response_status_code": { "type": ["integer", "null"] },
+    "response_headers": { "type": ["object", "null"] },
+    "response_body": { "type": ["object", "null"] },
+    "provider_event_id": { "type": ["string", "null"], "maxLength": 256 },
+    "error_details": {
+      "type": ["object", "null"],
+      "additionalProperties": true,
+      "properties": {
+        "error_code": { "type": ["string", "null"] },
+        "error_message": { "type": ["string", "null"] },
+        "retry_after": { "type": ["integer", "null"] },
+        "is_transient": { "type": "boolean" }
+      }
+    },
+    "dispatched_at": { "type": ["string", "null"], "format": "date-time" },
+    "responded_at": { "type": ["string", "null"], "format": "date-time" },
+    "latency_ms": { "type": ["integer", "null"], "minimum": 0 },
+    "next_retry_at": { "type": ["string", "null"], "format": "date-time" },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "attempt_number is set on insert + immutable thereafter",
+    "provider is set on insert + immutable",
+    "request_payload + request_url + provider are per-attempt-immutable",
+    "response_status_code + responded_at + latency_ms are set only on non-suppressed statuses",
+    "next_retry_at IS NULL when status IS terminal (succeeded / suppressed_*)",
+    "next_retry_at IS NOT NULL when status='failed' AND attempt_number < max_attempts AND error.is_transient=true",
+    "response_body encrypted at rest; response_headers truncated to essential headers only",
+    "request_payload encrypted at rest",
+    "unique (marketing_event_id, provider, attempt_number)"
+  ]
+}

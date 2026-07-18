@@ -1,0 +1,95 @@
+{
+  "id": "academorix://modules/analytics/retention",
+  "$version": 1,
+  "title": "analytics — retention windows",
+  "description": "Retention is compliance-anchored. Events retain 2 years by default (5 with extended entitlement); deliveries retain 90 days (support-debugging window); identities retain 1 year post-identify per GDPR minimisation. TenantErased cascades hard-delete every table.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(e) — storage limitation ('kept in a form which permits identification for no longer than is necessary')",
+    "gdpr Art. 17 — right to erasure cascades event redaction + identity deidentification",
+    "ccpa §1798.140 — behavioral profiling scoped retention",
+    "casl (Canadian anti-spam) — consent audit trail retention"
+  ],
+  "retention": [
+    {
+      "entity": "AnalyticsEvent",
+      "hot": {
+        "days": 730,
+        "description": "2 years default \u2014 supports year-over-year rollups + funnel windowing beyond a single yearly cycle."
+      },
+      "cold": { "days": 0, "description": "No cold tier \u2014 events are either hot or purged." },
+      "purge": {
+        "trigger": "hot window exceeded",
+        "action": "hard delete via PurgeExpiredAnalyticsDataJob (weekly)",
+        "job": "PurgeExpiredAnalyticsDataJob"
+      },
+      "override": {
+        "entitlement": "analytics_extended_retention",
+        "hot_days_when_enabled": 1825,
+        "description": "Enterprise + regulatory-heavy tenants extend to 5 years."
+      }
+    },
+    {
+      "entity": "AnalyticsDelivery",
+      "hot": {
+        "days": 90,
+        "description": "90 days \u2014 support-debugging window past which the provider-side dashboard is authoritative."
+      },
+      "purge": {
+        "trigger": "hot window exceeded",
+        "action": "hard delete",
+        "job": "PurgeExpiredAnalyticsDataJob"
+      },
+      "note": "Deliveries purge BEFORE their parent event (they RESTRICT event deletion)."
+    },
+    {
+      "entity": "AnalyticsProviderConfig",
+      "hot": {
+        "days": "while active",
+        "description": "Retained while is_active OR while deleted_at within 90-day grace."
+      },
+      "purge": {
+        "trigger": "deleted_at > 90 days",
+        "action": "hard delete + write summary row into audit",
+        "job": "PurgeExpiredAnalyticsDataJob"
+      }
+    },
+    {
+      "entity": "AnalyticsIdentity (anonymous, unidentified)",
+      "hot": {
+        "days": 90,
+        "description": "Dangling anonymous_ids with no activity for 90 days are purged. They contribute no useful signal past that window."
+      },
+      "purge": {
+        "trigger": "last_seen_at > 90 days AND identified_user_id IS NULL",
+        "action": "hard delete",
+        "job": "ReconcileAnalyticsIdentityJob (nightly)"
+      }
+    },
+    {
+      "entity": "AnalyticsIdentity (identified)",
+      "hot": {
+        "days": 365,
+        "description": "1 year post-identified_at per GDPR Art. 5(1)(e) minimisation. Extended to match parent User lifecycle when User is still active."
+      },
+      "purge": {
+        "trigger": "identified_at > 365 days AND parent User erased (deleted or GDPR-purged)",
+        "action": "hard delete",
+        "job": "ReconcileAnalyticsIdentityJob"
+      }
+    },
+    {
+      "entity": "audit_log (analytics-scoped)",
+      "hot": { "days": 365 },
+      "cold": {
+        "days": 2555,
+        "description": "7y for SOC 2 CC7.3 evidence \u2014 aligned with foundation's audit retention tier."
+      },
+      "purge": { "trigger": "cold window exceeded", "action": "anonymise-not-delete" }
+    },
+    {
+      "entity": "TenantErased cascade",
+      "action": "hard delete every table via PurgeAnalyticsDataForErasedTenantListener + write a summary audit row.",
+      "note": "No grace \u2014 tenant erasure is a synchronous, complete purge."
+    }
+  ]
+}

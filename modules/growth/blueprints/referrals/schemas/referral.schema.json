@@ -1,0 +1,223 @@
+{
+  "id": "academorix://modules/referrals/schemas/referral",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Referral",
+  "description": "The tracked referrer × referred × program × code instance. Frozen attribution_snapshot at claim time drives downstream marketing conversion attribution. Carries `tenant_id` + `referral_program_id` + optional `referral_code_id`. NEVER carries `application_id`, `region_id`, `organization_id`, `branch_id`, `scope_node_id`. State machine: pending_claim -> claimed -> signed_up -> trigger_pending -> vesting -> vested -> rewarded. Terminal states: rewarded, cancelled, expired, fraudulent.",
+  "type": "object",
+  "x-module": "referrals",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "referrals",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "ref_",
+    "incrementing": false,
+    "model": "Academorix\\Growth\\Referrals\\Models\\Referral",
+    "interface": "Academorix\\Growth\\Referrals\\Contracts\\Data\\ReferralInterface",
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToReferralProgram",
+      "HasReferralRewards",
+      "HasReferralFraudFlags",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "status": "ReferralStatus",
+      "cancellation_reason": "ReferralCancellationReason",
+      "attribution_snapshot": "array",
+      "device_snapshot": "array",
+      "fraud_score": "integer",
+      "claimed_at": "datetime",
+      "signed_up_at": "datetime",
+      "trigger_event_at": "datetime",
+      "vested_at": "datetime",
+      "rewarded_at": "datetime",
+      "cancelled_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["ReferralObserver"],
+    "appends": ["is_terminal", "days_until_expiry", "reward_summary"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `ref_<26>`." },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "referral_program_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "referral_programs", "column": "id", "onDelete": "restrict" }
+      },
+      "referral_code_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "referral_codes", "column": "id", "onDelete": "restrict" },
+        "description": "Nullable — attribution-only referrals (UTM tracked, no code) carry NULL."
+      },
+      "referrer_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Polymorphic. Enum: user / anonymous_lead."
+      },
+      "referrer_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Polymorphic FK. Resolved via the concrete type (user::User, leads::AnonymousLead)."
+      },
+      "referred_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Polymorphic. Enum: user / lead. Nullable during pending_claim (no resolved subject yet)."
+      },
+      "referred_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true
+      },
+      "referred_email": {
+        "type": "string",
+        "length": 254,
+        "nullable": true,
+        "description": "Captured at claim time — needed to correlate signup. Redacted to [REDACTED] 90 days post user erasure per GDPR minimisation."
+      },
+      "attribution_snapshot": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Frozen AttributionSnapshotBuilder output at claim time. IMMUTABLE — observer refuses mutation. Downstream marketing events read this."
+      },
+      "device_snapshot": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Shape: { user_agent_hash, ip_hash, device_fingerprint_hash }. All hashes SHA-256. Never raw."
+      },
+      "status": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'pending_claim'",
+        "description": "Enum: pending_claim / claimed / signed_up / trigger_pending / vesting / vested / rewarded / cancelled / expired / fraudulent."
+      },
+      "claimed_at": { "type": "timestamptz", "nullable": true },
+      "signed_up_at": { "type": "timestamptz", "nullable": true },
+      "trigger_event_at": { "type": "timestamptz", "nullable": true },
+      "vested_at": { "type": "timestamptz", "nullable": true },
+      "rewarded_at": { "type": "timestamptz", "nullable": true },
+      "cancelled_at": { "type": "timestamptz", "nullable": true },
+      "cancellation_reason": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: refund_issued / chargeback_filed / fraud_detected / manual_admin / referred_withdrew / program_archived."
+      },
+      "fraud_score": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "0..100. Set at claim time + re-scored at trigger time. > program.fraud_config.hard_block_threshold refuses the row."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "referral_program_id", "referrer_id", "referred_id"],
+        "unique": true,
+        "name": "referrals_unique_pair_idx",
+        "predicate": "deleted_at IS NULL AND referred_id IS NOT NULL",
+        "description": "One referral per program per referrer-referred pair (only when referred resolved). Prevents double-counting."
+      },
+      { "columns": ["tenant_id", "status", "created_at"], "name": "referrals_status_idx" },
+      { "columns": ["tenant_id", "referrer_type", "referrer_id"], "name": "referrals_by_referrer_idx" },
+      { "columns": ["tenant_id", "referred_type", "referred_id"], "name": "referrals_by_referred_idx" },
+      { "columns": ["tenant_id", "referral_code_id"], "name": "referrals_by_code_idx" },
+      { "columns": ["tenant_id", "fraud_score"], "name": "referrals_fraud_score_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "referral_program_id",
+    "referrer_type",
+    "referrer_id",
+    "attribution_snapshot",
+    "device_snapshot",
+    "status",
+    "fraud_score",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^ref_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "referral_program_id": { "type": "string", "pattern": "^rpg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "referral_code_id": { "type": ["string", "null"], "pattern": "^rcd_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "referrer_type": { "type": "string", "enum": ["user", "anonymous_lead"] },
+    "referrer_id": { "type": "string", "minLength": 1 },
+    "referred_type": { "type": ["string", "null"], "enum": [null, "user", "lead"] },
+    "referred_id": { "type": ["string", "null"] },
+    "referred_email": { "type": ["string", "null"], "format": "email", "maxLength": 254 },
+    "attribution_snapshot": { "type": "object" },
+    "device_snapshot": {
+      "type": "object",
+      "properties": {
+        "user_agent_hash": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+        "ip_hash": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+        "device_fingerprint_hash": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending_claim", "claimed", "signed_up", "trigger_pending", "vesting", "vested", "rewarded", "cancelled", "expired", "fraudulent"]
+    },
+    "claimed_at": { "type": ["string", "null"], "format": "date-time" },
+    "signed_up_at": { "type": ["string", "null"], "format": "date-time" },
+    "trigger_event_at": { "type": ["string", "null"], "format": "date-time" },
+    "vested_at": { "type": ["string", "null"], "format": "date-time" },
+    "rewarded_at": { "type": ["string", "null"], "format": "date-time" },
+    "cancelled_at": { "type": ["string", "null"], "format": "date-time" },
+    "cancellation_reason": {
+      "type": ["string", "null"],
+      "enum": [null, "refund_issued", "chargeback_filed", "fraud_detected", "manual_admin", "referred_withdrew", "program_archived"]
+    },
+    "fraud_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "referrer_id != referred_id (same-user self-referral refused)",
+    "attribution_snapshot IMMUTABLE after create",
+    "device_snapshot IMMUTABLE after create — all hashes SHA-256 only, never raw",
+    "status transitions follow the state machine (readme.md §3); terminal states are rewarded / cancelled / expired / fraudulent",
+    "fraud_score <= program.fraud_config.hard_block_threshold at insert time (else refused)",
+    "cancelled_at + cancellation_reason both set on cancellation",
+    "vested_at requires ReferralReward rows created atomically in same transaction",
+    "rewarded_at requires ALL rewards on the referral to be status=paid"
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "id": "marketing.resources.marketing-dead-letter.list",
+  "title": "Marketing dead-letter queue",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/marketing/dead-letters",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "marketing", "entity": "marketing-dead-letter", "action": "list" },
+  "requiresPermission": "marketing.dead_letters.viewAny",
+  "requiresEntitlement": "marketing_capture",
+  "dataSources": [
+    {
+      "name": "dead_letters",
+      "kind": "http.get",
+      "url": "/api/v1/marketing/dead-letters",
+      "unwrap": "data",
+      "queryFromFilters": true,
+      "initialFilters": { "unresolved": true }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Dead-letter queue" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Marketing events that exhausted their retry budget. Each represents a paid conversion loss." } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "title": "P1 signals",
+            "description": "Every unresolved dead letter is a compliance-relevant financial loss. Investigate the root cause + either replay (Enterprise-only) or mark resolved with a note."
+          }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Provider", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items_source": "marketing.providers",
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "provider", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Reason", "menuTrigger": "focus", "className": "min-w-56" },
+              "props_items": [
+                { "id": "max_attempts_exceeded", "label": "Max attempts exceeded" },
+                { "id": "provider_permanent_failure", "label": "Provider permanent failure" },
+                { "id": "circuit_breaker_max_opens", "label": "Circuit-breaker max opens" },
+                { "id": "invalid_payload", "label": "Invalid payload" },
+                { "id": "auth_failure", "label": "Auth failure" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "reason", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "Switch",
+              "props": { "label": "Show resolved" },
+              "actions": {
+                "onChange": { "kind": "filter.set", "field": "unresolved", "valueExpr": "!$value" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "bindings": {
+            "items": { "$ref": "dead_letters" },
+            "isLoading": { "$ref": "dead_letters.isLoading" }
+          },
+          "props": {
+            "columns": [
+              { "field": "provider", "label": "Provider", "sortable": true, "width": 180 },
+              { "field": "reason", "label": "Reason", "sortable": true, "width": 220 },
+              { "field": "replay_attempts", "label": "Replays", "width": 90 },
+              { "field": "created_at", "label": "Created", "sortable": true, "defaultSort": "desc", "width": 160, "formatter": "datetime-relative" },
+              { "field": "resolved_at", "label": "Resolved", "width": 160, "formatter": "datetime-relative" }
+            ],
+            "actionRenderer": [
+              {
+                "kind": "Button",
+                "props": { "variant": "primary", "size": "sm", "children": "Replay" },
+                "requiresPermission": "marketing.dead_letters.replay",
+                "requiresEntitlement": "marketing_dead_letter_replay",
+                "bindings": { "disabled": { "$expr": "row.resolved_at !== null" } },
+                "actions": {
+                  "onPress": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/marketing/dead-letters/' + row.id + '/replay'"
+                  }
+                }
+              },
+              {
+                "kind": "Button",
+                "props": { "variant": "secondary", "size": "sm", "children": "Resolve" },
+                "requiresPermission": "marketing.dead_letters.resolve",
+                "bindings": { "disabled": { "$expr": "row.resolved_at !== null" } },
+                "actions": {
+                  "onPress": {
+                    "kind": "prompt",
+                    "title": "Mark resolved?",
+                    "description": "Without replaying. Use when the provider event was replayed manually or when the loss is intentional.",
+                    "fields": [{ "name": "note", "label": "Resolution note", "required": true }],
+                    "onConfirm": {
+                      "kind": "http.post",
+                      "url": "/api/v1/marketing/dead-letters/{{row.id}}/resolve",
+                      "body": { "note": "{{prompt.note}}" },
+                      "invalidateQueries": ["dead_letters"]
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "check-circle", "className": "size-12 mx-auto text-success" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No dead letters" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "All good — every dispatched event has landed successfully." } }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

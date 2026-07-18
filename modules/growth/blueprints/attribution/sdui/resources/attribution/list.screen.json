@@ -1,0 +1,304 @@
+{
+  "id": "attribution.resources.attribution.list",
+  "title": "Attributions",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/attributions",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "attribution", "entity": "attribution", "action": "list" },
+  "requiresPermission": "attribution.viewAny",
+  "requiresEntitlement": "attribution_capture",
+  "dataSources": [
+    {
+      "name": "attributions",
+      "kind": "http.get",
+      "url": "/api/v1/attributions",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "lifecycle_summary",
+      "kind": "http.get",
+      "url": "/api/v1/attributions?aggregate=lifecycle_summary",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 900 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Attributions"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Where your subjects came from — first touch preserved forever, last touch updated on every visit."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "secondary",
+                    "leadingIcon": "arrow-down-tray",
+                    "children": "Import CSV"
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "to": "/tenant/attributions/import"
+                    }
+                  },
+                  "requiresPermission": "attribution.import",
+                  "requiresEntitlement": "attribution_import"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Grid",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-4 gap-3 py-2" },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Anonymous" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold mt-1" },
+                  "bindings": { "children": { "$ref": "lifecycle_summary.anonymous" } }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Identified" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold mt-1" },
+                  "bindings": { "children": { "$ref": "lifecycle_summary.identified" } }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Converted" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold mt-1 text-success" },
+                  "bindings": { "children": { "$ref": "lifecycle_summary.converted" } }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Churned" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold mt-1 text-muted" },
+                  "bindings": { "children": { "$ref": "lifecycle_summary.churned" } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Subject", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "user", "label": "User" },
+                { "id": "athlete", "label": "Athlete" },
+                { "id": "lead", "label": "Lead" },
+                { "id": "anonymous_session", "label": "Anonymous" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "subject_type",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Lifecycle", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "anonymous", "label": "Anonymous" },
+                { "id": "identified", "label": "Identified" },
+                { "id": "converted", "label": "Converted" },
+                { "id": "churned", "label": "Churned" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "lifecycle_state",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "First-touch source", "menuTrigger": "input", "className": "min-w-56" },
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "first_touch_source",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "label": "Campaign",
+                "placeholder": "e.g. spring-signup-2026",
+                "className": "min-w-64"
+              },
+              "actions": {
+                "onChange": {
+                  "kind": "filter.set",
+                  "field": "first_touch_campaign",
+                  "valueExpr": "$value"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "bindings": {
+            "items": { "$ref": "attributions" },
+            "isLoading": { "$ref": "attributions.isLoading" }
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "col-span-full text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "chart-bar", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No attributions yet" } },
+              {
+                "kind": "Text",
+                "props": {
+                  "className": "text-sm text-muted",
+                  "children": "Attribution profiles are captured automatically on the first attribution-bearing request from each subject."
+                }
+              }
+            ]
+          },
+          "columns": [
+            {
+              "id": "subject",
+              "header": "Subject",
+              "cellRenderer": {
+                "kind": "View",
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-medium" },
+                    "bindings": { "children": { "$ref": "row.subject_type" } }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted font-mono" },
+                    "bindings": { "children": { "$ref": "row.subject_id" } }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "first_touch_source",
+              "header": "First-touch source",
+              "cellRenderer": {
+                "kind": "Widget",
+                "widget": "attribution.attribution-source-chip",
+                "bindings": {
+                  "source": { "$ref": "row.first_touch_source" },
+                  "bucket": { "$ref": "row.first_touch_source_bucket" }
+                }
+              }
+            },
+            {
+              "id": "first_touch_campaign",
+              "header": "First-touch campaign",
+              "cellRenderer": {
+                "kind": "Text",
+                "bindings": { "children": { "$ref": "row.first_touch_campaign" } }
+              }
+            },
+            {
+              "id": "lifecycle_state",
+              "header": "Lifecycle",
+              "cellRenderer": {
+                "kind": "Chip",
+                "bindings": {
+                  "variant": {
+                    "$expr": "row.lifecycle_state === 'converted' ? 'success' : (row.lifecycle_state === 'churned' ? 'neutral' : (row.lifecycle_state === 'identified' ? 'info' : 'warning'))"
+                  },
+                  "children": { "$ref": "row.lifecycle_state" }
+                }
+              }
+            },
+            {
+              "id": "touchpoint_count",
+              "header": "Touches",
+              "cellRenderer": {
+                "kind": "Text",
+                "bindings": { "children": { "$ref": "row.touchpoint_count" } }
+              }
+            },
+            {
+              "id": "last_touch_at",
+              "header": "Last touch",
+              "cellRenderer": {
+                "kind": "Text",
+                "props": { "className": "text-sm text-muted" },
+                "bindings": { "children": { "$expr": "formatRelative(row.last_touch_at)" } }
+              }
+            }
+          ],
+          "rowActions": {
+            "onPress": {
+              "kind": "navigate",
+              "toExpr": "'/tenant/attributions/' + row.id"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

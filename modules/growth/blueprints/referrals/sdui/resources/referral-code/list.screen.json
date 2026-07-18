@@ -1,0 +1,127 @@
+{
+  "id": "referrals.resources.referral-code.list",
+  "title": "Referral codes",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/referral-codes",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "referrals", "entity": "referral-code", "action": "list" },
+  "requiresPermission": "referral_codes.viewAny",
+  "requiresEntitlement": "referrals_capture",
+  "dataSources": [
+    {
+      "name": "codes",
+      "kind": "http.get",
+      "url": "/api/v1/referral-codes",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Referral codes" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "User codes are auto-issued. Campaign + opaque codes are manually created." } }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "leadingIcon": "plus", "children": "New campaign code" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/referral-codes/new" } },
+              "requiresPermission": "referral_codes.create"
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2" },
+          "children": [
+            {
+              "kind": "Widget",
+              "widget": "referrals.program-picker",
+              "props": { "label": "Program", "onlyActive": false },
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "program_id", "valueExpr": "$payload.program_id" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Code type", "menuTrigger": "focus" },
+              "props_items": [
+                { "id": "user_scoped", "label": "User-scoped" },
+                { "id": "campaign", "label": "Campaign" },
+                { "id": "opaque", "label": "Opaque" }
+              ],
+              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "code_type", "valueExpr": "$selectedKey" } }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus" },
+              "props_items": [
+                { "id": "true", "label": "Active" },
+                { "id": "false", "label": "Inactive" }
+              ],
+              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "is_active", "valueExpr": "$selectedKey" } }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "bindings": {
+            "items": { "$ref": "codes" },
+            "isLoading": { "$ref": "codes.isLoading" }
+          },
+          "columns": [
+            { "key": "code", "label": "Code", "className": "font-mono" },
+            { "key": "code_type", "label": "Type" },
+            { "key": "usage_count", "label": "Uses", "format": "count" },
+            { "key": "usage_cap", "label": "Cap", "format": "count_or_dash" },
+            { "key": "expires_at", "label": "Expires", "format": "date_or_never" },
+            { "key": "is_active", "label": "Active", "format": "yes_no" },
+            {
+              "key": "actions",
+              "label": "",
+              "renderer": {
+                "kind": "View",
+                "props": { "className": "flex gap-1" },
+                "children": [
+                  {
+                    "kind": "Button",
+                    "props": { "variant": "ghost", "size": "xs", "leadingIcon": "clipboard" },
+                    "actions": {
+                      "onPress": { "kind": "clipboard.copy", "textExpr": "row.code" }
+                    }
+                  },
+                  {
+                    "kind": "Button",
+                    "props": { "variant": "ghost", "size": "xs", "leadingIcon": "no-symbol", "children": "Deactivate" },
+                    "bindings": { "hidden": { "$expr": "!row.is_active" } },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "urlExpr": "'/api/v1/referral-codes/' + row.id + '/deactivate'",
+                        "onSuccess": { "kind": "reload" }
+                      }
+                    },
+                    "requiresPermission": "referral_codes.deactivate"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

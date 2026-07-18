@@ -1,0 +1,139 @@
+{
+  "id": "academorix://modules/referrals/schemas/referral-code",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ReferralCode",
+  "description": "The distributable code that maps inbound clicks to a specific referral program. Three code_types: user_scoped (auto-issued per user, e.g. `alice-a1b2c3`), campaign (admin-generated, e.g. `SUMMER25`), opaque (system-generated for A/B cohorts). Carries `tenant_id` + `referral_program_id`.",
+  "type": "object",
+  "x-module": "referrals",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "referral_codes",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "rcd_",
+    "incrementing": false,
+    "model": "Academorix\\Growth\\Referrals\\Models\\ReferralCode",
+    "interface": "Academorix\\Growth\\Referrals\\Contracts\\Data\\ReferralCodeInterface",
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToReferralProgram",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "code_type": "ReferralCodeType",
+      "owner_type": "ReferralCodeOwnerType",
+      "is_active": "boolean",
+      "usage_cap": "integer",
+      "usage_count": "integer",
+      "expires_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["ReferralCodeObserver"],
+    "appends": ["is_exhausted", "is_expired", "share_url"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `rcd_<26>`." },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "referral_program_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "referral_programs", "column": "id", "onDelete": "restrict" }
+      },
+      "code_type": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: user_scoped / campaign / opaque."
+      },
+      "code": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "The visible code string. Format enforced per code_type."
+      },
+      "owner_type": { "type": "string", "length": 16, "nullable": true, "description": "Enum: user / campaign / anonymous. Null for opaque codes." },
+      "owner_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "Non-null for user_scoped codes only."
+      },
+      "campaign_name": { "type": "string", "length": 128, "nullable": true, "description": "Non-null for campaign codes only." },
+      "is_active": { "type": "boolean", "nullable": false, "default": true },
+      "usage_cap": { "type": "integer", "nullable": true, "description": "Max redemptions. Null = unlimited." },
+      "usage_count": { "type": "integer", "nullable": false, "default": 0 },
+      "expires_at": { "type": "timestamptz", "nullable": true, "description": "Null = never expires." },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "code"],
+        "unique": true,
+        "name": "referral_codes_tenant_code_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "One active code per tenant."
+      },
+      { "columns": ["tenant_id", "referral_program_id", "is_active"], "name": "referral_codes_program_active_idx" },
+      { "columns": ["tenant_id", "owner_user_id"], "name": "referral_codes_owner_user_idx", "predicate": "owner_user_id IS NOT NULL" },
+      { "columns": ["tenant_id", "campaign_name"], "name": "referral_codes_campaign_idx", "predicate": "campaign_name IS NOT NULL" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "referral_program_id",
+    "code_type",
+    "code",
+    "is_active",
+    "usage_count",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^rcd_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "referral_program_id": { "type": "string", "pattern": "^rpg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "code_type": { "type": "string", "enum": ["user_scoped", "campaign", "opaque"] },
+    "code": { "type": "string", "minLength": 4, "maxLength": 64 },
+    "owner_type": { "type": ["string", "null"], "enum": [null, "user", "campaign", "anonymous"] },
+    "owner_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "campaign_name": { "type": ["string", "null"], "maxLength": 128 },
+    "is_active": { "type": "boolean" },
+    "usage_cap": { "type": ["integer", "null"], "minimum": 1 },
+    "usage_count": { "type": "integer", "minimum": 0 },
+    "expires_at": { "type": ["string", "null"], "format": "date-time" },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "code_type=user_scoped: owner_user_id set, owner_type='user', campaign_name null; code matches /^[a-z0-9]+(-[a-z0-9]{4,8})?$/",
+    "code_type=campaign: campaign_name set, owner_type='campaign', owner_user_id null; code matches /^[A-Z0-9][A-Z0-9_-]{3,31}$/",
+    "code_type=opaque: owner_user_id null, campaign_name null; code matches /^[A-Z0-9]{16,26}$/",
+    "usage_count <= usage_cap (when set)",
+    "expires_at > created_at (when set)",
+    "code_type=campaign requires `referrals_code_slot` entitlement consumption on create"
+  ]
+}

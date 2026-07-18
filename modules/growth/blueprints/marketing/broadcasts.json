@@ -1,0 +1,55 @@
+{
+  "id": "academorix://modules/marketing/broadcasts",
+  "$version": 1,
+  "title": "marketing — realtime broadcast channels",
+  "description": "Three broadcast channel families for live UI updates. Tenant-level channel for cross-provider marketing dashboards; provider-scoped channel for the per-provider health widget + circuit-breaker state indicator; dead-letter channel for the ops queue. Reverb driver (Laravel Reverb) is the default transport; the notifications module handles fanout.",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.marketing",
+      "class": "Academorix\\Growth\\Marketing\\Broadcasts\\TenantMarketingChannel",
+      "description": "Tenant-wide marketing activity stream. Sink for the marketing dashboard showing event capture + delivery lifecycle.",
+      "authorization": "sanctum::authed AND tenant_matches AND (marketing role OR admin OR owner)",
+      "events": [
+        "MarketingEventCaptured",
+        "MarketingEventDispatched",
+        "MarketingEventDelivered",
+        "MarketingEventPartiallyDelivered",
+        "MarketingEventFailed",
+        "MarketingEventSuppressedByConsent"
+      ],
+      "throttle": "200 events/minute per channel",
+      "notes": "Payload is trimmed to non-confidential fields (see data-classes.json). Revenue values (value_amount_cents) are broadcast to admins + marketing role, redacted for support role."
+    },
+    {
+      "name": "tenant.{tenantId}.marketing.providers",
+      "class": "Academorix\\Growth\\Marketing\\Broadcasts\\TenantMarketingProvidersChannel",
+      "description": "Provider-scoped health + config activity. Powers the per-provider status chip + circuit-breaker state indicator in the marketing dashboard.",
+      "authorization": "sanctum::authed AND tenant_matches AND (marketing role OR admin OR owner)",
+      "events": [
+        "MarketingProviderConfigured",
+        "MarketingProviderDeactivated",
+        "MarketingProviderCircuitBreakerOpened",
+        "MarketingProviderCircuitBreakerClosed",
+        "MarketingProviderCircuitBreakerHalfOpen",
+        "MarketingProviderTestSent",
+        "MarketingProviderTestSucceeded",
+        "MarketingProviderTestFailed"
+      ],
+      "throttle": "50 events/minute per channel",
+      "notes": "Config field NEVER broadcast (encrypted at rest; the channel does not decrypt). Only the fact-of-change is broadcast; the SDUI re-fetches to get updated (redacted) config view."
+    },
+    {
+      "name": "tenant.{tenantId}.marketing.dead-letters",
+      "class": "Academorix\\Growth\\Marketing\\Broadcasts\\TenantMarketingDeadLettersChannel",
+      "description": "Dead-letter queue live updates. Powers the ops queue view showing new dead-letters + replay outcomes.",
+      "authorization": "sanctum::authed AND tenant_matches AND (marketing role OR admin OR owner)",
+      "events": [
+        "MarketingDeadLetterCreated",
+        "MarketingDeadLetterReplayed",
+        "MarketingDeadLetterResolved"
+      ],
+      "throttle": "20 events/minute per channel",
+      "notes": "Every MarketingDeadLetterCreated fires a companion push notification via the notifications module (cannot-opt-out). The channel is for the UI live-update; the notification is for the human alert."
+    }
+  ]
+}

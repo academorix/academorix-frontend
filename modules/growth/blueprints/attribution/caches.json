@@ -1,0 +1,96 @@
+{
+  "id": "academorix://modules/attribution/caches",
+  "$version": 1,
+  "title": "attribution — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["attribution", "attribution.touchpoints", "attribution.rollup", "attribution.subject"],
+  "keys": [
+    {
+      "pattern": "att:profile:{tenant_id}:{subject_type}:{subject_id}",
+      "description": "The Attribution row for a subject. Read hot by AttributionResolver on every attribution-bearing request. 5-min TTL because we invalidate aggressively on write.",
+      "ttlSeconds": 300,
+      "tags": ["attribution", "attribution.subject"],
+      "invalidatedBy": [
+        "AttributionObserver.created",
+        "AttributionObserver.updated",
+        "AttributionObserver.deleted",
+        "AttributionSubjectIdentified",
+        "AttributionMerged",
+        "AttributionResetConfirmed"
+      ]
+    },
+    {
+      "pattern": "att:snapshot:{attribution_id}",
+      "description": "The frozen AttributionSnapshot jsonb blob emitted by AttributionSnapshotBuilder.build(). Downstream modules read this on every event-create; caching avoids rebuilding the same blob N times per request.",
+      "ttlSeconds": 300,
+      "tags": ["attribution", "attribution.subject"],
+      "invalidatedBy": [
+        "AttributionLastTouchUpdated",
+        "AttributionConsentSnapshotUpdated",
+        "AttributionSessionRefreshed"
+      ]
+    },
+    {
+      "pattern": "att:touchpoint-count:{attribution_id}",
+      "description": "Denormalised touchpoint_count for a profile. Feeds the rollup + the churn detection. Invalidated on every touchpoint create.",
+      "ttlSeconds": 300,
+      "tags": ["attribution", "attribution.touchpoints"],
+      "invalidatedBy": ["AttributionTouchpointCaptured"]
+    },
+    {
+      "pattern": "att:touchpoints-recent:{attribution_id}:{limit}",
+      "description": "Most-recent N touchpoints for a subject (limit ∈ {10, 25, 50}). Feeds the my-attribution timeline widget.",
+      "ttlSeconds": 60,
+      "tags": ["attribution", "attribution.touchpoints"],
+      "invalidatedBy": ["AttributionTouchpointCaptured"]
+    },
+    {
+      "pattern": "att:rollup:{tenant_id}:{window}",
+      "description": "Campaign performance rollup per tenant per (hour / day / week / month) window. window ∈ {1h, 24h, 7d, 30d}. Materialised by CampaignRollupAggregatorJob hourly.",
+      "ttlSeconds": 3600,
+      "tags": ["attribution", "attribution.rollup"],
+      "invalidatedBy": ["AttributionCampaignRollupComputed"]
+    },
+    {
+      "pattern": "att:rollup-campaign:{tenant_id}:{campaign}:{window}",
+      "description": "Deep-dive on a single campaign. Feeds the campaign-detail dashboard.",
+      "ttlSeconds": 900,
+      "tags": ["attribution", "attribution.rollup"],
+      "invalidatedBy": ["AttributionCampaignRollupComputed"]
+    },
+    {
+      "pattern": "att:top-campaigns:{tenant_id}",
+      "description": "Top N campaigns by conversion count. Feeds the tenant dashboard homepage widget.",
+      "ttlSeconds": 900,
+      "tags": ["attribution", "attribution.rollup"],
+      "invalidatedBy": ["AttributionCampaignRollupComputed"]
+    },
+    {
+      "pattern": "att:lifecycle-summary:{tenant_id}",
+      "description": "Count of profiles per lifecycle_state (anonymous / identified / converted / churned). Feeds the lifecycle-summary card on the attribution dashboard.",
+      "ttlSeconds": 900,
+      "tags": ["attribution", "tenant"],
+      "invalidatedBy": [
+        "AttributionCreated",
+        "AttributionSubjectIdentified",
+        "AttributionConverted",
+        "AttributionChurned",
+        "AttributionRestored"
+      ]
+    },
+    {
+      "pattern": "att:consent-suppressions:{tenant_id}:{date}",
+      "description": "Daily count of consent-suppressed capture attempts. Feeds the compliance suppression-report.",
+      "ttlSeconds": 3600,
+      "tags": ["attribution", "tenant"],
+      "invalidatedBy": ["AttributionSuppressedByConsent"]
+    },
+    {
+      "pattern": "att:click-id-catalog",
+      "description": "The 5-click-ID mapping catalog (gclid → google, fbclid → meta, ...). Read hot by ClickIdExtractor + AttributionSnapshotBuilder. Very long TTL — the catalog changes only on config-file edit.",
+      "ttlSeconds": 86400,
+      "tags": ["attribution"],
+      "invalidatedBy": []
+    }
+  ]
+}

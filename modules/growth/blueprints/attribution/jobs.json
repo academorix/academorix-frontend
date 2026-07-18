@@ -1,0 +1,104 @@
+{
+  "id": "academorix://modules/attribution/jobs",
+  "$version": 1,
+  "title": "attribution — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Growth\\Attribution\\Jobs\\ReconcileAttributionCountsJob",
+      "queue": "attribution",
+      "purpose": "Nightly audit sweep to catch drift between attributions.touchpoint_count / conversion_touchpoint_count and the actual attribution_touchpoints row count. Fires AttributionTouchpointCountReconciled per drift found + increments the count_drift_corrections counter. Should always report 0 findings.",
+      "steps": [
+        "SELECT id, touchpoint_count, conversion_touchpoint_count FROM attributions WHERE deleted_at IS NULL LIMIT 1000",
+        "For each: SELECT COUNT(*), SUM(was_conversion::int) FROM attribution_touchpoints WHERE attribution_id = ?",
+        "When mismatch: UPDATE attributions SET touchpoint_count = actual, conversion_touchpoint_count = actual + fire AttributionTouchpointCountReconciled",
+        "Emit metric academorix.attribution.count_drift_corrections — should always be 0 in production"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Growth\\Attribution\\Jobs\\MarkAttributionChurnedJob",
+      "queue": "attribution",
+      "purpose": "Nightly sweep. Subjects with no touchpoint in the last 90 days transition anonymous | identified → churned. Fires AttributionChurned per row. Batched daily digest via AttributionChurnDetectedNotification.",
+      "steps": [
+        "SELECT id FROM attributions WHERE lifecycle_state IN ('anonymous', 'identified') AND last_touch_at < now() - interval '90 days' AND deleted_at IS NULL FOR UPDATE SKIP LOCKED LIMIT 5000",
+        "For each: transition to lifecycle_state='churned' + fire AttributionChurned",
+        "Batch AttributionChurnDetectedNotification per tenant per day"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Growth\\Attribution\\Jobs\\MergeIdentifiedAttributionsJob",
+      "queue": "attribution-critical",
+      "purpose": "Dispatched by MergeAnonymousAttributionsOnSubjectIdentified hook when AttributionSubjectIdentified fires (Enterprise-only). Finds anonymous profiles with matching signals (session_id / ip_hash / device_hash) within the last 30 days + merges them into the identified profile. Fires AttributionMerged on success.",
+      "steps": [
+        "Load the identified attribution + its associated User.id",
+        "SELECT id FROM attributions WHERE tenant_id = ? AND subject_type = 'anonymous_session' AND deleted_at IS NULL AND created_at > now() - interval '30 days' AND (current_session_id = ? OR EXISTS(SELECT 1 FROM attribution_touchpoints t WHERE t.attribution_id = attributions.id AND (t.device_snapshot->>'ip_hash' = ? OR t.device_snapshot->>'user_agent_hash' = ?)))",
+        "Cap the result set at max_anonymous_absorbed (default 10) — refuse merge with ATTRIBUTION_MERGE_LIMIT_EXCEEDED if exceeded",
+        "For each match: replay every attribution_touchpoint (INSERT INTO attribution_touchpoints with the new attribution_id)",
+        "If any anonymous first_touch_at < identified.first_touch_at: overwrite identified.first_touch_* fields (per attribution.merge.first_touch_overwrite_policy)",
+        "Soft-delete every absorbed anonymous attribution",
+        "Fire AttributionMerged with the full audit payload"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "attribution-merge-into-{identified_attribution_id}",
+      "tries": 3,
+      "backoff": [30, 120, 600]
+    },
+    {
+      "class": "Academorix\\Growth\\Attribution\\Jobs\\PurgeArchivedAttributionsJob",
+      "queue": "attribution",
+      "purpose": "Daily sweep. Hard-delete soft-deleted attribution rows past retention (730d default, 2555d on Enterprise via attribution_touchpoint_retention_extended). Also hard-delete touchpoints past retention. Also completes the reset audit hold — attribution_touchpoints rows past their reset's 90-day hold are hard-deleted, firing AttributionResetConfirmed.",
+      "steps": [
+        "SELECT id FROM attributions WHERE deleted_at < now() - interval '<retention_window>' LIMIT 500 (retention window per-tenant based on attribution_touchpoint_retention_extended)",
+        "For each: attempt hard delete; catch FK RESTRICT and record as 'retention_blocked' in metrics",
+        "SELECT id FROM attribution_touchpoints WHERE captured_at < now() - interval '<retention_window>' LIMIT 5000",
+        "Batch DELETE — 100 rows per statement",
+        "For every attribution with an AttributionResetRequested audit row > 90 days old: hard-delete every associated touchpoint + fire AttributionResetConfirmed"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 1
+    },
+    {
+      "class": "Academorix\\Growth\\Attribution\\Jobs\\CampaignRollupAggregatorJob",
+      "queue": "attribution",
+      "purpose": "Hourly pre-aggregation of campaign performance into a rollup cache. Runs per-tenant with attribution_rollup entitlement. Groups touchpoints by (campaign, source, medium) + counts + conversion counts + first-touch counts. Materialises into att:rollup:{tenant_id}:{window} cache keys for the four windows (1h, 24h, 7d, 30d).",
+      "steps": [
+        "For each tenant with attribution_rollup entitlement:",
+        "  For each window in [1h, 24h, 7d, 30d]:",
+        "    SELECT campaign, source, medium, COUNT(*) as touchpoints, SUM(was_conversion::int) as conversions, SUM(was_first_touch::int) as first_touches FROM attribution_touchpoints WHERE tenant_id = ? AND captured_at > now() - interval '<window>' GROUP BY campaign, source, medium ORDER BY touchpoints DESC LIMIT 1000",
+        "    Write result to cache key att:rollup:{tenant_id}:{window} with TTL 3600s",
+        "  Fire AttributionCampaignRollupComputed"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "attribution-rollup-{tenant_id}",
+      "tries": 2,
+      "backoff": [60, 300]
+    },
+    {
+      "class": "Academorix\\Growth\\Attribution\\Jobs\\AttributionExpiryNotifierJob",
+      "queue": "notifications",
+      "purpose": "Fires 7 days before a tenant's touchpoint retention window would purge a large batch. Sends an AttributionExpiringNotification to the tenant admin so they can request an export or upgrade to the extended-retention entitlement.",
+      "steps": [
+        "For each tenant: count touchpoints where captured_at BETWEEN (now() - retention_window) AND (now() - retention_window + interval '7 days')",
+        "If count > threshold (default 100): dispatch AttributionExpiringNotification to the tenant admin",
+        "Threshold is configurable per-tenant via settings"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    }
+  ]
+}

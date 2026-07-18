@@ -1,0 +1,153 @@
+{
+  "id": "academorix://modules/analytics/policies",
+  "$version": 1,
+  "title": "analytics — authorization policies",
+  "description": "Four policies matching the four entities. Read-only entities (event, delivery) refuse create/update/delete at the policy level; write operations for providers + identities scope-check by tenant + guard.",
+  "policies": [
+    {
+      "model": "AnalyticsEvent",
+      "class": "Academorix\\Growth\\Analytics\\Policies\\AnalyticsEventPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "analytics.events.viewAny",
+          "scope": "tenant member with analytics.events.viewAny OR platform_admin"
+        },
+        {
+          "action": "view",
+          "permission": "analytics.events.view",
+          "scope": "event.tenant_id === auth.tenant_id AND analytics.events.view OR platform_admin"
+        },
+        {
+          "action": "create",
+          "permission": null,
+          "scope": "REFUSED. Events only enter via the listener path (AnalyticsEventCapturer)."
+        },
+        {
+          "action": "update",
+          "permission": null,
+          "scope": "REFUSED. Events are immutable."
+        },
+        {
+          "action": "delete",
+          "permission": null,
+          "scope": "REFUSED. Events are hard-purged at retention boundary only."
+        }
+      ]
+    },
+    {
+      "model": "AnalyticsDelivery",
+      "class": "Academorix\\Growth\\Analytics\\Policies\\AnalyticsDeliveryPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "analytics.deliveries.viewAny",
+          "scope": "tenant member with analytics.deliveries.viewAny OR platform_admin"
+        },
+        {
+          "action": "view",
+          "permission": "analytics.deliveries.view",
+          "scope": "delivery.tenant_id === auth.tenant_id AND analytics.deliveries.view OR platform_admin"
+        },
+        {
+          "action": "revealRawPayload",
+          "permission": "analytics.deliveries.view",
+          "scope": "requires ?include=raw_payload query param + auth.roles.includes('super_admin')",
+          "description": "Ability gate for revealing request_payload + response bodies (may contain property values that survived PII scanning)."
+        },
+        {
+          "action": "create",
+          "permission": null,
+          "scope": "REFUSED. Deliveries only created by DispatchAnalyticsEventJob."
+        },
+        {
+          "action": "update",
+          "permission": null,
+          "scope": "REFUSED. Only the dispatch/retry pipeline may mutate."
+        },
+        {
+          "action": "delete",
+          "permission": null,
+          "scope": "REFUSED. Hard-purged at retention boundary."
+        }
+      ]
+    },
+    {
+      "model": "AnalyticsProviderConfig",
+      "class": "Academorix\\Growth\\Analytics\\Policies\\AnalyticsProviderConfigPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "analytics.providers.viewAny",
+          "scope": "tenant member OR platform_admin"
+        },
+        {
+          "action": "view",
+          "permission": "analytics.providers.view",
+          "scope": "config.tenant_id === auth.tenant_id"
+        },
+        {
+          "action": "create",
+          "permission": "analytics.providers.create",
+          "scope": "tenant admin/owner AND tenant has analytics_provider_slot entitlement remaining AND (provider IN baseline OR tenant has analytics_advanced_providers)"
+        },
+        {
+          "action": "update",
+          "permission": "analytics.providers.update",
+          "scope": "config.tenant_id === auth.tenant_id; refuse changes to provider column (immutable)"
+        },
+        {
+          "action": "delete",
+          "permission": "analytics.providers.delete",
+          "scope": "tenant owner (delete is a serious action \u2014 releases the provider slot + drains batch buffer)"
+        },
+        {
+          "action": "test",
+          "permission": "analytics.providers.test",
+          "scope": "tenant admin/owner; rate-limited to 30 tests/hour to avoid provider-side test-load abuse"
+        },
+        {
+          "action": "resetCircuitBreaker",
+          "permission": "analytics.providers.reset_circuit_breaker",
+          "scope": "tenant owner OR platform_admin \u2014 manual reset of an open circuit breaker; use with care"
+        }
+      ]
+    },
+    {
+      "model": "AnalyticsIdentity",
+      "class": "Academorix\\Growth\\Analytics\\Policies\\AnalyticsIdentityPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "analytics.identities.viewAny",
+          "scope": "tenant member with viewAny OR platform_admin"
+        },
+        {
+          "action": "view",
+          "permission": "analytics.identities.viewAny",
+          "scope": "identity.tenant_id === auth.tenant_id"
+        },
+        {
+          "action": "merge",
+          "permission": "analytics.identities.merge",
+          "scope": "tenant owner AND tenant has analytics_identity_merge entitlement (Enterprise-only)"
+        },
+        {
+          "action": "identify",
+          "permission": "analytics.identities.identify",
+          "scope": "tenant admin/owner. Server-side identify \u2014 the identified subject must exist in tenant's User table."
+        },
+        {
+          "action": "deidentify",
+          "permission": "analytics.identities.merge",
+          "scope": "tenant owner AND explicit subject request (typically GDPR right-to-erasure cascade)"
+        },
+        {
+          "action": "delete",
+          "permission": null,
+          "scope": "REFUSED. Retention runner is the only deletion path (soft-delete + eventual hard-purge)."
+        }
+      ]
+    }
+  ]
+}

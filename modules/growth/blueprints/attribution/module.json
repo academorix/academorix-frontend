@@ -1,0 +1,190 @@
+{
+  "$version": 1,
+  "name": "attribution",
+  "alias": "attribution",
+  "namespace": "Academorix\\Growth\\Attribution",
+  "description": "Captures marketing attribution metadata at every request boundary and persists it per-subject for lifetime source-tracing. Answers 'where did this signup / conversion come from?'. Two owned tables: (1) `attributions` — per-subject rolling profile with first-touch + last-touch snapshots, current-session state, aggregated touch counts, lifecycle state (anonymous / identified / converted / churned); (2) `attribution_touchpoints` — append-only ledger of every attribution-bearing request (UTM change, ad click, referrer switch). Every marketing/analytics event downstream snapshots the CURRENT attribution profile into its own `attribution` jsonb column at create-time (frozen — attribution changes after don't reshape historical events). Ships: `AttributionMiddleware` (captures utm_* + gclid + fbclid + ttclid + msclkid + sccid + referrer + landing_page from cookies + query params at request boundary), `AttributionContext` (request-scoped binding for domain code to read current attribution), `AttributionResolver` (looks up per-subject profile), `AttributionSnapshotBuilder` (builds the immutable jsonb blob for downstream event.attribution columns). Supports 5 click-ID sources: Google Ads (gclid), Meta (fbclid), TikTok (ttclid), Microsoft/Bing (msclkid), Snapchat (sccid). Attribution model: first-touch preserved forever; last-touch updates every attribution-bearing request; session-scoped touchpoints logged. Consent-gated — under `marketing` category consent tier; without consent, attribution captures only session_id + hashed_ip in an ephemeral in-memory context and refuses persistence past the session. Feeder for marketing + analytics + referrals + finance + notifications (Wave 5+).",
+  "keywords": [
+    "attribution",
+    "attributions",
+    "attribution-touchpoint",
+    "touchpoint",
+    "first-touch",
+    "last-touch",
+    "utm",
+    "utm-source",
+    "utm-medium",
+    "utm-campaign",
+    "click-id",
+    "gclid",
+    "fbclid",
+    "ttclid",
+    "msclkid",
+    "sccid",
+    "referrer",
+    "landing-page",
+    "campaign",
+    "marketing",
+    "growth",
+    "conversion",
+    "consent",
+    "session",
+    "device",
+    "identified",
+    "converted",
+    "churned",
+    "merge",
+    "reset",
+    "tenant",
+    "wave-5"
+  ],
+  "priority": 63,
+  "providers": ["Academorix\\Growth\\Attribution\\Providers\\AttributionServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "entitlements",
+    "compliance"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "marketing (Wave 5 — ad-network forwarder reads AttributionSnapshotBuilder output on every conversion event)",
+    "analytics (Wave 5 — behavioral event fan-out snapshots current attribution on every track call)",
+    "referrals (Wave 5 — referral-link click captures a touchpoint; conversion attribution reads the referral leg)",
+    "finance (Wave 5 — subscription + invoice records carry frozen attribution for revenue-source rollups)",
+    "notifications (Wave 5 — welcome-email / abandoned-cart flows read attribution to select persona + copy)"
+  ],
+  "contributes": {
+    "traits": ["BelongsToAttribution", "HasAttribution", "HasAttributionSnapshot"],
+    "attributes": ["AsAttributionListener", "AsTouchpointListener"],
+    "blueprints": ["attributions", "attribution_touchpoints"],
+    "middleware": ["attribution.capture", "attribution.resolve_subject"],
+    "events": [
+      "AttributionCreated",
+      "AttributionUpdated",
+      "AttributionFirstTouchRecorded",
+      "AttributionLastTouchUpdated",
+      "AttributionTouchpointCaptured",
+      "AttributionSubjectIdentified",
+      "AttributionConverted",
+      "AttributionChurned",
+      "AttributionRestored",
+      "AttributionSessionRefreshed",
+      "AttributionCampaignRollupComputed",
+      "AttributionMerged",
+      "AttributionResetRequested",
+      "AttributionResetConfirmed",
+      "AttributionDeleted",
+      "AttributionConsentSnapshotUpdated",
+      "AttributionTouchpointCountReconciled",
+      "AttributionSuppressedByConsent"
+    ],
+    "policies": ["AttributionPolicy", "AttributionTouchpointPolicy"],
+    "hooks": [
+      "MergeAnonymousAttributionsOnSubjectIdentified",
+      "PurgeAttributionDataForErasedTenant",
+      "RedactAttributionOnUserErasure"
+    ],
+    "commands": [
+      "attribution:list",
+      "attribution:describe",
+      "attribution:capture-manual",
+      "attribution:merge",
+      "attribution:reset",
+      "attribution:reconcile-counts",
+      "attribution:reconcile-campaigns",
+      "attribution:rollup-campaigns",
+      "attribution:purge-expired",
+      "attribution:audit-consent-suppressions"
+    ],
+    "jobs": [
+      "ReconcileAttributionCountsJob",
+      "MarkAttributionChurnedJob",
+      "MergeIdentifiedAttributionsJob",
+      "PurgeArchivedAttributionsJob",
+      "CampaignRollupAggregatorJob",
+      "AttributionExpiryNotifierJob"
+    ],
+    "notifications": [
+      "AttributionResetConfirmationNotification",
+      "AttributionMergeCompletedNotification",
+      "AttributionSuppressedByConsentNotification",
+      "AttributionChurnDetectedNotification"
+    ],
+    "broadcasts": [
+      "tenant.{tenantId}.attribution",
+      "user.{userId}.attribution"
+    ],
+    "observers": ["AttributionObserver", "AttributionTouchpointObserver"],
+    "rules": [
+      "valid_url",
+      "valid_click_id_shape",
+      "valid_utm_length_bounds",
+      "valid_session_id",
+      "valid_ip_hash",
+      "valid_lifecycle_state_transition",
+      "valid_attribution_scoping",
+      "valid_device_snapshot",
+      "valid_consent_snapshot"
+    ],
+    "casts": [
+      "AttributionLifecycleState",
+      "AttributionTouchpointType",
+      "ClickIdProvider",
+      "DeviceSnapshot",
+      "ConsentSnapshot",
+      "UtmParameters"
+    ],
+    "views": [],
+    "lang": ["attribution"],
+    "config": ["attribution"],
+    "macros": [
+      "Request::currentAttribution",
+      "Request::currentAttributionId",
+      "Request::attributionSnapshot"
+    ],
+    "bindings": [
+      "AttributionRepository",
+      "AttributionTouchpointRepository",
+      "AttributionProvisioner",
+      "AttributionContext",
+      "AttributionResolver",
+      "AttributionSnapshotBuilder",
+      "CampaignRollupAggregator",
+      "MergeStrategy",
+      "IpHasher",
+      "DeviceParser",
+      "ClickIdExtractor",
+      "UtmExtractor",
+      "ReferrerNormalizer"
+    ],
+    "resources": ["attribution", "attribution-touchpoint"]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing attribution reads (admin dashboards + campaign rollups) + per-subject profile + admin merge/reset actions. Users read their own via `/me/attribution`. Every route requires the `attribution_capture` entitlement; merge routes additionally require `attribution_merge` (Enterprise-only); rollup routes require `attribution_rollup` (Medium+); bulk import requires `attribution_import` (Enterprise-only).",
+      "routes": [
+        "GET /api/v1/attributions",
+        "GET /api/v1/attributions/{attribution}",
+        "GET /api/v1/attributions/{attribution}/touchpoints",
+        "POST /api/v1/attributions/{attribution}/merge",
+        "POST /api/v1/attributions/{attribution}/reset",
+        "GET /api/v1/me/attribution",
+        "GET /api/v1/campaigns/rollup",
+        "GET /api/v1/campaigns/rollup/{campaign}",
+        "POST /api/v1/attributions/import",
+        "GET /api/v1/attributions/consent-suppressions"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant read for support tooling + force-reset for GDPR / regulator-issued requests.",
+      "routes": [
+        "GET /api/v1/platform/attributions",
+        "POST /api/v1/platform/attributions/{attribution}/force-reset"
+      ]
+    }
+  }
+}

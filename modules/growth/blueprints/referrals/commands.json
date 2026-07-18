@@ -1,0 +1,77 @@
+{
+  "id": "academorix://modules/referrals/commands",
+  "$version": 1,
+  "title": "referrals — Artisan commands",
+  "commands": [
+    {
+      "signature": "referral-program:list {--tenant=} {--status=} {--include-archived}",
+      "class": "Academorix\\Growth\\Referrals\\Console\\Commands\\ListReferralProgramsCommand",
+      "purpose": "Cross-tenant or tenant-scoped program view. Filter by status. --include-archived shows archived rows; default hides them."
+    },
+    {
+      "signature": "referral-program:create {tenant} {slug} {--name=} {--side=single_sided} {--reward-type=percent_discount} {--reward-amount=10} {--reward-currency=} {--trigger=first_payment} {--vesting=trigger_plus_hold_days} {--hold-days=30} {--budget-cents=} {--max-per-referrer=} {--dry-run}",
+      "class": "Academorix\\Growth\\Referrals\\Console\\Commands\\CreateReferralProgramCommand",
+      "purpose": "Scriptable program creation (test harness + tenant onboarding). --dry-run validates the input against every observer rule without persisting."
+    },
+    {
+      "signature": "referral-program:activate {program}",
+      "class": "Academorix\\Growth\\Referrals\\Console\\Commands\\ActivateReferralProgramCommand",
+      "purpose": "Transition program status draft -> active OR paused -> active. Refuses when program has no distributable codes (auto-issues user codes as a side effect for existing users)."
+    },
+    {
+      "signature": "referral-program:pause {program} {--reason=}",
+      "class": "Academorix\\Growth\\Referrals\\Console\\Commands\\PauseReferralProgramCommand",
+      "purpose": "Transition program status active -> paused. New claims refused; existing in-flight referrals complete."
+    },
+    {
+      "signature": "referral-program:archive {program} {--reason=}",
+      "class": "Academorix\\Growth\\Referrals\\Console\\Commands\\ArchiveReferralProgramCommand",
+      "purpose": "Terminal transition. Prompts for confirmation. Cascades: pending referrals cancel + materialized-not-yet-paid rewards clawback. Audit-critical."
+    },
+    {
+      "signature": "referral-code:issue-for-user {user} {program} {--dry-run}",
+      "class": "Academorix\\Growth\\Referrals\\Console\\Commands\\IssueForUserReferralCodeCommand",
+      "purpose": "Manually generate a user_scoped code for a specific user + program. Common case is auto-issued by IssueReferralCodeJob at user-activation time; this exists for the edge cases (user activated before the program launched)."
+    },
+    {
+      "signature": "referral-code:generate-campaign-code {program} {code} {--campaign=} {--usage-cap=} {--expires-at=}",
+      "class": "Academorix\\Growth\\Referrals\\Console\\Commands\\GenerateCampaignCodeCommand",
+      "purpose": "CLI equivalent of POST /referral-codes. Admin-generated codes for external campaigns (SUMMER25). Consumes 1 unit of `referrals_code_slot` entitlement."
+    },
+    {
+      "signature": "referral:list {--tenant=} {--program=} {--referrer=} {--referred=} {--status=} {--from=} {--to=}",
+      "class": "Academorix\\Growth\\Referrals\\Console\\Commands\\ListReferralsCommand",
+      "purpose": "Cross-tenant or tenant-scoped referral ledger. Filter by program, referrer/referred user, status, date range."
+    },
+    {
+      "signature": "referral:describe {referral}",
+      "class": "Academorix\\Growth\\Referrals\\Console\\Commands\\DescribeReferralCommand",
+      "purpose": "Verbose read of one referral: base fields + attribution_snapshot summary + device_snapshot hashes + reward rows + fraud flag rows + audit trail summary."
+    },
+    {
+      "signature": "referral:cancel {referral} {--reason=} {--force}",
+      "class": "Academorix\\Growth\\Referrals\\Console\\Commands\\CancelReferralCommand",
+      "purpose": "Support-plane cancel. --force bypasses the state-machine guards (allows cancel from terminal states — used for post-mortem correction only). Prompts for confirmation unless --no-interaction. Cascades pending/vesting/materialized rewards."
+    },
+    {
+      "signature": "referral:force-vest {referral} {--reason=}",
+      "class": "Academorix\\Growth\\Referrals\\Console\\Commands\\ForceVestReferralCommand",
+      "purpose": "Enterprise-only admin override. Forces a referral in status IN ('trigger_pending','vesting') straight to vested + creates rewards. Refuses when tenant lacks `referrals_manual_override` entitlement. Audit-critical (records --reason)."
+    },
+    {
+      "signature": "referral-fraud:list-flags {--tenant=} {--severity=} {--disposition=unreviewed} {--flag-type=}",
+      "class": "Academorix\\Growth\\Referrals\\Console\\Commands\\ListFraudFlagsCommand",
+      "purpose": "Cross-tenant or tenant-scoped fraud flag view. Default disposition=unreviewed shows pending-review flags. Filter by severity + flag_type."
+    },
+    {
+      "signature": "referral-fraud:review {flag} {--disposition=} {--reason=}",
+      "class": "Academorix\\Growth\\Referrals\\Console\\Commands\\ReviewFraudFlagCommand",
+      "purpose": "Admin review a flag. --disposition IN (confirmed_fraud / false_positive / manual_override_approved). Cascades per observer semantics."
+    },
+    {
+      "signature": "referral-fraud:override {referral} {--reason=} {--all-flags}",
+      "class": "Academorix\\Growth\\Referrals\\Console\\Commands\\OverrideFraudCommand",
+      "purpose": "Enterprise-only. Bulk override every fraud flag on a specific referral with disposition=manual_override_approved. Permits the referral to proceed. Audit-critical + refuses when tenant lacks `referrals_manual_override`."
+    }
+  ]
+}

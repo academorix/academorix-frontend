@@ -1,0 +1,199 @@
+{
+  "id": "analytics.resources.analytics-identity.list",
+  "title": "Analytics identities",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/analytics/identities",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "analytics", "entity": "analytics-identity", "action": "list" },
+  "requiresPermission": "analytics.identities.viewAny",
+  "dataSources": [
+    {
+      "name": "identities",
+      "kind": "http.get",
+      "url": "/api/v1/analytics/identities",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": ["filter[is_identified]", "filter[anonymous_id]", "sort"]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Analytics identities" }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Anonymous \u2192 identified subject resolution. Merge identities that turned out to be the same person."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-wrap gap-3" },
+          "children": [
+            {
+              "kind": "Select",
+              "props": { "label": "Identified", "name": "filter[is_identified]", "placeholder": "All" },
+              "options": [
+                { "key": "true", "label": "Identified" },
+                { "key": "false", "label": "Anonymous only" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "identities" } }
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "label": "Anonymous ID",
+                "name": "filter[anonymous_id]",
+                "placeholder": "UUID"
+              },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "identities" } }
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "props": {
+            "emptyState": {
+              "title": "No identities yet",
+              "description": "Identities appear when your product code fires analytics events carrying an anonymous_id.",
+              "icon": "user"
+            }
+          },
+          "bindings": {
+            "items": { "$ref": "identities" },
+            "isLoading": { "$ref": "identities.isLoading" }
+          },
+          "columns": [
+            {
+              "id": "identity",
+              "header": "Identity",
+              "cell": {
+                "kind": "View",
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-mono text-xs" },
+                    "bindings": { "children": { "$ref": "row.anonymous_id" } }
+                  },
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-1.5 mt-0.5" },
+                    "children": [
+                      {
+                        "kind": "Chip",
+                        "bindings": {
+                          "variant": { "$expr": "row.is_identified ? 'success' : 'muted'" },
+                          "children": { "$expr": "row.is_identified ? 'Identified' : 'Anonymous'" }
+                        },
+                        "props": { "size": "xs" }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted font-mono" },
+                        "bindings": {
+                          "hidden": { "$expr": "!row.identified_user_id" },
+                          "children": { "$ref": "row.identified_user_id" }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "first_seen",
+              "header": "First seen",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm" },
+                "bindings": { "children": { "$expr": "formatRelative(row.first_seen_at)" } }
+              }
+            },
+            {
+              "id": "last_seen",
+              "header": "Last seen",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm" },
+                "bindings": { "children": { "$expr": "formatRelative(row.last_seen_at)" } }
+              }
+            },
+            {
+              "id": "span",
+              "header": "Span",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm text-muted" },
+                "bindings": {
+                  "children": { "$expr": "row.session_span_days + ' days'" }
+                }
+              }
+            },
+            {
+              "id": "actions",
+              "header": "",
+              "align": "end",
+              "cell": {
+                "kind": "Menu",
+                "props": {
+                  "trigger": {
+                    "kind": "Button",
+                    "props": {
+                      "variant": "ghost",
+                      "isIconOnly": true,
+                      "leadingIcon": "ellipsis-horizontal",
+                      "ariaLabel": "Actions"
+                    }
+                  }
+                },
+                "items": [
+                  {
+                    "id": "identify",
+                    "label": "Identify \u2026",
+                    "leadingIcon": "user-plus",
+                    "bindings": {
+                      "isDisabled": { "$expr": "row.is_identified" }
+                    },
+                    "action": {
+                      "kind": "openDialog",
+                      "dialog": "analytics.dialogs.identify",
+                      "props": { "identity_id": { "$ref": "row.id" } }
+                    }
+                  },
+                  {
+                    "id": "merge",
+                    "label": "Merge \u2026",
+                    "leadingIcon": "arrow-path-rounded-square",
+                    "bindings": {
+                      "isDisabled": {
+                        "$expr": "!identity.entitlements.analytics_identity_merge || !identity.permissions.includes('analytics.identities.merge')"
+                      }
+                    },
+                    "action": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/analytics/identities/' + row.id + '/merge'"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

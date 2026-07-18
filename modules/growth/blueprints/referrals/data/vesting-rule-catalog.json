@@ -1,0 +1,88 @@
+{
+  "$version": 1,
+  "title": "Referral vesting rule catalogue",
+  "description": "Every valid vesting_rule + its dependencies + description of when to use each. The valid_vesting_rule_dependencies rule reads this catalogue. VestingScheduler.computeCompletesAt() uses it to compute vesting_completes_at at trigger time.",
+  "rules": [
+    {
+      "vesting_rule": "immediate",
+      "display_name": "Immediate",
+      "description": "Vests the moment the trigger event fires. Use for low-friction rewards (point_award, small credits) where the tenant doesn't care about refund risk.",
+      "requires": {},
+      "vesting_offset_formula": "trigger_event_at",
+      "small_tier_allowed": true,
+      "medium_tier_allowed": true,
+      "enterprise_tier_allowed": true,
+      "typical_use_case": "Points programs where value is low + reversal effort not worth it."
+    },
+    {
+      "vesting_rule": "trigger_plus_hold_days",
+      "display_name": "Trigger + hold days",
+      "description": "Vests N days after the trigger event fires. Standard choice for cash-adjacent rewards where the tenant wants to observe the referred user for potential refund / churn before crediting.",
+      "requires": {
+        "vesting_hold_days": {
+          "type": "integer",
+          "min": 1,
+          "max": 365,
+          "description": "Days between trigger_event_at + vested_at. Typical 30d aligns with most refund windows."
+        }
+      },
+      "vesting_offset_formula": "trigger_event_at + interval 'vesting_hold_days days'",
+      "small_tier_allowed": true,
+      "medium_tier_allowed": true,
+      "enterprise_tier_allowed": true,
+      "typical_use_case": "Most common. Cash + credit + free_months rewards after trigger=first_payment."
+    },
+    {
+      "vesting_rule": "after_refund_window_closes",
+      "display_name": "After refund window closes",
+      "description": "Vests the day after the Finance module's configured refund_window closes for the underlying payment. Auto-aligns with the tenant's actual refund policy.",
+      "requires": {
+        "finance_module_refund_window_days": {
+          "type": "integer",
+          "min": 0,
+          "description": "Implicit — read from Finance module (Wave 4). Default 30d on most tenants."
+        }
+      },
+      "vesting_offset_formula": "underlying_payment.refund_window_closes_at + interval '1 day'",
+      "small_tier_allowed": true,
+      "medium_tier_allowed": true,
+      "enterprise_tier_allowed": true,
+      "typical_use_case": "Refund-aware programs. Requires Finance module wired (Wave 4)."
+    },
+    {
+      "vesting_rule": "n_events_completed",
+      "display_name": "N events completed",
+      "description": "Vests after the referred user completes N of some custom event. Requires a domain-event listener that tracks the count.",
+      "requires": {
+        "vesting_n_events": {
+          "type": "integer",
+          "min": 1,
+          "max": 100,
+          "description": "Number of events the referred user must complete before vesting."
+        },
+        "event_definition": "Tenant-specific custom event (e.g. session-attended, class-completed) tracked via a custom listener that increments a counter on the referral row."
+      },
+      "vesting_offset_formula": "when referral.custom_event_count >= vesting_n_events, vests immediately",
+      "small_tier_allowed": true,
+      "medium_tier_allowed": true,
+      "enterprise_tier_allowed": true,
+      "typical_use_case": "Engagement-based rewards. 'Reward when your referral completes 3 practice sessions.'"
+    },
+    {
+      "vesting_rule": "manual_approval",
+      "display_name": "Manual approval",
+      "description": "Vests only when admin explicitly force-vests. Never auto-vests. Enterprise-only.",
+      "requires": {},
+      "vesting_offset_formula": "N/A — manual",
+      "small_tier_allowed": false,
+      "medium_tier_allowed": false,
+      "enterprise_tier_allowed": true,
+      "typical_use_case": "High-value rewards where the tenant wants human review of every payout. Requires `referrals_manual_override` entitlement."
+    }
+  ],
+  "notes": [
+    "Program observers validate vesting_rule dependencies at create time. Missing required fields refuse with REFERRAL_PROGRAM_VESTING_MISSING_DEPENDENCIES.",
+    "Once a program has in-flight referrals, vesting_rule cannot be changed (REFERRAL_PROGRAM_REWARD_LOCKED).",
+    "manual_approval vesting requires Enterprise `referrals_manual_override` entitlement AT PROGRAM CREATE TIME. Downgrading a tenant from Enterprise archives manual_approval programs (they cannot proceed without the entitlement)."
+  ]
+}

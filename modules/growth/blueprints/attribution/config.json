@@ -1,0 +1,292 @@
+{
+  "id": "academorix://modules/attribution/config",
+  "$version": 1,
+  "title": "attribution — developer configuration",
+  "configFile": "config/attribution.php",
+  "envPrefix": "ATTRIBUTION_",
+  "sections": {
+    "capture": {
+      "keys": [
+        {
+          "path": "attribution.capture.enabled",
+          "type": "bool",
+          "env": "ATTRIBUTION_CAPTURE_ENABLED",
+          "default": true,
+          "description": "Master toggle. Off = middleware becomes a no-op. Distinct from the per-tenant attribution_capture entitlement (that's per-tenant; this is global)."
+        },
+        {
+          "path": "attribution.capture.session_ttl_hours",
+          "type": "int",
+          "env": "ATTRIBUTION_SESSION_TTL_HOURS",
+          "default": 24,
+          "description": "How long a session_id cookie lasts. After expiry, a new session_id is minted + AttributionSessionRefreshed fires."
+        },
+        {
+          "path": "attribution.capture.first_touch_ttl_days",
+          "type": "int",
+          "env": "ATTRIBUTION_FIRST_TOUCH_TTL_DAYS",
+          "default": 365,
+          "description": "How long a first-touch cookie lasts. Attribution profiles created past this window are treated as new first-touches (rare — most tenants keep it a year+)."
+        },
+        {
+          "path": "attribution.capture.strip_pii_from_referrer",
+          "type": "bool",
+          "default": true,
+          "description": "Strip query parameters from the referrer URL (keeps path + host). Prevents accidental PII leakage in referrer strings from third-party sites."
+        },
+        {
+          "path": "attribution.capture.max_utm_length",
+          "type": "int",
+          "default": 256,
+          "description": "Truncate utm_* values longer than this. Malformed URLs with megabyte-length utm_source strings are refused."
+        }
+      ]
+    },
+    "click_ids": {
+      "keys": [
+        {
+          "path": "attribution.click_ids.google.cookie",
+          "type": "string",
+          "default": "_gclid",
+          "description": "Cookie name for Google Ads click ID."
+        },
+        {
+          "path": "attribution.click_ids.google.query_param",
+          "type": "string",
+          "default": "gclid"
+        },
+        {
+          "path": "attribution.click_ids.google.ttl_days",
+          "type": "int",
+          "default": 90,
+          "description": "How long the click ID cookie lasts. Matches Google Ads' default."
+        },
+        {
+          "path": "attribution.click_ids.meta.cookie",
+          "type": "string",
+          "default": "_fbclid"
+        },
+        {
+          "path": "attribution.click_ids.meta.query_param",
+          "type": "string",
+          "default": "fbclid"
+        },
+        {
+          "path": "attribution.click_ids.meta.ttl_days",
+          "type": "int",
+          "default": 90
+        },
+        {
+          "path": "attribution.click_ids.tiktok.cookie",
+          "type": "string",
+          "default": "_ttclid"
+        },
+        {
+          "path": "attribution.click_ids.tiktok.query_param",
+          "type": "string",
+          "default": "ttclid"
+        },
+        {
+          "path": "attribution.click_ids.tiktok.ttl_days",
+          "type": "int",
+          "default": 30
+        },
+        {
+          "path": "attribution.click_ids.microsoft.cookie",
+          "type": "string",
+          "default": "_msclkid"
+        },
+        {
+          "path": "attribution.click_ids.microsoft.query_param",
+          "type": "string",
+          "default": "msclkid"
+        },
+        {
+          "path": "attribution.click_ids.microsoft.ttl_days",
+          "type": "int",
+          "default": 90
+        },
+        {
+          "path": "attribution.click_ids.snapchat.cookie",
+          "type": "string",
+          "default": "_sccid"
+        },
+        {
+          "path": "attribution.click_ids.snapchat.query_param",
+          "type": "string",
+          "default": "ScCid"
+        },
+        {
+          "path": "attribution.click_ids.snapchat.ttl_days",
+          "type": "int",
+          "default": 30
+        },
+        {
+          "path": "attribution.click_ids.provider_hint_precedence",
+          "type": "array",
+          "default": ["google", "meta", "tiktok", "microsoft", "snapchat"],
+          "description": "Ordered precedence for the provider_hint calculation. The first non-null click ID from this list wins."
+        }
+      ]
+    },
+    "rollup": {
+      "keys": [
+        {
+          "path": "attribution.rollup.schedule",
+          "type": "string",
+          "default": "hourly",
+          "enum": ["disabled", "hourly", "every-15-min"],
+          "description": "How often CampaignRollupAggregatorJob runs. Enterprise tenants may go every-15-min for near-realtime dashboards."
+        },
+        {
+          "path": "attribution.rollup.windows",
+          "type": "array",
+          "default": ["1h", "24h", "7d", "30d"],
+          "description": "Pre-computed rollup windows cached per tenant. Longer windows require more compute; keep this list bounded."
+        },
+        {
+          "path": "attribution.rollup.top_campaigns_cache_ttl_seconds",
+          "type": "int",
+          "default": 900,
+          "description": "TTL for the top-N campaigns cache. Feeds the tenant dashboard homepage widget."
+        },
+        {
+          "path": "attribution.rollup.batch_size",
+          "type": "int",
+          "default": 5000,
+          "description": "CampaignRollupAggregatorJob processes this many touchpoints per pass. Larger = fewer DB round-trips + more memory."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "attribution.retention.touchpoint_days",
+          "type": "int",
+          "default": 730,
+          "description": "Base retention window for attribution_touchpoints rows. Extended to 2555 on Enterprise via attribution_touchpoint_retention_extended entitlement (dynamic at runtime)."
+        },
+        {
+          "path": "attribution.retention.touchpoint_days_extended",
+          "type": "int",
+          "default": 2555,
+          "description": "Enterprise retention window (7 years). Applied when attribution_touchpoint_retention_extended = true."
+        },
+        {
+          "path": "attribution.retention.archived_hold_days",
+          "type": "int",
+          "default": 90,
+          "description": "Audit hold after reset request before touchpoint hard-delete."
+        },
+        {
+          "path": "attribution.retention.churn_threshold_days",
+          "type": "int",
+          "default": 90,
+          "description": "Days with no touchpoint before MarkAttributionChurnedJob transitions lifecycle_state to churned."
+        },
+        {
+          "path": "attribution.retention.archive_churned_days",
+          "type": "int",
+          "default": 730,
+          "description": "Days churned before PurgeArchivedAttributionsJob soft-deletes the profile."
+        },
+        {
+          "path": "attribution.retention.first_touch_forever",
+          "type": "bool",
+          "default": true,
+          "description": "true = first_touch_at is IMMUTABLE and preserved for the life of the profile. false is documented but never used in production — reserved for special-purpose tenants (research, testing)."
+        }
+      ]
+    },
+    "consent": {
+      "keys": [
+        {
+          "path": "attribution.consent.required_category",
+          "type": "string",
+          "default": "marketing",
+          "description": "Which consent category the AttributionMiddleware gate checks. Must exist in the compliance::consent registry."
+        },
+        {
+          "path": "attribution.consent.fallback_to_ephemeral",
+          "type": "bool",
+          "default": true,
+          "description": "true = when consent NOT granted, AttributionContext still binds session_id + hashed_ip in-memory (no persistence). false = context is empty; downstream events cannot attribute even ephemerally."
+        },
+        {
+          "path": "attribution.consent.honor_gpc_signal",
+          "type": "bool",
+          "default": true,
+          "description": "Honor the Sec-GPC HTTP header (Global Privacy Control). When '1', treats the request as consent-withdrawal."
+        },
+        {
+          "path": "attribution.consent.suppression_notification_frequency",
+          "type": "string",
+          "default": "daily",
+          "enum": ["realtime", "hourly", "daily", "weekly", "disabled"],
+          "description": "Cadence for AttributionSuppressedByConsentNotification batches. Daily is the sensible default (compliance signal, not operationally urgent)."
+        }
+      ]
+    },
+    "merge": {
+      "keys": [
+        {
+          "path": "attribution.merge.match_window_days",
+          "type": "int",
+          "default": 30,
+          "description": "MergeIdentifiedAttributionsJob looks for anonymous profiles with matching signals in this window before the identify event."
+        },
+        {
+          "path": "attribution.merge.match_signals",
+          "type": "array",
+          "default": ["session_id", "ip_hash", "device_hash"],
+          "description": "Which signals qualify as a match. session_id is strongest (same browser session pre-signup); ip_hash + device_hash are weaker (multiple users may share IP)."
+        },
+        {
+          "path": "attribution.merge.max_anonymous_absorbed",
+          "type": "int",
+          "default": 10,
+          "description": "Cap on anonymous profiles absorbed into one identified profile per merge run. Prevents runaway merges from misconfigured proxies."
+        },
+        {
+          "path": "attribution.merge.first_touch_overwrite_policy",
+          "type": "string",
+          "default": "earlier_wins",
+          "enum": ["earlier_wins", "keep_identified", "manual_review"],
+          "description": "How to reconcile first_touch when merging. earlier_wins = anonymous's first_touch replaces identified's when older. keep_identified = never overwrite. manual_review = flag for admin decision."
+        }
+      ]
+    },
+    "analytics": {
+      "keys": [
+        {
+          "path": "attribution.analytics.touchpoint_sample_rate",
+          "type": "float",
+          "default": 0.1,
+          "description": "Sampling rate for the 'Attribution Touchpoint Captured' analytics event. 0.1 = 10%. Enterprise may raise to 1.0 for full-fidelity funnel analysis."
+        },
+        {
+          "path": "attribution.analytics.enabled",
+          "type": "bool",
+          "default": true,
+          "description": "Toggle meta-analytics emission for this module. Off = the module fires no analytics events itself (downstream domain events still fire)."
+        }
+      ]
+    },
+    "reconciliation": {
+      "keys": [
+        {
+          "path": "attribution.reconciliation.expected_drift_findings",
+          "type": "int",
+          "default": 0,
+          "description": "Baseline for the count-drift alerts. Any finding above this is a P1 signal (should always be 0)."
+        },
+        {
+          "path": "attribution.reconciliation.batch_size",
+          "type": "int",
+          "default": 1000,
+          "description": "ReconcileAttributionCountsJob scans this many attributions per pass."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "id": "academorix://modules/referrals/entitlements",
+  "$version": 1,
+  "title": "referrals — declared entitlements",
+  "description": "Nine entitlement keys. `referrals_capture` is the boolean master gate for the module (on for every tier). `referrals_program_slot` caps the number of referral programs per tenant. `referrals_code_slot` caps campaign codes only — user-scoped codes are always free. `referrals_advanced_reward_types` (Medium+) enables free_months, free_sessions, credits, point_award — Small only allows percent_discount + fixed_amount. `referrals_double_sided` (Medium+) enables double-sided programs. `referrals_fraud_detection` (Medium+) enables the FraudDetector rule surface. `referrals_program_budget_cap` (Medium+) enables max_rewards_per_program. `referrals_manual_override` (Enterprise) enables admin force-vest + admin fraud override. `referrals_extended_retention` (Enterprise) extends 7y -> 10y for financial audit alignment.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "referrals_capture",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Master feature gate. Off = the whole module is inert: no programs may be created, existing programs paused, /me routes return 402. Every tier defaults on — off is an emergency ops-flip only.",
+      "enforcedBy": [
+        "referrals.enforce_capture_entitlement middleware on every /api/v1/referral-* + /api/v1/me/referral-* route",
+        "ReferralProgramObserver refuses create when the gate is closed",
+        "ReferralObserver refuses create when the gate is closed",
+        "SDUI surfaces hidden when features array does not include 'referrals.core'"
+      ]
+    },
+    {
+      "key": "referrals_program_slot",
+      "kind": "slot",
+      "unit": "programs",
+      "defaultsByPlan": { "small": 1, "medium": 5, "enterprise": null },
+      "description": "How many referral programs a tenant can have concurrently. Small: 1 (one simple program per tenant). Medium: 5. Enterprise: unlimited (null cap). Consumed on program create; released on archive.",
+      "enforcedBy": [
+        "ReferralProgramObserver.creating consumes 1 unit via EntitlementGate::consume('referrals_program_slot')",
+        "ReferralProgramObserver.archived releases 1 unit via EntitlementGate::release('referrals_program_slot')"
+      ]
+    },
+    {
+      "key": "referrals_code_slot",
+      "kind": "slot",
+      "unit": "codes",
+      "defaultsByPlan": { "small": 0, "medium": null, "enterprise": null },
+      "description": "Cap on CAMPAIGN codes per tenant. User-scoped codes (auto-issued via IssueReferralCodeJob) are always free — this cap only applies to admin-created campaign + opaque codes. Small: 0 (no campaign codes; user codes only). Medium: unlimited. Enterprise: unlimited.",
+      "enforcedBy": [
+        "ReferralCodeObserver.creating (for campaign / opaque codes only) consumes 1 unit",
+        "ReferralCodeObserver.deleted releases 1 unit"
+      ]
+    },
+    {
+      "key": "referrals_advanced_reward_types",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables reward types beyond the Small baseline. Small: only percent_discount + fixed_amount. Medium+: adds free_months, free_sessions, credits, point_award.",
+      "enforcedBy": [
+        "ReferralProgramObserver.creating refuses when reward_type IS IN advanced set AND entitlement is off",
+        "ReferralRewardObserver.creating refuses when reward_type is advanced AND entitlement is off (edge case: entitlement revoked mid-flight)"
+      ]
+    },
+    {
+      "key": "referrals_double_sided",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables double-sided programs — where both referrer and referred receive a reward. Small: single-sided only (referrer reward only).",
+      "enforcedBy": [
+        "ReferralProgramObserver.creating refuses when side='double_sided' AND entitlement is off"
+      ]
+    },
+    {
+      "key": "referrals_fraud_detection",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables the FraudDetector rule surface. Small: NO fraud detection — permissive default (fraud_score always 0 for Small tenants). Medium+: rule-based detection with all fraud rules active.",
+      "enforcedBy": [
+        "FraudDetector no-ops when tenant lacks the entitlement",
+        "SDUI fraud-flag surface hidden when features does not include 'referrals.fraud_detection'"
+      ]
+    },
+    {
+      "key": "referrals_program_budget_cap",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables max_rewards_per_program budget capping. Small: no budget cap (implicit — Small tenants set no cap). Medium+: budget cap can be configured per program.",
+      "enforcedBy": [
+        "ReferralProgramObserver.creating refuses when max_rewards_per_program IS NOT NULL AND entitlement is off",
+        "ReconcileProgramBudgetJob evaluates + fires ReferralProgramBudgetReached when cap is enabled + reached"
+      ]
+    },
+    {
+      "key": "referrals_manual_override",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Enables admin force-vest (POST /referrals/{id}/force-vest) and admin manual fraud override (disposition=manual_override_approved). Audit-critical operations that require the tenant to opt into the elevated privilege.",
+      "enforcedBy": [
+        "POST /referrals/{id}/force-vest route carries entitlement.enforce:referrals_manual_override middleware",
+        "ReferralFraudFlagObserver refuses disposition=manual_override_approved when the entitlement is off"
+      ]
+    },
+    {
+      "key": "referrals_extended_retention",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Extends retention from 7y default to 10y for financial audit alignment. Some regulated tenants require 10y for tax audit trails.",
+      "enforcedBy": [
+        "PurgeArchivedReferralsJob reads the entitlement to select the retention window (7y default; 10y when on)"
+      ]
+    }
+  ]
+}

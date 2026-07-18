@@ -1,0 +1,48 @@
+{
+  "id": "analytics.analytics-event-status-chip",
+  "title": "Analytics event status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for AnalyticsEvent.status. Mapping: delivered = success, partially_delivered = warning, suppressed_* = muted, pending / dispatching = info.",
+  "props": {
+    "status": { "type": "string", "description": "AnalyticsEvent.status enum value." },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md"] },
+    "showIcon": { "type": "boolean", "default": true },
+    "showLabel": { "type": "boolean", "default": true }
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "chip",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "props.status === 'delivered' ? 'success' : (props.status === 'partially_delivered' ? 'warning' : (props.status.startsWith('suppressed') ? 'muted' : 'info'))"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "children": [
+        {
+          "kind": "Icon",
+          "props": { "className": "size-3 mr-1" },
+          "bindings": {
+            "hidden": { "$expr": "!props.showIcon" },
+            "icon": {
+              "$expr": "props.status === 'delivered' ? 'check-circle' : (props.status === 'partially_delivered' ? 'exclamation-triangle' : (props.status.startsWith('suppressed') ? 'no-symbol' : 'clock'))"
+            }
+          }
+        },
+        {
+          "kind": "Text",
+          "props": { "as": "span" },
+          "bindings": {
+            "hidden": { "$expr": "!props.showLabel" },
+            "children": {
+              "$expr": "props.status === 'delivered' ? 'Delivered' : (props.status === 'partially_delivered' ? 'Partial' : (props.status === 'suppressed_by_consent' ? 'No consent' : (props.status === 'suppressed_by_sampling' ? 'Sampled out' : (props.status === 'suppressed_by_provider_off' ? 'No providers' : (props.status === 'dispatching' ? 'Dispatching' : 'Pending')))))"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

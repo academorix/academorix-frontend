@@ -1,0 +1,64 @@
+{
+  "id": "marketing.circuit-breaker-badge",
+  "title": "Circuit-breaker badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Dedicated badge showing circuit-breaker state for a marketing_provider_config. States: CLOSED (green, healthy), HALF_OPEN (yellow, probing), OPEN (red, blocked). Includes open-until timestamp when relevant + consecutive_failure_count.",
+  "props": {
+    "provider_config": {
+      "type": "object",
+      "required": true,
+      "description": "The MarketingProviderConfig object with circuit_breaker_open_until + consecutive_failure_count + circuit_breaker_config fields."
+    },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex items-center gap-2" },
+      "children": [
+        {
+          "kind": "Chip",
+          "bindings": {
+            "variant": {
+              "$expr": "!props.provider_config.circuit_breaker_open_until ? 'success' : (props.provider_config.circuit_breaker_open_until > $now ? 'danger' : 'warning')"
+            },
+            "size": { "$ref": "props.size" }
+          },
+          "props": {
+            "leadingIcon": {
+              "$expr": "!props.provider_config.circuit_breaker_open_until ? 'check-circle' : (props.provider_config.circuit_breaker_open_until > $now ? 'exclamation-triangle' : 'arrow-path')"
+            }
+          },
+          "children": [
+            {
+              "kind": "Text",
+              "bindings": {
+                "children": {
+                  "$expr": "!props.provider_config.circuit_breaker_open_until ? 'Circuit closed' : (props.provider_config.circuit_breaker_open_until > $now ? 'Circuit open' : 'Circuit half-open')"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs text-muted" },
+          "bindings": {
+            "hidden": { "$expr": "!props.provider_config.circuit_breaker_open_until || props.provider_config.circuit_breaker_open_until <= $now" },
+            "children": { "$expr": "'Reopens ' + $relativeTime(props.provider_config.circuit_breaker_open_until)" }
+          }
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs text-muted" },
+          "bindings": {
+            "hidden": { "$expr": "props.provider_config.consecutive_failure_count === 0" },
+            "children": { "$expr": "props.provider_config.consecutive_failure_count + '/' + props.provider_config.circuit_breaker_config.failure_threshold + ' failures'" }
+          }
+        }
+      ]
+    }
+  ]
+}

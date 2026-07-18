@@ -1,0 +1,139 @@
+{
+  "id": "marketing.resources.marketing-event.list",
+  "title": "Marketing events",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/marketing/events",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "marketing", "entity": "marketing-event", "action": "list" },
+  "requiresPermission": "marketing.events.viewAny",
+  "requiresEntitlement": "marketing_capture",
+  "dataSources": [
+    {
+      "name": "events",
+      "kind": "http.get",
+      "url": "/api/v1/marketing/events",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "event_slot",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/marketing_event_slot_per_month",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Marketing events" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Every business milestone captured + dispatched to your ad networks." } }
+              ]
+            },
+            {
+              "kind": "Widget",
+              "widget": "entitlements.entitlement-usage-bar",
+              "props": { "size": "sm", "label": "Events this month" },
+              "bindings": {
+                "cap": { "$ref": "event_slot.value_cap" },
+                "used": { "$ref": "event_slot.value_used" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Event type", "menuTrigger": "focus", "className": "min-w-56" },
+              "props_items_source": "marketing.event-type-catalog",
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "event_type", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "pending", "label": "Pending" },
+                { "id": "dispatching", "label": "Dispatching" },
+                { "id": "delivered", "label": "Delivered" },
+                { "id": "partially_delivered", "label": "Partially delivered" },
+                { "id": "failed", "label": "Failed" },
+                { "id": "suppressed_by_consent", "label": "Suppressed (consent)" },
+                { "id": "superseded", "label": "Superseded" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "status", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Provider", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items_source": "marketing.providers",
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "provider", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "DateRangePicker",
+              "props": { "label": "Date range", "className": "min-w-64" },
+              "actions": {
+                "onChange": {
+                  "kind": "filter.setMany",
+                  "fields": { "from": "$value.start", "to": "$value.end" }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "bindings": {
+            "items": { "$ref": "events" },
+            "isLoading": { "$ref": "events.isLoading" }
+          },
+          "props": {
+            "className": "w-full",
+            "columns": [
+              { "field": "event_type", "label": "Event type", "sortable": true, "width": 200 },
+              { "field": "status", "label": "Status", "sortable": true, "width": 160, "renderer": { "widget": "marketing.provider-status-chip" } },
+              { "field": "subject_type", "label": "Subject", "width": 140 },
+              { "field": "value_amount_cents", "label": "Value", "sortable": true, "width": 120, "renderer": { "kind": "Text", "formatter": "currency" } },
+              { "field": "eligible_provider_count", "label": "Eligible", "width": 90 },
+              { "field": "delivered_provider_count", "label": "Delivered", "width": 100 },
+              { "field": "attribution.utm_campaign", "label": "Campaign", "width": 180 },
+              { "field": "created_at", "label": "Captured", "sortable": true, "defaultSort": "desc", "width": 160, "formatter": "datetime-relative" }
+            ],
+            "onRowPress": {
+              "kind": "navigate",
+              "toExpr": "'/tenant/marketing/events/' + row.id"
+            }
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "megaphone", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No marketing events yet" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Events appear here as customers hit business milestones (signup, subscription, purchase, ...)." } }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

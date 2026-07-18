@@ -1,0 +1,41 @@
+{
+  "id": "academorix://modules/attribution/hooks",
+  "$version": 1,
+  "title": "attribution — TenancyHook + lifecycle hooks",
+  "description": "Cross-module hook implementations. TenancyHooks are the tenancy module's contract for reacting to tenant-lifecycle events (provision / suspend / erase). Attribution does not register a bootstrapper (nothing to hydrate at tenant-boot — attribution profiles are on-demand created), but registers three cross-module hooks: merge on identify (Enterprise-only), tenant erasure cascade, and user erasure redaction.",
+  "namespace": "Academorix\\Growth\\Attribution\\Hooks",
+  "hooks": [
+    {
+      "name": "MergeAnonymousAttributionsOnSubjectIdentified",
+      "class": "Academorix\\Growth\\Attribution\\Hooks\\MergeAnonymousAttributionsOnSubjectIdentified",
+      "kind": "merge",
+      "listens_to": "attribution::AttributionSubjectIdentified",
+      "purpose": "When an anonymous session identifies (becomes a user/athlete/lead), find every anonymous attributions row within the last 30 days that shares a matching signal (session_id / ip_hash / device_hash) with the newly identified profile. Dispatches MergeIdentifiedAttributionsJob to perform the actual merge. Gated by the tenant's `attribution_merge` entitlement — non-Enterprise tenants get a no-op (partial-attribution fallback).",
+      "priority": 50,
+      "runs_before": "marketing / analytics listeners so those consumers see the merged (canonical) profile",
+      "compliance": "GDPR Art. 25 — merging is user-initiated (via signup/login); no cross-user or cross-tenant merging."
+    },
+    {
+      "name": "PurgeAttributionDataForErasedTenant",
+      "class": "Academorix\\Growth\\Attribution\\Hooks\\PurgeAttributionDataForErasedTenant",
+      "kind": "tenant_erasure",
+      "listens_to": "tenancy::TenantErased",
+      "purpose": "Cascade delete via FK; writes compliance audit trail entry + emits count metrics (attributions purged, attribution_touchpoints purged). Audit rows outlive the source rows per financial retention.",
+      "compliance": "GDPR Art. 17 (right to erasure). Emitted metrics feed the compliance dashboard for retention proof."
+    },
+    {
+      "name": "RedactAttributionOnUserErasure",
+      "class": "Academorix\\Growth\\Attribution\\Hooks\\RedactAttributionOnUserErasure",
+      "kind": "user_erasure",
+      "listens_to": "user::UserErased",
+      "purpose": "When a user is erased (GDPR Art. 17 individual-subject erasure): for every attributions row with subject_type='user' and subject_id=erased_user_id, redact confidential fields (first/last_touch_* replaced with '[REDACTED]', click_id + device blobs replaced with '{}'), transition lifecycle_state to 'churned', null the subject_id. The row survives for aggregate metrics only. Every associated attribution_touchpoints row's device_snapshot has ip_hash + user_agent_hash replaced with '[REDACTED]'. Full hard-delete happens 90 days later via the audit-hold reset flow.",
+      "compliance": "GDPR Art. 17. Redaction (not deletion) preserves aggregate rollup integrity — the tenant's campaign performance dashboards keep working even after individual users erase themselves."
+    }
+  ],
+  "no_bootstrapper": {
+    "reason": "Attribution does not need a tenant-boot hydration path — every attribution profile is created on-demand at first attribution-bearing request. Contrast with modules like `tenancy` (bootstraps request-context) or `settings` (bootstraps config cache) that need per-request tenant hydration."
+  },
+  "no_provisioner": {
+    "reason": "No provisioning at tenant creation — attributions is populated by user activity, not by tenant onboarding. TenantProvisioned does not seed any rows in this module."
+  }
+}

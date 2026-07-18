@@ -1,0 +1,141 @@
+{
+  "id": "analytics.resources.analytics-funnel.report",
+  "title": "Funnel report",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/analytics/funnels/{funnel_key}/report",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "analytics", "entity": "analytics-funnel", "action": "report" },
+  "requiresPermission": "analytics.funnels.view",
+  "params": [{ "name": "funnel_key", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "report",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/analytics/funnels/' + params.funnel_key + '/report'",
+      "unwrap": "data",
+      "queryParamsFromState": ["since", "until", "group_by"]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-6xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold font-mono"
+              },
+              "bindings": { "children": { "$ref": "params.funnel_key" } }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Funnel report \u2014 per-step conversion + drop-off analysis."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-wrap gap-3" },
+          "children": [
+            {
+              "kind": "DateRangeField",
+              "props": {
+                "label": "Time window",
+                "nameFrom": "since",
+                "nameTo": "until",
+                "defaultRange": "last_30_days"
+              },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "report" } }
+            },
+            {
+              "kind": "Select",
+              "props": { "label": "Group by", "name": "group_by", "placeholder": "No grouping" },
+              "options": [
+                { "key": "none", "label": "None" },
+                { "key": "attribution_source", "label": "Attribution source" },
+                { "key": "attribution_campaign", "label": "Campaign" },
+                { "key": "device_type", "label": "Device type" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "report" } }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-3 gap-4" },
+          "children": [
+            {
+              "kind": "StatCard",
+              "props": { "label": "Overall conversion rate" },
+              "bindings": {
+                "value": {
+                  "$expr": "(report.overall_conversion_rate * 100).toFixed(1) + '%'"
+                }
+              }
+            },
+            {
+              "kind": "StatCard",
+              "props": { "label": "Sample size" },
+              "bindings": {
+                "value": { "$ref": "report.sample_size" }
+              }
+            },
+            {
+              "kind": "StatCard",
+              "props": { "label": "Average time to complete" },
+              "bindings": {
+                "value": {
+                  "$expr": "report.avg_completion_seconds + 's'"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "children": "This report excluded some subjects due to consent withdrawal."
+          },
+          "bindings": {
+            "hidden": {
+              "$expr": "!report.consent_suppressed_ratio || report.consent_suppressed_ratio < 0.05"
+            },
+            "props.children": {
+              "$expr": "'This report excluded ' + Math.round(report.consent_suppressed_ratio * 100) + '% of the sample due to consent withdrawal. Interpret with care.'"
+            }
+          }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "Steps"
+              }
+            },
+            {
+              "kind": "FunnelChart",
+              "bindings": { "steps": { "$ref": "report.steps" } }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

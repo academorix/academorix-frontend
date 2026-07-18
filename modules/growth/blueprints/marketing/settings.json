@@ -1,0 +1,169 @@
+{
+  "id": "academorix://modules/marketing/settings",
+  "$version": 1,
+  "title": "marketing — settings",
+  "description": "Tenant-facing marketing configuration + per-user preferences for the ROAS report subscription. The marketing_provider_configs table is NOT settings — those are per-provider credentials owned by the marketing module itself. This file declares tenant-level defaults (default retry schedule, notification routing) + per-user preferences (ROAS digest subscription).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "marketing",
+      "class": "Academorix\\Growth\\Marketing\\Settings\\MarketingSettings",
+      "label": "Marketing conversion tracking",
+      "description": "Tenant-wide defaults for marketing capture + dispatch.",
+      "icon": "megaphone",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 40,
+      "permission": "marketing.providers.viewAny",
+      "requiresEntitlement": "marketing_capture",
+      "sections": [
+        {
+          "label": "Capture defaults",
+          "description": "Tenant-wide defaults applied to newly-configured providers.",
+          "icon": "arrow-down-tray",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "default_test_mode",
+              "controlType": "toggle",
+              "label": "New providers start in test mode",
+              "defaultValue": true,
+              "helpText": "Newly-configured providers default to test_mode=true so credentials are validated before going live.",
+              "sortOrder": 1
+            },
+            {
+              "name": "default_retry_max_attempts",
+              "controlType": "number",
+              "label": "Default max retry attempts",
+              "defaultValue": 6,
+              "min": 1,
+              "max": 10,
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Notifications routing",
+          "description": "Where dead-letter + circuit-breaker alerts are delivered.",
+          "icon": "bell-alert",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "dead_letter_notify_users",
+              "controlType": "user-multi-select",
+              "label": "Notify these users on dead letters",
+              "defaultValue": [],
+              "helpText": "Every user listed receives MarketingDeadLetterCreatedNotification. Tenant owners are always notified regardless.",
+              "sortOrder": 1
+            },
+            {
+              "name": "circuit_breaker_notify_users",
+              "controlType": "user-multi-select",
+              "label": "Notify these users on circuit-breaker opens",
+              "defaultValue": [],
+              "sortOrder": 2
+            },
+            {
+              "name": "slack_channel",
+              "controlType": "text",
+              "label": "Slack channel for alerts",
+              "helpText": "Enterprise-only. Marketing alerts route to this Slack channel via the notifications module's Slack driver.",
+              "requiresEntitlement": "marketing.slack_alerts",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Consent policy",
+          "description": "Consent categories required to capture + dispatch marketing events.",
+          "icon": "check-badge",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "required_consent_categories",
+              "controlType": "multi-select",
+              "label": "Required consent categories",
+              "defaultValue": ["marketing", "advertising"],
+              "options": {
+                "marketing": "Marketing communications",
+                "advertising": "Advertising tracking",
+                "personalized_advertising": "Personalised advertising"
+              },
+              "helpText": "Compliance-critical. Regulators may require you to keep both marketing + advertising set.",
+              "sortOrder": 1
+            },
+            {
+              "name": "recheck_consent_on_dispatch",
+              "controlType": "toggle",
+              "label": "Re-check consent at dispatch time",
+              "defaultValue": true,
+              "helpText": "When enabled, consent revoked between capture and dispatch is honoured (in-flight events are suppressed). Recommended: leave enabled.",
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "marketing_user",
+      "class": "Academorix\\Growth\\Marketing\\Settings\\MarketingUserSettings",
+      "label": "My marketing preferences",
+      "description": "Per-user preferences for marketing reports + alerts.",
+      "icon": "user-circle",
+      "scope": "user",
+      "public": true,
+      "sortOrder": 35,
+      "sections": [
+        {
+          "label": "ROAS report subscription",
+          "icon": "chart-bar",
+          "sortOrder": 1,
+          "requiresEntitlement": "marketing_roas_report",
+          "fields": [
+            {
+              "name": "receive_monthly_roas_report",
+              "controlType": "toggle",
+              "label": "Send me the monthly ROAS report",
+              "defaultValue": true,
+              "sortOrder": 1
+            },
+            {
+              "name": "roas_report_channels",
+              "controlType": "multi-select",
+              "label": "Delivery channels",
+              "defaultValue": ["mail"],
+              "options": {
+                "mail": "Email",
+                "in_app": "In-app"
+              },
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Alert subscriptions",
+          "icon": "bell",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "receive_dead_letter_alerts",
+              "controlType": "toggle",
+              "label": "Notify me on marketing dead letters",
+              "defaultValue": true,
+              "helpText": "This preference only takes effect if the tenant admin listed you in dead_letter_notify_users. Owners always receive.",
+              "sortOrder": 1
+            },
+            {
+              "name": "receive_circuit_breaker_alerts",
+              "controlType": "toggle",
+              "label": "Notify me on circuit-breaker events",
+              "defaultValue": true,
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

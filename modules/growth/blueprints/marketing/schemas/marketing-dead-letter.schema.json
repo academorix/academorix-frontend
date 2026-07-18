@@ -1,0 +1,149 @@
+{
+  "id": "academorix://modules/marketing/schemas/marketing-dead-letter",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "MarketingDeadLetter",
+  "description": "Max-attempts-exceeded events for manual replay. Carries `tenant_id` + `marketing_event_id`. INDEFINITE retention (financial audit — every unresolved P1 preserved). NEVER carries `application_id`, `region_id`, `organization_id`, or `scope_node_id`.",
+  "type": "object",
+  "x-module": "marketing",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "marketing_dead_letters",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "mdl_",
+    "incrementing": false,
+    "model": "Academorix\\Growth\\Marketing\\Models\\MarketingDeadLetter",
+    "interface": "Academorix\\Growth\\Marketing\\Contracts\\Data\\MarketingDeadLetterInterface",
+    "implements": ["Academorix\\Growth\\Marketing\\Contracts\\Data\\MarketingDeadLetterInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToMarketingEvent",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable"
+    ],
+    "casts": {
+      "provider": "MarketingProvider",
+      "reason": "MarketingDeadLetterReason",
+      "final_error_details": "array",
+      "replay_attempts": "integer",
+      "last_replay_at": "datetime",
+      "resolved_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["MarketingDeadLetterObserver"],
+    "appends": ["is_resolved", "days_open"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "marketing_event_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "marketing_events", "column": "id", "onDelete": "restrict" }
+      },
+      "provider": {
+        "type": "string",
+        "length": 32,
+        "nullable": false
+      },
+      "reason": {
+        "type": "string",
+        "length": 48,
+        "nullable": false,
+        "description": "Enum: max_attempts_exceeded / provider_permanent_failure / circuit_breaker_max_opens / invalid_payload / auth_failure."
+      },
+      "final_error_details": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Snapshot of the last delivery's error_details. Shape: { error_code, error_message, retry_after, is_transient }."
+      },
+      "replay_attempts": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "How many manual replay attempts have been made."
+      },
+      "last_replay_at": { "type": "timestamptz", "nullable": true },
+      "resolved_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set when ops marks resolved OR when a manual replay succeeds. Once set, resolution is one-way (cannot be nulled)."
+      },
+      "resolved_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "The actor who resolved. NULL when auto-resolved by a successful replay."
+      },
+      "resolution_note": {
+        "type": "text",
+        "nullable": true,
+        "description": "Ops-authored note. Required on manual resolve; NULL on auto-resolve."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "provider", "reason", "created_at"], "name": "marketing_dead_letters_status_idx" },
+      { "columns": ["tenant_id", "resolved_at"], "name": "marketing_dead_letters_resolved_idx", "predicate": "resolved_at IS NULL" },
+      { "columns": ["marketing_event_id"], "name": "marketing_dead_letters_event_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "marketing_event_id", "provider", "reason", "replay_attempts", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^mdl_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "marketing_event_id": { "type": "string", "pattern": "^mev_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "provider": {
+      "type": "string",
+      "enum": ["meta_capi", "google_ads", "google_analytics_4", "gtm_server", "tiktok_events", "linkedin_insight", "snapchat_capi", "pinterest_capi", "custom_webhook"]
+    },
+    "reason": {
+      "type": "string",
+      "enum": ["max_attempts_exceeded", "provider_permanent_failure", "circuit_breaker_max_opens", "invalid_payload", "auth_failure"]
+    },
+    "final_error_details": {
+      "type": ["object", "null"],
+      "additionalProperties": true,
+      "properties": {
+        "error_code": { "type": ["string", "null"] },
+        "error_message": { "type": ["string", "null"] },
+        "retry_after": { "type": ["integer", "null"] },
+        "is_transient": { "type": "boolean" }
+      }
+    },
+    "replay_attempts": { "type": "integer", "minimum": 0 },
+    "last_replay_at": { "type": ["string", "null"], "format": "date-time" },
+    "resolved_at": { "type": ["string", "null"], "format": "date-time" },
+    "resolved_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "resolution_note": { "type": ["string", "null"] },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "resolved_at once set is IMMUTABLE (cannot be nulled)",
+    "resolved_by_user_id required when resolved_at set AND was NOT auto-resolved",
+    "resolution_note required when resolved_at set AND resolved_by_user_id set (manual resolve)",
+    "hard-deletion is FORBIDDEN — dead letters retain indefinitely for the tenant's lifetime",
+    "TenantErased cascades hard-delete via FK CASCADE — the only way a dead letter is deleted"
+  ]
+}

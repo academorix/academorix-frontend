@@ -1,0 +1,465 @@
+{
+  "id": "academorix://modules/marketing/events",
+  "$version": 1,
+  "title": "marketing — published events",
+  "namespace": "Academorix\\Growth\\Marketing\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. MarketingDeadLetterCreated + MarketingProviderCircuitBreakerOpened are the CRITICAL events of the module — the former signals a permanent conversion loss (financial impact); the latter signals a provider outage that will accumulate loss until reset. Both page the on-call. MarketingEventSuppressedByConsent is a compliance signal (spike detection); MarketingDeliveryRateLimited is an ops signal (provider-side throttling).",
+  "events": [
+    {
+      "name": "MarketingEventCaptured",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingEventCaptured",
+      "trigger": "MarketingEventObserver.creating committed a new marketing_events row. Fires exactly once per (tenant_id, deduplication_key) tuple. Precedes MarketingEventDispatched by the DispatchMarketingEventJob run.",
+      "queue": "marketing",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "marketing::EnqueueDispatchMarketingEventJob (spawns per-provider fan-out)",
+        "monitoring::MetricsCollector (increments academorix.marketing.events.captured_total)"
+      ],
+      "payload": {
+        "marketing_event_id": "ULID (mev_*)",
+        "tenant_id": "ULID (ten_*)",
+        "event_type": "string (25+ enum values)",
+        "source": "'system' | 'api' | 'import' | 'migration' | 'manual'",
+        "subject_type": "string (User / Athlete / Membership / Subscription / Lead)",
+        "subject_id": "ULID (polymorphic)",
+        "value_amount_cents": "integer | null",
+        "value_currency": "string (ISO 4217) | null",
+        "eligible_provider_count": "integer",
+        "deduplication_key": "string (128 chars)",
+        "captured_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingEventDispatched",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingEventDispatched",
+      "trigger": "MarketingEventDispatcher enqueued one DispatchToProviderJob per eligible provider. Fires ONCE per event. Distinct from MarketingDeliveryAttempted (per-provider-per-attempt).",
+      "queue": "marketing",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "marketing_event_id": "ULID",
+        "tenant_id": "ULID",
+        "provider_count": "integer",
+        "providers": "string[] (list of provider slugs enqueued)",
+        "dispatched_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingEventDelivered",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingEventDelivered",
+      "trigger": "Every eligible provider delivery succeeded (delivered_provider_count == eligible_provider_count). Terminal state — event.status transitions to 'delivered'.",
+      "queue": "marketing",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "monitoring::MetricsCollector (increments academorix.marketing.events.delivered_total)"
+      ],
+      "payload": {
+        "marketing_event_id": "ULID",
+        "tenant_id": "ULID",
+        "event_type": "string",
+        "delivered_provider_count": "integer",
+        "total_latency_ms": "integer (capture → last-delivery)",
+        "delivered_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingEventPartiallyDelivered",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingEventPartiallyDelivered",
+      "trigger": "At least one provider succeeded AND at least one failed permanently (dead-lettered). Event.status = 'partially_delivered'. Distinct from MarketingEventFailed (all providers failed).",
+      "queue": "marketing",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "marketing_event_id": "ULID",
+        "tenant_id": "ULID",
+        "event_type": "string",
+        "delivered_providers": "string[]",
+        "failed_providers": "string[]",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingEventFailed",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingEventFailed",
+      "trigger": "Every eligible provider dead-lettered. Event.status = 'failed'. Terminal.",
+      "queue": "marketing-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — every failed conversion is a compliance-relevant financial signal)",
+        "notifications::DispatchMarketingHighFailureRateNotification (when > 10% failure rate over 15min window)",
+        "monitoring::MetricsCollector (increments academorix.marketing.events.failed_total)"
+      ],
+      "payload": {
+        "marketing_event_id": "ULID",
+        "tenant_id": "ULID",
+        "event_type": "string",
+        "failed_providers": "string[]",
+        "failed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingEventSuppressedByConsent",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingEventSuppressedByConsent",
+      "trigger": "MarketingEventObserver.creating detected that the subject lacks `marketing` or `advertising` consent. Refuses capture. Event.status = 'suppressed_by_consent'. This is the CAPTURE-time gate; distinct from MarketingDeliverySuppressedByConsent (dispatch-time re-check on a captured event).",
+      "queue": "marketing",
+      "consumers": [
+        "audit::WriteToAuditLog (compliance record — every suppressed capture is a consent-honored event)",
+        "monitoring::MetricsCollector (increments academorix.marketing.events.suppressed_by_consent_total; spike drives MarketingConsentSuppressionSpikeNotification)"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "event_type": "string",
+        "subject_type": "string",
+        "subject_id": "ULID",
+        "missing_consent_categories": "string[] (subset of ['marketing', 'advertising'])",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingEventSuperseded",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingEventSuperseded",
+      "trigger": "A newer event with the same (tenant_id, deduplication_key) arrived while the earlier event was still in-flight. The observer marks the earlier event.status = 'superseded' + cancels its pending DispatchToProviderJob. Only fires when the old event has NOT yet delivered — delivered events are immutable.",
+      "queue": "marketing",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "superseded_event_id": "ULID (the older event)",
+        "superseding_event_id": "ULID (the newer event)",
+        "tenant_id": "ULID",
+        "deduplication_key": "string",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingDeliveryAttempted",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingDeliveryAttempted",
+      "trigger": "DispatchToProviderJob started an attempt against a provider. Fires ONCE per (marketing_event, provider, attempt_number). Precedes MarketingDeliverySucceeded or MarketingDeliveryFailed.",
+      "queue": "marketing",
+      "consumers": [
+        "monitoring::MetricsCollector (increments academorix.marketing.deliveries.attempted_total)"
+      ],
+      "payload": {
+        "marketing_delivery_id": "ULID (mdv_*)",
+        "marketing_event_id": "ULID",
+        "tenant_id": "ULID",
+        "provider": "string (provider slug)",
+        "attempt_number": "integer",
+        "attempted_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingDeliverySucceeded",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingDeliverySucceeded",
+      "trigger": "Provider returned 2xx AND the response passed provider-specific validation (e.g. Meta's `events_received == 1`). Delivery.status = 'succeeded'. Resets provider's consecutive_failure_count to 0.",
+      "queue": "marketing",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "monitoring::MetricsCollector (increments academorix.marketing.deliveries.succeeded_total)",
+        "marketing::MaybeCloseCircuitBreaker (checks if in half-open state; closes on success)"
+      ],
+      "payload": {
+        "marketing_delivery_id": "ULID",
+        "marketing_event_id": "ULID",
+        "tenant_id": "ULID",
+        "provider": "string",
+        "attempt_number": "integer",
+        "response_status_code": "integer",
+        "provider_event_id": "string | null",
+        "latency_ms": "integer",
+        "succeeded_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingDeliveryFailed",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingDeliveryFailed",
+      "trigger": "Provider returned 4xx/5xx OR request timed out OR response validation failed. Delivery.status = 'failed'. Increments provider's consecutive_failure_count. Schedules next retry when attempt_number < max_attempts + is_transient.",
+      "queue": "marketing",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "monitoring::MetricsCollector",
+        "marketing::MaybeOpenCircuitBreaker (checks if consecutive_failure_count >= threshold; opens the breaker)",
+        "marketing::MaybeCreateDeadLetter (when attempt_number == max_attempts OR is_transient=false — creates the MarketingDeadLetter row)"
+      ],
+      "payload": {
+        "marketing_delivery_id": "ULID",
+        "marketing_event_id": "ULID",
+        "tenant_id": "ULID",
+        "provider": "string",
+        "attempt_number": "integer",
+        "response_status_code": "integer | null",
+        "error_code": "string | null",
+        "error_message": "string",
+        "is_transient": "boolean",
+        "next_retry_at": "ISO 8601 | null (null = terminal failure, no retry)",
+        "failed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingDeliverySuppressedByConsent",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingDeliverySuppressedByConsent",
+      "trigger": "DispatchToProviderJob started + the pre-dispatch ConsentGate::allows check returned false. Delivery.status = 'suppressed_by_consent'. Never touches the wire. Fires when the user revoked consent between capture and dispatch.",
+      "queue": "marketing",
+      "consumers": [
+        "audit::WriteToAuditLog (compliance record — dispatch-time consent-honored suppression)",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "marketing_delivery_id": "ULID",
+        "marketing_event_id": "ULID",
+        "tenant_id": "ULID",
+        "provider": "string",
+        "revoked_consent_category": "'marketing' | 'advertising'",
+        "revoked_between_capture_and_dispatch": "boolean (true when consent was valid at capture but revoked by dispatch)",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingDeliverySuppressedByCircuitBreaker",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingDeliverySuppressedByCircuitBreaker",
+      "trigger": "DispatchToProviderJob started + the pre-dispatch CircuitBreakerGate check found the (tenant, provider) circuit is OPEN. Delivery.status = 'suppressed_by_circuit_breaker'. Never touches the wire. Retries scheduled when the circuit half-opens.",
+      "queue": "marketing",
+      "consumers": [
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "marketing_delivery_id": "ULID",
+        "marketing_event_id": "ULID",
+        "tenant_id": "ULID",
+        "provider": "string",
+        "circuit_breaker_open_until": "ISO 8601",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingDeliveryRateLimited",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingDeliveryRateLimited",
+      "trigger": "Provider returned a 429 or the pre-dispatch RateLimitGate refused the send. Delivery.status = 'rate_limited'. Schedules a retry with the provider's `Retry-After` header (or the configured rate_limit backoff).",
+      "queue": "marketing",
+      "consumers": [
+        "monitoring::MetricsCollector (increments academorix.marketing.deliveries.rate_limited_total; spike indicates tenant ceiling breached)"
+      ],
+      "payload": {
+        "marketing_delivery_id": "ULID",
+        "marketing_event_id": "ULID",
+        "tenant_id": "ULID",
+        "provider": "string",
+        "retry_after_seconds": "integer",
+        "next_retry_at": "ISO 8601",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingProviderCircuitBreakerOpened",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingProviderCircuitBreakerOpened",
+      "trigger": "CRITICAL. consecutive_failure_count reached failure_threshold. Sets circuit_breaker_open_until = now() + open_duration_seconds. Blocks all subsequent dispatches until the timer elapses. Every fire is a P1 signal — the provider is dead + attribution reporting will degrade until reset.",
+      "queue": "marketing-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchMarketingProviderCircuitBreakerOpenedNotification (cannot-opt-out — pages ops + notifies tenant owner)",
+        "monitoring::MetricsCollector (increments academorix.marketing.circuit_breakers.opened_total)"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "provider": "string",
+        "provider_config_id": "ULID (mpc_*)",
+        "consecutive_failure_count": "integer",
+        "open_until": "ISO 8601",
+        "last_error_code": "string | null",
+        "last_error_message": "string | null",
+        "opened_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingProviderCircuitBreakerClosed",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingProviderCircuitBreakerClosed",
+      "trigger": "Provider recovered — half-open probe succeeded OR ops manually reset via marketing:reset-circuit-breaker command / POST /providers/{provider}/reset-circuit-breaker. Resets consecutive_failure_count to 0 + increments circuit_breaker_reset_count when the close was manual.",
+      "queue": "marketing",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "provider": "string",
+        "provider_config_id": "ULID",
+        "closed_at": "ISO 8601",
+        "was_auto_close": "boolean (true = half-open probe succeeded; false = manual reset)",
+        "closed_by_user_id": "ULID | null (null = auto-close; set = manual reset)"
+      }
+    },
+    {
+      "name": "MarketingProviderCircuitBreakerHalfOpen",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingProviderCircuitBreakerHalfOpen",
+      "trigger": "The open_until timer elapsed. HalfOpenCircuitBreakerJob transitions the breaker to HALF_OPEN + dispatches 1 test event (half_open_test_events). Success closes the breaker; failure re-opens it.",
+      "queue": "marketing",
+      "consumers": [
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "provider": "string",
+        "provider_config_id": "ULID",
+        "half_open_at": "ISO 8601",
+        "test_event_id": "ULID (mev_*) — the event used for the probe"
+      }
+    },
+    {
+      "name": "MarketingProviderConfigured",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingProviderConfigured",
+      "trigger": "MarketingProviderConfigObserver committed a new provider config row.",
+      "queue": "marketing",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — provider connection is a compliance-relevant integration)",
+        "notifications::DispatchMarketingConfigurationChangedNotification (audit trail for tenant admins)",
+        "marketing::MaybeDispatchProviderTest (fires MarketingProviderTestSent when test_mode=true)"
+      ],
+      "payload": {
+        "provider_config_id": "ULID (mpc_*)",
+        "tenant_id": "ULID",
+        "provider": "string",
+        "test_mode": "boolean",
+        "enabled_event_types": "string[]",
+        "configured_by_user_id": "ULID",
+        "configured_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingProviderDeactivated",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingProviderDeactivated",
+      "trigger": "Provider config is_active flipped to false OR the row is soft-deleted. Stops all future dispatches; in-flight retries drain but no new attempts.",
+      "queue": "marketing",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchMarketingConfigurationChangedNotification",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "provider_config_id": "ULID",
+        "tenant_id": "ULID",
+        "provider": "string",
+        "deactivated_by_user_id": "ULID",
+        "deactivated_at": "ISO 8601",
+        "reason": "'manual' | 'tenant_suspended' | 'entitlement_revoked'"
+      }
+    },
+    {
+      "name": "MarketingDeadLetterCreated",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingDeadLetterCreated",
+      "trigger": "CRITICAL. A delivery exhausted its retry budget OR failed permanently (auth_failure, invalid_payload). DeadLetterHandler created the MarketingDeadLetter row. Every fire is a P1 — the event is a paid conversion signal that never reached the ad network.",
+      "queue": "marketing-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial audit)",
+        "notifications::DispatchMarketingDeadLetterCreatedNotification (cannot-opt-out — pages on-call for financial-critical failures)",
+        "monitoring::MetricsCollector (increments academorix.marketing.dead_letters.created_total)"
+      ],
+      "payload": {
+        "marketing_dead_letter_id": "ULID (mdl_*)",
+        "marketing_event_id": "ULID",
+        "tenant_id": "ULID",
+        "provider": "string",
+        "reason": "'max_attempts_exceeded' | 'provider_permanent_failure' | 'circuit_breaker_max_opens' | 'invalid_payload' | 'auth_failure'",
+        "final_attempt_number": "integer",
+        "final_error_code": "string | null",
+        "final_error_message": "string",
+        "created_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingDeadLetterReplayed",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingDeadLetterReplayed",
+      "trigger": "Ops or tenant admin invoked POST /dead-letters/{id}/replay OR the marketing:replay-dead-letter command. Enqueues a fresh DispatchToProviderJob with attempt_number=1. Increments dead_letter.replay_attempts + sets last_replay_at.",
+      "queue": "marketing",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "marketing_dead_letter_id": "ULID",
+        "marketing_event_id": "ULID",
+        "tenant_id": "ULID",
+        "replay_attempt_number": "integer (dead_letter.replay_attempts after increment)",
+        "replayed_by_user_id": "ULID",
+        "replayed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingDeadLetterResolved",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingDeadLetterResolved",
+      "trigger": "Either (a) a replay attempt succeeded (auto-resolved) OR (b) ops manually marked the dead letter resolved via POST /dead-letters/{id}/resolve. Sets resolved_at + resolved_by_user_id + resolution_note.",
+      "queue": "marketing",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "marketing_dead_letter_id": "ULID",
+        "marketing_event_id": "ULID",
+        "tenant_id": "ULID",
+        "resolved_by_user_id": "ULID | null (null = auto-resolved on replay success)",
+        "resolved_at": "ISO 8601",
+        "resolution_note": "string | null",
+        "was_auto_resolved": "boolean"
+      }
+    },
+    {
+      "name": "MarketingProviderTestSent",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingProviderTestSent",
+      "trigger": "Tenant onboarding flow. POST /providers/{provider}/test invoked OR test_mode=true on a new config. Dispatches a synthetic test event via the provider's sandbox endpoint.",
+      "queue": "marketing",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "provider_config_id": "ULID",
+        "tenant_id": "ULID",
+        "provider": "string",
+        "test_event_code": "string | null",
+        "sent_by_user_id": "ULID",
+        "sent_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingProviderTestSucceeded",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingProviderTestSucceeded",
+      "trigger": "Test-mode dispatch returned 2xx + validation passed.",
+      "queue": "marketing",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchMarketingProviderTestSucceededNotification (opt-in to the tenant admin who ran the test)"
+      ],
+      "payload": {
+        "provider_config_id": "ULID",
+        "tenant_id": "ULID",
+        "provider": "string",
+        "latency_ms": "integer",
+        "succeeded_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MarketingProviderTestFailed",
+      "class": "Academorix\\Growth\\Marketing\\Events\\MarketingProviderTestFailed",
+      "trigger": "Test-mode dispatch returned 4xx/5xx OR validation failed. Signals a mis-configured credential / wrong pixel_id / invalid webhook_url.",
+      "queue": "marketing",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchMarketingProviderTestFailedNotification (cannot-opt-out — the tenant admin needs to fix the config before it goes live)"
+      ],
+      "payload": {
+        "provider_config_id": "ULID",
+        "tenant_id": "ULID",
+        "provider": "string",
+        "error_code": "string | null",
+        "error_message": "string",
+        "response_status_code": "integer | null",
+        "failed_at": "ISO 8601"
+      }
+    }
+  ]
+}

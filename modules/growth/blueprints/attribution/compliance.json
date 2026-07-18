@@ -1,0 +1,172 @@
+{
+  "id": "academorix://modules/attribution/compliance",
+  "$version": 1,
+  "title": "attribution — compliance evidence",
+  "description": "Attribution is privacy-sensitive by design — it processes personal data (behavioural marketing metadata) under GDPR Art. 6(1)(f) legitimate interest, gated by explicit user consent under Art. 6(1)(a) for personalized advertising. Full GDPR + CCPA + LGPD alignment. NO health data, NO financial account data, NO minor-specific data (attribution operates on the User/session level, minors are attributed through their guardian's User row per user::hierarchy). PCI-DSS scope: N/A — attribution captures no card data ever.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(a)",
+          "principle": "lawfulness, fairness, transparency",
+          "evidence": "Attribution capture is disclosed in the tenant's privacy policy under the 'marketing tracking' section. AttributionSuppressedByConsent metric proves the consent-gate fires when consent is revoked."
+        },
+        {
+          "article": "Art. 5(1)(b)",
+          "principle": "purpose limitation",
+          "evidence": "Attribution data is used ONLY for: (1) marketing conversion attribution, (2) product analytics, (3) referral program crediting. Non-goals explicitly list forbidden uses: no third-party sale, no cross-tenant stitching, no cross-application merging, no minor-targeting."
+        },
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "IP addresses stored as SHA-256 hash only (raw IPs never stored). Device parsing extracts browser/OS/device_type — no raw fingerprint. Landing page URL stored but query parameters beyond utm_* are stripped."
+        },
+        {
+          "article": "Art. 5(1)(e)",
+          "principle": "storage limitation",
+          "evidence": "Touchpoint retention: 730 days default (2 years); Enterprise 2555 days (7 years) for financial-audit alignment. Reset requests purge touchpoints 90 days post-request (audit hold). Churned profiles archive after 730 days."
+        },
+        {
+          "article": "Art. 6(1)(f)",
+          "principle": "lawful basis: legitimate interest",
+          "evidence": "Base attribution capture (utm_* + landing_page + referrer + device) operates on legitimate interest for marketing attribution — a fundamental business function. Legitimate interest assessment (LIA) documented per tenant."
+        },
+        {
+          "article": "Art. 6(1)(a)",
+          "principle": "lawful basis: explicit consent",
+          "evidence": "Click IDs + personalized advertising features require explicit consent under `marketing` + `advertising` + `personalized_advertising` categories. Consent snapshot captured on every touchpoint for regulator queryability."
+        },
+        {
+          "article": "Art. 7(3)",
+          "principle": "right to withdraw consent",
+          "evidence": "Consent revocation flows through the compliance::consent module. AttributionConsentSnapshotUpdated fires when consent changes; future touchpoints refuse persistence past the revocation point."
+        },
+        {
+          "article": "Art. 15",
+          "principle": "right of access",
+          "evidence": "Users see their own attribution profile via GET /api/v1/me/attribution + full touchpoint history via GET /api/v1/me/attribution/touchpoints. Data-export flow (Wave 5+) surfaces the full history in machine-readable format (JSON/CSV)."
+        },
+        {
+          "article": "Art. 16",
+          "principle": "right of rectification",
+          "evidence": "Users can request correction via support flow. Admin edits go through attribution:describe + attribution:reset (correction = reset + re-capture)."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "attribution:reset command implements the right-to-erasure. Profile fields redacted immediately + touchpoints hard-deleted 90 days later (audit hold). Every reset writes to audits with 7-year retention. Force-reset (platform plane) available for regulator-issued requests."
+        },
+        {
+          "article": "Art. 20",
+          "principle": "right to data portability",
+          "evidence": "GET /api/v1/me/attribution returns the profile + touchpoints in machine-readable JSON. CSV export available on request via support flow."
+        },
+        {
+          "article": "Art. 21",
+          "principle": "right to object",
+          "evidence": "Users may object to attribution processing by revoking `marketing` consent. AttributionMiddleware then refuses persistence — profile becomes ephemeral in-memory only."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design + by default",
+          "evidence": "IP hashing (SHA-256) is the default — raw IPs cannot be stored. Consent gate runs BEFORE persistence, not after. Non-Enterprise tenants get partial-attribution (safer default than aggressive cross-device merging)."
+        },
+        {
+          "article": "Art. 30",
+          "principle": "records of processing activities",
+          "evidence": "This module's subprocessors.json declares external processors (empty by default). Every processing category (capture / merge / rollup / reset) is documented + auditable."
+        }
+      ]
+    },
+    "ccpa_cpra": {
+      "applicable": true,
+      "controls": [
+        {
+          "section": "Section 1798.100",
+          "principle": "right to know",
+          "evidence": "Same as GDPR Art. 15 — GET /me/attribution surfaces the profile."
+        },
+        {
+          "section": "Section 1798.105",
+          "principle": "right to delete",
+          "evidence": "Same as GDPR Art. 17 — attribution:reset command redacts + purges."
+        },
+        {
+          "section": "Section 1798.120",
+          "principle": "right to opt-out of sale",
+          "evidence": "Attribution data is NEVER sold. Non-goal explicitly documented in readme.md §12 and module.json."
+        },
+        {
+          "section": "Section 1798.135",
+          "principle": "global privacy control (GPC) signal",
+          "evidence": "AttributionMiddleware honors the Sec-GPC header — when set to '1', treats the request as consent-withdrawal for `marketing` + `advertising` + `personalized_advertising` categories."
+        }
+      ]
+    },
+    "lgpd": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 7",
+          "principle": "lawful basis for processing",
+          "evidence": "Same lawful basis map as GDPR (legitimate interest + explicit consent)."
+        },
+        {
+          "article": "Art. 18",
+          "principle": "data subject rights",
+          "evidence": "Same rights implementation as GDPR (access / correction / erasure / portability / objection)."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.3",
+          "principle": "restricted access + segregation of duties",
+          "evidence": "attribution.view-all + attribution.reset + attribution.merge are seeded to admin/owner only. Marketing role sees aggregated rollups without individual PII."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "restrict data transmission",
+          "evidence": "All /api/v1/attributions routes are TLS-only + require auth:sanctum + entitlement middleware. Platform routes additionally require auth:platform_admin."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "academorix.attribution.consent_suppressions_total counter tracks consent-gate refusals. academorix.attribution.count_drift_corrections counter tracks integrity drift. Both feed the observability dashboard."
+        },
+        {
+          "criterion": "CC9.1",
+          "principle": "risk mitigation",
+          "evidence": "IP hashing prevents raw-IP leakage. Consent gate prevents unauthorised persistence. Reset flow with 90-day audit hold + hard-delete satisfies the right-to-erasure without violating financial-record retention."
+        }
+      ]
+    },
+    "pci_dss": {
+      "applicable": false,
+      "reason": "Attribution captures NO card data — the module's boundary explicitly excludes payment methods. Financial attribution (which subscription tier a subject purchased) is captured downstream by finance module (Wave 5) via the frozen attribution snapshot on invoice/subscription rows."
+    },
+    "wcag_2_2_aa": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "1.4.3 (Contrast Minimum)",
+          "principle": "readable text",
+          "evidence": "Attribution SDUI screens use HeroUI's design tokens which meet AA contrast by default. Lifecycle-state chip colours (anonymous / identified / converted / churned) do not rely on colour alone — each carries a text label + icon."
+        },
+        {
+          "criterion": "2.1.1 (Keyboard)",
+          "principle": "keyboard operable",
+          "evidence": "Attribution timeline widget + merge dialog are fully keyboard-navigable per HeroUI Table + Dialog semantics."
+        },
+        {
+          "criterion": "4.1.3 (Status Messages)",
+          "principle": "aria-live regions",
+          "evidence": "Reset confirmation dialog uses aria-live=polite on the confirmation message. Merge-progress banner uses aria-live=polite for the async job status."
+        }
+      ]
+    }
+  }
+}

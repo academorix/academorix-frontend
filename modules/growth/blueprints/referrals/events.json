@@ -1,0 +1,519 @@
+{
+  "id": "academorix://modules/referrals/events",
+  "$version": 1,
+  "title": "referrals — published events",
+  "namespace": "Academorix\\Growth\\Referrals\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Two events are CRITICAL: `ReferralFraudDetected` (P1 signal — admin must review) and `ReferralProgramBudgetSpike` (P2 signal — > 50% program budget consumed in 24h suggests fraud storm OR viral traction OR budget mis-sizing). Financial events (ReferralVested / ReferralRewardMaterialized / ReferralRewarded / ReferralClawback) additionally fan out to finance (Wave 4) for credit + revenue attribution. ReferralSignedUp + ReferralVested fire a marketing event downstream for ad-network conversion attribution.",
+  "events": [
+    {
+      "name": "ReferralProgramCreated",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralProgramCreated",
+      "trigger": "ReferralProgramRepository finished a successful create. Fires exactly once per (tenant_id, slug) tuple.",
+      "queue": "referrals",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial-audit-adjacent)",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateTenantProgramListCache"
+      ],
+      "payload": {
+        "program_id": "ULID (rpg_*)",
+        "tenant_id": "ULID (ten_*)",
+        "name": "string",
+        "slug": "string",
+        "side": "'single_sided' | 'double_sided'",
+        "reward_type_referrer": "string",
+        "reward_amount_referrer": "integer",
+        "trigger_event": "string",
+        "vesting_rule": "string",
+        "created_by": "ULID (usr_*)"
+      }
+    },
+    {
+      "name": "ReferralProgramActivated",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralProgramActivated",
+      "trigger": "ReferralProgram.status transitioned draft -> active OR paused -> active. Program becomes eligible for new referral claims.",
+      "queue": "referrals",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchProgramActivatedInternalNotification (admin audit)"
+      ],
+      "payload": {
+        "program_id": "ULID",
+        "tenant_id": "ULID",
+        "activated_at": "ISO 8601",
+        "activated_by": "ULID",
+        "was_status": "'draft' | 'paused'"
+      }
+    },
+    {
+      "name": "ReferralProgramPaused",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralProgramPaused",
+      "trigger": "ReferralProgram.status transitioned active -> paused. New claims refused; existing referrals in-flight complete.",
+      "queue": "referrals",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "program_id": "ULID",
+        "tenant_id": "ULID",
+        "paused_at": "ISO 8601",
+        "paused_by": "ULID",
+        "reason": "string | null"
+      }
+    },
+    {
+      "name": "ReferralProgramArchived",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralProgramArchived",
+      "trigger": "ReferralProgram.status transitioned to archived. Terminal — cascades: pending referrals cancel + materialized-not-yet-paid rewards clawback.",
+      "queue": "referrals-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "referrals::ArchiveReferralsOnProgramArchived",
+        "notifications::DispatchProgramArchivedInternalNotification"
+      ],
+      "payload": {
+        "program_id": "ULID",
+        "tenant_id": "ULID",
+        "archived_at": "ISO 8601",
+        "archived_by": "ULID",
+        "reason": "string | null",
+        "cascaded_referral_count": "integer",
+        "cascaded_clawback_count": "integer"
+      }
+    },
+    {
+      "name": "ReferralCodeIssued",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralCodeIssued",
+      "trigger": "ReferralCodeRepository committed a new referral_codes row. Fires exactly once per code. Distinguishes user_scoped (auto-generated per user) from campaign (admin-generated) from opaque (system-generated for A/B test cohorts).",
+      "queue": "referrals",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateProgramCodeListCache"
+      ],
+      "payload": {
+        "code_id": "ULID (rcd_*)",
+        "tenant_id": "ULID",
+        "program_id": "ULID",
+        "code": "string (the visible code)",
+        "code_type": "'user_scoped' | 'campaign' | 'opaque'",
+        "owner_type": "'user' | 'campaign' | 'anonymous' | null",
+        "owner_user_id": "ULID | null",
+        "campaign_name": "string | null",
+        "usage_cap": "integer | null",
+        "expires_at": "ISO 8601 | null"
+      }
+    },
+    {
+      "name": "ReferralCodeUsageCapReached",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralCodeUsageCapReached",
+      "trigger": "ReferralCode.usage_count reached ReferralCode.usage_cap. Fires from ReferralCodeObserver.updated when the increment crosses the threshold.",
+      "queue": "referrals",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCodeCapReachedNotification (to campaign owner + admin)"
+      ],
+      "payload": {
+        "code_id": "ULID",
+        "tenant_id": "ULID",
+        "code": "string",
+        "usage_cap": "integer"
+      }
+    },
+    {
+      "name": "ReferralCodeExpired",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralCodeExpired",
+      "trigger": "ReferralCode.expires_at passed. Detected by claim-path (ReferralClaimer refuses expired code + fires this event) or by ExpireStaleReferralsJob scanning codes.",
+      "queue": "referrals",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "code_id": "ULID",
+        "tenant_id": "ULID",
+        "code": "string",
+        "expired_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ReferralClicked",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralClicked",
+      "trigger": "Public route GET /api/v1/referrals/claim/{code} was hit. Attribution snapshot + device snapshot captured; a Referral row in status 'pending_claim' may be created (depends on session state).",
+      "queue": "referrals",
+      "consumers": [
+        "activity::WriteToActivityLog (staff-visible for viral analytics)",
+        "attribution::CaptureReferralClickTouchpoint (adds a touchpoint on the referrer's attribution profile)",
+        "observability::MetricsCollector (academorix.referrals.clicks_total)"
+      ],
+      "payload": {
+        "code_id": "ULID | null (nullable when click carries no code — attribution-only)",
+        "tenant_id": "ULID",
+        "code": "string | null",
+        "ip_hash": "SHA-256 hex string",
+        "user_agent_hash": "SHA-256 hex string",
+        "device_fingerprint_hash": "SHA-256 hex string | null",
+        "clicked_at": "ISO 8601",
+        "referrer_url": "string | null"
+      }
+    },
+    {
+      "name": "ReferralClaimed",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralClaimed",
+      "trigger": "ReferralClaimer created a Referral row in status 'claimed' — the referred user landed on the signup page with the referral cookie set. Fires ONCE per referrer-referred pair.",
+      "queue": "referrals",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "referrals::SnapshotAttributionOnReferralClaimed",
+        "notifications::DispatchReferralClaimedNotification (to referrer — 'your friend clicked')"
+      ],
+      "payload": {
+        "referral_id": "ULID (ref_*)",
+        "tenant_id": "ULID",
+        "program_id": "ULID",
+        "code_id": "ULID | null",
+        "referrer_type": "'user' | 'anonymous_lead'",
+        "referrer_id": "ULID",
+        "claimed_at": "ISO 8601",
+        "attribution_snapshot": "object (frozen AttributionSnapshotBuilder output)",
+        "fraud_score": "integer (0..100)"
+      }
+    },
+    {
+      "name": "ReferralSignedUp",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralSignedUp",
+      "trigger": "Referral.status transitioned claimed -> signed_up. The referred user completed the signup flow.",
+      "queue": "referrals",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchReferralSignedUpNotification (to referrer — 'your friend joined')",
+        "marketing::CaptureReferralSignupAsConversion (fires a marketing event on the ad-network fan-out)"
+      ],
+      "payload": {
+        "referral_id": "ULID",
+        "tenant_id": "ULID",
+        "program_id": "ULID",
+        "referred_type": "'user' | 'lead'",
+        "referred_id": "ULID",
+        "referred_email": "string",
+        "signed_up_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ReferralTriggerReached",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralTriggerReached",
+      "trigger": "The program-configured trigger event fired for the referred user (signup / trial_started / first_payment / subscription_renewal_1 / subscription_renewal_3 / lifetime_value_threshold_hit / athlete_enrolled / event_registered). The listener captures it + transitions Referral -> trigger_pending.",
+      "queue": "referrals",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "referrals::DetectReferralFraudAtTriggerTime (re-runs FraudDetector before vesting)",
+        "observability::MetricsCollector (academorix.referrals.triggers_reached_total)"
+      ],
+      "payload": {
+        "referral_id": "ULID",
+        "tenant_id": "ULID",
+        "program_id": "ULID",
+        "trigger_event": "string",
+        "trigger_event_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ReferralEnteredVesting",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralEnteredVesting",
+      "trigger": "Referral.status transitioned trigger_pending -> vesting. VestingScheduler computed vesting_completes_at based on program config. For immediate-vesting programs, this fires in the same transaction as ReferralVested.",
+      "queue": "referrals",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "referral_id": "ULID",
+        "tenant_id": "ULID",
+        "vesting_starts_at": "ISO 8601",
+        "vesting_completes_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ReferralVested",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralVested",
+      "trigger": "Referral.status transitioned to vested — either by CheckReferralVestingJob (nightly, for hold-window programs) OR by immediate-vesting programs at trigger time OR by admin force-vest. ReferralReward rows created atomically in the same transaction.",
+      "queue": "referrals-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchReferralVestedNotification (to referrer + optionally referred)",
+        "marketing::CaptureReferralVestedAsConversion (marketing conversion event)",
+        "referrals::MaterializeVestedRewardsIntoFinance (dispatched to MaterializeVestedRewardsJob)"
+      ],
+      "payload": {
+        "referral_id": "ULID",
+        "tenant_id": "ULID",
+        "program_id": "ULID",
+        "vested_at": "ISO 8601",
+        "reward_ids": "ULID[] (created reward rows — 1 for single_sided, 2 for double_sided)",
+        "was_forced": "boolean (true if admin force-vest)"
+      }
+    },
+    {
+      "name": "ReferralRewardMaterialized",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralRewardMaterialized",
+      "trigger": "ReferralReward.status transitioned vested -> materialized — MaterializeVestedRewardsJob successfully created a Finance credit and set finance_credit_id.",
+      "queue": "referrals-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "reward_id": "ULID (rrw_*)",
+        "referral_id": "ULID",
+        "tenant_id": "ULID",
+        "recipient_role": "'referrer' | 'referred'",
+        "reward_type": "string",
+        "reward_amount": "integer",
+        "reward_currency": "string | null (ISO 4217)",
+        "finance_credit_id": "UUID (Wave 4 finance FK)",
+        "materialized_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ReferralRewarded",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralRewarded",
+      "trigger": "ReferralReward.status transitioned materialized -> paid. Referral.status transitioned vested -> rewarded when ALL rewards on the referral are paid. Terminal happy path.",
+      "queue": "referrals",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record + tax audit)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchReferralRewardedNotification (to recipient)"
+      ],
+      "payload": {
+        "reward_id": "ULID",
+        "referral_id": "ULID",
+        "tenant_id": "ULID",
+        "recipient_type": "'user' | 'lead'",
+        "recipient_id": "ULID",
+        "recipient_role": "'referrer' | 'referred'",
+        "paid_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ReferralCancelled",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralCancelled",
+      "trigger": "Referral.status transitioned to cancelled — either voluntarily (admin cancel / referred withdrew) OR cascaded (program archived / refund issued / chargeback filed / fraud confirmed).",
+      "queue": "referrals",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchReferralCancelledNotification (to referrer)",
+        "referrals::CascadeCancelOnRewards (any pending / vesting rewards move to cancelled; materialized rewards clawback)"
+      ],
+      "payload": {
+        "referral_id": "ULID",
+        "tenant_id": "ULID",
+        "cancelled_at": "ISO 8601",
+        "cancelled_by_user_id": "ULID | null (null = system cascade)",
+        "cancellation_reason": "'refund_issued' | 'chargeback_filed' | 'fraud_detected' | 'manual_admin' | 'referred_withdrew' | 'program_archived'"
+      }
+    },
+    {
+      "name": "ReferralExpired",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralExpired",
+      "trigger": "ExpireStaleReferralsJob transitioned a claimed-but-not-signed-up referral past 30-day TTL to expired.",
+      "queue": "referrals",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "referral_id": "ULID",
+        "tenant_id": "ULID",
+        "claimed_at": "ISO 8601",
+        "expired_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ReferralFraudDetected",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralFraudDetected",
+      "trigger": "ReferralFraudFlagObserver.created — a new fraud flag was written to the DB. CRITICAL when severity IN ('block', 'critical'). Every critical fire pages the admin.",
+      "queue": "referrals-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — fraud audit trail)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchReferralFraudFlaggedNotification (to admin — cannot-opt-out for critical severity)",
+        "observability::MetricsCollector (academorix.referrals.fraud_flags_created_total labelled by flag_type + severity)"
+      ],
+      "payload": {
+        "flag_id": "ULID (rfr_*)",
+        "referral_id": "ULID",
+        "tenant_id": "ULID",
+        "flag_type": "string",
+        "severity": "'warn' | 'block' | 'critical'",
+        "confidence": "integer (0..100)",
+        "detected_at": "ISO 8601",
+        "details": "object"
+      }
+    },
+    {
+      "name": "ReferralFraudFlagReviewed",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralFraudFlagReviewed",
+      "trigger": "Admin reviewed a fraud flag — disposition set to confirmed_fraud / false_positive / manual_override_approved.",
+      "queue": "referrals",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — fraud audit trail)",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "flag_id": "ULID",
+        "tenant_id": "ULID",
+        "referral_id": "ULID",
+        "reviewed_at": "ISO 8601",
+        "reviewed_by_user_id": "ULID",
+        "disposition": "'confirmed_fraud' | 'false_positive' | 'manual_override_approved'"
+      }
+    },
+    {
+      "name": "ReferralFraudDismissed",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralFraudDismissed",
+      "trigger": "Admin reviewed a flag with disposition = false_positive. Fires alongside ReferralFraudFlagReviewed for consumer convenience (a listener may want only dismissals).",
+      "queue": "referrals",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "flag_id": "ULID",
+        "tenant_id": "ULID",
+        "referral_id": "ULID",
+        "dismissed_at": "ISO 8601",
+        "dismissed_by_user_id": "ULID",
+        "reason": "string | null"
+      }
+    },
+    {
+      "name": "ReferralClawback",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralClawback",
+      "trigger": "ReferralReward.status transitioned to clawback. Reverses a materialized-or-paid reward due to refund / chargeback / fraud / program-archived. CRITICAL — every clawback is a financial reversal that Finance module (Wave 4) must also process.",
+      "queue": "referrals-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchReferralClawbackNotification (to recipient — cannot-opt-out)",
+        "finance::ReverseCreditForClawback (Wave 4 — reverses the Finance credit)",
+        "marketing::ReverseReferralConversion (marketing rollups adjust)"
+      ],
+      "payload": {
+        "reward_id": "ULID",
+        "referral_id": "ULID",
+        "tenant_id": "ULID",
+        "clawback_reason": "'refund' | 'chargeback' | 'fraud' | 'program_archived'",
+        "clawback_at": "ISO 8601",
+        "was_paid": "boolean",
+        "was_materialized": "boolean",
+        "reversed_amount": "integer"
+      }
+    },
+    {
+      "name": "ReferralProgramBudgetReached",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralProgramBudgetReached",
+      "trigger": "ReferralProgram.rewards_issued_count >= max_rewards_per_program OR rewards_issued_amount_cents crosses a threshold. New referral claims start refusing with PROGRAM_BUDGET_EXHAUSTED.",
+      "queue": "referrals-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchProgramBudgetAlertNotification (to admin)"
+      ],
+      "payload": {
+        "program_id": "ULID",
+        "tenant_id": "ULID",
+        "rewards_issued_count": "integer",
+        "rewards_issued_amount_cents": "integer",
+        "budget_cap": "integer",
+        "reached_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ReferralProgramBudgetSpike",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralProgramBudgetSpike",
+      "trigger": "> 50% of remaining program budget consumed in a rolling 24h window. Fired by ReconcileProgramBudgetJob. Ops signal — could be viral traction OR fraud storm.",
+      "queue": "referrals-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchProgramBudgetAlertNotification (to admin — includes recent-referral rollup)",
+        "observability::MetricsCollector (academorix.referrals.budget_spikes_total)"
+      ],
+      "payload": {
+        "program_id": "ULID",
+        "tenant_id": "ULID",
+        "consumed_in_24h_cents": "integer",
+        "remaining_budget_cents": "integer",
+        "spike_ratio": "number (0..1)",
+        "detected_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ReferralMaxReferralsPerReferrerReached",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralMaxReferralsPerReferrerReached",
+      "trigger": "A referrer's completed-referral count hit ReferralProgram.max_rewards_per_referrer or max_rewards_per_period. Further claims by this referrer refuse until the period rolls or the program allows more.",
+      "queue": "referrals",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchMaxReferralsReachedNotification (to referrer — 'you've hit your cap')"
+      ],
+      "payload": {
+        "referrer_id": "ULID",
+        "tenant_id": "ULID",
+        "program_id": "ULID",
+        "cap_type": "'per_referrer_lifetime' | 'per_referrer_period'",
+        "cap_value": "integer",
+        "reached_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ReferralInvitationSent",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralInvitationSent",
+      "trigger": "A user called POST /api/v1/me/invitations to send an invitation email/SMS. Fires per invitation recipient.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "notifications::DispatchInvitationEmail (delivers the invitation to the recipient)",
+        "observability::MetricsCollector (academorix.referrals.invitations_sent_total)"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "sender_user_id": "ULID",
+        "recipient_email": "string (hashed for analytics label)",
+        "channel": "'email' | 'sms'",
+        "code_id": "ULID (rcd_*)",
+        "template_slug": "string",
+        "sent_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ReferralInvitationClicked",
+      "class": "Academorix\\Growth\\Referrals\\Events\\ReferralInvitationClicked",
+      "trigger": "The invitation URL was hit (redirect endpoint captures the click). Different from ReferralClicked (general referral link) — this is specifically from an emailed / SMS'd invitation.",
+      "queue": "referrals",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "attribution::CaptureInvitationClickTouchpoint",
+        "observability::MetricsCollector (academorix.referrals.invitations_clicked_total)"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "sender_user_id": "ULID",
+        "recipient_email_hash": "SHA-256 hex string",
+        "code_id": "ULID",
+        "clicked_at": "ISO 8601"
+      }
+    }
+  ]
+}

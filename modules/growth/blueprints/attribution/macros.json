@@ -1,0 +1,34 @@
+{
+  "id": "academorix://modules/attribution/macros",
+  "$version": 1,
+  "title": "attribution — published macros",
+  "description": "Three request-level macros that surface the resolved attribution + its frozen snapshot from the RequestContext (set by the attribution.capture middleware). Registered by AttributionServiceProvider::boot(). No Blueprint macros — the owned tables use standard column shapes.",
+  "namespace_note": "Macros extend Illuminate\\Http\\Request. Middleware-set context bleeds through the Request accessor without needing to plumb it through service constructors.",
+  "macros": [
+    {
+      "name": "Request::currentAttribution",
+      "signature": "Request::currentAttribution(): ?Attribution",
+      "adds": "A single accessor on the framework Request class that returns the resolved Attribution model (or null when no attribution context / consent refused).",
+      "description": "Reads from RequestContext::attribution() set by the attribution.capture middleware. Lazy-loads the model on first access — subsequent calls in the same request return the cached instance.",
+      "registered_by": "Academorix\\Growth\\Attribution\\Providers\\AttributionServiceProvider::boot()",
+      "example": "public function store(Request $request): JsonResponse\n{\n    $attribution = $request->currentAttribution();\n    // Freeze the attribution into the created row so it survives future attribution changes.\n    $subscription = Subscription::create([\n        'user_id' => $request->user()->id,\n        'attribution' => $request->attributionSnapshot(),\n    ]);\n}"
+    },
+    {
+      "name": "Request::currentAttributionId",
+      "signature": "Request::currentAttributionId(): ?string",
+      "adds": "Convenience accessor returning just the ID.",
+      "description": "Returns the id string without triggering the model load. Useful for creators that just need the FK.",
+      "example": "$touchpoint = AttributionTouchpoint::create([\n    'attribution_id' => $request->currentAttributionId(),\n    // ...\n]);"
+    },
+    {
+      "name": "Request::attributionSnapshot",
+      "signature": "Request::attributionSnapshot(): ?array",
+      "adds": "Returns the frozen attribution snapshot jsonb blob for downstream events.",
+      "description": "Delegates to AttributionSnapshotBuilder::build() with the current attribution. Cached per-request so repeated calls don't rebuild the blob. This is the canonical way downstream code freezes attribution into an event row.",
+      "example": "$order = Order::create([\n    // ...\n    'attribution' => $request->attributionSnapshot(),  // freeze — never changes after this\n]);"
+    }
+  ],
+  "no_blueprint_macros": {
+    "reason": "The attribution module's owned tables (attributions, attribution_touchpoints) use standard column shapes. Downstream modules that want to carry an attribution snapshot on their own rows add a plain `attribution jsonb NULL` column — a Blueprint macro for that would be over-engineering for a one-column addition."
+  }
+}

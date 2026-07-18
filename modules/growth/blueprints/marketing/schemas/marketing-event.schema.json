@@ -1,0 +1,249 @@
+{
+  "id": "academorix://modules/marketing/schemas/marketing-event",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "MarketingEvent",
+  "description": "Canonical event ledger. One row per captured business milestone. Carries `tenant_id` only — cascades application/region/organization through the tenant. Attribution + consent snapshots frozen at capture time. NEVER carries `application_id`, `region_id`, `organization_id`, or `scope_node_id`.",
+  "type": "object",
+  "x-module": "marketing",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "marketing_events",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "mev_",
+    "incrementing": false,
+    "model": "Academorix\\Growth\\Marketing\\Models\\MarketingEvent",
+    "interface": "Academorix\\Growth\\Marketing\\Contracts\\Data\\MarketingEventInterface",
+    "implements": ["Academorix\\Growth\\Marketing\\Contracts\\Data\\MarketingEventInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMarketingDeliveries",
+      "HasMarketingDeadLetters",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "event_type": "MarketingEventType",
+      "source": "MarketingEventSource",
+      "status": "MarketingEventStatus",
+      "value_amount_cents": "integer",
+      "attribution": "array",
+      "consent_snapshot": "array",
+      "metadata": "array",
+      "eligible_provider_count": "integer",
+      "delivered_provider_count": "integer",
+      "retry_count": "integer",
+      "first_dispatched_at": "datetime",
+      "last_dispatched_at": "datetime"
+    },
+    "observers": ["MarketingEventObserver"],
+    "appends": ["is_terminal", "provider_delivery_ratio"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `mev_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "event_type": {
+        "type": "string",
+        "length": 48,
+        "nullable": false,
+        "description": "One of 26 MarketingEventType values. See data/event-type-catalog.json."
+      },
+      "source": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'system'",
+        "description": "Enum: system / api / import / migration / manual."
+      },
+      "subject_type": {
+        "type": "string",
+        "length": 96,
+        "nullable": false,
+        "description": "Polymorphic subject class name (User / Athlete / Membership / Subscription / Lead)."
+      },
+      "subject_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Polymorphic subject ID. Nullable after UserErased-triggered redaction (Art. 17)."
+      },
+      "value_amount_cents": {
+        "type": "bigint",
+        "nullable": true,
+        "description": "Revenue amount in cents. Nullable for non-revenue events. May be negative for refund_issued + chargeback_filed."
+      },
+      "value_currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": true,
+        "description": "ISO 4217 3-letter code. Required when value_amount_cents is set."
+      },
+      "attribution": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Frozen at capture. Shape: { utm_source?, utm_medium?, utm_campaign?, utm_content?, utm_term?, gclid?, fbclid?, ttclid?, msclkid?, sccid?, first_touch_at?, last_touch_at?, landing_page?, referrer?, session_id? }. Empty {} allowed."
+      },
+      "consent_snapshot": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "Frozen at capture. Shape: { marketing: boolean, advertising: boolean, personalized_advertising: boolean, recorded_at: ISO 8601 }."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Event-specific properties: user_agent_hash, ip_hash, device_type, browser, os, custom_data."
+      },
+      "status": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "Enum: pending / dispatching / delivered / partially_delivered / failed / suppressed_by_consent / superseded."
+      },
+      "retry_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Aggregate count of retry attempts across all providers."
+      },
+      "first_dispatched_at": { "type": "timestamptz", "nullable": true },
+      "last_dispatched_at": { "type": "timestamptz", "nullable": true },
+      "eligible_provider_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "How many providers this event should go to."
+      },
+      "delivered_provider_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "How many providers have succeeded so far."
+      },
+      "deduplication_key": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Unique per tenant. Prevents double-fire. Composite unique partial index (tenant_id, deduplication_key) WHERE deleted_at IS NULL."
+      },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "deduplication_key"],
+        "unique": true,
+        "name": "marketing_events_tenant_dedup_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      { "columns": ["tenant_id", "event_type", "created_at"], "name": "marketing_events_type_idx" },
+      { "columns": ["tenant_id", "status", "last_dispatched_at"], "name": "marketing_events_status_idx" },
+      { "columns": ["tenant_id", "subject_type", "subject_id"], "name": "marketing_events_subject_idx" },
+      { "columns": ["tenant_id", "created_at"], "name": "marketing_events_recent_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "event_type",
+    "source",
+    "subject_type",
+    "attribution",
+    "consent_snapshot",
+    "status",
+    "retry_count",
+    "eligible_provider_count",
+    "delivered_provider_count",
+    "deduplication_key",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^mev_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "event_type": { "type": "string" },
+    "source": { "type": "string", "enum": ["system", "api", "import", "migration", "manual"] },
+    "subject_type": { "type": "string" },
+    "subject_id": { "type": ["string", "null"] },
+    "value_amount_cents": { "type": ["integer", "null"] },
+    "value_currency": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
+    "attribution": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "utm_source": { "type": ["string", "null"] },
+        "utm_medium": { "type": ["string", "null"] },
+        "utm_campaign": { "type": ["string", "null"] },
+        "utm_content": { "type": ["string", "null"] },
+        "utm_term": { "type": ["string", "null"] },
+        "gclid": { "type": ["string", "null"] },
+        "fbclid": { "type": ["string", "null"] },
+        "ttclid": { "type": ["string", "null"] },
+        "msclkid": { "type": ["string", "null"] },
+        "sccid": { "type": ["string", "null"] },
+        "first_touch_at": { "type": ["string", "null"], "format": "date-time" },
+        "last_touch_at": { "type": ["string", "null"], "format": "date-time" },
+        "landing_page": { "type": ["string", "null"] },
+        "referrer": { "type": ["string", "null"] },
+        "session_id": { "type": ["string", "null"] }
+      }
+    },
+    "consent_snapshot": {
+      "type": "object",
+      "required": ["marketing", "advertising", "recorded_at"],
+      "properties": {
+        "marketing": { "type": "boolean" },
+        "advertising": { "type": "boolean" },
+        "personalized_advertising": { "type": "boolean" },
+        "recorded_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "metadata": { "type": ["object", "null"] },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "dispatching", "delivered", "partially_delivered", "failed", "suppressed_by_consent", "superseded"]
+    },
+    "retry_count": { "type": "integer", "minimum": 0 },
+    "first_dispatched_at": { "type": ["string", "null"], "format": "date-time" },
+    "last_dispatched_at": { "type": ["string", "null"], "format": "date-time" },
+    "eligible_provider_count": { "type": "integer", "minimum": 0 },
+    "delivered_provider_count": { "type": "integer", "minimum": 0 },
+    "deduplication_key": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9_:.-]+$" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "attribution + consent_snapshot are frozen at capture; never mutable after create",
+    "delivered_provider_count <= eligible_provider_count",
+    "status='delivered' requires delivered_provider_count == eligible_provider_count",
+    "status='failed' requires delivered_provider_count == 0 AND every eligible delivery dead-lettered",
+    "status='partially_delivered' requires 0 < delivered_provider_count < eligible_provider_count",
+    "value_currency IS NOT NULL when value_amount_cents IS NOT NULL",
+    "deduplication_key is unique per tenant WHERE deleted_at IS NULL",
+    "state transitions are one-way: pending → dispatching → {delivered / partially_delivered / failed / suppressed_by_consent / superseded}"
+  ]
+}

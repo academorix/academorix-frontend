@@ -1,0 +1,81 @@
+{
+  "id": "academorix://modules/analytics/caches",
+  "$version": 1,
+  "title": "analytics — cache keys + tags",
+  "description": "Fan-out cache for active-providers-per-tenant + circuit-breaker state mirror + batch buffer + entitlement cache.",
+  "driver": "redis",
+  "ownedTags": ["analytics"],
+  "keys": [
+    {
+      "pattern": "analytics:fanout:providers:{tenant_id}",
+      "description": "Cache of active AnalyticsProviderConfig fan-out set per tenant. Read on every capture. Contents: array of { id, provider, enabled_event_types, sampling_rate, batch_config, circuit_breaker_state }.",
+      "ttlSeconds": 300,
+      "tags": ["analytics", "tenant", "fanout"],
+      "invalidatedBy": [
+        "AnalyticsProviderConfigured event",
+        "AnalyticsProviderDeactivated event",
+        "AnalyticsProviderCircuitBreakerOpened event",
+        "AnalyticsProviderCircuitBreakerClosed event"
+      ]
+    },
+    {
+      "pattern": "analytics:circuit_breaker:{provider_config_id}",
+      "description": "Hot-path circuit-breaker state mirror. Prevents a DB read per dispatch. Written by AnalyticsProviderConfigObserver.updated + CircuitBreakerFailureListener.",
+      "ttlSeconds": 60,
+      "tags": ["analytics", "provider", "circuit"],
+      "invalidatedBy": [
+        "AnalyticsProviderConfigured event",
+        "AnalyticsProviderCircuitBreakerOpened event",
+        "AnalyticsProviderCircuitBreakerClosed event"
+      ]
+    },
+    {
+      "pattern": "analytics:batch_buffer:{tenant_id}:{provider}",
+      "description": "Redis list of pending AnalyticsDelivery.id values awaiting batch flush. LPUSH on new delivery, RPOP-N on flush.",
+      "ttlSeconds": null,
+      "tags": ["analytics", "batch", "tenant", "provider"],
+      "invalidatedBy": [
+        "AnalyticsBatchFlushed event (specifically drains the batch's entries)",
+        "AnalyticsProviderDeactivated event (drain-then-drop)"
+      ]
+    },
+    {
+      "pattern": "analytics:identity:anonymous:{tenant_id}:{anonymous_id}",
+      "description": "Cache of AnalyticsIdentity.id (aid_...) keyed by anonymous_id. Prevents a DB read per incoming event bearing an anonymous_id.",
+      "ttlSeconds": 3600,
+      "tags": ["analytics", "identity", "tenant"],
+      "invalidatedBy": [
+        "AnalyticsIdentityCreated event",
+        "AnalyticsIdentityIdentified event",
+        "AnalyticsIdentityAliased event",
+        "AnalyticsIdentitySplit event"
+      ]
+    },
+    {
+      "pattern": "analytics:entitlements:{tenant_id}:analytics_event_slot_per_month",
+      "description": "Current-month event pool consumed. Fast-path check during CaptureAnalyticsEventJob. Reset at UTC month boundary.",
+      "ttlSeconds": 300,
+      "tags": ["analytics", "entitlements", "tenant"],
+      "invalidatedBy": ["EntitlementConsumed event (analytics.event.captured)"]
+    },
+    {
+      "pattern": "analytics:sampling:actual_rate:{provider}:{event_name}:{day_bucket}",
+      "description": "Rolling 24h actual sampling rate per (provider, event_name). Written by SamplingRateReconcilerJob. Read by AnalyticsHighDropRateNotification threshold check.",
+      "ttlSeconds": 86400,
+      "tags": ["analytics", "sampling"]
+    },
+    {
+      "pattern": "analytics:funnel:report:{tenant_id}:{funnel_key}:{since}:{until}",
+      "description": "Materialised funnel report. Cached to protect the DB from repeated funnel queries by the dashboard.",
+      "ttlSeconds": 300,
+      "tags": ["analytics", "funnel", "tenant"]
+    },
+    {
+      "pattern": "analytics:experiment:results:{tenant_id}:{experiment_key}",
+      "description": "Materialised experiment results per (tenant, experiment_key). Refreshed on every AnalyticsExperimentAssigned event.",
+      "ttlSeconds": 900,
+      "tags": ["analytics", "experiment", "tenant"],
+      "invalidatedBy": ["AnalyticsExperimentAssigned event"]
+    }
+  ]
+}

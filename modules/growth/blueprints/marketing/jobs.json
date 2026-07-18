@@ -1,0 +1,173 @@
+{
+  "id": "academorix://modules/marketing/jobs",
+  "$version": 1,
+  "title": "marketing — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Growth\\Marketing\\Jobs\\CaptureMarketingEventJob",
+      "queue": "marketing",
+      "purpose": "Listener-driven. Fired by MarketingEventCapturer when a domain event maps to a marketing event type via the DomainEventMapper registry. Normalizes the domain event → marketing_events row + snapshots consent + attribution + eligible-provider list.",
+      "steps": [
+        "Load DomainEventMapper for the incoming domain-event class",
+        "Compute deduplication_key = mapper->deduplicationKey($domainEvent)",
+        "Check for existing marketing_events row with same (tenant_id, deduplication_key); if found + not yet delivered: fire MarketingEventSuperseded on the old row + create new; if found + delivered: skip",
+        "Snapshot ConsentGate::snapshotFor($subject) into consent_snapshot",
+        "Refuse capture when ConsentGate::allows($tenant, $subject, 'marketing') is false OR ConsentGate::allows($tenant, $subject, 'advertising') is false → fire MarketingEventSuppressedByConsent",
+        "Snapshot AttributionResolver::forSubject($subject) into attribution",
+        "Compute eligible_provider_count from active MarketingProviderConfigs where event_type IN enabled_event_types",
+        "Refuse capture when eligible_provider_count == 0 (log warning; no wasted work)",
+        "Insert marketing_events row with status='pending'",
+        "Fire MarketingEventCaptured after commit"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "(tenant_id, deduplication_key)",
+      "tries": 3,
+      "backoff": [10, 60, 300]
+    },
+    {
+      "class": "Academorix\\Growth\\Marketing\\Jobs\\DispatchMarketingEventJob",
+      "queue": "marketing",
+      "purpose": "Per-event fan-out. Fired on MarketingEventCaptured. Loads eligible provider configs + enqueues one DispatchToProviderJob per provider.",
+      "steps": [
+        "Load marketing_events row; refuse when status != 'pending' (idempotency)",
+        "Transition event.status to 'dispatching' + set first_dispatched_at",
+        "Load active MarketingProviderConfigs for (tenant_id, event.event_type IN enabled_event_types)",
+        "For each config: enqueue DispatchToProviderJob(event_id, config_id) with attempt_number=1",
+        "Fire MarketingEventDispatched with the provider list"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "marketing_event_id",
+      "tries": 3,
+      "backoff": [30, 120, 600]
+    },
+    {
+      "class": "Academorix\\Growth\\Marketing\\Jobs\\DispatchToProviderJob",
+      "queue": "marketing",
+      "purpose": "Per-provider HTTP call. The workhorse. Wraps the full pre-dispatch gate chain (consent re-check → circuit-breaker check → rate-limit check → transform payload → HTTP call → response validation → observer bookkeeping).",
+      "steps": [
+        "Load marketing_events + marketing_provider_configs",
+        "Refuse when event.status IN ('delivered', 'failed', 'suppressed_by_consent', 'superseded') — terminal",
+        "Refuse when provider_config.is_active = false → fire MarketingDeliveryFailed(status='suppressed_by_provider_off')",
+        "Insert marketing_deliveries row with status='dispatching' + fire MarketingDeliveryAttempted",
+        "PRE-DISPATCH GATE 1 — ConsentGate::allows($tenant, $subject, 'advertising') — fail = MarketingDeliverySuppressedByConsent + return",
+        "PRE-DISPATCH GATE 2 — CircuitBreakerGate::allow($tenant, $provider) — fail = MarketingDeliverySuppressedByCircuitBreaker + return",
+        "PRE-DISPATCH GATE 3 — RateLimitGate::allow($tenant, $provider) — fail = MarketingDeliveryRateLimited + schedule retry",
+        "Transform via MarketingPayloadTransformer::transformFor($provider, $event, $config)",
+        "Encrypt request_payload before persisting to marketing_deliveries.request_payload (at-rest encryption)",
+        "Dispatch via Guzzle with per-provider timeout (15s default, config.timeout_seconds override)",
+        "On 2xx + validation pass: transition delivery.status = 'succeeded' → fire MarketingDeliverySucceeded",
+        "On 4xx (permanent, is_transient=false per provider mapper): delivery.status = 'failed' → fire MarketingDeliveryFailed → MaybeCreateDeadLetter (skip retry)",
+        "On 429: delivery.status = 'rate_limited' → fire MarketingDeliveryRateLimited (schedule retry with provider Retry-After)",
+        "On 5xx / timeout / network: delivery.status = 'failed' → fire MarketingDeliveryFailed → schedule next retry when attempt_number < max_attempts, else MaybeCreateDeadLetter",
+        "Update marketing_events aggregate counters (delivered_provider_count, retry_count, last_dispatched_at)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "(marketing_event_id, provider, attempt_number)",
+      "tries": 1,
+      "note": "tries=1 because the retry semantics are OWNED by this module via RetryFailedDeliveriesJob + backoff schedule. Do NOT enable Laravel-level retry — it would bypass the circuit-breaker + rate-limit gates."
+    },
+    {
+      "class": "Academorix\\Growth\\Marketing\\Jobs\\RetryFailedDeliveriesJob",
+      "queue": "marketing",
+      "purpose": "Every 5 min sweep. Picks up marketing_deliveries with status='failed' AND next_retry_at <= now() AND attempt_number < max_attempts + enqueues a fresh DispatchToProviderJob with attempt_number+1.",
+      "steps": [
+        "SELECT id FROM marketing_deliveries WHERE status IN ('failed', 'rate_limited') AND next_retry_at IS NOT NULL AND next_retry_at <= now() AND attempt_number < (SELECT (retry_config->>'max_attempts')::int FROM marketing_provider_configs WHERE id = provider_config_id) FOR UPDATE SKIP LOCKED LIMIT 500",
+        "For each: enqueue DispatchToProviderJob(marketing_event_id, provider_config_id, attempt_number = current + 1)",
+        "Clear next_retry_at (avoid double-fire on the same row before the new attempt runs)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "marketing-retry-failed",
+      "tries": 3,
+      "backoff": [30, 120, 600]
+    },
+    {
+      "class": "Academorix\\Growth\\Marketing\\Jobs\\ReconcileMarketingEventStatusJob",
+      "queue": "marketing",
+      "purpose": "Nightly. Rolls up per-event delivery aggregates + updates marketing_events.status to terminal state when every delivery is terminal. Safety net for events stuck in 'dispatching' due to a crashed job.",
+      "steps": [
+        "SELECT e.id FROM marketing_events e WHERE e.status = 'dispatching' AND e.last_dispatched_at < now() - interval '24 hours' LIMIT 5000",
+        "For each event: aggregate delivery statuses; if every delivery is succeeded → event.status = 'delivered' + fire MarketingEventDelivered",
+        "If some succeeded + some dead-lettered → event.status = 'partially_delivered' + fire MarketingEventPartiallyDelivered",
+        "If every delivery is dead-lettered → event.status = 'failed' + fire MarketingEventFailed",
+        "Emit metric academorix.marketing.reconcile.stuck_events_found — should stay at 0 in a healthy system"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "marketing-reconcile-status",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Growth\\Marketing\\Jobs\\OpenCircuitBreakerJob",
+      "queue": "marketing-critical",
+      "purpose": "Dispatched on threshold-hit from MarketingDeliveryFailed listener. Atomically sets circuit_breaker_open_until on the provider config + fires MarketingProviderCircuitBreakerOpened.",
+      "steps": [
+        "UPDATE marketing_provider_configs SET circuit_breaker_open_until = now() + (circuit_breaker_config->>'open_duration_seconds')::int * interval '1 second' WHERE id = ? AND circuit_breaker_open_until IS NULL",
+        "If update affected 1 row: fire MarketingProviderCircuitBreakerOpened",
+        "Enqueue HalfOpenCircuitBreakerJob delayed until open_until"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "(tenant_id, provider)",
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Growth\\Marketing\\Jobs\\CloseCircuitBreakerJob",
+      "queue": "marketing",
+      "purpose": "Fired from HalfOpenCircuitBreakerJob's success path OR from manual reset (marketing:reset-circuit-breaker). Resets consecutive_failure_count to 0 + clears circuit_breaker_open_until.",
+      "steps": [
+        "UPDATE marketing_provider_configs SET circuit_breaker_open_until = NULL, consecutive_failure_count = 0, circuit_breaker_reset_count = circuit_breaker_reset_count + (?::int) WHERE id = ?",
+        "Fire MarketingProviderCircuitBreakerClosed with was_auto_close boolean"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 60,
+      "uniqueVia": "(tenant_id, provider)",
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Growth\\Marketing\\Jobs\\HalfOpenCircuitBreakerJob",
+      "queue": "marketing",
+      "purpose": "Delayed job. When circuit_breaker_open_until elapses, dispatches 1 test probe. Success → close the breaker; failure → re-open.",
+      "steps": [
+        "Load provider_config; refuse when circuit_breaker_open_until IS NULL or > now() (someone reset in the meantime)",
+        "Fire MarketingProviderCircuitBreakerHalfOpen",
+        "Load the oldest unshipped marketing_events row for this (tenant, provider) OR a synthetic probe event when no queue backlog",
+        "Enqueue DispatchToProviderJob(event, config, attempt_number=1) with a synthetic marker so the observer knows this is a half-open probe",
+        "On the resulting MarketingDeliverySucceeded: dispatch CloseCircuitBreakerJob(was_auto=true)",
+        "On MarketingDeliveryFailed: re-open the breaker (dispatch OpenCircuitBreakerJob)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "(tenant_id, provider)",
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Growth\\Marketing\\Jobs\\PurgeExpiredMarketingDataJob",
+      "queue": "marketing",
+      "purpose": "Weekly sweep. Applies the per-entity retention windows: marketing_events > 7 years → hard delete; marketing_deliveries > 2 years → hard delete; marketing_provider_configs (soft-deleted) > 90 days → hard delete; marketing_dead_letters retained indefinitely (financial audit — never auto-purged).",
+      "steps": [
+        "DELETE FROM marketing_deliveries WHERE created_at < now() - interval '2 years' LIMIT 10000",
+        "DELETE FROM marketing_events WHERE created_at < now() - interval '7 years' AND status IN ('delivered', 'partially_delivered', 'failed', 'suppressed_by_consent', 'superseded') LIMIT 5000",
+        "For Enterprise tenants with marketing_extended_retention entitlement: retention is 10 years instead of 7",
+        "DELETE FROM marketing_provider_configs WHERE deleted_at IS NOT NULL AND deleted_at < now() - interval '90 days' LIMIT 1000",
+        "marketing_dead_letters are NEVER auto-purged — ops resolves manually or the row survives for the tenant's lifetime (financial audit)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "marketing-purge-expired",
+      "tries": 1
+    }
+  ]
+}

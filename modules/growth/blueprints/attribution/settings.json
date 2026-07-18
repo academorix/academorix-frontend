@@ -1,0 +1,233 @@
+{
+  "id": "academorix://modules/attribution/settings",
+  "$version": 1,
+  "title": "attribution — settings",
+  "description": "Tenant-facing preferences (campaign rollup configuration, consent-suppression notification frequency) + user-level preferences (attribution timeline visibility on the user dashboard).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "attribution",
+      "class": "Academorix\\Growth\\Attribution\\Settings\\AttributionSettings",
+      "label": "Attribution",
+      "description": "Tenant-wide attribution capture + rollup preferences.",
+      "icon": "chart-bar",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 60,
+      "permission": "attribution.viewAny",
+      "requiresEntitlement": "attribution_capture",
+      "sections": [
+        {
+          "label": "Capture",
+          "description": "How attribution is captured at request boundary.",
+          "icon": "cloud-arrow-down",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "capture_enabled",
+              "controlType": "toggle",
+              "label": "Enable attribution capture",
+              "defaultValue": true,
+              "helpText": "When off, all downstream marketing / analytics / referrals events attribute against a null profile. Privacy-conservative deployments may prefer off.",
+              "sortOrder": 1
+            },
+            {
+              "name": "session_ttl_hours",
+              "controlType": "number",
+              "label": "Session TTL (hours)",
+              "defaultValue": 24,
+              "min": 1,
+              "max": 168,
+              "helpText": "How long a session_id cookie lasts before a fresh one is minted.",
+              "sortOrder": 2
+            },
+            {
+              "name": "first_touch_ttl_days",
+              "controlType": "number",
+              "label": "First-touch TTL (days)",
+              "defaultValue": 365,
+              "min": 30,
+              "max": 3650,
+              "helpText": "How long the first-touch cookie lasts. After expiry, a new profile is created on next visit.",
+              "sortOrder": 3
+            },
+            {
+              "name": "strip_pii_from_referrer",
+              "controlType": "toggle",
+              "label": "Strip query parameters from referrer URLs",
+              "defaultValue": true,
+              "helpText": "Recommended. Prevents accidental PII leakage in referrer strings from third-party sites.",
+              "sortOrder": 4
+            }
+          ]
+        },
+        {
+          "label": "Click IDs",
+          "description": "Which ad-network click IDs to capture.",
+          "icon": "cursor-arrow-rays",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "capture_google",
+              "controlType": "toggle",
+              "label": "Google Ads (gclid)",
+              "defaultValue": true,
+              "sortOrder": 1
+            },
+            {
+              "name": "capture_meta",
+              "controlType": "toggle",
+              "label": "Meta (fbclid)",
+              "defaultValue": true,
+              "sortOrder": 2
+            },
+            {
+              "name": "capture_tiktok",
+              "controlType": "toggle",
+              "label": "TikTok (ttclid)",
+              "defaultValue": true,
+              "requiresEntitlement": "attribution_click_ids_advanced",
+              "sortOrder": 3
+            },
+            {
+              "name": "capture_microsoft",
+              "controlType": "toggle",
+              "label": "Microsoft Bing (msclkid)",
+              "defaultValue": true,
+              "requiresEntitlement": "attribution_click_ids_advanced",
+              "sortOrder": 4
+            },
+            {
+              "name": "capture_snapchat",
+              "controlType": "toggle",
+              "label": "Snapchat (sccid)",
+              "defaultValue": true,
+              "requiresEntitlement": "attribution_click_ids_advanced",
+              "sortOrder": 5
+            }
+          ]
+        },
+        {
+          "label": "Rollup",
+          "description": "Campaign performance rollup configuration.",
+          "icon": "chart-pie",
+          "sortOrder": 3,
+          "requiresEntitlement": "attribution_rollup",
+          "fields": [
+            {
+              "name": "rollup_schedule",
+              "controlType": "select",
+              "label": "Rollup cadence",
+              "defaultValue": "hourly",
+              "options": {
+                "disabled": "Disabled",
+                "every-15-min": "Every 15 minutes",
+                "hourly": "Hourly"
+              },
+              "helpText": "How often campaign performance is recomputed.",
+              "sortOrder": 1
+            },
+            {
+              "name": "top_campaigns_widget_count",
+              "controlType": "number",
+              "label": "Top campaigns shown in widget",
+              "defaultValue": 5,
+              "min": 3,
+              "max": 20,
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Merge",
+          "description": "Cross-device profile merging (Enterprise-only).",
+          "icon": "arrow-path-rounded-square",
+          "sortOrder": 4,
+          "requiresEntitlement": "attribution_merge",
+          "fields": [
+            {
+              "name": "merge_match_window_days",
+              "controlType": "number",
+              "label": "Match window (days)",
+              "defaultValue": 30,
+              "min": 1,
+              "max": 90,
+              "helpText": "How far back to look for anonymous profiles to absorb into an identified profile.",
+              "sortOrder": 1
+            },
+            {
+              "name": "merge_first_touch_policy",
+              "controlType": "select",
+              "label": "First-touch overwrite policy",
+              "defaultValue": "earlier_wins",
+              "options": {
+                "earlier_wins": "Earlier first-touch wins (default)",
+                "keep_identified": "Keep identified profile's first-touch",
+                "manual_review": "Flag for admin review"
+              },
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Consent + Compliance",
+          "description": "Consent gate + suppression digest configuration.",
+          "icon": "shield-check",
+          "sortOrder": 5,
+          "fields": [
+            {
+              "name": "honor_gpc_signal",
+              "controlType": "toggle",
+              "label": "Honor Sec-GPC HTTP header",
+              "defaultValue": true,
+              "helpText": "Recommended. Global Privacy Control signal treated as consent withdrawal.",
+              "sortOrder": 1
+            },
+            {
+              "name": "suppression_notification_frequency",
+              "controlType": "select",
+              "label": "Consent suppression digest cadence",
+              "defaultValue": "daily",
+              "options": {
+                "disabled": "Disabled",
+                "hourly": "Hourly",
+                "daily": "Daily",
+                "weekly": "Weekly"
+              },
+              "helpText": "How often the compliance-team receives the AttributionSuppressedByConsent digest.",
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "attribution_user",
+      "class": "Academorix\\Growth\\Attribution\\Settings\\AttributionUserSettings",
+      "label": "My attribution",
+      "description": "Personal attribution preferences.",
+      "icon": "user-circle",
+      "scope": "user",
+      "public": true,
+      "sortOrder": 65,
+      "sections": [
+        {
+          "label": "Visibility",
+          "icon": "eye",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "show_attribution_widget",
+              "controlType": "toggle",
+              "label": "Show attribution widget on my dashboard",
+              "defaultValue": false,
+              "helpText": "Off by default — most users don't need this. Referrers and marketing power-users may prefer on.",
+              "sortOrder": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

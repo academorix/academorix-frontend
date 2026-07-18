@@ -1,0 +1,114 @@
+{
+  "id": "academorix://modules/referrals/retention",
+  "$version": 1,
+  "title": "referrals — retention windows",
+  "description": "Referrals data is financial-audit-adjacent. Every issued reward is a compliance-relevant financial event (tax audit, ad-spend audit, fraud audit). Default retention 7 years (SOC 2 CC6.3 + national tax law baselines: US, EU, UK, CA). Enterprise tier extends to 10y via `referrals_extended_retention`. TenantErased cascades FK CASCADE hard-delete of every owned row EXCEPT paid rewards — those migrate to a compliance archive for legal-obligation retention.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(e) — storage limitation (retention windows justified by tax + fraud audit)",
+    "gdpr Art. 17 — right to erasure (with financial-retention carve-out)",
+    "gdpr Art. 6(1)(b) — lawful basis: contract (reward program = contractual relationship)",
+    "gdpr Art. 6(1)(f) — legitimate interest (fraud detection)",
+    "can-spam Act — invitation emails carry unsubscribe path",
+    "us tax law — 7-year financial-record retention (1099 reporting for rewards > $600)",
+    "soc2 CC6.3 — audit trail retention",
+    "iso 27001 Annex A.12.3 — audit log retention",
+    "ccpa 1798.100 — right to know + right to delete (with retention carve-out)"
+  ],
+  "retention": [
+    {
+      "entity": "ReferralProgram",
+      "hot": { "days": "while active + 1 year" },
+      "cold": { "days": "2555 (7 years) post-archive; 3650 (10 years) with `referrals_extended_retention` (Enterprise)" },
+      "purge": {
+        "trigger": "> 7 (or 10) years past archived_at + zero downstream references",
+        "action": "hard delete via PurgeArchivedReferralsJob",
+        "notes": "Every issued reward traces back to a program. Program cannot be hard-deleted while any reward retains a reference — retention aligns with the longest-lived downstream (rewards + fraud flags)."
+      }
+    },
+    {
+      "entity": "ReferralCode",
+      "hot": { "days": "while active + 1 year" },
+      "cold": { "days": "2555 (7 years) post-deactivation" },
+      "purge": {
+        "trigger": "> 7 years past updated_at (last state change)",
+        "action": "hard delete",
+        "notes": "Codes retain for audit — a paid reward may reference the code as its acquisition path."
+      }
+    },
+    {
+      "entity": "Referral",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years); 3650 (10 years) with `referrals_extended_retention`" },
+      "purge": {
+        "trigger": "> 7 (or 10) years past claimed_at + status IN (rewarded / cancelled / expired / fraudulent)",
+        "action": "hard delete via PurgeArchivedReferralsJob",
+        "notes": "Retention runs against claimed_at — the earliest financial-relevant timestamp. Fraudulent referrals also retain 7y (fraud audit trail alignment)."
+      }
+    },
+    {
+      "entity": "ReferralReward",
+      "hot": { "days": 365, "description": "Active + first year for dispute resolution" },
+      "cold": { "days": "2555 (7 years); 3650 (10 years) with `referrals_extended_retention`" },
+      "purge": {
+        "trigger": "> 7 (or 10) years past paid_at / clawback_at / cancelled_at",
+        "action": "hard delete OR migrate to compliance_archive.referral_rewards (paid rewards)",
+        "notes": "Paid rewards over $600 (US tax threshold) migrate to compliance_archive rather than delete — 1099 reporting requires the ledger to persist. Cancelled + clawback rewards may be hard-deleted at the retention boundary."
+      }
+    },
+    {
+      "entity": "ReferralFraudFlag",
+      "hot": { "days": "while parent Referral in hot window" },
+      "cold": { "days": "2555 (7 years)" },
+      "purge": {
+        "trigger": "> 7 years past created_at",
+        "action": "hard delete",
+        "notes": "Fraud audit trail. Retained per SOC 2 CC6.3 + ISO 27001 Annex A.12.3 (audit log retention). Reviewed flags with disposition=confirmed_fraud retain longer — the Enterprise `referrals_extended_retention` extends to 10y."
+      }
+    },
+    {
+      "entity": "Referral.attribution_snapshot",
+      "hot": { "days": "co-terminous with Referral" },
+      "purge": {
+        "trigger": "co-terminous with Referral hard-delete",
+        "action": "cascaded (JSONB column on the referral row)",
+        "notes": "The snapshot is IMMUTABLE — no in-flight edits ever. Under GDPR right-to-erasure, the RedactReferralDataOnUserErasure hook redacts referred_email to '[REDACTED]' at 90 days post-erasure but retains the utm/click_id fields for aggregate rollup analytics."
+      }
+    },
+    {
+      "entity": "Referral.device_snapshot + fraud device evidence",
+      "hot": { "days": "co-terminous with Referral" },
+      "purge": {
+        "trigger": "co-terminous with Referral hard-delete",
+        "action": "cascaded",
+        "notes": "device_snapshot stores only HASHES (SHA-256 of UA + IP + fingerprint), never raw values. Retention aligns with the referral row + fraud flag rows. Under user-erasure: hashes stay (they can't be re-derived), but the referred_email field zeros out."
+      }
+    }
+  ],
+  "special_paths": [
+    {
+      "trigger": "TenantErased",
+      "action": "FK CASCADE hard-deletes every referral_programs / referral_codes / referrals / referral_rewards / referral_fraud_flags row.",
+      "carve_out": "PAID rewards (finance_credit_id set + paid_at set) migrate to compliance_archive.referral_rewards prior to cascade. Audit trail rows survive per audit module design (outlives-source)."
+    },
+    {
+      "trigger": "UserErased (referrer)",
+      "action": "RedactReferralDataOnUserErasure hook: cancel pending referrals + retain paid rewards with subject redacted (recipient_id nulled but role preserved).",
+      "carve_out": "Retention windows on the referral / reward rows unchanged — financial retention overrides erasure per legal-obligation carve-out."
+    },
+    {
+      "trigger": "UserErased (referred)",
+      "action": "Redact referred_email + referred_id on Referral row 90 days post-erasure. Keep the fraud flags for fraud audit trail.",
+      "carve_out": "Retention windows unchanged."
+    },
+    {
+      "trigger": "ReferralProgramArchived",
+      "action": "Retention windows do NOT reset — the archive is a business-lifecycle event, not a retention-lifecycle event. The 7 (or 10) year window continues to run from claimed_at on each referral."
+    }
+  ],
+  "cross_reference": [
+    "audit::retention.json — audit rows outlive their source rows regardless (fraud audit + financial audit).",
+    "activity::retention.json — activity rows follow their own tier-based retention.",
+    "compliance::consent-registry retention — consent snapshots on referrals retain per referral retention.",
+    "growth::attribution retention — attribution touchpoints retain 730d default / 7y with extended-retention entitlement."
+  ]
+}

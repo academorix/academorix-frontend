@@ -1,0 +1,114 @@
+{
+  "id": "academorix://modules/referrals/attributes",
+  "$version": 1,
+  "title": "referrals — PHP attribute contracts",
+  "description": "Four class-level attributes for listener discovery. `AsReferralProgramListener` subscribes to program lifecycle events; `AsReferralListener` subscribes to referral-instance lifecycle events; `AsReferralRewardListener` subscribes to reward lifecycle events (materialization, payment, clawback); `AsReferralFraudFlagListener` subscribes to fraud events. Discovery loader picks up each class at boot + wires the declared events. No property-level attributes: the five owned rows use ordinary Eloquent + spatie/laravel-data class attributes shipped by foundation.",
+  "namespace": "Academorix\\Growth\\Referrals\\Attributes",
+  "attributes": [
+    {
+      "name": "AsReferralProgramListener",
+      "class": "Academorix\\Growth\\Referrals\\Attributes\\AsReferralProgramListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to referral-program lifecycle events (ReferralProgramCreated / ReferralProgramActivated / ReferralProgramPaused / ReferralProgramArchived / ReferralProgramBudgetReached / ReferralProgramBudgetSpike).",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Array of event short names. Empty = subscribe to every ReferralProgram* event."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue override. Falls back to the event's default queue."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100
+        }
+      ],
+      "example": "#[AsReferralProgramListener(events: ['ReferralProgramArchived'], queue: 'referrals', priority: 50)]\nfinal class ArchiveReferralsOnProgramArchived\n{\n    public function __invoke(ReferralProgramArchived $event): void\n    {\n        // Cascade: cancel non-terminal referrals + clawback materialized-not-yet-paid rewards.\n    }\n}"
+    },
+    {
+      "name": "AsReferralListener",
+      "class": "Academorix\\Growth\\Referrals\\Attributes\\AsReferralListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to referral-instance lifecycle events (ReferralClicked / ReferralClaimed / ReferralSignedUp / ReferralTriggerReached / ReferralEnteredVesting / ReferralVested / ReferralRewarded / ReferralCancelled / ReferralExpired / ReferralInvitationSent / ReferralInvitationClicked). Also covers ReferralMaxReferralsPerReferrerReached.",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Empty = subscribe to every Referral* event."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100
+        }
+      ],
+      "example": "#[AsReferralListener(events: ['ReferralSignedUp', 'ReferralVested'], queue: 'marketing', priority: 60)]\nfinal class CaptureReferralAsMarketingConversion\n{\n    public function __invoke(ReferralSignedUp|ReferralVested $event): void\n    {\n        // Fan out to the marketing module's MarketingEventCapturer with the frozen attribution snapshot.\n    }\n}"
+    },
+    {
+      "name": "AsReferralRewardListener",
+      "class": "Academorix\\Growth\\Referrals\\Attributes\\AsReferralRewardListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to reward lifecycle events (ReferralRewardMaterialized / ReferralRewarded / ReferralClawback).",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": []
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "ReferralClawback consumers should override to `referrals-critical`."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100
+        }
+      ],
+      "example": "#[AsReferralRewardListener(events: ['ReferralClawback'], queue: 'referrals-critical', priority: 20)]\nfinal class NotifyFinanceOnClawback\n{\n    public function __invoke(ReferralClawback $event): void\n    {\n        // Notify the Finance module to reverse the underlying credit.\n    }\n}"
+    },
+    {
+      "name": "AsReferralFraudFlagListener",
+      "class": "Academorix\\Growth\\Referrals\\Attributes\\AsReferralFraudFlagListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to fraud events (ReferralFraudDetected / ReferralFraudFlagReviewed / ReferralFraudDismissed). ReferralFraudDetected is P1 CRITICAL for severity IN ('block', 'critical') — consumers of that event MUST alert admin.",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": []
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Critical-severity consumers should override to `referrals-critical`."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100
+        }
+      ],
+      "example": "#[AsReferralFraudFlagListener(events: ['ReferralFraudDetected'], queue: 'referrals-critical', priority: 10)]\nfinal class AlertAdminOnCriticalFraud\n{\n    public function __invoke(ReferralFraudDetected $event): void\n    {\n        if ($event->severity !== 'critical') return;\n        // Page tenant admin. Every critical fire = actionable fraud signal.\n    }\n}"
+    }
+  ]
+}

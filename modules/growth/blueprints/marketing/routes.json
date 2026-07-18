@@ -1,0 +1,272 @@
+{
+  "id": "academorix://modules/marketing/routes",
+  "$version": 1,
+  "title": "marketing — HTTP routes",
+  "description": "Tenant-facing marketing surface (event ledger + provider CRUD + dead-letter management + ROAS report + compliance report — 18 routes) + platform-admin cross-tenant support routes (3 routes). Every tenant-plane route carries `entitlement.enforce:marketing_capture` at minimum; the ROAS route additionally carries `entitlement.enforce:marketing_roas_report`; the dead-letter replay route additionally carries `entitlement.enforce:marketing_dead_letter_replay`. Marketing events are NEVER created via API — capture is via the domain-event listener path only. Attempted POST /events returns 403 MARKETING_EVENT_MANUAL_CREATE_FORBIDDEN.",
+  "groups": [
+    {
+      "name": "tenant-marketing-events",
+      "prefix": "/api/v1/marketing/events",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "entitlement.enforce:marketing_capture",
+        "marketing.enforce_consent",
+        "throttle:marketing-tenant",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Event ledger read + support-tool re-dispatch. NO POST — events are captured only via domain-event listeners.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingEventController@index",
+          "permission": "marketing.events.viewAny",
+          "description": "filter[event_type], filter[status], filter[from], filter[to], filter[provider] (via delivery join), filter[subject_type], filter[subject_id], filter[utm_source], filter[utm_campaign]. Default sort: created_at DESC."
+        },
+        {
+          "method": "GET",
+          "path": "/{event}",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingEventController@show",
+          "permission": "marketing.events.view",
+          "description": "Includes attribution + consent snapshots + eligible_provider_count + delivered_provider_count."
+        },
+        {
+          "method": "GET",
+          "path": "/{event}/deliveries",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingEventController@deliveries",
+          "permission": "marketing.deliveries.view",
+          "description": "Per-provider delivery ledger for the event. Includes attempt timeline + error details."
+        },
+        {
+          "method": "POST",
+          "path": "/{event}/dispatch",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingEventController@dispatch",
+          "permission": "marketing.events.dispatch",
+          "description": "Support-tool re-dispatch. Idempotent when the provider supports the event_id contract. Body: { providers?: string[] } (default = all eligible providers)."
+        }
+      ]
+    },
+    {
+      "name": "tenant-marketing-deliveries",
+      "prefix": "/api/v1/marketing/deliveries",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "entitlement.enforce:marketing_capture",
+        "marketing.enforce_consent",
+        "throttle:marketing-tenant",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Cross-event delivery ledger view.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingDeliveryController@index",
+          "permission": "marketing.deliveries.viewAny",
+          "description": "filter[provider], filter[status], filter[from], filter[to], filter[attempt_number]. Default sort: attempted_at DESC."
+        },
+        {
+          "method": "GET",
+          "path": "/{delivery}",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingDeliveryController@show",
+          "permission": "marketing.deliveries.view",
+          "description": "Includes request_url + response_status_code + error_details. request_payload + response_body are returned encrypted (support tool decrypts client-side)."
+        }
+      ]
+    },
+    {
+      "name": "tenant-marketing-providers",
+      "prefix": "/api/v1/marketing/providers",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "entitlement.enforce:marketing_capture",
+        "marketing.enforce_consent",
+        "throttle:marketing-tenant",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Provider config CRUD + test + circuit-breaker reset.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@index",
+          "permission": "marketing.providers.viewAny",
+          "description": "filter[provider], filter[is_active], filter[test_mode]. config returned encrypted; support role sees redacted view."
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@store",
+          "permission": "marketing.providers.create",
+          "description": "Body: MarketingProviderConfigCreateData. config jsonb validated against the per-provider JSON Schema. Consumes 1 unit of marketing_provider_slot."
+        },
+        {
+          "method": "GET",
+          "path": "/{provider}",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@show",
+          "permission": "marketing.providers.view",
+          "description": "{provider} route parameter accepts either the ULID (mpc_*) OR the provider slug when the tenant has exactly one config for that slug (ergonomic)."
+        },
+        {
+          "method": "PATCH",
+          "path": "/{provider}",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@update",
+          "permission": "marketing.providers.update"
+        },
+        {
+          "method": "DELETE",
+          "path": "/{provider}",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@destroy",
+          "permission": "marketing.providers.delete",
+          "description": "Soft-delete. Refused when circuit-breaker is open. 90-day grace before hard-purge."
+        },
+        {
+          "method": "POST",
+          "path": "/{provider}/test",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@test",
+          "permission": "marketing.providers.test",
+          "description": "Send a synthetic test event via the provider's sandbox endpoint. Body: { event_type?, test_event_code? }. Returns test result (succeeded / failed) + latency."
+        },
+        {
+          "method": "POST",
+          "path": "/{provider}/reset-circuit-breaker",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingProviderConfigController@resetCircuitBreaker",
+          "permission": "marketing.providers.reset-circuit-breaker",
+          "description": "Body: { note }. Every reset writes to audits with 7-year retention. Increments circuit_breaker_reset_count."
+        }
+      ]
+    },
+    {
+      "name": "tenant-marketing-dead-letters",
+      "prefix": "/api/v1/marketing/dead-letters",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "entitlement.enforce:marketing_capture",
+        "marketing.enforce_consent",
+        "throttle:marketing-tenant",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Dead-letter management. Replay is Enterprise-only.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingDeadLetterController@index",
+          "permission": "marketing.dead_letters.viewAny",
+          "description": "filter[provider], filter[reason], filter[resolved], filter[from], filter[to]. Default sort: created_at DESC. --unresolved default filter."
+        },
+        {
+          "method": "POST",
+          "path": "/{dead_letter}/replay",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingDeadLetterController@replay",
+          "permission": "marketing.dead_letters.replay",
+          "middleware_add": ["entitlement.enforce:marketing_dead_letter_replay"],
+          "description": "Body: { note }. Enqueue fresh DispatchToProviderJob(attempt=1). Increments replay_attempts. Successful replay auto-resolves. Enterprise-only."
+        },
+        {
+          "method": "POST",
+          "path": "/{dead_letter}/resolve",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\MarketingDeadLetterController@resolve",
+          "permission": "marketing.dead_letters.resolve",
+          "description": "Body: { note }. Mark resolved WITHOUT replay. Used when the provider event was replayed via the provider dashboard OR when the loss is intentional."
+        }
+      ]
+    },
+    {
+      "name": "tenant-marketing-reports",
+      "prefix": "/api/v1/marketing",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "entitlement.enforce:marketing_capture",
+        "marketing.enforce_consent",
+        "throttle:marketing-reports",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Reporting surface. ROAS + consent-suppressions.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/roas",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\RoasReportController@show",
+          "permission": "marketing.roas.view",
+          "middleware_add": ["entitlement.enforce:marketing_roas_report"],
+          "description": "?from=YYYY-MM-DD&to=YYYY-MM-DD&group_by=campaign|source|medium&provider=. Returns aggregated revenue attribution per grouping. Excludes test-mode events. Medium+ only."
+        },
+        {
+          "method": "GET",
+          "path": "/reports/consent-suppressions",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Tenant\\ConsentSuppressionsReportController@show",
+          "permission": "marketing.reports.consent-suppressions.view",
+          "description": "?from=YYYY-MM-DD&to=YYYY-MM-DD&consent_category=marketing|advertising. Returns counts of consent-suppressed events + deliveries. Powers the compliance dashboard."
+        }
+      ]
+    },
+    {
+      "name": "platform-marketing-support",
+      "prefix": "/api/v1/platform/marketing",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "throttle:marketing-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "Cross-tenant support tooling.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/deliveries",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Platform\\MarketingDeliveryController@index",
+          "permission": "platform.marketing.deliveries.viewAny",
+          "description": "filter[tenant_id], filter[provider], filter[status], filter[from], filter[to]. Cross-tenant scan for support debugging."
+        },
+        {
+          "method": "GET",
+          "path": "/dead-letters",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Platform\\MarketingDeadLetterController@index",
+          "permission": "platform.marketing.dead_letters.viewAny",
+          "description": "Cross-tenant P1 review dashboard. filter[tenant_id], filter[provider], filter[reason], filter[unresolved]."
+        },
+        {
+          "method": "GET",
+          "path": "/circuit-breakers",
+          "controller": "Academorix\\Growth\\Marketing\\Http\\Controllers\\Platform\\CircuitBreakerHealthController@index",
+          "permission": "platform.marketing.circuit_breakers.viewAny",
+          "description": "Cross-tenant view of every OPEN circuit-breaker + half-open probes in flight. Feeds the ops health dashboard."
+        }
+      ]
+    }
+  ]
+}

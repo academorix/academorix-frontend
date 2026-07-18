@@ -1,0 +1,45 @@
+{
+  "id": "attribution.attribution-source-chip",
+  "title": "Attribution source chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for an attribution source + bucket. Bucket ∈ { paid, organic, social, referral, direct, email, affiliate, unknown }. Icon + colour + label together — never colour alone (WCAG 2.2 AA § 1.4.1).",
+  "props": {
+    "source": {
+      "type": "string",
+      "required": true,
+      "description": "Canonical source identifier (google / meta / bing / referral / …). Renders as the chip label."
+    },
+    "bucket": {
+      "type": "string",
+      "enum": ["paid", "organic", "social", "referral", "direct", "email", "affiliate", "unknown"],
+      "required": true,
+      "description": "The analytics bucket. Drives colour + icon."
+    },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showIcon": { "type": "boolean", "default": true }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "props.bucket === 'paid' ? 'success' : (props.bucket === 'organic' ? 'info' : (props.bucket === 'social' ? 'info' : (props.bucket === 'email' ? 'warning' : (props.bucket === 'affiliate' ? 'warning' : (props.bucket === 'referral' ? 'neutral' : (props.bucket === 'direct' ? 'neutral' : 'neutral'))))))"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "props": {
+        "leadingIcon": {
+          "$expr": "props.showIcon ? (props.bucket === 'paid' ? 'currency-dollar' : (props.bucket === 'organic' ? 'magnifying-glass' : (props.bucket === 'social' ? 'chat-bubble-oval-left-ellipsis' : (props.bucket === 'email' ? 'envelope' : (props.bucket === 'affiliate' ? 'link' : (props.bucket === 'referral' ? 'arrow-uturn-right' : (props.bucket === 'direct' ? 'bookmark' : 'question-mark-circle'))))))) : null"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": { "children": { "$ref": "props.source" } }
+        }
+      ]
+    }
+  ]
+}

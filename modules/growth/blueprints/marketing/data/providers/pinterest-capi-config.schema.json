@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/marketing/data/providers/pinterest-capi-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Pinterest Conversions API provider config",
+  "description": "Configuration shape for a Pinterest Conversions API integration.",
+  "type": "object",
+  "required": ["ad_account_id", "access_token"],
+  "additionalProperties": false,
+  "properties": {
+    "ad_account_id": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "Pinterest Ad Account ID. Numeric."
+    },
+    "access_token": {
+      "type": "string",
+      "minLength": 50,
+      "description": "Pinterest OAuth2 access token. Encrypted at rest."
+    },
+    "refresh_token": {
+      "type": ["string", "null"],
+      "description": "OAuth2 refresh token. Encrypted at rest."
+    },
+    "app_id": {
+      "type": ["string", "null"],
+      "description": "For app-based conversions (rare)."
+    },
+    "action_source": {
+      "type": "string",
+      "enum": ["web", "app_android", "app_ios", "offline"],
+      "default": "web",
+      "description": "Pinterest action_source parameter. Server-side conversions from a web-app default to 'web'."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15
+    }
+  }
+}

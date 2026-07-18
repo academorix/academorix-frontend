@@ -1,0 +1,54 @@
+{
+  "id": "academorix://modules/attribution/policies",
+  "$version": 1,
+  "title": "attribution — authorization policies",
+  "description": "Two policies, one per owned model. Every ability defers to spatie/laravel-permission for the permission check, then layers own-only vs all-in-tenant narrowing. Confidential-field redaction (click IDs, ip_hash) happens at the data-class layer per data-classes.json — the policy authorises access to the ROW; the redactor authorises access to individual FIELDS.",
+  "policies": [
+    {
+      "model": "Attribution",
+      "class": "Academorix\\Growth\\Attribution\\Policies\\AttributionPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "attribution.viewAny", "scope": "marketing sees aggregated view (no PII); admin + owner see full rows" },
+        { "action": "view", "permission": "attribution.view", "scope": "narrows to own subject unless caller has attribution.view-all" },
+        { "action": "viewOwn", "permission": "attribution.view-own", "scope": "always allowed for GET /me/attribution — GDPR Art. 15" },
+        { "action": "reset", "permission": "attribution.reset", "scope": "admin + owner OR the subject themselves via attribution.reset-own" },
+        { "action": "resetOwn", "permission": "attribution.reset-own", "scope": "always allowed for the subject's own reset — GDPR Art. 17" },
+        { "action": "merge", "permission": "attribution.merge", "scope": "Enterprise-only — checked against attribution_merge entitlement + admin + owner role" },
+        { "action": "import", "permission": "attribution.import", "scope": "Enterprise-only" },
+        { "action": "viewRollup", "permission": "attribution.view-rollup", "scope": "aggregated data only — no per-subject PII returned even to callers with viewAny" },
+        { "action": "viewAuditUsage", "permission": "attribution.view-audit-usage" },
+        { "action": "viewConsentSuppressions", "permission": "attribution.view-consent-suppressions", "scope": "compliance role only — regulatory audit report" },
+        { "action": "platformViewAny", "permission": "platform.attribution.viewAny" },
+        { "action": "platformView", "permission": "platform.attribution.view" },
+        { "action": "platformForceReset", "permission": "platform.attribution.force-reset", "scope": "audit-critical: every fire notifies the tenant admin + writes an audit row with 7-year retention" },
+        { "action": "platformViewAuditUsage", "permission": "platform.attribution.view-audit-usage" }
+      ]
+    },
+    {
+      "model": "AttributionTouchpoint",
+      "class": "Academorix\\Growth\\Attribution\\Policies\\AttributionTouchpointPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "attribution.viewAny",
+          "scope": "marketing: aggregated (no PII); admin + owner: full rows; other roles refused unless viewing own subject's touchpoints"
+        },
+        {
+          "action": "view",
+          "permission": "attribution.view",
+          "scope": "must match parent Attribution.subject_id = auth()->id() OR caller has attribution.view-all"
+        },
+        {
+          "action": "viewOwn",
+          "permission": "attribution.view-own",
+          "scope": "always allowed for the subject's own touchpoint timeline"
+        },
+        {
+          "action": "viewConfidential",
+          "permission": "attribution.view-confidential",
+          "scope": "admin + owner only — surfaces the click_id + device_snapshot fields that are otherwise redacted"
+        }
+      ]
+    }
+  ]
+}

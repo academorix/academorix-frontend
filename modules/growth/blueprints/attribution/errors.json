@@ -1,0 +1,240 @@
+{
+  "id": "academorix://modules/attribution/errors",
+  "$version": 1,
+  "title": "attribution — error codes",
+  "namespace": "attribution",
+  "errors": [
+    {
+      "code": "ATTRIBUTION_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attribution.errors.attribution_not_found"
+    },
+    {
+      "code": "ATTRIBUTION_CAPTURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attribution.errors.attribution_capture_not_entitled",
+      "description": "Tenant has attribution_capture entitlement off. Middleware becomes a no-op; downstream events attribute against a null profile."
+    },
+    {
+      "code": "ATTRIBUTION_ROLLUP_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attribution.errors.attribution_rollup_not_entitled",
+      "description": "GET /api/v1/campaigns/rollup routes refused because attribution_rollup entitlement is off (Small tier). Response includes upgrade CTA."
+    },
+    {
+      "code": "ATTRIBUTION_MERGE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attribution.errors.attribution_merge_not_entitled",
+      "description": "attribution_merge entitlement off (non-Enterprise). Attempted merge via API or CLI refused."
+    },
+    {
+      "code": "ATTRIBUTION_IMPORT_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attribution.errors.attribution_import_not_entitled",
+      "description": "attribution_import entitlement off (non-Enterprise). Bulk CSV import refused."
+    },
+    {
+      "code": "ATTRIBUTION_CONSENT_NOT_GRANTED",
+      "http": 200,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "attribution.errors.attribution_consent_not_granted",
+      "description": "NOT a route-level error — internal signal. ConsentGate::allows('marketing') returned false; AttributionMiddleware refused persistence + fired AttributionSuppressedByConsent. Request still succeeds (200); the attribution just doesn't persist."
+    },
+    {
+      "code": "ATTRIBUTION_INVALID_SUBJECT_TYPE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attribution.errors.attribution_invalid_subject_type",
+      "description": "subject_type value not in enum { user, athlete, lead, anonymous_session }."
+    },
+    {
+      "code": "ATTRIBUTION_SUBJECT_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "attribution.errors.attribution_subject_mismatch",
+      "description": "subject_id does not match subject_type (e.g. subject_type='user' but subject_id is a session UUID)."
+    },
+    {
+      "code": "ATTRIBUTION_INVALID_LIFECYCLE_TRANSITION",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "attribution.errors.attribution_invalid_lifecycle_transition",
+      "description": "Attempted backward lifecycle transition (e.g. converted → identified). Only forward transitions permitted; reset is the only path to erase state."
+    },
+    {
+      "code": "ATTRIBUTION_FIRST_TOUCH_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "attribution.errors.attribution_first_touch_immutable",
+      "description": "Attempted mutation of first_touch_* fields. First-touch is IMMUTABLE post-create — the observer refuses. Every fire indicates a write path that shouldn't exist (data-integrity signal)."
+    },
+    {
+      "code": "ATTRIBUTION_TOUCHPOINT_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attribution.errors.attribution_touchpoint_not_found"
+    },
+    {
+      "code": "ATTRIBUTION_TOUCHPOINT_APPEND_ONLY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "attribution.errors.attribution_touchpoint_append_only",
+      "description": "Attempted UPDATE on an attribution_touchpoints row (fields other than metadata). Touchpoints are append-only. Every fire indicates a write path that shouldn't exist."
+    },
+    {
+      "code": "ATTRIBUTION_TOUCHPOINT_WITHOUT_PROFILE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "attribution.errors.attribution_touchpoint_without_profile",
+      "description": "Attempted to create an attribution_touchpoints row without a resolvable attributions row. Every touchpoint requires a parent profile."
+    },
+    {
+      "code": "ATTRIBUTION_INVALID_URL",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attribution.errors.attribution_invalid_url",
+      "description": "landing_page or referrer failed URL validation (not a valid URL, too long, contains characters outside RFC 3986)."
+    },
+    {
+      "code": "ATTRIBUTION_INVALID_CLICK_ID_SHAPE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "attribution.errors.attribution_invalid_click_id_shape",
+      "description": "click_id jsonb blob failed schema validation (unknown provider key, malformed provider_hint, etc.)."
+    },
+    {
+      "code": "ATTRIBUTION_INVALID_SESSION_ID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "attribution.errors.attribution_invalid_session_id",
+      "description": "session_id is not a valid UUID v4."
+    },
+    {
+      "code": "ATTRIBUTION_INVALID_IP_HASH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "attribution.errors.attribution_invalid_ip_hash",
+      "description": "ip_hash is not a valid SHA-256 hex string (64 chars, [0-9a-f])."
+    },
+    {
+      "code": "ATTRIBUTION_UTM_TOO_LONG",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attribution.errors.attribution_utm_too_long",
+      "description": "utm_source / utm_medium / utm_campaign / utm_content / utm_term exceeded max length (see config.attribution.capture.max_utm_length)."
+    },
+    {
+      "code": "ATTRIBUTION_MERGE_CROSS_TENANT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "attribution.errors.attribution_merge_cross_tenant",
+      "description": "Attempted merge across tenants (into.tenant_id != from.tenant_id). Refused with critical severity — cross-tenant merges are a security concern."
+    },
+    {
+      "code": "ATTRIBUTION_MERGE_INTO_ANONYMOUS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "attribution.errors.attribution_merge_into_anonymous",
+      "description": "The target of a merge must be an identified profile — merging into an anonymous target is refused (would defeat the purpose)."
+    },
+    {
+      "code": "ATTRIBUTION_MERGE_LIMIT_EXCEEDED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "attribution.errors.attribution_merge_limit_exceeded",
+      "description": "Attempted to absorb more than max_anonymous_absorbed (default 10) profiles into one identified profile in a single merge. Configured to prevent runaway merges from misconfigured proxies."
+    },
+    {
+      "code": "ATTRIBUTION_RESET_IN_PROGRESS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attribution.errors.attribution_reset_in_progress",
+      "description": "A reset for this attribution is already in the 90-day audit hold. Duplicate reset requests are refused."
+    },
+    {
+      "code": "ATTRIBUTION_RESET_TENANT_MISMATCH",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "attribution.errors.attribution_reset_tenant_mismatch",
+      "description": "Reset requested by a user whose tenant does not match the attribution.tenant_id. Cross-tenant reset is refused."
+    },
+    {
+      "code": "ATTRIBUTION_IMPORT_CSV_MALFORMED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attribution.errors.attribution_import_csv_malformed",
+      "description": "CSV import file failed schema validation (missing required columns, header mismatch, unsupported column types)."
+    },
+    {
+      "code": "ATTRIBUTION_IMPORT_ROW_LIMIT_EXCEEDED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "attribution.errors.attribution_import_row_limit_exceeded",
+      "description": "CSV import exceeded max rows per file (default 50,000). Split the import into multiple files."
+    },
+    {
+      "code": "ATTRIBUTION_COUNT_DRIFT_DETECTED",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "attribution.errors.attribution_count_drift_detected",
+      "description": "ReconcileAttributionCountsJob detected drift between denormalised touchpoint_count and actual row count. Every occurrence is a data-integrity signal (should be 0 in production)."
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "id": "academorix://modules/analytics/entitlements",
+  "$version": 1,
+  "title": "analytics — entitlements",
+  "description": "Nine entitlements gating analytics capture + delivery + advanced features. Plan-tier scaled: Small (baseline), Medium (advanced providers + batch config), Enterprise (identity merge + sampling config + extended retention + session recording).",
+  "reference": {
+    "publishedBy": "entitlements",
+    "resolvedBy": "GET /api/auth/me → data.quota_summary",
+    "seededFrom": "BusinessType.default_config.entitlements"
+  },
+  "kinds": [{ "kind": "pool" }, { "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "analytics_capture",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "small": true, "medium": true, "enterprise": true },
+      "description": "Master gate. Off = analytics module refuses capture entirely (no events, no deliveries, no identity resolution). Free tenants have client-side @stackra/analytics still; server-side is gated behind this."
+    },
+    {
+      "key": "analytics_provider_slot",
+      "kind": "slot",
+      "unit": "providers",
+      "defaultsByPlan": { "free": 0, "small": 1, "medium": 3, "enterprise": 999 },
+      "description": "Number of active AnalyticsProviderConfig rows allowed per tenant. Consumed on create; released on soft-delete."
+    },
+    {
+      "key": "analytics_event_slot_per_month",
+      "kind": "pool",
+      "period": "month",
+      "unit": "events",
+      "defaultsByPlan": { "free": 0, "small": 100000, "medium": 1000000, "enterprise": 999999999 },
+      "description": "Monthly event dispatch pool. One AnalyticsEvent captured = one draw regardless of eligible_provider_count. Reset at UTC month boundary. Overage refuses NEW captures with NOTIFICATIONS_ANALYTICS_MONTHLY_QUOTA_EXCEEDED."
+    },
+    {
+      "key": "analytics_advanced_providers",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "small": false, "medium": true, "enterprise": true },
+      "description": "Enables Mixpanel + Segment + June + Custom Webhook providers. Small tenants only get PostHog + Amplitude + Google Analytics 4 (the baseline three)."
+    },
+    {
+      "key": "analytics_batch_configuration",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "small": false, "medium": true, "enterprise": true },
+      "description": "Tenant may override batch_config.size + flush_interval_ms + max_bytes per provider. Without this entitlement, batch_config is frozen to the provider's default from data/batch-defaults.json."
+    },
+    {
+      "key": "analytics_identity_merge",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "small": false, "medium": false, "enterprise": true },
+      "description": "Enables cross-device identity merge via POST /identities/{id}/merge + the alias() verb. Without this entitlement, identify() still writes an AnalyticsIdentity row but historical events are NOT rewritten to the identified user id \u2014 the two remain disjoint subject histories."
+    },
+    {
+      "key": "analytics_sampling_config",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "small": false, "medium": false, "enterprise": true },
+      "description": "Enables custom sampling_rate + sampling_rules per provider. Non-Enterprise tenants can only sample via PostHog (which is free to sample locally) and Custom Webhook (opt-in escape hatch)."
+    },
+    {
+      "key": "analytics_extended_retention",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "small": false, "medium": false, "enterprise": true },
+      "description": "Extends AnalyticsEvent retention from 2 years to 5 years. Deliveries retention remains 90 days regardless. Enterprise + regulatory-heavy tenants."
+    },
+    {
+      "key": "analytics_session_recording",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "small": false, "medium": false, "enterprise": true },
+      "description": "Enables PostHog session recording capture. Independently gated by the `functional` consent category on the subject \u2014 an Enterprise tenant may have the entitlement but the recording still refuses if the subject hasn't granted functional consent."
+    }
+  ]
+}

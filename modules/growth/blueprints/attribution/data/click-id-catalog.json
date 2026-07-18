@@ -1,0 +1,115 @@
+{
+  "$version": 1,
+  "title": "Click ID catalogue — 5 supported ad-network click IDs",
+  "description": "Canonical mapping of ad-network click IDs to their extraction rules + provider metadata. Read by ClickIdExtractor at request boundary + AttributionSnapshotBuilder for the provider_hint. Extending: add a new provider entry here + no schema migration required (click IDs live in the jsonb blob).",
+  "providers": [
+    {
+      "provider": "google",
+      "display_name": "Google Ads",
+      "click_id_key": "gclid",
+      "cookie_name": "_gclid",
+      "query_param": "gclid",
+      "cookie_ttl_days": 90,
+      "gate": "attribution_capture (all tiers)",
+      "pattern": "^[A-Za-z0-9_-]{20,300}$",
+      "pattern_description": "Alphanumeric + dashes + underscores. Length typically 40-100 chars but Google occasionally emits longer.",
+      "example": "Cj0KCQjw3JanBhCPARIsAJpXTx4rG3g8YnI-XxYzP4wNoRfKfLxL4E1WcXvL_2z7BQ2y3T5R6xkE9tsaAqvJEALw_wcB",
+      "capi_endpoint": "https://googleads.googleapis.com/v14/customers/{customer_id}/conversionUploads:uploadClickConversions",
+      "notes": "The single largest source of paid click attribution. Almost every Wave 5 marketing-forwarder will support Google."
+    },
+    {
+      "provider": "meta",
+      "display_name": "Meta (Facebook + Instagram)",
+      "click_id_key": "fbclid",
+      "cookie_name": "_fbclid",
+      "query_param": "fbclid",
+      "cookie_ttl_days": 90,
+      "gate": "attribution_capture (all tiers)",
+      "pattern": "^[A-Za-z0-9_-]{20,300}$",
+      "pattern_description": "Alphanumeric + dashes + underscores. Length typically 30-80 chars.",
+      "example": "IwAR3xF9G8H_2z7BQ2y3T5R6xkE9tsaAqvJEALw3xF9G8H",
+      "supplementary_cookies": {
+        "_fbc": {
+          "description": "Meta-formatted click ID (fb.subdomain-index.timestamp.fbclid). Auto-computed by ClickIdExtractor from fbclid + captured_at when _fbc cookie is absent.",
+          "example": "fb.1.1642345600.IwAR3xF9G8H_2z7BQ2y3T5R6xkE9tsaAqvJEALw3xF9G8H"
+        },
+        "_fbp": {
+          "description": "Meta browser ID cookie (fb.subdomain-index.timestamp.random). Persists across sessions; captured as supplementary attribution signal.",
+          "example": "fb.1.1642345600.1234567890"
+        }
+      },
+      "capi_endpoint": "https://graph.facebook.com/v18.0/{pixel_id}/events",
+      "notes": "Meta CAPI expects _fbc (formatted click ID) rather than raw fbclid. ClickIdExtractor computes _fbc from fbclid when the browser didn't set it (older SDKs)."
+    },
+    {
+      "provider": "tiktok",
+      "display_name": "TikTok",
+      "click_id_key": "ttclid",
+      "cookie_name": "_ttclid",
+      "query_param": "ttclid",
+      "cookie_ttl_days": 30,
+      "gate": "attribution_click_ids_advanced (Medium+)",
+      "pattern": "^[A-Za-z0-9_-]{20,300}$",
+      "pattern_description": "Alphanumeric + dashes + underscores. Length typically 40-100 chars.",
+      "example": "E.C.P.AAA-BBB_CCC-DDD_EEE_FFF-GGG",
+      "capi_endpoint": "https://business-api.tiktok.com/open_api/v1.3/event/track/",
+      "notes": "Smaller cookie window (30 days) reflects TikTok's shorter conversion window."
+    },
+    {
+      "provider": "microsoft",
+      "display_name": "Microsoft Bing",
+      "click_id_key": "msclkid",
+      "cookie_name": "_msclkid",
+      "query_param": "msclkid",
+      "cookie_ttl_days": 90,
+      "gate": "attribution_click_ids_advanced (Medium+)",
+      "pattern": "^[a-f0-9]{20,64}$",
+      "pattern_description": "Lowercase hex — 32 chars is the typical shape. Microsoft is stricter about format than Google.",
+      "example": "3f5a2b8c1d4e6f7a8b9c0d1e2f3a4b5c",
+      "capi_endpoint": "https://ads.microsoft.com/api/ecs/v13/CampaignManagement/Service.svc",
+      "notes": "Bing captures msclkid distinct from gclid — a user searching on Bing sees msclkid; on Google sees gclid. Both may be present on multi-search sessions."
+    },
+    {
+      "provider": "snapchat",
+      "display_name": "Snapchat",
+      "click_id_key": "sccid",
+      "cookie_name": "_sccid",
+      "query_param": "ScCid",
+      "cookie_ttl_days": 30,
+      "gate": "attribution_click_ids_advanced (Medium+)",
+      "pattern": "^[A-Za-z0-9_-]{20,300}$",
+      "pattern_description": "Alphanumeric + dashes + underscores. Length typically 40-100 chars.",
+      "example": "e.c.p.AAA-BBB_CCC-DDD_EEE_FFF-GGG",
+      "capi_endpoint": "https://tr.snapchat.com/v2/conversion",
+      "notes": "Note the query param uses PascalCase 'ScCid' while the cookie uses lowercase '_sccid' — Snapchat's convention."
+    }
+  ],
+  "provider_hint_precedence": {
+    "order": ["google", "meta", "tiktok", "microsoft", "snapchat"],
+    "description": "When multiple click IDs are present on the same request (multi-touch attribution across ad networks), the provider_hint field on the click_id jsonb captures the highest-precedence provider. Rationale: Google typically dominates paid budget; Meta second; TikTok third; Microsoft fourth; Snapchat fifth. Tenants may override via config attribution.click_ids.provider_hint_precedence."
+  },
+  "extraction_rules": {
+    "order": [
+      "1. Read query params first (most-recent click).",
+      "2. Fall back to cookies (persisted click from earlier session).",
+      "3. Persist any query-param-sourced click IDs to cookies for future requests."
+    ],
+    "cookie_options": {
+      "path": "/",
+      "same_site": "Lax",
+      "secure": true,
+      "http_only": false,
+      "notes": "http_only=false so client-side JS analytics libraries can also read the cookies (dual-source pattern). same_site=Lax to survive cross-site redirects from ad clicks."
+    },
+    "consent_gate": {
+      "condition": "advertising consent",
+      "description": "Extraction is gated by advertising consent — not marketing consent. A subject may grant marketing (basic UTM capture) but withhold advertising (click ID capture). When advertising consent is off: click_id is stored as { provider_hint: null } — the utm_* fields survive."
+    }
+  },
+  "notes": [
+    "Every provider added here must land with (a) pattern regex, (b) CAPI endpoint (for downstream marketing module Wave 5), (c) supplementary_cookies if any, (d) gate.",
+    "The gate field determines which tier receives capture. Small tier gets google + meta only; Medium+ unlocks tiktok + microsoft + snapchat.",
+    "Every provider added here has a corresponding entry in the marketing::providers registry (Wave 5) for CAPI forwarding.",
+    "Adding a 6th provider (e.g. Pinterest — currently no dedicated click ID; uses utm_source only) requires ZERO schema migration. The click_id jsonb absorbs new keys naturally."
+  ]
+}

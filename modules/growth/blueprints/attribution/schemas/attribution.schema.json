@@ -1,0 +1,324 @@
+{
+  "id": "academorix://modules/attribution/schemas/attribution",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Attribution",
+  "description": "Per-subject rolling attribution profile. Carries `tenant_id` only — NEVER `application_id`, `region_id`, `organization_id`, `branch_id`, or `scope_node_id` (all cascade through tenant per tenancy-columns.md §5). Subject is polymorphic via subject_type + subject_id (user / athlete / lead / anonymous_session).",
+  "type": "object",
+  "x-module": "attribution",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "attributions",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "att_",
+    "incrementing": false,
+    "model": "Academorix\\Growth\\Attribution\\Models\\Attribution",
+    "interface": "Academorix\\Growth\\Attribution\\Contracts\\Data\\AttributionInterface",
+    "implements": ["Academorix\\Growth\\Attribution\\Contracts\\Data\\AttributionInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "lifecycle_state": "AttributionLifecycleState",
+      "first_touch_at": "datetime",
+      "last_touch_at": "datetime",
+      "lifecycle_converted_at": "datetime",
+      "first_touch_click_id": "array",
+      "first_touch_device": "array",
+      "last_touch_click_id": "array",
+      "last_touch_device": "array",
+      "consent_at_capture": "array",
+      "touchpoint_count": "integer",
+      "conversion_touchpoint_count": "integer",
+      "metadata": "array"
+    },
+    "observers": ["AttributionObserver"],
+    "appends": ["is_active", "days_since_first_touch", "days_since_last_touch"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `att_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "subject_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: user / athlete / lead / anonymous_session."
+      },
+      "subject_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "ULID (usr_/ath_/lead_) when subject_type != anonymous_session; UUID v4 when subject_type = anonymous_session. Nullable-in-practice via redaction (RedactAttributionOnUserErasure)."
+      },
+      "first_touch_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "IMMUTABLE post-create. Observer refuses updates."
+      },
+      "first_touch_source": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "utm_source at first touch. Normalized via ReferrerNormalizer + AttributionSourceCatalog."
+      },
+      "first_touch_medium": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "utm_medium at first touch."
+      },
+      "first_touch_campaign": {
+        "type": "string",
+        "length": 256,
+        "nullable": true,
+        "description": "utm_campaign at first touch."
+      },
+      "first_touch_content": {
+        "type": "string",
+        "length": 256,
+        "nullable": true,
+        "description": "utm_content at first touch."
+      },
+      "first_touch_term": {
+        "type": "string",
+        "length": 256,
+        "nullable": true,
+        "description": "utm_term at first touch."
+      },
+      "first_touch_landing_page": {
+        "type": "string",
+        "length": 512,
+        "nullable": false,
+        "description": "Full URL of first landing."
+      },
+      "first_touch_referrer": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "HTTP referrer at first touch. Query params stripped when strip_pii_from_referrer=true."
+      },
+      "first_touch_click_id": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "All click IDs present at first touch. Shape: { gclid, fbclid, ttclid, msclkid, sccid, provider_hint }. Validated against data/click-id-catalog.json."
+      },
+      "first_touch_device": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Parsed device blob at first touch. Shape: { user_agent_hash, ip_hash, device_type, browser, os, is_mobile, screen_size?, timezone?, locale? }. Never raw UA / IP."
+      },
+      "last_touch_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Updated on every attribution-bearing subsequent request."
+      },
+      "last_touch_source": { "type": "string", "length": 128, "nullable": false },
+      "last_touch_medium": { "type": "string", "length": 64, "nullable": true },
+      "last_touch_campaign": { "type": "string", "length": 256, "nullable": true },
+      "last_touch_content": { "type": "string", "length": 256, "nullable": true },
+      "last_touch_term": { "type": "string", "length": 256, "nullable": true },
+      "last_touch_landing_page": { "type": "string", "length": 512, "nullable": false },
+      "last_touch_referrer": { "type": "string", "length": 512, "nullable": true },
+      "last_touch_click_id": { "type": "jsonb", "nullable": false, "default": "'{}'::jsonb" },
+      "last_touch_device": { "type": "jsonb", "nullable": false, "default": "'{}'::jsonb" },
+      "current_session_id": {
+        "type": "uuid",
+        "nullable": true,
+        "description": "Current browser session bound to this attribution. UUID v4."
+      },
+      "touchpoint_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Denormalised count of attribution_touchpoints rows. Maintained by AttributionTouchpointObserver in the same transaction as the touchpoint create. Reconciled nightly."
+      },
+      "conversion_touchpoint_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Denormalised count of attribution_touchpoints with was_conversion=true."
+      },
+      "consent_at_capture": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Current consent state. Shape: { marketing, advertising, personalized_advertising, functional }. Updated on ConsentUpdated events via UpdateAttributionConsentSnapshot listener."
+      },
+      "lifecycle_state": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'anonymous'",
+        "description": "Enum: anonymous / identified / converted / churned."
+      },
+      "lifecycle_converted_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set when lifecycle_state transitions to converted."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "subject_type", "subject_id"],
+        "unique": true,
+        "name": "attributions_subject_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      { "columns": ["tenant_id", "lifecycle_state"], "name": "attributions_lifecycle_idx" },
+      { "columns": ["tenant_id", "first_touch_campaign"], "name": "attributions_first_touch_campaign_idx" },
+      { "columns": ["tenant_id", "last_touch_campaign"], "name": "attributions_last_touch_campaign_idx" },
+      { "columns": ["tenant_id", "last_touch_at"], "name": "attributions_last_touch_at_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "subject_type",
+    "subject_id",
+    "first_touch_at",
+    "first_touch_source",
+    "first_touch_landing_page",
+    "first_touch_click_id",
+    "first_touch_device",
+    "last_touch_at",
+    "last_touch_source",
+    "last_touch_landing_page",
+    "last_touch_click_id",
+    "last_touch_device",
+    "touchpoint_count",
+    "conversion_touchpoint_count",
+    "consent_at_capture",
+    "lifecycle_state",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^att_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "subject_type": {
+      "type": "string",
+      "enum": ["user", "athlete", "lead", "anonymous_session"]
+    },
+    "subject_id": {
+      "type": "string",
+      "description": "ULID with the correct subject prefix (usr_/ath_/lead_) OR UUID v4 for anonymous_session."
+    },
+    "first_touch_at": { "type": "string", "format": "date-time" },
+    "first_touch_source": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "first_touch_medium": { "type": ["string", "null"], "maxLength": 64 },
+    "first_touch_campaign": { "type": ["string", "null"], "maxLength": 256 },
+    "first_touch_content": { "type": ["string", "null"], "maxLength": 256 },
+    "first_touch_term": { "type": ["string", "null"], "maxLength": 256 },
+    "first_touch_landing_page": { "type": "string", "format": "uri", "maxLength": 512 },
+    "first_touch_referrer": { "type": ["string", "null"], "format": "uri", "maxLength": 512 },
+    "first_touch_click_id": {
+      "type": "object",
+      "properties": {
+        "gclid": { "type": ["string", "null"] },
+        "fbclid": { "type": ["string", "null"] },
+        "ttclid": { "type": ["string", "null"] },
+        "msclkid": { "type": ["string", "null"] },
+        "sccid": { "type": ["string", "null"] },
+        "provider_hint": {
+          "type": ["string", "null"],
+          "enum": ["google", "meta", "tiktok", "microsoft", "snapchat", null]
+        }
+      },
+      "additionalProperties": false
+    },
+    "first_touch_device": {
+      "type": "object",
+      "properties": {
+        "user_agent_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "ip_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "device_type": {
+          "type": "string",
+          "enum": ["mobile", "tablet", "desktop", "bot", "other"]
+        },
+        "browser": { "type": "string", "maxLength": 64 },
+        "os": { "type": "string", "maxLength": 64 },
+        "is_mobile": { "type": "boolean" },
+        "screen_size": { "type": ["string", "null"], "maxLength": 32 },
+        "timezone": { "type": ["string", "null"], "maxLength": 64 },
+        "locale": { "type": ["string", "null"], "maxLength": 16 }
+      },
+      "required": ["user_agent_hash", "ip_hash", "device_type", "browser", "os", "is_mobile"],
+      "additionalProperties": false
+    },
+    "last_touch_at": { "type": "string", "format": "date-time" },
+    "last_touch_source": { "type": "string", "maxLength": 128 },
+    "last_touch_medium": { "type": ["string", "null"], "maxLength": 64 },
+    "last_touch_campaign": { "type": ["string", "null"], "maxLength": 256 },
+    "last_touch_content": { "type": ["string", "null"], "maxLength": 256 },
+    "last_touch_term": { "type": ["string", "null"], "maxLength": 256 },
+    "last_touch_landing_page": { "type": "string", "format": "uri", "maxLength": 512 },
+    "last_touch_referrer": { "type": ["string", "null"], "format": "uri", "maxLength": 512 },
+    "last_touch_click_id": { "$ref": "#/properties/first_touch_click_id" },
+    "last_touch_device": { "$ref": "#/properties/first_touch_device" },
+    "current_session_id": {
+      "type": ["string", "null"],
+      "format": "uuid"
+    },
+    "touchpoint_count": { "type": "integer", "minimum": 0 },
+    "conversion_touchpoint_count": { "type": "integer", "minimum": 0 },
+    "consent_at_capture": {
+      "type": "object",
+      "properties": {
+        "marketing": { "type": "boolean" },
+        "advertising": { "type": "boolean" },
+        "personalized_advertising": { "type": "boolean" },
+        "functional": { "type": "boolean" }
+      },
+      "required": ["marketing", "advertising", "personalized_advertising", "functional"],
+      "additionalProperties": false
+    },
+    "lifecycle_state": {
+      "type": "string",
+      "enum": ["anonymous", "identified", "converted", "churned"]
+    },
+    "lifecycle_converted_at": { "type": ["string", "null"], "format": "date-time" },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "first_touch_at + first_touch_source + first_touch_landing_page + first_touch_click_id + first_touch_device are IMMUTABLE post-create — the observer refuses updates",
+    "subject_type='anonymous_session' + subject_id is a UUID v4; subject_type IN (user/athlete/lead) + subject_id is a ULID with the correct prefix",
+    "lifecycle_state transitions are forward-only (anonymous → identified → converted); churned reachable from anonymous | identified; restored from churned goes back to anonymous | identified",
+    "consent_at_capture must contain all four booleans (marketing / advertising / personalized_advertising / functional) — extra keys refused",
+    "touchpoint_count >= conversion_touchpoint_count",
+    "unique (tenant_id, subject_type, subject_id) partial WHERE deleted_at IS NULL",
+    "NO application_id / region_id / organization_id / branch_id / scope_node_id columns — cascades through tenant"
+  ]
+}

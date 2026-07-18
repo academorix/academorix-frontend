@@ -1,0 +1,104 @@
+{
+  "id": "academorix://modules/attribution/permissions",
+  "$version": 1,
+  "title": "attribution — permissions",
+  "seeder": "Academorix\\Growth\\Attribution\\Database\\Seeders\\AttributionPermissionSeeder",
+  "isSystem": true,
+  "description": "Two audiences. Tenant plane (sanctum) — admin + marketing + owner see aggregated rollups; individual subjects see only their own profile via `/me/attribution`. Platform plane (platform_admin) — cross-tenant read for support + force-reset for regulator-issued erasure requests. All permissions carry the `attribution.` prefix (or `platform.attribution.` on the platform audience) to align with hierarchy.md §4 audience-boundary rules.",
+  "permissions": [
+    {
+      "name": "attribution.viewAny",
+      "guard": "sanctum",
+      "description": "See the tenant's attribution profile list. Scoped: marketing sees aggregated (no PII); admin + owner see full rows.",
+      "seededOn": ["marketing", "admin", "owner"]
+    },
+    {
+      "name": "attribution.view",
+      "guard": "sanctum",
+      "description": "See one attribution profile. Same scope as viewAny.",
+      "seededOn": ["marketing", "admin", "owner"]
+    },
+    {
+      "name": "attribution.view-own",
+      "guard": "sanctum",
+      "description": "See own attribution profile via GET /me/attribution. Seeded to every authenticated role — GDPR Art. 15 right of access.",
+      "seededOn": ["member", "coach", "reception", "branch_manager", "marketing", "admin", "owner"]
+    },
+    {
+      "name": "attribution.view-all",
+      "guard": "sanctum",
+      "description": "See EVERY attribution profile in the tenant (admin drill-down). Distinct from viewAny (which is filterable and marketing-scoped).",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "attribution.view-confidential",
+      "guard": "sanctum",
+      "description": "See confidential fields (click IDs, ip_hash, user_agent_hash, device_snapshot). Redacted by default for other roles.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "attribution.reset",
+      "guard": "sanctum",
+      "description": "Invoke the GDPR right-to-erasure reset flow on an attribution profile.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "attribution.reset-own",
+      "guard": "sanctum",
+      "description": "Reset own attribution profile. Seeded to every authenticated role — GDPR Art. 17 right to erasure.",
+      "seededOn": ["member", "coach", "reception", "branch_manager", "marketing", "admin", "owner"]
+    },
+    {
+      "name": "attribution.merge",
+      "guard": "sanctum",
+      "description": "Manually merge N anonymous profiles into an identified profile. Enterprise-only.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "attribution.import",
+      "guard": "sanctum",
+      "description": "Bulk CSV import from external CRMs. Enterprise-only.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "attribution.view-rollup",
+      "guard": "sanctum",
+      "description": "See the campaign performance rollup dashboards. Aggregated data only — no per-subject PII.",
+      "seededOn": ["marketing", "admin", "owner"]
+    },
+    {
+      "name": "attribution.view-audit-usage",
+      "guard": "sanctum",
+      "description": "See attribution-module operational reports (consent-suppression audit, count-drift reconciler findings).",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "attribution.view-consent-suppressions",
+      "guard": "sanctum",
+      "description": "See the consent-suppression audit report (compliance-team specific — DPO role).",
+      "seededOn": ["compliance", "admin", "owner"]
+    },
+    {
+      "name": "platform.attribution.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.attribution.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.attribution.force-reset",
+      "guard": "platform_admin",
+      "description": "Support intervention to reset an attribution bypassing every tenant-level guard. Regulator-issued erasure requests. Every fire is audit-critical + notifies the tenant admin.",
+      "seededOn": ["super_admin", "ops"]
+    },
+    {
+      "name": "platform.attribution.view-audit-usage",
+      "guard": "platform_admin",
+      "description": "Cross-tenant attribution operational report for capacity planning + compliance-team review.",
+      "seededOn": ["super_admin", "ops"]
+    }
+  ]
+}

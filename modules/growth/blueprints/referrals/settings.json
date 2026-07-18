@@ -1,0 +1,240 @@
+{
+  "id": "academorix://modules/referrals/settings",
+  "$version": 1,
+  "title": "referrals — settings",
+  "description": "Tenant-facing preferences (per-tenant program defaults + fraud thresholds + retention window override) + user-level preferences (invitation channel + referral privacy).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "referrals",
+      "class": "Academorix\\Growth\\Referrals\\Settings\\ReferralsSettings",
+      "label": "Referrals",
+      "description": "Tenant-wide defaults for referral programs + fraud detection.",
+      "icon": "gift",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 45,
+      "permission": "referral_programs.viewAny",
+      "requiresEntitlement": "referrals_capture",
+      "sections": [
+        {
+          "label": "Program defaults",
+          "description": "Default values applied to newly-created programs. Overridable per program.",
+          "icon": "cog",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "default_reward_type",
+              "controlType": "select",
+              "label": "Default reward type",
+              "defaultValue": "percent_discount",
+              "options": {
+                "percent_discount": "Percent discount",
+                "fixed_amount": "Fixed amount",
+                "free_months": "Free months (Medium+)",
+                "free_sessions": "Free sessions (Medium+)",
+                "credits": "Credits (Medium+)",
+                "point_award": "Point award (Medium+)"
+              },
+              "sortOrder": 1
+            },
+            {
+              "name": "default_reward_amount",
+              "controlType": "number",
+              "label": "Default reward amount",
+              "defaultValue": 10,
+              "min": 1,
+              "helpText": "Interpretation depends on reward_type — percent 1..100; fixed_amount in cents; free_months in months; credits in cents; points in points.",
+              "sortOrder": 2
+            },
+            {
+              "name": "default_trigger_event",
+              "controlType": "select",
+              "label": "Default trigger event",
+              "defaultValue": "first_payment",
+              "options": {
+                "signup": "Signup",
+                "trial_started": "Trial started",
+                "first_payment": "First payment",
+                "subscription_renewal_1": "First renewal",
+                "subscription_renewal_3": "Third renewal",
+                "lifetime_value_threshold_hit": "LTV threshold",
+                "athlete_enrolled": "Athlete enrolled",
+                "event_registered": "Event registered"
+              },
+              "sortOrder": 3
+            },
+            {
+              "name": "default_vesting_rule",
+              "controlType": "select",
+              "label": "Default vesting rule",
+              "defaultValue": "trigger_plus_hold_days",
+              "options": {
+                "immediate": "Immediate",
+                "trigger_plus_hold_days": "Trigger + hold days",
+                "after_refund_window_closes": "After refund window closes",
+                "n_events_completed": "N events completed",
+                "manual_approval": "Manual approval (Enterprise)"
+              },
+              "sortOrder": 4
+            },
+            {
+              "name": "default_vesting_hold_days",
+              "controlType": "number",
+              "label": "Default vesting hold (days)",
+              "defaultValue": 30,
+              "min": 1,
+              "max": 365,
+              "helpText": "Used when vesting rule is 'Trigger + hold days'. Aligns with refund windows.",
+              "sortOrder": 5
+            }
+          ]
+        },
+        {
+          "label": "Fraud detection",
+          "description": "Global fraud thresholds. Programs can override per-program.",
+          "icon": "shield-exclamation",
+          "sortOrder": 2,
+          "requiresEntitlement": "referrals_fraud_detection",
+          "fields": [
+            {
+              "name": "fraud_hard_block_threshold",
+              "controlType": "number",
+              "label": "Hard block threshold",
+              "defaultValue": 90,
+              "min": 0,
+              "max": 100,
+              "helpText": "Referrals with fraud_score above this are refused at claim time. 100 = disabled.",
+              "sortOrder": 1
+            },
+            {
+              "name": "fraud_warn_threshold",
+              "controlType": "number",
+              "label": "Warn threshold",
+              "defaultValue": 40,
+              "min": 0,
+              "max": 100,
+              "helpText": "Referrals with fraud_score above this create a warn-severity flag but proceed.",
+              "sortOrder": 2
+            },
+            {
+              "name": "fraud_max_referrals_per_hour",
+              "controlType": "number",
+              "label": "Max referrals per referrer per hour",
+              "defaultValue": 3,
+              "min": 1,
+              "sortOrder": 3
+            },
+            {
+              "name": "fraud_self_ip_match_block",
+              "controlType": "toggle",
+              "label": "Block on referrer-referred IP match",
+              "defaultValue": true,
+              "sortOrder": 4
+            },
+            {
+              "name": "fraud_disposable_email_block",
+              "controlType": "toggle",
+              "label": "Block disposable email addresses",
+              "defaultValue": true,
+              "sortOrder": 5
+            }
+          ]
+        },
+        {
+          "label": "Retention",
+          "icon": "archive-box",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "retention_years",
+              "controlType": "select",
+              "label": "Retention window",
+              "defaultValue": 7,
+              "options": {
+                "7": "7 years (default)",
+                "10": "10 years (Enterprise)"
+              },
+              "helpText": "10 years requires the `referrals_extended_retention` entitlement.",
+              "requiresEntitlement": "referrals_extended_retention",
+              "sortOrder": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "referrals_user",
+      "class": "Academorix\\Growth\\Referrals\\Settings\\ReferralsUserSettings",
+      "label": "My referrals",
+      "description": "Per-user invitation + notification preferences.",
+      "icon": "user-plus",
+      "scope": "user",
+      "public": true,
+      "sortOrder": 42,
+      "sections": [
+        {
+          "label": "Invitation channels",
+          "icon": "envelope",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "invitation_channel",
+              "controlType": "select",
+              "label": "Preferred channel",
+              "defaultValue": "email",
+              "options": {
+                "email": "Email",
+                "sms": "SMS (usage charged)"
+              },
+              "sortOrder": 1
+            },
+            {
+              "name": "invitation_template",
+              "controlType": "select",
+              "label": "Invitation template",
+              "defaultValue": "generic-friend-invite",
+              "options": {
+                "generic-friend-invite": "Generic",
+                "casual-friend-invite": "Casual",
+                "professional-invite": "Professional",
+                "parent-friend-invite": "Parent-to-parent"
+              },
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Notification preferences",
+          "icon": "bell",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "notify_on_claim",
+              "controlType": "toggle",
+              "label": "Notify me when a friend clicks",
+              "defaultValue": true,
+              "sortOrder": 1
+            },
+            {
+              "name": "notify_on_signup",
+              "controlType": "toggle",
+              "label": "Notify me when a friend joins",
+              "defaultValue": true,
+              "sortOrder": 2
+            },
+            {
+              "name": "notify_on_vested",
+              "controlType": "toggle",
+              "label": "Notify me when a reward is on the way",
+              "defaultValue": true,
+              "helpText": "Reward-received notifications (materialization → paid) are transactional and cannot be turned off.",
+              "sortOrder": 3
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

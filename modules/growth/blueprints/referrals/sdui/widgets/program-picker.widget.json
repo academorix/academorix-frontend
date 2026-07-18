@@ -1,0 +1,118 @@
+{
+  "id": "referrals.program-picker",
+  "title": "Referral program picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "HeroUI ComboBox for selecting a referral program. Filters to active programs by default. Powers create/edit code + referral filter forms.",
+  "props": {
+    "selectedProgramId": { "type": "string" },
+    "onlyActive": { "type": "boolean", "default": true },
+    "isRequired": { "type": "boolean", "default": false },
+    "isDisabled": { "type": "boolean", "default": false },
+    "label": { "type": "string", "default": "Program" },
+    "placeholder": { "type": "string", "default": "Search programs..." }
+  },
+  "actions": {
+    "onSelectionChange": {
+      "description": "Fires when the user picks a program. Payload: { program_id: string, program_slug: string, program_name: string }."
+    }
+  },
+  "dataSources": [
+    {
+      "name": "programs",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/referral-programs' + (props.onlyActive ? '?filter[status]=active' : '')",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "props": {
+        "menuTrigger": "focus",
+        "className": "min-w-64"
+      },
+      "bindings": {
+        "label": { "$ref": "props.label" },
+        "isRequired": { "$ref": "props.isRequired" },
+        "isDisabled": { "$ref": "props.isDisabled" },
+        "selectedKey": { "$ref": "props.selectedProgramId" },
+        "items": {
+          "$expr": "programs.map(p => ({ id: p.id, label: p.name, description: p.status, textValue: p.name + ' ' + p.slug }))"
+        }
+      },
+      "actions": {
+        "onSelectionChange": {
+          "kind": "emit",
+          "event": "onSelectionChange",
+          "payloadExpr": "programs.find(p => p.id === $selectedKey) ? { program_id: $selectedKey, program_slug: programs.find(p => p.id === $selectedKey).slug, program_name: programs.find(p => p.id === $selectedKey).name } : null"
+        }
+      },
+      "children": [
+        {
+          "kind": "ComboBox.InputGroup",
+          "children": [
+            {
+              "kind": "Input",
+              "props": { "placeholder": { "$ref": "props.placeholder" } }
+            },
+            { "kind": "ComboBox.Trigger" }
+          ]
+        },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "bindings": { "items": { "$ref": "programs" } },
+              "itemRenderer": {
+                "kind": "ListBox.Item",
+                "bindings": {
+                  "key": { "$ref": "row.id" },
+                  "id": { "$ref": "row.id" },
+                  "textValue": { "$expr": "row.name" }
+                },
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex flex-col gap-0.5" },
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-medium" },
+                        "bindings": { "children": { "$ref": "row.name" } }
+                      },
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex items-center gap-2 text-xs text-muted" },
+                        "children": [
+                          {
+                            "kind": "Widget",
+                            "widget": "referrals.referral-status-chip",
+                            "props": { "size": "xs", "showIcon": false },
+                            "bindings": { "status": { "$ref": "row.status" } }
+                          },
+                          {
+                            "kind": "Text",
+                            "bindings": {
+                              "children": {
+                                "$expr": "row.reward_amount_referrer + (row.reward_type_referrer === 'percent_discount' ? '%' : '') + ' ' + row.reward_type_referrer.replace('_', ' ')"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  { "kind": "ListBox.ItemIndicator" }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

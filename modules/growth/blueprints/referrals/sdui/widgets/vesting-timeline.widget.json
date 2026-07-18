@@ -1,0 +1,190 @@
+{
+  "id": "referrals.vesting-timeline",
+  "title": "Vesting timeline",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Horizontal timeline visualising a referral's status journey: claimed -> signed_up -> trigger_pending -> vesting -> vested -> rewarded. Current stage highlighted; expected next stage annotated with 'expected by <date>' when a vesting_completes_at is set.",
+  "props": {
+    "referral": { "type": "object", "required": true, "description": "Full Referral row including status, claimed_at, signed_up_at, trigger_event_at, vested_at, rewarded_at, cancelled_at." },
+    "reward": { "type": "object", "description": "Optional first ReferralReward row for vesting_completes_at." },
+    "size": { "type": "string", "default": "md", "enum": ["sm", "md", "lg"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-3" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h4", "className": "font-medium text-sm", "children": "Referral journey" }
+            },
+            {
+              "kind": "Widget",
+              "widget": "referrals.referral-status-chip",
+              "bindings": { "status": { "$ref": "props.referral.status" } }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "grid grid-cols-6 gap-2 relative" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col items-center gap-1" },
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "size-8 rounded-full flex items-center justify-center border-2" },
+                  "bindings": {
+                    "className": {
+                      "$expr": "'size-8 rounded-full flex items-center justify-center border-2 ' + (props.referral.claimed_at ? 'border-success bg-success-subtle' : 'border-muted bg-transparent')"
+                    }
+                  },
+                  "children": [
+                    {
+                      "kind": "Icon",
+                      "props": { "name": "cursor-arrow-rays", "className": "size-4" }
+                    }
+                  ]
+                },
+                { "kind": "Text", "props": { "className": "text-xs font-medium", "children": "Claimed" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted" },
+                  "bindings": { "children": { "$expr": "props.referral.claimed_at ? formatDate(props.referral.claimed_at) : '—'" } }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col items-center gap-1" },
+              "children": [
+                {
+                  "kind": "View",
+                  "bindings": {
+                    "className": {
+                      "$expr": "'size-8 rounded-full flex items-center justify-center border-2 ' + (props.referral.signed_up_at ? 'border-success bg-success-subtle' : 'border-muted bg-transparent')"
+                    }
+                  },
+                  "children": [{ "kind": "Icon", "props": { "name": "user-plus", "className": "size-4" } }]
+                },
+                { "kind": "Text", "props": { "className": "text-xs font-medium", "children": "Signed up" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted" },
+                  "bindings": { "children": { "$expr": "props.referral.signed_up_at ? formatDate(props.referral.signed_up_at) : '—'" } }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col items-center gap-1" },
+              "children": [
+                {
+                  "kind": "View",
+                  "bindings": {
+                    "className": {
+                      "$expr": "'size-8 rounded-full flex items-center justify-center border-2 ' + (props.referral.trigger_event_at ? 'border-success bg-success-subtle' : 'border-muted bg-transparent')"
+                    }
+                  },
+                  "children": [{ "kind": "Icon", "props": { "name": "bolt", "className": "size-4" } }]
+                },
+                { "kind": "Text", "props": { "className": "text-xs font-medium", "children": "Triggered" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted" },
+                  "bindings": { "children": { "$expr": "props.referral.trigger_event_at ? formatDate(props.referral.trigger_event_at) : '—'" } }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col items-center gap-1" },
+              "children": [
+                {
+                  "kind": "View",
+                  "bindings": {
+                    "className": {
+                      "$expr": "'size-8 rounded-full flex items-center justify-center border-2 ' + (props.referral.status === 'vesting' ? 'border-warning bg-warning-subtle animate-pulse' : (props.referral.vested_at ? 'border-success bg-success-subtle' : 'border-muted bg-transparent'))"
+                    }
+                  },
+                  "children": [{ "kind": "Icon", "props": { "name": "hourglass", "className": "size-4" } }]
+                },
+                { "kind": "Text", "props": { "className": "text-xs font-medium", "children": "Vesting" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "props.referral.status === 'vesting' && props.reward && props.reward.vesting_completes_at ? 'ETA ' + formatDate(props.reward.vesting_completes_at) : '—'"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col items-center gap-1" },
+              "children": [
+                {
+                  "kind": "View",
+                  "bindings": {
+                    "className": {
+                      "$expr": "'size-8 rounded-full flex items-center justify-center border-2 ' + (props.referral.vested_at ? 'border-success bg-success-subtle' : 'border-muted bg-transparent')"
+                    }
+                  },
+                  "children": [{ "kind": "Icon", "props": { "name": "check", "className": "size-4" } }]
+                },
+                { "kind": "Text", "props": { "className": "text-xs font-medium", "children": "Vested" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted" },
+                  "bindings": { "children": { "$expr": "props.referral.vested_at ? formatDate(props.referral.vested_at) : '—'" } }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col items-center gap-1" },
+              "children": [
+                {
+                  "kind": "View",
+                  "bindings": {
+                    "className": {
+                      "$expr": "'size-8 rounded-full flex items-center justify-center border-2 ' + (props.referral.rewarded_at ? 'border-success bg-success' : 'border-muted bg-transparent')"
+                    }
+                  },
+                  "children": [{ "kind": "Icon", "props": { "name": "gift", "className": "size-4" } }]
+                },
+                { "kind": "Text", "props": { "className": "text-xs font-medium", "children": "Rewarded" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted" },
+                  "bindings": { "children": { "$expr": "props.referral.rewarded_at ? formatDate(props.referral.rewarded_at) : '—'" } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "bindings": {
+            "hidden": { "$expr": "!['cancelled','expired','fraudulent'].includes(props.referral.status)" },
+            "variant": {
+              "$expr": "props.referral.status === 'fraudulent' ? 'danger' : 'neutral'"
+            },
+            "children": {
+              "$expr": "({ cancelled: 'Referral cancelled — ' + (props.referral.cancellation_reason || 'no reason recorded'), expired: 'Referral expired without signup', fraudulent: 'Referral flagged as fraudulent' })[props.referral.status]"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

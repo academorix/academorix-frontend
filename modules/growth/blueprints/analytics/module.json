@@ -1,0 +1,336 @@
+{
+  "$version": 1,
+  "name": "analytics",
+  "alias": "analytics",
+  "namespace": "Academorix\\Growth\\Analytics",
+  "description": "Server-side behavioral event fan-out to product analytics platforms. Answers 'how are users behaving in the product?'. Fires FINE-GRAINED product-usage events (feature_viewed, action_completed, funnel_step_reached, experiment_variant_assigned, screen_time_recorded, cta_clicked, form_submitted, error_encountered, ...) that complement the FRONTEND `@stackra/analytics` package's client-side capture. Server-side is the AUTHORITATIVE source for events that MUST NOT be lost (payment succeeded, mutation completed, backend-driven state transitions) which browser-side capture drops to ad-blockers and iOS ITP. Ships FOUR tables: `analytics_events` (canonical ledger, 2-year retention), `analytics_deliveries` (per-provider log, 90-day retention), `analytics_provider_configs` (per-tenant provider credentials + enabled_event_types + sampling_rate + circuit-breaker), `analytics_identities` (identify \u2192 user_id resolution table \u2014 maps anonymous_id \u2192 identified_user_id across sessions). MultipleInstanceManager via `AnalyticsProviderManager` with 7 driver day-1: PostHog, Amplitude, Mixpanel, Segment (fan-out to N destinations behind Segment), June, Google Analytics 4 (yes, GA4 appears in both analytics and marketing \u2014 different event categories, same wire protocol), Custom Webhook (generic escape hatch). Each provider drives its own event batching (Segment batches; Mixpanel batches; PostHog can batch or single). Consent-gated under `analytics` consent category (distinct from `marketing`). Attribution snapshot pulled at event-create time. Server-side identify + track + page + screen + alias + group verbs. Sampling per-event-type + per-provider \u2014 PostHog might get 100%, Amplitude might get 10% for volume-heavy event types.",
+  "keywords": [
+    "analytics",
+    "product-analytics",
+    "behavioral",
+    "tracking",
+    "posthog",
+    "amplitude",
+    "mixpanel",
+    "segment",
+    "june",
+    "google-analytics-4",
+    "ga4",
+    "custom-webhook",
+    "identify",
+    "track",
+    "page",
+    "screen",
+    "alias",
+    "group",
+    "funnel",
+    "experiment",
+    "ab-test",
+    "cohort",
+    "consent",
+    "attribution",
+    "sampling",
+    "batching",
+    "circuit-breaker",
+    "growth",
+    "wave-5"
+  ],
+  "priority": 66,
+  "providers": ["Academorix\\Growth\\Analytics\\Providers\\AnalyticsServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "entitlements",
+    "compliance",
+    "attribution"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "marketing (Wave 5 \u2014 marketing conversion events optionally cross-post to analytics for funnel unification)",
+    "finance (Wave 5 \u2014 subscription lifecycle events emit fine-grained analytics per state transition)",
+    "referrals (Wave 5 \u2014 referral funnel steps fire as analytics events: link_clicked, referee_registered, referee_converted)",
+    "notifications (Wave 5 \u2014 notification open/click/dismiss surface as analytics for per-persona optimisation)"
+  ],
+  "contributes": {
+    "traits": ["EmitsAnalyticsEvent"],
+    "attributes": ["AsAnalyticsEventCapturer", "AsAnalyticsProviderDriver"],
+    "blueprints": [
+      "analytics_events",
+      "analytics_deliveries",
+      "analytics_provider_configs",
+      "analytics_identities"
+    ],
+    "middleware": ["analytics.enforce_consent"],
+    "events": [
+      "AnalyticsEventCaptured",
+      "AnalyticsEventDispatched",
+      "AnalyticsEventDelivered",
+      "AnalyticsEventPartiallyDelivered",
+      "AnalyticsEventSuppressedByConsent",
+      "AnalyticsEventSuppressedBySampling",
+      "AnalyticsDeliveryAttempted",
+      "AnalyticsDeliverySucceeded",
+      "AnalyticsDeliveryFailed",
+      "AnalyticsDeliveryRateLimited",
+      "AnalyticsProviderCircuitBreakerOpened",
+      "AnalyticsProviderCircuitBreakerClosed",
+      "AnalyticsProviderConfigured",
+      "AnalyticsProviderDeactivated",
+      "AnalyticsBatchFlushed",
+      "AnalyticsBatchFailed",
+      "AnalyticsIdentityCreated",
+      "AnalyticsIdentityIdentified",
+      "AnalyticsIdentityAliased",
+      "AnalyticsIdentitySplit",
+      "AnalyticsFunnelStepReached",
+      "AnalyticsExperimentAssigned"
+    ],
+    "policies": [
+      "AnalyticsEventPolicy",
+      "AnalyticsDeliveryPolicy",
+      "AnalyticsProviderConfigPolicy",
+      "AnalyticsIdentityPolicy"
+    ],
+    "hooks": [
+      "SnapshotAttributionOnAnalyticsEventCreating",
+      "SnapshotConsentOnAnalyticsEventCreating",
+      "MergeAliasedEventsOnIdentityIdentified",
+      "PurgeAnalyticsDataForErasedTenant",
+      "RedactAnalyticsSubjectOnUserErasure"
+    ],
+    "commands": [
+      "analytics:list-events",
+      "analytics:describe-event",
+      "analytics:list-deliveries",
+      "analytics:list-providers",
+      "analytics:configure-provider",
+      "analytics:test-provider",
+      "analytics:list-identities",
+      "analytics:merge-identities",
+      "analytics:funnel-report",
+      "analytics:experiment-results"
+    ],
+    "jobs": [
+      "CaptureAnalyticsEventJob",
+      "DispatchAnalyticsEventJob",
+      "DispatchToProviderJob",
+      "FlushBatchedProviderJob",
+      "RetryFailedAnalyticsDeliveriesJob",
+      "ReconcileAnalyticsIdentityJob",
+      "PurgeExpiredAnalyticsDataJob",
+      "SamplingRateReconcilerJob"
+    ],
+    "notifications": [
+      "AnalyticsProviderCircuitBreakerOpenedNotification",
+      "AnalyticsBatchBackpressureNotification",
+      "AnalyticsHighDropRateNotification",
+      "AnalyticsIdentityMergeCompletedNotification"
+    ],
+    "broadcasts": [
+      "tenant.{tenantId}.analytics.deliveries",
+      "tenant.{tenantId}.analytics.providers"
+    ],
+    "observers": [
+      "AnalyticsEventObserver",
+      "AnalyticsProviderConfigObserver",
+      "AnalyticsIdentityObserver",
+      "AnalyticsDeliveryObserver"
+    ],
+    "rules": [
+      "valid_event_name",
+      "valid_event_kind",
+      "valid_category",
+      "valid_sampling_rate",
+      "valid_provider_config",
+      "valid_batch_config",
+      "valid_anonymous_id",
+      "valid_analytics_consent_snapshot",
+      "valid_context_shape",
+      "valid_properties_shape"
+    ],
+    "casts": [
+      "AnalyticsEventKind",
+      "AnalyticsEventCategory",
+      "AnalyticsEventStatus",
+      "AnalyticsDeliveryStatus",
+      "AnalyticsProvider",
+      "AnalyticsProviderConfigShape",
+      "AnalyticsBatchConfig",
+      "AnalyticsContext",
+      "AnalyticsPropertiesBag",
+      "AnalyticsConsentSnapshot"
+    ],
+    "views": [],
+    "lang": ["analytics"],
+    "config": ["analytics"],
+    "macros": [
+      "Request::currentAnalyticsContext",
+      "Request::analyticsAnonymousId"
+    ],
+    "bindings": [
+      "AnalyticsEventRepository",
+      "AnalyticsDeliveryRepository",
+      "AnalyticsProviderConfigRepository",
+      "AnalyticsIdentityRepository",
+      "AnalyticsProviderManager",
+      "AnalyticsEventCapturer",
+      "AnalyticsEventDispatcher",
+      "SamplingGate",
+      "IdentityResolver",
+      "BatchBuffer",
+      "ProviderPayloadTransformer",
+      "AnalyticsCircuitBreakerRegistry",
+      "AnalyticsAttributionSnapshotter",
+      "AnalyticsConsentSnapshotter",
+      "FunnelReportBuilder",
+      "ExperimentAssignmentReportBuilder"
+    ],
+    "resources": [
+      "analytics-event",
+      "analytics-delivery",
+      "analytics-provider-config",
+      "analytics-identity",
+      "analytics-funnel",
+      "analytics-experiment"
+    ]
+  },
+  "attribute_driven": {
+    "description": "Modules opt in to server-side analytics capture via attributes. Discovery pass at boot compiles the AnalyticsEventCapturerRegistry so runtime dispatch is a hash-map lookup, never reflection. Provider drivers register via a separate attribute so custom drivers can be shipped by third-party modules.",
+    "attributes": {
+      "AsAnalyticsEventCapturer": "Marks a listener class as an analytics event capturer. `#[AsAnalyticsEventCapturer(domainEvent: OrderPlaced::class, analyticsEventName: 'Order Completed', category: 'funnel_step')]`. The capturer receives a domain event and produces one (or more) analytics events. Many-to-one: a single domain event can map to multiple analytics events with different property shapes.",
+      "AsAnalyticsProviderDriver": "Registers a custom AnalyticsProviderDriver at boot. `#[AsAnalyticsProviderDriver(name: 'my_custom_analytics', supportsBatching: true, maxBatchSize: 500)]`. Enables third-party modules to add drivers without editing the manager."
+    }
+  },
+  "provider_matrix": {
+    "description": "Seven drivers day-1 covering the mainstream product-analytics landscape. Each driver ships with a payload transformer + a batching policy + a retry policy + a signature-verification strategy for provider webhooks (bounce / retry hints).",
+    "drivers": [
+      {
+        "name": "posthog",
+        "class": "Academorix\\Growth\\Analytics\\Drivers\\PostHogProvider",
+        "endpoint": "https://{host}/capture/ (default host: app.posthog.com; EU host: eu.posthog.com)",
+        "auth": "api_key in body",
+        "payload_shape": "{ api_key, event, distinct_id, properties: { ...event_properties, $set: user_properties }, timestamp }",
+        "batching": true,
+        "max_batch_size": 1000,
+        "flush_interval_ms_default": 5000,
+        "verbs_supported": ["track", "identify", "page", "screen", "alias", "group"],
+        "session_recording": "opt-in via config.enable_session_recording; feature-gated by `analytics_session_recording` entitlement"
+      },
+      {
+        "name": "amplitude",
+        "class": "Academorix\\Growth\\Analytics\\Drivers\\AmplitudeProvider",
+        "endpoint": "https://api.amplitude.com/2/httpapi (US) / https://api.eu.amplitude.com/2/httpapi (EU)",
+        "auth": "api_key in body",
+        "payload_shape": "{ api_key, events: [{ event_type, user_id, device_id, event_properties, user_properties, session_id, time, ip, platform, os_name, os_version }] }",
+        "batching": true,
+        "max_batch_size": 1000,
+        "max_batch_bytes": 10485760,
+        "flush_interval_ms_default": 5000,
+        "verbs_supported": ["track", "identify"],
+        "verbs_synthesized": {
+          "page": "mapped to track('Page Viewed', { $screen_name })",
+          "screen": "mapped to track('Screen Viewed', { $screen_name })",
+          "alias": "mapped to Amplitude Identity API",
+          "group": "mapped to identify with $groups"
+        }
+      },
+      {
+        "name": "mixpanel",
+        "class": "Academorix\\Growth\\Analytics\\Drivers\\MixpanelProvider",
+        "endpoint": "https://api.mixpanel.com/import",
+        "auth": "Basic (service_account:secret)",
+        "payload_shape": "[{ event, properties: { $device_id, $distinct_id, time, $insert_id, ...event_properties } }]",
+        "batching": true,
+        "max_batch_size": 2000,
+        "flush_interval_ms_default": 10000,
+        "verbs_supported": ["track"],
+        "verbs_synthesized": {
+          "identify": "mapped to $identify special event + $set properties",
+          "alias": "mapped to $create_alias special event",
+          "group": "mapped to $set_group",
+          "page": "mapped to track('Page Viewed')",
+          "screen": "mapped to track('Screen Viewed')"
+        }
+      },
+      {
+        "name": "segment",
+        "class": "Academorix\\Growth\\Analytics\\Drivers\\SegmentProvider",
+        "endpoint": "https://api.segment.io/v1/{track|identify|page|screen|alias|group|batch}",
+        "auth": "Basic (write_key:)",
+        "payload_shape": "verb-specific \u2014 spec: https://segment.com/docs/connections/spec/",
+        "batching": true,
+        "max_batch_size": 100,
+        "max_batch_bytes": 500000,
+        "flush_interval_ms_default": 10000,
+        "verbs_supported": ["track", "identify", "page", "screen", "alias", "group"],
+        "note": "Segment fans out to N downstream destinations configured tenant-side in Segment console. Academorix sees Segment as one provider; effective destinations are Segment's problem."
+      },
+      {
+        "name": "june",
+        "class": "Academorix\\Growth\\Analytics\\Drivers\\JuneProvider",
+        "endpoint": "https://api.june.so/sdk/",
+        "auth": "Bearer api_key",
+        "payload_shape": "{ event, userId, properties, timestamp }",
+        "batching": false,
+        "verbs_supported": ["track", "identify", "group"],
+        "note": "B2B-analytics oriented. No page/screen verbs \u2014 mapped to track."
+      },
+      {
+        "name": "google_analytics_4",
+        "class": "Academorix\\Growth\\Analytics\\Drivers\\GoogleAnalytics4Provider",
+        "endpoint": "https://www.google-analytics.com/mp/collect?measurement_id={id}&api_secret={secret}",
+        "auth": "api_secret + measurement_id in query",
+        "payload_shape": "{ client_id, user_id, timestamp_micros, events: [{ name, params }] }",
+        "batching": true,
+        "max_batch_size": 25,
+        "flush_interval_ms_default": 5000,
+        "verbs_supported": ["track"],
+        "note": "SAME wire protocol as marketing::ga4 driver but DIFFERENT event_name catalog. Analytics events use snake_case behavioral names (screen_view, select_content, view_item); marketing events use business names (sign_up, purchase, generate_lead). Distinct tenant configs allowed \u2014 typically the same GA4 property is used for both, filtered client-side in GA4 by event_name."
+      },
+      {
+        "name": "custom_webhook",
+        "class": "Academorix\\Growth\\Analytics\\Drivers\\CustomWebhookProvider",
+        "endpoint": "caller-configured",
+        "auth": "HMAC-SHA256 signature in X-Academorix-Signature header",
+        "payload_shape": "full analytics_event row (JSON)",
+        "batching": true,
+        "max_batch_size": 100,
+        "flush_interval_ms_default": 10000,
+        "verbs_supported": ["track", "identify", "page", "screen", "alias", "group"],
+        "note": "Generic escape hatch. Sensitive escape hatch \u2014 endpoint URL locked to https:// + validated against tenant's allowed_egress_domains before dispatch."
+      }
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing analytics reads (event log, delivery log, provider CRUD, identity resolution, funnel + experiment reports) + admin merge/deactivate actions. Every route requires the `analytics_capture` entitlement; merge routes additionally require `analytics_identity_merge` (Enterprise); advanced providers require `analytics_advanced_providers` (Medium+); sampling configuration routes require `analytics_sampling_config` (Enterprise); funnel + experiment routes require `analytics_extended_retention` (Enterprise for beyond 2y).",
+      "routes": [
+        "GET /api/v1/analytics/events",
+        "GET /api/v1/analytics/events/{event}",
+        "GET /api/v1/analytics/deliveries",
+        "GET /api/v1/analytics/providers",
+        "POST /api/v1/analytics/providers",
+        "GET /api/v1/analytics/providers/{provider}",
+        "PATCH /api/v1/analytics/providers/{provider}",
+        "DELETE /api/v1/analytics/providers/{provider}",
+        "POST /api/v1/analytics/providers/{provider}/test",
+        "POST /api/v1/analytics/providers/{provider}/reset-circuit-breaker",
+        "GET /api/v1/analytics/identities",
+        "POST /api/v1/analytics/identities/{identity}/merge",
+        "POST /api/v1/analytics/identities/{identity}/identify",
+        "GET /api/v1/analytics/funnels/{funnel_key}/report",
+        "GET /api/v1/analytics/experiments/{experiment_key}/results"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant support tooling. Delivery inspection + circuit-breaker dashboard for on-call.",
+      "routes": [
+        "GET /api/v1/platform/analytics/deliveries",
+        "GET /api/v1/platform/analytics/circuit-breakers"
+      ]
+    }
+  }
+}

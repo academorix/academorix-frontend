@@ -1,0 +1,129 @@
+{
+  "id": "academorix://modules/analytics/settings",
+  "$version": 1,
+  "title": "analytics — settings",
+  "description": "Tenant-facing analytics settings. Small config surface \u2014 most configuration lives on AnalyticsProviderConfig rows. This settings group governs tenant-wide behaviors: default consent gate strictness, custom-webhook allowed domains, funnel defaults.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "analytics",
+      "class": "Academorix\\Growth\\Analytics\\Settings\\AnalyticsSettings",
+      "label": "Analytics",
+      "description": "Server-side analytics capture + fan-out behavior.",
+      "icon": "chart-bar",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 20,
+      "permission": "analytics.providers.viewAny",
+      "sections": [
+        {
+          "label": "Consent enforcement",
+          "description": "How strictly the consent gate treats missing / stale consent.",
+          "icon": "shield-check",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "consent_strict_mode",
+              "controlType": "toggle",
+              "label": "Strict consent mode",
+              "defaultValue": true,
+              "validation": ["boolean"],
+              "sortOrder": 1,
+              "helpText": "When on, subjects with no explicit consent decision are treated as suppressed (fail-closed). When off, no-decision subjects are captured while awaiting decision (fail-open). GDPR-strict tenants keep this on."
+            },
+            {
+              "name": "consent_recheck_on_dispatch",
+              "controlType": "toggle",
+              "label": "Recheck consent at dispatch time",
+              "defaultValue": true,
+              "validation": ["boolean"],
+              "sortOrder": 2,
+              "helpText": "Default on. Suppresses events whose subject withdrew consent between capture + dispatch. Off = honors the capture-time snapshot only."
+            }
+          ]
+        },
+        {
+          "label": "Custom webhook",
+          "description": "Settings for the custom_webhook provider driver.",
+          "icon": "code-bracket",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "custom_webhook_allowed_egress_domains",
+              "controlType": "tags",
+              "label": "Allowed egress domains",
+              "defaultValue": [],
+              "validation": ["nullable", "array", "each_url_https"],
+              "sortOrder": 1,
+              "helpText": "Comma-separated list of https:// domains the custom_webhook driver may POST to. Any provider config pointing outside this list is refused. Anti-exfiltration control."
+            },
+            {
+              "name": "custom_webhook_sign_algorithm",
+              "controlType": "select",
+              "label": "HMAC signing algorithm",
+              "defaultValue": "sha256",
+              "options": { "sha256": "SHA-256", "sha512": "SHA-512" },
+              "validation": ["required", "string", "in:sha256,sha512"],
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Funnel + experiment defaults",
+          "description": "Default window + confidence-level for funnel + experiment queries.",
+          "icon": "funnel",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "funnel_default_window_days",
+              "controlType": "number",
+              "label": "Default funnel window (days)",
+              "defaultValue": 30,
+              "min": 1,
+              "max": 365,
+              "validation": ["integer", "min:1", "max:365"],
+              "sortOrder": 1
+            },
+            {
+              "name": "experiment_confidence_level",
+              "controlType": "select",
+              "label": "Statistical confidence level",
+              "defaultValue": "0.95",
+              "options": { "0.90": "90%", "0.95": "95%", "0.99": "99%" },
+              "validation": ["required", "string", "in:0.90,0.95,0.99"],
+              "sortOrder": 2,
+              "helpText": "Used in ExperimentAssignmentReportBuilder for p-value + confidence interval computation."
+            }
+          ]
+        },
+        {
+          "label": "Session recording",
+          "description": "PostHog session recording opt-in. Independently requires analytics_session_recording entitlement + subject functional consent.",
+          "icon": "video-camera",
+          "sortOrder": 4,
+          "fields": [
+            {
+              "name": "session_recording_enabled",
+              "controlType": "toggle",
+              "label": "Enable session recording",
+              "defaultValue": false,
+              "validation": ["boolean"],
+              "sortOrder": 1,
+              "helpText": "Master toggle. Requires Enterprise plan + subject-level `functional` consent. Provider config also needs enable_session_recording=true."
+            },
+            {
+              "name": "session_recording_mask_all_text",
+              "controlType": "toggle",
+              "label": "Mask all text",
+              "defaultValue": true,
+              "validation": ["boolean"],
+              "sortOrder": 2,
+              "helpText": "PostHog session-recording setting. On = all text redacted (default; safer). Off = free-form text captured. Never captures inputs with type=password regardless."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "id": "academorix://modules/attribution/analytics",
+  "$version": 1,
+  "title": "attribution — product analytics",
+  "lane": "analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "description": "Analytics events emitted by the attribution module itself (meta-analytics — the module observing its own capture behavior). Distinct from the domain marketing/analytics events that DOWNSTREAM modules emit using this module's attribution snapshot. Consent tier for most events is `functional` (first-party operational analytics per notifications::consent-tiers.json). The consent-suppression event uses tier `essential` because it's a compliance-integrity signal.",
+  "events": [
+    {
+      "name": "Attribution Profile Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "subject_type", "lifecycle_state", "first_touch_source_bucket"],
+      "description": "New attribution profile created. first_touch_source_bucket collapses individual sources into { paid / organic / social / referral / direct / email / affiliate / unknown } to avoid high-cardinality labels."
+    },
+    {
+      "name": "Attribution Subject Identified",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "was_subject_type", "new_subject_type", "days_since_first_touch_bucket"],
+      "description": "Anonymous → identified transition. days_since_first_touch_bucket: <1d / 1-7d / 7-30d / 30-90d / >90d."
+    },
+    {
+      "name": "Attribution Converted",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "first_touch_source_bucket", "last_touch_source_bucket", "days_since_first_touch_bucket", "touchpoint_count_bucket", "conversion_value_cents_bucket"],
+      "description": "Identified → converted transition. Powers first-touch vs last-touch revenue-attribution analysis. conversion_value_cents_bucket: 0 / 1-999 / 1000-9999 / 10000+."
+    },
+    {
+      "name": "Attribution Churned",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "was_lifecycle_state", "days_inactive_bucket"],
+      "description": "days_inactive_bucket: 90-180 / 180-365 / >365. Baseline churn metric for retention planning."
+    },
+    {
+      "name": "Attribution Restored",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "days_since_churn_bucket"]
+    },
+    {
+      "name": "Attribution Merged",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "merged_from_count_bucket", "first_touch_overwritten"],
+      "description": "Enterprise-only. merged_from_count_bucket: 1 / 2 / 3-5 / 6+."
+    },
+    {
+      "name": "Attribution Reset Requested",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "trigger"],
+      "description": "GDPR erasure signal. Consent tier essential — data-subject rights cannot be opted-out of tracking. Trigger enum: user_request / admin_action / regulator_request / force_reset."
+    },
+    {
+      "name": "Attribution Touchpoint Captured",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "touchpoint_type", "source_bucket", "was_first_touch", "was_authenticated"],
+      "description": "High-volume event. Sampled at 10% by default (see feature-flags.json)."
+    },
+    {
+      "name": "Attribution Consent Suppressed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "attempted_source_bucket", "consent_state_summary"],
+      "description": "Compliance-integrity signal. Consent tier essential — data-processing-fairness metric cannot be opted-out. consent_state_summary: 'marketing_off' / 'advertising_off' / 'both_off' / 'partial'."
+    },
+    {
+      "name": "Attribution Campaign Rollup Computed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "campaign_count_bucket", "conversion_count_bucket", "computation_duration_ms_bucket"],
+      "description": "Medium+. Signals rollup pipeline health."
+    }
+  ],
+  "notes": [
+    "Analytics NEVER carry raw utm values, click IDs, or landing page URLs — those are always the bucket variant. Prevents cross-tenant campaign leakage from aggregated analytics data.",
+    "user_id + attribution_id + subject_id are NEVER included as properties — attribution is downstream-facing PII-adjacent data. The tenant's product analytics for their own attribution flows through this module's OWN rollup surface (SDUI campaign dashboard), not through Segment.",
+    "The `essential` consent tier for Attribution Reset Requested + Attribution Consent Suppressed is deliberate — these are compliance-integrity signals that cannot be opted out (data-subject rights + data-processing-fairness metrics).",
+    "The 10% sampling on Attribution Touchpoint Captured is configurable via `attribution.analytics.touchpoint_sample_rate`. Enterprise tenants may raise to 100% for full-fidelity funnel analysis."
+  ]
+}

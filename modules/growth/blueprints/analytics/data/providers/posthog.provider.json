@@ -1,0 +1,57 @@
+{
+  "id": "academorix://modules/analytics/data/providers/posthog",
+  "$version": 1,
+  "provider": "posthog",
+  "displayName": "PostHog",
+  "description": "PostHog product analytics + session recording + feature flags. Self-hosted or PostHog Cloud (US / EU).",
+  "wire_protocol": {
+    "endpoint_template": "https://{host}/capture/",
+    "http_method": "POST",
+    "content_type": "application/json",
+    "auth_scheme": "api_key in body",
+    "batch_endpoint": "https://{host}/batch/"
+  },
+  "config_schema": {
+    "type": "object",
+    "required": ["api_key", "host"],
+    "properties": {
+      "api_key": {
+        "type": "string",
+        "description": "PostHog project API key. NOT the personal API key.",
+        "minLength": 20,
+        "maxLength": 128
+      },
+      "host": {
+        "type": "string",
+        "format": "hostname",
+        "default": "app.posthog.com",
+        "description": "PostHog host. `app.posthog.com` for US Cloud; `eu.posthog.com` for EU Cloud; a custom URL for self-hosted."
+      },
+      "enable_session_recording": {
+        "type": "boolean",
+        "default": false,
+        "description": "Enable PostHog session recording. Requires tenant analytics_session_recording entitlement + subject functional consent."
+      },
+      "capture_pageview": {
+        "type": "boolean",
+        "default": true,
+        "description": "Whether the driver auto-fires $pageview alongside track events. Off for server-side-only tenants."
+      },
+      "capture_pageleave": {
+        "type": "boolean",
+        "default": false
+      },
+      "person_properties_set_once": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Property names to set via $set_once (idempotent) rather than $set. Used for immutable properties like signup_date."
+      }
+    },
+    "additionalProperties": false
+  },
+  "test_event": {
+    "event_kind": "track",
+    "event_name": "test_event_from_academorix",
+    "properties": { "__test": true, "source": "academorix_provider_test" }
+  }
+}

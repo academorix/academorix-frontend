@@ -1,0 +1,58 @@
+{
+  "id": "referrals.reward-badge",
+  "title": "Reward badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Visual summary of a referral reward: type + amount + currency + role. Renders as a compact card / chip. Examples: '$25 credit for referrer' or '10% off for both'.",
+  "props": {
+    "rewardType": {
+      "type": "string",
+      "enum": ["percent_discount", "fixed_amount", "free_months", "free_sessions", "credits", "point_award"],
+      "required": true
+    },
+    "rewardAmount": { "type": "integer", "required": true, "minimum": 1 },
+    "rewardCurrency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "recipientRole": {
+      "type": "string",
+      "enum": ["referrer", "referred", "both"],
+      "default": "referrer"
+    },
+    "size": { "type": "string", "default": "md", "enum": ["sm", "md", "lg"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Card",
+      "props": { "className": "flex items-center gap-2 px-3 py-1.5 bg-accent-subtle border" },
+      "children": [
+        {
+          "kind": "Icon",
+          "bindings": {
+            "name": {
+              "$expr": "({ percent_discount: 'tag', fixed_amount: 'currency-dollar', free_months: 'calendar', free_sessions: 'ticket', credits: 'wallet', point_award: 'star' })[props.rewardType]"
+            }
+          },
+          "props": { "className": "size-4 text-accent" }
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "font-semibold" },
+          "bindings": {
+            "children": {
+              "$expr": "({ percent_discount: props.rewardAmount + '% off', fixed_amount: formatMoney(props.rewardAmount, props.rewardCurrency || 'USD'), free_months: props.rewardAmount + ' free ' + (props.rewardAmount === 1 ? 'month' : 'months'), free_sessions: props.rewardAmount + ' free ' + (props.rewardAmount === 1 ? 'session' : 'sessions'), credits: formatMoney(props.rewardAmount, props.rewardCurrency || 'USD') + ' credit', point_award: props.rewardAmount.toLocaleString() + ' points' })[props.rewardType]"
+            }
+          }
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs text-muted" },
+          "bindings": {
+            "children": {
+              "$expr": "props.recipientRole === 'both' ? 'for both' : ('for ' + props.recipientRole)"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

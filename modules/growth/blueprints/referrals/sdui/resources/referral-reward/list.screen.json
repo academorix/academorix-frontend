@@ -1,0 +1,128 @@
+{
+  "id": "referrals.resources.referral-reward.list",
+  "title": "Referral rewards",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/referral-rewards",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "referrals", "entity": "referral-reward", "action": "list" },
+  "requiresPermission": "referral_rewards.viewAny",
+  "requiresEntitlement": "referrals_capture",
+  "dataSources": [
+    {
+      "name": "rewards",
+      "kind": "http.get",
+      "url": "/api/v1/referral-rewards",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Referral rewards" }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus" },
+              "props_items": [
+                { "id": "pending", "label": "Pending" },
+                { "id": "vesting", "label": "Vesting" },
+                { "id": "vested", "label": "Vested" },
+                { "id": "materialized", "label": "Materialized" },
+                { "id": "paid", "label": "Paid" },
+                { "id": "cancelled", "label": "Cancelled" },
+                { "id": "clawback", "label": "Clawback" }
+              ],
+              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "status", "valueExpr": "$selectedKey" } }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Role", "menuTrigger": "focus" },
+              "props_items": [
+                { "id": "referrer", "label": "Referrer" },
+                { "id": "referred", "label": "Referred" }
+              ],
+              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "recipient_role", "valueExpr": "$selectedKey" } }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Reward type", "menuTrigger": "focus" },
+              "props_items": [
+                { "id": "percent_discount", "label": "Percent discount" },
+                { "id": "fixed_amount", "label": "Fixed amount" },
+                { "id": "free_months", "label": "Free months" },
+                { "id": "free_sessions", "label": "Free sessions" },
+                { "id": "credits", "label": "Credits" },
+                { "id": "point_award", "label": "Points" }
+              ],
+              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "reward_type", "valueExpr": "$selectedKey" } }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "bindings": {
+            "items": { "$ref": "rewards" },
+            "isLoading": { "$ref": "rewards.isLoading" }
+          },
+          "columns": [
+            {
+              "key": "recipient",
+              "label": "Recipient",
+              "renderer": {
+                "kind": "Text",
+                "bindings": { "children": { "$expr": "row.recipient?.display_name || row.recipient_id" } }
+              }
+            },
+            {
+              "key": "reward",
+              "label": "Reward",
+              "renderer": {
+                "kind": "Widget",
+                "widget": "referrals.reward-badge",
+                "bindings": {
+                  "rewardType": { "$ref": "row.reward_type" },
+                  "rewardAmount": { "$ref": "row.reward_amount" },
+                  "rewardCurrency": { "$ref": "row.reward_currency" },
+                  "recipientRole": { "$ref": "row.recipient_role" },
+                  "size": "sm"
+                }
+              }
+            },
+            {
+              "key": "status",
+              "label": "Status",
+              "renderer": {
+                "kind": "Chip",
+                "bindings": {
+                  "variant": {
+                    "$expr": "({ pending: 'neutral', vesting: 'warning', vested: 'info', materialized: 'success', paid: 'success', cancelled: 'neutral', clawback: 'danger' })[row.status]"
+                  },
+                  "children": { "$ref": "row.status" },
+                  "size": "xs"
+                }
+              }
+            },
+            { "key": "vesting_completes_at", "label": "Vests at", "format": "date" },
+            { "key": "materialized_at", "label": "Materialized", "format": "date_or_dash" },
+            { "key": "paid_at", "label": "Paid", "format": "date_or_dash" }
+          ],
+          "rowAction": {
+            "onPress": { "kind": "navigate", "toExpr": "'/tenant/referrals/' + row.referral_id" }
+          }
+        }
+      ]
+    }
+  ]
+}

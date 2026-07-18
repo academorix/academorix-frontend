@@ -1,0 +1,116 @@
+{
+  "id": "academorix://modules/marketing/feature-flags",
+  "$version": 1,
+  "title": "marketing — kill switches",
+  "engine": "laravel/pennant",
+  "description": "Operational kill switches distinct from the tier-based `features.json` gates. These are for emergency-off / staged rollout / per-tenant ops interventions. Every flag is ON in normal production; off flips are ops decisions.",
+  "flags": [
+    {
+      "key": "marketing.captures",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for the capture path. Off = MarketingEventCapturer no-ops. Emergency-only (used during DB migrations of marketing_events)."
+    },
+    {
+      "key": "marketing.dispatches",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for the dispatch path. Off = DispatchMarketingEventJob no-ops (events pile up in status='pending'). Emergency-only if a widespread provider issue is causing thundering herd on the queue."
+    },
+    {
+      "key": "marketing.consent_recheck_on_dispatch",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = skip the re-check-at-dispatch consent gate (trusts the capture-time snapshot only). Documented drift risk — revocations between capture and dispatch won't suppress. Test envs only."
+    },
+    {
+      "key": "marketing.circuit_breaker",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = CircuitBreakerGate always allows. Every failure counts against the threshold but the breaker never opens. Used to force-through dispatches during a provider recovery test."
+    },
+    {
+      "key": "marketing.rate_limit",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = RateLimitGate always allows. Trust the provider's own 429 handling. Used when tenant + provider rate limits are misconfigured."
+    },
+    {
+      "key": "marketing.retry_sweeper",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = RetryFailedDeliveriesJob does not enqueue new attempts. Failed deliveries stay failed until manual replay. Used during queue-worker debugging."
+    },
+    {
+      "key": "marketing.reminders",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = MarketingRoasReportReadyNotification + high-failure-rate alerts + consent-suppression-spike alerts all no-op. Used when notifications module is degraded to avoid backing up its queue."
+    },
+    {
+      "key": "marketing.reconciler",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReconcileMarketingEventStatusJob skips. Only flip off for maintenance windows."
+    },
+    {
+      "key": "marketing.meta_capi",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Per-provider kill switch. Off = Meta CAPI dispatches skip. Used when Meta CAPI is announced-degraded."
+    },
+    {
+      "key": "marketing.google_ads",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Per-provider kill switch. Off = Google Ads dispatches skip."
+    },
+    {
+      "key": "marketing.google_analytics_4",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "marketing.gtm_server",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "marketing.tiktok_events",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "marketing.linkedin_insight",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "marketing.snapchat_capi",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "marketing.pinterest_capi",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "marketing.custom_webhook",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "marketing.encrypt_request_payload",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = marketing_deliveries.request_payload stored in plaintext. NEVER flip off in production (compliance violation)."
+    },
+    {
+      "key": "marketing.encrypt_provider_config",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = marketing_provider_configs.config stored in plaintext. NEVER flip off in production (compliance violation — credentials in plaintext)."
+    }
+  ]
+}

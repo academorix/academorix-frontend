@@ -1,0 +1,51 @@
+{
+  "id": "academorix://modules/analytics/data/providers/amplitude",
+  "$version": 1,
+  "provider": "amplitude",
+  "displayName": "Amplitude",
+  "description": "Amplitude product analytics + behavioral cohorts + funnel + retention.",
+  "wire_protocol": {
+    "endpoint_template": "https://api.amplitude.com/2/httpapi",
+    "endpoint_eu": "https://api.eu.amplitude.com/2/httpapi",
+    "http_method": "POST",
+    "content_type": "application/json",
+    "auth_scheme": "api_key in body",
+    "batch_endpoint": "same (accepts events array up to 1000)"
+  },
+  "config_schema": {
+    "type": "object",
+    "required": ["api_key"],
+    "properties": {
+      "api_key": {
+        "type": "string",
+        "description": "Amplitude project API key.",
+        "minLength": 20,
+        "maxLength": 128
+      },
+      "region": {
+        "type": "string",
+        "enum": ["us", "eu"],
+        "default": "us",
+        "description": "Amplitude region. EU tenants must use 'eu' for GDPR data-residency."
+      },
+      "gdpr_mode": {
+        "type": "boolean",
+        "default": true,
+        "description": "When true, Amplitude masks IP addresses to /24 subnet. Should always be true for EU tenants."
+      },
+      "min_id_length": {
+        "type": "integer",
+        "default": 5,
+        "minimum": 1,
+        "maximum": 128,
+        "description": "Amplitude requires distinct_id / device_id >= this length. Default 5."
+      }
+    },
+    "additionalProperties": false
+  },
+  "test_event": {
+    "event_kind": "track",
+    "event_name": "test_event_from_academorix",
+    "properties": { "__test": true, "source": "academorix_provider_test" }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "id": "academorix://modules/referrals/helpers",
+  "$version": 1,
+  "title": "referrals — helper functions",
+  "description": "Ergonomic helpers for accessing the active program from the request context, resolving codes to referral records, and building attribution + reward snapshots. All helpers are thin wrappers around bound services — never business logic.",
+  "namespace": "Academorix\\Growth\\Referrals\\Support",
+  "helpers": [
+    {
+      "signature": "active_referral_program(): ?ReferralProgram",
+      "purpose": "Returns the resolved ReferralProgram for the current request (set by referrals.enforce_active_program middleware). Null when no program context.",
+      "example": "$program = active_referral_program();\nif ($program === null) throw new NoActiveProgramException();",
+      "delegates_to": "Request::activeReferralProgram() macro"
+    },
+    {
+      "signature": "active_referral_program_id(): ?string",
+      "purpose": "Returns the resolved ReferralProgram.id or null. Convenience for creators that need the ID without loading the model.",
+      "delegates_to": "Request::activeReferralProgramId() macro"
+    },
+    {
+      "signature": "resolve_referral_code(string $code, string $tenantId): ?ReferralCode",
+      "purpose": "Cache-aware lookup for a code within a tenant. Returns the ReferralCode model (with program loaded) or null when the code is unknown / expired / inactive / usage-cap-reached.",
+      "delegates_to": "ReferralCodeRepository::resolve()"
+    },
+    {
+      "signature": "compute_referral_fraud_score(Referral $referral): int",
+      "purpose": "Returns the fraud_score (0..100) from FraudDetector for a Referral row. Read-only wrapper — does NOT create ReferralFraudFlag rows (that's the observer's job).",
+      "delegates_to": "FraudDetector::score()"
+    },
+    {
+      "signature": "compute_vesting_completes_at(ReferralProgram $program, DateTimeInterface $triggeredAt): Carbon",
+      "purpose": "Given a program's vesting_rule + optional vesting_hold_days / vesting_n_events, computes the vesting_completes_at timestamp for a referral that just reached its trigger event. Handles all five vesting rules.",
+      "delegates_to": "VestingScheduler::computeCompletesAt()"
+    },
+    {
+      "signature": "build_referral_share_url(User $user, ReferralProgram $program = null): string",
+      "purpose": "Constructs the shareable URL for the user's referral code. Uses the tenant's configured `referral_landing_url` + appends ?ref={code}. Falls back to https://{tenant.slug}.academorix.app/?ref={code} when unset.",
+      "delegates_to": "ReferralCodeRepository::findForUserProgram() + Tenant::config('referral_landing_url')"
+    },
+    {
+      "signature": "referrer_has_capacity(User $referrer, ReferralProgram $program): bool",
+      "purpose": "Returns true when the referrer has NOT hit max_rewards_per_referrer OR max_rewards_per_period for this program. Consulted before creating a Referral row.",
+      "delegates_to": "ReferralRepository::countActiveForReferrer() + program config"
+    },
+    {
+      "signature": "program_has_budget(ReferralProgram $program): bool",
+      "purpose": "Returns true when rewards_issued_count < max_rewards_per_program (when the budget cap is configured). Read from the cached counters (ref:program:budget:{program_id}).",
+      "delegates_to": "ProgramBudgetGate::hasCapacity()"
+    },
+    {
+      "signature": "is_disposable_email(string $email): bool",
+      "purpose": "Returns true when the email's domain matches the known-disposable list (data/disposable-email-domains.json). O(1) — the list is loaded into a memoised Set at boot.",
+      "delegates_to": "FraudDetector::isDisposableEmail()"
+    },
+    {
+      "signature": "referral_snapshot_shape_version(): int",
+      "purpose": "Returns the current attribution_snapshot schema version — bumped when the frozen snapshot shape changes. Downstream marketing / finance consumers branch on this.",
+      "delegates_to": "config('referrals.attribution.snapshot_shape_version')"
+    }
+  ],
+  "notes": [
+    "Helpers deliberately delegate — testing swaps the bound service to a stub, and every helper follows.",
+    "No helper directly touches the DB — everything routes through repositories or services.",
+    "The FraudDetector-adjacent helper `is_disposable_email` reads from the memoised Set built at boot from the JSON file. New domains added to the list require an app-restart to take effect (rare — the list changes maybe once per quarter)."
+  ]
+}

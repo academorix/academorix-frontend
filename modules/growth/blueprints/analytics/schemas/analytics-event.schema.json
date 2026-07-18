@@ -1,0 +1,341 @@
+{
+  "id": "academorix://modules/analytics/schemas/analytics-event",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AnalyticsEvent",
+  "description": "Canonical behavioral event ledger. One row per business event captured. Immutable after status transitions to a terminal state (delivered / partially_delivered / suppressed_by_consent / suppressed_by_sampling / suppressed_by_provider_off). Snapshots attribution + consent + context at CREATE time; those columns are frozen and NEVER rewritten by later state changes.",
+  "type": "object",
+  "x-module": "analytics",
+  "x-eloquent": {
+    "table": "analytics_events",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "ane_",
+    "incrementing": false,
+    "model": "Academorix\\Growth\\Analytics\\Models\\AnalyticsEvent",
+    "interface": "Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsEventInterface",
+    "implements": ["Academorix\\Growth\\Analytics\\Contracts\\Data\\AnalyticsEventInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasAuditable",
+      "Filterable"
+    ],
+    "casts": {
+      "event_kind": "AnalyticsEventKind",
+      "category": "AnalyticsEventCategory",
+      "status": "AnalyticsEventStatus",
+      "properties": "AnalyticsPropertiesBag",
+      "context": "AnalyticsContext",
+      "attribution": "array",
+      "consent_snapshot": "AnalyticsConsentSnapshot",
+      "event_time": "datetime"
+    },
+    "appends": ["is_terminal", "provider_delivery_ratio"],
+    "observers": ["AnalyticsEventObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true, "description": "`ane_<26>`" },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "event_name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Event name in snake_case or Colon-scoped form. Examples: `feature_viewed`, `funnel_step_reached`, `experiment_variant_assigned`, `feature_used:calendar`. Matched against enabled_event_types patterns on each provider config."
+      },
+      "event_kind": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: track / identify / page / screen / alias / group. Analytics-provider verbs."
+      },
+      "category": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "description": "Enum: feature_use / funnel_step / cta / error / performance / experiment / lifecycle / session. Coarse taxonomy for reporting rollups."
+      },
+      "subject_type": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Polymorphic subject class. `Academorix\\User\\Models\\User` for identified users; `Academorix\\Growth\\Analytics\\Models\\AnalyticsIdentity` for anonymous subjects."
+      },
+      "subject_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Subject primary key. For anonymous events: the AnalyticsIdentity.id (aid_). For identified events: the User.id (usr_)."
+      },
+      "anonymous_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "UUID assigned to the browser/device on first visit. Populated for events fired PRE-identify. When a subject later identifies, MergeAliasedEventsJob rewrites subject_id from the AnalyticsIdentity.id to the User.id but preserves anonymous_id for audit."
+      },
+      "properties": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Event-specific properties. Provider-agnostic \u2014 each driver's ProviderPayloadTransformer maps to provider-native shape. Max 100 keys, max 1KB total serialised. PII scanned + refused at CREATE."
+      },
+      "context": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Standard context: device (id, type, manufacturer, model), os (name, version), browser (name, version), locale, timezone, ip_hash (SHA-256), user_agent_family (never raw UA)."
+      },
+      "attribution": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Snapshot from growth::attribution at CREATE time. Frozen thereafter. Contains: utm (source, medium, campaign, term, content), click_ids (gclid, fbclid, ttclid, msclkid, sccid), first_touch, last_touch, referrer, landing_page, session_id."
+      },
+      "consent_snapshot": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Snapshot of subject's consent state at CREATE time. Shape: { analytics: bool, functional: bool, essential: bool, marketing: bool, ai_training: bool }. Dispatch checks this AGAIN at DISPATCH time \u2014 a subject who revokes consent between capture + dispatch has the pending event suppressed."
+      },
+      "status": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "Enum: pending / dispatching / delivered / partially_delivered / suppressed_by_consent / suppressed_by_sampling / suppressed_by_provider_off."
+      },
+      "eligible_provider_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Computed at CREATE: count of active providers whose enabled_event_types matches event_name AND whose sampling roll succeeds AND whose consent gate passes."
+      },
+      "delivered_provider_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Updated as AnalyticsDelivery rows transition to state=delivered. When == eligible_provider_count, status \u2192 delivered. Else on all attempts exhausted, status \u2192 partially_delivered."
+      },
+      "deduplication_key": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Optional idempotency key for critical events (payment_succeeded, subscription_upgraded). Providers with native dedupe (Mixpanel $insert_id, Amplitude insert_id) receive this. Volume-heavy sampling events don't set it \u2014 the whole point is sampling drops them."
+      },
+      "session_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "UUID scoping this event to a session. Sessions expire after 30 min of inactivity per attribution module semantics."
+      },
+      "event_time": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "When the event actually occurred (may differ from created_at for backfilled or queued events). Providers receive event_time as their timestamp field \u2014 NOT created_at."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "event_time"],
+        "unique": false,
+        "name": "analytics_events_tenant_time_idx",
+        "description": "Primary read path for tenant admin event log \u2014 reverse-ordered by event_time."
+      },
+      {
+        "columns": ["tenant_id", "event_name", "event_time"],
+        "unique": false,
+        "name": "analytics_events_tenant_name_time_idx",
+        "description": "Funnel + event-type filter."
+      },
+      {
+        "columns": ["tenant_id", "category", "event_time"],
+        "unique": false,
+        "name": "analytics_events_tenant_category_time_idx",
+        "description": "Category rollup: 'how many funnel_step events last 24h?'"
+      },
+      {
+        "columns": ["subject_type", "subject_id", "event_time"],
+        "unique": false,
+        "name": "analytics_events_subject_time_idx",
+        "description": "Per-subject event stream: 'this user did what in the last week?'"
+      },
+      {
+        "columns": ["anonymous_id"],
+        "unique": false,
+        "name": "analytics_events_anonymous_idx",
+        "predicate": "anonymous_id IS NOT NULL",
+        "description": "MergeAliasedEventsJob scans by anonymous_id to rewrite subject_id."
+      },
+      {
+        "columns": ["deduplication_key"],
+        "unique": false,
+        "name": "analytics_events_dedupe_idx",
+        "predicate": "deduplication_key IS NOT NULL",
+        "description": "Idempotency lookup for critical events."
+      },
+      {
+        "columns": ["session_id"],
+        "unique": false,
+        "name": "analytics_events_session_idx"
+      },
+      {
+        "columns": ["tenant_id", "status"],
+        "unique": false,
+        "name": "analytics_events_tenant_status_idx",
+        "description": "Retry-sweep scan: 'events in tenant X still in dispatching status'."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "event_name",
+    "event_kind",
+    "category",
+    "subject_type",
+    "subject_id",
+    "properties",
+    "context",
+    "attribution",
+    "consent_snapshot",
+    "status",
+    "eligible_provider_count",
+    "delivered_provider_count",
+    "session_id",
+    "event_time",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^ane_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "event_name": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(:[a-z][a-z0-9_]*)*$", "maxLength": 128 },
+    "event_kind": { "type": "string", "enum": ["track", "identify", "page", "screen", "alias", "group"] },
+    "category": {
+      "type": "string",
+      "enum": ["feature_use", "funnel_step", "cta", "error", "performance", "experiment", "lifecycle", "session"]
+    },
+    "subject_type": { "type": "string" },
+    "subject_id": { "type": "string" },
+    "anonymous_id": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "properties": {
+      "type": "object",
+      "maxProperties": 100,
+      "description": "Free-form event properties. Max 1KB total serialised. PII refused at CREATE."
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "device": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "type": { "type": "string", "enum": ["desktop", "mobile", "tablet", "tv", "unknown"] },
+            "manufacturer": { "type": "string" },
+            "model": { "type": "string" }
+          }
+        },
+        "os": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" }
+          }
+        },
+        "browser": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" }
+          }
+        },
+        "locale": { "type": "string" },
+        "timezone": { "type": "string" },
+        "ip_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "SHA-256 hex. NEVER raw IP."
+        },
+        "user_agent_family": {
+          "type": "string",
+          "description": "Coarse UA family ('Chrome', 'Safari'). NEVER full UA string."
+        }
+      }
+    },
+    "attribution": {
+      "type": "object",
+      "description": "Frozen at CREATE from growth::attribution snapshot."
+    },
+    "consent_snapshot": {
+      "type": "object",
+      "properties": {
+        "analytics": { "type": "boolean" },
+        "functional": { "type": "boolean" },
+        "essential": { "type": "boolean" },
+        "marketing": { "type": "boolean" },
+        "ai_training": { "type": "boolean" }
+      },
+      "required": ["analytics", "essential"]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "dispatching",
+        "delivered",
+        "partially_delivered",
+        "suppressed_by_consent",
+        "suppressed_by_sampling",
+        "suppressed_by_provider_off"
+      ]
+    },
+    "eligible_provider_count": { "type": "integer", "minimum": 0 },
+    "delivered_provider_count": { "type": "integer", "minimum": 0 },
+    "deduplication_key": { "type": ["string", "null"], "maxLength": 128 },
+    "session_id": { "type": "string" },
+    "event_time": { "type": "string", "format": "date-time" },
+    "is_terminal": {
+      "type": "boolean",
+      "description": "Computed. True when status IN (delivered, partially_delivered, suppressed_*)."
+    },
+    "provider_delivery_ratio": {
+      "type": "number",
+      "description": "Computed. delivered_provider_count / max(1, eligible_provider_count)."
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_by": { "type": ["string", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["context.ip_hash", "context.user_agent_family", "created_by"],
+    "computed": ["is_terminal", "provider_delivery_ratio"],
+    "notes": [
+      "context.ip_hash + user_agent_family HIDDEN on tenant-facing wire (recording internals; not admin-facing).",
+      "AnalyticsEvent is READ-ONLY over HTTP \u2014 no PATCH/DELETE/POST routes. Events only enter via the listener path (AnalyticsEventCapturer)."
+    ]
+  }
+}

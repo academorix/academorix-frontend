@@ -1,0 +1,70 @@
+{
+  "id": "academorix://modules/attribution/attributes",
+  "$version": 1,
+  "title": "attribution — PHP attribute contracts",
+  "description": "Two class-level attributes for listener discovery. `#[AsAttributionListener]` subscribes to attribution-profile lifecycle events (create / identify / convert / churn / restore / merge / reset). `#[AsTouchpointListener]` subscribes specifically to the high-volume touchpoint-captured event — separated because downstream consumers may want touchpoints WITHOUT profile events (e.g. referrals module cares about touchpoints only). Discovery loader picks up each class at boot + wires the declared events.",
+  "namespace": "Academorix\\Growth\\Attribution\\Attributes",
+  "attributes": [
+    {
+      "name": "AsAttributionListener",
+      "class": "Academorix\\Growth\\Attribution\\Attributes\\AsAttributionListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to attribution-profile lifecycle events (AttributionCreated / AttributionUpdated / AttributionFirstTouchRecorded / AttributionLastTouchUpdated / AttributionSubjectIdentified / AttributionConverted / AttributionChurned / AttributionRestored / AttributionSessionRefreshed / AttributionMerged / AttributionResetRequested / AttributionResetConfirmed / AttributionDeleted / AttributionConsentSnapshotUpdated / AttributionCampaignRollupComputed / AttributionTouchpointCountReconciled). Does NOT include AttributionTouchpointCaptured or AttributionSuppressedByConsent — those have their own attribute so high-volume consumers can opt in independently.",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Array of event short names (`AttributionCreated`, `AttributionConverted`, `AttributionMerged`, …). Empty = subscribe to every `Academorix\\Growth\\Attribution\\Events\\Attribution*` event EXCEPT the two high-volume ones (touchpoint + suppressed-by-consent). Names resolve against events.json at boot; typos abort boot with a discovery error."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue override. Falls back to the event's default queue (see events.json). AttributionResetRequested / AttributionResetConfirmed / AttributionSubjectIdentified consumers should override to `attribution-critical`."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Handler ordering within a single event. Lower runs first. The internal MergeAnonymousAttributionsOnSubjectIdentified hook declares priority 50 so it runs BEFORE marketing/analytics listeners see the identified profile."
+        }
+      ],
+      "example": "#[AsAttributionListener(events: ['AttributionConverted'], queue: 'attribution-critical', priority: 100)]\nfinal class ForwardConversionToMetaCapi\n{\n    public function __construct(private readonly MetaCapiClient $client) {}\n\n    public function __invoke(AttributionConverted $event): void\n    {\n        // Wave 5 marketing module reads the attribution profile and forwards to Meta CAPI.\n    }\n}"
+    },
+    {
+      "name": "AsTouchpointListener",
+      "class": "Academorix\\Growth\\Attribution\\Attributes\\AsTouchpointListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to the high-volume touchpoint events (AttributionTouchpointCaptured + AttributionSuppressedByConsent). Separated from AsAttributionListener because these fire on EVERY attribution-bearing request — most consumers should NOT subscribe to them. Only consumers that specifically care about touchpoint-level fanout (referrals matching referral links, analytics real-time-funnel dashboards) should use this attribute.",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": ["AttributionTouchpointCaptured"],
+          "description": "Empty = subscribe to AttributionTouchpointCaptured only (not AttributionSuppressedByConsent — that's a compliance signal, opt-in explicitly). Pass ['AttributionTouchpointCaptured', 'AttributionSuppressedByConsent'] for both."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue override. Touchpoint listeners default to `attribution-high-volume` — do NOT route to `notifications` (would flood the queue)."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100
+        },
+        {
+          "name": "sample_rate",
+          "type": "float",
+          "default": 1.0,
+          "description": "Per-listener sampling multiplier. 0.1 = only invoke on 10% of touchpoints. Global sampling still applies via feature-flags::attribution.touchpoint_analytics_sampled."
+        }
+      ],
+      "example": "#[AsTouchpointListener(events: ['AttributionTouchpointCaptured'], queue: 'attribution-high-volume', sample_rate: 0.1)]\nfinal class MaybeMatchReferralLink\n{\n    public function __invoke(AttributionTouchpointCaptured $event): void\n    {\n        // Wave 5 referrals module checks if the touchpoint's landing_page matches a known referral link pattern.\n    }\n}"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "id": "academorix://modules/referrals/notifications",
+  "$version": 1,
+  "title": "referrals — notification classes + categories",
+  "namespace": "Academorix\\Growth\\Referrals\\Notifications",
+  "notifications": [
+    "ReferralInvitationSentNotification",
+    "ReferralClaimedNotification",
+    "ReferralSignedUpNotification",
+    "ReferralVestedNotification",
+    "ReferralRewardedNotification",
+    "ReferralFraudFlaggedNotification",
+    "ReferralClawbackNotification",
+    "ReferralProgramBudgetAlertNotification",
+    "ReferralMaxReferralsReachedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "referrals.invitation_sent",
+      "display_name": "You invited a friend",
+      "description": "Confirmation that your invitation was delivered. Includes recipient email + share link + link to /me/referrals.",
+      "default_channels": ["in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": false
+    },
+    {
+      "slug": "referrals.claimed",
+      "display_name": "Your friend clicked the link",
+      "description": "Sent to the referrer when the referred user landed on the signup page. Includes referral status + expected next step.",
+      "default_channels": ["in_app", "push"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": false
+    },
+    {
+      "slug": "referrals.signed_up",
+      "display_name": "Your friend joined",
+      "description": "Sent to the referrer when the referred user completed signup. Includes reward pending status + when to expect vesting.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": false
+    },
+    {
+      "slug": "referrals.vested",
+      "display_name": "Your reward is on the way",
+      "description": "Sent to the referrer (+ optionally referred for double-sided programs) when the reward vests. Includes reward amount + expected materialization time.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "referrals.rewarded",
+      "display_name": "Your referral reward is now available",
+      "description": "Sent to the recipient when the reward is paid (Finance credit issued). Includes reward summary + how to redeem.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "referrals.fraud_flagged",
+      "display_name": "Fraud flag needs review",
+      "description": "Admin-facing. Sent to tenant admins + fraud reviewers when a ReferralFraudFlag with severity IN (block, critical) is created. Critical severity is cannot-opt-out.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "referrals.clawback",
+      "display_name": "Referral reward reversed",
+      "description": "Sent to the referrer + referred when a reward is clawed back. Includes reason (refund / chargeback / fraud / program archived) + any next-step guidance. Cannot-opt-out — user needs to know their reward was reversed.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "referrals.program_budget_alert",
+      "display_name": "Referral program budget alert",
+      "description": "Admin-facing. Sent when a program budget reaches 90% consumed OR spikes > 50% in 24h. Includes recent-referral rollup + suggested action (top up budget / pause program).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "referrals.max_referrals_reached",
+      "display_name": "You've hit your referral cap",
+      "description": "Sent to the referrer when they hit max_rewards_per_referrer OR max_rewards_per_period. Explains the cap + when it resets.",
+      "default_channels": ["in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": false
+    }
+  ]
+}

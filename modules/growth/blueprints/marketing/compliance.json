@@ -1,0 +1,123 @@
+{
+  "id": "academorix://modules/marketing/compliance",
+  "$version": 1,
+  "title": "marketing — compliance evidence",
+  "description": "Marketing is financial-record-adjacent AND privacy-critical. Every dispatched event carries user identifiers (email hashed / phone hashed / click IDs) to third-party ad networks — GDPR Art. 6(1)(a) explicit consent, GDPR Art. 17 erasure, CCPA §1798.135 Do Not Sell honoring, iOS ATT Framework mitigation, PCI-DSS scope (never card data). SOC 2 CC7.2 monitoring on the delivery ledger.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 6(1)(a)",
+          "principle": "lawful basis: consent",
+          "evidence": "Every marketing_events row carries a non-null consent_snapshot with { marketing, advertising, personalized_advertising, recorded_at }. Capture refuses when consent is absent → status='suppressed_by_consent'. Dispatch re-checks via ConsentGate::allows() and suppresses when revoked between capture and dispatch."
+        },
+        {
+          "article": "Art. 7(3)",
+          "principle": "right to withdraw consent",
+          "evidence": "Users revoke consent via the compliance/consent module surface. The re-check-at-dispatch gate honours revocations that arrive between capture and delivery. Historical events remain in the ledger for compliance retention but are not re-dispatched."
+        },
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "PII hashing is enforced per provider: Meta CAPI, Snapchat, Pinterest, TikTok, LinkedIn all receive SHA256 email + phone (never raw). GA4 Measurement Protocol receives client_id + user_id (no PII). Providers that accept raw PII (Google Ads) still receive hashed variants preferentially."
+        },
+        {
+          "article": "Art. 15",
+          "principle": "right of access",
+          "evidence": "Users request their marketing event history via the compliance/data-subject-rights surface. The export includes: event list (event_type, captured_at, value_amount, subject_id), delivery list per event (provider, status, dispatched_at), and consent snapshots. Provider-side data is out of scope of Academorix — the export includes the identity fields dispatched to each provider so the user can invoke their rights directly with the provider."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "TenantErased cascades hard-delete of every marketing row via FK CASCADE. UserErased (individual) triggers RedactUserFromMarketingEventsJob (compliance module) which nulls the subject_id fields on the affected rows + fires a compensating delete-request to every provider that received the events (Meta CAPI Data Deletion API, Google Ads user-data deletion, etc.). Audit trail rows survive per financial retention (Art. 17 §3 exception: legal obligation)."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "The `payment_status` field is a category (never card data). request_payload jsonb encrypts at rest. Provider credentials in marketing_provider_configs.config are encrypted at rest via the compliance/encryption service. The two-phase consent gate (capture + dispatch) is by-design."
+        },
+        {
+          "article": "Art. 28",
+          "principle": "processor contracts",
+          "evidence": "Each of the 9 provider integrations is a Data Processor under Art. 28 — tenant admin acknowledges the DPA reference before configuring the provider. The tenant-facing subprocessor list (compliance/subprocessors surface) enumerates all 9."
+        }
+      ]
+    },
+    "ccpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "section": "§1798.135",
+          "principle": "Do Not Sell My Personal Information",
+          "evidence": "When a user opts out of the sale of their personal information via the compliance/consent surface, the `advertising` consent category is set to false. Every subsequent MarketingEvent capture is suppressed. In-flight events are re-checked at dispatch and suppressed. CCPA's 'sale' definition includes cross-context behavioral advertising sharing, which is exactly what marketing does."
+        },
+        {
+          "section": "§1798.100",
+          "principle": "right to know",
+          "evidence": "Same as GDPR Art. 15 access. Users can request the full marketing history via the compliance surface."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical + physical access",
+          "evidence": "marketing_provider_configs.config (credentials) is encrypted at rest. Access to view credentials is restricted to owner + admin roles. Support role sees redacted config (never the underlying values). Every provider config change writes to audits with 7-year retention."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "restrict data transmission",
+          "evidence": "All 9 providers use TLS 1.2+ endpoints. Guzzle enforces TLS + certificate validation. HMAC signing (custom_webhook + gtm_server) uses SHA256. Provider credentials are never logged; request_payload is encrypted at rest."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "The BookingOverlapDetected pattern applies here: MarketingProviderCircuitBreakerOpened + MarketingDeadLetterCreated are P1 signals. Every fire pages the on-call. The academorix.marketing.dead_letters.created_total counter is tracked; a spike is a compliance-relevant financial-loss signal."
+        },
+        {
+          "criterion": "CC9.1",
+          "principle": "risk mitigation",
+          "evidence": "Two-phase consent gate + attribution snapshot + per-provider circuit-breaker + retry with backoff + dead-letter queue = defense-in-depth against the compliance-critical failure modes (consent revocation between capture and dispatch, provider outage, retry exhaustion)."
+        }
+      ]
+    },
+    "pci_dss": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "3.4",
+          "principle": "no PAN storage",
+          "evidence": "marketing_events.value_amount_cents is a currency amount (integer). Currency is ISO 4217. NO PAN, CVV, expiry, or cardholder name on any marketing row. Refund events carry only the amount (no card_last4). Payment references upstream Finance module tokens (Wave 4)."
+        },
+        {
+          "requirement": "10.2",
+          "principle": "audit trail",
+          "evidence": "Every write to marketing_events / marketing_deliveries / marketing_provider_configs / marketing_dead_letters emits an audit row (Auditable trait). Financial-record retention: 7 years (10 for Enterprise with marketing_extended_retention). Every state transition on an event is audit-captured."
+        }
+      ]
+    },
+    "ios_att": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "Apple App Tracking Transparency",
+          "principle": "server-side mitigation for client-side tracking constraints",
+          "evidence": "iOS ATT limits client-side pixel firing on iOS. The marketing module's server-side dispatch is the platform's ATT mitigation — we capture from server-side domain events, hash PII, and forward via provider APIs that Apple's client-side restrictions do not apply to. Meta's iOS 14+ integration explicitly acknowledges CAPI as the ATT mitigation path."
+        }
+      ]
+    },
+    "can_spam": {
+      "applicable": true,
+      "controls": [
+        {
+          "section": "Section 5",
+          "principle": "unsubscribe path",
+          "evidence": "Marketing communications dispatched via ad-network integrations carry the tenant's unsubscribe URL in the event payload (custom_data.unsubscribe_url per Meta CAPI). Every provider driver includes the tenant's unsubscribe URL. Tenants without a valid unsubscribe URL cannot enable email-marketing event types."
+        }
+      ]
+    }
+  }
+}

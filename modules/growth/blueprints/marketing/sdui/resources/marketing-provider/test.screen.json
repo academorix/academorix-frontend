@@ -1,0 +1,101 @@
+{
+  "id": "marketing.resources.marketing-provider.test",
+  "title": "Test marketing provider",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/marketing/providers/:providerId/test",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "marketing", "entity": "marketing-provider", "action": "test" },
+  "requiresPermission": "marketing.providers.test",
+  "requiresEntitlement": "marketing_capture",
+  "dataSources": [
+    {
+      "name": "provider",
+      "kind": "http.get",
+      "url": "/api/v1/marketing/providers/{{routeParams.providerId}}",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-2xl mx-auto p-6 flex flex-col gap-6" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "'Test ' + provider.provider" } } },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "info",
+            "title": "Sandbox dispatch",
+            "description": "Sends a synthetic test event via the provider's sandbox endpoint. Excluded from production ROAS. Meta shows these in the Test Events tab; GA4 shows them in the DebugView; other providers surface them in their debug tools."
+          }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6 flex flex-col gap-3" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Event type", "menuTrigger": "focus" },
+              "bindings": { "items": { "$ref": "provider.enabled_event_types" } },
+              "actions": {
+                "onSelectionChange": { "kind": "form.set", "field": "event_type", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "Input",
+              "props": { "label": "Test event code (Meta only)", "placeholder": "TEST12345" },
+              "bindings": {
+                "hidden": { "$expr": "provider.provider !== 'meta_capi'" }
+              },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "test_event_code", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "leadingIcon": "paper-airplane", "children": "Send test event" },
+              "bindings": { "disabled": { "$expr": "!form.event_type" } },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/marketing/providers/{{provider.id}}/test",
+                  "body": {
+                    "event_type": "{{form.event_type}}",
+                    "test_event_code": "{{form.test_event_code}}"
+                  },
+                  "onResult": {
+                    "kind": "state.set",
+                    "field": "test_result"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "bindings": { "hidden": { "$expr": "!state.test_result" } },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Test result" } },
+            {
+              "kind": "DescriptionList",
+              "props": {
+                "items": [
+                  { "label": "Outcome", "field": "state.test_result.outcome" },
+                  { "label": "HTTP status", "field": "state.test_result.response_status_code" },
+                  { "label": "Latency", "field": "state.test_result.latency_ms", "formatter": "duration-ms" },
+                  { "label": "Provider event ID", "field": "state.test_result.provider_event_id", "className": "font-mono" },
+                  { "label": "Error", "field": "state.test_result.error_message" }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

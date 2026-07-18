@@ -1,0 +1,113 @@
+{
+  "id": "academorix://modules/marketing/observers",
+  "$version": 1,
+  "title": "marketing — Eloquent observers",
+  "description": "Four observers enforce the module's write-time invariants: event capture integrity (dedup, consent gate, attribution snapshot, eligible-provider computation), delivery lifecycle (per-attempt bookkeeping + circuit-breaker + retry scheduling), provider config validation (per-provider JSON Schema + entitlement + test-mode dispatch), and dead-letter creation (P1 notification + audit).",
+  "observers": [
+    {
+      "model": "MarketingEvent",
+      "observer": "Academorix\\Growth\\Marketing\\Observers\\MarketingEventObserver",
+      "handles": [
+        "creating → populate ULID prefix `mev_`",
+        "creating → refuse when tenant does NOT hold `marketing_capture` entitlement (returns `MARKETING_FEATURE_NOT_ENTITLED`)",
+        "creating → refuse when tenant does NOT hold `marketing_event_slot_per_month` capacity (per-month rolling window; returns `MARKETING_EVENT_QUOTA_EXCEEDED`)",
+        "creating → check for existing (tenant_id, deduplication_key) row via composite unique partial index; if found + not yet delivered: mark the OLDER row status='superseded' + fire MarketingEventSuperseded + cancel its pending DispatchToProviderJob; if found + already delivered: refuse the new insert with `MARKETING_EVENT_ALREADY_DELIVERED`",
+        "creating → snapshot ConsentGate::snapshotFor($subject) into consent_snapshot jsonb (never null — schema requires it)",
+        "creating → refuse when ConsentGate::allows($tenant, $subject, 'marketing') = false → set status='suppressed_by_consent' + fire MarketingEventSuppressedByConsent (no dispatch will happen) + still persist the row (compliance audit)",
+        "creating → refuse when ConsentGate::allows($tenant, $subject, 'advertising') = false → same treatment as above",
+        "creating → snapshot AttributionResolver::forSubject($subject) into attribution jsonb (never null — schema requires it; empty object when no attribution captured, e.g. server-side signup with no cookies)",
+        "creating → compute eligible_provider_count from SELECT COUNT(*) FROM marketing_provider_configs WHERE tenant_id = ? AND is_active = true AND (config->>'enabled_event_types')::jsonb @> to_jsonb(event.event_type)",
+        "creating → refuse when eligible_provider_count = 0 → log warning `MARKETING_NO_ELIGIBLE_PROVIDERS` (don't fail — configured providers may be added later, but this row will never dispatch; useful for tenant onboarding fills)",
+        "creating → set delivered_provider_count = 0 + retry_count = 0 + status='pending'",
+        "creating → fire MarketingEventCaptured after commit",
+        "updating (status → dispatching) → set first_dispatched_at when previously NULL",
+        "updating (status → dispatching) → refuse when previous status not IN ('pending', 'dispatching', 'partially_delivered') — the state machine is one-way",
+        "updating (status → delivered) → require delivered_provider_count == eligible_provider_count (defense-in-depth against the reconciler firing early); refuse otherwise",
+        "updating (status → delivered) → fire MarketingEventDelivered",
+        "updating (status → failed) → require delivered_provider_count == 0 AND every eligible delivery is dead-lettered; fire MarketingEventFailed",
+        "updating (status → partially_delivered) → require 0 < delivered_provider_count < eligible_provider_count AND every eligible delivery has a terminal status (succeeded / dead-lettered); fire MarketingEventPartiallyDelivered",
+        "updating (attribution / consent_snapshot changed) → REFUSE ALL — snapshots are immutable after create (returns `MARKETING_SNAPSHOT_IMMUTABLE`)",
+        "deleting (soft-delete) → refuse when status IN ('pending', 'dispatching') — must be terminal first (returns `MARKETING_EVENT_STILL_IN_FLIGHT`)",
+        "deleting (hard-delete) → refuse when < 7 years past created_at (financial retention; 10 years for Enterprise with marketing_extended_retention entitlement)"
+      ]
+    },
+    {
+      "model": "MarketingDelivery",
+      "observer": "Academorix\\Growth\\Marketing\\Observers\\MarketingDeliveryObserver",
+      "handles": [
+        "creating → populate ULID prefix `mdv_`",
+        "creating → verify parent event.status IN ('pending', 'dispatching') — refuse otherwise (returns `MARKETING_DELIVERY_EVENT_TERMINAL`)",
+        "creating → verify parent provider_config.is_active = true (returns `MARKETING_DELIVERY_PROVIDER_INACTIVE`)",
+        "creating → verify circuit-breaker state via CircuitBreakerGate::allow($tenant, $provider) OR the row is marked as a half-open probe; refuse otherwise → mark status='suppressed_by_circuit_breaker' + fire MarketingDeliverySuppressedByCircuitBreaker",
+        "creating → encrypt request_payload before persist (at-rest encryption for the entire jsonb blob)",
+        "creating → truncate response_body to 4KB before persist (support-debugging window, not the full payload)",
+        "creating → fire MarketingDeliveryAttempted",
+        "updating (status → succeeded) → reset parent provider_config.consecutive_failure_count = 0 + set last_success_at = now()",
+        "updating (status → succeeded) → increment parent event.delivered_provider_count atomically",
+        "updating (status → succeeded) → if provider_config.circuit_breaker_open_until is set (half-open probe path): fire CloseCircuitBreakerJob(was_auto=true) → transitions the breaker to CLOSED",
+        "updating (status → succeeded) → set responded_at + compute latency_ms = responded_at - dispatched_at",
+        "updating (status → succeeded) → fire MarketingDeliverySucceeded",
+        "updating (status → failed) → increment provider_config.consecutive_failure_count + set last_failure_at = now()",
+        "updating (status → failed) → if consecutive_failure_count >= circuit_breaker_config.failure_threshold AND circuit_breaker_open_until IS NULL: dispatch OpenCircuitBreakerJob(tenant_id, provider)",
+        "updating (status → failed) → compute next_retry_at from retry_config.backoff_seconds[attempt_number]; when attempt_number >= max_attempts OR error.is_transient = false: set next_retry_at = NULL + create MarketingDeadLetter row via DeadLetterHandler",
+        "updating (status → failed) → fire MarketingDeliveryFailed",
+        "updating (status → rate_limited) → compute next_retry_at from response Retry-After header (or provider default 60s)",
+        "updating (status → rate_limited) → fire MarketingDeliveryRateLimited",
+        "updating (status → suppressed_by_consent) → fire MarketingDeliverySuppressedByConsent",
+        "updating (status → suppressed_by_circuit_breaker) → fire MarketingDeliverySuppressedByCircuitBreaker (may already fire from creating path)",
+        "updating (attempt_number changed) → REFUSE — attempt_number is set at insert + immutable",
+        "updating (request_payload / request_url / provider changed) → REFUSE — the delivery is per-attempt-immutable",
+        "deleting → REFUSE ALL — deliveries are financial audit records; hard-purged by PurgeExpiredMarketingDataJob only"
+      ]
+    },
+    {
+      "model": "MarketingProviderConfig",
+      "observer": "Academorix\\Growth\\Marketing\\Observers\\MarketingProviderConfigObserver",
+      "handles": [
+        "creating → populate ULID prefix `mpc_`",
+        "creating → refuse when tenant does NOT hold `marketing_provider_slot` capacity (returns `MARKETING_PROVIDER_QUOTA_EXCEEDED` — Small: 1, Medium: 3, Enterprise: unlimited)",
+        "creating → refuse when provider IN ('linkedin_insight', 'snapchat_capi', 'pinterest_capi', 'gtm_server') AND tenant does NOT hold `marketing_advanced_providers` entitlement (returns `MARKETING_ADVANCED_PROVIDER_NOT_ENTITLED` — Medium+ only)",
+        "creating → refuse when provider = 'custom_webhook' AND tenant does NOT hold `marketing_custom_webhook` entitlement (returns `MARKETING_CUSTOM_WEBHOOK_NOT_ENTITLED` — Medium+ only)",
+        "creating → refuse when a non-deleted row already exists for (tenant_id, provider) — composite unique partial WHERE deleted_at IS NULL (returns `MARKETING_PROVIDER_ALREADY_CONFIGURED`)",
+        "creating → validate config jsonb against schemas/providers/<provider>-config.schema.json (per-provider — Meta needs pixel_id + access_token; Google Ads needs customer_id + api_key + conversion_action_id; GTM Server needs webhook_url + hmac_secret; etc.) → refuse with `MARKETING_PROVIDER_CONFIG_INVALID`",
+        "creating → validate enabled_event_types IS a subset of MarketingEventType enum (returns `MARKETING_INVALID_ENABLED_EVENT_TYPES`)",
+        "creating → validate enabled_event_types IS a subset of the provider's supports() list (per data/provider-capability-matrix.json — e.g. LinkedIn does not support 'refund_issued'; returns `MARKETING_PROVIDER_UNSUPPORTED_EVENT_TYPE`)",
+        "creating → encrypt config jsonb at rest (contains credentials)",
+        "creating → default circuit_breaker_config from data/circuit-breaker-defaults.json when not provided (failure_threshold: 5, open_duration_seconds: 3600, half_open_test_events: 1)",
+        "creating → default retry_config from data/retry-schedule-defaults.json when not provided (max_attempts: 6, backoff_seconds: [60, 300, 1800, 7200, 43200, 86400])",
+        "creating → validate test_event_code shape when test_mode=true (returns `MARKETING_INVALID_TEST_EVENT_CODE`)",
+        "creating → set consecutive_failure_count = 0 + circuit_breaker_open_until = NULL + circuit_breaker_reset_count = 0",
+        "creating → fire MarketingProviderConfigured",
+        "creating → when test_mode=true: dispatch MarketingProviderTestJob (sends a synthetic test event via the provider's sandbox) → fires MarketingProviderTestSent / TestSucceeded / TestFailed",
+        "updating (config jsonb changed) → re-validate against the per-provider JSON schema; refuse when invalid",
+        "updating (config jsonb changed) → re-encrypt at rest",
+        "updating (config jsonb changed) → fire MarketingConfigurationChangedNotification (audit trail — the tenant admin needs to know credentials rotated)",
+        "updating (enabled_event_types changed) → re-validate against the provider's supports() list",
+        "updating (is_active flipped false) → fire MarketingProviderDeactivated (reason='manual')",
+        "updating (test_mode flipped) → refuse when the config has ANY successful production deliveries in the last 30 days (returns `MARKETING_TEST_MODE_TOGGLE_FORBIDDEN` — flip-flops would corrupt aggregation)",
+        "updating (circuit_breaker_open_until changed) → fire MarketingProviderCircuitBreakerOpened when set from NULL, MarketingProviderCircuitBreakerClosed when cleared to NULL",
+        "updating (circuit_breaker_open_until changed) → increment circuit_breaker_reset_count when the clear was manual (actor is not the HalfOpenCircuitBreakerJob)",
+        "deleting (soft-delete) → refuse when circuit_breaker_open_until is set + still open (returns `MARKETING_PROVIDER_CIRCUIT_OPEN_ON_DEACTIVATE` — reset the breaker first)",
+        "deleting (soft-delete) → fire MarketingProviderDeactivated (reason='manual')",
+        "deleting (hard-delete) → allow only when soft-deleted > 90 days ago (grace period for auditing)"
+      ]
+    },
+    {
+      "model": "MarketingDeadLetter",
+      "observer": "Academorix\\Growth\\Marketing\\Observers\\MarketingDeadLetterObserver",
+      "handles": [
+        "creating → populate ULID prefix `mdl_`",
+        "creating → verify parent marketing_event exists + at least one delivery reached terminal-failure with matching provider (defense-in-depth against orphan dead-letters)",
+        "creating → set replay_attempts = 0 + resolved_at = NULL + resolved_by_user_id = NULL",
+        "creating → fire MarketingDeadLetterCreated (P1 — pages on-call)",
+        "creating → write critical audit row via the audit module (retention: 7 years)",
+        "updating (replay_attempts incremented) → set last_replay_at = now()",
+        "updating (replay_attempts incremented) → fire MarketingDeadLetterReplayed",
+        "updating (resolved_at set from NULL → now()) → require resolved_by_user_id present (unless was_auto_resolved on a successful replay)",
+        "updating (resolved_at set) → fire MarketingDeadLetterResolved",
+        "updating (resolved_at reset to NULL) → REFUSE — resolution is one-way (returns `MARKETING_DEAD_LETTER_ALREADY_RESOLVED`)",
+        "deleting → REFUSE ALL — dead-letters are financial audit records; retained indefinitely for the tenant's lifetime"
+      ]
+    }
+  ]
+}

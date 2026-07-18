@@ -1,0 +1,415 @@
+{
+  "id": "academorix://modules/referrals/routes",
+  "$version": 1,
+  "title": "referrals — HTTP routes",
+  "description": "Tenant-facing admin surfaces (program CRUD + code CRUD + referral ledger + reward ledger + fraud-flag review) + user-facing surfaces (me/referral-code, me/referrals, me/referral-rewards, me/invitations) + public claim endpoint (GET /referrals/claim/{code}, no auth — sets tracking cookie) + platform-plane cross-tenant read + support intervention. Every admin tenant route carries `entitlement.enforce:referrals_capture`; advanced routes layer specific entitlements per policy.",
+  "groups": [
+    {
+      "name": "tenant-referral-programs",
+      "prefix": "/api/v1/referral-programs",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "entitlement.enforce:referrals_capture",
+        "throttle:referrals-admin",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Program CRUD + status transitions. Admin/marketing/owner only.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralProgramController@index",
+          "permission": "referral_programs.viewAny",
+          "description": "filter[status], filter[side], filter[reward_type], filter[trigger_event], include=codes,referrals_count,rewards_summary."
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralProgramController@store",
+          "permission": "referral_programs.create",
+          "description": "Body: ReferralProgramCreateData. Consumes 1 unit of `referrals_program_slot` entitlement."
+        },
+        {
+          "method": "GET",
+          "path": "/{program}",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralProgramController@show",
+          "permission": "referral_programs.view"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{program}",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralProgramController@update",
+          "permission": "referral_programs.update",
+          "description": "Reward config fields (reward_type, reward_amount) refuse when program has in-flight referrals (locked)."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{program}",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralProgramController@destroy",
+          "permission": "referral_programs.delete",
+          "description": "Soft-delete. Refused when program has any non-terminal referrals. Archive first."
+        },
+        {
+          "method": "POST",
+          "path": "/{program}/activate",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralProgramController@activate",
+          "permission": "referral_programs.activate",
+          "description": "Body: {}. Transitions draft/paused -> active. Refuses when program has no distributable codes."
+        },
+        {
+          "method": "POST",
+          "path": "/{program}/pause",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralProgramController@pause",
+          "permission": "referral_programs.pause",
+          "description": "Body: { reason? }."
+        },
+        {
+          "method": "POST",
+          "path": "/{program}/archive",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralProgramController@archive",
+          "permission": "referral_programs.archive",
+          "description": "Body: { reason }. Cascades: pending referrals cancel + materialized-not-yet-paid rewards clawback. Audit-critical."
+        }
+      ]
+    },
+    {
+      "name": "tenant-referral-codes",
+      "prefix": "/api/v1/referral-codes",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "entitlement.enforce:referrals_capture",
+        "throttle:referrals-admin",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Campaign + opaque code management. User_scoped codes are auto-issued by IssueReferralCodeJob, not created here.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralCodeController@index",
+          "permission": "referral_codes.viewAny",
+          "description": "filter[program_id], filter[code_type], filter[owner_user_id], filter[campaign_name], filter[is_active], filter[expires_before]."
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralCodeController@store",
+          "permission": "referral_codes.create",
+          "description": "Body: ReferralCodeCreateData. campaign or opaque codes only — user_scoped codes are auto-issued. Consumes 1 unit of `referrals_code_slot` for campaign codes."
+        },
+        {
+          "method": "GET",
+          "path": "/{code}",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralCodeController@show",
+          "permission": "referral_codes.view"
+        },
+        {
+          "method": "POST",
+          "path": "/{code}/deactivate",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralCodeController@deactivate",
+          "permission": "referral_codes.deactivate",
+          "description": "Sets is_active=false. New claims against the code refused. Existing in-flight referrals complete."
+        }
+      ]
+    },
+    {
+      "name": "tenant-referrals",
+      "prefix": "/api/v1/referrals",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "entitlement.enforce:referrals_capture",
+        "throttle:referrals-admin",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Admin referral ledger + admin actions (cancel, force-vest).",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralController@index",
+          "permission": "referrals.viewAny",
+          "description": "filter[program_id], filter[status], filter[referrer_id], filter[referred_id], filter[has_fraud_flag], filter[fraud_score.gte], filter[claimed_at.gte/lte]."
+        },
+        {
+          "method": "GET",
+          "path": "/{referral}",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralController@show",
+          "permission": "referrals.view",
+          "description": "Includes attribution_snapshot, device_snapshot (hashes only), rewards, fraud_flags."
+        },
+        {
+          "method": "POST",
+          "path": "/{referral}/cancel",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralController@cancel",
+          "permission": "referrals.cancel",
+          "description": "Body: { reason }. Cascades pending/vesting rewards -> cancelled; materialized rewards -> clawback."
+        },
+        {
+          "method": "POST",
+          "path": "/{referral}/force-vest",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralController@forceVest",
+          "permission": "referrals.force-vest",
+          "middleware_add": ["entitlement.enforce:referrals_manual_override"],
+          "description": "Enterprise-only. Body: { reason }. Transitions trigger_pending/vesting -> vested immediately + creates rewards. Audit-critical."
+        }
+      ]
+    },
+    {
+      "name": "tenant-referral-rewards",
+      "prefix": "/api/v1/referral-rewards",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "entitlement.enforce:referrals_capture",
+        "throttle:referrals-admin",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Reward ledger + clawback action.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralRewardController@index",
+          "permission": "referral_rewards.viewAny",
+          "description": "filter[referral_id], filter[recipient_id], filter[recipient_role], filter[reward_type], filter[status]."
+        },
+        {
+          "method": "GET",
+          "path": "/{reward}",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralRewardController@show",
+          "permission": "referral_rewards.view"
+        },
+        {
+          "method": "POST",
+          "path": "/{reward}/clawback",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralRewardController@clawback",
+          "permission": "referral_rewards.clawback",
+          "description": "Body: { clawback_reason, notes? }. Financial reversal. Audit-critical."
+        }
+      ]
+    },
+    {
+      "name": "tenant-referral-fraud-flags",
+      "prefix": "/api/v1/referral-fraud-flags",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "entitlement.enforce:referrals_capture",
+        "entitlement.enforce:referrals_fraud_detection",
+        "throttle:referrals-admin",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Fraud-flag review + admin actions. Medium+ tier (fraud_detection entitlement gate).",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralFraudFlagController@index",
+          "permission": "referral_fraud_flags.viewAny",
+          "description": "filter[referral_id], filter[flag_type], filter[severity], filter[disposition], filter[reviewed] (bool)."
+        },
+        {
+          "method": "GET",
+          "path": "/{flag}",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralFraudFlagController@show",
+          "permission": "referral_fraud_flags.view"
+        },
+        {
+          "method": "POST",
+          "path": "/{flag}/review",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralFraudFlagController@review",
+          "permission": "referral_fraud_flags.review",
+          "description": "Body: { disposition IN (confirmed_fraud / false_positive / manual_override_approved), reason? }. Cascades per observer semantics."
+        }
+      ]
+    },
+    {
+      "name": "tenant-me-referrals",
+      "prefix": "/api/v1/me",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "entitlement.enforce:referrals_capture",
+        "throttle:referrals-user",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "User-facing self-serve. Every user's own referral code + referrals + rewards + invitations.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/referral-code",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\MeReferralCodeController@show",
+          "permission": null,
+          "description": "Reads (or auto-issues via IssueReferralCodeJob) the caller's user_scoped code for the active program. Returns { code, share_url, program_summary }."
+        },
+        {
+          "method": "GET",
+          "path": "/referrals",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\MeReferralsController@index",
+          "permission": null,
+          "description": "Caller's own referral history — where they are the referrer. filter[status], filter[program_id]. Response scopes to auth()->id() automatically."
+        },
+        {
+          "method": "GET",
+          "path": "/referral-rewards",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\MeReferralRewardsController@index",
+          "permission": null,
+          "description": "Caller's own rewards — where they are the recipient. filter[status]."
+        },
+        {
+          "method": "POST",
+          "path": "/invitations",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\MeInvitationsController@store",
+          "permission": null,
+          "description": "Body: { recipient_emails: string[] (max 10), channel: 'email'|'sms', template_slug? }. Dispatches NotifyReferralInvitationJob per recipient. Rate-limited to 100 recipients per day per user."
+        }
+      ]
+    },
+    {
+      "name": "tenant-referral-claim",
+      "prefix": "/api/v1/referrals",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "application.resolve",
+        "tenant.resolve",
+        "throttle:referrals-claim",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Public claim endpoint — no auth. Sets referral cookie + captures attribution/device snapshot + creates Referral row in status='pending_claim'.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/claim/{code}",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Tenant\\ReferralClaimController@claim",
+          "permission": null,
+          "description": "The click-capture endpoint. Reads {code} + captures attribution + sets a signed cookie with the referral_id + redirects to /signup or a configured landing URL. Idempotent per (code, session)."
+        }
+      ]
+    },
+    {
+      "name": "platform-referrals",
+      "prefix": "/api/v1/platform/referrals",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "throttle:referrals-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "Cross-tenant read for support tooling.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Platform\\ReferralController@index",
+          "permission": "platform.referrals.viewAny",
+          "description": "filter[tenant_id], filter[status], filter[has_fraud_flag]. Cross-tenant scan."
+        },
+        {
+          "method": "GET",
+          "path": "/{referral}",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Platform\\ReferralController@show",
+          "permission": "platform.referrals.view"
+        },
+        {
+          "method": "POST",
+          "path": "/{referral}/force-vest",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Platform\\ReferralController@forceVest",
+          "permission": "platform.referrals.force-vest",
+          "description": "Platform support intervention. Body: { reason }. Bypasses tenant guards. Notifies tenant admin + writes audit row with 7-year retention."
+        }
+      ]
+    },
+    {
+      "name": "platform-referral-rewards-support",
+      "prefix": "/api/v1/platform/referral-rewards",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "throttle:referrals-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "Cross-tenant reward support tooling.",
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/{reward}/force-clawback",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Platform\\ReferralRewardController@forceClawback",
+          "permission": "platform.referral_rewards.force-clawback",
+          "description": "Body: { clawback_reason, notes }. Financial reversal. Audit-critical."
+        }
+      ]
+    },
+    {
+      "name": "platform-referral-fraud-flags-support",
+      "prefix": "/api/v1/platform/referral-fraud-flags",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "throttle:referrals-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "Cross-tenant fraud review support.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Platform\\ReferralFraudFlagController@index",
+          "permission": "platform.referral_fraud_flags.viewAny",
+          "description": "Cross-tenant fraud rollup. filter[tenant_id], filter[severity], filter[disposition]."
+        },
+        {
+          "method": "POST",
+          "path": "/{flag}/review",
+          "controller": "Academorix\\Growth\\Referrals\\Http\\Controllers\\Platform\\ReferralFraudFlagController@review",
+          "permission": "platform.referral_fraud_flags.review",
+          "description": "Platform-plane review. Bypasses tenant permission requirement."
+        }
+      ]
+    }
+  ]
+}

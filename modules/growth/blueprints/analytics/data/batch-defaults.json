@@ -1,0 +1,51 @@
+{
+  "id": "academorix://modules/analytics/data/batch-defaults",
+  "$version": 1,
+  "title": "analytics — per-provider batch defaults",
+  "description": "Default batch_config values per provider. Applied when creating a new AnalyticsProviderConfig without an explicit batch_config. Tenants with analytics_batch_configuration entitlement may override.",
+  "note": "Values chosen based on each provider's published batch limits + a reasonable flush interval that balances latency (want events dispatched soon) against efficiency (batch bigger = fewer HTTP calls). Non-batching providers (June) list `null` for size + flush.",
+  "defaults": {
+    "posthog": {
+      "size": 500,
+      "flush_interval_ms": 5000,
+      "max_bytes": 1048576,
+      "notes": "PostHog accepts up to 1000/batch. Choosing 500 is a conservative default that leaves headroom + ships events within 5s."
+    },
+    "amplitude": {
+      "size": 500,
+      "flush_interval_ms": 5000,
+      "max_bytes": 5242880,
+      "notes": "Amplitude accepts 1000/batch AND 10MB. We cap batch bytes at 5MB to keep the failure blast radius bounded."
+    },
+    "mixpanel": {
+      "size": 1000,
+      "flush_interval_ms": 10000,
+      "max_bytes": 1048576,
+      "notes": "Mixpanel accepts 2000/batch. Higher default batch size than others because Mixpanel's /import endpoint is optimised for bulk. Longer flush interval (10s) because Mixpanel dispatch is typically background-analytics oriented, not real-time."
+    },
+    "segment": {
+      "size": 100,
+      "flush_interval_ms": 10000,
+      "max_bytes": 500000,
+      "notes": "Segment's /v1/batch hard-caps at 100 events + 500KB. Longer flush interval accepts Segment's downstream fan-out latency."
+    },
+    "june": {
+      "size": null,
+      "flush_interval_ms": null,
+      "max_bytes": null,
+      "notes": "June does NOT support batching. One HTTP request per event. size/flush ignored."
+    },
+    "google_analytics_4": {
+      "size": 25,
+      "flush_interval_ms": 5000,
+      "max_bytes": null,
+      "notes": "GA4 measurement protocol caps at 25 events per request. Tight cap."
+    },
+    "custom_webhook": {
+      "size": 100,
+      "flush_interval_ms": 10000,
+      "max_bytes": 5242880,
+      "notes": "Conservative defaults. Tenant-facing consumer can handle whatever the tenant configures."
+    }
+  }
+}

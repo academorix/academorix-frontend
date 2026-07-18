@@ -1,0 +1,34 @@
+{
+  "id": "academorix://modules/attribution/subprocessors",
+  "$version": 1,
+  "title": "attribution — subprocessors",
+  "description": "The Attribution module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. Attribution DATA flows downstream to the Marketing module (Wave 5), which engages ad-network processors (Google, Meta, TikTok, Microsoft, Snapchat) for conversion forwarding — those live in marketing::subprocessors.json. Similarly the Analytics module (Wave 5) engages processors like Segment / PostHog — those live in analytics::subprocessors.json. This file lists ZERO active subprocessors to be explicit about the module's boundary — attribution capture + storage is fully first-party.",
+  "subprocessors": [],
+  "downstream_subprocessors_referenced": [
+    {
+      "module": "marketing",
+      "reference": "marketing::subprocessors.json (Wave 5)",
+      "used_for": "Conversion forwarding to ad networks. Every conversion event snapshots the attribution profile and forwards to Google Ads CAPI + Meta CAPI + TikTok Events API + Microsoft Ads Conversions API + Snapchat CAPI. The attribution profile IS the payload — but the marketing module owns the wire boundary."
+    },
+    {
+      "module": "analytics",
+      "reference": "analytics::subprocessors.json (Wave 5)",
+      "used_for": "Behavioral event capture. Every analytics track/identify/page event snapshots the attribution profile as a property. Processors: Segment, PostHog, Amplitude (per-tenant configurable)."
+    },
+    {
+      "module": "referrals",
+      "reference": "referrals::subprocessors.json (Wave 5)",
+      "used_for": "Referral click matching. When the referrals module detects a referral-link click, it appends an attribution touchpoint via this module. No external processor engaged."
+    },
+    {
+      "module": "notifications",
+      "reference": "notifications::subprocessors.json",
+      "used_for": "Dispatching AttributionResetConfirmationNotification + AttributionMergeCompletedNotification + AttributionSuppressedByConsentNotification + AttributionChurnDetectedNotification via mail / SMS / push channels."
+    }
+  ],
+  "notes": [
+    "This file exists deliberately even with an empty subprocessors array. The GDPR Art. 30 record of processing activities requires per-module subprocessor lists; an empty list is the correct declaration for a module that engages none directly.",
+    "The attribution module is the source of truth for the frozen attribution snapshot. Downstream modules engage the ad networks and analytics processors — those subprocessor engagements are declared in the downstream modules, not here. This keeps the DPA (Data Processing Agreement) with each tenant precise about which module handles which subprocessor.",
+    "If a future Wave introduces a subprocessor into this module (e.g. a data-enrichment provider for reverse-IP-to-company lookup), add it here + update compliance.json Art. 28 evidence + refresh the tenant-facing subprocessor list. Currently there are NO plans for such enrichment — it would violate the module's data-minimisation stance."
+  ]
+}

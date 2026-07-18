@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/marketing/data/providers/google-ads-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Google Ads Enhanced Conversions provider config",
+  "description": "Configuration shape for a Google Ads Enhanced Conversions Upload integration.",
+  "type": "object",
+  "required": ["customer_id", "developer_token", "conversion_action_id", "refresh_token", "client_id", "client_secret"],
+  "additionalProperties": false,
+  "properties": {
+    "customer_id": {
+      "type": "string",
+      "pattern": "^[0-9]{10}$",
+      "description": "10-digit Google Ads customer ID (no dashes)."
+    },
+    "developer_token": {
+      "type": "string",
+      "minLength": 20,
+      "description": "Google Ads API developer token. Encrypted at rest."
+    },
+    "conversion_action_id": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "The conversion action ID configured in Google Ads for this event. One action per event_type."
+    },
+    "refresh_token": {
+      "type": "string",
+      "minLength": 20,
+      "description": "OAuth2 refresh token. Encrypted at rest."
+    },
+    "client_id": {
+      "type": "string",
+      "description": "OAuth2 client ID."
+    },
+    "client_secret": {
+      "type": "string",
+      "minLength": 20,
+      "description": "OAuth2 client secret. Encrypted at rest."
+    },
+    "login_customer_id": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9]{10}$",
+      "description": "Optional login customer ID for MCC-hierarchy access. When the developer token is bound to an MCC account, this identifies the login user."
+    },
+    "conversion_action_map": {
+      "type": ["object", "null"],
+      "description": "Optional per-event-type override of conversion_action_id. When present, keys are MarketingEventType values and values are per-event conversion action IDs. Falls back to the top-level conversion_action_id when no key matches.",
+      "patternProperties": {
+        "^[a-z_]+$": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15
+    }
+  }
+}

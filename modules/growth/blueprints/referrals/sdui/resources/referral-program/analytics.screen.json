@@ -1,0 +1,139 @@
+{
+  "id": "referrals.resources.referral-program.analytics",
+  "title": "Program analytics",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/referral-programs/:programId/analytics",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "referrals", "entity": "referral-program", "action": "analytics" },
+  "requiresPermission": "referral_programs.view-analytics",
+  "requiresEntitlement": "referrals_capture",
+  "dataSources": [
+    {
+      "name": "program",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/referral-programs/' + $params.programId",
+      "unwrap": "data"
+    },
+    {
+      "name": "rollup",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/referral-programs/' + $params.programId + '/analytics?window=30d'",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "topCodes",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/referral-codes?filter[referral_program_id]=' + $params.programId + '&sort=-usage_count&per_page=10'",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold" },
+          "bindings": { "children": { "$expr": "program.name + ' — analytics'" } }
+        },
+        {
+          "kind": "Grid",
+          "props": { "className": "grid grid-cols-2 lg:grid-cols-5 gap-4" },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Claims" } },
+                { "kind": "Text", "props": { "className": "text-2xl font-bold mt-1" }, "bindings": { "children": { "$ref": "rollup.claims_count" } } }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Signups" } },
+                { "kind": "Text", "props": { "className": "text-2xl font-bold mt-1" }, "bindings": { "children": { "$ref": "rollup.signups_count" } } }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Vested" } },
+                { "kind": "Text", "props": { "className": "text-2xl font-bold mt-1" }, "bindings": { "children": { "$ref": "rollup.vested_count" } } }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Rewarded" } },
+                { "kind": "Text", "props": { "className": "text-2xl font-bold mt-1" }, "bindings": { "children": { "$ref": "rollup.rewarded_count" } } }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Clawback" } },
+                { "kind": "Text", "props": { "className": "text-2xl font-bold mt-1 text-danger" }, "bindings": { "children": { "$ref": "rollup.clawback_count" } } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "bindings": { "hidden": { "$expr": "!program.max_rewards_per_program" } },
+          "children": [
+            { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Budget consumed" } },
+            {
+              "kind": "ProgressBar",
+              "bindings": {
+                "value": {
+                  "$expr": "(program.rewards_issued_amount_cents / program.max_rewards_per_program) * 100"
+                },
+                "maxValue": 100,
+                "variant": {
+                  "$expr": "(program.rewards_issued_amount_cents / program.max_rewards_per_program) > 0.9 ? 'danger' : ((program.rewards_issued_amount_cents / program.max_rewards_per_program) > 0.5 ? 'warning' : 'success')"
+                }
+              }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-xs text-muted mt-2" },
+              "bindings": {
+                "children": {
+                  "$expr": "formatMoney(program.rewards_issued_amount_cents, program.reward_currency_referrer || 'USD') + ' of ' + formatMoney(program.max_rewards_per_program, program.reward_currency_referrer || 'USD') + ' consumed'"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Top codes" } },
+            {
+              "kind": "Table",
+              "bindings": { "items": { "$ref": "topCodes" } },
+              "columns": [
+                { "key": "code", "label": "Code" },
+                { "key": "code_type", "label": "Type" },
+                { "key": "usage_count", "label": "Uses" },
+                { "key": "created_at", "label": "Created", "format": "date" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

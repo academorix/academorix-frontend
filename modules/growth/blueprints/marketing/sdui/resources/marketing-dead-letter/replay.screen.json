@@ -1,0 +1,120 @@
+{
+  "id": "marketing.resources.marketing-dead-letter.replay",
+  "title": "Replay dead letter",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/marketing/dead-letters/:deadLetterId/replay",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "marketing", "entity": "marketing-dead-letter", "action": "replay" },
+  "requiresPermission": "marketing.dead_letters.replay",
+  "requiresEntitlement": "marketing_dead_letter_replay",
+  "dataSources": [
+    {
+      "name": "dead_letter",
+      "kind": "http.get",
+      "url": "/api/v1/marketing/dead-letters/{{routeParams.deadLetterId}}",
+      "unwrap": "data"
+    },
+    {
+      "name": "event",
+      "kind": "http.get",
+      "url": "/api/v1/marketing/events/{{dead_letter.marketing_event_id}}",
+      "unwrap": "data",
+      "dependencies": ["dead_letter"]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-3xl mx-auto p-6 flex flex-col gap-6" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Replay dead letter" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Enqueue a fresh dispatch attempt against the provider." } }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Event" } },
+            {
+              "kind": "DescriptionList",
+              "props": {
+                "items": [
+                  { "label": "Event type", "field": "event.event_type" },
+                  { "label": "Subject", "expr": "event.subject_type + ' (' + event.subject_id + ')'" },
+                  { "label": "Value", "field": "event.value_amount_cents", "formatter": "currency", "currencyField": "event.value_currency" },
+                  { "label": "Captured at", "field": "event.created_at", "formatter": "datetime" }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Dead-letter details" } },
+            {
+              "kind": "DescriptionList",
+              "props": {
+                "items": [
+                  { "label": "Provider", "field": "dead_letter.provider" },
+                  { "label": "Reason", "field": "dead_letter.reason" },
+                  { "label": "Replay attempts", "field": "dead_letter.replay_attempts" },
+                  { "label": "Last replay at", "field": "dead_letter.last_replay_at", "formatter": "datetime-relative" },
+                  { "label": "Final error code", "field": "dead_letter.final_error_details.error_code" },
+                  { "label": "Final error message", "field": "dead_letter.final_error_details.error_message" }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "title": "Before replaying",
+            "description": "If the provider supports the event_id dedup contract (Meta CAPI, Google Ads), replay is idempotent. Otherwise the provider may record a duplicate conversion. Confirm the root cause has been fixed before replaying."
+          }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6 flex flex-col gap-3" },
+          "children": [
+            {
+              "kind": "TextArea",
+              "props": {
+                "label": "Replay note",
+                "placeholder": "Why is this being replayed? Written to audit trail.",
+                "required": true,
+                "rows": 3
+              },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "note", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "size": "lg", "leadingIcon": "arrow-path", "children": "Replay" },
+              "bindings": { "disabled": { "$expr": "!form.note || form.note.length < 10" } },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/marketing/dead-letters/{{dead_letter.id}}/replay",
+                  "body": { "note": "{{form.note}}" },
+                  "onSuccess": { "kind": "navigate", "to": "/tenant/marketing/dead-letters" }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

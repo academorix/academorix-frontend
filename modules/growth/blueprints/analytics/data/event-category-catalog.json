@@ -1,0 +1,87 @@
+{
+  "id": "academorix://modules/analytics/data/event-category-catalog",
+  "$version": 1,
+  "title": "analytics — event category taxonomy",
+  "description": "Closed set of AnalyticsEvent.category values. Each category has a description, a display label, an icon, retention behavior, and default consent requirements.",
+  "categories": [
+    {
+      "key": "feature_use",
+      "label": "Feature use",
+      "description": "Feature surfaces viewed / used / dismissed. The largest bucket by volume; captures product engagement patterns.",
+      "icon": "cursor-arrow-rays",
+      "color": "info",
+      "retention_days": 730,
+      "consent_default": "analytics"
+    },
+    {
+      "key": "funnel_step",
+      "label": "Funnel step",
+      "description": "Steps in a defined funnel (signup, onboarding, checkout, feature-adoption). Powers the funnel report.",
+      "icon": "funnel",
+      "color": "primary",
+      "retention_days": 1825,
+      "retention_note": "Longer retention by default \u2014 funnel windows > 1yr are useful for enterprise cohort analysis.",
+      "consent_default": "analytics",
+      "consent_exceptions": ["payment_succeeded", "subscription_upgraded", "invoice_paid — use essential consent"]
+    },
+    {
+      "key": "cta",
+      "label": "Call to action",
+      "description": "Explicit user actions on interactive surfaces (button clicks, form submits, link follows).",
+      "icon": "cursor-arrow-ripple",
+      "color": "accent",
+      "retention_days": 730,
+      "consent_default": "analytics"
+    },
+    {
+      "key": "error",
+      "label": "Error",
+      "description": "Errors the user encountered (validation failures, rate limits, application errors). Useful for UX + reliability triage.",
+      "icon": "exclamation-triangle",
+      "color": "danger",
+      "retention_days": 365,
+      "retention_note": "Shorter retention \u2014 error volume is high, decays in usefulness after a quarter.",
+      "consent_default": "functional",
+      "consent_note": "Errors are treated as `functional` consent (they help the platform operate correctly) rather than `analytics`."
+    },
+    {
+      "key": "performance",
+      "label": "Performance",
+      "description": "Timing signals (screen load, API call duration). Similar to monitoring metrics but subject-scoped so we can attribute perf issues to specific users/regions.",
+      "icon": "bolt",
+      "color": "warning",
+      "retention_days": 180,
+      "consent_default": "functional"
+    },
+    {
+      "key": "experiment",
+      "label": "Experiment",
+      "description": "A/B experiment variant assignments + exposures. Powers ExperimentAssignmentReportBuilder.",
+      "icon": "beaker",
+      "color": "secondary",
+      "retention_days": 1825,
+      "retention_note": "Long retention \u2014 experiment analysis spans months.",
+      "consent_default": "analytics"
+    },
+    {
+      "key": "lifecycle",
+      "label": "Lifecycle",
+      "description": "User + subscription lifecycle milestones (registered, activated, upgraded, downgraded, churned).",
+      "icon": "user-plus",
+      "color": "success",
+      "retention_days": 1825,
+      "consent_default": "essential",
+      "consent_note": "Lifecycle events use `essential` consent \u2014 they're operationally required (business audit trail)."
+    },
+    {
+      "key": "session",
+      "label": "Session",
+      "description": "Session lifecycle (session_started, session_ended).",
+      "icon": "clock",
+      "color": "muted",
+      "retention_days": 90,
+      "retention_note": "Short retention \u2014 session-level granularity is aggregated into feature_use + funnel over time.",
+      "consent_default": "functional"
+    }
+  ]
+}

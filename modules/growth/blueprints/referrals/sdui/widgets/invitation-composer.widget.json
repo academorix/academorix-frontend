@@ -1,0 +1,183 @@
+{
+  "id": "referrals.invitation-composer",
+  "title": "Invitation composer",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "The /me/invitations composer. Multi-recipient email input (chip-based) + channel toggle (email/SMS) + template selector + preview + send. Rate-limit indicator shows X/100 daily. Refuses submit when disposable emails detected.",
+  "props": {
+    "userReferralCode": { "type": "object", "required": true, "description": "The user's active user_scoped code + share_url + program_summary." },
+    "dailyLimit": { "type": "integer", "default": 100 },
+    "dailyUsed": { "type": "integer", "default": 0 },
+    "maxPerRequest": { "type": "integer", "default": 10 }
+  },
+  "actions": {
+    "onSend": {
+      "description": "Fires when the user submits. Payload: { recipient_emails: string[], channel: 'email'|'sms', template_slug: string }."
+    }
+  },
+  "dataSources": [
+    {
+      "name": "templates",
+      "kind": "static",
+      "path": "modules/growth/blueprints/referrals/data/invitation-template-samples.json"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Card",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h3", "className": "font-semibold text-lg", "children": "Invite friends" }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm text-muted" },
+              "bindings": {
+                "children": {
+                  "$expr": "'Your friends get ' + props.userReferralCode.program_summary.reward_summary_referred + ' — you get ' + props.userReferralCode.program_summary.reward_summary_referrer + '.'"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between p-3 bg-neutral-subtle rounded-md" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted", "children": "Your referral code" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-mono font-medium" },
+                  "bindings": { "children": { "$ref": "props.userReferralCode.code" } }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "ghost",
+                "size": "sm",
+                "leadingIcon": "clipboard",
+                "children": "Copy link"
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "clipboard.copy",
+                  "textExpr": "props.userReferralCode.share_url"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "ComboBox",
+          "props": { "label": "Channel", "menuTrigger": "focus" },
+          "props_items": [
+            { "id": "email", "label": "Email" },
+            { "id": "sms", "label": "SMS (usage charged)" }
+          ],
+          "form": { "field": "channel", "defaultValue": "email" }
+        },
+        {
+          "kind": "ComboBox",
+          "props": { "label": "Template", "menuTrigger": "focus" },
+          "bindings": {
+            "items": {
+              "$expr": "templates.templates.filter(t => t.channel === (form.channel || 'email')).map(t => ({ id: t.slug, label: t.display_name, description: t.description }))"
+            }
+          },
+          "form": { "field": "template_slug", "defaultValue": "generic-friend-invite" }
+        },
+        {
+          "kind": "TagGroup",
+          "props": {
+            "label": "Recipient emails",
+            "description": "Paste up to {props.maxPerRequest} email addresses. Press Enter after each.",
+            "isRequired": true
+          },
+          "form": { "field": "recipient_emails" },
+          "bindings": {
+            "maxItems": { "$ref": "props.maxPerRequest" }
+          }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between text-xs text-muted" },
+          "children": [
+            {
+              "kind": "Text",
+              "bindings": {
+                "children": {
+                  "$expr": "'You have sent ' + props.dailyUsed + ' of ' + props.dailyLimit + ' invitations today.'"
+                }
+              }
+            },
+            {
+              "kind": "Chip",
+              "bindings": {
+                "variant": {
+                  "$expr": "props.dailyUsed / props.dailyLimit > 0.9 ? 'warning' : (props.dailyUsed / props.dailyLimit > 0.7 ? 'info' : 'neutral')"
+                },
+                "size": "xs",
+                "children": {
+                  "$expr": "Math.round((1 - props.dailyUsed / props.dailyLimit) * 100) + '% remaining'"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "bindings": {
+            "hidden": {
+              "$expr": "props.dailyUsed / props.dailyLimit < 0.9"
+            },
+            "variant": "warning",
+            "children": "You're near your daily invitation cap. Save the rest for tomorrow."
+          }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2 pt-2" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "paper-airplane",
+                "children": "Send invitations",
+                "isDisabled": {
+                  "$expr": "!form.recipient_emails || form.recipient_emails.length === 0 || props.dailyUsed >= props.dailyLimit"
+                }
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/me/invitations",
+                  "bodyExpr": "{ recipient_emails: form.recipient_emails, channel: form.channel || 'email', template_slug: form.template_slug || 'generic-friend-invite' }",
+                  "onSuccess": {
+                    "kind": "emit",
+                    "event": "onSend",
+                    "payloadExpr": "form"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

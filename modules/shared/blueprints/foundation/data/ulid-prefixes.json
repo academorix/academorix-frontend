@@ -53,6 +53,11 @@
       "entity": "AthleteGuardian",
       "description": "Parent / legal-guardian pivot binding an Athlete to a User. Exactly one is_primary=true per Athlete when any exists. Four role flags (has_legal_custody, can_pickup, can_receive_communications, can_authorise_medical_care). Verification workflow with auto/hr/silent paths."
     },
+    "aid_": {
+      "module": "analytics",
+      "entity": "AnalyticsIdentity",
+      "description": "Identity resolution table. Maps anonymous_id (uuid, browser/device generated on first visit) → identified_user_id as soon as the user identifies. device_fingerprint_hash (SHA-256) — NEVER raw fingerprint. Used ONLY for anti-abuse (coordinated signup detection). merged_from array preserves alias merge trail. 1-year retention post-identify per GDPR minimisation."
+    },
     "ajd_": {
       "module": "auth",
       "entity": "JwtDenyListEntry",
@@ -67,6 +72,21 @@
       "module": "auth",
       "entity": "AuthMfaChallenge",
       "description": "Auth-side pending MFA challenge ledger row. Shared with mfa module (mfc_ is mfa's alias for the same shape)."
+    },
+    "and_": {
+      "module": "analytics",
+      "entity": "AnalyticsDelivery",
+      "description": "Per-provider-per-attempt delivery log. One row per (event × provider × attempt). Contains request payload, provider response, HTTP status, latency, and (on failure) error details + next_retry_at. 90-day retention — debugging window past which provider-side dashboards are authoritative. batch_id links deliveries flushed in a single batch job."
+    },
+    "ane_": {
+      "module": "analytics",
+      "entity": "AnalyticsEvent",
+      "description": "Canonical behavioral event ledger. One row per business event captured. Immutable after terminal status (delivered / partially_delivered / suppressed_by_consent / suppressed_by_sampling / suppressed_by_provider_off). Snapshots attribution + consent + context at CREATE time (frozen). Server-side authoritative for events browsers drop to ad-blockers + iOS ITP. Consent-gated on `analytics` category (distinct from marketing). 2-year retention (5-year with analytics_extended_retention)."
+    },
+    "apc_": {
+      "module": "analytics",
+      "entity": "AnalyticsProviderConfig",
+      "description": "Per-tenant provider configuration. Encrypted config jsonb (API keys, project IDs, host URLs). enabled_event_types + sampling_rate + batch_config filter which events fan out. Circuit-breaker state (5-strike / 60s window / half-open probe). Seven providers: posthog, amplitude, mixpanel, segment, june, google_analytics_4 (analytics catalog, distinct from marketing), custom_webhook."
     },
     "apd_": {
       "module": "approvals",
@@ -114,10 +134,20 @@
       "entity": "Athlete",
       "description": "The person being coached. Belongs to Tenant + Branch + optional User. Snapshot demographic + medical (REGULATED_HEALTH) + emergency contact (CONFIDENTIAL) profile with 7-year retention + 90-day post-archive redaction. Consent snapshot per GDPR Art. 8 for minors."
     },
+    "atp_": {
+      "module": "attribution",
+      "entity": "AttributionTouchpoint",
+      "description": "Append-only touchpoint ledger. One row per attribution-bearing HTTP request. NEVER mutated after commit (except metadata jsonb). NO SoftDeletes — hard-delete only via retention purge, reset audit hold, or TenantErased cascade. Denormalised subject_type + subject_id for direct index-driven queries."
+    },
     "atr_": {
       "module": "auth",
       "entity": "RefreshToken",
       "description": "Refresh token in the rotation-with-reuse-detection chain. Polymorphic tokenable, family_id for lockdown cascade."
+    },
+    "att_": {
+      "module": "attribution",
+      "entity": "Attribution",
+      "description": "Per-subject rolling attribution profile. Polymorphic subject (user / athlete / lead / anonymous_session). First-touch fields IMMUTABLE post-create. Lifecycle: anonymous → identified → converted → churned. Consent-gated at capture (marketing category). Cascades through tenant_id only — NEVER carries application_id / region_id / organization_id / branch_id / scope_node_id."
     },
     "aud_": {
       "module": "audit",
@@ -302,10 +332,30 @@
       "entity": "PlatformLanguage",
       "description": "Curated per-platform language row (BCP-47 tag + display metadata + is_beta flag)."
     },
+    "mdl_": {
+      "module": "marketing",
+      "entity": "MarketingDeadLetter",
+      "description": "Max-attempts-exceeded events for manual replay. Every fire is P1 — the event is a paid conversion signal that never reached the ad network. Reasons: max_attempts_exceeded / provider_permanent_failure / circuit_breaker_max_opens / invalid_payload / auth_failure. 7-year retention (financial audit). Replay + resolve workflow with ops audit trail."
+    },
+    "mdv_": {
+      "module": "marketing",
+      "entity": "MarketingDelivery",
+      "description": "Per-provider-per-attempt delivery log. One row per (event × provider × attempt). Captures request payload (encrypted at rest), response, HTTP status, latency, error details, next_retry_at. 2-year retention (support debugging window). Suppression states: suppressed_by_consent / suppressed_by_circuit_breaker / suppressed_by_provider_off / rate_limited."
+    },
+    "mev_": {
+      "module": "marketing",
+      "entity": "MarketingEvent",
+      "description": "Canonical marketing event ledger. One row per captured business milestone (signup, trial_started, subscription_started, membership_purchased, athlete_enrolled, refund_issued, chargeback_filed, ...). Attribution + consent snapshotted at CREATE time (frozen). 7-year retention (financial audit). Immutable after terminal status. Composite unique (tenant_id, deduplication_key) prevents double-fire."
+    },
     "mfc_": {
       "module": "mfa",
       "entity": "MfaChallenge",
       "description": "Ephemeral in-flight MFA challenge. Shared ledger owned by identity/auth; schema documented in mfa module."
+    },
+    "mpc_": {
+      "module": "marketing",
+      "entity": "MarketingProviderConfig",
+      "description": "Per-tenant provider config. One active row per (tenant, provider). Encrypted config jsonb (pixel_id, access_token, customer_id, api_secret, webhook_url, hmac_secret). Holds circuit-breaker state (consecutive_failure_count, circuit_breaker_open_until, reset_count), retry config (backoff schedule + max_attempts), rate-limit ceilings, test-mode flag + test_event_code. Nine providers: meta_capi, google_ads, google_analytics_4, gtm_server, tiktok_events, linkedin_insight, snapchat_capi, pinterest_capi, custom_webhook."
     },
     "nla_": {
       "module": "newsletter",
@@ -390,10 +440,20 @@
       "entity": "PlanSubscription",
       "description": "Active subscription binding a tenant to a Plan."
     },
+    "rcd_": {
+      "module": "referrals",
+      "entity": "ReferralCode",
+      "description": "Referral code entry. code_type: user_scoped (per-user, generated on account activation) / campaign (admin-picked, e.g. SUMMER25) / opaque (random). Usage caps + expiry + is_active. Composite unique (tenant, code) among non-deleted rows."
+    },
     "rdf_": {
       "module": "rbac",
       "entity": "RoleDefinition",
       "description": "Academorix metadata layer for system roles - business_type default provisioning, i18n labels, min-tier gating."
+    },
+    "ref_": {
+      "module": "referrals",
+      "entity": "Referral",
+      "description": "Tracked referrer × referred × program × code instance. Captures attribution_snapshot from growth::attribution + device_snapshot (SHA-256 hashes only) at claim time. Fraud score 0..100 from FraudDetector. State machine: pending_claim → claimed → signed_up → trigger_pending → vesting → vested → rewarded, with cancelled / expired / fraudulent branch outs. Composite unique (tenant, program, referrer, referred) prevents double-referral."
     },
     "reg_": {
       "module": "region",
@@ -401,10 +461,25 @@
       "description": "Commercial + regulatory zone belonging to a Tenant. Currency + timezone + locale + tax_config + weekend_days. Orthogonal to Organization; they meet at Branch. Every tenant provisions exactly one is_default=true Region on TenantProvisioned.",
       "promoted_from_reserved": true
     },
+    "rfr_": {
+      "module": "referrals",
+      "entity": "ReferralFraudFlag",
+      "description": "Rule-based fraud detection finding. flag_type: self_ip_match / device_fingerprint_match / disposable_email / self_email_variant / velocity_exceeded / click_storm_pattern / blacklist_domain / geographic_mismatch / behavioral_anomaly. Severity (warn / block / critical) + confidence (0..100) + supporting evidence jsonb. Review workflow: unreviewed → confirmed_fraud / false_positive / manual_override_approved. 7-year retention."
+    },
     "rol_": {
       "module": "rbac",
       "entity": "Role",
       "description": "Spatie-extended role row with (application_id, tenant_id, is_system, description, sort_order)."
+    },
+    "rpg_": {
+      "module": "referrals",
+      "entity": "ReferralProgram",
+      "description": "Per-tenant referral program config. Reward type (percent_discount / fixed_amount / free_months / free_sessions / credits / point_award) × amount × currency, single_sided or double_sided, trigger_event, vesting_rule (immediate / trigger_plus_hold_days / after_refund_window_closes / n_events_completed / manual_approval), fraud_config, eligibility_config, program budget caps. Program state: draft → active → paused → archived."
+    },
+    "rrw_": {
+      "module": "referrals",
+      "entity": "ReferralReward",
+      "description": "Per-referral reward record. One row per recipient_role (referrer / referred) per referral. Vesting timeline (vesting_starts_at → vesting_completes_at → materialized_at → paid_at). Materializes as Finance credits (Wave 4 finance module). Clawback on refund / chargeback / fraud / program_archived reverses paid rewards. 7-year retention (tax audit — issued rewards over IRS threshold require 1099 reporting)."
     },
     "rtr_": {
       "module": "compliance",

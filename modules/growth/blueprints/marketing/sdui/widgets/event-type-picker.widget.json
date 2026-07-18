@@ -1,0 +1,50 @@
+{
+  "id": "marketing.event-type-picker",
+  "title": "Event type picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Multi-select for enabled_event_types on a marketing_provider_config. Filters the event_type catalogue to values supported by the selected provider (per data/provider-capability-matrix.json). Displays disabled state for unsupported event_types.",
+  "props": {
+    "provider": {
+      "type": "string",
+      "required": true,
+      "description": "The provider slug. Determines which event_types are selectable."
+    },
+    "supported_event_types": {
+      "type": "array",
+      "required": true,
+      "description": "The provider's supports() list from data/provider-capability-matrix.json."
+    },
+    "selected": {
+      "type": "array",
+      "default": [],
+      "description": "Currently-selected event_types (used as initialValues in edit mode)."
+    }
+  },
+  "dataSources": [
+    {
+      "name": "catalog",
+      "kind": "static",
+      "source": "marketing.event-type-catalog"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "CheckboxGroup",
+      "props": { "className": "grid grid-cols-1 md:grid-cols-2 gap-2" },
+      "bindings": {
+        "items": {
+          "$expr": "catalog.event_types.map(t => ({ id: t.event_type, label: t.display_name, description: t.description, disabled: !props.supported_event_types.includes(t.event_type), checked: props.selected.includes(t.event_type) }))"
+        }
+      },
+      "actions": {
+        "onSelectionChange": {
+          "kind": "form.set",
+          "field": "enabled_event_types",
+          "valueExpr": "$selectedKeys"
+        }
+      }
+    }
+  ]
+}

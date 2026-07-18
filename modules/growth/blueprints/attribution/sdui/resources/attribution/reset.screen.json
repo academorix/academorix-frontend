@@ -1,0 +1,128 @@
+{
+  "id": "attribution.resources.attribution.reset",
+  "title": "Reset attribution",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/attributions/:attributionId/reset",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "attribution", "entity": "attribution", "action": "reset" },
+  "requiresPermission": "attribution.reset",
+  "requiresEntitlement": "attribution_capture",
+  "dataSources": [
+    {
+      "name": "attribution",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/attributions/' + params.attributionId",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-2xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Reset attribution (GDPR)" } },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted mt-1",
+                "children": "GDPR Art. 17 right-to-erasure. This action redacts the profile immediately and hard-deletes every associated touchpoint 90 days from now (audit hold)."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "danger" },
+          "children": [
+            { "kind": "Text", "props": { "className": "font-medium", "children": "Immediate + irreversible." } },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm mt-1",
+                "children": "The subject's marketing / advertising / personalized-advertising consent will be treated as revoked going forward. Downstream marketing / analytics / referrals events that already captured this attribution snapshot RETAIN their frozen copy — the reset only erases the source profile."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            { "kind": "Text", "props": { "className": "text-sm font-semibold uppercase text-muted mb-3", "children": "What will be erased" } },
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col gap-1 text-sm" },
+              "children": [
+                { "kind": "Text", "bindings": { "children": { "$expr": "'Subject: ' + attribution.subject_type + ' ' + attribution.subject_id" } } },
+                { "kind": "Text", "bindings": { "children": { "$expr": "'First-touch: ' + attribution.first_touch_source + ' / ' + (attribution.first_touch_campaign || 'no campaign') + ' at ' + attribution.first_touch_at" } } },
+                { "kind": "Text", "bindings": { "children": { "$expr": "attribution.touchpoint_count + ' touchpoints scheduled for hard-delete on ' + computeDate(90, 'days')" } } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "TextArea",
+          "props": {
+            "label": "Reason (required for audit)",
+            "placeholder": "e.g. User requested erasure via support ticket #12345",
+            "required": true
+          },
+          "actions": {
+            "onChange": { "kind": "form.set", "field": "reason", "valueExpr": "$value" }
+          }
+        },
+        {
+          "kind": "Checkbox",
+          "props": {
+            "label": "I confirm this is a valid data-subject erasure request (GDPR Art. 17 / CCPA § 1798.105)."
+          },
+          "actions": {
+            "onChange": { "kind": "form.set", "field": "subject_confirms_gdpr_request", "valueExpr": "$value" }
+          }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-end gap-2 mt-4" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "secondary", "children": "Cancel" },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/attributions/' + params.attributionId"
+                }
+              }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "danger", "leadingIcon": "trash", "children": "Reset attribution" },
+              "bindings": {
+                "disabled": {
+                  "$expr": "!form.subject_confirms_gdpr_request || !form.reason || form.reason.trim().length === 0"
+                }
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "urlExpr": "'/api/v1/attributions/' + params.attributionId + '/reset'",
+                  "bodyExpr": "{ reason: form.reason, subject_confirms_gdpr_request: form.subject_confirms_gdpr_request }",
+                  "onSuccess": {
+                    "kind": "navigate",
+                    "to": "/tenant/attributions"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

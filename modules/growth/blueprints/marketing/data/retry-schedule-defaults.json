@@ -1,0 +1,49 @@
+{
+  "$version": 1,
+  "title": "Retry schedule defaults per provider",
+  "description": "Default retry_config values baked into new marketing_provider_configs. Every attempt after the first waits the specified backoff_seconds[i] before the next attempt (where i = attempt_number - 1). max_attempts determines when the delivery is dead-lettered.",
+  "defaults": {
+    "meta_capi": {
+      "max_attempts": 6,
+      "backoff_seconds": [60, 300, 1800, 7200, 43200, 86400],
+      "notes": "Standard exponential backoff: 1m / 5m / 30m / 2h / 12h / 24h. Meta CAPI's own retry advice matches this cadence."
+    },
+    "google_ads": {
+      "max_attempts": 6,
+      "backoff_seconds": [60, 300, 1800, 7200, 43200, 86400],
+      "notes": "Standard schedule."
+    },
+    "google_analytics_4": {
+      "max_attempts": 4,
+      "backoff_seconds": [60, 300, 1800, 7200],
+      "notes": "Shorter schedule — GA4 accepts most payloads; if 4 attempts fail, it's not going to succeed on later attempts."
+    },
+    "gtm_server": {
+      "max_attempts": 6,
+      "backoff_seconds": [60, 300, 1800, 7200, 43200, 86400],
+      "notes": "Standard schedule — caller-hosted endpoints may need extended windows during their maintenance."
+    },
+    "tiktok_events": {
+      "max_attempts": 6,
+      "backoff_seconds": [60, 300, 1800, 7200, 43200, 86400]
+    },
+    "linkedin_insight": {
+      "max_attempts": 6,
+      "backoff_seconds": [120, 600, 3600, 14400, 86400, 172800],
+      "notes": "Longer backoff — LinkedIn's outages last 2-4h historically. Schedule matches: 2m / 10m / 1h / 4h / 24h / 48h."
+    },
+    "snapchat_capi": {
+      "max_attempts": 6,
+      "backoff_seconds": [60, 300, 1800, 7200, 43200, 86400]
+    },
+    "pinterest_capi": {
+      "max_attempts": 6,
+      "backoff_seconds": [60, 300, 1800, 7200, 43200, 86400]
+    },
+    "custom_webhook": {
+      "max_attempts": 8,
+      "backoff_seconds": [30, 60, 300, 1800, 7200, 43200, 86400, 259200],
+      "notes": "More attempts for caller-hosted endpoints (tenant may be fixing their side). Extended tail — final attempt at 72h."
+    }
+  }
+}

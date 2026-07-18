@@ -1,0 +1,126 @@
+{
+  "$version": 1,
+  "title": "Referral fraud flag catalogue",
+  "description": "Every valid flag_type + the expected `details` JSONB shape + suggested severity + suggested confidence-scoring inputs. The ReferralFraudFlagObserver validates details.shape against this catalogue at create time.",
+  "flag_types": [
+    {
+      "flag_type": "self_ip_match",
+      "display_name": "Self-IP match",
+      "description": "The referrer and referred share an IP hash within a 90-day window. Strong signal of self-referral or same-household refund abuse.",
+      "typical_severity": "block",
+      "confidence_inputs": ["ip_hash_matched", "days_between_referrals"],
+      "details_shape": {
+        "matched_ip_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$", "description": "SHA-256 hex" },
+        "referrer_ip_matched_at": { "type": "string", "format": "date-time" },
+        "referred_ip_matched_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    {
+      "flag_type": "device_fingerprint_match",
+      "display_name": "Device fingerprint match",
+      "description": "Referrer + referred share a device fingerprint hash. Same-device self-referral signal.",
+      "typical_severity": "block",
+      "confidence_inputs": ["device_hash_matched", "browser_version_matched", "os_matched"],
+      "details_shape": {
+        "matched_device_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "matched_browser_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "matched_os_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    {
+      "flag_type": "disposable_email",
+      "display_name": "Disposable email",
+      "description": "Referred email domain matches the known-disposable list (data/disposable-email-domains.json).",
+      "typical_severity": "warn",
+      "confidence_inputs": ["domain_in_list"],
+      "details_shape": {
+        "email_domain": { "type": "string" },
+        "list_source": { "type": "string", "enum": ["data/disposable-email-domains.json"] }
+      }
+    },
+    {
+      "flag_type": "self_email_variant",
+      "display_name": "Self-email variant",
+      "description": "Referred email is a plus-addressing variant of the referrer's email (alice@example.com + alice+ref@example.com).",
+      "typical_severity": "warn",
+      "confidence_inputs": ["local_part_matched", "domain_matched"],
+      "details_shape": {
+        "referrer_email_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "referred_email_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "match_pattern": { "type": "string", "enum": ["plus_addressing", "dot_notation", "subdomain"] }
+      }
+    },
+    {
+      "flag_type": "velocity_exceeded",
+      "display_name": "Velocity exceeded",
+      "description": "The referrer submitted > max_referrals_per_hour in the last 60 min.",
+      "typical_severity": "warn",
+      "confidence_inputs": ["velocity_ratio", "referrer_history"],
+      "details_shape": {
+        "velocity_window_seconds": { "type": "integer" },
+        "count_in_window": { "type": "integer" },
+        "threshold": { "type": "integer" },
+        "referrer_recent_referral_ids": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    {
+      "flag_type": "click_storm_pattern",
+      "display_name": "Click storm pattern",
+      "description": "> 10 claims from the same IP in 10 min without subsequent signups. Suggests scraper / bot activity.",
+      "typical_severity": "warn",
+      "confidence_inputs": ["click_count", "time_window", "signup_rate"],
+      "details_shape": {
+        "matched_pattern": { "type": "string", "enum": ["burst", "sustained", "periodic"] },
+        "click_count": { "type": "integer" },
+        "time_window_seconds": { "type": "integer" },
+        "signup_conversion_rate": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    {
+      "flag_type": "blacklist_domain",
+      "display_name": "Blacklist domain",
+      "description": "Referred email domain is in the tenant's per-program blacklist (fraud_config.blacklist_domains).",
+      "typical_severity": "block",
+      "confidence_inputs": ["domain_in_blacklist"],
+      "details_shape": {
+        "email_domain": { "type": "string" },
+        "matched_blacklist_entry": { "type": "string" }
+      }
+    },
+    {
+      "flag_type": "geographic_mismatch",
+      "display_name": "Geographic mismatch",
+      "description": "Referrer + referred IP geolocation differs by > 5000km. VPN abuse signal — not conclusive on its own.",
+      "typical_severity": "warn",
+      "confidence_inputs": ["geo_distance_km"],
+      "details_shape": {
+        "referrer_country_hint": { "type": "string", "pattern": "^[A-Z]{2}$" },
+        "referred_country_hint": { "type": "string", "pattern": "^[A-Z]{2}$" },
+        "distance_km": { "type": "integer" }
+      }
+    },
+    {
+      "flag_type": "behavioral_anomaly",
+      "display_name": "Behavioral anomaly",
+      "description": "Composite heuristic combining several soft signals (rapid claim -> signup -> trigger; no in-app engagement between events; abnormal timezone drift). No single sub-signal fires alone; the composite score does.",
+      "typical_severity": "warn",
+      "confidence_inputs": ["signal_count", "composite_score"],
+      "details_shape": {
+        "matched_signals": { "type": "array", "items": { "type": "string" } },
+        "composite_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "notes": { "type": "string" }
+      }
+    }
+  ],
+  "severity_defaults": {
+    "warn": "Creates a flag; referral proceeds. Ops can review later.",
+    "block": "Creates a flag; referral proceeds only if fraud_score is below hard_block_threshold. Blocks vesting until admin reviews.",
+    "critical": "Creates a flag; parent Referral immediately transitions to status='fraudulent'. Cascades rewards to clawback."
+  },
+  "notes": [
+    "flag_type + severity + confidence + details are IMMUTABLE post-create. Only disposition + reviewed_* fields mutate.",
+    "The ReferralFraudFlagObserver validates the `details` JSONB shape at create time against this catalogue.",
+    "Every fraud flag is retained 7 years hard (no soft-delete) per SOC 2 + ISO 27001 fraud audit trail retention.",
+    "Adding a new flag_type requires: (1) update this catalogue; (2) implement the rule in FraudDetector; (3) update the ReferralFraudFlagType enum cast; (4) add SDUI copy for the new type; (5) migration to widen the flag_type enum in Postgres."
+  ]
+}

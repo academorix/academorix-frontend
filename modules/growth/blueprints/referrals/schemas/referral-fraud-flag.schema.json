@@ -1,0 +1,149 @@
+{
+  "id": "academorix://modules/referrals/schemas/referral-fraud-flag",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ReferralFraudFlag",
+  "description": "Detection finding per referral. 9 flag_types × 3 severities × 4 dispositions. Immutable except for the review fields (disposition, reviewed_at, reviewed_by_user_id). Carries `tenant_id` + `referral_id`. Retained 7 years hard (no soft-delete). NEVER carries application_id / region_id / organization_id / branch_id / scope_node_id.",
+  "type": "object",
+  "x-module": "referrals",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "referral_fraud_flags",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "rfr_",
+    "incrementing": false,
+    "model": "Academorix\\Growth\\Referrals\\Models\\ReferralFraudFlag",
+    "interface": "Academorix\\Growth\\Referrals\\Contracts\\Data\\ReferralFraudFlagInterface",
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToReferral",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable"
+    ],
+    "casts": {
+      "flag_type": "ReferralFraudFlagType",
+      "severity": "ReferralFraudFlagSeverity",
+      "confidence": "integer",
+      "details": "array",
+      "disposition": "ReferralFraudFlagDisposition",
+      "reviewed_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["ReferralFraudFlagObserver"],
+    "appends": ["is_unreviewed", "days_since_detected"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `rfr_<26>`." },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "referral_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "referrals", "column": "id", "onDelete": "restrict" }
+      },
+      "flag_type": {
+        "type": "string",
+        "length": 48,
+        "nullable": false,
+        "description": "Enum: self_ip_match / device_fingerprint_match / disposable_email / self_email_variant / velocity_exceeded / click_storm_pattern / blacklist_domain / geographic_mismatch / behavioral_anomaly."
+      },
+      "severity": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: warn / block / critical. Critical severity immediately cascades parent Referral to status=fraudulent."
+      },
+      "confidence": {
+        "type": "integer",
+        "nullable": false,
+        "description": "0..100. Higher = higher certainty the flag is a true positive."
+      },
+      "details": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Supporting evidence. Shape varies per flag_type — see data/fraud-flag-catalog.json for the per-type schema."
+      },
+      "reviewed_at": { "type": "timestamptz", "nullable": true },
+      "reviewed_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "disposition": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: unreviewed (null) / confirmed_fraud / false_positive / manual_override_approved."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "referral_id", "flag_type"], "name": "referral_fraud_flags_referral_type_idx" },
+      { "columns": ["tenant_id", "severity", "disposition"], "name": "referral_fraud_flags_review_queue_idx", "predicate": "disposition IS NULL" },
+      { "columns": ["tenant_id", "flag_type", "created_at"], "name": "referral_fraud_flags_type_recent_idx" },
+      { "columns": ["tenant_id", "reviewed_by_user_id"], "name": "referral_fraud_flags_reviewer_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "referral_id",
+    "flag_type",
+    "severity",
+    "confidence",
+    "details",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^rfr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "referral_id": { "type": "string", "pattern": "^ref_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "flag_type": {
+      "type": "string",
+      "enum": ["self_ip_match", "device_fingerprint_match", "disposable_email", "self_email_variant", "velocity_exceeded", "click_storm_pattern", "blacklist_domain", "geographic_mismatch", "behavioral_anomaly"]
+    },
+    "severity": { "type": "string", "enum": ["warn", "block", "critical"] },
+    "confidence": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "details": {
+      "type": "object",
+      "description": "Per-flag_type evidence shape. See data/fraud-flag-catalog.json for the per-type spec."
+    },
+    "reviewed_at": { "type": ["string", "null"], "format": "date-time" },
+    "reviewed_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "disposition": {
+      "type": ["string", "null"],
+      "enum": [null, "confirmed_fraud", "false_positive", "manual_override_approved"]
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "flag_type + severity + confidence + details IMMUTABLE after create",
+    "disposition + reviewed_at + reviewed_by_user_id set atomically on review",
+    "disposition=manual_override_approved requires `referrals_manual_override` entitlement (Enterprise-only)",
+    "severity=critical cascades parent Referral to status=fraudulent",
+    "disposition=confirmed_fraud cascades parent Referral to status=fraudulent + clawback rewards",
+    "NO SoftDeletes — retained 7 years hard for fraud audit",
+    "parent Referral.tenant_id must match flag.tenant_id (cross-tenant guard)"
+  ]
+}

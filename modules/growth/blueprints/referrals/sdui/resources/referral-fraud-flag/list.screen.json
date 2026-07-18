@@ -1,0 +1,123 @@
+{
+  "id": "referrals.resources.referral-fraud-flag.list",
+  "title": "Fraud review queue",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/referral-fraud-flags",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "referrals", "entity": "referral-fraud-flag", "action": "list" },
+  "requiresPermission": "referral_fraud_flags.viewAny",
+  "requiresEntitlement": "referrals_fraud_detection",
+  "dataSources": [
+    {
+      "name": "flags",
+      "kind": "http.get",
+      "url": "/api/v1/referral-fraud-flags",
+      "unwrap": "data",
+      "queryFromFilters": true,
+      "defaultFilters": { "reviewed": false }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Fraud review queue" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Flags awaiting review. Confirm fraud (cancels referral + clawbacks rewards), dismiss as false positive, or manual-override to permit the referral." } }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Severity", "menuTrigger": "focus" },
+              "props_items": [
+                { "id": "warn", "label": "Warn" },
+                { "id": "block", "label": "Block" },
+                { "id": "critical", "label": "Critical" }
+              ],
+              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "severity", "valueExpr": "$selectedKey" } }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Flag type", "menuTrigger": "focus" },
+              "props_items": [
+                { "id": "self_ip_match", "label": "Self IP match" },
+                { "id": "device_fingerprint_match", "label": "Device fingerprint match" },
+                { "id": "disposable_email", "label": "Disposable email" },
+                { "id": "self_email_variant", "label": "Self email variant" },
+                { "id": "velocity_exceeded", "label": "Velocity exceeded" },
+                { "id": "click_storm_pattern", "label": "Click storm" },
+                { "id": "blacklist_domain", "label": "Blacklist domain" },
+                { "id": "geographic_mismatch", "label": "Geographic mismatch" },
+                { "id": "behavioral_anomaly", "label": "Behavioral anomaly" }
+              ],
+              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "flag_type", "valueExpr": "$selectedKey" } }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Reviewed?", "menuTrigger": "focus" },
+              "props_items": [
+                { "id": "false", "label": "Unreviewed" },
+                { "id": "true", "label": "Reviewed" }
+              ],
+              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "reviewed", "valueExpr": "$selectedKey" } }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "bindings": {
+            "items": { "$ref": "flags" },
+            "isLoading": { "$ref": "flags.isLoading" }
+          },
+          "columns": [
+            {
+              "key": "flag_type",
+              "label": "Flag type",
+              "renderer": {
+                "kind": "Text",
+                "bindings": { "children": { "$expr": "row.flag_type.replace(/_/g, ' ')" } }
+              }
+            },
+            {
+              "key": "severity",
+              "label": "Severity",
+              "renderer": {
+                "kind": "Widget",
+                "widget": "referrals.fraud-severity-chip",
+                "bindings": {
+                  "severity": { "$ref": "row.severity" },
+                  "disposition": { "$expr": "row.disposition || 'unreviewed'" },
+                  "confidence": { "$ref": "row.confidence" },
+                  "size": "xs"
+                }
+              }
+            },
+            {
+              "key": "referral_id",
+              "label": "Referral",
+              "renderer": {
+                "kind": "Text",
+                "props": { "className": "font-mono text-xs" },
+                "bindings": { "children": { "$ref": "row.referral_id" } }
+              }
+            },
+            { "key": "created_at", "label": "Detected", "format": "relative_time" }
+          ],
+          "rowAction": {
+            "onPress": { "kind": "navigate", "toExpr": "'/tenant/referral-fraud-flags/' + row.id" }
+          }
+        }
+      ]
+    }
+  ]
+}

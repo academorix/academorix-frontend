@@ -1,0 +1,49 @@
+{
+  "id": "academorix://modules/marketing/data/providers/linkedin-insight-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "LinkedIn Insight Tag Conversions API provider config",
+  "description": "Configuration shape for a LinkedIn Insight Tag Conversions API integration.",
+  "type": "object",
+  "required": ["conversion_urn", "access_token"],
+  "additionalProperties": false,
+  "properties": {
+    "conversion_urn": {
+      "type": "string",
+      "pattern": "^urn:lla:llaPartnerConversion:[0-9]+$",
+      "description": "LinkedIn Conversion URN. Format: urn:lla:llaPartnerConversion:{id}. One URN per conversion type (LinkedIn treats each event_type as a separate conversion)."
+    },
+    "access_token": {
+      "type": "string",
+      "minLength": 50,
+      "description": "OAuth2 Bearer token for the LinkedIn Ads API. Encrypted at rest. Refreshed via the refresh_token when available."
+    },
+    "refresh_token": {
+      "type": ["string", "null"],
+      "description": "OAuth2 refresh token. When present, expired access_tokens are auto-refreshed. Encrypted at rest."
+    },
+    "conversion_urn_map": {
+      "type": ["object", "null"],
+      "description": "Optional per-event-type override of conversion_urn. When present, keys are MarketingEventType values.",
+      "patternProperties": {
+        "^[a-z_]+$": {
+          "type": "string",
+          "pattern": "^urn:lla:llaPartnerConversion:[0-9]+$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "account_id": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9]+$",
+      "description": "Optional LinkedIn Ads account ID for account-specific attribution. Required only for accounts with multiple conversion trackers."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 20,
+      "description": "LinkedIn's API is slower than Meta/Google — 20s default."
+    }
+  }
+}

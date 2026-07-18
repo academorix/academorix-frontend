@@ -1,0 +1,74 @@
+{
+  "id": "academorix://modules/marketing/features",
+  "$version": 1,
+  "title": "marketing — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "marketing.core",
+      "displayName": "Marketing conversion tracking",
+      "description": "Server-side ad-network conversion event forwarder. Captures business milestones + dispatches to configured providers.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "marketing.advanced_providers",
+      "displayName": "LinkedIn, Snapchat, Pinterest, GTM Server",
+      "description": "Advanced provider set. Small tenants get Meta / Google Ads / GA4 / Custom Webhook. Medium+ unlock LinkedIn Insight, Snapchat CAPI, Pinterest CAPI, GTM Server.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "marketing.custom_webhook",
+      "displayName": "Custom webhook provider",
+      "description": "Generic HMAC-signed JSON webhook driver. Escape hatch for tenants using Segment / Rudderstack / custom analytics warehouses.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "marketing.roas_report",
+      "displayName": "ROAS report",
+      "description": "Return on Ad Spend dashboard aggregated by campaign / source / medium. Medium+ tier.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "marketing.dead_letter_replay",
+      "displayName": "Manual dead-letter replay",
+      "description": "Replay individual dead-lettered events after the retry budget is exhausted. Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "marketing.test_mode",
+      "displayName": "Provider test mode",
+      "description": "Send synthetic test events via provider sandbox endpoints. Used for tenant onboarding + credential rotation validation.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "marketing.consent_suppressions_report",
+      "displayName": "Consent suppressions report",
+      "description": "Compliance surface: view events + deliveries suppressed by consent over a date range.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "marketing.slack_alerts",
+      "displayName": "Slack alert channel",
+      "description": "Route MarketingProviderCircuitBreakerOpened + MarketingDeadLetterCreated notifications to a tenant Slack channel. Enterprise-only; requires the tenant to have configured a Slack integration in the notifications module.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "marketing.extended_retention",
+      "displayName": "10-year event retention",
+      "description": "Extends marketing_events retention from 7 years (default) to 10 years. Enterprise-only. For finance regimes that require longer ad-spend audit trails.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
+}

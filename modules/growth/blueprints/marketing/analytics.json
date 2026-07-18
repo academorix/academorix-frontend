@@ -1,0 +1,88 @@
+{
+  "id": "academorix://modules/marketing/analytics",
+  "$version": 1,
+  "title": "marketing — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "note": "This module IS the marketing lane. Its ANALYTICS.json declares product-analytics events that the growth::analytics lane emits about THIS MODULE's admin surfaces (provider CRUD, dead-letter queue management, ROAS report views). Marketing-lane events themselves (signup / conversion / etc.) are declared elsewhere via #[AsDomainEventMapper] — those are Lane 5, not Lane 4.",
+  "events": [
+    {
+      "name": "Marketing Provider Configured",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "test_mode", "enabled_event_type_count"],
+      "description": "Admin configured a new marketing provider. Powers onboarding funnel + provider-mix insight."
+    },
+    {
+      "name": "Marketing Provider Deactivated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "reason", "days_active_bucket"]
+    },
+    {
+      "name": "Marketing Provider Test Sent",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "outcome", "latency_ms_bucket"],
+      "description": "outcome: succeeded / failed. Signal for onboarding funnel drop-off."
+    },
+    {
+      "name": "Marketing Provider Circuit Breaker Opened",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "consecutive_failure_count"],
+      "description": "P1 event — every fire indicates paid-conversion loss risk. Consent tier: essential (system-health signal)."
+    },
+    {
+      "name": "Marketing Provider Circuit Breaker Reset",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "was_auto_close"]
+    },
+    {
+      "name": "Marketing Dead Letter Created",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "reason", "event_type", "value_amount_cents_bucket"],
+      "description": "P1 event — every fire indicates a fully lost paid conversion. Consent tier: essential (financial-audit signal)."
+    },
+    {
+      "name": "Marketing Dead Letter Replayed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "outcome"]
+    },
+    {
+      "name": "Marketing Dead Letter Resolved",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "was_auto_resolved"]
+    },
+    {
+      "name": "Marketing ROAS Report Viewed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "from", "to", "group_by", "row_count_bucket"],
+      "description": "Signal for feature engagement of the ROAS dashboard."
+    },
+    {
+      "name": "Marketing Event Dispatched (Support Tool)",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "event_type", "provider_count_bucket", "was_original_delivered"],
+      "description": "Support-tool re-dispatch usage. was_original_delivered indicates whether the original delivery succeeded (support intervention on a delivered event = double-fire investigation)."
+    },
+    {
+      "name": "Marketing Consent Suppression Spike Detected",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "spike_ratio_bucket", "affected_event_types_count"]
+    }
+  ],
+  "notes": [
+    "Analytics NEVER carry raw value_amount_cents — always the bucket (0 / 1-999 / 1000-9999 / 10000-99999 / 100000+). Prevents cross-tenant revenue inference from aggregated data.",
+    "Analytics NEVER carry raw utm_campaign — the marketing module treats campaign names as competitor intel (see data-classes.json:confidential). ROAS analytics uses aggregated attribution.",
+    "The 'essential' consent tier for Circuit Breaker Opened + Dead Letter Created + Consent Suppression Spike is deliberate — system-health + financial-audit signals cannot be opted out.",
+    "This file is DISTINCT from the marketing-lane declarations. Marketing-lane events (signup, subscription_started, refund_issued, ...) are captured server-side via #[AsDomainEventMapper]-decorated mapper classes; those flow through THIS module's substrate as marketing_events rows. This analytics.json is the growth::analytics feed about the admin experience of managing the marketing surface — a different lane, different consent, different retention."
+  ]
+}

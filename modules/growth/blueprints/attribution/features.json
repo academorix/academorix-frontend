@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/attribution/features",
+  "$version": 1,
+  "title": "attribution — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "attribution.core",
+      "displayName": "Attribution capture",
+      "description": "Server-side capture of UTM + click IDs + referrer + landing page at request boundary. First-touch preserved forever; last-touch updated on every attribution-bearing request. All tiers.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "attribution.click_ids_advanced",
+      "displayName": "Advanced click ID capture",
+      "description": "Capture msclkid (Microsoft Bing) + sccid (Snapchat) click IDs in addition to gclid + fbclid. Medium+.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "attribution.rollup",
+      "displayName": "Campaign performance rollup",
+      "description": "Hourly pre-aggregation of campaign performance metrics + rollup dashboards + GET /api/v1/campaigns/rollup routes. Medium+.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "attribution.merge",
+      "displayName": "Cross-device profile merging",
+      "description": "Merge anonymous browser profiles into an identified profile when a subject signs up / logs in from a different device. Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "attribution.import",
+      "displayName": "Bulk CSV import",
+      "description": "Bulk import historical attribution data from external CRMs (Salesforce, HubSpot, Segment). Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "attribution.retention_extended",
+      "displayName": "Extended touchpoint retention",
+      "description": "Extends touchpoint retention from 730 days (2 years) to 2555 days (7 years) — aligns with financial-record retention. Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "attribution.timeline_widget",
+      "displayName": "Attribution timeline widget",
+      "description": "SDUI widget rendering the last N touchpoints for a subject. Embedded in the my-attribution screen + admin drill-downs.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "attribution.consent_suppression_report",
+      "displayName": "Consent suppression audit report",
+      "description": "Compliance-team report of AttributionSuppressedByConsent events. Feeds quarterly regulatory review. All tiers (compliance-critical).",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    }
+  ]
+}

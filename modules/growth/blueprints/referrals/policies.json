@@ -1,0 +1,130 @@
+{
+  "id": "academorix://modules/referrals/policies",
+  "$version": 1,
+  "title": "referrals — authorization policies",
+  "description": "Five policies, one per owned entity. Admin-heavy — most write actions require owner/admin/marketing role. User plane exposes read-own + invitation-send only. Every ability defers to spatie/laravel-permission for the permission check; scope narrowing runs via the ResolveScope middleware (tenant + optional branch context — though this module is not branch-scoped, so the branch narrow is a no-op).",
+  "policies": [
+    {
+      "model": "ReferralProgram",
+      "class": "Academorix\\Growth\\Referrals\\Policies\\ReferralProgramPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "referral_programs.viewAny", "scope": "admin + marketing + owner" },
+        { "action": "view", "permission": "referral_programs.view", "scope": "admin + marketing + owner" },
+        { "action": "create", "permission": "referral_programs.create", "scope": "admin + marketing + owner" },
+        { "action": "update", "permission": "referral_programs.update", "scope": "admin + marketing + owner" },
+        { "action": "delete", "permission": "referral_programs.delete", "scope": "admin + owner only — audit-critical" },
+        { "action": "activate", "permission": "referral_programs.activate", "scope": "admin + owner" },
+        { "action": "pause", "permission": "referral_programs.pause", "scope": "admin + marketing + owner" },
+        { "action": "archive", "permission": "referral_programs.archive", "scope": "admin + owner only" },
+        { "action": "viewAnalytics", "permission": "referral_programs.view-analytics" }
+      ]
+    },
+    {
+      "model": "ReferralCode",
+      "class": "Academorix\\Growth\\Referrals\\Policies\\ReferralCodePolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "referral_codes.viewAny",
+          "scope": "admin + marketing + owner see everything. Users see only their own via /me/referral-code (separate endpoint)."
+        },
+        {
+          "action": "view",
+          "permission": "referral_codes.view",
+          "scope": "owner + admin + marketing; user_scoped codes visible to the owning user"
+        },
+        {
+          "action": "create",
+          "permission": "referral_codes.create",
+          "scope": "admin + marketing + owner (for campaign codes). User codes auto-issued via IssueReferralCodeJob (no direct create permission needed)"
+        },
+        { "action": "deactivate", "permission": "referral_codes.deactivate", "scope": "admin + marketing + owner" },
+        {
+          "action": "delete",
+          "permission": "referral_codes.delete",
+          "scope": "admin + owner only. Codes with any usage cannot be deleted (retention window applies)"
+        }
+      ]
+    },
+    {
+      "model": "Referral",
+      "class": "Academorix\\Growth\\Referrals\\Policies\\ReferralPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "referrals.viewAny",
+          "scope": "admin + marketing + support: cross-tenant view of all referrals. Users see own via /me/referrals separately."
+        },
+        {
+          "action": "view",
+          "permission": "referrals.view",
+          "scope": "admin + marketing + the referrer + the referred"
+        },
+        {
+          "action": "cancel",
+          "permission": "referrals.cancel",
+          "scope": "admin + marketing + owner. Refuses on already-terminal referrals."
+        },
+        {
+          "action": "forceVest",
+          "permission": "referrals.force-vest",
+          "scope": "Enterprise-only via `referrals_manual_override` entitlement + admin/owner. Audit-critical — records the reason."
+        },
+        { "action": "platformViewAny", "permission": "platform.referrals.viewAny" },
+        { "action": "platformView", "permission": "platform.referrals.view" },
+        {
+          "action": "platformForceVest",
+          "permission": "platform.referrals.force-vest",
+          "scope": "Platform-plane force-vest for support intervention. Bypasses tenant guards. Notifies tenant admin + writes audit row with 7-year retention."
+        }
+      ]
+    },
+    {
+      "model": "ReferralReward",
+      "class": "Academorix\\Growth\\Referrals\\Policies\\ReferralRewardPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "referral_rewards.viewAny",
+          "scope": "admin + marketing + support. Users see own via /me/referral-rewards."
+        },
+        { "action": "view", "permission": "referral_rewards.view", "scope": "recipient + admin + marketing" },
+        {
+          "action": "clawback",
+          "permission": "referral_rewards.clawback",
+          "scope": "admin + owner only. Financial reversal — audit-critical. Every clawback fires ReferralClawback + notifies Finance."
+        },
+        { "action": "platformViewAny", "permission": "platform.referral_rewards.viewAny" },
+        {
+          "action": "platformForceClawback",
+          "permission": "platform.referral_rewards.force-clawback",
+          "scope": "Platform support intervention. Emits notification to tenant admin + writes audit row."
+        }
+      ]
+    },
+    {
+      "model": "ReferralFraudFlag",
+      "class": "Academorix\\Growth\\Referrals\\Policies\\ReferralFraudFlagPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "referral_fraud_flags.viewAny",
+          "scope": "admin + support only. Fraud data is highly sensitive."
+        },
+        { "action": "view", "permission": "referral_fraud_flags.view", "scope": "admin + support" },
+        {
+          "action": "review",
+          "permission": "referral_fraud_flags.review",
+          "scope": "admin only. Sets disposition. Every review is compliance-audited (7-year retention)."
+        },
+        {
+          "action": "override",
+          "permission": "referral_fraud_flags.override",
+          "scope": "Enterprise-only via `referrals_manual_override` entitlement + admin. Manual override that permits a flagged referral to proceed."
+        },
+        { "action": "platformViewAny", "permission": "platform.referral_fraud_flags.viewAny" },
+        { "action": "platformReview", "permission": "platform.referral_fraud_flags.review" }
+      ]
+    }
+  ]
+}

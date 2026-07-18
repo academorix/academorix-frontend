@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/referrals/feature-flags",
+  "$version": 1,
+  "title": "referrals — kill switches",
+  "engine": "laravel/pennant",
+  "description": "Operational kill switches distinct from the tier-based `features.json` gates. These are for emergency-off / staged rollout / per-tenant ops interventions. Every flag is ON in normal production; off flips are ops decisions.",
+  "flags": [
+    {
+      "key": "referrals.claim_writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for the claim endpoint. Off = GET /api/v1/referrals/claim/{code} returns 503 with a maintenance banner. Emergency-only (used during DB migrations of the referrals table)."
+    },
+    {
+      "key": "referrals.fraud_detection_sync",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "FraudDetector runs synchronously at claim time. Off = async fallback (DetectReferralFraudJob dispatched instead). Sync is safer (blocks bad claims before persistence) but slower — 250ms typical. Test envs flip off for latency benchmarks."
+    },
+    {
+      "key": "referrals.materialization",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = MaterializeVestedRewardsJob no-ops. Rewards stay in status='vested' until re-enabled. Used when Finance module is unstable to avoid backing up its queue."
+    },
+    {
+      "key": "referrals.clawback_cascade",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = finance::RefundIssued / ChargebackFiled do NOT cascade to clawback. Admins must clawback manually. Emergency-only if the cascade is misbehaving."
+    },
+    {
+      "key": "referrals.marketing_lane",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReferralSignedUp / ReferralVested do NOT fire marketing events. Ad-network optimisation pauses. Used when marketing module is unstable."
+    },
+    {
+      "key": "referrals.invitation_delivery",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = NotifyReferralInvitationJob no-ops. POST /me/invitations still succeeds (records the event) but nothing is dispatched. Used when notifications module is unstable."
+    },
+    {
+      "key": "referrals.reconciler_jobs",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReconcileProgramBudgetJob + CheckReferralVestingJob + ExpireStaleReferralsJob skip. Only flip off for maintenance windows."
+    },
+    {
+      "key": "referrals.expiry_automation",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ExpireStaleReferralsJob does NOT auto-transition claimed -> expired. Admins expire manually via the ledger."
+    },
+    {
+      "key": "referrals.attribution_snapshot_capture",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = referrals do NOT capture attribution_snapshot at claim time. Downstream marketing events lose attribution data. Emergency-only if attribution module is corrupt."
+    }
+  ]
+}

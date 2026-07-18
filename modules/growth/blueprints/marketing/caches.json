@@ -1,0 +1,97 @@
+{
+  "id": "academorix://modules/marketing/caches",
+  "$version": 1,
+  "title": "marketing — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["marketing", "marketing.providers", "marketing.dead_letters", "marketing.roas"],
+  "keys": [
+    {
+      "pattern": "mkt:providers:{tenant_id}",
+      "description": "Active provider config list for a tenant. Read by MarketingEventDispatcher on every fan-out to compute eligible providers. Hot path — every captured event hits this cache.",
+      "ttlSeconds": 300,
+      "tags": ["marketing", "marketing.providers", "tenant"],
+      "invalidatedBy": [
+        "MarketingProviderConfigObserver.created",
+        "MarketingProviderConfigObserver.updated",
+        "MarketingProviderConfigObserver.deleted",
+        "MarketingProviderConfigured",
+        "MarketingProviderDeactivated"
+      ]
+    },
+    {
+      "pattern": "mkt:providers:{tenant_id}:{event_type}",
+      "description": "Eligible providers for (tenant, event_type). Sub-index of the tenant provider list, filtered to configs whose enabled_event_types includes the event_type. Read once per captured event.",
+      "ttlSeconds": 300,
+      "tags": ["marketing", "marketing.providers", "tenant"],
+      "invalidatedBy": [
+        "MarketingProviderConfigObserver.* (invalidates every event_type sub-key for the tenant)"
+      ]
+    },
+    {
+      "pattern": "mkt:circuit-breaker:{tenant_id}:{provider}",
+      "description": "Circuit-breaker state per (tenant, provider). Read by CircuitBreakerGate on every pre-dispatch. Sub-second TTL because the state changes frequently.",
+      "ttlSeconds": 30,
+      "tags": ["marketing", "marketing.providers"],
+      "invalidatedBy": [
+        "MarketingProviderCircuitBreakerOpened",
+        "MarketingProviderCircuitBreakerClosed",
+        "MarketingProviderCircuitBreakerHalfOpen"
+      ]
+    },
+    {
+      "pattern": "mkt:rate-limit:{tenant_id}:{provider}:{second}",
+      "description": "Rate-limit counter per (tenant, provider) per second. Fixed-window counter. TTL = 2s so a request that arrives at the boundary reads the current window's counter.",
+      "ttlSeconds": 2,
+      "tags": ["marketing"],
+      "invalidatedBy": ["TTL only"]
+    },
+    {
+      "pattern": "mkt:pii-hash:{sha256_input}",
+      "description": "Memoises PiiHasher::hash($input) results. Small TTL because we don't want to hold hashed PII in cache indefinitely (compliance).",
+      "ttlSeconds": 60,
+      "tags": ["marketing"],
+      "invalidatedBy": ["TTL only"]
+    },
+    {
+      "pattern": "mkt:event-mapper-registry",
+      "description": "DomainEventMapper registry — the discovered mapping of domain-event-class → marketing-event-type. Read at boot into an in-memory registry via MarketingEventCapturer; this cache is a warm-boot accelerator.",
+      "ttlSeconds": 86400,
+      "tags": ["marketing"],
+      "invalidatedBy": ["boot-time discovery re-run", "manual: marketing:reconcile-mappers"]
+    },
+    {
+      "pattern": "mkt:dead-letters:count:{tenant_id}:unresolved",
+      "description": "Unresolved dead-letter count per tenant. Feeds the SDUI dead-letter-count badge.",
+      "ttlSeconds": 60,
+      "tags": ["marketing", "marketing.dead_letters", "tenant"],
+      "invalidatedBy": [
+        "MarketingDeadLetterCreated",
+        "MarketingDeadLetterResolved"
+      ]
+    },
+    {
+      "pattern": "mkt:roas:{tenant_id}:{from}:{to}:{group_by}",
+      "description": "Materialised ROAS report per (tenant, date range, grouping). Fed by the GET /roas endpoint + the monthly-report scheduled job. Long TTL because the underlying event ledger is append-only for delivered events; recomputation is expensive.",
+      "ttlSeconds": 3600,
+      "tags": ["marketing", "marketing.roas", "tenant"],
+      "invalidatedBy": [
+        "manual: marketing:invalidate-roas (rare — typically only after a bulk correction)",
+        "TTL"
+      ]
+    },
+    {
+      "pattern": "mkt:consent-suppressions:baseline:{tenant_id}",
+      "description": "Trailing 7-day baseline for consent-suppression rate detection. Read by the marketing:detect-consent-suppression-spike scheduled command.",
+      "ttlSeconds": 3600,
+      "tags": ["marketing", "tenant"],
+      "invalidatedBy": ["TTL only"]
+    },
+    {
+      "pattern": "mkt:provider-schemas:{provider}",
+      "description": "Parsed data/providers/<provider>-config.schema.json JSON Schema object. Read by MarketingProviderConfigObserver on every config create/update. Loaded once at boot + rarely invalidated.",
+      "ttlSeconds": 86400,
+      "tags": ["marketing"],
+      "invalidatedBy": ["boot-time reload", "manual"]
+    }
+  ]
+}

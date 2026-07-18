@@ -1,0 +1,246 @@
+{
+  "id": "academorix://modules/marketing/errors",
+  "$version": 1,
+  "title": "marketing — error codes",
+  "namespace": "marketing",
+  "errors": [
+    {
+      "code": "MARKETING_EVENT_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.event_not_found"
+    },
+    {
+      "code": "MARKETING_FEATURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.feature_not_entitled",
+      "description": "Tenant does not hold `marketing_capture` entitlement. Response includes upgrade CTA in meta.upgrade_url."
+    },
+    {
+      "code": "MARKETING_EVENT_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "marketing.errors.event_quota_exceeded",
+      "description": "Tenant reached the marketing_event_slot_per_month cap. Small: 10k, Medium: 100k. Resets on the 1st of each calendar month. Not user-facing — capture path returns 402 to the domain event listener which logs + drops."
+    },
+    {
+      "code": "MARKETING_EVENT_MANUAL_CREATE_FORBIDDEN",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "marketing.errors.event_manual_create_forbidden",
+      "description": "Direct API creation of marketing events is forbidden — capture is via the MarketingEventCapturer domain-event listener path only. Prevents replay attacks."
+    },
+    {
+      "code": "MARKETING_EVENT_ALREADY_DELIVERED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.event_already_delivered",
+      "description": "A row already exists with the same (tenant_id, deduplication_key) AND has status='delivered'. The domain event fired twice for the same milestone — idempotency prevents the double-write."
+    },
+    {
+      "code": "MARKETING_EVENT_STILL_IN_FLIGHT",
+      "http": 409,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.event_still_in_flight",
+      "description": "Attempted to soft-delete an event still in status IN ('pending', 'dispatching'). Wait for terminal status or force via support tooling."
+    },
+    {
+      "code": "MARKETING_SNAPSHOT_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "marketing.errors.snapshot_immutable",
+      "description": "Attempted to mutate attribution or consent_snapshot after event creation. These fields are frozen at capture-time."
+    },
+    {
+      "code": "MARKETING_NO_ELIGIBLE_PROVIDERS",
+      "http": 200,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "marketing.errors.no_eligible_providers",
+      "description": "Event captured but no active provider config declares this event_type in its enabled_event_types. Not an error — the event persists for future provider configs to backfill against (when marketing.capture.refuse_when_no_eligible_providers=false)."
+    },
+    {
+      "code": "MARKETING_DELIVERY_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.delivery_not_found"
+    },
+    {
+      "code": "MARKETING_DELIVERY_EVENT_TERMINAL",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.delivery_event_terminal",
+      "description": "Attempted to attach a new delivery to an event in terminal status. Every terminal event is closed to new deliveries."
+    },
+    {
+      "code": "MARKETING_DELIVERY_PROVIDER_INACTIVE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.delivery_provider_inactive",
+      "description": "Attempted to dispatch to a provider config with is_active=false. Delivery record persists with status='suppressed_by_provider_off'."
+    },
+    {
+      "code": "MARKETING_PROVIDER_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.provider_not_found"
+    },
+    {
+      "code": "MARKETING_PROVIDER_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.provider_quota_exceeded",
+      "description": "Reached marketing_provider_slot cap. Small: 1 per tenant. Medium: 3. Response includes upgrade path."
+    },
+    {
+      "code": "MARKETING_ADVANCED_PROVIDER_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.advanced_provider_not_entitled",
+      "description": "LinkedIn / Snapchat / Pinterest / GTM Server require Medium+ tier."
+    },
+    {
+      "code": "MARKETING_CUSTOM_WEBHOOK_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.custom_webhook_not_entitled",
+      "description": "Custom Webhook provider requires Medium+ tier."
+    },
+    {
+      "code": "MARKETING_PROVIDER_ALREADY_CONFIGURED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.provider_already_configured",
+      "description": "Tenant already has an active config for this provider. Delete the existing one first."
+    },
+    {
+      "code": "MARKETING_PROVIDER_CONFIG_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.provider_config_invalid",
+      "description": "Config jsonb does not match the per-provider JSON Schema. Response body includes the schema validation errors."
+    },
+    {
+      "code": "MARKETING_INVALID_ENABLED_EVENT_TYPES",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.invalid_enabled_event_types",
+      "description": "One or more entries in enabled_event_types are not valid MarketingEventType values."
+    },
+    {
+      "code": "MARKETING_PROVIDER_UNSUPPORTED_EVENT_TYPE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.provider_unsupported_event_type",
+      "description": "One or more event types in enabled_event_types are not supported by the provider. Response body includes the supported set."
+    },
+    {
+      "code": "MARKETING_INVALID_TEST_EVENT_CODE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.invalid_test_event_code"
+    },
+    {
+      "code": "MARKETING_TEST_MODE_TOGGLE_FORBIDDEN",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "marketing.errors.test_mode_toggle_forbidden",
+      "description": "Cannot toggle test_mode after production deliveries. Flip-flops would corrupt ROAS aggregation. Delete + re-create the config with the desired test_mode."
+    },
+    {
+      "code": "MARKETING_PROVIDER_CIRCUIT_OPEN_ON_DEACTIVATE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "marketing.errors.provider_circuit_open_on_deactivate",
+      "description": "Cannot deactivate a provider config while its circuit-breaker is open. Reset the breaker first (marketing:reset-circuit-breaker or POST /providers/{id}/reset-circuit-breaker)."
+    },
+    {
+      "code": "MARKETING_DEAD_LETTER_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.dead_letter_not_found"
+    },
+    {
+      "code": "MARKETING_DEAD_LETTER_ALREADY_RESOLVED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.dead_letter_already_resolved",
+      "description": "Attempted to un-resolve an already-resolved dead letter. Resolution is one-way."
+    },
+    {
+      "code": "MARKETING_DEAD_LETTER_REPLAY_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.dead_letter_replay_not_entitled",
+      "description": "Dead-letter replay requires Enterprise tier. Small + Medium tenants can view + resolve, but cannot replay."
+    },
+    {
+      "code": "MARKETING_INSUFFICIENT_ROLE",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "marketing.errors.insufficient_role",
+      "description": "Caller lacks the owner/admin/marketing role required to access the marketing surface."
+    },
+    {
+      "code": "MARKETING_STUCK_EVENT_DETECTED",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "marketing.errors.stuck_event_detected",
+      "description": "ReconcileMarketingEventStatusJob found an event stuck in 'dispatching' for > 24h. Every occurrence is a P1 signal — a DispatchToProviderJob crashed silently."
+    }
+  ]
+}

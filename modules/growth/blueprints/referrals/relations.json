@@ -1,0 +1,209 @@
+{
+  "id": "academorix://modules/referrals/relations",
+  "$version": 1,
+  "title": "referrals — model relationships",
+  "description": "Five owned entities. Every row is tenant-scoped (cascades on tenant delete). ReferralProgram is the aggregate root; ReferralCode belongs to a Program; Referral belongs to a Program + optional Code; ReferralReward belongs to a Referral; ReferralFraudFlag belongs to a Referral. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / organization_id / region_id / branch_id / scope_node_id on any owned row — all cascade through tenant_id.",
+  "internal": [
+    {
+      "from": "ReferralProgram",
+      "kind": "hasMany",
+      "to": "ReferralCode",
+      "foreignKey": "referral_program_id",
+      "description": "A program can distribute many codes (per-user codes + campaign codes + opaque codes)."
+    },
+    {
+      "from": "ReferralCode",
+      "kind": "belongsTo",
+      "to": "ReferralProgram",
+      "foreignKey": "referral_program_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT on delete. Codes anchor to their program; a paused/archived program keeps its codes for audit + already-issued referrals."
+    },
+    {
+      "from": "ReferralProgram",
+      "kind": "hasMany",
+      "to": "Referral",
+      "foreignKey": "referral_program_id",
+      "description": "A program tracks many referral instances over its lifetime."
+    },
+    {
+      "from": "Referral",
+      "kind": "belongsTo",
+      "to": "ReferralProgram",
+      "foreignKey": "referral_program_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT on delete. Referrals retain 7 years for financial audit; program cannot be hard-deleted while referrals exist."
+    },
+    {
+      "from": "ReferralCode",
+      "kind": "hasMany",
+      "to": "Referral",
+      "foreignKey": "referral_code_id",
+      "description": "One code may be used by many referred users (subject to usage_cap)."
+    },
+    {
+      "from": "Referral",
+      "kind": "belongsTo",
+      "to": "ReferralCode",
+      "foreignKey": "referral_code_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Nullable — a referral tracked purely via attribution (click carrying utm parameters but no code) has no code."
+    },
+    {
+      "from": "Referral",
+      "kind": "hasMany",
+      "to": "ReferralReward",
+      "foreignKey": "referral_id",
+      "description": "1..2 rewards per referral (single-sided = 1 for referrer; double-sided = 2, one per side)."
+    },
+    {
+      "from": "ReferralReward",
+      "kind": "belongsTo",
+      "to": "Referral",
+      "foreignKey": "referral_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT on delete. Rewards outlive referrals for financial audit."
+    },
+    {
+      "from": "Referral",
+      "kind": "hasMany",
+      "to": "ReferralFraudFlag",
+      "foreignKey": "referral_id",
+      "description": "Zero or many fraud flags per referral. A single referral can accumulate flags from multiple detection passes (claim-time + trigger-time)."
+    },
+    {
+      "from": "ReferralFraudFlag",
+      "kind": "belongsTo",
+      "to": "Referral",
+      "foreignKey": "referral_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT on delete. Flags retain 7 years for fraud audit."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "ReferralProgram",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every program is tenant-scoped per tenancy-columns.md §3."
+    },
+    {
+      "from": "ReferralCode",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "ReferralCode",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "owner_user_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Owner FK for user_scoped codes only. Null for campaign / opaque codes. RESTRICT: user hard-delete cannot orphan their code (redaction handled by RedactReferralDataOnUserErasure hook)."
+    },
+    {
+      "from": "Referral",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "Referral",
+      "kind": "morphTo",
+      "to": "polymorphic",
+      "foreignKey": "referrer_id",
+      "typeKey": "referrer_type",
+      "onDelete": "restrict",
+      "description": "Polymorphic referrer. Concrete types: user::User (usr_), leads::AnonymousLead (lea_ — future). RESTRICT for audit-integrity — a referrer's hard-delete cannot orphan reward audit history."
+    },
+    {
+      "from": "Referral",
+      "kind": "morphTo",
+      "to": "polymorphic",
+      "foreignKey": "referred_id",
+      "typeKey": "referred_type",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Polymorphic referred. Nullable — a claim (link clicked) may not yet resolve to a User/Lead. Concrete types: user::User, leads::Lead."
+    },
+    {
+      "from": "ReferralReward",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "ReferralReward",
+      "kind": "morphTo",
+      "to": "polymorphic",
+      "foreignKey": "recipient_id",
+      "typeKey": "recipient_type",
+      "onDelete": "restrict",
+      "description": "Polymorphic recipient. Concrete types: user::User, leads::Lead (rare — some programs reward pre-signup leads). RESTRICT for financial-record integrity."
+    },
+    {
+      "from": "ReferralReward",
+      "kind": "belongsTo",
+      "to": "finance::Credit",
+      "foreignKey": "finance_credit_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Wave 4 — the Finance credit created when this reward materialised. Nullable until MaterializeVestedRewardsJob successfully calls Finance."
+    },
+    {
+      "from": "ReferralFraudFlag",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "ReferralFraudFlag",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "reviewed_by_user_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "The admin who reviewed the flag. Nullable while flag is unreviewed."
+    }
+  ],
+  "inbound": {
+    "description": "Downstream modules attach in later waves:",
+    "examples": [
+      "finance::Credit (Wave 4) — every materialised ReferralReward creates a Credit row that references the reward via reward_id + reward_source='referral'.",
+      "marketing::MarketingEvent (Wave 5) — ReferralSignedUp + ReferralVested fire marketing events; the referral_id is captured on the event row for revenue attribution.",
+      "attribution::Attribution (Wave 5, already shipped) — Referral.attribution_snapshot is captured from AttributionSnapshotBuilder at claim time."
+    ],
+    "note": "No inbound relations in Wave 5 beyond the internal set — this module is a growth-tier terminal aggregate."
+  },
+  "morphs": [
+    {
+      "on": "Referral.referrer",
+      "types": ["user::User", "leads::AnonymousLead"],
+      "note": "Wave 5 ships user only; leads::AnonymousLead is a placeholder for Wave 6 lead-capture module."
+    },
+    {
+      "on": "Referral.referred",
+      "types": ["user::User", "leads::Lead"],
+      "note": "Wave 5 ships user only. Both nullable during the claim/click stage before user resolution."
+    },
+    {
+      "on": "ReferralReward.recipient",
+      "types": ["user::User", "leads::Lead"]
+    }
+  ],
+  "notes": [
+    "Referral does NOT carry `application_id`. Referrals cascade through the tenant's application per tenancy-columns.md §2. Cross-application referrals are non-goals — a Sports-app referrer cannot refer to Marketplace-app.",
+    "ReferralReward does NOT carry `referral_program_id` directly — it cascades through `referral_id -> program_id`. Denormalisation deferred until proven necessary for query planning.",
+    "The composite unique index on (tenant_id, referral_program_id, referrer_id, referred_id) partial WHERE deleted_at IS NULL enforces one referral per program per referrer-referred pair — a referred user cannot be re-referred by the same referrer for the same program.",
+    "ReferralFraudFlag can have MULTIPLE rows per Referral (one per detection pass + flag type). A referral flagged for `self_ip_match` at claim time may accumulate a `velocity_exceeded` flag at trigger time.",
+    "polymorphic morphTo on referrer/referred/recipient uses `academorix/foundation`'s HasPolyRelation trait — refuses cross-tenant morph resolution at write time."
+  ]
+}

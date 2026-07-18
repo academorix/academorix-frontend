@@ -1,0 +1,77 @@
+{
+  "id": "academorix://modules/analytics/features",
+  "$version": 1,
+  "title": "analytics — feature keys",
+  "description": "Per-provider availability + advanced feature keys. Resolved at /auth/me. Downstream: `analytics.enabled` gates the module surface; per-provider keys let tenants pick their fan-out set.",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features (string[])",
+    "seededFrom": "BusinessType.default_config.features",
+    "distinctFrom": "feature-flags.json (kill switches)"
+  },
+  "features": [
+    {
+      "key": "analytics.enabled",
+      "displayName": "Server-side analytics",
+      "description": "Master enable for backend-driven analytics capture. Off = analytics module never captures.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "analytics.provider.posthog",
+      "displayName": "PostHog provider",
+      "description": "Enables PostHog as a selectable analytics provider. Baseline plan.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "analytics.provider.amplitude",
+      "displayName": "Amplitude provider",
+      "description": "Enables Amplitude. Baseline plan.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "analytics.provider.google_analytics_4",
+      "displayName": "Google Analytics 4 provider",
+      "description": "Enables GA4 measurement protocol. Baseline plan. Distinct config from marketing::ga4 allowed.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "analytics.provider.mixpanel",
+      "displayName": "Mixpanel provider",
+      "description": "Enables Mixpanel /import endpoint. Requires analytics_advanced_providers entitlement.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "analytics.provider.segment",
+      "displayName": "Segment provider",
+      "description": "Enables Segment as an upstream fan-out point (Segment then routes to N downstream destinations). Requires analytics_advanced_providers entitlement.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "analytics.provider.june",
+      "displayName": "June provider",
+      "description": "Enables June (B2B analytics). Requires analytics_advanced_providers entitlement.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "analytics.provider.custom_webhook",
+      "displayName": "Custom webhook provider",
+      "description": "Enables the HMAC-signed custom webhook driver. Requires analytics_advanced_providers entitlement + a validated tenant.allowed_egress_domains entry.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "analytics.session_recording",
+      "displayName": "PostHog session recording",
+      "description": "Enables session-recording capture via the PostHog provider. Requires analytics_session_recording entitlement + subject-level `functional` consent.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
+}

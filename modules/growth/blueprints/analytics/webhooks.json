@@ -1,0 +1,71 @@
+{
+  "id": "academorix://modules/analytics/webhooks",
+  "$version": 1,
+  "title": "analytics — webhook namespaces",
+  "description": "One OUTBOUND wire event: `analytics.event.delivered` (v1). No INBOUND webhooks \u2014 analytics providers don't call us back (their dashboards are the source of truth for delivered analytics data; we only care about our own delivery-side status).",
+  "outbound": {
+    "namespace": "analytics",
+    "publishedBy": "webhook module",
+    "events": [
+      {
+        "name": "analytics.event.delivered",
+        "version": "v1",
+        "trigger": "AnalyticsEventDelivered event fires \u2014 all eligible providers succeeded.",
+        "sample_payload": {
+          "event": "analytics.event.delivered",
+          "version": "v1",
+          "occurred_at": "2026-07-14T03:15:07Z",
+          "data": {
+            "analytics_event_id": "ane_01H8XXXXX...",
+            "tenant_id": "ten_01H8XXXXX...",
+            "event_name": "feature_viewed",
+            "event_kind": "track",
+            "category": "feature_use",
+            "subject": { "type": "user", "id": "usr_01H8XXXXX..." },
+            "delivered_provider_count": 3,
+            "eligible_provider_count": 4,
+            "suppressed_providers": [{ "provider": "amplitude", "reason": "sampling" }],
+            "delivered_at": "2026-07-14T03:15:06Z"
+          }
+        },
+        "consumers": [
+          "downstream tenant-owned analytics warehouse (via webhook subscription)",
+          "cross-service consumers wanting to react to analytics delivery (e.g. an ETL that snapshots the event to BigQuery)"
+        ]
+      },
+      {
+        "name": "analytics.event.partially_delivered",
+        "version": "v1",
+        "trigger": "AnalyticsEventPartiallyDelivered event fires \u2014 some providers exhausted retries with failures.",
+        "sample_payload": {
+          "event": "analytics.event.partially_delivered",
+          "version": "v1",
+          "occurred_at": "2026-07-14T03:20:07Z",
+          "data": {
+            "analytics_event_id": "ane_...",
+            "tenant_id": "ten_...",
+            "delivered_provider_count": 2,
+            "eligible_provider_count": 4,
+            "failed_providers": [
+              { "provider": "amplitude", "error_code": "NOTIFICATIONS_ANALYTICS_PROVIDER_ERROR" },
+              { "provider": "mixpanel", "error_code": "NOTIFICATIONS_ANALYTICS_PROVIDER_RATE_LIMITED" }
+            ]
+          }
+        }
+      },
+      {
+        "name": "analytics.provider.circuit_breaker.opened",
+        "version": "v1",
+        "trigger": "AnalyticsProviderCircuitBreakerOpened event fires."
+      },
+      {
+        "name": "analytics.provider.circuit_breaker.closed",
+        "version": "v1",
+        "trigger": "AnalyticsProviderCircuitBreakerClosed event fires."
+      }
+    ]
+  },
+  "inbound": {
+    "note": "Analytics providers do NOT call us back. Provider-side event capture is one-way (POST from us to them). We rely on provider-side dashboards for downstream analytics; no inbound-webhook ingestion required for THIS module. Contrast with notifications-mail (which DOES ingest inbound bounce/complaint webhooks) or notifications-push (which does not either \u2014 same shape as analytics)."
+  }
+}

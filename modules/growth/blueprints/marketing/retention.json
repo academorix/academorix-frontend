@@ -1,0 +1,99 @@
+{
+  "id": "academorix://modules/marketing/retention",
+  "$version": 1,
+  "title": "marketing — retention windows",
+  "description": "Marketing events are financial records (7 years default, 10 for Enterprise). Deliveries retain 2 years (support-debugging window). Dead letters retain INDEFINITELY (financial audit — every unresolved P1 preserved). Provider configs retain while active + 90d grace after deactivation.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(c) — data minimisation",
+    "gdpr Art. 17 — right to erasure (with financial-retention carve-out)",
+    "gdpr Art. 17 §3 — carve-out: legal obligation to retain financial records supersedes erasure right",
+    "soc2 CC6.3 — audit trail retention",
+    "pci-dss 10.7 — audit trail retention 1 year hot + 6 years archive",
+    "ccpa §1798.140 — sale-of-personal-information records retention",
+    "national tax law — 7-year financial-record retention (US, EU, UK, CA baselines)",
+    "ad-spend audit — some finance regimes require 10 years"
+  ],
+  "retention": [
+    {
+      "entity": "MarketingEvent",
+      "hot": { "days": 365, "description": "Active + first year for ROAS reporting, support queries, dispute resolution" },
+      "cold": { "days": "2555 (7 years)", "description": "Financial-audit retention. Enterprise tenants with marketing_extended_retention entitlement: 3650 (10 years)." },
+      "purge": {
+        "trigger": "> 7 years past created_at (10 years for Enterprise) AND status IS terminal (delivered / partially_delivered / failed / suppressed_by_consent / superseded)",
+        "action": "hard delete via PurgeExpiredMarketingDataJob",
+        "notes": "Events in status='pending' or 'dispatching' are NEVER purged by the retention job — they're the ReconcileMarketingEventStatusJob's problem. A stuck event past the retention window would indicate a decade-old crashed dispatch job."
+      }
+    },
+    {
+      "entity": "MarketingDelivery",
+      "hot": { "days": 90, "description": "Recent-attempt debugging window" },
+      "cold": { "days": "730 (2 years)", "description": "Support-debugging retention. Enterprise does NOT extend delivery retention — the audit trail lives on marketing_events." },
+      "purge": {
+        "trigger": "> 2 years past created_at",
+        "action": "hard delete",
+        "notes": "Delivery rows are per-attempt log entries. Their support-debugging value drops to zero after 2 years — the retention window is set to the tenant support agreement's SLA + a buffer."
+      }
+    },
+    {
+      "entity": "MarketingProviderConfig",
+      "hot": { "days": "while active" },
+      "cold": { "days": 90, "description": "Grace period after soft-delete for audit / rollback." },
+      "purge": {
+        "trigger": "soft-deleted > 90 days ago",
+        "action": "hard delete",
+        "notes": "The 90-day grace allows the ops team to review the config change after a compromise or rollback. After grace, the row is hard-purged but the historical config data survives in the audit trail (which retains 7 years) via before/after snapshots on MarketingConfigurationChangedNotification + MarketingProviderConfigured events."
+      }
+    },
+    {
+      "entity": "MarketingDeadLetter",
+      "hot": { "days": "indefinite while unresolved" },
+      "cold": { "days": "indefinite", "description": "Dead-letter rows are NEVER auto-purged. Every unresolved P1 preserved for the tenant's lifetime + beyond." },
+      "purge": {
+        "trigger": "TenantErased cascade (via FK CASCADE) — never scheduled/timed",
+        "action": "hard delete (only on tenant erasure)",
+        "notes": "Dead letters are the highest-integrity retention class in the module. A resolved dead letter still lives on — resolution is recorded via resolved_at + resolution_note but the row does not become purgeable. Rationale: every dead letter represents a paid conversion signal that failed to reach an ad network; that's an ad-spend audit trail that regulators, finance teams, and marketing auditors all care about years later."
+      }
+    },
+    {
+      "entity": "marketing_events.consent_snapshot + attribution jsonb blobs",
+      "hot": { "days": "co-terminous with event" },
+      "purge": {
+        "trigger": "event hard-delete",
+        "action": "cascaded (blobs are sub-fields, not separate tables)",
+        "notes": "The snapshots outlive individual consent state changes on the source rows — that's the whole point of the snapshot pattern. The event carries its historical consent + attribution for its lifetime."
+      }
+    },
+    {
+      "entity": "marketing_deliveries.request_payload + response_body (encrypted)",
+      "hot": { "days": 90 },
+      "cold": { "days": 730 },
+      "purge": {
+        "trigger": "delivery hard-delete",
+        "action": "cascaded",
+        "notes": "request_payload is encrypted at rest (contains PII + potentially sensitive attribution). Encryption keys are managed by the compliance/encryption service; key rotation does not invalidate historical rows (each row carries its key version)."
+      }
+    }
+  ],
+  "special_cases": [
+    {
+      "case": "TenantErased cascade",
+      "action": "hard delete of every marketing_events / marketing_deliveries / marketing_provider_configs / marketing_dead_letters row via FK CASCADE",
+      "notes": "Audit trail rows written during those events survive per audit module's outlives-source design. Regulators can still trace the erased tenant's activity — but the tenant's own data is gone."
+    },
+    {
+      "case": "UserErased (individual GDPR Art. 17)",
+      "action": "RedactUserFromMarketingEventsJob nulls subject_id on affected marketing_events + fires provider-side deletion requests (Meta Data Deletion API, Google Ads user-data deletion, etc.)",
+      "notes": "The event row itself survives (financial retention) but the subject-identifying fields are redacted. Provider-side deletion is best-effort — Academorix records the deletion request; the provider is responsible for honoring it."
+    },
+    {
+      "case": "MarketingProviderConfigDeactivated with existing deliveries",
+      "action": "Config is soft-deleted; existing deliveries preserve the provider_config_id reference (RESTRICT FK); the config row is hard-purged after the 90-day grace",
+      "notes": "This is the 'referenced deleted config' path. Deliveries created after config deactivation are impossible (observer refuses). Deliveries created before continue to reference the historical config row via RESTRICT."
+    }
+  ],
+  "cross_reference": [
+    "The audit rows written by Auditable outlive the source rows per audit::retention.json — audit retention is 7 years regardless of source-row retention.",
+    "TenantErased cascades hard-delete via FK CASCADE, but the audit rows written during those events survive the cascade (per audit module's outlives-source design).",
+    "The compliance/data-subject-rights module orchestrates UserErased across all modules including this one — the module registers `RedactUserFromMarketingEventsJob` as a compliance callback."
+  ]
+}

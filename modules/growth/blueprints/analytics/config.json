@@ -1,0 +1,221 @@
+{
+  "id": "academorix://modules/analytics/config",
+  "$version": 1,
+  "title": "analytics — developer configuration",
+  "description": "Deploy-static configuration. Mirrors `config/analytics.php`. Governs capture pipeline, retry policy, sampling defaults, consent enforcement, attribution snapshot behavior, retention windows, batching defaults per provider.",
+  "configFile": "config/analytics.php",
+  "envPrefix": "ANALYTICS_",
+  "sections": {
+    "capture": {
+      "description": "Capture-side settings.",
+      "keys": [
+        {
+          "path": "analytics.capture.strict_pii_scan",
+          "type": "bool",
+          "default": true,
+          "env": "ANALYTICS_STRICT_PII_SCAN",
+          "description": "Enforce PII regex refusal at PropertyValidator. Should always be true in production."
+        },
+        {
+          "path": "analytics.capture.max_properties_per_event",
+          "type": "int",
+          "default": 100
+        },
+        {
+          "path": "analytics.capture.max_properties_bytes",
+          "type": "int",
+          "default": 1024,
+          "description": "Max serialised properties size in bytes."
+        },
+        {
+          "path": "analytics.capture.async_capture_by_default",
+          "type": "bool",
+          "default": false,
+          "description": "When true, EmitsAnalyticsEvent trait dispatches CaptureAnalyticsEventJob instead of synchronous capture. Trade-off: async is faster on the request path but loses attribution/consent context (must be snapshotted before dispatch)."
+        }
+      ]
+    },
+    "dispatch": {
+      "description": "Fan-out dispatch settings.",
+      "keys": [
+        {
+          "path": "analytics.dispatch.max_concurrent_providers_per_event",
+          "type": "int",
+          "default": 10,
+          "description": "Cap on parallel provider dispatches per event. Prevents fan-out storms."
+        },
+        {
+          "path": "analytics.dispatch.default_queue",
+          "type": "string",
+          "default": "analytics",
+          "description": "Queue name for the default dispatch path. Critical events route to `analytics-critical`."
+        },
+        {
+          "path": "analytics.dispatch.critical_categories",
+          "type": "array<string>",
+          "default": ["funnel_step", "lifecycle"],
+          "description": "Event categories routed to the higher-priority queue."
+        }
+      ]
+    },
+    "retry": {
+      "description": "Retry policy defaults \u2014 overridable per-provider via retry_config.",
+      "keys": [
+        {
+          "path": "analytics.retry.max_attempts",
+          "type": "int",
+          "default": 5
+        },
+        {
+          "path": "analytics.retry.backoff_ms",
+          "type": "array<int>",
+          "default": [1000, 5000, 30000, 300000, 3600000],
+          "description": "Attempt 1..5 backoffs. Exponential with a 1h cap."
+        },
+        {
+          "path": "analytics.retry.retry_on_status",
+          "type": "array<int>",
+          "default": [408, 429, 500, 502, 503, 504]
+        }
+      ]
+    },
+    "circuit_breaker": {
+      "description": "Circuit-breaker defaults.",
+      "keys": [
+        {
+          "path": "analytics.circuit_breaker.threshold",
+          "type": "int",
+          "default": 5,
+          "description": "Consecutive failures to open."
+        },
+        {
+          "path": "analytics.circuit_breaker.failure_rate",
+          "type": "float",
+          "default": 0.2,
+          "description": "Or 20% failure rate over window opens."
+        },
+        {
+          "path": "analytics.circuit_breaker.window_seconds",
+          "type": "int",
+          "default": 60
+        },
+        {
+          "path": "analytics.circuit_breaker.half_open_probe_interval_seconds",
+          "type": "int",
+          "default": 60
+        },
+        {
+          "path": "analytics.circuit_breaker.close_after_successes",
+          "type": "int",
+          "default": 3
+        }
+      ]
+    },
+    "sampling": {
+      "description": "Sampling defaults.",
+      "keys": [
+        {
+          "path": "analytics.sampling.default_rate",
+          "type": "float",
+          "default": 1.0
+        },
+        {
+          "path": "analytics.sampling.stable_hash_algorithm",
+          "type": "string",
+          "default": "xxhash64",
+          "description": "Stable-per-(event, provider) sampling roll hash algo. xxhash64 for speed."
+        }
+      ]
+    },
+    "consent": {
+      "description": "Consent gate.",
+      "keys": [
+        {
+          "path": "analytics.consent.required_category",
+          "type": "string",
+          "default": "analytics",
+          "description": "Consent category name checked against compliance::ConsentGate. Distinct from `marketing`."
+        },
+        {
+          "path": "analytics.consent.essential_funnel_step_whitelist",
+          "type": "array<string>",
+          "default": ["payment_succeeded", "subscription_upgraded", "invoice_paid"],
+          "description": "Funnel-step events allowed to bypass user-consent gating because they're operationally required (payment audit trail). Uses `essential` consent instead of `analytics`."
+        }
+      ]
+    },
+    "attribution": {
+      "description": "Attribution snapshot behavior.",
+      "keys": [
+        {
+          "path": "analytics.attribution.snapshot_at_capture",
+          "type": "bool",
+          "default": true,
+          "description": "Frozen snapshot at CREATE time \u2014 immutable thereafter. Should always be true."
+        },
+        {
+          "path": "analytics.attribution.fallback_to_last_touch",
+          "type": "bool",
+          "default": true,
+          "description": "When current AttributionContext is empty, fall back to the subject's last-touch attribution from growth::attribution."
+        }
+      ]
+    },
+    "retention": {
+      "description": "Retention windows \u2014 mirrors retention.json but exposed for env-driven override in dev/test.",
+      "keys": [
+        {
+          "path": "analytics.retention.events_days",
+          "type": "int",
+          "default": 730,
+          "env": "ANALYTICS_RETENTION_EVENTS_DAYS"
+        },
+        {
+          "path": "analytics.retention.deliveries_days",
+          "type": "int",
+          "default": 90,
+          "env": "ANALYTICS_RETENTION_DELIVERIES_DAYS"
+        },
+        {
+          "path": "analytics.retention.identities_days",
+          "type": "int",
+          "default": 365
+        }
+      ]
+    },
+    "batching": {
+      "description": "Per-provider batching defaults \u2014 seeded from data/batch-defaults.json.",
+      "keys": [
+        {
+          "path": "analytics.batching.buffer_driver",
+          "type": "string",
+          "default": "redis",
+          "description": "Batch buffer backing store. redis for prod; memory for tests."
+        },
+        {
+          "path": "analytics.batching.max_buffer_depth_per_provider",
+          "type": "int",
+          "default": 10000,
+          "description": "Backpressure signal \u2014 batch depth exceeds this triggers AnalyticsBatchBackpressureNotification."
+        }
+      ]
+    },
+    "test_mode": {
+      "description": "Local + test env defaults.",
+      "keys": [
+        {
+          "path": "analytics.test.stub_all_providers",
+          "type": "bool",
+          "default": false,
+          "description": "When true, all providers replaced by NullProviderDriver. Test env only."
+        },
+        {
+          "path": "analytics.test.log_payloads",
+          "type": "bool",
+          "default": false,
+          "description": "Log full request payloads to Log channel at debug level. Local dev only \u2014 leaks property values."
+        }
+      ]
+    }
+  }
+}

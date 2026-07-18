@@ -1,0 +1,157 @@
+{
+  "id": "academorix://modules/referrals/jobs",
+  "$version": 1,
+  "title": "referrals — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Growth\\Referrals\\Jobs\\DetectReferralFraudJob",
+      "queue": "referrals",
+      "purpose": "Runs FraudDetector against a specific Referral at (a) claim time (dispatched from ReferralClaimer inside the claim transaction — synchronous execution when FRAUD_SYNC=true; async fallback otherwise), and (b) trigger time (dispatched from the trigger listener before vesting transitions). Writes ReferralFraudFlag rows for each rule that fires. Refuses the referral (or blocks vesting) when severity IN ('block','critical').",
+      "steps": [
+        "Load referral + program config + referrer's recent-referral history + device/ip evidence",
+        "Run each configured fraud rule in program.fraud_config (self_ip_match, device_fingerprint_match, disposable_email, self_email_variant, velocity_exceeded, click_storm_pattern, blacklist_domain, geographic_mismatch, behavioral_anomaly)",
+        "For each rule that fires: create a ReferralFraudFlag row with severity + confidence + details JSONB",
+        "Return the max severity + max fraud_score across rules",
+        "If severity=critical: transition Referral.status -> fraudulent + fire ReferralCancelled with reason='fraud_detected'",
+        "If severity=block: transition Referral.status -> fraudulent (blocks further processing but doesn't cancel yet — waits for admin review)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "(referral_id, detection_phase)",
+      "tries": 3,
+      "backoff": [30, 120, 600]
+    },
+    {
+      "class": "Academorix\\Growth\\Referrals\\Jobs\\IssueReferralCodeJob",
+      "queue": "referrals",
+      "purpose": "Auto-generates a user_scoped referral code for a newly-activated user, IF the tenant has at least one active referral program. Dispatched from IssueUserReferralCodeOnAccountActivated hook. Skipped when the user already has a code for the program.",
+      "steps": [
+        "Load user + tenant + all active programs for the tenant",
+        "For each active program: check if a code with owner_user_id=user.id already exists (idempotency)",
+        "For each program without an existing code: call ReferralCodeGenerator.forUser(user, program) → generates `{username-slug}-{6-char-random}` (respecting config.referrals.code_generation.entropy_bits + collision retry loop)",
+        "Create the referral_codes row (fires ReferralCodeIssued)",
+        "Notification opt-in: dispatch a welcome email letting the user know they have a code + linking to /me/referral-code"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "user_id",
+      "tries": 3,
+      "backoff": [30, 120, 600]
+    },
+    {
+      "class": "Academorix\\Growth\\Referrals\\Jobs\\CheckReferralVestingJob",
+      "queue": "referrals",
+      "purpose": "Nightly sweep. Transitions Referral.status vesting -> vested for rows whose vesting_completes_at has passed. Handles trigger_plus_hold_days + after_refund_window_closes + n_events_completed vesting rules. Each transition creates ReferralReward rows atomically.",
+      "steps": [
+        "SELECT id FROM referrals WHERE status='vesting' AND vested_at IS NULL AND vesting_completes_at < now() AND deleted_at IS NULL FOR UPDATE SKIP LOCKED LIMIT 1000",
+        "For each: re-run FraudDetector to catch trigger-window fraud",
+        "If no blocking fraud: transition status -> vested + create ReferralReward rows atomically (single or double sided per program)",
+        "Fire ReferralVested + ReferralEnteredVesting -> ReferralVested transition consumers",
+        "If FraudDetector blocks: transition status -> fraudulent instead"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 3,
+      "backoff": [60, 300, 1800]
+    },
+    {
+      "class": "Academorix\\Growth\\Referrals\\Jobs\\MaterializeVestedRewardsJob",
+      "queue": "referrals-critical",
+      "purpose": "Every 15 min. Picks vested-status rewards + calls RewardMaterializer.materialize() which dispatches to the Finance module (Wave 4) to create a pending credit. Sets finance_credit_id + materialized_at on success. Fires ReferralRewardMaterialized.",
+      "steps": [
+        "SELECT id FROM referral_rewards WHERE status='vested' AND materialized_at IS NULL AND deleted_at IS NULL FOR UPDATE SKIP LOCKED LIMIT 500",
+        "For each: call RewardMaterializer.materialize(reward) — this is the Finance module bridge",
+        "On success: UPDATE referral_rewards SET status='materialized', finance_credit_id=?, materialized_at=now()",
+        "On Finance module failure: retain status='vested', increment attempt_count, backoff",
+        "Every double-materialization attempt (finance_credit_id already set) fires REFERRAL_REWARD_DOUBLE_MATERIALIZATION (P1)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 600,
+      "tries": 5,
+      "backoff": [60, 300, 900, 1800, 3600]
+    },
+    {
+      "class": "Academorix\\Growth\\Referrals\\Jobs\\ExpireStaleReferralsJob",
+      "queue": "referrals",
+      "purpose": "Nightly. Transitions Referral.status 'claimed' / 'pending_claim' -> expired for rows past their claim TTL (default 30d, configurable per program). Never signed up → expired terminal.",
+      "steps": [
+        "SELECT id FROM referrals WHERE status IN ('pending_claim','claimed') AND claimed_at < now() - interval '30 days' AND deleted_at IS NULL FOR UPDATE SKIP LOCKED LIMIT 2000",
+        "For each: transition status -> expired + fire ReferralExpired"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Growth\\Referrals\\Jobs\\ClawbackRewardsOnRefundJob",
+      "queue": "referrals-critical",
+      "purpose": "Dispatched by ClawbackRewardsOnFinanceRefund hook when finance::RefundIssued fires. Finds every ReferralReward tied (via the underlying referred user's first payment) to the refunded payment + transitions status -> clawback. Fires ReferralClawback per reward.",
+      "steps": [
+        "Load the refund event (finance module payload provides user_id + payment_id + refund_amount)",
+        "SELECT rewards WHERE recipient_type='user' AND recipient_id = user_id AND status IN ('materialized','paid') — filtered to rewards tied to this specific referral path (the observer chain established the link at trigger time via program.trigger_event='first_payment')",
+        "For each: transition status -> clawback + set clawback_reason='refund' + clawback_at=now()",
+        "Fire ReferralClawback per reward"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 600,
+      "uniqueVia": "(user_id, payment_id)",
+      "tries": 5,
+      "backoff": [60, 300, 900, 1800, 3600]
+    },
+    {
+      "class": "Academorix\\Growth\\Referrals\\Jobs\\ReconcileProgramBudgetJob",
+      "queue": "referrals",
+      "purpose": "Nightly. Recomputes rewards_issued_count + rewards_issued_amount_cents from ReferralReward rows for each active program (defense against counter drift). Detects budget spikes (> 50% of remaining budget consumed in a rolling 24h window) + fires ReferralProgramBudgetSpike.",
+      "steps": [
+        "For each active program: SELECT count(*), sum(reward_amount) FROM referral_rewards WHERE referral_id IN (SELECT id FROM referrals WHERE referral_program_id = program.id) AND status IN ('materialized','paid') AND deleted_at IS NULL",
+        "Update program.rewards_issued_count + rewards_issued_amount_cents; log discrepancy metric academorix.referrals.budget.drift_ratio",
+        "For each program: compute consumed_in_24h = sum(reward_amount) WHERE materialized_at > now() - 24h; if consumed_in_24h > 0.5 * (max_rewards_per_program - rewards_issued_amount_cents): fire ReferralProgramBudgetSpike",
+        "For each program at budget cap: fire ReferralProgramBudgetReached (idempotent — check if already fired)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Growth\\Referrals\\Jobs\\NotifyReferralInvitationJob",
+      "queue": "notifications",
+      "purpose": "Delivers a ReferralInvitationSent invitation via email / SMS. Dispatched by the InvitationDispatcher when a user calls POST /me/invitations. Consults tenant's invitation_template_samples + user's referral code + guard against disposable-email recipients.",
+      "steps": [
+        "Load user + user's active referral code + tenant + template (from data/invitation-template-samples.json or tenant override)",
+        "Refuse when recipient email matches disposable_email domains (silently succeeds with no delivery — logs suppression)",
+        "Refuse when recipient email is already in referrals as a signed_up user (avoid re-invitation churn)",
+        "Compose email/SMS body substituting {sender_name}, {referral_url}, {reward_summary}",
+        "Dispatch via notifications module + fire ReferralInvitationSent"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "(sender_user_id, recipient_email_hash)",
+      "tries": 3,
+      "backoff": [30, 120, 600]
+    },
+    {
+      "class": "Academorix\\Growth\\Referrals\\Jobs\\PurgeArchivedReferralsJob",
+      "queue": "referrals",
+      "purpose": "Weekly sweep. Hard-deletes referrals + rewards + fraud flags past their retention window (7 years default, 10 years for Enterprise `referrals_extended_retention`). Preserves audit trail rows (survives per audit module design). Paid rewards migrate to compliance archive rather than being hard-deleted (financial-obligation retention).",
+      "steps": [
+        "SELECT id FROM referrals WHERE deleted_at < now() - interval '7 years' AND status IN ('rewarded','cancelled','expired','fraudulent') LIMIT 500",
+        "For each: check tenant.referrals_extended_retention entitlement — if enterprise, use 10y window",
+        "For each: check downstream rewards. If any reward.status='paid' AND retention alignment requires it: migrate to compliance_archive.referral_rewards + hard-delete referral",
+        "Hard-delete referral_fraud_flags where referral_id in the delete set",
+        "Emit academorix.referrals.retention.purged_total counter"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 1
+    }
+  ]
+}

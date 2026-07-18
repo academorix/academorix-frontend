@@ -1,0 +1,113 @@
+{
+  "id": "academorix://modules/analytics/compliance",
+  "$version": 1,
+  "title": "analytics — compliance evidence",
+  "description": "Primary control points for GDPR (Art. 6, 7, 17, 21, 30, 32), CCPA §1798.140 profiling, and SOC 2 Type 2 (CC7.3, CC8.1). Consent gate + PII-refusal + retention runner are the load-bearing compliance surfaces.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 6(1)(a)",
+          "principle": "consent as lawful basis",
+          "evidence": "Every AnalyticsEvent captures a consent_snapshot at CREATE time. Dispatch re-checks consent state against the snapshot. Events for subjects without `analytics` consent are refused (suppressed_by_consent status). Consent trail lives in compliance::ConsentRecord \u2014 immutable, tenant + subject + category snapshotted."
+        },
+        {
+          "article": "Art. 7(3)",
+          "principle": "right to withdraw consent as easily as it was given",
+          "evidence": "compliance::ConsentWithdrawn event fires when a subject withdraws \u2014 analytics::SuppressPendingEventsOnConsentWithdrawnListener marks any pending events for that subject as suppressed. No further dispatches will fire post-withdrawal for events captured before withdrawal."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "user::UserErased cascades analytics::RedactAnalyticsSubjectOnUserErasureListener \u2014 redacts subject-identifying properties on events, sets AnalyticsIdentity.identified_user_id=null, hashes device_fingerprint. Aggregate reporting continues from the behavioral shape."
+        },
+        {
+          "article": "Art. 21",
+          "principle": "right to object to processing (including profiling)",
+          "evidence": "Behavioral analytics IS profiling for CCPA purposes. Subject-level opt-out via consent withdrawal (Art. 7(3) mechanism) satisfies Art. 21 objection. AnalyticsEventPolicy view enforces tenant-scoping so no cross-tenant profiling can leak."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "PropertyValidator refuses PII in properties + context at CREATE time. IP addresses are hashed at capture boundary (never raw). Device fingerprints are hashed. Attribution is snapshotted immutable so replaying an event later doesn't leak fresh attribution context."
+        },
+        {
+          "article": "Art. 28",
+          "principle": "processor arrangement",
+          "evidence": "subprocessors.json lists PostHog / Amplitude / Mixpanel / Segment / June / GA4 as Article 28 processors with DPA URLs + certifications. DPAs on file, referenced by DSAR orchestrator."
+        },
+        {
+          "article": "Art. 30",
+          "principle": "records of processing activities",
+          "evidence": "audit_log rows for every AnalyticsProviderConfig change (credential rotation, sampling change, enabled_event_types change). 7-year retention per foundation's audit tier."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security of processing",
+          "evidence": "TLS 1.3 for outbound to every provider. Provider webhook signatures verified inbound. AnalyticsProviderConfig.config encrypted at rest AES-256-GCM via Laravel Crypt. Secrets in Doppler; never in code."
+        },
+        {
+          "article": "Art. 44-49",
+          "principle": "international transfers",
+          "evidence": "Provider region selection via provider config (PostHog EU, Amplitude EU, GA4 measurement_id region). Tenant may pin to EU-only providers by including only EU endpoints in enabled_event_types. Legally: adequacy decisions + SCC clauses on file with each provider."
+        }
+      ]
+    },
+    "ccpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "section": "§1798.140(o)",
+          "principle": "behavioral profiling categorised as personal information",
+          "evidence": "Every analytics event contributes to the subject's behavioral profile. Consent snapshot + AnalyticsEvent visibility give the subject standing to invoke §1798.115 right-to-know via the compliance module's DSAR runner (analytics is a DsarExportable contributor)."
+        },
+        {
+          "section": "§1798.105",
+          "principle": "right to delete",
+          "evidence": "compliance::UserErased cascade + PurgeAnalyticsDataForErasedTenant handle full erasure. Deletion runs within the compliance module's DSAR SLA (30 days baseline)."
+        },
+        {
+          "section": "§1798.120",
+          "principle": "right to opt-out of sale/sharing",
+          "evidence": "Analytics data is NEVER sold. When a subject opts out of sharing (functionally equivalent to withdrawing analytics consent), the consent gate suppresses all future dispatch. Provider configs are per-tenant \u2014 no cross-tenant data pooling."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC7.3",
+          "principle": "incident response",
+          "evidence": "feature-flags.json per-provider kill switches. Emergency ops can flip a bad provider off in seconds without a redeploy. Circuit breakers auto-open on failure rate breach; auto-close on recovery. Alerts fire via AnalyticsProviderCircuitBreakerOpenedNotification within 15 minutes."
+        },
+        {
+          "criterion": "CC7.5",
+          "principle": "monitoring and remediation",
+          "evidence": "metrics.json declares 12 OpenTelemetry metrics covering send volume, delivery latency, failure rates by state, circuit-breaker state, batch flush timing, sampling drift. Alerts fire on threshold breach."
+        },
+        {
+          "criterion": "CC8.1",
+          "principle": "change management",
+          "evidence": "Every AnalyticsProviderConfig change writes an audit row via HasAuditable trait \u2014 credential rotation, enabled_event_types adjustment, sampling change, circuit_breaker reset. 7-year retention. Config column encrypted so audit rows don't leak credentials."
+        }
+      ]
+    },
+    "iso_27001": {
+      "applicable": true,
+      "controls": [
+        {
+          "clause": "A.8.3",
+          "principle": "information deletion",
+          "evidence": "Retention runner (PurgeExpiredAnalyticsDataJob weekly) hard-purges past retention window. TenantErased cascade delete complete + audited."
+        },
+        {
+          "clause": "A.14.1.3",
+          "principle": "protecting transactions",
+          "evidence": "TLS 1.3 outbound + signed inbound webhooks (per provider) + HMAC for custom_webhook driver."
+        }
+      ]
+    }
+  }
+}

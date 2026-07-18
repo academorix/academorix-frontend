@@ -1,0 +1,168 @@
+{
+  "id": "analytics.resources.analytics-provider-config.create",
+  "title": "Add analytics provider",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/analytics/providers/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "analytics", "entity": "analytics-provider-config", "action": "create" },
+  "requiresPermission": "analytics.providers.create",
+  "requiresEntitlement": "analytics_provider_slot",
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "Back to providers",
+            "className": "text-sm text-muted"
+          },
+          "actions": { "onPress": { "kind": "navigate", "to": "/tenant/analytics/providers" } }
+        },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Add analytics provider"
+          }
+        },
+        {
+          "kind": "Wizard",
+          "props": { "activeStep": "$state.step" },
+          "steps": [
+            {
+              "id": "choose_provider",
+              "label": "Choose provider",
+              "content": {
+                "kind": "View",
+                "children": [
+                  {
+                    "kind": "RadioGroup",
+                    "props": { "label": "Provider", "name": "provider" },
+                    "options": [
+                      { "key": "posthog", "label": "PostHog", "description": "Product analytics + session recording + feature flags" },
+                      { "key": "amplitude", "label": "Amplitude", "description": "Behavioral cohort + funnel + retention" },
+                      { "key": "google_analytics_4", "label": "Google Analytics 4", "description": "Web + app analytics via measurement protocol" },
+                      { "key": "mixpanel", "label": "Mixpanel", "description": "Product analytics /import endpoint", "requiresEntitlement": "analytics_advanced_providers" },
+                      { "key": "segment", "label": "Segment", "description": "Upstream fan-out CDP", "requiresEntitlement": "analytics_advanced_providers" },
+                      { "key": "june", "label": "June", "description": "B2B product analytics", "requiresEntitlement": "analytics_advanced_providers" },
+                      { "key": "custom_webhook", "label": "Custom webhook", "description": "HMAC-signed JSON to your endpoint", "requiresEntitlement": "analytics_advanced_providers" }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "credentials",
+              "label": "Credentials",
+              "content": {
+                "kind": "View",
+                "children": [
+                  {
+                    "kind": "TextField",
+                    "props": { "label": "Display name", "name": "name", "placeholder": "e.g. PostHog Production", "required": true }
+                  },
+                  {
+                    "kind": "DynamicForm",
+                    "props": {
+                      "schemaSourceExpr": "'/blueprints/analytics/data/providers/' + $state.provider + '.provider.json'",
+                      "schemaPath": "config_schema",
+                      "name": "config"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sampling_batching",
+              "label": "Sampling + batching",
+              "content": {
+                "kind": "View",
+                "children": [
+                  {
+                    "kind": "NumberField",
+                    "props": {
+                      "label": "Sampling rate",
+                      "name": "sampling_rate",
+                      "min": 0,
+                      "max": 1,
+                      "step": 0.01,
+                      "defaultValue": 1
+                    },
+                    "bindings": {
+                      "isDisabled": {
+                        "$expr": "!identity.entitlements.analytics_sampling_config && $state.provider !== 'posthog' && $state.provider !== 'custom_webhook'"
+                      }
+                    }
+                  },
+                  {
+                    "kind": "TagField",
+                    "props": {
+                      "label": "Enabled event types",
+                      "name": "enabled_event_types",
+                      "defaultValue": ["track:*", "identify", "page", "screen", "alias", "group"]
+                    }
+                  },
+                  {
+                    "kind": "Toggle",
+                    "props": {
+                      "label": "Test mode",
+                      "name": "test_mode",
+                      "defaultValue": false,
+                      "helpText": "When on, events land in the provider's debug view rather than production analytics."
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "confirm",
+              "label": "Confirm",
+              "content": {
+                "kind": "View",
+                "children": [
+                  {
+                    "kind": "Alert",
+                    "props": {
+                      "variant": "info",
+                      "children": "We'll dispatch a synthetic test event after creation to verify credentials + endpoint reachability."
+                    }
+                  },
+                  {
+                    "kind": "Button",
+                    "props": {
+                      "variant": "primary",
+                      "size": "lg",
+                      "children": "Create provider"
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "url": "/api/v1/analytics/providers",
+                        "bodyFromState": true,
+                        "onSuccess": [
+                          { "kind": "toast.success", "message": "Provider created \u2014 sending test event" },
+                          {
+                            "kind": "navigate",
+                            "toExpr": "'/tenant/analytics/providers/' + response.data.id + '/test'"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

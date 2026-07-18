@@ -1,0 +1,82 @@
+{
+  "id": "referrals.fraud-severity-chip",
+  "title": "Fraud severity chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for referral_fraud_flag.severity + disposition combo. Values combine severity (warn/block/critical) with disposition (unreviewed/confirmed_fraud/false_positive/manual_override_approved). Never colour-alone — carries text label + icon.",
+  "props": {
+    "severity": {
+      "type": "string",
+      "enum": ["warn", "block", "critical"],
+      "required": true
+    },
+    "disposition": {
+      "type": "string",
+      "enum": ["unreviewed", "confirmed_fraud", "false_positive", "manual_override_approved"],
+      "default": "unreviewed"
+    },
+    "confidence": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "inline-flex items-center gap-1" },
+      "children": [
+        {
+          "kind": "Chip",
+          "bindings": {
+            "variant": {
+              "$expr": "props.disposition === 'false_positive' ? 'neutral' : (props.disposition === 'confirmed_fraud' ? 'danger' : (props.severity === 'critical' ? 'danger' : (props.severity === 'block' ? 'warning' : 'info')))"
+            },
+            "size": { "$ref": "props.size" }
+          },
+          "props": {
+            "leadingIcon": {
+              "$expr": "({ warn: 'exclamation-triangle', block: 'no-symbol', critical: 'shield-exclamation' })[props.severity]"
+            }
+          },
+          "children": [
+            {
+              "kind": "Text",
+              "bindings": {
+                "children": {
+                  "$expr": "({ warn: 'Warn', block: 'Block', critical: 'Critical' })[props.severity]"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Chip",
+          "bindings": {
+            "hidden": { "$expr": "props.disposition === 'unreviewed'" },
+            "variant": {
+              "$expr": "({ confirmed_fraud: 'danger', false_positive: 'success', manual_override_approved: 'info' })[props.disposition]"
+            },
+            "size": { "$ref": "props.size" }
+          },
+          "children": [
+            {
+              "kind": "Text",
+              "bindings": {
+                "children": {
+                  "$expr": "({ confirmed_fraud: 'Confirmed', false_positive: 'False positive', manual_override_approved: 'Overridden' })[props.disposition]"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs text-muted ml-1" },
+          "bindings": {
+            "hidden": { "$expr": "!props.confidence" },
+            "children": { "$expr": "props.confidence + '% confidence'" }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "id": "academorix://modules/analytics/data-classes",
+  "$version": 1,
+  "title": "analytics — field classification",
+  "description": "Field-level classification per foundation's five-tier taxonomy. Analytics is behavioral; properties + context + attribution can carry near-PII (device fingerprints, IP hashes, session ids) so most substantive columns land in `confidential` or `internal`. NO raw PII (email, phone, name, address) is ever stored \u2014 enforced by PropertyValidator at capture time.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "AnalyticsEvent.id",
+      "AnalyticsEvent.event_kind",
+      "AnalyticsEvent.category",
+      "AnalyticsEvent.status",
+      "AnalyticsEvent.eligible_provider_count",
+      "AnalyticsEvent.delivered_provider_count",
+      "AnalyticsEvent.event_time",
+      "AnalyticsEvent.created_at",
+      "AnalyticsEvent.updated_at",
+      "AnalyticsDelivery.id",
+      "AnalyticsDelivery.provider",
+      "AnalyticsDelivery.status",
+      "AnalyticsDelivery.attempt_number",
+      "AnalyticsDelivery.response_http_status",
+      "AnalyticsDelivery.latency_ms",
+      "AnalyticsDelivery.created_at",
+      "AnalyticsProviderConfig.id",
+      "AnalyticsProviderConfig.provider",
+      "AnalyticsProviderConfig.name",
+      "AnalyticsProviderConfig.is_active",
+      "AnalyticsProviderConfig.test_mode",
+      "AnalyticsProviderConfig.created_at",
+      "AnalyticsIdentity.id",
+      "AnalyticsIdentity.first_seen_at",
+      "AnalyticsIdentity.identified_at",
+      "AnalyticsIdentity.last_seen_at"
+    ],
+    "internal": [
+      "AnalyticsEvent.tenant_id",
+      "AnalyticsEvent.event_name",
+      "AnalyticsEvent.subject_type",
+      "AnalyticsEvent.subject_id",
+      "AnalyticsEvent.session_id",
+      "AnalyticsEvent.deduplication_key",
+      "AnalyticsEvent.metadata",
+      "AnalyticsDelivery.tenant_id",
+      "AnalyticsDelivery.analytics_event_id",
+      "AnalyticsDelivery.analytics_provider_config_id",
+      "AnalyticsDelivery.batch_id",
+      "AnalyticsDelivery.error_code",
+      "AnalyticsProviderConfig.tenant_id",
+      "AnalyticsProviderConfig.enabled_event_types",
+      "AnalyticsProviderConfig.sampling_rate",
+      "AnalyticsProviderConfig.sampling_rules",
+      "AnalyticsProviderConfig.batch_config",
+      "AnalyticsProviderConfig.circuit_breaker_config",
+      "AnalyticsProviderConfig.circuit_breaker_state",
+      "AnalyticsProviderConfig.retry_config",
+      "AnalyticsProviderConfig.notes",
+      "AnalyticsIdentity.tenant_id",
+      "AnalyticsIdentity.anonymous_id",
+      "AnalyticsIdentity.identified_user_id",
+      "AnalyticsIdentity.merged_from",
+      "AnalyticsIdentity.notes"
+    ],
+    "confidential": [
+      "AnalyticsEvent.properties",
+      "AnalyticsEvent.context",
+      "AnalyticsEvent.attribution",
+      "AnalyticsEvent.consent_snapshot",
+      "AnalyticsEvent.anonymous_id",
+      "AnalyticsDelivery.request_payload",
+      "AnalyticsDelivery.response",
+      "AnalyticsDelivery.error_message",
+      "AnalyticsIdentity.device_fingerprint_hash"
+    ],
+    "restricted": [
+      "AnalyticsProviderConfig.config"
+    ],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "audit_log": [
+      "audits.analytics.* rows produced by HasAuditable on AnalyticsEvent + AnalyticsProviderConfig + AnalyticsIdentity. Retained per foundation's audit_log tier."
+    ]
+  },
+  "notes": [
+    "AnalyticsProviderConfig.config is RESTRICTED — contains API keys, project IDs, host URLs. AES-256-GCM encrypted at rest via Laravel Crypt. NEVER surfaced on any wire.",
+    "AnalyticsEvent.properties + context + attribution are CONFIDENTIAL — property values may include semi-identifying signal (feature ids, screen names) but NEVER raw PII (enforced at capture by PropertyValidator).",
+    "AnalyticsIdentity.device_fingerprint_hash is CONFIDENTIAL — hashed at browser boundary; NEVER raw fingerprint. Used only for anti-abuse.",
+    "AnalyticsDelivery.request_payload + response are CONFIDENTIAL — may include serialised property values. Hidden on tenant wire by default; reveal requires super_admin + ?include=raw_payload.",
+    "No `restricted` fields beyond the encrypted config column — analytics deliberately AVOIDS storing raw PII. Provider API keys are the only truly sensitive material."
+  ]
+}

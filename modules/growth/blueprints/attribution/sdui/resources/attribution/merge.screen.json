@@ -1,0 +1,230 @@
+{
+  "id": "attribution.resources.attribution.merge",
+  "title": "Merge attributions",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/attributions/:attributionId/merge",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "attribution", "entity": "attribution", "action": "merge" },
+  "requiresPermission": "attribution.merge",
+  "requiresEntitlement": "attribution_merge",
+  "dataSources": [
+    {
+      "name": "attribution",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/attributions/' + params.attributionId",
+      "unwrap": "data"
+    },
+    {
+      "name": "merge_candidates",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/attributions/' + params.attributionId + '/merge-candidates'",
+      "unwrap": "data",
+      "description": "Anonymous profiles matching session_id / ip_hash / device_hash within 30 days."
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-4xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Merge anonymous profiles" } },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted mt-1",
+                "children": "Absorb anonymous browser sessions into this identified profile. First-touch data from the earliest anonymous session may overwrite this profile's first-touch (per merge policy)."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "className": "my-2"
+          },
+          "children": [
+            { "kind": "Text", "props": { "className": "font-medium", "children": "This action is irreversible." } },
+            { "kind": "Text", "props": { "className": "text-sm", "children": "Absorbed profiles are soft-deleted immediately. Every touchpoint is replayed onto this profile." } }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            { "kind": "Text", "props": { "className": "text-sm font-semibold uppercase text-muted mb-3", "children": "Target (identified)" } },
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "bindings": { "children": { "$expr": "attribution.subject_type + ' ' + attribution.subject_id" } } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted mt-1" }, "bindings": { "children": { "$expr": "'First-touch: ' + attribution.first_touch_source + ' / ' + (attribution.first_touch_campaign || 'no campaign') + ' at ' + attribution.first_touch_at" } } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-between mb-3" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm font-semibold uppercase text-muted", "children": "Candidate anonymous profiles" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted" },
+                  "bindings": { "children": { "$expr": "merge_candidates.length + ' candidate(s)'" } }
+                }
+              ]
+            },
+            {
+              "kind": "Table",
+              "bindings": { "items": { "$ref": "merge_candidates" } },
+              "emptyState": {
+                "kind": "Text",
+                "props": { "className": "text-sm text-muted text-center py-8", "children": "No candidates match session_id / ip_hash / device_hash within the 30-day window." }
+              },
+              "columns": [
+                {
+                  "id": "select",
+                  "header": "",
+                  "cellRenderer": {
+                    "kind": "Checkbox",
+                    "actions": {
+                      "onChange": {
+                        "kind": "form.toggle_in_array",
+                        "field": "from_attribution_ids",
+                        "valueExpr": "row.id"
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "subject",
+                  "header": "Session",
+                  "cellRenderer": {
+                    "kind": "Text",
+                    "props": { "className": "font-mono text-xs" },
+                    "bindings": { "children": { "$ref": "row.subject_id" } }
+                  }
+                },
+                {
+                  "id": "first_touch_source",
+                  "header": "First-touch",
+                  "cellRenderer": {
+                    "kind": "Widget",
+                    "widget": "attribution.attribution-source-chip",
+                    "bindings": {
+                      "source": { "$ref": "row.first_touch_source" },
+                      "bucket": { "$ref": "row.first_touch_source_bucket" }
+                    }
+                  }
+                },
+                {
+                  "id": "first_touch_at",
+                  "header": "First seen",
+                  "cellRenderer": {
+                    "kind": "Text",
+                    "props": { "className": "text-sm" },
+                    "bindings": { "children": { "$expr": "formatRelative(row.first_touch_at)" } }
+                  }
+                },
+                {
+                  "id": "touchpoint_count",
+                  "header": "Touches",
+                  "cellRenderer": {
+                    "kind": "Text",
+                    "bindings": { "children": { "$ref": "row.touchpoint_count" } }
+                  }
+                },
+                {
+                  "id": "match_signals",
+                  "header": "Match",
+                  "cellRenderer": {
+                    "kind": "View",
+                    "props": { "className": "flex gap-1" },
+                    "children": [
+                      {
+                        "kind": "Chip",
+                        "props": { "size": "xs", "variant": "info" },
+                        "bindings": {
+                          "hidden": { "$expr": "!row.match_signals.session_id" },
+                          "children": "session"
+                        }
+                      },
+                      {
+                        "kind": "Chip",
+                        "props": { "size": "xs", "variant": "neutral" },
+                        "bindings": {
+                          "hidden": { "$expr": "!row.match_signals.ip_hash" },
+                          "children": "IP"
+                        }
+                      },
+                      {
+                        "kind": "Chip",
+                        "props": { "size": "xs", "variant": "neutral" },
+                        "bindings": {
+                          "hidden": { "$expr": "!row.match_signals.device_hash" },
+                          "children": "device"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "TextArea",
+          "props": {
+            "label": "Reason (optional)",
+            "placeholder": "e.g. Cross-device merge — user identified from mobile after signing up on desktop"
+          },
+          "actions": {
+            "onChange": { "kind": "form.set", "field": "reason", "valueExpr": "$value" }
+          }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-end gap-2 mt-4" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "secondary", "children": "Cancel" },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/attributions/' + params.attributionId"
+                }
+              }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "leadingIcon": "arrow-path-rounded-square", "children": "Merge selected" },
+              "bindings": { "disabled": { "$expr": "!form.from_attribution_ids || form.from_attribution_ids.length === 0" } },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "urlExpr": "'/api/v1/attributions/' + params.attributionId + '/merge'",
+                  "bodyExpr": "{ from_attribution_ids: form.from_attribution_ids, reason: form.reason }",
+                  "onSuccess": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/attributions/' + params.attributionId"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

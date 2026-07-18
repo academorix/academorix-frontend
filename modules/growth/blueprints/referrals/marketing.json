@@ -1,0 +1,155 @@
+{
+  "id": "academorix://modules/referrals/marketing",
+  "$version": 1,
+  "title": "referrals — marketing events (ad-network conversions)",
+  "lane": "marketing",
+  "consentTiers": ["essential", "functional", "advertising"],
+  "description": "Marketing-lane events fired by the referrals module. Every referral that reaches signed_up + vested transitions its acquisition path to a first-class attributable conversion — the marketing module forwards these to configured ad networks (Meta CAPI, Google Ads Enhanced Conversions, TikTok Events API, Microsoft UET, Snapchat CAPI) using the frozen attribution_snapshot's click_id + utm data. Marketing events are ZERO-LOSS — each lost event = wasted ad spend + broken attribution. Consent tier is `advertising` (subset of `marketing`) — a user who revokes advertising consent has their conversions suppressed at dispatch (attribution snapshot is not re-shared with ad networks).",
+  "events": [
+    {
+      "name": "Referral Signup Attributed",
+      "kind": "conversion",
+      "consent_required": "advertising",
+      "provider_filter": null,
+      "properties": [
+        "tenant_id",
+        "referral_id",
+        "program_id",
+        "referrer_user_id",
+        "referred_user_id",
+        "signed_up_at",
+        "click_id (from attribution_snapshot: gclid/fbclid/ttclid/msclkid/sccid)",
+        "click_id_provider (google/meta/tiktok/microsoft/snapchat)",
+        "utm_source",
+        "utm_medium",
+        "utm_campaign",
+        "utm_content",
+        "utm_term",
+        "referrer_url_hash",
+        "device_type",
+        "browser",
+        "os",
+        "value_cents (0 — signup is unpriced)",
+        "currency"
+      ],
+      "provider_events": [
+        { "provider": "meta_capi", "event_name": "Lead" },
+        { "provider": "google_ads_ec", "event_name": "sign_up" },
+        { "provider": "tiktok_events_api", "event_name": "CompleteRegistration" },
+        { "provider": "microsoft_uet", "event_name": "sign_up" },
+        { "provider": "snapchat_capi", "event_name": "SIGN_UP" }
+      ],
+      "description": "Fires on ReferralSignedUp. Attributes the signup to the ad-network that seeded the referrer's original acquisition (or the referred user's own attribution path when known)."
+    },
+    {
+      "name": "Referral Vested Attributed",
+      "kind": "conversion",
+      "consent_required": "advertising",
+      "provider_filter": null,
+      "properties": [
+        "tenant_id",
+        "referral_id",
+        "program_id",
+        "referrer_user_id",
+        "referred_user_id",
+        "vested_at",
+        "trigger_event",
+        "click_id",
+        "click_id_provider",
+        "utm_source",
+        "utm_medium",
+        "utm_campaign",
+        "reward_type",
+        "reward_amount_cents (referrer side)",
+        "reward_currency",
+        "value_cents (revenue attribution — often the first_payment amount if trigger=first_payment)",
+        "currency",
+        "device_type"
+      ],
+      "provider_events": [
+        { "provider": "meta_capi", "event_name": "Purchase" },
+        { "provider": "google_ads_ec", "event_name": "purchase" },
+        { "provider": "tiktok_events_api", "event_name": "CompletePayment" },
+        { "provider": "microsoft_uet", "event_name": "purchase" },
+        { "provider": "snapchat_capi", "event_name": "PURCHASE" }
+      ],
+      "description": "Fires on ReferralVested. The HIGH-VALUE conversion — this is what ad-network bidding algorithms optimise against. Includes revenue attribution (value_cents) when trigger_event=first_payment."
+    },
+    {
+      "name": "Referral Signup Reversed",
+      "kind": "reversal",
+      "consent_required": "advertising",
+      "provider_filter": null,
+      "properties": [
+        "tenant_id",
+        "referral_id",
+        "program_id",
+        "original_signup_event_id",
+        "reversal_reason (cancellation_reason)",
+        "reversed_at"
+      ],
+      "provider_events": [
+        { "provider": "meta_capi", "event_name": "Lead", "reversal": true },
+        { "provider": "google_ads_ec", "event_name": "sign_up", "reversal": true },
+        { "provider": "tiktok_events_api", "event_name": "CompleteRegistration", "reversal": true }
+      ],
+      "description": "Fires on ReferralCancelled (when the underlying referral had already fired a Signup Attributed event). Ad networks receive a reversal signal so they can adjust bidding — critical for accurate ROAS calculation. Not all networks support reversal — the ones that do get the reversal event; the others receive a compensating negative-value conversion on providers that support it."
+    },
+    {
+      "name": "Referral Purchase Reversed",
+      "kind": "reversal",
+      "consent_required": "advertising",
+      "provider_filter": null,
+      "properties": [
+        "tenant_id",
+        "referral_id",
+        "program_id",
+        "original_purchase_event_id",
+        "reversal_reason (clawback_reason: refund / chargeback / fraud / program_archived)",
+        "reversed_value_cents",
+        "reversed_at"
+      ],
+      "provider_events": [
+        { "provider": "meta_capi", "event_name": "Purchase", "reversal": true },
+        { "provider": "google_ads_ec", "event_name": "purchase", "reversal": true },
+        { "provider": "tiktok_events_api", "event_name": "CompletePayment", "reversal": true }
+      ],
+      "description": "Fires on ReferralClawback (when the underlying reward had already fired a Vested Attributed event). Reverses the ad-network purchase conversion — protects downstream ROAS + fraud-model training data."
+    },
+    {
+      "name": "Referral Invitation Delivered",
+      "kind": "engagement",
+      "consent_required": "marketing",
+      "provider_filter": ["meta_capi"],
+      "properties": [
+        "tenant_id",
+        "sender_user_id",
+        "recipient_email_hash",
+        "channel",
+        "code_id",
+        "template_slug",
+        "sent_at"
+      ],
+      "description": "Fires on ReferralInvitationSent. Lower-tier engagement event — only fanned out to Meta CAPI (for lookalike audience building). Other networks ignore."
+    }
+  ],
+  "delivery_semantics": {
+    "loss_tolerance": "zero",
+    "retry_policy": "exponential backoff (10s / 60s / 5m / 30m / 3h / 24h) up to 6 attempts; then dead-letter queue for manual replay",
+    "circuit_breaker": "per-provider circuit breaker in the marketing module; if one provider is down, the others still receive events",
+    "ledger": "growth::marketing owns the two-table ledger: marketing_events (canonical) + marketing_deliveries (per-provider-per-attempt log)"
+  },
+  "pii_hashing": {
+    "email": "SHA-256 hex lowercased-trimmed",
+    "phone": "SHA-256 hex E.164-normalised",
+    "click_id": "raw (ad-network needs original click ID)",
+    "user_id": "sent as external_id (unhashed) — matches ad-network's advanced-matching contract"
+  },
+  "attribution_snapshot_shape_version": 1,
+  "notes": [
+    "This is the MARKETING lane per growth-and-observability.md — different consent tier (`advertising`, subset of marketing) than the analytics lane (`functional`) even for the same underlying event.",
+    "Ad networks require SHA-256 hashing of PII per their contracts — the growth::marketing module handles hashing, this module just declares which properties are PII.",
+    "Reversal events are critical — without them, ROAS calculations inflate and the ad network keeps bidding on false conversions.",
+    "attribution_snapshot_shape_version is bumped when the frozen snapshot shape changes — downstream marketing forwarders can branch on the version to handle evolution."
+  ]
+}

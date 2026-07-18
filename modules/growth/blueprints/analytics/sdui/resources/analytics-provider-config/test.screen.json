@@ -1,0 +1,94 @@
+{
+  "id": "analytics.resources.analytics-provider-config.test",
+  "title": "Test analytics provider",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/analytics/providers/{id}/test",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "analytics", "entity": "analytics-provider-config", "action": "test" },
+  "requiresPermission": "analytics.providers.test",
+  "params": [{ "name": "id", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "provider",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/analytics/providers/' + params.id",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": { "leadingIcon": "arrow-left", "children": "Back to providers", "className": "text-sm text-muted" },
+          "actions": { "onPress": { "kind": "navigate", "to": "/tenant/analytics/providers" } }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-3" },
+          "children": [
+            {
+              "kind": "Widget",
+              "widget": "analytics.analytics-provider-badge",
+              "props": { "provider": { "$ref": "provider.provider" }, "size": "lg" }
+            },
+            {
+              "kind": "Text",
+              "props": { "as": "h1", "className": "text-2xl font-semibold" },
+              "bindings": { "children": { "$expr": "'Test ' + provider.name" } }
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "info",
+            "children": "Dispatches a synthetic test event to this provider. Rate-limited to 30 tests per hour. Test events land in the provider's debug view when test_mode is on."
+          }
+        },
+        {
+          "kind": "Button",
+          "props": {
+            "variant": "primary",
+            "size": "lg",
+            "leadingIcon": "paper-airplane",
+            "children": "Send test event"
+          },
+          "actions": {
+            "onPress": {
+              "kind": "http.post",
+              "urlExpr": "'/api/v1/analytics/providers/' + params.id + '/test'",
+              "onSuccess": [
+                { "kind": "toast.success", "message": "Test event dispatched" },
+                { "kind": "state.set", "path": "test_result", "valueFrom": "response.data" }
+              ],
+              "onError": [
+                { "kind": "state.set", "path": "test_result", "valueFrom": "error" }
+              ]
+            }
+          }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "bindings": { "hidden": { "$expr": "!$state.test_result" } },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h2", "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3", "children": "Test result" }
+            },
+            {
+              "kind": "JsonViewer",
+              "bindings": { "value": { "$ref": "$state.test_result" } }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

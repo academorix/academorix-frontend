@@ -1,0 +1,49 @@
+{
+  "id": "academorix://modules/marketing/helpers",
+  "$version": 1,
+  "title": "marketing — helper functions",
+  "description": "Ergonomic helpers for capturing marketing events, resolving providers, and hashing PII. All helpers are thin wrappers around bound services — never business logic. Callers who need the wire-shape of events use the DomainEventMapper attribute path; helpers here are for imperative flows (support tools, tests, ad-hoc scripts).",
+  "namespace": "Academorix\\Growth\\Marketing\\Support",
+  "helpers": [
+    {
+      "signature": "capture_marketing_event(string $eventType, Model $subject, ?int $valueAmountCents = null, ?string $valueCurrency = null, array $metadata = []): ?MarketingEvent",
+      "purpose": "Imperative capture path. Returns the created MarketingEvent OR null when suppressed by consent OR when no eligible providers exist. Wraps MarketingEventCapturer::captureManually with the current tenant + attribution + consent snapshot. Reserved for support tooling — domain code should use the #[AsDomainEventMapper] pattern.",
+      "delegates_to": "MarketingEventCapturer::captureManually()"
+    },
+    {
+      "signature": "hash_pii_for_provider(string $provider, array $identifying): array",
+      "purpose": "Applies the provider's PII hashing rules (email lowercased+trimmed+SHA256; phone E.164 normalized+SHA256; name lowercased+ASCII-folded+SHA256). Returns the transformed array. Providers that don't require hashing (GA4, GTM Server, Custom Webhook) receive the raw identifiers. Consumed by MarketingPayloadTransformer implementations.",
+      "delegates_to": "PiiHasher::hashForProvider()"
+    },
+    {
+      "signature": "resolve_provider(MarketingProviderConfig $config): IMarketingProvider",
+      "purpose": "Returns the driver instance for a provider_config row. Delegates to MarketingProviderManager::forConfig() which reads $config->provider + $config->config and calls the appropriate createXxxDriver factory. Reserved for advanced consumers — typical dispatch flows go through MarketingEventDispatcher.",
+      "delegates_to": "MarketingProviderManager::forConfig()"
+    },
+    {
+      "signature": "eligible_providers_for(Tenant $tenant, string $eventType): Collection<MarketingProviderConfig>",
+      "purpose": "Returns the active provider_configs for (tenant, event_type) — is_active=true AND event_type IN enabled_event_types AND circuit_breaker_open_until IS NULL OR <= now(). Used by MarketingEventDispatcher AND by support tooling that pre-computes the fan-out plan before dispatching.",
+      "delegates_to": "MarketingProviderConfigRepository::activeForTenantAndEventType()"
+    },
+    {
+      "signature": "hmac_sign(string $secret, string $payload, ?int $timestamp = null): array",
+      "purpose": "Builds the { signature, timestamp } pair used by CustomWebhookProvider + GtmServerProvider. Signature = SHA256(secret + timestamp + payload). timestamp defaults to time() when omitted. Consumers add these to request headers (X-Marketing-Signature + X-Marketing-Timestamp for custom_webhook; X-Gtm-Signature + X-Gtm-Timestamp for gtm_server).",
+      "delegates_to": "HmacSigner::sign()"
+    },
+    {
+      "signature": "build_attribution_snapshot(Model $subject): array",
+      "purpose": "Convenience wrapper over AttributionResolver::forSubject($subject)->snapshot(). Returns the frozen attribution shape ready for insertion into marketing_events.attribution jsonb. Reserved for support tooling that pre-computes marketing events from historical data.",
+      "delegates_to": "AttributionResolver::forSubject() + AttributionSnapshotBuilder::build()"
+    },
+    {
+      "signature": "should_dispatch_test_event(MarketingProviderConfig $config): bool",
+      "purpose": "Returns true when the config is in test_mode AND the provider supports test mode AND the caller has marketing.providers.test permission. Used by the SDUI test-provider button + the CLI test-provider command.",
+      "delegates_to": "MarketingProviderConfigResolver::shouldTest()"
+    }
+  ],
+  "notes": [
+    "Helpers deliberately delegate — testing swaps the bound service to a stub, and every helper follows.",
+    "No helper directly touches the DB — everything routes through repositories or services. Keeps the boundary clean.",
+    "The capture_marketing_event helper is intentionally NOT the primary capture path. Production code registers #[AsDomainEventMapper] classes; the helper exists for support scripts + one-off backfills + tests."
+  ]
+}

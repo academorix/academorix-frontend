@@ -1,0 +1,186 @@
+{
+  "id": "analytics.resources.analytics-experiment.report",
+  "title": "Experiment results",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/analytics/experiments/{experiment_key}/results",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "analytics", "entity": "analytics-experiment", "action": "report" },
+  "requiresPermission": "analytics.experiments.view",
+  "params": [{ "name": "experiment_key", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "results",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/analytics/experiments/' + params.experiment_key + '/results'",
+      "unwrap": "data",
+      "queryParamsFromState": ["metric", "confidence_level"]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-6xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold font-mono"
+              },
+              "bindings": { "children": { "$ref": "params.experiment_key" } }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "A/B experiment results \u2014 per-variant conversion, uplift, confidence."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-wrap gap-3" },
+          "children": [
+            {
+              "kind": "Select",
+              "props": { "label": "Metric", "name": "metric", "defaultValue": "conversion_rate" },
+              "options": [
+                { "key": "conversion_rate", "label": "Conversion rate" },
+                { "key": "uplift", "label": "Uplift vs control" },
+                { "key": "sample_size", "label": "Sample size" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "results" } }
+            },
+            {
+              "kind": "Select",
+              "props": { "label": "Confidence level", "name": "confidence_level", "defaultValue": "0.95" },
+              "options": [
+                { "key": "0.90", "label": "90%" },
+                { "key": "0.95", "label": "95%" },
+                { "key": "0.99", "label": "99%" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "results" } }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-2 gap-4" },
+          "children": [
+            {
+              "kind": "StatCard",
+              "props": { "label": "Total exposures" },
+              "bindings": { "value": { "$ref": "results.total_exposures" } }
+            },
+            {
+              "kind": "StatCard",
+              "props": { "label": "Winning variant" },
+              "bindings": { "value": { "$ref": "results.winning_variant" } }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase tracking-wide mb-3",
+                "children": "Variant comparison"
+              }
+            },
+            {
+              "kind": "DataGrid",
+              "bindings": {
+                "items": { "$ref": "results.variants" }
+              },
+              "columns": [
+                {
+                  "id": "variant",
+                  "header": "Variant",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "font-mono font-semibold" },
+                    "bindings": { "children": { "$ref": "row.variant" } }
+                  }
+                },
+                {
+                  "id": "sample_size",
+                  "header": "Sample size",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-sm font-mono" },
+                    "bindings": { "children": { "$ref": "row.sample_size" } }
+                  }
+                },
+                {
+                  "id": "conversion_rate",
+                  "header": "Conversion rate",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-sm font-mono" },
+                    "bindings": {
+                      "children": { "$expr": "(row.conversion_rate * 100).toFixed(2) + '%'" }
+                    }
+                  }
+                },
+                {
+                  "id": "uplift",
+                  "header": "Uplift vs control",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-sm font-mono" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.is_control ? 'control' : ((row.uplift * 100).toFixed(1) + '%')"
+                      },
+                      "className": {
+                        "$expr": "'text-sm font-mono ' + (row.uplift > 0 ? 'text-success' : (row.uplift < 0 ? 'text-danger' : 'text-muted'))"
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "p_value",
+                  "header": "p-value",
+                  "cell": {
+                    "kind": "Text",
+                    "props": { "className": "text-sm font-mono" },
+                    "bindings": {
+                      "children": { "$expr": "row.is_control ? '\u2014' : row.p_value.toFixed(4)" }
+                    }
+                  }
+                },
+                {
+                  "id": "significance",
+                  "header": "Significant?",
+                  "cell": {
+                    "kind": "Chip",
+                    "props": { "size": "xs" },
+                    "bindings": {
+                      "variant": {
+                        "$expr": "row.is_significant ? 'success' : 'muted'"
+                      },
+                      "children": {
+                        "$expr": "row.is_control ? 'control' : (row.is_significant ? 'yes' : 'no')"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "id": "academorix://modules/attribution/retention",
+  "$version": 1,
+  "title": "attribution — retention windows",
+  "description": "Attribution profiles are retained forever while their subject is active. Touchpoints retain 730 days default (2 years) — extended to 2555 days (7 years) on Enterprise via attribution_touchpoint_retention_extended. Reset attributions purge touchpoints 90 days post-request (audit hold). Anonymous session profiles archive at 730 days from last_touch_at. Aligns with GDPR Art. 5(1)(e) storage-limitation principle — shortest legitimate retention consistent with legitimate interest.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(e) — storage limitation (base retention window)",
+    "gdpr Art. 17 — right to erasure (with 90-day audit hold on reset)",
+    "gdpr Art. 25 — data protection by design (default 730d; extended retention is opt-in)",
+    "ccpa/cpra Section 1798.100 + 1798.105 — right to know + right to delete",
+    "soc2 CC6.3 — audit trail retention (audit rows outlive source rows)"
+  ],
+  "retention": [
+    {
+      "entity": "Attribution — active (lifecycle_state ∈ {anonymous, identified, converted})",
+      "hot": { "days": "forever while subject is active" },
+      "cold": { "days": "n/a" },
+      "purge": {
+        "trigger": "user erasure (RedactAttributionOnUserErasure) OR tenant erasure (FK CASCADE)",
+        "action": "hard delete via cascade",
+        "notes": "Active profiles are the tenant's canonical marketing-attribution state. Only erasure paths (user or tenant) hard-purge them."
+      }
+    },
+    {
+      "entity": "Attribution — churned (lifecycle_state = 'churned')",
+      "hot": { "days": 730, "description": "Retained 2 years post-churn for potential re-engagement" },
+      "cold": { "days": "n/a" },
+      "purge": {
+        "trigger": "> 730 days past last_touch_at + churned status",
+        "action": "soft-delete via PurgeArchivedAttributionsJob",
+        "notes": "The soft-delete releases the (tenant_id, subject_type, subject_id) unique slot so a fresh attribution can start if the subject re-engages years later."
+      }
+    },
+    {
+      "entity": "Attribution — soft-deleted",
+      "hot": { "days": 90, "description": "Audit hold after reset" },
+      "cold": { "days": "n/a" },
+      "purge": {
+        "trigger": "> 90 days past deleted_at",
+        "action": "hard delete via PurgeArchivedAttributionsJob",
+        "notes": "The 90-day audit hold matches the AttributionResetRequested → AttributionResetConfirmed flow. Post-hold hard-delete fires AttributionResetConfirmed to close the erasure loop."
+      }
+    },
+    {
+      "entity": "AttributionTouchpoint — base tier (730 days)",
+      "hot": { "days": 730, "description": "Base retention window. Applies to Small + Medium tiers. Non-Enterprise tenants only." },
+      "purge": {
+        "trigger": "> 730 days past captured_at + tenant lacks attribution_touchpoint_retention_extended entitlement",
+        "action": "hard delete via PurgeArchivedAttributionsJob",
+        "notes": "The 2-year window aligns with the default analytics retention downstream. Touchpoints past 730 days rarely contribute to actionable analysis."
+      }
+    },
+    {
+      "entity": "AttributionTouchpoint — extended tier (2555 days)",
+      "hot": { "days": 2555, "description": "Enterprise-only. Extended retention for financial-audit alignment (7 years matches finance module invoice/subscription retention)." },
+      "purge": {
+        "trigger": "> 2555 days past captured_at + tenant holds attribution_touchpoint_retention_extended entitlement",
+        "action": "hard delete via PurgeArchivedAttributionsJob"
+      }
+    },
+    {
+      "entity": "AttributionTouchpoint — post-reset audit hold",
+      "hot": { "days": 90 },
+      "purge": {
+        "trigger": "attribution has an AttributionResetRequested audit row > 90 days old",
+        "action": "hard delete every associated touchpoint + fire AttributionResetConfirmed",
+        "notes": "The 90-day audit hold complies with GDPR Art. 17 without violating the operational need for compliance-team review of erasure requests."
+      }
+    },
+    {
+      "entity": "Attribution — first_touch fields",
+      "hot": { "days": "co-terminous with attribution row" },
+      "notes": "first_touch_* fields are IMMUTABLE post-create. They are preserved for the life of the profile per attribution.retention.first_touch_forever config. The audit trail row for AttributionFirstTouchRecorded retains 7 years regardless of the source-row retention."
+    },
+    {
+      "entity": "Attribution — last_touch fields",
+      "hot": { "days": "co-terminous with attribution row" },
+      "notes": "last_touch_* fields overwrite on every attribution-bearing request. Historical last_touch values live in the AttributionLastTouchUpdated audit trail with 90-day retention (frequent-mutation event; longer retention is unnecessary for compliance)."
+    },
+    {
+      "entity": "Attribution — consent_at_capture",
+      "hot": { "days": "co-terminous with attribution row" },
+      "notes": "Consent snapshot on the attribution row is the CURRENT state. Per-touchpoint consent snapshots (on each attribution_touchpoints row) are the ORIGINAL state at capture-time — those are the regulator-queryable proof-of-consent records."
+    }
+  ],
+  "cross_reference": [
+    "The audit rows written by Auditable outlive the source rows per audit::retention.json — audit retention is 7 years regardless of source-row retention. That includes AttributionResetRequested + AttributionResetConfirmed + AttributionMerged + AttributionConverted events.",
+    "TenantErased cascades hard-delete of every attribution row + touchpoint (FK cascade), but the audit rows written during those events survive the cascade (per audit module's outlives-source design).",
+    "UserErased (individual erasure) redacts fields but does NOT hard-delete — the attribution row survives for aggregate metrics with subject_id=null. The 90-day hard-delete happens via the reset audit hold if the user also requested reset (GDPR is opt-in about erasure; deletion at UserErasure alone is not automatic)."
+  ]
+}

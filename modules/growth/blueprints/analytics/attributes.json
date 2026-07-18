@@ -1,0 +1,120 @@
+{
+  "id": "academorix://modules/analytics/attributes",
+  "$version": 1,
+  "title": "analytics — PHP attribute contracts",
+  "description": "Two attributes discovered at build time by CompileAnalyticsRegistries. The compiler maps class targets into AnalyticsEventCapturerRegistry + AnalyticsProviderDriverRegistry so runtime dispatch is a hash-map lookup, never a reflection call.",
+  "namespace": "Academorix\\Growth\\Analytics\\Attributes",
+  "attributes": [
+    {
+      "name": "AsAnalyticsEventCapturer",
+      "class": "Academorix\\Growth\\Analytics\\Attributes\\AsAnalyticsEventCapturer",
+      "targets": ["class"],
+      "description": "Marks a listener class as an analytics event capturer. The capturer receives one or more domain events and produces one or more analytics events. Many-to-one: a single domain event can map to multiple analytics events with different property shapes (e.g. OrderPlaced → 'checkout_completed' + 'first_purchase_completed' + 'lifetime_value_updated'). Registered at boot by the CompileAnalyticsRegistries loader into AnalyticsEventCapturerRegistry.",
+      "params": [
+        {
+          "name": "domainEvent",
+          "type": "class-string",
+          "required": true,
+          "description": "FQCN of the domain event class this capturer reacts to. Multiple attributes on the same class allow one capturer to observe multiple domain events."
+        },
+        {
+          "name": "analyticsEventName",
+          "type": "string",
+          "required": true,
+          "description": "The analytics event name to emit (snake_case, may include a colon-scoped subresource). Examples: 'feature_viewed', 'funnel_step_reached', 'feature_used:calendar'."
+        },
+        {
+          "name": "category",
+          "type": "string",
+          "required": true,
+          "enum": [
+            "feature_use",
+            "funnel_step",
+            "cta",
+            "error",
+            "performance",
+            "experiment",
+            "lifecycle",
+            "session"
+          ],
+          "description": "Coarse category for reporting rollups + retention (extended retention only applies to experiment + funnel_step)."
+        },
+        {
+          "name": "kind",
+          "type": "string",
+          "default": "track",
+          "enum": ["track", "identify", "page", "screen", "alias", "group"],
+          "description": "Analytics verb. Domain events almost always emit `track`; identify + alias fire on user-lifecycle events like UserRegistered / IdentityMerged."
+        },
+        {
+          "name": "priority",
+          "type": "int",
+          "default": 100,
+          "description": "Capturer ordering when multiple capturers observe the same domain event. Lower = earlier. Matters when one capturer emits an event that another downstream capturer needs to see (rare)."
+        },
+        {
+          "name": "consentRequired",
+          "type": "string",
+          "default": "analytics",
+          "enum": ["essential", "functional", "analytics", "marketing"],
+          "description": "Consent category that gates dispatch. Most analytics events require the `analytics` category; `essential` events (payment_succeeded funnel step) may bypass user-consent gating because they're operationally required."
+        }
+      ],
+      "example": "#[AsAnalyticsEventCapturer(\n    domainEvent: OrderPlaced::class,\n    analyticsEventName: 'checkout_completed',\n    category: 'funnel_step',\n    kind: 'track'\n)]\nfinal class CheckoutCompletedCapturer implements AnalyticsEventCapturerInterface { /* ... */ }"
+    },
+    {
+      "name": "AsAnalyticsProviderDriver",
+      "class": "Academorix\\Growth\\Analytics\\Attributes\\AsAnalyticsProviderDriver",
+      "targets": ["class"],
+      "description": "Registers a custom AnalyticsProviderDriver at boot. Enables third-party modules to ship additional drivers without editing the AnalyticsProviderManager. The 7 first-party drivers (PostHog, Amplitude, Mixpanel, Segment, June, Google Analytics 4, Custom Webhook) use this attribute; add a new one to teach the manager about a fresh provider.",
+      "params": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "description": "Provider name in snake_case. Matches AnalyticsProviderConfig.provider column values."
+        },
+        {
+          "name": "supportsBatching",
+          "type": "bool",
+          "required": true,
+          "description": "Whether the driver's transport supports batched dispatch. Batching drivers must implement BatchAwareProviderInterface."
+        },
+        {
+          "name": "maxBatchSize",
+          "type": "int",
+          "default": 100,
+          "description": "Maximum events per batch. Provider-imposed limit (Mixpanel 2000, Amplitude 1000, Segment 100, GA4 25)."
+        },
+        {
+          "name": "maxBatchBytes",
+          "type": "int",
+          "default": 500000,
+          "description": "Maximum batch payload size in bytes. Amplitude 10MB, Segment 500KB, others usually generous."
+        },
+        {
+          "name": "verbsSupported",
+          "type": "array<string>",
+          "required": true,
+          "description": "Which analytics verbs the driver natively supports. Verbs not in this list are either synthesized (mapped to another verb) or refused by the driver's supports(verb) check."
+        },
+        {
+          "name": "requiresConsentCategories",
+          "type": "array<string>",
+          "default": ["analytics"],
+          "description": "Consent categories required for this driver above the event-level requirement. PostHog session recordings additionally require 'functional' \u2014 setting this to ['analytics', 'functional'] refuses ALL PostHog dispatches when functional consent is missing (session recording is the differentiator, but the effect propagates)."
+        }
+      ],
+      "example": "#[AsAnalyticsProviderDriver(\n    name: 'posthog',\n    supportsBatching: true,\n    maxBatchSize: 1000,\n    verbsSupported: ['track', 'identify', 'page', 'screen', 'alias', 'group']\n)]\nfinal class PostHogProvider implements AnalyticsProviderInterface, BatchAwareProviderInterface { /* ... */ }"
+    }
+  ],
+  "discovery": {
+    "loader": "Academorix\\Growth\\Analytics\\Discovery\\CompileAnalyticsRegistries",
+    "runs_at": "boot (after ContainerBooted event)",
+    "output_registries": [
+      "AnalyticsEventCapturerRegistry — map of DomainEventClass → list of capturer class names ordered by priority",
+      "AnalyticsProviderDriverRegistry — map of provider-name → driver class + metadata (supportsBatching, maxBatchSize, verbsSupported, requiresConsentCategories)"
+    ],
+    "cache": "Redis, keyed on `analytics:registries:<sha256-of-attribute-scan>`. Invalidated on `artisan analytics:describe --refresh` or class-map change."
+  }
+}

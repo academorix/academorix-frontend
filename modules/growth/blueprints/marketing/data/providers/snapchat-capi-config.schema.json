@@ -1,0 +1,38 @@
+{
+  "id": "academorix://modules/marketing/data/providers/snapchat-capi-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Snapchat Conversions API provider config",
+  "description": "Configuration shape for a Snapchat Conversions API integration.",
+  "type": "object",
+  "required": ["pixel_id", "access_token"],
+  "additionalProperties": false,
+  "properties": {
+    "pixel_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9\\-]{36}$",
+      "description": "Snapchat Pixel ID. UUID format."
+    },
+    "access_token": {
+      "type": "string",
+      "minLength": 50,
+      "description": "Snap Business API access token. Encrypted at rest."
+    },
+    "app_id": {
+      "type": ["string", "null"],
+      "description": "For app-based conversions. Format: iOS app ID or Android package name."
+    },
+    "event_conversion_type": {
+      "type": "string",
+      "enum": ["WEB", "MOBILE_APP", "OFFLINE"],
+      "default": "WEB",
+      "description": "Snapchat event_conversion_type parameter. Server-side conversions from a web-app default to WEB. Native mobile use MOBILE_APP; POS/in-person use OFFLINE."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15
+    }
+  }
+}

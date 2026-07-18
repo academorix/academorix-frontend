@@ -1,0 +1,278 @@
+{
+  "$version": 1,
+  "title": "Attribution source catalogue + normalization",
+  "description": "Canonical mapping of common utm_source + referrer patterns to their normalized source identifier and analytics bucket. Read by ReferrerNormalizer (to canonicalize referrers into a source) and AttributionSourceBucketer (to collapse individual sources into one of 8 buckets for analytics). Add new sources here as they emerge — the bucket assignment is the load-bearing decision.",
+  "buckets": {
+    "paid": {
+      "display_name": "Paid",
+      "description": "Paid ad clicks — always accompanied by a click_id (gclid / fbclid / etc.). Non-null click_id.provider_hint auto-classifies to paid regardless of utm_source."
+    },
+    "organic": {
+      "display_name": "Organic search",
+      "description": "Unpaid search-engine referrals. Referrer contains google.com / bing.com / duckduckgo.com / yahoo.com / etc. without a click_id."
+    },
+    "social": {
+      "display_name": "Social",
+      "description": "Unpaid social-network referrals. Referrer from facebook.com / twitter.com / instagram.com / linkedin.com / tiktok.com / etc."
+    },
+    "referral": {
+      "display_name": "Referral",
+      "description": "Non-social, non-search third-party referrals. Blog links, partner sites, review sites."
+    },
+    "direct": {
+      "display_name": "Direct",
+      "description": "No referrer. User typed the URL or used a bookmark."
+    },
+    "email": {
+      "display_name": "Email",
+      "description": "Click from an email link. utm_medium=email, or referrer from a known email-tracking domain, or the email-tracking-token cookie present."
+    },
+    "affiliate": {
+      "display_name": "Affiliate",
+      "description": "Referral from an affiliate network. utm_medium=affiliate."
+    },
+    "unknown": {
+      "display_name": "Unknown",
+      "description": "Fallback when no bucket applies. Should be rare — investigate spikes."
+    }
+  },
+  "sources": [
+    {
+      "canonical": "google",
+      "aliases": ["google", "google-ads", "google-search", "adwords", "google_paid"],
+      "referrer_patterns": ["google.com", "google.co.uk", "google.ca", "google.de", "google.fr", "google.es", "google.it", "google.com.br", "google.co.jp", "google.co.in"],
+      "bucket_organic": "organic",
+      "bucket_paid": "paid",
+      "notes": "The bucket depends on click_id.gclid presence: gclid present → paid; absent → organic."
+    },
+    {
+      "canonical": "bing",
+      "aliases": ["bing", "microsoft", "microsoft-ads", "bing-ads"],
+      "referrer_patterns": ["bing.com"],
+      "bucket_organic": "organic",
+      "bucket_paid": "paid"
+    },
+    {
+      "canonical": "duckduckgo",
+      "aliases": ["duckduckgo", "ddg"],
+      "referrer_patterns": ["duckduckgo.com"],
+      "bucket_organic": "organic",
+      "bucket_paid": "paid"
+    },
+    {
+      "canonical": "yahoo",
+      "aliases": ["yahoo", "yahoo-search"],
+      "referrer_patterns": ["yahoo.com", "search.yahoo.com"],
+      "bucket_organic": "organic",
+      "bucket_paid": "paid"
+    },
+    {
+      "canonical": "baidu",
+      "aliases": ["baidu"],
+      "referrer_patterns": ["baidu.com"],
+      "bucket_organic": "organic",
+      "bucket_paid": "paid"
+    },
+    {
+      "canonical": "yandex",
+      "aliases": ["yandex"],
+      "referrer_patterns": ["yandex.com", "yandex.ru"],
+      "bucket_organic": "organic",
+      "bucket_paid": "paid"
+    },
+    {
+      "canonical": "facebook",
+      "aliases": ["facebook", "fb", "facebook.com", "meta"],
+      "referrer_patterns": ["facebook.com", "m.facebook.com", "l.facebook.com"],
+      "bucket_organic": "social",
+      "bucket_paid": "paid",
+      "notes": "click_id.fbclid presence indicates paid ad."
+    },
+    {
+      "canonical": "instagram",
+      "aliases": ["instagram", "ig", "instagram.com"],
+      "referrer_patterns": ["instagram.com", "l.instagram.com"],
+      "bucket_organic": "social",
+      "bucket_paid": "paid"
+    },
+    {
+      "canonical": "twitter",
+      "aliases": ["twitter", "x", "x.com", "twitter.com"],
+      "referrer_patterns": ["twitter.com", "x.com", "t.co"],
+      "bucket_organic": "social",
+      "bucket_paid": "paid"
+    },
+    {
+      "canonical": "linkedin",
+      "aliases": ["linkedin", "linkedin.com"],
+      "referrer_patterns": ["linkedin.com", "lnkd.in"],
+      "bucket_organic": "social",
+      "bucket_paid": "paid"
+    },
+    {
+      "canonical": "tiktok",
+      "aliases": ["tiktok", "tiktok.com"],
+      "referrer_patterns": ["tiktok.com"],
+      "bucket_organic": "social",
+      "bucket_paid": "paid",
+      "notes": "click_id.ttclid presence indicates paid ad."
+    },
+    {
+      "canonical": "snapchat",
+      "aliases": ["snapchat", "snap", "snapchat.com"],
+      "referrer_patterns": ["snapchat.com"],
+      "bucket_organic": "social",
+      "bucket_paid": "paid",
+      "notes": "click_id.sccid presence indicates paid ad."
+    },
+    {
+      "canonical": "pinterest",
+      "aliases": ["pinterest", "pinterest.com"],
+      "referrer_patterns": ["pinterest.com"],
+      "bucket_organic": "social",
+      "bucket_paid": "paid"
+    },
+    {
+      "canonical": "reddit",
+      "aliases": ["reddit", "reddit.com"],
+      "referrer_patterns": ["reddit.com", "old.reddit.com"],
+      "bucket_organic": "social",
+      "bucket_paid": "paid"
+    },
+    {
+      "canonical": "youtube",
+      "aliases": ["youtube", "youtube.com", "youtu.be"],
+      "referrer_patterns": ["youtube.com", "m.youtube.com", "youtu.be"],
+      "bucket_organic": "social",
+      "bucket_paid": "paid"
+    },
+    {
+      "canonical": "whatsapp",
+      "aliases": ["whatsapp", "whatsapp.com"],
+      "referrer_patterns": ["whatsapp.com", "wa.me"],
+      "bucket_organic": "social"
+    },
+    {
+      "canonical": "telegram",
+      "aliases": ["telegram", "telegram.org"],
+      "referrer_patterns": ["telegram.org", "t.me"],
+      "bucket_organic": "social"
+    },
+    {
+      "canonical": "email",
+      "aliases": ["email", "newsletter", "mailchimp", "sendgrid", "postmark", "mailgun", "sendinblue", "campaign-monitor", "convertkit"],
+      "referrer_patterns": [],
+      "bucket_organic": "email",
+      "bucket_paid": "email",
+      "notes": "Any source with utm_medium=email OR a known email-tracking cookie present."
+    },
+    {
+      "canonical": "affiliate",
+      "aliases": ["affiliate", "referred_by", "cj-affiliate", "impact", "rakuten", "awin", "sharesale"],
+      "referrer_patterns": [],
+      "bucket_organic": "affiliate",
+      "notes": "Any source with utm_medium=affiliate."
+    },
+    {
+      "canonical": "producthunt",
+      "aliases": ["producthunt", "product-hunt", "ph"],
+      "referrer_patterns": ["producthunt.com"],
+      "bucket_organic": "referral"
+    },
+    {
+      "canonical": "hackernews",
+      "aliases": ["hackernews", "hn", "ycombinator"],
+      "referrer_patterns": ["news.ycombinator.com"],
+      "bucket_organic": "referral"
+    },
+    {
+      "canonical": "github",
+      "aliases": ["github", "github.com"],
+      "referrer_patterns": ["github.com"],
+      "bucket_organic": "referral"
+    },
+    {
+      "canonical": "medium",
+      "aliases": ["medium", "medium.com"],
+      "referrer_patterns": ["medium.com"],
+      "bucket_organic": "referral"
+    },
+    {
+      "canonical": "quora",
+      "aliases": ["quora", "quora.com"],
+      "referrer_patterns": ["quora.com"],
+      "bucket_organic": "referral"
+    },
+    {
+      "canonical": "stackoverflow",
+      "aliases": ["stackoverflow", "stack-overflow"],
+      "referrer_patterns": ["stackoverflow.com"],
+      "bucket_organic": "referral"
+    },
+    {
+      "canonical": "capterra",
+      "aliases": ["capterra"],
+      "referrer_patterns": ["capterra.com"],
+      "bucket_organic": "referral"
+    },
+    {
+      "canonical": "g2",
+      "aliases": ["g2", "g2crowd", "g2.com"],
+      "referrer_patterns": ["g2.com"],
+      "bucket_organic": "referral"
+    },
+    {
+      "canonical": "trustpilot",
+      "aliases": ["trustpilot"],
+      "referrer_patterns": ["trustpilot.com"],
+      "bucket_organic": "referral"
+    },
+    {
+      "canonical": "trustradius",
+      "aliases": ["trustradius"],
+      "referrer_patterns": ["trustradius.com"],
+      "bucket_organic": "referral"
+    },
+    {
+      "canonical": "getapp",
+      "aliases": ["getapp"],
+      "referrer_patterns": ["getapp.com"],
+      "bucket_organic": "referral"
+    },
+    {
+      "canonical": "softwareadvice",
+      "aliases": ["softwareadvice"],
+      "referrer_patterns": ["softwareadvice.com"],
+      "bucket_organic": "referral"
+    },
+    {
+      "canonical": "referral",
+      "aliases": ["referral", "friend-referral", "referral-program"],
+      "referrer_patterns": [],
+      "bucket_organic": "referral",
+      "notes": "Sourced from the referrals module's ReferralLinkClicked event."
+    },
+    {
+      "canonical": "direct",
+      "aliases": ["direct", "(direct)", "(none)"],
+      "referrer_patterns": [],
+      "bucket_organic": "direct",
+      "notes": "No referrer AND no utm_source. User typed URL or used a bookmark."
+    }
+  ],
+  "bucket_resolution_order": [
+    "if click_id.provider_hint is non-null → 'paid' (unconditional)",
+    "if utm_medium == 'email' OR source.canonical == 'email' → 'email'",
+    "if utm_medium == 'affiliate' OR source.canonical == 'affiliate' → 'affiliate'",
+    "if source has bucket_organic == 'social' → 'social'",
+    "if source has bucket_organic == 'organic' → 'organic'",
+    "if source has bucket_organic == 'referral' → 'referral'",
+    "if no referrer AND no utm_source → 'direct'",
+    "else → 'unknown'"
+  ],
+  "notes": [
+    "The bucket_organic field is the DEFAULT bucket when no click_id is present. The bucket_paid field is the bucket when a matching click_id IS present.",
+    "The bucket_resolution_order is deliberately unambiguous — the FIRST matching rule wins. This prevents click_ids from being missed (paid classification is highest-priority) and prevents email/affiliate from bleeding into organic.",
+    "New sources land here first. AttributionSourceBucketer.bucket() reads this file at boot; unknown sources fall through to bucket_organic='unknown' — which surfaces in analytics as a signal to expand the catalog."
+  ]
+}

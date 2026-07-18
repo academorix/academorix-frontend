@@ -1,0 +1,84 @@
+{
+  "id": "academorix://modules/analytics/health",
+  "$version": 1,
+  "title": "analytics — health probes",
+  "description": "Per-provider reachability probes + capture pipeline probes.",
+  "probes": [
+    {
+      "name": "analytics-posthog-reachable",
+      "class": "Academorix\\Growth\\Analytics\\Health\\Probes\\PostHogReachableProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "GET https://{host}/decide/?token={api_token} \u2014 verifies credentials + reachability. Only when a PostHog config is active for at least one tenant.",
+      "timeoutMs": 3000,
+      "featureFlag": "analytics.provider.posthog.enabled"
+    },
+    {
+      "name": "analytics-amplitude-reachable",
+      "class": "Academorix\\Growth\\Analytics\\Health\\Probes\\AmplitudeReachableProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "OPTIONS request to /2/httpapi (no-op that validates reachability).",
+      "timeoutMs": 3000,
+      "featureFlag": "analytics.provider.amplitude.enabled"
+    },
+    {
+      "name": "analytics-mixpanel-reachable",
+      "class": "Academorix\\Growth\\Analytics\\Health\\Probes\\MixpanelReachableProbe",
+      "category": "readiness",
+      "critical": false,
+      "timeoutMs": 3000,
+      "featureFlag": "analytics.provider.mixpanel.enabled"
+    },
+    {
+      "name": "analytics-segment-reachable",
+      "class": "Academorix\\Growth\\Analytics\\Health\\Probes\\SegmentReachableProbe",
+      "category": "readiness",
+      "critical": false,
+      "timeoutMs": 3000,
+      "featureFlag": "analytics.provider.segment.enabled"
+    },
+    {
+      "name": "analytics-june-reachable",
+      "class": "Academorix\\Growth\\Analytics\\Health\\Probes\\JuneReachableProbe",
+      "category": "readiness",
+      "critical": false,
+      "timeoutMs": 3000,
+      "featureFlag": "analytics.provider.june.enabled"
+    },
+    {
+      "name": "analytics-google-analytics-4-reachable",
+      "class": "Academorix\\Growth\\Analytics\\Health\\Probes\\GoogleAnalytics4ReachableProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "GA4 measurement protocol has no ping endpoint \u2014 probe uses a debug event dispatch to /mp/collect?debug_mode=true.",
+      "timeoutMs": 3000,
+      "featureFlag": "analytics.provider.google_analytics_4.enabled"
+    },
+    {
+      "name": "analytics-batch-buffer-writable",
+      "class": "Academorix\\Growth\\Analytics\\Health\\Probes\\BatchBufferWritableProbe",
+      "category": "readiness",
+      "critical": true,
+      "description": "Redis PING + a probe key write/read. Critical \u2014 without the buffer, batched dispatch collapses.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "analytics-capture-pipeline",
+      "class": "Academorix\\Growth\\Analytics\\Health\\Probes\\CapturePipelineProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Round-trip probe: fake AnalyticsEventCapturer emits a probe event tagged internal=true; probe waits up to 5s for the DispatchAnalyticsEventJob to fire. Validates the full capture \u2192 fan-out chain wiring.",
+      "timeoutMs": 5000
+    },
+    {
+      "name": "analytics-open-circuits-count",
+      "class": "Academorix\\Growth\\Analytics\\Health\\Probes\\OpenCircuitsCountProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Counts open circuits across all tenants + providers. Warn at 3+; fail at 10+ (widespread provider outage).",
+      "timeoutMs": 500,
+      "thresholds": { "warn_open_circuits": 3, "fail_open_circuits": 10 }
+    }
+  ]
+}

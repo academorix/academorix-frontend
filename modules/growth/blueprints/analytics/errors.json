@@ -1,0 +1,162 @@
+{
+  "id": "academorix://modules/analytics/errors",
+  "$version": 1,
+  "title": "analytics — error codes",
+  "description": "Analytics-scoped error codes. Namespace: NOTIFICATIONS_ANALYTICS_* to match the notifications family convention (analytics is a fan-out module in the same shape). Every code maps to an HTTP status + retryability flag + user-facing bit + audit severity.",
+  "namespace": "analytics",
+  "errors": [
+    {
+      "code": "NOTIFICATIONS_ANALYTICS_CAPTURE_DISABLED",
+      "http": 503,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "analytics.errors.capture_disabled",
+      "description": "analytics.capture kill switch is off. Event refused; no fan-out."
+    },
+    {
+      "code": "NOTIFICATIONS_ANALYTICS_MODULE_NOT_ENTITLED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "analytics.errors.module_not_entitled",
+      "description": "Tenant lacks analytics_capture entitlement."
+    },
+    {
+      "code": "NOTIFICATIONS_ANALYTICS_MONTHLY_QUOTA_EXCEEDED",
+      "http": 429,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "analytics.errors.monthly_quota_exceeded",
+      "description": "Tenant has consumed analytics_event_slot_per_month; new events refused until UTC month rollover. Not a delivery failure \u2014 the event never enters the ledger."
+    },
+    {
+      "code": "NOTIFICATIONS_ANALYTICS_PROVIDER_SLOT_EXHAUSTED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "analytics.errors.provider_slot_exhausted",
+      "description": "Tenant has consumed analytics_provider_slot; create refused. User-facing so admin can upgrade plan or delete an existing provider."
+    },
+    {
+      "code": "NOTIFICATIONS_ANALYTICS_PII_DETECTED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "analytics.errors.pii_detected",
+      "description": "PropertyValidator refused the event \u2014 a value or property name matched a PII regex (email, phone, credit card, national ID). Event refused with no dispatch. Emits a compliance-audit warning."
+    },
+    {
+      "code": "NOTIFICATIONS_ANALYTICS_CONSENT_MISSING",
+      "http": 200,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "analytics.errors.consent_missing",
+      "description": "Subject has no `analytics` consent. AnalyticsEvent marked suppressed_by_consent; no HTTP dispatch."
+    },
+    {
+      "code": "NOTIFICATIONS_ANALYTICS_PROVIDER_ERROR",
+      "http": 502,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "analytics.errors.provider_error",
+      "description": "Provider returned 5xx or a network error occurred. Retried via RetryFailedAnalyticsDeliveriesJob backoff."
+    },
+    {
+      "code": "NOTIFICATIONS_ANALYTICS_PROVIDER_RATE_LIMITED",
+      "http": 429,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "analytics.errors.provider_rate_limited",
+      "description": "Provider returned 429. Delivery marked rate_limited; next_retry_at extended per Retry-After hint."
+    },
+    {
+      "code": "NOTIFICATIONS_ANALYTICS_PROVIDER_CIRCUIT_OPEN",
+      "http": 503,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "analytics.errors.provider_circuit_open",
+      "description": "Circuit breaker open for this provider \u2014 dispatch suppressed until half-open probe recovers. Delivery marked circuit_open."
+    },
+    {
+      "code": "NOTIFICATIONS_ANALYTICS_PROVIDER_AUTH_INVALID",
+      "http": 401,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "analytics.errors.provider_auth_invalid",
+      "description": "Provider returned 401/403 \u2014 credentials invalid or revoked. Delivery marked permanently_failed. Fires AnalyticsProviderCircuitBreakerOpened after 3 consecutive auth failures."
+    },
+    {
+      "code": "NOTIFICATIONS_ANALYTICS_INVALID_PROVIDER_CONFIG",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "analytics.errors.invalid_provider_config",
+      "description": "AnalyticsProviderConfig.config failed schema validation against data/providers/{provider}.provider.json."
+    },
+    {
+      "code": "NOTIFICATIONS_ANALYTICS_INVALID_EVENT_NAME",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "analytics.errors.invalid_event_name",
+      "description": "event_name failed the pattern validator (snake_case with optional colon-scoped subresource)."
+    },
+    {
+      "code": "NOTIFICATIONS_ANALYTICS_INVALID_PROPERTIES_SHAPE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "analytics.errors.invalid_properties_shape",
+      "description": "properties exceeded max_properties_per_event (100) OR max_properties_bytes (1024)."
+    },
+    {
+      "code": "NOTIFICATIONS_ANALYTICS_IDENTITY_MERGE_NOT_ENTITLED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "analytics.errors.identity_merge_not_entitled",
+      "description": "Tenant lacks analytics_identity_merge entitlement (Enterprise-only). Identify() still writes the identity row but MergeAliasedEventsJob does NOT run."
+    },
+    {
+      "code": "NOTIFICATIONS_ANALYTICS_HIGH_CONSENT_SUPPRESSION",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "analytics.errors.high_consent_suppression",
+      "description": "Funnel/experiment report query would exclude >20% of the sample due to consent withdrawal. Refused unless caller has analytics.data-viewer.override permission. Prevents misinterpretation of partial data."
+    },
+    {
+      "code": "NOTIFICATIONS_ANALYTICS_BATCH_FLUSH_FAILED",
+      "http": 502,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "analytics.errors.batch_flush_failed",
+      "description": "FlushBatchedProviderJob failed at the transport layer. Individual deliveries in the batch are marked failed; batch re-attempted on next flush cycle."
+    },
+    {
+      "code": "NOTIFICATIONS_ANALYTICS_CUSTOM_WEBHOOK_DOMAIN_NOT_ALLOWED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "alert",
+      "i18n_key": "analytics.errors.custom_webhook_domain_not_allowed",
+      "description": "Custom webhook provider config points at a domain not in tenant.allowed_egress_domains. Refused with a compliance-audit alert (potential exfiltration attempt)."
+    }
+  ]
+}

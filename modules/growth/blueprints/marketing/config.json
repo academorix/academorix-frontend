@@ -1,0 +1,277 @@
+{
+  "id": "academorix://modules/marketing/config",
+  "$version": 1,
+  "title": "marketing — developer configuration",
+  "configFile": "config/marketing.php",
+  "envPrefix": "MARKETING_",
+  "sections": {
+    "capture": {
+      "keys": [
+        {
+          "path": "marketing.capture.enabled",
+          "type": "bool",
+          "env": "MARKETING_CAPTURE_ENABLED",
+          "default": true,
+          "description": "Master toggle. Off = MarketingEventCapturer no-ops. Emergency-only."
+        },
+        {
+          "path": "marketing.capture.dedup_key_max_length",
+          "type": "int",
+          "default": 128,
+          "description": "Max length for deduplication_key. Bounded by the DB column length."
+        },
+        {
+          "path": "marketing.capture.refuse_when_no_eligible_providers",
+          "type": "bool",
+          "default": false,
+          "description": "false = log warning + persist row anyway (allows future provider adds to backfill). true = refuse the create with MARKETING_NO_ELIGIBLE_PROVIDERS."
+        }
+      ]
+    },
+    "dispatch": {
+      "keys": [
+        {
+          "path": "marketing.dispatch.timeout_seconds",
+          "type": "int",
+          "env": "MARKETING_DISPATCH_TIMEOUT",
+          "default": 15,
+          "description": "Per-provider HTTP timeout. Overridable per-provider via provider_config.timeout_seconds."
+        },
+        {
+          "path": "marketing.dispatch.connect_timeout_seconds",
+          "type": "int",
+          "default": 5,
+          "description": "Guzzle connect timeout."
+        },
+        {
+          "path": "marketing.dispatch.max_concurrent_per_tenant",
+          "type": "int",
+          "default": 10,
+          "description": "Concurrency ceiling for DispatchToProviderJob per tenant. Prevents a single tenant from monopolizing the marketing queue."
+        }
+      ]
+    },
+    "retry": {
+      "keys": [
+        {
+          "path": "marketing.retry.default_max_attempts",
+          "type": "int",
+          "default": 6,
+          "description": "Default max_attempts baked into retry_config for new provider_configs."
+        },
+        {
+          "path": "marketing.retry.default_backoff_seconds",
+          "type": "array",
+          "default": [60, 300, 1800, 7200, 43200, 86400],
+          "description": "Default exponential backoff: 1m / 5m / 30m / 2h / 12h / 24h. Length must equal default_max_attempts."
+        },
+        {
+          "path": "marketing.retry.sweep_interval_seconds",
+          "type": "int",
+          "default": 300,
+          "description": "How often RetryFailedDeliveriesJob sweeps for retry-eligible rows. 5-min default."
+        }
+      ]
+    },
+    "circuit_breaker": {
+      "keys": [
+        {
+          "path": "marketing.circuit_breaker.default_failure_threshold",
+          "type": "int",
+          "default": 5,
+          "description": "Default consecutive-failure count that opens the breaker."
+        },
+        {
+          "path": "marketing.circuit_breaker.default_open_duration_seconds",
+          "type": "int",
+          "default": 3600,
+          "description": "Default open duration. 1h. After this, HalfOpenCircuitBreakerJob probes."
+        },
+        {
+          "path": "marketing.circuit_breaker.default_half_open_test_events",
+          "type": "int",
+          "default": 1,
+          "description": "Number of probe events fired in half-open state. 1 = fast recovery detection."
+        }
+      ]
+    },
+    "rate_limit": {
+      "keys": [
+        {
+          "path": "marketing.rate_limit.meta_capi_per_second",
+          "type": "int",
+          "default": 100,
+          "description": "Ceiling for Meta CAPI requests per second per config. Prevents API-quota exhaustion."
+        },
+        {
+          "path": "marketing.rate_limit.google_ads_per_second",
+          "type": "int",
+          "default": 10
+        },
+        {
+          "path": "marketing.rate_limit.google_analytics_4_per_second",
+          "type": "int",
+          "default": 100
+        },
+        {
+          "path": "marketing.rate_limit.tiktok_events_per_second",
+          "type": "int",
+          "default": 50
+        },
+        {
+          "path": "marketing.rate_limit.linkedin_insight_per_second",
+          "type": "int",
+          "default": 10
+        },
+        {
+          "path": "marketing.rate_limit.snapchat_capi_per_second",
+          "type": "int",
+          "default": 50
+        },
+        {
+          "path": "marketing.rate_limit.pinterest_capi_per_second",
+          "type": "int",
+          "default": 25
+        },
+        {
+          "path": "marketing.rate_limit.custom_webhook_per_second",
+          "type": "int",
+          "default": 20
+        }
+      ]
+    },
+    "consent": {
+      "keys": [
+        {
+          "path": "marketing.consent.required_categories",
+          "type": "array",
+          "default": ["marketing", "advertising"],
+          "description": "Consent categories the caller must have granted for the event to be captured + dispatched. Both required per GDPR Art. 6(1)(a)."
+        },
+        {
+          "path": "marketing.consent.recheck_on_dispatch",
+          "type": "bool",
+          "default": true,
+          "description": "true = re-check consent at dispatch time (allows revocation-between-capture-and-dispatch to suppress delivery). false = trust the capture-time snapshot only (faster but bypasses revocation-between)."
+        }
+      ]
+    },
+    "attribution": {
+      "keys": [
+        {
+          "path": "marketing.attribution.source_of_truth",
+          "type": "string",
+          "default": "growth::attribution",
+          "description": "Module handling attribution capture + snapshot. Marketing depends on it."
+        },
+        {
+          "path": "marketing.attribution.freeze_on_create",
+          "type": "bool",
+          "default": true,
+          "description": "true = attribution snapshot is immutable after event creation (correct behaviour). false = attribution reads live at each display (breaks historical ROAS reporting — never turn off in production)."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "marketing.retention.event_years",
+          "type": "int",
+          "default": 7,
+          "description": "marketing_events retention. 10 years for Enterprise tenants with marketing_extended_retention entitlement."
+        },
+        {
+          "path": "marketing.retention.delivery_years",
+          "type": "int",
+          "default": 2,
+          "description": "marketing_deliveries retention (support-debugging window)."
+        },
+        {
+          "path": "marketing.retention.provider_config_grace_days",
+          "type": "int",
+          "default": 90,
+          "description": "Soft-deleted provider_configs retained this many days before hard-purge."
+        },
+        {
+          "path": "marketing.retention.dead_letter_indefinite",
+          "type": "bool",
+          "default": true,
+          "description": "true = dead letters are NEVER auto-purged (financial audit for the tenant's lifetime). false = follow event retention window (not recommended)."
+        }
+      ]
+    },
+    "test_mode": {
+      "keys": [
+        {
+          "path": "marketing.test_mode.exclude_from_roas",
+          "type": "bool",
+          "default": true,
+          "description": "true = ROAS report excludes events dispatched via test_mode=true configs. Prevents test conversions from polluting production numbers."
+        }
+      ]
+    },
+    "reconciliation": {
+      "keys": [
+        {
+          "path": "marketing.reconciliation.stuck_event_threshold_hours",
+          "type": "int",
+          "default": 24,
+          "description": "ReconcileMarketingEventStatusJob rolls up events stuck in 'dispatching' for this long."
+        },
+        {
+          "path": "marketing.reconciliation.expected_stuck_events",
+          "type": "int",
+          "default": 0,
+          "description": "Baseline for the reconciler alerts. Any finding above this is a P1 signal."
+        }
+      ]
+    },
+    "providers": {
+      "keys": [
+        {
+          "path": "marketing.providers.meta_capi.api_version",
+          "type": "string",
+          "default": "v18.0",
+          "description": "Meta Graph API version. Bump on Meta's major-version changes."
+        },
+        {
+          "path": "marketing.providers.google_ads.api_version",
+          "type": "string",
+          "default": "v14"
+        },
+        {
+          "path": "marketing.providers.google_analytics_4.endpoint",
+          "type": "string",
+          "default": "https://www.google-analytics.com/mp/collect",
+          "description": "GA4 Measurement Protocol endpoint. debug variant available at .../debug/mp/collect (used for test_mode)."
+        },
+        {
+          "path": "marketing.providers.tiktok_events.api_version",
+          "type": "string",
+          "default": "v1.3"
+        },
+        {
+          "path": "marketing.providers.linkedin_insight.api_version",
+          "type": "string",
+          "default": "202312"
+        },
+        {
+          "path": "marketing.providers.snapchat_capi.api_version",
+          "type": "string",
+          "default": "v2"
+        },
+        {
+          "path": "marketing.providers.pinterest_capi.api_version",
+          "type": "string",
+          "default": "v5"
+        },
+        {
+          "path": "marketing.providers.pii_hashing.algorithm",
+          "type": "string",
+          "default": "sha256",
+          "description": "Hash algorithm applied to email/phone/name before dispatch. Providers that require it: Meta CAPI, Snapchat, Pinterest, TikTok, LinkedIn. GA4 skips hashing (Measurement Protocol accepts raw client_id + user_id)."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,160 @@
+{
+  "id": "referrals.resources.referral-fraud-flag.review",
+  "title": "Review fraud flag",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/referral-fraud-flags/:flagId",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "referrals", "entity": "referral-fraud-flag", "action": "review" },
+  "requiresPermission": "referral_fraud_flags.review",
+  "requiresEntitlement": "referrals_fraud_detection",
+  "dataSources": [
+    {
+      "name": "flag",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/referral-fraud-flags/' + $params.flagId + '?include=referral'",
+      "unwrap": "data"
+    },
+    {
+      "name": "manualOverrideEntitlement",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/referrals_manual_override",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$expr": "'Fraud flag — ' + flag.flag_type.replace(/_/g, ' ')" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted font-mono" },
+                  "bindings": { "children": { "$expr": "'Referral: ' + flag.referral_id" } }
+                }
+              ]
+            },
+            {
+              "kind": "Widget",
+              "widget": "referrals.fraud-severity-chip",
+              "bindings": {
+                "severity": { "$ref": "flag.severity" },
+                "disposition": { "$expr": "flag.disposition || 'unreviewed'" },
+                "confidence": { "$ref": "flag.confidence" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Evidence" } },
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col gap-2 text-sm font-mono" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": {
+                      "$expr": "JSON.stringify(flag.details, null, 2)"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Alert",
+              "props": {
+                "variant": "info",
+                "children": "Evidence hashes are SHA-256 truncated in the UI. The full hash is retained for the fraud audit trail but not surfaced here to reduce surface area."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "bindings": { "hidden": { "$expr": "!flag.reviewed_at" } },
+          "children": [
+            { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Already reviewed" } },
+            {
+              "kind": "Text",
+              "bindings": {
+                "children": {
+                  "$expr": "'Disposition: ' + flag.disposition + ' by user ' + flag.reviewed_by_user_id + ' on ' + formatDate(flag.reviewed_at)"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "bindings": { "hidden": { "$expr": "flag.reviewed_at" } },
+          "children": [
+            { "kind": "Text", "props": { "as": "h3", "className": "font-semibold mb-3", "children": "Decision" } },
+            {
+              "kind": "RadioGroup",
+              "props": { "isRequired": true },
+              "props_items": [
+                {
+                  "id": "confirmed_fraud",
+                  "label": "Confirm fraud — cancel referral + clawback rewards"
+                },
+                {
+                  "id": "false_positive",
+                  "label": "Dismiss as false positive"
+                },
+                {
+                  "id": "manual_override_approved",
+                  "label": "Manual override — permit referral to proceed",
+                  "isDisabled": { "$expr": "!manualOverrideEntitlement.enabled" }
+                }
+              ],
+              "form": { "field": "disposition" }
+            },
+            {
+              "kind": "TextArea",
+              "props": { "label": "Notes", "description": "Recorded in the audit trail." },
+              "form": { "field": "reason" }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex justify-end gap-2 pt-4" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "children": "Submit review" },
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.post",
+                      "urlExpr": "'/api/v1/referral-fraud-flags/' + flag.id + '/review'",
+                      "bodyExpr": "form",
+                      "onSuccess": { "kind": "navigate.back" }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

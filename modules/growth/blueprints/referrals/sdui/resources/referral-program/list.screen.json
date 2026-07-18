@@ -1,0 +1,235 @@
+{
+  "id": "referrals.resources.referral-program.list",
+  "title": "Referral programs",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/referral-programs",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "referrals", "entity": "referral-program", "action": "list" },
+  "requiresPermission": "referral_programs.viewAny",
+  "requiresEntitlement": "referrals_capture",
+  "dataSources": [
+    {
+      "name": "programs",
+      "kind": "http.get",
+      "url": "/api/v1/referral-programs",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "slot_entitlement",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/referrals_program_slot",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Referral programs" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Reward existing customers for bringing new ones." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "entitlements.entitlement-usage-bar",
+                  "props": { "size": "sm", "label": "Program slots" },
+                  "bindings": {
+                    "cap": { "$ref": "slot_entitlement.value_cap" },
+                    "used": { "$ref": "slot_entitlement.value_used" }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "leadingIcon": "plus", "children": "New program" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/referral-programs/new" } },
+                  "bindings": { "disabled": { "$ref": "slot_entitlement.is_exceeded" } },
+                  "requiresPermission": "referral_programs.create"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "draft", "label": "Draft" },
+                { "id": "active", "label": "Active" },
+                { "id": "paused", "label": "Paused" },
+                { "id": "archived", "label": "Archived" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Side", "menuTrigger": "focus", "className": "min-w-40" },
+              "props_items": [
+                { "id": "single_sided", "label": "Single-sided" },
+                { "id": "double_sided", "label": "Double-sided" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "side", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Reward type", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "percent_discount", "label": "Percent discount" },
+                { "id": "fixed_amount", "label": "Fixed amount" },
+                { "id": "free_months", "label": "Free months" },
+                { "id": "free_sessions", "label": "Free sessions" },
+                { "id": "credits", "label": "Credits" },
+                { "id": "point_award", "label": "Points" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "reward_type", "valueExpr": "$selectedKey" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Grid",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" },
+          "bindings": {
+            "items": { "$ref": "programs" },
+            "isLoading": { "$ref": "programs.isLoading" }
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "col-span-full text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "gift", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No referral programs yet" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Launch your first program to turn happy customers into your best marketing channel." } }
+            ]
+          },
+          "itemRenderer": {
+            "kind": "Card",
+            "props": { "className": "p-4 hover:shadow-md transition-shadow cursor-pointer" },
+            "actions": {
+              "onPress": { "kind": "navigate", "toExpr": "'/tenant/referral-programs/' + row.id" }
+            },
+            "children": [
+              {
+                "kind": "View",
+                "props": { "className": "flex items-start justify-between gap-2 mb-2" },
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-medium text-lg" },
+                    "bindings": { "children": { "$ref": "row.name" } }
+                  },
+                  {
+                    "kind": "Chip",
+                    "bindings": {
+                      "variant": {
+                        "$expr": "({ draft: 'neutral', active: 'success', paused: 'warning', archived: 'neutral' })[row.status]"
+                      },
+                      "children": {
+                        "$expr": "({ draft: 'Draft', active: 'Active', paused: 'Paused', archived: 'Archived' })[row.status]"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "Widget",
+                "widget": "referrals.reward-badge",
+                "bindings": {
+                  "rewardType": { "$ref": "row.reward_type_referrer" },
+                  "rewardAmount": { "$ref": "row.reward_amount_referrer" },
+                  "rewardCurrency": { "$ref": "row.reward_currency_referrer" },
+                  "recipientRole": {
+                    "$expr": "row.side === 'double_sided' ? 'both' : 'referrer'"
+                  }
+                }
+              },
+              {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-3 text-xs text-muted mt-3" },
+                "children": [
+                  {
+                    "kind": "Text",
+                    "bindings": {
+                      "children": {
+                        "$expr": "'Trigger: ' + row.trigger_event.replace(/_/g, ' ')"
+                      }
+                    }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "ml-auto" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.rewards_issued_count + ' rewards issued'"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "View",
+                "props": { "className": "mt-3" },
+                "bindings": {
+                  "hidden": { "$expr": "!row.max_rewards_per_program" }
+                },
+                "children": [
+                  {
+                    "kind": "ProgressBar",
+                    "bindings": {
+                      "value": {
+                        "$expr": "(row.rewards_issued_amount_cents / row.max_rewards_per_program) * 100"
+                      },
+                      "maxValue": 100,
+                      "variant": {
+                        "$expr": "(row.rewards_issued_amount_cents / row.max_rewards_per_program) > 0.9 ? 'danger' : ((row.rewards_issued_amount_cents / row.max_rewards_per_program) > 0.5 ? 'warning' : 'success')"
+                      },
+                      "size": "sm"
+                    },
+                    "props": { "ariaLabel": "Budget consumed" }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted mt-1" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "'Budget: ' + formatMoney(row.rewards_issued_amount_cents, row.reward_currency_referrer || 'USD') + ' of ' + formatMoney(row.max_rewards_per_program, row.reward_currency_referrer || 'USD')"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
